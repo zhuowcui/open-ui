@@ -60,7 +60,16 @@ AST-lowered candidates remain pending. All 200 prior additions remain in the
 new manifest, including three that currently fail a profile; admission never
 turns their failing comparisons into passes.
 
-At clean checkpoint `6b53a991`, the complete
+At clean checkpoint `dc451061`, the complete
+[v20 expanded requalification](generated/expanded-requalification-v20.json)
+is 22,049/23,728 exact, with 1,679 differences and zero errors. The same
+198 of 201 additions are exact at all four profiles; the other three remain
+failures. All original profile results match the clean v37 census, including
+every pinned Chromium oracle identity and decoded image. The
+[v22 diagnostic selection](../../tools/qualification/manifests/expanded-v22.json)
+records the 198 exact additions; the release contract still includes all 201.
+
+At the prior clean checkpoint `6b53a991`, the complete
 [v19 expanded requalification](generated/expanded-requalification-v19.json)
 is 22,046/23,728 exact, with 1,682 differences and zero errors. The same
 198 of 201 additions are exact at all four profiles; three remain failures.
@@ -70,7 +79,18 @@ Chromium oracle identity and decoded image hash. The
 [v21 diagnostic selection](../../tools/qualification/manifests/expanded-v21.json)
 records the 198 exact additions; the release contract still includes all 201.
 
-At clean checkpoint `128edc38`, the [v36 original census](generated/four-profile-census-v36.json)
+At clean checkpoint `dc451061`, the [v37 original census](generated/four-profile-census-v37.json)
+is 21,248/22,924 exact, with 1,676 differences and zero errors. The
+[adjacent row-flex continuation repair](adjacent-row-flex-fragmentation.md)
+made three comparisons exact and reduced one other difference from 132 to
+14 pixels. Only four Open UI images changed, no exact image regressed, and
+all 22,924 Chromium oracle identities and decoded images stayed fixed. The
+924 residual test IDs remain unowned. The clean
+[v38 focused/primitive index](generated/focused-primitive-raster-v38.json)
+is 640/640 and 960/960 exact; all 1,600 Open UI and Chromium images are
+unchanged from the prior raster v37 index.
+
+At the prior clean checkpoint `128edc38`, the [v36 original census](generated/four-profile-census-v36.json)
 is 21,245/22,924 exact, with 1,679 differences and zero errors. The
 [fractional Ahem strike repair](fractional-ahem-stripe-edges.md) changed 21
 already failing Open UI images and reduced wrong pixels by 281. No exact case
@@ -95,7 +115,8 @@ at `e1bdccc4` is 640/640 and 960/960 exact with zero errors and no decoded
 image changes from v36. The clean
 [201-addition guard](generated/expanded-additions-object-deferred-v1.json)
 is 801/804 exact with three differences and no changed Open UI or Chromium
-image; a complete expanded-manifest rerun remains open.
+image; the complete expanded-manifest rerun was open at that checkpoint and
+has since completed in v20.
 
 At clean checkpoint `d70c4696`, the [v33 original census](generated/four-profile-census-v33.json)
 was 21,244/22,924 exact with 1,680 differences and zero errors. The

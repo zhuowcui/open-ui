@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,245/22,924 exact, 1,679 different, 0 errors |
+| Fresh four-profile Chromium census | 21,248/22,924 exact, 1,676 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 198/201 exact at all four profiles in the latest clean run; three still fail |
 | Pending native final-state candidates | 0/35 exact at all four profiles after the latest clean recheck |
@@ -26,8 +26,24 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v36.json)
-at `128edc38` is 21,245/22,924 exact, 1,679 different, and zero errors.
+The [latest complete clean census](../renderer/generated/four-profile-census-v37.json)
+at `dc451061` is 21,248/22,924 exact, 1,676 different, and zero errors.
+The [adjacent row-flex continuation repair](../renderer/adjacent-row-flex-fragmentation.md)
+made three fractional-scale comparisons exact and reduced one other difference
+from 132 to 14 pixels. Only four Open UI images changed across 22,924
+comparisons; no formerly exact case regressed, and all Chromium oracle
+identities and decoded images stayed fixed. The 924 remaining residual test
+IDs are unowned. The clean
+[v38 focused/primitive index](../renderer/generated/focused-primitive-raster-v38.json)
+is 640/640 and 960/960 exact, with all 1,600 Open UI and Chromium images
+unchanged from the prior raster v37 index. The complete clean
+[v20 expanded requalification](../renderer/generated/expanded-requalification-v20.json)
+is 22,049/23,728 exact, 1,679 different, and zero errors; 198 of 201
+additions remain exact at all four profiles, with the same three failures.
+
+At the prior clean checkpoint `128edc38`, the
+[v36 census](../renderer/generated/four-profile-census-v36.json) was
+21,245/22,924 exact, 1,679 different, and zero errors.
 The fractional Ahem hinting repair changed 21 already failing Open UI images,
 reduced their combined wrong-pixel count by 281, and introduced no exact
 regression. All 22,924 Chromium oracle identities and decoded images stayed
@@ -62,7 +78,8 @@ earlier additions remain failures. The remaining 35
 produced 18/140 exact comparisons, 122 differences, and zero errors at clean
 checkpoint `8324c6b0`; none is exact at all four profiles. All 140 comparison
 statuses, mismatched-pixel counts, and diff signatures match the prior pending
-report. The original release gate still has 926 unowned residual test IDs.
+report. At that prior checkpoint, the original release gate had 926 unowned
+residual test IDs.
 Open UI runs no JavaScript; the newly admitted interaction has a public native
 Rust API path. A script in a Chromium test is a source-data fact, not an
 application feature requirement or an excuse to omit a needed native Rust API.

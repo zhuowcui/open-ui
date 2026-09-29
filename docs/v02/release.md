@@ -8,10 +8,10 @@ claimed by source code alone.
 |---|---|---|
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
-| Four-profile renderer matrix | 21,245/22,924 exact, 1,679 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v36.json) | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v37.json) | pass |
+| Four-profile renderer matrix | 21,248/22,924 exact, 1,676 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v37.json) | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v38.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 198 of 201 exact additions and [demotes three](../renderer/generated/expanded-requalification-v19.json); 22,046/23,728 total comparisons exact, 1,682 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 198 of 201 exact additions and [demotes three](../renderer/generated/expanded-requalification-v20.json); 22,049/23,728 total comparisons exact, 1,679 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
@@ -45,7 +45,20 @@ behavioral or nonvisual reasons is not a waiver for application interaction:
 needed element behavior must be available through the public native Rust API
 over the same retained document and event path.
 
-The latest clean census at `128edc38` is
+The latest clean census at `dc451061` is
+[21,248/22,924 exact](../renderer/generated/four-profile-census-v37.json),
+with 1,676 differences, zero errors, and 924 unowned residual test IDs. The
+[adjacent row-flex repair](../renderer/adjacent-row-flex-fragmentation.md)
+made three comparisons exact and improved one other failing comparison by 118
+pixels. No formerly exact image regressed, and all Chromium oracle identities
+and decoded images stayed fixed. The clean
+[v38 focused/primitive index](../renderer/generated/focused-primitive-raster-v38.json)
+is 640/640 and 960/960 exact. The complete clean
+[v20 expanded requalification](../renderer/generated/expanded-requalification-v20.json)
+is 22,049/23,728 exact, 1,679 different, and zero errors; the same 198 of
+201 additions are exact at all four profiles.
+
+At the prior clean checkpoint `128edc38`, the v36 census was
 [21,245/22,924 exact](../renderer/generated/four-profile-census-v36.json),
 with 1,679 differences, zero errors, and 926 unowned residual test IDs. The
 [fractional Ahem strike repair](../renderer/fractional-ahem-stripe-edges.md)
