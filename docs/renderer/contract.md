@@ -57,10 +57,30 @@ disposition. Product interactions must be available through the public
 The [native adjoining-floats admission](adjoining-floats-native-admission.md)
 versions one newly exact case into the expanded contract. The other 35
 AST-lowered candidates remain pending. All 200 prior additions remain in the
-new manifest, including three that currently fail a profile; admission never
+new manifest, including two that currently fail a profile; admission never
 turns their failing comparisons into passes.
 
-At clean checkpoint `d39282e4`, the [v38 original census](generated/four-profile-census-v38.json)
+At clean checkpoint `e14e3e64`, the
+[v39 original census](generated/four-profile-census-v39.json) is
+21,264/22,924 exact, with 1,660 differences and zero errors. The shared
+[vertical-lr Ahem rotation-anchor repair](vertical-lr-ahem-rotation-anchor.md)
+made nine original comparisons exact, changed only those nine Open UI images,
+and reduced wrong pixels by 30,184. No exact comparison regressed, and all
+22,924 Chromium oracle identities and decoded images stayed fixed. The 916
+residual test IDs remain unowned. The clean
+[v40 focused/primitive index](generated/focused-primitive-raster-v40.json)
+is 640/640 and 960/960 exact. The complete clean
+[v22 expanded requalification](generated/expanded-requalification-v22.json)
+is 22,066/23,728 exact, with 1,662 differences and zero errors. All original
+decoded images and statuses match the separate clean census; the one changed
+addition is now exact at four profiles, leaving 199 of 201 additions exact.
+Every Chromium oracle identity and decoded image matches the prior clean
+expanded run. The
+[v24 diagnostic selection](../../tools/qualification/manifests/expanded-v24.json)
+lists 199 exact additions, while the release contract still includes all 201
+and their two failures.
+
+At the prior clean checkpoint `d39282e4`, the [v38 original census](generated/four-profile-census-v38.json)
 is 21,255/22,924 exact, with 1,669 differences and zero errors. The shared
 [analytic gradient-edge repair](fractional-multicol-seam-investigation.md)
 made seven comparisons exact and reduced wrong pixels by 5,957 without an

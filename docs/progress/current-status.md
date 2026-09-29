@@ -11,9 +11,9 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,255/22,924 exact, 1,669 different, 0 errors |
+| Fresh four-profile Chromium census | 21,264/22,924 exact, 1,660 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
-| Expanded native final-state additions | 198/201 exact at all four profiles in the latest clean run; three still fail |
+| Expanded native final-state additions | 199/201 exact at all four profiles in the latest clean run; two still fail |
 | Pending native final-state candidates | 0/35 exact at all four profiles after the latest clean recheck |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
@@ -26,8 +26,26 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v38.json)
-at `d39282e4` is 21,255/22,924 exact, 1,669 different, and zero errors.
+The [latest complete clean census](../renderer/generated/four-profile-census-v39.json)
+at `e14e3e64` is 21,264/22,924 exact, 1,660 different, and zero errors.
+The [vertical-lr Ahem rotation-anchor repair](../renderer/vertical-lr-ahem-rotation-anchor.md)
+made nine original comparisons exact, changed only those nine Open UI images,
+and reduced wrong pixels by 30,184. No formerly exact comparison regressed;
+all 22,924 Chromium oracle identities and decoded images stayed fixed. The
+916 remaining residual test IDs are unowned. The clean
+[v40 focused/primitive index](../renderer/generated/focused-primitive-raster-v40.json)
+is 640/640 and 960/960 exact. The complete
+[v22 expanded requalification](../renderer/generated/expanded-requalification-v22.json)
+is 22,066/23,728 exact, 1,662 different, and zero errors. The same nine
+original comparisons plus one admitted native final-state comparison became
+exact; 199 of 201 additions now pass all four profiles. The
+[v24 diagnostic selection](../../tools/qualification/manifests/expanded-v24.json)
+lists those 199, while the release contract keeps all 201 and their two
+failures. The other 35 AST-lowered candidates remain pending.
+
+At the prior clean checkpoint `d39282e4`, the
+[v38 census](../renderer/generated/four-profile-census-v38.json)
+was 21,255/22,924 exact, 1,669 different, and zero errors.
 The [analytic gradient-edge repair](../renderer/fractional-multicol-seam-investigation.md)
 changed 29 Open UI images, made seven comparisons exact, and reduced the
 remaining wrong-pixel count by 5,957. No formerly exact comparison regressed;
@@ -435,7 +453,7 @@ load it.
   still fails AddressSanitizer, LeakSanitizer, and fuzz on process-exit
   Fontconfig allocations. Its MSRV, Miri, Linux platform, and C UBSan jobs
   passed.
-- The four-profile Chromium census fails exactness; 923 residual test IDs
+- The four-profile Chromium census fails exactness; 916 residual test IDs
   have no reviewed owner. Both 40-profile CPU raster matrices are exact.
 - The C ABI covers the retained engine, headless renderer, and an owned full
   accessibility-tree snapshot, but does not yet export the owned Linux event loop.
