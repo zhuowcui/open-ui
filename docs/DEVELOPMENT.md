@@ -33,7 +33,7 @@ sudo apt-get install build-essential clang libclang-dev ninja-build pkg-config \
 ```bash
 cd bindings/rust
 cargo build --workspace --locked
-cargo test --workspace --locked
+RUST_MIN_STACK=4194304 cargo test --workspace --locked
 cargo run --locked --package hello
 cargo run --locked --package hello --features linux
 ```
@@ -42,6 +42,8 @@ Headless is the default: Linux window dependencies are behind the `linux`
 feature. Set `OUI_BACKEND=software` or `OUI_BACKEND=opengl` to force native
 presentation. `Auto` attempts OpenGL and reports/falls back to software without
 changing engine or scene semantics.
+The workspace test command uses the same 4 MiB libtest worker-thread stack as
+CI; a fragmented multicol integration case exceeds libtest's 2 MiB default.
 
 The public Rust graph is versioned together at 0.2.0. Internal dependencies
 must keep exact `version = "=0.2.0"` plus `path` so local work and crates.io

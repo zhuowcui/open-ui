@@ -39,7 +39,7 @@ The current v0.2 release candidate has:
   exact at all four profiles; 198 of 201 currently meet that gate and three
   remain failures. The other 35 AST-lowered cases remain pending;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
-- 42 application scenarios covering retained updates, controls, editing,
+- 43 application scenarios covering retained updates, controls, editing,
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;

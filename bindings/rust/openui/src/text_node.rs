@@ -67,6 +67,15 @@ impl TextNode {
         Ok(parent.map(|handle| crate::Element::from_handle(self.document.clone(), handle)))
     }
 
+    /// Detach this text node while keeping its handle and data for later
+    /// reattachment. The document owns it until it is removed or dropped.
+    pub fn detach(&mut self) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.detach(self.handle))?;
+        self.remove_on_drop = false;
+        Ok(())
+    }
+
     pub fn remove(mut self) -> Result<(), Error> {
         self.remove_on_drop = false;
         self.document.remove_node(self.handle)

@@ -126,6 +126,14 @@ impl Element {
         self.document.remove_node(self.handle)
     }
 
+    /// Detach this element while keeping its handle, descendants, state, and
+    /// Rust event listeners. Attach it again with [`Self::append_child`] or
+    /// [`Self::insert_before`]. Use [`Self::remove`] to destroy it instead.
+    pub fn detach(&self) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.detach(self.handle))
+    }
+
     /// Return the first authored element child, skipping text nodes.
     pub fn first_child(&self) -> Result<Option<Element>, Error> {
         let child = self.document.with_engine(|engine| {

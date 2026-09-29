@@ -860,6 +860,53 @@ impl Engine {
         Ok(())
     }
 
+    /// Detach an authored subtree without invalidating its handles or losing
+    /// its state. The caller may edit and reattach it later.
+    pub fn detach(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
+        if node == self.document.root() {
+            return Err(EngineError::RootRemoval);
+        }
+        if self.document.node(node).parent.is_none() {
+            return Ok(());
+        }
+        let mut descendants = Vec::new();
+        self.collect_subtree(node, &mut descendants);
+        self.document.detach(node);
+        let detached_handles: Vec<_> = descendants
+            .iter()
+            .filter_map(|node| self.node_slots.get(node))
+            .map(|index| self.handle_for_slot(*index))
+            .collect();
+        self.clear_subtree_presentation_state(&detached_handles);
+        self.mark_dirty(InvalidationClass::Subtree);
+        Ok(())
+    }
+
+    fn clear_subtree_presentation_state(&mut self, handles: &[NodeHandle]) {
+        self.cancel_animations_for_handles(handles);
+        if self
+            .focused
+            .is_some_and(|focused| handles.contains(&focused))
+        {
+            self.focused = None;
+        }
+        self.pointer_capture
+            .retain(|_, captured| !handles.contains(captured));
+        self.active_pointers
+            .retain(|_, active| !handles.contains(active));
+        self.hover_paths.retain(|_, path| {
+            path.retain(|node| !handles.contains(node));
+            !path.is_empty()
+        });
+        if self
+            .modal_root
+            .is_some_and(|modal| handles.contains(&modal))
+        {
+            self.modal_root = None;
+        }
+    }
+
     pub fn remove(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
         let node = self.resolve(handle)?;
         if node == self.document.root() {
@@ -873,27 +920,7 @@ impl Engine {
             .filter_map(|node| self.node_slots.get(node))
             .map(|index| self.handle_for_slot(*index))
             .collect();
-        self.cancel_animations_for_handles(&removed_handles);
-        if self
-            .focused
-            .is_some_and(|focused| removed_handles.contains(&focused))
-        {
-            self.focused = None;
-        }
-        self.pointer_capture
-            .retain(|_, captured| !removed_handles.contains(captured));
-        self.active_pointers
-            .retain(|_, active| !removed_handles.contains(active));
-        self.hover_paths.retain(|_, path| {
-            path.retain(|node| !removed_handles.contains(node));
-            !path.is_empty()
-        });
-        if self
-            .modal_root
-            .is_some_and(|modal| removed_handles.contains(&modal))
-        {
-            self.modal_root = None;
-        }
+        self.clear_subtree_presentation_state(&removed_handles);
         for node in &descendants {
             if let Some(index) = self.node_slots.remove(node) {
                 self.controls.remove(&index);

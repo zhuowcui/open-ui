@@ -28,8 +28,8 @@ Browser-style effects are provided by native operations where v0.2 needs them:
 
 | Application task | Public Rust API |
 |---|---|
-| Create, find, clone, move, or remove elements | `Element::create`, `Document::element_by_id`, `clone_subtree`, `append_child`, `insert_before`, `remove` |
-| Create, read, edit, attach, or move text nodes | `Document::create_text_node`, `TextNode::data`, `set_data`, `Element::append_text_child`, `insert_text_before` |
+| Create, find, clone, move, detach, or destroy elements | `Element::create`, `Document::element_by_id`, `clone_subtree`, `append_child`, `insert_before`, `detach`, `remove` |
+| Create, read, edit, attach, move, detach, or destroy text nodes | `Document::create_text_node`, `TextNode::data`, `set_data`, `detach`, `remove`, `Element::append_text_child`, `insert_text_before` |
 | Find elements by native kind or class | `Document::elements_of_kind`, `elements_with_class`, `Element::kind` |
 | Change class tokens | `Element::has_class`, `add_class`, `remove_class` |
 | Read or change text, attributes, or typed style | `Element::text_content`, `set_text`, `set_attribute`, `set_property` and generated typed setters |
@@ -52,6 +52,14 @@ Native kinds group some tag names, such as `div` and `main`; an application
 that needs to distinguish them can retain its element handle or assign an ID.
 Kind lookup covers attached authored elements and excludes text and generated
 pseudo-elements.
+`Element::detach` removes a subtree from presentation while keeping its
+generation-checked handles, authored state, and Rust event listeners for later
+reattachment. `Element::remove` destroys the subtree and invalidates those
+handles. Detached subtrees remain owned by the document until reattached,
+removed, or the document is dropped.
+`TextNode::detach` does the same for a text node and transfers it to document
+ownership so dropping the Rust handle does not destroy a node intended for
+later reattachment.
 For example, the effects of looking up an element, activating it, focusing it,
 scrolling it, and changing an input value are available through
 `Document::element_by_id`, `Element::click`, `focus`, `scroll_to`, and

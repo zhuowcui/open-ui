@@ -18,7 +18,7 @@ remain open.
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
-| Application conformance scenarios | 42 across 10 domains |
+| Application conformance scenarios | 43 across 10 domains |
 | Frozen / current C exports | 84 / 102 |
 | C examples / C++ consumers | 5 / 1 |
 | Workspace tests | pass |
@@ -45,6 +45,15 @@ produced 18/140 exact comparisons, 122 differences, and zero errors; none is
 exact at all four profiles. The original release gate still has 931 unowned
 residual test IDs. Open UI runs no JavaScript; the newly admitted interaction
 has a public native Rust API path.
+The public `Element::detach` and `TextNode::detach` operations now keep authored
+nodes available for reattachment while removing them from the presented
+document. A new conformance scenario checks element lookup, focus,
+reattachment, listener delivery, and eventual destruction; the text-node
+scenario now checks detachment and reattachment too. The conformance suite is
+43/43.
+The locked Rust workspace suite passed with CI's 4 MiB libtest worker-thread
+stack. The default 2 MiB worker stack still aborts in an existing fragmented
+multicol integration test; its isolated rerun passes at 4 MiB.
 
 A [fractional overflow-clip investigation](../renderer/fractional-rectangular-overflow-clip.md)
 found a coincident button/child edge that differs by 125 pixels at 1.25×. A

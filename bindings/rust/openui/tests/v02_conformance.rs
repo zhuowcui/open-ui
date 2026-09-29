@@ -81,6 +81,40 @@ fn native_id_lookup_follows_attached_document_order() {
 }
 
 #[test]
+fn native_detach_preserves_subtree_handles_and_listeners_for_reattachment() {
+    let document = document();
+    let container = child(&document, "div");
+    container.set_id("container").unwrap();
+    let button = Element::create(&document, "button").unwrap();
+    button.set_id("action").unwrap();
+    container.append_child(&button).unwrap();
+    let clicks = Rc::new(Cell::new(0));
+    let seen = clicks.clone();
+    button
+        .on("click", move |_| seen.set(seen.get() + 1))
+        .unwrap();
+    button.focus().unwrap();
+    assert!(document.focused_element().unwrap().is_some());
+
+    container.detach().unwrap();
+    assert!(container.parent().unwrap().is_none());
+    assert!(document.element_by_id("action").unwrap().is_none());
+    assert!(document.focused_element().unwrap().is_none());
+    assert_eq!(
+        button.parent().unwrap().unwrap().kind().unwrap(),
+        ElementTag::Div
+    );
+
+    container.set_width(LengthValue::px(70.0)).unwrap();
+    document.body().append_child(&container).unwrap();
+    assert!(document.element_by_id("action").unwrap().is_some());
+    button.click().unwrap();
+    assert_eq!(clicks.get(), 1);
+    container.remove().unwrap();
+    assert!(button.kind().is_err());
+}
+
+#[test]
 fn native_layout_read_then_id_style_mutation_updates_the_same_document() {
     let document = document();
     let target = child(&document, "div");
@@ -189,7 +223,7 @@ fn native_text_nodes_attach_move_and_keep_element_traversal_typed() {
 
     let leading_text = document.create_text_node("before").unwrap();
     container.insert_text_before(&leading_text, &first).unwrap();
-    let middle_text = document.create_text_node("middle").unwrap();
+    let mut middle_text = document.create_text_node("middle").unwrap();
     container.insert_text_before(&middle_text, &second).unwrap();
     assert_eq!(leading_text.data().unwrap(), "before");
     assert_eq!(container.text_content().unwrap(), "beforemiddle");
@@ -241,6 +275,15 @@ fn native_text_nodes_attach_move_and_keep_element_traversal_typed() {
             .unwrap()
             .as_deref(),
         Some("text-parent")
+    );
+    middle_text.detach().unwrap();
+    assert!(middle_text.parent().unwrap().is_none());
+    assert_eq!(other.text_content().unwrap(), "");
+    middle_text.set_data("reattached").unwrap();
+    container.append_text_child(&middle_text).unwrap();
+    assert_eq!(
+        container.text_content().unwrap(),
+        "a longer native text nodereattached"
     );
     let foreign_document = Document::new(320, 240).unwrap();
     let foreign = foreign_document.create_text_node("foreign").unwrap();
