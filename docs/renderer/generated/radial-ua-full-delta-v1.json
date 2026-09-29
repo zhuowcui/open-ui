@@ -1,0 +1,119 @@
+{
+  "baseline_clean_commit": "d70c4696e38edeee08dab189ba05cf8d2aa4c76a",
+  "baseline_report_sha256": "8dea896d72705dece16e1b7bca4127c4c50ec044c8148c05a4bd51b5c7fc0d47",
+  "changes": [
+    {
+      "after_mismatched_pixels": 1,
+      "after_openui_rgba_sha256": "db232baa324bca3b2987cbe8a9dceed185ac5b3c158756d467b1452bad22c6ee",
+      "after_status": "different",
+      "before_mismatched_pixels": 626,
+      "before_openui_rgba_sha256": "cbb20ceabe0de42801d43aa31dc647859fb3e5742afbcd16753951c4c034ce54",
+      "before_status": "different",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/background-image-centered"
+    },
+    {
+      "after_mismatched_pixels": 1,
+      "after_openui_rgba_sha256": "db232baa324bca3b2987cbe8a9dceed185ac5b3c158756d467b1452bad22c6ee",
+      "after_status": "different",
+      "before_mismatched_pixels": 626,
+      "before_openui_rgba_sha256": "cbb20ceabe0de42801d43aa31dc647859fb3e5742afbcd16753951c4c034ce54",
+      "before_status": "different",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_backgrounds/background-image-centered-ref"
+    },
+    {
+      "after_mismatched_pixels": 596,
+      "after_openui_rgba_sha256": "5aba78d5a5013c9913aec49d6f347f65375077546908bf629636b783c328cbf4",
+      "after_status": "different",
+      "before_mismatched_pixels": 668,
+      "before_openui_rgba_sha256": "0a31012ecb0ad0ca772c4957ede406d61d5e1c95c3bc6131709b0124590a7aaa",
+      "before_status": "different",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_break/block-max-height-004"
+    },
+    {
+      "after_mismatched_pixels": 456,
+      "after_openui_rgba_sha256": "106ff1904fec24a5180e1591ae99583da76507fb4096fc38cb4cae0589fd72ef",
+      "after_status": "different",
+      "before_mismatched_pixels": 531,
+      "before_openui_rgba_sha256": "00a09204e3b86c9b3fa6f6f3d5273cf0e90cf5f4a66893bd7b0c307802682ea0",
+      "before_status": "different",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_break/block-max-height-004"
+    },
+    {
+      "after_mismatched_pixels": 596,
+      "after_openui_rgba_sha256": "5aba78d5a5013c9913aec49d6f347f65375077546908bf629636b783c328cbf4",
+      "after_status": "different",
+      "before_mismatched_pixels": 668,
+      "before_openui_rgba_sha256": "0a31012ecb0ad0ca772c4957ede406d61d5e1c95c3bc6131709b0124590a7aaa",
+      "before_status": "different",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_break/block-max-height-004-ref"
+    },
+    {
+      "after_mismatched_pixels": 456,
+      "after_openui_rgba_sha256": "106ff1904fec24a5180e1591ae99583da76507fb4096fc38cb4cae0589fd72ef",
+      "after_status": "different",
+      "before_mismatched_pixels": 531,
+      "before_openui_rgba_sha256": "00a09204e3b86c9b3fa6f6f3d5273cf0e90cf5f4a66893bd7b0c307802682ea0",
+      "before_status": "different",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_break/block-max-height-004-ref"
+    },
+    {
+      "after_mismatched_pixels": 1002,
+      "after_openui_rgba_sha256": "346945bc2f25cb4af149c84d2987a581033f73d8116e860d3817f55991cad42b",
+      "after_status": "different",
+      "before_mismatched_pixels": 1002,
+      "before_openui_rgba_sha256": "57cedb392a6dd4c669492816ab342e9dfe258417ce495342ee79a31d6e364c66",
+      "before_status": "different",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_flexbox/css-flexbox-img-expand-evenly"
+    },
+    {
+      "after_mismatched_pixels": 80,
+      "after_openui_rgba_sha256": "93356b47db08ad9aa89ad4d9917f5c3bae7f87ac88e56145ae8f8e17bc6b1e8b",
+      "after_status": "different",
+      "before_mismatched_pixels": 160,
+      "before_openui_rgba_sha256": "823fae00d90cc73b39b7b7c22bd9a010d38f5bdc3a5c501ca61c3e5128df167b",
+      "before_status": "different",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_multicol/img-alt-as-multicol-crash"
+    },
+    {
+      "after_mismatched_pixels": 0,
+      "after_openui_rgba_sha256": "65def467240588bdfb6f225a18e5dbb8dc73e47aec597f41bf015ab85bcc30b4",
+      "after_status": "exact",
+      "before_mismatched_pixels": 96,
+      "before_openui_rgba_sha256": "17df47f28c8d7c912936a930dd8ebce642d62afb28edd73642348f2924ebd4bb",
+      "before_status": "different",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_multicol/img-alt-as-multicol-crash"
+    }
+  ],
+  "chromium_oracle_identity_changes": 0,
+  "chromium_oracle_rgba_changes": 0,
+  "clean_shard_report_sha256": [
+    "d746d23ca83a8111eb809aa2beedba7d5b54140fbf29c51c623ab13d25f7e1a0",
+    "d433484650e16e09048ecd43d4bb3a6818a835fd1026463ab31537cb8ed49ece",
+    "c2038ab4f7a8edf54eb68aa13c12ccb58256eca077b57ba3c411bedc30b3ce6e",
+    "0771f0dd252b9f45ffd0e42d2c3cfc65441931b556ec4b26fa831cd617cfc56c"
+  ],
+  "clean_source_commit": "6676cf60cc31e426709c2f1c97ba6a4b5d2090a6",
+  "comparisons": {
+    "different": 1679,
+    "errors": 0,
+    "exact": 21245,
+    "total": 22924
+  },
+  "contract_sha256": "b51624ccb5b994601e3b96bca0be7442c926b5abdbc325f233524dcfe5a14e0e",
+  "exact_regressions": 0,
+  "new_exact": 1,
+  "openui_rgba_changes": 9,
+  "qualification": false,
+  "schema_version": 1,
+  "scope": "complete original four-profile matrix",
+  "status_changes": 1
+}
