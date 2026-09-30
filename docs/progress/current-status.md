@@ -173,8 +173,9 @@ symbols; the 84 frozen symbols and all C struct layouts remain intact.
 `oui_app_run` and `oui_app_request_exit` now run native C applications through
 Rust `App` and the same retained `Document`. Versioned platform callbacks can
 mutate elements and request exit after engine and presentation borrows end.
-Native C/C++ consumers exercise X11 software/OpenGL and pure Wayland software
-windows. Shared Rust keyboard handling now respects cancelled keydown events,
+[Clean native C/C++ consumers](../v02/native-c-lifecycle-evidence.md) exercise
+X11 software/OpenGL and pure Wayland software windows. Shared Rust keyboard
+handling now respects cancelled keydown events,
 separates committed text from logical key names, and ignores text input on
 noneditable controls. Physical release-lab and packaged application
 qualification, including AT-SPI operation, remains open.
