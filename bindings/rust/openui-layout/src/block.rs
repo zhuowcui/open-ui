@@ -811,6 +811,13 @@ pub(crate) fn normalize_multicol_child_outer_box(
     let converter = WritingModeConverter::new(writing_direction, physical_size);
     let logical = converter.to_logical_size(physical_size);
     fragment.size = PhysicalSize::new(logical.inline_size, logical.block_size);
+    fragment.principal_box_rect = fragment.principal_box_rect.map(|rect| {
+        let logical = converter.to_logical_rect(rect);
+        PhysicalRect::new(
+            PhysicalOffset::new(logical.offset.inline_offset, logical.offset.block_offset),
+            PhysicalSize::new(logical.size.inline_size, logical.size.block_size),
+        )
+    });
     fragment.overflow_rect = fragment.overflow_rect.map(|rect| {
         let logical = converter.to_logical_rect(rect);
         PhysicalRect::new(
@@ -929,6 +936,14 @@ fn normalize_multicol_owned_subtree(
         return;
     }
 
+    fragment.principal_box_rect = fragment.principal_box_rect.map(|rect| {
+        let logical =
+            WritingModeConverter::new(writing_direction, physical_size).to_logical_rect(rect);
+        PhysicalRect::new(
+            PhysicalOffset::new(logical.offset.inline_offset, logical.offset.block_offset),
+            PhysicalSize::new(logical.size.inline_size, logical.size.block_size),
+        )
+    });
     fragment.overflow_rect = fragment.overflow_rect.map(|rect| {
         let logical =
             WritingModeConverter::new(writing_direction, physical_size).to_logical_rect(rect);
@@ -1118,6 +1133,14 @@ fn project_multicol_child_to_physical(
             fragment.offset.top = fragment.offset.top + authored.top;
         }
     }
+    fragment.principal_box_rect = fragment.principal_box_rect.map(|rect| {
+        WritingModeConverter::new(writing_direction, physical_size).to_physical_rect(
+            LogicalRect::new(
+                LogicalOffset::new(rect.offset.left, rect.offset.top),
+                LogicalSize::new(rect.size.width, rect.size.height),
+            ),
+        )
+    });
     fragment.overflow_rect = fragment.overflow_rect.map(|rect| {
         WritingModeConverter::new(writing_direction, physical_size).to_physical_rect(
             LogicalRect::new(
@@ -1198,6 +1221,14 @@ pub(crate) fn project_logical_fragment_tree_to_physical(
         );
     }
     fragment.size = physical_size;
+    fragment.principal_box_rect = fragment.principal_box_rect.map(|rect| {
+        WritingModeConverter::new(writing_direction, physical_size).to_physical_rect(
+            LogicalRect::new(
+                LogicalOffset::new(rect.offset.left, rect.offset.top),
+                LogicalSize::new(rect.size.width, rect.size.height),
+            ),
+        )
+    });
     fragment.overflow_rect = fragment.overflow_rect.map(|rect| {
         WritingModeConverter::new(writing_direction, physical_size).to_physical_rect(
             LogicalRect::new(
@@ -9207,6 +9238,17 @@ fn retain_monolithic_descendants_for_slice_with_atomic_nodes(
                 include_atomic_nodes,
             );
         let original_height = child.size.height;
+        // A normal block can own more used block space than its atomic
+        // contents. Finishing those contents does not finish the block's
+        // border-box continuation. Exclude its trailing decoration when
+        // distinguishing that independent space from an auto-sized wrapper.
+        let owns_independent_block_extent = flow_is_monolithic_only
+            && matches!(
+                child_style.display,
+                Display::Block | Display::FlowRoot | Display::ListItem
+            )
+            && original_height - child.border.bottom - child.padding.bottom
+                > fragment_in_flow_descendant_bottom(child, doc);
         let contains_nested_monolithic = retain_monolithic_descendants_for_slice_with_atomic_nodes(
             child,
             doc,
@@ -9216,10 +9258,11 @@ fn retain_monolithic_descendants_for_slice_with_atomic_nodes(
             include_atomic_nodes,
         );
         contains_retained_monolithic |= contains_nested_monolithic;
-        if flow_is_monolithic_only && !contains_nested_monolithic {
+        if flow_is_monolithic_only && !contains_nested_monolithic && !owns_independent_block_extent
+        {
             return false;
         }
-        if contains_nested_monolithic {
+        if contains_nested_monolithic || owns_independent_block_extent {
             let child_source_end = child_source_start + original_height;
             let intersection_start = child_source_start.max_of(source_start);
             let intersection_end = child_source_end.min_of(source_end);
@@ -20898,6 +20941,12 @@ fn layout_multicol(
                     .filter(|extent| *extent > LayoutUnit::zero());
                     if in_flow_overflow_size > child_frag.size.height
                         && auto_column_flex_in_flow_size.is_none()
+                        && child_style.box_decoration_break != BoxDecorationBreak::Clone
+                    {
+                        child_frag.principal_box_rect = Some(child_frag.border_box_rect());
+                    }
+                    if in_flow_overflow_size > child_frag.size.height
+                        && auto_column_flex_in_flow_size.is_none()
                         && !subtree_has_overflow_clipping_descendant(doc, info.id)
                     {
                         child_frag.decoration_paint_block_size = Some(child_frag.size.height);
@@ -23000,6 +23049,12 @@ fn layout_multicol(
                         } else {
                             child_frag.size.height
                         };
+                        if in_flow_overflow_size > child_frag.size.height
+                            && auto_column_flex_in_flow_size.is_none()
+                            && child_style.box_decoration_break != BoxDecorationBreak::Clone
+                        {
+                            child_frag.principal_box_rect = Some(child_frag.border_box_rect());
+                        }
                         if in_flow_overflow_size > child_frag.size.height
                             && auto_column_flex_in_flow_size.is_none()
                             && !subtree_has_overflow_clipping_descendant(doc, info.id)
@@ -28917,6 +28972,22 @@ fn layout_multicol(
 
                             let mut part = child_frag.clone();
                             part.size.height = visual_part_height;
+                            if let Some(source_box) = child_frag.principal_box_rect {
+                                // Visible child flow may outlive the containing box.
+                                // Slice the independently owned border box without
+                                // changing child source progress or painted overflow.
+                                let start = (source_box.offset.top - content_consumed)
+                                    .clamp_negative_to_zero()
+                                    .min_of(visual_part_height);
+                                let end = (source_box.offset.top + source_box.size.height
+                                    - content_consumed)
+                                    .clamp_negative_to_zero()
+                                    .min_of(visual_part_height);
+                                part.principal_box_rect = Some(PhysicalRect::new(
+                                    PhysicalOffset::new(source_box.offset.left, start),
+                                    PhysicalSize::new(source_box.size.width, end - start),
+                                ));
+                            }
                             if sibling_avoid_descendant_break.is_some()
                                 && child_style.display == Display::Flex
                                 && !child_style.flex_direction.is_column()

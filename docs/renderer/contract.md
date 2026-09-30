@@ -102,6 +102,20 @@ are exact with all 1,600 images unchanged from `e51d88fd`. The
 [investigation](native-empty-block-fragment-slicing.md) records the failures.
 Chromium inputs remain fixed.
 
+The complete clean `822e0462` [v44 census](generated/four-profile-census-v44.json)
+is 21,291/22,924 exact, with 1,633 differences, zero errors, and 900 unowned
+residual IDs. Its [full delta](generated/native-spanner-boundary-full-delta-v1.json)
+records 13 new exact comparisons and no exact regression from `0ad4b12f`.
+Twenty-six Open UI images change, while all Chromium images and oracle
+identities stay fixed. Two existing fieldset differences grow by 87 pixels
+each. Its [expanded run](generated/expanded-requalification-v27.json) is
+22,094/23,728 exact, with all original rows agreeing with the separate census
+and the same 200 of the declared 201 additions exact at all four profiles.
+The subsequent [native constrained-box repair](../v02/native-element-geometry.md#constrained-boxes-and-visible-child-overflow)
+uses shared box-ownership data for application geometry and input. It requires
+fresh complete renderer qualification; reduced native states and API guards
+remain diagnostic.
+
 At clean checkpoint `822e0462`, the
 [v46 focused/primitive index](generated/focused-primitive-raster-v46.json)
 is 640/640 and 960/960 exact; all Open UI images, Chromium images, and oracle
@@ -111,7 +125,7 @@ is 7,034/7,680 exact, with 646 differences and zero errors. Thirteen comparisons
 become exact with no exact regression, but two existing fieldset differences
 worsen by 87 pixels each. It has dirty diagnostic source and partial scope;
 it does not qualify the renderer. Complete clean original and expanded runs
-at `822e0462` remain in progress.
+at `822e0462` are indexed above.
 
 The later [scaled LCD font investigation](scaled-lcd-hinting-oracle-investigation.md)
 found an older cached Chromium image that differs from six agreeing fresh

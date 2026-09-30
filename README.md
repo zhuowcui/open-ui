@@ -31,13 +31,13 @@ The current v0.2 release candidate has:
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
   on replay and 182 changed; these old screenshots are not pixel targets;
 - a clean four-profile census against cached Chromium captures with
-  21,278 of 22,924 comparisons exact, 1,646 different, and zero render errors in the
-  [latest evidence index](docs/renderer/generated/four-profile-census-v43.json);
+  21,291 of 22,924 comparisons exact, 1,633 different, and zero render errors in the
+  [latest evidence index](docs/renderer/generated/four-profile-census-v44.json);
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
-  comparisons exact in the [latest raster index](docs/renderer/generated/focused-primitive-raster-v45.json);
+  comparisons exact in the [latest raster index](docs/renderer/generated/focused-primitive-raster-v46.json);
 - 201 native final-state cases in the expanded contract, including one newly
   added case; 200 of 201 currently meet the four-profile gate and one
-  remains a failure in the [latest full expanded report](docs/renderer/generated/expanded-requalification-v26.json).
+  remains a failure in the [latest full expanded report](docs/renderer/generated/expanded-requalification-v27.json).
   The other 35 AST-lowered cases remain pending;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
 - 55 application scenarios covering retained updates, controls, editing,
@@ -54,9 +54,9 @@ Chromium for some fixtures, which is why replaying old screenshots cannot be a
 release gate. A [font oracle audit](docs/renderer/scaled-lcd-hinting-oracle-investigation.md)
 also found one older cached Chromium capture that differs from six fresh
 captures under the same recorded identity; that evidence needs reconciliation.
-The cached four-profile census still has 1,646 differences, including three
-regressions against the preceding checkpoint that remain under repair,
-so this repository is not yet declaring the final v0.2 release. Physical-GPU
+The cached four-profile census still has 1,633 differences, with no exact
+regression from the preceding checkpoint. This repository is not yet
+declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia
 GPU qualification, retained per-node layers, compositor-owned animation
 curves, release-lab C/C++ application qualification, and signed publication

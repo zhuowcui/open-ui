@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean census against cached Chromium captures | 21,278/22,924 exact, 1,646 different, 0 errors; three exact regressions under repair |
+| Latest complete clean census against cached Chromium captures | 21,291/22,924 exact, 1,633 different, 0 errors; no exact regression from the preceding checkpoint |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
@@ -27,20 +27,29 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The latest complete clean checkpoint `0ad4b12f` is
-[21,278/22,924 exact](../renderer/generated/four-profile-census-v43.json),
-with 1,646 differences, zero errors, and 909 unowned residual test IDs. Its
-[complete delta](../renderer/generated/native-geometry-full-delta-v1.json)
-recovers three nested-column comparisons from `e51d88fd` but regresses three
-ordinary-spanner comparisons at 1.25×. All Chromium images and oracle identities
-remain fixed. This checkpoint is not renderer qualification. Its full
-[expanded run](../renderer/generated/expanded-requalification-v26.json) is
-22,081/23,728 exact, with 1,647 differences and zero errors; all original rows
-agree with the separate census, and the declared 201 additions remain included.
-The [v28 diagnostic selection](../../tools/qualification/manifests/expanded-v28.json)
+The latest complete clean checkpoint `822e0462` is
+[21,291/22,924 exact](../renderer/generated/four-profile-census-v44.json),
+with 1,633 differences, zero errors, and 900 unowned residual test IDs. Its
+[complete delta](../renderer/generated/native-spanner-boundary-full-delta-v1.json)
+makes 13 comparisons exact, changes 26 Open UI images, and has no exact
+regressions from `0ad4b12f`. Every Chromium image and oracle identity remains
+fixed. Two existing fieldset differences at 1.25× increase by 87 pixels each.
+This checkpoint is not renderer qualification. Its complete
+[expanded run](../renderer/generated/expanded-requalification-v27.json) is
+22,094/23,728 exact, with 1,634 differences and zero errors; all original rows
+agree with the separate census, and all declared 201 additions remain included.
+The [v29 diagnostic selection](../../tools/qualification/manifests/expanded-v29.json)
 lists the same 200 additions exact at all four profiles. Its
-[focused/primitive matrices](../renderer/generated/focused-primitive-raster-v45.json)
-are 640/640 and 960/960 exact, with all 1,600 images unchanged from `e51d88fd`.
+[focused/primitive matrices](../renderer/generated/focused-primitive-raster-v46.json)
+are 640/640 and 960/960 exact, with all 1,600 images unchanged from `0ad4b12f`.
+
+The subsequent [native constrained-box geometry repair](../v02/native-element-geometry.md#constrained-boxes-and-visible-child-overflow)
+separates a box's own size from the continuation space carrying child overflow.
+The consuming Rust and C applications check dynamic size changes, owned
+rectangles, child input, and accessibility through the shared engine. It also
+retains independently sized child boxes after their atomic content ends.
+Its development measurements are diagnostic; complete renderer and native API
+qualification remain open.
 
 The preceding [complete clean census](../renderer/generated/four-profile-census-v41.json)
 at `15f9f12d` is 21,266/22,924 exact, 1,658 different, and zero errors
@@ -220,9 +229,9 @@ with accessibility and view timelines. Four new public Rust scenarios cover
 columns, pointer eligibility, empty and singular boxes, scrolling, transforms,
 and handle lifetime. The versioned C rectangle-copy API and a real C consumer
 use the same engine. ABI verification preserves every existing struct layout
-and all 84 frozen exports; 107 current exports, six headless C consumers, and
+and all 84 frozen exports; its 107 exports, six headless C consumers, and
 the C++ header consumer pass. The final locked workspace passes 8,486 tests with zero failures and 13 ignored.
-All 54 public application conformance scenarios pass. Needed native API behavior
+All 54 public application conformance scenarios passed at that geometry checkpoint. Needed native API behavior
 and the full renderer and release-lab qualifications remain open.
 The subsequent [native text input repair](../v02/interaction-controls.md)
 adds cancelable textarea Enter and read-only input enforcement across typing,
@@ -264,12 +273,12 @@ become exact and none regresses from exact, while two existing fieldset
 differences worsen by 87 pixels each. Every Chromium image and oracle identity
 is unchanged. Clean `822e0462` passes all
 [1,600 focused/primitive comparisons](../renderer/generated/focused-primitive-raster-v46.json),
-with every image unchanged from `0ad4b12f`. The next complete
-clean original/expanded census remains pending. A larger start-margin candidate
+with every image unchanged from `0ad4b12f`. The complete
+clean original/expanded censuses are indexed above. A larger start-margin candidate
 remains held after two exact regressions; no reference or fixture was changed.
 The append-only C `oui_element_detach` export uses the same engine operation
 for element and text handles. `oui_document_element_by_id` now provides owned
-handles for native C element lookup. ABI verification reports 107 current
+handles for native C element lookup. That detach/lookup checkpoint has 107
 symbols; the 84 frozen symbols and all C struct layouts remain intact.
 `oui_app_run` and `oui_app_request_exit` now run native C applications through
 Rust `App` and the same retained `Document`. Versioned platform callbacks can

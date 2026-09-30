@@ -1,0 +1,105 @@
+{
+  "ast_audit_sha256": "325962b8b8fe74c15ed59650c0b0d48787312ff1e8956b05d21b15cc0aa35966",
+  "chromium": {
+    "binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "build_identity": "147.0.7727.50",
+    "capture_harness_sha256": "1aa6f07a50e71c82ae715502b86f974915128f057c6963a6dfd49319fba3f582"
+  },
+  "contract_sha256": "b51624ccb5b994601e3b96bca0be7442c926b5abdbc325f233524dcfe5a14e0e",
+  "demoted": [
+    {
+      "comparisons": [
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 0,
+            "green": 0,
+            "red": 0
+          },
+          "connected_region_count": 0,
+          "diff_signature_sha256": "b74c2debcc932b1c09c883f76b0a26a4c1bb29c387b464694c01f43b297c4c4a",
+          "mismatch_bounds": null,
+          "mismatched_pixels": 0,
+          "profile": "legacy-800x600@1",
+          "status": "exact"
+        },
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 0,
+            "green": 0,
+            "red": 0
+          },
+          "connected_region_count": 0,
+          "diff_signature_sha256": "b74c2debcc932b1c09c883f76b0a26a4c1bb29c387b464694c01f43b297c4c4a",
+          "mismatch_bounds": null,
+          "mismatched_pixels": 0,
+          "profile": "mobile-375x667@2",
+          "status": "exact"
+        },
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 255,
+            "green": 255,
+            "red": 255
+          },
+          "connected_region_count": 20,
+          "diff_signature_sha256": "e4d634b9e692b91a374f07a278f9526af79c45454c24a8c120e358974cbd2d33",
+          "mismatch_bounds": {
+            "height": 291,
+            "width": 152,
+            "x": 26,
+            "y": 61
+          },
+          "mismatched_pixels": 1315,
+          "profile": "desktop-1280x720@1.25",
+          "status": "different"
+        },
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 0,
+            "green": 0,
+            "red": 0
+          },
+          "connected_region_count": 0,
+          "diff_signature_sha256": "b74c2debcc932b1c09c883f76b0a26a4c1bb29c387b464694c01f43b297c4c4a",
+          "mismatch_bounds": null,
+          "mismatched_pixels": 0,
+          "profile": "desktop-1920x1080@1.5",
+          "status": "exact"
+        }
+      ],
+      "test_id": "wpt/css_display/display-contents-dynamic-fieldset-legend-001"
+    }
+  ],
+  "demoted_count": 1,
+  "matrix_report_sha256": "d54c7b60304e1951d8f49de2e283a26ff68a949ae2472c13a33e84655855655c",
+  "openui": {
+    "binary_sha256": "58eb0ed0006c76989b96e7b1d48ac268a5782c250e27d1f0b5a366c1c2319789",
+    "raster_backend_identity": {
+      "backend": "cpu-skia",
+      "color_type": "N32-premultiplied",
+      "driver": null,
+      "gl_renderer": null,
+      "gl_version": null,
+      "sample_count": 0,
+      "surface_properties": "scene-raster-configuration-v1"
+    }
+  },
+  "original_manifest_sha256": "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f",
+  "output_sha256": "8c83ad023d51675f3c018a273d781c07e5bce93c76eee2e53af014f49e760bdc",
+  "prior_admitted_count": 201,
+  "prior_expanded_manifest_sha256": "906455ea4f348ad5ee7ad062073a297e8daef375261b1960fcbbcdcd6369c3cc",
+  "retained_four_profile_exact_count": 200,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "822e0462505ada4cc71429a5c56716ff93062c19",
+    "harness_sha256": "f38c02cc29461c39800e4ea44788a4235d17ea811b7727e886b0857a3eb4adbe",
+    "source_tree_sha256": "fff9463d5e3baaa8480c0085426625e25df669372773c1a315e0f565c3d9962c",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "status": "diagnostic-requalification; original contract remains blocked"
+}

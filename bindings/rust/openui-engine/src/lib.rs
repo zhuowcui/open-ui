@@ -1691,6 +1691,9 @@ impl Engine {
         ) {
             let width = fragment.size.width.to_f32();
             let height = fragment.size.height.to_f32();
+            let border_box = fragment.border_box_rect();
+            let box_width = border_box.size.width.to_f32();
+            let box_height = border_box.size.height.to_f32();
             let translated = parent_world.then(Affine::translate(
                 fragment.offset.left.to_f32(),
                 fragment.offset.top.to_f32(),
@@ -1718,6 +1721,10 @@ impl Engine {
                     Some(style),
                 )
             };
+            let box_world = world.then(Affine::translate(
+                border_box.offset.left.to_f32(),
+                border_box.offset.top.to_f32(),
+            ));
             if node_style.is_some()
                 && document.node(fragment.node_id).tag != ElementTag::Text
                 && matches!(
@@ -1728,9 +1735,9 @@ impl Engine {
                 rects
                     .entry(fragment.node_id)
                     .or_default()
-                    .push(world.map_rect(width, height));
+                    .push(box_world.map_rect(box_width, box_height));
             }
-            let world_to_local = world.inverse();
+            let world_to_local = box_world.inverse();
             let mut own_clips = inherited_clips.to_vec();
             if let Some(style) = node_style {
                 if let Some(inset) = style.clip_path_inset {
@@ -1743,16 +1750,16 @@ impl Engine {
                             0.0
                         }
                     };
-                    let top = resolve(&inset[0], height);
-                    let right = resolve(&inset[1], width);
-                    let bottom = resolve(&inset[2], height);
-                    let left = resolve(&inset[3], width);
-                    let clipped_world = world.then(Affine::translate(left, top));
+                    let top = resolve(&inset[0], box_height);
+                    let right = resolve(&inset[1], box_width);
+                    let bottom = resolve(&inset[2], box_height);
+                    let left = resolve(&inset[3], box_width);
+                    let clipped_world = box_world.then(Affine::translate(left, top));
                     if let Some(inverse) = clipped_world.inverse() {
                         own_clips.push(HitClip {
                             world_to_local: inverse,
-                            width: (width - left - right).max(0.0),
-                            height: (height - top - bottom).max(0.0),
+                            width: (box_width - left - right).max(0.0),
+                            height: (box_height - top - bottom).max(0.0),
                             radii: [(0.0, 0.0); 4],
                         });
                     }
@@ -1761,23 +1768,34 @@ impl Engine {
                 let pointer_eligible = node.tag != ElementTag::Text
                     && style.visibility == openui_style::Visibility::Visible
                     && style.pointer_events == openui_style::PointerEvents::Auto;
-                if let Some(world_to_local) =
-                    world_to_local.filter(|_| pointer_eligible && width > 0.0 && height > 0.0)
+                if let Some(world_to_local) = world_to_local
+                    .filter(|_| pointer_eligible && box_width > 0.0 && box_height > 0.0)
                 {
                     out.push(HitEntry {
                         node: fragment.node_id,
                         world_to_local,
-                        width,
-                        height,
+                        width: box_width,
+                        height: box_height,
                         clips: own_clips.clone(),
                     });
                 }
-                if let Some(world_to_local) = world_to_local.filter(|_| fragment.has_overflow_clip)
+                // An authored overflow clip belongs to the element's border
+                // box. A synthetic continuation clip still bounds the larger
+                // flow extent carrying its visible descendants.
+                let clips_authored_box = style.overflow_x != openui_style::Overflow::Visible
+                    || style.overflow_y != openui_style::Overflow::Visible;
+                let (clip_world, clip_width, clip_height) = if clips_authored_box {
+                    (box_world, box_width, box_height)
+                } else {
+                    (world, width, height)
+                };
+                if let Some(world_to_local) =
+                    clip_world.inverse().filter(|_| fragment.has_overflow_clip)
                 {
                     own_clips.push(HitClip {
                         world_to_local,
-                        width,
-                        height,
+                        width: clip_width,
+                        height: clip_height,
                         radii: if fragment.ignore_border_radius {
                             [(0.0, 0.0); 4]
                         } else {

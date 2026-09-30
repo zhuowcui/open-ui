@@ -9,10 +9,10 @@ claimed by source code alone.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | 21,278/22,924 exact, 1,646 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v43.json); three exact regressions against the preceding checkpoint | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact at clean `822e0462` in the [latest raster index](../renderer/generated/focused-primitive-raster-v46.json); full original/expanded runs remain pending | pass |
+| Four-profile renderer matrix | 21,291/22,924 exact, 1,633 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v44.json); 13 new exact comparisons and no exact regression | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact at clean `822e0462` in the [latest raster index](../renderer/generated/focused-primitive-raster-v46.json); its complete original/expanded reports are recorded below | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v26.json); 22,081/23,728 total comparisons exact, 1,647 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v27.json); 22,094/23,728 total comparisons exact, 1,634 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
@@ -57,7 +57,21 @@ reviewed cause remains unknown. The clean census below remains evidence
 against those preserved cached captures, and final qualification requires
 oracle reconciliation. No cached reference was replaced or result promoted.
 
-The latest clean census at `0ad4b12f` is
+The latest complete clean census at `822e0462` is
+[21,291/22,924 exact](../renderer/generated/four-profile-census-v44.json), with
+1,633 differences and zero errors. Its
+[complete delta](../renderer/generated/native-spanner-boundary-full-delta-v1.json)
+records 13 new exact comparisons, 26 changed Open UI images, no exact
+regressions, and fixed Chromium images and identities. The 900 residual test
+IDs remain unowned. Two existing fieldset differences increase by 87 pixels
+each. The complete expanded run is
+[22,094/23,728 exact](../renderer/generated/expanded-requalification-v27.json),
+with the same 200 of 201 additions exact at every required profile.
+The newer [native constrained-box geometry work](native-element-geometry.md#constrained-boxes-and-visible-child-overflow)
+requires its own complete renderer rechecks; its reduced measurements and
+public API guards do not replace those gates.
+
+The preceding clean census at `0ad4b12f` is
 [21,278/22,924 exact](../renderer/generated/four-profile-census-v43.json),
 with 1,646 differences, zero errors, and 909 unowned residual test IDs. The
 [complete delta](../renderer/generated/native-geometry-full-delta-v1.json)

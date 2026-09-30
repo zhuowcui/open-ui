@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Read the five committed geometry inputs from separate pinned Chromium processes."""
+"""Measure committed native geometry inputs in separate pinned Chromium processes."""
 
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import importlib.util
 import json
+import math
 import os
 from pathlib import Path
 import signal
@@ -16,6 +18,7 @@ import urllib.request
 ROOT = Path(__file__).resolve().parents[2]
 HARNESS = ROOT / "tools/accountability/run_all_pixel_comparisons.py"
 INPUTS = ROOT / "docs/v02/evidence/native-geometry-v1"
+CONSTRAINED_INPUTS = ROOT / "docs/v02/evidence/native-constrained-box-v1"
 EXPRESSION = (
     "new Promise(resolve=>{"
     "const done=()=>document.fonts.ready.then(()=>"
@@ -28,6 +31,14 @@ EXPRESSION = (
     "geometry:{bounds:rect(e.getBoundingClientRect()),"
     "rects:Array.from(e.getClientRects(),rect)}};})"
 )
+CONSTRAINED_EXPRESSION = EXPRESSION[:EXPRESSION.index("}).then")] + (
+    "}).then(()=>{const rect=r=>({x:r.x,y:r.y,width:r.width,height:r.height});"
+    "const nodes={};for(const name of ['columns','limit','border']){"
+    "const e=document.querySelector('.'+name);nodes[name]={"
+    "bounds:rect(e.getBoundingClientRect()),rects:Array.from(e.getClientRects(),rect)};}"
+    "return {metrics:{width:innerWidth,height:innerHeight,dpr:devicePixelRatio},"
+    "geometry:{nodes}};})"
+)
 
 
 def sha256(path: Path) -> str:
@@ -37,21 +48,35 @@ def sha256(path: Path) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results-dir", type=Path, required=True)
+    parser.add_argument("--chrome", type=Path)
+    parser.add_argument("--suite", choices=("native", "constrained"), default="native")
+    parser.add_argument("--scale", type=float, default=1.0)
     args = parser.parse_args()
+    if not math.isfinite(args.scale) or args.scale <= 0.0:
+        parser.error("scale must be positive and finite")
+    constrained = args.suite == "constrained"
+    inputs = CONSTRAINED_INPUTS if constrained else INPUTS
+    height = 340 if constrained else 240
+    expression = CONSTRAINED_EXPRESSION if constrained else EXPRESSION
     spec = importlib.util.spec_from_file_location("capture", HARNESS)
     assert spec is not None and spec.loader is not None
     capture = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(capture)
-    chrome, chrome_dir = capture.find_chrome()
+    if args.chrome is None:
+        chrome, chrome_dir = capture.find_chrome()
+    else:
+        chrome = str(args.chrome.resolve(strict=True))
+        chrome_dir = str(args.chrome.resolve().parent)
     if chrome is None:
         raise RuntimeError("pinned Chromium is unavailable")
     environment = capture.chrome_environment(chrome_dir, True, False)
     version = subprocess.check_output([chrome, "--version"], env=environment, text=True).strip()
     if version.split()[-1] != "147.0.7727.50":
         raise RuntimeError(f"unexpected Chromium build: {version}")
-    cases = sorted(INPUTS.glob("*/test.html"))
-    if len(cases) != 5:
-        raise RuntimeError("five committed native geometry inputs required")
+    cases = sorted(inputs.glob("*/test.html"))
+    expected_count = 13 if constrained else 5
+    if len(cases) != expected_count:
+        raise RuntimeError(f"{expected_count} committed {args.suite} geometry inputs required")
     output = args.results_dir.resolve()
     output.parent.mkdir(parents=True, exist_ok=True)
     output.mkdir()  # Preserve every prior input, record and Chromium profile.
@@ -66,7 +91,7 @@ def main() -> None:
         command = [
             chrome, "--headless", "--disable-gpu", "--no-sandbox", "--no-first-run",
             "--no-default-browser-check", "--remote-debugging-port=0",
-            f"--user-data-dir={profile}", "--window-size=320,327", "about:blank",
+            f"--user-data-dir={profile}", f"--window-size=320,{height + 87}", "about:blank",
         ]
         process = subprocess.Popen(
             command, env=environment, start_new_session=True,
@@ -78,7 +103,7 @@ def main() -> None:
             client = capture._CdpWebSocket(capture._page_websocket_url(port))
             client.command("Page.enable")
             client.command("Emulation.setDeviceMetricsOverride", {
-                "width": 320, "height": 240, "deviceScaleFactor": 1.0, "mobile": False,
+                "width": 320, "height": height, "deviceScaleFactor": args.scale, "mobile": False,
             })
             client.command("Page.navigate", {
                 "url": "file:" + urllib.request.pathname2url(str(path)),
@@ -86,18 +111,23 @@ def main() -> None:
             observations = []
             for _ in range(2):
                 result = client.command("Runtime.evaluate", {
-                    "expression": EXPRESSION, "awaitPromise": True, "returnByValue": True,
+                    "expression": expression, "awaitPromise": True, "returnByValue": True,
                 })
                 if "exceptionDetails" in result:
                     raise RuntimeError(result["exceptionDetails"])
                 value = result["result"]["value"]
-                if not capture._device_metrics_match(value["metrics"], 320, 240, 1.0):
+                if not capture._device_metrics_match(value["metrics"], 320, height, args.scale):
                     raise RuntimeError(f"wrong viewport metrics: {value['metrics']}")
                 observations.append(value["geometry"])
             if observations[0] != observations[1]:
                 raise RuntimeError(f"unstable geometry: {source.parent.name}")
+            screenshot = client.command("Page.captureScreenshot", {
+                "format": "png", "fromSurface": True, "captureBeyondViewport": False,
+            })
+            (directory / "chromium.png").write_bytes(base64.b64decode(screenshot["data"]))
             record = {
                 "case": source.parent.name, "input_sha256": sha256(path),
+                "png_sha256": sha256(directory / "chromium.png"),
                 "geometry": observations[0], "repeated_query_equal": True,
             }
             (directory / "geometry.json").write_text(json.dumps(record, indent=2) + "\n")
@@ -119,7 +149,8 @@ def main() -> None:
         "schema_version": 1, "release_qualification": False,
         "chromium_binary_sha256": sha256(Path(chrome)),
         "capture_harness_sha256": sha256(HARNESS), "chromium_build": version,
-        "viewport": [320, 240, 1.0], "cases": records,
+        "viewport": [320, height, args.scale], "cases": records,
+        "suite": args.suite, "probe_sha256": sha256(Path(__file__)),
     }
     (output / "summary.json").write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
 

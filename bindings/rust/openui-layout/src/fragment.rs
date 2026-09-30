@@ -198,8 +198,16 @@ pub struct Fragment {
     /// Offset from the parent fragment's top-left corner.
     pub offset: PhysicalOffset,
 
-    /// The fragment's border-box size.
+    /// The fragment's layout extent, including any continuation space needed
+    /// to carry visible in-flow overflow.
     pub size: PhysicalSize,
+
+    /// The fragment's own border box in local coordinates when its layout
+    /// extent also carries visible child overflow. Geometry and input use
+    /// this box; children retain their independently positioned fragments.
+    /// `None` means the border box fills `size`. This is layout ownership
+    /// data, independent of decoration ink and paint clipping.
+    pub principal_box_rect: Option<PhysicalRect>,
 
     /// Resolved padding (in LayoutUnit).
     pub padding: BoxStrut,
@@ -479,6 +487,7 @@ impl Fragment {
             kind: FragmentKind::Box,
             offset: PhysicalOffset::zero(),
             size,
+            principal_box_rect: None,
             padding: BoxStrut::zero(),
             border: BoxStrut::zero(),
             margin: BoxStrut::zero(),
@@ -544,6 +553,7 @@ impl Fragment {
             kind: FragmentKind::Text,
             offset: PhysicalOffset::zero(),
             size,
+            principal_box_rect: None,
             padding: BoxStrut::zero(),
             border: BoxStrut::zero(),
             margin: BoxStrut::zero(),
@@ -654,10 +664,11 @@ impl Fragment {
             .unwrap_or_else(|| PhysicalRect::new(PhysicalOffset::zero(), self.size))
     }
 
-    /// The border-box rect with offset at zero (local coordinates).
+    /// The fragment's own border-box rect in local coordinates.
     #[inline]
     pub fn border_box_rect(&self) -> PhysicalRect {
-        PhysicalRect::new(PhysicalOffset::zero(), self.size)
+        self.principal_box_rect
+            .unwrap_or_else(|| PhysicalRect::new(PhysicalOffset::zero(), self.size))
     }
 }
 

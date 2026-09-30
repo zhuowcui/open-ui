@@ -102,7 +102,14 @@ partial dirty-source diagnostic does not establish renderer qualification.
 The clean `822e0462`
 [focused/primitive index](generated/focused-primitive-raster-v46.json)
 passes all 1,600 comparisons with every image unchanged from `0ad4b12f`.
-The complete clean original and expanded censuses remain in progress.
+The complete clean original census is [v44](generated/four-profile-census-v44.json):
+21,291/22,924 exact, 1,633 different, zero errors, and 900 unowned residual IDs.
+Its [full delta](generated/native-spanner-boundary-full-delta-v1.json) retains
+all 13 new exact comparisons, no exact regression, and fixed Chromium inputs.
+The complete [expanded run](generated/expanded-requalification-v27.json) is
+22,094/23,728 exact, with 1,634 differences and zero errors. All original rows
+agree with the separate census; 200 of all 201 additions remain exact at every
+profile. Remaining pixel differences and ownership keep qualification open.
 
 ## Background coverage and the held margin candidate
 

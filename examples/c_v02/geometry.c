@@ -73,6 +73,19 @@ int main(void) {
   assert(oui_element_get_bounds(target, &bounds) == OUI_OK);
   assert(bounds.x == 0.0f && bounds.y == 0.0f && bounds.width == 272.0f);
   assert(bounds.height == 68.671875f);
+  OuiRect wrapper_rects[3];
+  assert(oui_element_get_client_rects_v1(wrapper, wrapper_rects, 3, &count) == OUI_OK);
+  assert(count == 3 && wrapper_rects[2].width == 84.0f);
+  assert(wrapper_rects[2].height == 22.65625f);
+  property(wrapper, OUI_STYLE_PROPERTY_MAX_HEIGHT, "120px");
+  assert(oui_element_get_client_rects_v1(wrapper, rects, 3, &count) == OUI_OK);
+  assert(rects[1].height == 51.328125f && rects[2].height == 0.0f);
+  assert(oui_element_get_bounds(wrapper, &bounds) == OUI_OK);
+  assert(bounds.width == 192.0f && bounds.height == 68.671875f);
+  assert(wrapper_rects[2].height == 22.65625f); /* Earlier copies remain owned. */
+  assert(oui_element_get_client_rects_v1(target, rects, 3, &count) == OUI_OK);
+  assert(rects[2].height == 68.65625f); /* The child still owns visible overflow. */
+  property(wrapper, OUI_STYLE_PROPERTY_MAX_HEIGHT, "160px");
   property(target, OUI_STYLE_PROPERTY_POINTER_EVENTS, "none");
   property(target, OUI_STYLE_PROPERTY_VISIBILITY, "hidden");
   assert(oui_element_get_bounds(target, &bounds) == OUI_OK && bounds.width == 272.0f);
@@ -91,6 +104,6 @@ int main(void) {
   assert(oui_element_destroy(columns) == OUI_OK);
   assert(oui_element_destroy(root) == OUI_OK);
   assert(oui_document_destroy(document) == OUI_OK);
-  puts("geometry: native column rectangles, owned copies, bounds and lifecycle passed");
+  puts("geometry: native column boxes, child overflow, owned copies, bounds and lifecycle passed");
   return 0;
 }

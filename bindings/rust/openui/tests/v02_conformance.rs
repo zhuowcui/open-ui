@@ -141,6 +141,10 @@ fn native_geometry_includes_all_column_fragments() {
     let wrapper = Element::create(&document, "div").unwrap();
     wrapper.set_display(Display::Block).unwrap();
     wrapper.set_max_height(LengthValue::px(160.0)).unwrap();
+    wrapper.set_id("constrained wrapper").unwrap();
+    wrapper
+        .set_accessibility_label("constrained wrapper")
+        .unwrap();
     columns.append_child(&wrapper).unwrap();
     let target = Element::create(&document, "div").unwrap();
     sized(&target, 50.0, 200.0);
@@ -152,6 +156,7 @@ fn native_geometry_includes_all_column_fragments() {
         })
         .unwrap();
     wrapper.append_child(&target).unwrap();
+    target.set_id("overflowing child").unwrap();
     target.set_accessibility_label("column target").unwrap();
 
     let bounds = target.bounding_rect().unwrap().unwrap();
@@ -190,6 +195,90 @@ fn native_geometry_includes_all_column_fragments() {
             (216.0, 0.0, 56.0, 68.65625)
         ]
     );
+    // The constrained wrapper owns only 160px of source border box, while
+    // its taller child continues through the last column as visible overflow.
+    assert_eq!(
+        wrapper
+            .client_rects()
+            .unwrap()
+            .iter()
+            .map(|rect| (rect.x, rect.y, rect.width, rect.height))
+            .collect::<Vec<_>>(),
+        [
+            (0.0, 0.0, 84.0, 68.671875),
+            (108.0, 0.0, 84.0, 68.671875),
+            (216.0, 0.0, 84.0, 22.65625)
+        ]
+    );
+
+    let hit_id = |x, y| {
+        document
+            .hit_test(x, y)
+            .unwrap()
+            .and_then(|element| element.get_attribute("id").unwrap())
+    };
+    assert_eq!(hit_id(280.0, 10.0).as_deref(), Some("constrained wrapper"));
+    assert_ne!(hit_id(280.0, 40.0).as_deref(), Some("constrained wrapper"));
+    assert_eq!(hit_id(230.0, 40.0).as_deref(), Some("overflowing child"));
+
+    // Shortening the box does not shorten its overflowing child's fragments.
+    // Empty continuations remain in client_rects but do not enlarge bounds.
+    let owned_rects = wrapper.client_rects().unwrap();
+    let child_rects = target.client_rects().unwrap();
+    wrapper.set_max_height(LengthValue::px(120.0)).unwrap();
+    let shortened = wrapper.client_rects().unwrap();
+    assert_eq!(shortened[1].height, 51.328125);
+    assert_eq!(shortened[2].height, 0.0);
+    assert_eq!(wrapper.bounding_rect().unwrap().unwrap().width, 192.0);
+    assert_eq!(owned_rects[2].height, 22.65625);
+    assert_eq!(target.client_rects().unwrap(), child_rects);
+    assert_eq!(hit_id(230.0, 40.0).as_deref(), Some("overflowing child"));
+    assert_ne!(hit_id(280.0, 10.0).as_deref(), Some("constrained wrapper"));
+    let tree = document.accessibility_update().unwrap();
+    let accessible = tree
+        .nodes
+        .iter()
+        .find(|(_, node)| node.label() == Some("constrained wrapper"))
+        .unwrap();
+    let bounds = accessible.1.bounds().unwrap();
+    assert_eq!(
+        (bounds.x0, bounds.y0, bounds.x1, bounds.y1),
+        (0.0, 0.0, 192.0, 68.671875)
+    );
+
+    wrapper.set_max_height(LengthValue::px(0.0)).unwrap();
+    assert!(wrapper
+        .client_rects()
+        .unwrap()
+        .iter()
+        .all(|rect| rect.height == 0.0));
+    let empty = wrapper.bounding_rect().unwrap().unwrap();
+    // Preserve the public native contract: the first of all-empty boxes.
+    assert_eq!(
+        (empty.x, empty.y, empty.width, empty.height),
+        (0.0, 0.0, 84.0, 0.0)
+    );
+    assert_eq!(target.client_rects().unwrap(), child_rects);
+    wrapper.set_max_height(LengthValue::px(160.0)).unwrap();
+    wrapper.set_min_height(LengthValue::px(180.0)).unwrap();
+    assert_eq!(wrapper.client_rects().unwrap()[2].height, 42.65625);
+    assert_eq!(hit_id(280.0, 40.0).as_deref(), Some("constrained wrapper"));
+
+    // A clipping descendant must not turn the containing box's own end
+    // into an authored overflow clip. Its visible child remains interactive
+    // through the larger continuation extent carried by the fragmentainer.
+    wrapper.set_min_height(LengthValue::px(0.0)).unwrap();
+    let clipped_descendant = Element::create(&document, "div").unwrap();
+    sized(&clipped_descendant, 20.0, 20.0);
+    clipped_descendant.set_overflow(Overflow::Hidden).unwrap();
+    target.append_child(&clipped_descendant).unwrap();
+    assert_eq!(wrapper.client_rects().unwrap()[2].height, 22.65625);
+    assert_eq!(hit_id(230.0, 40.0).as_deref(), Some("overflowing child"));
+    assert_eq!(target.client_rects().unwrap(), child_rects);
+    wrapper.set_max_height(LengthValue::px(120.0)).unwrap();
+    assert_eq!(wrapper.client_rects().unwrap()[1].height, 51.328125);
+    assert_eq!(hit_id(122.0, 60.0).as_deref(), Some("overflowing child"));
+    assert_ne!(hit_id(170.0, 60.0).as_deref(), Some("constrained wrapper"));
 }
 
 #[test]

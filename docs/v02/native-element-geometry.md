@@ -37,7 +37,7 @@ rectangles into caller-owned storage. A null destination and zero capacity
 query the required count. If capacity is too small, the count is updated and
 the destination is untouched. Layout can change between count and copy calls.
 Existing C struct layouts and the 84 frozen exports remain intact; there are
-107 current exports. The existing `oui_element_get_bounds` now returns the
+109 current exports. The existing `oui_element_get_bounds` now returns the
 combined bounds too.
 
 The [C geometry consumer](../../examples/c_v02/geometry.c) creates a real native
@@ -65,7 +65,7 @@ Three public Rust regressions failed before the repair: the column query
 returned only x=216, pointer-ineligible elements returned no box, and an empty
 box returned no rectangle. Four native geometry scenarios now cover these
 cases plus scroll, transform, ownership, accessibility, and handle lifetime.
-They belong to the complete 54-scenario application conformance suite.
+They belong to the complete 55-scenario application conformance suite.
 
 Reproduce the Chromium measurement into a new directory:
 
@@ -78,3 +78,80 @@ The tool executes queries only in the separate Chromium oracle and preserves
 each profile and result. Open UI applications and tests perform their element
 operations through native Rust or C. These measurements do not qualify the
 complete pixel matrix, all remaining native API behavior, or the release lab.
+
+## Constrained boxes and visible child overflow
+
+A box with a fixed or maximum height can have a taller child that continues
+through later columns. The public geometry query previously reported that
+child flow as the containing box's own size. Layout now carries a separate
+local border-box rectangle for that continuation. Geometry, pointer input,
+accessibility bounds, and view timelines read the same owned box; children
+keep their independently positioned overflow fragments. Paint clipping and
+decoration budgets remain separate layout data.
+
+For a 160-pixel box containing a 206-pixel bordered child, Chromium gives the
+box's last column a height of 22.65625 pixels and the child's last column a
+height of 68.65625. The public Rust and C consumers now assert both values.
+They also shorten the box to 120 pixels and check its zero-height final
+continuation, 192-pixel combined width, unchanged child flow, and owned
+rectangle copies. The Rust consumer checks hit testing outside the box and
+on the visible child, updated accessibility bounds, zero-height boxes, and
+minimum height taking precedence over maximum height. A clipping-descendant
+guard also exposed missing child continuations: a normal block with its own
+used size was dropped after its atomic child ended. Layout now retains and
+slices that independently owned block space. Synthetic input clips use the
+continuation extent that carries child flow; authored clips use the own box. The Rust and C checks
+both fail against the preceding implementation and pass with the repair.
+
+The [constrained-box diagnostic](generated/native-constrained-box-geometry-v1.json)
+records 13 reduced static inputs at scales 1, 1.25, 1.5, 2, and 3. The box's
+client rectangles match Chromium in 45/65 comparisons; all three queried
+nodes' complete geometry matches in 35/65. Pixels match in 43/65. All 13
+scale-1 native images are unchanged by this geometry repair. These development
+measurements do not qualify the full renderer or all native APIs.
+An additional clipping-descendant reproducer now matches all three nodes'
+geometry and retains native pointer interaction in later columns. Its pixel
+difference decreases from 16,074 to 11,358 and remains open. The broader
+raster diagnostic predates this child-retention correction; fresh complete
+matrices are still required for the final source.
+
+The remaining cases are explicit:
+
+- Cloned borders and padding produce the wrong continuation sizes and count.
+- A constrained flex column does not fragment its visible child flow.
+- Vertical maximum-size overflow is omitted from column balancing.
+- A flow-root wrapper retains whole child boxes behind clips; its child
+  geometry differs and fractional border pixels differ at scales 1.25 and 1.5.
+- The additional clipping-descendant case still differs in painting.
+- For three entirely empty continuations, the published native bounds
+  operation returns the first rectangle; the measured Chromium operation
+  returns the last. The native contract remains explicit. Its client
+  rectangles and pixels agree at all five scales.
+
+The complete locked workspace passes 8,491 tests, with 13 ignored; the Linux
+engine/framework/C/platform suite passes 193 tests, with eight ignored. The
+C ABI consumer gate preserves all 109 exports and passes six C consumers plus
+the C++ header check. The 244 Python checks pass. Complete original and
+expanded renderer rechecks for this source remain required.
+
+Build and run the native reduced state:
+
+```sh
+cd bindings/rust
+cargo --config .cargo/config.chromium.toml build --locked \
+  -p openui-engine --example constrained_box_geometry
+target/debug/examples/constrained_box_geometry \
+  ../../out/native-constrained-new/max160 max160 1.25
+```
+
+Measure the preserved static input in the separate Chromium oracle:
+
+```sh
+python3 tools/qualification/probe_native_geometry_oracle.py \
+  --suite constrained --scale 1.25 \
+  --results-dir out/native-constrained-new/chromium-1.25
+```
+
+Both tools preserve earlier results by requiring a new output directory.
+The Chromium tool can take an explicit pinned binary through `--chrome`.
+Open UI constructs and changes every state with native Rust operations.
