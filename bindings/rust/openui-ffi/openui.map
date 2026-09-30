@@ -33,7 +33,9 @@ OPENUI_0.2 {
     oui_document_create;
     oui_document_destroy;
     oui_document_dispatch_event;
+    oui_document_dispatch_key_input_v1;
     oui_document_dispatch_pointer_event;
+    oui_document_dispatch_text_input_v1;
     oui_document_element_by_id;
     oui_document_end_update;
     oui_document_get_viewport;

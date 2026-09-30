@@ -132,6 +132,14 @@ int main(void) {
     CHECK(oui_element_append_child(root, text_control));
     CHECK(oui_element_set_control_value(text_control, text("original")));
     CHECK(oui_element_set_attribute(text_control, text("readonly"), text("")));
+    CHECK(oui_element_focus(text_control));
+    OuiEvent key = {.struct_size = sizeof(key),
+                    .abi_version = OUI_ABI_VERSION,
+                    .event_type = OUI_EVENT_KEY_DOWN,
+                    .key_code = 13,
+                    .text = text("Enter")};
+    CHECK(oui_document_dispatch_key_input_v1(document, &key, text("\r")));
+    CHECK(oui_document_dispatch_text_input_v1(document, text("blocked")));
     if (oui_element_perform_accessibility_action(text_control, OUI_ACCESSIBILITY_SET_VALUE,
                                                  text("blocked"), 0, 0) == OUI_OK ||
         oui_element_perform_accessibility_action(text_control,

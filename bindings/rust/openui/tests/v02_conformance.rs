@@ -593,7 +593,13 @@ fn textarea_accepts_multiline_text() {
         .on("click", move |_| seen_clicks.set(seen_clicks.get() + 1))
         .unwrap();
     document
-        .dispatch_key_event(KeyEventType::Down, 13, Some("Enter"), Modifiers::NONE)
+        .dispatch_key_input(
+            KeyEventType::Down,
+            13,
+            Some("Enter"),
+            Some("\r"),
+            Modifiers::NONE,
+        )
         .unwrap();
     assert_eq!(textarea.control_value().unwrap().as_deref(), Some("é\nz"));
     assert_eq!(textarea.selection().unwrap(), Some((3, 3)));
@@ -605,6 +611,19 @@ fn textarea_accepts_multiline_text() {
         ]
     );
     assert_eq!(clicks.get(), 0);
+
+    for (kind, code, key, text, modifiers) in [
+        (KeyEventType::Up, 13, "Enter", "\r", Modifiers::NONE),
+        (KeyEventType::Down, 81, "q", "\r", Modifiers::NONE),
+        (KeyEventType::Down, 81, "q", "q", Modifiers::CTRL),
+        (KeyEventType::Down, 81, "q", "q", Modifiers::META),
+    ] {
+        document
+            .dispatch_key_input(kind, code, Some(key), Some(text), modifiers)
+            .unwrap();
+        assert_eq!(textarea.control_value().unwrap().as_deref(), Some("é\nz"));
+        assert_eq!(edits.borrow().len(), 2);
+    }
 
     document
         .dispatch_key_event(KeyEventType::Down, 90, Some("z"), Modifiers::CTRL)
@@ -728,7 +747,13 @@ fn read_only_text_controls_keep_selection_and_reject_native_edits() {
         target.set_selection(11, 11).unwrap();
         target.remove_attribute("readonly").unwrap();
         document
-            .dispatch_key_event(KeyEventType::Char, 0, Some("!"), Modifiers::NONE)
+            .dispatch_key_input(
+                KeyEventType::Down,
+                81,
+                Some("q"),
+                Some("!"),
+                Modifiers::NONE,
+            )
             .unwrap();
         assert_eq!(
             target.control_value().unwrap().as_deref(),

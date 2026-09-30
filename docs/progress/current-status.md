@@ -20,10 +20,10 @@ remain open.
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
 | Application conformance scenarios | 55 across 10 domains |
-| Frozen / current C exports | 84 / 107 |
+| Frozen / current C exports | 84 / 109 |
 | C examples / C++ consumers | 7 / 2, including native C/C++ window consumers |
-| Workspace tests | 8,489 pass; 13 ignored |
-| Python closure, qualification and packaging tests | 239 pass |
+| Workspace tests | 8,491 pass; 13 ignored |
+| Python closure, qualification, accountability and packaging tests | 244 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
@@ -234,6 +234,21 @@ ignored; the full workspace passes 8,489 with 13 ignored, and all six C
 consumers and the C++ header consumer pass. The 107-export ABI is unchanged.
 These results do not update the clean renderer census or qualify release-lab
 input and accessibility operation.
+The public `Document::dispatch_key_input` now exposes the Linux adapter's
+normalized input path to consuming headless and Linux Rust apps. Two additive
+C input exports use the same document defaults, bringing the current ABI to
+109 symbols without changing the frozen 84 symbols or any struct layout.
+The updated Rust consumer scenarios and C checks verify separate logical key
+names and committed text, cancellation, read-only state, owning-thread rules,
+and callbacks inspecting the edited control. The local C window consumer
+dispatches Enter and committed text from a presentation callback and observes
+exactly two input notifications. Physical input and AT-SPI qualification remain
+open.
+The [normalized-input diagnostic](../v02/generated/native-keyboard-input-diagnostic-v1.json)
+records 153 headless and 193 Linux Rust/C/platform passes, each with eight
+ignored, 8,491 workspace passes with 13 ignored, 244 Python checks, and
+all six headless C consumers plus the C++ header consumer. These checks
+do not update the renderer census or complete physical input qualification.
 The refined [spanner continuation repair](../renderer/native-empty-block-fragment-slicing.md)
 recovers the three new ordinary-wrapper failures in a 20-comparison diagnostic
 while retaining nested row overflow. The

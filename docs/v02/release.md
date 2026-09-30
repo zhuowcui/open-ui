@@ -16,7 +16,7 @@ claimed by source code alone.
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
-| Rust/C application contract | 55 scenarios, 107 current exports, six headless C examples and a C++ header consumer, plus native C/C++ window consumers; previous symbols and layouts preserved | remaining API review and lab qualification open |
+| Rust/C application contract | 55 scenarios, 109 current exports, six headless C examples and a C++ header consumer, plus native C/C++ window consumers; previous symbols and layouts preserved | remaining API review and lab qualification open |
 | Native element interaction | Public Rust `Document`, `Element`, and `TextNode` APIs cover ID/class/native-kind lookup, class-token updates, retained detach/reattach, mutation, callbacks, activation, focus, scrolling, and controls; browser-style operations needed by applications must be exposed through native APIs | core implemented; remaining API coverage review open |
 | C-owned X11/Wayland application loop | `oui_app_run` and `oui_app_request_exit` use Rust `App` and the same retained document; versioned platform callbacks and [clean native C/C++ window runs](native-c-lifecycle-evidence.md) cover X11 software/GL and Wayland software | implemented; release-lab qualification open |
 | C platform accessibility | owned full-tree snapshots, node metadata/relations/focus, and changed/removed IDs export from the shared engine; automated AT-SPI operation in a C window remains unqualified | open |

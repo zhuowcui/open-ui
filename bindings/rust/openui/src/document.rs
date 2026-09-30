@@ -563,8 +563,10 @@ impl Document {
             .map(|_| ())
     }
 
-    #[cfg(all(feature = "linux", target_os = "linux"))]
-    pub(crate) fn dispatch_key_input(
+    /// Dispatch a logical key and its separately committed text through the
+    /// same cancelable defaults as the native platform adapter. Key-up never
+    /// commits text; control characters and control/meta shortcuts are filtered.
+    pub fn dispatch_key_input(
         &self,
         event_type: KeyEventType,
         key_code: i32,

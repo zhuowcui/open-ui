@@ -16,7 +16,7 @@ schemas:
 Regenerate with `python3 tools/ffi/generate_ffi.py`, or verify without writing
 with `python3 tools/ffi/generate_ffi.py --check`. After building the crate,
 `python3 tools/ffi/verify_abi.py` checks exact exports, compiles C and C++
-consumers, and runs the five C examples.
+consumers, and runs the six headless C examples.
 
 All opaque handles are generation-checked and thread-affine. Strings are
 length-delimited UTF-8. Every status failure records a thread-local structured
@@ -29,6 +29,24 @@ later lookups while preserving its existing handles for reattachment.
 The owned `OuiAccessibilitySnapshot` API exposes node metadata, ordered
 relations, focus, and changed/removed IDs without retaining engine borrows.
 Snapshots remain readable after document destruction on their owning thread.
+
+## Native keyboard and text input
+
+`oui_document_dispatch_key_input_v1` sends a logical key and separately
+committed UTF-8 text through the same native Rust `Document` defaults as Linux
+input. Initialize an existing `OuiEvent` with its size, ABI version, key-down
+or key-up type, zero flags, key code, modifiers, and logical key name in `text`.
+Pass committed text separately. Key-up, Control/Meta shortcuts, and platform
+control characters do not insert that text. Enter in a textarea inserts one
+newline through the cancelable default action.
+
+`oui_document_dispatch_text_input_v1` injects committed text directly through
+cancelable `beforeinput`; a successful edit emits one `input` event after the
+value changes. Read-only and disabled controls reject user edits. Both calls
+use the focused retained control, run synchronously on the document's owning
+thread, and permit reentrant callbacks. They are available in both headless
+and Linux builds. Application interaction uses native APIs; Open UI executes
+no JavaScript.
 
 ## Native Linux windows
 

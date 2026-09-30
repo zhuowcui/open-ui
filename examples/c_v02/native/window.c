@@ -7,6 +7,9 @@
 typedef struct NativeContext {
   OuiDocument* document;
   OuiElement* card;
+  OuiElement* textarea;
+  OuiListener* input_listener;
+  uint32_t input_events;
   uint32_t backend;
   uint64_t frames;
   uint64_t first_hash;
@@ -26,6 +29,19 @@ static int check(NativeContext* context, OuiStatus status) {
     return 0;
   }
   return 1;
+}
+
+static void input_event(OuiEvent* event, void* user_data) {
+  NativeContext* context = (NativeContext*)user_data;
+  uint8_t value[6];
+  size_t length = 0;
+  ++context->input_events;
+  const char* expected = context->input_events == 1 ? "one\n" : "one\n!";
+  if (event->event_type != OUI_EVENT_INPUT ||
+      !check(context,
+             oui_element_copy_control_value(context->textarea, value, sizeof(value), &length)) ||
+      length != strlen(expected) || memcmp(value, expected, length) != 0)
+    context->failed = 1;
 }
 
 static void platform_event(OuiApp* app, const OuiPlatformEvent* event, void* user_data) {
@@ -60,6 +76,18 @@ static void platform_event(OuiApp* app, const OuiPlatformEvent* event, void* use
       check(context, oui_buffer_destroy(bitmap.pixels));
       if (event->frame_number == 1) {
         context->first_hash = hash;
+        check(context, oui_element_focus(context->textarea));
+        OuiEvent key = {.struct_size = sizeof(key),
+                        .abi_version = OUI_ABI_VERSION,
+                        .event_type = OUI_EVENT_KEY_DOWN,
+                        .key_code = 13,
+                        .text = text("Enter")};
+        check(context, oui_document_dispatch_key_input_v1(context->document, &key, text("\r")));
+        key.event_type = OUI_EVENT_KEY_UP;
+        check(context, oui_document_dispatch_key_input_v1(context->document, &key, text("\r")));
+        check(context, oui_document_dispatch_text_input_v1(context->document, text("!")));
+        if (context->input_events != 2)
+          context->failed = 1;
         OuiStyleValue color = {0};
         color.tag = OUI_STYLE_VALUE_COLOR;
         color.data.color = (OuiColor){0, 0, 255, 255};
@@ -104,16 +132,24 @@ int main(int argc, char** argv) {
   color.data.color = (OuiColor){255, 0, 0, 255};
   check(&context,
         oui_element_set_property(context.card, OUI_STYLE_PROPERTY_BACKGROUND_COLOR, &color));
+  check(&context, oui_element_create(context.document, OUI_ELEMENT_TEXTAREA, &context.textarea));
+  check(&context, oui_element_append_child(root, context.textarea));
+  check(&context, oui_element_set_control_value(context.textarea, text("one")));
+  check(&context, oui_element_set_selection(context.textarea, 3, 3));
+  check(&context, oui_element_add_event_listener(context.textarea, OUI_EVENT_INPUT, 0, input_event,
+                                                 &context, &context.input_listener));
   OuiAppRunConfig run = {sizeof(run), OUI_ABI_VERSION, 0, 0, platform_event, &context};
   check(&context, oui_app_run(app, &run));
   if (oui_app_run(app, &run) != OUI_ERROR_INVALID_STATE)
     context.failed = 1;
   check(&context, oui_app_destroy(app));
   check(&context, oui_document_update(context.document));
+  check(&context, oui_listener_destroy(context.input_listener));
+  check(&context, oui_element_destroy(context.textarea));
   check(&context, oui_element_destroy(context.card));
   check(&context, oui_element_destroy(root));
   check(&context, oui_document_destroy(context.document));
-  printf("native C: backend=%u frames=%llu resized=%d\n", context.backend,
-         (unsigned long long)context.frames, context.resized);
-  return context.failed || context.frames < 2 || !context.resized;
+  printf("native C: backend=%u frames=%llu resized=%d input=%u\n", context.backend,
+         (unsigned long long)context.frames, context.resized, context.input_events);
+  return context.failed || context.frames < 2 || !context.resized || context.input_events != 2;
 }

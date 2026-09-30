@@ -801,6 +801,19 @@ OuiStatus oui_document_update(OuiDocument* document);
 OuiStatus oui_document_render_rgba(OuiDocument* document, OuiBitmap* out_bitmap);
 OuiStatus oui_document_render_png(OuiDocument* document, OuiBuffer** out_buffer);
 OuiStatus oui_document_dispatch_event(OuiDocument* document, OuiElement* target, OuiEvent* event);
+/*
+ * Native normalized input uses the focused control and the shared Rust/Linux
+ * default-action path. key->event_type is OUI_EVENT_KEY_DOWN or KEY_UP;
+ * key->text is the logical key name, distinct from committed_text. flags must
+ * be zero. The descriptor is not modified. Callbacks may cancel keydown or
+ * beforeinput; one input event follows a successful edit. Key-up, control/meta
+ * shortcuts and platform control characters do not insert committed_text.
+ * Both calls are synchronous and owning-thread-only. Descriptors and UTF-8
+ * slices need only remain readable through the call; callbacks and user_data
+ * obey the existing listener lifetime contract. No JavaScript is executed.
+ */
+OuiStatus oui_document_dispatch_key_input_v1(OuiDocument* document, const OuiEvent* key, OuiUtf8 committed_text);
+OuiStatus oui_document_dispatch_text_input_v1(OuiDocument* document, OuiUtf8 text);
 OuiStatus oui_document_dispatch_pointer_event(OuiDocument* document, OuiEvent* event);
 OuiStatus oui_document_hit_test(OuiDocument* document, float x, float y, OuiElement** out_element);
 /* Found elements return owned handles; destroy them with oui_element_destroy. */

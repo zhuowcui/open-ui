@@ -41,13 +41,28 @@ into a newly focused element. Noneditable or disabled controls ignore text
 composition. IME disable also clears the preview and requests presentation.
 
 Native keyboard and text input use `Document::dispatch_key_event` and
-`Document::dispatch_text_input`. Enter in a textarea replaces the current
+`Document::dispatch_text_input`. A consuming Rust app can also call
+`Document::dispatch_key_input` in either a headless or Linux build. It accepts
+the logical key name separately from committed text and uses the same native
+default actions as the Linux adapter. Key-up and Control/Meta shortcuts do not
+insert committed text, and platform control characters are filtered.
+Enter in a textarea replaces the current
 selection with a newline after cancelable `keydown` and `beforeinput`
 callbacks. Enter and Space on text controls do not synthesize a click.
 Committed characters use the same text input path: `beforeinput` runs before
 the edit, and exactly one `input` notification follows a successful edit.
 The Linux adapter uses this path and filters platform control characters so
 Enter does not insert a second newline.
+
+The C ABI exposes this same path through
+`oui_document_dispatch_key_input_v1` and
+`oui_document_dispatch_text_input_v1`. The key call consumes a versioned
+`OuiEvent` descriptor for key-down or key-up, with zero flags and the logical
+key in `text`; committed text is a separate UTF-8 argument. Both calls are
+synchronous on the document's owning thread. Native callbacks can cancel
+`keydown` or `beforeinput` and inspect or mutate the retained control without
+an engine borrow. The additions preserve all existing event layouts and
+exports. They do not execute scripts.
 
 Applications make an input or textarea read-only with
 `Element::set_attribute("readonly", "")` and restore editing with
@@ -72,6 +87,17 @@ allowed selection and owned snapshots for both text control kinds. The
 [diagnostic index](generated/native-text-input-diagnostic-v1.json) records the
 test logs and the preceding source's genuine textarea, read-only and C failures.
 These native interaction checks do not qualify physical IME or AT-SPI operation.
+
+The subsequent public normalized-input check passes 153 headless Rust/C tests
+and 193 Linux Rust/C/platform tests, each with eight ignored. The full locked
+workspace passes 8,491 tests with 13 ignored. All six headless C consumers and
+the C++ header consumer pass with 109 current exports; existing structs and
+the preceding 107 exports are preserved. The C window consumer invokes native
+Enter and text input from a presentation callback and reads the updated value
+inside its two input callbacks. The
+[normalized-input diagnostic](generated/native-keyboard-input-diagnostic-v1.json)
+records the evidence. These checks do not qualify the remaining renderer,
+physical input, accessibility, or hardware gates.
 
 The preceding seven native IME regressions are public Rust application tests in
 [`v02_conformance.rs`](../../bindings/rust/openui/tests/v02_conformance.rs).

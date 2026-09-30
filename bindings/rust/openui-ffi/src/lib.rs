@@ -1841,6 +1841,71 @@ pub extern "C" fn oui_document_dispatch_event(
     })
 }
 
+// SAFETY CONTRACT: document is an owning-thread handle; key is readable for its
+// declared versioned size and UTF-8 slices remain readable through the call.
+// Listener callbacks and user_data follow the existing synchronous contract.
+#[no_mangle]
+pub extern "C" fn oui_document_dispatch_key_input_v1(
+    document_handle: *mut OuiDocument,
+    key: *const OuiEvent,
+    committed_text: OuiUtf8,
+) -> OuiStatus {
+    ffi(|| {
+        let state = document(document_handle as usize)?;
+        if key.is_null() {
+            return Err(invalid("key descriptor is null"));
+        }
+        // SAFETY: a versioned descriptor begins with a readable size field.
+        let struct_size = unsafe { ptr::read(key.cast::<u32>()) };
+        if struct_size < 2 * size_of::<u32>() as u32 {
+            return Err(invalid("key descriptor header is too small"));
+        }
+        // SAFETY: the declared header covers the ABI-version field.
+        let abi_version = unsafe { ptr::read(key.cast::<u32>().add(1)) };
+        check_header(struct_size, abi_version, size_of::<OuiEvent>())?;
+        // SAFETY: the validated declared size covers the complete descriptor.
+        let key = unsafe { *key };
+        validate_event(&key)?;
+        if key.flags != 0 {
+            return Err(invalid("key descriptor flags must be zero"));
+        }
+        let event_type = match key.event_type {
+            6 => openui::KeyEventType::Down,
+            7 => openui::KeyEventType::Up,
+            _ => return Err(invalid("normalized key input requires key-down or key-up")),
+        };
+        let key_text = utf8(key.text, "logical key name")?;
+        let committed_text = utf8(committed_text, "committed text")?;
+        state
+            .native
+            .dispatch_key_input(
+                event_type,
+                key.key_code,
+                (!key_text.is_empty()).then_some(key_text.as_str()),
+                (!committed_text.is_empty()).then_some(committed_text.as_str()),
+                openui::Modifiers(key.modifiers),
+            )
+            .map_err(native_app::native_error)
+    })
+}
+
+// SAFETY CONTRACT: document is an owning-thread handle; text remains readable
+// through this call. Callbacks execute after engine and listener borrows end.
+#[no_mangle]
+pub extern "C" fn oui_document_dispatch_text_input_v1(
+    document_handle: *mut OuiDocument,
+    text: OuiUtf8,
+) -> OuiStatus {
+    ffi(|| {
+        let state = document(document_handle as usize)?;
+        let text = utf8(text, "committed text")?;
+        state
+            .native
+            .dispatch_text_input(&text)
+            .map_err(native_app::native_error)
+    })
+}
+
 // SAFETY CONTRACT: `document` is live and `event` is readable/writable for its
 // declared size through all synchronous callbacks. The event type is pointer
 // down, up, or move; hit testing supplies the target.
@@ -4248,6 +4313,306 @@ mod tests {
         assert_eq!(oui_element_destroy(checkbox), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn normalized_c_keyboard_and_text_share_cancelable_document_defaults() {
+        struct Observations {
+            target: *mut OuiElement,
+            cancel_key: bool,
+            cancel_text: bool,
+            make_read_only: bool,
+            events: Vec<(u32, String, String)>,
+        }
+        unsafe extern "C" fn observe(event: *mut OuiEvent, user_data: *mut c_void) {
+            // SAFETY: the test owns both values through synchronous dispatch.
+            let event = unsafe { &mut *event };
+            let seen = unsafe { &mut *user_data.cast::<Observations>() };
+            let mut value = [0; 64];
+            let mut length = 0;
+            assert_eq!(
+                oui_element_copy_control_value(
+                    seen.target,
+                    value.as_mut_ptr(),
+                    value.len(),
+                    &mut length
+                ),
+                OuiStatus::Ok
+            );
+            let event_text = if event.text.length == 0 {
+                String::new()
+            } else {
+                // SAFETY: event text remains readable through this callback.
+                String::from_utf8(
+                    unsafe { std::slice::from_raw_parts(event.text.data, event.text.length) }
+                        .to_vec(),
+                )
+                .unwrap()
+            };
+            seen.events.push((
+                event.event_type,
+                event_text,
+                String::from_utf8(value[..length].to_vec()).unwrap(),
+            ));
+            if (event.event_type == 6 && seen.cancel_key)
+                || (event.event_type == 18 && seen.cancel_text)
+            {
+                event.flags |= OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+            }
+            if event.event_type == 18 && seen.make_read_only {
+                assert_eq!(
+                    oui_element_set_attribute(seen.target, text("readonly"), empty_utf8()),
+                    OuiStatus::Ok
+                );
+            }
+        }
+        fn value(target: *mut OuiElement) -> String {
+            let mut bytes = [0; 64];
+            let mut length = 0;
+            assert_eq!(
+                oui_element_copy_control_value(
+                    target,
+                    bytes.as_mut_ptr(),
+                    bytes.len(),
+                    &mut length
+                ),
+                OuiStatus::Ok
+            );
+            String::from_utf8(bytes[..length].to_vec()).unwrap()
+        }
+        let document = create_document(160, 100);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let textarea = create_element(document, 31, root);
+        assert_eq!(
+            oui_element_set_control_value(textarea, text("é👍z")),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_element_set_selection(textarea, 2, 6), OuiStatus::Ok);
+        assert_eq!(oui_element_focus(textarea), OuiStatus::Ok);
+        let mut seen = Box::new(Observations {
+            target: textarea,
+            cancel_key: false,
+            cancel_text: false,
+            make_read_only: false,
+            events: Vec::new(),
+        });
+        let mut listeners = Vec::new();
+        for kind in [6, 18, 16, 4] {
+            let mut listener = ptr::null_mut();
+            assert_eq!(
+                oui_element_add_event_listener(
+                    textarea,
+                    kind,
+                    0,
+                    Some(observe),
+                    (&mut *seen as *mut Observations).cast(),
+                    &mut listener
+                ),
+                OuiStatus::Ok
+            );
+            listeners.push(listener);
+        }
+        let mut enter = event(6, "Enter");
+        enter.key_code = 13;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &enter, text("\r")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é\nz");
+        assert_eq!(
+            seen.events,
+            vec![
+                (6, "Enter".into(), "é👍z".into()),
+                (18, "\n".into(), "é👍z".into()),
+                (16, "\n".into(), "é\nz".into())
+            ]
+        );
+        let mut anchor = 0;
+        let mut focus = 0;
+        assert_eq!(
+            oui_element_get_selection(textarea, &mut anchor, &mut focus),
+            OuiStatus::Ok
+        );
+        assert_eq!((anchor, focus), (3, 3));
+        let mut key_up = event(7, "Enter");
+        key_up.key_code = 13;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key_up, text("\r")),
+            OuiStatus::Ok
+        );
+        let mut shortcut = event(6, "q");
+        shortcut.key_code = 81;
+        for modifiers in [2, 8] {
+            shortcut.modifiers = modifiers;
+            assert_eq!(
+                oui_document_dispatch_key_input_v1(document, &shortcut, text("q")),
+                OuiStatus::Ok
+            );
+            assert_eq!(value(textarea), "é\nz");
+        }
+        seen.events.clear();
+        seen.cancel_key = true;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &enter, text("\r")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é\nz");
+        assert_eq!(seen.events.len(), 1);
+        seen.cancel_key = false;
+        seen.cancel_text = true;
+        seen.events.clear();
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &enter, text("\r")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é\nz");
+        assert_eq!(seen.events.len(), 2);
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, text("blocked")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é\nz");
+        seen.cancel_text = false;
+        let mut undo = event(6, "z");
+        undo.key_code = 90;
+        undo.modifiers = 2;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &undo, text("z")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é👍z");
+        // Undo restores the value and collapses selection at the end. Establish
+        // the intended replacement range through the native application API.
+        assert_eq!(oui_element_set_selection(textarea, 2, 6), OuiStatus::Ok);
+        seen.events.clear();
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, text("!")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é!z");
+        assert_eq!(
+            seen.events,
+            vec![
+                (18, "!".into(), "é👍z".into()),
+                (16, "!".into(), "é!z".into())
+            ]
+        );
+        seen.make_read_only = true;
+        seen.events.clear();
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, text("blocked")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é!z");
+        assert_eq!(seen.events.len(), 1);
+        seen.events.clear();
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, text("blocked")),
+            OuiStatus::Ok
+        );
+        assert!(seen.events.is_empty());
+        let mut backspace = event(6, "Backspace");
+        backspace.key_code = 8;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &backspace, empty_utf8()),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é!z");
+        for listener in listeners {
+            assert_eq!(oui_listener_destroy(listener), OuiStatus::Ok);
+        }
+        assert_eq!(oui_element_destroy(textarea), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn normalized_c_input_validates_headers_utf8_and_thread_ownership() {
+        let document = create_document(100, 100);
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, ptr::null(), empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        let short_size = 4_u32;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(
+                document,
+                (&short_size as *const u32).cast(),
+                empty_utf8()
+            ),
+            OuiStatus::InvalidArgument
+        );
+        let short_header = [8_u32, OUI_ABI_VERSION];
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(
+                document,
+                short_header.as_ptr().cast(),
+                empty_utf8()
+            ),
+            OuiStatus::InvalidArgument
+        );
+        let mut key = event(6, "a");
+        key.key_code = 65;
+        key.abi_version = 1;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, text("a")),
+            OuiStatus::AbiMismatch
+        );
+        key.abi_version = OUI_ABI_VERSION;
+        key.event_type = 4;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        key.event_type = 6;
+        key.modifiers = 1 << 31;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        key.modifiers = 0;
+        key.flags = OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        key.flags = 0;
+        let invalid_bytes = [0xff_u8];
+        let invalid_text = OuiUtf8 {
+            data: invalid_bytes.as_ptr(),
+            length: 1,
+        };
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, invalid_text),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, invalid_text),
+            OuiStatus::InvalidArgument
+        );
+        key.text = invalid_text;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        key.text = text("a");
+        let address = document as usize;
+        let wrong_thread = std::thread::spawn(move || {
+            oui_document_dispatch_text_input_v1(address as *mut OuiDocument, text("a"))
+        })
+        .join()
+        .unwrap();
+        assert_eq!(wrong_thread, OuiStatus::WrongThread);
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, text("a")),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, empty_utf8()),
+            OuiStatus::InvalidHandle
+        );
     }
 
     #[test]
