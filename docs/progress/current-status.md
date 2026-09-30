@@ -247,15 +247,25 @@ open.
 The [normalized-input diagnostic](../v02/generated/native-keyboard-input-diagnostic-v1.json)
 records 153 headless and 193 Linux Rust/C/platform passes, each with eight
 ignored, 8,491 workspace passes with 13 ignored, 244 Python checks, and
-all six headless C consumers plus the C++ header consumer. These checks
+all six headless C consumers plus the C++ header consumer. The subsequent
+[clean window index](../v02/generated/native-keyboard-window-index-v1.json)
+records six passing C/C++ processes on X11 software/OpenGL and pure Wayland
+software at `07be54f9`. These checks
 do not update the renderer census or complete physical input qualification.
 The refined [spanner continuation repair](../renderer/native-empty-block-fragment-slicing.md)
 recovers the three new ordinary-wrapper failures in a 20-comparison diagnostic
 while retaining nested row overflow. The
 [diagnostic index](../renderer/generated/native-spanner-boundary-diagnostic-v2.json)
 records both layout guards, the reduced border sweep and all 1,600 unchanged,
-exact focused/primitive images. Its wider column check and the next complete
-clean original/expanded census remain pending. A larger start-margin candidate
+exact focused/primitive images. Its completed
+[wider diagnostic](../renderer/generated/native-spanner-boundary-cohort-diagnostic-v1.json)
+is 7,034/7,680 exact, with 646 differences and zero errors: 13 comparisons
+become exact and none regresses from exact, while two existing fieldset
+differences worsen by 87 pixels each. Every Chromium image and oracle identity
+is unchanged. Clean `822e0462` passes all
+[1,600 focused/primitive comparisons](../renderer/generated/focused-primitive-raster-v46.json),
+with every image unchanged from `0ad4b12f`. The next complete
+clean original/expanded census remains pending. A larger start-margin candidate
 remains held after two exact regressions; no reference or fixture was changed.
 The append-only C `oui_element_detach` export uses the same engine operation
 for element and text handles. `oui_document_element_by_id` now provides owned

@@ -93,3 +93,25 @@ These window reports remain WSLg functional smoke evidence with
 inspection still require the release lab. Original and expanded renderer
 census counts are unchanged by this evidence update; final release gates
 remain open.
+
+## Public normalized-input checkpoint
+
+At clean checkpoint `07be54f9`, consuming Rust apps can call the same
+`Document::dispatch_key_input` path as the Linux adapter. The two additive C
+input APIs expose native keyboard defaults and committed text over that same
+document. The ABI has 109 exports, preserving the preceding 107 exports and
+every existing struct layout.
+
+All six C/C++ window processes pass again on X11 software, X11 OpenGL, and
+pure Wayland software. The C consumer focuses its textarea from the first
+presentation callback, dispatches Enter and key-up with platform carriage-return
+text, then inserts committed text. It receives exactly two input notifications
+and reads the updated retained value inside each callback. Both consumers
+present a second frame and exit successfully. The
+[clean window index](generated/native-keyboard-window-index-v1.json) links the
+unmodified reports emitted by the verification tool.
+
+These are local WSLg functional checks with `release_qualification: false`.
+Physical input, IME, AT-SPI, reference-machine performance, and hardware
+qualification remain open. Open UI executes no JavaScript; these input
+operations are native Rust methods and native C calls.

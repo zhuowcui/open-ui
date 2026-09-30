@@ -102,6 +102,17 @@ are exact with all 1,600 images unchanged from `e51d88fd`. The
 [investigation](native-empty-block-fragment-slicing.md) records the failures.
 Chromium inputs remain fixed.
 
+At clean checkpoint `822e0462`, the
+[v46 focused/primitive index](generated/focused-primitive-raster-v46.json)
+is 640/640 and 960/960 exact; all Open UI images, Chromium images, and oracle
+identities are unchanged from `0ad4b12f`. The broader
+[column/fragmentation diagnostic](generated/native-spanner-boundary-cohort-diagnostic-v1.json)
+is 7,034/7,680 exact, with 646 differences and zero errors. Thirteen comparisons
+become exact with no exact regression, but two existing fieldset differences
+worsen by 87 pixels each. It has dirty diagnostic source and partial scope;
+it does not qualify the renderer. Complete clean original and expanded runs
+at `822e0462` remain in progress.
+
 The later [scaled LCD font investigation](scaled-lcd-hinting-oracle-investigation.md)
 found an older cached Chromium image that differs from six agreeing fresh
 captures of `wpt/css2_floats/float-nowrap-3` at 1920×1080@1.5. Both variants have

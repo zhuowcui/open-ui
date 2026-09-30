@@ -10,7 +10,7 @@ claimed by source code alone.
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
 | Four-profile renderer matrix | 21,278/22,924 exact, 1,646 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v43.json); three exact regressions against the preceding checkpoint | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v45.json) | pass |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact at clean `822e0462` in the [latest raster index](../renderer/generated/focused-primitive-raster-v46.json); full original/expanded runs remain pending | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
 | Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v26.json); 22,081/23,728 total comparisons exact, 1,647 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |

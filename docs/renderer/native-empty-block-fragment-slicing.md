@@ -93,7 +93,16 @@ and oracle identity stays fixed. The
 [diagnostic index](generated/native-spanner-boundary-diagnostic-v2.json)
 also records 640/640 focused and 960/960 primitive exact; all 1,600 Open UI
 images, Chromium images and oracle identities are unchanged from `0ad4b12f`.
-Its wider column check and a complete clean census are still required.
+The later [wider column/fragmentation diagnostic](generated/native-spanner-boundary-cohort-diagnostic-v1.json)
+is 7,034/7,680 exact, with 646 differences and zero errors. Thirteen comparisons
+become exact and none regresses from exact. Twenty-six Open UI images change;
+every Chromium image and oracle identity is unchanged. Two already failing
+fieldset comparisons at 1.25× worsen by 87 pixels each and remain open. This
+partial dirty-source diagnostic does not establish renderer qualification.
+The clean `822e0462`
+[focused/primitive index](generated/focused-primitive-raster-v46.json)
+passes all 1,600 comparisons with every image unchanged from `0ad4b12f`.
+The complete clean original and expanded censuses remain in progress.
 
 ## Background coverage and the held margin candidate
 
