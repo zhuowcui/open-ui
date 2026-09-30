@@ -14454,13 +14454,19 @@ fn materialize_leaf_block_slices(
     fragment: &mut Fragment,
     doc: &Document,
     source_node: NodeId,
+    has_enclosing_fragmentation: bool,
     source_block_size: LayoutUnit,
     writing_direction: WritingDirectionMode,
 ) {
-    // An extracted spanner splits its ancestor's source flow into column
-    // rows. Those rows retain their own continuation clips and overflow;
-    // the ancestor's visual slice height is not a child's source boundary.
-    if subtree_has_in_flow_spanner_descendant(doc, source_node) {
+    // A nested multicol owns the column rows split by its spanners. Those
+    // rows retain their own continuation clips and overflow; an ancestor's
+    // visual slice height is not a child's source boundary. An ordinary
+    // block wrapper uses the current multicol's source coordinates instead.
+    if (has_enclosing_fragmentation
+        || crate::multicol::ColumnLayoutAlgorithm::from_style(&doc.node(source_node).style)
+            .is_some())
+        && subtree_has_in_flow_spanner_descendant(doc, source_node)
+    {
         return;
     }
     for child in &mut fragment.children {
@@ -30761,6 +30767,7 @@ fn layout_multicol(
                                     &mut part,
                                     doc,
                                     child_node_id,
+                                    space.has_block_fragmentation(),
                                     visual_part_height,
                                     space.writing_direction,
                                 );

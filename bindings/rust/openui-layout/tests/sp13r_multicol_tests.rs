@@ -4621,3 +4621,60 @@ fn wrapped_authored_column_height_is_retained_before_spanners() {
         assert_eq!(fragments[0].offset.top, lu(expected_top));
     }
 }
+
+#[test]
+fn ordinary_spanner_wrapper_materializes_leaf_source_slices() {
+    let mut doc = Document::new();
+    let outer = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(outer, |style| {
+        style.display = Display::Block;
+        style.width = Length::px(400.0);
+        style.column_count = Some(2);
+    });
+    let wrapper = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(wrapper, |style| {
+        style.display = Display::Block;
+        style.height = Length::px(450.0);
+    });
+    doc.append_child(outer, wrapper);
+    let first = doc.create_node(ElementTag::Div);
+    for index in 0..3 {
+        let block = if index == 0 {
+            first
+        } else {
+            doc.create_node(ElementTag::Div)
+        };
+        doc.update_resolved_style(block, |style| {
+            style.display = Display::Block;
+            style.width = Length::px(100.0);
+            style.height = Length::px(200.0);
+        });
+        doc.append_child(wrapper, block);
+        if index < 2 {
+            let spanner = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(spanner, |style| {
+                style.display = Display::Block;
+                style.column_span = ColumnSpan::All;
+                style.height = Length::px(50.0);
+            });
+            doc.append_child(wrapper, spanner);
+        }
+    }
+    let fragment = block_layout(
+        &doc,
+        outer,
+        &ConstraintSpace::for_block_child(lu(400), lu(600), lu(400), lu(600), false),
+    );
+    let column_fragments = columns(&fragment);
+    for (index, column) in column_fragments.iter().take(2).enumerate() {
+        let leaf = find_node(column, first).expect("leaf in each pre-spanner column");
+        assert_eq!(leaf.size.height, lu(100));
+        assert_eq!(leaf.offset.top, lu(0));
+        let slice = leaf.decoration_slice.expect("owned leaf source slice");
+        assert_eq!(slice.source_block_offset, lu(index as i32 * 100));
+        assert_eq!(slice.source_block_size, lu(200));
+        assert_eq!(leaf.is_first_for_node, index == 0);
+        assert_eq!(leaf.is_last_for_node, index == 1);
+    }
+    assert!(column_fragments.len() >= 2);
+}

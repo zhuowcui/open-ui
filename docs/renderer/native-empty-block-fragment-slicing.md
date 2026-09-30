@@ -72,8 +72,59 @@ regression retains the leaf's source geometry and overflow in its owned row.
 The [29-ID, four-profile diagnostic guard](generated/native-spanner-leaf-guard-v1.json)
 is 79/116 exact, 37 different, and
 zero errors: 12 new exact comparisons, no formerly exact regression, and
-unchanged Chromium inputs. A new complete clean run is still required before
-this corrected source replaces the earlier census evidence.
+unchanged Chromium inputs. The later complete clean run at `0ad4b12f` is
+[21,278/22,924 exact](generated/four-profile-census-v43.json), with 1,646
+differences and zero errors. Its
+[complete delta](generated/native-geometry-full-delta-v1.json) restores the
+three nested-column comparisons but regresses three ordinary-spanner
+comparisons at 1.25×. The preceding small guard did not include those cases.
+This checkpoint is also unqualified.
+
+The next correction distinguishes an enclosing fragmentation context and an
+owned nested multicol from an ordinary wrapper in the current column flow.
+The ordinary wrapper now gives its empty leaves proper source slices, while
+the nested layout retains its row clips and overflow. A new native layout
+guard fails on the preceding source: the ordinary wrapper's first leaf is
+200 pixels high instead of its 100-pixel source slice. Both that guard and the
+existing nested-spanner guard pass with the correction; all 94 multicol
+integration tests pass. A 20-comparison diagnostic recovers the three ordinary
+spanner failures without changing the other 17 results. Every Chromium image
+and oracle identity stays fixed. The
+[diagnostic index](generated/native-spanner-boundary-diagnostic-v2.json)
+also records 640/640 focused and 960/960 primitive exact; all 1,600 Open UI
+images, Chromium images and oracle identities are unchanged from `0ad4b12f`.
+Its wider column check and a complete clean census are still required.
+
+## Background coverage and the held margin candidate
+
+A truncated background's hard safety clip discarded the primitive's own
+fractional block edge. Closing that safety clip outward on the device grid
+retains the existing snapped primitive and its coverage. The existing inline
+clip policy is preserved. A native paint guard verifies three edge phases;
+the preceding code returns gray where the preserved Chromium capture has a
+partially covered yellow cell. The 300-case reduced sweep improves two column
+cases from different to exact: plain borders remain 100/100, ordinary clips
+remain 100/100, and columns become 25/100 instead of 23/100. No exact case
+regresses. This limited diagnostic is not full raster qualification.
+
+A separate shared start-margin candidate combines the child's propagated
+margin strut in both multicol measurement and placement. It improves reduced
+columns from 23/100 to 94/100, and combining it with the coverage correction
+makes all 300 reduced cases exact. The wider 7,680-comparison column and break
+check rejects this margin candidate: no original comparison becomes exact,
+and two exact comparisons regress. Only four Open UI images change; all
+Chromium images and identities stay fixed.
+
+The changed fixture's native embedded-document tree contains an existing
+16-pixel spacer representing a collapsed margin, plus the descendant's
+16-pixel margin. The candidate counts both and moves the first section from
+y=16 to y=32. The source Chromium document has no spacer. This is a native
+test translation boundary that needs review; it is not evidence that Chromium
+pixels cannot be matched. The margin candidate and its reports remain
+preserved outside the accepted renderer changes. No fixture, reference image,
+or admitted manifest was edited to obtain a passing result.
+
+## Earlier rejected candidates
 
 An earlier candidate regressed six exact cloned-decoration comparisons and
 was rejected. A second had no exact regressions across the complete

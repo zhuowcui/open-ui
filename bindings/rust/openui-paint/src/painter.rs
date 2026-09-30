@@ -15845,35 +15845,48 @@ fn paint_box_decoration_background(
 
     let decoration_clip_saved = decoration_block_size.is_some();
     if decoration_clip_saved {
-        // A truncated decoration keeps a hard block-axis cutoff. A painted
-        // inline border still needs its fractional outer edge, while a plain
-        // background must retain the original hard inline clip: adjacent
-        // column continuations can otherwise paint the same edge twice.
+        // The decoration primitive owns its fractional block edge. Close the
+        // safety clip outward on the device grid so it does not discard that
+        // primitive's antialias coverage. A borderless inline edge retains its
+        // original hard clip to avoid overlapping neighboring columns.
         let inline_border_ink = if fragment_block_axis_is_x(fragment) {
             style.effective_border_top() > 0 || style.effective_border_bottom() > 0
         } else {
             style.effective_border_left() > 0 || style.effective_border_right() > 0
         };
-        let clip_rect = if inline_border_ink || fragment.decoration_limit_preserves_inline_coverage
-        {
-            let snapping = RasterSnapping::new(style.device_scale_factor);
-            if fragment_block_axis_is_x(fragment) {
-                Rect::from_ltrb(
-                    border_box_rect.left,
-                    snapping.logical_coordinate(border_box_rect.top, PhysicalSnap::Floor),
-                    border_box_rect.right,
-                    snapping.logical_coordinate(border_box_rect.bottom, PhysicalSnap::Ceil),
-                )
-            } else {
-                Rect::from_ltrb(
-                    snapping.logical_coordinate(border_box_rect.left, PhysicalSnap::Floor),
-                    border_box_rect.top,
-                    snapping.logical_coordinate(border_box_rect.right, PhysicalSnap::Ceil),
-                    border_box_rect.bottom,
-                )
-            }
+        let snapping = RasterSnapping::new(style.device_scale_factor);
+        let preserve_inline =
+            inline_border_ink || fragment.decoration_limit_preserves_inline_coverage;
+        let clip_rect = if fragment_block_axis_is_x(fragment) {
+            Rect::from_ltrb(
+                snapping.logical_coordinate(border_box_rect.left, PhysicalSnap::Floor),
+                if preserve_inline {
+                    snapping.logical_coordinate(border_box_rect.top, PhysicalSnap::Floor)
+                } else {
+                    border_box_rect.top
+                },
+                snapping.logical_coordinate(border_box_rect.right, PhysicalSnap::Ceil),
+                if preserve_inline {
+                    snapping.logical_coordinate(border_box_rect.bottom, PhysicalSnap::Ceil)
+                } else {
+                    border_box_rect.bottom
+                },
+            )
         } else {
-            border_box_rect
+            Rect::from_ltrb(
+                if preserve_inline {
+                    snapping.logical_coordinate(border_box_rect.left, PhysicalSnap::Floor)
+                } else {
+                    border_box_rect.left
+                },
+                snapping.logical_coordinate(border_box_rect.top, PhysicalSnap::Floor),
+                if preserve_inline {
+                    snapping.logical_coordinate(border_box_rect.right, PhysicalSnap::Ceil)
+                } else {
+                    border_box_rect.right
+                },
+                snapping.logical_coordinate(border_box_rect.bottom, PhysicalSnap::Ceil),
+            )
         };
         canvas.save();
         canvas.clip_rect(clip_rect, ClipOp::Intersect, false);
@@ -21486,6 +21499,53 @@ mod tests {
                 block_start_sized_rect(&fragment, rect, offset, size),
                 expected
             );
+        }
+    }
+
+    #[test]
+    fn truncated_decoration_retains_the_background_edge_coverage() {
+        let mut document = Document::new();
+        let node = document.create_node(openui_dom::ElementTag::Div);
+        let mut style = ComputedStyle::default();
+        style.update_derived(|style| {
+            style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            style.device_scale_factor = 1.25;
+        });
+        let mut fragment = Fragment::new_box(
+            node,
+            PhysicalSize::new(LayoutUnit::from_i32(84), LayoutUnit::from_f32(67.3125)),
+        );
+        fragment.decoration_slice = Some(openui_layout::DecorationSlice {
+            source_block_offset: LayoutUnit::from_f32(134.6875),
+            source_block_size: LayoutUnit::from_i32(202),
+        });
+        fragment.is_first_for_node = false;
+        // Both directions of CSS snapping retain the primitive's own edge
+        // coverage. BGRA values come from preserved Chromium captures.
+        for (limit, edge_row, edge_color) in [
+            (25.3125, 31, [96, 160, 160, 255]),
+            (25.65625, 32, [64, 192, 192, 255]),
+            (24.65625, 31, [96, 160, 160, 255]),
+        ] {
+            fragment.decoration_paint_block_size = Some(LayoutUnit::from_f32(limit));
+            let mut surface = surfaces::raster_n32_premul((120, 100)).expect("surface");
+            surface
+                .canvas()
+                .clear(skia_safe::Color::from_rgb(128, 128, 128));
+            surface.canvas().scale((1.25, 1.25));
+            paint_box_decoration_background(
+                surface.canvas(),
+                &fragment,
+                &document,
+                &style,
+                PhysicalOffset::zero(),
+                1.0,
+            );
+            let pixels = surface_bytes(&mut surface);
+            let pixel = |x: usize, y: usize| &pixels[(y * 120 + x) * 4..][..4];
+            assert_eq!(pixel(10, edge_row - 1), [0, 255, 255, 255]);
+            assert_eq!(pixel(10, edge_row), edge_color);
+            assert_eq!(pixel(10, edge_row + 1), [128, 128, 128, 255]);
         }
     }
 
