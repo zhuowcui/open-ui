@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,265/22,924 exact, 1,659 different, 0 errors |
+| Fresh four-profile Chromium census | 21,266/22,924 exact, 1,658 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
 | Pending native final-state candidates | 0/35 exact at all four profiles after the latest clean recheck |
@@ -26,21 +26,24 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v40.json)
-at `ee0b04dd` is 21,265/22,924 exact, 1,659 different, and zero errors.
-The [native button content-clip repair](../renderer/button-content-clip-coverage.md)
-made one original comparison exact by removing duplicate half-pixel coverage
-at a coincident button/child edge. Only that Open UI image changed; no exact
-case regressed, and all 22,924 Chromium oracle identities and decoded images
-stayed fixed. The 915 residual test IDs remain unowned. The clean
-[v41 focused/primitive index](../renderer/generated/focused-primitive-raster-v41.json)
-is 640/640 and 960/960 exact. The complete
-[v23 expanded requalification](../renderer/generated/expanded-requalification-v23.json)
-is 22,068/23,728 exact, 1,660 different, and zero errors. The button native
-final-state addition is now exact at all four profiles, so 200 of 201
-additions pass. The [v25 diagnostic selection](../../tools/qualification/manifests/expanded-v25.json)
-lists those 200; the release contract retains all 201, including the remaining
-fieldset legend failure. The other 35 AST-lowered candidates remain pending.
+The [latest complete clean census](../renderer/generated/four-profile-census-v41.json)
+at `15f9f12d` is 21,266/22,924 exact, 1,658 different, and zero errors.
+The [circular background one-axis clip repair](../renderer/circular-background-one-axis-clip.md)
+makes the F16 circular fill apply the same horizontal overflow scissor as the
+direct rounded fill. One original comparison became exact; only that Open UI
+image changed, and no exact comparison regressed. All 22,924 Chromium oracle
+identities and decoded images stayed fixed. The 914 residual test IDs remain
+unowned. The clean
+[v42 focused/primitive index](../renderer/generated/focused-primitive-raster-v42.json)
+is 640/640 and 960/960 exact, with all 1,600 images unchanged from v41.
+The complete [v24 expanded requalification](../renderer/generated/expanded-requalification-v24.json)
+is 22,069/23,728 exact, 1,659 different, and zero errors. Every original
+result matches the separate census; all 804 addition images stayed fixed,
+leaving 200 of 201 additions exact at all four profiles. All 23,728 Chromium
+oracle identities and decoded images stayed fixed. The
+[v26 diagnostic selection](../../tools/qualification/manifests/expanded-v26.json)
+lists those 200; the release contract retains all 201, including the fieldset
+legend failure. The other 35 AST-lowered candidates remain pending.
 The [fractional Ahem legend investigation](../renderer/fieldset-legend-ahem-raster-investigation.md)
 records that case's 14 extra glyph rows and three rejected shared-raster
 experiments; no renderer fix or qualification is claimed from that work.

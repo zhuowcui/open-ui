@@ -24,7 +24,9 @@ retained `Document` and `Element` handles; the application may keep those
 handles and call native methods from Rust callbacks. C applications use the
 versioned C ABI over the same engine. There is no JavaScript execution,
 `eval`, script binding, or embedded browser runtime in the application path.
-Browser-style effects are provided by native operations where v0.2 needs them:
+Element APIs can be called directly from Rust; they do not require JavaScript.
+Needed browser-style element operations are exposed as public Rust methods for
+the consuming native application to call:
 
 | Application task | Public Rust API |
 |---|---|

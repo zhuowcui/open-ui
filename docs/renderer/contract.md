@@ -60,24 +60,25 @@ AST-lowered candidates remain pending. All 200 prior additions remain in the
 new manifest, including one that currently fails a profile; admission never
 turns their failing comparisons into passes.
 
-At clean checkpoint `ee0b04dd`, the
-[v40 original census](generated/four-profile-census-v40.json) is
-21,265/22,924 exact, with 1,659 differences and zero errors. The shared
-[native button content-clip repair](button-content-clip-coverage.md)
-made one original comparison exact by removing duplicate edge coverage at
-1.25×. Only that Open UI image changed, no exact comparison regressed, and all
-22,924 Chromium oracle identities and decoded images stayed fixed. The 915
-residual test IDs remain unowned. The clean
-[v41 focused/primitive index](generated/focused-primitive-raster-v41.json)
-is 640/640 and 960/960 exact. The complete clean
-[v23 expanded requalification](generated/expanded-requalification-v23.json)
-is 22,068/23,728 exact, with 1,660 differences and zero errors. The button
-addition is now exact at all four profiles, leaving 200 of 201 additions
-exact. Every original expanded result matches the separate clean v40 census,
-and all 23,728 Chromium oracle identities and decoded images match the prior
-expanded run. The [v25 diagnostic selection](../../tools/qualification/manifests/expanded-v25.json)
-lists 200 exact additions; the release contract retains all 201 and the one
-remaining fieldset legend failure.
+At clean checkpoint `15f9f12d`, the
+[v41 original census](generated/four-profile-census-v41.json) is
+21,266/22,924 exact, with 1,658 differences and zero errors. The shared
+[circular background one-axis clip repair](circular-background-one-axis-clip.md)
+makes the F16 circular fill honor the same horizontal overflow scissor as the
+direct rounded fill. One original comparison became exact, only that Open UI
+image changed, and no exact comparison regressed. All 22,924 Chromium oracle
+identities and decoded images stayed fixed. The 914 residual test IDs remain
+unowned. The clean
+[v42 focused/primitive index](generated/focused-primitive-raster-v42.json)
+is 640/640 and 960/960 exact, with all 1,600 images unchanged from v41.
+The complete [v24 expanded requalification](generated/expanded-requalification-v24.json)
+is 22,069/23,728 exact, with 1,659 differences and zero errors. All original
+results match the separate clean census, all 804 addition images stayed fixed,
+and all 23,728 Chromium oracle identities and decoded images match v23.
+The same 200 of 201 additions are exact at all four profiles. The
+[v26 diagnostic selection](../../tools/qualification/manifests/expanded-v26.json)
+lists those 200; the release contract retains all 201 and the remaining
+fieldset legend failure.
 
 At prior clean checkpoint `e14e3e64`, the
 [v39 original census](generated/four-profile-census-v39.json) was
