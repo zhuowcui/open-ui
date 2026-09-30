@@ -181,6 +181,13 @@ All six regular hosted checks and all six clean native C/C++ window processes
 pass at that checkpoint. The five optional hosted hardening jobs were skipped.
 This API work does not update the original or expanded census counts or close
 the remaining renderer, native API review, or release-lab gates.
+The subsequent [native empty-block border repair](../renderer/native-empty-block-fragment-slicing.md)
+corrects child continuation geometry in ordinary block containers. The scoped
+diagnostic guard makes 11 original comparisons exact with no exact regression
+across its 112 comparisons; its Chromium images and identities stay fixed.
+The locked workspace passes 8,481 tests. The reduced sweep remains partially
+different, and the complete clean original/expanded census must still run;
+these diagnostics do not change the totals above or close release qualification.
 The append-only C `oui_element_detach` export uses the same engine operation
 for element and text handles. `oui_document_element_by_id` now provides owned
 handles for native C element lookup. ABI verification reports 106 current

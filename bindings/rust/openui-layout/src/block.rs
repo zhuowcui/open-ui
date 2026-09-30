@@ -14446,6 +14446,65 @@ fn materialize_nontranslated_transform_slice(
     });
 }
 
+/// Materialize an empty in-flow block's continuation inside a source slice.
+/// A complete box replayed behind a fragmentainer clip retains all four
+/// border sides, which selects a different border primitive from a fragment
+/// whose block-start or block-end side is suppressed.
+fn materialize_leaf_block_slices(
+    fragment: &mut Fragment,
+    doc: &Document,
+    source_block_size: LayoutUnit,
+    writing_direction: WritingDirectionMode,
+) {
+    for child in &mut fragment.children {
+        if child.node_id.is_none()
+            || child.kind != FragmentKind::Box
+            || !child.children.is_empty()
+            || child.is_inline_box_fragment
+        {
+            continue;
+        }
+        let style = &doc.node(child.node_id).style;
+        if style.display != Display::Block
+            || style.position != Position::Static
+            || style.float != Float::None
+            || style.break_inside.is_avoid()
+            || style.box_decoration_break == BoxDecorationBreak::Clone
+            || style.transform != openui_style::Transform2D::IDENTITY
+            || node_is_monolithic_for_fragmentation(doc, child.node_id)
+        {
+            continue;
+        }
+        let start = child.offset.top;
+        let original_height = child.size.height;
+        let visible_start = start.max_of(LayoutUnit::zero());
+        let visible_end = (start + original_height).min_of(source_block_size);
+        if visible_end <= visible_start {
+            continue;
+        }
+        let consumed = visible_start - start;
+        let original_source_size = child
+            .decoration_slice
+            .map_or(original_height, |slice| slice.source_block_size);
+        let source_offset = child
+            .decoration_slice
+            .map_or(LayoutUnit::zero(), |slice| slice.source_block_offset)
+            + consumed;
+        if consumed == LayoutUnit::zero() && visible_end - visible_start == original_height {
+            continue;
+        }
+        child.offset.top = visible_start;
+        child.size.height = visible_end - visible_start;
+        child.decoration_slice = Some(crate::fragment::DecorationSlice {
+            source_block_offset: source_offset,
+            source_block_size: original_source_size,
+        });
+        child.is_first_for_node &= source_offset == LayoutUnit::zero();
+        child.is_last_for_node &= source_offset + child.size.height >= original_source_size;
+        child.fragmentation_writing_direction = Some(writing_direction);
+    }
+}
+
 /// Keep an already-sliced visual translation in fragment-local coordinates
 /// when an ordinary ancestor is shifted to expose the next source slice.
 ///
@@ -30684,6 +30743,20 @@ fn layout_multicol(
                                 }
                                 part.skip_box_decoration = true;
                             }
+                            // Flex/grid items retain geometry assigned by
+                            // their own fragmentation algorithms, including
+                            // parallel overflow across forced breaks. Only
+                            // ordinary block containers materialize these
+                            // empty normal-flow descendants from a source
+                            // slice here.
+                            if child_style.display == Display::Block {
+                                materialize_leaf_block_slices(
+                                    &mut part,
+                                    doc,
+                                    visual_part_height,
+                                    space.writing_direction,
+                                );
+                            }
                             let transform = child_style.transform;
                             let has_nontranslated_transform = transform
                                 != openui_style::Transform2D::IDENTITY
@@ -33503,6 +33576,68 @@ mod tests {
             .children
             .iter()
             .find_map(|child| fragment_for_node(child, node_id))
+    }
+
+    #[test]
+    fn empty_bordered_block_retains_its_own_column_continuations() {
+        let mut doc = Document::new();
+        let root = doc.root();
+        let columns = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(columns, |style| {
+            style.display = Display::Block;
+            style.width = Length::px(300.0);
+            style.column_count = Some(3);
+            style.column_gap = Some(Length::px(24.0));
+        });
+        doc.append_child(root, columns);
+        let wrapper = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(wrapper, |style| {
+            style.display = Display::Block;
+            style.max_height = Length::px(160.0);
+        });
+        doc.append_child(columns, wrapper);
+        let bordered = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(bordered, |style| {
+            style.display = Display::Block;
+            style.width = Length::px(50.0);
+            style.height = Length::px(200.0);
+            style.border_top_width = 3;
+            style.border_right_width = 3;
+            style.border_bottom_width = 3;
+            style.border_left_width = 3;
+            style.border_top_style = BorderStyle::Solid;
+            style.border_right_style = BorderStyle::Solid;
+            style.border_bottom_style = BorderStyle::Solid;
+            style.border_left_style = BorderStyle::Solid;
+        });
+        doc.append_child(wrapper, bordered);
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(320), LayoutUnit::from_i32(300));
+        let fragment = block_layout(&doc, root, &space);
+        let columns = fragment_for_node(&fragment, columns).unwrap();
+        let continuations: Vec<_> = columns
+            .children
+            .iter()
+            .filter_map(|column| fragment_for_node(column, bordered))
+            .collect();
+        assert_eq!(continuations.len(), 3);
+        assert_eq!(
+            continuations
+                .iter()
+                .map(|part| (part.is_first_for_node, part.is_last_for_node))
+                .collect::<Vec<_>>(),
+            [(true, false), (false, false), (false, true)],
+        );
+        let mut consumed = LayoutUnit::zero();
+        for part in continuations {
+            let slice = part.decoration_slice.unwrap();
+            assert_eq!(slice.source_block_offset, consumed);
+            assert_eq!(slice.source_block_size, LayoutUnit::from_i32(206));
+            assert_eq!(part.offset.top, LayoutUnit::zero());
+            assert_eq!(part.size.width, LayoutUnit::from_i32(56));
+            assert!(part.size.height > LayoutUnit::zero());
+            consumed = consumed + part.size.height;
+        }
+        assert_eq!(consumed, LayoutUnit::from_i32(206));
     }
 
     #[test]
