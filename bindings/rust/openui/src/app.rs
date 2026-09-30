@@ -282,7 +282,8 @@ impl openui_platform::PlatformApplication for App {
                 self.document.dispatch_composition_update(&text)
             }
             PlatformEvent::CompositionEnd(text) => self.document.dispatch_composition_end(&text),
-            PlatformEvent::Focused(_)
+            PlatformEvent::Focused(false) => self.document.dispatch_composition_cancel(),
+            PlatformEvent::Focused(true)
             | PlatformEvent::DroppedFile(_)
             | PlatformEvent::HoveredFile(_)
             | PlatformEvent::HoveredFileCancelled
@@ -686,6 +687,40 @@ mod tests {
         .unwrap();
         let frame = PlatformApplication::render(&mut app, 0.0).unwrap();
         assert_eq!((frame.width, frame.height), (480, 240));
+    }
+
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[test]
+    fn native_ime_commits_after_empty_preview_and_cancels_on_window_focus_loss() {
+        use openui_platform::{PlatformApplication, PlatformEvent};
+        let mut app = App::builder().build().unwrap();
+        let input = crate::Element::create(app.document(), "input").unwrap();
+        app.document().body().append_child(&input).unwrap();
+        input.focus().unwrap();
+        for event in [
+            PlatformEvent::CompositionStart,
+            PlatformEvent::CompositionUpdate("e".into()),
+            PlatformEvent::CompositionUpdate(String::new()),
+            PlatformEvent::CompositionEnd("é".into()),
+        ] {
+            app.event(event).unwrap();
+        }
+        assert_eq!(input.control_value().unwrap().as_deref(), Some("é"));
+        let before = app.render(0.0).unwrap();
+        app.event(PlatformEvent::CompositionStart).unwrap();
+        app.event(PlatformEvent::CompositionUpdate("preview".into()))
+            .unwrap();
+        app.render(0.0).unwrap();
+        assert!(!app.needs_redraw());
+        app.event(PlatformEvent::Focused(false)).unwrap();
+        assert!(app.needs_redraw());
+        let after = app.render(0.0).unwrap();
+        assert_eq!(input.control_value().unwrap().as_deref(), Some("é"));
+        assert_eq!(before.pixels, after.pixels);
+        assert!(!app.needs_redraw());
+        app.event(PlatformEvent::CompositionEnd("late commit".into()))
+            .unwrap();
+        assert_eq!(input.control_value().unwrap().as_deref(), Some("é"));
     }
 
     #[cfg(all(feature = "linux", target_os = "linux"))]

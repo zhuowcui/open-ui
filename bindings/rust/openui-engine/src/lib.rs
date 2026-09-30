@@ -810,7 +810,7 @@ impl Engine {
             *self.document.node_mut(duplicate_node) = data;
             self.slots[duplicate.index as usize].authored = authored;
             if let Some(mut control) = control {
-                control.composition = None;
+                control.clear_composition();
                 self.controls.insert(duplicate.index, control);
             }
             if let Some(semantics) = semantics {

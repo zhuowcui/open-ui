@@ -523,6 +523,60 @@ impl NativeClipboard {
     }
 }
 
+#[derive(Default)]
+struct ImeState {
+    enabled: bool,
+    focused: bool,
+    composing: bool,
+}
+
+impl ImeState {
+    fn focus_changed(&mut self, focused: bool) -> Option<PlatformEvent> {
+        self.focused = focused;
+        if !focused && std::mem::take(&mut self.composing) {
+            Some(PlatformEvent::CompositionEnd(String::new()))
+        } else {
+            None
+        }
+    }
+
+    fn events(&mut self, ime: Ime) -> Vec<PlatformEvent> {
+        match ime {
+            Ime::Enabled => {
+                self.enabled = true;
+                Vec::new()
+            }
+            Ime::Disabled => {
+                self.enabled = false;
+                if std::mem::take(&mut self.composing) {
+                    vec![PlatformEvent::CompositionEnd(String::new())]
+                } else {
+                    Vec::new()
+                }
+            }
+            Ime::Preedit(text, _) if self.enabled && self.focused => {
+                let mut events = Vec::new();
+                if !self.composing && !text.is_empty() {
+                    self.composing = true;
+                    events.push(PlatformEvent::CompositionStart);
+                }
+                if self.composing {
+                    events.push(PlatformEvent::CompositionUpdate(text));
+                }
+                events
+            }
+            Ime::Commit(text) if self.enabled && self.focused => {
+                vec![if std::mem::take(&mut self.composing) {
+                    PlatformEvent::CompositionEnd(text)
+                } else {
+                    PlatformEvent::TextInput(text)
+                }]
+            }
+            Ime::Preedit(_, _) | Ime::Commit(_) => Vec::new(),
+        }
+    }
+}
+
 struct Runtime<A: PlatformApplication> {
     application: A,
     options: WindowOptions,
@@ -535,7 +589,7 @@ struct Runtime<A: PlatformApplication> {
     cursor: LogicalPosition<f64>,
     scale_factor: f64,
     modifiers: Modifiers,
-    composing: bool,
+    ime: ImeState,
     started: Instant,
     error: Option<PlatformError>,
     presented_frames: u64,
@@ -940,37 +994,20 @@ impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
                     meta: state.super_key(),
                 };
             }
-            WindowEvent::Ime(ime) => match ime {
-                Ime::Enabled => {}
-                Ime::Preedit(text, _) => {
-                    if !self.composing && !text.is_empty() {
-                        self.composing = self.send(event_loop, PlatformEvent::CompositionStart);
+            WindowEvent::Ime(ime) => {
+                for event in self.ime.events(ime) {
+                    if !self.send(event_loop, event) {
+                        break;
                     }
-                    if self.composing
-                        && self.send(event_loop, PlatformEvent::CompositionUpdate(text))
-                    {
-                        self.request_redraw();
-                    }
+                    self.request_redraw();
                 }
-                Ime::Commit(text) => {
-                    let event = if self.composing {
-                        self.composing = false;
-                        PlatformEvent::CompositionEnd(text)
-                    } else {
-                        PlatformEvent::TextInput(text)
-                    };
-                    if self.send(event_loop, event) {
-                        self.request_redraw();
-                    }
-                }
-                Ime::Disabled => {
-                    if self.composing {
-                        self.composing = false;
-                        let _ = self.send(event_loop, PlatformEvent::CompositionEnd(String::new()));
-                    }
-                }
-            },
+            }
             WindowEvent::Focused(focused) => {
+                if let Some(event) = self.ime.focus_changed(focused) {
+                    if !self.send(event_loop, event) {
+                        return;
+                    }
+                }
                 if self.send(event_loop, PlatformEvent::Focused(focused)) {
                     self.request_redraw();
                 }
@@ -1024,7 +1061,7 @@ pub fn run<A: PlatformApplication>(
         cursor: LogicalPosition::new(0.0, 0.0),
         scale_factor: 1.0,
         modifiers: Modifiers::default(),
-        composing: false,
+        ime: ImeState::default(),
         started: Instant::now(),
         error: None,
         presented_frames: 0,
@@ -1161,6 +1198,55 @@ fn empty_tree_update() -> accesskit::TreeUpdate {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn ime_normalization_preserves_commit_after_the_synthetic_empty_preview() {
+        let mut state = ImeState::default();
+        state.focus_changed(true);
+        assert!(state.events(Ime::Enabled).is_empty());
+        assert!(matches!(
+            state.events(Ime::Preedit("e".into(), Some((1, 1)))).as_slice(),
+            [PlatformEvent::CompositionStart, PlatformEvent::CompositionUpdate(text)] if text == "e"
+        ));
+        assert!(matches!(
+            state.events(Ime::Preedit(String::new(), None)).as_slice(),
+            [PlatformEvent::CompositionUpdate(text)] if text.is_empty()
+        ));
+        assert!(matches!(
+            state.events(Ime::Commit("é".into())).as_slice(),
+            [PlatformEvent::CompositionEnd(text)] if text == "é"
+        ));
+        assert!(matches!(
+            state.events(Ime::Commit("direct".into())).as_slice(),
+            [PlatformEvent::TextInput(text)] if text == "direct"
+        ));
+    }
+
+    #[test]
+    fn ime_focus_loss_and_disable_cancel_without_inserting_a_late_commit() {
+        let mut state = ImeState::default();
+        state.focus_changed(true);
+        state.events(Ime::Enabled);
+        state.events(Ime::Preedit("preview".into(), Some((0, 0))));
+        assert!(matches!(
+            state.focus_changed(false),
+            Some(PlatformEvent::CompositionEnd(text)) if text.is_empty()
+        ));
+        assert!(state.events(Ime::Commit("late".into())).is_empty());
+        state.focus_changed(true);
+        assert!(matches!(
+            state.events(Ime::Preedit("new".into(), Some((0, 0)))).as_slice(),
+            [PlatformEvent::CompositionStart, PlatformEvent::CompositionUpdate(text)] if text == "new"
+        ));
+        assert!(matches!(
+            state.events(Ime::Disabled).as_slice(),
+            [PlatformEvent::CompositionEnd(text)] if text.is_empty()
+        ));
+        assert!(state.events(Ime::Commit("late".into())).is_empty());
+        assert!(state
+            .events(Ime::Preedit("late".into(), Some((0, 0))))
+            .is_empty());
+    }
 
     #[test]
     fn character_keys_do_not_alias_navigation_and_editing_keys() {

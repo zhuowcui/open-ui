@@ -40,7 +40,7 @@ The current v0.2 release candidate has:
   remains a failure in the [latest full expanded report](docs/renderer/generated/expanded-requalification-v24.json).
   The other 35 AST-lowered cases remain pending;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
-- 43 application scenarios covering retained updates, controls, editing,
+- 50 application scenarios covering retained updates, controls, editing,
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;

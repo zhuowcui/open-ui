@@ -40,6 +40,7 @@ scrolling, controls, and event dispatch operate directly on the native engine:
 | Handle input or activate an element | `Element::on`, `on_capture`, `click`; Rust callbacks in `view!` |
 | Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `bounding_rect`; `Document::hit_test` |
 | Update form controls or details | `set_control_value`, `set_selection`, `set_checked`, `set_open` |
+| Inject or cancel native IME input | `Document::dispatch_composition_start`, `dispatch_composition_update`, `dispatch_composition_end`, `dispatch_composition_cancel` |
 
 These methods operate on the same retained document as rendering and native
 input. Open UI does not promise browser-compatible names or the entire Web API

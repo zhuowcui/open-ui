@@ -1772,7 +1772,8 @@ fn dispatch_event_to(
             }
             8 => borrow_engine_mut(state)?.insert_text(target, &text)?,
             10 => borrow_engine_mut(state)?.update_composition(target, &text)?,
-            11 => borrow_engine_mut(state)?.finish_composition(target)?,
+            11 if text.is_empty() => borrow_engine_mut(state)?.cancel_composition(target)?,
+            11 => borrow_engine_mut(state)?.commit_composition(target, &text)?,
             12 => {
                 borrow_engine_mut(state)?.focus_with_origin(target, FocusOrigin::Accessibility)?;
             }
@@ -4207,6 +4208,48 @@ mod tests {
 
         assert_eq!(oui_element_destroy(input), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(checkbox), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_composition_dispatch_commits_final_text_and_restores_canceled_edits() {
+        let document = create_document(100, 100);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let input = create_element(document, 23, root);
+        assert_eq!(
+            oui_element_set_control_value(input, text("kept")),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_element_set_selection(input, 0, 4), OuiStatus::Ok);
+        for (kind, value) in [(9, ""), (10, "preview"), (10, ""), (11, "漢字")] {
+            let mut event = event(kind, value);
+            assert_eq!(
+                oui_document_dispatch_event(document, input, &mut event),
+                OuiStatus::Ok
+            );
+        }
+        let mut bytes = vec![0; "漢字".len()];
+        let mut written = 0;
+        assert_eq!(
+            oui_element_copy_control_value(input, bytes.as_mut_ptr(), bytes.len(), &mut written),
+            OuiStatus::Ok
+        );
+        assert_eq!(std::str::from_utf8(&bytes).unwrap(), "漢字");
+        for (kind, value) in [(9, ""), (10, "preview"), (11, "")] {
+            let mut event = event(kind, value);
+            assert_eq!(
+                oui_document_dispatch_event(document, input, &mut event),
+                OuiStatus::Ok
+            );
+        }
+        assert_eq!(
+            oui_element_copy_control_value(input, bytes.as_mut_ptr(), bytes.len(), &mut written),
+            OuiStatus::Ok
+        );
+        assert_eq!(std::str::from_utf8(&bytes).unwrap(), "漢字");
+        assert_eq!(oui_element_destroy(input), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
     }

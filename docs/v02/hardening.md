@@ -3,7 +3,7 @@
 The versioned application suite is defined by
 `tools/conformance/v02-scenarios.json`. Its verifier requires at least 30
 unique scenarios, complete coverage of ten product domains, and exact parity
-with the public Rust integration tests. The current suite contains 36
+with the public Rust integration tests. The current suite contains 50
 scenarios. It covers retained lifecycle and ownership, large mutations, core
 controls, pointer and keyboard routing, Unicode editing, IME, clipboard,
 focus, scrolling, typed animation timelines, accessibility, resources,
@@ -34,7 +34,7 @@ Those remain open until they run on the declared exclusive reference machine.
 ## Automated hardening
 
 The ordinary CI verifies the scenario manifest and performance schema. The
-hardening workflow runs all 41 scenarios, Mesa OpenGL on X11 through Xvfb, and
+hardening workflow runs all 50 scenarios, Mesa OpenGL on X11 through Xvfb, and
 software presentation on a pure headless Wayland compositor for pull requests.
 Its scheduled/manual jobs additionally compile the public headless and Linux
 surfaces at the Rust 1.85 MSRV, check C opaque-handle ownership under Miri,

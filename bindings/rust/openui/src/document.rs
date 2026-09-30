@@ -33,6 +33,8 @@ pub(crate) struct DocumentInner {
     pub listeners: RefCell<HashMap<ListenerKey, Vec<Listener>>>,
     pub resource_provider: RefCell<Option<Box<ResourceProvider>>>,
     pub clipboard: RefCell<String>,
+    composition_target: Cell<Option<NodeHandle>>,
+    composition_generation: Cell<u64>,
     animation_events: RefCell<Vec<AnimationEvent>>,
     transaction_depth: Cell<usize>,
     #[cfg(feature = "ffi-integration")]
@@ -73,6 +75,8 @@ impl Document {
                 listeners: RefCell::new(HashMap::new()),
                 resource_provider: RefCell::new(None),
                 clipboard: RefCell::new(String::new()),
+                composition_target: Cell::new(None),
+                composition_generation: Cell::new(0),
                 animation_events: RefCell::new(Vec::new()),
                 transaction_depth: Cell::new(0),
                 #[cfg(feature = "ffi-integration")]
@@ -93,6 +97,8 @@ impl Document {
                 listeners: RefCell::new(HashMap::new()),
                 resource_provider: RefCell::new(None),
                 clipboard: RefCell::new(String::new()),
+                composition_target: Cell::new(None),
+                composition_generation: Cell::new(0),
                 animation_events: RefCell::new(Vec::new()),
                 transaction_depth: Cell::new(0),
                 foreign_event_handler: RefCell::new(None),
@@ -785,23 +791,15 @@ impl Document {
         let Some(target) = self.with_engine(|engine| engine.focused())? else {
             return Ok(());
         };
-        let editable = self.with_engine(|engine| {
-            engine.control_state(target).map(|state| {
-                state.is_some_and(|state| {
-                    !state.disabled
-                        && matches!(
-                            state.role,
-                            FormControlRole::TextInput | FormControlRole::TextArea
-                        )
-                })
-            })
-        })??;
-        if !editable {
+        if !self.is_editable_target(target)? {
             return Ok(());
         }
         let before = Event::keyboard("beforeinput", 0, Some(text), Modifiers::NONE);
         self.dispatch_to(target, &before)?;
-        if !before.default_prevented() {
+        if !before.default_prevented()
+            && self.with_engine(Engine::focused)? == Some(target)
+            && self.is_editable_target(target)?
+        {
             self.with_engine_mut(|engine| engine.insert_text(target, text))?;
             self.dispatch_to(
                 target,
@@ -811,35 +809,120 @@ impl Document {
         Ok(())
     }
 
+    /// Begin an IME edit on the focused, enabled text control. Focus changes
+    /// cancel the edit; later updates cannot move it to a different control.
     pub fn dispatch_composition_start(&self) -> Result<(), Error> {
-        if let Some(target) = self.with_engine(|engine| engine.focused())? {
-            self.dispatch_to(target, &Event::composition("compositionstart", ""))?;
+        self.dispatch_composition_cancel()?;
+        let Some(target) = self.with_engine(Engine::focused)? else {
+            return Ok(());
+        };
+        if !self.is_editable_target(target)? {
+            return Ok(());
+        }
+        let generation = self.inner.composition_generation.get().wrapping_add(1);
+        self.inner.composition_generation.set(generation);
+        self.inner.composition_target.set(Some(target));
+        let event = Event::composition("compositionstart", "");
+        self.dispatch_to(target, &event)?;
+        if event.default_prevented() && self.inner.composition_generation.get() == generation {
+            self.dispatch_composition_cancel()?;
         }
         Ok(())
     }
 
+    /// Replace the active edit's preview. An empty preview clears its visible
+    /// text while retaining the edit for a later commit or cancellation.
     pub fn dispatch_composition_update(&self, text: &str) -> Result<(), Error> {
-        let Some(target) = self.with_engine(|engine| engine.focused())? else {
+        let Some(target) = self.active_composition_target()? else {
             return Ok(());
         };
+        let generation = self.inner.composition_generation.get();
         let event = Event::composition("compositionupdate", text);
         self.dispatch_to(target, &event)?;
-        if !event.default_prevented() {
+        if !event.default_prevented()
+            && self.inner.composition_generation.get() == generation
+            && self.active_composition_target()? == Some(target)
+        {
             self.with_engine_mut(|engine| engine.update_composition(target, text))?;
         }
         Ok(())
     }
 
+    /// Commit the final text, which may differ from the last preview. Empty
+    /// text cancels the edit. A native `beforeinput` callback may cancel it too.
     pub fn dispatch_composition_end(&self, text: &str) -> Result<(), Error> {
-        let Some(target) = self.with_engine(|engine| engine.focused())? else {
+        if text.is_empty() {
+            return self.dispatch_composition_cancel();
+        }
+        let Some(target) = self.active_composition_target()? else {
             return Ok(());
         };
-        self.with_engine_mut(|engine| engine.finish_composition(target))?;
+        let generation = self.inner.composition_generation.get();
+        let before = Event::keyboard("beforeinput", 0, Some(text), Modifiers::NONE);
+        self.dispatch_to(target, &before)?;
+        if self.inner.composition_generation.get() != generation {
+            return Ok(());
+        }
+        if before.default_prevented() {
+            return self.dispatch_composition_cancel();
+        }
+        if self.active_composition_target()? != Some(target) {
+            return Ok(());
+        }
+        self.with_engine_mut(|engine| engine.commit_composition(target, text))?;
+        self.inner.composition_target.set(None);
         self.dispatch_to(target, &Event::composition("compositionend", text))?;
-        self.dispatch_to(
-            target,
-            &Event::keyboard("input", 0, Some(text), Modifiers::NONE),
-        )
+        if self.target_is_live(target)? {
+            self.dispatch_to(
+                target,
+                &Event::keyboard("input", 0, Some(text), Modifiers::NONE),
+            )?;
+        }
+        Ok(())
+    }
+
+    /// Cancel an active IME edit without generating an `input` event or an
+    /// undo entry. Native platform adapters also call this on focus loss.
+    pub fn dispatch_composition_cancel(&self) -> Result<(), Error> {
+        let Some(target) = self.inner.composition_target.take() else {
+            return Ok(());
+        };
+        if !self.target_is_live(target)? {
+            return Ok(());
+        }
+        self.with_engine_mut(|engine| engine.cancel_composition(target))?;
+        self.dispatch_to(target, &Event::composition("compositionend", ""))
+    }
+
+    fn active_composition_target(&self) -> Result<Option<NodeHandle>, Error> {
+        let Some(target) = self.inner.composition_target.get() else {
+            return Ok(None);
+        };
+        if self.with_engine(Engine::focused)? == Some(target) && self.is_editable_target(target)? {
+            return Ok(Some(target));
+        }
+        self.dispatch_composition_cancel()?;
+        Ok(None)
+    }
+
+    fn target_is_live(&self, target: NodeHandle) -> Result<bool, Error> {
+        self.with_engine(|engine| target.downgrade().upgrade(engine).is_ok())
+    }
+
+    fn is_editable_target(&self, target: NodeHandle) -> Result<bool, Error> {
+        self.with_engine(|engine| {
+            engine
+                .control_state(target)
+                .ok()
+                .flatten()
+                .is_some_and(|state| {
+                    !state.disabled
+                        && matches!(
+                            state.role,
+                            FormControlRole::TextInput | FormControlRole::TextArea
+                        )
+                })
+        })
     }
 
     pub fn clipboard_text(&self) -> Result<String, Error> {
@@ -1071,6 +1154,14 @@ impl Document {
     ) -> Result<(), Error> {
         if previous == next {
             return Ok(());
+        }
+        if self
+            .inner
+            .composition_target
+            .get()
+            .is_some_and(|target| Some(target) != next)
+        {
+            self.dispatch_composition_cancel()?;
         }
         if let Some(previous) = previous {
             self.dispatch_to(previous, &Event::keyboard("blur", 0, None, Modifiers::NONE))?;

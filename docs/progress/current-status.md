@@ -19,7 +19,7 @@ remain open.
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
-| Application conformance scenarios | 43 across 10 domains |
+| Application conformance scenarios | 50 across 10 domains |
 | Frozen / current C exports | 84 / 106 |
 | C examples / C++ consumers | 6 / 2, including native C/C++ window consumers |
 | Workspace tests | pass |
@@ -164,8 +164,13 @@ The public `Element::detach` and `TextNode::detach` operations now keep authored
 nodes available for reattachment while removing them from the presented
 document. A new conformance scenario checks element lookup, focus,
 reattachment, listener delivery, and eventual destruction; the text-node
-scenario now checks detachment and reattachment too. The conformance suite is
-43/43.
+scenario now checks detachment and reattachment too. That checkpoint's
+conformance suite was 43/43. Seven additional native IME scenarios now check
+final text after an empty preview, one-step undo, cancellation and selection
+restoration, disabled/noneditable controls, and callbacks that cancel, redirect,
+restart, or remove the target. The public `Document::dispatch_composition_cancel`
+method exposes cancellation directly to native Rust applications; the suite
+contains 50 scenarios. See [interaction and controls](../v02/interaction-controls.md).
 The append-only C `oui_element_detach` export uses the same engine operation
 for element and text handles. `oui_document_element_by_id` now provides owned
 handles for native C element lookup. ABI verification reports 106 current

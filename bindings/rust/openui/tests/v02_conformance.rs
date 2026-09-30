@@ -1,6 +1,6 @@
 use openui::prelude::*;
 use openui::{AccessibilityAction, AccessibilityRelation, KeyEventType, MouseEventType};
-use std::cell::Cell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
 fn document() -> Document {
@@ -428,6 +428,261 @@ fn ime_composition_commits_once() {
     document.dispatch_composition_update("かな").unwrap();
     document.dispatch_composition_end("かな").unwrap();
     assert_eq!(input.control_value().unwrap().as_deref(), Some("かな"));
+}
+
+#[test]
+fn ime_commits_final_text_after_platform_clears_preview_as_one_undo_step() {
+    let document = document();
+    let input = child(&document, "input");
+    input.set_control_value("leftかなright").unwrap();
+    input.set_selection(4, 10).unwrap();
+    input.focus().unwrap();
+    let events = Rc::new(RefCell::new(Vec::new()));
+    for name in ["beforeinput", "compositionend", "input"] {
+        let observed = events.clone();
+        let retained = input.clone();
+        input
+            .on(name, move |event| {
+                // Native callbacks can inspect and mutate this same document.
+                retained.set_attribute("data-last-event", name).unwrap();
+                observed.borrow_mut().push((
+                    event.event_type.clone(),
+                    event.key_text.clone(),
+                    retained.control_value().unwrap().unwrap(),
+                ));
+            })
+            .unwrap();
+    }
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("ka").unwrap();
+    document.dispatch_composition_update("kanji").unwrap();
+    // Winit sends an empty preview immediately before the final commit.
+    document.dispatch_composition_update("").unwrap();
+    document.dispatch_composition_end("漢字").unwrap();
+    assert_eq!(
+        input.control_value().unwrap().as_deref(),
+        Some("left漢字right")
+    );
+    assert_eq!(
+        events.borrow().as_slice(),
+        [
+            ("beforeinput".into(), "漢字".into(), "leftright".into()),
+            (
+                "compositionend".into(),
+                "漢字".into(),
+                "left漢字right".into()
+            ),
+            ("input".into(), "漢字".into(), "left漢字right".into()),
+        ]
+    );
+    assert_eq!(input.selection().unwrap(), Some((10, 10)));
+    assert!(input
+        .get_attribute("data-oui-composition-start")
+        .unwrap()
+        .is_none());
+    document
+        .dispatch_key_event(KeyEventType::Down, 90, Some("z"), Modifiers::CTRL)
+        .unwrap();
+    assert_eq!(
+        input.control_value().unwrap().as_deref(),
+        Some("leftかなright")
+    );
+    document
+        .dispatch_key_event(
+            KeyEventType::Down,
+            90,
+            Some("z"),
+            Modifiers::CTRL | Modifiers::SHIFT,
+        )
+        .unwrap();
+    assert_eq!(
+        input.control_value().unwrap().as_deref(),
+        Some("left漢字right")
+    );
+    for name in ["beforeinput", "compositionend", "input"] {
+        input.remove_event(name).unwrap();
+    }
+}
+
+#[test]
+fn ime_cancel_restores_selection_pixels_and_existing_redo() {
+    let document = document();
+    let input = child(&document, "input");
+    input.set_control_value("original").unwrap();
+    input.focus().unwrap();
+    document.dispatch_text_input("!").unwrap();
+    document
+        .dispatch_key_event(KeyEventType::Down, 90, Some("z"), Modifiers::CTRL)
+        .unwrap();
+    input.set_selection(6, 2).unwrap();
+    let before = document.render_to_bitmap().unwrap();
+    let inputs = Rc::new(Cell::new(0));
+    let observed = inputs.clone();
+    input
+        .on("input", move |_| observed.set(observed.get() + 1))
+        .unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("仮").unwrap();
+    document.dispatch_composition_update("preview").unwrap();
+    document.dispatch_composition_cancel().unwrap();
+    assert_eq!(input.control_value().unwrap().as_deref(), Some("original"));
+    assert_eq!(input.selection().unwrap(), Some((2, 6)));
+    assert_eq!(inputs.get(), 0);
+    assert!(input
+        .get_attribute("data-oui-composition-start")
+        .unwrap()
+        .is_none());
+    assert_eq!(
+        before.pixels(),
+        document.render_to_bitmap().unwrap().pixels()
+    );
+    document
+        .dispatch_key_event(
+            KeyEventType::Down,
+            90,
+            Some("z"),
+            Modifiers::CTRL | Modifiers::SHIFT,
+        )
+        .unwrap();
+    assert_eq!(input.control_value().unwrap().as_deref(), Some("original!"));
+}
+
+#[test]
+fn ime_ignores_noneditable_controls_and_cancels_when_disabled() {
+    let document = document();
+    let button = child(&document, "button");
+    button.focus().unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("preview").unwrap();
+    document.dispatch_composition_end("committed").unwrap();
+    let input = child(&document, "input");
+    input.set_control_value("kept").unwrap();
+    input.focus().unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("preview").unwrap();
+    input.set_attribute("disabled", "").unwrap();
+    document.dispatch_composition_end("committed").unwrap();
+    assert_eq!(input.control_value().unwrap().as_deref(), Some("kept"));
+}
+
+#[test]
+fn ime_commit_can_be_canceled_by_a_native_beforeinput_callback() {
+    let document = document();
+    let input = child(&document, "input");
+    input.set_control_value("kept").unwrap();
+    input.set_selection(0, 4).unwrap();
+    input.focus().unwrap();
+    input
+        .on("beforeinput", |event| event.prevent_default())
+        .unwrap();
+    let inputs = Rc::new(Cell::new(0));
+    let observed = inputs.clone();
+    input
+        .on("input", move |_| observed.set(observed.get() + 1))
+        .unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("preview").unwrap();
+    document.dispatch_composition_end("committed").unwrap();
+    assert_eq!(input.control_value().unwrap().as_deref(), Some("kept"));
+    assert_eq!(input.selection().unwrap(), Some((0, 4)));
+    assert_eq!(inputs.get(), 0);
+
+    input.remove_event("beforeinput").unwrap();
+    let retained = document.clone();
+    input
+        .on("compositionstart", move |event| {
+            retained
+                .dispatch_composition_update("reentrant preview")
+                .unwrap();
+            event.prevent_default();
+        })
+        .unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_end("ignored commit").unwrap();
+    assert_eq!(input.control_value().unwrap().as_deref(), Some("kept"));
+    assert_eq!(inputs.get(), 0);
+    input.remove_event("compositionstart").unwrap();
+}
+
+#[test]
+fn ime_callbacks_cannot_redirect_an_edit_to_a_different_focused_control() {
+    let document = document();
+    let first = child(&document, "input");
+    let second = child(&document, "input");
+    first.set_control_value("first").unwrap();
+    second.set_control_value("second").unwrap();
+    first.focus().unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("preview").unwrap();
+    let next = second.clone();
+    first
+        .on("beforeinput", move |_| next.focus().unwrap())
+        .unwrap();
+    document.dispatch_composition_end("committed").unwrap();
+    document
+        .dispatch_composition_update("late preview")
+        .unwrap();
+    document.dispatch_composition_end("late commit").unwrap();
+    assert_eq!(first.control_value().unwrap().as_deref(), Some("first"));
+    assert_eq!(second.control_value().unwrap().as_deref(), Some("second"));
+    first.remove_event("beforeinput").unwrap();
+}
+
+#[test]
+fn ime_callback_restarting_the_same_control_keeps_the_new_edit() {
+    let document = document();
+    let input = child(&document, "input");
+    input.focus().unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("old preview").unwrap();
+    let restarted = Rc::new(Cell::new(false));
+    let once = restarted.clone();
+    let retained = document.clone();
+    input
+        .on("beforeinput", move |_| {
+            if !once.replace(true) {
+                retained.dispatch_composition_start().unwrap();
+                retained.dispatch_composition_update("new preview").unwrap();
+            }
+        })
+        .unwrap();
+    document.dispatch_composition_end("old commit").unwrap();
+    assert!(restarted.get());
+    assert_eq!(
+        input.control_value().unwrap().as_deref(),
+        Some("new preview")
+    );
+    document.dispatch_composition_end("new commit").unwrap();
+    assert_eq!(
+        input.control_value().unwrap().as_deref(),
+        Some("new commit")
+    );
+    input.remove_event("beforeinput").unwrap();
+}
+
+#[test]
+fn ime_callbacks_may_remove_the_target_without_terminating_input_dispatch() {
+    let document = document();
+    let input = child(&document, "input");
+    input.focus().unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("preview").unwrap();
+    let removed = input.clone();
+    input
+        .on("beforeinput", move |_| removed.remove().unwrap())
+        .unwrap();
+    document.dispatch_composition_end("committed").unwrap();
+    assert!(document.focused_element().unwrap().is_none());
+
+    let input = child(&document, "input");
+    input.focus().unwrap();
+    document.dispatch_composition_start().unwrap();
+    let removed = input.clone();
+    input
+        .on("compositionend", move |_| removed.remove().unwrap())
+        .unwrap();
+    document.dispatch_composition_end("committed").unwrap();
+    assert!(document.focused_element().unwrap().is_none());
 }
 
 #[test]
