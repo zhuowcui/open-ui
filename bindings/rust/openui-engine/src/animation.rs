@@ -634,16 +634,13 @@ impl Engine {
             } => {
                 let node = self.resolve(subject)?;
                 let position = self
-                    .hit_test
-                    .iter()
-                    .rev()
-                    .find(|entry| entry.node == node)
-                    .map(|entry| match axis {
+                    .node_bounds(node)
+                    .map(|bounds| match axis {
                         TimelineAxis::Inline | TimelineAxis::X => {
-                            entry.local_to_world.map(entry.width * 0.5, 0.0).0 as f64
+                            (bounds.x + bounds.width * 0.5) as f64
                         }
                         TimelineAxis::Block | TimelineAxis::Y => {
-                            entry.local_to_world.map(0.0, entry.height * 0.5).1 as f64
+                            (bounds.y + bounds.height * 0.5) as f64
                         }
                     })
                     .unwrap_or_default();

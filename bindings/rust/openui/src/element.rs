@@ -522,6 +522,18 @@ impl Element {
             .perform_accessibility_action(self.handle, action)
     }
 
+    /// Owned border-box rectangles for every layout fragment, in logical
+    /// viewport coordinates after scrolling and transforms. Includes empty,
+    /// hidden, clipped, and pointer-ineligible boxes. Detached elements and
+    /// `display: none` elements return an empty list. Reading flushes layout.
+    pub fn client_rects(&self) -> Result<Vec<Rect>, Error> {
+        self.document
+            .with_engine_mut(|engine| engine.client_rects(self.handle))
+    }
+
+    /// Bounds of all nonempty layout fragments in logical viewport
+    /// coordinates. Returns the first rectangle when every fragment is
+    /// empty, and `None` when the element has no layout box.
     pub fn bounding_rect(&self) -> Result<Option<Rect>, Error> {
         self.document
             .with_engine_mut(|engine| engine.bounds(self.handle))

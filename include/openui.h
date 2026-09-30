@@ -876,6 +876,13 @@ OuiStatus oui_element_set_property(OuiElement* element, OuiStyleProperty propert
 OuiStatus oui_element_animate(OuiElement* element, OuiStyleProperty property, const OuiKeyframe* keyframes, size_t keyframe_count, const OuiAnimationOptions* options, const OuiAnimationTimeline* timeline, uint64_t* out_animation_id);
 OuiStatus oui_element_transition(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* target, const OuiAnimationOptions* options, uint64_t* out_animation_id);
 OuiStatus oui_element_get_bounds(OuiElement* element, OuiRect* out_rect);
+/* Logical viewport border boxes in layout order after scroll/transforms.
+ * Includes hidden, empty and pointer-ineligible boxes; excludes detached and
+ * display:none elements. rects=NULL, capacity=0 queries the required count.
+ * On OUI_ERROR_BUFFER_TOO_SMALL, out_count is updated and rects remains untouched.
+ * Copies are caller-owned. Layout may change between the count and copy calls.
+ * out_count and rects must be writable, nonoverlapping caller storage. */
+OuiStatus oui_element_get_client_rects_v1(OuiElement* element, OuiRect* rects, size_t capacity, size_t* out_count);
 OuiStatus oui_element_scroll_to(OuiElement* element, double x, double y);
 OuiStatus oui_element_get_scroll_offset(OuiElement* element, double* out_x, double* out_y);
 OuiStatus oui_element_focus(OuiElement* element);
@@ -910,7 +917,9 @@ OuiStatus oui_corner_radii_create(const OuiLength values[4], OuiStyleCompound** 
 OuiStatus oui_transform_create(const OuiTransformOperation* operations, size_t operation_count, OuiStyleCompound** out_compound);
 /* Parses one schema-typed literal. If tag is OUI_STYLE_VALUE_COMPOUND, the
  * returned payload is owned by the caller and must be destroyed with
- * oui_style_compound_destroy after the value has been submitted. */
+ * oui_style_compound_destroy after the value has been submitted.
+ * ColumnCount uses the integer payload: 0 means auto, positive means count.
+ * Parsed C counts must fit int32_t; negative payloads are invalid. */
 OuiStatus oui_style_value_parse(OuiStyleProperty property, OuiUtf8 literal, OuiStyleValue* out_value);
 OuiStatus oui_style_compound_destroy(OuiStyleCompound* compound);
 

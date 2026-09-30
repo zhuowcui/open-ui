@@ -131,6 +131,162 @@ fn native_layout_read_then_id_style_mutation_updates_the_same_document() {
 }
 
 #[test]
+fn native_geometry_includes_all_column_fragments() {
+    let document = document();
+    let columns = child(&document, "div");
+    columns.set_display(Display::Block).unwrap();
+    columns.set_width(LengthValue::px(300.0)).unwrap();
+    columns.set_column_count(Some(3)).unwrap();
+    columns.set_column_gap(LengthValue::px(24.0)).unwrap();
+    let wrapper = Element::create(&document, "div").unwrap();
+    wrapper.set_display(Display::Block).unwrap();
+    wrapper.set_max_height(LengthValue::px(160.0)).unwrap();
+    columns.append_child(&wrapper).unwrap();
+    let target = Element::create(&document, "div").unwrap();
+    sized(&target, 50.0, 200.0);
+    target
+        .set_border(Border {
+            width: 3.0,
+            style: BorderStyle::Solid,
+            color: Color::BLACK,
+        })
+        .unwrap();
+    wrapper.append_child(&target).unwrap();
+    target.set_accessibility_label("column target").unwrap();
+
+    let bounds = target.bounding_rect().unwrap().unwrap();
+    assert_eq!(bounds.x, 0.0);
+    assert_eq!(bounds.y, 0.0);
+    assert_eq!(bounds.width, 272.0);
+    assert_eq!(bounds.height, 68.671875);
+    assert_eq!(target.width().unwrap(), 272.0);
+    assert_eq!(target.height().unwrap(), 68.671875);
+    let tree = document.accessibility_update().unwrap();
+    let accessible = tree
+        .nodes
+        .iter()
+        .find(|(_, node)| node.label() == Some("column target"))
+        .unwrap();
+    let accessible_bounds = accessible.1.bounds().unwrap();
+    assert_eq!(
+        (
+            accessible_bounds.x0,
+            accessible_bounds.y0,
+            accessible_bounds.x1,
+            accessible_bounds.y1
+        ),
+        (0.0, 0.0, 272.0, 68.671875)
+    );
+    let rects = target.client_rects().unwrap();
+    assert_eq!(rects.len(), 3);
+    assert_eq!(
+        rects
+            .iter()
+            .map(|rect| (rect.x, rect.y, rect.width, rect.height))
+            .collect::<Vec<_>>(),
+        [
+            (0.0, 0.0, 56.0, 68.671875),
+            (108.0, 0.0, 56.0, 68.671875),
+            (216.0, 0.0, 56.0, 68.65625)
+        ]
+    );
+}
+
+#[test]
+fn native_geometry_is_independent_of_pointer_and_visibility() {
+    let document = document();
+    let target = child(&document, "div");
+    sized(&target, 80.0, 30.0);
+    let initial = target.bounding_rect().unwrap().unwrap();
+    target.set_pointer_events(PointerEvents::None).unwrap();
+    assert_eq!(target.bounding_rect().unwrap(), Some(initial));
+    assert_eq!(target.client_rects().unwrap(), [initial]);
+    target.set_visibility(Visibility::Hidden).unwrap();
+    assert_eq!(target.bounding_rect().unwrap(), Some(initial));
+    target.set_display(Display::None).unwrap();
+    assert!(target.bounding_rect().unwrap().is_none());
+    assert!(target.client_rects().unwrap().is_empty());
+}
+
+#[test]
+fn native_geometry_preserves_empty_and_singular_boxes() {
+    let document = document();
+    let target = child(&document, "div");
+    target.set_id("collapsed").unwrap();
+    sized(&target, 0.0, 30.0);
+    let bounds = target.bounding_rect().unwrap().unwrap();
+    assert_eq!((bounds.width, bounds.height), (0.0, 30.0));
+    assert_eq!(target.client_rects().unwrap(), [bounds]);
+    sized(&target, 80.0, 30.0);
+    target
+        .set_transform(TransformList(vec![TransformOperation::Scale(0.0, 1.0)]))
+        .unwrap();
+    let bounds = target.bounding_rect().unwrap().unwrap();
+    assert_eq!(
+        (bounds.x, bounds.y, bounds.width, bounds.height),
+        (40.0, 0.0, 0.0, 30.0)
+    );
+    assert_eq!(target.client_rects().unwrap(), [bounds]);
+    assert!(!document
+        .hit_test(40.0, 5.0)
+        .unwrap()
+        .is_some_and(|hit| { hit.get_attribute("id").unwrap().as_deref() == Some("collapsed") }));
+}
+
+#[test]
+fn native_geometry_updates_after_scroll_transform_and_detachment() {
+    let document = document();
+    let scroller = child(&document, "div");
+    sized(&scroller, 80.0, 50.0);
+    scroller.set_overflow(Overflow::Hidden).unwrap();
+    let target = Element::create(&document, "div").unwrap();
+    sized(&target, 120.0, 100.0);
+    scroller.append_child(&target).unwrap();
+    let original = target.client_rects().unwrap();
+    assert_eq!(
+        (
+            original[0].x,
+            original[0].y,
+            original[0].width,
+            original[0].height
+        ),
+        (0.0, 0.0, 120.0, 100.0)
+    );
+
+    scroller.scroll_to(20.0, 30.0).unwrap();
+    let scrolled = target.bounding_rect().unwrap().unwrap();
+    assert_eq!(
+        (scrolled.x, scrolled.y, scrolled.width, scrolled.height),
+        (-20.0, -30.0, 120.0, 100.0)
+    );
+    target
+        .set_transform(TransformList(vec![TransformOperation::Translate(
+            LengthValue::px(15.0),
+            LengthValue::px(7.0),
+        )]))
+        .unwrap();
+    let transformed = target.bounding_rect().unwrap().unwrap();
+    assert_eq!(
+        (
+            transformed.x,
+            transformed.y,
+            transformed.width,
+            transformed.height
+        ),
+        (-5.0, -23.0, 120.0, 100.0)
+    );
+    assert_eq!((original[0].x, original[0].y), (0.0, 0.0));
+
+    target.detach().unwrap();
+    assert!(target.client_rects().unwrap().is_empty());
+    assert!(target.bounding_rect().unwrap().is_none());
+    scroller.append_child(&target).unwrap();
+    assert_eq!(target.client_rects().unwrap(), [transformed]);
+    target.remove().unwrap();
+    assert!(target.client_rects().is_err());
+}
+
+#[test]
 fn native_class_lookup_tracks_event_driven_updates_and_detachment() {
     let document = document();
     let first = child(&document, "div");

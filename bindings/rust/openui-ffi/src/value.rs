@@ -77,6 +77,20 @@ pub(crate) fn style_value(
                     Ok(StyleValue::Number(number))
                 }
             }
+            3 if property == StyleProperty::ColumnCount => {
+                let count = value.data.integer;
+                if count < 0 {
+                    return Err(ApiError::new(
+                        OuiStatus::InvalidArgument,
+                        "column count must be zero (auto) or positive",
+                    ));
+                }
+                Ok(StyleValue::Renderer(
+                    openui_style::RendererStyleValue::ColumnCount(
+                        (count != 0).then_some(count as u32),
+                    ),
+                ))
+            }
             3 => Ok(StyleValue::Integer(value.data.integer)),
             4 => {
                 let color = value.data.color;

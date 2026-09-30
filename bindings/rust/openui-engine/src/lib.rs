@@ -282,6 +282,37 @@ impl Affine {
             self.b * x + self.d * y + self.f,
         )
     }
+
+    fn map_rect(self, width: f32, height: f32) -> SceneRect {
+        let corners = [
+            self.map(0.0, 0.0),
+            self.map(width, 0.0),
+            self.map(0.0, height),
+            self.map(width, height),
+        ];
+        let min_x = corners
+            .iter()
+            .map(|point| point.0)
+            .fold(f32::INFINITY, f32::min);
+        let max_x = corners
+            .iter()
+            .map(|point| point.0)
+            .fold(f32::NEG_INFINITY, f32::max);
+        let min_y = corners
+            .iter()
+            .map(|point| point.1)
+            .fold(f32::INFINITY, f32::min);
+        let max_y = corners
+            .iter()
+            .map(|point| point.1)
+            .fold(f32::NEG_INFINITY, f32::max);
+        SceneRect {
+            x: min_x,
+            y: min_y,
+            width: max_x - min_x,
+            height: max_y - min_y,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -295,7 +326,6 @@ struct HitClip {
 #[derive(Debug, Clone)]
 struct HitEntry {
     node: NodeId,
-    local_to_world: Affine,
     world_to_local: Affine,
     width: f32,
     height: f32,
@@ -332,6 +362,7 @@ pub struct Engine {
     latest_fragment: Option<Arc<Fragment>>,
     latest_scene: Option<SceneSnapshot>,
     hit_test: Vec<HitEntry>,
+    fragment_rects: HashMap<NodeId, Vec<SceneRect>>,
     focused: Option<NodeHandle>,
     pointer_capture: HashMap<u64, NodeHandle>,
     hover_paths: HashMap<u64, Vec<NodeHandle>>,
@@ -412,6 +443,7 @@ impl Engine {
             latest_fragment: None,
             latest_scene: None,
             hit_test: Vec::new(),
+            fragment_rects: HashMap::new(),
             focused: None,
             pointer_capture: HashMap::new(),
             hover_paths: HashMap::new(),
@@ -1544,44 +1576,40 @@ impl Engine {
         Ok(None)
     }
 
+    /// Owned border-box rectangles in layout order, in logical viewport
+    /// coordinates after scrolling and transforms. Input eligibility,
+    /// visibility, and clipping do not remove layout boxes from this query.
+    pub fn client_rects(&mut self, handle: NodeHandle) -> Result<Vec<SceneRect>, EngineError> {
+        let node = self.resolve(handle)?;
+        self.update()?;
+        Ok(self.fragment_rects.get(&node).cloned().unwrap_or_default())
+    }
+
+    /// Bounds of all nonempty border-box fragments. If every fragment is
+    /// empty, return the first; if there is no layout box, return `None`.
     pub fn bounds(&mut self, handle: NodeHandle) -> Result<Option<SceneRect>, EngineError> {
         let node = self.resolve(handle)?;
         self.update()?;
-        Ok(self
-            .hit_test
+        Ok(self.node_bounds(node))
+    }
+
+    fn node_bounds(&self, node: NodeId) -> Option<SceneRect> {
+        let rects = self.fragment_rects.get(&node)?;
+        let bounds = rects
             .iter()
-            .rev()
-            .find(|entry| entry.node == node)
-            .map(|entry| {
-                let corners = [
-                    entry.local_to_world.map(0.0, 0.0),
-                    entry.local_to_world.map(entry.width, 0.0),
-                    entry.local_to_world.map(0.0, entry.height),
-                    entry.local_to_world.map(entry.width, entry.height),
-                ];
-                let min_x = corners
-                    .iter()
-                    .map(|point| point.0)
-                    .fold(f32::INFINITY, f32::min);
-                let max_x = corners
-                    .iter()
-                    .map(|point| point.0)
-                    .fold(f32::NEG_INFINITY, f32::max);
-                let min_y = corners
-                    .iter()
-                    .map(|point| point.1)
-                    .fold(f32::INFINITY, f32::min);
-                let max_y = corners
-                    .iter()
-                    .map(|point| point.1)
-                    .fold(f32::NEG_INFINITY, f32::max);
+            .copied()
+            .filter(|rect| rect.width > 0.0 && rect.height > 0.0)
+            .reduce(|a, b| {
+                let x = a.x.min(b.x);
+                let y = a.y.min(b.y);
                 SceneRect {
-                    x: min_x,
-                    y: min_y,
-                    width: max_x - min_x,
-                    height: max_y - min_y,
+                    x,
+                    y,
+                    width: (a.x + a.width).max(b.x + b.width) - x,
+                    height: (a.y + a.height).max(b.y + b.height) - y,
                 }
-            }))
+            });
+        bounds.or_else(|| rects.first().copied())
     }
 
     fn handle_for_slot(&self, index: u32) -> NodeHandle {
@@ -1659,6 +1687,7 @@ impl Engine {
             parent_world: Affine,
             inherited_clips: &[HitClip],
             out: &mut Vec<HitEntry>,
+            rects: &mut HashMap<NodeId, Vec<SceneRect>>,
         ) {
             let width = fragment.size.width.to_f32();
             let height = fragment.size.height.to_f32();
@@ -1689,9 +1718,19 @@ impl Engine {
                     Some(style),
                 )
             };
-            let Some(world_to_local) = world.inverse() else {
-                return;
-            };
+            if node_style.is_some()
+                && document.node(fragment.node_id).tag != ElementTag::Text
+                && matches!(
+                    fragment.kind,
+                    openui_layout::FragmentKind::Box | openui_layout::FragmentKind::Viewport
+                )
+            {
+                rects
+                    .entry(fragment.node_id)
+                    .or_default()
+                    .push(world.map_rect(width, height));
+            }
+            let world_to_local = world.inverse();
             let mut own_clips = inherited_clips.to_vec();
             if let Some(style) = node_style {
                 if let Some(inset) = style.clip_path_inset {
@@ -1722,17 +1761,19 @@ impl Engine {
                 let pointer_eligible = node.tag != ElementTag::Text
                     && style.visibility == openui_style::Visibility::Visible
                     && style.pointer_events == openui_style::PointerEvents::Auto;
-                if pointer_eligible && width > 0.0 && height > 0.0 {
+                if let Some(world_to_local) =
+                    world_to_local.filter(|_| pointer_eligible && width > 0.0 && height > 0.0)
+                {
                     out.push(HitEntry {
                         node: fragment.node_id,
-                        local_to_world: world,
                         world_to_local,
                         width,
                         height,
                         clips: own_clips.clone(),
                     });
                 }
-                if fragment.has_overflow_clip {
+                if let Some(world_to_local) = world_to_local.filter(|_| fragment.has_overflow_clip)
+                {
                     own_clips.push(HitClip {
                         world_to_local,
                         width,
@@ -1766,18 +1807,21 @@ impl Engine {
                 (z, *order)
             });
             for (_, child) in children {
-                walk(document, child, child_world, &own_clips, out);
+                walk(document, child, child_world, &own_clips, out, rects);
             }
         }
         let mut entries = Vec::new();
+        let mut rects = HashMap::new();
         walk(
             &self.document,
             fragment,
             Affine::IDENTITY,
             &[],
             &mut entries,
+            &mut rects,
         );
         self.hit_test = entries;
+        self.fragment_rects = rects;
     }
 }
 

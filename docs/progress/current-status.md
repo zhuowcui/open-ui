@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Four-profile census against cached Chromium captures | 21,266/22,924 exact, 1,658 different, 0 errors |
+| Latest complete clean census against cached Chromium captures | 21,278/22,924 exact, 1,646 different, 0 errors; three exact regressions under repair |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
@@ -19,15 +19,15 @@ remain open.
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
-| Application conformance scenarios | 50 across 10 domains |
-| Frozen / current C exports | 84 / 106 |
-| C examples / C++ consumers | 6 / 2, including native C/C++ window consumers |
+| Application conformance scenarios | 54 across 10 domains |
+| Frozen / current C exports | 84 / 107 |
+| C examples / C++ consumers | 7 / 2, including native C/C++ window consumers |
 | Workspace tests | pass |
 | Python closure and qualification tests | 236 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v41.json)
+The preceding [complete clean census](../renderer/generated/four-profile-census-v41.json)
 at `15f9f12d` is 21,266/22,924 exact, 1,658 different, and zero errors
 against the cached Chromium captures.
 The [circular background one-axis clip repair](../renderer/circular-background-one-axis-clip.md)
@@ -185,12 +185,33 @@ The subsequent [native empty-block border repair](../renderer/native-empty-block
 corrects child continuation geometry in ordinary block containers. The scoped
 diagnostic guard makes 11 original comparisons exact with no exact regression
 across its 112 comparisons; its Chromium images and identities stay fixed.
-The locked workspace passes 8,481 tests. The reduced sweep remains partially
-different, and the complete clean original/expanded census must still run;
-these diagnostics do not change the totals above or close release qualification.
+The later [complete clean census](../renderer/generated/four-profile-census-v42.json)
+at `e51d88fd` is 21,278/22,924 exact, 1,646 different, and zero errors. It made
+15 comparisons exact but regressed three previously exact profiles of one
+nested multicol case. All Chromium images and oracle identities stayed fixed.
+The source now preserves extracted-spanner row ownership; the 116-comparison
+diagnostic guard restores those profiles and retains 12 new exact comparisons,
+with no exact regression. A new clean full run is pending; the regressing
+checkpoint is not accepted. The complete
+[v25 expanded requalification](../renderer/generated/expanded-requalification-v25.json)
+is 22,081/23,728 exact, 1,647 different, and zero errors, with 200/201 additions
+exact at all profiles. The clean
+[v44 focused/primitive index](../renderer/generated/focused-primitive-raster-v44.json)
+remains 640/640 and 960/960 exact. These results do not close pixel qualification.
+
+The [native geometry repair](../v02/native-element-geometry.md) exposes owned
+`Element::client_rects`, corrects combined element bounds, and shares geometry
+with accessibility and view timelines. Four new public Rust scenarios cover
+columns, pointer eligibility, empty and singular boxes, scrolling, transforms,
+and handle lifetime. The versioned C rectangle-copy API and a real C consumer
+use the same engine. ABI verification preserves every existing struct layout
+and all 84 frozen exports; 107 current exports, six headless C consumers, and
+the C++ header consumer pass. The final locked workspace passes 8,486 tests with zero failures and 13 ignored.
+All 54 public application conformance scenarios pass. Needed native API behavior
+and the full renderer and release-lab qualifications remain open.
 The append-only C `oui_element_detach` export uses the same engine operation
 for element and text handles. `oui_document_element_by_id` now provides owned
-handles for native C element lookup. ABI verification reports 106 current
+handles for native C element lookup. ABI verification reports 107 current
 symbols; the 84 frozen symbols and all C struct layouts remain intact.
 `oui_app_run` and `oui_app_request_exit` now run native C applications through
 Rust `App` and the same retained `Document`. Versioned platform callbacks can

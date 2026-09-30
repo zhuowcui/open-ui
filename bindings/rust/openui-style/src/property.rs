@@ -1719,6 +1719,24 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(StyleValue::PointerEvents),
+        P::ColumnCount => {
+            if input == "auto" {
+                Some(StyleValue::Renderer(RendererStyleValue::ColumnCount(None)))
+            } else {
+                input
+                    .parse::<u32>()
+                    .ok()
+                    .filter(|count| *count > 0)
+                    .map(|count| StyleValue::Renderer(RendererStyleValue::ColumnCount(Some(count))))
+            }
+        }
+        P::Visibility => match input {
+            "visible" => Some(Visibility::Visible),
+            "hidden" => Some(Visibility::Hidden),
+            "collapse" => Some(Visibility::Collapse),
+            _ => None,
+        }
+        .map(|value| StyleValue::Renderer(RendererStyleValue::Visibility(value))),
         _ => parse_typography_literal(property, input),
     };
     result.ok_or_else(|| invalid(property, input))

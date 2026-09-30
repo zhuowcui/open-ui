@@ -81,6 +81,16 @@ The same 200 of 201 additions are exact at all four profiles. The
 lists those 200; the release contract retains all 201 and the remaining
 fieldset legend failure.
 
+The later complete clean run at `e51d88fd` is recorded in
+[v42](generated/four-profile-census-v42.json): 21,278/22,924 exact, 1,646
+different, and zero errors. Its full delta found three formerly exact
+regressions in an extracted-spanner continuation, so this checkpoint is not
+accepted as a renderer qualification. The source correction restores the
+spanner row's continuation ownership; its 116-comparison diagnostic retains
+12 new exact comparisons with no exact regression. A new complete clean run
+is pending. The [investigation](native-empty-block-fragment-slicing.md) records
+both the failed checkpoint and the correction. Chromium inputs remain fixed.
+
 The later [scaled LCD font investigation](scaled-lcd-hinting-oracle-investigation.md)
 found an older cached Chromium image that differs from six agreeing fresh
 captures of `wpt/css2_floats/float-nowrap-3` at 1920×1080@1.5. Both variants have

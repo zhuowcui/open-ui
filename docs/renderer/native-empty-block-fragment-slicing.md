@@ -50,8 +50,30 @@ required profiles: 75/112 exact, 37 different, and zero errors. Eleven
 comparisons became exact, none regressed from exact, and every Chromium image
 and oracle identity stayed fixed. One already failing comparison,
 `out-of-flow-in-multicolumn-063` at 1.25×, increased from 62 to 63 differing
-pixels. The complete original and expanded manifests must still be run from
-a clean checkpoint before their totals can change.
+pixels.
+
+The first complete clean run at `e51d88fd` was
+[21,278/22,924 exact](generated/four-profile-census-v42.json), with 1,646
+differences and zero errors. Its
+[full delta](generated/native-empty-block-census-delta-v1.json) records 15 new
+exact comparisons and three previously exact regressions in one nested
+multicol case. No Chromium image or oracle identity changed. This checkpoint
+is not accepted as a renderer qualification. The complete expanded matrix
+has 22,081/23,728 exact, 1,647 differences, and zero errors; its 201 additions
+remain 200/201 exact at every profile. The clean focused and primitive matrices
+remain 640/640 and 960/960 exact.
+
+The nested case contains an extracted spanner. Its source flow is split into
+separate column rows, which own their continuation clips and overflow.
+The ordinary ancestor's visual height is not a child source boundary. The
+repair now checks the authored source owner and leaves those rows with the
+spanner continuation path, including anonymous overflow pieces. A real layout
+regression retains the leaf's source geometry and overflow in its owned row.
+The [29-ID, four-profile diagnostic guard](generated/native-spanner-leaf-guard-v1.json)
+is 79/116 exact, 37 different, and
+zero errors: 12 new exact comparisons, no formerly exact regression, and
+unchanged Chromium inputs. A new complete clean run is still required before
+this corrected source replaces the earlier census evidence.
 
 An earlier candidate regressed six exact cloned-decoration comparisons and
 was rejected. A second had no exact regressions across the complete

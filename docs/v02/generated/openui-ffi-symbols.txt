@@ -61,6 +61,7 @@ oui_element_detach
 oui_element_focus
 oui_element_get_accessibility_id
 oui_element_get_bounds
+oui_element_get_client_rects_v1
 oui_element_get_control_flags
 oui_element_get_scroll_offset
 oui_element_get_selection

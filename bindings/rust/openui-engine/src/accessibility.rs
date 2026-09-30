@@ -615,35 +615,14 @@ impl Engine {
     }
 
     fn accessibility_bounds(&self, dom_id: DomNodeId) -> Option<Rect> {
-        self.hit_test
-            .iter()
-            .rev()
-            .find(|entry| entry.node == dom_id)
-            .map(|entry| {
-                let corners = [
-                    entry.local_to_world.map(0.0, 0.0),
-                    entry.local_to_world.map(entry.width, 0.0),
-                    entry.local_to_world.map(0.0, entry.height),
-                    entry.local_to_world.map(entry.width, entry.height),
-                ];
-                let min_x = corners
-                    .iter()
-                    .map(|point| point.0)
-                    .fold(f32::INFINITY, f32::min);
-                let max_x = corners
-                    .iter()
-                    .map(|point| point.0)
-                    .fold(f32::NEG_INFINITY, f32::max);
-                let min_y = corners
-                    .iter()
-                    .map(|point| point.1)
-                    .fold(f32::INFINITY, f32::min);
-                let max_y = corners
-                    .iter()
-                    .map(|point| point.1)
-                    .fold(f32::NEG_INFINITY, f32::max);
-                Rect::new(min_x as f64, min_y as f64, max_x as f64, max_y as f64)
-            })
+        self.node_bounds(dom_id).map(|bounds| {
+            Rect::new(
+                bounds.x as f64,
+                bounds.y as f64,
+                (bounds.x + bounds.width) as f64,
+                (bounds.y + bounds.height) as f64,
+            )
+        })
     }
 
     fn scroll_into_view(&mut self, handle: NodeHandle) -> Result<(), EngineError> {

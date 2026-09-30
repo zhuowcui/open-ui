@@ -1505,6 +1505,35 @@ pub extern "C" fn oui_element_get_bounds(
     })
 }
 
+// SAFETY CONTRACT: `element` is live. `out_count` is writable. When copying,
+// `rects` is writable for `capacity` rectangles and does not overlap outputs.
+#[no_mangle]
+pub extern "C" fn oui_element_get_client_rects_v1(
+    element_handle: *mut OuiElement,
+    rects: *mut OuiRect,
+    capacity: usize,
+    out_count: *mut usize,
+) -> OuiStatus {
+    ffi(|| {
+        if out_count.is_null() {
+            return Err(invalid("rectangle count output is null"));
+        }
+        let source = element(element_handle as usize)?;
+        let state = element_document(&source)?;
+        let owned: Vec<_> = borrow_engine_mut(&state)?
+            .client_rects(source.node)?
+            .into_iter()
+            .map(|rect| OuiRect {
+                x: rect.x,
+                y: rect.y,
+                width: rect.width,
+                height: rect.height,
+            })
+            .collect();
+        copy_array_to_c(&owned, rects, capacity, out_count, "client rectangles")
+    })
+}
+
 // SAFETY CONTRACT: `element` is live; offsets must be finite.
 #[no_mangle]
 pub extern "C" fn oui_element_scroll_to(
@@ -2670,6 +2699,15 @@ pub extern "C" fn oui_style_value_parse(
             (2, StyleValue::Number(value)) => OuiStylePayload { number: *value },
             (2, StyleValue::FontWeight(value)) => OuiStylePayload { number: value.0 },
             (3, StyleValue::Integer(value)) => OuiStylePayload { integer: *value },
+            (3, StyleValue::Renderer(openui_style::RendererStyleValue::ColumnCount(value))) => {
+                OuiStylePayload {
+                    integer: match value {
+                        None => 0,
+                        Some(count) => i32::try_from(*count)
+                            .map_err(|_| invalid("column count exceeds the C integer range"))?,
+                    },
+                }
+            }
             (4, StyleValue::Color(value)) => OuiStylePayload {
                 color: OuiColor {
                     red: (value.r * 255.0).round() as u8,

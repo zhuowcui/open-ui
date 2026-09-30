@@ -14453,9 +14453,16 @@ fn materialize_nontranslated_transform_slice(
 fn materialize_leaf_block_slices(
     fragment: &mut Fragment,
     doc: &Document,
+    source_node: NodeId,
     source_block_size: LayoutUnit,
     writing_direction: WritingDirectionMode,
 ) {
+    // An extracted spanner splits its ancestor's source flow into column
+    // rows. Those rows retain their own continuation clips and overflow;
+    // the ancestor's visual slice height is not a child's source boundary.
+    if subtree_has_in_flow_spanner_descendant(doc, source_node) {
+        return;
+    }
     for child in &mut fragment.children {
         if child.node_id.is_none()
             || child.kind != FragmentKind::Box
@@ -30753,6 +30760,7 @@ fn layout_multicol(
                                 materialize_leaf_block_slices(
                                     &mut part,
                                     doc,
+                                    child_node_id,
                                     visual_part_height,
                                     space.writing_direction,
                                 );

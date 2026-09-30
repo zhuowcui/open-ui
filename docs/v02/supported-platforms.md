@@ -38,7 +38,7 @@ scrolling, controls, and event dispatch operate directly on the native engine:
 | Read or change text, attributes, or typed style | `Element::text_content`, `set_text`, `set_attribute`, `set_property` and generated typed setters |
 | Read resolved style | `Element::computed_style`, which returns an owned snapshot |
 | Handle input or activate an element | `Element::on`, `on_capture`, `click`; Rust callbacks in `view!` |
-| Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `bounding_rect`; `Document::hit_test` |
+| Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `client_rects`, `bounding_rect`; `Document::hit_test` |
 | Update form controls or details | `set_control_value`, `set_selection`, `set_checked`, `set_open` |
 | Inject or cancel native IME input | `Document::dispatch_composition_start`, `dispatch_composition_update`, `dispatch_composition_end`, `dispatch_composition_cancel` |
 
@@ -56,6 +56,14 @@ through the public Rust API, and verify it from a consuming native Rust
 application. Test coverage must exercise the retained state and resulting
 events or rendering. A missing public method remains an implementation gap
 until that native application path works.
+
+`Element::client_rects` returns an owned list of border-box fragments in logical
+viewport coordinates, including scroll offsets and transforms.
+`bounding_rect` returns their combined bounds. These layout queries include
+empty, hidden, clipped, and pointer-ineligible boxes; they do not borrow the
+input hit-test list. Detached elements and `display: none` elements have no
+layout rectangles. The [native geometry evidence](native-element-geometry.md)
+records Rust and C consumer checks and the separate Chromium measurements.
 
 Class tokens are native element metadata; styling changes use typed style
 setters rather than a parsed CSS class rule.
