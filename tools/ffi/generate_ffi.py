@@ -140,6 +140,8 @@ def outputs() -> dict[Path, bytes]:
             "OuiStylePayload": {"size": 8, "align": 8},
             "OuiStyleValue": {"size": 16, "align": 8},
             "OuiAppConfig": {"size": 40, "align": 8},
+            "OuiAppRunConfig": {"size": 32, "align": 8},
+            "OuiPlatformEvent": {"size": 152, "align": 8},
             "OuiViewportMetrics": {"size": 40, "align": 8},
             "OuiDocumentConfig": {"size": 48, "align": 8},
             "OuiFontUnicodeRange": {"size": 8, "align": 4},

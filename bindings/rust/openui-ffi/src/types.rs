@@ -445,3 +445,44 @@ pub struct OuiErrorInfo {
 }
 
 pub type OuiEventCallback = unsafe extern "C" fn(event: *mut OuiEvent, user_data: *mut c_void);
+
+/// Borrowed platform event; all text/path storage is valid only during callback.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiPlatformEvent {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub event_type: u32,
+    pub phase: u32,
+    pub flags: u32,
+    pub backend: u32,
+    pub pointer_id: u64,
+    pub x: f32,
+    pub y: f32,
+    pub delta_x: f32,
+    pub delta_y: f32,
+    pub key_code: i32,
+    pub modifiers: u32,
+    pub button: u32,
+    pub reserved: u32,
+    pub frame_number: u64,
+    pub time_ms: f64,
+    pub text: OuiUtf8,
+    pub path: *const u8,
+    pub path_length: usize,
+    pub viewport: OuiViewportMetrics,
+}
+
+pub type OuiPlatformEventCallback =
+    unsafe extern "C" fn(app: *mut OuiApp, event: *const OuiPlatformEvent, user_data: *mut c_void);
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiAppRunConfig {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub flags: u32,
+    pub reserved: u32,
+    pub callback: Option<OuiPlatformEventCallback>,
+    pub user_data: *mut c_void,
+}

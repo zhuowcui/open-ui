@@ -18,9 +18,10 @@ attestation identity.
 - C ABI export/layout checks plus C and C++ consumers;
 - application conformance and performance artifact validation.
 
-`.github/workflows/hardening.yml` additionally runs the 36-scenario application
-suite and starts real windows under Xvfb/Mesa OpenGL and a headless Weston pure
-Wayland session with software presentation.
+`.github/workflows/hardening.yml` additionally runs the 43-scenario application
+suite, Linux C API tests, and real Rust/C/C++ windows under Xvfb with software
+and Mesa OpenGL presentation. A headless Weston session runs the Rust and
+C/C++ consumers on pure Wayland with software presentation.
 
 ## Scheduled hardening
 
@@ -46,7 +47,9 @@ architectures it:
 1. verifies source contracts and crates.io package contents;
 2. builds the SDK twice with a fixed source epoch and compares hashes;
 3. builds `.deb` and `.rpm` packages in Ubuntu/Fedora environments;
-4. installs each package and compiles/runs the packaged C example;
+4. installs each package and compiles/runs the packaged C example; Debian
+   consumers also open native C/C++ windows on X11 software/GL and Wayland
+   software;
 5. uploads checksums, SBOM, provenance, detached symbols, and artifacts;
 6. produces keyless signatures and GitHub attestations when running from the
    protected release tag.

@@ -1817,10 +1817,12 @@ dependencies = [
 name = "openui-ffi"
 version = "0.2.0"
 dependencies = [
+ "openui",
  "openui-compositor",
  "openui-dom",
  "openui-engine",
  "openui-geometry",
+ "openui-platform",
  "openui-style",
 ]
 

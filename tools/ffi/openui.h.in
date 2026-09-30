@@ -675,6 +675,80 @@ typedef struct OuiErrorInfo {
 
 typedef void (*OuiEventCallback)(OuiEvent* event, void* user_data);
 
+typedef enum OuiPlatformEventType {
+  OUI_PLATFORM_BACKEND_CHANGED = 1,
+  OUI_PLATFORM_RESIZED = 2,
+  OUI_PLATFORM_POINTER = 3,
+  OUI_PLATFORM_WHEEL = 4,
+  OUI_PLATFORM_KEY = 5,
+  OUI_PLATFORM_TEXT_INPUT = 6,
+  OUI_PLATFORM_COMPOSITION_START = 7,
+  OUI_PLATFORM_COMPOSITION_UPDATE = 8,
+  OUI_PLATFORM_COMPOSITION_END = 9,
+  OUI_PLATFORM_FOCUSED = 10,
+  OUI_PLATFORM_DROPPED_FILE = 11,
+  OUI_PLATFORM_HOVERED_FILE = 12,
+  OUI_PLATFORM_HOVERED_FILE_CANCELLED = 13,
+  OUI_PLATFORM_PRESENTED = 14,
+  OUI_PLATFORM_CLOSE_REQUESTED = 15
+} OuiPlatformEventType;
+
+enum {
+  OUI_PLATFORM_FLAG_REPEAT = 1u << 0,
+  OUI_PLATFORM_FLAG_FOCUSED = 1u << 1,
+  OUI_PLATFORM_FLAG_FALLBACK = 1u << 2,
+  OUI_PLATFORM_POINTER_MOVE = 0,
+  OUI_PLATFORM_POINTER_DOWN = 1,
+  OUI_PLATFORM_POINTER_UP = 2,
+  OUI_PLATFORM_POINTER_CANCEL = 3,
+  OUI_PLATFORM_POINTER_LEAVE = 4,
+  OUI_PLATFORM_KEY_DOWN = 0,
+  OUI_PLATFORM_KEY_UP = 1
+};
+
+/* Append-only platform notification. Unused fields are zero. text is UTF-8;
+ * path is a length-delimited native Linux filename, which need not be UTF-8.
+ * button is 0=left, 1=middle, 2=right, or 3 plus the native other-button ID.
+ * pointer_id is the full native 64-bit ID; legacy OuiEvent uses its low 32 bits.
+ * A legacy event target may be NULL when no C element handle exists for it.
+ */
+typedef struct OuiPlatformEvent {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t event_type;
+  uint32_t phase;
+  uint32_t flags;
+  uint32_t backend;
+  uint64_t pointer_id;
+  float x;
+  float y;
+  float delta_x;
+  float delta_y;
+  int32_t key_code;
+  uint32_t modifiers;
+  uint32_t button;
+  uint32_t reserved;
+  uint64_t frame_number;
+  double time_ms;
+  OuiUtf8 text;
+  const uint8_t* path;
+  size_t path_length;
+  OuiViewportMetrics viewport;
+} OuiPlatformEvent;
+
+typedef void (*OuiPlatformEventCallback)(OuiApp* app,
+                                       const OuiPlatformEvent* event,
+                                       void* user_data);
+
+typedef struct OuiAppRunConfig {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t flags;
+  uint32_t reserved;
+  OuiPlatformEventCallback callback;
+  void* user_data;
+} OuiAppRunConfig;
+
 /*
  * Ownership and callback contract:
  * - Opaque handles are generation-checked and thread-affine.
@@ -701,6 +775,20 @@ OuiStatus oui_error_copy_message(uint8_t* destination, size_t capacity, size_t* 
 OuiStatus oui_app_create(const OuiAppConfig* config, OuiApp** out_app);
 OuiStatus oui_app_destroy(OuiApp* app);
 OuiStatus oui_app_document(OuiApp* app, OuiDocument** out_document);
+
+/* Blocking Linux lifecycle, enabled by the SDK's linux feature. Call on the
+ * process's main/UI thread, using the app's existing retained document.
+ * An app may attempt run once. Nested runs return OUI_ERROR_REENTRANT.
+ * callback is optional; callback/user_data must remain valid until run returns.
+ * Callbacks run after document handling and engine/platform presentation
+ * borrows are released, may mutate retained elements and request exit, and
+ * must not unwind or retain event/text/path pointers. Copy payloads if needed.
+ * App destruction during run is rejected. Document handles remain usable.
+ * Request exit before run or within a UI-thread callback. Headless-only builds
+ * return OUI_ERROR_INVALID_STATE from run; the other app APIs remain available.
+ */
+OuiStatus oui_app_run(OuiApp* app, const OuiAppRunConfig* config);
+OuiStatus oui_app_request_exit(OuiApp* app);
 
 OuiStatus oui_document_create(const OuiDocumentConfig* config, OuiDocument** out_document);
 OuiStatus oui_document_destroy(OuiDocument* document);

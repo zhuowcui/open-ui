@@ -5,7 +5,8 @@
 //! ```
 
 pub use crate::app::{
-    App, AppBuilder, BackendPreference, HeadlessApp, LogicalSize, RenderOptions, WindowOptions,
+    App, AppBuilder, AppExitHandle, BackendPreference, HeadlessApp, LogicalSize, RenderOptions,
+    WindowOptions,
 };
 pub use crate::context::{current_document, with_document};
 pub use crate::document::Document;

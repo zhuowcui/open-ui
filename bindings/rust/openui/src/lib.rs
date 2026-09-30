@@ -132,7 +132,8 @@ pub use view_node::{mount_view, IntoView, ViewNode};
 // ─── Re-exports: application shell ─────────────────────────
 
 pub use app::{
-    App, AppBuilder, BackendPreference, HeadlessApp, LogicalSize, RenderOptions, WindowOptions,
+    App, AppBuilder, AppExitHandle, BackendPreference, HeadlessApp, LogicalSize, RenderOptions,
+    WindowOptions,
 };
 pub use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityNode, AccessibilityNodeId,
@@ -142,6 +143,8 @@ pub use openui_engine::{
     ScrollAnimationId, TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
     ViewportMetricsError,
 };
+#[cfg(all(feature = "linux", target_os = "linux"))]
+pub use openui_platform::{KeyboardInput, PlatformEvent};
 
 // ─── Re-exports: proc macros ────────────────────────────────
 

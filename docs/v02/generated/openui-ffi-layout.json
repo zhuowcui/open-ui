@@ -38,6 +38,10 @@
       "align": 8,
       "size": 40
     },
+    "OuiAppRunConfig": {
+      "align": 8,
+      "size": 32
+    },
     "OuiBitmap": {
       "align": 8,
       "size": 32
@@ -85,6 +89,10 @@
     "OuiLength": {
       "align": 4,
       "size": 8
+    },
+    "OuiPlatformEvent": {
+      "align": 8,
+      "size": 152
     },
     "OuiRect": {
       "align": 4,

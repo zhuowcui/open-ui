@@ -24,14 +24,19 @@ use std::rc::Rc;
 
 type ListenerKey = (NodeHandle, String);
 type ResourceProvider = dyn Fn(&str) -> Option<Vec<u8>>;
+#[cfg(feature = "ffi-integration")]
+type ForeignEventHandler =
+    dyn Fn(NodeHandle, NodeHandle, &Event, Option<bool>) -> Result<(), Error>;
 
 pub(crate) struct DocumentInner {
-    pub engine: RefCell<Engine>,
+    pub engine: Rc<RefCell<Engine>>,
     pub listeners: RefCell<HashMap<ListenerKey, Vec<Listener>>>,
     pub resource_provider: RefCell<Option<Box<ResourceProvider>>>,
     pub clipboard: RefCell<String>,
     animation_events: RefCell<Vec<AnimationEvent>>,
     transaction_depth: Cell<usize>,
+    #[cfg(feature = "ffi-integration")]
+    foreign_event_handler: RefCell<Option<Rc<ForeignEventHandler>>>,
 }
 
 /// Cloneable owner reference for one retained native document.
@@ -61,14 +66,51 @@ impl Document {
     ) -> Result<Self, Error> {
         Ok(Self {
             inner: Rc::new(DocumentInner {
-                engine: RefCell::new(Engine::new_with_font_collection(viewport, font_collection)?),
+                engine: Rc::new(RefCell::new(Engine::new_with_font_collection(
+                    viewport,
+                    font_collection,
+                )?)),
                 listeners: RefCell::new(HashMap::new()),
                 resource_provider: RefCell::new(None),
                 clipboard: RefCell::new(String::new()),
                 animation_events: RefCell::new(Vec::new()),
                 transaction_depth: Cell::new(0),
+                #[cfg(feature = "ffi-integration")]
+                foreign_event_handler: RefCell::new(None),
             }),
         })
+    }
+
+    /// Integration boundary for another native language facade over this engine.
+    /// The shared cell remains confined to its owning thread. Callers must release
+    /// every borrow before dispatching input or invoking application callbacks.
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn from_shared_engine(engine: Rc<RefCell<Engine>>) -> Self {
+        Self {
+            inner: Rc::new(DocumentInner {
+                engine,
+                listeners: RefCell::new(HashMap::new()),
+                resource_provider: RefCell::new(None),
+                clipboard: RefCell::new(String::new()),
+                animation_events: RefCell::new(Vec::new()),
+                transaction_depth: Cell::new(0),
+                foreign_event_handler: RefCell::new(None),
+            }),
+        }
+    }
+
+    /// Install a native facade's listener bridge. The handler runs without
+    /// document, engine, or listener-list borrows and must not retain the event.
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn set_foreign_event_handler(&self, handler: Rc<ForeignEventHandler>) -> Result<(), Error> {
+        *self
+            .inner
+            .foreign_event_handler
+            .try_borrow_mut()
+            .map_err(|_| Error::ReentrantMutation)? = Some(handler);
+        Ok(())
     }
 
     pub fn body(&self) -> Element {
@@ -444,7 +486,7 @@ impl Document {
                 modifiers,
             );
             event.set_phase(EventPhase::Target);
-            self.invoke(node, &event, None)?;
+            self.invoke(node, node, &event, None)?;
         }
         for node in update.entered {
             let event = Event::pointer(
@@ -456,7 +498,7 @@ impl Document {
                 modifiers,
             );
             event.set_phase(EventPhase::Target);
-            self.invoke(node, &event, None)?;
+            self.invoke(node, node, &event, None)?;
         }
         let Some(target) = update.target else {
             return Ok(());
@@ -511,12 +553,47 @@ impl Document {
         key_text: Option<&str>,
         modifiers: Modifiers,
     ) -> Result<(), Error> {
+        self.dispatch_key_event_default(event_type, key_code, key_text, modifiers)
+            .map(|_| ())
+    }
+
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    pub(crate) fn dispatch_key_input(
+        &self,
+        event_type: KeyEventType,
+        key_code: i32,
+        key_text: Option<&str>,
+        text: Option<&str>,
+        modifiers: Modifiers,
+    ) -> Result<(), Error> {
+        let allowed = self.dispatch_key_event_default(event_type, key_code, key_text, modifiers)?;
+        if allowed
+            && event_type == KeyEventType::Down
+            && !modifiers.contains(Modifiers::CTRL)
+            && !modifiers.contains(Modifiers::META)
+        {
+            if let Some(text) = text.filter(|text| {
+                !text.is_empty() && text.chars().all(|character| !character.is_control())
+            }) {
+                self.dispatch_text_input(text)?;
+            }
+        }
+        Ok(())
+    }
+
+    fn dispatch_key_event_default(
+        &self,
+        event_type: KeyEventType,
+        key_code: i32,
+        key_text: Option<&str>,
+        modifiers: Modifiers,
+    ) -> Result<bool, Error> {
         let target =
             self.with_engine(|engine| engine.focused().unwrap_or_else(|| engine.root()))?;
         let event = Event::keyboard(event_type.name(), key_code, key_text, modifiers);
         self.dispatch_to(target, &event)?;
         if event.default_prevented() {
-            return Ok(());
+            return Ok(false);
         }
         if event_type == KeyEventType::Char {
             if let Some(text) = key_text.filter(|text| !text.is_empty()) {
@@ -527,30 +604,32 @@ impl Document {
                     self.dispatch_to(target, &Event::keyboard("input", 0, Some(text), modifiers))?;
                 }
             }
-            return Ok(());
+            return Ok(true);
         }
         if event_type != KeyEventType::Down {
-            return Ok(());
+            return Ok(true);
         }
         let key = key_text.unwrap_or_default();
         if key_code == 9 || key.eq_ignore_ascii_case("tab") {
-            return self.advance_focus(if modifiers.contains(Modifiers::SHIFT) {
-                -1
-            } else {
-                1
-            });
+            return self
+                .advance_focus(if modifiers.contains(Modifiers::SHIFT) {
+                    -1
+                } else {
+                    1
+                })
+                .map(|_| true);
         }
         if modifiers.contains(Modifiers::CTRL) || modifiers.contains(Modifiers::META) {
             match key.to_ascii_lowercase().as_str() {
-                "a" => return self.edit_focused(EditCommand::SelectAll),
+                "a" => return self.edit_focused(EditCommand::SelectAll).map(|_| true),
                 "z" if modifiers.contains(Modifiers::SHIFT) => {
-                    return self.edit_focused(EditCommand::Redo)
+                    return self.edit_focused(EditCommand::Redo).map(|_| true)
                 }
-                "z" => return self.edit_focused(EditCommand::Undo),
-                "y" => return self.edit_focused(EditCommand::Redo),
-                "c" => return self.copy_selection(false),
-                "x" => return self.copy_selection(true),
-                "v" => return self.paste_clipboard(),
+                "z" => return self.edit_focused(EditCommand::Undo).map(|_| true),
+                "y" => return self.edit_focused(EditCommand::Redo).map(|_| true),
+                "c" => return self.copy_selection(false).map(|_| true),
+                "x" => return self.copy_selection(true).map(|_| true),
+                "v" => return self.paste_clipboard().map(|_| true),
                 _ => {}
             }
         }
@@ -578,7 +657,7 @@ impl Document {
         })?;
         if adjustable {
             if let Some(adjustment) = adjustment {
-                return self.adjust_focused(adjustment);
+                return self.adjust_focused(adjustment).map(|_| true);
             }
         }
         let command = match (key_code, key.to_ascii_lowercase().as_str()) {
@@ -629,7 +708,7 @@ impl Document {
             _ => None,
         };
         if let Some(command) = command {
-            return self.edit_focused(command);
+            return self.edit_focused(command).map(|_| true);
         }
         if key_code == 13 || key_code == 32 || key == "Enter" || key == " " {
             let click = Event::keyboard("click", key_code, key_text, modifiers);
@@ -642,7 +721,7 @@ impl Document {
                 }
             }
         }
-        Ok(())
+        Ok(true)
     }
 
     pub fn dispatch_wheel_event(
@@ -706,6 +785,20 @@ impl Document {
         let Some(target) = self.with_engine(|engine| engine.focused())? else {
             return Ok(());
         };
+        let editable = self.with_engine(|engine| {
+            engine.control_state(target).map(|state| {
+                state.is_some_and(|state| {
+                    !state.disabled
+                        && matches!(
+                            state.role,
+                            FormControlRole::TextInput | FormControlRole::TextArea
+                        )
+                })
+            })
+        })??;
+        if !editable {
+            return Ok(());
+        }
         let before = Event::keyboard("beforeinput", 0, Some(text), Modifiers::NONE);
         self.dispatch_to(target, &before)?;
         if !before.default_prevented() {
@@ -901,7 +994,7 @@ impl Document {
                 EngineEventPhase::Bubble => (EventPhase::Bubble, Some(false)),
             };
             event.set_phase(phase);
-            self.invoke(step.node, event, capture)?;
+            self.invoke(step.node, target, event, capture)?;
             if event.propagation_stopped() {
                 return Ok(());
             }
@@ -909,7 +1002,25 @@ impl Document {
         Ok(())
     }
 
-    fn invoke(&self, node: NodeHandle, event: &Event, capture: Option<bool>) -> Result<(), Error> {
+    fn invoke(
+        &self,
+        node: NodeHandle,
+        _target: NodeHandle,
+        event: &Event,
+        capture: Option<bool>,
+    ) -> Result<(), Error> {
+        #[cfg(feature = "ffi-integration")]
+        {
+            let handler = self
+                .inner
+                .foreign_event_handler
+                .try_borrow()
+                .map_err(|_| Error::ReentrantMutation)?
+                .clone();
+            if let Some(handler) = handler {
+                handler(node, _target, event, capture)?;
+            }
+        }
         let callbacks: Vec<_> = self
             .inner
             .listeners

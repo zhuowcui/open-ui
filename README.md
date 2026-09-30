@@ -44,7 +44,7 @@ The current v0.2 release candidate has:
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;
-- 84 frozen retained-engine/headless C exports, with 104 current exports and
+- 84 frozen retained-engine/headless C exports, with 106 current exports and
   checked layouts and an ABI checksum;
 - sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates defined
   in CI; several remain open or failing.
@@ -58,7 +58,9 @@ The cached four-profile census still has 1,658 differences,
 so this repository is not yet declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia
 GPU qualification, retained per-node layers, compositor-owned animation
-curves, a C-owned native event loop, and signed publication still remain. See
+curves, release-lab C/C++ application qualification, and signed publication
+still remain. The C ABI now runs native Linux windows through the Rust `App`
+and retained `Document`. See
 [current status](docs/progress/current-status.md)
 and [release qualification](docs/v02/release.md).
 

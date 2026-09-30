@@ -9,6 +9,7 @@ use openui_engine::ViewportMetrics;
 use std::cell::Cell;
 #[cfg(all(feature = "linux", target_os = "linux"))]
 use std::cell::RefCell;
+use std::rc::Rc;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LogicalSize {
@@ -52,6 +53,16 @@ pub struct AppBuilder {
     options: WindowOptions,
 }
 
+/// Cloneable shutdown request for the application's owning UI thread.
+#[derive(Clone, Default)]
+pub struct AppExitHandle(Rc<Cell<bool>>);
+
+impl AppExitHandle {
+    pub fn request_exit(&self) {
+        self.0.set(true);
+    }
+}
+
 impl AppBuilder {
     pub fn title(mut self, title: impl Into<String>) -> Self {
         self.options.title = title.into();
@@ -78,9 +89,13 @@ impl AppBuilder {
             document: Document::with_viewport_metrics(viewport)?,
             options: self.options,
             root_scope: None,
-            exit_requested: Cell::new(false),
+            exit_requested: AppExitHandle::default(),
             #[cfg(all(feature = "linux", target_os = "linux"))]
             software_compositor: RefCell::new(openui_compositor::SoftwareCompositor::default()),
+            #[cfg(all(feature = "linux", target_os = "linux"))]
+            platform_event_handler: None,
+            #[cfg(all(feature = "linux", target_os = "linux"))]
+            rendered_generations: Cell::new(None),
         })
     }
 }
@@ -89,9 +104,13 @@ pub struct App {
     document: Document,
     options: WindowOptions,
     root_scope: Option<ScopeId>,
-    exit_requested: Cell<bool>,
+    exit_requested: AppExitHandle,
     #[cfg(all(feature = "linux", target_os = "linux"))]
     software_compositor: RefCell<openui_compositor::SoftwareCompositor>,
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    platform_event_handler: Option<Box<dyn FnMut(&openui_platform::PlatformEvent)>>,
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    rendered_generations: Cell<Option<[u64; 5]>>,
 }
 
 impl App {
@@ -105,6 +124,38 @@ impl App {
 
     pub fn document(&self) -> &Document {
         &self.document
+    }
+
+    /// Present an existing retained document, preserving its nodes and listeners.
+    pub fn from_document(document: Document, options: WindowOptions) -> Result<Self, Error> {
+        ViewportMetrics::from_logical_size(options.size.width, options.size.height, 1.0)?;
+        Ok(Self {
+            document,
+            options,
+            root_scope: None,
+            exit_requested: AppExitHandle::default(),
+            #[cfg(all(feature = "linux", target_os = "linux"))]
+            software_compositor: RefCell::new(openui_compositor::SoftwareCompositor::default()),
+            #[cfg(all(feature = "linux", target_os = "linux"))]
+            platform_event_handler: None,
+            #[cfg(all(feature = "linux", target_os = "linux"))]
+            rendered_generations: Cell::new(None),
+        })
+    }
+
+    pub fn exit_handle(&self) -> AppExitHandle {
+        self.exit_requested.clone()
+    }
+
+    /// Observe platform events after document processing and all engine borrows.
+    /// The callback runs on the UI thread, may use retained handles, and ends
+    /// when the blocking run returns. It must not start another native run.
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    pub fn on_platform_event(
+        &mut self,
+        handler: impl FnMut(&openui_platform::PlatformEvent) + 'static,
+    ) {
+        self.platform_event_handler = Some(Box::new(handler));
     }
 
     pub fn mount<V: IntoView>(&mut self, view: impl FnOnce() -> V) -> Result<(), Error> {
@@ -124,6 +175,12 @@ impl App {
     /// Run the owned native event loop.
     pub fn run<V: IntoView>(mut self, view: impl FnOnce() -> V) -> Result<(), Error> {
         self.mount(view)?;
+        self.run_document()
+    }
+
+    /// Block in the native event loop using the document already attached.
+    pub fn run_document(self) -> Result<(), Error> {
+        self.document.update_all()?;
         #[cfg(all(feature = "linux", target_os = "linux"))]
         {
             let options = openui_platform::WindowOptions {
@@ -143,11 +200,11 @@ impl App {
     }
 
     pub fn request_exit(&self) {
-        self.exit_requested.set(true);
+        self.exit_requested.request_exit();
     }
 
     pub fn exit_requested(&self) -> bool {
-        self.exit_requested.get()
+        self.exit_requested.0.get()
     }
 }
 
@@ -155,32 +212,16 @@ impl App {
 impl openui_platform::PlatformApplication for App {
     fn event(&mut self, event: openui_platform::PlatformEvent) -> Result<(), String> {
         use openui_engine::PointerEventKind;
-        use openui_platform::{KeyPhase, PlatformEvent, PointerButton, PointerPhase};
+        use openui_platform::{PlatformEvent, PointerButton, PointerPhase};
 
-        let modifiers = |value: openui_platform::Modifiers| {
-            let mut result = crate::Modifiers::NONE;
-            if value.shift {
-                result |= crate::Modifiers::SHIFT;
-            }
-            if value.control {
-                result |= crate::Modifiers::CTRL;
-            }
-            if value.alt {
-                result |= crate::Modifiers::ALT;
-            }
-            if value.meta {
-                result |= crate::Modifiers::META;
-            }
-            result
-        };
         let button = |value: PointerButton| match value {
             PointerButton::Left => crate::MouseButton::Left,
             PointerButton::Middle => crate::MouseButton::Middle,
             PointerButton::Right | PointerButton::Other(_) => crate::MouseButton::Right,
         };
-        let result = match event {
+        let result = match &event {
             PlatformEvent::BackendChanged(_) => Ok(()),
-            PlatformEvent::Resized(viewport) => self.document.set_viewport(viewport),
+            PlatformEvent::Resized(viewport) => self.document.set_viewport(*viewport),
             PlatformEvent::Pointer {
                 pointer_id,
                 phase,
@@ -189,18 +230,18 @@ impl openui_platform::PlatformApplication for App {
                 button: pointer,
                 modifiers: keys,
             } => self.document.dispatch_pointer_event(
-                pointer_id,
-                match phase {
+                *pointer_id,
+                match *phase {
                     PointerPhase::Move => PointerEventKind::Move,
                     PointerPhase::Down => PointerEventKind::Down,
                     PointerPhase::Up => PointerEventKind::Up,
                     PointerPhase::Cancel | PointerPhase::Leave => PointerEventKind::Cancel,
                 },
-                x,
-                y,
-                button(pointer),
-                modifiers(keys),
-                pointer_id != 0,
+                *x,
+                *y,
+                button(*pointer),
+                platform_modifiers(*keys),
+                *pointer_id != 0,
             ),
             PlatformEvent::Wheel {
                 x,
@@ -208,37 +249,32 @@ impl openui_platform::PlatformApplication for App {
                 delta_x,
                 delta_y,
                 modifiers: keys,
-            } => self
-                .document
-                .dispatch_wheel_event(x, y, delta_x, delta_y, modifiers(keys)),
+            } => self.document.dispatch_wheel_event(
+                *x,
+                *y,
+                *delta_x,
+                *delta_y,
+                platform_modifiers(*keys),
+            ),
             PlatformEvent::Key {
                 phase,
                 key_code,
                 text,
                 modifiers: keys,
-                ..
+                repeat,
             } => {
-                let keys = modifiers(keys);
-                let dispatched = self.document.dispatch_key_event(
-                    match phase {
-                        KeyPhase::Down => crate::KeyEventType::Down,
-                        KeyPhase::Up => crate::KeyEventType::Up,
-                    },
-                    key_code,
-                    text.as_deref(),
-                    keys,
-                );
-                if dispatched.is_ok()
-                    && phase == KeyPhase::Down
-                    && !keys.contains(crate::Modifiers::CTRL)
-                    && !keys.contains(crate::Modifiers::META)
-                    && text.as_deref().is_some_and(is_text_input)
-                {
-                    self.document
-                        .dispatch_text_input(text.as_deref().expect("text was checked"))
-                } else {
-                    dispatched
-                }
+                // Compatibility injection: navigation keys have no committed
+                // text. The native adapter supplies both fields explicitly.
+                return self.key_input(openui_platform::KeyboardInput {
+                    phase: *phase,
+                    key_code: *key_code,
+                    key_text: text.clone(),
+                    text: text
+                        .clone()
+                        .filter(|_| !matches!(*key_code, 8 | 9 | 13 | 27 | 33..=40 | 46)),
+                    modifiers: *keys,
+                    repeat: *repeat,
+                });
             }
             PlatformEvent::TextInput(text) => self.document.dispatch_text_input(&text),
             PlatformEvent::CompositionStart => self.document.dispatch_composition_start(),
@@ -249,9 +285,35 @@ impl openui_platform::PlatformApplication for App {
             PlatformEvent::Focused(_)
             | PlatformEvent::DroppedFile(_)
             | PlatformEvent::HoveredFile(_)
-            | PlatformEvent::HoveredFileCancelled => Ok(()),
+            | PlatformEvent::HoveredFileCancelled
+            | PlatformEvent::Presented { .. }
+            | PlatformEvent::CloseRequested => Ok(()),
         };
-        result.map_err(|error| error.to_string())
+        result.map_err(|error| error.to_string())?;
+        if let Some(handler) = self.platform_event_handler.as_mut() {
+            handler(&event);
+        }
+        Ok(())
+    }
+
+    fn key_input(&mut self, input: openui_platform::KeyboardInput) -> Result<(), String> {
+        use openui_platform::KeyPhase;
+        self.document
+            .dispatch_key_input(
+                match input.phase {
+                    KeyPhase::Down => crate::KeyEventType::Down,
+                    KeyPhase::Up => crate::KeyEventType::Up,
+                },
+                input.key_code,
+                input.key_text.as_deref(),
+                input.text.as_deref(),
+                platform_modifiers(input.modifiers),
+            )
+            .map_err(|error| error.to_string())?;
+        if let Some(handler) = self.platform_event_handler.as_mut() {
+            handler(&input.key_event());
+        }
+        Ok(())
     }
 
     fn render(&mut self, time_ms: f64) -> Result<openui_platform::SoftwareFrame, String> {
@@ -267,6 +329,11 @@ impl openui_platform::PlatformApplication for App {
             .borrow_mut()
             .render(&scene)
             .map_err(|error| error.to_string())?;
+        self.rendered_generations.set(Some(
+            self.document
+                .with_engine(visual_generations)
+                .map_err(|error| error.to_string())?,
+        ));
         Ok(openui_platform::SoftwareFrame {
             width: frame.width,
             height: frame.height,
@@ -294,6 +361,12 @@ impl openui_platform::PlatformApplication for App {
 
     fn is_animating(&self) -> bool {
         self.document.is_animating().unwrap_or(false)
+    }
+
+    fn needs_redraw(&self) -> bool {
+        self.document
+            .with_engine(visual_generations)
+            .is_ok_and(|generations| self.rendered_generations.get() != Some(generations))
     }
 
     fn cursor_icon(&mut self, x: f32, y: f32) -> Result<openui_platform::CursorIcon, String> {
@@ -337,8 +410,33 @@ impl openui_platform::PlatformApplication for App {
 }
 
 #[cfg(all(feature = "linux", target_os = "linux"))]
-fn is_text_input(text: &str) -> bool {
-    !text.is_empty() && text.chars().all(|character| !character.is_control())
+fn platform_modifiers(value: openui_platform::Modifiers) -> crate::Modifiers {
+    let mut result = crate::Modifiers::NONE;
+    if value.shift {
+        result |= crate::Modifiers::SHIFT;
+    }
+    if value.control {
+        result |= crate::Modifiers::CTRL;
+    }
+    if value.alt {
+        result |= crate::Modifiers::ALT;
+    }
+    if value.meta {
+        result |= crate::Modifiers::META;
+    }
+    result
+}
+
+#[cfg(all(feature = "linux", target_os = "linux"))]
+fn visual_generations(engine: &openui_engine::Engine) -> [u64; 5] {
+    let generations = engine.dirty_generations();
+    [
+        generations.tree,
+        generations.intrinsic,
+        generations.layout,
+        generations.paint,
+        generations.compositing,
+    ]
 }
 
 impl Drop for App {
@@ -374,9 +472,13 @@ impl HeadlessApp {
                     ..WindowOptions::default()
                 },
                 root_scope: None,
-                exit_requested: Cell::new(false),
+                exit_requested: AppExitHandle::default(),
                 #[cfg(all(feature = "linux", target_os = "linux"))]
                 software_compositor: RefCell::new(openui_compositor::SoftwareCompositor::default()),
+                #[cfg(all(feature = "linux", target_os = "linux"))]
+                platform_event_handler: None,
+                #[cfg(all(feature = "linux", target_os = "linux"))]
+                rendered_generations: Cell::new(None),
             },
         })
     }
@@ -443,6 +545,53 @@ mod tests {
         assert_eq!((first.width(), first.height()), (64, 64));
         assert_eq!(first.pixels(), second.pixels());
         assert!(first.pixels().iter().any(|channel| *channel != 255));
+    }
+
+    #[test]
+    fn app_from_document_retains_existing_nodes_and_exit_handle() {
+        let document = Document::new(80, 40).unwrap();
+        let element = crate::Element::create(&document, "button").unwrap();
+        document.body().append_child(&element).unwrap();
+        element.set_attribute("id", "retained").unwrap();
+        let app = App::from_document(document, WindowOptions::default()).unwrap();
+        assert!(app.document().element_by_id("retained").unwrap().is_some());
+        let exit = app.exit_handle();
+        assert!(!app.exit_requested());
+        exit.request_exit();
+        assert!(app.exit_requested());
+    }
+
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[test]
+    fn platform_observer_can_mutate_and_request_exit_after_render_borrows() {
+        use openui_platform::{PlatformApplication, PlatformEvent};
+        let document = Document::new(80, 40).unwrap();
+        let element = crate::Element::create(&document, "div").unwrap();
+        document.body().append_child(&element).unwrap();
+        let mut app = App::from_document(document, WindowOptions::default()).unwrap();
+        let exit = app.exit_handle();
+        app.on_platform_event(move |event| {
+            if matches!(event, PlatformEvent::Presented { .. }) {
+                element.set_text("next frame").unwrap();
+                exit.request_exit();
+            }
+        });
+        assert!(app.needs_redraw());
+        let first = app.render(0.0).unwrap();
+        assert!(!app.needs_redraw());
+        app.event(PlatformEvent::Presented {
+            frame_number: 1,
+            time_ms: 0.0,
+        })
+        .unwrap();
+        assert!(app.exit_requested());
+        assert!(app.needs_redraw());
+        let second = app.render(0.0).unwrap();
+        assert_ne!(first.pixels, second.pixels);
+        assert!(!app.needs_redraw());
+        let unchanged = app.render(0.0).unwrap();
+        assert_eq!(second.pixels, unchanged.pixels);
+        assert!(!app.needs_redraw());
     }
 
     #[test]
@@ -537,5 +686,90 @@ mod tests {
         .unwrap();
         let frame = PlatformApplication::render(&mut app, 0.0).unwrap();
         assert_eq!((frame.width, frame.height), (480, 240));
+    }
+
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[test]
+    fn cancelled_native_keydown_does_not_insert_committed_text() {
+        use openui_platform::{KeyPhase, KeyboardInput, PlatformApplication};
+        let mut app = App::builder().build().unwrap();
+        let input = crate::Element::create(app.document(), "input").unwrap();
+        app.document().body().append_child(&input).unwrap();
+        input.focus().unwrap();
+        let callback_input = input.clone();
+        input
+            .on("keydown", move |event| {
+                callback_input.set_control_value("callback").unwrap();
+                event.prevent_default();
+            })
+            .unwrap();
+        app.key_input(KeyboardInput {
+            phase: KeyPhase::Down,
+            key_code: 65,
+            key_text: Some("a".into()),
+            text: Some("a".into()),
+            modifiers: openui_platform::Modifiers::default(),
+            repeat: false,
+        })
+        .unwrap();
+        assert_eq!(input.control_value().unwrap().as_deref(), Some("callback"));
+    }
+
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[test]
+    fn native_named_keys_and_noneditable_controls_do_not_receive_text() {
+        use openui_platform::{KeyPhase, KeyboardInput, PlatformApplication};
+        let mut app = App::builder().build().unwrap();
+        let input = crate::Element::create(app.document(), "input").unwrap();
+        app.document().body().append_child(&input).unwrap();
+        input.focus().unwrap();
+        for (key_code, key_text, text) in [
+            (27, "Escape", None),
+            (38, "ArrowUp", None),
+            (0, ".", Some(".")),
+            (0, "#", Some("#")),
+            (0, "é", Some("é")),
+        ] {
+            app.key_input(KeyboardInput {
+                phase: KeyPhase::Down,
+                key_code,
+                key_text: Some(key_text.into()),
+                text: text.map(str::to_owned),
+                modifiers: openui_platform::Modifiers::default(),
+                repeat: false,
+            })
+            .unwrap();
+        }
+        assert_eq!(input.control_value().unwrap().as_deref(), Some(".#é"));
+        let checkbox = crate::Element::create(app.document(), "input").unwrap();
+        checkbox.set_attribute("type", "checkbox").unwrap();
+        app.document().body().append_child(&checkbox).unwrap();
+        checkbox.focus().unwrap();
+        app.key_input(KeyboardInput {
+            phase: KeyPhase::Down,
+            key_code: 32,
+            key_text: Some(" ".into()),
+            text: Some(" ".into()),
+            modifiers: openui_platform::Modifiers::default(),
+            repeat: false,
+        })
+        .unwrap();
+        assert!(app
+            .document()
+            .with_engine(|engine| {
+                engine
+                    .control_state(checkbox.handle)
+                    .unwrap()
+                    .unwrap()
+                    .checked
+            })
+            .unwrap());
+        app.event(openui_platform::PlatformEvent::TextInput("ignored".into()))
+            .unwrap();
+        let button = crate::Element::create(app.document(), "button").unwrap();
+        app.document().body().append_child(&button).unwrap();
+        button.focus().unwrap();
+        app.event(openui_platform::PlatformEvent::TextInput("ignored".into()))
+            .unwrap();
     }
 }

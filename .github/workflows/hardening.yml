@@ -63,7 +63,7 @@ jobs:
             build-essential clang libclang-18-dev libfontconfig1-dev \
             libfreetype-dev libgl1-mesa-dev libwayland-dev libx11-dev \
             libx11-xcb-dev libxcb1-dev libxkbcommon-dev mesa-utils \
-            ninja-build pkg-config python3 weston xvfb
+            ninja-build pkg-config python3 weston xvfb libxkbcommon-x11-0
           rustup toolchain install 1.94.1 --profile minimal --component rustfmt
           rustup default 1.94.1
       - uses: actions/cache@v5
@@ -85,6 +85,17 @@ jobs:
       - name: Build Linux example
         working-directory: bindings/rust
         run: cargo build --locked --package hello --features linux
+      - name: Build and test the C Linux application surface
+        working-directory: bindings/rust
+        run: |
+          RUST_MIN_STACK=4194304 cargo test --locked --package openui-ffi --features linux
+          cargo build --locked --package openui-ffi --features linux
+      - name: Exercise native C and C++ windows on X11 with software and Mesa OpenGL
+        run: |
+          xvfb-run --auto-servernum python3 tools/ffi/verify_native_window.py \
+            --protocol x11 --backend software --report "$RUNNER_TEMP/native-x11-software.json"
+          xvfb-run --auto-servernum python3 tools/ffi/verify_native_window.py \
+            --protocol x11 --backend opengl --report "$RUNNER_TEMP/native-x11-opengl.json"
       - name: Smoke-test X11 with Mesa OpenGL
         working-directory: bindings/rust
         run: xvfb-run --auto-servernum env OUI_BACKEND=opengl OUI_SMOKE_EXIT=1 target/debug/hello
@@ -102,6 +113,16 @@ jobs:
             sleep 0.1
           done
           env -u DISPLAY WAYLAND_DISPLAY=wayland-openui OUI_BACKEND=software OUI_SMOKE_EXIT=1 target/debug/hello
+          env -u DISPLAY WAYLAND_DISPLAY=wayland-openui \
+            python3 ../../tools/ffi/verify_native_window.py --protocol wayland \
+              --backend software --report "$RUNNER_TEMP/native-wayland-software.json"
+      - name: Preserve native C/C++ smoke reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: native-c-cpp-window-smokes
+          path: ${{ runner.temp }}/native-*.json
+          if-no-files-found: ignore
 
   miri-handles:
     if: github.event_name != 'pull_request'

@@ -538,6 +538,7 @@ struct Runtime<A: PlatformApplication> {
     composing: bool,
     started: Instant,
     error: Option<PlatformError>,
+    presented_frames: u64,
 }
 
 impl<A: PlatformApplication> Runtime<A> {
@@ -642,20 +643,26 @@ impl<A: PlatformApplication> Runtime<A> {
             self.fail(event_loop, error);
             return;
         }
+        self.presented_frames = self.presented_frames.saturating_add(1);
+        if !self.send(
+            event_loop,
+            PlatformEvent::Presented {
+                frame_number: self.presented_frames,
+                time_ms: elapsed_ms,
+            },
+        ) {
+            return;
+        }
         self.update_accessibility(event_loop);
-        if self.application.is_animating() {
+        if self.application.is_animating() || self.application.needs_redraw() {
             self.request_redraw();
         }
     }
 
     fn handle_key(&mut self, event_loop: &ActiveEventLoop, event: winit::event::KeyEvent) {
         let pressed = event.state == ElementState::Pressed;
-        let text = event
-            .text
-            .as_ref()
-            .map(ToString::to_string)
-            .or_else(|| logical_key_text(&event.logical_key));
-        let shortcut = text.as_deref().map(str::to_ascii_lowercase);
+        let key_text = logical_key_text(&event.logical_key);
+        let shortcut = key_text.as_deref().map(str::to_ascii_lowercase);
         let command_modifier = self.modifiers.control || self.modifiers.meta;
         if pressed && command_modifier && shortcut.as_deref() == Some("v") {
             if let Ok(text) = self.clipboard.load() {
@@ -665,20 +672,19 @@ impl<A: PlatformApplication> Runtime<A> {
                 }
             }
         }
-        if !self.send(
-            event_loop,
-            PlatformEvent::Key {
-                phase: if pressed {
-                    KeyPhase::Down
-                } else {
-                    KeyPhase::Up
-                },
-                key_code: key_code(&event.logical_key),
-                text: text.clone(),
-                modifiers: self.modifiers,
-                repeat: event.repeat,
+        if let Err(error) = self.application.key_input(crate::KeyboardInput {
+            phase: if pressed {
+                KeyPhase::Down
+            } else {
+                KeyPhase::Up
             },
-        ) {
+            key_code: key_code(&event.logical_key),
+            key_text,
+            text: event.text.as_ref().map(ToString::to_string),
+            modifiers: self.modifiers,
+            repeat: event.repeat,
+        }) {
+            self.fail(event_loop, PlatformError::Application(error));
             return;
         }
         if pressed && command_modifier && matches!(shortcut.as_deref(), Some("c") | Some("x")) {
@@ -773,7 +779,10 @@ impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
             adapter.process_event(&window, &event);
         }
         match event {
-            WindowEvent::CloseRequested | WindowEvent::Destroyed => event_loop.exit(),
+            WindowEvent::CloseRequested | WindowEvent::Destroyed => {
+                let _ = self.send(event_loop, PlatformEvent::CloseRequested);
+                event_loop.exit();
+            }
             WindowEvent::Resized(physical) => {
                 if physical.width > 0
                     && physical.height > 0
@@ -986,7 +995,7 @@ impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
         if self.application.exit_requested() {
             event_loop.exit();
-        } else if self.application.is_animating() {
+        } else if self.application.is_animating() || self.application.needs_redraw() {
             self.request_redraw();
         }
     }
@@ -1018,6 +1027,7 @@ pub fn run<A: PlatformApplication>(
         composing: false,
         started: Instant::now(),
         error: None,
+        presented_frames: 0,
     };
     event_loop
         .run_app(&mut runtime)
@@ -1091,7 +1101,19 @@ fn key_code(key: &Key) -> i32 {
         Key::Named(NamedKey::Delete) => 46,
         Key::Named(NamedKey::Backspace) => 8,
         Key::Named(NamedKey::Escape) => 27,
-        Key::Character(value) => value.chars().next().map_or(0, |value| value as i32),
+        // Character code points collide with the navigation/control codes.
+        // Letters and digits keep their conventional codes; other characters
+        // carry their identity in key_text and committed text.
+        Key::Character(value) => {
+            let mut characters = value.chars();
+            characters.next().map_or(0, |character| {
+                if character.is_ascii_alphanumeric() && characters.next().is_none() {
+                    character.to_ascii_uppercase() as i32
+                } else {
+                    0
+                }
+            })
+        }
         _ => 0,
     }
 }
@@ -1139,6 +1161,21 @@ fn empty_tree_update() -> accesskit::TreeUpdate {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn character_keys_do_not_alias_navigation_and_editing_keys() {
+        for text in ["!", "\"", "#", "$", "%", "&", "'", "(", ".", "é", "é"] {
+            assert_eq!(key_code(&Key::Character(text.into())), 0, "{text}");
+        }
+        assert_eq!(key_code(&Key::Character("a".into())), 65);
+        assert_eq!(key_code(&Key::Character("1".into())), 49);
+        assert_eq!(key_code(&Key::Named(NamedKey::Delete)), 46);
+        assert_eq!(key_code(&Key::Named(NamedKey::ArrowLeft)), 37);
+        assert_eq!(
+            logical_key_text(&Key::Named(NamedKey::Escape)).as_deref(),
+            Some("Escape")
+        );
+    }
 
     #[test]
     fn software_frame_is_copied_without_resampling() {

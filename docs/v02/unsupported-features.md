@@ -56,9 +56,9 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   not been qualified;
 - automated AT-SPI operation and physical-GPU context-loss qualification remain
   to be run in the release lab;
-- the C ABI now exports an owned accessibility-tree snapshot, but not the owned
-  Linux event loop, so native X11/Wayland C application parity is incomplete
-  even though retained engine/headless C parity is covered;
+- the C ABI exports owned accessibility-tree snapshots and the shared Rust
+  Linux event loop; release-lab AT-SPI operation, context loss, and packaged
+  native C/C++ application qualification remain open;
 - full preserve-3d/backface layer semantics remain incomplete.
 
 The release cannot be marked final until the release-candidate gaps are closed

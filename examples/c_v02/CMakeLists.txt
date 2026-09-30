@@ -10,3 +10,9 @@ endforeach()
 
 add_executable(openui_header_smoke header_smoke.cc)
 target_link_libraries(openui_header_smoke PRIVATE OpenUI::OpenUI)
+
+add_executable(openui_native_c native/window.c)
+target_link_libraries(openui_native_c PRIVATE OpenUI::OpenUI)
+add_executable(openui_native_cpp native/window.cc)
+target_link_libraries(openui_native_cpp PRIVATE OpenUI::OpenUI)
+set_target_properties(openui_native_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)

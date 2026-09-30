@@ -29,12 +29,19 @@ pub(crate) enum HandleKind {
 #[derive(Clone)]
 pub(crate) struct AppState {
     pub document: Rc<DocumentState>,
-    pub _title: String,
-    pub _backend: u32,
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    pub title: String,
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    pub backend: u32,
+    pub running: Cell<bool>,
+    pub has_run: Cell<bool>,
+    pub exit_requested: Cell<bool>,
+    pub exit_handle: RefCell<Option<openui::AppExitHandle>>,
 }
 
 pub(crate) struct DocumentState {
-    pub engine: RefCell<Engine>,
+    pub engine: Rc<RefCell<Engine>>,
+    pub native: openui::Document,
     pub update_depth: Cell<u32>,
     pub listeners: RefCell<Vec<ListenerRecord>>,
     pub next_listener: Cell<u64>,

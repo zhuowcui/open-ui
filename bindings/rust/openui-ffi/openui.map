@@ -12,6 +12,8 @@ OPENUI_0.2 {
     oui_app_create;
     oui_app_destroy;
     oui_app_document;
+    oui_app_request_exit;
+    oui_app_run;
     oui_border_create;
     oui_buffer_data;
     oui_buffer_destroy;

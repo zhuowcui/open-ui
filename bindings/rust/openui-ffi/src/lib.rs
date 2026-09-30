@@ -8,10 +8,14 @@
 
 mod accessibility_snapshot;
 mod generated;
+mod native_app;
+#[cfg(test)]
+mod native_app_tests;
 mod registry;
 mod types;
 mod value;
 
+pub use native_app::{oui_app_request_exit, oui_app_run};
 pub use types::*;
 
 use generated::{property_from_raw, valid_event_type};
@@ -116,14 +120,28 @@ fn new_document(config: &OuiDocumentConfig) -> Result<Rc<DocumentState>, ApiErro
         size_of::<OuiDocumentConfig>(),
     )?;
     let viewport = viewport_metrics(&config.viewport)?;
-    Ok(Rc::new(DocumentState {
-        engine: RefCell::new(Engine::new(viewport)?),
+    let engine = Rc::new(RefCell::new(Engine::new(viewport)?));
+    let state = Rc::new(DocumentState {
+        native: openui::Document::from_shared_engine(engine.clone()),
+        engine,
         update_depth: Cell::new(0),
         listeners: RefCell::new(Vec::new()),
         next_listener: Cell::new(1),
         element_handles: RefCell::new(std::collections::HashMap::new()),
         animation_events: RefCell::new(Vec::new()),
-    }))
+    });
+    let weak = Rc::downgrade(&state);
+    state
+        .native
+        .set_foreign_event_handler(Rc::new(move |node, target, event, capture| {
+            if let Some(state) = weak.upgrade() {
+                native_app::dispatch_native_listener(&state, node, target, event, capture)
+                    .map_err(|error| openui::Error::Platform(error.message))?;
+            }
+            Ok(())
+        }))
+        .map_err(native_app::native_error)?;
+    Ok(state)
 }
 
 fn viewport_metrics(raw: &OuiViewportMetrics) -> Result<ViewportMetrics, ApiError> {
@@ -669,7 +687,7 @@ pub extern "C" fn oui_app_create(
         if config.backend > 2 {
             return Err(invalid("unknown backend preference"));
         }
-        let title = utf8(config.title, "title")?;
+        let _title = utf8(config.title, "title")?;
         let document_config = OuiDocumentConfig {
             struct_size: size_of::<OuiDocumentConfig>() as u32,
             abi_version: OUI_ABI_VERSION,
@@ -685,8 +703,14 @@ pub extern "C" fn oui_app_create(
         };
         let state = Rc::new(AppState {
             document: new_document(&document_config)?,
-            _title: title,
-            _backend: config.backend,
+            #[cfg(all(feature = "linux", target_os = "linux"))]
+            title: _title,
+            #[cfg(all(feature = "linux", target_os = "linux"))]
+            backend: config.backend,
+            running: Cell::new(false),
+            has_run: Cell::new(false),
+            exit_requested: Cell::new(false),
+            exit_handle: RefCell::new(None),
         });
         write_handle(out_app, LocalHandle::App(state))
     })
@@ -696,6 +720,13 @@ pub extern "C" fn oui_app_create(
 #[no_mangle]
 pub extern "C" fn oui_app_destroy(app: *mut OuiApp) -> OuiStatus {
     ffi(|| {
+        let state = native_app::app_state(app)?;
+        if state.running.get() {
+            return Err(ApiError::new(
+                OuiStatus::InvalidState,
+                "cannot destroy an app while its native run is active",
+            ));
+        }
         destroy(app as usize, HandleKind::App)?;
         Ok(())
     })
@@ -1799,6 +1830,7 @@ pub extern "C" fn oui_document_dispatch_pointer_event(
             1 => PointerEventKind::Down,
             2 => PointerEventKind::Up,
             3 => PointerEventKind::Move,
+            24 => PointerEventKind::Cancel,
             _ => return Err(invalid("pointer dispatch requires a pointer event type")),
         };
         let state = document(document_handle as usize)?;

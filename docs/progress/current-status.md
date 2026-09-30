@@ -20,8 +20,8 @@ remain open.
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
 | Application conformance scenarios | 43 across 10 domains |
-| Frozen / current C exports | 84 / 104 |
-| C examples / C++ consumers | 5 / 1 |
+| Frozen / current C exports | 84 / 106 |
+| C examples / C++ consumers | 6 / 2, including native C/C++ window consumers |
 | Workspace tests | pass |
 | Python closure and qualification tests | 236 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
@@ -168,8 +168,16 @@ scenario now checks detachment and reattachment too. The conformance suite is
 43/43.
 The append-only C `oui_element_detach` export uses the same engine operation
 for element and text handles. `oui_document_element_by_id` now provides owned
-handles for native C element lookup. ABI verification reports 104 current
+handles for native C element lookup. ABI verification reports 106 current
 symbols; the 84 frozen symbols and all C struct layouts remain intact.
+`oui_app_run` and `oui_app_request_exit` now run native C applications through
+Rust `App` and the same retained `Document`. Versioned platform callbacks can
+mutate elements and request exit after engine and presentation borrows end.
+Native C/C++ consumers exercise X11 software/OpenGL and pure Wayland software
+windows. Shared Rust keyboard handling now respects cancelled keydown events,
+separates committed text from logical key names, and ignores text input on
+noneditable controls. Physical release-lab and packaged application
+qualification, including AT-SPI operation, remains open.
 The locked Rust workspace suite passed with CI's 4 MiB libtest worker-thread
 stack. The default 2 MiB worker stack still aborts in an existing fragmented
 multicol integration test; its isolated rerun passes at 4 MiB.
@@ -491,10 +499,11 @@ load it.
   still fails AddressSanitizer, LeakSanitizer, and fuzz on process-exit
   Fontconfig allocations. Its MSRV, Miri, Linux platform, and C UBSan jobs
   passed.
-- The four-profile Chromium census fails exactness; 915 residual test IDs
+- The four-profile Chromium census fails exactness; 914 residual test IDs
   have no reviewed owner. Both 40-profile CPU raster matrices are exact.
-- The C ABI covers the retained engine, headless renderer, and an owned full
-  accessibility-tree snapshot, but does not yet export the owned Linux event loop.
+- The C ABI covers the retained engine, headless renderer, owned full
+  accessibility-tree snapshots, and the shared Rust Linux event loop;
+  release-lab AT-SPI and packaged native C/C++ application qualification remain open.
 - Retained per-node layers and compositor-owned animation curves are incomplete,
   so the strict blocked-UI 100-animation gate is not yet qualified.
 - Full preserve-3d and backface layer semantics remain incomplete.

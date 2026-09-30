@@ -10,8 +10,24 @@ X11 and Wayland. Window, pointer, touch, wheel, keyboard, scale, resize, focus,
 file-drop, and IME notifications are normalized into logical coordinates before
 entering the framework. Application callbacks run after platform and engine
 borrows have been released. Redraws are requested for input, resize, expose,
-accessibility actions, or active animation; settled applications use winit's
+accessibility actions, active animation, or retained mutations from a platform
+callback; settled applications use winit's
 waiting control flow.
+
+`App::from_document` and `App::run_document` run an existing retained document.
+`App::exit_handle` supplies an owned UI-thread exit handle, and
+`App::on_platform_event` observes native notifications after document handling.
+`PlatformEvent::Presented` is sent after a successful buffer presentation;
+changing an element in this callback requests another frame. Logical key names
+and committed text are passed separately in `KeyboardInput`, so cancelling a
+keydown suppresses its text default and names such as `Escape` are never typed
+into a control. Text input on a noneditable control is ignored.
+
+The C ABI's opt-in `linux` feature exposes the same path through `oui_app_run`,
+`oui_app_request_exit`, `OuiAppRunConfig`, and `OuiPlatformEvent`. C listeners
+run through the Rust document's event route and can prevent native defaults.
+The [C ABI guide](../../bindings/rust/openui-ffi/README.md#native-linux-windows)
+defines callback ownership, main-thread requirements, and lifetime rules.
 
 Both presentation paths consume the exact frame produced from the engine's
 immutable scene. `Software` presents it through softbuffer. `OpenGl` creates an

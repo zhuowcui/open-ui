@@ -12,12 +12,18 @@ keywords.workspace = true
 publish = false
 build = "build.rs"
 
+[features]
+default = []
+linux = ["openui/linux", "dep:openui-platform", "openui-platform/linux"]
+
 [lib]
 crate-type = ["rlib", "staticlib", "cdylib"]
 
 [dependencies]
+openui = { version = "=0.2.0", path = "../openui", features = ["ffi-integration"] }
 openui-compositor = { version = "=0.2.0", path = "../openui-compositor" }
 openui-dom = { version = "=0.2.0", path = "../openui-dom" }
 openui-engine = { version = "=0.2.0", path = "../openui-engine" }
 openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
+openui-platform = { version = "=0.2.0", path = "../openui-platform", optional = true }
 openui-style = { version = "=0.2.0", path = "../openui-style" }
