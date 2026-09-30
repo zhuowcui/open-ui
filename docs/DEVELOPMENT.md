@@ -11,6 +11,10 @@ public native Rust API over the retained engine. WPT scripts may be read by
 offline qualification tools to identify a final visual state; they are never
 run by Open UI. See the [native interaction contract](v02/supported-platforms.md#native-interaction-api).
 
+Closing an interaction gap requires a public Rust method and coverage from a
+native consumer exercising its state changes, events, or rendered result.
+An internal Engine method or a test fixture alone does not complete that work.
+
 ## Prerequisites
 
 - Rust 1.85 or newer.

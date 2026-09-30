@@ -25,8 +25,9 @@ handles and call native methods from Rust callbacks. C applications use the
 versioned C ABI over the same engine. There is no JavaScript execution,
 `eval`, script binding, or embedded browser runtime in the application path.
 Element APIs can be called directly from Rust; they do not require JavaScript.
-Needed browser-style element operations are exposed as public Rust methods for
-the consuming native application to call:
+Every browser-style element operation needed by a consuming native application
+must be exposed as a public Rust method. Lookup, mutation, geometry, focus,
+scrolling, controls, and event dispatch operate directly on the native engine:
 
 | Application task | Public Rust API |
 |---|---|
@@ -48,6 +49,13 @@ For example, an app can look up a button, register a Rust click callback, and
 change another element through `Document::element_by_id`, `Element::on`, and
 `Element::set_text`. It does not inject or execute a script. An internal Engine
 operation or test-only fixture is not sufficient application API coverage.
+
+To close an API gap, implement the operation in the shared engine, expose it
+through the public Rust API, and verify it from a consuming native Rust
+application. Test coverage must exercise the retained state and resulting
+events or rendering. A missing public method remains an implementation gap
+until that native application path works.
+
 Class tokens are native element metadata; styling changes use typed style
 setters rather than a parsed CSS class rule.
 Native kinds group some tag names, such as `div` and `main`; an application
