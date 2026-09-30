@@ -47,8 +47,14 @@ passes 8,480 tests with 13 ignored. The Linux-enabled Rust/C/platform checks
 pass 185 tests with eight ignored, including Winit event normalization
 and C composition dispatch. The ABI generator reports no drift; the 106 C
 exports and frozen layouts are unchanged. These checks establish the native
-input behavior above. Operating a physical IME and AT-SPI service on the release
-lab, and final Chromium rendering qualification, remain open.
+input behavior above. At clean checkpoint `04394c86`, the
+[static raster guards](../renderer/generated/focused-primitive-raster-v43.json)
+are 640/640 focused and 960/960 primitive exact. The
+[image comparison](../renderer/generated/native-ime-raster-delta-v1.json)
+confirms that all 1,600 Open UI images, Chromium images, and oracle identities
+are unchanged from the prior guards. This does not update the original or
+expanded full-census counts. Operating a physical IME and AT-SPI service on the
+release lab, and final Chromium rendering qualification, remain open.
 
 File, date, and color picker dialogs and media controls remain outside the v0.2
 interactive contract. Their passive rendering roles are retained for exact

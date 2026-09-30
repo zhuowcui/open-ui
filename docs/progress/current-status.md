@@ -171,6 +171,16 @@ restoration, disabled/noneditable controls, and callbacks that cancel, redirect,
 restart, or remove the target. The public `Document::dispatch_composition_cancel`
 method exposes cancellation directly to native Rust applications; the suite
 contains 50 scenarios. See [interaction and controls](../v02/interaction-controls.md).
+At clean native-IME checkpoint `04394c86`, the
+[v43 static raster guards](../renderer/generated/focused-primitive-raster-v43.json)
+are 640/640 focused and 960/960 primitive exact, and all 1,600 Open UI images,
+Chromium images, and oracle identities are
+[unchanged](../renderer/generated/native-ime-raster-delta-v1.json). The locked
+workspace passes 8,480 tests; Linux-enabled Rust/C/platform checks pass 185.
+All six regular hosted checks and all six clean native C/C++ window processes
+pass at that checkpoint. The five optional hosted hardening jobs were skipped.
+This API work does not update the original or expanded census counts or close
+the remaining renderer, native API review, or release-lab gates.
 The append-only C `oui_element_detach` export uses the same engine operation
 for element and text handles. `oui_document_element_by_id` now provides owned
 handles for native C element lookup. ABI verification reports 106 current

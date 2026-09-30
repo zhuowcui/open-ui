@@ -57,3 +57,39 @@ the C library with `linux`, checks that native consumer sources are packaged,
 and runs the installed Debian C/C++ windows. Tag builds, both architecture
 installations, hardware/accessibility qualification, and publication remain
 pending in the [release ledger](release.md).
+
+## Native IME checkpoint
+
+At clean checkpoint `04394c863b4f8a8d69a5768a3fa5e9d4a2998411`, native text
+composition commits the final text after an empty preview, groups preview
+updates into one undo step, and restores the original value and selection on
+cancellation. Rust applications call the public `Document` input methods;
+the C native loop shares that document and engine. The legacy explicit C
+composition dispatcher now uses the same engine commit/cancel operations.
+The [interaction contract](interaction-controls.md) records callback and
+focus behavior and the consuming Rust regressions.
+
+Both native consumers still present two frames and exit successfully on all
+three previously exercised paths:
+
+| Window protocol | Presentation | C / C++ | Clean report |
+|---|---|---|---|
+| X11 | Software | Both pass | [v2 identities](generated/native-c-x11-software-smoke-v2.json) |
+| X11 | OpenGL | Both pass | [v2 identities](generated/native-c-x11-opengl-smoke-v2.json) |
+| Pure Wayland | Software | Both pass | [v2 identities](generated/native-c-wayland-software-smoke-v2.json) |
+
+The locked workspace passes 8,480 tests with 13 ignored, the public application
+suite passes 50 scenarios, and the Linux-enabled Rust/C/platform suites pass
+185 tests with eight ignored. The 106-export ABI, five headless C consumers,
+C++ header check, 239 Python tests, read-only generators, historical archive
+integrity, and accountability audit pass. All six ordinary hosted PR checks
+passed at this source checkpoint; the five optional hardening jobs were skipped.
+The [complete static raster guards](../renderer/generated/focused-primitive-raster-v43.json)
+pass all 1,600 comparisons, with
+[no image or oracle-identity changes](../renderer/generated/native-ime-raster-delta-v1.json).
+
+These window reports remain WSLg functional smoke evidence with
+`release_qualification: false`. Native OS IME operation and AT-SPI service
+inspection still require the release lab. Original and expanded renderer
+census counts are unchanged by this evidence update; final release gates
+remain open.
