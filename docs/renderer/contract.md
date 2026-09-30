@@ -62,7 +62,8 @@ turns their failing comparisons into passes.
 
 At clean checkpoint `15f9f12d`, the
 [v41 original census](generated/four-profile-census-v41.json) is
-21,266/22,924 exact, with 1,658 differences and zero errors. The shared
+21,266/22,924 exact against cached Chromium captures, with 1,658 differences
+and zero errors. The shared
 [circular background one-axis clip repair](circular-background-one-axis-clip.md)
 makes the F16 circular fill honor the same horizontal overflow scissor as the
 direct rounded fill. One original comparison became exact, only that Open UI
@@ -79,6 +80,19 @@ The same 200 of 201 additions are exact at all four profiles. The
 [v26 diagnostic selection](../../tools/qualification/manifests/expanded-v26.json)
 lists those 200; the release contract retains all 201 and the remaining
 fieldset legend failure.
+
+The later [scaled LCD font investigation](scaled-lcd-hinting-oracle-investigation.md)
+found an older cached Chromium image that differs from six agreeing fresh
+captures of `wpt/css2_floats/float-nowrap-3` at 1920×1080@1.5. Both variants have
+the same recorded oracle identity. The
+[read-only oracle audit](generated/chromium-font-oracle-audit-v1.json)
+reports the contradiction and explicitly does not qualify a renderer. The
+root cause remains unreviewed. Both images, both input records, and the exact
+HTML reproducer are preserved; no cache entry, historical archive, or pinned
+oracle was rewritten. The renderer experiment was rejected after 43 exact
+regressions and restored. The existing clean census is evidence against its
+cached inputs; final qualification also requires this identity discrepancy
+to be reconciled.
 
 At prior clean checkpoint `e14e3e64`, the
 [v39 original census](generated/four-profile-census-v39.json) was

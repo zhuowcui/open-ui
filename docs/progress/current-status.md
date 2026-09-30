@@ -11,7 +11,8 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,266/22,924 exact, 1,658 different, 0 errors |
+| Four-profile census against cached Chromium captures | 21,266/22,924 exact, 1,658 different, 0 errors |
+| Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
 | Pending native final-state candidates | 0/35 exact at all four profiles after the latest clean recheck |
@@ -22,12 +23,13 @@ remain open.
 | Frozen / current C exports | 84 / 104 |
 | C examples / C++ consumers | 5 / 1 |
 | Workspace tests | pass |
-| Python closure and qualification tests | 231 pass |
+| Python closure and qualification tests | 236 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
 The [latest complete clean census](../renderer/generated/four-profile-census-v41.json)
-at `15f9f12d` is 21,266/22,924 exact, 1,658 different, and zero errors.
+at `15f9f12d` is 21,266/22,924 exact, 1,658 different, and zero errors
+against the cached Chromium captures.
 The [circular background one-axis clip repair](../renderer/circular-background-one-axis-clip.md)
 makes the F16 circular fill apply the same horizontal overflow scissor as the
 direct rounded fill. One original comparison became exact; only that Open UI
@@ -47,6 +49,17 @@ legend failure. The other 35 AST-lowered candidates remain pending.
 The [fractional Ahem legend investigation](../renderer/fieldset-legend-ahem-raster-investigation.md)
 records that case's 14 extra glyph rows and three rejected shared-raster
 experiments; no renderer fix or qualification is claimed from that work.
+
+The [scaled LCD font investigation](../renderer/scaled-lcd-hinting-oracle-investigation.md)
+rejected a shared no-hinting change: among 904 real-font comparisons, 28 became
+exact but 43 formerly exact comparisons regressed. The renderer was restored.
+Of 12 fresh Chromium captures, 11 matched their cached images and one differed;
+five additional fresh captures of that case all matched the first fresh one.
+The [oracle audit](../renderer/generated/chromium-font-oracle-audit-v1.json)
+records two decoded images under one identical recorded input identity. The
+root cause is unreviewed, both variants remain preserved, and final renderer
+qualification requires reconciliation. This diagnostic does not update the
+clean census counts or qualify any renderer change.
 
 At the prior clean checkpoint `e14e3e64`, the
 [v39 census](../renderer/generated/four-profile-census-v39.json)

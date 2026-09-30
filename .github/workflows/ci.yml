@@ -112,6 +112,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install renderer evidence test dependency
+        run: python3 -m pip install Pillow==12.2.0
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22.18.0
@@ -146,7 +153,7 @@ jobs:
           printf 'CHROMIUM_WPT_ROOT=%s\nCHROMIUM_WPT_CSS=%s\n' \
             "$wpt_root" "$wpt_root/css" >> "$GITHUB_ENV"
 
-      - name: Run frozen closure and porter tests
+      - name: Run closure, porter, and renderer evidence tests
         run: |
           python3 -m unittest \
             tools.accountability.test_audit_frozen_oracle \
@@ -158,7 +165,9 @@ jobs:
             tools.wpt.test_sp17_closure \
             tools.wpt.test_sp18_closure \
             tools.wpt.test_sp19_closure \
-            tools.wpt.test_sp20_closure
+            tools.wpt.test_sp20_closure \
+            tools.qualification.test_renderer_matrix \
+            tools.qualification.test_summarize_renderer_census
 
       - name: Verify immutable closure ledgers
         run: |

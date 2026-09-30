@@ -8,7 +8,8 @@ claimed by source code alone.
 |---|---|---|
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
-| Four-profile renderer matrix | 21,266/22,924 exact, 1,658 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v41.json) | fail |
+| Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
+| Four-profile renderer matrix | 21,266/22,924 exact, 1,658 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v41.json) | fail |
 | Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v42.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
 | Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v24.json); 22,069/23,728 total comparisons exact, 1,659 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
@@ -44,6 +45,17 @@ operations for pixel qualification. A test excluded from the pixel matrix for
 behavioral or nonvisual reasons is not a waiver for application interaction:
 needed element behavior must be available through the public native Rust API
 over the same retained document and event path.
+Each needed operation must be callable by the consuming native Rust app and
+verified through that public API. An internal Engine operation or a test-only
+fixture does not close a native application API gap.
+
+The [scaled LCD font investigation](../renderer/scaled-lcd-hinting-oracle-investigation.md)
+rejected a renderer change that regressed 43 formerly exact comparisons. It
+also found one older cached Chromium image that differs from six agreeing
+fresh captures. The capture identity and fixture bytes are the same; the
+reviewed cause remains unknown. The clean census below remains evidence
+against those preserved cached captures, and final qualification requires
+oracle reconciliation. No cached reference was replaced or result promoted.
 
 The latest clean census at `15f9f12d` is
 [21,266/22,924 exact](../renderer/generated/four-profile-census-v41.json),

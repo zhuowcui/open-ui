@@ -18,6 +18,74 @@ MATRIX = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
 sys.modules[SPEC.name] = MATRIX
 SPEC.loader.exec_module(MATRIX)
+import audit_chromium_oracles as ORACLE_AUDIT
+
+
+class ChromiumOracleAuditTests(unittest.TestCase):
+    def write_report(self, path, rgba, *, identity="oracle", png="png", source="capture"):
+        rows = [{
+            "id": "native-font-case",
+            "status": "exact",
+            "chromium_oracle_identity_sha256": identity,
+            "chromium_rgba_sha256": rgba,
+            "chromium_oracle_rgba_sha256": rgba,
+            "chromium_png_sha256": png,
+            "chromium_oracle_source": source,
+        }]
+        report = {
+            "schema_version": 2,
+            "evidence": {"tolerance_pixels": 0},
+            "source": {"clean": False},
+            "complete_contract_scope": False,
+            "contract_sha256": "contract",
+            "font_byte_hashes": {},
+            "resource_hashes": {},
+            "chromium": {"build_identity": "pinned", "binary_sha256": "browser",
+                         "capture_harness_sha256": "harness"},
+            "profiles": [{"profile": "profile", "tests": rows,
+                          "result_sha256": MATRIX.canonical_sha256(rows)}],
+        }
+        path.write_text(json.dumps(report))
+
+    def test_fresh_capture_conflict_is_reported_despite_renderer_exact_status(self):
+        with tempfile.TemporaryDirectory() as directory:
+            first, second = [pathlib.Path(directory) / name for name in ("old.json", "fresh.json")]
+            self.write_report(first, "old-pixels", source="cache")
+            self.write_report(second, "fresh-pixels")
+            result = ORACLE_AUDIT.audit([first, second])
+            self.assertEqual(result["status"], "contradicted-oracle-identity")
+            self.assertEqual(result["contradicted_identity_count"], 1)
+            self.assertEqual(result["fresh_capture_observation_count"], 1)
+            self.assertFalse(result["renderer_qualification"])
+
+    def test_encoding_changes_with_same_decoded_pixels_are_consistent(self):
+        with tempfile.TemporaryDirectory() as directory:
+            first, second = [pathlib.Path(directory) / name for name in ("a.json", "b.json")]
+            self.write_report(first, "pixels", png="encoding-a")
+            self.write_report(second, "pixels", png="encoding-b")
+            result = ORACLE_AUDIT.audit([first, second])
+            self.assertEqual(result["status"], "consistent-observations")
+            self.assertEqual(result["fresh_capture_observation_count"], 2)
+            self.assertFalse(result["renderer_qualification"])
+
+    def test_distinct_capture_protocols_do_not_alias_one_oracle(self):
+        with tempfile.TemporaryDirectory() as directory:
+            first, second = [pathlib.Path(directory) / name for name in ("a.json", "b.json")]
+            self.write_report(first, "old-pixels", identity="old-protocol")
+            self.write_report(second, "new-pixels", identity="new-protocol")
+            result = ORACLE_AUDIT.audit([first, second])
+            self.assertEqual(result["contradicted_identity_count"], 0)
+            self.assertEqual(result["observed_identity_count"], 2)
+
+    def test_changed_rows_cannot_reuse_a_profile_evidence_digest(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = pathlib.Path(directory) / "report.json"
+            self.write_report(path, "pixels")
+            report = json.loads(path.read_text())
+            report["profiles"][0]["tests"][0]["chromium_rgba_sha256"] = "changed"
+            path.write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError, "changed profile results"):
+                ORACLE_AUDIT.audit([path])
 
 
 class RendererMatrixTests(unittest.TestCase):

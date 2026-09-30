@@ -30,8 +30,8 @@ The current v0.2 release candidate has:
 
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
   on replay and 182 changed; these old screenshots are not pixel targets;
-- a clean four-profile Chromium census with 21,266 of 22,924 comparisons
-  exact, 1,658 different, and zero render errors in the
+- a clean four-profile census against cached Chromium captures with
+  21,266 of 22,924 comparisons exact, 1,658 different, and zero render errors in the
   [latest evidence index](docs/renderer/generated/four-profile-census-v41.json);
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
   comparisons exact in the [latest raster index](docs/renderer/generated/focused-primitive-raster-v42.json);
@@ -51,7 +51,10 @@ The current v0.2 release candidate has:
 
 Chromium is the sole pixel target. The archived Open UI bytes disagree with
 Chromium for some fixtures, which is why replaying old screenshots cannot be a
-release gate. The four-profile Chromium census still has 1,658 differences,
+release gate. A [font oracle audit](docs/renderer/scaled-lcd-hinting-oracle-investigation.md)
+also found one older cached Chromium capture that differs from six fresh
+captures under the same recorded identity; that evidence needs reconciliation.
+The cached four-profile census still has 1,658 differences,
 so this repository is not yet declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia
 GPU qualification, retained per-node layers, compositor-owned animation
