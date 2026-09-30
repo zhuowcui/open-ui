@@ -287,6 +287,14 @@ impl Engine {
                 })
             }
             AccessibilityAction::SetValue(value) => {
+                if self
+                    .controls
+                    .get(&handle.index)
+                    .is_some_and(|control| is_editable(control.role))
+                    && !self.can_edit_text(handle)?
+                {
+                    return Err(EngineError::NotEditable);
+                }
                 self.set_control_value(handle, value)?;
                 Ok(ActivationResult {
                     changed: vec![handle],
@@ -559,7 +567,7 @@ impl Engine {
             node.add_action(Action::Blur);
         }
         if let Some(control) = control {
-            populate_control_accessibility(&mut node, control);
+            populate_control_accessibility(&mut node, control, self.can_edit_text(handle)?);
         } else if matches!(data.tag, ElementTag::Summary) {
             node.add_action(Action::Click);
         } else if data.tag == ElementTag::Details {
@@ -646,7 +654,7 @@ impl Engine {
     }
 }
 
-fn populate_control_accessibility(node: &mut Node, control: &crate::ControlState) {
+fn populate_control_accessibility(node: &mut Node, control: &crate::ControlState, editable: bool) {
     if control.disabled {
         node.set_disabled();
     }
@@ -665,8 +673,10 @@ fn populate_control_accessibility(node: &mut Node, control: &crate::ControlState
             if !control.placeholder.is_empty() {
                 node.set_placeholder(&control.placeholder);
             }
-            node.add_action(Action::SetValue);
-            node.add_action(Action::ReplaceSelectedText);
+            if editable {
+                node.add_action(Action::SetValue);
+                node.add_action(Action::ReplaceSelectedText);
+            }
             node.add_action(Action::SetTextSelection);
         }
         FormControlRole::Select => {

@@ -564,16 +564,26 @@ impl Engine {
         Ok(())
     }
 
+    /// Whether user text input may modify this control. Native application
+    /// value setters and selection queries remain available for read-only controls.
+    pub fn can_edit_text(&self, handle: NodeHandle) -> Result<bool, EngineError> {
+        let node = self.resolve(handle)?;
+        Ok(self.controls.get(&handle.index).is_some_and(|control| {
+            !control.disabled
+                && is_editable_role(control.role)
+                && self.document.attribute(node, "readonly").is_none()
+        }))
+    }
+
     pub fn insert_text(&mut self, handle: NodeHandle, text: &str) -> Result<(), EngineError> {
-        self.resolve(handle)?;
+        if !self.can_edit_text(handle)? {
+            return Err(EngineError::NotEditable);
+        }
         let value = {
             let control = self
                 .controls
                 .get_mut(&handle.index)
                 .ok_or(EngineError::NotEditable)?;
-            if control.disabled || !is_editable_role(control.role) {
-                return Err(EngineError::NotEditable);
-            }
             control.replace_selection(text);
             control.value.clone()
         };
@@ -590,6 +600,11 @@ impl Engine {
         command: EditCommand,
     ) -> Result<(), EngineError> {
         self.resolve(handle)?;
+        if !matches!(command, EditCommand::Move { .. } | EditCommand::SelectAll)
+            && !self.can_edit_text(handle)?
+        {
+            return Err(EngineError::NotEditable);
+        }
         let (value, changed) = {
             let control = self
                 .controls
@@ -632,15 +647,14 @@ impl Engine {
         handle: NodeHandle,
         text: &str,
     ) -> Result<(), EngineError> {
-        self.resolve(handle)?;
+        if !self.can_edit_text(handle)? {
+            return Err(EngineError::NotEditable);
+        }
         let value = {
             let control = self
                 .controls
                 .get_mut(&handle.index)
                 .ok_or(EngineError::NotEditable)?;
-            if control.disabled || !is_editable_role(control.role) {
-                return Err(EngineError::NotEditable);
-            }
             control.update_composition(text);
             control.value.clone()
         };

@@ -31,20 +31,20 @@ The current v0.2 release candidate has:
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
   on replay and 182 changed; these old screenshots are not pixel targets;
 - a clean four-profile census against cached Chromium captures with
-  21,266 of 22,924 comparisons exact, 1,658 different, and zero render errors in the
-  [latest evidence index](docs/renderer/generated/four-profile-census-v41.json);
+  21,278 of 22,924 comparisons exact, 1,646 different, and zero render errors in the
+  [latest evidence index](docs/renderer/generated/four-profile-census-v43.json);
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
-  comparisons exact in the [latest raster index](docs/renderer/generated/focused-primitive-raster-v42.json);
+  comparisons exact in the [latest raster index](docs/renderer/generated/focused-primitive-raster-v45.json);
 - 201 native final-state cases in the expanded contract, including one newly
   added case; 200 of 201 currently meet the four-profile gate and one
-  remains a failure in the [latest full expanded report](docs/renderer/generated/expanded-requalification-v24.json).
+  remains a failure in the [latest full expanded report](docs/renderer/generated/expanded-requalification-v26.json).
   The other 35 AST-lowered cases remain pending;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
-- 50 application scenarios covering retained updates, controls, editing,
+- 55 application scenarios covering retained updates, controls, editing,
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;
-- 84 frozen retained-engine/headless C exports, with 106 current exports and
+- 84 frozen retained-engine/headless C exports, with 107 current exports and
   checked layouts and an ABI checksum;
 - sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates defined
   in CI; several remain open or failing.
@@ -54,7 +54,8 @@ Chromium for some fixtures, which is why replaying old screenshots cannot be a
 release gate. A [font oracle audit](docs/renderer/scaled-lcd-hinting-oracle-investigation.md)
 also found one older cached Chromium capture that differs from six fresh
 captures under the same recorded identity; that evidence needs reconciliation.
-The cached four-profile census still has 1,658 differences,
+The cached four-profile census still has 1,646 differences, including three
+regressions against the preceding checkpoint that remain under repair,
 so this repository is not yet declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia
 GPU qualification, retained per-node layers, compositor-owned animation

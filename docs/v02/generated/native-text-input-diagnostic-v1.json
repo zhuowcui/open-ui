@@ -1,0 +1,56 @@
+{
+  "baseline_c_library": {
+    "release_qualification": false,
+    "sha256": "8c3d4355ae431b049c3f767312c4bd6577cdb05a06ffaeba5048c5c66581ec71",
+    "status": "preceding diagnostic library; C readonly consumer fails"
+  },
+  "baseline_failures": {
+    "/tmp/openui-native-readonly-baseline.log": "f044bc52b5dc6fc0469d5bc8cb13f25607fa62f4f01fdbe18a6d8cd3fae12f1a",
+    "/tmp/openui-native-readonly-c-baseline.log": "e4740b70b7e8011977190192aec657f77f77efd484eff60c20e8837f4abec6e7",
+    "/tmp/openui-native-textarea-baseline.log": "ff2733337e6510ea7e91c437f0f03cdcf6dbf87fb6d215988a0b8a81f2206318"
+  },
+  "c_abi": {
+    "c_consumers": 6,
+    "cpp_header_consumers": 1,
+    "log": "/tmp/openui-native-input-spanner-c-abi.log",
+    "sha256": "60970f8e27bff6895d3321732b8a39b6ddb264b50702fd96a98ee33f2dadc5a1"
+  },
+  "checked_native_behavior": [
+    "cancelable textarea Enter",
+    "UTF-8 selection replacement and undo",
+    "no synthesized clicks on text controls",
+    "one input callback after committed characters",
+    "read-only key/text/IME/accessibility enforcement",
+    "read-only selection and explicit application writes",
+    "C read-only accessibility actions and owned snapshots"
+  ],
+  "checks": {
+    "linux": {
+      "failed": 0,
+      "ignored": 8,
+      "log": "/tmp/openui-native-input-spanner-linux-tests-v2.log",
+      "passed": 191,
+      "sha256": "481ea12c9111c01519fd27aa4a1f7e9c5e776fe850b5392ac6585ced75db57d4",
+      "suites": 9
+    },
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "log": "/tmp/openui-native-input-spanner-workspace-tests.log",
+      "passed": 8489,
+      "sha256": "1aa49494075f3c138547e3c3ba21503861c76b112cc88673df7a59a49ba972af",
+      "suites": 147
+    }
+  },
+  "current_c_exports": 107,
+  "frozen_c_exports": 84,
+  "public_application_scenarios": 55,
+  "release_qualification": false,
+  "remaining_gates": [
+    "complete clean original and expanded Chromium matrices",
+    "remaining native application API review",
+    "physical IME and AT-SPI operation",
+    "release hardware, hardening, packaging and provenance"
+  ],
+  "schema_version": 1
+}

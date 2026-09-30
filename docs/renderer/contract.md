@@ -85,11 +85,22 @@ The later complete clean run at `e51d88fd` is recorded in
 [v42](generated/four-profile-census-v42.json): 21,278/22,924 exact, 1,646
 different, and zero errors. Its full delta found three formerly exact
 regressions in an extracted-spanner continuation, so this checkpoint is not
-accepted as a renderer qualification. The source correction restores the
+accepted as a renderer qualification. The first source correction restores the
 spanner row's continuation ownership; its 116-comparison diagnostic retains
-12 new exact comparisons with no exact regression. A new complete clean run
-is pending. The [investigation](native-empty-block-fragment-slicing.md) records
-both the failed checkpoint and the correction. Chromium inputs remain fixed.
+12 new exact comparisons with no exact regression. Its later complete clean
+run at `0ad4b12f` is [v43](generated/four-profile-census-v43.json):
+21,278/22,924 exact, 1,646 different, and zero errors, with 909 unowned residual
+IDs. The [full delta](generated/native-geometry-full-delta-v1.json) recovers
+three nested-column failures but introduces three ordinary-spanner failures at
+1.25×. This checkpoint remains unqualified. Its
+[expanded run](generated/expanded-requalification-v26.json) is
+22,081/23,728 exact, with 1,647 differences and zero errors; all original rows
+match the separate census, and 200 of the declared 201 additions remain exact
+at all four profiles. Its
+[focused/primitive matrices](generated/focused-primitive-raster-v45.json)
+are exact with all 1,600 images unchanged from `e51d88fd`. The
+[investigation](native-empty-block-fragment-slicing.md) records the failures.
+Chromium inputs remain fixed.
 
 The later [scaled LCD font investigation](scaled-lcd-hinting-oracle-investigation.md)
 found an older cached Chromium image that differs from six agreeing fresh

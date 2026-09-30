@@ -573,6 +573,169 @@ fn textarea_accepts_multiline_text() {
         textarea.control_value().unwrap().as_deref(),
         Some("one\ntwo")
     );
+
+    textarea.set_control_value("é👍z").unwrap();
+    textarea.set_selection(2, 6).unwrap();
+    let edits = Rc::new(RefCell::new(Vec::new()));
+    for event_type in ["beforeinput", "input"] {
+        let edits = edits.clone();
+        textarea
+            .on(event_type, move |event| {
+                edits
+                    .borrow_mut()
+                    .push((event.event_type.clone(), event.key_text.clone()));
+            })
+            .unwrap();
+    }
+    let clicks = Rc::new(Cell::new(0));
+    let seen_clicks = clicks.clone();
+    textarea
+        .on("click", move |_| seen_clicks.set(seen_clicks.get() + 1))
+        .unwrap();
+    document
+        .dispatch_key_event(KeyEventType::Down, 13, Some("Enter"), Modifiers::NONE)
+        .unwrap();
+    assert_eq!(textarea.control_value().unwrap().as_deref(), Some("é\nz"));
+    assert_eq!(textarea.selection().unwrap(), Some((3, 3)));
+    assert_eq!(
+        &*edits.borrow(),
+        &[
+            ("beforeinput".to_owned(), "\n".to_owned()),
+            ("input".to_owned(), "\n".to_owned())
+        ]
+    );
+    assert_eq!(clicks.get(), 0);
+
+    document
+        .dispatch_key_event(KeyEventType::Down, 90, Some("z"), Modifiers::CTRL)
+        .unwrap();
+    assert_eq!(textarea.control_value().unwrap().as_deref(), Some("é👍z"));
+    textarea
+        .on("keydown", |event| event.prevent_default())
+        .unwrap();
+    let event_count = edits.borrow().len();
+    document
+        .dispatch_key_event(KeyEventType::Down, 13, Some("Enter"), Modifiers::NONE)
+        .unwrap();
+    assert_eq!(textarea.control_value().unwrap().as_deref(), Some("é👍z"));
+    assert_eq!(edits.borrow().len(), event_count);
+    textarea.remove_event("keydown").unwrap();
+    textarea
+        .on("beforeinput", |event| event.prevent_default())
+        .unwrap();
+    document
+        .dispatch_key_event(KeyEventType::Down, 13, Some("Enter"), Modifiers::NONE)
+        .unwrap();
+    assert_eq!(textarea.control_value().unwrap().as_deref(), Some("é👍z"));
+    assert_eq!(edits.borrow().len(), event_count + 1);
+    textarea.remove_event("beforeinput").unwrap();
+
+    let input = child(&document, "input");
+    let callback_input = input.clone();
+    textarea
+        .on("keydown", move |_| callback_input.focus().unwrap())
+        .unwrap();
+    document
+        .dispatch_key_event(KeyEventType::Down, 13, Some("Enter"), Modifiers::NONE)
+        .unwrap();
+    assert_eq!(input.control_value().unwrap().as_deref(), Some(""));
+    assert_eq!(textarea.control_value().unwrap().as_deref(), Some("é👍z"));
+    textarea.remove_event("keydown").unwrap();
+    input.focus().unwrap();
+    let seen_clicks = clicks.clone();
+    input
+        .on("click", move |_| seen_clicks.set(seen_clicks.get() + 1))
+        .unwrap();
+    for (code, text) in [(13, "Enter"), (32, " ")] {
+        document
+            .dispatch_key_event(KeyEventType::Down, code, Some(text), Modifiers::NONE)
+            .unwrap();
+    }
+    assert_eq!(input.control_value().unwrap().as_deref(), Some(""));
+    assert_eq!(clicks.get(), 0);
+}
+
+#[test]
+fn read_only_text_controls_keep_selection_and_reject_native_edits() {
+    for tag in ["input", "textarea"] {
+        let document = document();
+        let target = child(&document, tag);
+        target.set_control_value("original").unwrap();
+        target.set_selection(0, 8).unwrap();
+        target.set_attribute("readonly", "").unwrap();
+        target.set_accessibility_label("readonly target").unwrap();
+        target.focus().unwrap();
+        let input_events = Rc::new(RefCell::new(Vec::new()));
+        for event_type in ["beforeinput", "input"] {
+            let seen = input_events.clone();
+            target
+                .on(event_type, move |event| {
+                    seen.borrow_mut()
+                        .push((event.event_type.clone(), event.key_text.clone()))
+                })
+                .unwrap();
+        }
+        document.dispatch_text_input("replacement").unwrap();
+        document
+            .dispatch_key_event(KeyEventType::Char, 0, Some("typed"), Modifiers::NONE)
+            .unwrap();
+        document
+            .dispatch_key_event(KeyEventType::Down, 8, Some("Backspace"), Modifiers::NONE)
+            .unwrap();
+        document
+            .dispatch_key_event(KeyEventType::Down, 13, Some("Enter"), Modifiers::NONE)
+            .unwrap();
+        document.dispatch_composition_start().unwrap();
+        document.dispatch_composition_update("preview").unwrap();
+        document.dispatch_composition_end("committed").unwrap();
+        assert_eq!(target.control_value().unwrap().as_deref(), Some("original"));
+        assert!(
+            input_events.borrow().is_empty(),
+            "{tag}: {:?}",
+            input_events.borrow()
+        );
+        assert!(target
+            .perform_accessibility_action(AccessibilityAction::SetValue("blocked".into()))
+            .is_err());
+        assert!(target
+            .perform_accessibility_action(AccessibilityAction::ReplaceSelectedText(
+                "blocked".into()
+            ))
+            .is_err());
+        assert_eq!(target.control_value().unwrap().as_deref(), Some("original"));
+        let tree = document.accessibility_update().unwrap();
+        let node = &tree
+            .nodes
+            .iter()
+            .find(|(_, node)| node.label() == Some("readonly target"))
+            .unwrap()
+            .1;
+        assert!(node.is_read_only());
+        assert!(!node.supports_action(openui::AccessibilityPlatformAction::SetValue));
+        assert!(!node.supports_action(openui::AccessibilityPlatformAction::ReplaceSelectedText));
+        assert!(node.supports_action(openui::AccessibilityPlatformAction::SetTextSelection));
+        document
+            .dispatch_key_event(KeyEventType::Down, 65, Some("a"), Modifiers::CTRL)
+            .unwrap();
+        assert_eq!(target.selection().unwrap(), Some((0, 8)));
+
+        // Explicit native application writes remain available in read-only mode.
+        target.set_control_value("application").unwrap();
+        assert_eq!(
+            target.control_value().unwrap().as_deref(),
+            Some("application")
+        );
+        target.set_selection(11, 11).unwrap();
+        target.remove_attribute("readonly").unwrap();
+        document
+            .dispatch_key_event(KeyEventType::Char, 0, Some("!"), Modifiers::NONE)
+            .unwrap();
+        assert_eq!(
+            target.control_value().unwrap().as_deref(),
+            Some("application!")
+        );
+        assert_eq!(input_events.borrow().len(), 2);
+    }
 }
 
 #[test]

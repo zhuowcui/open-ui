@@ -807,4 +807,37 @@ mod tests {
         app.event(openui_platform::PlatformEvent::TextInput("ignored".into()))
             .unwrap();
     }
+
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[test]
+    fn native_textarea_enter_inserts_one_cancelable_newline() {
+        use openui_platform::{KeyPhase, KeyboardInput, PlatformApplication};
+        let mut app = App::builder().build().unwrap();
+        let textarea = crate::Element::create(app.document(), "textarea").unwrap();
+        app.document().body().append_child(&textarea).unwrap();
+        textarea.set_control_value("start").unwrap();
+        textarea.set_selection(5, 5).unwrap();
+        textarea.focus().unwrap();
+        let enter = || KeyboardInput {
+            phase: KeyPhase::Down,
+            key_code: 13,
+            key_text: Some("Enter".into()),
+            text: Some("\r".into()),
+            modifiers: openui_platform::Modifiers::default(),
+            repeat: false,
+        };
+        app.key_input(enter()).unwrap();
+        assert_eq!(
+            textarea.control_value().unwrap().as_deref(),
+            Some("start\n")
+        );
+        textarea
+            .on("beforeinput", |event| event.prevent_default())
+            .unwrap();
+        app.key_input(enter()).unwrap();
+        assert_eq!(
+            textarea.control_value().unwrap().as_deref(),
+            Some("start\n")
+        );
+    }
 }

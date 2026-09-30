@@ -594,23 +594,20 @@ impl Document {
         key_text: Option<&str>,
         modifiers: Modifiers,
     ) -> Result<bool, Error> {
+        // A committed character is text input, not an input notification.
+        // The shared path emits beforeinput and then input only after an edit.
+        if event_type == KeyEventType::Char {
+            if let Some(text) = key_text.filter(|text| !text.is_empty()) {
+                self.dispatch_text_input(text)?;
+            }
+            return Ok(true);
+        }
         let target =
             self.with_engine(|engine| engine.focused().unwrap_or_else(|| engine.root()))?;
         let event = Event::keyboard(event_type.name(), key_code, key_text, modifiers);
         self.dispatch_to(target, &event)?;
         if event.default_prevented() {
             return Ok(false);
-        }
-        if event_type == KeyEventType::Char {
-            if let Some(text) = key_text.filter(|text| !text.is_empty()) {
-                if self
-                    .with_engine_mut(|engine| engine.insert_text(target, text))
-                    .is_ok()
-                {
-                    self.dispatch_to(target, &Event::keyboard("input", 0, Some(text), modifiers))?;
-                }
-            }
-            return Ok(true);
         }
         if event_type != KeyEventType::Down {
             return Ok(true);
@@ -717,6 +714,27 @@ impl Document {
             return self.edit_focused(command).map(|_| true);
         }
         if key_code == 13 || key_code == 32 || key == "Enter" || key == " " {
+            let role = self.with_engine(|engine| {
+                engine
+                    .control_state(target)
+                    .ok()
+                    .flatten()
+                    .map(|state| state.role)
+            })?;
+            if matches!(
+                role,
+                Some(FormControlRole::TextInput | FormControlRole::TextArea)
+            ) {
+                // Text controls edit through the same cancelable input path
+                // as native committed text; these keys do not activate them.
+                if role == Some(FormControlRole::TextArea)
+                    && (key_code == 13 || key == "Enter")
+                    && self.with_engine(Engine::focused)? == Some(target)
+                {
+                    self.dispatch_text_input("\n")?;
+                }
+                return Ok(true);
+            }
             let click = Event::keyboard("click", key_code, key_text, modifiers);
             self.dispatch_to(target, &click)?;
             if !click.default_prevented() {
@@ -910,19 +928,7 @@ impl Document {
     }
 
     fn is_editable_target(&self, target: NodeHandle) -> Result<bool, Error> {
-        self.with_engine(|engine| {
-            engine
-                .control_state(target)
-                .ok()
-                .flatten()
-                .is_some_and(|state| {
-                    !state.disabled
-                        && matches!(
-                            state.role,
-                            FormControlRole::TextInput | FormControlRole::TextArea
-                        )
-                })
-        })
+        self.with_engine(|engine| engine.can_edit_text(target).unwrap_or(false))
     }
 
     pub fn clipboard_text(&self) -> Result<String, Error> {

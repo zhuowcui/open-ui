@@ -40,9 +40,42 @@ or losing native window focus cancels it, and later updates cannot insert text
 into a newly focused element. Noneditable or disabled controls ignore text
 composition. IME disable also clears the preview and requests presentation.
 
-The seven native IME regressions are public Rust application tests in
+Native keyboard and text input use `Document::dispatch_key_event` and
+`Document::dispatch_text_input`. Enter in a textarea replaces the current
+selection with a newline after cancelable `keydown` and `beforeinput`
+callbacks. Enter and Space on text controls do not synthesize a click.
+Committed characters use the same text input path: `beforeinput` runs before
+the edit, and exactly one `input` notification follows a successful edit.
+The Linux adapter uses this path and filters platform control characters so
+Enter does not insert a second newline.
+
+Applications make an input or textarea read-only with
+`Element::set_attribute("readonly", "")` and restore editing with
+`Element::remove_attribute("readonly")`. Read-only controls allow selection
+and explicit application `set_control_value` calls. User typing, deletion,
+undo/redo, IME edits, and accessibility value changes cannot modify them.
+Accessibility snapshots report read-only state and advertise selection
+actions without advertising value-editing actions.
+
+The current public application suite has 55 scenarios. The textarea scenario
+checks UTF-8 selection replacement, one-step undo, callback cancellation,
+focus changes during callbacks, and absence of synthesized clicks. The new
+read-only scenario checks both text control kinds through the public Rust
+keyboard, text, IME, and accessibility APIs, then reenables editing. The
+Linux-enabled framework and engine check passes 162 tests with eight ignored;
+it includes Enter with a platform carriage-return payload. The subsequent
+framework, engine, C and Linux-platform check passes 191 tests with eight
+ignored. The full locked workspace passes 8,489 tests with 13 ignored, and all
+six C consumers and the C++ header consumer pass with the same 107 exports.
+The C accessibility consumer verifies read-only state, rejected value changes,
+allowed selection and owned snapshots for both text control kinds. The
+[diagnostic index](generated/native-text-input-diagnostic-v1.json) records the
+test logs and the preceding source's genuine textarea, read-only and C failures.
+These native interaction checks do not qualify physical IME or AT-SPI operation.
+
+The preceding seven native IME regressions are public Rust application tests in
 [`v02_conformance.rs`](../../bindings/rust/openui/tests/v02_conformance.rs).
-Together with the existing scenarios, that suite is 50/50. The locked workspace
+At that checkpoint, the suite was 50/50. The locked workspace
 passes 8,480 tests with 13 ignored. The Linux-enabled Rust/C/platform checks
 pass 185 tests with eight ignored, including Winit event normalization
 and C composition dispatch. The ABI generator reports no drift; the 106 C

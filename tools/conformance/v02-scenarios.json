@@ -36,6 +36,7 @@
     { "id": "named_radio_group_is_exclusive", "domains": ["controls"] },
     { "id": "unicode_grapheme_editing", "domains": ["editing", "text"] },
     { "id": "textarea_accepts_multiline_text", "domains": ["editing", "controls"] },
+    { "id": "read_only_text_controls_keep_selection_and_reject_native_edits", "domains": ["editing", "controls", "events"] },
     { "id": "ime_composition_commits_once", "domains": ["editing", "events"] },
     { "id": "ime_commits_final_text_after_platform_clears_preview_as_one_undo_step", "domains": ["editing", "events", "text"] },
     { "id": "ime_cancel_restores_selection_pixels_and_existing_redo", "domains": ["editing", "events", "text"] },

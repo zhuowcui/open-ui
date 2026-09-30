@@ -1,6 +1,6 @@
 # Open UI v0.2 release qualification
 
-The v0.2 source contract and artifact pipeline are implemented. This document
+The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
@@ -9,14 +9,14 @@ claimed by source code alone.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | 21,266/22,924 exact, 1,658 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v41.json) | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v42.json) | pass |
+| Four-profile renderer matrix | 21,278/22,924 exact, 1,646 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v43.json); three exact regressions against the preceding checkpoint | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v45.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v24.json); 22,069/23,728 total comparisons exact, 1,659 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v26.json); 22,081/23,728 total comparisons exact, 1,647 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
-| Rust/C application contract | 50 scenarios, 106 current exports, five headless C examples and a C++ header consumer, plus native C/C++ window consumers; previous symbols and layouts preserved | core implemented; lab qualification open |
+| Rust/C application contract | 55 scenarios, 107 current exports, six headless C examples and a C++ header consumer, plus native C/C++ window consumers; previous symbols and layouts preserved | remaining API review and lab qualification open |
 | Native element interaction | Public Rust `Document`, `Element`, and `TextNode` APIs cover ID/class/native-kind lookup, class-token updates, retained detach/reattach, mutation, callbacks, activation, focus, scrolling, and controls; browser-style operations needed by applications must be exposed through native APIs | core implemented; remaining API coverage review open |
 | C-owned X11/Wayland application loop | `oui_app_run` and `oui_app_request_exit` use Rust `App` and the same retained document; versioned platform callbacks and [clean native C/C++ window runs](native-c-lifecycle-evidence.md) cover X11 software/GL and Wayland software | implemented; release-lab qualification open |
 | C platform accessibility | owned full-tree snapshots, node metadata/relations/focus, and changed/removed IDs export from the shared engine; automated AT-SPI operation in a C window remains unqualified | open |
@@ -57,7 +57,21 @@ reviewed cause remains unknown. The clean census below remains evidence
 against those preserved cached captures, and final qualification requires
 oracle reconciliation. No cached reference was replaced or result promoted.
 
-The latest clean census at `15f9f12d` is
+The latest clean census at `0ad4b12f` is
+[21,278/22,924 exact](../renderer/generated/four-profile-census-v43.json),
+with 1,646 differences, zero errors, and 909 unowned residual test IDs. The
+[complete delta](../renderer/generated/native-geometry-full-delta-v1.json)
+recovers the preceding checkpoint's three nested-column failures but introduces
+three ordinary-spanner failures at 1.25×. No Chromium image or oracle identity
+changes. This checkpoint is not accepted as renderer qualification. The full
+expanded run is [22,081/23,728 exact](../renderer/generated/expanded-requalification-v26.json),
+with 1,647 differences and zero errors. All original rows agree with the
+separate census, and 200/201 additions remain exact at all four profiles.
+The release manifest retains all 201. The focused and primitive matrices are
+[640/640 and 960/960 exact](../renderer/generated/focused-primitive-raster-v45.json),
+with all 1,600 images unchanged from the preceding checkpoint.
+
+The preceding clean census at `15f9f12d` is
 [21,266/22,924 exact](../renderer/generated/four-profile-census-v41.json),
 with 1,658 differences, zero errors, and 914 unowned residual test IDs. The
 [circular background one-axis clip repair](../renderer/circular-background-one-axis-clip.md)

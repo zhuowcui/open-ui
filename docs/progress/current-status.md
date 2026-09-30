@@ -19,13 +19,28 @@ remain open.
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
-| Application conformance scenarios | 54 across 10 domains |
+| Application conformance scenarios | 55 across 10 domains |
 | Frozen / current C exports | 84 / 107 |
 | C examples / C++ consumers | 7 / 2, including native C/C++ window consumers |
-| Workspace tests | pass |
-| Python closure and qualification tests | 236 pass |
+| Workspace tests | 8,489 pass; 13 ignored |
+| Python closure, qualification and packaging tests | 239 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
+
+The latest complete clean checkpoint `0ad4b12f` is
+[21,278/22,924 exact](../renderer/generated/four-profile-census-v43.json),
+with 1,646 differences, zero errors, and 909 unowned residual test IDs. Its
+[complete delta](../renderer/generated/native-geometry-full-delta-v1.json)
+recovers three nested-column comparisons from `e51d88fd` but regresses three
+ordinary-spanner comparisons at 1.25×. All Chromium images and oracle identities
+remain fixed. This checkpoint is not renderer qualification. Its full
+[expanded run](../renderer/generated/expanded-requalification-v26.json) is
+22,081/23,728 exact, with 1,647 differences and zero errors; all original rows
+agree with the separate census, and the declared 201 additions remain included.
+The [v28 diagnostic selection](../../tools/qualification/manifests/expanded-v28.json)
+lists the same 200 additions exact at all four profiles. Its
+[focused/primitive matrices](../renderer/generated/focused-primitive-raster-v45.json)
+are 640/640 and 960/960 exact, with all 1,600 images unchanged from `e51d88fd`.
 
 The preceding [complete clean census](../renderer/generated/four-profile-census-v41.json)
 at `15f9f12d` is 21,266/22,924 exact, 1,658 different, and zero errors
@@ -209,6 +224,24 @@ and all 84 frozen exports; 107 current exports, six headless C consumers, and
 the C++ header consumer pass. The final locked workspace passes 8,486 tests with zero failures and 13 ignored.
 All 54 public application conformance scenarios pass. Needed native API behavior
 and the full renderer and release-lab qualifications remain open.
+The subsequent [native text input repair](../v02/interaction-controls.md)
+adds cancelable textarea Enter and read-only input enforcement across typing,
+deletion, IME, and accessibility actions. Committed characters now emit one
+input notification after the edit. The public suite has 55 scenarios, and the
+Linux-enabled framework/engine check passes 162 tests with eight ignored.
+The subsequent shared Rust/C/Linux-platform check passes 191 tests with eight
+ignored; the full workspace passes 8,489 with 13 ignored, and all six C
+consumers and the C++ header consumer pass. The 107-export ABI is unchanged.
+These results do not update the clean renderer census or qualify release-lab
+input and accessibility operation.
+The refined [spanner continuation repair](../renderer/native-empty-block-fragment-slicing.md)
+recovers the three new ordinary-wrapper failures in a 20-comparison diagnostic
+while retaining nested row overflow. The
+[diagnostic index](../renderer/generated/native-spanner-boundary-diagnostic-v2.json)
+records both layout guards, the reduced border sweep and all 1,600 unchanged,
+exact focused/primitive images. Its wider column check and the next complete
+clean original/expanded census remain pending. A larger start-margin candidate
+remains held after two exact regressions; no reference or fixture was changed.
 The append-only C `oui_element_detach` export uses the same engine operation
 for element and text handles. `oui_document_element_by_id` now provides owned
 handles for native C element lookup. ABI verification reports 107 current

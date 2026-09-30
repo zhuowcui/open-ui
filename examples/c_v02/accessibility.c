@@ -25,9 +25,11 @@ int main(void) {
   OuiDocument* document = NULL;
   OuiElement* root = NULL;
   OuiElement* button = NULL;
+  OuiElement* text_control = NULL;
   OuiAccessibilitySnapshot* first = NULL;
   OuiAccessibilitySnapshot* second = NULL;
   OuiAccessibilitySnapshot* third = NULL;
+  OuiAccessibilitySnapshot* read_only = NULL;
   int failed = 0;
   uint64_t root_id = 0;
   uint64_t button_id = 0;
@@ -123,6 +125,55 @@ int main(void) {
     failed = 1;
     goto cleanup;
   }
+
+  const OuiElementTag text_kinds[] = {OUI_ELEMENT_INPUT, OUI_ELEMENT_TEXTAREA};
+  for (size_t kind = 0; kind < sizeof(text_kinds) / sizeof(text_kinds[0]); ++kind) {
+    CHECK(oui_element_create(document, text_kinds[kind], &text_control));
+    CHECK(oui_element_append_child(root, text_control));
+    CHECK(oui_element_set_control_value(text_control, text("original")));
+    CHECK(oui_element_set_attribute(text_control, text("readonly"), text("")));
+    if (oui_element_perform_accessibility_action(text_control, OUI_ACCESSIBILITY_SET_VALUE,
+                                                 text("blocked"), 0, 0) == OUI_OK ||
+        oui_element_perform_accessibility_action(text_control,
+                                                 OUI_ACCESSIBILITY_REPLACE_SELECTED_TEXT,
+                                                 text("blocked"), 0, 0) == OUI_OK) {
+      failed = 1;
+      goto cleanup;
+    }
+    CHECK(oui_element_perform_accessibility_action(
+        text_control, OUI_ACCESSIBILITY_SET_TEXT_SELECTION, text(""), 0, 8));
+    uint8_t value[8];
+    CHECK(oui_element_copy_control_value(text_control, value, sizeof(value), &length));
+    if (length != sizeof(value) || memcmp(value, "original", sizeof(value)) != 0) {
+      failed = 1;
+      goto cleanup;
+    }
+    uint64_t control_id = 0;
+    CHECK(oui_element_get_accessibility_id(text_control, &control_id));
+    CHECK(oui_document_accessibility_snapshot(document, NULL, &read_only));
+    CHECK(oui_accessibility_snapshot_get_info(read_only, &snapshot_info));
+    int found_control = 0;
+    for (size_t index = 0; index < snapshot_info.node_count; ++index) {
+      OuiAccessibilityNodeInfo node = {.struct_size = sizeof(node), .abi_version = OUI_ABI_VERSION};
+      CHECK(oui_accessibility_snapshot_get_node(read_only, index, &node));
+      if (node.id == control_id) {
+        found_control = (node.flags & OUI_ACCESSIBILITY_NODE_READ_ONLY) != 0 &&
+                        (node.actions & OUI_ACCESSIBILITY_ACTION_SET_TEXT_SELECTION_BIT) != 0 &&
+                        (node.actions & (OUI_ACCESSIBILITY_ACTION_SET_VALUE_BIT |
+                                         OUI_ACCESSIBILITY_ACTION_REPLACE_SELECTED_TEXT_BIT)) == 0;
+      }
+    }
+    if (!found_control) {
+      failed = 1;
+      goto cleanup;
+    }
+    CHECK(oui_element_set_control_value(text_control, text("native")));
+    CHECK(oui_accessibility_snapshot_destroy(read_only));
+    read_only = NULL;
+    CHECK(oui_element_remove(text_control));
+    CHECK(oui_element_destroy(text_control));
+    text_control = NULL;
+  }
   CHECK(oui_document_destroy(document));
   document = NULL;
   CHECK(oui_accessibility_snapshot_copy_text(first, button_id, OUI_ACCESSIBILITY_TEXT_LABEL, label,
@@ -134,6 +185,10 @@ int main(void) {
   puts("Owned accessibility snapshots and incremental changes: OK");
 
 cleanup:
+  if (read_only)
+    oui_accessibility_snapshot_destroy(read_only);
+  if (text_control)
+    oui_element_destroy(text_control);
   if (third)
     oui_accessibility_snapshot_destroy(third);
   if (second)
