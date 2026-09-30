@@ -105,8 +105,9 @@ native equivalents are `element_by_id`, `elements_with_class`, and
 
 ## No JavaScript runtime
 
-Open UI does not run application or test JavaScript and does not provide a
-JavaScript engine, `eval`, script bindings, or a plan to add them. Chromium is
+Open UI does not run application or test JavaScript, in this or future
+versions. It does not provide a JavaScript engine, `eval`, script bindings,
+or a plan to add them. Chromium is
 the separate test oracle. Offline qualification tooling may read Chromium's
 WPT scripts as source data to identify a deterministic final visual state;
 Open UI constructs that state with native Rust operations. The script is input

@@ -1,8 +1,8 @@
 # Sub-Project 4: DOM Adapter & C API
 
-> **Historical plan only.** The V8 bootstrap described below was part of an
-> abandoned Blink extraction strategy. Open UI v0.2 executes no JavaScript and
-> does not embed V8. Consuming applications implement element interaction in
+> **Historical plan only.** The Blink extraction strategy below was abandoned.
+> Open UI executes no JavaScript and does not embed V8, in any version.
+> Consuming applications implement element interaction in
 > Rust through the [public `Document` and `Element` API](../v02/supported-platforms.md#native-interaction-api);
 > needed browser-like operations must be available as native Rust methods.
 
@@ -43,7 +43,7 @@ Geometry results (LayoutBox positions, sizes, baselines)
 4. **Typed style API** — Two approaches:
    - **Generic**: `oui_element_set_style(e, "width", "200px")` — uses `SetInlineStyleProperty(CSSPropertyID, String)` internally
    - **Typed convenience**: `oui_element_set_width(e, oui_px(200))` — type-safe, no string parsing at call site
-5. **Single init/shutdown** — `oui_init()` / `oui_shutdown()` manage the heavy blink bootstrap (V8, ICU, ResourceBundle, mojo) once per process.
+5. **Historical init/shutdown proposal** — The abandoned extraction plan proposed `oui_init()` / `oui_shutdown()` for Blink infrastructure. This is not the native Rust runtime's lifecycle; see the [current native C lifecycle](../v02/native-c-lifecycle-evidence.md).
 
 ## What SP3 Already Proved
 
@@ -75,7 +75,6 @@ These blink APIs work and are the foundation for SP4's implementation:
 - FeatureList
 - ResourceBundle with `content_shell.pak`
 - Mojo
-- V8 snapshot loading + flags
 - `blink::Platform::InitializeBlink()`
 - `OpenUIPlatform` instantiation
 - `blink::Initialize()` (equivalent of `InitializeWithoutIsolateForTesting`)
