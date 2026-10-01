@@ -169,3 +169,14 @@ columns, neighboring heights and nested padding. Public Rust and C consumers
 perform those mutations and query the resulting owned rectangles. The prior
 65-case constrained sweep remains byte-identical and retains its existing
 failures. Complete renderer and native API qualification remain open.
+
+The later [vertical maximum-size correction](../renderer/native-vertical-max-block.md)
+uses the physical width bound for the vertical block axis and preserves
+visible child overflow through balancing and continuation distribution.
+Both vertical directions match Chromium in complete geometry and pixels at
+all five scales. The reduced sweep now has 53/65 exact pixels and 45/65
+exact complete geometry; all 55 horizontal images and geometry records and
+the 144 atomic-child states stay unchanged. Public Rust and C consumers query
+those fragments and hit the overflowing child in the last column. Their
+guards reject the preceding implementation. Complete clean renderer and
+native API qualification remain open.

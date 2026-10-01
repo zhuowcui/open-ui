@@ -92,7 +92,9 @@ These reduced measurements do not qualify the original 22,924 comparisons,
 the complete expanded manifest, the final focused/primitive matrices, all
 native APIs, or release hardware. Wider candidate checks remain separate
 from the clean `547c7081` census. The complete original and expanded runs at
-that preceding checkpoint are still running.
+that preceding checkpoint are now indexed in the
+[current status](../progress/current-status.md), with all renderer images
+unchanged and the original remaining failures open.
 
 ## Reproduce
 

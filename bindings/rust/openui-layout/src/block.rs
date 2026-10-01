@@ -776,6 +776,17 @@ fn block_size_in_parent_axes<'a>(
     }
 }
 
+fn maximum_block_size_in_parent_axes<'a>(
+    style: &'a ComputedStyle,
+    parent_writing_direction: WritingDirectionMode,
+) -> &'a openui_geometry::Length {
+    if parent_writing_direction.is_horizontal() {
+        &style.max_height
+    } else {
+        &style.max_width
+    }
+}
+
 /// Store one completed physical child size in the current block formatting
 /// context's logical `(inline, block)` pair while the block algorithm runs.
 /// Fragment storage is converted back to physical exactly once in
@@ -21012,7 +21023,11 @@ fn layout_multicol(
                             child_frag.size.height
                         } else if (grid_item_overflow_size.is_some()
                             || (!child_block_size.is_auto()
-                                || !child_style.max_height.is_none()
+                                || !maximum_block_size_in_parent_axes(
+                                    child_style,
+                                    space.writing_direction,
+                                )
+                                .is_none()
                                 || table_section_overflow_size.is_some())
                             || transparent_auto_wrapper_with_flex_overflow
                             || auto_column_flex_in_flow_size.is_some())
@@ -21055,13 +21070,15 @@ fn layout_multicol(
                     {
                         child_frag.decoration_paint_block_size = Some(child_frag.size.height);
                     }
-                    let undecorated_max_height_overflow = !child_style.max_height.is_none()
-                        && child_style.effective_border_top() == 0
-                        && child_style.effective_border_bottom() == 0
-                        && resolve_margin_or_padding(&child_style.padding_top, column_width)
-                            == LayoutUnit::zero()
-                        && resolve_margin_or_padding(&child_style.padding_bottom, column_width)
-                            == LayoutUnit::zero();
+                    let undecorated_max_height_overflow =
+                        !maximum_block_size_in_parent_axes(child_style, space.writing_direction)
+                            .is_none()
+                            && child_style.effective_border_top() == 0
+                            && child_style.effective_border_bottom() == 0
+                            && resolve_margin_or_padding(&child_style.padding_top, column_width)
+                                == LayoutUnit::zero()
+                            && resolve_margin_or_padding(&child_style.padding_bottom, column_width)
+                                == LayoutUnit::zero();
                     let fragmentable_in_flow_overflow = (!child_block_size.is_auto()
                         || undecorated_max_height_overflow
                         || table_section_overflow_size.is_some()
@@ -23168,6 +23185,11 @@ fn layout_multicol(
                         let child_block_size =
                             block_size_in_parent_axes(child_style, space.writing_direction);
                         let in_flow_overflow_size = if (!child_block_size.is_auto()
+                            || !maximum_block_size_in_parent_axes(
+                                child_style,
+                                space.writing_direction,
+                            )
+                            .is_none()
                             || auto_column_flex_in_flow_size.is_some())
                             && child_style.overflow_x == Overflow::Visible
                             && child_style.overflow_y == Overflow::Visible
@@ -24809,13 +24831,15 @@ fn layout_multicol(
                         )
                     }
                 };
-                let child_has_undecorated_max_height_overflow = !child_style.max_height.is_none()
-                    && child_style.effective_border_top() == 0
-                    && child_style.effective_border_bottom() == 0
-                    && resolve_margin_or_padding(&child_style.padding_top, column_width)
-                        == LayoutUnit::zero()
-                    && resolve_margin_or_padding(&child_style.padding_bottom, column_width)
-                        == LayoutUnit::zero();
+                let child_has_undecorated_max_height_overflow =
+                    !maximum_block_size_in_parent_axes(child_style, space.writing_direction)
+                        .is_none()
+                        && child_style.effective_border_top() == 0
+                        && child_style.effective_border_bottom() == 0
+                        && resolve_margin_or_padding(&child_style.padding_top, column_width)
+                            == LayoutUnit::zero()
+                        && resolve_margin_or_padding(&child_style.padding_bottom, column_width)
+                            == LayoutUnit::zero();
                 let child_has_fragmentable_in_flow_overflow = (!block_size_in_parent_axes(child_style, space.writing_direction).is_auto()
                         || child_has_undecorated_max_height_overflow
                         || child_style.display.is_table_wrapper()

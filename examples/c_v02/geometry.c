@@ -32,6 +32,59 @@ static OuiElement* block(OuiDocument* document, OuiElement* parent) {
   return element;
 }
 
+static void vertical_geometry(const char* writing_mode, float final_parent_x, float hit_x) {
+  OuiDocumentConfig config = {
+      sizeof(config), OUI_ABI_VERSION, {320.0, 240.0, 320, 240, 1.0, OUI_VIEWPORT_LOGICAL, 0}};
+  OuiDocument* document = NULL;
+  OuiElement* root = NULL;
+  assert(oui_document_create(&config, &document) == OUI_OK);
+  assert(oui_document_root(document, &root) == OUI_OK);
+  OuiElement* columns = block(document, root);
+  property(columns, OUI_STYLE_PROPERTY_HEIGHT, "300px");
+  property(columns, OUI_STYLE_PROPERTY_WRITING_MODE, writing_mode);
+  property(columns, OUI_STYLE_PROPERTY_COLUMN_COUNT, "3");
+  property(columns, OUI_STYLE_PROPERTY_COLUMN_GAP, "24px");
+  OuiElement* wrapper = block(document, columns);
+  property(wrapper, OUI_STYLE_PROPERTY_WRITING_MODE, writing_mode);
+  property(wrapper, OUI_STYLE_PROPERTY_MAX_WIDTH, "160px");
+  OuiElement* target = block(document, wrapper);
+  property(target, OUI_STYLE_PROPERTY_WIDTH, "200px");
+  property(target, OUI_STYLE_PROPERTY_HEIGHT, "50px");
+  property(target, OUI_STYLE_PROPERTY_BORDER, "3px solid black");
+  OuiRect bounds;
+  assert(oui_element_get_bounds(columns, &bounds) == OUI_OK && bounds.width == 68.671875f);
+  size_t count = 0;
+  OuiRect wrapper_rects[3];
+  assert(oui_element_get_client_rects_v1(wrapper, wrapper_rects, 3, &count) == OUI_OK &&
+         count == 3);
+  assert(wrapper_rects[0].y == 0.0f && wrapper_rects[1].y == 108.0f &&
+         wrapper_rects[2].y == 216.0f);
+  assert(wrapper_rects[0].width == 68.671875f && wrapper_rects[1].width == 68.671875f);
+  assert(wrapper_rects[2].width == 22.65625f && wrapper_rects[2].x == final_parent_x);
+  assert(wrapper_rects[0].height == 84.0f && wrapper_rects[1].height == 84.0f &&
+         wrapper_rects[2].height == 84.0f);
+  OuiRect rects[3];
+  assert(oui_element_get_client_rects_v1(target, rects, 3, &count) == OUI_OK && count == 3);
+  assert(rects[0].y == 0.0f && rects[1].y == 108.0f && rects[2].y == 216.0f);
+  assert(rects[0].width == 68.671875f && rects[1].width == 68.671875f &&
+         rects[2].width == 68.65625f);
+  assert(rects[0].height == 56.0f && rects[1].height == 56.0f && rects[2].height == 56.0f);
+  OuiElement* hit = NULL;
+  assert(oui_document_hit_test(document, hit_x, 230.0f, &hit) == OUI_OK && hit != NULL);
+  assert(hit == target); /* Hit testing borrows the existing native handle. */
+  OuiRect hit_rects[3];
+  assert(oui_element_get_client_rects_v1(hit, hit_rects, 3, &count) == OUI_OK && count == 3);
+  for (size_t i = 0; i < count; ++i) {
+    assert(hit_rects[i].x == rects[i].x && hit_rects[i].y == rects[i].y &&
+           hit_rects[i].width == rects[i].width && hit_rects[i].height == rects[i].height);
+  }
+  assert(oui_element_destroy(target) == OUI_OK);
+  assert(oui_element_destroy(wrapper) == OUI_OK);
+  assert(oui_element_destroy(columns) == OUI_OK);
+  assert(oui_element_destroy(root) == OUI_OK);
+  assert(oui_document_destroy(document) == OUI_OK);
+}
+
 int main(void) {
   OuiDocumentConfig config = {
       sizeof(config), OUI_ABI_VERSION, {320.0, 240.0, 320, 240, 1.0, OUI_VIEWPORT_LOGICAL, 0}};
@@ -137,6 +190,8 @@ int main(void) {
   assert(oui_element_destroy(columns) == OUI_OK);
   assert(oui_element_destroy(root) == OUI_OK);
   assert(oui_document_destroy(document) == OUI_OK);
+  vertical_geometry("vertical-lr", 0.0f, 40.0f);
+  vertical_geometry("vertical-rl", 46.015625f, 20.0f);
   puts("geometry: native column boxes, child overflow, owned copies, bounds and lifecycle passed");
   return 0;
 }

@@ -414,6 +414,88 @@ fn native_geometry_includes_all_column_fragments() {
             "padded child {height}"
         );
     }
+    // Vertical writing uses maximum width as the containing block's bound.
+    // Its visible child still contributes all 206 block-axis pixels to balance.
+    for mode in [WritingMode::VerticalLr, WritingMode::VerticalRl] {
+        let vertical_document = Document::new(320, 240).unwrap();
+        let columns = child(&vertical_document, "div");
+        columns.set_display(Display::Block).unwrap();
+        columns.set_height(LengthValue::px(300.0)).unwrap();
+        columns
+            .set_property(
+                StyleProperty::WritingMode,
+                StyleValue::Renderer(RendererStyleValue::WritingMode(mode)),
+            )
+            .unwrap();
+        columns.set_column_count(Some(3)).unwrap();
+        columns.set_column_gap(LengthValue::px(24.0)).unwrap();
+        let wrapper = Element::create(&vertical_document, "div").unwrap();
+        wrapper.set_display(Display::Block).unwrap();
+        wrapper
+            .set_property(
+                StyleProperty::WritingMode,
+                StyleValue::Renderer(RendererStyleValue::WritingMode(mode)),
+            )
+            .unwrap();
+        wrapper.set_max_width(LengthValue::px(160.0)).unwrap();
+        columns.append_child(&wrapper).unwrap();
+        let target = Element::create(&vertical_document, "div").unwrap();
+        sized(&target, 200.0, 50.0);
+        target
+            .set_border(Border {
+                width: 3.0,
+                style: BorderStyle::Solid,
+                color: Color::BLACK,
+            })
+            .unwrap();
+        target.set_id("vertical overflowing child").unwrap();
+        wrapper.append_child(&target).unwrap();
+        assert_eq!(columns.width().unwrap(), 68.671875, "{mode:?}");
+        let parent_rects = wrapper.client_rects().unwrap();
+        let child_rects = target.client_rects().unwrap();
+        assert_eq!(
+            parent_rects
+                .iter()
+                .map(|r| (r.y, r.width, r.height))
+                .collect::<Vec<_>>(),
+            [
+                (0.0, 68.671875, 84.0),
+                (108.0, 68.671875, 84.0),
+                (216.0, 22.65625, 84.0)
+            ],
+            "{mode:?}"
+        );
+        assert_eq!(
+            child_rects
+                .iter()
+                .map(|r| (r.y, r.width, r.height))
+                .collect::<Vec<_>>(),
+            [
+                (0.0, 68.671875, 56.0),
+                (108.0, 68.671875, 56.0),
+                (216.0, 68.65625, 56.0)
+            ],
+            "{mode:?}"
+        );
+        assert_eq!(
+            parent_rects[2].x,
+            if mode == WritingMode::VerticalRl {
+                46.015625
+            } else {
+                0.0
+            }
+        );
+        let point = if mode == WritingMode::VerticalRl {
+            20.0
+        } else {
+            40.0
+        };
+        let hit = vertical_document.hit_test(point, 230.0).unwrap().unwrap();
+        assert_eq!(
+            hit.get_attribute("id").unwrap().as_deref(),
+            Some("vertical overflowing child")
+        );
+    }
 }
 
 #[test]

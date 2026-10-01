@@ -27,7 +27,23 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The latest complete clean checkpoint `822e0462` is
+The latest complete clean checkpoint `547c7081` is
+[21,291/22,924 exact](../renderer/generated/four-profile-census-v45.json),
+with 1,633 differences, zero errors and 900 unowned residual IDs. The
+[complete delta](../renderer/generated/native-constrained-box-full-delta-v1.json)
+retains all 22,924 Open UI RGBA images and Chromium oracle identities from
+`822e0462`; no exact comparison regresses. Its complete
+[expanded run](../renderer/generated/expanded-requalification-v28.json) is
+22,094/23,728 exact, with 1,634 differences and zero errors. Every original
+row agrees with the separate census, and all 23,728 images and oracle
+identities are unchanged. The
+[v30 diagnostic selection](../../tools/qualification/manifests/expanded-v30.json)
+retains 200 of the declared 201 additions exact at all four profiles.
+The clean [v47 raster index](../renderer/generated/focused-primitive-raster-v47.json)
+is 640/640 focused and 960/960 primitive exact. Complete renderer
+qualification and ownership of the remaining differences stay open.
+
+The preceding complete clean checkpoint `822e0462` is
 [21,291/22,924 exact](../renderer/generated/four-profile-census-v44.json),
 with 1,633 differences, zero errors, and 900 unowned residual test IDs. Its
 [complete delta](../renderer/generated/native-spanner-boundary-full-delta-v1.json)
@@ -48,8 +64,8 @@ separates a box's own size from the continuation space carrying child overflow.
 The consuming Rust and C applications check dynamic size changes, owned
 rectangles, child input, and accessibility through the shared engine. It also
 retains independently sized child boxes after their atomic content ends.
-Its development measurements are diagnostic; complete renderer and native API
-qualification remain open.
+Its complete clean renderer runs are indexed above; those remaining pixel
+failures and native API qualification remain open.
 
 The preceding [complete clean census](../renderer/generated/four-profile-census-v41.json)
 at `15f9f12d` is 21,266/22,924 exact, 1,658 different, and zero errors
@@ -661,8 +677,8 @@ C ABI gate pass. Complete renderer qualification for this candidate remains
 required. At the preceding clean `547c7081`, the
 [v47 focused/primitive index](../renderer/generated/focused-primitive-raster-v47.json)
 is 640/640 and 960/960 exact with all 1,600 images and oracle identities
-unchanged from `822e0462`. Its complete original and expanded runs are still
-in progress.
+unchanged from `822e0462`. Its complete original and expanded runs are now
+indexed above, with all images unchanged and the same remaining failures.
 
 The atomic-column candidate's wider development checks are complete:
 640/640 focused and 960/960 primitive exact, with 7,034/7,680 exact in the
@@ -685,3 +701,13 @@ differences and zero errors. All 9,280 candidate images and Chromium oracle
 identities are unchanged from the preceding painting and balancing source.
 Complete clean renderer matrices and reviewed residual ownership remain
 required before qualification.
+
+The subsequent [vertical maximum-size correction](../renderer/native-vertical-max-block.md)
+makes all ten reduced vertical comparisons exact at five scales. The full
+reduced constrained-box sweep is 53/65 pixel-exact and 45/65 complete
+geometry-exact. Its 55 horizontal guards and the 144 atomic-child states
+retain their bytes and geometry. Public Rust and C consumers check both
+vertical directions and last-column pointer interaction; the guards reject
+the preceding source and library. All 8,491 workspace tests, 55 Linux Rust
+scenarios and the 109-export ABI consumer gate pass. These are development
+measurements; clean full matrices and release qualification remain required.

@@ -112,9 +112,18 @@ each. Its [expanded run](generated/expanded-requalification-v27.json) is
 22,094/23,728 exact, with all original rows agreeing with the separate census
 and the same 200 of the declared 201 additions exact at all four profiles.
 The subsequent [native constrained-box repair](../v02/native-element-geometry.md#constrained-boxes-and-visible-child-overflow)
-uses shared box-ownership data for application geometry and input. It requires
-fresh complete renderer qualification; reduced native states and API guards
-remain diagnostic.
+uses shared box-ownership data for application geometry and input. Its clean
+`547c7081` [v45 census](generated/four-profile-census-v45.json) retains
+21,291/22,924 exact, 1,633 differences, zero errors and 900 unowned residual IDs.
+The [complete delta](generated/native-constrained-box-full-delta-v1.json)
+records all original and expanded Open UI RGBA images, Chromium RGBA images
+and oracle identities unchanged from `822e0462`. Every original row agrees
+with the separate expanded run. The clean
+[v28 expanded index](generated/expanded-requalification-v28.json) retains the
+same 200 of 201 additions exact at all four profiles. Clean
+[v47 focused/primitive matrices](generated/focused-primitive-raster-v47.json)
+are 640/640 and 960/960 exact. No new renderer pass or full qualification
+is claimed from unchanged images; the remaining failures stay open.
 
 At clean checkpoint `822e0462`, the
 [v46 focused/primitive index](generated/focused-primitive-raster-v46.json)
