@@ -25,6 +25,9 @@ handles and call native methods from Rust callbacks. C applications use the
 versioned C ABI over the same engine. There is no JavaScript execution,
 `eval`, script binding, or embedded browser runtime in the application path.
 Element APIs can be called directly from Rust; they do not require JavaScript.
+Element lookup, focus, scrolling, and mutation are native engine operations.
+The consuming native application calls them through public Rust methods and
+Rust callbacks.
 Every browser-style element operation needed by a consuming native application
 must be exposed as a public Rust method. Lookup, mutation, geometry, focus,
 scrolling, controls, and event dispatch operate directly on the native engine:

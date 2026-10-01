@@ -47,7 +47,10 @@ returns an error.
 Applications implement interaction with native Rust callbacks and public
 `Document` and `Element` methods. The C ABI translates its calls to the same
 engine. Browser-style element operations needed by applications receive
-native APIs; JavaScript execution is not part of this product.
+public native Rust APIs over that engine. A consuming application must be able
+to call these operations directly; an internal Engine method or test fixture
+does not complete the public API. Open UI never executes JavaScript, in this
+or future versions, and has no plan for a script runtime or script bindings.
 
 `openui-style` is the only public source of style value definitions. Property
 metadata drives Rust setters, macro checks, C values, invalidation, animation,
@@ -79,5 +82,5 @@ or an indefinite compatibility shim.
 Blink/Chromium remains a test oracle for the declared renderer corpus, not
 a supported application runtime or release dependency. Linux and headless
 closure takes priority over other operating systems and graphics APIs. macOS,
-Windows, mobile platforms, Vulkan, browser execution, network fetching, media,
+Windows, mobile platforms, Vulkan, network fetching, media,
 and specialized native pickers remain explicitly deferred.

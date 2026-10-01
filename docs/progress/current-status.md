@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean census against cached Chromium captures | 21,291/22,924 exact, 1,633 different, 0 errors; every image and oracle identity unchanged from the preceding clean run |
+| Latest complete clean census against cached Chromium captures | 21,308/22,924 exact, 1,616 different, 0 errors; 17 newly exact comparisons, no exact regression, Chromium images and identities unchanged |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
@@ -27,32 +27,35 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The latest complete clean checkpoint `056421db` is
-[21,291/22,924 exact](../renderer/generated/four-profile-census-v48.json),
-with 1,633 differences, zero errors and 900 unreviewed residual IDs. Its
-[complete delta](../renderer/generated/native-column-paint-phases-full-delta-v1.json)
-verifies every original and expanded Open UI image and Chromium oracle
-identity unchanged from `497e322d`. No formerly exact image regresses.
-The complete [expanded run](../renderer/generated/expanded-requalification-v31.json)
-is 22,094/23,728 exact, with 1,634 differences and zero errors; all 22,924
+The latest complete clean checkpoint `9b158cda` is
+[21,308/22,924 exact](../renderer/generated/four-profile-census-v49.json),
+with 1,616 differences, zero errors and 892 unreviewed residual IDs. Its
+[complete delta](../renderer/generated/native-image-full-delta-v1.json)
+verifies 30 improved comparisons, including 17 newly exact, against
+`056421db`. None worsen or regress from exact. Every Chromium image and
+oracle identity remains unchanged in all four suites.
+The complete [expanded run](../renderer/generated/expanded-requalification-v32.json)
+is 22,111/23,728 exact, with 1,617 differences and zero errors; all 22,924
 original rows agree between the runs. The
-[v33 diagnostic selection](../../tools/qualification/manifests/expanded-v33.json)
+[v34 diagnostic selection](../../tools/qualification/manifests/expanded-v34.json)
 retains 200 of the declared 201 additions. The clean
-[v50 raster index](../renderer/generated/focused-primitive-raster-v50.json)
+[v51 raster index](../renderer/generated/focused-primitive-raster-v51.json)
 is 640/640 focused and 960/960 primitive exact, with every image and oracle
-identity unchanged. Both complete full-matrix commands returned exit 1 for
-remaining pixel differences; the terminal reports pass complete count, source
-and hash validation. These results do not close residual ownership or the
-required pixel gate.
+identity unchanged from `056421db`. The first original/expanded execution was
+interrupted by an environment reset and remains incomplete evidence. Separate
+replacement runs have complete terminal reports and pass count, source and
+hash validation. Their process handles expired before exit codes were observed;
+no exit code is inferred. The source identity remained clean and unchanged
+from build through final audit. These results do not close residual ownership
+or the required pixel gate.
 
 The [native image fallback correction](../renderer/native-image-fallback.md)
 matches all 120 isolated public Rust image states in pixels and owned bounds.
 Its complete development selection is 7,039/7,680 exact, with zero errors,
 five newly exact comparisons and no formerly exact regression; focused and
 primitive matrices remain 640/640 and 960/960 exact. Column owned geometry,
-source-less frames and opacity remain open. The new source still needs clean
-complete original and expanded matrices; the latest clean census above is
-not evidence for this later correction.
+source-less frames and opacity remain open. Its clean complete original,
+expanded, focused and primitive results are indexed above.
 
 The preceding `497e322d`
 [delta index](../renderer/generated/native-column-flex-full-delta-v1.json)
@@ -60,12 +63,12 @@ retains the original command's exit-143 observation alongside its complete
 terminal report. Its pixels remain unchanged, including the four fractional
 failures that worsened at the earlier `e9211183` checkpoint.
 
-The `056421db` [fresh hosted hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36823315523)
+The `9b158cda` [fresh hosted hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36840619251)
 has finished. Miri, Rust 1.85, C UBSan and application/X11/Wayland checks pass.
 Both native sanitizer jobs fail after passing 25 FFI tests, reporting 10,476
 Fontconfig bytes in 236 allocations at exit. Fuzzing stops at `tree_mutations`
 with 2,606 Fontconfig bytes in 59 allocations; its three later targets remain
-unverified. The [seven-job index](../v02/generated/hosted-hardening-056421db-v1.json)
+unverified. The [seven-job index](../v02/generated/hosted-hardening-9b158cda-v1.json)
 preserves every outcome and all three complete failed-job log hashes. The
 font-manager lifetime/root cause and leak gates remain open. Incomplete
 renderer runs are not qualifying evidence.

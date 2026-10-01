@@ -9,13 +9,13 @@ claimed by source code alone.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | 21,291/22,924 exact, 1,633 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v48.json); every image and oracle identity unchanged from `497e322d`; 900 residual IDs still lack reviewed ownership | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact at clean `056421db` in the [latest raster index](../renderer/generated/focused-primitive-raster-v50.json); every image and oracle identity unchanged from `497e322d`; complete original/expanded runs at this source retain their pixels and remaining failures | pass |
+| Four-profile renderer matrix | 21,308/22,924 exact, 1,616 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v49.json); 17 newly exact, no worsened comparison or exact regression from `056421db`, Chromium images and identities unchanged; 892 residual IDs still lack reviewed ownership | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact at clean `9b158cda` in the [latest raster index](../renderer/generated/focused-primitive-raster-v51.json); every image and oracle identity unchanged from `056421db` | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v31.json); 22,094/23,728 total comparisons exact, 1,634 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v32.json); 22,111/23,728 total comparisons exact, 1,617 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
-| Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36823315523): locked headless and Linux checks passed | pass |
+| Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): locked headless and Linux checks passed | pass |
 | Rust/C application contract | 55 scenarios, 109 current exports, six headless C examples and a C++ header consumer, plus native C/C++ window consumers; previous symbols and layouts preserved | remaining API review and lab qualification open |
 | Native element interaction | Public Rust `Document`, `Element`, and `TextNode` APIs cover ID/class/native-kind lookup, class-token updates, retained detach/reattach, mutation, callbacks, activation, focus, scrolling, and controls; browser-style operations needed by applications must be exposed through native APIs | core implemented; remaining API coverage review open |
 | C-owned X11/Wayland application loop | `oui_app_run` and `oui_app_request_exit` use Rust `App` and the same retained document; versioned platform callbacks and [clean native C/C++ window runs](native-c-lifecycle-evidence.md) cover X11 software/GL and Wayland software | implemented; release-lab qualification open |
@@ -24,10 +24,10 @@ claimed by source code alone.
 | No-work frame | zero layout, paint, and raster on unchanged snapshots | pass |
 | Mutation ownership | 10,000-iteration soak, no owned-object leak | pass |
 | Local performance smoke | 0.108 ms p95, 308 UI-thread animation fps, 1.389% RSS growth | non-qualifying pass |
-| X11/Wayland software and Mesa GL | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36823315523) passed both smoke paths; physical release-lab tests remain open | provisional pass |
-| Miri C handle ownership | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36823315523): opaque-handle ownership test passed under pinned Miri | pass |
-| ASan/LSan/fuzz | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36823315523): all 25 FFI tests passed, then both sanitizers reported 10,476 bytes through Fontconfig at process exit; fuzz stopped on a 2,606-byte Fontconfig allocation report | fail |
-| Native C UBSan | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36823315523): ABI consumers passed | pass |
+| X11/Wayland software and Mesa GL | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251) passed both smoke paths; physical release-lab tests remain open | provisional pass |
+| Miri C handle ownership | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): opaque-handle ownership test passed under pinned Miri | pass |
+| ASan/LSan/fuzz | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): all 25 FFI tests passed, then both sanitizers reported 10,476 bytes through Fontconfig at process exit; fuzz stopped on a 2,606-byte Fontconfig allocation report | fail |
+| Native C UBSan | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): ABI consumers passed | pass |
 | x86-64/AArch64 SDK, deb, rpm | deterministic source pipeline and tag matrix | pending tag build |
 | Clean Ubuntu/Fedora install | release workflow consumer jobs | pending tag build |
 | Physical GPU/context loss | release-lab profile | open |
@@ -74,28 +74,32 @@ reviewed cause remains unknown. The clean census below remains evidence
 against those preserved cached captures, and final qualification requires
 oracle reconciliation. No cached reference was replaced or result promoted.
 
-The latest complete clean `056421db` [v48 census](../renderer/generated/four-profile-census-v48.json)
-retains 21,291/22,924 exact, 1,633 different and zero errors. Its
-[full delta](../renderer/generated/native-column-paint-phases-full-delta-v1.json)
-verifies every original and expanded Open UI image, Chromium image and oracle
-identity unchanged from `497e322d`. All original rows agree with the complete
-[v31 expanded run](../renderer/generated/expanded-requalification-v31.json),
-which is 22,094/23,728 exact and retains 200 of 201 exact additions. Both
-full-matrix commands completed with exit 1 for remaining pixel differences;
-their terminal reports pass complete source, count and hash validation. The
-required pixel gate remains failing. The clean
-[v50 raster matrices](../renderer/generated/focused-primitive-raster-v50.json)
+The latest complete clean `9b158cda` [v49 census](../renderer/generated/four-profile-census-v49.json)
+is 21,308/22,924 exact, 1,616 different and zero errors. Its
+[full delta](../renderer/generated/native-image-full-delta-v1.json)
+verifies 30 improved comparisons and 17 newly exact, with no worsened comparison
+or exact regression from `056421db`. Every Chromium image and oracle identity
+remains unchanged. All original rows agree with the complete
+[v32 expanded run](../renderer/generated/expanded-requalification-v32.json),
+which is 22,111/23,728 exact and retains 200 of 201 exact additions. The first
+execution was interrupted by an environment reset; its incomplete evidence
+remains preserved. Separate replacement runs have complete terminal reports
+that pass source, count and hash validation. Process handles expired before
+exit codes were observed, so no exit code is inferred. The source remained
+clean and unchanged from build through final audit. The 892 residual IDs lack
+reviewed ownership and the required pixel gate remains failing. The clean
+[v51 raster matrices](../renderer/generated/focused-primitive-raster-v51.json)
 pass 640/640 focused and 960/960 primitive comparisons, with every image and
 oracle identity unchanged. The preceding `497e322d`
 [delta index](../renderer/generated/native-column-flex-full-delta-v1.json)
 preserves its original command's exit-143 observation and complete report.
 The
-[hosted hardening](https://github.com/zhuowcui/open-ui/actions/runs/36823315523)
+[hosted hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251)
 has finished with four passing and three failing jobs. Both native sanitizers
 pass 25 FFI tests before reporting 10,476 Fontconfig bytes in 236 allocations
 at exit; fuzzing stops at `tree_mutations` with 2,606 bytes in 59 allocations.
 The three later fuzz targets remain unverified. The
-[seven-job index](generated/hosted-hardening-056421db-v1.json) preserves the
+[seven-job index](generated/hosted-hardening-9b158cda-v1.json) preserves the
 complete failed-job logs and each outcome. Font-manager lifetime/root cause
 review remains open. Incomplete renderer results do not qualify that source.
 

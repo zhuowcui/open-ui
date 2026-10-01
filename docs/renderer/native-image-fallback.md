@@ -59,6 +59,21 @@ baseline observations. These development measurements
 are diagnostic; clean complete original and expanded matrices are required
 after the source checkpoint.
 
+The separate complete clean `9b158cda` runs are now indexed in the
+[v49 census](generated/four-profile-census-v49.json),
+[v32 expanded ledger](generated/expanded-requalification-v32.json), and
+[v51 raster index](generated/focused-primitive-raster-v51.json).
+The original suite is 21,308/22,924 exact, with 1,616 differences and zero
+errors; the expanded suite is 22,111/23,728 exact, with 1,617 differences and
+zero errors. The [complete delta](generated/native-image-full-delta-v1.json)
+records 30 improved images, 17 newly exact comparisons, no worsened comparison
+and no exact regression from `056421db`. All Chromium images and identities
+remain fixed. All original rows agree between the suites, and 200 of the 201
+additions remain exact at all four profiles. Focused and primitive matrices
+remain 640/640 and 960/960 exact with unchanged images. The 892 residual test
+IDs still lack reviewed ownership; complete rendering qualification stays open.
+Earlier interrupted runs remain preserved as incomplete evidence.
+
 The complete locked workspace suite passes 8,491 tests, with 13 ignored.
 Formatting, eight generated-source checks and the accountability audit pass.
 The Linux FFI suite passes 26 tests; 239 Python tests and the C/C++ ABI

@@ -12,6 +12,20 @@ rendering evidence for that state. Each element behavior needed by a consuming
 application also requires a public Rust operation over the same engine; fixture
 lowering alone does not complete application API coverage.
 
+The latest complete clean `9b158cda` results are
+[21,308/22,924 exact](generated/four-profile-census-v49.json) for the original
+four-profile suite and [22,111/23,728 exact](generated/expanded-requalification-v32.json)
+for the expanded suite, both with zero errors. The
+[full delta](generated/native-image-full-delta-v1.json) verifies 30 improved
+comparisons, 17 newly exact, no worsened comparison and no exact regression
+from `056421db`; every Chromium image and oracle identity remains fixed.
+All original rows agree between the suites. The same 200 of 201 additions
+remain exact at all four profiles; the failing addition stays in the contract.
+The clean [40-profile raster index](generated/focused-primitive-raster-v51.json)
+remains 640/640 focused and 960/960 primitive exact with unchanged pixels.
+The 1,616 original differences and 892 unreviewed residual IDs keep the
+renderer gate open. The older checkpoint records below remain provenance.
+
 Static media presentation may consume a generated first frame. Those pixels
 are decoded ahead of rendering by the Chromium-matched codec revision, bound
 to the source bytes and decoder by SHA-256 in
