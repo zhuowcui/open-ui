@@ -9,10 +9,10 @@ claimed by source code alone.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | 21,291/22,924 exact, 1,633 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v45.json); all images unchanged from `822e0462` and no exact regression | fail |
+| Four-profile renderer matrix | 21,291/22,924 exact, 1,633 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v46.json); four existing failures worsened at fractional scales and no formerly exact comparison regressed | fail |
 | Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact at clean `547c7081` in the [latest raster index](../renderer/generated/focused-primitive-raster-v47.json); its complete original/expanded reports are recorded below | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v28.json); 22,094/23,728 total comparisons exact, 1,634 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v29.json); 22,094/23,728 total comparisons exact, 1,634 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
@@ -57,7 +57,16 @@ reviewed cause remains unknown. The clean census below remains evidence
 against those preserved cached captures, and final qualification requires
 oracle reconciliation. No cached reference was replaced or result promoted.
 
-The latest complete clean census at `547c7081` is
+The later clean `e9211183` [v46 census](../renderer/generated/four-profile-census-v46.json)
+has the same exact/different totals. Its
+[full delta](../renderer/generated/native-vertical-max-block-full-delta-v1.json)
+records four changed original images: `block-max-height-004` and its reference
+worsen by 72 pixels each at 1.25 scale and 75 each at 1.5 scale. Every Chromium
+image and oracle identity stays fixed, and no formerly exact comparison
+regresses. The [v29 expanded run](../renderer/generated/expanded-requalification-v29.json)
+retains the same 200 of 201 exact additions. These failures remain open.
+
+The preceding complete clean census at `547c7081` is
 [21,291/22,924 exact](../renderer/generated/four-profile-census-v45.json),
 with 1,633 differences, zero errors and 900 unowned residual IDs. The
 [complete delta](../renderer/generated/native-constrained-box-full-delta-v1.json)

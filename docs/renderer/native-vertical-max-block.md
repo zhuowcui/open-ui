@@ -77,3 +77,16 @@ target/debug/examples/constrained_box_geometry \
 Use new output directories. The preserved static inputs in
 `docs/v02/evidence/native-constrained-box-v1` belong to the separate Chromium
 oracle. Native applications perform every interaction through the framework.
+
+## Complete clean follow-up
+
+The complete `e9211183` original and expanded matrices finished. The
+[v46 census](generated/four-profile-census-v46.json) remains 21,291/22,924
+exact and the [v29 expanded report](generated/expanded-requalification-v29.json)
+remains 22,094/23,728 exact, both with zero errors. The
+[delta](generated/native-vertical-max-block-full-delta-v1.json) records four
+changed comparisons, all existing failures: `block-max-height-004` and its
+reference worsen from 554 to 626 pixels at 1.25 scale and from 456 to 531 at
+1.5 scale. All other images and every Chromium oracle identity are unchanged;
+no formerly exact comparison regresses. Their fractional continuation/paint
+coverage needs review and repair. The full renderer remains unqualified.

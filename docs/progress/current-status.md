@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean census against cached Chromium captures | 21,291/22,924 exact, 1,633 different, 0 errors; no exact regression from the preceding checkpoint |
+| Latest complete clean census against cached Chromium captures | 21,291/22,924 exact, 1,633 different, 0 errors; no formerly exact regression, but four existing failures worsened |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
@@ -743,3 +743,17 @@ become correct, all 60 other geometry records and all 65 PNGs remain
 unchanged. All 8,491 workspace tests pass, with 13 ignored in 147 suites;
 formatting and read-only generators pass. Complete clean renderer verification
 and final release qualification remain required.
+
+The complete clean `e9211183` [v46 census](../renderer/generated/four-profile-census-v46.json)
+is 21,291/22,924 exact, with 1,633 differences and zero errors. The
+[v29 expanded requalification](../renderer/generated/expanded-requalification-v29.json)
+is 22,094/23,728 exact, with 1,634 differences and zero errors; the same
+200 of 201 additions pass all four profiles. All original rows agree between
+the runs and every Chromium image and oracle identity stayed fixed. The
+[full delta](../renderer/generated/native-vertical-max-block-full-delta-v1.json)
+shows four original comparisons changed: `block-max-height-004` and its
+reference worsen from 554 to 626 different pixels at 1.25 scale, and from
+456 to 531 at 1.5 scale. All other images stayed fixed and no formerly exact
+comparison regressed. Those fractional continuation/coverage failures need
+review and repair; unchanged totals do not establish renderer stability.
+The 900 residual IDs remain unreviewed, so this is diagnostic evidence.

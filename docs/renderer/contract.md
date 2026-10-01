@@ -801,3 +801,12 @@ generated OTC fixtures from the pinned WPT checkout. The generator verifies
 source and output hashes, and Rust/C tests require identical container, face
 index, byte length, and SHA-256 metadata. These fixtures remain document-owned;
 they do not expand qualifying dependence on ambient system fonts.
+
+The later complete clean `e9211183` [v46 census](generated/four-profile-census-v46.json)
+and [v29 expanded requalification](generated/expanded-requalification-v29.json)
+retain the preceding exact/different totals, with zero errors. The
+[full delta](generated/native-vertical-max-block-full-delta-v1.json) records
+four worsened existing failures at fractional scales in `block-max-height-004`
+and its reference. Every Chromium image and oracle identity stays fixed,
+and no formerly exact comparison regresses. Those failures remain open;
+this evidence does not qualify the renderer.
