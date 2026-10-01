@@ -332,6 +332,88 @@ fn native_geometry_includes_all_column_fragments() {
             "child {height}"
         );
     }
+    // A capped fragmentainer must defer an atomic child that cannot fit
+    // after the first border. The containing boxes keep their own fragments.
+    columns.set_max_height(LengthValue::px(80.0)).unwrap();
+    for (height, child_heights, wrapper_heights) in [
+        (90.0, vec![80.0, 90.0, 36.0], vec![80.0, 80.0, 0.0]),
+        (200.0, vec![80.0, 126.0], vec![80.0, 80.0]),
+        (300.0, vec![80.0, 126.0], vec![80.0, 80.0]),
+    ] {
+        clipped_descendant
+            .set_height(LengthValue::px(height))
+            .unwrap();
+        assert_eq!(columns.height().unwrap(), 80.0, "capped child {height}");
+        assert_eq!(
+            target
+                .client_rects()
+                .unwrap()
+                .iter()
+                .map(|r| r.height)
+                .collect::<Vec<_>>(),
+            child_heights,
+            "capped child {height}"
+        );
+        assert_eq!(
+            wrapper
+                .client_rects()
+                .unwrap()
+                .iter()
+                .map(|r| r.height)
+                .collect::<Vec<_>>(),
+            wrapper_heights,
+            "capped child {height}"
+        );
+        let bitmap = document.render_to_bitmap().unwrap();
+        let pixel = |x: usize, y: usize| {
+            let offset = y * bitmap.stride() + x * 4;
+            &bitmap.pixels()[offset..offset + 4]
+        };
+        assert_eq!(
+            pixel(0, 40),
+            [0, 0, 0, 255],
+            "first border for child {height}"
+        );
+        assert_eq!(
+            pixel(55, 40),
+            [0, 0, 0, 255],
+            "first border for child {height}"
+        );
+        assert_eq!(
+            pixel(170, 100),
+            [255, 255, 255, 255],
+            "own background for child {height}"
+        );
+    }
+    // The break uses the column's source coordinates through nested padding.
+    wrapper.set_padding_top(LengthValue::px(10.0)).unwrap();
+    for (height, child_heights, wrapper_heights) in [
+        (90.0, vec![70.0, 90.0, 46.0], vec![80.0, 90.0, 0.0]),
+        (200.0, vec![70.0, 136.0], vec![80.0, 90.0]),
+        (300.0, vec![70.0, 136.0], vec![80.0, 90.0]),
+    ] {
+        clipped_descendant
+            .set_height(LengthValue::px(height))
+            .unwrap();
+        let rects = target.client_rects().unwrap();
+        assert_eq!(rects[0].y, 10.0, "padded child {height}");
+        assert_eq!(rects[1].y, 0.0, "padded child {height}");
+        assert_eq!(
+            rects.iter().map(|r| r.height).collect::<Vec<_>>(),
+            child_heights,
+            "padded child {height}"
+        );
+        assert_eq!(
+            wrapper
+                .client_rects()
+                .unwrap()
+                .iter()
+                .map(|r| r.height)
+                .collect::<Vec<_>>(),
+            wrapper_heights,
+            "padded child {height}"
+        );
+    }
 }
 
 #[test]

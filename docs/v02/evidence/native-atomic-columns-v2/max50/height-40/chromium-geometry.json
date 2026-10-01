@@ -1,0 +1,112 @@
+{
+  "case": "height-40",
+  "geometry": {
+    "hit": "border",
+    "nodes": {
+      "border": {
+        "bounds": {
+          "height": 50,
+          "width": 488,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 50,
+            "width": 56,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "height": 50,
+            "width": 56,
+            "x": 108,
+            "y": 0
+          },
+          {
+            "height": 50,
+            "width": 56,
+            "x": 216,
+            "y": 0
+          },
+          {
+            "height": 50,
+            "width": 56,
+            "x": 324,
+            "y": 0
+          },
+          {
+            "height": 6,
+            "width": 56,
+            "x": 432,
+            "y": 0
+          }
+        ]
+      },
+      "columns": {
+        "bounds": {
+          "height": 50,
+          "width": 300,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 50,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          }
+        ]
+      },
+      "limit": {
+        "bounds": {
+          "height": 50,
+          "width": 408,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 50,
+            "width": 84,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "height": 50,
+            "width": 84,
+            "x": 108,
+            "y": 0
+          },
+          {
+            "height": 50,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          {
+            "height": 10,
+            "width": 84,
+            "x": 324,
+            "y": 0
+          },
+          {
+            "height": 0,
+            "width": 84,
+            "x": 432,
+            "y": 0
+          }
+        ]
+      }
+    },
+    "viewport": {
+      "dpr": 1,
+      "height": 340,
+      "width": 320
+    }
+  },
+  "input_sha256": "29b131946eca8ea675613b54f5a5c04b31ffe6aff80496a9e2e8ed279a9272c3",
+  "png_sha256": "b5de3dc1c975a241488b01258d1a2a0da9fb2f69363da4594dd5390d002efef6",
+  "repeated_query_equal": true
+}

@@ -97,6 +97,39 @@ int main(void) {
   assert(rects[2].x == 216.0f); /* Copied values remain owned by this consumer. */
   assert(oui_element_append_child(wrapper, target) == OUI_OK);
   assert(oui_element_get_client_rects_v1(target, NULL, 0, &count) == OUI_OK && count == 3);
+  /* Native C mutations reach the same deferred atomic-child layout as Rust. */
+  property(target, OUI_STYLE_PROPERTY_POINTER_EVENTS, "auto");
+  property(target, OUI_STYLE_PROPERTY_VISIBILITY, "visible");
+  property(columns, OUI_STYLE_PROPERTY_MAX_HEIGHT, "80px");
+  OuiElement* clipped = block(document, target);
+  property(clipped, OUI_STYLE_PROPERTY_WIDTH, "20px");
+  property(clipped, OUI_STYLE_PROPERTY_OVERFLOW, "hidden");
+  const char* atomic_heights[] = {"90px", "200px", "300px"};
+  const float child_heights[][3] = {
+      {80.0f, 90.0f, 36.0f}, {80.0f, 126.0f, 0.0f}, {80.0f, 126.0f, 0.0f}};
+  const size_t fragment_counts[] = {3, 2, 2};
+  for (size_t state = 0; state < 3; ++state) {
+    property(clipped, OUI_STYLE_PROPERTY_HEIGHT, atomic_heights[state]);
+    assert(oui_element_get_client_rects_v1(target, rects, 3, &count) == OUI_OK);
+    assert(count == fragment_counts[state]);
+    for (size_t part = 0; part < count; ++part) {
+      assert(rects[part].x == 108.0f * part && rects[part].y == 0.0f);
+      assert(rects[part].height == child_heights[state][part]);
+    }
+    assert(oui_element_get_client_rects_v1(wrapper, wrapper_rects, 3, &count) == OUI_OK);
+    assert(count == fragment_counts[state]);
+    assert(wrapper_rects[0].height == 80.0f && wrapper_rects[1].height == 80.0f);
+    if (count == 3)
+      assert(wrapper_rects[2].height == 0.0f);
+  }
+  property(wrapper, OUI_STYLE_PROPERTY_PADDING_TOP, "10px");
+  property(clipped, OUI_STYLE_PROPERTY_HEIGHT, "200px");
+  assert(oui_element_get_client_rects_v1(target, rects, 3, &count) == OUI_OK && count == 2);
+  assert(rects[0].y == 10.0f && rects[0].height == 70.0f);
+  assert(rects[1].y == 0.0f && rects[1].height == 136.0f);
+  assert(oui_element_get_client_rects_v1(wrapper, wrapper_rects, 3, &count) == OUI_OK);
+  assert(count == 2 && wrapper_rects[0].height == 80.0f && wrapper_rects[1].height == 90.0f);
+  assert(oui_element_destroy(clipped) == OUI_OK);
   assert(oui_element_remove(target) == OUI_OK);
   assert(oui_element_get_client_rects_v1(target, NULL, 0, &count) == OUI_ERROR_STALE_HANDLE);
   assert(oui_element_destroy(target) == OUI_OK);

@@ -672,3 +672,16 @@ no exact comparison regresses and no Chromium reference changes. These dirty
 source diagnostics do not replace the complete clean renderer gates. The
 [atomic-column index](../v02/generated/native-monolithic-column-balancing-v1.json)
 records their counts, hashes and complete four-image delta.
+
+The later [atomic-child deferral candidate](../renderer/native-atomic-column-deferral.md)
+now matches 144 reduced native states against Chromium in both geometry and
+pixels. The 65 earlier constrained guards retain their native bytes and
+geometry. The full workspace passes 8,491 tests, all 55 public Rust scenarios
+pass with Linux, and the 109-export C ABI passes six C consumers and the C++
+header consumer. The new C guard rejects the preceding library. These remain
+dirty development results. Its completed focused and primitive matrices are
+640/640 and 960/960 exact; the column cohort is 7,034/7,680 exact, with 646
+differences and zero errors. All 9,280 candidate images and Chromium oracle
+identities are unchanged from the preceding painting and balancing source.
+Complete clean renderer matrices and reviewed residual ownership remain
+required before qualification.

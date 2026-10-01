@@ -57,6 +57,11 @@ The native geometry query exposes this remaining layout defect too.
 The owning subsystem is `openui-layout` multicolumn continuation ownership,
 with decoration replay in `openui-paint`; it is not a JavaScript requirement.
 
+The later [atomic-child deferral candidate](native-atomic-column-deferral.md)
+repairs those reduced capped states and verifies neighboring column heights
+and nested padding. Its measurements have their own source and artifact
+hashes; this checkpoint's earlier results remain preserved.
+
 ## Verification and limits
 
 The candidate passes all 8,491 locked workspace tests, with 13 ignored,

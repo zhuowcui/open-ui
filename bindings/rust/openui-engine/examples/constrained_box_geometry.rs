@@ -39,9 +39,9 @@ fn fragment_dump(fragment: &Fragment, depth: usize, output: &mut String) {
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let arguments: Vec<_> = std::env::args().skip(1).collect();
-    if !(2..=5).contains(&arguments.len()) {
+    if !(2..=6).contains(&arguments.len()) {
         return Err(
-            "expected OUTPUT_DIR CASE [SCALE] [CLIPPED_DESCENDANT_HEIGHT] [COLUMN_MAX_HEIGHT]"
+            "expected OUTPUT_DIR CASE [SCALE] [CLIPPED_DESCENDANT_HEIGHT] [COLUMN_MAX_HEIGHT] [WRAPPER_PADDING_TOP]"
                 .into(),
         );
     }
@@ -60,6 +60,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let column_max_height: Option<f32> = arguments.get(4).map(|value| value.parse()).transpose()?;
     if column_max_height.is_some_and(|height| !height.is_finite() || height < 0.0) {
         return Err("column maximum height must be finite and nonnegative".into());
+    }
+    let wrapper_padding_top: Option<f32> =
+        arguments.get(5).map(|value| value.parse()).transpose()?;
+    if wrapper_padding_top.is_some_and(|padding| !padding.is_finite() || padding < 0.0) {
+        return Err("wrapper padding must be finite and nonnegative".into());
     }
     let vertical = matches!(case, "vertical-rl" | "vertical-lr");
     let mut engine = Engine::new(ViewportMetrics::from_logical_size(320.0, 340.0, scale)?)?;
@@ -141,6 +146,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         _ => return Err("unknown case".into()),
     };
     engine.set_property(wrapper, property, LengthValue::px(maximum).into())?;
+    if let Some(padding) = wrapper_padding_top {
+        engine.set_property(
+            wrapper,
+            StyleProperty::PaddingTop,
+            LengthValue::px(padding).into(),
+        )?;
+    }
     engine.set_property(
         wrapper,
         StyleProperty::BackgroundColor,

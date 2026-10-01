@@ -162,3 +162,10 @@ repairs the reduced clipping-descendant pixels and its unconstrained column
 balancing. Its 40 native states are exact at five scales; three larger child
 cases in an additional constrained-column sweep remain different. Wider
 renderer qualification for the candidate is still required.
+
+The newer [atomic-child deferral candidate](../renderer/native-atomic-column-deferral.md)
+matches 144 reduced native states against Chromium, including constrained
+columns, neighboring heights and nested padding. Public Rust and C consumers
+perform those mutations and query the resulting owned rectangles. The prior
+65-case constrained sweep remains byte-identical and retains its existing
+failures. Complete renderer and native API qualification remain open.

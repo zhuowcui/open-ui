@@ -9289,8 +9289,9 @@ fn retain_monolithic_descendants_for_slice_with_atomic_nodes(
                 child_style.display,
                 Display::Block | Display::FlowRoot | Display::ListItem
             )
-            && original_height - child.border.bottom - child.padding.bottom
-                > fragment_in_flow_descendant_bottom(child, doc);
+            && (!child_style.height.is_auto()
+                || original_height - child.border.bottom - child.padding.bottom
+                    > fragment_in_flow_descendant_bottom(child, doc));
         let contains_nested_monolithic = retain_monolithic_descendants_for_slice_with_atomic_nodes(
             child,
             doc,
@@ -9359,6 +9360,68 @@ fn compress_oversized_monolithic_flow(
                 accumulated_overflow + (child.size.height - fragmentainer_block_size);
         }
     }
+}
+
+/// Reserve the rest of a fragmented definite block before an atomic child
+/// that cannot fit after its leading decoration. The child starts in the next
+/// fragmentainer; its overflow does not enlarge that block's authored size.
+fn defer_atomic_children_in_definite_blocks(
+    fragment: &mut Fragment,
+    doc: &Document,
+    fragmentainer_size: LayoutUnit,
+    source_offset: LayoutUnit,
+) -> bool {
+    if fragmentainer_size <= LayoutUnit::zero() || fragment.node_id.is_none() {
+        return false;
+    }
+    let style = &doc.node(fragment.node_id).style;
+    if !matches!(style.display, Display::Block | Display::ListItem)
+        || style.is_out_of_flow()
+        || style.float != Float::None
+        || crate::multicol::ColumnLayoutAlgorithm::from_style(style).is_some()
+    {
+        return false;
+    }
+    let own_block_size = fragment.border_box_rect().size.height;
+    let mut changed = false;
+    let mut inserted_gap = LayoutUnit::zero();
+    for child in &mut fragment.children {
+        if child.node_id.is_none() {
+            continue;
+        }
+        let child_style = &doc.node(child.node_id).style;
+        if child_style.is_out_of_flow() || child_style.float != Float::None {
+            continue;
+        }
+        child.offset.top = child.offset.top + inserted_gap;
+        if node_is_monolithic_for_fragmentation(doc, child.node_id) {
+            if !style.height.is_auto()
+                && own_block_size > fragmentainer_size
+                && child.offset.top > LayoutUnit::zero()
+            {
+                let child_source_start = source_offset + child.offset.top;
+                let phase = LayoutUnit::from_raw(
+                    child_source_start
+                        .raw()
+                        .rem_euclid(fragmentainer_size.raw()),
+                );
+                let capacity = fragmentainer_size - phase;
+                if phase > LayoutUnit::zero() && child.size.height > capacity {
+                    child.offset.top = child.offset.top + capacity;
+                    inserted_gap = inserted_gap + capacity;
+                    changed = true;
+                }
+            }
+        } else {
+            changed |= defer_atomic_children_in_definite_blocks(
+                child,
+                doc,
+                fragmentainer_size,
+                source_offset + child.offset.top,
+            );
+        }
+    }
+    changed
 }
 
 #[derive(Clone, Copy, Debug, Default)]
@@ -24711,7 +24774,26 @@ fn layout_multicol(
                     compress_oversized_monolithic_flow(&mut child_frag, doc, column_height);
                     recompute_physical_overflow(&mut child_frag);
                 }
-                let child_in_flow_overflow_height =
+                let deferred_atomic_child = child_frag.principal_box_rect.is_some()
+                    && defer_atomic_children_in_definite_blocks(
+                        &mut child_frag,
+                        doc,
+                        column_height,
+                        col_block_offset + actual_margin,
+                    );
+                let child_in_flow_overflow_height = if deferred_atomic_child {
+                    child_frag
+                        .children
+                        .iter()
+                        .filter(|child| {
+                            child.node_id.is_none()
+                                || !doc.node(child.node_id).style.is_out_of_flow()
+                        })
+                        .map(|child| child.offset.top + child.border_box_rect().size.height)
+                        .max()
+                        .unwrap_or(child_height)
+                        .max_of(child_height)
+                } else {
                     if crate::multicol::ColumnLayoutAlgorithm::from_style(child_style).is_some()
                         && (!child_style.height.is_auto() || !child_style.max_height.is_none())
                         && !subtree_has_in_flow_spanner_descendant(doc, child_node_id)
@@ -24725,7 +24807,8 @@ fn layout_multicol(
                             doc,
                             space.writing_direction,
                         )
-                    };
+                    }
+                };
                 let child_has_undecorated_max_height_overflow = !child_style.max_height.is_none()
                     && child_style.effective_border_top() == 0
                     && child_style.effective_border_bottom() == 0
@@ -28036,12 +28119,16 @@ fn layout_multicol(
                                         // An oversized monolithic descendant
                                         // owns this fragmentainer and may
                                         // paint through its block edge, but
-                                        // its parent break token advances by
-                                        // one fragmentainer. Later siblings
-                                        // resume at the next column rather
-                                        // than after the descendant's full
-                                        // visual overflow extent.
-                                        next_unit = column_height;
+                                        // an undeferred parent's break token advances by
+                                        // one fragmentainer. A unit already deferred
+                                        // past leading decoration consumes its full
+                                        // source interval, bounded by the containing
+                                        // box's remaining authored space.
+                                        next_unit = if deferred_atomic_child {
+                                            (unit_end - content_consumed).min_of(remaining_content)
+                                        } else {
+                                            column_height
+                                        };
                                         // A missing-image placeholder already
                                         // paints as overflow from its retained
                                         // atomic child. Expanding the parent
