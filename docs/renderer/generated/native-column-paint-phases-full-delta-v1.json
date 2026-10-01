@@ -1,0 +1,68 @@
+{
+  "checkpoint": "056421db1fab811620648e56ec77f42b78c4a65d",
+  "execution_observations": {
+    "path": "out/renderer-evidence/native-paint-phase-056421db/execution-observations-v1.json",
+    "sha256": "22ad2df1653f93456f0787171d5ad622cd9000b094dd66d1a093539b59f7d5f3"
+  },
+  "expanded": {
+    "changed_comparison_count": 0,
+    "changed_comparisons": [],
+    "chromium_oracle_images_and_identities_unchanged": true,
+    "comparisons": 23728,
+    "improved_comparison_count": 0,
+    "newly_exact_comparison_count": 0,
+    "preceding_report": "out/renderer-evidence/native-column-flex-497e322d/expanded/expanded-summary.json",
+    "preceding_report_sha256": "68c48e1321ad750d73688033c2200599e2a9f9e6b403cb61e6ae6e3f4e6b2e51",
+    "previously_exact_regressions": [],
+    "report": "out/renderer-evidence/native-paint-phase-056421db/expanded/expanded-summary.json",
+    "report_sha256": "fbc4df1cbe71634457f39bb3c1bd055e6d8fc99ecee9ab0b3d79aa00d75c04aa",
+    "results": {
+      "different": 1634,
+      "errors": 0,
+      "exact": 22094,
+      "profile_result_sha256": "0919c64696fb110ba27955904cc4d1afd676855038bb0db8a2d7f16e474eaa11",
+      "total": 23728
+    },
+    "source": {
+      "clean": true,
+      "commit": "056421db1fab811620648e56ec77f42b78c4a65d",
+      "harness_sha256": "e5d5d749235aeaf5f5d8c11b9af508922e549ec96b7830874289cfe0de608014",
+      "source_tree_sha256": "b9c45799ee6b6f0540af4574b7776cbc1e1feba94a3003e9289253b41400b697",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "worsened_comparison_count": 0
+  },
+  "original": {
+    "changed_comparison_count": 0,
+    "changed_comparisons": [],
+    "chromium_oracle_images_and_identities_unchanged": true,
+    "comparisons": 22924,
+    "improved_comparison_count": 0,
+    "newly_exact_comparison_count": 0,
+    "preceding_report": "out/renderer-evidence/native-column-flex-497e322d/original/full-summary.json",
+    "preceding_report_sha256": "5c7d4425327402bcd389a920fa4211e13c72b78a0f06f639a78276e9a988683b",
+    "previously_exact_regressions": [],
+    "report": "out/renderer-evidence/native-paint-phase-056421db/original/full-summary.json",
+    "report_sha256": "f4195953dbe3a4ea1c750e4a80ccce3e45f4792637693df9fbb887052e0631f3",
+    "results": {
+      "different": 1633,
+      "errors": 0,
+      "exact": 21291,
+      "profile_result_sha256": "eebd02fc27e99333038cee1e45fc60a4b2bc7f3a016deb71ad436437a445a86a",
+      "total": 22924
+    },
+    "source": {
+      "clean": true,
+      "commit": "056421db1fab811620648e56ec77f42b78c4a65d",
+      "harness_sha256": "e5d5d749235aeaf5f5d8c11b9af508922e549ec96b7830874289cfe0de608014",
+      "source_tree_sha256": "b9c45799ee6b6f0540af4574b7776cbc1e1feba94a3003e9289253b41400b697",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "worsened_comparison_count": 0
+  },
+  "original_rows_match_expanded": true,
+  "original_rows_verified_in_expanded": 22924,
+  "policy": "Chromium is the sole pixel target. Complete clean measurements remain diagnostic until all residual and release gates pass.",
+  "release_qualification": false,
+  "schema_version": 1
+}

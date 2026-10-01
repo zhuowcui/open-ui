@@ -27,30 +27,31 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The latest complete clean checkpoint `497e322d` is
-[21,291/22,924 exact](../renderer/generated/four-profile-census-v47.json),
+The latest complete clean checkpoint `056421db` is
+[21,291/22,924 exact](../renderer/generated/four-profile-census-v48.json),
 with 1,633 differences, zero errors and 900 unreviewed residual IDs. Its
-[complete delta](../renderer/generated/native-column-flex-full-delta-v1.json)
+[complete delta](../renderer/generated/native-column-paint-phases-full-delta-v1.json)
 verifies every original and expanded Open UI image and Chromium oracle
-identity unchanged from `e9211183`, including the four fractional failures
-that worsened at that earlier checkpoint. No formerly exact image regresses.
-The complete [expanded run](../renderer/generated/expanded-requalification-v30.json)
+identity unchanged from `497e322d`. No formerly exact image regresses.
+The complete [expanded run](../renderer/generated/expanded-requalification-v31.json)
 is 22,094/23,728 exact, with 1,634 differences and zero errors; all 22,924
 original rows agree between the runs. The
-[v32 diagnostic selection](../../tools/qualification/manifests/expanded-v32.json)
+[v33 diagnostic selection](../../tools/qualification/manifests/expanded-v33.json)
 retains 200 of the declared 201 additions. The clean
-[v49 raster index](../renderer/generated/focused-primitive-raster-v49.json)
-is 640/640 focused and 960/960 primitive exact. The original command's
-nonzero tool exit observation is preserved in the delta index; its terminal
-report passes the complete count, source and report-hash audit. These results
-do not close residual ownership or the required pixel gate.
+[v50 raster index](../renderer/generated/focused-primitive-raster-v50.json)
+is 640/640 focused and 960/960 primitive exact, with every image and oracle
+identity unchanged. Both complete full-matrix commands returned exit 1 for
+remaining pixel differences; the terminal reports pass complete count, source
+and hash validation. These results do not close residual ownership or the
+required pixel gate.
 
-The clean [v50 raster index](../renderer/generated/focused-primitive-raster-v50.json)
-at the later native paint/input checkpoint `056421db` is 640/640 focused and
-960/960 primitive exact. All 1,600 Open UI images and Chromium oracle
-identities remain unchanged from `497e322d`. Its clean original and expanded
-matrices are still running from the preserved runner.
-Its [fresh hosted hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36823315523)
+The preceding `497e322d`
+[delta index](../renderer/generated/native-column-flex-full-delta-v1.json)
+retains the original command's exit-143 observation alongside its complete
+terminal report. Its pixels remain unchanged, including the four fractional
+failures that worsened at the earlier `e9211183` checkpoint.
+
+The `056421db` [fresh hosted hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36823315523)
 has finished. Miri, Rust 1.85, C UBSan and application/X11/Wayland checks pass.
 Both native sanitizer jobs fail after passing 25 FFI tests, reporting 10,476
 Fontconfig bytes in 236 allocations at exit. Fuzzing stops at `tree_mutations`
@@ -750,7 +751,10 @@ The clean vertical checkpoint `e9211183` passes the
 640/640 and 960/960 exact, with all 1,600 images and oracle identities unchanged
 from `547c7081`. All six hosted jobs pass; MSRV, Miri, native sanitizer, C UB
 sanitizer and fuzz jobs are skipped on the PR and remain required. Complete
-original and expanded matrices are still running at this clean source.
+original and expanded results are recorded in the
+[v46 census](../renderer/generated/four-profile-census-v46.json) and
+[v29 expanded index](../renderer/generated/expanded-requalification-v29.json),
+including the four worsened fractional failures.
 
 The separate [flow-root child-slice candidate](../renderer/native-flow-root-leaf-slices.md)
 matches all five reduced flow-root states in geometry and pixels. The reduced

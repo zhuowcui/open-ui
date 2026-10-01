@@ -76,5 +76,12 @@ The accepted clean `056421db` checkpoint now passes
 [640/640 focused and 960/960 primitive comparisons](generated/focused-primitive-raster-v50.json)
 at all 40 profiles. All 1,600 Open UI RGBA images, Chromium RGBA images and
 oracle identities remain unchanged from `497e322d`. The clean original and
-expanded matrices at this source are still running. This exact raster result
-does not close the wider renderer, native interaction or release gates.
+expanded matrices at this source have also finished:
+[21,291/22,924 original comparisons](generated/four-profile-census-v48.json) and
+[22,094/23,728 expanded comparisons](generated/expanded-requalification-v31.json)
+are exact, with zero errors. The
+[complete delta](generated/native-column-paint-phases-full-delta-v1.json)
+verifies every Open UI image, Chromium image and oracle identity unchanged
+from `497e322d`; all original rows agree between the full runs. Both commands
+returned exit 1 for their remaining pixel differences. This evidence does not
+close the wider renderer, native interaction or release gates.

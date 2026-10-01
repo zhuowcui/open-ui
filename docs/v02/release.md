@@ -9,10 +9,10 @@ claimed by source code alone.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | 21,291/22,924 exact, 1,633 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v47.json); every image and oracle identity unchanged from `e9211183`, including its four worsened failures | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact at clean `056421db` in the [latest raster index](../renderer/generated/focused-primitive-raster-v50.json); every image and oracle identity unchanged from `497e322d`; complete original/expanded runs at this later source remain pending | pass |
+| Four-profile renderer matrix | 21,291/22,924 exact, 1,633 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v48.json); every image and oracle identity unchanged from `497e322d`; 900 residual IDs still lack reviewed ownership | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact at clean `056421db` in the [latest raster index](../renderer/generated/focused-primitive-raster-v50.json); every image and oracle identity unchanged from `497e322d`; complete original/expanded runs at this source retain their pixels and remaining failures | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v30.json); 22,094/23,728 total comparisons exact, 1,634 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v31.json); 22,094/23,728 total comparisons exact, 1,634 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36823315523): locked headless and Linux checks passed | pass |
@@ -66,19 +66,21 @@ reviewed cause remains unknown. The clean census below remains evidence
 against those preserved cached captures, and final qualification requires
 oracle reconciliation. No cached reference was replaced or result promoted.
 
-The latest complete clean `497e322d` [v47 census](../renderer/generated/four-profile-census-v47.json)
+The latest complete clean `056421db` [v48 census](../renderer/generated/four-profile-census-v48.json)
 retains 21,291/22,924 exact, 1,633 different and zero errors. Its
-[full delta](../renderer/generated/native-column-flex-full-delta-v1.json)
+[full delta](../renderer/generated/native-column-paint-phases-full-delta-v1.json)
 verifies every original and expanded Open UI image, Chromium image and oracle
-identity unchanged from `e9211183`. All original rows agree with the complete
-[v30 expanded run](../renderer/generated/expanded-requalification-v30.json),
-which is 22,094/23,728 exact and retains 200 of 201 exact additions. The
-original command's nonzero tool exit observation remains recorded; the
-terminal report passes complete source, count and hash validation. The
-required pixel gate remains failing. At the later `056421db` native paint/input
-checkpoint, the clean [v50 raster matrices](../renderer/generated/focused-primitive-raster-v50.json)
+identity unchanged from `497e322d`. All original rows agree with the complete
+[v31 expanded run](../renderer/generated/expanded-requalification-v31.json),
+which is 22,094/23,728 exact and retains 200 of 201 exact additions. Both
+full-matrix commands completed with exit 1 for remaining pixel differences;
+their terminal reports pass complete source, count and hash validation. The
+required pixel gate remains failing. The clean
+[v50 raster matrices](../renderer/generated/focused-primitive-raster-v50.json)
 pass 640/640 focused and 960/960 primitive comparisons, with every image and
-oracle identity unchanged. Its original and expanded matrices are still running.
+oracle identity unchanged. The preceding `497e322d`
+[delta index](../renderer/generated/native-column-flex-full-delta-v1.json)
+preserves its original command's exit-143 observation and complete report.
 The
 [hosted hardening](https://github.com/zhuowcui/open-ui/actions/runs/36823315523)
 has finished with four passing and three failing jobs. Both native sanitizers
