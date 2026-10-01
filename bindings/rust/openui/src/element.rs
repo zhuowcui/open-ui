@@ -532,7 +532,7 @@ impl Element {
     }
 
     /// Bounds of all nonempty layout fragments in logical viewport
-    /// coordinates. Returns the first rectangle when every fragment is
+    /// coordinates. Returns the final rectangle when every fragment is
     /// empty, and `None` when the element has no layout box.
     pub fn bounding_rect(&self) -> Result<Option<Rect>, Error> {
         self.document

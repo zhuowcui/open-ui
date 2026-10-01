@@ -732,3 +732,14 @@ with 646 differences and zero errors. All 9,280 images and Chromium oracle
 identities remain unchanged from the atomic-child candidate. Complete
 clean renderer matrices, residual closure and release qualification remain
 required.
+
+The separate [empty-fragment bounds correction](../renderer/native-empty-fragment-bounds.md)
+returns the final all-empty rectangle, following Chromium's ordered union.
+The public Rust and C guards reject the prior renderer and pass with the
+correction, including native accessibility bounds. All 55 Linux application
+scenarios and the 109-export ABI consumer gate pass. The reduced sweep is
+55/65 geometry-exact and 55/65 pixel-exact; the five zero-height bounds
+become correct, all 60 other geometry records and all 65 PNGs remain
+unchanged. All 8,491 workspace tests pass, with 13 ignored in 147 suites;
+formatting and read-only generators pass. Complete clean renderer verification
+and final release qualification remain required.

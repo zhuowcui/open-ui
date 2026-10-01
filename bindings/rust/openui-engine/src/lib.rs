@@ -1586,7 +1586,8 @@ impl Engine {
     }
 
     /// Bounds of all nonempty border-box fragments. If every fragment is
-    /// empty, return the first; if there is no layout box, return `None`.
+    /// empty, return the final rectangle, matching Chromium's ordered union;
+    /// if there is no layout box, return `None`.
     pub fn bounds(&mut self, handle: NodeHandle) -> Result<Option<SceneRect>, EngineError> {
         let node = self.resolve(handle)?;
         self.update()?;
@@ -1609,7 +1610,11 @@ impl Engine {
                     height: (a.y + a.height).max(b.y + b.height) - y,
                 }
             });
-        bounds.or_else(|| rects.first().copied())
+        // Chromium unions rectangles in layout order. An empty accumulator
+        // is replaced even by an empty next rectangle, so an entirely empty
+        // list retains its final rectangle. Once nonempty, empty boxes do
+        // not enlarge the bounds.
+        bounds.or_else(|| rects.last().copied())
     }
 
     fn handle_for_slot(&self, index: u32) -> NodeHandle {

@@ -17,7 +17,8 @@ Detached elements and `display: none` elements return an empty list.
 Destroyed handles return an error.
 
 `Element::bounding_rect()` combines the nonempty fragment rectangles. If
-every rectangle is empty, it returns the first. If there is no layout box,
+every rectangle is empty, it returns the final rectangle, matching Chromium's
+ordered union. If there is no layout box,
 it returns `None`. `width()` and `height()` read these combined bounds.
 These are owned native snapshots; later mutation does not change an earlier
 returned rectangle or list.
@@ -26,10 +27,9 @@ The engine records geometry independently of the pointer hit-test list during
 the same retained fragment traversal. Accessibility bounds and view-timeline
 geometry read the same combined bounds. Geometry storage is separate from
 paint clipping and decoration ownership.
-The rectangle semantics follow the
-[CSSOM View geometry operations](https://drafts.csswg.org/cssom-view/#dom-element-getboundingclientrect)
-for the measured cases; this does not claim the entire Web API surface or
-complete 3D qualification.
+The returned geometry is checked directly against pinned Chromium,
+including its ordered rectangle union for entirely empty lists. This does
+not claim the entire Web API surface or complete 3D qualification.
 
 ## C consumer
 
@@ -191,3 +191,10 @@ exact geometry and pixels at all five scales, hits the last-column child and
 runs a Rust click callback once. The C consumer queries the same fragments.
 Those guards reject the preceding implementations. Wider renderer and native
 API qualification remain required.
+
+The later [entirely empty bounds correction](../renderer/native-empty-fragment-bounds.md)
+uses Chromium's ordered rectangle union instead of preserving the former
+first-fragment fallback. Rust and C consumers now assert the final empty
+column's position, and the Rust application verifies matching accessibility
+bounds and owned snapshots. All five zero-height reduced cases match
+Chromium in complete geometry; every one of the 65 PNGs stays unchanged.

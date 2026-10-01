@@ -138,6 +138,15 @@ int main(void) {
   assert(wrapper_rects[2].height == 22.65625f); /* Earlier copies remain owned. */
   assert(oui_element_get_client_rects_v1(target, rects, 3, &count) == OUI_OK);
   assert(rects[2].height == 68.65625f); /* The child still owns visible overflow. */
+  property(wrapper, OUI_STYLE_PROPERTY_MAX_HEIGHT, "0px");
+  assert(oui_element_get_client_rects_v1(wrapper, rects, 3, &count) == OUI_OK && count == 3);
+  for (size_t part = 0; part < count; ++part) {
+    assert(rects[part].x == 108.0f * part && rects[part].y == 0.0f);
+    assert(rects[part].width == 84.0f && rects[part].height == 0.0f);
+  }
+  assert(oui_element_get_bounds(wrapper, &bounds) == OUI_OK);
+  assert(bounds.x == 216.0f && bounds.y == 0.0f && bounds.width == 84.0f && bounds.height == 0.0f);
+  assert(wrapper_rects[2].height == 22.65625f); /* Earlier owned copies remain unchanged. */
   property(wrapper, OUI_STYLE_PROPERTY_MAX_HEIGHT, "160px");
   /* An independent block formatting context still fragments ordinary children. */
   property(wrapper, OUI_STYLE_PROPERTY_DISPLAY, "flow-root");

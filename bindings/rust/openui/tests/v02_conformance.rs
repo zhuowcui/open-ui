@@ -247,16 +247,34 @@ fn native_geometry_includes_all_column_fragments() {
     );
 
     wrapper.set_max_height(LengthValue::px(0.0)).unwrap();
-    assert!(wrapper
-        .client_rects()
-        .unwrap()
-        .iter()
-        .all(|rect| rect.height == 0.0));
+    let empty_rects = wrapper.client_rects().unwrap();
+    assert_eq!(
+        empty_rects
+            .iter()
+            .map(|rect| (rect.x, rect.y, rect.width, rect.height))
+            .collect::<Vec<_>>(),
+        [
+            (0.0, 0.0, 84.0, 0.0),
+            (108.0, 0.0, 84.0, 0.0),
+            (216.0, 0.0, 84.0, 0.0)
+        ]
+    );
     let empty = wrapper.bounding_rect().unwrap().unwrap();
-    // Preserve the public native contract: the first of all-empty boxes.
+    // Pinned Chromium's rectangle union keeps the final all-empty fragment.
     assert_eq!(
         (empty.x, empty.y, empty.width, empty.height),
-        (0.0, 0.0, 84.0, 0.0)
+        (216.0, 0.0, 84.0, 0.0)
+    );
+    let tree = document.accessibility_update().unwrap();
+    let accessible = tree
+        .nodes
+        .iter()
+        .find(|(_, node)| node.label() == Some("constrained wrapper"))
+        .unwrap();
+    let bounds = accessible.1.bounds().unwrap();
+    assert_eq!(
+        (bounds.x0, bounds.y0, bounds.x1, bounds.y1),
+        (216.0, 0.0, 300.0, 0.0)
     );
     assert_eq!(target.client_rects().unwrap(), child_rects);
     wrapper.set_max_height(LengthValue::px(160.0)).unwrap();
