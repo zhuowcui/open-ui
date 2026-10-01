@@ -1,0 +1,220 @@
+diff --git a/bindings/rust/openui-paint/src/image_resource.rs b/bindings/rust/openui-paint/src/image_resource.rs
+index a422f1e6..5b0f72f9 100644
+--- a/bindings/rust/openui-paint/src/image_resource.rs
++++ b/bindings/rust/openui-paint/src/image_resource.rs
+@@ -1266,0 +1267 @@ pub fn physical_quantized_image_patch(
++        (0, 0),
+@@ -1281 +1282,8 @@ pub fn physical_quantized_broken_image_patch(
+-    physical_quantized_broken_image_patch_with_clip(image, source, destination, device_scale, None)
++    physical_quantized_broken_image_patch_with_clip(
++        image,
++        source,
++        destination,
++        device_scale,
++        None,
++        (0, 0),
++    )
+@@ -1289,0 +1298 @@ pub(crate) fn physical_quantized_broken_image_patch_with_clip(
++    raster_origin: (i32, i32),
+@@ -1311,0 +1321 @@ pub(crate) fn physical_quantized_broken_image_patch_with_clip(
++        raster_origin,
+@@ -1349,0 +1360 @@ pub fn physical_quantized_replaced_profile_corners(
++        (0, 0),
+@@ -1358,0 +1370 @@ struct LegacyFixedImageAxis {
++    device_origin: i32,
+@@ -1364,0 +1377,10 @@ impl LegacyFixedImageAxis {
++        Self::in_raster_device(source_start, source_extent, device_start, device_extent, 0)
++    }
++
++    fn in_raster_device(
++        source_start: f32,
++        source_extent: f32,
++        device_start: f32,
++        device_extent: f32,
++        device_origin: i32,
++    ) -> Self {
+@@ -1367,2 +1389,3 @@ impl LegacyFixedImageAxis {
+-        let inverse_translation =
+-            (f64::from(source_start) - f64::from(device_start) * f64::from(inverse_scale)) as f32;
++        let inverse_translation = (f64::from(source_start)
++            - f64::from(device_start - device_origin as f32) * f64::from(inverse_scale))
++            as f32;
+@@ -1373,0 +1397 @@ impl LegacyFixedImageAxis {
++            device_origin,
+@@ -1378 +1402 @@ impl LegacyFixedImageAxis {
+-        let center = device_pixel as f32 + 0.5;
++        let center = (device_pixel - self.device_origin) as f32 + 0.5;
+@@ -1414,0 +1439 @@ fn physical_quantized_image_patch_with_color_order(
++    raster_origin: (i32, i32),
+@@ -1573 +1598 @@ fn physical_quantized_image_patch_with_color_order(
+-        LegacyFixedImageAxis::new(
++        LegacyFixedImageAxis::in_raster_device(
+@@ -1577,0 +1603 @@ fn physical_quantized_image_patch_with_color_order(
++            raster_origin.0,
+@@ -1581 +1607 @@ fn physical_quantized_image_patch_with_color_order(
+-        LegacyFixedImageAxis::new(
++        LegacyFixedImageAxis::in_raster_device(
+@@ -1585,0 +1612 @@ fn physical_quantized_image_patch_with_color_order(
++            raster_origin.1,
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index c937cd69..3aa5b961 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -151,0 +152 @@ thread_local! {
++    static IMAGE_LAYER_RASTER_ORIGIN: RefCell<(i32, i32)> = const { RefCell::new((0, 0)) };
+@@ -1193,0 +1195,17 @@ fn paint_fragment_contents(
++    let image_group_bounds = (needs_layer && fragment_subtree_has_images(fragment, doc))
++        .then(|| image_opacity_bounds(fragment, doc, abs_offset))
++        .flatten();
++    struct ImageLayerOriginGuard((i32, i32));
++    impl Drop for ImageLayerOriginGuard {
++        fn drop(&mut self) {
++            IMAGE_LAYER_RASTER_ORIGIN.with(|origin| origin.replace(self.0));
++        }
++    }
++    let _image_layer_origin = image_group_bounds.map(|bounds| {
++        let scale = style.device_scale_factor as f32;
++        let origin = (
++            (bounds.left * scale).floor().max(0.0) as i32,
++            (bounds.top * scale).floor().max(0.0) as i32,
++        );
++        ImageLayerOriginGuard(IMAGE_LAYER_RASTER_ORIGIN.with(|current| current.replace(origin)))
++    });
+@@ -1195,2 +1213,2 @@ fn paint_fragment_contents(
+-        if fragment_subtree_has_text(fragment) {
+-            // Text-backed opacity groups use Chromium's ordinary N32
++        if fragment_subtree_has_text(fragment) || fragment_subtree_has_images(fragment, doc) {
++            // Text and sampled images use Chromium's ordinary N32
+@@ -1198 +1216 @@ fn paint_fragment_contents(
+-            // an F16 layer for fully covered glyph cells.
++            // an F16 layer for fully covered glyph or image cells.
+@@ -4466,0 +4485,12 @@ fn paint_broken_image_resource(
++    let visible_destination = VIEWPORT_SIZE.with(|viewport| {
++        if !canvas.local_to_device_as_3x3().is_identity() {
++            return visible_destination;
++        }
++        let (width, height) = *viewport.borrow();
++        Rect::from_ltrb(
++            visible_destination.left.max(0.0),
++            visible_destination.top.max(0.0),
++            visible_destination.right.min(width),
++            visible_destination.bottom.min(height),
++        )
++    });
+@@ -4482,0 +4513 @@ fn paint_broken_image_resource(
++                IMAGE_LAYER_RASTER_ORIGIN.with(|origin| *origin.borrow()),
+@@ -8215,0 +8247,91 @@ fn fragment_subtree_has_text(fragment: &Fragment) -> bool {
++fn fragment_subtree_has_images(fragment: &Fragment, doc: &Document) -> bool {
++    (!fragment.node_id.is_none()
++        && (doc.node(fragment.node_id).tag == ElementTag::Image
++            || doc.node(fragment.node_id).replaced.is_some()))
++        || fragment
++            .children
++            .iter()
++            .any(|child| fragment_subtree_has_images(child, doc))
++}
++
++fn image_opacity_bounds(
++    fragment: &Fragment,
++    doc: &Document,
++    offset: PhysicalOffset,
++) -> Option<Rect> {
++    fn collect(
++        fragment: &Fragment,
++        doc: &Document,
++        offset: PhysicalOffset,
++        bounds: &mut Option<Rect>,
++    ) {
++        if !fragment.node_id.is_none() {
++            let node = doc.node(fragment.node_id);
++            let style = &node.style;
++            let background = fragment
++                .paint_background_color_override
++                .unwrap_or(style.background_color);
++            let own_content = fragment.kind == FragmentKind::Text
++                || node.tag == ElementTag::Image
++                || node.replaced.is_some()
++                || !background.is_transparent()
++                || !style.background_layers.is_empty()
++                || style.background_linear_gradient.is_some()
++                || style.effective_border_top() > 0
++                || style.effective_border_right() > 0
++                || style.effective_border_bottom() > 0
++                || style.effective_border_left() > 0
++                || style.has_outline()
++                || !style.box_shadow.is_empty();
++            if style.visibility == Visibility::Visible && own_content {
++                let owned = fragment.border_box_rect();
++                let mut rect = Rect::from_xywh(
++                    offset.left.to_f32() + owned.offset.left.to_f32(),
++                    offset.top.to_f32() + owned.offset.top.to_f32(),
++                    owned.size.width.to_f32(),
++                    owned.size.height.to_f32(),
++                );
++                if fragment.kind != FragmentKind::Text
++                    && node.tag != ElementTag::Image
++                    && node.replaced.is_none()
++                {
++                    rect = Rect::from_ltrb(
++                        rect.left.round(),
++                        rect.top.round(),
++                        rect.right.round(),
++                        rect.bottom.round(),
++                    );
++                }
++                if !rect.is_empty() {
++                    match bounds {
++                        Some(bounds) => bounds.join(rect),
++                        None => *bounds = Some(rect),
++                    }
++                }
++            }
++        }
++        for child in &fragment.children {
++            collect(
++                child,
++                doc,
++                PhysicalOffset::new(
++                    offset.left + child.offset.left,
++                    offset.top + child.offset.top,
++                ),
++                bounds,
++            );
++        }
++    }
++
++    let mut bounds = None;
++    collect(fragment, doc, offset, &mut bounds);
++    bounds.map(|bounds| {
++        Rect::from_ltrb(
++            bounds.left.floor(),
++            bounds.top.floor(),
++            bounds.right.ceil(),
++            bounds.bottom.ceil(),
++        )
++    })
++}
++
+@@ -15749,0 +15872,8 @@ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Docum
++    opaque_in_flow_child_covers_inner_border_box_with_replaced(fragment, doc, true)
++}
++
++fn opaque_in_flow_child_covers_inner_border_box_with_replaced(
++    fragment: &Fragment,
++    doc: &Document,
++    allow_replaced: bool,
++) -> bool {
+@@ -15795 +15925,9 @@ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Docum
+-        let child_style = &doc.node(child.node_id).style;
++        let child_node = doc.node(child.node_id);
++        // A replaced image's opaque background still has independent AA
++        // coverage at its edge. The parent's color remains visible there.
++        // Geometry coverage for a scroll backing has no such requirement.
++        if !allow_replaced && (child_node.tag == ElementTag::Image || child_node.replaced.is_some())
++        {
++            return false;
++        }
++        let child_style = &child_node.style;
+@@ -16269 +16407 @@ fn paint_box_decoration_background(
+-        && opaque_in_flow_child_covers_inner_border_box(fragment, doc);
++        && opaque_in_flow_child_covers_inner_border_box_with_replaced(fragment, doc, false);

@@ -35,8 +35,11 @@ An additional 160 states exercise image opacity, parent opacity and transparent
 backgrounds through public native setters. The image correction makes 40
 states exact, improves 138 comparisons against explicitly rebuilt preceding
 libraries, and regresses none. Opacity remains incorrect in the other 120
-states. A separate N32 opacity prototype improves that suite to 124 exact
-states; it is still under investigation and is not part of this correction.
+states. The later [native opacity investigation](native-image-opacity.md)
+makes all 160 exact in a shared N32 and layer-origin prototype and verifies
+another 160 public Rust states. Additional shadow, outline, transform and
+clip cases retain failures, including one worsened comparison. The prototype
+remains unapplied pending the shared correction and clean qualification.
 
 The [column image app](../../bindings/rust/openui/examples/native_column_image_fallback.rs)
 queries both public bounds and continuation rectangles. Of its 50 states,

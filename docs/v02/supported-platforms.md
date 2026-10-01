@@ -133,6 +133,11 @@ Chromium source file, not Open UI's implementation or a release waiver.
 The current deterministic test scripts use ID, class, and tag lookups; the
 native equivalents are `element_by_id`, `elements_with_class`, and
 `elements_of_kind`. None requires a script engine.
+The [native opacity consumer](../../bindings/rust/openui/examples/native_image_opacity.rs)
+demonstrates a consuming application calling typed element setters from a
+Rust click callback and querying the resulting owned bounds. Its
+[renderer investigation](../renderer/native-image-opacity.md) records the
+remaining pixel differences separately from that public native API path.
 
 ## No JavaScript runtime
 

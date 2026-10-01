@@ -57,6 +57,15 @@ primitive matrices remain 640/640 and 960/960 exact. Column owned geometry,
 source-less frames and opacity remain open. Its clean complete original,
 expanded, focused and primitive results are indexed above.
 
+The [native opacity investigation](../renderer/native-image-opacity.md) adds
+two consuming Rust applications and 60 script-free minimized states. A shared
+paint prototype matches all 320 reduced opacity comparisons and retains the
+120 plain image guards. The expanded shadow/outline/transform/clip checks are
+90/140 exact, with one comparison worsening from 83 to 105 wrong pixels.
+The prototype remains unapplied. All measured public image bounds are exact;
+the click consumer mutates opacity through a Rust callback. These diagnostic
+results do not replace the clean census or close native API qualification.
+
 The preceding `497e322d`
 [delta index](../renderer/generated/native-column-flex-full-delta-v1.json)
 retains the original command's exit-143 observation alongside its complete

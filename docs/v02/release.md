@@ -66,6 +66,13 @@ Focused and primitive matrices retain 640/640 and 960/960 exact results.
 Native column geometry, source-less frames and opacity remain open; clean
 complete original and expanded matrices are required at the new checkpoint.
 
+The [native opacity investigation](../renderer/native-image-opacity.md)
+verifies public Rust setters, owned image bounds and a Rust click callback.
+Its shared renderer prototype matches 320 reduced opacity comparisons, but
+the additional paint cases remain 90/140 exact and include one worsened
+clipped-image comparison. The prototype remains unapplied and unqualified;
+the clean renderer totals above remain authoritative.
+
 The [scaled LCD font investigation](../renderer/scaled-lcd-hinting-oracle-investigation.md)
 rejected a renderer change that regressed 43 formerly exact comparisons. It
 also found one older cached Chromium image that differs from six agreeing
