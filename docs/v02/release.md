@@ -49,6 +49,15 @@ Each needed operation must be callable by the consuming native Rust app and
 verified through that public API. An internal Engine operation or a test-only
 fixture does not close a native application API gap.
 
+The [native column paint and input checkpoint](../renderer/native-column-paint-phases.md)
+verifies public Rust position/opacity mutations, pointer queries and a Rust
+click callback, with C consumers over the same engine. Its 55 native states
+include 35 exact in geometry, pixels and pointer targets together. The
+[candidate index](generated/native-column-paint-phases-v1.json) preserves
+the completed 9,280-comparison development matrices and negative consumer
+guards. These dirty-source diagnostic results do not qualify the release;
+clean complete renderer matrices and the remaining native behavior are required.
+
 The [scaled LCD font investigation](../renderer/scaled-lcd-hinting-oracle-investigation.md)
 rejected a renderer change that regressed 43 formerly exact comparisons. It
 also found one older cached Chromium image that differs from six agreeing

@@ -777,4 +777,26 @@ images and Chromium identities are unchanged. The combined workspace passes
 8,491 tests (13 ignored), all 55 Linux application scenarios and the complete
 109-export C/C++ consumer gate. Complete clean renderer matrices remain
 required; row/reversed flex, following-block paint order and cloned decoration
-remain measured native behavior to finish.
+remain measured native behavior to finish at that checkpoint.
+
+The later [column paint and input correction](../renderer/native-column-paint-phases.md)
+keeps a following ordinary block's background below overflowing atomic content
+and orders input entries by the corresponding paint phase. The public Rust
+application changes position and opacity through typed methods, checks the
+element under the pointer, and observes one Rust click callback. Of 55 native
+states, 35 match Chromium in geometry, pixels, and pointer targets together;
+38 have exact pixels and 45 have matching pointer targets. The original
+column-flex app gains five exact images, with every earlier geometry record
+unchanged. All 144 atomic-child neighbors remain exact and unchanged.
+
+The [candidate index](../v02/generated/native-column-paint-phases-v1.json)
+records 8,491 workspace tests passing (13 ignored), all 55 Linux application
+scenarios, the 109-export C/C++ consumer gate, read-only generators, and the
+7/7 accountability audit. The new Rust and C overlap guards reject their
+preceding implementations. The focused and primitive development matrices are
+640/640 and 960/960 exact; the column/flex selection is 7,034/7,680 exact,
+646 different, zero errors. All 9,280 broader images and Chromium oracle
+identities remain unchanged, with no formerly exact regression. These
+development-checkout matrices are diagnostic; clean complete verification is
+still required. Row, grid, reversed flex, and following inline-block cases
+remain explicitly owned and unfinished.

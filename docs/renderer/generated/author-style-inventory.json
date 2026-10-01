@@ -619,6 +619,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "clip-path-inset",
@@ -910,6 +911,7 @@
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/relative.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
       ],
@@ -953,6 +955,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "filter-blur",
@@ -966,6 +969,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "filter-grayscale",
@@ -1084,6 +1088,7 @@
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/new_formatting_context.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "float",
@@ -1887,6 +1892,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "mask-layers",
@@ -2029,6 +2035,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "opacity",
@@ -2298,6 +2305,7 @@
         "bindings/rust/openui-layout/src/ruby/layout.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "position",
@@ -2940,6 +2948,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
       ],

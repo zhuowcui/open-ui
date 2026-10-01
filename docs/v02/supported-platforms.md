@@ -70,7 +70,12 @@ constructs all states through typed Rust methods. Eight case variants match
 Chromium in geometry and pixels at all five scales after the combined
 [continuation and empty-bounds corrections](../renderer/native-column-flex-overflow.md#combined-native-checkpoint).
 Its default state hits the overflowing child and runs a Rust click callback.
-Row/reversed flex and following-block paint order remain needed native behavior.
+The later [column paint and input correction](../renderer/native-column-paint-phases.md)
+makes the following ordinary block agree with Chromium in geometry, pixels,
+and pointer targets at all five scales. A consuming Rust app changes its
+position and opacity through public methods and activates the overflowing
+child through a Rust callback. Row/reversed flex, grid continuations, and a
+following inline-block remain needed native behavior.
 
 `Element::client_rects` returns an owned list of border-box fragments in logical
 viewport coordinates, including scroll offsets and transforms.

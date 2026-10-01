@@ -20,6 +20,7 @@ HARNESS = ROOT / "tools/accountability/run_all_pixel_comparisons.py"
 INPUTS = ROOT / "docs/v02/evidence/native-geometry-v1"
 CONSTRAINED_INPUTS = ROOT / "docs/v02/evidence/native-constrained-box-v1"
 COLUMN_FLEX_INPUTS = ROOT / "docs/v02/evidence/native-column-flex-v1"
+COLUMN_PAINT_INPUTS = ROOT / "docs/v02/evidence/native-column-paint-phases-v1"
 EXPRESSION = (
     "new Promise(resolve=>{"
     "const done=()=>document.fonts.ready.then(()=>"
@@ -56,16 +57,22 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results-dir", type=Path, required=True)
     parser.add_argument("--chrome", type=Path)
-    parser.add_argument("--suite", choices=("native", "constrained", "column-flex"), default="native")
+    parser.add_argument("--suite", choices=("native", "constrained", "column-flex", "column-paint"), default="native")
     parser.add_argument("--scale", type=float, default=1.0)
     args = parser.parse_args()
     if not math.isfinite(args.scale) or args.scale <= 0.0:
         parser.error("scale must be positive and finite")
-    column_flex = args.suite == "column-flex"
-    constrained = args.suite in ("constrained", "column-flex")
-    inputs = COLUMN_FLEX_INPUTS if column_flex else CONSTRAINED_INPUTS if constrained else INPUTS
+    column_flex = args.suite in ("column-flex", "column-paint")
+    constrained = args.suite in ("constrained", "column-flex", "column-paint")
+    inputs = (COLUMN_PAINT_INPUTS if args.suite == "column-paint" else COLUMN_FLEX_INPUTS) if column_flex else CONSTRAINED_INPUTS if constrained else INPUTS
     height = 340 if constrained else 240
     expression = COLUMN_FLEX_EXPRESSION if column_flex else CONSTRAINED_EXPRESSION if constrained else EXPRESSION
+    if args.suite == "column-paint":
+        expression = expression.replace(
+            "geometry:{nodes}",
+            "geometry:{nodes,hit_targets:Object.fromEntries([[217,30],[227,30]].map(([x,y])=>"
+            "[`${x},${y}`,document.elementFromPoint(x,y)?.className||'']))}",
+        )
     spec = importlib.util.spec_from_file_location("capture", HARNESS)
     assert spec is not None and spec.loader is not None
     capture = importlib.util.module_from_spec(spec)

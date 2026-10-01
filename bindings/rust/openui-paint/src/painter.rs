@@ -7002,7 +7002,27 @@ fn prepaint_shared_column_root_decorations(
                             doc.device_scale_factor(),
                         )
                 });
-            if (!grouped && !precedes_grouped_decoration) || node_order.contains(&node_id) {
+            // Flex and grid items paint atomically after ordinary in-flow
+            // block backgrounds. Retain a later root block's background in
+            // this phase when it shares a column with an earlier atomic
+            // container; recursive painting then keeps the item's overflow
+            // above that background.
+            let follows_atomic_container = decoration.ancestor_node_ids.is_empty()
+                && doc.node(decoration.fragment.node_id).style.display == Display::Block
+                && doc.node(decoration.fragment.node_id).style.position
+                    == openui_style::Position::Static
+                && !doc
+                    .node(decoration.fragment.node_id)
+                    .style
+                    .has_paint_containment()
+                && decorations.iter().take(decoration_index).any(|earlier| {
+                    earlier.ancestor_node_ids.is_empty()
+                        && (doc.node(earlier.fragment.node_id).style.display.is_flex()
+                            || doc.node(earlier.fragment.node_id).style.display.is_grid())
+                });
+            if (!grouped && !precedes_grouped_decoration && !follows_atomic_container)
+                || node_order.contains(&node_id)
+            {
                 continue;
             }
             node_order.push(node_id);

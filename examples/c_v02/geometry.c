@@ -174,6 +174,24 @@ int main(void) {
   assert(rects[1].height == 51.328125f && rects[2].height == 0.0f);
   assert(wrapper_rects[2].height == 22.65625f); /* The earlier snapshot remains owned. */
   property(wrapper, OUI_STYLE_PROPERTY_MAX_HEIGHT, "160px");
+  /* Atomic flex content remains above the following ordinary block background. */
+  OuiElement* following = block(document, columns);
+  property(following, OUI_STYLE_PROPERTY_WIDTH, "20px");
+  property(following, OUI_STYLE_PROPERTY_HEIGHT, "20px");
+  property(following, OUI_STYLE_PROPERTY_BACKGROUND_COLOR, "blue");
+  assert(oui_document_hit_test(document, 227.0f, 30.0f, &flex_hit) == OUI_OK && flex_hit == target);
+  property(following, OUI_STYLE_PROPERTY_POSITION, "relative");
+  assert(oui_document_hit_test(document, 227.0f, 30.0f, &flex_hit) == OUI_OK &&
+         flex_hit == following);
+  property(following, OUI_STYLE_PROPERTY_POSITION, "static");
+  assert(oui_document_hit_test(document, 227.0f, 30.0f, &flex_hit) == OUI_OK && flex_hit == target);
+  property(following, OUI_STYLE_PROPERTY_OPACITY, "0.5");
+  assert(oui_document_hit_test(document, 227.0f, 30.0f, &flex_hit) == OUI_OK &&
+         flex_hit == following);
+  property(following, OUI_STYLE_PROPERTY_OPACITY, "1");
+  assert(oui_document_hit_test(document, 227.0f, 30.0f, &flex_hit) == OUI_OK && flex_hit == target);
+  assert(oui_element_remove(following) == OUI_OK);
+  assert(oui_element_destroy(following) == OUI_OK);
   property(wrapper, OUI_STYLE_PROPERTY_DISPLAY, "block");
   property(target, OUI_STYLE_PROPERTY_POINTER_EVENTS, "none");
   property(target, OUI_STYLE_PROPERTY_VISIBILITY, "hidden");

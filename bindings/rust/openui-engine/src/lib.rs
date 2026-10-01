@@ -1829,8 +1829,43 @@ impl Engine {
                 };
                 (z, *order)
             });
-            for (_, child) in children {
+            let child_entries_start = out.len();
+            let mut paint_ranges = Vec::with_capacity(children.len());
+            for (order, child) in children {
+                let (z, phase) = if child.node_id.is_none() {
+                    (
+                        0,
+                        openui_paint::paint_order::InFlowPaintPhase::BlockBackground,
+                    )
+                } else {
+                    let style = &document.node(child.node_id).style;
+                    (
+                        style.z_index.unwrap_or(0),
+                        openui_paint::paint_order::in_flow_paint_phase(style),
+                    )
+                };
+                let start = out.len();
                 walk(document, child, child_world, &own_clips, out, rects);
+                paint_ranges.push(((z, phase, order), start, out.len()));
+            }
+            if paint_ranges.windows(2).any(|pair| pair[0].0 > pair[1].0) {
+                // Layout rectangle collection retains its original order.
+                // Only input entries move into their shared paint phases.
+                // Atomic flex/grid content is above later ordinary block
+                // backgrounds, while positioned/effect groups remain above it.
+                let mut entries: Vec<_> = out
+                    .split_off(child_entries_start)
+                    .into_iter()
+                    .map(Some)
+                    .collect();
+                paint_ranges.sort_by_key(|range| range.0);
+                for (_, start, end) in paint_ranges {
+                    out.extend(
+                        entries[start - child_entries_start..end - child_entries_start]
+                            .iter_mut()
+                            .filter_map(Option::take),
+                    );
+                }
             }
         }
         let mut entries = Vec::new();
