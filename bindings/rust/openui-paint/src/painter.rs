@@ -4157,105 +4157,61 @@ fn paint_missing_image(
         style.aspect_ratio.is_some() && (!style.width.is_auto() || !style.height.is_auto());
     let treated_as_replaced =
         (!style.width.is_auto() && !style.height.is_auto()) || has_ratio_dimension;
+    // UA fallback decorations use CSS-pixel-snapped edges before the
+    // device-scale transform, as does the element background. Keep the
+    // layout fragment and the public geometry unchanged.
+    let abs_offset = PhysicalOffset::new(abs_offset.left.round(), abs_offset.top.round());
     let host_width = fragment.size.width.to_f32();
     let host_height = fragment.size.height.to_f32();
+    // The failed-image shadow container and icon are absent when an
+    // authored fixed dimension cannot contain the 16px icon plus its inset.
+    // This decision uses the authored lengths, before percentage resolution.
+    if treated_as_replaced
+        && doc.attribute(fragment.node_id, "src") == Some("")
+        && ((style.width.is_fixed() && style.width.value() < 18.0)
+            || (style.height.is_fixed() && style.height.value() < 18.0))
+    {
+        return;
+    }
     if treated_as_replaced
         && doc.attribute(fragment.node_id, "src") == Some("")
         && host_width > 0.0
         && host_width < 18.0
         && host_height >= 18.0
     {
-        // Blink keeps an explicitly empty image's broken-resource placeholder
-        // at its minimum eight-pixel inline extent when the authored replaced
-        // box is narrower than the normal 18px framed icon. The remainder of
-        // the element continues to show the author's background.
-        let placeholder_width = 8.0_f32.min(host_width);
-        let source = Rect::from_xywh(0.0, 0.0, image.width() as f32, image.height() as f32);
-        let device_destination = Rect::from_xywh(
-            abs_offset.left.to_f32() + 2.0,
-            abs_offset.top.to_f32() + 2.0,
-            16.0,
-            16.0,
-        );
-        let mut image_paint = Paint::default();
-        image_paint.set_alpha_f(opacity_multiplier);
-        canvas.save();
-        canvas.clip_rect(
-            Rect::from_xywh(
-                abs_offset.left.to_f32() + 1.0,
-                abs_offset.top.to_f32() + 1.0,
-                (placeholder_width - 2.0).max(0.0),
-                (host_height - 2.0).max(0.0),
-            ),
-            ClipOp::Intersect,
-            false,
-        );
-        let device_scale = style.device_scale_factor.max(f64::EPSILON) as f32;
-        let packed_patch = if device_scale.fract().abs() <= 1.0e-5
-            && style.raster_configuration.backend != RasterBackend::GaneshGl
-        {
-            let source_phase = source.width() / (16.0 * 16.0 * device_scale);
-            let packed_source = Rect::from_xywh(
-                source.left - source_phase,
-                source.top,
-                source.width(),
-                source.height(),
-            );
-            crate::image_resource::physical_quantized_image_patch(
-                &image,
-                packed_source,
-                device_destination,
-                device_scale,
-                false,
-                false,
-                false,
-                false,
-                false,
-                false,
-                None,
-                false,
-                false,
-                false,
-                false,
-                false,
+        let _host_clip_guard = skia_safe::AutoCanvasRestore::guard(canvas, true);
+        if style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible {
+            let (x, y, width, height) =
+                compute_overflow_clip_reference_rect(fragment, abs_offset, style);
+            canvas.clip_rect(
+                Rect::from_xywh(x, y, width, height),
+                ClipOp::Intersect,
                 true,
-                Some(device_destination),
-            )
-            .ok()
-        } else {
-            None
-        };
-        if let Some((patch, aligned_destination, _)) = packed_patch {
-            canvas.draw_image_rect_with_sampling_options(
-                patch.clone(),
-                Some((
-                    &Rect::from_xywh(0.0, 0.0, patch.width() as f32, patch.height() as f32),
-                    SrcRectConstraint::Strict,
-                )),
-                aligned_destination,
-                SamplingOptions::from(FilterMode::Nearest),
-                &image_paint,
-            );
-        } else {
-            canvas.draw_image_rect_with_sampling_options(
-                image,
-                Some((&source, SrcRectConstraint::Strict)),
-                Rect::from_xywh(
-                    device_destination.left + 1.0 / 16.0,
-                    device_destination.top,
-                    device_destination.width(),
-                    device_destination.height(),
-                ),
-                SamplingOptions::new(FilterMode::Linear, MipmapMode::Nearest),
-                &image_paint,
             );
         }
-        canvas.restore();
+        // An explicitly empty image may retain the broken-resource icon
+        // when an authored percentage resolves below its ordinary size.
+        // The shadow container clips that icon to its own resolved extent;
+        // the remainder of the host keeps the author's background.
+        // The UA container inherits the authored percentage width and
+        // resolves it against the replaced host's content box. Its two
+        // 1px borders and two 1px paddings establish a 4px minimum extent.
+        let placeholder_width = if style.width.is_percent() || style.width.is_calculated() {
+            resolve_margin_or_padding_f32(&style.width, host_width).max(4.0)
+        } else {
+            host_width
+        };
+        let child_clip = Rect::from_xywh(
+            abs_offset.left.to_f32() + 1.0,
+            abs_offset.top.to_f32() + 1.0,
+            (placeholder_width - 2.0).max(0.0),
+            (host_height - 2.0).max(0.0),
+        );
 
         let mut border = Paint::default();
         border.set_style(PaintStyle::Stroke);
         border.set_stroke_width(1.0);
-        border.set_anti_alias(false);
+        border.set_anti_alias(true);
         border.set_color4f(
             Color4f::new(0.7529412, 0.7529412, 0.7529412, opacity_multiplier),
             None::<&ColorSpace>,
@@ -4268,6 +4224,17 @@ fn paint_missing_image(
                 (host_height - 1.0).max(0.0),
             ),
             &border,
+        );
+
+        paint_broken_image_resource(
+            canvas,
+            image,
+            style,
+            abs_offset.left.to_f32() + 2.0,
+            abs_offset.top.to_f32() + 2.0,
+            opacity_multiplier,
+            None,
+            Some(child_clip),
         );
         return;
     }
@@ -4290,8 +4257,6 @@ fn paint_missing_image(
         .clamp_negative_to_zero()
         .to_f32();
     let clips_missing_replaced = treated_as_replaced
-        && style.has_border_radius()
-        && !fragment.ignore_border_radius
         && (style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible);
     // Blink places the broken-image glyph in a UA shadow child. The host
     // image's `overflow: clip` applies to that child even when the image is
@@ -4312,7 +4277,9 @@ fn paint_missing_image(
         );
         canvas.save();
         canvas.clip_rrect(clip_rrect, ClipOp::Intersect, true);
-        missing_clip_rrect = Some(clip_rrect);
+        if style.has_border_radius() && !fragment.ignore_border_radius {
+            missing_clip_rrect = Some(clip_rrect);
+        }
     }
     if clips_missing_nonreplaced {
         let (x, y, width, height) =
@@ -4358,7 +4325,7 @@ fn paint_missing_image(
             let mut border = Paint::default();
             border.set_style(PaintStyle::Stroke);
             border.set_stroke_width(1.0);
-            border.set_anti_alias(false);
+            border.set_anti_alias(true);
             border.set_color4f(
                 Color4f::new(0.7529412, 0.7529412, 0.7529412, opacity_multiplier),
                 None::<&ColorSpace>,
@@ -4420,116 +4387,16 @@ fn paint_missing_image(
         )
     };
 
-    // Chromium records the 14px resource into the 16px fallback slot with a
-    // three-cell scalar head followed by the regular vectorized filter phase.
-    // Preserve both phases so linear resampling of the pinned browser resource
-    // is stable across the two Skia revisions.
-    let source = Rect::from_xywh(0.0, 0.0, image.width() as f32, image.height() as f32);
-    let main_phase = if missing_clip_rrect.is_some() {
-        3.0 / 64.0
-    } else {
-        1.0 / 16.0
-    };
-    let main_destination = Rect::from_xywh(icon_x + main_phase, icon_y, 16.0, 16.0);
-    let device_destination = Rect::from_xywh(icon_x, icon_y, 16.0, 16.0);
-    let mut paint = Paint::default();
-    paint.set_alpha_f(opacity_multiplier);
-    let sampling = SamplingOptions::new(FilterMode::Linear, MipmapMode::Linear);
-    let span_head = missing_clip_rrect
-        .as_ref()
-        .and_then(|rrect| rounded_clip_span_head(rrect, device_destination));
-    if let Some(span_head) = span_head.as_ref() {
-        canvas.save();
-        canvas.clip_path(span_head, ClipOp::Difference, false);
-    }
-    let device_scale = style.device_scale_factor.max(f64::EPSILON) as f32;
-    // The packed browser sampler carries the 1/16 destination phase in its
-    // inverse image matrix, while the destination coverage remains snapped to
-    // the fallback slot. Encode that phase in source space so replaying the
-    // resolved texels at an integral destination does not attenuate the first
-    // column as a geometric edge. The conversion uses physical destination
-    // width because the 200% resource has twice the source density.
-    let packed_phase_source = if device_scale.fract().abs() <= 1.0e-5 {
-        let source_phase =
-            main_phase * source.width() / (device_destination.width() * device_scale);
-        Rect::from_xywh(
-            source.left - source_phase,
-            source.top,
-            source.width(),
-            source.height(),
-        )
-    } else {
-        source
-    };
-    let packed_physical_patch =
-        if span_head.is_none() && style.raster_configuration.backend != RasterBackend::GaneshGl {
-            if device_scale.fract().abs() > 1.0e-5 {
-                crate::image_resource::physical_quantized_broken_image_patch(
-                    &image,
-                    packed_phase_source,
-                    device_destination,
-                    device_scale,
-                )
-                .ok()
-            } else {
-                crate::image_resource::physical_quantized_image_patch(
-                    &image,
-                    packed_phase_source,
-                    device_destination,
-                    device_scale,
-                    false,
-                    false,
-                    false,
-                    false,
-                    false,
-                    false,
-                    None,
-                    false,
-                    false,
-                    false,
-                    false,
-                    false,
-                    true,
-                    Some(device_destination),
-                )
-                .ok()
-            }
-        } else {
-            None
-        };
-    if let Some((patch, aligned_destination, _)) = packed_physical_patch {
-        canvas.draw_image_rect_with_sampling_options(
-            patch.clone(),
-            Some((
-                &Rect::from_xywh(0.0, 0.0, patch.width() as f32, patch.height() as f32),
-                SrcRectConstraint::Strict,
-            )),
-            aligned_destination,
-            SamplingOptions::from(FilterMode::Nearest),
-            &paint,
-        );
-    } else {
-        canvas.draw_image_rect_with_sampling_options(
-            image.clone(),
-            Some((&source, SrcRectConstraint::Strict)),
-            main_destination,
-            sampling,
-            &paint,
-        );
-    }
-    if let Some(span_head) = span_head.as_ref() {
-        canvas.restore();
-        canvas.save();
-        canvas.clip_path(span_head, ClipOp::Intersect, false);
-        canvas.draw_image_rect_with_sampling_options(
-            image,
-            Some((&source, SrcRectConstraint::Strict)),
-            device_destination,
-            sampling,
-            &paint,
-        );
-        canvas.restore();
-    }
+    paint_broken_image_resource(
+        canvas,
+        image,
+        style,
+        icon_x,
+        icon_y,
+        opacity_multiplier,
+        missing_clip_rrect.as_ref(),
+        None,
+    );
 
     if !treated_as_replaced
         && doc
@@ -4559,6 +4426,225 @@ fn paint_missing_image(
     if clips_missing_replaced || clips_missing_nonreplaced {
         canvas.restore();
     }
+}
+
+/// Sample the pinned fallback resource through the same physical transform
+/// for ordinary and clipped UA shadow content.
+fn paint_broken_image_resource(
+    canvas: &Canvas,
+    image: Image,
+    style: &ComputedStyle,
+    icon_x: f32,
+    icon_y: f32,
+    opacity_multiplier: f32,
+    missing_clip_rrect: Option<&RRect>,
+    child_clip: Option<Rect>,
+) {
+    // CPU slots sample through the legacy inverse matrix and restart at
+    // analytic coverage spans. Rounded clips retain their established direct
+    // resource path and its separate span head.
+    let source = Rect::from_xywh(0.0, 0.0, image.width() as f32, image.height() as f32);
+    let main_phase = if missing_clip_rrect.is_some() {
+        3.0 / 64.0
+    } else {
+        1.0 / 16.0
+    };
+    let main_destination = Rect::from_xywh(icon_x + main_phase, icon_y, 16.0, 16.0);
+    let device_destination = Rect::from_xywh(icon_x, icon_y, 16.0, 16.0);
+    let mut paint = Paint::default();
+    paint.set_alpha_f(opacity_multiplier);
+    let sampling = SamplingOptions::new(FilterMode::Linear, MipmapMode::Linear);
+    let span_head =
+        missing_clip_rrect.and_then(|rrect| rounded_clip_span_head(rrect, device_destination));
+    let visible_destination = child_clip.map_or(device_destination, |clip| {
+        Rect::from_ltrb(
+            device_destination.left.max(clip.left),
+            device_destination.top.max(clip.top),
+            device_destination.right.min(clip.right),
+            device_destination.bottom.min(clip.bottom),
+        )
+    });
+    if visible_destination.is_empty() {
+        return;
+    }
+    if let Some(span_head) = span_head.as_ref() {
+        canvas.save();
+        canvas.clip_path(span_head, ClipOp::Difference, false);
+    }
+    let device_scale = style.device_scale_factor.max(f64::EPSILON) as f32;
+    let packed_physical_patch =
+        if span_head.is_none() && style.raster_configuration.backend != RasterBackend::GaneshGl {
+            crate::image_resource::physical_quantized_broken_image_patch_with_clip(
+                &image,
+                source,
+                device_destination,
+                device_scale,
+                Some(visible_destination),
+            )
+            .ok()
+        } else {
+            None
+        };
+    if let Some((patch, aligned_destination, _)) = packed_physical_patch {
+        paint_legacy_image_resource(
+            canvas,
+            patch,
+            aligned_destination,
+            device_destination,
+            child_clip,
+            device_scale,
+            opacity_multiplier,
+        );
+    } else {
+        let _clip_guard = child_clip.map(|clip| {
+            let guard = skia_safe::AutoCanvasRestore::guard(canvas, true);
+            canvas.clip_rect(clip, ClipOp::Intersect, true);
+            guard
+        });
+        canvas.draw_image_rect_with_sampling_options(
+            image.clone(),
+            Some((&source, SrcRectConstraint::Strict)),
+            main_destination,
+            sampling,
+            &paint,
+        );
+    }
+    if let Some(span_head) = span_head.as_ref() {
+        canvas.restore();
+        canvas.save();
+        canvas.clip_path(span_head, ClipOp::Intersect, false);
+        canvas.draw_image_rect_with_sampling_options(
+            image,
+            Some((&source, SrcRectConstraint::Strict)),
+            device_destination,
+            sampling,
+            &paint,
+        );
+        canvas.restore();
+    }
+}
+
+/// Preserve Chromium's packed image blend with analytic coverage supplied
+/// separately from the sampled premultiplied texels.
+fn paint_legacy_image_resource(
+    canvas: &Canvas,
+    patch: Image,
+    aligned_destination: Rect,
+    destination: Rect,
+    clip: Option<Rect>,
+    scale: f32,
+    opacity: f32,
+) {
+    use skia_safe::runtime_effect::RuntimeEffect;
+    thread_local! {
+        static BLENDER: RuntimeEffect = RuntimeEffect::make_for_blender(r#"
+            uniform float coverage;
+            half4 main(half4 source, half4 destination) {
+                float4 src = floor(float4(source) * 255 + 0.5);
+                float4 dst = floor(float4(destination) * 255 + 0.5);
+                float srcScale = coverage + 1;
+                float inverse = 65535 - src.a * srcScale;
+                float dstScale = floor((inverse + floor(inverse / 256)) / 256);
+                return half4(floor((src * srcScale + dst * dstScale) / 256) / 255);
+            }
+        "#, None).expect("legacy image coverage blender");
+    }
+    fn segments(start: f32, end: f32, scale: f32) -> Vec<(f32, f32, u32)> {
+        let start = start * scale;
+        let end = end * scale;
+        let first = start.floor();
+        let last = end.ceil();
+        if last - first <= 1.0 {
+            return vec![(
+                first / scale,
+                last / scale,
+                ((end - start) * 256.0).ceil().min(255.0) as u32,
+            )];
+        }
+        let mut result = Vec::with_capacity(3);
+        if start != first {
+            result.push((
+                first / scale,
+                (first + 1.0) / scale,
+                ((first + 1.0 - start) * 256.0).ceil().min(255.0) as u32,
+            ));
+        }
+        if end.floor() > start.ceil() {
+            result.push((start.ceil() / scale, end.floor() / scale, 255));
+        }
+        if end != end.floor() {
+            result.push((
+                end.floor() / scale,
+                last / scale,
+                ((end - end.floor()) * 256.0).ceil().min(255.0) as u32,
+            ));
+        }
+        result
+    }
+    let matrix = Matrix::scale_translate(
+        (
+            aligned_destination.width() / patch.width() as f32,
+            aligned_destination.height() / patch.height() as f32,
+        ),
+        (aligned_destination.left, aligned_destination.top),
+    );
+    let texels = patch
+        .to_shader(
+            (TileMode::Clamp, TileMode::Clamp),
+            SamplingOptions::from(FilterMode::Nearest),
+            &matrix,
+        )
+        .expect("legacy image texel shader");
+    let visible = clip.map_or(destination, |clip| {
+        Rect::from_ltrb(
+            destination.left.max(clip.left),
+            destination.top.max(clip.top),
+            destination.right.min(clip.right),
+            destination.bottom.min(clip.bottom),
+        )
+    });
+    let horizontal = segments(visible.left, visible.right, scale);
+    let vertical = segments(visible.top, visible.bottom, scale);
+    let overlap = |pixel: f32, start: f32, end: f32| {
+        (end.min(pixel + 1.0) - start.max(pixel)).clamp(0.0, 1.0)
+    };
+    BLENDER.with(|effect| {
+        let mut paint = Paint::default();
+        paint.set_anti_alias(false);
+        paint.set_alpha_f(opacity);
+        paint.set_shader(texels);
+        for &(left, right, _) in &horizontal {
+            for &(top, bottom, _) in &vertical {
+                let x = (left * scale).round();
+                let y = (top * scale).round();
+                let image_x = (overlap(x, destination.left * scale, destination.right * scale)
+                    * 256.0)
+                    .ceil()
+                    .min(255.0) as u32;
+                let image_y = (overlap(y, destination.top * scale, destination.bottom * scale)
+                    * 256.0)
+                    .ceil()
+                    .min(255.0) as u32;
+                let image_coverage =
+                    crate::image_resource::combine_physical_axis_coverage(image_x, image_y);
+                // SkAAClip's rectangular path uses fixed_to_alpha: round
+                // the covered area times 255. Its mask intersects the image
+                // span through SkMulDiv255Round before the byte blend.
+                let clip_coverage = clip.map_or(255, |clip| {
+                    let cx = overlap(x, clip.left * scale, clip.right * scale);
+                    let cy = overlap(y, clip.top * scale, clip.bottom * scale);
+                    (cx * cy * 255.0).round() as u32
+                });
+                let coverage = ((image_coverage * clip_coverage + 127) / 255) as f32;
+                paint.set_blender(
+                    effect
+                        .make_blender(Data::new_copy(&coverage.to_ne_bytes()), None)
+                        .expect("legacy image coverage draw"),
+                );
+                canvas.draw_rect(Rect::from_ltrb(left, top, right, bottom), &paint);
+            }
+        }
+    });
 }
 
 /// Paint the propagated canvas of a statically lowered nested document into
@@ -6261,7 +6347,12 @@ fn prepaint_in_flow_block_decorations(
             continue;
         }
         let pointer = fragment as *const Fragment as usize;
-        if PREPAINTED_BOX_DECORATIONS.with(|fragments| fragments.borrow().contains(&pointer)) {
+        // An overflowing monolithic child is replayed outside its column's
+        // clip. Its background belongs to that replay as well: prepainting
+        // it here would compound antialiased coverage when the child paints.
+        if HOIST_SKIP.with(|fragments| fragments.borrow().contains(&pointer))
+            || PREPAINTED_BOX_DECORATIONS.with(|fragments| fragments.borrow().contains(&pointer))
+        {
             continue;
         }
         let fragment_offset = PhysicalOffset::new(

@@ -1267,15 +1267,26 @@ pub fn physical_quantized_image_patch(
     )
 }
 
-/// Resolve the fractional-scale broken-image slot with Chromium's legacy
+/// Resolve the broken-image slot with Chromium's legacy
 /// software image coordinate path. Its first sample is mapped through a f32
-/// inverse matrix, then subsequent X samples advance in signed 32.32 fixed
-/// point. Exact 1/16 filter phases can therefore land on the preceding cell.
+/// inverse matrix at each analytic coverage span, then subsequent X samples
+/// advance in signed 32.32 fixed point. Coverage is applied by the draw, so
+/// the returned texels keep their sampled premultiplied colors.
 pub fn physical_quantized_broken_image_patch(
     image: &Image,
     source: Rect,
     destination: Rect,
     device_scale: f32,
+) -> Result<(Image, Rect, Option<(Rect, Rect)>), String> {
+    physical_quantized_broken_image_patch_with_clip(image, source, destination, device_scale, None)
+}
+
+pub(crate) fn physical_quantized_broken_image_patch_with_clip(
+    image: &Image,
+    source: Rect,
+    destination: Rect,
+    device_scale: f32,
+    clip: Option<Rect>,
 ) -> Result<(Image, Rect, Option<(Rect, Rect)>), String> {
     physical_quantized_image_patch_with_color_order(
         image,
@@ -1295,7 +1306,7 @@ pub fn physical_quantized_broken_image_patch(
         false,
         false,
         true,
-        Some(destination),
+        clip,
         true,
         true,
     )
@@ -1702,7 +1713,15 @@ fn physical_quantized_image_patch_with_color_order(
             };
             let device_x = f64::from(physical_left + target_x) + 0.5;
             let source_x = if let Some(axis) = legacy_x {
-                axis.sample_from_first(physical_left, target_x)
+                let pixel = physical_left + target_x;
+                let span_start = coverage_left.ceil() as i32;
+                if pixel < span_start
+                    || (coverage_right.fract() != 0.0 && pixel >= coverage_right.floor() as i32)
+                {
+                    axis.sample(pixel)
+                } else {
+                    axis.sample_from_first(span_start, pixel - span_start)
+                }
             } else if full_precision_sampling && single_axis_background_repeat {
                 full_precision_repeated_source_coordinate(
                     sampling_source.left,
@@ -1840,7 +1859,10 @@ fn physical_quantized_image_patch_with_color_order(
                 // color channels with nearest premultiplication while alpha
                 // closes a non-empty fractional span upward. Replaying these
                 // pixels without another AA contour avoids double coverage.
-                let value = if (replaced || coverage_bounds.is_some()) && geometric_coverage < 255 {
+                let value = if !legacy_float_matrix
+                    && (replaced || coverage_bounds.is_some())
+                    && geometric_coverage < 255
+                {
                     if channel == 3 {
                         ((value * geometric_coverage + 255) >> 8).min(255)
                     } else if !replaced

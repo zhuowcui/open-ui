@@ -45,6 +45,15 @@ remaining pixel differences; the terminal reports pass complete count, source
 and hash validation. These results do not close residual ownership or the
 required pixel gate.
 
+The [native image fallback correction](../renderer/native-image-fallback.md)
+matches all 120 isolated public Rust image states in pixels and owned bounds.
+Its complete development selection is 7,039/7,680 exact, with zero errors,
+five newly exact comparisons and no formerly exact regression; focused and
+primitive matrices remain 640/640 and 960/960 exact. Column owned geometry,
+source-less frames and opacity remain open. The new source still needs clean
+complete original and expanded matrices; the latest clean census above is
+not evidence for this later correction.
+
 The preceding `497e322d`
 [delta index](../renderer/generated/native-column-flex-full-delta-v1.json)
 retains the original command's exit-143 observation alongside its complete

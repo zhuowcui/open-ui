@@ -58,6 +58,14 @@ the completed 9,280-comparison development matrices and negative consumer
 guards. These dirty-source diagnostic results do not qualify the release;
 clean complete renderer matrices and the remaining native behavior are required.
 
+The [native image fallback correction](../renderer/native-image-fallback.md)
+passes all 120 isolated image/bounds comparisons through public Rust APIs.
+Its complete development column/flex selection is 7,039/7,680 exact, with
+zero errors, five newly exact comparisons and no formerly exact regression.
+Focused and primitive matrices retain 640/640 and 960/960 exact results.
+Native column geometry, source-less frames and opacity remain open; clean
+complete original and expanded matrices are required at the new checkpoint.
+
 The [scaled LCD font investigation](../renderer/scaled-lcd-hinting-oracle-investigation.md)
 rejected a renderer change that regressed 43 formerly exact comparisons. It
 also found one older cached Chromium image that differs from six agreeing
