@@ -9,10 +9,10 @@ claimed by source code alone.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | 21,291/22,924 exact, 1,633 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v46.json); four existing failures worsened at fractional scales and no formerly exact comparison regressed | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact at clean `547c7081` in the [latest raster index](../renderer/generated/focused-primitive-raster-v47.json); its complete original/expanded reports are recorded below | pass |
+| Four-profile renderer matrix | 21,291/22,924 exact, 1,633 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v47.json); every image and oracle identity unchanged from `e9211183`, including its four worsened failures | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact at clean `497e322d` in the [latest raster index](../renderer/generated/focused-primitive-raster-v49.json); its complete original/expanded reports are recorded below | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v29.json); 22,094/23,728 total comparisons exact, 1,634 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v30.json); 22,094/23,728 total comparisons exact, 1,634 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36812728952): locked headless and Linux checks passed | pass |
@@ -66,7 +66,21 @@ reviewed cause remains unknown. The clean census below remains evidence
 against those preserved cached captures, and final qualification requires
 oracle reconciliation. No cached reference was replaced or result promoted.
 
-The later clean `e9211183` [v46 census](../renderer/generated/four-profile-census-v46.json)
+The latest complete clean `497e322d` [v47 census](../renderer/generated/four-profile-census-v47.json)
+retains 21,291/22,924 exact, 1,633 different and zero errors. Its
+[full delta](../renderer/generated/native-column-flex-full-delta-v1.json)
+verifies every original and expanded Open UI image, Chromium image and oracle
+identity unchanged from `e9211183`. All original rows agree with the complete
+[v30 expanded run](../renderer/generated/expanded-requalification-v30.json),
+which is 22,094/23,728 exact and retains 200 of 201 exact additions. The
+original command's nonzero tool exit observation remains recorded; the
+terminal report passes complete source, count and hash validation. The
+required pixel gate remains failing. Clean renderer matrices and
+[hosted hardening](https://github.com/zhuowcui/open-ui/actions/runs/36823315523)
+at the later `056421db` native paint/input checkpoint are running; incomplete
+results do not qualify that source.
+
+The preceding clean `e9211183` [v46 census](../renderer/generated/four-profile-census-v46.json)
 has the same exact/different totals. Its
 [full delta](../renderer/generated/native-vertical-max-block-full-delta-v1.json)
 records four changed original images: `block-max-height-004` and its reference

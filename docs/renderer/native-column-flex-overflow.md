@@ -139,4 +139,15 @@ The combined locked workspace passes 8,491 tests with 13 ignored in 147
 suites. All 55 Linux application scenarios pass. Six C consumers and the
 C++ consumer pass with all 109 exports and prior layouts intact. The new
 C fragment guard rejects the preceding empty-bounds library at an assertion.
-Complete clean renderer matrices remain required.
+The complete clean `497e322d` renderer runs now have
+[21,291/22,924 original comparisons exact](generated/four-profile-census-v47.json)
+and [22,094/23,728 expanded comparisons exact](generated/expanded-requalification-v30.json),
+both with zero errors. Every Open UI image and Chromium oracle identity is
+[unchanged](generated/native-column-flex-full-delta-v1.json) from `e9211183`,
+with no formerly exact regression. The original command's nonzero tool exit
+observation is preserved; its terminal report validates independently.
+The clean [focused and primitive matrices](generated/focused-primitive-raster-v49.json)
+are 640/640 and 960/960 exact. Full Chromium pixel equality, reviewed residual
+ownership and release qualification remain required. The later
+[paint and input correction](native-column-paint-phases.md) closes the reduced
+following ordinary-block state through public native Rust methods and callbacks.

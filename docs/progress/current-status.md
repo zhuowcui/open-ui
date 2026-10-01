@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean census against cached Chromium captures | 21,291/22,924 exact, 1,633 different, 0 errors; no formerly exact regression, but four existing failures worsened |
+| Latest complete clean census against cached Chromium captures | 21,291/22,924 exact, 1,633 different, 0 errors; every image and oracle identity unchanged from the preceding clean run |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
@@ -27,7 +27,30 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The latest complete clean checkpoint `547c7081` is
+The latest complete clean checkpoint `497e322d` is
+[21,291/22,924 exact](../renderer/generated/four-profile-census-v47.json),
+with 1,633 differences, zero errors and 900 unreviewed residual IDs. Its
+[complete delta](../renderer/generated/native-column-flex-full-delta-v1.json)
+verifies every original and expanded Open UI image and Chromium oracle
+identity unchanged from `e9211183`, including the four fractional failures
+that worsened at that earlier checkpoint. No formerly exact image regresses.
+The complete [expanded run](../renderer/generated/expanded-requalification-v30.json)
+is 22,094/23,728 exact, with 1,634 differences and zero errors; all 22,924
+original rows agree between the runs. The
+[v32 diagnostic selection](../../tools/qualification/manifests/expanded-v32.json)
+retains 200 of the declared 201 additions. The clean
+[v49 raster index](../renderer/generated/focused-primitive-raster-v49.json)
+is 640/640 focused and 960/960 primitive exact. The original command's
+nonzero tool exit observation is preserved in the delta index; its terminal
+report passes the complete count, source and report-hash audit. These results
+do not close residual ownership or the required pixel gate.
+
+Clean original, expanded, focused and primitive matrices for the later native
+paint/input checkpoint `056421db` are running from its preserved clean runner.
+Its [fresh hosted hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36823315523)
+is also in progress. Incomplete runs are not qualifying evidence.
+
+The preceding complete clean checkpoint `547c7081` is
 [21,291/22,924 exact](../renderer/generated/four-profile-census-v45.json),
 with 1,633 differences, zero errors and 900 unowned residual IDs. The
 [complete delta](../renderer/generated/native-constrained-box-full-delta-v1.json)
