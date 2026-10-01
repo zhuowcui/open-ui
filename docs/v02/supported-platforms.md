@@ -58,6 +58,13 @@ application. Test coverage must exercise the retained state and resulting
 events or rendering. A missing public method remains an implementation gap
 until that native application path works.
 
+The [native flow-root application](../../bindings/rust/openui/examples/native_flow_root_geometry.rs)
+constructs a document, queries owned fragments, finds a child under the pointer
+and activates it through public Rust methods. A Rust click callback handles
+that activation. It exports its geometry and PNG through the public framework;
+its [five-scale evidence](../renderer/native-flow-root-leaf-slices.md) matches
+Chromium without executing a script.
+
 `Element::client_rects` returns an owned list of border-box fragments in logical
 viewport coordinates, including scroll offsets and transforms.
 `bounding_rect` returns their combined bounds. These layout queries include

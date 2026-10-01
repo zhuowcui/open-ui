@@ -139,6 +139,15 @@ int main(void) {
   assert(oui_element_get_client_rects_v1(target, rects, 3, &count) == OUI_OK);
   assert(rects[2].height == 68.65625f); /* The child still owns visible overflow. */
   property(wrapper, OUI_STYLE_PROPERTY_MAX_HEIGHT, "160px");
+  /* An independent block formatting context still fragments ordinary children. */
+  property(wrapper, OUI_STYLE_PROPERTY_DISPLAY, "flow-root");
+  assert(oui_element_get_client_rects_v1(target, rects, 3, &count) == OUI_OK && count == 3);
+  assert(rects[0].y == 0.0f && rects[1].y == 0.0f && rects[2].y == 0.0f);
+  assert(rects[0].height == 68.671875f && rects[1].height == 68.671875f &&
+         rects[2].height == 68.65625f);
+  assert(oui_element_get_bounds(target, &bounds) == OUI_OK);
+  assert(bounds.y == 0.0f && bounds.width == 272.0f && bounds.height == 68.671875f);
+  property(wrapper, OUI_STYLE_PROPERTY_DISPLAY, "block");
   property(target, OUI_STYLE_PROPERTY_POINTER_EVENTS, "none");
   property(target, OUI_STYLE_PROPERTY_VISIBILITY, "hidden");
   assert(oui_element_get_bounds(target, &bounds) == OUI_OK && bounds.width == 272.0f);

@@ -180,3 +180,14 @@ the 144 atomic-child states stay unchanged. Public Rust and C consumers query
 those fragments and hit the overflowing child in the last column. Their
 guards reject the preceding implementation. Complete clean renderer and
 native API qualification remain open.
+
+The later [flow-root child-slice correction](../renderer/native-flow-root-leaf-slices.md)
+materializes ordinary child continuations inside independent block formatting
+contexts. All five flow-root states now match Chromium in complete geometry
+and pixels, including the fractional border phases. The reduced sweep has
+55/65 exact pixels and 50/65 exact geometry; all 60 other states are unchanged.
+A consuming Rust application uses only public framework methods, exports
+exact geometry and pixels at all five scales, hits the last-column child and
+runs a Rust click callback once. The C consumer queries the same fragments.
+Those guards reject the preceding implementations. Wider renderer and native
+API qualification remain required.

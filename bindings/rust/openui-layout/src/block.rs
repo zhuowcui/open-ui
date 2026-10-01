@@ -31007,10 +31007,10 @@ fn layout_multicol(
                             // Flex/grid items retain geometry assigned by
                             // their own fragmentation algorithms, including
                             // parallel overflow across forced breaks. Only
-                            // ordinary block containers materialize these
+                            // ordinary block and flow-root containers materialize these
                             // empty normal-flow descendants from a source
                             // slice here.
-                            if child_style.display == Display::Block {
+                            if matches!(child_style.display, Display::Block | Display::FlowRoot) {
                                 materialize_leaf_block_slices(
                                     &mut part,
                                     doc,

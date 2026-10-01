@@ -34,7 +34,7 @@ The current v0.2 release candidate has:
   21,291 of 22,924 comparisons exact, 1,633 different, and zero render errors in the
   [latest evidence index](docs/renderer/generated/four-profile-census-v45.json);
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
-  comparisons exact in the [latest raster index](docs/renderer/generated/focused-primitive-raster-v47.json);
+  comparisons exact in the [latest raster index](docs/renderer/generated/focused-primitive-raster-v48.json);
 - 201 native final-state cases in the expanded contract, including one newly
   added case; 200 of 201 currently meet the four-profile gate and one
   remains a failure in the [latest full expanded report](docs/renderer/generated/expanded-requalification-v28.json).

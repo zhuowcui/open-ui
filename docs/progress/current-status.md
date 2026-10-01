@@ -711,3 +711,24 @@ vertical directions and last-column pointer interaction; the guards reject
 the preceding source and library. All 8,491 workspace tests, 55 Linux Rust
 scenarios and the 109-export ABI consumer gate pass. These are development
 measurements; clean full matrices and release qualification remain required.
+
+The clean vertical checkpoint `e9211183` passes the
+[v48 focused/primitive gates](../renderer/generated/focused-primitive-raster-v48.json):
+640/640 and 960/960 exact, with all 1,600 images and oracle identities unchanged
+from `547c7081`. All six hosted jobs pass; MSRV, Miri, native sanitizer, C UB
+sanitizer and fuzz jobs are skipped on the PR and remain required. Complete
+original and expanded matrices are still running at this clean source.
+
+The separate [flow-root child-slice candidate](../renderer/native-flow-root-leaf-slices.md)
+matches all five reduced flow-root states in geometry and pixels. The reduced
+sweep is 55/65 pixel-exact and 50/65 geometry-exact, with all 60 other states
+unchanged. A public Rust consuming application produces exact geometry and
+pixels at all five scales and runs a native click callback through the same
+retained document. Rust and C guards reject the preceding implementations.
+The workspace, all 55 Linux Rust tests and the 109-export C ABI consumer
+gate pass. Its uncommitted candidate matrices are 640/640 focused and
+960/960 primitive exact; the wider column cohort is 7,034/7,680 exact,
+with 646 differences and zero errors. All 9,280 images and Chromium oracle
+identities remain unchanged from the atomic-child candidate. Complete
+clean renderer matrices, residual closure and release qualification remain
+required.
