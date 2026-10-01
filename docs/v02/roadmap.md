@@ -8,12 +8,16 @@ second implementation roadmap.
 
 1. Close the zero-tolerance four-profile renderer matrix against pinned
    Chromium, including the focused and primitive profile gates.
-2. Complete retained per-node compositing and immutable compositor animation
+2. Complete every element operation needed by consuming native applications
+   through public Rust APIs over the shared retained engine. Verify state
+   changes and applicable events, geometry, or rendering from a native Rust
+   consumer. A script in a Chromium test does not waive this work.
+3. Complete retained per-node compositing and immutable compositor animation
    curves, including preserve-3d and backface behavior.
-3. Qualify 100 promoted animations during a 250 ms UI-thread stall.
-4. Exercise X11, pure Wayland, Mesa software GL, physical GPU recovery, AT-SPI,
+4. Qualify 100 promoted animations during a 250 ms UI-thread stall.
+5. Exercise X11, pure Wayland, Mesa software GL, physical GPU recovery, AT-SPI,
    and clean Ubuntu/Fedora package installation.
-5. Produce byte-identical x86-64 and AArch64 artifacts twice, sign them, publish
+6. Produce byte-identical x86-64 and AArch64 artifacts twice, sign them, publish
    the compatible Rust crates in dependency order, and freeze the release tag.
 
 ## After the v0.2 contract is frozen
@@ -25,7 +29,8 @@ second implementation roadmap.
 - Continue renderer conformance by admitting new independently reviewed cases
   against Chromium without modifying historical evidence.
 
-No JavaScript runtime, script bindings, or browser execution are planned for
-Open UI. New application interaction is added through public native Rust APIs
+Open UI never executes JavaScript, in this or future versions. Its roadmap
+does not include a JavaScript runtime or script bindings. New application
+interaction is added through public native Rust APIs
 over the shared retained engine. Network fetching is also outside this
 desktop framework's roadmap.

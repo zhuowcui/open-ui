@@ -7,7 +7,8 @@ style that has proven necessary to make progress safely.
 
 Open UI should render the same UI as Chromium, pixel-for-pixel, while exposing a
 standalone native UI engine. Applications implement interaction in Rust through
-public `Document` and `Element` APIs; Open UI does not execute JavaScript.
+public `Document` and `Element` APIs. Open UI never executes JavaScript, in this
+or future versions.
 
 ## Completion Standard
 
@@ -22,6 +23,13 @@ For WPT parity work, that means:
 - `audit.py` passes,
 - remaining failures are explicitly classified,
 - and no generic bucket hides unknown work.
+
+For application interaction, completion requires a public native Rust API
+over the shared retained engine and verification from a consuming Rust app.
+That verification must cover the operation's state changes and applicable
+events, geometry, or rendering. A needed element operation remains unfinished
+until this public application path works, even if an internal Engine fixture
+already produces exact Chromium pixels.
 
 ## No Escape Buckets
 

@@ -15,13 +15,14 @@ headless clock ─────────────────────�
 The supported application path has no Blink/Chromium runtime, resource pack,
 HTML loader, CSS text parser, JavaScript engine, or network stack. Chromium 147
 is the pinned rendering reference used to prove renderer compatibility.
-Rust applications handle interaction in native Rust through `openui::Document`,
-`openui::Element`, signals, and Rust event callbacks. Document lookup by ID,
+Open UI never executes JavaScript, in this or future versions. Applications
+handle interaction in native Rust through `openui::Document`, `openui::Element`,
+signals, and Rust event callbacks. Document lookup by ID,
 element and text-node mutation, class lookup and updates, focus, scrolling,
 controls, and event handling use public Rust methods. When an application
 needs an operation analogous to a browser element API, Open UI must expose
 that behavior through a public native Rust method on the retained document
-or element. The application never runs JavaScript. See the
+or element. A missing native operation is unfinished API work. See the
 [native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
 
 ## Verified status

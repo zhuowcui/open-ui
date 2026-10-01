@@ -1,8 +1,9 @@
 # Renderer qualification contract
 
 Open UI accepts native structure, state, typed styles, and immutable resources.
-Its rendering target is pinned Chromium 147; HTML parsing, JavaScript execution,
-navigation, networking, iframe browsing contexts, storage, and media playback
+Its rendering target is pinned Chromium 147. Open UI never executes JavaScript,
+in this or future versions. HTML parsing, navigation, networking, iframe
+browsing contexts, storage, and media playback
 are not part of the renderer contract.
 Application interaction is implemented through the public native Rust API,
 including retained `Document` and `Element` methods and Rust callbacks. A

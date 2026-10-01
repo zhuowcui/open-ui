@@ -50,6 +50,8 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   unqualified; OpenGL presentation currently uploads the CPU Skia frame;
 - the current four-profile Chromium census does not meet its exact gate; the
   focused and primitive 40-profile CPU matrices are exact;
+- complete coverage of needed element operations through public native Rust
+  APIs still requires review and verification from consuming applications;
 - retained per-node compositor layers and compositor-owned immutable animation
   curves are incomplete;
 - the strict 100 promoted animations while the UI thread is blocked gate has
