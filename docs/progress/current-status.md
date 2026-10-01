@@ -51,9 +51,14 @@ at the later native paint/input checkpoint `056421db` is 640/640 focused and
 identities remain unchanged from `497e322d`. Its clean original and expanded
 matrices are still running from the preserved runner.
 Its [fresh hosted hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36823315523)
-is also in progress; both native sanitizer jobs have failed. Complete logs
-and the remaining job outcomes still need review. Incomplete runs are not
-qualifying evidence.
+has finished. Miri, Rust 1.85, C UBSan and application/X11/Wayland checks pass.
+Both native sanitizer jobs fail after passing 25 FFI tests, reporting 10,476
+Fontconfig bytes in 236 allocations at exit. Fuzzing stops at `tree_mutations`
+with 2,606 Fontconfig bytes in 59 allocations; its three later targets remain
+unverified. The [seven-job index](../v02/generated/hosted-hardening-056421db-v1.json)
+preserves every outcome and all three complete failed-job log hashes. The
+font-manager lifetime/root cause and leak gates remain open. Incomplete
+renderer runs are not qualifying evidence.
 
 The preceding complete clean checkpoint `547c7081` is
 [21,291/22,924 exact](../renderer/generated/four-profile-census-v45.json),
