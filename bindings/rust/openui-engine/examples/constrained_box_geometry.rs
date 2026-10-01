@@ -39,12 +39,28 @@ fn fragment_dump(fragment: &Fragment, depth: usize, output: &mut String) {
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let arguments: Vec<_> = std::env::args().skip(1).collect();
-    if arguments.len() != 2 && arguments.len() != 3 {
-        return Err("expected OUTPUT_DIR CASE [SCALE]".into());
+    if !(2..=5).contains(&arguments.len()) {
+        return Err(
+            "expected OUTPUT_DIR CASE [SCALE] [CLIPPED_DESCENDANT_HEIGHT] [COLUMN_MAX_HEIGHT]"
+                .into(),
+        );
     }
     let output = PathBuf::from(&arguments[0]);
     let case = arguments[1].as_str();
     let scale: f64 = arguments.get(2).map_or(Ok(1.0), |value| value.parse())?;
+    let descendant_height: f32 = arguments.get(3).map_or(Ok(20.0), |value| value.parse())?;
+    if !descendant_height.is_finite()
+        || descendant_height < 0.0
+        || (arguments.len() >= 4 && case != "clipped-descendant")
+    {
+        return Err(
+            "clipped descendant height requires that case and a finite nonnegative value".into(),
+        );
+    }
+    let column_max_height: Option<f32> = arguments.get(4).map(|value| value.parse()).transpose()?;
+    if column_max_height.is_some_and(|height| !height.is_finite() || height < 0.0) {
+        return Err("column maximum height must be finite and nonnegative".into());
+    }
     let vertical = matches!(case, "vertical-rl" | "vertical-lr");
     let mut engine = Engine::new(ViewportMetrics::from_logical_size(320.0, 340.0, scale)?)?;
     let root = engine.root();
@@ -52,6 +68,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let columns = engine.create_element(ElementTag::Div)?;
     engine.append_child(root, columns)?;
     engine.set_property(columns, StyleProperty::Display, Display::Block.into())?;
+    if let Some(maximum) = column_max_height {
+        engine.set_property(
+            columns,
+            StyleProperty::MaxHeight,
+            LengthValue::px(maximum).into(),
+        )?;
+    }
     engine.set_property(
         columns,
         if vertical {
@@ -239,7 +262,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         engine.set_property(
             descendant,
             StyleProperty::Height,
-            LengthValue::px(20.0).into(),
+            LengthValue::px(descendant_height).into(),
         )?;
         engine.set_property(descendant, StyleProperty::Overflow, Overflow::Hidden.into())?;
     }

@@ -433,10 +433,13 @@ fn collect_overflowing_max_block_decorations<'a>(
             && child.kind == FragmentKind::Box
             && child.is_first_for_node
             && (doc.node(child.node_id).tag == ElementTag::Fieldset
-                || child.children.iter().any(|descendant| {
-                    fragment_is_in_flow_monolithic(descendant, doc)
-                        || fragment_has_in_flow_monolithic_descendant(descendant, doc)
-                }))
+                || fragment_has_overflowing_in_flow_monolithic_descendant(
+                    child,
+                    doc,
+                    LayoutUnit::zero(),
+                    fragment_physical_block_extent(child),
+                    fragment_block_axis_is_x(child),
+                ))
             && (!doc.node(child.node_id).style.max_height.is_none()
                 || doc.node(child.node_id).style.height.is_fixed())
             && child.decoration_slice.is_some_and(|slice| {
@@ -455,14 +458,41 @@ fn fragment_is_in_flow_monolithic(fragment: &Fragment, doc: &Document) -> bool {
         && is_monolithic_column_fragment(fragment, doc)
 }
 
-fn fragment_has_in_flow_monolithic_descendant(fragment: &Fragment, doc: &Document) -> bool {
+/// Complete decoration replay is needed only for an indivisible descendant
+/// that extends outside this continuation. An atomic descendant that fits
+/// does not move its fragmentable ancestors outside the fragmentainer clip.
+fn fragment_has_overflowing_in_flow_monolithic_descendant(
+    fragment: &Fragment,
+    doc: &Document,
+    source_offset: LayoutUnit,
+    block_extent: LayoutUnit,
+    block_axis_is_x: bool,
+) -> bool {
     fragment.children.iter().any(|child| {
-        if child.node_id.is_none() {
-            fragment_has_in_flow_monolithic_descendant(child, doc)
+        if !child.node_id.is_none() && doc.node(child.node_id).style.is_out_of_flow() {
+            return false;
+        }
+        let start = source_offset
+            + if block_axis_is_x {
+                child.offset.left
+            } else {
+                child.offset.top
+            };
+        if fragment_is_in_flow_monolithic(child, doc) {
+            let size = if block_axis_is_x {
+                child.size.width
+            } else {
+                child.size.height
+            };
+            start < LayoutUnit::zero() || start + size > block_extent
         } else {
-            !doc.node(child.node_id).style.is_out_of_flow()
-                && (fragment_is_in_flow_monolithic(child, doc)
-                    || fragment_has_in_flow_monolithic_descendant(child, doc))
+            fragment_has_overflowing_in_flow_monolithic_descendant(
+                child,
+                doc,
+                start,
+                block_extent,
+                block_axis_is_x,
+            )
         }
     })
 }

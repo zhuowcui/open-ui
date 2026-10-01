@@ -275,10 +275,63 @@ fn native_geometry_includes_all_column_fragments() {
     assert_eq!(wrapper.client_rects().unwrap()[2].height, 22.65625);
     assert_eq!(hit_id(230.0, 40.0).as_deref(), Some("overflowing child"));
     assert_eq!(target.client_rects().unwrap(), child_rects);
+    // A small atomic child does not move its ancestors' decorations outside
+    // their column clips or extend the wrapper's own background into child flow.
+    document.body().set_background_color(Color::WHITE).unwrap();
+    columns
+        .set_background_color(Color::from_rgba8(128, 128, 128, 255))
+        .unwrap();
+    wrapper
+        .set_background_color(Color::from_rgba8(255, 255, 0, 255))
+        .unwrap();
+    let bitmap = document.render_to_bitmap().unwrap();
+    let pixel = |x: usize, y: usize| {
+        let offset = y * bitmap.stride() + x * 4;
+        &bitmap.pixels()[offset..offset + 4]
+    };
+    assert_eq!(pixel(0, 100), [255, 255, 255, 255]);
+    assert_eq!(pixel(60, 100), [255, 255, 255, 255]);
+    assert_eq!(pixel(280, 40), [128, 128, 128, 255]);
     wrapper.set_max_height(LengthValue::px(120.0)).unwrap();
     assert_eq!(wrapper.client_rects().unwrap()[1].height, 51.328125);
     assert_eq!(hit_id(122.0, 60.0).as_deref(), Some("overflowing child"));
     assert_ne!(hit_id(170.0, 60.0).as_deref(), Some("constrained wrapper"));
+    // Atomic contents establish a minimum feasible balanced column size.
+    // All columns share that size; an independently sized parent keeps its
+    // own final decoration after the contents end.
+    wrapper.set_max_height(LengthValue::px(160.0)).unwrap();
+    for (height, column_height, child_heights, wrapper_heights) in [
+        (68.0, 71.0, vec![71.0, 71.0, 64.0], vec![71.0, 71.0, 18.0]),
+        (69.0, 72.0, vec![72.0, 72.0, 62.0], vec![72.0, 72.0, 16.0]),
+        (90.0, 93.0, vec![93.0, 93.0, 20.0], vec![93.0, 67.0, 0.0]),
+        (200.0, 206.0, vec![206.0], vec![160.0]),
+        (300.0, 300.0, vec![206.0], vec![160.0]),
+    ] {
+        clipped_descendant
+            .set_height(LengthValue::px(height))
+            .unwrap();
+        assert_eq!(columns.height().unwrap(), column_height, "child {height}");
+        assert_eq!(
+            target
+                .client_rects()
+                .unwrap()
+                .iter()
+                .map(|r| r.height)
+                .collect::<Vec<_>>(),
+            child_heights,
+            "child {height}"
+        );
+        assert_eq!(
+            wrapper
+                .client_rects()
+                .unwrap()
+                .iter()
+                .map(|r| r.height)
+                .collect::<Vec<_>>(),
+            wrapper_heights,
+            "child {height}"
+        );
+    }
 }
 
 #[test]

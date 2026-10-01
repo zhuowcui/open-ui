@@ -1,0 +1,56 @@
+{
+  "chromium": {
+    "binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "build_identity": "147.0.7727.50",
+    "capture_harness_sha256": "1aa6f07a50e71c82ae715502b86f974915128f057c6963a6dfd49319fba3f582"
+  },
+  "comparison_to_822e0462": {
+    "chromium_rgba_and_oracle_unchanged": true,
+    "comparison_count": 1600,
+    "openui_rgba_unchanged": true
+  },
+  "contract_sha256": "b51624ccb5b994601e3b96bca0be7442c926b5abdbc325f233524dcfe5a14e0e",
+  "entries": [],
+  "focused": {
+    "different": 0,
+    "errors": 0,
+    "exact": 640,
+    "profile_result_sha256": "a31909755d5cd85dfb96eaa8dffd763240e51f4e6e180d749f479d66067d4d31",
+    "total": 640
+  },
+  "input_reports": {
+    "focused": "e174754e8190ad4595b310d2c6a85662abc0a6622543d97168c47e30e95c8604",
+    "primitive": "829027128441bdbfcaa6d330217cf333cff803ed616ebf673fd305a2b91d0055"
+  },
+  "openui": {
+    "binary_sha256": "2d9a90fcbdc89026ff2e1ee739a9fcd50aff1936be79274ef503a584ea810fa4",
+    "raster_backend_identity": {
+      "backend": "cpu-skia",
+      "color_type": "N32-premultiplied",
+      "driver": null,
+      "gl_renderer": null,
+      "gl_version": null,
+      "sample_count": 0,
+      "surface_properties": "scene-raster-configuration-v1"
+    }
+  },
+  "output_sha256": "8562f609a61d375a418ca088d09aece92278a7cf0e1583fc1bf810c9282c14a2",
+  "ownership_input_sha256": "ca8d04dce8056248f785e0be572827462abe44fbf7b75c459abd08de9b110f7d",
+  "primitive": {
+    "different": 0,
+    "errors": 0,
+    "exact": 960,
+    "profile_result_sha256": "bfbc4aa1523b3267b5b6f7ac88723e77d37e29d395f7bfc5f0d2a9ad4885f0e0",
+    "total": 960
+  },
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "547c708181a3426c86022ea69b02f36b2d089fd0",
+    "harness_sha256": "7e12afd1dbb867f13f5a82f9bb25efac2bd5c8d4af0ae199efe858723dd57b6a",
+    "source_tree_sha256": "951e8e2dc4e26565d67ee7b6d3392b493d9871a390231c5c2d7e014a8f49379b",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "status": "exact",
+  "unowned_residual_test_count": 0
+}

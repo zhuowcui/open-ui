@@ -649,3 +649,26 @@ The archive check above only protects historical evidence.
 For the workstation-only exact toolchain, pass
 `--config .cargo/config.chromium.toml` to Cargo. Ordinary development and
 release builds use the portable default configuration.
+
+### Native atomic descendants: candidate evidence
+
+The [shared paint and balancing candidate](../renderer/native-monolithic-column-balancing.md)
+matches all 40 measured native states at five scales. All 65 preceding
+constrained-box images and geometry records stay unchanged. An additional
+80-pixel column constraint leaves three of eight scale-1 cases different.
+All 8,491 workspace tests, 55 public Linux Rust scenarios, and the 109-export
+C ABI gate pass. Complete renderer qualification for this candidate remains
+required. At the preceding clean `547c7081`, the
+[v47 focused/primitive index](../renderer/generated/focused-primitive-raster-v47.json)
+is 640/640 and 960/960 exact with all 1,600 images and oracle identities
+unchanged from `822e0462`. Its complete original and expanded runs are still
+in progress.
+
+The atomic-column candidate's wider development checks are complete:
+640/640 focused and 960/960 primitive exact, with 7,034/7,680 exact in the
+four-profile column cohort. Its cohort images are identical to the paint-only
+candidate. Four already-failing comparisons differ more than at `822e0462`;
+no exact comparison regresses and no Chromium reference changes. These dirty
+source diagnostics do not replace the complete clean renderer gates. The
+[atomic-column index](../v02/generated/native-monolithic-column-balancing-v1.json)
+records their counts, hashes and complete four-image delta.

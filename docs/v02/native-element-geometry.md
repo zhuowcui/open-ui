@@ -24,7 +24,8 @@ returned rectangle or list.
 
 The engine records geometry independently of the pointer hit-test list during
 the same retained fragment traversal. Accessibility bounds and view-timeline
-geometry read the same combined bounds. Static painting is unchanged.
+geometry read the same combined bounds. Geometry storage is separate from
+paint clipping and decoration ownership.
 The rectangle semantics follow the
 [CSSOM View geometry operations](https://drafts.csswg.org/cssom-view/#dom-element-getboundingclientrect)
 for the measured cases; this does not claim the entire Web API surface or
@@ -155,3 +156,9 @@ python3 tools/qualification/probe_native_geometry_oracle.py \
 Both tools preserve earlier results by requiring a new output directory.
 The Chromium tool can take an explicit pinned binary through `--chrome`.
 Open UI constructs and changes every state with native Rust operations.
+
+The later [atomic descendant candidate](../renderer/native-monolithic-column-balancing.md)
+repairs the reduced clipping-descendant pixels and its unconstrained column
+balancing. Its 40 native states are exact at five scales; three larger child
+cases in an additional constrained-column sweep remain different. Wider
+renderer qualification for the candidate is still required.

@@ -8951,6 +8951,48 @@ fn leading_monolithic_descendant_extent(
     None
 }
 
+/// The first indivisible unit in an ordinary block's own source space.
+/// Block-start decoration travels with its first child, and block-end
+/// decoration stays with a child that finishes the block's content space.
+/// Oversized atomic content supplies its own minimum rather than promoting
+/// its fragmentable ancestor's overflow offset into additional source size.
+fn constrained_block_leading_balance_unit(
+    doc: &Document,
+    fragment: &Fragment,
+) -> Option<LayoutUnit> {
+    for child in &fragment.children {
+        if child.kind == FragmentKind::ColumnRule {
+            continue;
+        }
+        if !child.node_id.is_none() {
+            let style = &doc.node(child.node_id).style;
+            if style.display == Display::None || style.is_out_of_flow() {
+                continue;
+            }
+        }
+        let child_unit = if !child.node_id.is_none()
+            && (node_is_monolithic_for_fragmentation(doc, child.node_id)
+                || doc.node(child.node_id).style.break_inside.is_avoid())
+        {
+            child.size.height
+        } else {
+            constrained_block_leading_balance_unit(doc, child)?
+        };
+        let own_block_size = fragment.border_box_rect().size.height;
+        if child_unit > own_block_size {
+            return Some(child_unit);
+        }
+        let unit_end = child.offset.top + child_unit;
+        let content_end = own_block_size - fragment.border.bottom - fragment.padding.bottom;
+        return Some(if unit_end >= content_end {
+            unit_end.max_of(own_block_size)
+        } else {
+            unit_end
+        });
+    }
+    None
+}
+
 /// Leading class-A unit used when an avoid edge links sibling block flows.
 ///
 /// An otherwise fragmentable empty fixed-height box has no descendant break
@@ -20947,7 +20989,6 @@ fn layout_multicol(
                     }
                     if in_flow_overflow_size > child_frag.size.height
                         && auto_column_flex_in_flow_size.is_none()
-                        && !subtree_has_overflow_clipping_descendant(doc, info.id)
                     {
                         child_frag.decoration_paint_block_size = Some(child_frag.size.height);
                     }
@@ -22282,6 +22323,32 @@ fn layout_multicol(
             if let Some(leading_floor) = nested_leading_monolithic_balance_floor {
                 column_height = column_height.max_of(leading_floor);
             }
+            if !has_explicit_height
+                && matches!(
+                    algo.column_fill,
+                    ColumnFill::Balance | ColumnFill::BalanceAll
+                )
+            {
+                let constrained_floor = col_fragments
+                    .iter()
+                    .filter(|fragment| {
+                        fragment.principal_box_rect.is_some()
+                            && !fragment.node_id.is_none()
+                            && matches!(
+                                doc.node(fragment.node_id).style.display,
+                                Display::Block | Display::FlowRoot | Display::ListItem
+                            )
+                            && crate::multicol::ColumnLayoutAlgorithm::from_style(
+                                &doc.node(fragment.node_id).style,
+                            )
+                            .is_none()
+                    })
+                    .filter_map(|fragment| constrained_block_leading_balance_unit(doc, fragment))
+                    .max();
+                if let Some(floor) = constrained_floor {
+                    column_height = column_height.max_of(floor);
+                }
+            }
             if let Some(float_floor) = float_only_auto_balance_floor {
                 // Floats do not create normal-flow class-A balancing units.
                 // A nested multicol float therefore remains one parallel row
@@ -23057,7 +23124,6 @@ fn layout_multicol(
                         }
                         if in_flow_overflow_size > child_frag.size.height
                             && auto_column_flex_in_flow_size.is_none()
-                            && !subtree_has_overflow_clipping_descendant(doc, info.id)
                         {
                             child_frag.decoration_paint_block_size = Some(child_frag.size.height);
                         }
