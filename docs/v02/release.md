@@ -15,7 +15,7 @@ claimed by source code alone.
 | Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v29.json); 22,094/23,728 total comparisons exact, 1,634 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
-| Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
+| Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36812728952): locked headless and Linux checks passed | pass |
 | Rust/C application contract | 55 scenarios, 109 current exports, six headless C examples and a C++ header consumer, plus native C/C++ window consumers; previous symbols and layouts preserved | remaining API review and lab qualification open |
 | Native element interaction | Public Rust `Document`, `Element`, and `TextNode` APIs cover ID/class/native-kind lookup, class-token updates, retained detach/reattach, mutation, callbacks, activation, focus, scrolling, and controls; browser-style operations needed by applications must be exposed through native APIs | core implemented; remaining API coverage review open |
 | C-owned X11/Wayland application loop | `oui_app_run` and `oui_app_request_exit` use Rust `App` and the same retained document; versioned platform callbacks and [clean native C/C++ window runs](native-c-lifecycle-evidence.md) cover X11 software/GL and Wayland software | implemented; release-lab qualification open |
@@ -24,10 +24,10 @@ claimed by source code alone.
 | No-work frame | zero layout, paint, and raster on unchanged snapshots | pass |
 | Mutation ownership | 10,000-iteration soak, no owned-object leak | pass |
 | Local performance smoke | 0.108 ms p95, 308 UI-thread animation fps, 1.389% RSS growth | non-qualifying pass |
-| X11/Wayland software and Mesa GL | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115) passed both smoke paths; physical release-lab tests remain open | provisional pass |
-| Miri C handle ownership | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): opaque-handle ownership test passed under pinned Miri | pass |
-| ASan/LSan/fuzz | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): all 18 FFI tests passed, then both sanitizers reported 10,476 bytes through Fontconfig at process exit; fuzz stopped on a 2,606-byte Fontconfig allocation report | fail |
-| Native C UBSan | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): ABI consumers passed | pass |
+| X11/Wayland software and Mesa GL | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36812728952) passed both smoke paths; physical release-lab tests remain open | provisional pass |
+| Miri C handle ownership | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36812728952): opaque-handle ownership test passed under pinned Miri | pass |
+| ASan/LSan/fuzz | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36812728952): all 25 FFI tests passed, then both sanitizers reported 10,476 bytes through Fontconfig at process exit; fuzz stopped on a 2,606-byte Fontconfig allocation report | fail |
+| Native C UBSan | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36812728952): ABI consumers passed | pass |
 | x86-64/AArch64 SDK, deb, rpm | deterministic source pipeline and tag matrix | pending tag build |
 | Clean Ubuntu/Fedora install | release workflow consumer jobs | pending tag build |
 | Physical GPU/context loss | release-lab profile | open |
@@ -500,7 +500,7 @@ then LeakSanitizer and AddressSanitizer reported 10,476 bytes in 236
 Fontconfig allocations at process exit. Fuzz stopped on a 2,606-byte
 Fontconfig allocation report.
 
-The [manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36365378115)
+The [manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36812728952)
 on the current `ceebef52` evidence checkpoint passed X11/Mesa and pure-Wayland
 platform smoke, Miri handles, and C UBSan. AddressSanitizer and LeakSanitizer
 again failed after all 18 ABI tests passed: each reported 10,476 bytes in 236

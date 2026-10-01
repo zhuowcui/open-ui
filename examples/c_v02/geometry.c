@@ -156,6 +156,24 @@ int main(void) {
          rects[2].height == 68.65625f);
   assert(oui_element_get_bounds(target, &bounds) == OUI_OK);
   assert(bounds.y == 0.0f && bounds.width == 272.0f && bounds.height == 68.671875f);
+  /* Constrained column flex owns its box independently of item overflow. */
+  property(wrapper, OUI_STYLE_PROPERTY_DISPLAY, "flex");
+  property(wrapper, OUI_STYLE_PROPERTY_FLEX_DIRECTION, "column");
+  property(target, OUI_STYLE_PROPERTY_FLEX_SHRINK, "0");
+  property(target, OUI_STYLE_PROPERTY_FLEX_BASIS, "auto");
+  assert(oui_element_get_client_rects_v1(target, rects, 3, &count) == OUI_OK && count == 3);
+  assert(rects[0].y == 0.0f && rects[1].y == 0.0f && rects[2].y == 0.0f);
+  assert(rects[0].height == 68.671875f && rects[1].height == 68.671875f &&
+         rects[2].height == 68.65625f);
+  assert(oui_element_get_client_rects_v1(wrapper, wrapper_rects, 3, &count) == OUI_OK &&
+         count == 3 && wrapper_rects[2].height == 22.65625f);
+  OuiElement* flex_hit = NULL;
+  assert(oui_document_hit_test(document, 240.0f, 40.0f, &flex_hit) == OUI_OK && flex_hit == target);
+  property(wrapper, OUI_STYLE_PROPERTY_MAX_HEIGHT, "120px");
+  assert(oui_element_get_client_rects_v1(wrapper, rects, 3, &count) == OUI_OK && count == 3);
+  assert(rects[1].height == 51.328125f && rects[2].height == 0.0f);
+  assert(wrapper_rects[2].height == 22.65625f); /* The earlier snapshot remains owned. */
+  property(wrapper, OUI_STYLE_PROPERTY_MAX_HEIGHT, "160px");
   property(wrapper, OUI_STYLE_PROPERTY_DISPLAY, "block");
   property(target, OUI_STYLE_PROPERTY_POINTER_EVENTS, "none");
   property(target, OUI_STYLE_PROPERTY_VISIBILITY, "hidden");

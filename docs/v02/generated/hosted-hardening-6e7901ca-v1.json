@@ -1,0 +1,108 @@
+{
+  "failed_job_logs": {
+    "address": {
+      "path": "/tmp/openui-hardening-36812728952-address.log",
+      "sha256": "7808f0846a6e2f74ba6865114f865979e2d8129c0f19e144e1edbf4e8ba9801c"
+    },
+    "fuzz": {
+      "path": "/tmp/openui-hardening-36812728952-fuzz.log",
+      "sha256": "d0017d5a5200fc3b6741ccc0eccf2ef7924653f4f850971132e0e2b9b788cb4e"
+    },
+    "leak": {
+      "path": "/tmp/openui-hardening-36812728952-leak.log",
+      "sha256": "a6f2bf6ec1cf32cf8cf65824738bd7a059015bb4b2bf1fafcdfa590eb4473895"
+    }
+  },
+  "jobs": [
+    {
+      "completed_at": "2026-10-01T04:08:03Z",
+      "conclusion": "success",
+      "name": "miri-handles",
+      "started_at": "2026-10-01T03:55:33Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36812728952/job/110211123179"
+    },
+    {
+      "completed_at": "2026-10-01T04:11:43Z",
+      "conclusion": "success",
+      "name": "msrv",
+      "started_at": "2026-10-01T03:55:33Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36812728952/job/110211123408"
+    },
+    {
+      "completed_at": "2026-10-01T04:01:46Z",
+      "conclusion": "failure",
+      "name": "native-sanitizers (leak)",
+      "started_at": "2026-10-01T03:55:33Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36812728952/job/110211123413"
+    },
+    {
+      "completed_at": "2026-10-01T04:19:35Z",
+      "conclusion": "success",
+      "name": "conformance-and-platform",
+      "started_at": "2026-10-01T03:55:34Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36812728952/job/110211123418"
+    },
+    {
+      "completed_at": "2026-10-01T04:11:49Z",
+      "conclusion": "failure",
+      "name": "fuzz-smoke",
+      "started_at": "2026-10-01T03:55:33Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36812728952/job/110211123430"
+    },
+    {
+      "completed_at": "2026-10-01T04:08:05Z",
+      "conclusion": "success",
+      "name": "c-undefined-sanitizer",
+      "started_at": "2026-10-01T03:55:33Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36812728952/job/110211123441"
+    },
+    {
+      "completed_at": "2026-10-01T04:08:08Z",
+      "conclusion": "failure",
+      "name": "native-sanitizers (address)",
+      "started_at": "2026-10-01T03:55:33Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36812728952/job/110211123464"
+    }
+  ],
+  "raw_status_sha256": "2f5cf765078d543811053e794c4d2ac825a6462663e3b70c5b594c8ad3e17b5c",
+  "release_qualification": false,
+  "reviewed_failures": [
+    {
+      "allocation_count": 236,
+      "allocation_library": "libfontconfig.so.1",
+      "job": "leak",
+      "leaked_bytes": 10476,
+      "owner": "openui-text system font collection and pinned Skia/Fontconfig integration",
+      "status": "open; native font-manager lifetime/root cause requires further review"
+    },
+    {
+      "allocation_count": 236,
+      "allocation_library": "libfontconfig.so.1",
+      "job": "address",
+      "leaked_bytes": 10476,
+      "owner": "openui-text system font collection and pinned Skia/Fontconfig integration",
+      "status": "open; native font-manager lifetime/root cause requires further review"
+    },
+    {
+      "allocation_count": 59,
+      "allocation_library": "libfontconfig.so.1",
+      "job": "fuzz",
+      "leaked_bytes": 2606,
+      "owner": "openui-text system font collection and pinned Skia/Fontconfig integration",
+      "status": "open; native font-manager lifetime/root cause requires further review"
+    }
+  ],
+  "run_conclusion": "failure",
+  "run_status": "completed",
+  "run_url": "https://github.com/zhuowcui/open-ui/actions/runs/36812728952",
+  "sanitizer_ffi_tests_passed_before_process_exit_leak": 25,
+  "schema_version": 1,
+  "source_commit": "6e7901ca39feaed755ee434648415f43e04b37c5"
+}

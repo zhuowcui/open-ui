@@ -65,6 +65,13 @@ that activation. It exports its geometry and PNG through the public framework;
 its [five-scale evidence](../renderer/native-flow-root-leaf-slices.md) matches
 Chromium without executing a script.
 
+The [native column-flex app](../../bindings/rust/openui/examples/native_column_flex_geometry.rs)
+constructs all states through typed Rust methods. Eight case variants match
+Chromium in geometry and pixels at all five scales after the combined
+[continuation and empty-bounds corrections](../renderer/native-column-flex-overflow.md#combined-native-checkpoint).
+Its default state hits the overflowing child and runs a Rust click callback.
+Row/reversed flex and following-block paint order remain needed native behavior.
+
 `Element::client_rects` returns an owned list of border-box fragments in logical
 viewport coordinates, including scroll offsets and transforms.
 `bounding_rect` returns their combined bounds. These layout queries include

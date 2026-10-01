@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[2]
 HARNESS = ROOT / "tools/accountability/run_all_pixel_comparisons.py"
 INPUTS = ROOT / "docs/v02/evidence/native-geometry-v1"
 CONSTRAINED_INPUTS = ROOT / "docs/v02/evidence/native-constrained-box-v1"
+COLUMN_FLEX_INPUTS = ROOT / "docs/v02/evidence/native-column-flex-v1"
 EXPRESSION = (
     "new Promise(resolve=>{"
     "const done=()=>document.fonts.ready.then(()=>"
@@ -39,6 +40,12 @@ CONSTRAINED_EXPRESSION = EXPRESSION[:EXPRESSION.index("}).then")] + (
     "return {metrics:{width:innerWidth,height:innerHeight,dpr:devicePixelRatio},"
     "geometry:{nodes}};})"
 )
+COLUMN_FLEX_EXPRESSION = CONSTRAINED_EXPRESSION.replace(
+    "['columns','limit','border']", "['columns','limit','border','clipped','following']",
+).replace(
+    "const e=document.querySelector('.'+name);nodes[name]",
+    "const e=document.querySelector('.'+name);if(!e)continue;nodes[name]",
+)
 
 
 def sha256(path: Path) -> str:
@@ -49,15 +56,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results-dir", type=Path, required=True)
     parser.add_argument("--chrome", type=Path)
-    parser.add_argument("--suite", choices=("native", "constrained"), default="native")
+    parser.add_argument("--suite", choices=("native", "constrained", "column-flex"), default="native")
     parser.add_argument("--scale", type=float, default=1.0)
     args = parser.parse_args()
     if not math.isfinite(args.scale) or args.scale <= 0.0:
         parser.error("scale must be positive and finite")
-    constrained = args.suite == "constrained"
-    inputs = CONSTRAINED_INPUTS if constrained else INPUTS
+    column_flex = args.suite == "column-flex"
+    constrained = args.suite in ("constrained", "column-flex")
+    inputs = COLUMN_FLEX_INPUTS if column_flex else CONSTRAINED_INPUTS if constrained else INPUTS
     height = 340 if constrained else 240
-    expression = CONSTRAINED_EXPRESSION if constrained else EXPRESSION
+    expression = COLUMN_FLEX_EXPRESSION if column_flex else CONSTRAINED_EXPRESSION if constrained else EXPRESSION
     spec = importlib.util.spec_from_file_location("capture", HARNESS)
     assert spec is not None and spec.loader is not None
     capture = importlib.util.module_from_spec(spec)
@@ -74,7 +82,7 @@ def main() -> None:
     if version.split()[-1] != "147.0.7727.50":
         raise RuntimeError(f"unexpected Chromium build: {version}")
     cases = sorted(inputs.glob("*/test.html"))
-    expected_count = 13 if constrained else 5
+    expected_count = 11 if column_flex else 13 if constrained else 5
     if len(cases) != expected_count:
         raise RuntimeError(f"{expected_count} committed {args.suite} geometry inputs required")
     output = args.results_dir.resolve()

@@ -757,3 +757,24 @@ reference worsen from 554 to 626 different pixels at 1.25 scale, and from
 comparison regressed. Those fractional continuation/coverage failures need
 review and repair; unchanged totals do not establish renderer stability.
 The 900 residual IDs remain unreviewed, so this is diagnostic evidence.
+
+The explicit [hosted hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36812728952)
+at `6e7901ca` finished. Miri handles, Rust 1.85, native C UBSan and application/
+X11/Wayland conformance passed. Both native sanitizer jobs passed 25 FFI tests
+before reporting 10,476 leaked Fontconfig bytes in 236 allocations at process
+exit. Fuzzing stopped on a 2,606-byte Fontconfig leak in 59 allocations; the
+remaining targets therefore remain unverified. The
+[seven-job index](../v02/generated/hosted-hardening-6e7901ca-v1.json) records
+all outcomes and raw log hashes. The leak gates remain failing.
+
+The [column-flex continuation checkpoint](../renderer/native-column-flex-overflow.md#combined-native-checkpoint)
+now combines item source-flow accounting with corrected empty bounds. The
+public native Rust app is 45/55 geometry-exact, 43/55 pixel-exact, and 40/55
+exact in both. The original reduced sweep is 60/65 exact in both, with all
+PNG bytes unchanged from the prior column-flex candidate. All 144 atomic
+guards retain exact geometry and pixels. The preceding 9,280 broader candidate
+images and Chromium identities are unchanged. The combined workspace passes
+8,491 tests (13 ignored), all 55 Linux application scenarios and the complete
+109-export C/C++ consumer gate. Complete clean renderer matrices remain
+required; row/reversed flex, following-block paint order and cloned decoration
+remain measured native behavior to finish.

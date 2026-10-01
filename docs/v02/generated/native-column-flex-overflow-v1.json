@@ -1,0 +1,4941 @@
+{
+  "backend": "cpu-skia",
+  "binaries": {
+    "constrained_box_geometry-flex-overflow-final-v1": "4747cbebc36f831a29d4df016026c491c8b70ae2db1980ad47961e26312f7b27",
+    "libopenui_ffi-column-flex-linux-v2.so": "90f8eb2533b1cf338757612f31ffc65cbfad1b68392dd54995146bd414280917",
+    "native_column_flex_geometry-baseline-e9211183": "2790548567809cd4c873e3ae37d68c8c937843b11e1d07984e6f35c90068dfd7",
+    "native_column_flex_geometry-final-v1": "b2a82ff3782b097ab1d60e07eee3eda1f77f4dbcc283032d024b071d0b6e2b02",
+    "native_column_flex_geometry_diagnostic-baseline-e9211183": "705b712a55c90b1846076139d791b586137fbd7e1e721e03fccf1a37392ef1b9",
+    "pixel_compare_column_flex_candidate": "2fdcf50e3f0c3248396a63dfeaa6f76036a7731807bee7712b25009a5a493936"
+  },
+  "candidate_matrices": {
+    "audit_sha256": "d6153de5f5419109cc1d7457311468f76535e3a42a544e6edc1485d0fcab275a",
+    "matrices": {
+      "cohort": {
+        "changed_comparisons": [],
+        "changed_openui_image_count": 0,
+        "chromium_oracle_images_and_identities_unchanged": true,
+        "preceding_report": "out/renderer-evidence/flow-root-leaf-slices-v1/cohort/full-summary.json",
+        "preceding_report_sha256": "22930d165c6a662ea593cd75104b0582c5ddaad57c860ee47436f2d996225a52",
+        "previously_exact_regressions": 0,
+        "report": "out/renderer-evidence/native-column-flex-overflow-v1/cohort/full-summary.json",
+        "report_sha256": "72b682abeec4ae985be7e246a008c41fca7db81405a2b2b25ad7c5cf2023a740",
+        "results": {
+          "different": 646,
+          "errors": 0,
+          "exact": 7034,
+          "profile_result_sha256": "9c68481e1c49db4f722c60cdf215c9c166e40b3683040af90e8e2a0c74c5b198",
+          "total": 7680
+        },
+        "source": {
+          "clean": false,
+          "commit": "d648fbb24f0e049ccc6a7ad40517eac1153e6ec1",
+          "harness_sha256": "3b6418a5f61c819ce381f7fa0bfbcb7190d5f222e54d3d382c291c7e13249642",
+          "source_tree_sha256": "bb147fbc1d29bb1ac6844a988b73a60f14104ea3f14a2c4b2af82e6b9ef5f41c",
+          "status_sha256": "2b5aaa7fac9797e1d3a4b482ccaada1f27bef74c2e5311ec736d92bd88e2bb30"
+        }
+      },
+      "focused": {
+        "changed_comparisons": [],
+        "changed_openui_image_count": 0,
+        "chromium_oracle_images_and_identities_unchanged": true,
+        "preceding_report": "out/renderer-evidence/flow-root-leaf-slices-v1/focused/focused-summary.json",
+        "preceding_report_sha256": "ada510ac135ba0124c2bc2f8dcfb9e5b5cd1df3b0485baa7d3cd5a2b3e04f87e",
+        "previously_exact_regressions": 0,
+        "report": "out/renderer-evidence/native-column-flex-overflow-v1/focused/focused-summary.json",
+        "report_sha256": "89794dfcde9210b300b91a3b3eac42cd3d64e65acaa812a160078224ddd2f815",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "456d17c5b64fd7a88c754c6292da4454c60f7790c4d4f693f0d583d0076a8640",
+          "total": 640
+        },
+        "source": {
+          "clean": false,
+          "commit": "d648fbb24f0e049ccc6a7ad40517eac1153e6ec1",
+          "harness_sha256": "3b6418a5f61c819ce381f7fa0bfbcb7190d5f222e54d3d382c291c7e13249642",
+          "source_tree_sha256": "bb147fbc1d29bb1ac6844a988b73a60f14104ea3f14a2c4b2af82e6b9ef5f41c",
+          "status_sha256": "2b5aaa7fac9797e1d3a4b482ccaada1f27bef74c2e5311ec736d92bd88e2bb30"
+        }
+      },
+      "primitive": {
+        "changed_comparisons": [],
+        "changed_openui_image_count": 0,
+        "chromium_oracle_images_and_identities_unchanged": true,
+        "preceding_report": "out/renderer-evidence/flow-root-leaf-slices-v1/primitive/primitive-summary.json",
+        "preceding_report_sha256": "0057e874836e20112f2d7982bf046e6c4687b68a645caabf9065ce657028a4b4",
+        "previously_exact_regressions": 0,
+        "report": "out/renderer-evidence/native-column-flex-overflow-v1/primitive/primitive-summary.json",
+        "report_sha256": "a0677d0b8c8bbd351e8ffa3a55b856910eafbc2baf0184e25226853104ef54e3",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "3e4774b01c4285d308a782fd9724e31780d84c9341ca5bbf5303468e28a0fa4d",
+          "total": 960
+        },
+        "source": {
+          "clean": false,
+          "commit": "d648fbb24f0e049ccc6a7ad40517eac1153e6ec1",
+          "harness_sha256": "3b6418a5f61c819ce381f7fa0bfbcb7190d5f222e54d3d382c291c7e13249642",
+          "source_tree_sha256": "bb147fbc1d29bb1ac6844a988b73a60f14104ea3f14a2c4b2af82e6b9ef5f41c",
+          "status_sha256": "2b5aaa7fac9797e1d3a4b482ccaada1f27bef74c2e5311ec736d92bd88e2bb30"
+        }
+      }
+    },
+    "release_qualification": false,
+    "schema_version": 1
+  },
+  "candidate_matrix_selection": {
+    "complete_original_scope": false,
+    "count": 1920,
+    "path": "/tmp/openui-column-margin-cohort-selection.json",
+    "profiles": 4,
+    "sha256": "1864d30a8ca6133c4c365b4a0da9d5e36863f74f6f791c834b02f94342f646f4"
+  },
+  "chromium_capture_reports": {
+    "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.25/summary.json": "fdaf861103b4c94ec1b454125a7d4c27d317925897f0e59f0dd33263d9339bae",
+    "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.5/summary.json": "55c33f78f425690c4735a211b2a2e5d39bf19f369b5732a0d399c27a2a989abf",
+    "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1/summary.json": "47dcd76ace25a7a3629b1a2d2ce0bd275174267af2ad700cb2fbc251cd3f6ce9",
+    "out/renderer-evidence/native-column-flex-overflow-v1/chromium-2/summary.json": "a3de48e1dee202f0fefb9f48cfd74e8b3690fcce7235dcd7d44738a62c0b4456",
+    "out/renderer-evidence/native-column-flex-overflow-v1/chromium-3/summary.json": "d99f5f3a2e3cc1d543655c9ecaaaa868938c9eecb4fa1d117403d1cdec6c0016"
+  },
+  "chromium_inputs": {
+    "docs/v02/evidence/native-column-flex-v1/avoid/test.html": "a2037e8f8f3acbf01eafae5a4d524521c12b424bc29a945a62ee10b7773cad9d",
+    "docs/v02/evidence/native-column-flex-v1/clipped20/test.html": "fc8d3ad02056717a2031c489ac915ef1a3a0bece7f7afafd3dc03ee0fc0d46ab",
+    "docs/v02/evidence/native-column-flex-v1/clipped90/test.html": "0061192c00e259f0fd3db4865fa23923746eba5e7813111c11f3be6708d84a9a",
+    "docs/v02/evidence/native-column-flex-v1/following-sibling/test.html": "721bd6fab40e090168d4a59986f83a0df2c0a6ddb1f77c55cc6d000fd74efa80",
+    "docs/v02/evidence/native-column-flex-v1/max0/test.html": "7e013e8b0ad7f66b9931aa408be5995f0d6d4040a4a42838be197d63a5a2f726",
+    "docs/v02/evidence/native-column-flex-v1/max120/test.html": "bfbf25618ff9c3a140f50320683fb56e91abe94c27340bd6e0c35134bbd14b13",
+    "docs/v02/evidence/native-column-flex-v1/max160/test.html": "386e8d6287ab706b720e405d272fa77d59b50a3902c1581997e43e2592d13bb4",
+    "docs/v02/evidence/native-column-flex-v1/next-item/test.html": "619b9de908765015e9b8ed7d9f8d29f99ef8134cf9f9a629f22fa1a3b66a24e3",
+    "docs/v02/evidence/native-column-flex-v1/padding10/test.html": "6304524ee54334996051ada87a3c057cca9e5107f019eb2379f1eb657afacc25",
+    "docs/v02/evidence/native-column-flex-v1/reverse/test.html": "c5ff5b5357377c5df57698cd0cd71c3c1289a8aca3d9c92ed50121f5581de93a",
+    "docs/v02/evidence/native-column-flex-v1/row/test.html": "19f2c57f390672b64d76e74551f72459612dfe81c1415ddb2e4a015a66ec5094"
+  },
+  "input_reports": {
+    "out/renderer-evidence/native-column-flex-overflow-v1/atomic-neighbor-replay-final-v1/comparison.json": "465f632b3281c52a640acd11516fc0269f3b69bfd964c89b2c36b80f057e5621",
+    "out/renderer-evidence/native-column-flex-overflow-v1/comparison-final-v1.json": "2dd9218fbbdc0d7a5b0c9b292958b61f1ee6dd7a4a75d3ca2f80a7d444ad3207",
+    "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-baseline-delta-v1.json": "b544b1f81c4479932b7f9e2adb2907f34a6ebfe28d65b3b798c991a1d3a3e7bd",
+    "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-comparison-final-v1.json": "465fa6381e3a99e1cbb052655ae47c92e546847404661d110b20dd4dcd18dc73"
+  },
+  "javascript_executed_by_openui": false,
+  "public_native_cases": [
+    {
+      "case": "avoid",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1/avoid",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1/avoid",
+      "scale": "1"
+    },
+    {
+      "case": "clipped20",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1/clipped20",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1/clipped20",
+      "scale": "1"
+    },
+    {
+      "case": "clipped90",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1/clipped90",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1/clipped90",
+      "scale": "1"
+    },
+    {
+      "case": "following-sibling",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1/following-sibling",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "following": {
+          "bounds": {
+            "height": 20,
+            "width": 20,
+            "x": 216,
+            "y": 22.65625
+          },
+          "rects": [
+            {
+              "height": 20,
+              "width": 20,
+              "x": 216,
+              "y": 22.65625
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 60,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 255,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 15300
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 20,
+              "width": 3,
+              "x": 216,
+              "y": 23
+            },
+            "mismatched_pixels": 60
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 20,
+          "width": 3,
+          "x": 216,
+          "y": 23
+        },
+        "mismatched_pixels": 60
+      },
+      "geometry_exact": true,
+      "mismatch_bounds": {
+        "height": 20,
+        "width": 3,
+        "x": 216,
+        "y": 23
+      },
+      "mismatched_pixels": 60,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1/following-sibling",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "following": {
+          "bounds": {
+            "height": 20,
+            "width": 20,
+            "x": 216,
+            "y": 22.65625
+          },
+          "rects": [
+            {
+              "height": 20,
+              "width": 20,
+              "x": 216,
+              "y": 22.65625
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The following normal block background erases the overflowing flex item border; Chromium preserves the border above that background.",
+        "owner": "openui-paint in-flow paint phases"
+      },
+      "scale": "1"
+    },
+    {
+      "case": "max0",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1/max0",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1/max0",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "All-empty combined bounds select the first fragment; Chromium selects the final fragment for this reduced multicol box.",
+        "owner": "openui-engine retained geometry collection"
+      },
+      "scale": "1"
+    },
+    {
+      "case": "max120",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1/max120",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1/max120",
+      "scale": "1"
+    },
+    {
+      "case": "max160",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1/max160",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 1,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1/max160",
+      "scale": "1"
+    },
+    {
+      "case": "next-item",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1/next-item",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1/next-item",
+      "scale": "1"
+    },
+    {
+      "case": "padding10",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1/padding10",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1/padding10",
+      "scale": "1"
+    },
+    {
+      "case": "reverse",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1/reverse",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 99.34375,
+            "width": 272,
+            "x": 0,
+            "y": -46
+          },
+          "rects": [
+            {
+              "height": 99.34375,
+              "width": 56,
+              "x": 0,
+              "y": -46
+            },
+            {
+              "height": 53.34375,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.3125,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.3125,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1/reverse",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 312.6875,
+            "width": 272,
+            "x": 0,
+            "y": -152.6875
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 56,
+              "x": 0,
+              "y": -46
+            },
+            {
+              "height": 206,
+              "width": 56,
+              "x": 108,
+              "y": -99.34375
+            },
+            {
+              "height": 206.03125,
+              "width": 56,
+              "x": 216,
+              "y": -152.6875
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The whole item is replayed instead of retaining its visible source continuations, and the final continuation extends beyond the source end.",
+        "owner": "openui-layout reversed column-flex fragmentation"
+      },
+      "scale": "1"
+    },
+    {
+      "case": "row",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1/row",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 49254,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -5208948
+          },
+          "green": {
+            "changed_pixels": 42156,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -5228838
+          },
+          "red": {
+            "changed_pixels": 42156,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -5228838
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 206,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            },
+            "mismatched_pixels": 49254
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 206,
+          "width": 300,
+          "x": 0,
+          "y": 0
+        },
+        "mismatched_pixels": 49254
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": {
+        "height": 206,
+        "width": 300,
+        "x": 0,
+        "y": 0
+      },
+      "mismatched_pixels": 49254,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1/row",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 206,
+            "width": 56,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 206,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 160,
+            "width": 84,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 160,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The visual-overflow sizing heuristic treats fragmentable row-flex item flow as an indivisible unit.",
+        "owner": "openui-layout row-flex multicolumn measurement"
+      },
+      "scale": "1"
+    },
+    {
+      "case": "avoid",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.25/avoid",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.25/avoid",
+      "scale": "1.25"
+    },
+    {
+      "case": "clipped20",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.25/clipped20",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.25/clipped20",
+      "scale": "1.25"
+    },
+    {
+      "case": "clipped90",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.25/clipped90",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.25/clipped90",
+      "scale": "1.25"
+    },
+    {
+      "case": "following-sibling",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.25/following-sibling",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "following": {
+          "bounds": {
+            "height": 20,
+            "width": 20,
+            "x": 216,
+            "y": 22.65625
+          },
+          "rects": [
+            {
+              "height": 20,
+              "width": 20,
+              "x": 216,
+              "y": 22.65625
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 104,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 255,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 23928
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 26,
+              "width": 4,
+              "x": 270,
+              "y": 28
+            },
+            "mismatched_pixels": 104
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 26,
+          "width": 4,
+          "x": 270,
+          "y": 28
+        },
+        "mismatched_pixels": 104
+      },
+      "geometry_exact": true,
+      "mismatch_bounds": {
+        "height": 26,
+        "width": 4,
+        "x": 270,
+        "y": 28
+      },
+      "mismatched_pixels": 104,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.25/following-sibling",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "following": {
+          "bounds": {
+            "height": 20,
+            "width": 20,
+            "x": 216,
+            "y": 22.65625
+          },
+          "rects": [
+            {
+              "height": 20,
+              "width": 20,
+              "x": 216,
+              "y": 22.65625
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The following normal block background erases the overflowing flex item border; Chromium preserves the border above that background.",
+        "owner": "openui-paint in-flow paint phases"
+      },
+      "scale": "1.25"
+    },
+    {
+      "case": "max0",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.25/max0",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.25/max0",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "All-empty combined bounds select the first fragment; Chromium selects the final fragment for this reduced multicol box.",
+        "owner": "openui-engine retained geometry collection"
+      },
+      "scale": "1.25"
+    },
+    {
+      "case": "max120",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.25/max120",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.25/max120",
+      "scale": "1.25"
+    },
+    {
+      "case": "max160",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.25/max160",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 1,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.25/max160",
+      "scale": "1.25"
+    },
+    {
+      "case": "next-item",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.25/next-item",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.25/next-item",
+      "scale": "1.25"
+    },
+    {
+      "case": "padding10",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.25/padding10",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.25/padding10",
+      "scale": "1.25"
+    },
+    {
+      "case": "reverse",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.25/reverse",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 99.34375,
+            "width": 272,
+            "x": 0,
+            "y": -46
+          },
+          "rects": [
+            {
+              "height": 99.34375,
+              "width": 56,
+              "x": 0,
+              "y": -46
+            },
+            {
+              "height": 53.34375,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.3125,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.3125,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 24,
+            "maximum_absolute_delta": 125,
+            "maximum_signed_delta": 32,
+            "minimum_signed_delta": -125,
+            "signed_delta_sum": -1634
+          },
+          "green": {
+            "changed_pixels": 282,
+            "maximum_absolute_delta": 173,
+            "maximum_signed_delta": 44,
+            "minimum_signed_delta": -173,
+            "signed_delta_sum": -2006
+          },
+          "red": {
+            "changed_pixels": 282,
+            "maximum_absolute_delta": 173,
+            "maximum_signed_delta": 44,
+            "minimum_signed_delta": -173,
+            "signed_delta_sum": -2006
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 7,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 63,
+              "width": 64,
+              "x": 273,
+              "y": 0
+            },
+            "mismatched_pixels": 126
+          },
+          {
+            "bounds": {
+              "height": 67,
+              "width": 4,
+              "x": 66,
+              "y": 0
+            },
+            "mismatched_pixels": 70
+          },
+          {
+            "bounds": {
+              "height": 67,
+              "width": 4,
+              "x": 201,
+              "y": 0
+            },
+            "mismatched_pixels": 70
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 4,
+              "x": 0,
+              "y": 66
+            },
+            "mismatched_pixels": 4
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 4,
+              "x": 135,
+              "y": 66
+            },
+            "mismatched_pixels": 4
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 4,
+              "x": 270,
+              "y": 66
+            },
+            "mismatched_pixels": 4
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 4,
+              "x": 336,
+              "y": 66
+            },
+            "mismatched_pixels": 4
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 67,
+          "width": 340,
+          "x": 0,
+          "y": 0
+        },
+        "mismatched_pixels": 282
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": {
+        "height": 67,
+        "width": 340,
+        "x": 0,
+        "y": 0
+      },
+      "mismatched_pixels": 282,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.25/reverse",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 312.6875,
+            "width": 272,
+            "x": 0,
+            "y": -152.6875
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 56,
+              "x": 0,
+              "y": -46
+            },
+            {
+              "height": 206,
+              "width": 56,
+              "x": 108,
+              "y": -99.34375
+            },
+            {
+              "height": 206.03125,
+              "width": 56,
+              "x": 216,
+              "y": -152.6875
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The whole item is replayed instead of retaining its visible source continuations, and the final continuation extends beyond the source end.",
+        "owner": "openui-layout reversed column-flex fragmentation"
+      },
+      "scale": "1.25"
+    },
+    {
+      "case": "row",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.25/row",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 77279,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -8133647
+          },
+          "green": {
+            "changed_pixels": 66402,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -8165369
+          },
+          "red": {
+            "changed_pixels": 66402,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -8165369
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 2,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 258,
+              "width": 375,
+              "x": 0,
+              "y": 0
+            },
+            "mismatched_pixels": 77362
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 1,
+              "x": 3,
+              "y": 3
+            },
+            "mismatched_pixels": 1
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 258,
+          "width": 375,
+          "x": 0,
+          "y": 0
+        },
+        "mismatched_pixels": 77363
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": {
+        "height": 258,
+        "width": 375,
+        "x": 0,
+        "y": 0
+      },
+      "mismatched_pixels": 77363,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.25/row",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 206,
+            "width": 56,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 206,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 160,
+            "width": 84,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 160,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The visual-overflow sizing heuristic treats fragmentable row-flex item flow as an indivisible unit.",
+        "owner": "openui-layout row-flex multicolumn measurement"
+      },
+      "scale": "1.25"
+    },
+    {
+      "case": "avoid",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.5/avoid",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.5/avoid",
+      "scale": "1.5"
+    },
+    {
+      "case": "clipped20",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.5/clipped20",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.5/clipped20",
+      "scale": "1.5"
+    },
+    {
+      "case": "clipped90",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.5/clipped90",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.5/clipped90",
+      "scale": "1.5"
+    },
+    {
+      "case": "following-sibling",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.5/following-sibling",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "following": {
+          "bounds": {
+            "height": 20,
+            "width": 20,
+            "x": 216,
+            "y": 22.65625
+          },
+          "rects": [
+            {
+              "height": 20,
+              "width": 20,
+              "x": 216,
+              "y": 22.65625
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 155,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 255,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 34444
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 31,
+              "width": 5,
+              "x": 324,
+              "y": 34
+            },
+            "mismatched_pixels": 155
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 31,
+          "width": 5,
+          "x": 324,
+          "y": 34
+        },
+        "mismatched_pixels": 155
+      },
+      "geometry_exact": true,
+      "mismatch_bounds": {
+        "height": 31,
+        "width": 5,
+        "x": 324,
+        "y": 34
+      },
+      "mismatched_pixels": 155,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.5/following-sibling",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "following": {
+          "bounds": {
+            "height": 20,
+            "width": 20,
+            "x": 216,
+            "y": 22.65625
+          },
+          "rects": [
+            {
+              "height": 20,
+              "width": 20,
+              "x": 216,
+              "y": 22.65625
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The following normal block background erases the overflowing flex item border; Chromium preserves the border above that background.",
+        "owner": "openui-paint in-flow paint phases"
+      },
+      "scale": "1.5"
+    },
+    {
+      "case": "max0",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.5/max0",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.5/max0",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "All-empty combined bounds select the first fragment; Chromium selects the final fragment for this reduced multicol box.",
+        "owner": "openui-engine retained geometry collection"
+      },
+      "scale": "1.5"
+    },
+    {
+      "case": "max120",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.5/max120",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.5/max120",
+      "scale": "1.5"
+    },
+    {
+      "case": "max160",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.5/max160",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 1,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.5/max160",
+      "scale": "1.5"
+    },
+    {
+      "case": "next-item",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.5/next-item",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.5/next-item",
+      "scale": "1.5"
+    },
+    {
+      "case": "padding10",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.5/padding10",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.5/padding10",
+      "scale": "1.5"
+    },
+    {
+      "case": "reverse",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.5/reverse",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 99.34375,
+            "width": 272,
+            "x": 0,
+            "y": -46
+          },
+          "rects": [
+            {
+              "height": 99.34375,
+              "width": 56,
+              "x": 0,
+              "y": -46
+            },
+            {
+              "height": 53.34375,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.3125,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.3125,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 30,
+            "maximum_absolute_delta": 47,
+            "maximum_signed_delta": 24,
+            "minimum_signed_delta": -47,
+            "signed_delta_sum": -632
+          },
+          "green": {
+            "changed_pixels": 263,
+            "maximum_absolute_delta": 111,
+            "maximum_signed_delta": 56,
+            "minimum_signed_delta": -111,
+            "signed_delta_sum": -1261
+          },
+          "red": {
+            "changed_pixels": 263,
+            "maximum_absolute_delta": 111,
+            "maximum_signed_delta": 56,
+            "minimum_signed_delta": -111,
+            "signed_delta_sum": -1261
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 7,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 80,
+              "width": 5,
+              "x": 79,
+              "y": 0
+            },
+            "mismatched_pixels": 84
+          },
+          {
+            "bounds": {
+              "height": 80,
+              "width": 5,
+              "x": 241,
+              "y": 0
+            },
+            "mismatched_pixels": 84
+          },
+          {
+            "bounds": {
+              "height": 75,
+              "width": 1,
+              "x": 403,
+              "y": 0
+            },
+            "mismatched_pixels": 75
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 5,
+              "x": 0,
+              "y": 79
+            },
+            "mismatched_pixels": 5
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 5,
+              "x": 162,
+              "y": 79
+            },
+            "mismatched_pixels": 5
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 5,
+              "x": 324,
+              "y": 79
+            },
+            "mismatched_pixels": 5
+          },
+          {
+            "bounds": {
+              "height": 1,
+              "width": 5,
+              "x": 403,
+              "y": 79
+            },
+            "mismatched_pixels": 5
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 80,
+          "width": 408,
+          "x": 0,
+          "y": 0
+        },
+        "mismatched_pixels": 263
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": {
+        "height": 80,
+        "width": 408,
+        "x": 0,
+        "y": 0
+      },
+      "mismatched_pixels": 263,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.5/reverse",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 312.6875,
+            "width": 272,
+            "x": 0,
+            "y": -152.6875
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 56,
+              "x": 0,
+              "y": -46
+            },
+            {
+              "height": 206,
+              "width": 56,
+              "x": 108,
+              "y": -99.34375
+            },
+            {
+              "height": 206.03125,
+              "width": 56,
+              "x": 216,
+              "y": -152.6875
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The whole item is replayed instead of retaining its visible source continuations, and the final continuation extends beyond the source end.",
+        "owner": "openui-layout reversed column-flex fragmentation"
+      },
+      "scale": "1.5"
+    },
+    {
+      "case": "row",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-1.5/row",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 111064,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -11707860
+          },
+          "green": {
+            "changed_pixels": 95387,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -11753704
+          },
+          "red": {
+            "changed_pixels": 95387,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -11753704
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 309,
+              "width": 450,
+              "x": 0,
+              "y": 0
+            },
+            "mismatched_pixels": 111163
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 309,
+          "width": 450,
+          "x": 0,
+          "y": 0
+        },
+        "mismatched_pixels": 111163
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": {
+        "height": 309,
+        "width": 450,
+        "x": 0,
+        "y": 0
+      },
+      "mismatched_pixels": 111163,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-1.5/row",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 206,
+            "width": 56,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 206,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 160,
+            "width": 84,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 160,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The visual-overflow sizing heuristic treats fragmentable row-flex item flow as an indivisible unit.",
+        "owner": "openui-layout row-flex multicolumn measurement"
+      },
+      "scale": "1.5"
+    },
+    {
+      "case": "avoid",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-2/avoid",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-2/avoid",
+      "scale": "2"
+    },
+    {
+      "case": "clipped20",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-2/clipped20",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-2/clipped20",
+      "scale": "2"
+    },
+    {
+      "case": "clipped90",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-2/clipped90",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-2/clipped90",
+      "scale": "2"
+    },
+    {
+      "case": "following-sibling",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-2/following-sibling",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "following": {
+          "bounds": {
+            "height": 20,
+            "width": 20,
+            "x": 216,
+            "y": 22.65625
+          },
+          "rects": [
+            {
+              "height": 20,
+              "width": 20,
+              "x": 216,
+              "y": 22.65625
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 240,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 255,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 61200
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 40,
+              "width": 6,
+              "x": 432,
+              "y": 46
+            },
+            "mismatched_pixels": 240
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 40,
+          "width": 6,
+          "x": 432,
+          "y": 46
+        },
+        "mismatched_pixels": 240
+      },
+      "geometry_exact": true,
+      "mismatch_bounds": {
+        "height": 40,
+        "width": 6,
+        "x": 432,
+        "y": 46
+      },
+      "mismatched_pixels": 240,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-2/following-sibling",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "following": {
+          "bounds": {
+            "height": 20,
+            "width": 20,
+            "x": 216,
+            "y": 22.65625
+          },
+          "rects": [
+            {
+              "height": 20,
+              "width": 20,
+              "x": 216,
+              "y": 22.65625
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The following normal block background erases the overflowing flex item border; Chromium preserves the border above that background.",
+        "owner": "openui-paint in-flow paint phases"
+      },
+      "scale": "2"
+    },
+    {
+      "case": "max0",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-2/max0",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-2/max0",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "All-empty combined bounds select the first fragment; Chromium selects the final fragment for this reduced multicol box.",
+        "owner": "openui-engine retained geometry collection"
+      },
+      "scale": "2"
+    },
+    {
+      "case": "max120",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-2/max120",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-2/max120",
+      "scale": "2"
+    },
+    {
+      "case": "max160",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-2/max160",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 1,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-2/max160",
+      "scale": "2"
+    },
+    {
+      "case": "next-item",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-2/next-item",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-2/next-item",
+      "scale": "2"
+    },
+    {
+      "case": "padding10",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-2/padding10",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-2/padding10",
+      "scale": "2"
+    },
+    {
+      "case": "reverse",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-2/reverse",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 99.34375,
+            "width": 272,
+            "x": 0,
+            "y": -46
+          },
+          "rects": [
+            {
+              "height": 99.34375,
+              "width": 56,
+              "x": 0,
+              "y": -46
+            },
+            {
+              "height": 53.34375,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.3125,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.3125,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-2/reverse",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 312.6875,
+            "width": 272,
+            "x": 0,
+            "y": -152.6875
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 56,
+              "x": 0,
+              "y": -46
+            },
+            {
+              "height": 206,
+              "width": 56,
+              "x": 108,
+              "y": -99.34375
+            },
+            {
+              "height": 206.03125,
+              "width": 56,
+              "x": 216,
+              "y": -152.6875
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The whole item is replayed instead of retaining its visible source continuations, and the final continuation extends beyond the source end.",
+        "owner": "openui-layout reversed column-flex fragmentation"
+      },
+      "scale": "2"
+    },
+    {
+      "case": "row",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-2/row",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 197016,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -20835792
+          },
+          "green": {
+            "changed_pixels": 168624,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -20915352
+          },
+          "red": {
+            "changed_pixels": 168624,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -20915352
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 412,
+              "width": 600,
+              "x": 0,
+              "y": 0
+            },
+            "mismatched_pixels": 197016
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 412,
+          "width": 600,
+          "x": 0,
+          "y": 0
+        },
+        "mismatched_pixels": 197016
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": {
+        "height": 412,
+        "width": 600,
+        "x": 0,
+        "y": 0
+      },
+      "mismatched_pixels": 197016,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-2/row",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 206,
+            "width": 56,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 206,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 160,
+            "width": 84,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 160,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The visual-overflow sizing heuristic treats fragmentable row-flex item flow as an indivisible unit.",
+        "owner": "openui-layout row-flex multicolumn measurement"
+      },
+      "scale": "2"
+    },
+    {
+      "case": "avoid",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-3/avoid",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-3/avoid",
+      "scale": "3"
+    },
+    {
+      "case": "clipped20",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-3/clipped20",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-3/clipped20",
+      "scale": "3"
+    },
+    {
+      "case": "clipped90",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-3/clipped90",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-3/clipped90",
+      "scale": "3"
+    },
+    {
+      "case": "following-sibling",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-3/following-sibling",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "following": {
+          "bounds": {
+            "height": 20,
+            "width": 20,
+            "x": 216,
+            "y": 22.65625
+          },
+          "rects": [
+            {
+              "height": 20,
+              "width": 20,
+              "x": 216,
+              "y": 22.65625
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 540,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 255,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 137700
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 60,
+              "width": 9,
+              "x": 648,
+              "y": 69
+            },
+            "mismatched_pixels": 540
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 60,
+          "width": 9,
+          "x": 648,
+          "y": 69
+        },
+        "mismatched_pixels": 540
+      },
+      "geometry_exact": true,
+      "mismatch_bounds": {
+        "height": 60,
+        "width": 9,
+        "x": 648,
+        "y": 69
+      },
+      "mismatched_pixels": 540,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-3/following-sibling",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "following": {
+          "bounds": {
+            "height": 20,
+            "width": 20,
+            "x": 216,
+            "y": 22.65625
+          },
+          "rects": [
+            {
+              "height": 20,
+              "width": 20,
+              "x": 216,
+              "y": 22.65625
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The following normal block background erases the overflowing flex item border; Chromium preserves the border above that background.",
+        "owner": "openui-paint in-flow paint phases"
+      },
+      "scale": "3"
+    },
+    {
+      "case": "max0",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-3/max0",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-3/max0",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 0,
+            "width": 84,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 0,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 0,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "All-empty combined bounds select the first fragment; Chromium selects the final fragment for this reduced multicol box.",
+        "owner": "openui-engine retained geometry collection"
+      },
+      "scale": "3"
+    },
+    {
+      "case": "max120",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-3/max120",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-3/max120",
+      "scale": "3"
+    },
+    {
+      "case": "max160",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-3/max160",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 1,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-3/max160",
+      "scale": "3"
+    },
+    {
+      "case": "next-item",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-3/next-item",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-3/next-item",
+      "scale": "3"
+    },
+    {
+      "case": "padding10",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-3/padding10",
+      "geometry_exact": true,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-3/padding10",
+      "scale": "3"
+    },
+    {
+      "case": "reverse",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-3/reverse",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 99.34375,
+            "width": 272,
+            "x": 0,
+            "y": -46
+          },
+          "rects": [
+            {
+              "height": 99.34375,
+              "width": 56,
+              "x": 0,
+              "y": -46
+            },
+            {
+              "height": 53.34375,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.3125,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.3125,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 0,
+        "connected_regions": [],
+        "mismatch_bounds": null,
+        "mismatched_pixels": 0
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": null,
+      "mismatched_pixels": 0,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-3/reverse",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 312.6875,
+            "width": 272,
+            "x": 0,
+            "y": -152.6875
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 56,
+              "x": 0,
+              "y": -46
+            },
+            {
+              "height": 206,
+              "width": 56,
+              "x": 108,
+              "y": -99.34375
+            },
+            {
+              "height": 206.03125,
+              "width": 56,
+              "x": 216,
+              "y": -152.6875
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 53.34375,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 53.34375,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The whole item is replayed instead of retaining its visible source continuations, and the final continuation extends beyond the source end.",
+        "owner": "openui-layout reversed column-flex fragmentation"
+      },
+      "scale": "3"
+    },
+    {
+      "case": "row",
+      "chromium_directory": "out/renderer-evidence/native-column-flex-overflow-v1/chromium-3/row",
+      "chromium_geometry": {
+        "border": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 272,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 56,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 68.65625,
+              "width": 56,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 68.671875,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "height": 68.671875,
+              "width": 84,
+              "x": 108,
+              "y": 0
+            },
+            {
+              "height": 22.65625,
+              "width": 84,
+              "x": 216,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "difference": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 443286,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -46880532
+          },
+          "green": {
+            "changed_pixels": 379404,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -47059542
+          },
+          "red": {
+            "changed_pixels": 379404,
+            "maximum_absolute_delta": 255,
+            "maximum_signed_delta": 128,
+            "minimum_signed_delta": -255,
+            "signed_delta_sum": -47059542
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 618,
+              "width": 900,
+              "x": 0,
+              "y": 0
+            },
+            "mismatched_pixels": 443286
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 618,
+          "width": 900,
+          "x": 0,
+          "y": 0
+        },
+        "mismatched_pixels": 443286
+      },
+      "geometry_exact": false,
+      "mismatch_bounds": {
+        "height": 618,
+        "width": 900,
+        "x": 0,
+        "y": 0
+      },
+      "mismatched_pixels": 443286,
+      "native_click_callback_count": 0,
+      "native_directory": "out/renderer-evidence/native-column-flex-overflow-v1/public-rust-final-3/row",
+      "native_geometry": {
+        "border": {
+          "bounds": {
+            "height": 206,
+            "width": 56,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 56,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "columns": {
+          "bounds": {
+            "height": 206,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 206,
+              "width": 300,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "limit": {
+          "bounds": {
+            "height": 160,
+            "width": 84,
+            "x": 0,
+            "y": 0
+          },
+          "rects": [
+            {
+              "height": 160,
+              "width": 84,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        }
+      },
+      "remaining_work": {
+        "cause": "The visual-overflow sizing heuristic treats fragmentable row-flex item flow as an indivisible unit.",
+        "owner": "openui-layout row-flex multicolumn measurement"
+      },
+      "scale": "3"
+    }
+  ],
+  "qualification_remaining": [
+    "candidate focused and primitive matrices",
+    "remaining native row/reversed flex, all-empty bounds and following-block paint behavior",
+    "complete clean original and expanded matrices and residual closure",
+    "remaining native APIs and release-lab gates"
+  ],
+  "release_qualification": false,
+  "results": {
+    "atomic_guard_comparisons": 144,
+    "atomic_guard_geometry_and_pixels_exact": 144,
+    "atomic_guard_geometry_and_png_unchanged": 144,
+    "exact_geometry_regressions": 0,
+    "exact_pixel_regressions": 0,
+    "new_public_geometry_and_pixels_exact": 30,
+    "original_complete_geometry_exact": 55,
+    "original_native_comparisons": 65,
+    "original_pixels_exact": 60,
+    "other_original_images_and_geometry_unchanged": 60,
+    "public_native_comparisons": 55,
+    "public_native_complete_geometry_exact": 40,
+    "public_native_geometry_and_pixels_exact": 35,
+    "public_native_pixels_exact": 43
+  },
+  "reviewed_cause": {
+    "cause": "Forward column-flex item flow was classified as unbreakable visual overflow; principal box ownership, atomic balancing minima, padding and actual final source end were lost during distribution.",
+    "correction": "Use separate containing-box and item source extents in shared measurement and continuation distribution; retain the first indivisible unit and materialize ordinary leaf item slices.",
+    "owner": "openui-layout multicolumn fragmentation"
+  },
+  "schema_version": 1,
+  "source": {
+    "checkpoint": "d648fbb24f0e049ccc6a7ad40517eac1153e6ec1",
+    "clean": false,
+    "code_file_sha256": {
+      "bindings/rust/openui-layout/src/block.rs": "71cf4376420fa6dec27bd0d196ef8a782d58e21d07758159e2ff0094fe9b8955",
+      "bindings/rust/openui/examples/native_column_flex_geometry.rs": "741ffb5d05080a53702c8b0fed8930c404dddb56a00ba5f3b96b524ab20efcb6",
+      "examples/c_v02/geometry.c": "d4fa971b15cb1edab97acacf5551e267f4b1a3bc75c665476eb22ba9949d5cbd",
+      "tools/qualification/probe_native_geometry_oracle.py": "651ed963936b50c0af2c2d27262e2ff4219370910b4fc52f79e2d6b4f2a3e194"
+    },
+    "verification_note": "The workspace and native builds verified these production code and consuming guard bytes before the worktree parent was advanced to the flow-root checkpoint. The Linux application check ran at the updated parent.",
+    "verification_parent": "e921118385bfed05f3c9d4ab30ceb6a125b29917"
+  },
+  "verification": {
+    "accountability": {
+      "checks_passed": 7,
+      "full_historical_artifacts_present": true,
+      "renderer_pixel_qualification": false
+    },
+    "c_abi": {
+      "c_consumers": 6,
+      "cpp_header_consumers": 1,
+      "exports": 109,
+      "frozen_exports": 84,
+      "guard_rejects_preceding_library": true,
+      "prior_layouts_preserved": true
+    },
+    "formatting": "pass",
+    "native_rust_linux_application": {
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "235fb91669d9097c67021e34dbc5b433d453ff45ad37a019d4cda9a4921023bc",
+      "passed": 55,
+      "suites": 1
+    },
+    "native_rust_linux_unit": {
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "babcf2a40715ba004fca71daf2b2e7a92107c6e28c4d7be9b874a139fe2d0f28",
+      "passed": 78,
+      "suites": 1
+    },
+    "public_rust_guard_rejects_preceding_renderer": true,
+    "read_only_generators": "pass",
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "log_sha256": "12447f9864c0d4b3fbae0f2c4726a8026f6544e77172c1f4e5c90f6a863d3519",
+      "passed": 8491,
+      "suites": 147
+    }
+  },
+  "verification_log_sha256": {
+    "abi": "758ee47d4bf43be1010edd87745130a4ea05b5f7a3c8599ed7a82ef8940a8fcb",
+    "accountability": "c8f5257eb48b1e3fc78f66edc617bd5ca428b516eb9530b5cfd2ec364b06da31",
+    "contracts": "c98dc031fa8bc67893f59bf6c9c59f1f00e125e14cc75f82d97d7d24d5cde3a7",
+    "native_c_baseline_guard": "e7b833ccb4cc5b6826d49cdb08f71e14fc233e1fb8ae112f09932533b25bd811",
+    "native_rust_baseline_guard": "735294871daceedc3173c8e629e57dcfbcd2de3ee11db19d7fe40ca01abc98d3",
+    "runner_build": "85eb6e1c6bad1cf306f06feffddc32fcffad650ecb3d2ed14e05a4884d41a3e9"
+  }
+}

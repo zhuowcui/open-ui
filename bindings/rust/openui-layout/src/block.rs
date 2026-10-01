@@ -20935,10 +20935,13 @@ fn layout_multicol(
                         child_frag.has_overflow_clip = true;
                         child_frag.block_axis_clip_only = false;
                     }
+                    let auto_column_flex_in_flow_size =
+                        auto_column_flex_in_flow_block_size(&child_frag, child_style, doc);
                     let flex_visual_overflow_flow_size = style.height.is_auto()
                         && resolved.count > 1
                         && child_style.display == Display::Flex
                         && child_style.height.is_auto()
+                        && auto_column_flex_in_flow_size.is_none()
                         && child_style.overflow_x == Overflow::Visible
                         && child_style.overflow_y == Overflow::Visible
                         && !subtree_has_positioned_descendant(doc, info.id)
@@ -20960,8 +20963,6 @@ fn layout_multicol(
                             == LayoutUnit::zero()
                         && subtree_has_flex_descendant(doc, info.id)
                         && fragment_in_flow_block_bottom(&child_frag, doc) > child_frag.size.height;
-                    let auto_column_flex_in_flow_size =
-                        auto_column_flex_in_flow_block_size(&child_frag, child_style, doc);
                     let row_flex_inline_fragmentation_size = (child_style.display == Display::Flex
                         && !child_style.flex_direction.is_column()
                         && child_style.height.is_auto())
@@ -21060,13 +21061,23 @@ fn layout_multicol(
                     })
                     .filter(|extent| *extent > LayoutUnit::zero());
                     if in_flow_overflow_size > child_frag.size.height
-                        && auto_column_flex_in_flow_size.is_none()
+                        && (auto_column_flex_in_flow_size.is_none()
+                            || !maximum_block_size_in_parent_axes(
+                                child_style,
+                                space.writing_direction,
+                            )
+                            .is_none())
                         && child_style.box_decoration_break != BoxDecorationBreak::Clone
                     {
                         child_frag.principal_box_rect = Some(child_frag.border_box_rect());
                     }
                     if in_flow_overflow_size > child_frag.size.height
-                        && auto_column_flex_in_flow_size.is_none()
+                        && (auto_column_flex_in_flow_size.is_none()
+                            || !maximum_block_size_in_parent_axes(
+                                child_style,
+                                space.writing_direction,
+                            )
+                            .is_none())
                     {
                         child_frag.decoration_paint_block_size = Some(child_frag.size.height);
                     }
@@ -21082,8 +21093,10 @@ fn layout_multicol(
                     let fragmentable_in_flow_overflow = (!child_block_size.is_auto()
                         || undecorated_max_height_overflow
                         || table_section_overflow_size.is_some()
-                        || grid_item_overflow_size.is_some())
-                        && child_style.display != Display::Flex
+                        || grid_item_overflow_size.is_some()
+                        || auto_column_flex_in_flow_size.is_some())
+                        && (child_style.display != Display::Flex
+                            || auto_column_flex_in_flow_size.is_some())
                         && child_style.float == Float::None
                         && in_flow_overflow_size > child_frag.size.height
                         && child_style.overflow_x == Overflow::Visible
@@ -21132,7 +21145,8 @@ fn layout_multicol(
                             LayoutUnit::zero()
                         }
                     } else if transparent_auto_wrapper_with_flex_overflow
-                        || auto_column_flex_in_flow_size.is_some()
+                        || (auto_column_flex_in_flow_size.is_some()
+                            && !fragmentable_in_flow_overflow)
                     {
                         in_flow_overflow_size
                     } else if let Some(float_extent) = nested_float_fragmentation_size {
@@ -22414,10 +22428,15 @@ fn layout_multicol(
                     .filter(|fragment| {
                         fragment.principal_box_rect.is_some()
                             && !fragment.node_id.is_none()
-                            && matches!(
+                            && (matches!(
                                 doc.node(fragment.node_id).style.display,
                                 Display::Block | Display::FlowRoot | Display::ListItem
+                            ) || auto_column_flex_in_flow_block_size(
+                                fragment,
+                                &doc.node(fragment.node_id).style,
+                                doc,
                             )
+                            .is_some())
                             && crate::multicol::ColumnLayoutAlgorithm::from_style(
                                 &doc.node(fragment.node_id).style,
                             )
@@ -23202,13 +23221,23 @@ fn layout_multicol(
                             child_frag.size.height
                         };
                         if in_flow_overflow_size > child_frag.size.height
-                            && auto_column_flex_in_flow_size.is_none()
+                            && (auto_column_flex_in_flow_size.is_none()
+                                || !maximum_block_size_in_parent_axes(
+                                    child_style,
+                                    space.writing_direction,
+                                )
+                                .is_none())
                             && child_style.box_decoration_break != BoxDecorationBreak::Clone
                         {
                             child_frag.principal_box_rect = Some(child_frag.border_box_rect());
                         }
                         if in_flow_overflow_size > child_frag.size.height
-                            && auto_column_flex_in_flow_size.is_none()
+                            && (auto_column_flex_in_flow_size.is_none()
+                                || !maximum_block_size_in_parent_axes(
+                                    child_style,
+                                    space.writing_direction,
+                                )
+                                .is_none())
                         {
                             child_frag.decoration_paint_block_size = Some(child_frag.size.height);
                         }
@@ -23222,7 +23251,8 @@ fn layout_multicol(
                             }
                         } else if let Some(flow_size) = oversized_nested_inline_flow_size {
                             flow_size
-                        } else if auto_column_flex_in_flow_size.is_some()
+                        } else if (auto_column_flex_in_flow_size.is_some()
+                            && child_frag.principal_box_rect.is_none())
                             || row_flex_inline_fragmentation_size.is_some()
                         {
                             in_flow_overflow_size.max_of(
@@ -24840,11 +24870,15 @@ fn layout_multicol(
                             == LayoutUnit::zero()
                         && resolve_margin_or_padding(&child_style.padding_bottom, column_width)
                             == LayoutUnit::zero();
+                let auto_column_flex_in_flow_size =
+                    auto_column_flex_in_flow_block_size(&child_frag, child_style, doc);
                 let child_has_fragmentable_in_flow_overflow = (!block_size_in_parent_axes(child_style, space.writing_direction).is_auto()
                         || child_has_undecorated_max_height_overflow
                         || child_style.display.is_table_wrapper()
-                        || child_style.display == Display::Grid)
-                        && child_style.display != Display::Flex
+                        || child_style.display == Display::Grid
+                        || auto_column_flex_in_flow_size.is_some())
+                        && (child_style.display != Display::Flex
+                            || auto_column_flex_in_flow_size.is_some())
                         && !child_style.is_out_of_flow()
                         && child_style.overflow_x == Overflow::Visible
                         && child_style.overflow_y == Overflow::Visible
@@ -29076,6 +29110,7 @@ fn layout_multicol(
                             } else if !is_clone
                                 && child_style.display == Display::Flex
                                 && content_consumed == LayoutUnit::zero()
+                                && !child_has_fragmentable_in_flow_overflow
                             {
                                 let child_padding_top = resolve_margin_or_padding(
                                     &child_style.padding_top,
@@ -30403,6 +30438,12 @@ fn layout_multicol(
                                                 && child_style.justify_content.distribution
                                                     == openui_style::ContentDistribution::Default
                                                 && !continuation_has_adjacent_column_flex_item
+                                                // A max-constrained flexbox has separate
+                                                // principal and item source extents. Its
+                                                // parallel item continuation ends at the
+                                                // item's source boundary, even when the
+                                                // rounded fragmentainer has room left.
+                                                && !child_has_fragmentable_in_flow_overflow
                                             {
                                                 let needed_fragment_height = (content_shift
                                                     - original_child_top)
@@ -31004,13 +31045,16 @@ fn layout_multicol(
                                 }
                                 part.skip_box_decoration = true;
                             }
-                            // Flex/grid items retain geometry assigned by
-                            // their own fragmentation algorithms, including
-                            // parallel overflow across forced breaks. Only
-                            // ordinary block and flow-root containers materialize these
-                            // empty normal-flow descendants from a source
-                            // slice here.
-                            if matches!(child_style.display, Display::Block | Display::FlowRoot) {
+                            // Ordinary block and flow-root children, plus a
+                            // constrained column flexbox's parallel item flow,
+                            // use the current multicol's source slice. Other
+                            // flex/grid items retain geometry assigned by their
+                            // own fragmentation algorithms.
+                            if matches!(child_style.display, Display::Block | Display::FlowRoot)
+                                || (child_style.display == Display::Flex
+                                    && child_style.flex_direction.is_column()
+                                    && child_has_fragmentable_in_flow_overflow)
+                            {
                                 materialize_leaf_block_slices(
                                     &mut part,
                                     doc,

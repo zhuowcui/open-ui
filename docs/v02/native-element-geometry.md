@@ -198,3 +198,9 @@ first-fragment fallback. Rust and C consumers now assert the final empty
 column's position, and the Rust application verifies matching accessibility
 bounds and owned snapshots. All five zero-height reduced cases match
 Chromium in complete geometry; every one of the 65 PNGs stays unchanged.
+
+The combined [column-flex and empty-bounds checkpoint](../renderer/native-column-flex-overflow.md#combined-native-checkpoint)
+now matches the original reduced sweep in complete geometry and pixels for
+60/65 comparisons. Its public native Rust application matches both for eight
+case variants at all five scales. All 144 atomic guards remain exact; row/
+reversed flex, following-block paint order and cloned decoration remain open.
