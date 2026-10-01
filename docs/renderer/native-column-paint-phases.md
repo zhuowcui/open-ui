@@ -71,3 +71,10 @@ differences and zero errors. All 9,280 candidate images and Chromium oracle
 identities match the preceding checkpoint, with no formerly exact regression.
 Candidate measurements from the development checkout are diagnostic evidence;
 they are not clean-source release qualification.
+
+The accepted clean `056421db` checkpoint now passes
+[640/640 focused and 960/960 primitive comparisons](generated/focused-primitive-raster-v50.json)
+at all 40 profiles. All 1,600 Open UI RGBA images, Chromium RGBA images and
+oracle identities remain unchanged from `497e322d`. The clean original and
+expanded matrices at this source are still running. This exact raster result
+does not close the wider renderer, native interaction or release gates.

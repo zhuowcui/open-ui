@@ -10,7 +10,7 @@ claimed by source code alone.
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
 | Four-profile renderer matrix | 21,291/22,924 exact, 1,633 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v47.json); every image and oracle identity unchanged from `e9211183`, including its four worsened failures | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact at clean `497e322d` in the [latest raster index](../renderer/generated/focused-primitive-raster-v49.json); its complete original/expanded reports are recorded below | pass |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact at clean `056421db` in the [latest raster index](../renderer/generated/focused-primitive-raster-v50.json); every image and oracle identity unchanged from `497e322d`; complete original/expanded runs at this later source remain pending | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
 | Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v30.json); 22,094/23,728 total comparisons exact, 1,634 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
@@ -75,10 +75,14 @@ identity unchanged from `e9211183`. All original rows agree with the complete
 which is 22,094/23,728 exact and retains 200 of 201 exact additions. The
 original command's nonzero tool exit observation remains recorded; the
 terminal report passes complete source, count and hash validation. The
-required pixel gate remains failing. Clean renderer matrices and
+required pixel gate remains failing. At the later `056421db` native paint/input
+checkpoint, the clean [v50 raster matrices](../renderer/generated/focused-primitive-raster-v50.json)
+pass 640/640 focused and 960/960 primitive comparisons, with every image and
+oracle identity unchanged. Its original and expanded matrices and
 [hosted hardening](https://github.com/zhuowcui/open-ui/actions/runs/36823315523)
-at the later `056421db` native paint/input checkpoint are running; incomplete
-results do not qualify that source.
+are still running. Both native sanitizer jobs have failed; their complete logs
+and remaining job outcomes still need review. Incomplete results do not qualify
+that source.
 
 The preceding clean `e9211183` [v46 census](../renderer/generated/four-profile-census-v46.json)
 has the same exact/different totals. Its

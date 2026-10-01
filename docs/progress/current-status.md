@@ -45,10 +45,15 @@ nonzero tool exit observation is preserved in the delta index; its terminal
 report passes the complete count, source and report-hash audit. These results
 do not close residual ownership or the required pixel gate.
 
-Clean original, expanded, focused and primitive matrices for the later native
-paint/input checkpoint `056421db` are running from its preserved clean runner.
+The clean [v50 raster index](../renderer/generated/focused-primitive-raster-v50.json)
+at the later native paint/input checkpoint `056421db` is 640/640 focused and
+960/960 primitive exact. All 1,600 Open UI images and Chromium oracle
+identities remain unchanged from `497e322d`. Its clean original and expanded
+matrices are still running from the preserved runner.
 Its [fresh hosted hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36823315523)
-is also in progress. Incomplete runs are not qualifying evidence.
+is also in progress; both native sanitizer jobs have failed. Complete logs
+and the remaining job outcomes still need review. Incomplete runs are not
+qualifying evidence.
 
 The preceding complete clean checkpoint `547c7081` is
 [21,291/22,924 exact](../renderer/generated/four-profile-census-v45.json),
