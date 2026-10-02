@@ -64,8 +64,9 @@ passes. The neutral gamma implementation is now committed at `63aeb672`;
 its [completed standalone evidence](../renderer/generated/native-png-sampling-v4.json)
 makes 35 additional native PNG images exact against the opacity checkpoint.
 Fresh clean umbrella binaries reproduce all 880 native images from clean
-`ebbe2b6f`, whose complete original and expanded matrices retain the table's
-neutral gamma counts with observed exit 1. All Chromium references remain unchanged.
+`ebbe2b6f`, whose complete original and expanded matrices are 21,308/22,924
+and 22,111/23,728 exact respectively, with observed exit 1. All Chromium
+references remain unchanged.
 Two already failing images each acquire nine differing green-channel cells
 while total channel error decreases; those residuals remain failures. The
 original pixel gate, normal published-consumer builds and residual ownership
@@ -92,13 +93,13 @@ The full locked workspace passes 8,498 tests with 13 ignored at clean
 `8f45444e`. Recorded controls survive live style changes and document drop.
 Fresh complete raster gates pass 640/640 focused and 960/960 primitive exact,
 with all 1,600 native/Chromium images and oracle identities unchanged. Fresh
-clean umbrella binaries reproduce all 850 native controls. Full census reruns
-of the current runtime are running; incomplete results are nonqualifying.
+clean umbrella binaries reproduce all 850 native controls. Pre-repair full
+census reruns at `8f45444e` are running; incomplete results are nonqualifying.
 The earlier complete viewport runs at `574864d0` have finished with observed
 exit 1: 21,292/22,924 original and 22,095/23,728 expanded exact, zero errors.
 All original rows agree between those runs, and 200/201 additions still pass
 all four profiles. Their 16 formerly exact regressions are reproduced by the
-current runtime and owned by `openui-paint`; Chromium inputs are unchanged.
+preceding runtime and owned by `openui-paint`; Chromium inputs are unchanged.
 The [completed report index](../renderer/generated/native-viewport-full-v1.json)
 preserves this failure. The [clean shared clipping repair](../renderer/generated/native-viewport-full-v2.json)
 at `1366b72f` restores
@@ -115,6 +116,15 @@ contracts, archive integrity, formatting, release-source verification and
 7/7 repository metadata accountability pass. The index preserves the first
 audit failure on absent ignored historical PNGs and the successful existing
 clean-checkout audit mode; the strict pixel gate remains unchanged.
+
+Fresh clean umbrella binaries at implementation checkpoint `28cde831`
+[reproduce all 850 native images](../renderer/generated/native-viewport-full-v3.json),
+geometry, callbacks, teardowns and difference signatures from the clean repair
+source. The six renderer crates are cleaned before rebuilding. Source remains
+clean and unchanged through build and both native runs, with observed exit 0;
+fresh umbrella release-source verification passes too. Full original and
+expanded repair censuses remain incomplete, and the 166 native fractional
+pixel failures still fail.
 The generated consumer inventory is corrected to exactly 203 public fields,
 including the existing typed thumb-color property; no unclassified field is
 allowed. All eight generator checks, archive integrity and accountability pass. Runs at

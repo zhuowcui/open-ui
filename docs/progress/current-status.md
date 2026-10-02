@@ -70,15 +70,15 @@ The latest clean implementation passes 8,498 locked workspace tests with
 Fresh complete focused and primitive gates pass 640/640 and 960/960 exact,
 with all 1,600 native and Chromium image hashes and oracle identities unchanged.
 Fresh clean umbrella binaries reproduce all 850 native images, geometry and
-difference signatures. Complete original/expanded reruns of the current
-runtime are running; incomplete results remain nonqualifying.
+difference signatures. Complete pre-repair original/expanded reruns at
+`8f45444e` are running; incomplete results remain nonqualifying.
 
 The [earlier complete viewport runs](../renderer/generated/native-viewport-full-v1.json)
 at `574864d0` have now finished with observed exit 1: 21,292/22,924 original
 and 22,095/23,728 expanded exact, zero errors. Their original rows agree;
 200/201 additions remain exact at every profile. Against neutral gamma,
 30 comparisons change and 16 lose exactness; all Chromium images and oracle
-identities remain fixed. The current `8f45444e` runtime reproduces every one
+identities remain fixed. The preceding `8f45444e` runtime reproduces every one
 of those 16 failed PNGs. These are owned by `openui-paint` and keep the gate
 failing.
 
@@ -99,6 +99,15 @@ integrity, formatting, release-source verification and 7/7 repository metadata
 accountability checks pass. The ordinary audit without clean-checkout mode
 first failed on absent ignored historical PNGs; that log is retained, and
 the existing `--repository-only` mode passes without changing any audit rule.
+
+The [fresh clean umbrella reproduction](../renderer/generated/native-viewport-full-v3.json)
+at implementation checkpoint `28cde831` builds after cleaning the six
+renderer crates and reproduces all 850 native images, geometry, callbacks,
+teardowns and difference signatures from `1366b72f`. Source remains clean
+and unchanged through build and both completed native runs, which have
+observed exit 0. The fresh umbrella release-source verification also passes;
+these checks do not close the 166 native fractional-scale failures or the
+unfinished complete renderer gate.
 The strict generated inventory now accounts for the existing thumb-color
 property: 203 consumed public fields and zero unclassified fields. All eight
 generator checks, archive integrity and the 7/7 accountability audit pass.
