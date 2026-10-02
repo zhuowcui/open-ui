@@ -1192,10 +1192,12 @@ fn paint_fragment_contents(
     let flattens_opacity = can_flatten_box_opacity(fragment, style);
     let needs_layer = style.opacity < 1.0 && !flattens_opacity;
     if needs_layer {
-        if fragment_subtree_has_text(fragment) {
-            // Text-backed opacity groups use Chromium's ordinary N32
+        if fragment_subtree_has_text(fragment) || fragment_subtree_has_images(fragment, doc) {
+            // Text and sampled-image opacity groups use Chromium's ordinary N32
             // intermediate. Its packed alpha is observably different from
-            // an F16 layer for fully covered glyph cells.
+            // an F16 layer for fully covered glyph and image cells. Raster
+            // backgrounds and border images require the same intermediate
+            // as replaced images, including under an ancestor's opacity.
             canvas.save_layer_alpha_f(None, style.opacity);
         } else {
             // Solid/vector-only groups retain float color until the final
@@ -8211,6 +8213,29 @@ fn can_flatten_box_opacity(fragment: &Fragment, style: &ComputedStyle) -> bool {
 
 fn fragment_subtree_has_text(fragment: &Fragment) -> bool {
     fragment.kind == FragmentKind::Text || fragment.children.iter().any(fragment_subtree_has_text)
+}
+
+fn fragment_subtree_has_images(fragment: &Fragment, doc: &Document) -> bool {
+    (!fragment.node_id.is_none()
+        && {
+            let node = doc.node(fragment.node_id);
+            node.tag == ElementTag::Image
+                || node.replaced.is_some()
+                || node
+                    .style
+                    .background_layers
+                    .iter()
+                    .any(|layer| matches!(layer.image, CssImage::Raster(_)))
+                || node
+                    .style
+                    .border_image
+                    .as_ref()
+                    .is_some_and(|border| matches!(border.source, CssImage::Raster(_)))
+        })
+        || fragment
+            .children
+            .iter()
+            .any(|child| fragment_subtree_has_images(child, doc))
 }
 
 fn paint_list_marker(
@@ -22166,6 +22191,49 @@ mod tests {
         let outside = &pixels[..4];
         assert_eq!(center, &[0, 128, 0, 255]);
         assert_eq!(outside, &[255, 255, 255, 255]);
+    }
+
+    #[test]
+    fn raster_background_keeps_packed_opacity_under_an_ancestor() {
+        let mut doc = Document::new();
+        let parent = doc.create_node(ElementTag::Div);
+        let child = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), parent);
+        doc.append_child(parent, child);
+        let image = doc.register_image_resource(
+            "css-backgrounds/support/1x1-green.png",
+            "image/png",
+            "a236213916dd30bd771a233aa1d66381eabf335bf8885304b75a4e2e370d68ce",
+            include_bytes!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/../../../tools/accountability/data/wpt_assets/sp13p/1x1-green.png"
+            ))
+            .to_vec(),
+        );
+        doc.update_resolved_style(parent, |style| style.opacity = 0.5);
+        doc.update_resolved_style(child, |style| {
+            style
+                .background_layers
+                .push(BackgroundLayer::new(CssImage::Raster(image)));
+        });
+        let size = PhysicalSize::new(LayoutUnit::from_i32(12), LayoutUnit::from_i32(12));
+        let mut fragment = Fragment::new_box(parent, size);
+        fragment.children.push(Fragment::new_box(child, size));
+
+        for scale in [1.0_f64, 1.25, 1.5, 2.0, 3.0] {
+            doc.update_resolved_style(parent, |style| style.device_scale_factor = scale);
+            doc.update_resolved_style(child, |style| style.device_scale_factor = scale);
+            let mut surface = surfaces::raster_n32_premul((40, 40)).expect("surface");
+            surface.canvas().clear(skia_safe::Color::WHITE);
+            surface.canvas().scale((scale as f32, scale as f32));
+            let save_count = surface.canvas().save_count();
+            paint_fragment(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+            assert_eq!(surface.canvas().save_count(), save_count);
+            let pixels = surface_bytes(&mut surface);
+            // Repeated Chromium captures of the same RGB source at opacity
+            // 0.5 yield #7ebf7e. F16 instead yields #80bf80 at full coverage.
+            assert_eq!(&pixels[(6 * 40 + 6) * 4..][..4], &[126, 191, 126, 255]);
+        }
     }
 
     #[test]
