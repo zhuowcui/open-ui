@@ -264,6 +264,19 @@ controls. Both trials remain unapplied and do not establish a new full-census
 total. The accepted native API code `9e0f0145` now has its own original and
 expanded censuses running from the unchanged clean checkout and pinned binary;
 no completed result is claimed for those processes.
+A later opaque-layer composition trial at clean `b3c54ea8` restores the four
+scrolling losses. Its affected selection is 172/304 exact, zero errors; all
+other 300 comparisons and all 850 exact native controls remain unchanged.
+One SVG pixel regression remains. Conservative layer-opacity metadata and
+transparent/clipped/effected neighbors must be verified before adopting the
+trial. The [review](../renderer/generated-image-sampling.md#scroll-layer-composition-follow-up)
+rejects direct CPU scroll-content replay, which worsens all four failures.
+Its [completed own-source raster checks](../renderer/generated/native-viewport-full-v16.json)
+are 640/640 focused and 960/960 primitive exact, with observed exits 0 and all
+1,600 comparison invariants unchanged. All trials remain unapplied, and the
+accepted full-census counts remain unchanged.
+All hosted workflows at `fdac09eb` have now completed: six jobs passed and
+five hardening jobs were skipped. Skips remain open qualification work.
 The older solid-tile candidate's complete censuses have finished with observed
 exits 1: 21,308/22,924 original and 22,111/23,728 expanded exact, zero errors.
 All native and Chromium images, oracle identities and difference signatures

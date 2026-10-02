@@ -262,6 +262,20 @@ image-rectangle scroll replay changes none of
 those results. The trials remain unapplied; the selected scope cannot prove
 full renderer qualification or close a release gate.
 
+A clean opaque-layer composition trial at `b3c54ea8` restores all four
+scrolling losses in the same selection, reaching 172/304 exact with zero
+errors. All other 300 comparisons and all 850 exact native controls remain
+unchanged. One SVG pixel regression remains. Conservative opacity metadata,
+transparent/clipped/effected neighbors and full
+original/expanded qualification remain required; the trial stays unapplied.
+Its [complete raster checks](../renderer/generated/native-viewport-full-v16.json)
+finish with observed exits 0: 640/640 focused and 960/960 primitive exact,
+with all 1,600 comparison invariants unchanged.
+The [follow-up review](../renderer/generated-image-sampling.md#scroll-layer-composition-follow-up)
+rejects direct CPU scroll-content replay, which worsens all four failures.
+Hosted workflows at `fdac09eb` have finished with six successful jobs and
+five skipped hardening jobs. Skips do not qualify those hardening gates.
+
 All six ordinary hosted checks at `427f7df4` pass; five skipped hardening jobs
 are unverified. No final-release or later hosted result is claimed.
 The generated consumer inventory is corrected to exactly 203 public fields,

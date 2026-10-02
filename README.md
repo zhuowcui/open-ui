@@ -71,7 +71,10 @@ loses 23 exact Chromium comparisons and gains 14 in its complete census;
 it remains unapplied. A subsequent
 [generated-tile format trial](docs/renderer/generated-image-sampling.md)
 repairs 18 of those regressions in the affected selection, preserving all
-850 exact native controls; five regressions still prevent promotion.
+850 exact native controls. A later opaque-layer composition trial restores
+four more exact comparisons in that selection, leaving one SVG pixel
+regression. Conservative layer-opacity metadata and complete qualification
+remain required before promoting these changes.
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia

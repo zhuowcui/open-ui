@@ -31,6 +31,19 @@ exact regressions remain. This selected diagnostic does not establish a new
 full-census result. The format correction and sampling configuration remain
 unapplied to the umbrella renderer.
 
+A later clean `b3c54ea8` composition trial restores the four scrolling losses
+by following Chromium's `Src` draw for opaque quads. Its affected selection is
+172/304 exact, zero errors, with all other 300 comparisons and all 850 native
+controls unchanged. One SVG pixel regression remains. Background-color opacity
+alone is insufficient layer metadata; conservative coverage/clipping/effect
+proof and neighboring controls are required before adoption. The
+[follow-up](generated-image-sampling.md#scroll-layer-composition-follow-up)
+also rejects direct scroll-content replay, which worsens all four failures.
+These results remain selected diagnostics, with no new full-census total.
+Its [complete raster evidence](generated/native-viewport-full-v16.json) is
+640/640 focused and 960/960 primitive exact, with observed exits 0 and all
+1,600 comparison invariants unchanged. These gates do not qualify the full renderer.
+
 The earlier complete clean `9b158cda` results are
 [21,308/22,924 exact](generated/four-profile-census-v49.json) for the original
 four-profile suite and [22,111/23,728 exact](generated/expanded-requalification-v32.json)
