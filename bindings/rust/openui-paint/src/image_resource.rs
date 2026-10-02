@@ -180,7 +180,7 @@ pub fn decode_image_resource(doc: &Document, id: ImageResourceId) -> Result<Imag
         return Ok(image);
     }
 
-    let image = match resource.mime_type.as_str() {
+    let mut image = match resource.mime_type.as_str() {
         "image/png" | "image/jpeg" => Image::from_encoded(Data::new_copy(&resource.bytes))
             .ok_or_else(|| format!("failed to decode raster resource {}", resource.source))?,
         "image/x-openui-rgba8" => decode_rgba8_resource(resource)?,
@@ -195,12 +195,81 @@ pub fn decode_image_resource(doc: &Document, id: ImageResourceId) -> Result<Imag
             ));
         }
     };
+    // Chromium's SkPngRustCodec omits a custom profile when gAMA is neutral
+    // and no higher-precedence profile or chromaticity is present. Blink then
+    // tags those decoded source samples as sRGB. The libpng codec used by
+    // rust-skia otherwise gives these same bytes a power-2.2 profile, changing
+    // their colors at draw time. Reinterpret the source metadata, retaining
+    // the encoded channel values rather than converting them first.
+    if resource.mime_type == "image/png"
+        && png_has_neutral_gamma_without_color_profile(&resource.bytes)
+    {
+        image = image
+            .reinterpret_color_space(ColorSpace::new_srgb())
+            .ok_or_else(|| {
+                format!(
+                    "failed to retain PNG source color space {}",
+                    resource.source
+                )
+            })?;
+    }
     IMAGE_CACHE.with(|cache| {
         cache
             .borrow_mut()
             .insert(resource.sha256.clone(), image.clone());
     });
     Ok(image)
+}
+
+fn png_chunk_crc32(bytes: &[u8]) -> u32 {
+    let mut crc = u32::MAX;
+    for byte in bytes {
+        crc ^= u32::from(*byte);
+        for _ in 0..8 {
+            crc = (crc >> 1) ^ (0xedb8_8320 & 0_u32.wrapping_sub(crc & 1));
+        }
+    }
+    !crc
+}
+
+fn png_has_neutral_gamma_without_color_profile(bytes: &[u8]) -> bool {
+    if !bytes.starts_with(b"\x89PNG\r\n\x1a\n") {
+        return false;
+    }
+    let mut offset = 8_usize;
+    let mut gamma = None;
+    while let Some(header) = bytes.get(offset..).and_then(|tail| tail.get(..8)) {
+        let length = u32::from_be_bytes(header[..4].try_into().unwrap()) as usize;
+        let kind = &header[4..];
+        let Some(data_end) = offset
+            .checked_add(8)
+            .and_then(|start| start.checked_add(length))
+        else {
+            return false;
+        };
+        let Some(chunk_end) = data_end.checked_add(4).filter(|end| *end <= bytes.len()) else {
+            return false;
+        };
+        match kind {
+            b"cICP" | b"iCCP" | b"sRGB" | b"cHRM" => return false,
+            b"gAMA" if length == 4 => {
+                let expected = u32::from_be_bytes(bytes[data_end..chunk_end].try_into().unwrap());
+                if png_chunk_crc32(&bytes[offset + 4..data_end]) != expected {
+                    return false;
+                }
+                gamma = Some(u32::from_be_bytes(
+                    bytes[offset + 8..data_end].try_into().unwrap(),
+                ));
+            }
+            b"IDAT" => break,
+            _ => {}
+        }
+        offset = chunk_end;
+    }
+    gamma.is_some_and(|gamma| {
+        let relative_gamma = gamma as f32 / 100_000.0 * 2.2;
+        relative_gamma > 0.95 && relative_gamma < 1.05
+    })
 }
 
 /// A fully opaque one-pixel raster has the same sample at every repeated
@@ -2550,6 +2619,58 @@ fn svg_has_explicit_dimension(bytes: &[u8]) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn png_color_chunks(chunks: &[(&[u8; 4], &[u8])]) -> Vec<u8> {
+        let mut bytes = b"\x89PNG\r\n\x1a\n".to_vec();
+        for (kind, data) in chunks {
+            bytes.extend_from_slice(&(data.len() as u32).to_be_bytes());
+            let crc_start = bytes.len();
+            bytes.extend_from_slice(*kind);
+            bytes.extend_from_slice(data);
+            let crc = png_chunk_crc32(&bytes[crc_start..]);
+            bytes.extend_from_slice(&crc.to_be_bytes());
+        }
+        bytes
+    }
+
+    #[test]
+    fn png_neutral_gamma_respects_color_profile_precedence() {
+        let neutral = 45_455_u32.to_be_bytes();
+        assert!(png_has_neutral_gamma_without_color_profile(
+            &png_color_chunks(&[(b"gAMA", &neutral), (b"IDAT", &[]),])
+        ));
+        for kind in [b"cICP", b"iCCP", b"sRGB", b"cHRM"] {
+            for chunks in [
+                vec![(kind, &[][..]), (b"gAMA", &neutral[..])],
+                vec![(b"gAMA", &neutral[..]), (kind, &[][..])],
+            ] {
+                assert!(!png_has_neutral_gamma_without_color_profile(
+                    &png_color_chunks(&chunks)
+                ));
+            }
+        }
+        for gamma in [0_u32, 25_000, 100_000] {
+            assert!(!png_has_neutral_gamma_without_color_profile(
+                &png_color_chunks(&[(b"gAMA", &gamma.to_be_bytes()),])
+            ));
+        }
+    }
+
+    #[test]
+    fn png_neutral_gamma_rejects_corrupt_or_truncated_metadata() {
+        let bytes = png_color_chunks(&[(b"gAMA", &45_455_u32.to_be_bytes())]);
+        for length in 0..bytes.len() {
+            assert!(!png_has_neutral_gamma_without_color_profile(
+                &bytes[..length]
+            ));
+        }
+        let mut corrupt = bytes.clone();
+        *corrupt.last_mut().unwrap() ^= 1;
+        assert!(!png_has_neutral_gamma_without_color_profile(&corrupt));
+        let mut oversized = bytes;
+        oversized[8..12].copy_from_slice(&u32::MAX.to_be_bytes());
+        assert!(!png_has_neutral_gamma_without_color_profile(&oversized));
+    }
 
     #[test]
     fn broken_image_fixed_matrix_preserves_fractional_filter_phases() {
