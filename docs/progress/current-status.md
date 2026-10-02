@@ -201,6 +201,22 @@ pass 640/640 and 960/960 exact with observed exits 0, clean source unchanged,
 and all 1,600 native/Chromium images, oracle identities and differences
 unchanged. Its complete original and expanded censuses are in progress.
 No complete census result or release qualification is claimed for it.
+
+The [private sampling and corner investigation](../renderer/generated/native-viewport-full-v11.json)
+identifies a missing Chromium Skia build setting: `SK_ENABLE_LEGACY_SHADERCONTEXT`.
+Clean `8d103fb1` adds only that setting to the comparison configuration, retains
+the existing Skia pin, and reaches 823/850 exact native viewport images without
+an exact loss or worsened color-channel cell. Its complete focused and primitive
+matrices pass 640/640 and 960/960 exact, with all 1,600 images and oracle identities
+unchanged. Clean `64fa1a7c` then preserves coverage at the independent scrollbar
+corner and reaches 850/850 exact, plus 12/12 exact wider-viewport guards. All
+native geometry, callbacks and teardown checks remain exact; reference bytes
+remain unchanged. These prototypes are unapplied. Their full renderer and
+application qualification remain open; the corner candidate's workspace and
+replacement raster matrices are pending. Its first raster attempts were stopped
+with observed exits 143 because an overlapping workspace test can temporarily
+write a tracked PNG. Those partial outputs are preserved and do not qualify.
+
 All six ordinary hosted jobs at umbrella checkpoint `427f7df4` pass; five
 skipped hardening jobs remain unverified. Later checkpoints require their
 own hosted results.
