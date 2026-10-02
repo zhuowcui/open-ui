@@ -22,12 +22,12 @@ remain open.
 | Application conformance scenarios | 55 across 10 domains |
 | Frozen / current C exports | 84 / 109 |
 | C examples / C++ consumers | 7 / 2, including native C/C++ window consumers |
-| Workspace tests | 8,491 pass; 13 ignored |
+| Workspace tests | 8,492 pass; 13 ignored on clean raster-opacity qualification source |
 | Python closure, qualification, accountability and packaging tests | 244 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The latest complete clean checkpoint `9b158cda` is
+The complete clean checkpoint `9b158cda` is
 [21,308/22,924 exact](../renderer/generated/four-profile-census-v49.json),
 with 1,616 differences, zero errors and 892 unreviewed residual IDs. Its
 [complete delta](../renderer/generated/native-image-full-delta-v1.json)
@@ -48,6 +48,20 @@ hash validation. Their process handles expired before exit codes were observed;
 no exit code is inferred. The source identity remained clean and unchanged
 from build through final audit. These results do not close residual ownership
 or the required pixel gate.
+
+The shared [raster image opacity correction](../renderer/native-png-sampling.md#reviewed-opacity-difference)
+is now committed at umbrella checkpoint `42cce619`. Its
+[completed clean evidence](../renderer/generated/native-png-sampling-v3.json)
+retains 21,308/22,924 original and 22,111/23,728 expanded exact comparisons,
+with every native image and Chromium oracle unchanged from `9b158cda`.
+The full matrices ran on clean `fccbcccb`; all code and build inputs match
+`42cce619`, with only three documentation files differing. Fresh clean umbrella
+consumer builds reproduce all 880 native images and owned bounds. The 540 PNG,
+160 image-opacity, and 180 clipping comparisons are respectively 148, 109,
+and 143 exact, gaining 210 exact results and losing none. One previously
+failing clipped-image edge worsens and remains open. The 40-profile matrices
+remain 640/640 and 960/960 exact. This checkpoint does not close the release
+gate or the remaining native API obligations.
 
 The [native image fallback correction](../renderer/native-image-fallback.md)
 matches all 120 isolated public Rust image states in pixels and owned bounds.

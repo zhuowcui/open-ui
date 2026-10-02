@@ -12,7 +12,7 @@ rendering evidence for that state. Each element behavior needed by a consuming
 application also requires a public Rust operation over the same engine; fixture
 lowering alone does not complete application API coverage.
 
-The latest complete clean `9b158cda` results are
+The complete clean `9b158cda` results are
 [21,308/22,924 exact](generated/four-profile-census-v49.json) for the original
 four-profile suite and [22,111/23,728 exact](generated/expanded-requalification-v32.json)
 for the expanded suite, both with zero errors. The
@@ -25,6 +25,17 @@ The clean [40-profile raster index](generated/focused-primitive-raster-v51.json)
 remains 640/640 focused and 960/960 primitive exact with unchanged pixels.
 The 1,616 original differences and 892 unreviewed residual IDs keep the
 renderer gate open. The older checkpoint records below remain provenance.
+
+The subsequent shared raster opacity correction is committed at umbrella
+checkpoint `42cce619`. Its [completed clean evidence](generated/native-png-sampling-v3.json)
+retains every original and expanded native and Chromium pixel, with the same
+counts above and exact 640/640 focused and 960/960 primitive matrices. Those
+matrices ran on clean `fccbcccb`; all code and build inputs match the umbrella
+checkpoint, with only three documentation files differing. Fresh clean
+umbrella builds reproduce all 880 native image controls. They gain 210 exact
+comparisons with no exact regression; one already failing clipped-image edge
+worsens and remains open. This is a renderer checkpoint, not a declaration
+of release qualification.
 
 Static media presentation may consume a generated first frame. Those pixels
 are decoded ahead of rendering by the Chromium-matched codec revision, bound

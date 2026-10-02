@@ -1,5 +1,10 @@
 # SP14 — Deterministic Text Porting
 
+> Historical sprint record. The current pixel target is Chromium, and old
+> Open UI screenshots are provenance. JavaScript references describe Chromium
+> test sources. Open UI executes no JavaScript; needed interaction belongs in
+> the [public native Rust API](v02/supported-platforms.md#native-interaction-api).
+
 ## Status
 
 SP14 W0–W4 is complete. The full 4,045-row unported text backlog is closed:

@@ -10,7 +10,8 @@ weak element handle cannot keep the document alive after teardown.
 
 The current branch builds this consumer under the checked-in Chromium Cargo
 configuration. All 540 runs execute the callback exactly once, release the
-document, and match Chromium's element bounds. Only 74 images are pixel-exact.
+document, and match Chromium's element bounds. After the raster opacity
+correction, 148 images are pixel-exact.
 Working application APIs do not establish pixel qualification.
 
 For example, from `bindings/rust`, the retained green fixture can be rendered
@@ -35,12 +36,13 @@ identically. Open UI creates every state with Rust operations.
 
 | Diagnostic implementation | Exact pixels | Exact owned bounds and native callback checks |
 |---|---:|---:|
-| Current branch renderer | 74/540 | 540/540 |
+| Previous renderer `9b158cda` | 74/540 | 540/540 |
+| Current branch renderer `42cce619` | 148/540 | 540/540 |
 | Earlier unapplied renderer prototypes, N32 image patches | 98/540 | 540/540 |
 | RGBA image patch format experiment, rejected | 95/540 | 540/540 |
 | Neutral PNG gamma interpretation prototype | 146/540 | 540/540 |
 | Raster decoration opacity with the earlier prototypes | 196/540 | 540/540 |
-| Isolated raster opacity change on the current renderer, unapplied | 148/540 | 540/540 |
+| Clean isolated raster opacity qualification source `fccbcccb` | 148/540 | 540/540 |
 
 These are diagnostic cases; none has been admitted to the release manifest.
 The [evidence index](generated/native-png-sampling-v1.json) records source,
@@ -90,7 +92,7 @@ group. It changes shared paint behavior, adds no build flags, and has no
 filename or test-ID condition. Its regression test paints a raster background
 inside a translucent parent at five scales.
 
-The [clean source measurements](generated/native-png-sampling-v2.json) improve
+The [completed measurements](generated/native-png-sampling-v3.json) improve
 all 270 changed PNG comparisons, make 74 more exact, and preserve all 540
 native callbacks, owned bounds, and teardown checks. The existing image-opacity
 consumer improves all 160 comparisons, making 109 exact. The 180 failed-image
@@ -101,14 +103,33 @@ open under `openui-paint` ownership.
 All 8,492 workspace tests pass, with 13 ignored. The focused and primitive
 40-profile gates pass at 640/640 and 960/960, with every PNG and decoded pixel
 unchanged from C9. The 1,256 original image and opacity guards are also
-unchanged. The complete original census is still running; the expanded census
-has not run for this isolated patch. The patch remains unapplied to the
-umbrella branch and is not release qualification.
+unchanged. Both complete clean censuses have finished: 21,308/22,924 original
+and 22,111/23,728 expanded comparisons are exact, with zero errors. Every
+Open UI and Chromium image and oracle identity remains unchanged from C9;
+all original rows agree between the two suites. The same 200 of 201 additions
+are exact across four profiles. The failing fieldset addition remains in the
+contract.
+
+The opacity correction is committed on the umbrella branch at `42cce619`.
+The full matrices ran on clean `fccbcccb`; its code and build inputs match
+the umbrella checkpoint, with three documentation files differing. A fresh
+clean umbrella build reproduces all 880 native images and owned bounds.
+This attribution does not claim a full matrix ran on the umbrella source
+identity. The older [v2 evidence](generated/native-png-sampling-v2.json) and
+patch remain historical records. The original pixel gate and the worsened
+failed-image edge remain open; this checkpoint is not release qualification.
 
 Two separate edge trials are rejected: adding an analytic AA clip worsens
 51 native comparisons, and drawing an AA shader rectangle worsens 33. Neither
 increases the native suite's exact count. Their measurements are preserved
-in the same evidence index.
+in the earlier evidence index. A later RGBA root-surface trial loses 215 exact
+native results and is rejected. An opacity-bounds hint and a packed silver
+stroke-color trial change no native pixels and are also left unapplied.
+
+The four audited Skia clipping, canvas, and raster-blitter source files have
+identical bytes at the Chromium pin and installed rust-skia revision. This
+rules out a source-version difference in those files; it does not establish
+the remaining edge's cause. Their pinned source hashes are in the v3 index.
 
 ## Remaining work
 

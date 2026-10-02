@@ -9,8 +9,8 @@ claimed by source code alone.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | 21,308/22,924 exact, 1,616 different, zero errors against cached Chromium captures in the [latest clean census](../renderer/generated/four-profile-census-v49.json); 17 newly exact, no worsened comparison or exact regression from `056421db`, Chromium images and identities unchanged; 892 residual IDs still lack reviewed ownership | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact at clean `9b158cda` in the [latest raster index](../renderer/generated/focused-primitive-raster-v51.json); every image and oracle identity unchanged from `056421db` | pass |
+| Four-profile renderer matrix | 21,308/22,924 exact, 1,616 different, zero errors in the [completed clean opacity census](../renderer/generated/native-png-sampling-v3.json); all pixels and oracle identities unchanged from the [C9 census](../renderer/generated/four-profile-census-v49.json); 892 residual IDs still lack reviewed ownership | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact on clean raster-opacity qualification source in the [completed evidence](../renderer/generated/native-png-sampling-v3.json); every image and oracle identity unchanged from C9 | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
 | Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v32.json); 22,111/23,728 total comparisons exact, 1,617 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
@@ -51,8 +51,15 @@ fixture does not close a native application API gap.
 
 The [native PNG application](../renderer/native-png-sampling.md) verifies
 resource registration, typed image styles, mutation through Rust callbacks,
-owned bounds, and teardown in 540 runs on the current branch. Only 74 of those
-images match Chromium exactly. An unapplied PNG metadata prototype makes
+owned bounds, and teardown in 540 runs on the current branch. After the shared
+raster opacity correction, 148 of those images match Chromium exactly.
+The [completed opacity evidence](../renderer/generated/native-png-sampling-v3.json)
+records unchanged full original and expanded matrices on clean source with
+the same code and build inputs as umbrella checkpoint `42cce619`, plus fresh
+clean umbrella consumer runs. The image-opacity and clipping consumers gain
+109 and 27 exact results respectively. No exact result is lost; one existing
+failed-image edge worsens and remains open. These cases add no admitted release
+passes. An unapplied PNG metadata prototype makes
 48 additional images exact against a preceding unapplied renderer, with no
 exact regression in the reduced sweep. Its standalone and complete clean
 qualification remain open; these controls add no admitted release passes.
