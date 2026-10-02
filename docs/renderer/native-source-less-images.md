@@ -75,7 +75,10 @@ evidence and the renderer remains unapplied.
 The SVG decoration path also contains an existing `49/50` opacity adjustment.
 Its comment alone does not establish a Chromium paint rule. That adjustment
 needs source and command-trace review and a shared geometry/compositing repair;
-a coincidentally exact screenshot cannot justify a pixel correction.
+a coincidentally exact screenshot cannot justify a pixel correction. The
+[later SVG viewport investigation](native-svg-viewport.md) finds the incorrect
+fragment size and replaces the adjustment in an unapplied shared prototype.
+Its broader native controls still fail, so that work is not release evidence.
 
 ## Release status
 

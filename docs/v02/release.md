@@ -66,6 +66,14 @@ is 1,673/1,800 exact across 360 script-free native states and five scales,
 with all owned bounds exact. It remains unapplied and does not qualify the
 complete renderer or admit new release cases.
 
+The [native SVG viewport investigation](../renderer/native-svg-viewport.md)
+uses a proposed public Rust element constructor, with 134/480 exact pixel
+comparisons and 480/480 exact owned bounds across 96 script-free controls.
+Its workspace passes 8,492 tests, but the patch remains unapplied: 346 native
+comparisons still differ and other required renderer qualification remains
+open. The former `49/50` SVG opacity adjustment is replaced in that prototype
+by viewport sizing and shared border drawing; no reference pixels change.
+
 The [native column paint and input checkpoint](../renderer/native-column-paint-phases.md)
 verifies public Rust position/opacity mutations, pointer queries and a Rust
 click callback, with C consumers over the same engine. Its 55 native states

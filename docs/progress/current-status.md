@@ -92,6 +92,17 @@ separate complete V2 original census is 21,302/22,924 exact, with 1,622
 differences, zero errors and 23 formerly exact regressions. Its source checks
 pass and all Chromium references remain unchanged; the prototype is rejected.
 
+The [native SVG viewport investigation](../renderer/native-svg-viewport.md)
+adds 96 script-free states through a proposed public Rust element constructor.
+Its latest unapplied prototype is 134/480 pixel-exact and 480/480 exact in
+owned bounds. The tiny double-border control is exact at all five scales,
+but 346 native comparisons still differ and 54 already failing comparisons
+worsen against the first viewport prototype. The locked workspace passes
+8,492 tests with zero failures and 13 ignored. The old `49/50` SVG opacity
+adjustment is removed in the prototype in favor of fixed viewport geometry
+and shared border drawing. This remains diagnostic work; the accepted
+renderer and release counts are unchanged.
+
 The preceding `497e322d`
 [delta index](../renderer/generated/native-column-flex-full-delta-v1.json)
 retains the original command's exit-143 observation alongside its complete

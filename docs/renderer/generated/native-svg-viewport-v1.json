@@ -1,0 +1,1051 @@
+{
+  "accepted_c9_results": {
+    "different": 1616,
+    "errors": 0,
+    "exact": 21308,
+    "total": 22924
+  },
+  "accepted_renderer_unchanged": true,
+  "affected_wpt_guards": {
+    "deltas": {
+      "accepted_c9": {
+        "all_chromium_bytes_and_oracle_identities_unchanged": true,
+        "baseline": {
+          "path": "out/renderer-evidence/native-image-clean-9b158cda-rerun-v2/original/full-summary.json",
+          "sha256": "d74a544b679a8b46d7d88ffa937113a2aa4937da25e604576503164d3a6f8877"
+        },
+        "changed": 116,
+        "changes": [
+          {
+            "after": 0,
+            "before": 562,
+            "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-image-4-ref",
+            "profile": "legacy-800x600@1"
+          },
+          {
+            "after": 428,
+            "before": 428,
+            "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius",
+            "profile": "legacy-800x600@1"
+          },
+          {
+            "after": 260,
+            "before": 633,
+            "id": "wpt/css_backgrounds/border-radius-clip-001",
+            "profile": "legacy-800x600@1"
+          },
+          {
+            "after": 2,
+            "before": 13,
+            "id": "wpt/css_backgrounds/border-radius-clip-002",
+            "profile": "legacy-800x600@1"
+          },
+          {
+            "after": 0,
+            "before": 77,
+            "id": "wpt/css_backgrounds/border-radius-content-edge-001",
+            "profile": "legacy-800x600@1"
+          },
+          {
+            "after": 0,
+            "before": 900,
+            "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-image-4-ref",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 4002,
+            "before": 3995,
+            "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 661,
+            "before": 1402,
+            "id": "wpt/css_backgrounds/border-radius-clip-001",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 0,
+            "before": 33,
+            "id": "wpt/css_backgrounds/border-radius-clip-002",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 115,
+            "before": 172,
+            "id": "wpt/css_backgrounds/border-radius-content-edge-001",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 0,
+            "before": 4,
+            "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 0,
+            "before": 189,
+            "id": "wpt/css_overflow/overflow-replaced-element-002",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 0,
+            "before": 189,
+            "id": "wpt/css_overflow/overflow-replaced-element-002-ref",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 0,
+            "before": 8,
+            "id": "wpt/css_sizing/aspect-ratio_large-aspect-ratio-crash",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 732,
+            "before": 361,
+            "id": "wpt/css_backgrounds/background-334",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 250,
+            "id": "wpt/css_backgrounds/background-attachment-fixed-border-radius-offset",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 250,
+            "id": "wpt/css_backgrounds/background-attachment-fixed-border-radius-offset-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 1061,
+            "before": 1688,
+            "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-image-4-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 4759,
+            "before": 4959,
+            "id": "wpt/css_backgrounds/background-clip_clip-content-box_with_radius",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 6812,
+            "before": 6769,
+            "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 503,
+            "before": 504,
+            "id": "wpt/css_backgrounds/background-image-cover-zoomed-1",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 2576,
+            "before": 2585,
+            "id": "wpt/css_backgrounds/background-repeat-space-1-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 163,
+            "before": 163,
+            "id": "wpt/css_backgrounds/background-repeat-space-2",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 163,
+            "before": 163,
+            "id": "wpt/css_backgrounds/background-repeat-space-2-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 1809,
+            "before": 1819,
+            "id": "wpt/css_backgrounds/background-repeat-space-3-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 2036,
+            "before": 2049,
+            "id": "wpt/css_backgrounds/background-repeat-space-4-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 2190,
+            "before": 2202,
+            "id": "wpt/css_backgrounds/background-repeat-space-5-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 3407,
+            "before": 3423,
+            "id": "wpt/css_backgrounds/background-repeat-space-6-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 3732,
+            "before": 3747,
+            "id": "wpt/css_backgrounds/background-repeat-space-7-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 222,
+            "before": 340,
+            "id": "wpt/css_backgrounds/background-repeat_background-repeat-no-repeat",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 290,
+            "before": 290,
+            "id": "wpt/css_backgrounds/background-size_background-size-cover",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 311,
+            "before": 249,
+            "id": "wpt/css_backgrounds/border-image-017",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 311,
+            "before": 249,
+            "id": "wpt/css_backgrounds/border-image-018",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 311,
+            "before": 249,
+            "id": "wpt/css_backgrounds/border-image-019",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 311,
+            "before": 249,
+            "id": "wpt/css_backgrounds/border-image-020",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 471,
+            "before": 500,
+            "id": "wpt/css_backgrounds/border-image-shorthand-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 852,
+            "before": 854,
+            "id": "wpt/css_backgrounds/border-image-shorthand-003",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 311,
+            "before": 249,
+            "id": "wpt/css_backgrounds/border-image-slice-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 311,
+            "before": 249,
+            "id": "wpt/css_backgrounds/border-image-slice-002",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 4191,
+            "before": 4209,
+            "id": "wpt/css_backgrounds/border-image-slice-005",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 4191,
+            "before": 4209,
+            "id": "wpt/css_backgrounds/border-image-slice-007",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 182,
+            "before": 182,
+            "id": "wpt/css_backgrounds/border-image-width-005",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 182,
+            "before": 182,
+            "id": "wpt/css_backgrounds/border-image-width-006",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 27,
+            "before": 60,
+            "id": "wpt/css_backgrounds/border-radius-013",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 505,
+            "before": 955,
+            "id": "wpt/css_backgrounds/border-radius-clip-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 20,
+            "id": "wpt/css_backgrounds/border-radius-clip-002",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 87,
+            "before": 195,
+            "id": "wpt/css_backgrounds/border-radius-content-edge-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 1030,
+            "before": 1135,
+            "id": "wpt/css_backgrounds/box-shadow_box-shadow-blur-definition-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 3,
+            "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 125,
+            "before": 250,
+            "id": "wpt/css_break/table_repeated-section_image.tentative",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 394,
+            "before": 394,
+            "id": "wpt/css_flexbox/flex-aspect-ratio-img-row-014",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 310,
+            "id": "wpt/css_flexbox/flex-item-z-ordering-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 125,
+            "id": "wpt/css_flexbox/flex-minimum-width-flex-items-013",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 742,
+            "before": 847,
+            "id": "wpt/css_flexbox/flexbox-basic-img-horiz-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 742,
+            "before": 847,
+            "id": "wpt/css_flexbox/flexbox-basic-img-horiz-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 942,
+            "before": 950,
+            "id": "wpt/css_flexbox/flexbox-basic-img-vert-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 940,
+            "before": 950,
+            "id": "wpt/css_flexbox/flexbox-basic-img-vert-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 626,
+            "before": 626,
+            "id": "wpt/css_flexbox/flexbox-min-width-auto-006",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 65,
+            "before": 63,
+            "id": "wpt/css_flexbox/flexbox-whitespace-handling-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 65,
+            "before": 63,
+            "id": "wpt/css_flexbox/flexbox-whitespace-handling-001a",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 65,
+            "before": 63,
+            "id": "wpt/css_flexbox/flexbox-whitespace-handling-001b",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 524,
+            "before": 524,
+            "id": "wpt/css_multicol/multicol-collapsing-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 450,
+            "before": 450,
+            "id": "wpt/css_multicol/multicol-rule-color-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 500,
+            "before": 500,
+            "id": "wpt/css_multicol/multicol-rule-fraction-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 2711,
+            "before": 3603,
+            "id": "wpt/css_overflow/overflow-replaced-element-002",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 2711,
+            "before": 3603,
+            "id": "wpt/css_overflow/overflow-replaced-element-002-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 123,
+            "before": 124,
+            "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-055",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 1576,
+            "id": "wpt/css_sizing/aspect-ratio_large-aspect-ratio-crash",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 125,
+            "id": "wpt/css_sizing/aspect-ratio_replaced-element-031",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 200,
+            "before": 200,
+            "id": "wpt/css_sizing/image-min-max-content-intrinsic-size-change-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 347,
+            "before": 348,
+            "id": "wpt/css_sizing/image-min-max-content-intrinsic-size-change-003-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 1064,
+            "before": 2132,
+            "id": "wpt/css_sizing/intrinsic-percent-replaced-009",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 1064,
+            "before": 2132,
+            "id": "wpt/css_sizing/intrinsic-percent-replaced-009-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 1617,
+            "before": 2381,
+            "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-image-4-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 1293,
+            "before": 1256,
+            "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 1744,
+            "before": 1748,
+            "id": "wpt/css_backgrounds/background-repeat-space-1-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 1456,
+            "before": 1458,
+            "id": "wpt/css_backgrounds/background-repeat-space-3-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 1880,
+            "before": 1881,
+            "id": "wpt/css_backgrounds/background-repeat-space-4-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 1880,
+            "before": 1881,
+            "id": "wpt/css_backgrounds/background-repeat-space-5-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 2744,
+            "before": 2751,
+            "id": "wpt/css_backgrounds/background-repeat-space-6-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 2744,
+            "before": 2751,
+            "id": "wpt/css_backgrounds/background-repeat-space-7-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 145,
+            "before": 288,
+            "id": "wpt/css_backgrounds/background-repeat_background-repeat-no-repeat",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 761,
+            "before": 761,
+            "id": "wpt/css_backgrounds/background-size_background-size-cover",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 75,
+            "before": 225,
+            "id": "wpt/css_backgrounds/border-image-017",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 75,
+            "before": 225,
+            "id": "wpt/css_backgrounds/border-image-018",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 75,
+            "before": 225,
+            "id": "wpt/css_backgrounds/border-image-019",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 75,
+            "before": 225,
+            "id": "wpt/css_backgrounds/border-image-020",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 75,
+            "before": 225,
+            "id": "wpt/css_backgrounds/border-image-slice-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 75,
+            "before": 225,
+            "id": "wpt/css_backgrounds/border-image-slice-002",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 30,
+            "before": 58,
+            "id": "wpt/css_backgrounds/border-radius-013",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 421,
+            "before": 966,
+            "id": "wpt/css_backgrounds/border-radius-clip-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 25,
+            "id": "wpt/css_backgrounds/border-radius-clip-002",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 38,
+            "before": 226,
+            "id": "wpt/css_backgrounds/border-radius-content-edge-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 741,
+            "before": 742,
+            "id": "wpt/css_backgrounds/box-shadow_box-shadow-blur-definition-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 4,
+            "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 472,
+            "before": 472,
+            "id": "wpt/css_flexbox/flex-aspect-ratio-img-row-014",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 187,
+            "id": "wpt/css_flexbox/flex-item-z-ordering-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 856,
+            "before": 1622,
+            "id": "wpt/css_flexbox/flexbox-basic-img-horiz-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 856,
+            "before": 1622,
+            "id": "wpt/css_flexbox/flexbox-basic-img-horiz-001-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 1270,
+            "before": 2430,
+            "id": "wpt/css_flexbox/flexbox-basic-img-vert-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 1270,
+            "before": 2430,
+            "id": "wpt/css_flexbox/flexbox-basic-img-vert-001-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 602,
+            "before": 602,
+            "id": "wpt/css_flexbox/flexbox-min-width-auto-006",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 150,
+            "before": 156,
+            "id": "wpt/css_flexbox/flexbox-whitespace-handling-001-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 150,
+            "before": 156,
+            "id": "wpt/css_flexbox/flexbox-whitespace-handling-001a",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 150,
+            "before": 156,
+            "id": "wpt/css_flexbox/flexbox-whitespace-handling-001b",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 629,
+            "before": 629,
+            "id": "wpt/css_multicol/multicol-collapsing-001-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 360,
+            "before": 360,
+            "id": "wpt/css_multicol/multicol-rule-color-001-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 360,
+            "before": 360,
+            "id": "wpt/css_multicol/multicol-rule-fraction-001-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 7308,
+            "before": 7885,
+            "id": "wpt/css_overflow/overflow-replaced-element-002",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 7308,
+            "before": 7885,
+            "id": "wpt/css_overflow/overflow-replaced-element-002-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 149,
+            "before": 152,
+            "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-055",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 2855,
+            "id": "wpt/css_sizing/aspect-ratio_large-aspect-ratio-crash",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 121,
+            "before": 121,
+            "id": "wpt/css_sizing/image-min-max-content-intrinsic-size-change-001-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 211,
+            "before": 211,
+            "id": "wpt/css_sizing/image-min-max-content-intrinsic-size-change-003-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 3849,
+            "before": 3852,
+            "id": "wpt/css_sizing/intrinsic-percent-replaced-009",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 3849,
+            "before": 3852,
+            "id": "wpt/css_sizing/intrinsic-percent-replaced-009-ref",
+            "profile": "desktop-1920x1080@1.5"
+          }
+        ],
+        "exact_regressions": 0,
+        "improved": 83,
+        "new_exact": 20,
+        "worsened": 13
+      },
+      "preceding_prototype": {
+        "all_chromium_bytes_and_oracle_identities_unchanged": true,
+        "baseline": {
+          "path": "out/renderer-evidence/native-generated-sampling-v1/changed-guards-v4/full-summary.json",
+          "sha256": "70a91664931091249c27653c0345e6f18fb75d68feeb68dc6e75a2d0e96ba27b"
+        },
+        "changed": 4,
+        "changes": [
+          {
+            "after": 0,
+            "before": 1,
+            "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+            "profile": "legacy-800x600@1"
+          },
+          {
+            "after": 0,
+            "before": 4,
+            "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 0,
+            "before": 3,
+            "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 4,
+            "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+            "profile": "desktop-1920x1080@1.5"
+          }
+        ],
+        "exact_regressions": 0,
+        "improved": 4,
+        "new_exact": 4,
+        "worsened": 0
+      }
+    },
+    "evidence": {
+      "binary_unchanged": true,
+      "kind": "diagnostic-census",
+      "qualification_backend_match": true,
+      "qualified": false,
+      "source_unchanged": true,
+      "tolerance_pixels": 0
+    },
+    "exit_code": 1,
+    "report": {
+      "path": "out/renderer-evidence/native-svg-decoration-v1/changed-guards-v5/full-summary.json",
+      "sha256": "5d7b192fea1d1fc4541f84dcba6ae6a07bcc303139ed120a821cf35e585ba7be"
+    },
+    "results": {
+      "different": 130,
+      "errors": 0,
+      "exact": 182,
+      "profile_result_sha256": "7a2c5dce2e2a2297ade547aca0f96811e1e5e6c048f1182e7b8f1e3ca3e9fcbc",
+      "total": 312
+    }
+  },
+  "chromium_picture_traces": [
+    {
+      "metadata": {
+        "path": "out/renderer-evidence/native-svg-decoration-v1/picture-trace-v1/metadata.json",
+        "sha256": "2144b7bf3a0a858268886ea98ccf620ca7677863beac6a6f61351c6ce00cec45"
+      },
+      "screenshots_identical_to_immutable_oracles": true,
+      "traced_inputs": 1
+    },
+    {
+      "metadata": {
+        "path": "out/renderer-evidence/native-svg-decoration-v1/picture-trace-fractional-v2/metadata.json",
+        "sha256": "939c6e60caad5a8f7208816194cb02fc3dd78d44f385b664443d2b8153e19add"
+      },
+      "screenshots_identical_to_immutable_oracles": true,
+      "traced_inputs": 2
+    },
+    {
+      "metadata": {
+        "path": "out/renderer-evidence/native-svg-decoration-v1/picture-trace-native-v3/metadata.json",
+        "sha256": "25cca53371a28c04f42637ce8936dbd9a67fc8b8e047ab2d11baf2f34dde868d"
+      },
+      "screenshots_identical_to_immutable_oracles": true,
+      "traced_inputs": 4
+    }
+  ],
+  "chromium_sources": [
+    {
+      "path": "out/renderer-evidence/native-svg-decoration-v1/pinned-source-v1/layout_svg_foreign_object.cc",
+      "sha256": "fc4a3dbd3561cafaa238cefcb1e60e5c6a5388f99da5277840b01761d977240d",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/third_party/blink/renderer/core/layout/svg/layout_svg_foreign_object.cc"
+    },
+    {
+      "path": "out/renderer-evidence/native-svg-decoration-v1/pinned-source-v1/svg_foreign_object_painter.cc",
+      "sha256": "39d5d8641db316470bd1162dfdba10c813d449bbb82febe927b151ad0ed6b9e8",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/third_party/blink/renderer/core/paint/svg_foreign_object_painter.cc"
+    },
+    {
+      "path": "out/renderer-evidence/native-svg-decoration-v1/pinned-source-v1/svg.css",
+      "sha256": "bcf80bc68a433419b2d9024f8cae288399582b796a61a67bfc53c4c9f6b25240",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/third_party/blink/renderer/core/css/svg.css"
+    },
+    {
+      "path": "out/renderer-evidence/native-svg-decoration-v1/pinned-source-v1/box_border_painter.cc",
+      "sha256": "df610e882fc43bb756e031a1741f4516ab82a655b7cbd6f30e73946ccdaf4fa9",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/third_party/blink/renderer/core/paint/box_border_painter.cc"
+    },
+    {
+      "path": "out/renderer-evidence/native-svg-decoration-v1/pinned-source-v1/border_edge.cc",
+      "sha256": "fef1b151ca68c0bab96d68592dc93857eb1c37da61881127b0a73168c3bc8f67",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/third_party/blink/renderer/core/style/border_edge.cc"
+    },
+    {
+      "path": "out/renderer-evidence/native-svg-decoration-v1/pinned-source-v1/svg_root_painter.cc",
+      "sha256": "6679eb8c7471f617bf0f249275ff5b77e79c1d8b26e14d5f4253c3c2d93c14b6",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/third_party/blink/renderer/core/paint/svg_root_painter.cc"
+    }
+  ],
+  "complete_original_census": {
+    "exit_code": null,
+    "qualifying": false,
+    "results_path": "out/renderer-evidence/native-svg-decoration-v1/wider-v5/original/full-summary.json",
+    "status": "running"
+  },
+  "focused_and_primitive": [
+    {
+      "all_native_and_chromium_bytes_unchanged_against_c9": true,
+      "evidence": {
+        "binary_unchanged": true,
+        "kind": "diagnostic-census",
+        "qualification_backend_match": true,
+        "qualified": false,
+        "source_unchanged": true,
+        "tolerance_pixels": 0
+      },
+      "report": {
+        "path": "out/renderer-evidence/native-svg-decoration-v1/focused-v5/focused-summary.json",
+        "sha256": "8302687c7e47c4b99fc970c41dc14239fe16bea29bd5557d0ce8346748ef99e2"
+      },
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "c13b84cec4ab2e8dd3fcc3e757d68cd10f9e18e1594dfede2abcc929921299c4",
+        "total": 640
+      },
+      "suite": "focused"
+    },
+    {
+      "all_native_and_chromium_bytes_unchanged_against_c9": true,
+      "evidence": {
+        "binary_unchanged": true,
+        "kind": "diagnostic-census",
+        "qualification_backend_match": true,
+        "qualified": false,
+        "source_unchanged": true,
+        "tolerance_pixels": 0
+      },
+      "report": {
+        "path": "out/renderer-evidence/native-svg-decoration-v1/primitive-v5/primitive-summary.json",
+        "sha256": "805f0a929944adbec018e4d6a52ef7cd4af3b887df0302445cb086b583d12a28"
+      },
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "964ca5680583fd5915562212637bf380b70f01dc4bf201aa88d0dcfaca4379b4",
+        "total": 960
+      },
+      "suite": "primitive"
+    }
+  ],
+  "javascript_executed_by_openui": false,
+  "native_cases": {
+    "admitted": false,
+    "comparisons": 480,
+    "manifest": {
+      "path": "docs/renderer/evidence/native-svg-decoration-v1/cases.json",
+      "sha256": "9dfe5d60dd4471f2661b83ef428ba52945d9bf0da0071e4c1693074ca7831217"
+    },
+    "measurements": [
+      {
+        "binary_sha256": "78f0f0d804276449f236ed82a28d1c9d7b21d8272d0de771727c5d5c6633e3c3",
+        "delta_against_first_viewport": {
+          "exact_regressions": 0,
+          "improved": 0,
+          "new_exact": 0,
+          "worsened": 0
+        },
+        "different": 406,
+        "exact": 74,
+        "label": "viewport-v2",
+        "owned_bounds_exact": 480,
+        "report": {
+          "path": "out/renderer-evidence/native-svg-decoration-v1/viewport-v2-comparison-v1.json",
+          "sha256": "4aebb4a5eeea768ef9f25f0c9c0ffabd0a12f67e67aa73c92b0d1747ee60c211"
+        },
+        "total": 480
+      },
+      {
+        "binary_sha256": "06e26beaead4a2ab4649148b6c647ef11e0229071fe5761eec85d9467d6e7b21",
+        "delta_against_first_viewport": {
+          "exact_regressions": 0,
+          "improved": 56,
+          "new_exact": 40,
+          "worsened": 12
+        },
+        "different": 366,
+        "exact": 114,
+        "label": "empty-inner-v3",
+        "owned_bounds_exact": 480,
+        "report": {
+          "path": "out/renderer-evidence/native-svg-decoration-v1/empty-inner-v3-comparison-v1.json",
+          "sha256": "1e5b8398116afdb8ea6944c708f9c8ac751597f0f58798a767653917419e48cb"
+        },
+        "total": 480
+      },
+      {
+        "binary_sha256": "42f02449ef24e7443f8138e66023c12ed610ba195a12899017653d3191c1361c",
+        "delta_against_first_viewport": {
+          "exact_regressions": 30,
+          "improved": 24,
+          "new_exact": 24,
+          "worsened": 224
+        },
+        "different": 412,
+        "exact": 68,
+        "label": "local-viewport-v4",
+        "owned_bounds_exact": 480,
+        "report": {
+          "path": "out/renderer-evidence/native-svg-decoration-v1/local-viewport-v4-comparison-v1.json",
+          "sha256": "7dc8b13e685f4c259a55f6569b29f73230c6f6c4b95d297c155cea0f1fe049bb"
+        },
+        "total": 480
+      },
+      {
+        "binary_sha256": "b99a30c43a54b72a455e51e94c431ccafa02b794dac381156912f1cb0cb45543",
+        "delta_against_first_viewport": {
+          "exact_regressions": 0,
+          "improved": 68,
+          "new_exact": 60,
+          "worsened": 54
+        },
+        "different": 346,
+        "exact": 134,
+        "label": "snapped-origin-v5",
+        "owned_bounds_exact": 480,
+        "report": {
+          "path": "out/renderer-evidence/native-svg-decoration-v1/snapped-origin-v5-comparison-v1.json",
+          "sha256": "79213e72b670c9fd34557ceec0181532cbc05011e812b4d3286ca3c890972444"
+        },
+        "total": 480
+      }
+    ],
+    "states": 96
+  },
+  "pixel_tolerance": 0,
+  "prototype_identity": {
+    "binary_sha256": "b99a30c43a54b72a455e51e94c431ccafa02b794dac381156912f1cb0cb45543",
+    "build_exit_code": 0,
+    "pixel_compare": {
+      "binary_sha256": "c048c37ae253c35bc12469285440f49a652d1193ff70da6d944cc73b448a7fe7",
+      "build_exit_code": 0,
+      "build_identity": {
+        "schema_version": 1,
+        "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_ENABLE_LEGACY_SHADERCONTEXT\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+        "source": {
+          "clean": false,
+          "commit": "730e46ace9eaa3ca3c010772c5a1921bad5011b3",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "9cba4e1b6a37cdeeba339935ff209aaef602794c8e1131a8a29977dd683d4297",
+          "status_sha256": "36e4af9ec6986ca78404e7383fce41c6b7266339c05a47a12daade28770cdb36"
+        }
+      }
+    },
+    "qualification": false,
+    "source": {
+      "clean": false,
+      "commit": "730e46ace9eaa3ca3c010772c5a1921bad5011b3",
+      "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+      "source_tree_sha256": "9cba4e1b6a37cdeeba339935ff209aaef602794c8e1131a8a29977dd683d4297",
+      "status_sha256": "36e4af9ec6986ca78404e7383fce41c6b7266339c05a47a12daade28770cdb36"
+    }
+  },
+  "release_qualification": false,
+  "remaining_native_root_causes_reviewed": false,
+  "remaining_work": [
+    "346 native pixel failures",
+    "54 previously failing native comparisons worsened against first viewport prototype",
+    "13 previously failing WPT comparisons worsened against accepted C9 in affected guards",
+    "complete original and expanded censuses and clean-source qualification",
+    "SVG coordinate, transform, clipping and border behavior outside these reduced controls"
+  ],
+  "responsible_subsystems": [
+    "openui-engine",
+    "openui",
+    "openui-layout",
+    "openui-paint"
+  ],
+  "schema_version": 1,
+  "standalone_patch": {
+    "applied": false,
+    "applies_to_umbrella_branch": true,
+    "artifact": {
+      "path": "docs/renderer/evidence/native-svg-decoration-v1/svg-viewport-prototype-v5.patch",
+      "sha256": "076976bcb29324e4c162e70c36b3326420d6618026ec307405b2ed15487c77c7"
+    },
+    "measured_build_contains_other_unapplied_prototypes": true,
+    "standalone_build_qualified": false
+  },
+  "workspace": {
+    "artifact_restoration": {
+      "after_tests_sha256": "23b3d97436ebb63a32051c3f17a8e5e50ebc136fd8b4b2b86a64d7a84bfa3b13",
+      "before_sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871",
+      "failed": 0,
+      "ignored": 13,
+      "passed": 8492,
+      "restored_sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871",
+      "source_restored": true,
+      "workspace_exit_code": 0
+    },
+    "exit_code": 0,
+    "failed": 0,
+    "ignored": 13,
+    "log": {
+      "path": "out/renderer-evidence/native-svg-decoration-v1/workspace-tests-v5.log",
+      "sha256": "d6525159ac181048b2b01d0f641fa4ee3185e681b91c5e154ac5d2028a5d6f12"
+    },
+    "passed": 8492
+  }
+}
