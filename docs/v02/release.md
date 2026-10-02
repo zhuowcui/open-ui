@@ -9,10 +9,10 @@ claimed by source code alone.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | [Earlier complete native viewport census](../renderer/generated/native-viewport-full-v1.json) at `574864d0`: 21,292/22,924 exact, 1,632 different, zero errors; 16 formerly exact regressions. The clipping repair restores all 16 in the affected selection; its complete census remains required. Neutral gamma was 21,308 exact; 892 residual IDs still lack reviewed ownership | fail |
+| Four-profile renderer matrix | [Complete pre-repair native viewport census](../renderer/generated/native-viewport-full-v4.json) at `8f45444e`: 21,292/22,924 exact, 1,632 different, zero errors; all original images and signatures agree with earlier `574864d0`. The clipping repair restores the 16 formerly exact regressions in the affected selection; its complete census remains required. Neutral gamma was 21,308 exact; 892 residual IDs still lack reviewed ownership | fail |
 | Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact on clean clipping repair source `1366b72f` in the [completed evidence](../renderer/generated/native-viewport-full-v2.json); every image and oracle identity unchanged from the preceding viewport implementation | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | [Earlier complete native viewport run](../renderer/generated/native-viewport-full-v1.json) is 22,095/23,728 exact, 1,633 different, zero errors; still 200/201 additions exact at all four profiles. Neutral gamma was 22,111 exact. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | [Complete pre-repair native viewport run](../renderer/generated/native-viewport-full-v4.json) at `8f45444e` is 22,095/23,728 exact, 1,633 different, zero errors; original rows agree with its separate census. Neutral gamma was 22,111 exact, with 200/201 additions exact at all four profiles. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): locked headless and Linux checks passed | pass |
@@ -93,8 +93,12 @@ The full locked workspace passes 8,498 tests with 13 ignored at clean
 `8f45444e`. Recorded controls survive live style changes and document drop.
 Fresh complete raster gates pass 640/640 focused and 960/960 primitive exact,
 with all 1,600 native/Chromium images and oracle identities unchanged. Fresh
-clean umbrella binaries reproduce all 850 native controls. Pre-repair full
-census reruns at `8f45444e` are running; incomplete results are nonqualifying.
+clean umbrella binaries reproduce all 850 native controls. The pre-repair full
+census reruns at `8f45444e` have finished with observed exit 1 and zero errors:
+21,292/22,924 original and 22,095/23,728 expanded exact. All original rows agree
+between those complete runs and with the earlier `574864d0` run in every native
+image, Chromium image and difference signature. Hash/count validation passes;
+these failed results do not qualify the clipping repair's unfinished runs.
 The earlier complete viewport runs at `574864d0` have finished with observed
 exit 1: 21,292/22,924 original and 22,095/23,728 expanded exact, zero errors.
 All original rows agree between those runs, and 200/201 additions still pass
@@ -125,6 +129,18 @@ clean and unchanged through build and both native runs, with observed exit 0;
 fresh umbrella release-source verification passes too. Full original and
 expanded repair censuses remain incomplete, and the 166 native fractional
 pixel failures still fail.
+
+The [per-axis scrollbar candidate](../renderer/generated/native-viewport-full-v4.json)
+at clean `cc056cee` remains unapplied. Eight fresh Chromium traces reproduce
+immutable oracle PNG bytes and show a forced bar with no range as an ordinary
+picture while the opposite axis uses a composited scrollbar. The candidate
+improves eight already failing images by 1,898 differing pixels, with no exact
+loss, no new exact image and all 850 geometry/callback/teardown records
+unchanged. The 166 fractional failures remain failures. Complete focused and
+primitive candidate runs are pending; workspace and complete census remain
+required. The evidence also preserves the rejected unsnapped-scroll hypothesis
+and pinned primary-source findings about opaque-layer boundary clearing. Those
+layer-data changes are not yet implemented or qualified.
 The generated consumer inventory is corrected to exactly 203 public fields,
 including the existing typed thumb-color property; no unclassified field is
 allowed. All eight generator checks, archive integrity and accountability pass. Runs at

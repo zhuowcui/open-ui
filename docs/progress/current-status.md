@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean census against cached Chromium captures | Earlier native viewport `574864d0`: 21,292/22,924 exact, 1,632 different, 0 errors; 16 formerly exact regressions. The clipping repair restores all 16 in the affected selection; full current-runtime qualification remains open |
+| Latest complete clean census against cached Chromium captures | Pre-repair native viewport `8f45444e`: 21,292/22,924 exact, 1,632 different, 0 errors; all original images and difference signatures unchanged from `574864d0`. The clipping repair restores all 16 formerly exact regressions in the affected selection; full current-runtime qualification remains open |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
@@ -70,8 +70,12 @@ The latest clean implementation passes 8,498 locked workspace tests with
 Fresh complete focused and primitive gates pass 640/640 and 960/960 exact,
 with all 1,600 native and Chromium image hashes and oracle identities unchanged.
 Fresh clean umbrella binaries reproduce all 850 native images, geometry and
-difference signatures. Complete pre-repair original/expanded reruns at
-`8f45444e` are running; incomplete results remain nonqualifying.
+difference signatures. The [complete pre-repair original/expanded reruns](../renderer/generated/native-viewport-full-v4.json)
+at `8f45444e` now have observed exit 1: 21,292/22,924 original and
+22,095/23,728 expanded exact, zero errors. Canonical result hashes and counts
+are verified. All original rows agree between the runs, and every original
+native image, Chromium image and difference signature agrees with the earlier
+`574864d0` result. These complete failures do not qualify the clipping repair.
 
 The [earlier complete viewport runs](../renderer/generated/native-viewport-full-v1.json)
 at `574864d0` have now finished with observed exit 1: 21,292/22,924 original
@@ -108,6 +112,20 @@ and unchanged through build and both completed native runs, which have
 observed exit 0. The fresh umbrella release-source verification also passes;
 these checks do not close the 166 native fractional-scale failures or the
 unfinished complete renderer gate.
+
+Eight fresh Chromium traces reproduce the immutable oracle PNGs byte-for-byte.
+They reject the unsnapped-scroll hypothesis: hidden viewport scrolling also
+uses a snapped screen-space transform. A clean per-axis scrollbar candidate
+at `cc056cee` instead selects ordinary picture rendering for a forced bar with
+no range while the opposite axis uses a composited scrollbar. Its adjacent
+corner shares the ordinary picture. All 850 native geometry/callback/teardown
+records stay unchanged; eight already failing images improve by 1,898 pixels,
+with zero exact loss and no new exact image. The candidate remains unapplied;
+complete focused and primitive runs are pending, and workspace/full gates
+remain required. The 166 native fractional failures remain failures.
+Pinned Chromium source also identifies opaque-layer boundary clearing and
+background-color selection as the next layer-data investigation; no output
+pixel correction is applied.
 The strict generated inventory now accounts for the existing thumb-color
 property: 203 consumed public fields and zero unclassified fields. All eight
 generator checks, archive integrity and the 7/7 accountability audit pass.

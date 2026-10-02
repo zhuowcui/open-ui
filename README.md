@@ -33,7 +33,7 @@ The current v0.2 release candidate has:
 
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
   on replay and 182 changed; these old screenshots are not pixel targets;
-- an [earlier complete native viewport census](docs/renderer/generated/native-viewport-full-v1.json)
+- a [complete pre-repair native viewport census](docs/renderer/generated/native-viewport-full-v4.json)
   with 21,292 of 22,924 comparisons exact, 1,632 different, and zero render
   errors; its 16 formerly exact regressions are restored by a shared clipping
   repair in the affected selection, with complete qualification still required;
