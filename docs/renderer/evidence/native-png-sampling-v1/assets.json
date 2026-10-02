@@ -1,0 +1,77 @@
+[
+  {
+    "name": "green",
+    "source": "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css/css-backgrounds/support/60x60-green.png",
+    "file": "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+    "sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+    "dimensions": [
+      60,
+      60
+    ],
+    "has_icc_profile": false,
+    "alpha_range": [
+      255,
+      255
+    ]
+  },
+  {
+    "name": "pattern",
+    "source": "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css/css-backgrounds/support/100x100-blue-and-orange.png",
+    "file": "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+    "sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+    "dimensions": [
+      100,
+      100
+    ],
+    "has_icc_profile": false,
+    "alpha_range": [
+      255,
+      255
+    ]
+  },
+  {
+    "name": "icc",
+    "source": "/home/nero/code/open-ui/tools/accountability/data/wpt_assets/sp13p/css3.png",
+    "file": "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+    "sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+    "dimensions": [
+      300,
+      224
+    ],
+    "has_icc_profile": true,
+    "alpha_range": [
+      255,
+      255
+    ]
+  },
+  {
+    "name": "alpha",
+    "source": "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css/CSS2/backgrounds/support/background-alpha-test.png",
+    "file": "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+    "sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+    "dimensions": [
+      256,
+      256
+    ],
+    "has_icc_profile": false,
+    "alpha_range": [
+      0,
+      255
+    ]
+  },
+  {
+    "name": "border",
+    "source": "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css/css-backgrounds/support/outline-5px-10px-15px-20px-green.png",
+    "file": "docs/renderer/evidence/native-png-sampling-v1/assets/border.png",
+    "sha256": "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+    "dimensions": [
+      100,
+      100
+    ],
+    "has_icc_profile": false,
+    "alpha_range": [
+      255,
+      255
+    ]
+  }
+]

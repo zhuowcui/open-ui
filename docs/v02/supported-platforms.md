@@ -42,6 +42,7 @@ dispatch operate directly on the native engine:
 | Change class tokens | `Element::has_class`, `add_class`, `remove_class` |
 | Read or change text, attributes, or typed style | `Element::text_content`, `set_text`, `set_attribute`, `set_property` and generated typed setters |
 | Read resolved style | `Element::computed_style`, which returns an owned snapshot |
+| Supply image bytes and display an image, background, or border image | `Document::register_image_resource`, `set_resource_provider`, `load_image_resource`; `Element::set_image_resource`, `set_background_layers`, `set_border_image` |
 | Handle input or activate an element | `Element::on`, `on_capture`, `click`; Rust callbacks in `view!` |
 | Inject normalized keyboard or committed text input | `Document::dispatch_key_input`, `dispatch_key_event`, `dispatch_text_input` |
 | Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `client_rects`, `bounding_rect`; `Document::hit_test` |
@@ -140,6 +141,13 @@ demonstrates a consuming application calling typed element setters from a
 Rust click callback and querying the resulting owned bounds. Its
 [renderer investigation](../renderer/native-image-opacity.md) records the
 remaining pixel differences separately from that public native API path.
+
+The [native PNG consumer](../../bindings/rust/openui/examples/native_png_sampling.rs)
+supplies real image bytes through the public resource API and changes width,
+height, and opacity from a Rust click callback. All 540 measured runs on the
+current branch pass callback, owned-bounds, and document teardown checks. Its
+[pixel investigation](../renderer/native-png-sampling.md) records the remaining
+renderer failures; these states are not admitted release passes.
 
 ## No JavaScript runtime
 

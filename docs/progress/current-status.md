@@ -103,6 +103,16 @@ adjustment is removed in the prototype in favor of fixed viewport geometry
 and shared border drawing. This remains diagnostic work; the accepted
 renderer and release counts are unchanged.
 
+The [native PNG application](../renderer/native-png-sampling.md) supplies real
+encoded resources through public Rust APIs and changes size and opacity from
+a Rust callback. All 540 current-branch runs pass callback, owned-bounds, and
+teardown checks; 74/540 images are pixel-exact. The unapplied neutral-gamma
+decoder prototype reaches 146/540 against an earlier prototype's 98/540,
+with 48 new exact images and no exact regression. All Chromium captures are
+fixed. The separate RGBA patch format trial loses three exact native images
+and is rejected. These new controls are not admitted; standalone decoder and
+complete clean renderer qualification remain open.
+
 The preceding `497e322d`
 [delta index](../renderer/generated/native-column-flex-full-delta-v1.json)
 retains the original command's exit-143 observation alongside its complete

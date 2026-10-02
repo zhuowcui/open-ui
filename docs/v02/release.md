@@ -49,6 +49,14 @@ Each needed operation must be callable by the consuming native Rust app and
 verified through that public API. An internal Engine operation or a test-only
 fixture does not close a native application API gap.
 
+The [native PNG application](../renderer/native-png-sampling.md) verifies
+resource registration, typed image styles, mutation through Rust callbacks,
+owned bounds, and teardown in 540 runs on the current branch. Only 74 of those
+images match Chromium exactly. An unapplied PNG metadata prototype makes
+48 additional images exact against a preceding unapplied renderer, with no
+exact regression in the reduced sweep. Its standalone and complete clean
+qualification remain open; these controls add no admitted release passes.
+
 The [renderer source check](../renderer/renderer-build-identity.md) verifies
 the source recorded inside the comparison executable before accepting a run,
 then checks the source and binary again after it. Its
