@@ -4,7 +4,7 @@ use crate::types::{OuiLength, OuiStatus, OuiStyleValue};
 use openui_style::{
     Color, ContentAlignment, ContentDistribution, ContentPosition, Cursor, Display, FlexDirection,
     FlexWrap, FontWeight, ItemAlignment, ItemPosition, LengthValue, ListStyleType, Overflow,
-    PointerEvents, Position, StyleProperty, StyleValue,
+    PointerEvents, Position, RendererStyleValue, StyleProperty, StyleValue,
 };
 
 pub(crate) fn length(value: OuiLength) -> Result<LengthValue, ApiError> {
@@ -154,7 +154,7 @@ fn enum_value(property: StyleProperty, value: i32) -> Result<StyleValue, ApiErro
             _ => None,
         }
         .map(StyleValue::Position),
-        P::Overflow => match value {
+        P::Overflow | P::OverflowX | P::OverflowY => match value {
             0 => Some(Overflow::Visible),
             1 => Some(Overflow::Hidden),
             2 => Some(Overflow::Scroll),
@@ -162,7 +162,11 @@ fn enum_value(property: StyleProperty, value: i32) -> Result<StyleValue, ApiErro
             4 => Some(Overflow::Clip),
             _ => None,
         }
-        .map(StyleValue::Overflow),
+        .map(|value| match property {
+            P::OverflowX => StyleValue::Renderer(RendererStyleValue::OverflowX(value)),
+            P::OverflowY => StyleValue::Renderer(RendererStyleValue::OverflowY(value)),
+            _ => StyleValue::Overflow(value),
+        }),
         P::FlexDirection => match value {
             0 => Some(FlexDirection::Row),
             1 => Some(FlexDirection::RowReverse),

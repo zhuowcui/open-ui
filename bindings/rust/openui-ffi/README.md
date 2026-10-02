@@ -44,6 +44,9 @@ The copy needs no release operation and remains valid after mutations or
 document destruction. Call the query on the document's owning thread.
 `oui_element_get_scroll_offset` also resolves pending layout, so a query after
 content shrink or viewport resize returns the clamped retained offset.
+`OUI_STYLE_PROPERTY_OVERFLOW_X` and `OVERFLOW_Y` accept the existing
+`OuiOverflow` enum values independently, including values returned by
+`oui_style_value_parse`.
 The [C consumer](../../../examples/c_v02/scroll_metrics.c) and its C++ build
 exercise these operations directly through the public native API at five
 scales. Nested scrolling, scrollbar pointer/keyboard input, and accessibility

@@ -2801,8 +2801,14 @@ pub extern "C" fn oui_style_value_parse(
         let property: StyleProperty = property_from_raw(property)
             .ok_or_else(|| invalid("unknown style property identifier"))?;
         let literal = utf8(literal, "style literal")?;
-        let parsed =
-            parse_literal(property, &literal).map_err(|error| invalid(error.to_string()))?;
+        // The axis properties share the native overflow value grammar and C
+        // enum encoding; the setter keeps their independent engine identities.
+        let literal_property = match property {
+            StyleProperty::OverflowX | StyleProperty::OverflowY => StyleProperty::Overflow,
+            _ => property,
+        };
+        let parsed = parse_literal(literal_property, &literal)
+            .map_err(|error| invalid(error.to_string()))?;
         let tag = generated::expected_value_tag(property);
         let data = match (tag, &parsed) {
             (1, StyleValue::Length(value)) => OuiStylePayload {

@@ -15,7 +15,10 @@ static OuiUtf8 utf8(const char* value) {
 
 static void property(OuiElement* element, OuiStyleProperty id, const char* literal) {
   OuiStyleValue value;
-  assert(oui_style_value_parse(id, utf8(literal), &value) == OUI_OK);
+  OuiStatus status = oui_style_value_parse(id, utf8(literal), &value);
+  if (status != OUI_OK)
+    fprintf(stderr, "scroll property %d literal '%s': %d\n", id, literal, status);
+  assert(status == OUI_OK);
   assert(oui_element_set_property(element, id, &value) == OUI_OK);
   if (value.tag == OUI_STYLE_VALUE_COMPOUND)
     assert(oui_style_compound_destroy((OuiStyleCompound*)value.data.compound) == OUI_OK);
@@ -27,6 +30,14 @@ static OuiScrollMetricsV1 metrics(OuiElement* element) {
   assert(oui_element_get_scroll_metrics_v1(element, &value, &found) == OUI_OK);
   assert(found == 1);
   return value;
+}
+
+static OuiStyleValue overflow_value(int value) {
+  OuiStyleValue result;
+  memset(&result, 0, sizeof(result));
+  result.tag = OUI_STYLE_VALUE_ENUM;
+  result.data.enum_value = value;
+  return result;
 }
 
 static void viewport(double scale) {
@@ -67,7 +78,20 @@ static void viewport(double scale) {
   assert(small.scroll_width == 320.0 && small.scroll_height == 240.0);
   assert(original.client_width == 305.0 && original.scroll_width == 327.0);
 
-  property(root, OUI_STYLE_PROPERTY_OVERFLOW_X, "scroll");
+  /* Direct typed values change one axis without changing the other. */
+  OuiStyleValue horizontal = overflow_value(OUI_OVERFLOW_SCROLL);
+  OuiStyleValue vertical = overflow_value(OUI_OVERFLOW_HIDDEN);
+  assert(oui_element_set_property(root, OUI_STYLE_PROPERTY_OVERFLOW_X, &horizontal) == OUI_OK);
+  assert(oui_element_set_property(root, OUI_STYLE_PROPERTY_OVERFLOW_Y, &vertical) == OUI_OK);
+  OuiScrollMetricsV1 asymmetric = metrics(root);
+  assert(asymmetric.client_width == 320.0 && asymmetric.client_height == 225.0);
+  assert(asymmetric.scroll_width == 320.0 && asymmetric.scroll_height == 225.0);
+  OuiStyleValue invalid = overflow_value(99);
+  assert(oui_element_set_property(root, OUI_STYLE_PROPERTY_OVERFLOW_X, &invalid) ==
+         OUI_ERROR_INVALID_ARGUMENT);
+  asymmetric = metrics(root);
+  assert(asymmetric.client_width == 320.0 && asymmetric.client_height == 225.0);
+
   property(root, OUI_STYLE_PROPERTY_OVERFLOW_Y, "scroll");
   OuiScrollMetricsV1 forced = metrics(root);
   assert(forced.client_width == 305.0 && forced.client_height == 225.0);
