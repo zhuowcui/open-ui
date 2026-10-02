@@ -4,9 +4,9 @@
     "bindings/rust/openui-paint/src"
   ],
   "counts": {
-    "consumed": 216,
+    "consumed": 217,
     "internal": 14,
-    "public_typed": 202,
+    "public_typed": 203,
     "unclassified": 0
   },
   "fields": [
@@ -483,6 +483,7 @@
         "bindings/rust/openui-layout/src/relative.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/text_painter.rs"
@@ -886,6 +887,7 @@
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/relative.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
       ],
@@ -1522,6 +1524,7 @@
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
@@ -2169,7 +2172,9 @@
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/new_formatting_context.rs",
         "bindings/rust/openui-layout/src/table.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-layout/src/viewport.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
       ],
       "css_name": "overflow-x",
       "field": "overflow_x",
@@ -2187,7 +2192,9 @@
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/table.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-layout/src/viewport.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
       ],
       "css_name": "overflow-y",
       "field": "overflow_y",
@@ -2382,6 +2389,7 @@
         "bindings/rust/openui-layout/src/relative.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
         "bindings/rust/openui-paint/src/painter.rs",
@@ -2501,6 +2509,19 @@
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
+      "css_name": "scrollbar-thumb-color",
+      "field": "scrollbar_thumb_color",
+      "internal_rationale": null,
+      "property_id": 234,
+      "rust_type": "Option<Color>"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
       "css_name": "scrollbar-track-color",
       "field": "scrollbar_track_color",
       "internal_rationale": null,
@@ -2511,7 +2532,8 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/block.rs"
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/viewport.rs"
       ],
       "css_name": "scrollbar-width",
       "field": "scrollbar_width",
@@ -3087,6 +3109,7 @@
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/decoration_painter.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
@@ -3155,6 +3178,7 @@
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs"
