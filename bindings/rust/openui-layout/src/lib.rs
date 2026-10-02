@@ -27,6 +27,7 @@ pub mod ruby;
 pub mod size_constraints;
 pub mod sticky;
 pub mod table;
+mod viewport;
 
 pub use crate::inline::algorithm::inline_layout;
 pub use crate::inline::algorithm::{apply_inline_fragmentation, resume_inline_from_break_token};
@@ -42,6 +43,7 @@ pub use exclusions::ExclusionSpace;
 pub use flex::flex_layout;
 pub use fragment::{
     resolve_text_run_orientation, DecorationSlice, Fragment, FragmentKind, TextRunOrientation,
+    ViewportScrollport,
 };
 pub use fragmentation::{
     BlockBreakToken, BreakAppeal, BreakToken, FragmentainerSpace, InlineBreakToken,

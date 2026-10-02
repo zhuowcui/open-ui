@@ -146,6 +146,7 @@ thread_local! {
     static FRAGMENTED_INLINE_SKIP_AFTER: RefCell<Option<usize>> = const { RefCell::new(None) };
     static VIEWPORT_SIZE: RefCell<(f32, f32)> = const { RefCell::new((800.0, 600.0)) };
     static RASTER_TILED_REPLAY: RefCell<bool> = const { RefCell::new(false) };
+    static DEFER_VIEWPORT_SCROLLBARS: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
     static BROKEN_IMAGE: RefCell<Option<Image>> = const { RefCell::new(None) };
     static BROKEN_IMAGE_HIGH_RES: RefCell<Option<Image>> = const { RefCell::new(None) };
     static RASTERIZING_PROMOTED_TRANSFORM: RefCell<bool> = const { RefCell::new(false) };
@@ -180,6 +181,22 @@ pub(crate) fn set_paint_raster_tiled(tiled: bool) {
 pub(crate) fn reset_picture_paint_state() {
     PAINTED_FRAGMENTED_OUTLINES.with(|painted| painted.borrow_mut().clear());
     EXTERNALLY_DEFERRED_OUTLINES.with(|deferred| deferred.borrow_mut().clear());
+}
+
+pub(crate) fn paint_document_fragments(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+) {
+    struct RestoreScrollbarPhase(bool);
+    impl Drop for RestoreScrollbarPhase {
+        fn drop(&mut self) {
+            DEFER_VIEWPORT_SCROLLBARS.with(|deferred| deferred.set(self.0));
+        }
+    }
+    let _phase = RestoreScrollbarPhase(DEFER_VIEWPORT_SCROLLBARS.with(|value| value.replace(true)));
+    paint_fragment(canvas, fragment, doc, offset);
 }
 
 fn uses_deterministic_text_profile(style: &ComputedStyle) -> bool {
@@ -1303,6 +1320,39 @@ fn paint_fragment_contents(
     {
         // The platform control renderer above consumed the directional
         // single-character content with its native LCD mask.
+    } else if let Some(scrollport) = fragment.viewport_scrollport {
+        canvas.save();
+        canvas.clip_rect(
+            Rect::from_xywh(
+                abs_offset.left.to_f32(),
+                abs_offset.top.to_f32(),
+                scrollport.client_rect.width().to_f32(),
+                scrollport.client_rect.height().to_f32(),
+            ),
+            ClipOp::Intersect,
+            false,
+        );
+        let node = doc.node(fragment.node_id);
+        // Chromium snaps the viewport scroll transform in physical space.
+        // Keep the retained offset and geometry logical while preserving the
+        // unscrolled paint phase when composing the document at a new offset.
+        let snapping = RasterSnapping::new(doc.device_scale_factor());
+        canvas.translate((
+            snapping.logical_coordinate(-node.scroll_left, PhysicalSnap::Nearest),
+            snapping.logical_coordinate(-node.scroll_top, PhysicalSnap::Nearest),
+        ));
+        paint_children_with_stacking_order(
+            canvas,
+            &fragment.children,
+            doc,
+            abs_offset,
+            true,
+            style.display.is_flex() && fragmented_flex_has_internal_four_way_junction(fragment),
+        );
+        canvas.restore();
+        if !DEFER_VIEWPORT_SCROLLBARS.with(|deferred| deferred.get()) {
+            paint_viewport_scrollbars(canvas, fragment, doc, abs_offset);
+        }
     } else if needs_clip {
         paint_with_overflow_clip(canvas, fragment, doc, abs_offset, style);
     } else {
@@ -10994,6 +11044,403 @@ fn paint_scrollbars_if_needed(
             &paint,
         );
     }
+}
+
+/// Paint the pinned Linux Chromium Fluent viewport scrollbar theme.
+/// Geometry follows ScrollbarThemeFluent and cc::ScrollUtils; colors follow
+/// ui/color/fluent_ui_color_mixer.cc in Chromium 147.0.7727.50.
+pub(crate) fn paint_viewport_scrollbars(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+) {
+    let Some(scrollport) = fragment.viewport_scrollport else {
+        return;
+    };
+    let source = if doc.body_overflow_is_propagated() {
+        doc.body_element().unwrap_or(fragment.node_id)
+    } else {
+        doc.document_element().unwrap_or(fragment.node_id)
+    };
+    let style = &doc.node(source).style;
+    let thickness = scrollport.scrollbar_thickness.to_f32();
+    let client_width = scrollport.client_rect.width().to_f32();
+    let client_height = scrollport.client_rect.height().to_f32();
+    let node = doc.node(fragment.node_id);
+    let mut track = Paint::default();
+    track.set_color(skia_safe::Color::from_rgb(252, 252, 252));
+    if let Some(color) = style.scrollbar_track_color {
+        set_paint_css_color(&mut track, &color);
+    }
+    let mut thumb = Paint::default();
+    thumb.set_anti_alias(true);
+    thumb.set_color(skia_safe::Color::from_rgb(139, 139, 139));
+    if let Some(color) = style.scrollbar_thumb_color {
+        set_paint_css_color(&mut thumb, &color);
+    }
+    canvas.save();
+    canvas.translate((offset.left.to_f32(), offset.top.to_f32()));
+    let user_scrollable = (scrollport.horizontal_scrollbar
+        && scrollport.content_rect.width().to_f32() > client_width)
+        || (scrollport.vertical_scrollbar
+            && scrollport.content_rect.height().to_f32() > client_height);
+    if !user_scrollable {
+        // Without a user-scrollable translation Chromium records the controls
+        // as ordinary pictures. They use the full track raster, rather than
+        // the compact resource of a PaintedScrollbarLayer. The vertical
+        // picture also contains the adjoining corner.
+        for horizontal in [true, false] {
+            let visible = if horizontal {
+                scrollport.horizontal_scrollbar
+            } else {
+                scrollport.vertical_scrollbar
+            };
+            if !visible {
+                continue;
+            }
+            let length = if horizontal {
+                client_width
+            } else {
+                client_height
+            };
+            let corner = !horizontal && scrollport.horizontal_scrollbar;
+            let outer = if horizontal {
+                Rect::from_xywh(0.0, client_height, length, thickness)
+            } else {
+                Rect::from_xywh(client_width, 0.0, thickness, length)
+            };
+            paint_fluent_scrollbar_picture(
+                canvas,
+                outer,
+                horizontal,
+                corner,
+                style.device_scale_factor as f32,
+                &track,
+                &thumb,
+            );
+        }
+        canvas.restore();
+        return;
+    }
+    for horizontal in [false, true] {
+        let visible = if horizontal {
+            scrollport.horizontal_scrollbar
+        } else {
+            scrollport.vertical_scrollbar
+        };
+        if !visible {
+            continue;
+        }
+        let length = if horizontal {
+            client_width
+        } else {
+            client_height
+        };
+        let proportion = thickness / 15.0;
+        let button = (18.0 * proportion).round().min((length / 2.0).floor());
+        let track_length = (length - 2.0 * button).max(0.0);
+        let total = if horizontal {
+            scrollport.content_rect.width().to_f32()
+        } else {
+            scrollport.content_rect.height().to_f32()
+        };
+        let scroll = if horizontal {
+            if scrollport.negative_x {
+                node.scroll_left - scrollport.content_rect.x().to_f32()
+            } else {
+                node.scroll_left
+            }
+        } else {
+            if scrollport.negative_y {
+                node.scroll_top - scrollport.content_rect.y().to_f32()
+            } else {
+                node.scroll_top
+            }
+        };
+        let maximum = (total - length).max(0.0);
+        let thumb_length = ((length / total.max(1.0) * track_length).round())
+            .max((17.0 * proportion).round())
+            .min(track_length);
+        let raw_position = if maximum > 0.0 {
+            scroll.max(0.0) * (track_length - thumb_length) / maximum
+        } else {
+            0.0
+        };
+        let position = if raw_position > 0.0 && raw_position < 1.0 {
+            1.0
+        } else {
+            raw_position.trunc()
+        };
+        let raw_thickness = (9.0 * proportion).round();
+        let thumb_thickness = raw_thickness - (thickness - raw_thickness) % 2.0;
+        let outer = if horizontal {
+            Rect::from_xywh(0.0, client_height, length, thickness)
+        } else {
+            Rect::from_xywh(client_width, 0.0, thickness, length)
+        };
+        paint_fluent_scrollbar_track(
+            canvas,
+            outer,
+            horizontal,
+            button,
+            style.device_scale_factor as f32,
+            &track,
+            &thumb,
+        );
+        let thumb_rect = if horizontal {
+            Rect::from_xywh(
+                button + position,
+                client_height + (thickness - thumb_thickness) / 2.0,
+                thumb_length,
+                thumb_thickness,
+            )
+        } else {
+            Rect::from_xywh(
+                client_width + (thickness - thumb_thickness) / 2.0,
+                button + position,
+                thumb_thickness,
+                thumb_length,
+            )
+        };
+        if maximum > 0.0 && thumb_length > 0.0 {
+            // The software compositor clips a solid-color quad with the
+            // Fluent rounded-corner mask; it does not directly draw an RRect.
+            canvas.save();
+            canvas.clip_rrect(
+                RRect::new_rect_xy(thumb_rect, thumb_thickness, thumb_thickness),
+                ClipOp::Intersect,
+                true,
+            );
+            let mut fill = thumb.clone();
+            let scale = style.device_scale_factor as f32;
+            // cc encloses the thumb in physical content coordinates before
+            // replay. Keep the rounded mask in target coordinates. This quad
+            // is inset from its layer edges, so SoftwareRenderer does not
+            // enable geometric AA even when its layer origin is fractional.
+            let left = ((thumb_rect.left - outer.left) * scale).floor() / scale + outer.left;
+            let top = ((thumb_rect.top - outer.top) * scale).floor() / scale + outer.top;
+            let right = ((thumb_rect.right - outer.left) * scale).ceil() / scale + outer.left;
+            let bottom = ((thumb_rect.bottom - outer.top) * scale).ceil() / scale + outer.top;
+            fill.set_anti_alias(false);
+            canvas.draw_rect(Rect::new(left, top, right, bottom), &fill);
+            canvas.restore();
+        }
+    }
+    if scrollport.horizontal_scrollbar && scrollport.vertical_scrollbar {
+        canvas.draw_rect(
+            Rect::from_xywh(client_width, client_height, thickness, thickness),
+            &track,
+        );
+    }
+    canvas.restore();
+}
+
+fn paint_fluent_scrollbar_picture(
+    canvas: &Canvas,
+    outer: Rect,
+    horizontal: bool,
+    corner: bool,
+    scale: f32,
+    track: &Paint,
+    thumb: &Paint,
+) {
+    let thickness = if horizontal {
+        outer.height()
+    } else {
+        outer.width()
+    };
+    let length = if horizontal {
+        outer.width()
+    } else {
+        outer.height()
+    };
+    let width = outer.width();
+    let height = outer.height() + if corner { thickness } else { 0.0 };
+    let physical_width = (width * scale).ceil().max(1.0) as i32;
+    let physical_height = (height * scale).ceil().max(1.0) as i32;
+    let Some(mut surface) = surfaces::raster_n32_premul((physical_width, physical_height)) else {
+        return;
+    };
+    let painter = surface.canvas();
+    painter.clear(skia_safe::Color::TRANSPARENT);
+    painter.scale((scale, scale));
+    painter.draw_rect(Rect::from_xywh(0.0, 0.0, width, height), track);
+    let button = (18.0 * thickness / 15.0)
+        .round()
+        .min((length / 2.0).floor());
+    for forward in [false, true] {
+        let start = if forward { length - button } else { 0.0 };
+        let rect = if horizontal {
+            Rect::from_xywh(start, 0.0, button, thickness)
+        } else {
+            Rect::from_xywh(0.0, start, thickness, button)
+        };
+        paint_fluent_scrollbar_arrow(painter, rect, horizontal, forward, thumb);
+    }
+    let image = surface.image_snapshot();
+    let mut replay = Paint::default();
+    replay
+        .set_anti_alias((outer.left * scale).fract() != 0.0 || (outer.top * scale).fract() != 0.0);
+    canvas.save();
+    canvas.scale((scale.recip(), scale.recip()));
+    let source = Rect::from_xywh(0.0, 0.0, physical_width as f32, physical_height as f32);
+    canvas.draw_image_rect_with_sampling_options(
+        &image,
+        Some((&source, SrcRectConstraint::Strict)),
+        Rect::from_xywh(
+            outer.left * scale,
+            outer.top * scale,
+            physical_width as f32,
+            physical_height as f32,
+        ),
+        SamplingOptions::from(FilterMode::Linear),
+        &replay,
+    );
+    canvas.restore();
+}
+
+fn paint_fluent_scrollbar_track(
+    canvas: &Canvas,
+    outer: Rect,
+    horizontal: bool,
+    button: f32,
+    scale: f32,
+    track: &Paint,
+    thumb: &Paint,
+) {
+    // Chromium stores the track and buttons in a compact N32 nine-patch.
+    // The across-axis resource size floors while its length ceils. Keeping
+    // this raster transform separate from the presentation transform matters
+    // at fractional device scales.
+    let thickness = if horizontal {
+        outer.height()
+    } else {
+        outer.width()
+    };
+    let length = if horizontal {
+        outer.width()
+    } else {
+        outer.height()
+    };
+    let skin_length = length.min(2.0 * button + 1.0);
+    let across = (thickness * scale).floor().max(1.0) as i32;
+    let along = (skin_length * scale).ceil().max(1.0) as i32;
+    let (width, height) = if horizontal {
+        (along, across)
+    } else {
+        (across, along)
+    };
+    let Some(mut surface) = surfaces::raster_n32_premul((width, height)) else {
+        return;
+    };
+    let painter = surface.canvas();
+    painter.clear(skia_safe::Color::TRANSPARENT);
+    painter.scale((
+        width as f32 / if horizontal { skin_length } else { thickness },
+        height as f32 / if horizontal { thickness } else { skin_length },
+    ));
+    painter.draw_rect(
+        Rect::from_xywh(
+            0.0,
+            0.0,
+            if horizontal { skin_length } else { thickness },
+            if horizontal { thickness } else { skin_length },
+        ),
+        track,
+    );
+    for forward in [false, true] {
+        let start = if forward { skin_length - button } else { 0.0 };
+        let rect = if horizontal {
+            Rect::from_xywh(start, 0.0, button, thickness)
+        } else {
+            Rect::from_xywh(0.0, start, thickness, button)
+        };
+        paint_fluent_scrollbar_arrow(painter, rect, horizontal, forward, thumb);
+    }
+    let image = surface.image_snapshot();
+    let aperture_size = 2 - along % 2;
+    let aperture_start = along / 2 - (1 - along % 2);
+    let center = if horizontal {
+        IRect::from_xywh(aperture_start, 0, aperture_size, across)
+    } else {
+        IRect::from_xywh(0, aperture_start, across, aperture_size)
+    };
+    let destination = Rect::from_xywh(
+        outer.left * scale,
+        outer.top * scale,
+        (outer.width() * scale).ceil(),
+        (outer.height() * scale).ceil(),
+    );
+    let mut replay = Paint::default();
+    replay
+        .set_anti_alias((outer.left * scale).fract() != 0.0 || (outer.top * scale).fract() != 0.0);
+    // Nine-patch borders retain the source image's pixel dimensions. Replay
+    // in physical units, as Chromium's scaled track quads do, so those already
+    // scaled borders do not receive the device scale a second time.
+    canvas.save();
+    canvas.scale((scale.recip(), scale.recip()));
+    canvas.draw_image_nine(
+        &image,
+        center,
+        destination,
+        FilterMode::Linear,
+        Some(&replay),
+    );
+    canvas.restore();
+}
+
+fn paint_fluent_scrollbar_arrow(
+    canvas: &Canvas,
+    button: Rect,
+    horizontal: bool,
+    forward: bool,
+    color: &Paint,
+) {
+    let scale = button.width().max(button.height()) / 18.0;
+    let mut side = (9.0 * scale).ceil();
+    side += (button.width().min(button.height()) - side) % 2.0;
+    let mut x = (button.left + (button.width() - side) / 2.0).floor();
+    let mut y = (button.top + (button.height() - side) / 2.0).floor();
+    let shift = (if forward { scale } else { -scale }).round();
+    if horizontal {
+        x += shift;
+    } else {
+        y += shift;
+    }
+    let arrow_size = (side.round() as i32 / 2 + 1) as f32;
+    let mut points = if horizontal {
+        let start = x + (arrow_size as i32 / 2) as f32;
+        [
+            (start, y),
+            (start, y + side),
+            (start + arrow_size, y + side / 2.0),
+        ]
+    } else {
+        let start = y + side - (arrow_size as i32 / 2) as f32 + 1.0;
+        [
+            (x, start),
+            (x + side, start),
+            (x + side / 2.0, start - arrow_size),
+        ]
+    };
+    if horizontal && !forward {
+        for point in &mut points {
+            point.0 = x * 2.0 + side - point.0;
+        }
+    } else if !horizontal && forward {
+        for point in &mut points {
+            point.1 = y * 2.0 + side - point.1;
+        }
+    }
+    let mut path = PathBuilder::new();
+    path.move_to(points[0]);
+    path.line_to(points[1]);
+    path.line_to(points[2]);
+    path.close();
+    let mut paint = color.clone();
+    paint.set_anti_alias(false);
+    canvas.draw_path(&path.detach(), &paint);
 }
 
 /// Paint Chromium's seven-pixel native resize grip for a non-scrollbar

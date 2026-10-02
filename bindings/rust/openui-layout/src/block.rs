@@ -1519,6 +1519,17 @@ fn project_oof_candidate_to_physical(
 ///
 /// Returns a `Fragment` with resolved sizes and positioned children.
 pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
+    if doc.node(node_id).tag == ElementTag::Viewport {
+        return crate::viewport::layout(doc, node_id, space);
+    }
+    block_layout_contents(doc, node_id, space)
+}
+
+pub(crate) fn block_layout_contents(
+    doc: &Document,
+    node_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
     let physical_style = &doc.node(node_id).style;
 
     if doc.node(node_id).replaced.is_some() {

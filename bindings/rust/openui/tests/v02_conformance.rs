@@ -1467,6 +1467,121 @@ fn nested_scroll_container_consumes_wheel() {
     );
 }
 
+fn overflowing_viewport(document: &Document) -> Element {
+    let content = child(document, "div");
+    sized(&content, 300.0, 224.0);
+    content.set_position(Position::Absolute).unwrap();
+    content.set_left(Length::px(27.0)).unwrap();
+    content.set_top(Length::px(22.0)).unwrap();
+    content
+}
+
+#[test]
+fn viewport_native_scroll_clamps_extremes_and_resolves_pending_layout() {
+    let document = document();
+    let content = overflowing_viewport(&document);
+    let root = document.body();
+    root.scroll_to(f64::MAX, f64::MAX).unwrap();
+    // Repeated Chromium queries: both 15px bars leave a 305x225 client.
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (22.0, 21.0)
+    );
+    let rect = content.bounding_rect().unwrap().unwrap();
+    assert_eq!((rect.x, rect.y), (5.0, 1.0));
+    root.scroll_to(-1000.0, -1000.0).unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (0.0, 0.0)
+    );
+    root.scroll_to(1000.0, 1000.0).unwrap();
+    root.set_overflow(Overflow::Hidden).unwrap();
+    // Changing overflow removes both gutters and clamps the previous offset.
+    root.scroll_by(-1.0, -1.0).unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (6.0, 5.0)
+    );
+    content.set_width(LengthValue::px(80.0)).unwrap();
+    content.set_height(LengthValue::px(40.0)).unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (0.0, 0.0)
+    );
+    assert!(root.scroll_to(f64::INFINITY, 0.0).is_err());
+}
+
+#[test]
+fn viewport_wheel_uses_the_same_limits_and_respects_cancelation() {
+    let document = document();
+    let content = overflowing_viewport(&document);
+    let root = document.body();
+    document
+        .dispatch_wheel_event(30.0, 30.0, 1000.0, 1000.0, Modifiers::NONE)
+        .unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (22.0, 21.0)
+    );
+    root.scroll_to(0.0, 0.0).unwrap();
+    content
+        .on("wheel", |event| event.prevent_default())
+        .unwrap();
+    document
+        .dispatch_wheel_event(30.0, 30.0, 1000.0, 1000.0, Modifiers::NONE)
+        .unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (0.0, 0.0)
+    );
+    // Authored hidden and clip viewport overflow still allow Rust scroll calls.
+    for overflow in [Overflow::Hidden, Overflow::Clip] {
+        let document = Document::new(320, 240).unwrap();
+        let _content = overflowing_viewport(&document);
+        let root = document.body();
+        root.set_overflow(overflow).unwrap();
+        root.scroll_to(1000.0, 1000.0).unwrap();
+        assert_eq!(
+            (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+            (7.0, 6.0)
+        );
+        root.scroll_to(0.0, 0.0).unwrap();
+        document
+            .dispatch_wheel_event(30.0, 30.0, 1000.0, 1000.0, Modifiers::NONE)
+            .unwrap();
+        assert_eq!(
+            (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+            (0.0, 0.0)
+        );
+    }
+}
+
+#[test]
+fn viewport_smooth_scroll_clamps_its_target_and_tracks_content_shrink() {
+    let document = document();
+    let content = overflowing_viewport(&document);
+    let root = document.body();
+    root.smooth_scroll_to(1000.0, 1000.0, 100.0, Easing::Linear)
+        .unwrap();
+    document.advance_time(50.0).unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (11.0, 10.5)
+    );
+    document.advance_time(100.0).unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (22.0, 21.0)
+    );
+    content.set_width(LengthValue::px(80.0)).unwrap();
+    content.set_height(LengthValue::px(40.0)).unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (0.0, 0.0)
+    );
+    assert!(!document.is_animating().unwrap());
+}
+
 #[test]
 fn smooth_scroll_uses_manual_clock() {
     let document = document();

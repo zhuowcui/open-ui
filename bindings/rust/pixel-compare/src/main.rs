@@ -38,15 +38,21 @@ pub struct FixtureEngine {
 
 impl FixtureEngine {
     fn new(viewport: ViewportMetrics) -> Result<Self, EngineError> {
-        Ok(Self {
-            inner: Engine::new_with_font_collection_and_options(
-                viewport,
-                openui_text::FontCollection::deterministic_test(),
-                EngineOptions {
-                    raster_configuration: active_raster_configuration(),
-                },
-            )?,
-        })
+        let mut inner = Engine::new_with_font_collection_and_options(
+            viewport,
+            openui_text::FontCollection::deterministic_test(),
+            EngineOptions {
+                raster_configuration: active_raster_configuration(),
+            },
+        )?;
+        // Both immutable Chromium capture styles hide every scrollbar with
+        // `::-webkit-scrollbar { display: none; }`. Represent that input through
+        // the typed native style before applying authored fixture declarations.
+        inner.set_renderer_style(
+            inner.root(),
+            RendererStyleValue::ScrollbarWidth(ScrollbarWidth::None),
+        )?;
+        Ok(Self { inner })
     }
 
     fn into_engine(self) -> Engine {
@@ -58,7 +64,14 @@ impl FixtureEngine {
     }
 
     fn create_node(&mut self, tag: ElementTag) -> NodeId {
-        self.inner.create_element(tag).expect("fixture element")
+        let node = self.inner.create_element(tag).expect("fixture element");
+        self.inner
+            .set_renderer_style(
+                node,
+                RendererStyleValue::ScrollbarWidth(ScrollbarWidth::None),
+            )
+            .expect("fixture capture-harness scrollbar style");
+        node
     }
 
     fn append_child(&mut self, parent: NodeId, child: NodeId) {
@@ -874,6 +887,10 @@ pub fn base_doc(viewport_metrics: ViewportMetrics) -> (FixtureEngine, NodeId) {
     let viewport = doc.root();
     // Viewport: no margin/padding, just a container matching screen dimensions
     doc.set_style(viewport, RendererStyleValue::Display(Display::Block));
+    // BODY_STYLE also sets `html { overflow: hidden; }`; the body itself
+    // remains visible below so its background and overflowing ink can propagate.
+    doc.set_style(viewport, RendererStyleValue::OverflowX(Overflow::Hidden));
+    doc.set_style(viewport, RendererStyleValue::OverflowY(Overflow::Hidden));
     // The raster surface itself supplies the initial white canvas. Keep the
     // synthetic viewport transparent so an explicitly emitted legacy `html`
     // background can be distinguished from that initial canvas color.

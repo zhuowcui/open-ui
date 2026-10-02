@@ -16,7 +16,7 @@ use skia_safe::{
 };
 use std::sync::Arc;
 
-use crate::painter::paint_fragment;
+use crate::painter::paint_document_fragments;
 
 // Chromium 147's cc::LayerTreeSettings::max_untiled_layer_size.
 const MAX_UNTILED_LAYER_SIZE: i32 = 512;
@@ -87,7 +87,12 @@ fn root_constraint_space(doc: &Document, width: f64, height: f64) -> ConstraintS
 /// Immutable paint recording consumed by both headless and window compositors.
 #[derive(Clone)]
 pub struct RecordedPicture {
+    /// Complete immutable recording, including compositor-owned viewport ink.
     pub picture: Picture,
+    /// Document content alone follows the document layer's tiling policy.
+    pub(crate) content_picture: Picture,
+    /// Viewport controls are compositor quads, replayed after document tiles.
+    pub(crate) viewport_overlay: Option<Picture>,
     pub viewport: ViewportMetrics,
     pub raster_configuration: RasterConfiguration,
     pub(crate) lcd_surface: bool,
@@ -105,6 +110,11 @@ impl RecordedPicture {
 
     pub fn uses_lcd_surface(&self) -> bool {
         self.lcd_surface
+    }
+
+    /// Immutable viewport-control recording, independent of document tiling.
+    pub fn viewport_overlay_picture(&self) -> Option<&Picture> {
+        self.viewport_overlay.as_ref()
     }
 }
 
@@ -158,17 +168,48 @@ pub fn record_fragment(
         width as f32,
         height as f32,
     );
-    paint_fragment(
+    paint_document_fragments(
         recording_canvas,
         fragment,
         doc,
         openui_geometry::PhysicalOffset::zero(),
     );
-    let picture = recorder
+    let content_picture = recorder
         .finish_recording_as_picture(None)
         .ok_or_else(|| "Failed to record paint commands".to_string())?;
+    let viewport_overlay = if fragment
+        .viewport_scrollport
+        .is_some_and(|scrollport| scrollport.horizontal_scrollbar || scrollport.vertical_scrollbar)
+    {
+        let canvas = recorder.begin_recording(bounds, false);
+        crate::painter::paint_viewport_scrollbars(
+            canvas,
+            fragment,
+            doc,
+            openui_geometry::PhysicalOffset::zero(),
+        );
+        Some(
+            recorder
+                .finish_recording_as_picture(None)
+                .ok_or_else(|| "Failed to record viewport controls".to_string())?,
+        )
+    } else {
+        None
+    };
+    let picture = if let Some(overlay) = &viewport_overlay {
+        let canvas = recorder.begin_recording(bounds, false);
+        canvas.draw_picture(&content_picture, None, None);
+        canvas.draw_picture(overlay, None, None);
+        recorder
+            .finish_recording_as_picture(None)
+            .ok_or_else(|| "Failed to compose immutable paint recordings".to_string())?
+    } else {
+        content_picture.clone()
+    };
     Ok(RecordedPicture {
         picture,
+        content_picture,
+        viewport_overlay,
         viewport,
         raster_configuration,
         lcd_surface,
@@ -223,7 +264,8 @@ pub fn rasterize_picture(recording: &RecordedPicture) -> Result<Surface, String>
             tile.canvas().clear(canvas_color);
             tile.canvas().translate((-tile_x as f32, -tile_y as f32));
             tile.canvas().scale((scale, scale));
-            tile.canvas().draw_picture(&recording.picture, None, None);
+            tile.canvas()
+                .draw_picture(&recording.content_picture, None, None);
 
             let image = tile.image_snapshot();
             let crop_left = if tile_x == 0 { 0 } else { 1 };
@@ -260,6 +302,12 @@ pub fn rasterize_picture(recording: &RecordedPicture) -> Result<Surface, String>
                 &Paint::default(),
             );
         }
+    }
+    if let Some(overlay) = &recording.viewport_overlay {
+        surface.canvas().save();
+        surface.canvas().scale((scale, scale));
+        surface.canvas().draw_picture(overlay, None, None);
+        surface.canvas().restore();
     }
     let exact_physical_height = recording.viewport.logical_height() as f32 * scale;
     if height as f32 > exact_physical_height + f32::EPSILON {
@@ -366,6 +414,37 @@ mod tests {
     use openui_dom::ElementTag;
     use openui_geometry::Length;
     use openui_style::*;
+
+    #[test]
+    fn viewport_control_recording_survives_document_mutation_and_drop() {
+        let mut document = Document::new();
+        let root = document.root();
+        document.update_resolved_style(root, |style| {
+            style.overflow_x = Overflow::Scroll;
+            style.overflow_y = Overflow::Scroll;
+        });
+        document.set_raster_context(document.raster_configuration(), 2.0);
+        let viewport = ViewportMetrics::from_logical_size(320.0, 240.0, 2.0).unwrap();
+        let (_, first) = record_document(&document, viewport).unwrap();
+        assert!(first.viewport_overlay_picture().is_some());
+        let png = |recording: &RecordedPicture| {
+            rasterize_picture(recording)
+                .unwrap()
+                .image_snapshot()
+                .encode(None, EncodedImageFormat::PNG, None)
+                .unwrap()
+                .as_bytes()
+                .to_vec()
+        };
+        let before = png(&first);
+        document.update_resolved_style(root, |style| {
+            style.scrollbar_track_color = Some(Color::RED);
+        });
+        let (_, second) = record_document(&document, viewport).unwrap();
+        assert_ne!(before, png(&second));
+        drop(document);
+        assert_eq!(before, png(&first));
+    }
 
     #[test]
     fn chromium_sized_small_layers_replay_untiled() {

@@ -550,14 +550,26 @@ impl Element {
     pub fn scroll_left(&self) -> Result<f64, Error> {
         Ok(self
             .document
-            .with_engine(|engine| engine.scroll_offset(self.handle))??
+            .with_engine_mut(|engine| {
+                engine.update()?;
+                engine.scroll_offset(self.handle)
+            })?
             .0)
+    }
+
+    /// Owned client and content dimensions after resolving pending layout.
+    pub fn scroll_metrics(&self) -> Result<Option<crate::ScrollMetrics>, Error> {
+        self.document
+            .with_engine_mut(|engine| engine.scroll_metrics(self.handle))
     }
 
     pub fn scroll_top(&self) -> Result<f64, Error> {
         Ok(self
             .document
-            .with_engine(|engine| engine.scroll_offset(self.handle))??
+            .with_engine_mut(|engine| {
+                engine.update()?;
+                engine.scroll_offset(self.handle)
+            })?
             .1)
     }
 
@@ -567,10 +579,8 @@ impl Element {
     }
 
     pub fn scroll_by(&self, dx: f64, dy: f64) -> Result<(), Error> {
-        let (x, y) = self
-            .document
-            .with_engine(|engine| engine.scroll_offset(self.handle))??;
-        self.scroll_to(x + dx, y + dy)
+        self.document
+            .with_engine_mut(|engine| engine.scroll_by(self.handle, dx, dy))
     }
 
     pub fn control_value(&self) -> Result<Option<String>, Error> {

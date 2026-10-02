@@ -71,31 +71,32 @@ while total channel error decreases; those residuals remain failures. The
 original pixel gate, normal published-consumer builds and residual ownership
 remain open; these controls add no admitted release passes.
 
-The separate [viewport scroll prototype](../renderer/generated/native-viewport-scroll-v3.json)
-matches all 850 native offsets, owned element bounds, and visible/content
-dimensions for the proposed public Rust scroll-area snapshot. It is unapplied
-and unqualified: 196/250 original and 485/600 direction-guard images are exact.
-After the earlier physical nine-patch correction, recording viewport controls
-independently of document tiles makes another 130 images exact. All 154 changed
-comparisons improve, with no worsened color-channel cell or exact loss. The
-510 comparisons at scales 1, 2, and 3 are exact; 169 fractional-scale failures
-remain.
-Remaining scrollbar raster, native controls, nested scrolling, propagation,
-and C API parity must be completed and verified. No JavaScript runtime is part
-of that work. The latest prototype's full locked workspace passes 8,498 tests
-with 13 ignored at clean `ca49a1a6`; recorded controls also survive live style
-mutation and document drop. Clean raster reruns remain 640/640 focused and
-960/960 primitive exact, with every native and Chromium PNG/RGBA hash and oracle
-identity unchanged. Earlier raster gates lose 70 exact
-comparisons because the native fixture adapter omitted the existing capture
-harness's hidden-scrollbar input styles. That shared lowering is corrected
-through typed Rust properties; clean complete reruns restore 640/640 focused
-and 960/960 primitive exact results with unchanged images and oracle identities.
-Fresh combined-source builds reproduce all 850 native controls. Full original
-and expanded reruns at the earlier `574864d0` remain pending and do not include
-the later recording change; its complete census is still needed. A physical
-thumb-quad experiment worsens 138 already failing comparisons and is rejected.
-The remaining pixel and public API gaps are unqualified.
+The native viewport implementation now exposes `Element::scroll_metrics`
+through the public Rust API and uses shared viewport layout for paired gutters,
+programmatic/wheel/smooth scroll limits, pending-layout queries, and clamping
+after content shrink or viewport resize. A
+[consuming native Rust application](../../bindings/rust/openui/examples/native_viewport_scroll.rs)
+verifies all 850 offsets, owned bounds, client/content dimensions, callback
+invocations and teardowns against Chromium. Clean qualification source
+`8f45444e` is 196/250 original and 488/600 direction-guard images exact.
+All 510 integer-scale comparisons remain exact; 166 fractional-scale image
+failures remain unqualified. Physical scroll snapping, thumb enclosure without
+interior-edge antialiasing, and whole-track recordings for non-scrollable
+viewports remove 32,877 differing pixels and make three more images exact
+against the preceding recording checkpoint. No exact image is lost or
+mismatch count increased. Four traced Chromium captures reproduce immutable
+oracle bytes and confirm the distinct shared drawing paths.
+
+The full locked workspace passes 8,498 tests with 13 ignored at clean
+`8f45444e`. Recorded controls survive live style changes and document drop.
+Fresh raster and full census requalification are required; the earlier complete
+counts above remain historical neutral gamma measurements. Runs at
+`574864d0` exclude the later recording and transform changes. The
+[older recording index](../renderer/generated/native-viewport-scroll-v3.json)
+and rejected proposals remain immutable evidence. Native scrollbar operation
+and accessibility, nested scrolling, propagation, C metrics and the remaining
+pixel/public API gaps still require implementation and verification. No
+JavaScript runtime or glue is part of that work.
 
 The [renderer source check](../renderer/renderer-build-identity.md) verifies
 the source recorded inside the comparison executable before accepting a run,

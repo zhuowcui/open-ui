@@ -99,9 +99,10 @@ impl Engine {
             ));
         }
         let node = self.resolve(target)?;
+        let clamped = self.clamp_scroll_offset(target, x, y)?;
         let source = self.document.node(node);
         let from = (source.scroll_left as f64, source.scroll_top as f64);
-        let to = (x.max(0.0), y.max(0.0));
+        let to = (clamped.0 as f64, clamped.1 as f64);
         self.scroll_animations
             .retain(|_, animation| animation.target != target);
         let id = ScrollAnimationId(self.next_scroll_animation_id);
@@ -536,8 +537,8 @@ impl Engine {
             .collect::<Vec<_>>();
         for (id, target, x, y, finished) in samples {
             let node = self.resolve(target)?;
+            let next = self.clamp_scroll_offset(target, x, y)?;
             let data = self.document.node_mut(node);
-            let next = (x.max(0.0) as f32, y.max(0.0) as f32);
             if (data.scroll_left, data.scroll_top) != next {
                 data.scroll_left = next.0;
                 data.scroll_top = next.1;

@@ -140,7 +140,7 @@ pub use openui_engine::{
     AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole, AccessibilityTreeUpdate,
     AnimationEvent, AnimationEventKind, AnimationId, AnimationState, ControlAdjustment,
     EditCommand, EngineOptions, FocusOrigin, PointerEventKind, RasterConfiguration,
-    ScrollAnimationId, TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
+    ScrollAnimationId, ScrollMetrics, TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
     ViewportMetricsError,
 };
 #[cfg(all(feature = "linux", target_os = "linux"))]

@@ -765,16 +765,10 @@ impl Document {
             if !event.default_prevented() {
                 let mut current = Some(target);
                 while let Some(node) = current {
-                    let scrollable = self.with_engine(|engine| {
-                        engine.computed_style(node).is_ok_and(|style| {
-                            style.overflow_x.is_scrollable() || style.overflow_y.is_scrollable()
-                        })
+                    let scrolled = self.with_engine_mut(|engine| {
+                        engine.scroll_wheel(node, delta_x as f64, delta_y as f64)
                     })?;
-                    if scrollable {
-                        self.with_engine_mut(|engine| {
-                            let (left, top) = engine.scroll_offset(node)?;
-                            engine.scroll_to(node, left + delta_x as f64, top + delta_y as f64)
-                        })?;
+                    if scrolled {
                         break;
                     }
                     current = self.with_engine(|engine| engine.parent(node))??;

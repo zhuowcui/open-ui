@@ -57,6 +57,15 @@ pub struct NodeHandle {
     generation: u32,
 }
 
+/// Owned, resolved dimensions of an element's scrolling area, in logical pixels.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct ScrollMetrics {
+    pub client_width: f64,
+    pub client_height: f64,
+    pub scroll_width: f64,
+    pub scroll_height: f64,
+}
+
 impl NodeHandle {
     pub fn document_id(self) -> u64 {
         self.document
@@ -1403,12 +1412,51 @@ impl Engine {
         Ok((node.scroll_left as f64, node.scroll_top as f64))
     }
 
+    /// Resolve pending layout and return an owned scroll-area snapshot.
+    /// Elements without a layout box have no metrics.
+    pub fn scroll_metrics(
+        &mut self,
+        handle: NodeHandle,
+    ) -> Result<Option<ScrollMetrics>, EngineError> {
+        let node = self.resolve(handle)?;
+        self.update()?;
+        fn find(fragment: &Fragment, node: NodeId) -> Option<&Fragment> {
+            if fragment.node_id == node {
+                return Some(fragment);
+            }
+            fragment.children.iter().find_map(|child| find(child, node))
+        }
+        let Some(fragment) = self
+            .latest_fragment
+            .as_ref()
+            .and_then(|root| find(root, node))
+        else {
+            return Ok(None);
+        };
+        let (client, content) = if let Some(scrollport) = fragment.viewport_scrollport {
+            (scrollport.client_rect.size, scrollport.content_rect.size)
+        } else {
+            (
+                fragment.padding_box_size(),
+                fragment.scrollable_overflow().size,
+            )
+        };
+        Ok(Some(ScrollMetrics {
+            client_width: client.width.to_f64(),
+            client_height: client.height.to_f64(),
+            scroll_width: content.width.to_f64(),
+            scroll_height: content.height.to_f64(),
+        }))
+    }
+
     pub fn scroll_to(&mut self, handle: NodeHandle, x: f64, y: f64) -> Result<(), EngineError> {
         if !x.is_finite() || !y.is_finite() {
             return Err(EngineError::Render("scroll offsets must be finite".into()));
         }
         let node = self.resolve(handle)?;
-        let (x, y) = (x.max(0.0) as f32, y.max(0.0) as f32);
+        let (x, y) = self.clamp_scroll_offset(handle, x, y)?;
+        self.scroll_animations
+            .retain(|_, animation| animation.target != handle);
         if (
             self.document.node(node).scroll_left,
             self.document.node(node).scroll_top,
@@ -1416,14 +1464,116 @@ impl Engine {
         {
             return Ok(());
         }
-        self.scroll_animations
-            .retain(|_, animation| animation.target != handle);
         let data = self.document.node_mut(node);
         data.scroll_left = x;
         data.scroll_top = y;
         self.dirty.hit_test = true;
         self.mark_dirty(InvalidationClass::Composite);
         Ok(())
+    }
+
+    pub fn scroll_by(&mut self, handle: NodeHandle, dx: f64, dy: f64) -> Result<(), EngineError> {
+        if !dx.is_finite() || !dy.is_finite() {
+            return Err(EngineError::InvalidInput("scroll deltas must be finite"));
+        }
+        self.resolve(handle)?;
+        self.update()?;
+        let (x, y) = self.scroll_offset(handle)?;
+        self.scroll_to(handle, x + dx, y + dy)
+    }
+
+    fn clamp_scroll_offset(
+        &mut self,
+        handle: NodeHandle,
+        x: f64,
+        y: f64,
+    ) -> Result<(f32, f32), EngineError> {
+        let node = self.resolve(handle)?;
+        if node != self.document.root() {
+            // Nested scroll containers retain their existing path while
+            // their geometry and writing-direction ranges are qualified.
+            return Ok((
+                x.max(0.0).min(f32::MAX as f64) as f32,
+                y.max(0.0).min(f32::MAX as f64) as f32,
+            ));
+        }
+        self.update()?;
+        let scrollport = self
+            .latest_fragment
+            .as_ref()
+            .and_then(|fragment| fragment.viewport_scrollport)
+            .expect("viewport layout establishes a scrollport");
+        let (x_range, y_range) = self.viewport_scroll_limits(scrollport);
+        Ok((
+            x.clamp(x_range.0, x_range.1) as f32,
+            y.clamp(y_range.0, y_range.1) as f32,
+        ))
+    }
+
+    fn viewport_scroll_limits(
+        &self,
+        scrollport: openui_layout::ViewportScrollport,
+    ) -> ((f64, f64), (f64, f64)) {
+        let x_range = if scrollport.negative_x {
+            (scrollport.content_rect.x().to_f64().min(0.0), 0.0)
+        } else {
+            (
+                0.0,
+                (scrollport.content_rect.right() - scrollport.client_rect.width())
+                    .to_f64()
+                    .max(0.0),
+            )
+        };
+        let y_range = if scrollport.negative_y {
+            (scrollport.content_rect.y().to_f64().min(0.0), 0.0)
+        } else {
+            (
+                0.0,
+                (scrollport.content_rect.bottom() - scrollport.client_rect.height())
+                    .to_f64()
+                    .max(0.0),
+            )
+        };
+        (x_range, y_range)
+    }
+
+    /// Apply user wheel input through the document-owned viewport geometry.
+    /// A hidden viewport remains available to programmatic scrolling only.
+    pub fn scroll_wheel(
+        &mut self,
+        handle: NodeHandle,
+        delta_x: f64,
+        delta_y: f64,
+    ) -> Result<bool, EngineError> {
+        if !delta_x.is_finite() || !delta_y.is_finite() {
+            return Err(EngineError::InvalidInput("wheel deltas must be finite"));
+        }
+        let node = self.resolve(handle)?;
+        let (user_x, user_y) = if node == self.document.root() {
+            self.update()?;
+            let scrollport = self
+                .latest_fragment
+                .as_ref()
+                .and_then(|fragment| fragment.viewport_scrollport)
+                .expect("viewport layout establishes a scrollport");
+            (
+                scrollport.overflow_x.is_scrollable(),
+                scrollport.overflow_y.is_scrollable(),
+            )
+        } else {
+            let style = &self.document.node(node).style;
+            (
+                style.overflow_x.is_scrollable(),
+                style.overflow_y.is_scrollable(),
+            )
+        };
+        let before = self.scroll_offset(handle)?;
+        self.scroll_to(
+            handle,
+            before.0 + if user_x { delta_x } else { 0.0 },
+            before.1 + if user_y { delta_y } else { 0.0 },
+        )?;
+        Ok(self.scroll_offset(handle)? != before)
     }
 
     pub fn focus(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
@@ -1519,11 +1669,27 @@ impl Engine {
                 openui_geometry::LayoutUnit::from_f64(height),
                 direction,
             );
-            let fragment = Arc::new(openui_layout::block_layout(
-                &self.document,
-                self.document.root(),
-                &space,
-            ));
+            let mut fragment =
+                openui_layout::block_layout(&self.document, self.document.root(), &space);
+            if let Some(scrollport) = fragment.viewport_scrollport {
+                let (x_range, y_range) = self.viewport_scroll_limits(scrollport);
+                let root = self.document.root();
+                let old = (
+                    self.document.node(root).scroll_left,
+                    self.document.node(root).scroll_top,
+                );
+                let next = (
+                    (old.0 as f64).clamp(x_range.0, x_range.1) as f32,
+                    (old.1 as f64).clamp(y_range.0, y_range.1) as f32,
+                );
+                if old != next {
+                    self.document.node_mut(root).scroll_left = next.0;
+                    self.document.node_mut(root).scroll_top = next.1;
+                    // Sticky layout consumes the retained offset too.
+                    fragment = openui_layout::block_layout(&self.document, root, &space);
+                }
+            }
+            let fragment = Arc::new(fragment);
             self.stats.layouts += 1;
             self.rebuild_hit_test(&fragment);
             self.latest_fragment = Some(fragment);
@@ -1789,11 +1955,18 @@ impl Engine {
                 // flow extent carrying its visible descendants.
                 let clips_authored_box = style.overflow_x != openui_style::Overflow::Visible
                     || style.overflow_y != openui_style::Overflow::Visible;
-                let (clip_world, clip_width, clip_height) = if clips_authored_box {
-                    (box_world, box_width, box_height)
-                } else {
-                    (world, width, height)
-                };
+                let (clip_world, clip_width, clip_height) =
+                    if let Some(scrollport) = fragment.viewport_scrollport {
+                        (
+                            world,
+                            scrollport.client_rect.width().to_f32(),
+                            scrollport.client_rect.height().to_f32(),
+                        )
+                    } else if clips_authored_box {
+                        (box_world, box_width, box_height)
+                    } else {
+                        (world, width, height)
+                    };
                 if let Some(world_to_local) =
                     clip_world.inverse().filter(|_| fragment.has_overflow_clip)
                 {

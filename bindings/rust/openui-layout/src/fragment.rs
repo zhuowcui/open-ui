@@ -9,7 +9,7 @@ use openui_dom::NodeId;
 use openui_geometry::{
     BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize, WritingDirectionMode,
 };
-use openui_style::{ComputedStyle, TextOrientation, WritingMode};
+use openui_style::{ComputedStyle, Overflow, TextOrientation, WritingMode};
 use openui_text::ShapeResult;
 use std::sync::Arc;
 
@@ -30,6 +30,24 @@ pub enum FragmentKind {
     /// An anonymous column box in a multicol container.
     /// Clips content to column boundaries (CSS Multicol §3.1).
     ColumnBox,
+}
+
+/// Immutable geometry of the document's viewport scroll container.
+///
+/// Scrollbar gutters belong to the viewport, rather than to an authored
+/// element's border or padding. Layout, paint and native input consume this
+/// same geometry.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ViewportScrollport {
+    pub client_rect: PhysicalRect,
+    pub content_rect: PhysicalRect,
+    pub horizontal_scrollbar: bool,
+    pub vertical_scrollbar: bool,
+    pub scrollbar_thickness: LayoutUnit,
+    pub overflow_x: Overflow,
+    pub overflow_y: Overflow,
+    pub negative_x: bool,
+    pub negative_y: bool,
 }
 
 /// Resolved orientation of one shaped text run in physical fragment storage.
@@ -267,6 +285,10 @@ pub struct Fragment {
     /// Blink: `PhysicalBoxFragment::ScrollableOverflow()`.
     pub overflow_rect: Option<PhysicalRect>,
 
+    /// Layout-owned viewport client and content extents. Scrollbar space is
+    /// separate from authored borders and padding.
+    pub viewport_scrollport: Option<ViewportScrollport>,
+
     /// Whether this fragment clips overflowing content.
     ///
     /// Set to `true` when the element's `overflow-x` or `overflow-y` is not
@@ -501,6 +523,7 @@ impl Fragment {
             baseline_offset: 0.0,
             text_combine: None,
             overflow_rect: None,
+            viewport_scrollport: None,
             has_overflow_clip: false,
             block_axis_clip_only: false,
             inline_axis_clip_only: false,
@@ -567,6 +590,7 @@ impl Fragment {
             baseline_offset: 0.0,
             text_combine: None,
             overflow_rect: None,
+            viewport_scrollport: None,
             has_overflow_clip: false,
             block_axis_clip_only: false,
             inline_axis_clip_only: false,

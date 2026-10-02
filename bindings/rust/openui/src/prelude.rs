@@ -20,7 +20,7 @@ pub use crate::view_node::{mount_view, IntoView, ViewNode};
 pub use crate::ElementTag;
 pub use crate::{
     AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
-    ViewportAuthority, ViewportMetrics,
+    ScrollMetrics, ViewportAuthority, ViewportMetrics,
 };
 pub use openui_macros::{component, view};
 pub use openui_text::{

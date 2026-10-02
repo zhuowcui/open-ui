@@ -45,7 +45,7 @@ dispatch operate directly on the native engine:
 | Supply image bytes and display an image, background, or border image | `Document::register_image_resource`, `set_resource_provider`, `load_image_resource`; `Element::set_image_resource`, `set_background_layers`, `set_border_image` |
 | Handle input or activate an element | `Element::on`, `on_capture`, `click`; Rust callbacks in `view!` |
 | Inject normalized keyboard or committed text input | `Document::dispatch_key_input`, `dispatch_key_event`, `dispatch_text_input` |
-| Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `client_rects`, `bounding_rect`; `Document::hit_test` |
+| Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `scroll_metrics`, `client_rects`, `bounding_rect`; `Document::hit_test` |
 | Update form controls or details | `set_control_value`, `set_selection`, `set_checked`, `set_open` |
 | Inject or cancel native IME input | `Document::dispatch_composition_start`, `dispatch_composition_update`, `dispatch_composition_end`, `dispatch_composition_cancel` |
 
@@ -63,6 +63,19 @@ through the public Rust API, and verify it from a consuming native Rust
 application. Test coverage must exercise the retained state and resulting
 events or rendering. A missing public method remains an implementation gap
 until that native application path works.
+
+The [native viewport application](../../bindings/rust/openui/examples/native_viewport_scroll.rs)
+builds its document through typed Rust methods, scrolls it from a Rust click
+callback, injects normalized wheel input, and reads owned geometry and
+`ScrollMetrics`. The viewport uses shared layout dimensions to reserve
+scrollbar gutters and clamp programmatic, wheel, and smooth scrolling. Pending
+layout is resolved before reading offsets or dimensions; shrinking the content
+or resizing the viewport also clamps the retained offset.
+`Element::scroll_metrics` returns an owned snapshot of client and content
+dimensions in logical pixels, or `None` when the element has no layout box.
+This implements the public Rust path; nested scrolling ranges, native scrollbar
+input/accessibility, C metric exposure, and complete pixel qualification still
+require work. Those are native implementation gaps.
 
 The [native flow-root application](../../bindings/rust/openui/examples/native_flow_root_geometry.rs)
 constructs a document, queries owned fragments, finds a child under the pointer

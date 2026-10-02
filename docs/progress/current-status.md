@@ -40,37 +40,39 @@ matrices remain exact. All eight generated-contract checks, accountability
 and archive integrity checks pass. The 1,616 census differences and residual
 ownership review still keep the release gate open.
 
-A separate [native viewport prototype](../renderer/generated/native-viewport-scroll-v3.json)
-matches Chromium's offsets and owned
-element bounds in 850 comparisons. Its proposed public Rust
-`Element::scroll_metrics` snapshot also matches all 850 checks
-for visible-area and content dimensions. Physical nine-patch replay makes
-14 more images exact and improves 288 comparisons without losing an exact
-result. A further immutable recording separates viewport controls from document
-tiles. This makes another 130 images exact and improves 154 comparisons, with
-no worsened color-channel cell. It remains unapplied: 196/250 original and
-485/600 direction-guard images are exact. All 510 comparisons at scales 1, 2,
-and 3 are exact; the 169 remaining failures use fractional scales. The five-scale guards
-cover horizontal, vertical and sideways flow in both directions. Native
-scrollbar input states, nested containers, propagation, and full renderer
-qualification remain open; no JavaScript runtime or glue is involved.
-The latest prototype's full locked workspace passes 8,498 tests with
-13 ignored at clean `ca49a1a6`. Its new test verifies that recorded viewport
-controls survive live style changes and document drop. Complete clean raster
-reruns remain 640/640 focused and 960/960 primitive exact, with all 1,600 native
-and Chromium PNG/RGBA hashes and oracle identities unchanged. The earlier
-`b9dfda41` raster runs lose 25 focused
-and 45 primitive exact comparisons because the native fixture builder omitted
-the existing Chromium harness's hidden-scrollbar styles. The shared fixture
-adapter now represents those same immutable input styles through typed Rust
-properties. Complete clean reruns restore 640/640 focused and 960/960 primitive
-exact results, with every accepted native and Chromium image and oracle
-identity unchanged. Fresh combined-source builds also reproduce all 850
-native controls. Full original and expanded reruns at the earlier `574864d0`
-remain pending; they do not include the later recording change. Its full
-census still needs to run. A separate physical thumb-quad experiment worsens
-138 already failing comparisons and is preserved as rejected evidence.
-This does not establish renderer qualification or release admission.
+The native viewport implementation now exposes public Rust
+`Element::scroll_metrics` over the shared engine, reserves paired scrollbar
+gutters, clamps programmatic/wheel/smooth scrolling, resolves pending layout,
+and clamps retained offsets after content shrink or viewport resize. The
+[consuming Rust application](../../bindings/rust/openui/examples/native_viewport_scroll.rs)
+uses typed construction, a Rust callback, normalized wheel input, owned
+snapshots and checked teardown. All 850 offset, bounds and dimension checks
+match Chromium. At clean qualification source `8f45444e`, 196/250 original and
+488/600 direction guards are pixel-exact; all 510 comparisons at scales 1,
+2 and 3 are exact. The remaining 166 fractional-scale failures stay failures.
+
+Compared with the earlier immutable-recording checkpoint, physical scroll
+snapping, correct thumb enclosure, and the whole-track path for non-scrollable
+viewports remove 32,877 mismatched pixels and make three more images exact.
+No exact image is lost or differing-pixel count increased. The pinned Chromium
+trace reproduces four immutable oracle captures byte-for-byte and shows why
+scrollable and non-scrollable controls require different shared paint paths.
+Explicit texture-piece replay and a separate untagged composition surface
+produce identical pixels; the extra implementations are omitted. The previous
+[recording evidence](../renderer/generated/native-viewport-scroll-v3.json)
+remains historical and unchanged. Its rejected thumb proposal enabled
+antialiasing on interior edges; the current enclosure keeps those edges crisp.
+
+The latest clean implementation passes 8,498 locked workspace tests with
+13 ignored. Recorded controls survive live style mutation and document drop.
+Fresh focused/primitive gates and complete original/expanded requalification
+are required for this implementation; prior complete counts in the table
+remain attributed to the neutral gamma checkpoint. The earlier full runs at
+`574864d0` exclude the later recording, transform and picture changes. Native
+scrollbar input/accessibility, nested scrolling ranges, propagation, C metrics,
+and remaining renderer/release qualification remain open. Open UI runs no
+JavaScript; all needed application operations remain public native Rust API
+obligations.
 
 The complete clean checkpoint `9b158cda` is
 [21,308/22,924 exact](../renderer/generated/four-profile-census-v49.json),
