@@ -78,9 +78,13 @@ dimensions in logical pixels, or `None` when the element has no layout box.
 The [C metrics query](native-scroll-metrics.md) now exposes the same owned
 dimensions, with C and C++ consumers and versioned output validation. Native
 inset length mutations also work through the shared engine and public Rust
-callbacks. Nested scrolling ranges, native scrollbar input/accessibility,
-remaining C property conversion, and complete pixel qualification still
-require work. Those are native implementation gaps.
+callbacks. The [native style consumers](../../bindings/rust/openui-ffi/README.md#native-style-operations)
+also exercise 35 primitive longhands through the public Rust, C, and C++
+paths, including lossless alignment modifiers and optional colors. Their
+callback, retained-state, raw-frame color, and owned-snapshot checks pass at
+five scales. Nested scrolling ranges, native scrollbar input/accessibility,
+remaining C property conversion, complete native API coverage, and complete
+pixel qualification still require work. Those are native implementation gaps.
 
 The [native flow-root application](../../bindings/rust/openui/examples/native_flow_root_geometry.rs)
 constructs a document, queries owned fragments, finds a child under the pointer

@@ -16,7 +16,7 @@ schemas:
 Regenerate with `python3 tools/ffi/generate_ffi.py`, or verify without writing
 with `python3 tools/ffi/generate_ffi.py --check`. After building the crate,
 `python3 tools/ffi/verify_abi.py` checks exact exports, compiles C and C++
-consumers, and runs seven headless C examples and two C++ consumers.
+consumers, and runs eight headless C examples and three C++ consumers.
 
 All opaque handles are generation-checked and thread-affine. Strings are
 length-delimited UTF-8. Every status failure records a thread-local structured
@@ -29,6 +29,38 @@ later lookups while preserving its existing handles for reattachment.
 The owned `OuiAccessibilitySnapshot` API exposes node metadata, ordered
 relations, focus, and changed/removed IDs without retaining engine borrows.
 Snapshots remain readable after document destruction on their owning thread.
+
+## Native style operations
+
+Native apps mutate retained style through public Rust setters or
+`oui_element_set_property`. The shared engine now accepts author values for
+35 additional primitive longhands, including independent border colors and
+widths, alignment, filters, column dimensions, and optional scrollbar colors.
+Relative lengths remain authored values until the engine resolves them.
+
+`oui_style_value_parse` parses one native property value. It preserves
+`currentcolor`, optional `auto` colors, safe/unsafe alignment modifiers, and
+unsigned orphan/widow counts that exceed the scalar C integer range. These
+values return an owned `OUI_STYLE_VALUE_COMPOUND` bound to the selected property.
+Submit it to that property, then release it with `oui_style_compound_destroy`;
+the element retains its own copy. Using the carrier for another property,
+from another thread, or after release fails without mutating retained style.
+Existing scalar encodings, exports, and struct layouts are unchanged.
+
+The [Rust consumer](../openui/tests/native_primitive_styles.rs),
+[C consumer](../../../examples/c_v02/primitive_styles.c), and
+[C++ consumer](../../../examples/c_v02/primitive_styles.cc) exercise all 35
+longhands at five scales, with callback mutations, owned snapshots, rendering,
+and document teardown. This does not complete every style or element API.
+Open UI never executes JavaScript; needed application behavior is implemented
+in the shared engine and exposed through public native Rust methods.
+
+Rust `Bitmap::pixels` and C `oui_document_render_rgba` return owned,
+top-to-bottom RGBA8888 rows with premultiplied color channels. Shared CPU
+readback now requests that format explicitly; platform-native Skia N32 bytes
+previously swapped red and blue in these consumers and Linux presentation.
+The PNG encoding path is separate. Full renderer and release-lab qualification
+remain open.
 
 ## Native scroll dimensions
 

@@ -51,7 +51,10 @@ The current v0.2 release candidate has:
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;
 - 84 frozen retained-engine/headless C exports, with 110 current exports and
   checked layouts and an ABI checksum; the [native scroll and inset consumers](docs/v02/native-scroll-metrics.md)
-  pass through public Rust, C and C++ APIs;
+  and [native style consumers](bindings/rust/openui-ffi/README.md#native-style-operations)
+  pass through public Rust, C and C++ APIs; the clean native style checkpoint
+  passes 8,515 workspace tests with 13 ignored and preserves the exact
+  640/640 focused and 960/960 primitive pixel suites;
 - sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates defined
   in CI; several remain open or failing.
 

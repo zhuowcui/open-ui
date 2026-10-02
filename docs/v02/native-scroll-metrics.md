@@ -49,7 +49,9 @@ behavior guards; they do not establish new pixel qualification.
 The [C source](../../examples/c_v02/scroll_metrics.c), its
 [C++ build](../../examples/c_v02/scroll_metrics.cc), and the
 [Rust consumer](../../bindings/rust/openui/tests/native_insets.rs) use public
-framework APIs. Remaining generated C primitive property families still
-require review and implementation. Native scrollbar keyboard/pointer input,
+framework APIs. The later [native style checkpoint](generated/native-primitive-styles-v1.json)
+verifies 35 primitive longhands through public Rust, C, and C++ consumers.
+Remaining C property conversion and native API coverage still require review
+and implementation. Native scrollbar keyboard/pointer input,
 accessibility, nested scrolling, full renderer qualification, and release-lab
 qualification also remain open.

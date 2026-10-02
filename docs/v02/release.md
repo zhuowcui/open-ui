@@ -10,13 +10,13 @@ claimed by source code alone.
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
 | Four-profile renderer matrix | [Complete clipping repair census](../renderer/generated/native-viewport-full-v7.json) at `1366b72f`: 21,308/22,924 exact, 1,616 different, zero errors. All 16 earlier exact results are restored across the complete census, with no new exact loss or worsened pixel count; Chromium images and identities are unchanged. Residual ownership review remains open | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact on clean clipping repair source `1366b72f` in the [completed evidence](../renderer/generated/native-viewport-full-v2.json); every image and oracle identity unchanged from the preceding viewport implementation | pass |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact on clean native style/RGBA source `9e0f0145` in the [completed evidence](generated/native-primitive-styles-v1.json); all 1,600 images, oracle identities and difference signatures unchanged from preceding exact raster evidence | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
 | Expanded native final-state fixtures | [Complete clipping repair run](../renderer/generated/native-viewport-full-v7.json) at `1366b72f` is 22,111/23,728 exact, 1,617 different, zero errors; original rows agree with its separate census. All 804 addition comparisons are unchanged, with 200/201 additions exact at all four profiles. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
-| Rust workspace and docs | full locked workspace suite | pass |
-| Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): locked headless and Linux checks passed | pass |
-| Rust/C application contract | 58 scenarios, 110 current exports, seven headless C examples and two C++ consumers, plus native C/C++ window consumers; [native scroll/inset evidence](native-scroll-metrics.md) preserves previous symbols and layouts | remaining API review and lab qualification open |
+| Rust workspace and docs | clean `9e0f0145`, Linux C feature enabled: 8,515 passed, zero failed, 13 ignored | pass |
+| Rust 1.85 MSRV | [Earlier hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): locked headless and Linux checks passed; own-source job at `9e0f0145` skipped | own-source qualification open |
+| Rust/C application contract | 58 scenarios, 110 current exports, eight headless C examples and three C++ consumers, plus native C/C++ window consumers; [native style evidence](generated/native-primitive-styles-v1.json) preserves all previous symbols and layouts | remaining API review and lab qualification open |
 | Native element interaction | Public Rust `Document`, `Element`, and `TextNode` APIs cover ID/class/native-kind lookup, class-token updates, retained detach/reattach, mutation, callbacks, activation, focus, scrolling, and controls; browser-style operations needed by applications must be exposed through native APIs | core implemented; remaining API coverage review open |
 | C-owned X11/Wayland application loop | `oui_app_run` and `oui_app_request_exit` use Rust `App` and the same retained document; versioned platform callbacks and [clean native C/C++ window runs](native-c-lifecycle-evidence.md) cover X11 software/GL and Wayland software | implemented; release-lab qualification open |
 | C platform accessibility | owned full-tree snapshots, node metadata/relations/focus, and changed/removed IDs export from the shared engine; automated AT-SPI operation in a C window remains unqualified | open |
@@ -24,10 +24,10 @@ claimed by source code alone.
 | No-work frame | zero layout, paint, and raster on unchanged snapshots | pass |
 | Mutation ownership | 10,000-iteration soak, no owned-object leak | pass |
 | Local performance smoke | 0.108 ms p95, 308 UI-thread animation fps, 1.389% RSS growth | non-qualifying pass |
-| X11/Wayland software and Mesa GL | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251) passed both smoke paths; physical release-lab tests remain open | provisional pass |
-| Miri C handle ownership | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): opaque-handle ownership test passed under pinned Miri | pass |
-| ASan/LSan/fuzz | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): all 25 FFI tests passed, then both sanitizers reported 10,476 bytes through Fontconfig at process exit; fuzz stopped on a 2,606-byte Fontconfig allocation report | fail |
-| Native C UBSan | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): ABI consumers passed | pass |
+| X11/Wayland software and Mesa GL | [Own-checkpoint hardening](https://github.com/zhuowcui/open-ui/actions/runs/37064659223) passed native/window smoke paths at `9e0f0145`; physical release-lab tests remain open | provisional pass |
+| Miri C handle ownership | [Earlier hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): opaque-handle ownership test passed under pinned Miri; own-source job at `9e0f0145` skipped | own-source qualification open |
+| ASan/LSan/fuzz | [Earlier hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): all 25 FFI tests passed, then both sanitizers reported 10,476 bytes through Fontconfig at process exit; fuzz stopped on a 2,606-byte Fontconfig allocation report. Own-source jobs at `9e0f0145` skipped | earlier failures unresolved; own-source qualification open |
+| Native C UBSan | [Earlier hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): ABI consumers passed; own-source job at `9e0f0145` skipped | own-source qualification open |
 | x86-64/AArch64 SDK, deb, rpm | deterministic source pipeline and tag matrix | pending tag build |
 | Clean Ubuntu/Fedora install | release workflow consumer jobs | pending tag build |
 | Physical GPU/context loss | release-lab profile | open |
@@ -48,6 +48,18 @@ over the same retained document and event path.
 Each needed operation must be callable by the consuming native Rust app and
 verified through that public API. An internal Engine operation or a test-only
 fixture does not close a native application API gap.
+
+The [native style checkpoint](generated/native-primitive-styles-v1.json) at
+`9e0f0145` verifies 35 primitive longhands through public Rust, C, and C++
+consumers at five scales. The same retained engine preserves optional colors,
+`currentcolor`, alignment modifiers, and full unsigned counts through C
+transport. Shared raw-frame readback now returns the documented premultiplied
+RGBA order. All previous 110 exports and 30 layouts are unchanged. The full
+workspace and both 40-profile pixel suites pass, with eight generators,
+archive integrity, and accountability also passing. Six own-checkpoint hosted
+jobs pass; five skipped hardening jobs remain open. Full four-profile pixel
+qualification, complete needed native API coverage, and release-lab gates
+remain required.
 
 The [native PNG application](../renderer/native-png-sampling.md) verifies
 resource registration, typed image styles, mutation through Rust callbacks,

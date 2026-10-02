@@ -13,7 +13,7 @@ remain open.
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
 | Latest complete clean census against cached Chromium captures | Repaired native viewport `1366b72f`: 21,308/22,924 exact, 1,616 different, 0 errors; all 16 formerly exact regressions restored with zero new exact loss or worsened pixel count. The full pixel gate remains failing |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
-| Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
+| Focused / primitive 40-profile matrices | 640/640 / 960/960 exact on clean native style/RGBA source `9e0f0145` |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
 | Pending native final-state candidates | 0/35 exact at all four profiles after the latest clean recheck |
 | Full inventory | 7,673 |
@@ -21,11 +21,30 @@ remain open.
 | Accountability audit | 7/7 |
 | Application conformance scenarios | 58 across 10 domains |
 | Frozen / current C exports | 84 / 110 |
-| C examples / C++ consumers | 8 / 3, including native C/C++ window consumers |
-| Workspace tests | 8,498 pass; 13 ignored on clean viewport clipping repair source `1366b72f` |
+| C examples / C++ consumers | 9 / 4, including native C/C++ window consumers; eight C and three C++ headless consumers run on clean `9e0f0145` |
+| Workspace tests | 8,515 pass; 13 ignored on clean native style/RGBA source `9e0f0145`, with the Linux C feature enabled |
 | Python closure, qualification, accountability and packaging tests | 244 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
+
+The [native style evidence](../v02/generated/native-primitive-styles-v1.json)
+records clean `9e0f0145`. Public Rust, C, and C++ consumers exercise 35 primitive
+longhands at five scales, mutate retained state from callbacks, and check
+owned snapshots and pixels. Safe/unsafe alignment, `currentcolor`, optional
+colors, and full unsigned counts survive C transport without changing any
+of the 110 exports or 30 existing layouts. The consumer also exposed raw
+N32 bytes being interpreted as RGBA. Shared CPU readback now requests RGBA
+explicitly, correcting red/blue order for native apps and Linux presenters.
+The full workspace passes 8,515 tests with zero failures and 13 ignored.
+Its complete focused and primitive matrices are 640/640 and 960/960 exact
+at zero tolerance. All 1,600 Open UI and Chromium images, oracle identities,
+and difference signatures remain unchanged against the previous exact raster
+evidence. The full original and expanded matrices still require their own
+complete result on this source.
+Own-checkpoint hosted CI has six successful jobs and five skipped hardening
+jobs; skips remain open results. Every needed public native operation still
+requires implementation and consuming-application verification. Open UI
+executes no JavaScript, in any version.
 
 The [neutral PNG gamma correction](../renderer/generated/native-png-sampling-v4.json)
 is committed at `63aeb672`. Both complete clean matrices have observed exit 1

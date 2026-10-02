@@ -1,0 +1,993 @@
+{
+  "artifacts": [
+    {
+      "path": "bindings/rust/openui/src/style.rs",
+      "sha256": "3ba12057839aeadd23c81f8892104443f3250e7dde4503ac91a85f5207b21264"
+    },
+    {
+      "path": "bindings/rust/openui/tests/native_primitive_styles.rs",
+      "sha256": "c4909e8158775985e3b3573e5cb7300daf6df1d7cfb7aa4cdfae5c3ab75c4171"
+    },
+    {
+      "path": "bindings/rust/openui-compositor/src/lib.rs",
+      "sha256": "491e8d584382f11c7da15126bb9b6546542906fa497ba00aa2bc9752d8708a6b"
+    },
+    {
+      "path": "bindings/rust/openui-ffi/src/lib.rs",
+      "sha256": "8574f289a64e667010129a9a215b44b1952250e8ded053c0c3d7273c22ce46be"
+    },
+    {
+      "path": "bindings/rust/openui-ffi/src/registry.rs",
+      "sha256": "937bd9a0e2eca0a6f7bede231a369c821c128c90ec0eeba1e807e061fd2b576d"
+    },
+    {
+      "path": "bindings/rust/openui-ffi/src/value.rs",
+      "sha256": "85971ef7aecbbb5918355c2a5a35a91cea3146be33f9e24b815b5d4e1008f3c6"
+    },
+    {
+      "path": "bindings/rust/openui-style/src/generated_properties.rs",
+      "sha256": "583aa4dcc7a18aab60bcad744d244302f0252537b48babaaea8220d4fcd6c57b"
+    },
+    {
+      "path": "bindings/rust/openui-style/src/property.rs",
+      "sha256": "caad4d658f1d6a0f177630559f90e5aad88c812f6bcdb7c7cce669ae68edf089"
+    },
+    {
+      "path": "docs/v02/generated/openui-ffi-checksum.txt",
+      "sha256": "ec09b3049678f1744f2d6e267c3be67344f1ee9edb1c574685175f0bd65e5635"
+    },
+    {
+      "path": "docs/v02/generated/openui-ffi-layout.json",
+      "sha256": "b1d214225748db72f52e63de0376f4d5654af70ee81be85a66ee94d6d6ca851d"
+    },
+    {
+      "path": "docs/v02/generated/openui-ffi-symbols.txt",
+      "sha256": "ff0c4db9b91e4f1fab3cd2737e507cc0b1c130a3e22cedd48e925f99578493c9"
+    },
+    {
+      "path": "examples/c_v02/primitive_styles.c",
+      "sha256": "905011ff401a2605696ab602fb042ff1b90a61fee950d5df4db49d99e5900278"
+    },
+    {
+      "path": "examples/c_v02/primitive_styles.cc",
+      "sha256": "514ff512ba8eb7a9f86ee121ab9ca885f399b2d9f786c69cf4abe6d5d5a8aacc"
+    },
+    {
+      "path": "include/openui.h",
+      "sha256": "f5fd6cf810c18b37fa6858552876e9bf013decd4a29b36a6d4c96931e5d95f5e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-accountability-check-v131.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-archive-check-v131.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-build-v132/build.log",
+      "sha256": "2e377f99d7b7c6aa1173af327eec44b8daa790dbc84b9986955206aa8b084959"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-build-v133/build.json",
+      "sha256": "a57809a14bfbeb6781f163fcd8d139d33bf84cfad3c697dd9c6a677770f278c6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-build-v133/build.log",
+      "sha256": "1d0d3fce70f03bba15452e930ccfb464af94c9e8f92d7d2043de44ef89d9072f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-checks-v131.json",
+      "sha256": "1c3ab54d9eafee8fec64c8fe301ffcd7c65db1f89c99ddca9023f642eb8f3830"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-ci-v136.json",
+      "sha256": "3dd4ac18e3cfeb63225b55ca01ac85cb0ad932a887010596737a2c6523ef75a0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/abi-consumers.log",
+      "sha256": "2670e6a2d22bd845fec55f982df238215919859ed21958c92f175f1e534dab2c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/attempt.json",
+      "sha256": "c8d14267631dd56c527b95e3aac24291cd90f8e8d1ca89227fc434b377fe5b1c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/c-format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/clean.log",
+      "sha256": "141e94852d7a88f21f2e971fb48f51d6f66eb1221eb3e4f9cafdeda602f30143"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/ffi-build.log",
+      "sha256": "d7140ba91b74e479403ef11a956299a24d119d835631389ee9e3e93a6b20fac4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/libopenui_ffi.so",
+      "sha256": "fbb693610402816da7077eae8ba096eaf9ed6162e649b7d2683210691f337785"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/verification.json",
+      "sha256": "95aaafdf25202e352687ef369a69fd176bd286bb51e956552f98ee7211919e7b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/workspace-produced-basic_text_openui.png",
+      "sha256": "23b3d97436ebb63a32051c3f17a8e5e50ebc136fd8b4b2b86a64d7a84bfa3b13"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/workspace.log",
+      "sha256": "905b6ea6a3c05374c9994eafaf952a4ba35699828d6c7abf33f46fc9d6949e56"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-coverage-v134.json",
+      "sha256": "2a0e2fa96b58371dcce8d56ef20dcc8e3094aa07bedd488030e846360fb8aea1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-coverage-v135.json",
+      "sha256": "b7b964b1c24b4709bd8fef42a91de7a030538d4a3573ec0af97a30d8be8a4072"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-ffi-check-v131.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-focused-v137/focused-summary.json",
+      "sha256": "b33b2c9d582524815d12c1c99ed82feeef4a98957cb22ae64fec05b962cfb4a7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-focused-v137.log",
+      "sha256": "4e633045f89ede613fcc9976a7f7d3b6c29733729ed91664a3515e0286adcd31"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-multicol-check-v131.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-preliminary-v125/native-rust.log",
+      "sha256": "d7e2e2e80df477086508d7712f956f040b53ece30251bb0ca279420a1e3e2e64"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-preliminary-v126/abi-consumers.log",
+      "sha256": "6dec7c970fa895758d376391952e2d11ef5ae77dac7104102974e1b734759cef"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-preliminary-v126/attempt.json",
+      "sha256": "a64b4500632771e62ffffec7832d2264c8b4f4be8be3ecb8158359899a947c1f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-preliminary-v126/ffi-build.log",
+      "sha256": "7646ec5020260f0ef4695308076a660ff5e61f907c2482d1e3dc72c85893f867"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-preliminary-v126/format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-preliminary-v126/native-rust.log",
+      "sha256": "3283bd0e6056732e8e71ffbe51111549f9a7d2d4d26034a75cd79e622f5ad643"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-preliminary-v126/style-ffi.log",
+      "sha256": "3304ca0c26e5537609dd32410ae69fe3289531ba72f3b587018d75112b6db8e1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-preliminary-v128-abi.log",
+      "sha256": "49ae3cf5c9b72241d987afaf7162f2430e0b82b9940242d86d4f2ed5a46d2490"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-preliminary-v129/abi-consumers.log",
+      "sha256": "2670e6a2d22bd845fec55f982df238215919859ed21958c92f175f1e534dab2c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-preliminary-v129/attempt.json",
+      "sha256": "f41bb5c06738b8608bfb427af78c5c85dea7bc1f5aa2b0288556ba16ae08d5c4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-preliminary-v129/ffi-build.log",
+      "sha256": "cc565ff74a19bd99ebad06786ca4e044d2de74713ee1fb0f00b80166a4f6049f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-preliminary-v129/native-rust.log",
+      "sha256": "a83bc42dacb0cafa76e6a631c78d0d19b75e12391d3a52e6c44da205bd6111df"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-primitive-v137/primitive-summary.json",
+      "sha256": "330711e254c2f631ce2db67ca3a8f700602ab5ada1e30476b6bb09570f039748"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-primitive-v137.log",
+      "sha256": "30fe78faf499cf86965bc3cb40c1df82053b00c6ab655c9e76097cb6ecdc5812"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-raster-delta-v138.json",
+      "sha256": "cfa074c5e5e381f273ede5e8e9ffda63eead8e6f619cf61f3675b252754abd21"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-renderer-check-v131.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-sp17-check-v131.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-sp18-check-v131.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-sp20-check-v131.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-style-check-v131.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-v02-check-v131.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-ci-v127.json",
+      "sha256": "b1566efca004a8b6b7e8fb3b49846fc79d281e99d9356217c204a9c372a813dd"
+    },
+    {
+      "path": "tools/ffi/openui.h.in",
+      "sha256": "610b7f770d6a54661b97ebfb2a9fdf887afe21a2aec4814cc755ceb9658ff7e9"
+    },
+    {
+      "path": "tools/style/generate_properties.py",
+      "sha256": "ceebf0b7841861ef126549421dada01367a6147f417c91df88f8de71f35060b9"
+    }
+  ],
+  "earlier_attempts": [
+    {
+      "observed_exit_code": 101,
+      "qualifying": false,
+      "reason": "Consumer used a private bitmap field; corrected to the public pixels() method.",
+      "version": 125
+    },
+    {
+      "observed_exit_code": 1,
+      "qualifying": false,
+      "reason": "C consumer exposed swapped red/blue in native raw output.",
+      "version": 126
+    },
+    {
+      "observed_exit_code": 1,
+      "qualifying": false,
+      "reason": "Diagnostic C run recorded the incorrect blue pixel bytes.",
+      "version": 128
+    },
+    {
+      "observed_exit_code": 0,
+      "qualifying": false,
+      "reason": "Preliminary dirty-source native checks only.",
+      "version": 129
+    },
+    {
+      "cargo_exit_code": 101,
+      "observed_exit_code": 1,
+      "qualifying": false,
+      "reason": "Incorrect command used the package name as the binary name; corrected to pixel_compare.",
+      "version": 132
+    }
+  ],
+  "focused_and_primitive_matrices": {
+    "matrices": [
+      {
+        "all_native_and_chromium_images_oracle_identities_and_differences_unchanged": true,
+        "observed_exit_code": 0,
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-focused-v137/focused-summary.json",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "e63831eea3fe3badcc9cbf61d2381d9e2ced5003d8ef2c7022f82499d0ba1e0e",
+          "total": 640
+        },
+        "sha256": "b33b2c9d582524815d12c1c99ed82feeef4a98957cb22ae64fec05b962cfb4a7",
+        "source": {
+          "clean": true,
+          "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "source_after": {
+          "clean": true,
+          "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "suite": "focused"
+      },
+      {
+        "all_native_and_chromium_images_oracle_identities_and_differences_unchanged": true,
+        "observed_exit_code": 0,
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-primitive-v137/primitive-summary.json",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "ea0746cf970af59cd860f7db6a1ed462d4e18032eec453c1780d0cfd58e19fe4",
+          "total": 960
+        },
+        "sha256": "330711e254c2f631ce2db67ca3a8f700602ab5ada1e30476b6bb09570f039748",
+        "source": {
+          "clean": true,
+          "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "source_after": {
+          "clean": true,
+          "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "suite": "primitive"
+      }
+    ],
+    "release_qualification": false,
+    "schema_version": 1
+  },
+  "hosted": {
+    "counts": {
+      "cancelled": 0,
+      "failure": 0,
+      "skipped": 5,
+      "success": 6
+    },
+    "head": "9e0f01457621cff9757914b71d956d403e4ff117",
+    "unfinished": 0
+  },
+  "javascript_executed_by_openui": false,
+  "native_api_checks": {
+    "abi": {
+      "abi_version": "0x00020000",
+      "all_30_previous_layouts_preserved": true,
+      "all_previous_exports_preserved": true,
+      "exports": 110,
+      "parent": "044b597379cf1208170b4d03fec7cbd3893fffe9"
+    },
+    "javascript_executed_by_openui": false,
+    "library": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/libopenui_ffi.so",
+      "sha256": "fbb693610402816da7077eae8ba096eaf9ed6162e649b7d2683210691f337785",
+      "unchanged": true
+    },
+    "note": "Completed native API, workspace and ABI checks. These are not new Chromium pixel passes.",
+    "release_qualification": false,
+    "results": {
+      "c_and_cpp_primitive_runs": 10,
+      "c_and_cpp_scroll_runs": 10,
+      "headless_c_examples_run": 8,
+      "headless_cpp_consumers_run": 3,
+      "native_scales": [
+        1,
+        1.25,
+        1.5,
+        2,
+        3
+      ],
+      "primitive_properties": 35,
+      "test_result_lines": 149,
+      "workspace_failed": 0,
+      "workspace_ignored": 13,
+      "workspace_passed": 8515
+    },
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "steps": [
+      {
+        "command": [
+          "cargo",
+          "--config",
+          ".cargo/config.chromium.toml",
+          "clean",
+          "-p",
+          "openui-layout",
+          "-p",
+          "openui-engine",
+          "-p",
+          "openui",
+          "-p",
+          "openui-compositor",
+          "-p",
+          "pixel-compare",
+          "-p",
+          "openui-paint"
+        ],
+        "cwd": "/home/nero/code/open-ui/bindings/rust",
+        "log": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/clean.log",
+        "log_sha256": "141e94852d7a88f21f2e971fb48f51d6f66eb1221eb3e4f9cafdeda602f30143",
+        "name": "clean",
+        "observed_exit_code": 0,
+        "source_after": {
+          "clean": true,
+          "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "tracked_test_image": null
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          ".cargo/config.chromium.toml",
+          "test",
+          "--locked",
+          "--workspace",
+          "--features",
+          "openui-ffi/linux"
+        ],
+        "cwd": "/home/nero/code/open-ui/bindings/rust",
+        "log": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/workspace.log",
+        "log_sha256": "905b6ea6a3c05374c9994eafaf952a4ba35699828d6c7abf33f46fc9d6949e56",
+        "name": "workspace",
+        "observed_exit_code": 0,
+        "source_after": {
+          "clean": true,
+          "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "tracked_test_image": {
+          "original_sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871",
+          "produced_path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/workspace-produced-basic_text_openui.png",
+          "produced_sha256": "23b3d97436ebb63a32051c3f17a8e5e50ebc136fd8b4b2b86a64d7a84bfa3b13"
+        }
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          ".cargo/config.chromium.toml",
+          "build",
+          "--locked",
+          "-p",
+          "openui-ffi",
+          "--features",
+          "linux"
+        ],
+        "cwd": "/home/nero/code/open-ui/bindings/rust",
+        "log": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/ffi-build.log",
+        "log_sha256": "d7140ba91b74e479403ef11a956299a24d119d835631389ee9e3e93a6b20fac4",
+        "name": "ffi-build",
+        "observed_exit_code": 0,
+        "source_after": {
+          "clean": true,
+          "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "tracked_test_image": null
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "/home/nero/code/open-ui/tools/ffi/verify_abi.py",
+          "--library",
+          "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/libopenui_ffi.so"
+        ],
+        "cwd": "/home/nero/code/open-ui",
+        "log": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/abi-consumers.log",
+        "log_sha256": "2670e6a2d22bd845fec55f982df238215919859ed21958c92f175f1e534dab2c",
+        "name": "abi-consumers",
+        "observed_exit_code": 0,
+        "source_after": {
+          "clean": true,
+          "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "tracked_test_image": null
+      },
+      {
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--check"
+        ],
+        "cwd": "/home/nero/code/open-ui/bindings/rust",
+        "log": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/format.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "format",
+        "observed_exit_code": 0,
+        "source_after": {
+          "clean": true,
+          "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "tracked_test_image": null
+      },
+      {
+        "command": [
+          "/home/nero/.cache/uv/archive-v0/wZz0Bk1agw0QZFSFjB9JD/clang_format/data/bin/clang-format",
+          "--dry-run",
+          "--Werror",
+          "examples/c_v02/primitive_styles.c",
+          "examples/c_v02/primitive_styles.cc"
+        ],
+        "cwd": "/home/nero/code/open-ui",
+        "log": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-clean-v130/c-format.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "c-format",
+        "observed_exit_code": 0,
+        "source_after": {
+          "clean": true,
+          "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "tracked_test_image": null
+      }
+    ]
+  },
+  "policy": "Open UI never executes JavaScript. Consuming native apps call public Rust methods and Rust callbacks over the shared retained engine. Chromium is the sole pixel target.",
+  "primitive_coverage": {
+    "all_style_properties_complete": false,
+    "bridge_properties": [
+      {
+        "css_name": "align-content",
+        "id": "126",
+        "rust_name": "AlignContent",
+        "rust_type": "ContentAlignment",
+        "value_kind": "content-alignment"
+      },
+      {
+        "css_name": "align-self",
+        "id": "127",
+        "rust_name": "AlignSelf",
+        "rust_type": "ItemAlignment",
+        "value_kind": "item-alignment"
+      },
+      {
+        "css_name": "border-bottom-color",
+        "id": "133",
+        "rust_name": "BorderBottomColor",
+        "rust_type": "StyleColor",
+        "value_kind": "color"
+      },
+      {
+        "css_name": "border-bottom-width",
+        "id": "137",
+        "rust_name": "BorderBottomWidth",
+        "rust_type": "i32",
+        "value_kind": "integer"
+      },
+      {
+        "css_name": "border-left-color",
+        "id": "140",
+        "rust_name": "BorderLeftColor",
+        "rust_type": "StyleColor",
+        "value_kind": "color"
+      },
+      {
+        "css_name": "border-left-width",
+        "id": "142",
+        "rust_name": "BorderLeftWidth",
+        "rust_type": "i32",
+        "value_kind": "integer"
+      },
+      {
+        "css_name": "border-right-color",
+        "id": "144",
+        "rust_name": "BorderRightColor",
+        "rust_type": "StyleColor",
+        "value_kind": "color"
+      },
+      {
+        "css_name": "border-right-width",
+        "id": "146",
+        "rust_name": "BorderRightWidth",
+        "rust_type": "i32",
+        "value_kind": "integer"
+      },
+      {
+        "css_name": "border-top-color",
+        "id": "148",
+        "rust_name": "BorderTopColor",
+        "rust_type": "StyleColor",
+        "value_kind": "color"
+      },
+      {
+        "css_name": "border-top-width",
+        "id": "152",
+        "rust_name": "BorderTopWidth",
+        "rust_type": "i32",
+        "value_kind": "integer"
+      },
+      {
+        "css_name": "bottom",
+        "id": "153",
+        "rust_name": "Bottom",
+        "rust_type": "Length",
+        "value_kind": "length"
+      },
+      {
+        "css_name": "column-height",
+        "id": "165",
+        "rust_name": "ColumnHeight",
+        "rust_type": "Option<Length>",
+        "value_kind": "length"
+      },
+      {
+        "css_name": "column-rule-color",
+        "id": "166",
+        "rust_name": "ColumnRuleColor",
+        "rust_type": "StyleColor",
+        "value_kind": "color"
+      },
+      {
+        "css_name": "column-rule-width",
+        "id": "168",
+        "rust_name": "ColumnRuleWidth",
+        "rust_type": "i32",
+        "value_kind": "integer"
+      },
+      {
+        "css_name": "column-width",
+        "id": "170",
+        "rust_name": "ColumnWidth",
+        "rust_type": "Option<Length>",
+        "value_kind": "length"
+      },
+      {
+        "css_name": "filter-blur",
+        "id": "177",
+        "rust_name": "FilterBlur",
+        "rust_type": "f32",
+        "value_kind": "number"
+      },
+      {
+        "css_name": "filter-grayscale",
+        "id": "178",
+        "rust_name": "FilterGrayscale",
+        "rust_type": "f32",
+        "value_kind": "number"
+      },
+      {
+        "css_name": "justify-items",
+        "id": "188",
+        "rust_name": "JustifyItems",
+        "rust_type": "ItemAlignment",
+        "value_kind": "item-alignment"
+      },
+      {
+        "css_name": "justify-self",
+        "id": "189",
+        "rust_name": "JustifySelf",
+        "rust_type": "ItemAlignment",
+        "value_kind": "item-alignment"
+      },
+      {
+        "css_name": "left",
+        "id": "190",
+        "rust_name": "Left",
+        "rust_type": "Length",
+        "value_kind": "length"
+      },
+      {
+        "css_name": "order",
+        "id": "197",
+        "rust_name": "Order",
+        "rust_type": "i32",
+        "value_kind": "integer"
+      },
+      {
+        "css_name": "orphans",
+        "id": "198",
+        "rust_name": "Orphans",
+        "rust_type": "u32",
+        "value_kind": "integer"
+      },
+      {
+        "css_name": "outline-color",
+        "id": "199",
+        "rust_name": "OutlineColor",
+        "rust_type": "StyleColor",
+        "value_kind": "color"
+      },
+      {
+        "css_name": "outline-offset",
+        "id": "200",
+        "rust_name": "OutlineOffset",
+        "rust_type": "i32",
+        "value_kind": "integer"
+      },
+      {
+        "css_name": "overflow-clip-margin",
+        "id": "203",
+        "rust_name": "OverflowClipMargin",
+        "rust_type": "f32",
+        "value_kind": "number"
+      },
+      {
+        "css_name": "overflow-x",
+        "id": "204",
+        "rust_name": "OverflowX",
+        "rust_type": "Overflow",
+        "value_kind": "overflow"
+      },
+      {
+        "css_name": "overflow-y",
+        "id": "205",
+        "rust_name": "OverflowY",
+        "rust_type": "Overflow",
+        "value_kind": "overflow"
+      },
+      {
+        "css_name": "right",
+        "id": "209",
+        "rust_name": "Right",
+        "rust_type": "Length",
+        "value_kind": "length"
+      },
+      {
+        "css_name": "scrollbar-track-color",
+        "id": "214",
+        "rust_name": "ScrollbarTrackColor",
+        "rust_type": "Option<Color>",
+        "value_kind": "color"
+      },
+      {
+        "css_name": "top",
+        "id": "217",
+        "rust_name": "Top",
+        "rust_type": "Length",
+        "value_kind": "length"
+      },
+      {
+        "css_name": "widows",
+        "id": "221",
+        "rust_name": "Widows",
+        "rust_type": "u32",
+        "value_kind": "integer"
+      },
+      {
+        "css_name": "outline-width",
+        "id": "231",
+        "rust_name": "OutlineWidth",
+        "rust_type": "i32",
+        "value_kind": "integer"
+      },
+      {
+        "css_name": "scrollbar-thumb-color",
+        "id": "234",
+        "rust_name": "ScrollbarThumbColor",
+        "rust_type": "Option<Color>",
+        "value_kind": "color"
+      },
+      {
+        "css_name": "shape-image-threshold",
+        "id": "235",
+        "rust_name": "ShapeImageThreshold",
+        "rust_type": "f32",
+        "value_kind": "number"
+      },
+      {
+        "css_name": "shape-margin",
+        "id": "236",
+        "rust_name": "ShapeMargin",
+        "rust_type": "Length",
+        "value_kind": "length"
+      }
+    ],
+    "c_and_cpp_consumers_all_bridge_properties": true,
+    "c_property_set_equals_schema_bridge": true,
+    "cpp_consumer_uses_same_c_application": true,
+    "prior_report": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-coverage-v134.json",
+      "sha256": "2a0e2fa96b58371dcce8d56ef20dcc8e3094aa07bedd488030e846360fb8aea1"
+    },
+    "public_rust_consumer_all_bridge_properties": true,
+    "source_commit": "9e0f01457621cff9757914b71d956d403e4ff117"
+  },
+  "read_only_checks": {
+    "checks": [
+      {
+        "command": [
+          "python3",
+          "tools/qualification/generate_renderer_contract.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-renderer-check-v131.log",
+        "log_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+        "name": "renderer",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp13r_multicol_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-multicol-check-v131.log",
+        "log_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+        "name": "multicol",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp17_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-sp17-check-v131.log",
+        "log_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+        "name": "sp17",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp18_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-sp18-check-v131.log",
+        "log_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+        "name": "sp18",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp20_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-sp20-check-v131.log",
+        "log_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+        "name": "sp20",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/release/generate_v02_contract.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-v02-check-v131.log",
+        "log_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+        "name": "v02",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/style/generate_properties.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-style-check-v131.log",
+        "log_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+        "name": "style",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/ffi/generate_ffi.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-ffi-check-v131.log",
+        "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+        "name": "ffi",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/accountability/restore_frozen_openui_archive.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-archive-check-v131.log",
+        "log_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+        "name": "archive",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/accountability/audit.py",
+          "--repository-only"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-primitive-accountability-check-v131.log",
+        "log_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+        "name": "accountability",
+        "process_exit_code": 0
+      }
+    ],
+    "qualification_note": "Read-only generator, archive integrity and repository-accountability checks over an unchanged clean umbrella checkpoint. This is not a renderer pixel qualification run.",
+    "release_qualification": false,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "release_qualification": false,
+  "remaining_gates": [
+    "Full four-profile original and expanded renderer qualification on this source",
+    "Remaining needed public native Rust operations and complete C property conversion",
+    "Five skipped hosted hardening jobs and other required hardening results",
+    "Native nested scroll and scrollbar input/accessibility behavior",
+    "Retained per-node layers, presentation-side animation and preserve-3d semantics",
+    "Physical release-lab, accessibility, packaging, signing and publication"
+  ],
+  "rgba_readback": {
+    "consumer_expected": "premultiplied RGBA8888",
+    "correct_blue_pixel_bytes": [
+      0,
+      0,
+      255,
+      255
+    ],
+    "fixture_specific_pixel_correction": false,
+    "native_consumers_and_linux_presenters_share_frame": true,
+    "png_encoding_path_changed": false,
+    "previous_blue_pixel_bytes": [
+      255,
+      0,
+      0,
+      255
+    ],
+    "previous_cpu_readback": "platform-native Skia N32, BGRA on the Linux development host",
+    "shared_fix": "SoftwareCompositor requests RGBA8888 when reading the immutable raster image"
+  },
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+    "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+    "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+    "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+    "source_tree_sha256": "c28db0f09b5e5f6967b4a7563097997296c6d414ef005bd2d1e2fe554955225b",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
