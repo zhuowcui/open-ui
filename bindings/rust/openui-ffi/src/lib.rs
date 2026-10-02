@@ -1534,6 +1534,49 @@ pub extern "C" fn oui_element_get_client_rects_v1(
     })
 }
 
+// SAFETY CONTRACT: `out_metrics` has a readable initialized version header and,
+// when its declared size is sufficient, writable storage for the complete
+// structure. `out_has_metrics` is writable, nonoverlapping byte storage.
+// Both outputs are unchanged on error; a missing layout box returns zero sizes.
+#[no_mangle]
+pub extern "C" fn oui_element_get_scroll_metrics_v1(
+    element_handle: *mut OuiElement,
+    out_metrics: *mut OuiScrollMetricsV1,
+    out_has_metrics: *mut u8,
+) -> OuiStatus {
+    ffi(|| {
+        if out_metrics.is_null() || out_has_metrics.is_null() {
+            return Err(invalid("scroll metrics output is null"));
+        }
+        // Read the prefix before borrowing the full versioned structure. A
+        // caller with an older, shorter allocation can be rejected safely.
+        let struct_size = unsafe { ptr::read(out_metrics.cast::<u32>()) };
+        if struct_size < 2 * size_of::<u32>() as u32 {
+            return Err(invalid("scroll metrics header is too small"));
+        }
+        let abi_version = unsafe { ptr::read(out_metrics.cast::<u32>().add(1)) };
+        check_header(struct_size, abi_version, size_of::<OuiScrollMetricsV1>())?;
+        let source = element(element_handle as usize)?;
+        let state = element_document(&source)?;
+        let metrics = borrow_engine_mut(&state)?.scroll_metrics(source.node)?;
+        let output = OuiScrollMetricsV1 {
+            struct_size,
+            abi_version,
+            client_width: metrics.map_or(0.0, |value| value.client_width),
+            client_height: metrics.map_or(0.0, |value| value.client_height),
+            scroll_width: metrics.map_or(0.0, |value| value.scroll_width),
+            scroll_height: metrics.map_or(0.0, |value| value.scroll_height),
+        };
+        // SAFETY: both outputs were validated above and the C contract requires
+        // writable, properly aligned and nonoverlapping caller storage.
+        unsafe {
+            ptr::write(out_metrics, output);
+            ptr::write(out_has_metrics, u8::from(metrics.is_some()));
+        }
+        Ok(())
+    })
+}
+
 // SAFETY CONTRACT: `element` is live; offsets must be finite.
 #[no_mangle]
 pub extern "C" fn oui_element_scroll_to(
@@ -1561,7 +1604,11 @@ pub extern "C" fn oui_element_get_scroll_offset(
         }
         let source = element(element_handle as usize)?;
         let state = element_document(&source)?;
-        let (x, y) = borrow_engine(&state)?.scroll_offset(source.node)?;
+        let (x, y) = {
+            let mut engine = borrow_engine_mut(&state)?;
+            engine.update()?;
+            engine.scroll_offset(source.node)?
+        };
         // SAFETY: both pointers are caller-provided writable `double` slots.
         unsafe {
             ptr::write(out_x, x);
@@ -3313,6 +3360,13 @@ mod tests {
         );
         assert_eq!(
             (
+                size_of::<OuiScrollMetricsV1>(),
+                align_of::<OuiScrollMetricsV1>()
+            ),
+            (40, 8)
+        );
+        assert_eq!(
+            (
                 size_of::<OuiFontUnicodeRange>(),
                 align_of::<OuiFontUnicodeRange>()
             ),
@@ -3946,6 +4000,142 @@ mod tests {
         assert_eq!(oui_element_destroy(div), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_scroll_metrics_validate_output_headers_and_ownership() {
+        let document_handle = create_document(32, 32);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document_handle, &mut root), OuiStatus::Ok);
+        let mut output = OuiScrollMetricsV1 {
+            struct_size: size_of::<OuiScrollMetricsV1>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            client_width: -1.0,
+            client_height: -1.0,
+            scroll_width: -1.0,
+            scroll_height: -1.0,
+        };
+        let initial = output;
+        let mut found = 55;
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, ptr::null_mut(), &mut found),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output, ptr::null_mut()),
+            OuiStatus::InvalidArgument
+        );
+        output.abi_version = 1;
+        let wrong_version = output;
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output, &mut found),
+            OuiStatus::AbiMismatch
+        );
+        assert_eq!(output, wrong_version);
+        assert_eq!(found, 55);
+        output = initial;
+        let mut short_header = [8_u32, OUI_ABI_VERSION];
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, short_header.as_mut_ptr().cast(), &mut found),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(short_header, [8, OUI_ABI_VERSION]);
+        assert_eq!(found, 55);
+        let state = document(document_handle as usize).unwrap();
+        let held = borrow_engine(&state).unwrap();
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output, &mut found),
+            OuiStatus::Reentrant
+        );
+        assert_eq!(output, initial);
+        assert_eq!(found, 55);
+        drop(held);
+        drop(state);
+
+        let address = root as usize;
+        let wrong_thread = std::thread::spawn(move || {
+            let mut output = initial;
+            let mut found = 55;
+            let status = oui_element_get_scroll_metrics_v1(
+                address as *mut OuiElement,
+                &mut output,
+                &mut found,
+            );
+            assert_eq!(output, initial);
+            assert_eq!(found, 55);
+            status
+        })
+        .join()
+        .unwrap();
+        assert_eq!(wrong_thread, OuiStatus::WrongThread);
+        assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output, &mut found),
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(output, initial);
+        assert_eq!(found, 55);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_scroll_metrics_preserve_larger_caller_storage_and_absent_boxes() {
+        #[repr(C)]
+        struct Extended {
+            metrics: OuiScrollMetricsV1,
+            tail: u64,
+        }
+        let document = create_document(80, 50);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let mut output = Extended {
+            metrics: OuiScrollMetricsV1 {
+                struct_size: size_of::<Extended>() as u32,
+                abi_version: OUI_ABI_VERSION,
+                client_width: -1.0,
+                client_height: -1.0,
+                scroll_width: -1.0,
+                scroll_height: -1.0,
+            },
+            tail: 0xdead_beef_1234_5678,
+        };
+        let mut found = 0;
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output.metrics, &mut found),
+            OuiStatus::Ok
+        );
+        assert_eq!(found, 1);
+        assert_eq!(output.metrics.client_width, 80.0);
+        assert_eq!(output.metrics.client_height, 50.0);
+        assert_eq!(output.metrics.scroll_width, 80.0);
+        assert_eq!(output.metrics.scroll_height, 50.0);
+        assert_eq!(output.metrics.struct_size, size_of::<Extended>() as u32);
+        assert_eq!(output.tail, 0xdead_beef_1234_5678);
+        let owned = output.metrics;
+        let detached = create_element(document, 0, ptr::null_mut());
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(detached, &mut output.metrics, &mut found),
+            OuiStatus::Ok
+        );
+        assert_eq!(found, 0);
+        assert_eq!(output.metrics.client_width, 0.0);
+        assert_eq!(output.metrics.client_height, 0.0);
+        assert_eq!(output.metrics.scroll_width, 0.0);
+        assert_eq!(output.metrics.scroll_height, 0.0);
+        assert_eq!(output.tail, 0xdead_beef_1234_5678);
+        assert_eq!(oui_element_remove(detached), OuiStatus::Ok);
+        let absent = output.metrics;
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(detached, &mut output.metrics, &mut found),
+            OuiStatus::StaleHandle
+        );
+        assert_eq!(output.metrics, absent);
+        assert_eq!(found, 0);
+        assert_eq!(oui_element_destroy(detached), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+        assert_eq!(owned.client_width, 80.0);
+        assert_eq!(owned.client_height, 50.0);
     }
 
     #[test]

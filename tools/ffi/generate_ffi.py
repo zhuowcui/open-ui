@@ -144,6 +144,7 @@ def outputs() -> dict[Path, bytes]:
             "OuiPlatformEvent": {"size": 152, "align": 8},
             "OuiViewportMetrics": {"size": 40, "align": 8},
             "OuiDocumentConfig": {"size": 48, "align": 8},
+            "OuiScrollMetricsV1": {"size": 40, "align": 8},
             "OuiFontUnicodeRange": {"size": 8, "align": 4},
             "OuiFontFeatureDefault": {"size": 8, "align": 4},
             "OuiFontFaceDescriptor": {"size": 112, "align": 8},

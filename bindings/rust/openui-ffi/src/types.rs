@@ -139,6 +139,18 @@ pub struct OuiDocumentConfig {
     pub viewport: OuiViewportMetrics,
 }
 
+/// Caller-owned client and content dimensions in logical CSS pixels.
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct OuiScrollMetricsV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub client_width: f64,
+    pub client_height: f64,
+    pub scroll_width: f64,
+    pub scroll_height: f64,
+}
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct OuiFontUnicodeRange {

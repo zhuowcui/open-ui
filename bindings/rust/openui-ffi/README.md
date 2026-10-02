@@ -16,7 +16,7 @@ schemas:
 Regenerate with `python3 tools/ffi/generate_ffi.py`, or verify without writing
 with `python3 tools/ffi/generate_ffi.py --check`. After building the crate,
 `python3 tools/ffi/verify_abi.py` checks exact exports, compiles C and C++
-consumers, and runs the six headless C examples.
+consumers, and runs seven headless C examples and two C++ consumers.
 
 All opaque handles are generation-checked and thread-affine. Strings are
 length-delimited UTF-8. Every status failure records a thread-local structured
@@ -29,6 +29,25 @@ later lookups while preserving its existing handles for reattachment.
 The owned `OuiAccessibilitySnapshot` API exposes node metadata, ordered
 relations, focus, and changed/removed IDs without retaining engine borrows.
 Snapshots remain readable after document destruction on their owning thread.
+
+## Native scroll dimensions
+
+`oui_element_get_scroll_metrics_v1` exposes the same shared engine query as
+Rust `Element::scroll_metrics`. Initialize `OuiScrollMetricsV1.struct_size`
+and `abi_version`, then pass writable, nonoverlapping metrics and presence
+outputs. The call resolves pending layout and copies client and content
+dimensions in logical pixels. An element without a layout box returns
+`OUI_OK`, a zero presence flag, and four zero dimensions. Errors leave both
+outputs unchanged. Larger caller structures keep their trailing bytes.
+
+The copy needs no release operation and remains valid after mutations or
+document destruction. Call the query on the document's owning thread.
+`oui_element_get_scroll_offset` also resolves pending layout, so a query after
+content shrink or viewport resize returns the clamped retained offset.
+The [C consumer](../../../examples/c_v02/scroll_metrics.c) and its C++ build
+exercise these operations directly through the public native API at five
+scales. Nested scrolling, scrollbar pointer/keyboard input, and accessibility
+qualification remain separate work.
 
 ## Native keyboard and text input
 

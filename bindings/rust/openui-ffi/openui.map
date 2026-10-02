@@ -67,6 +67,7 @@ OPENUI_0.2 {
     oui_element_get_bounds;
     oui_element_get_client_rects_v1;
     oui_element_get_control_flags;
+    oui_element_get_scroll_metrics_v1;
     oui_element_get_scroll_offset;
     oui_element_get_selection;
     oui_element_insert_before;

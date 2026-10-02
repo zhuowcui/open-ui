@@ -98,6 +98,10 @@
       "align": 4,
       "size": 16
     },
+    "OuiScrollMetricsV1": {
+      "align": 8,
+      "size": 40
+    },
     "OuiStylePayload": {
       "align": 8,
       "size": 8

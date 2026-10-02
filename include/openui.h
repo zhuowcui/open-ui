@@ -421,6 +421,16 @@ typedef struct OuiDocumentConfig {
   OuiViewportMetrics viewport;
 } OuiDocumentConfig;
 
+/* Caller-owned client and content dimensions in logical CSS pixels. */
+typedef struct OuiScrollMetricsV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  double client_width;
+  double client_height;
+  double scroll_width;
+  double scroll_height;
+} OuiScrollMetricsV1;
+
 typedef enum OuiFontFaceStyle {
   OUI_FONT_FACE_STYLE_NORMAL = 0,
   OUI_FONT_FACE_STYLE_ITALIC = 1,
@@ -896,7 +906,15 @@ OuiStatus oui_element_get_bounds(OuiElement* element, OuiRect* out_rect);
  * Copies are caller-owned. Layout may change between the count and copy calls.
  * out_count and rects must be writable, nonoverlapping caller storage. */
 OuiStatus oui_element_get_client_rects_v1(OuiElement* element, OuiRect* rects, size_t capacity, size_t* out_count);
+/* Resolve pending layout and copy shared native-engine scroll dimensions.
+ * Initialize struct_size and abi_version. Both outputs must be writable and
+ * nonoverlapping. A valid element without a layout box returns OUI_OK,
+ * out_has_metrics=0 and four zero dimensions. Outputs remain unchanged on
+ * error. No handle or buffer needs releasing; copies survive later mutations
+ * and document destruction. Must be called on the document's owning thread. */
+OuiStatus oui_element_get_scroll_metrics_v1(OuiElement* element, OuiScrollMetricsV1* out_metrics, uint8_t* out_has_metrics);
 OuiStatus oui_element_scroll_to(OuiElement* element, double x, double y);
+/* Resolve pending layout before reading the retained logical scroll offsets. */
 OuiStatus oui_element_get_scroll_offset(OuiElement* element, double* out_x, double* out_y);
 OuiStatus oui_element_focus(OuiElement* element);
 OuiStatus oui_element_blur(OuiElement* element);
