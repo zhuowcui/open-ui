@@ -170,6 +170,49 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
         f"            StyleProperty::{row['rust_name']} => Some(Self::{row['rust_name']}(style.fields.{field_names(row)[0]}.clone())),"
         for row in renderer_rows
     )
+    # Author values keep relative lengths until the engine resolves them. This
+    # bridge also serves C's scalar transport; computed renderer values remain
+    # a separate, lossless path through the same fields.
+    primitive_shapes = {
+        ("length", "Length"): ("Length", "resolve_length(*value)", "length(input).map(StyleValue::Length)"),
+        ("length", "Option<Length>"): (
+            "Length", "{ let value = resolve_length(*value); (!value.is_auto()).then_some(value) }",
+            "length(input).map(StyleValue::Length)",
+        ),
+        ("number", "f32"): ("Number", "*value", "input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number)"),
+        ("integer", "i32"): ("Integer", "*value", "input.parse::<i32>().ok().map(StyleValue::Integer)"),
+        ("integer", "u32"): ("Integer", "u32::try_from(*value).ok()?", None),
+        ("color", "StyleColor"): ("Color", "StyleColor::Resolved(*value)", None),
+        ("color", "Option<Color>"): ("Color", "Some(*value)", None),
+        ("overflow", "Overflow"): ("Overflow", "*value", "overflow_literal(input).map(StyleValue::Overflow)"),
+        ("item-alignment", "ItemAlignment"): ("ItemAlignment", "*value", "item_alignment_literal(input).map(StyleValue::ItemAlignment)"),
+        ("content-alignment", "ContentAlignment"): ("ContentAlignment", "*value", "content_alignment_literal(input).map(StyleValue::ContentAlignment)"),
+    }
+    primitive_apply_cases = []
+    primitive_parse_cases = []
+    for row in renderer_rows:
+        if int(row["id"]) <= 125 or row["rust_name"] == "ColumnCount":
+            continue
+        shape = primitive_shapes.get((row["value_kind"], fields[field_names(row)[0]]))
+        if shape is None:
+            if row["value_kind"] in {key[0] for key in primitive_shapes}:
+                raise SystemExit(f"missing author-value bridge for {row['css_name']}: {row['rust_type']}")
+            continue
+        variant, value, parse = shape
+        name = row["rust_name"]
+        primitive_apply_cases.append(
+            f"            (StyleProperty::{name}, StyleValue::{variant}(value)) => Some(Self::{name}({value})),"
+        )
+        if parse is None:
+            if row["rust_type"] == "u32":
+                parse = f"input.parse::<u32>().ok().map(|value| StyleValue::Renderer(RendererStyleValue::{name}(value)))"
+            elif row["rust_type"] == "StyleColor":
+                parse = f'if input.eq_ignore_ascii_case("currentcolor") {{ Some(StyleValue::Renderer(RendererStyleValue::{name}(StyleColor::CurrentColor))) }} else {{ color(input).map(StyleValue::Color) }}'
+            elif row["rust_type"] == "Option<Color>":
+                parse = f'if input == "auto" {{ Some(StyleValue::Renderer(RendererStyleValue::{name}(None))) }} else {{ color(input).map(StyleValue::Color) }}'
+        primitive_parse_cases.append(f"        StyleProperty::{name} => {parse},")
+    primitive_apply = "\n".join(primitive_apply_cases)
+    primitive_parse = "\n".join(primitive_parse_cases)
     internal = internal_rows()
     internal_variants = "\n".join(
         f"    {title(row['field'].replace('_', '-'))}({fields[row['field']]}),"
@@ -241,6 +284,17 @@ impl RendererStyleValue {{
         }}
     }}
 
+    pub(crate) fn from_author_value(
+        property: StyleProperty,
+        value: &StyleValue,
+        resolve_length: impl Fn(LengthValue) -> Length,
+    ) -> Option<Self> {{
+        match (property, value) {{
+{primitive_apply}
+            _ => None,
+        }}
+    }}
+
     pub(crate) fn from_computed(
         style: &ComputedStyle,
         property: StyleProperty,
@@ -249,6 +303,13 @@ impl RendererStyleValue {{
 {renderer_read}
             _ => None,
         }}
+    }}
+}}
+
+fn parse_renderer_author_literal(property: StyleProperty, input: &str) -> Option<StyleValue> {{
+    match property {{
+{primitive_parse}
+        _ => None,
     }}
 }}
 

@@ -138,7 +138,11 @@ typedef enum OuiAlignItems {
   OUI_ALIGN_ITEMS_NORMAL = 0, OUI_ALIGN_ITEMS_STRETCH = 1,
   OUI_ALIGN_ITEMS_CENTER = 2, OUI_ALIGN_ITEMS_START = 3,
   OUI_ALIGN_ITEMS_END = 4, OUI_ALIGN_ITEMS_FLEX_START = 5,
-  OUI_ALIGN_ITEMS_FLEX_END = 6, OUI_ALIGN_ITEMS_BASELINE = 7
+  OUI_ALIGN_ITEMS_FLEX_END = 6, OUI_ALIGN_ITEMS_BASELINE = 7,
+  OUI_ALIGN_ITEMS_AUTO = 8, OUI_ALIGN_ITEMS_SELF_START = 9,
+  OUI_ALIGN_ITEMS_SELF_END = 10, OUI_ALIGN_ITEMS_LEFT = 11,
+  OUI_ALIGN_ITEMS_RIGHT = 12, OUI_ALIGN_ITEMS_LAST_BASELINE = 13,
+  OUI_ALIGN_ITEMS_LEGACY = 14
 } OuiAlignItems;
 
 typedef enum OuiJustifyContent {
@@ -147,7 +151,9 @@ typedef enum OuiJustifyContent {
   OUI_JUSTIFY_CONTENT_FLEX_START = 4, OUI_JUSTIFY_CONTENT_FLEX_END = 5,
   OUI_JUSTIFY_CONTENT_SPACE_BETWEEN = 6,
   OUI_JUSTIFY_CONTENT_SPACE_AROUND = 7,
-  OUI_JUSTIFY_CONTENT_SPACE_EVENLY = 8
+  OUI_JUSTIFY_CONTENT_SPACE_EVENLY = 8, OUI_JUSTIFY_CONTENT_STRETCH = 9,
+  OUI_JUSTIFY_CONTENT_BASELINE = 10, OUI_JUSTIFY_CONTENT_LAST_BASELINE = 11,
+  OUI_JUSTIFY_CONTENT_LEFT = 12, OUI_JUSTIFY_CONTENT_RIGHT = 13
 } OuiJustifyContent;
 
 typedef enum OuiCursor {
@@ -526,6 +532,7 @@ typedef struct OuiBitmap {
   uint32_t width;
   uint32_t height;
   size_t stride;
+  /* Owned top-to-bottom RGBA8888 rows; colors are premultiplied by alpha. */
   OuiBuffer* pixels;
 } OuiBitmap;
 
@@ -951,6 +958,12 @@ OuiStatus oui_transform_create(const OuiTransformOperation* operations, size_t o
  * oui_style_compound_destroy after the value has been submitted.
  * ColumnCount uses the integer payload: 0 means auto, positive means count.
  * Parsed C counts must fit int32_t; negative payloads are invalid. */
+/* Parse one native typed property value. Complex values that cannot use the
+ * property's scalar encoding return OUI_STYLE_VALUE_COMPOUND. Such values are
+ * bound to the selected property, preserve all native fields, and must be
+ * released with oui_style_compound_destroy after use. They are owned,
+ * thread-affine copies; the element clones them on submission. Existing scalar
+ * encodings are unchanged. No CSS stylesheet or JavaScript is executed. */
 OuiStatus oui_style_value_parse(OuiStyleProperty property, OuiUtf8 literal, OuiStyleValue* out_value);
 OuiStatus oui_style_compound_destroy(OuiStyleCompound* compound);
 

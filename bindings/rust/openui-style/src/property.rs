@@ -16,18 +16,18 @@ use crate::{
     GridTrackSize, HangingPunctuation, HyphenateCharacter, HyphenationLimits, Hyphens,
     InitialLetter, InitialLetterValue, ItemAlignment, ItemPosition, LineBreak, LineClamp,
     LineHeight, LinearGradient, ListStylePosition, ListStyleType, MarginTrim, ObjectFit,
-    ObjectPosition, OpenTypeFeatureList, Overflow, OverflowClipBox, OverflowWrap, Position,
-    PositionArea, QuotePair, Resize, RubyAlign, RubyOverhang, RubyPosition, ScrollMarkerGroup,
-    ScrollSnapAlign, ScrollSnapAxis, ScrollTargetGroup, ScrollbarGutter, ScrollbarWidth,
-    ShapeOutside, StyleColor, TabSize, TableLayout, TextAlign, TextAlignLast, TextAutospace,
-    TextBoxEdge, TextBoxShorthand, TextBoxTrim, TextCombineUpright, TextDecorationLine,
-    TextDecorationShorthand, TextDecorationSkipInk, TextDecorationStyle, TextDecorationThickness,
-    TextEmphasisFill, TextEmphasisMark, TextEmphasisPosition, TextEmphasisShorthand,
-    TextEmphasisStyle, TextJustify, TextOrientation, TextOverflow, TextRendering, TextShadow,
-    TextShadowList, TextSizeAdjust, TextSpacingTrim, TextTransform, TextUnderlinePosition,
-    TextWrap, TextWrapMode, TextWrapShorthand, TextWrapStyle, Transform2D, TypographyValue,
-    UnicodeBidi, VerticalAlign, Visibility, WebkitBoxOrient, WhiteSpace, WhiteSpaceCollapse,
-    WhiteSpaceShorthand, WordBreak, WritingMode,
+    ObjectPosition, OpenTypeFeatureList, Overflow, OverflowAlignment, OverflowClipBox,
+    OverflowWrap, Position, PositionArea, QuotePair, Resize, RubyAlign, RubyOverhang, RubyPosition,
+    ScrollMarkerGroup, ScrollSnapAlign, ScrollSnapAxis, ScrollTargetGroup, ScrollbarGutter,
+    ScrollbarWidth, ShapeOutside, StyleColor, TabSize, TableLayout, TextAlign, TextAlignLast,
+    TextAutospace, TextBoxEdge, TextBoxShorthand, TextBoxTrim, TextCombineUpright,
+    TextDecorationLine, TextDecorationShorthand, TextDecorationSkipInk, TextDecorationStyle,
+    TextDecorationThickness, TextEmphasisFill, TextEmphasisMark, TextEmphasisPosition,
+    TextEmphasisShorthand, TextEmphasisStyle, TextJustify, TextOrientation, TextOverflow,
+    TextRendering, TextShadow, TextShadowList, TextSizeAdjust, TextSpacingTrim, TextTransform,
+    TextUnderlinePosition, TextWrap, TextWrapMode, TextWrapShorthand, TextWrapStyle, Transform2D,
+    TypographyValue, UnicodeBidi, VerticalAlign, Visibility, WebkitBoxOrient, WhiteSpace,
+    WhiteSpaceCollapse, WhiteSpaceShorthand, WordBreak, WritingMode,
 };
 use openui_geometry::{Length, LengthType, RasterConfiguration};
 
@@ -467,7 +467,8 @@ fn length(input: &str) -> Option<LengthValue> {
             ] {
                 if let Some(number) = input
                     .strip_suffix(suffix)
-                    .and_then(|v| v.trim().parse().ok())
+                    .and_then(|v| v.trim().parse::<f32>().ok())
+                    .filter(|value| value.is_finite())
                 {
                     return Some(make(number));
                 }
@@ -504,6 +505,101 @@ fn edges(input: &str) -> Option<Edges<LengthValue>> {
         }),
         _ => None,
     }
+}
+
+fn overflow_literal(input: &str) -> Option<Overflow> {
+    match input {
+        "visible" => Some(Overflow::Visible),
+        "hidden" => Some(Overflow::Hidden),
+        "scroll" => Some(Overflow::Scroll),
+        "auto" => Some(Overflow::Auto),
+        "clip" => Some(Overflow::Clip),
+        _ => None,
+    }
+}
+
+fn alignment_words(input: &str) -> (OverflowAlignment, Vec<&str>) {
+    let mut words = input.split_whitespace();
+    let mut tokens = Vec::new();
+    let overflow = match words.next() {
+        Some("safe") => OverflowAlignment::Safe,
+        Some("unsafe") => OverflowAlignment::Unsafe,
+        Some(word) => {
+            tokens.push(word);
+            OverflowAlignment::Default
+        }
+        None => OverflowAlignment::Default,
+    };
+    tokens.extend(words);
+    (overflow, tokens)
+}
+
+fn item_alignment_literal(input: &str) -> Option<ItemAlignment> {
+    let (overflow, words) = alignment_words(input);
+    let position = match words.as_slice() {
+        ["auto"] => ItemPosition::Auto,
+        ["normal"] => ItemPosition::Normal,
+        ["stretch"] => ItemPosition::Stretch,
+        ["baseline"] | ["first", "baseline"] => ItemPosition::Baseline,
+        ["last", "baseline"] => ItemPosition::LastBaseline,
+        ["center"] => ItemPosition::Center,
+        ["start"] => ItemPosition::Start,
+        ["end"] => ItemPosition::End,
+        ["self-start"] => ItemPosition::SelfStart,
+        ["self-end"] => ItemPosition::SelfEnd,
+        ["flex-start"] => ItemPosition::FlexStart,
+        ["flex-end"] => ItemPosition::FlexEnd,
+        ["left"] => ItemPosition::Left,
+        ["right"] => ItemPosition::Right,
+        ["legacy"] => ItemPosition::Legacy,
+        _ => return None,
+    };
+    if overflow != OverflowAlignment::Default
+        && matches!(
+            position,
+            ItemPosition::Auto
+                | ItemPosition::Normal
+                | ItemPosition::Stretch
+                | ItemPosition::Baseline
+                | ItemPosition::LastBaseline
+                | ItemPosition::Legacy
+        )
+    {
+        return None;
+    }
+    Some(ItemAlignment::with_overflow(position, overflow))
+}
+
+fn content_alignment_literal(input: &str) -> Option<ContentAlignment> {
+    let (overflow, words) = alignment_words(input);
+    let mut value = match words.as_slice() {
+        ["normal"] => ContentAlignment::default(),
+        ["center"] => ContentAlignment::new(ContentPosition::Center),
+        ["start"] => ContentAlignment::new(ContentPosition::Start),
+        ["end"] => ContentAlignment::new(ContentPosition::End),
+        ["flex-start"] => ContentAlignment::new(ContentPosition::FlexStart),
+        ["flex-end"] => ContentAlignment::new(ContentPosition::FlexEnd),
+        ["left"] => ContentAlignment::new(ContentPosition::Left),
+        ["right"] => ContentAlignment::new(ContentPosition::Right),
+        ["baseline"] | ["first", "baseline"] => ContentAlignment::new(ContentPosition::Baseline),
+        ["last", "baseline"] => ContentAlignment::new(ContentPosition::LastBaseline),
+        ["space-between"] => ContentAlignment::with_distribution(ContentDistribution::SpaceBetween),
+        ["space-around"] => ContentAlignment::with_distribution(ContentDistribution::SpaceAround),
+        ["space-evenly"] => ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly),
+        ["stretch"] => ContentAlignment::with_distribution(ContentDistribution::Stretch),
+        _ => return None,
+    };
+    if overflow != OverflowAlignment::Default
+        && (value.distribution != ContentDistribution::Default
+            || matches!(
+                value.position,
+                ContentPosition::Normal | ContentPosition::Baseline | ContentPosition::LastBaseline
+            ))
+    {
+        return None;
+    }
+    value.overflow = overflow;
+    Some(value)
 }
 
 fn color(input: &str) -> Option<Color> {
@@ -1565,15 +1661,7 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(StyleValue::Position),
-        P::Overflow => match input {
-            "visible" => Some(Overflow::Visible),
-            "hidden" => Some(Overflow::Hidden),
-            "scroll" => Some(Overflow::Scroll),
-            "auto" => Some(Overflow::Auto),
-            "clip" => Some(Overflow::Clip),
-            _ => None,
-        }
-        .map(StyleValue::Overflow),
+        P::Overflow => overflow_literal(input).map(StyleValue::Overflow),
         P::Width
         | P::Height
         | P::MinWidth
@@ -1630,37 +1718,8 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(StyleValue::FlexWrap),
-        P::AlignItems => match input {
-            "normal" => Some(ItemPosition::Normal),
-            "stretch" => Some(ItemPosition::Stretch),
-            "center" => Some(ItemPosition::Center),
-            "start" => Some(ItemPosition::Start),
-            "end" => Some(ItemPosition::End),
-            "flex-start" => Some(ItemPosition::FlexStart),
-            "flex-end" => Some(ItemPosition::FlexEnd),
-            "baseline" => Some(ItemPosition::Baseline),
-            _ => None,
-        }
-        .map(|v| StyleValue::ItemAlignment(ItemAlignment::new(v))),
-        P::JustifyContent => match input {
-            "normal" => Some(ContentAlignment::default()),
-            "center" => Some(ContentAlignment::new(ContentPosition::Center)),
-            "start" => Some(ContentAlignment::new(ContentPosition::Start)),
-            "end" => Some(ContentAlignment::new(ContentPosition::End)),
-            "flex-start" => Some(ContentAlignment::new(ContentPosition::FlexStart)),
-            "flex-end" => Some(ContentAlignment::new(ContentPosition::FlexEnd)),
-            "space-between" => Some(ContentAlignment::with_distribution(
-                ContentDistribution::SpaceBetween,
-            )),
-            "space-around" => Some(ContentAlignment::with_distribution(
-                ContentDistribution::SpaceAround,
-            )),
-            "space-evenly" => Some(ContentAlignment::with_distribution(
-                ContentDistribution::SpaceEvenly,
-            )),
-            _ => None,
-        }
-        .map(StyleValue::ContentAlignment),
+        P::AlignItems => item_alignment_literal(input).map(StyleValue::ItemAlignment),
+        P::JustifyContent => content_alignment_literal(input).map(StyleValue::ContentAlignment),
         P::Gap => {
             let v: Vec<_> = input
                 .split_whitespace()
@@ -1741,9 +1800,12 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(|value| StyleValue::Renderer(RendererStyleValue::Visibility(value))),
-        _ => parse_typography_literal(property, input),
+        _ => parse_typography_literal(property, input)
+            .or_else(|| parse_renderer_author_literal(property, input)),
     };
-    result.ok_or_else(|| invalid(property, input))
+    result
+        .filter(|value| !matches!(value, StyleValue::Number(value) if !value.is_finite()))
+        .ok_or_else(|| invalid(property, input))
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -2042,6 +2104,12 @@ pub fn apply_to_computed(
             .then_some(property.metadata().invalidation)
             .ok_or_else(mismatch);
     }
+    if let Some(value) = RendererStyleValue::from_author_value(property, value, resolve) {
+        return value
+            .apply(style, property)
+            .then_some(property.metadata().invalidation)
+            .ok_or_else(mismatch);
+    }
     match (property, value) {
         (P::Display, StyleValue::Display(v)) => style.fields.display = *v,
         (P::Position, StyleValue::Position(v)) => style.fields.position = *v,
@@ -2055,10 +2123,6 @@ pub fn apply_to_computed(
         (P::MinHeight, StyleValue::Length(v)) => style.fields.min_height = resolve(*v),
         (P::MaxWidth, StyleValue::Length(v)) => style.fields.max_width = resolve(*v),
         (P::MaxHeight, StyleValue::Length(v)) => style.fields.max_height = resolve(*v),
-        (P::Left, StyleValue::Length(v)) => style.fields.left = resolve(*v),
-        (P::Top, StyleValue::Length(v)) => style.fields.top = resolve(*v),
-        (P::Right, StyleValue::Length(v)) => style.fields.right = resolve(*v),
-        (P::Bottom, StyleValue::Length(v)) => style.fields.bottom = resolve(*v),
         (P::Margin, StyleValue::Edges(v)) => {
             style.fields.margin_top = resolve(v.top);
             style.fields.margin_right = resolve(v.right);

@@ -163,6 +163,7 @@ pub struct Frame {
     pub raster_configuration: RasterConfiguration,
     pub raster_backend_identity: RasterBackendIdentity,
     pub stride: usize,
+    /// Top-to-bottom RGBA8888 rows with premultiplied color channels.
     pub pixels: Vec<u8>,
     pub scene_generation: SceneGeneration,
 }
@@ -215,7 +216,11 @@ impl SoftwareCompositor {
         }
         let mut surface = rasterize_picture(&scene.picture).map_err(CompositorError::Raster)?;
         let image = surface.image_snapshot();
-        let info = image.image_info();
+        // Raster surfaces use platform-native N32 (BGRA on our Linux hosts).
+        // Native apps and both Linux presenters consume explicit RGBA bytes.
+        let info = image
+            .image_info()
+            .with_color_type(skia_safe::ColorType::RGBA8888);
         let width = scene.viewport.physical_width();
         let height = scene.viewport.physical_height();
         let stride = (width as usize)
@@ -225,7 +230,7 @@ impl SoftwareCompositor {
             .checked_mul(height as usize)
             .ok_or_else(|| CompositorError::Raster("frame allocation overflow".into()))?;
         let mut pixels = vec![0; pixel_len];
-        if !image.read_pixels(info, &mut pixels, stride, (0, 0), CachingHint::Allow) {
+        if !image.read_pixels(&info, &mut pixels, stride, (0, 0), CachingHint::Allow) {
             return Err(CompositorError::ReadPixels);
         }
         let frame = Frame {

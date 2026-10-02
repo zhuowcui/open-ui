@@ -3,7 +3,7 @@ use openui_engine::{
     AccessibilityNode, AccessibilityNodeId, AnimationEvent, Engine, EngineError,
     FontCollectionError, FontFaceHandle, NodeHandle,
 };
-use openui_style::{ImageResourceId, StyleValue};
+use openui_style::{ImageResourceId, StyleProperty, StyleValue};
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::ffi::c_void;
@@ -102,6 +102,7 @@ pub(crate) enum LocalHandle {
     Document(Rc<DocumentState>),
     Element(ElementRef),
     Compound(StyleValue),
+    PropertyCompound(StyleProperty, StyleValue),
     Resource(ResourceRef),
     FontFace(FontFaceRef),
     Listener(ListenerRef),
@@ -115,7 +116,7 @@ impl LocalHandle {
             Self::App(_) => HandleKind::App,
             Self::Document(_) => HandleKind::Document,
             Self::Element(_) => HandleKind::Element,
-            Self::Compound(_) => HandleKind::Compound,
+            Self::Compound(_) | Self::PropertyCompound(..) => HandleKind::Compound,
             Self::Resource(_) => HandleKind::Resource,
             Self::FontFace(_) => HandleKind::FontFace,
             Self::Listener(_) => HandleKind::Listener,

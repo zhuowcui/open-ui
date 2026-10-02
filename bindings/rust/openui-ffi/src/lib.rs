@@ -2749,36 +2749,51 @@ fn c_length(value: LengthValue) -> OuiLength {
 }
 
 fn c_enum(value: &StyleValue) -> Option<i32> {
-    use openui_style::{ContentDistribution, ContentPosition, ItemPosition};
+    use openui_style::{ContentDistribution, ContentPosition, ItemPosition, OverflowAlignment};
     Some(match value {
         StyleValue::Display(value) => *value as i32,
         StyleValue::Position(value) => *value as i32,
         StyleValue::Overflow(value) => *value as i32,
         StyleValue::FlexDirection(value) => *value as i32,
         StyleValue::FlexWrap(value) => *value as i32,
-        StyleValue::ItemAlignment(value) => match value.position {
-            ItemPosition::Normal => 0,
-            ItemPosition::Stretch => 1,
-            ItemPosition::Center => 2,
-            ItemPosition::Start => 3,
-            ItemPosition::End => 4,
-            ItemPosition::FlexStart => 5,
-            ItemPosition::FlexEnd => 6,
-            ItemPosition::Baseline => 7,
-            _ => return None,
-        },
-        StyleValue::ContentAlignment(value) => match (value.position, value.distribution) {
-            (ContentPosition::Normal, ContentDistribution::Default) => 0,
-            (ContentPosition::Start, _) => 1,
-            (ContentPosition::End, _) => 2,
-            (ContentPosition::Center, _) => 3,
-            (ContentPosition::FlexStart, _) => 4,
-            (ContentPosition::FlexEnd, _) => 5,
-            (_, ContentDistribution::SpaceBetween) => 6,
-            (_, ContentDistribution::SpaceAround) => 7,
-            (_, ContentDistribution::SpaceEvenly) => 8,
-            _ => return None,
-        },
+        StyleValue::ItemAlignment(value) if value.overflow == OverflowAlignment::Default => {
+            match value.position {
+                ItemPosition::Normal => 0,
+                ItemPosition::Stretch => 1,
+                ItemPosition::Center => 2,
+                ItemPosition::Start => 3,
+                ItemPosition::End => 4,
+                ItemPosition::FlexStart => 5,
+                ItemPosition::FlexEnd => 6,
+                ItemPosition::Baseline => 7,
+                ItemPosition::Auto => 8,
+                ItemPosition::SelfStart => 9,
+                ItemPosition::SelfEnd => 10,
+                ItemPosition::Left => 11,
+                ItemPosition::Right => 12,
+                ItemPosition::LastBaseline => 13,
+                ItemPosition::Legacy => 14,
+            }
+        }
+        StyleValue::ContentAlignment(value) if value.overflow == OverflowAlignment::Default => {
+            match (value.position, value.distribution) {
+                (ContentPosition::Normal, ContentDistribution::Default) => 0,
+                (ContentPosition::Start, ContentDistribution::Default) => 1,
+                (ContentPosition::End, ContentDistribution::Default) => 2,
+                (ContentPosition::Center, ContentDistribution::Default) => 3,
+                (ContentPosition::FlexStart, ContentDistribution::Default) => 4,
+                (ContentPosition::FlexEnd, ContentDistribution::Default) => 5,
+                (ContentPosition::Normal, ContentDistribution::SpaceBetween) => 6,
+                (ContentPosition::Normal, ContentDistribution::SpaceAround) => 7,
+                (ContentPosition::Normal, ContentDistribution::SpaceEvenly) => 8,
+                (ContentPosition::Normal, ContentDistribution::Stretch) => 9,
+                (ContentPosition::Baseline, ContentDistribution::Default) => 10,
+                (ContentPosition::LastBaseline, ContentDistribution::Default) => 11,
+                (ContentPosition::Left, ContentDistribution::Default) => 12,
+                (ContentPosition::Right, ContentDistribution::Default) => 13,
+                _ => return None,
+            }
+        }
         StyleValue::Cursor(value) => *value as i32,
         StyleValue::ListStyle(value) => *value as i32,
         StyleValue::PointerEvents(value) => *value as i32,
@@ -2801,51 +2816,68 @@ pub extern "C" fn oui_style_value_parse(
         let property: StyleProperty = property_from_raw(property)
             .ok_or_else(|| invalid("unknown style property identifier"))?;
         let literal = utf8(literal, "style literal")?;
-        // The axis properties share the native overflow value grammar and C
-        // enum encoding; the setter keeps their independent engine identities.
-        let literal_property = match property {
-            StyleProperty::OverflowX | StyleProperty::OverflowY => StyleProperty::Overflow,
-            _ => property,
-        };
-        let parsed = parse_literal(literal_property, &literal)
-            .map_err(|error| invalid(error.to_string()))?;
+        let parsed =
+            parse_literal(property, &literal).map_err(|error| invalid(error.to_string()))?;
         let tag = generated::expected_value_tag(property);
-        let data = match (tag, &parsed) {
-            (1, StyleValue::Length(value)) => OuiStylePayload {
-                length: c_length(*value),
-            },
-            (2, StyleValue::Number(value)) => OuiStylePayload { number: *value },
-            (2, StyleValue::FontWeight(value)) => OuiStylePayload { number: value.0 },
-            (3, StyleValue::Integer(value)) => OuiStylePayload { integer: *value },
-            (3, StyleValue::Renderer(openui_style::RendererStyleValue::ColumnCount(value))) => {
+        let native_value = || -> Result<_, ApiError> {
+            Ok(OuiStylePayload {
+                compound: register(LocalHandle::PropertyCompound(property, parsed.clone()))?
+                    as *const OuiStyleCompound,
+            })
+        };
+        let (tag, data) = match (tag, &parsed) {
+            (1, StyleValue::Length(value)) => (
+                1,
+                OuiStylePayload {
+                    length: c_length(*value),
+                },
+            ),
+            (2, StyleValue::Number(value)) => (2, OuiStylePayload { number: *value }),
+            (2, StyleValue::FontWeight(value)) => (2, OuiStylePayload { number: value.0 }),
+            (3, StyleValue::Integer(value)) => (3, OuiStylePayload { integer: *value }),
+            (3, StyleValue::Renderer(openui_style::RendererStyleValue::ColumnCount(value))) => (
+                3,
                 OuiStylePayload {
                     integer: match value {
                         None => 0,
                         Some(count) => i32::try_from(*count)
                             .map_err(|_| invalid("column count exceeds the C integer range"))?,
                     },
-                }
-            }
-            (4, StyleValue::Color(value)) => OuiStylePayload {
-                color: OuiColor {
-                    red: (value.r * 255.0).round() as u8,
-                    green: (value.g * 255.0).round() as u8,
-                    blue: (value.b * 255.0).round() as u8,
-                    alpha: (value.a * 255.0).round() as u8,
                 },
+            ),
+            (
+                3,
+                StyleValue::Renderer(
+                    openui_style::RendererStyleValue::Orphans(value)
+                    | openui_style::RendererStyleValue::Widows(value),
+                ),
+            ) => match i32::try_from(*value) {
+                Ok(value) => (3, OuiStylePayload { integer: value }),
+                Err(_) => (6, native_value()?),
             },
-            (5, value) => OuiStylePayload {
-                enum_value: c_enum(value)
-                    .ok_or_else(|| invalid("literal has no C enum encoding"))?,
+            (4, StyleValue::Color(value)) => (
+                4,
+                OuiStylePayload {
+                    color: OuiColor {
+                        red: (value.r * 255.0).round() as u8,
+                        green: (value.g * 255.0).round() as u8,
+                        blue: (value.b * 255.0).round() as u8,
+                        alpha: (value.a * 255.0).round() as u8,
+                    },
+                },
+            ),
+            (5, value) => match c_enum(value) {
+                Some(value) => (5, OuiStylePayload { enum_value: value }),
+                None => (6, native_value()?),
             },
-            (6, _) => OuiStylePayload {
-                compound: register(LocalHandle::Compound(parsed))? as *const OuiStyleCompound,
-            },
-            _ => {
-                return Err(invalid(
-                    "literal does not match generated property value tag",
-                ))
-            }
+            (6, _) => (
+                6,
+                OuiStylePayload {
+                    compound: register(LocalHandle::Compound(parsed.clone()))?
+                        as *const OuiStyleCompound,
+                },
+            ),
+            _ => (6, native_value()?),
         };
         // SAFETY: the caller promises writable storage and null was rejected.
         unsafe {
@@ -5138,5 +5170,212 @@ mod tests {
 
         assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn native_scalar_extensions_keep_owned_property_identity_and_full_values() {
+        use openui_style::{OverflowAlignment, StyleColor};
+        let document_handle = create_document(64, 64);
+        let element_handle = create_element(document_handle, 0, ptr::null_mut());
+        for (property, literal) in [
+            (StyleProperty::AlignSelf, "safe center"),
+            (StyleProperty::AlignContent, "unsafe end"),
+            (StyleProperty::BorderBottomColor, "currentcolor"),
+            (StyleProperty::ScrollbarTrackColor, "auto"),
+            (StyleProperty::Orphans, "4294967295"),
+        ] {
+            let mut parsed = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+            assert_eq!(
+                oui_style_value_parse(property as i32, text(literal), parsed.as_mut_ptr()),
+                OuiStatus::Ok
+            );
+            // SAFETY: successful parsing initialized the output and selected its payload.
+            let parsed = unsafe { parsed.assume_init() };
+            assert_eq!(parsed.tag, 6);
+            let compound = unsafe { parsed.data.compound } as usize;
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &parsed),
+                OuiStatus::Ok
+            );
+            let reference = element(element_handle as usize).unwrap();
+            let state = element_document(&reference).unwrap();
+            let snapshot = borrow_engine(&state)
+                .unwrap()
+                .computed_style(reference.node)
+                .unwrap()
+                .clone();
+            match property {
+                StyleProperty::AlignSelf => {
+                    assert_eq!(snapshot.align_self.overflow, OverflowAlignment::Safe)
+                }
+                StyleProperty::AlignContent => {
+                    assert_eq!(snapshot.align_content.overflow, OverflowAlignment::Unsafe)
+                }
+                StyleProperty::BorderBottomColor => {
+                    assert_eq!(snapshot.border_bottom_color, StyleColor::CurrentColor)
+                }
+                StyleProperty::ScrollbarTrackColor => {
+                    assert_eq!(snapshot.scrollbar_track_color, None)
+                }
+                StyleProperty::Orphans => assert_eq!(snapshot.orphans, u32::MAX),
+                _ => unreachable!(),
+            }
+            assert_eq!(
+                oui_element_set_property(element_handle, StyleProperty::Width as i32, &parsed),
+                OuiStatus::WrongValueType
+            );
+            assert_eq!(
+                oui_element_set_property(
+                    element_handle,
+                    StyleProperty::WritingMode as i32,
+                    &parsed
+                ),
+                OuiStatus::WrongValueType
+            );
+            let mut reserved = parsed;
+            reserved.reserved = 1;
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &reserved),
+                OuiStatus::WrongValueType
+            );
+            assert_eq!(
+                format!("{snapshot:?}"),
+                format!(
+                    "{:?}",
+                    borrow_engine(&state)
+                        .unwrap()
+                        .computed_style(reference.node)
+                        .unwrap()
+                )
+            );
+            std::thread::spawn(move || {
+                let own_document = create_document(16, 16);
+                let own_element = create_element(own_document, 0, ptr::null_mut());
+                let foreign = OuiStyleValue {
+                    tag: 6,
+                    reserved: 0,
+                    data: OuiStylePayload {
+                        compound: compound as *const OuiStyleCompound,
+                    },
+                };
+                assert_eq!(
+                    oui_element_set_property(own_element, property as i32, &foreign),
+                    OuiStatus::WrongThread
+                );
+                assert_eq!(
+                    oui_style_compound_destroy(compound as *mut OuiStyleCompound),
+                    OuiStatus::WrongThread
+                );
+                assert_eq!(oui_element_destroy(own_element), OuiStatus::Ok);
+                assert_eq!(oui_document_destroy(own_document), OuiStatus::Ok);
+            })
+            .join()
+            .unwrap();
+            assert_eq!(
+                oui_style_compound_destroy(compound as *mut OuiStyleCompound),
+                OuiStatus::Ok
+            );
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &parsed),
+                OuiStatus::InvalidHandle
+            );
+            // Submitting cloned the value into retained state before its carrier was released.
+            assert_eq!(
+                format!("{snapshot:?}"),
+                format!(
+                    "{:?}",
+                    borrow_engine(&state)
+                        .unwrap()
+                        .computed_style(reference.node)
+                        .unwrap()
+                )
+            );
+        }
+        assert_eq!(oui_element_destroy(element_handle), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn invalid_native_literals_preserve_output_and_existing_scalar_encodings() {
+        for (property, literal) in [
+            (StyleProperty::FilterBlur, "NaN"),
+            (StyleProperty::OverflowClipMargin, "inf"),
+            (StyleProperty::Left, "NaNpx"),
+            (StyleProperty::ColumnWidth, "infem"),
+            (StyleProperty::AlignSelf, "safe stretch"),
+            (StyleProperty::AlignContent, "safe space-between"),
+            (StyleProperty::Orphans, "-1"),
+            (StyleProperty::Widows, "4294967296"),
+        ] {
+            let mut output = OuiStyleValue {
+                tag: 77,
+                reserved: 42,
+                data: OuiStylePayload { integer: 123 },
+            };
+            assert_eq!(
+                oui_style_value_parse(property as i32, text(literal), &mut output),
+                OuiStatus::InvalidArgument
+            );
+            assert_eq!(
+                (output.tag, output.reserved, unsafe { output.data.integer }),
+                (77, 42, 123)
+            );
+        }
+        for (property, literals) in [
+            (
+                StyleProperty::AlignItems,
+                &[
+                    "normal",
+                    "stretch",
+                    "center",
+                    "start",
+                    "end",
+                    "flex-start",
+                    "flex-end",
+                    "baseline",
+                    "auto",
+                    "self-start",
+                    "self-end",
+                    "left",
+                    "right",
+                    "last baseline",
+                    "legacy",
+                ][..],
+            ),
+            (
+                StyleProperty::JustifyContent,
+                &[
+                    "normal",
+                    "start",
+                    "end",
+                    "center",
+                    "flex-start",
+                    "flex-end",
+                    "space-between",
+                    "space-around",
+                    "space-evenly",
+                    "stretch",
+                    "baseline",
+                    "last baseline",
+                    "left",
+                    "right",
+                ][..],
+            ),
+        ] {
+            for (number, literal) in literals.iter().enumerate() {
+                let mut output = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+                assert_eq!(
+                    oui_style_value_parse(property as i32, text(literal), output.as_mut_ptr()),
+                    OuiStatus::Ok
+                );
+                let output = unsafe { output.assume_init() };
+                assert_eq!(output.tag, 5);
+                assert_eq!(unsafe { output.data.enum_value }, number as i32);
+                assert_eq!(
+                    value::style_value(property, &output).unwrap(),
+                    parse_literal(property, literal).unwrap()
+                );
+            }
+        }
     }
 }
