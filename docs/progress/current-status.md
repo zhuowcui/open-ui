@@ -66,6 +66,17 @@ The prototype remains unapplied. All measured public image bounds are exact;
 the click consumer mutates opacity through a Rust callback. These diagnostic
 results do not replace the clean census or close native API qualification.
 
+The [renderer executable source check](../renderer/renderer-build-identity.md)
+now rejects a comparison executable built from different source before using
+cached results or rendering. It also checks source and binary stability after
+the run. The [verification index](../renderer/generated/renderer-build-identity-v1.json)
+records real executable acceptance/rejection and an explicitly nonqualifying
+single-case integration. It also preserves an attribution error in the newer
+opacity development runs: their copied comparison binary was still the earlier
+prototype. Fresh replacement focused and primitive matrices are 640/640 and
+960/960 exact with unchanged images; the original replacement census is still
+running. The clean renderer counts above remain authoritative.
+
 The preceding `497e322d`
 [delta index](../renderer/generated/native-column-flex-full-delta-v1.json)
 retains the original command's exit-143 observation alongside its complete

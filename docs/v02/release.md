@@ -49,6 +49,15 @@ Each needed operation must be callable by the consuming native Rust app and
 verified through that public API. An internal Engine operation or a test-only
 fixture does not close a native application API gap.
 
+The [renderer source check](../renderer/renderer-build-identity.md) verifies
+the source recorded inside the comparison executable before accepting a run,
+then checks the source and binary again after it. Its
+[verification](../renderer/generated/renderer-build-identity-v1.json) preserves
+the rejected attribution of older executable results to newer opacity source.
+Replacement development raster suites are exact; the complete original
+replacement census is still running. These measurements do not replace the
+clean release matrix above.
+
 The [native column paint and input checkpoint](../renderer/native-column-paint-phases.md)
 verifies public Rust position/opacity mutations, pointer queries and a Rust
 click callback, with C consumers over the same engine. Its 55 native states

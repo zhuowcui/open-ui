@@ -2,6 +2,7 @@
 //!
 //! Usage:
 //!   pixel_compare list                              # List all test IDs
+//!   pixel_compare build-source-identity             # Source recorded by Cargo
 //!   pixel_compare render <test_id> <output.png> [--viewport WxH] [--scale N]
 //!       [--raster-config PROFILE] [--backend cpu-skia|ganesh-gl]
 //!   pixel_compare render-all <output_dir> [--viewport WxH] [--scale N]
@@ -289,6 +290,10 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
 
     match args.get(1).map(|s| s.as_str()) {
+        Some("build-source-identity") => print!(
+            "{}",
+            include_str!(concat!(env!("OUT_DIR"), "/renderer-build-identity.json"))
+        ),
         Some("list") => {
             for (id, _) in registry() {
                 println!("{}", id);

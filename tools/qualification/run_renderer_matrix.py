@@ -29,6 +29,7 @@ ROOT = Path(__file__).resolve().parents[2]
 QUALIFICATION_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(QUALIFICATION_DIR))
 import residuals  # noqa: E402
+import renderer_source_identity as build_source  # noqa: E402
 
 CONTRACT = ROOT / "docs/renderer/generated/qualification-contract-v2.json"
 FULL_IDS = ROOT / "tools/qualification/manifests/complete-5731.json"
@@ -140,53 +141,35 @@ def repository_commit() -> str:
 
 
 def repository_source_identity() -> dict[str, object]:
-    status = subprocess.run(
-        ["git", "status", "--porcelain=v1", "-z", "--untracked-files=all"],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-    ).stdout
-    paths = subprocess.run(
-        ["git", "ls-files", "-co", "--exclude-standard", "-z"],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-    ).stdout.split(b"\0")
-    digest = hashlib.sha256()
-    for encoded_path in sorted(path for path in paths if path):
-        path = ROOT / os.fsdecode(encoded_path)
-        digest.update(len(encoded_path).to_bytes(8, "big"))
-        digest.update(encoded_path)
-        if not path.exists() and not path.is_symlink():
-            content = b"<deleted>"
-        elif path.is_symlink():
-            content = os.readlink(path).encode("utf-8", "surrogateescape")
-        else:
-            content = path.read_bytes()
-        digest.update(len(content).to_bytes(8, "big"))
-        digest.update(content)
-    harness_paths = [
-        *sorted(QUALIFICATION_DIR.glob("*.py")),
-        ROOT / "tools/accountability/run_all_pixel_comparisons.py",
-        ROOT / "bindings/rust/pixel-compare/Cargo.toml",
-        ROOT / "bindings/rust/pixel-compare/src/main.rs",
-        ROOT / "bindings/rust/pixel-compare/src/wpt/mod.rs",
-    ]
-    harness = hashlib.sha256()
-    for path in harness_paths:
-        relative = str(path.relative_to(ROOT)).encode("utf-8")
-        content = path.read_bytes()
-        harness.update(len(relative).to_bytes(8, "big"))
-        harness.update(relative)
-        harness.update(len(content).to_bytes(8, "big"))
-        harness.update(content)
-    return {
-        "commit": repository_commit(),
-        "clean": not status,
-        "status_sha256": bytes_sha256(status),
-        "source_tree_sha256": digest.hexdigest(),
-        "harness_sha256": harness.hexdigest(),
-    }
+    return build_source.repository_source_identity(ROOT)
+
+
+def renderer_build_source_identity(
+    binary: Path, expected: dict[str, object],
+) -> dict[str, object]:
+    """Reject stale executables before rendering or accepting cached results."""
+    try:
+        result = subprocess.run(
+            [str(binary.resolve()), "build-source-identity"],
+            check=True, capture_output=True, text=True, timeout=30,
+        )
+        identity = json.loads(result.stdout)
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError) as error:
+        raise ValueError(
+            "renderer executable has no valid build source identity; rebuild pixel_compare"
+        ) from error
+    if not isinstance(identity, dict) or identity.get("schema_version") != 1:
+        raise ValueError("renderer executable has an unsupported build source identity")
+    source = identity.get("source")
+    if not isinstance(source, dict):
+        raise ValueError("renderer executable is missing its build source")
+    mismatch = [key for key, value in expected.items() if source.get(key) != value]
+    if mismatch:
+        raise ValueError(
+            f"renderer executable source mismatch: {', '.join(mismatch)}; "
+            "rebuild pixel_compare from the current source"
+        )
+    return identity
 
 
 def raster_configuration_name(
@@ -845,6 +828,10 @@ def main() -> None:
 
     if not args.pixel_compare.is_file():
         raise SystemExit(f"missing pixel renderer: {args.pixel_compare}")
+    try:
+        renderer_build_identity = renderer_build_source_identity(args.pixel_compare, source_identity)
+    except ValueError as error:
+        raise SystemExit(str(error)) from error
     pixel_runner.PIXEL_COMPARE = str(args.pixel_compare.resolve())
     if args.chrome is None:
         chrome, chrome_dir = pixel_runner.find_chrome()
@@ -873,6 +860,7 @@ def main() -> None:
         "harness_sha256": source_identity["harness_sha256"],
         "contract_sha256": bytes_sha256(contract_bytes),
         "openui_binary_sha256": openui_binary_sha256,
+        "renderer_build_identity_sha256": canonical_sha256(renderer_build_identity),
         "chromium_binary_sha256": chromium_binary_sha256,
         "chromium_build_identity": actual_chromium,
         "chromium_capture_harness_sha256": chromium_capture_harness_sha256(),
@@ -906,9 +894,14 @@ def main() -> None:
     exact = sum(int(summary["exact"]) for summary in summaries)
     different = sum(int(summary["different"]) for summary in summaries)
     errors = sum(int(summary["errors"]) for summary in summaries)
+    source_after = repository_source_identity()
+    source_unchanged = source_after == source_identity
+    binary_unchanged = sha256(args.pixel_compare) == openui_binary_sha256
     complete = plan["complete_profile_set"] and plan["complete_id_set"]
     qualified = (
         bool(source_identity["clean"])
+        and source_unchanged
+        and binary_unchanged
         and complete
         and args.raster_backend == contract["raster"]["qualification_backend"]
         and different == 0
@@ -923,12 +916,15 @@ def main() -> None:
         "evidence": {
             "kind": "qualification" if qualified else "diagnostic-census",
             "qualified": qualified,
+            "source_unchanged": source_unchanged,
+            "binary_unchanged": binary_unchanged,
             "tolerance_pixels": 0,
             "qualification_backend_match": (
                 args.raster_backend == contract["raster"]["qualification_backend"]
             ),
         },
         "source": source_identity,
+        "source_after": source_after,
         "shard": {"index": args.shard_index, "count": args.shard_count},
         "chromium": {
             "build_identity": actual_chromium,
@@ -940,6 +936,7 @@ def main() -> None:
         },
         "openui": {
             "binary_sha256": openui_binary_sha256,
+            "build_identity": renderer_build_identity,
             "raster_backend_identity": backend_identity,
         },
         "id_manifest": {
@@ -992,7 +989,10 @@ def main() -> None:
     report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(f"matrix report: {report_path}")
     print(f"exact={exact} different={different} errors={errors}")
-    if errors or different or report.get("residual_ledger", {}).get("error"):
+    if (
+        errors or different or report.get("residual_ledger", {}).get("error")
+        or not source_unchanged or not binary_unchanged
+    ):
         raise SystemExit(1)
 
 

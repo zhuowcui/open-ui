@@ -17,6 +17,11 @@ Closing an interaction gap requires a public Rust method and coverage from a
 native consumer exercising its state changes, events, or rendered result.
 An internal Engine method or a test fixture alone does not complete that work.
 
+The renderer matrix checks the comparison executable's embedded build source
+against the current tree. Rebuild the `pixel-compare` package after source
+changes; building an application example does not update that executable.
+See [renderer executable source checks](renderer/renderer-build-identity.md).
+
 ## Prerequisites
 
 - Rust 1.85 or newer.

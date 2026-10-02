@@ -8,6 +8,7 @@ import tempfile
 import unittest
 
 from PIL import Image
+from unittest.mock import patch
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -19,6 +20,54 @@ assert SPEC.loader is not None
 sys.modules[SPEC.name] = MATRIX
 SPEC.loader.exec_module(MATRIX)
 import audit_chromium_oracles as ORACLE_AUDIT
+
+
+class RendererBuildIdentityTests(unittest.TestCase):
+    def setUp(self):
+        self.source = {
+            "commit": "commit", "clean": True, "status_sha256": "status",
+            "source_tree_sha256": "source", "harness_sha256": "harness",
+        }
+
+    def response(self, identity):
+        return subprocess.CompletedProcess([], 0, json.dumps(identity), "")
+
+    def test_executable_built_from_current_source_is_accepted(self):
+        identity = {"schema_version": 1, "source": self.source, "skia_gn_args": "flags"}
+        with patch.object(MATRIX.subprocess, "run", return_value=self.response(identity)) as run:
+            self.assertEqual(
+                MATRIX.renderer_build_source_identity(pathlib.Path("runner"), self.source),
+                identity,
+            )
+        self.assertEqual(run.call_args.args[0][-1], "build-source-identity")
+
+    def test_older_source_cannot_be_attributed_to_a_new_checkout(self):
+        for key in self.source:
+            with self.subTest(key=key):
+                old = {**self.source, key: "older"}
+                with patch.object(MATRIX.subprocess, "run", return_value=self.response({
+                    "schema_version": 1, "source": old,
+                })):
+                    with self.assertRaisesRegex(ValueError, key):
+                        MATRIX.renderer_build_source_identity(pathlib.Path("runner"), self.source)
+
+    def test_legacy_executable_without_embedded_identity_is_rejected(self):
+        legacy = subprocess.CompletedProcess([], 0, "Usage: pixel_compare list", "")
+        with patch.object(MATRIX.subprocess, "run", return_value=legacy):
+            with self.assertRaisesRegex(ValueError, "rebuild pixel_compare"):
+                MATRIX.renderer_build_source_identity(pathlib.Path("runner"), self.source)
+
+    def test_missing_or_unsupported_manifest_is_rejected(self):
+        for identity in [None, {}, {"schema_version": 2}, {"schema_version": 1}]:
+            with self.subTest(identity=identity):
+                with patch.object(MATRIX.subprocess, "run", return_value=self.response(identity)):
+                    with self.assertRaises(ValueError):
+                        MATRIX.renderer_build_source_identity(pathlib.Path("runner"), self.source)
+
+    def test_executable_probe_failure_is_rejected(self):
+        with patch.object(MATRIX.subprocess, "run", side_effect=subprocess.TimeoutExpired("runner", 30)):
+            with self.assertRaisesRegex(ValueError, "build source identity"):
+                MATRIX.renderer_build_source_identity(pathlib.Path("runner"), self.source)
 
 
 class ChromiumOracleAuditTests(unittest.TestCase):
