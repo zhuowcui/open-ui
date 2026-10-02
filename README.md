@@ -65,7 +65,10 @@ also found one older cached Chromium capture that differs from six fresh
 captures under the same recorded identity; that evidence needs reconciliation.
 The latest complete census for the accepted renderer has 1,616 differences after
 restoring all 16 earlier exact regressions. Later native API and private
-renderer candidates require their own complete qualification. This repository is not yet
+renderer candidates require their own complete qualification. The
+[private sampling candidate](docs/renderer/generated/native-viewport-full-v14.json)
+loses 23 exact Chromium comparisons and gains 14 in its complete census;
+it remains unapplied. This repository is not yet
 declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia
 GPU qualification, retained per-node layers, compositor-owned animation

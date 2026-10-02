@@ -218,8 +218,9 @@ unapplied, with 144 fractional failures. Its
 [complete focused and primitive matrices](../renderer/generated/native-viewport-full-v10.json)
 pass 640/640 and 960/960 exact with observed exits 0, clean source unchanged,
 and all 1,600 native/Chromium images, oracle identities and differences
-unchanged. Complete original and expanded censuses remain in progress;
-no complete total or release qualification is claimed.
+unchanged. Its later completed original and expanded censuses retain
+21,308/22,924 and 22,111/23,728 exact, zero errors, with all images and
+differences unchanged. Those complete failures do not qualify a release.
 
 The [private sampling and corner investigation](../renderer/generated/native-viewport-full-v11.json)
 finds that pinned Chromium enables `SK_ENABLE_LEGACY_SHADERCONTEXT`, which the
@@ -236,7 +237,15 @@ passes 8,498 tests, zero failures and 13 ignored, with clean source unchanged
 after tracked output restoration. Full original and expanded qualification
 remain required. Its [completed replacement raster matrices](../renderer/generated/native-viewport-full-v13.json)
 pass 640/640 focused and 960/960 primitive exact with unchanged pixels and oracle
-identities. The older solid-tile candidate's complete censuses have observed
+identities. Its [completed original and expanded censuses](../renderer/generated/native-viewport-full-v14.json)
+have observed exits 1: 21,299/22,924 and 22,102/23,728 exact, zero errors.
+The 144 changed comparisons include 23 exact losses, 14 exact gains and
+46 worsened pixel counts. All Chromium images and oracle identities remain
+fixed. A clean configuration-only sweep reproduces every changed comparison
+on 304 selected rows; its partial scope is diagnostic, not qualification.
+The sampler/build-configuration correction remains unresolved and the
+candidate is rejected for promotion. All 804 additions are unchanged;
+200/201 remain exact at all four profiles. The older solid-tile candidate's complete censuses have observed
 exits 1 and retain 21,308/22,924 original and 22,111/23,728 expanded exact, zero
 errors, with every image and difference signature unchanged against the
 preceding accepted renderer. Those complete failures do not qualify a release.

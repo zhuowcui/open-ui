@@ -12,6 +12,18 @@ rendering evidence for that state. Each element behavior needed by a consuming
 application also requires a public Rust operation over the same engine; fixture
 lowering alone does not complete application API coverage.
 
+The [native style/RGBA checkpoint](../v02/generated/native-primitive-styles-v1.json)
+at clean `9e0f0145` verifies 35 primitive longhands through public Rust, C, and
+C++ consumers. Its locked workspace passes 8,515 tests with 13 ignored, and
+its complete focused/primitive matrices remain 640/640 and 960/960 exact.
+The full original and expanded contract still requires its own complete run
+on that source. The separate [private sampling/corner candidate](generated/native-viewport-full-v14.json)
+completes both censuses with zero errors and 21,299/22,924 original and
+22,102/23,728 expanded exact. It loses 23 previously exact comparisons and
+gains 14; every Chromium image and oracle identity is unchanged. A clean
+configuration-only selected sweep reproduces all changed rows. Its image
+sampling correction remains unresolved, and the candidate stays unapplied.
+
 The earlier complete clean `9b158cda` results are
 [21,308/22,924 exact](generated/four-profile-census-v49.json) for the original
 four-profile suite and [22,111/23,728 exact](generated/expanded-requalification-v32.json)

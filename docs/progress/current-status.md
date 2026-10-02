@@ -218,8 +218,9 @@ still fail. The prototype remains unapplied, with 144 fractional failures.
 Its [complete focused and primitive matrices](../renderer/generated/native-viewport-full-v10.json)
 pass 640/640 and 960/960 exact with observed exits 0, clean source unchanged,
 and all 1,600 native/Chromium images, oracle identities and differences
-unchanged. Its complete original and expanded censuses are in progress.
-No complete census result or release qualification is claimed for it.
+unchanged. Its later completed original and expanded censuses retain
+21,308/22,924 and 22,111/23,728 exact, zero errors, with all images and
+differences unchanged. Those complete failures do not qualify a release.
 
 The [private sampling and corner investigation](../renderer/generated/native-viewport-full-v11.json)
 identifies a missing Chromium Skia build setting: `SK_ENABLE_LEGACY_SHADERCONTEXT`.
@@ -236,8 +237,18 @@ passes 8,498 tests, zero failures and 13 ignored, with tracked output restored
 and clean source unchanged. Its full renderer and application qualification
 remain open. Its [completed replacement raster matrices](../renderer/generated/native-viewport-full-v13.json)
 are 640/640 focused and 960/960 primitive exact, with all image hashes and oracle
-identities unchanged against the configuration-only candidate. Its complete
-original and expanded censuses remain in progress after workspace restoration.
+identities unchanged against the configuration-only candidate. Its
+[completed original and expanded censuses](../renderer/generated/native-viewport-full-v14.json)
+fail with 21,299/22,924 and 22,102/23,728 exact, zero errors. Against the
+preceding solid-tile/accepted renderer, 144 comparisons change: 23 lose
+exactness, 14 become exact, and 46 have more differing pixels. Every Chromium
+image and oracle identity stays fixed; all 804 additions are unchanged and
+200/201 remain exact at all four profiles. A clean configuration-only
+304-comparison sweep reproduces every changed row, including all 23 exact
+losses. The sampling flag change causes the measured regressions without
+requiring the corner change. Shared image sampling remains owned by
+`openui-paint` and raster build configuration, with the correction unresolved.
+The candidate is rejected for promotion and remains unapplied.
 The older solid-tile candidate's complete censuses have finished with observed
 exits 1: 21,308/22,924 original and 22,111/23,728 expanded exact, zero errors.
 All native and Chromium images, oracle identities and difference signatures
