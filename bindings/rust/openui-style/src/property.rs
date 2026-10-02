@@ -1580,6 +1580,10 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
         | P::MinHeight
         | P::MaxWidth
         | P::MaxHeight
+        | P::Left
+        | P::Top
+        | P::Right
+        | P::Bottom
         | P::MarginTop
         | P::MarginRight
         | P::MarginBottom
@@ -2051,6 +2055,10 @@ pub fn apply_to_computed(
         (P::MinHeight, StyleValue::Length(v)) => style.fields.min_height = resolve(*v),
         (P::MaxWidth, StyleValue::Length(v)) => style.fields.max_width = resolve(*v),
         (P::MaxHeight, StyleValue::Length(v)) => style.fields.max_height = resolve(*v),
+        (P::Left, StyleValue::Length(v)) => style.fields.left = resolve(*v),
+        (P::Top, StyleValue::Length(v)) => style.fields.top = resolve(*v),
+        (P::Right, StyleValue::Length(v)) => style.fields.right = resolve(*v),
+        (P::Bottom, StyleValue::Length(v)) => style.fields.bottom = resolve(*v),
         (P::Margin, StyleValue::Edges(v)) => {
             style.fields.margin_top = resolve(v.top);
             style.fields.margin_right = resolve(v.right);
