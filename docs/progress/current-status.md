@@ -20,8 +20,8 @@ remain open.
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
 | Application conformance scenarios | 58 across 10 domains |
-| Frozen / current C exports | 84 / 109 |
-| C examples / C++ consumers | 7 / 2, including native C/C++ window consumers |
+| Frozen / current C exports | 84 / 110 |
+| C examples / C++ consumers | 8 / 3, including native C/C++ window consumers |
 | Workspace tests | 8,498 pass; 13 ignored on clean viewport clipping repair source `1366b72f` |
 | Python closure, qualification, accountability and packaging tests | 244 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
@@ -215,8 +215,15 @@ remain unchanged. These prototypes are unapplied. The corner candidate's
 [completed workspace](../renderer/generated/native-viewport-full-v12.json)
 passes 8,498 tests, zero failures and 13 ignored, with tracked output restored
 and clean source unchanged. Its full renderer and application qualification
-remain open; replacement focused/primitive matrices and complete censuses are
-running after workspace restoration. Its first raster attempts were stopped
+remain open. Its [completed replacement raster matrices](../renderer/generated/native-viewport-full-v13.json)
+are 640/640 focused and 960/960 primitive exact, with all image hashes and oracle
+identities unchanged against the configuration-only candidate. Its complete
+original and expanded censuses remain in progress after workspace restoration.
+The older solid-tile candidate's complete censuses have finished with observed
+exits 1: 21,308/22,924 original and 22,111/23,728 expanded exact, zero errors.
+All native and Chromium images, oracle identities and difference signatures
+remain unchanged against the preceding accepted renderer. These complete
+failures keep the release gate open. Its first corner raster attempts were stopped
 with observed exits 143 because an overlapping workspace test can temporarily
 write a tracked PNG. Those partial outputs are preserved and do not qualify.
 
@@ -229,10 +236,20 @@ generator checks, archive integrity and the 7/7 accountability audit pass.
 All six ordinary hosted checks at `d5cd5f04` pass; five skipped hardening jobs
 remain unverified. The earlier full runs at `574864d0` exclude the later
 recording, transform and picture changes. Native
-scrollbar input/accessibility, nested scrolling ranges, propagation, C metrics,
-and remaining renderer/release qualification remain open. Open UI runs no
-JavaScript; all needed application operations remain public native Rust API
+scrollbar input/accessibility, nested scrolling ranges, propagation,
+remaining C property conversion and renderer/release qualification remain open.
+Open UI runs no JavaScript; all needed application operations remain public native Rust API
 obligations.
+
+The [native scroll API evidence](../v02/native-scroll-metrics.md) records clean
+`dfae5ae9`: the additive C metrics query, pending-layout offset reads, independent
+overflow-axis values and shared inset length mutations pass 28 API tests,
+seven C examples, two C++ consumers, and a public Rust callback/resize consumer
+at five scales. All previous 109 exports and 29 layouts remain unchanged; the
+ABI now has 110 exports. Eight generators, archive integrity and accountability
+pass. Two earlier failed C consumer attempts are preserved. Needed native API
+coverage and renderer/release qualification remain open; these checks do not
+qualify new pixels or a later hosted head.
 
 The complete clean checkpoint `9b158cda` is
 [21,308/22,924 exact](../renderer/generated/four-profile-census-v49.json),

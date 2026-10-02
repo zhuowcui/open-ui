@@ -75,8 +75,11 @@ layout is resolved before reading offsets or dimensions; shrinking the content
 or resizing the viewport also clamps the retained offset.
 `Element::scroll_metrics` returns an owned snapshot of client and content
 dimensions in logical pixels, or `None` when the element has no layout box.
-This implements the public Rust path; nested scrolling ranges, native scrollbar
-input/accessibility, C metric exposure, and complete pixel qualification still
+The [C metrics query](native-scroll-metrics.md) now exposes the same owned
+dimensions, with C and C++ consumers and versioned output validation. Native
+inset length mutations also work through the shared engine and public Rust
+callbacks. Nested scrolling ranges, native scrollbar input/accessibility,
+remaining C property conversion, and complete pixel qualification still
 require work. Those are native implementation gaps.
 
 The [native flow-root application](../../bindings/rust/openui/examples/native_flow_root_geometry.rs)

@@ -33,16 +33,16 @@ The current v0.2 release candidate has:
 
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
   on replay and 182 changed; these old screenshots are not pixel targets;
-- a [complete pre-repair native viewport census](docs/renderer/generated/native-viewport-full-v4.json)
-  with 21,292 of 22,924 comparisons exact, 1,632 different, and zero render
-  errors; its 16 formerly exact regressions are restored by a shared clipping
-  repair in the affected selection, with complete qualification still required;
+- a [complete native viewport census](docs/renderer/generated/native-viewport-full-v9.json)
+  at `079208f8` with 21,308 of 22,924 comparisons exact, 1,616 different, and
+  zero render errors; the shared clipping repair restores all 16 earlier exact
+  regressions, and the full pixel gate remains failing;
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
   comparisons exact in the [clipping repair evidence](docs/renderer/generated/native-viewport-full-v2.json);
 - 201 native final-state cases in the expanded contract, including one newly
   added case; 200 of 201 meet the four-profile gate in the earlier complete
   viewport run, and one remains a failure in the
-  [expanded evidence](docs/renderer/generated/native-viewport-full-v1.json).
+  [expanded evidence](docs/renderer/generated/native-viewport-full-v9.json).
   The other 35 AST-lowered cases remain pending;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
 - 58 application scenarios covering retained updates, controls, editing,
@@ -50,7 +50,8 @@ The current v0.2 release candidate has:
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;
 - 84 frozen retained-engine/headless C exports, with 110 current exports and
-  checked layouts and an ABI checksum;
+  checked layouts and an ABI checksum; the [native scroll and inset consumers](docs/v02/native-scroll-metrics.md)
+  pass through public Rust, C and C++ APIs;
 - sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates defined
   in CI; several remain open or failing.
 
@@ -59,10 +60,9 @@ Chromium for some fixtures, which is why replaying old screenshots cannot be a
 release gate. A [font oracle audit](docs/renderer/scaled-lcd-hinting-oracle-investigation.md)
 also found one older cached Chromium capture that differs from six fresh
 captures under the same recorded identity; that evidence needs reconciliation.
-The earlier complete viewport census has 1,632 differences, including 16
-formerly exact regressions. The shared clipping repair is implemented and
-restores all 16 in the affected selection, while its complete censuses remain
-unfinished. This repository is not yet
+The latest complete census for the accepted renderer has 1,616 differences after
+restoring all 16 earlier exact regressions. Later native API and private
+renderer candidates require their own complete qualification. This repository is not yet
 declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia
 GPU qualification, retained per-node layers, compositor-owned animation

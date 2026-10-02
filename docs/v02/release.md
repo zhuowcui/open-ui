@@ -16,7 +16,7 @@ claimed by source code alone.
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): locked headless and Linux checks passed | pass |
-| Rust/C application contract | 58 scenarios, 109 current exports, six headless C examples and a C++ header consumer, plus native C/C++ window consumers; previous symbols and layouts preserved | remaining API review and lab qualification open |
+| Rust/C application contract | 58 scenarios, 110 current exports, seven headless C examples and two C++ consumers, plus native C/C++ window consumers; [native scroll/inset evidence](native-scroll-metrics.md) preserves previous symbols and layouts | remaining API review and lab qualification open |
 | Native element interaction | Public Rust `Document`, `Element`, and `TextNode` APIs cover ID/class/native-kind lookup, class-token updates, retained detach/reattach, mutation, callbacks, activation, focus, scrolling, and controls; browser-style operations needed by applications must be exposed through native APIs | core implemented; remaining API coverage review open |
 | C-owned X11/Wayland application loop | `oui_app_run` and `oui_app_request_exit` use Rust `App` and the same retained document; versioned platform callbacks and [clean native C/C++ window runs](native-c-lifecycle-evidence.md) cover X11 software/GL and Wayland software | implemented; release-lab qualification open |
 | C platform accessibility | owned full-tree snapshots, node metadata/relations/focus, and changed/removed IDs export from the shared engine; automated AT-SPI operation in a C window remains unqualified | open |
@@ -222,8 +222,13 @@ prototypes remain unapplied. The corner candidate's
 [completed workspace](../renderer/generated/native-viewport-full-v12.json)
 passes 8,498 tests, zero failures and 13 ignored, with clean source unchanged
 after tracked output restoration. Full original and expanded qualification
-and replacement focused/primitive matrices are running and remain required. The
-first corner raster attempts were stopped with observed exits 143 after an
+remain required. Its [completed replacement raster matrices](../renderer/generated/native-viewport-full-v13.json)
+pass 640/640 focused and 960/960 primitive exact with unchanged pixels and oracle
+identities. The older solid-tile candidate's complete censuses have observed
+exits 1 and retain 21,308/22,924 original and 22,111/23,728 expanded exact, zero
+errors, with every image and difference signature unchanged against the
+preceding accepted renderer. Those complete failures do not qualify a release.
+The first corner raster attempts were stopped with observed exits 143 after an
 overlapping workspace test was discovered; their partial outputs do not qualify.
 
 All six ordinary hosted checks at `427f7df4` pass; five skipped hardening jobs
@@ -234,8 +239,8 @@ allowed. All eight generator checks, archive integrity and accountability pass. 
 `574864d0` exclude the later recording and transform changes. The
 [older recording index](../renderer/generated/native-viewport-scroll-v3.json)
 and rejected proposals remain immutable evidence. Native scrollbar operation
-and accessibility, nested scrolling, propagation, C metrics and the remaining
-pixel/public API gaps still require implementation and verification. No
+and accessibility, nested scrolling, propagation, remaining C property
+conversion and pixel/public API gaps still require implementation and verification. No
 JavaScript runtime or glue is part of that work.
 
 The [renderer source check](../renderer/renderer-build-identity.md) verifies

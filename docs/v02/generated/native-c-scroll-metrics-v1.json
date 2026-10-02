@@ -1,0 +1,1544 @@
+{
+  "api_verification": {
+    "abi": {
+      "abi_version": "0x00020000",
+      "added_exports": [
+        "oui_element_get_scroll_metrics_v1"
+      ],
+      "added_layout": {
+        "align": 8,
+        "size": 40
+      },
+      "current_exports": 110,
+      "existing_layout_count": 29,
+      "existing_layouts_preserved": true,
+      "parent": "cced75443fe0e38f0bde6815d63a30447b8f301f",
+      "previous_exports": 109,
+      "previous_exports_preserved": true
+    },
+    "javascript_executed_by_openui": false,
+    "library": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/libopenui_ffi.so",
+      "sha256": "45b796feee122353e384130b03d87c6072d9df08b84d2588adde741b98b6fee6",
+      "unchanged": true
+    },
+    "release_qualification": false,
+    "results": {
+      "c_examples_run": 7,
+      "cpp_consumers_run": 2,
+      "ffi_tests_failed": 0,
+      "ffi_tests_ignored": 0,
+      "ffi_tests_passed": 28,
+      "scroll_metric_consumer_runs": 10,
+      "scroll_metric_scales": [
+        1,
+        1.25,
+        1.5,
+        2,
+        3
+      ],
+      "test_result_lines": 2
+    },
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "dfae5ae95e2fe7706dbd55996399439b5e563424",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "47082da1ba8e4d4f19605cb9244b9b3800031f315539eff402dedba6a60867d8",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "dfae5ae95e2fe7706dbd55996399439b5e563424",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "47082da1ba8e4d4f19605cb9244b9b3800031f315539eff402dedba6a60867d8",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "steps": [
+      {
+        "command": [
+          "cargo",
+          "--config",
+          ".cargo/config.chromium.toml",
+          "clean",
+          "-p",
+          "openui-layout",
+          "-p",
+          "openui-engine",
+          "-p",
+          "openui",
+          "-p",
+          "openui-compositor",
+          "-p",
+          "pixel-compare",
+          "-p",
+          "openui-paint"
+        ],
+        "cwd": "/home/nero/code/open-ui/bindings/rust",
+        "log": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/clean.log",
+        "log_sha256": "02ff5cde431ce42b69786cdfa1473ce77237f05e9ab85e4b373050707c9142ae",
+        "name": "clean",
+        "observed_exit_code": 0,
+        "source_after": {
+          "clean": true,
+          "commit": "dfae5ae95e2fe7706dbd55996399439b5e563424",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "47082da1ba8e4d4f19605cb9244b9b3800031f315539eff402dedba6a60867d8",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          ".cargo/config.chromium.toml",
+          "test",
+          "--locked",
+          "-p",
+          "openui",
+          "--test",
+          "native_insets"
+        ],
+        "cwd": "/home/nero/code/open-ui/bindings/rust",
+        "log": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/native-inset-consumer.log",
+        "log_sha256": "8be9f81047e847147fb5e17f99d9efbd6ef64deb0e8ef20a95eaa63bc444ac43",
+        "name": "native-inset-consumer",
+        "observed_exit_code": 0,
+        "source_after": {
+          "clean": true,
+          "commit": "dfae5ae95e2fe7706dbd55996399439b5e563424",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "47082da1ba8e4d4f19605cb9244b9b3800031f315539eff402dedba6a60867d8",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          ".cargo/config.chromium.toml",
+          "test",
+          "--locked",
+          "-p",
+          "openui-ffi",
+          "--features",
+          "linux"
+        ],
+        "cwd": "/home/nero/code/open-ui/bindings/rust",
+        "log": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/ffi-tests.log",
+        "log_sha256": "36ddc8a5ce2834316c8df7a4374944adb89945f5b475c0dddd7af54fdf59c055",
+        "name": "ffi-tests",
+        "observed_exit_code": 0,
+        "source_after": {
+          "clean": true,
+          "commit": "dfae5ae95e2fe7706dbd55996399439b5e563424",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "47082da1ba8e4d4f19605cb9244b9b3800031f315539eff402dedba6a60867d8",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "command": [
+          "cargo",
+          "--config",
+          ".cargo/config.chromium.toml",
+          "build",
+          "--locked",
+          "-p",
+          "openui-ffi",
+          "--features",
+          "linux"
+        ],
+        "cwd": "/home/nero/code/open-ui/bindings/rust",
+        "log": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/ffi-build.log",
+        "log_sha256": "0a829e1ff30ee6a414baef13938774f6f4ae4fce2df4854da1058ebd09292022",
+        "name": "ffi-build",
+        "observed_exit_code": 0,
+        "source_after": {
+          "clean": true,
+          "commit": "dfae5ae95e2fe7706dbd55996399439b5e563424",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "47082da1ba8e4d4f19605cb9244b9b3800031f315539eff402dedba6a60867d8",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "/home/nero/code/open-ui/tools/ffi/verify_abi.py",
+          "--library",
+          "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/libopenui_ffi.so"
+        ],
+        "cwd": "/home/nero/code/open-ui",
+        "log": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/abi-consumers.log",
+        "log_sha256": "da6aef602d37ce4f388444b9fb9d08387c190a1a7966992ebf0c7a0e3354827b",
+        "name": "abi-consumers",
+        "observed_exit_code": 0,
+        "source_after": {
+          "clean": true,
+          "commit": "dfae5ae95e2fe7706dbd55996399439b5e563424",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "47082da1ba8e4d4f19605cb9244b9b3800031f315539eff402dedba6a60867d8",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "path": "bindings/rust/openui/tests/native_insets.rs",
+      "sha256": "1b21ca68096c62209400f52d7fb5c3b13c89a4265cc072c69ca4b9fcfc88702e"
+    },
+    {
+      "path": "docs/v02/generated/openui-ffi-checksum.txt",
+      "sha256": "585af69fd06825cde2468f85e2ce586fd47dfda4f62cf6a4ec3267e9535ca142"
+    },
+    {
+      "path": "docs/v02/generated/openui-ffi-layout.json",
+      "sha256": "b1d214225748db72f52e63de0376f4d5654af70ee81be85a66ee94d6d6ca851d"
+    },
+    {
+      "path": "docs/v02/generated/openui-ffi-symbols.txt",
+      "sha256": "ff0c4db9b91e4f1fab3cd2737e507cc0b1c130a3e22cedd48e925f99578493c9"
+    },
+    {
+      "path": "examples/c_v02/header_smoke.cc",
+      "sha256": "d9f65ecd2eec4f8ce2c1c9ae536820582eae01c622e7b181a6e720aabb9c136a"
+    },
+    {
+      "path": "examples/c_v02/scroll_metrics.c",
+      "sha256": "ca4371064b33b816d45d6cdd95f43d638e3c7e1c8049783f9a40edd6a98bec28"
+    },
+    {
+      "path": "examples/c_v02/scroll_metrics.cc",
+      "sha256": "2324704056dad36347b5b5a6e5f705e894c36e83765d02d6fd62cd17005a7092"
+    },
+    {
+      "path": "include/openui.h",
+      "sha256": "3c91b39de60b360fe2ddd6476ae60e2e3b55cbc0574379e3af8ce5380ed973ef"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v114/abi-consumers.log",
+      "sha256": "8d062c7bb72cd987ce8b63595ec26613e17df041e35868e5e5c24a0310c1fa7f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v114/attempt.json",
+      "sha256": "ff4a88fdfa045c200f81de87d85d3537c9657a3fc74308bd5b7fdb37fcefe775"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v114/clean.log",
+      "sha256": "ecf2a3a0fac50d777fe81e86b5fc20798751baeffd0cad2ff7563718fadc8333"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v114/ffi-build.log",
+      "sha256": "0c94aef1dec4001415742fb46c356acf953381ae5703b3e85cee686109c95162"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v114/ffi-tests.log",
+      "sha256": "fbe8bfcd497462475d8e17393fd2fd69278afedba1f5616c60d8f713006d1514"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v117/abi-consumers.log",
+      "sha256": "f7bc57ffaf754c9d97fba9532791793d25798b117d16645982e1694550f9773b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v117/attempt.json",
+      "sha256": "ce27595a3671a6d4c7fddcd4a1a32151da2d400a198d9118761d4ec8d2673a14"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v117/clean.log",
+      "sha256": "02ff5cde431ce42b69786cdfa1473ce77237f05e9ab85e4b373050707c9142ae"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v117/ffi-build.log",
+      "sha256": "ccb694f82f91e9d98f6f8e00202cf0dffadb59abce120bea4e9366d6b842eb8a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v117/ffi-tests.log",
+      "sha256": "3c3bb8ed1ff4bb48ebaa973b9effeb1b3d49ff9f90c3847697e5f6f3d1a2faca"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/abi-consumers.log",
+      "sha256": "da6aef602d37ce4f388444b9fb9d08387c190a1a7966992ebf0c7a0e3354827b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/attempt.json",
+      "sha256": "4689244f991fef5f2ce1ed1053950c782ea268a5f6f7f8d8f05bd1b7709b5be3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/clean.log",
+      "sha256": "02ff5cde431ce42b69786cdfa1473ce77237f05e9ab85e4b373050707c9142ae"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/ffi-build.log",
+      "sha256": "0a829e1ff30ee6a414baef13938774f6f4ae4fce2df4854da1058ebd09292022"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/ffi-tests.log",
+      "sha256": "36ddc8a5ce2834316c8df7a4374944adb89945f5b475c0dddd7af54fdf59c055"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/libopenui_ffi.so",
+      "sha256": "45b796feee122353e384130b03d87c6072d9df08b84d2588adde741b98b6fee6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/native-inset-consumer.log",
+      "sha256": "8be9f81047e847147fb5e17f99d9efbd6ef64deb0e8ef20a95eaa63bc444ac43"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/verification.json",
+      "sha256": "e7d748155a04775b82a2b56dd78cad431e46f6dc25dfae03d89a08d8fc452b55"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-accountability-check-v121.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-archive-check-v121.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-checks-v121.json",
+      "sha256": "d08e16e361cfabe8aa20174a2c0b01af2d03c2d2de8b84f3518457bc1491a4ef"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-ffi-check-v121.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-multicol-check-v121.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-renderer-check-v121.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-sp17-check-v121.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-sp18-check-v121.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-sp20-check-v121.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-style-check-v121.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-v02-check-v121.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    }
+  ],
+  "existing_chromium_geometry": [
+    {
+      "case": "300x224-auto-0-0",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/300x224-auto-0-0/chromium.png",
+        "sha256": "85fd24773a8ec6f37d975e73254be8d98cb14c7c53ab2d763cbb780dc2214155"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/300x224-auto-0-0/test.html",
+        "sha256": "c9754a65d41cc854fb57fb5b4957abbce0413544559f76e9706614b0f5df99ed"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/300x224-auto-0-0/geometry.json",
+        "sha256": "708faf1756f0cabeccf12818619ad4cc8d307a6776fa3b3551e606f504fb3b58"
+      },
+      "scale": "1"
+    },
+    {
+      "case": "300x224-auto-1000-1000",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 5,
+              "y": 1
+            }
+          }
+        },
+        "scroll": {
+          "x": 22,
+          "y": 21
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/300x224-auto-1000-1000/chromium.png",
+        "sha256": "df3551e1d1b08ff19cd7df401833fc2d02c52b75c706e2ac0039f2850bad848a"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/300x224-auto-1000-1000/test.html",
+        "sha256": "c9754a65d41cc854fb57fb5b4957abbce0413544559f76e9706614b0f5df99ed"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/300x224-auto-1000-1000/geometry.json",
+        "sha256": "650c2944e17fabff677d9ee02a7719529ccb704ffb989ad2dd261407ddab7582"
+      },
+      "scale": "1"
+    },
+    {
+      "case": "80x40-auto-0-0",
+      "geometry": {
+        "client": {
+          "height": 240,
+          "width": 320
+        },
+        "extent": {
+          "height": 240,
+          "width": 320
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 40,
+              "width": 80,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/80x40-auto-0-0/chromium.png",
+        "sha256": "79e66eac8a9208602c9e89ba32900d19450293dc28edb5f5a5f8404427733d47"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/80x40-auto-0-0/test.html",
+        "sha256": "ce53af0cdfad1cb90b00139a8a4854150b920d91fad4f08e30e7df5c7af3e380"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/80x40-auto-0-0/geometry.json",
+        "sha256": "846156508478e7095992ec3bf3380046124ab3eba9d43ca8ffc2179ecac602bf"
+      },
+      "scale": "1"
+    },
+    {
+      "case": "80x40-scroll-0-0",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 225,
+          "width": 305
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 40,
+              "width": 80,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/80x40-scroll-0-0/chromium.png",
+        "sha256": "3ee2df78c774ad7708ea0ca51f28635b4bdf8c474f723cbbf3a54acae7924e2e"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/80x40-scroll-0-0/test.html",
+        "sha256": "99905037eace7193310009ed632a7914b6ccf1cf52eb850591417a4bd8b9d8f7"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/80x40-scroll-0-0/geometry.json",
+        "sha256": "79ae6a1f76377abeaccc5b80f302bbe3f35dd2c74b5e90e930afc222b304caea"
+      },
+      "scale": "1"
+    },
+    {
+      "case": "300x224-hidden-1000-1000",
+      "geometry": {
+        "client": {
+          "height": 240,
+          "width": 320
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 20,
+              "y": 16
+            }
+          }
+        },
+        "scroll": {
+          "x": 7,
+          "y": 6
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/300x224-hidden-1000-1000/chromium.png",
+        "sha256": "ae351ef310d8e65c313e7c0aee6143174f4dbcaeb6cb2abb03c7b44f295fea34"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/300x224-hidden-1000-1000/test.html",
+        "sha256": "8075f870a659d707a77e9ac54ae866273d0aa97d2db15600b64110c1165f0c5b"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1/300x224-hidden-1000-1000/geometry.json",
+        "sha256": "ec26ead018997d40d25acd6df1d55169f13d38141accdfc5025426c2a06ef399"
+      },
+      "scale": "1"
+    },
+    {
+      "case": "300x224-auto-0-0",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/300x224-auto-0-0/chromium.png",
+        "sha256": "7d93031a77ae8a4c492953dc068d54e4159a2c2892529fc904bbca291ceacfd8"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/300x224-auto-0-0/test.html",
+        "sha256": "c9754a65d41cc854fb57fb5b4957abbce0413544559f76e9706614b0f5df99ed"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/300x224-auto-0-0/geometry.json",
+        "sha256": "dbcb64ed5f3705353e4d72c09756d3eb5a47dc284d5ee99913d455ed9ed5d5fa"
+      },
+      "scale": "1.25"
+    },
+    {
+      "case": "300x224-auto-1000-1000",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 5,
+              "y": 1
+            }
+          }
+        },
+        "scroll": {
+          "x": 22,
+          "y": 21
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/300x224-auto-1000-1000/chromium.png",
+        "sha256": "a04ecfb753c400fac7b00cf3c2f6a36f8628439531fe5f7cb15a74d679429bbe"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/300x224-auto-1000-1000/test.html",
+        "sha256": "c9754a65d41cc854fb57fb5b4957abbce0413544559f76e9706614b0f5df99ed"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/300x224-auto-1000-1000/geometry.json",
+        "sha256": "d86092455e7e57be96460e8b8b7417e36c0146249b51f7a26e78eed37e66bd09"
+      },
+      "scale": "1.25"
+    },
+    {
+      "case": "80x40-auto-0-0",
+      "geometry": {
+        "client": {
+          "height": 240,
+          "width": 320
+        },
+        "extent": {
+          "height": 240,
+          "width": 320
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 40,
+              "width": 80,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/80x40-auto-0-0/chromium.png",
+        "sha256": "6b91238bc3d23de652c71b5e7f0bd67c2fef1813507039f3719bf3ed8b3fc7b3"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/80x40-auto-0-0/test.html",
+        "sha256": "ce53af0cdfad1cb90b00139a8a4854150b920d91fad4f08e30e7df5c7af3e380"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/80x40-auto-0-0/geometry.json",
+        "sha256": "971337f68a598c59158b73443011eff52a6bbe742e6784156c28355c3d28a989"
+      },
+      "scale": "1.25"
+    },
+    {
+      "case": "80x40-scroll-0-0",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 225,
+          "width": 305
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 40,
+              "width": 80,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/80x40-scroll-0-0/chromium.png",
+        "sha256": "595db88d5a88c30ff12197aedaeae65a74d2f4096078b06cd8cd461713165197"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/80x40-scroll-0-0/test.html",
+        "sha256": "99905037eace7193310009ed632a7914b6ccf1cf52eb850591417a4bd8b9d8f7"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/80x40-scroll-0-0/geometry.json",
+        "sha256": "60473aafe5950177ed8aed1eaf725429a48aea52b0cd3ab477a2138c9df2c883"
+      },
+      "scale": "1.25"
+    },
+    {
+      "case": "300x224-hidden-1000-1000",
+      "geometry": {
+        "client": {
+          "height": 240,
+          "width": 320
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 20,
+              "y": 16
+            }
+          }
+        },
+        "scroll": {
+          "x": 7,
+          "y": 6
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/300x224-hidden-1000-1000/chromium.png",
+        "sha256": "059f798d80759390055931b5ce41b0e06694d65fd722413f4b6825c8a16a383f"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/300x224-hidden-1000-1000/test.html",
+        "sha256": "8075f870a659d707a77e9ac54ae866273d0aa97d2db15600b64110c1165f0c5b"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.25/300x224-hidden-1000-1000/geometry.json",
+        "sha256": "749d4690e4d91614f16c7324991d2d0038860a329b51fa444dfa860bebd79fbd"
+      },
+      "scale": "1.25"
+    },
+    {
+      "case": "300x224-auto-0-0",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/300x224-auto-0-0/chromium.png",
+        "sha256": "cd38d0abbb72a9b78e2826ef829ebef6f138ba6866fba2a04cecd797ee90e05a"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/300x224-auto-0-0/test.html",
+        "sha256": "c9754a65d41cc854fb57fb5b4957abbce0413544559f76e9706614b0f5df99ed"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/300x224-auto-0-0/geometry.json",
+        "sha256": "7a5f0fdb06efb3a1c4fbdce683dbc3f56fd67beaadba4a2c1c7cb9aaf1e0f32c"
+      },
+      "scale": "1.5"
+    },
+    {
+      "case": "300x224-auto-1000-1000",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 5,
+              "y": 1
+            }
+          }
+        },
+        "scroll": {
+          "x": 22,
+          "y": 21
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/300x224-auto-1000-1000/chromium.png",
+        "sha256": "d3b4ae0e127dcc4badcc4b11c2be4b3fb3426eabf159d419b7ed9bd24418bf94"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/300x224-auto-1000-1000/test.html",
+        "sha256": "c9754a65d41cc854fb57fb5b4957abbce0413544559f76e9706614b0f5df99ed"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/300x224-auto-1000-1000/geometry.json",
+        "sha256": "36cd4cde5542f39c366c4a563b7e6d9b18ee8da4f0a05200e79ab33010676d7d"
+      },
+      "scale": "1.5"
+    },
+    {
+      "case": "80x40-auto-0-0",
+      "geometry": {
+        "client": {
+          "height": 240,
+          "width": 320
+        },
+        "extent": {
+          "height": 240,
+          "width": 320
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 40,
+              "width": 80,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/80x40-auto-0-0/chromium.png",
+        "sha256": "47bdab56670dfaea7a9180555f16392665bbaeb88490bc8a56eac4a2b37b27f3"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/80x40-auto-0-0/test.html",
+        "sha256": "ce53af0cdfad1cb90b00139a8a4854150b920d91fad4f08e30e7df5c7af3e380"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/80x40-auto-0-0/geometry.json",
+        "sha256": "808afef3e81da9fce64f2ce5e559a8b669f722ff44778811b57c82be4b98c5a6"
+      },
+      "scale": "1.5"
+    },
+    {
+      "case": "80x40-scroll-0-0",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 225,
+          "width": 305
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 40,
+              "width": 80,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/80x40-scroll-0-0/chromium.png",
+        "sha256": "d80a0e7070b3d37f883c7b57d33d2c94f73c1cd2dec9ac40a8a6e9bf6f4f88b9"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/80x40-scroll-0-0/test.html",
+        "sha256": "99905037eace7193310009ed632a7914b6ccf1cf52eb850591417a4bd8b9d8f7"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/80x40-scroll-0-0/geometry.json",
+        "sha256": "b21a48b3743c4e89bf5d7cd6c6bce270d390c04e7a9461449b07c927bb1e142a"
+      },
+      "scale": "1.5"
+    },
+    {
+      "case": "300x224-hidden-1000-1000",
+      "geometry": {
+        "client": {
+          "height": 240,
+          "width": 320
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 20,
+              "y": 16
+            }
+          }
+        },
+        "scroll": {
+          "x": 7,
+          "y": 6
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/300x224-hidden-1000-1000/chromium.png",
+        "sha256": "47ef0343704b30aba59eb8f2e46725d22d4a128e239b1a7453c3031ae4feee42"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/300x224-hidden-1000-1000/test.html",
+        "sha256": "8075f870a659d707a77e9ac54ae866273d0aa97d2db15600b64110c1165f0c5b"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-1.5/300x224-hidden-1000-1000/geometry.json",
+        "sha256": "be13ae0e9d5a8bd9f991e09c3bec47f503c85774bb75f30bfa4999c920d5223a"
+      },
+      "scale": "1.5"
+    },
+    {
+      "case": "300x224-auto-0-0",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/300x224-auto-0-0/chromium.png",
+        "sha256": "11352cc81984357ef8c7bef8aa9a3f560958f3ba979d4ba1fa0ba14ea968f71f"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/300x224-auto-0-0/test.html",
+        "sha256": "c9754a65d41cc854fb57fb5b4957abbce0413544559f76e9706614b0f5df99ed"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/300x224-auto-0-0/geometry.json",
+        "sha256": "4d9c1ea2f0523c43cc7cc64a197b47cfe5287ac84c20b647b1a3c209075c84f8"
+      },
+      "scale": "2"
+    },
+    {
+      "case": "300x224-auto-1000-1000",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 5,
+              "y": 1
+            }
+          }
+        },
+        "scroll": {
+          "x": 22,
+          "y": 21
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/300x224-auto-1000-1000/chromium.png",
+        "sha256": "70d1faa80fd7bbf81aa1804bc845c2cffc0592525d35654fefcbdcfd1560e3b5"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/300x224-auto-1000-1000/test.html",
+        "sha256": "c9754a65d41cc854fb57fb5b4957abbce0413544559f76e9706614b0f5df99ed"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/300x224-auto-1000-1000/geometry.json",
+        "sha256": "8db8e85eb0ddcfc8e41ed2e8002cd0d2e38c494bbf9b442c9fc4231026dca479"
+      },
+      "scale": "2"
+    },
+    {
+      "case": "80x40-auto-0-0",
+      "geometry": {
+        "client": {
+          "height": 240,
+          "width": 320
+        },
+        "extent": {
+          "height": 240,
+          "width": 320
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 40,
+              "width": 80,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/80x40-auto-0-0/chromium.png",
+        "sha256": "57802a2e861dbcaa06689c809ab6668f97d7e7c2361481408a57352cfa2b2307"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/80x40-auto-0-0/test.html",
+        "sha256": "ce53af0cdfad1cb90b00139a8a4854150b920d91fad4f08e30e7df5c7af3e380"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/80x40-auto-0-0/geometry.json",
+        "sha256": "5d1ca30e8a3efadeb1370b38154b348d7b97b617488174c043862df1d6aa434a"
+      },
+      "scale": "2"
+    },
+    {
+      "case": "80x40-scroll-0-0",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 225,
+          "width": 305
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 40,
+              "width": 80,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/80x40-scroll-0-0/chromium.png",
+        "sha256": "549211c21f91471e2b2eba678ad7023d97bff0bd348b28c58f9e6e401c09d17b"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/80x40-scroll-0-0/test.html",
+        "sha256": "99905037eace7193310009ed632a7914b6ccf1cf52eb850591417a4bd8b9d8f7"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/80x40-scroll-0-0/geometry.json",
+        "sha256": "28b4252aa1b81bbbd5f573124ab73bcdea991396a59f55eea745f1c96fe1835b"
+      },
+      "scale": "2"
+    },
+    {
+      "case": "300x224-hidden-1000-1000",
+      "geometry": {
+        "client": {
+          "height": 240,
+          "width": 320
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 20,
+              "y": 16
+            }
+          }
+        },
+        "scroll": {
+          "x": 7,
+          "y": 6
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/300x224-hidden-1000-1000/chromium.png",
+        "sha256": "f9d78a5ef5d2b3438c997c01ed20ccf8f42e85b5367e6f862106c31e78540a91"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/300x224-hidden-1000-1000/test.html",
+        "sha256": "8075f870a659d707a77e9ac54ae866273d0aa97d2db15600b64110c1165f0c5b"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-2/300x224-hidden-1000-1000/geometry.json",
+        "sha256": "772ec49236ae8badde5ec0fa473a8062e218bafa929d0405af17a1f481e1cce5"
+      },
+      "scale": "2"
+    },
+    {
+      "case": "300x224-auto-0-0",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/300x224-auto-0-0/chromium.png",
+        "sha256": "ba5b6b104f6ad7d3d799b338b1d4eb49b3cc1cff71fb25bd25804497f55d0f9f"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/300x224-auto-0-0/test.html",
+        "sha256": "c9754a65d41cc854fb57fb5b4957abbce0413544559f76e9706614b0f5df99ed"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/300x224-auto-0-0/geometry.json",
+        "sha256": "1c6c659e9184fa2d63a50e948a6720625dda9929816443afaac6def2d68c2075"
+      },
+      "scale": "3"
+    },
+    {
+      "case": "300x224-auto-1000-1000",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 5,
+              "y": 1
+            }
+          }
+        },
+        "scroll": {
+          "x": 22,
+          "y": 21
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/300x224-auto-1000-1000/chromium.png",
+        "sha256": "bfcfddc1dc54ef7df487bcccbed96440bc34e66664230820ef285dc957382b5d"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/300x224-auto-1000-1000/test.html",
+        "sha256": "c9754a65d41cc854fb57fb5b4957abbce0413544559f76e9706614b0f5df99ed"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/300x224-auto-1000-1000/geometry.json",
+        "sha256": "f8c5fa8b64ec9be43cb5dd9abe3fab5fbbd0d843dd97c7cbf56f53ce03d13ec0"
+      },
+      "scale": "3"
+    },
+    {
+      "case": "80x40-auto-0-0",
+      "geometry": {
+        "client": {
+          "height": 240,
+          "width": 320
+        },
+        "extent": {
+          "height": 240,
+          "width": 320
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 40,
+              "width": 80,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/80x40-auto-0-0/chromium.png",
+        "sha256": "9bd90fde0be7701edbf309df941df928ef1501384023edd1a05db5ca74577849"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/80x40-auto-0-0/test.html",
+        "sha256": "ce53af0cdfad1cb90b00139a8a4854150b920d91fad4f08e30e7df5c7af3e380"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/80x40-auto-0-0/geometry.json",
+        "sha256": "f9024fe020bed636a2923d023a042bb7c766cea14518f1cb635568cb91da482f"
+      },
+      "scale": "3"
+    },
+    {
+      "case": "80x40-scroll-0-0",
+      "geometry": {
+        "client": {
+          "height": 225,
+          "width": 305
+        },
+        "extent": {
+          "height": 225,
+          "width": 305
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 40,
+              "width": 80,
+              "x": 27,
+              "y": 22
+            }
+          }
+        },
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/80x40-scroll-0-0/chromium.png",
+        "sha256": "9824dd78ce85d43839b3fc9bc743cdcfa66b50da5e756748d255edf51685073c"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/80x40-scroll-0-0/test.html",
+        "sha256": "99905037eace7193310009ed632a7914b6ccf1cf52eb850591417a4bd8b9d8f7"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/80x40-scroll-0-0/geometry.json",
+        "sha256": "3aba6de822285c072d1eb465bb738f320038357c6accf5403a8c67e3cbfddb8c"
+      },
+      "scale": "3"
+    },
+    {
+      "case": "300x224-hidden-1000-1000",
+      "geometry": {
+        "client": {
+          "height": 240,
+          "width": 320
+        },
+        "extent": {
+          "height": 246,
+          "width": 327
+        },
+        "nodes": {
+          "content": {
+            "bounds": {
+              "height": 224,
+              "width": 300,
+              "x": 20,
+              "y": 16
+            }
+          }
+        },
+        "scroll": {
+          "x": 7,
+          "y": 6
+        }
+      },
+      "image": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/300x224-hidden-1000-1000/chromium.png",
+        "sha256": "fc4dab1ea6d031f07fe48d33cedd55c6f3f6652d840ccde87cc03e7eeea7ab7b"
+      },
+      "input": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/300x224-hidden-1000-1000/test.html",
+        "sha256": "8075f870a659d707a77e9ac54ae866273d0aa97d2db15600b64110c1165f0c5b"
+      },
+      "metadata": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-3/300x224-hidden-1000-1000/geometry.json",
+        "sha256": "50cf5955300f7c54e5a200f831d68cc7f7a03e2d470645e05f904ca7802bd4cf"
+      },
+      "scale": "3"
+    }
+  ],
+  "javascript_executed_by_openui": false,
+  "native_only_guards": [
+    "Content shrink and viewport resize clamp offsets before a separate metrics query.",
+    "Direct C enum values preserve independent overflow axes and reject an invalid value.",
+    "Detached and display:none elements return no metrics and zero dimensions.",
+    "Owned metrics copies survive mutation and document destruction."
+  ],
+  "nonqualifying_prior_attempts": [
+    {
+      "abi_consumer_exit_code": 1,
+      "attempt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v114/attempt.json",
+        "sha256": "ff4a88fdfa045c200f81de87d85d3537c9657a3fc74308bd5b7fdb37fcefe775"
+      },
+      "qualifying": false,
+      "reason": "C overflow-axis literal parsing and enum transport were incomplete.",
+      "source": {
+        "clean": true,
+        "commit": "ddb36f2d7bb5a6c80920b3bb84f296ac546239ec",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "e005f8caab3f471b1af967727674a3a054d927fa73a85fedf95af8756b3b68c1",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "abi_consumer_exit_code": 1,
+      "attempt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v117/attempt.json",
+        "sha256": "ce27595a3671a6d4c7fddcd4a1a32151da2d400a198d9118761d4ec8d2673a14"
+      },
+      "qualifying": false,
+      "reason": "Native inset length literals and shared engine application were incomplete.",
+      "source": {
+        "clean": true,
+        "commit": "49fa8018d7f0e403ab3d63975729edd41b3724c4",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "920ee7327bccfd69ecea272129b519e61e52c84c55f3e460dc5243d3a6c16ab3",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "pixel_qualification": false,
+  "policy": "Open UI never executes JavaScript. Consuming native applications call public Rust methods and Rust callbacks over the retained engine. Chromium is the sole pixel target.",
+  "public_rust_inset_consumer": {
+    "log": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/c-scroll-metrics-clean-v120/native-inset-consumer.log",
+      "sha256": "8be9f81047e847147fb5e17f99d9efbd6ef64deb0e8ef20a95eaa63bc444ac43"
+    },
+    "observed_exit_code": 0,
+    "operations": [
+      "Native Rust click callback changes em/rem inset lengths.",
+      "Owned bounds survive mutation.",
+      "Left/top auto and right/bottom percentages position the retained element.",
+      "Viewport resize recomputes position.",
+      "Weak handles expire after document teardown."
+    ],
+    "scales": [
+      1,
+      1.25,
+      1.5,
+      2,
+      3
+    ],
+    "tests_failed": 0,
+    "tests_passed": 1
+  },
+  "read_only_checks": {
+    "checks": [
+      {
+        "command": [
+          "python3",
+          "tools/qualification/generate_renderer_contract.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-renderer-check-v121.log",
+        "log_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+        "name": "renderer",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp13r_multicol_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-multicol-check-v121.log",
+        "log_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+        "name": "multicol",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp17_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-sp17-check-v121.log",
+        "log_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+        "name": "sp17",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp18_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-sp18-check-v121.log",
+        "log_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+        "name": "sp18",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp20_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-sp20-check-v121.log",
+        "log_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+        "name": "sp20",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/release/generate_v02_contract.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-v02-check-v121.log",
+        "log_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+        "name": "v02",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/style/generate_properties.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-style-check-v121.log",
+        "log_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+        "name": "style",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/ffi/generate_ffi.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-ffi-check-v121.log",
+        "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+        "name": "ffi",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/accountability/restore_frozen_openui_archive.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-archive-check-v121.log",
+        "log_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+        "name": "archive",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/accountability/audit.py",
+          "--repository-only"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-accountability-check-v121.log",
+        "log_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+        "name": "accountability",
+        "process_exit_code": 0
+      }
+    ],
+    "qualification_note": "Read-only generator, archive integrity and repository-accountability checks over an unchanged clean umbrella checkpoint. This is not a renderer pixel qualification run.",
+    "release_qualification": false,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "dfae5ae95e2fe7706dbd55996399439b5e563424",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "47082da1ba8e4d4f19605cb9244b9b3800031f315539eff402dedba6a60867d8",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "dfae5ae95e2fe7706dbd55996399439b5e563424",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "47082da1ba8e4d4f19605cb9244b9b3800031f315539eff402dedba6a60867d8",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "release_qualification": false,
+  "remaining_work": [
+    "Complete native keyboard and pointer scrollbar defaults and accessibility qualification.",
+    "Qualify nested scroll ranges and propagation.",
+    "Review and implement remaining generated C primitive property families, including alignment and border/filter fields.",
+    "Complete renderer, compositor, Linux hardware, hardening and release qualification."
+  ],
+  "schema_version": 1
+}
