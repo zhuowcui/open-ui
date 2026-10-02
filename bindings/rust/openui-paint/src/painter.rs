@@ -1322,16 +1322,22 @@ fn paint_fragment_contents(
         // single-character content with its native LCD mask.
     } else if let Some(scrollport) = fragment.viewport_scrollport {
         canvas.save();
-        canvas.clip_rect(
-            Rect::from_xywh(
-                abs_offset.left.to_f32(),
-                abs_offset.top.to_f32(),
-                scrollport.client_rect.width().to_f32(),
-                scrollport.client_rect.height().to_f32(),
-            ),
-            ClipOp::Intersect,
-            false,
-        );
+        // With no reserved gutter, viewport clipping belongs to the final
+        // surface/tile assembly. Applying that edge again during document
+        // raster changes analytic coverage of transformed ink near the edge.
+        // A reserved scrollbar gutter still needs the smaller client clip.
+        if scrollport.horizontal_scrollbar || scrollport.vertical_scrollbar {
+            canvas.clip_rect(
+                Rect::from_xywh(
+                    abs_offset.left.to_f32(),
+                    abs_offset.top.to_f32(),
+                    scrollport.client_rect.width().to_f32(),
+                    scrollport.client_rect.height().to_f32(),
+                ),
+                ClipOp::Intersect,
+                false,
+            );
+        }
         let node = doc.node(fragment.node_id);
         // Chromium snaps the viewport scroll transform in physical space.
         // Keep the retained offset and geometry logical while preserving the
