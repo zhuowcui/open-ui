@@ -40,7 +40,8 @@ matrices remain exact. All eight generated-contract checks, accountability
 and archive integrity checks pass. The 1,616 census differences and residual
 ownership review still keep the release gate open.
 
-The native viewport implementation now exposes public Rust
+The [native viewport implementation](../renderer/generated/native-viewport-scroll-v4.json)
+now exposes public Rust
 `Element::scroll_metrics` over the shared engine, reserves paired scrollbar
 gutters, clamps programmatic/wheel/smooth scrolling, resolves pending layout,
 and clamps retained offsets after content shrink or viewport resize. The
@@ -65,9 +66,15 @@ antialiasing on interior edges; the current enclosure keeps those edges crisp.
 
 The latest clean implementation passes 8,498 locked workspace tests with
 13 ignored. Recorded controls survive live style mutation and document drop.
-Fresh focused/primitive gates and complete original/expanded requalification
-are required for this implementation; prior complete counts in the table
-remain attributed to the neutral gamma checkpoint. The earlier full runs at
+Fresh complete focused and primitive gates pass 640/640 and 960/960 exact,
+with all 1,600 native and Chromium image hashes and oracle identities unchanged.
+Fresh clean umbrella binaries reproduce all 850 native images, geometry and
+difference signatures. Complete original/expanded reruns of the current
+runtime are running; incomplete results remain nonqualifying. Prior complete
+counts in the table remain attributed to the neutral gamma checkpoint.
+The strict generated inventory now accounts for the existing thumb-color
+property: 203 consumed public fields and zero unclassified fields. All eight
+generator checks, archive integrity and the 7/7 accountability audit pass. The earlier full runs at
 `574864d0` exclude the later recording, transform and picture changes. Native
 scrollbar input/accessibility, nested scrolling ranges, propagation, C metrics,
 and remaining renderer/release qualification remain open. Open UI runs no

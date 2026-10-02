@@ -71,7 +71,8 @@ while total channel error decreases; those residuals remain failures. The
 original pixel gate, normal published-consumer builds and residual ownership
 remain open; these controls add no admitted release passes.
 
-The native viewport implementation now exposes `Element::scroll_metrics`
+The [native viewport implementation](../renderer/generated/native-viewport-scroll-v4.json)
+now exposes `Element::scroll_metrics`
 through the public Rust API and uses shared viewport layout for paired gutters,
 programmatic/wheel/smooth scroll limits, pending-layout queries, and clamping
 after content shrink or viewport resize. A
@@ -89,8 +90,14 @@ oracle bytes and confirm the distinct shared drawing paths.
 
 The full locked workspace passes 8,498 tests with 13 ignored at clean
 `8f45444e`. Recorded controls survive live style changes and document drop.
-Fresh raster and full census requalification are required; the earlier complete
-counts above remain historical neutral gamma measurements. Runs at
+Fresh complete raster gates pass 640/640 focused and 960/960 primitive exact,
+with all 1,600 native/Chromium images and oracle identities unchanged. Fresh
+clean umbrella binaries reproduce all 850 native controls. Full census reruns
+of the current runtime are running; incomplete results are nonqualifying.
+The earlier complete counts above remain historical neutral gamma measurements.
+The generated consumer inventory is corrected to exactly 203 public fields,
+including the existing typed thumb-color property; no unclassified field is
+allowed. All eight generator checks, archive integrity and accountability pass. Runs at
 `574864d0` exclude the later recording and transform changes. The
 [older recording index](../renderer/generated/native-viewport-scroll-v3.json)
 and rejected proposals remain immutable evidence. Native scrollbar operation

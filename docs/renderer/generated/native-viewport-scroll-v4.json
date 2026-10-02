@@ -1,0 +1,525 @@
+{
+  "applied_to_umbrella": true,
+  "artifact_hashes": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-strict-clean-v28/native-identity.json",
+      "sha256": "906acf95f0a1b2b77a0abe5dc644645c34466df57026d0cd67a96f5d266adb34",
+      "size": 580
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-strict-clean-v28/pixel-tool-identity.json",
+      "sha256": "3737f6a21987f1bf8806916264ef1feb8cce04952eefc9d368dea73267057f2b",
+      "size": 1294
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-workspace-v28/workspace.json",
+      "sha256": "81f7b3761cf567d2fc1d417d271fce9743a0185fd7fda993324f90cd2ef3e26f",
+      "size": 1381
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-clean-focused-v28/focused-summary.json",
+      "sha256": "70cda00519188f0d34cad9a895dfccb4a78cfddd36417046c57e85e39014f75b",
+      "size": 1646410
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-clean-primitive-v28/primitive-summary.json",
+      "sha256": "e648d2664653de9b3e52466ccc28cb5afa3e7bd1d724275d5d44181b55ba6ba9",
+      "size": 2455616
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-focused-delta-v30.json",
+      "sha256": "bb6bc287b0f21c18fc3ae019af2c91e4a7c374ca0a30860fac34a3084dfa1d4c",
+      "size": 1171
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-primitive-delta-v30.json",
+      "sha256": "02cf846a7603cb97035c6bc2c8541998f481375af75705c5c3f0d08c1932ba50",
+      "size": 1173
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-clean-v29/native-identity.json",
+      "sha256": "b5f2445a22b164a524291ae7d0350b287b36e4beea4753c2344cfdb45810fe1e",
+      "size": 681
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-clean-v29/source-after-native-v30.json",
+      "sha256": "572bae6476ff3578f3b108535a4de9ca45aa8b528b8fb8abe3bf7940ffb36d61",
+      "size": 875
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-clean-v29-comparison-v1.json",
+      "sha256": "44ec92501b3488feca2cc21f926d000cc0ba59d640617f95e24a72f588f4c3d4",
+      "size": 751565
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/umbrella-clean-v29-comparison-v1.json",
+      "sha256": "bc2b7c076e8362fbe90909fb5207db1a6518b5dc1c61b9590e9db7c5ea6d78c1",
+      "size": 1861060
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-strict-clean-v28-comparison-v1.json",
+      "sha256": "e59a2b8b790359aff41c3732e1cf92c07e9c1f69943814338e42c49eca5849dd",
+      "size": 753065
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/picture-strict-clean-v28-comparison-v1.json",
+      "sha256": "bf0b1d19201cee288c31c21c637ae0cf88d286e26fea38d7fc9f9dd6c157b253",
+      "size": 1864660
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-strict-clean-v28-delta-from-overlay-v28.json",
+      "sha256": "4676c5c6ad842154f31694ce52a4e49aea60c5a32f309cc03754083ef59a9c6f",
+      "size": 4770
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/picture-strict-clean-v28-delta-from-overlay-v28.json",
+      "sha256": "8df9e8167ad40ddeee1b7a8c6c8f52dfcd98c9e54683f1ecb48c06e99e0846ec",
+      "size": 11537
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-v24/metadata.json",
+      "sha256": "cd573d2f9b4f36bb5bc88a1568055cfae2489c6c6131928859a55144f964a09d",
+      "size": 4022
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-v25/metadata.json",
+      "sha256": "7d0594507db643e89cd87229de40d556f12245cbf36522c8d9f0e098bb6436b9",
+      "size": 4022
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-path-review-v28.json",
+      "sha256": "607673e64bdab54ec80c2da9ac6378947c52da10b99cc9bc0af1217937b9d9c6",
+      "size": 7276
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/primary-scrollbar-paths-v24.json",
+      "sha256": "ea8118b0255e616dd6d3a60db16682bddbb532ad826feb8a1f97b012683c31fd",
+      "size": 1150
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/primary-scroll-transform-v20.json",
+      "sha256": "47cbb5c270a26d61cf2f351455600a4a67cd879abb7433c3ddff64456f8dbe89",
+      "size": 737
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/primary-nine-patch-v19.json",
+      "sha256": "2c67144df985805389f8990e7f0e7523fa80df29ad8fd2af5a23f5f68b422cee",
+      "size": 337
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/primary-composition-v26.json",
+      "sha256": "f9747f7c9b8d31bb45b51ae97e9b046124741dfcc0ce1c10a8f0dcf9d42dad70",
+      "size": 349
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-contract-checks-v30.json",
+      "sha256": "ddcf5fef7a19166033d3dd2e14adfed46d2647fbaf2f4ac3b767a8d17be72809",
+      "size": 3104
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-renderer-generator-v29.log",
+      "sha256": "a20d4b3d4481685004af74770aa8029d4c4116437d9277ede11861843fac94a9",
+      "size": 750
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-renderer-regenerate-v30.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "size": 81
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/composition-native-build-v26.log",
+      "sha256": "245122e74acd959c365b3dfd60e2448fba8656c67bf5cefbca565ee7ab4c97c4",
+      "size": 8648
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-v22.log",
+      "sha256": "75562199e220dc0006d5a9a9a0969018a9e997ed54213cad646aaa0f873ff609",
+      "size": 371
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/backend-trace-v23.log",
+      "sha256": "35b605a6a3597eb46596a04323ba9696af759623c87d79912764d16d3d3e5bb5",
+      "size": 262
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/strips-clean-v19/native-identity.json",
+      "sha256": "4aac7e54dde0c1ab4d3e8fa65bd7417942819548dd6ce0416b42afcacb174457",
+      "size": 580
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/strips-clean-v19-comparison-v1.json",
+      "sha256": "20ff710780f1cccfdb37f21f34818c84746a4df2f3c943cd2882cdc12d5ff176",
+      "size": 759626
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/strips-clean-v19-comparison-v1.json",
+      "sha256": "6f1bc8a3084212ed6ab98ebb90686be5def94987008a4aa5258df9ca6ea63608",
+      "size": 1887052
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-phase-clean-v20/native-identity.json",
+      "sha256": "03b9771e86eb037d7cdccc15362dc611ce082e4e202a99347a84d41dd66193fb",
+      "size": 580
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll-phase-clean-v20-comparison-v1.json",
+      "sha256": "946712e8c7e64d9cf59c5bf61adb491231fd500d100aa5ce60b80d4242309585",
+      "size": 760588
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/scroll-phase-clean-v20-comparison-v1.json",
+      "sha256": "2af09b2a60cdd2765a1a6c964efd6c80723d4730799fbda8fa5fd021eb65b8f6",
+      "size": 1880815
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/thumb-interior-clean-v21/native-identity.json",
+      "sha256": "f59227bb85068e85fc150c1fb2c5f4b68aa4644cf39314d59a6b3710c4c729da",
+      "size": 580
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/thumb-interior-clean-v21-comparison-v1.json",
+      "sha256": "42c8c290d7342498fc62454e75e3c78cafdcc176fb6a3fd8b181b1e0aaade745",
+      "size": 754442
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/thumb-interior-clean-v21-comparison-v1.json",
+      "sha256": "75a43a19fa3322a8161fadff0abb84a80b8780ef106adcdc90bf290a370c1688",
+      "size": 1864660
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-clean-v24/native-identity.json",
+      "sha256": "30c7a79ee1535d6110e0e821a0a849cbd6e50177b74f8d87868e6ea114346f06",
+      "size": 580
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-clean-v24-comparison-v1.json",
+      "sha256": "aa3d188ff1f3f318624bcee638745e904956274e96da01b633d195fdedfc036f",
+      "size": 751315
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/picture-clean-v24-comparison-v1.json",
+      "sha256": "a40095dcb18c9e3823ca0895ce1ff5c97a5de62cd97e2b83688453f42a9310cf",
+      "size": 1860460
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/composition-clean-v27/native-identity.json",
+      "sha256": "a9a7aaab34ba9459926ed71d1860e4b10fe9e1071d9543a95db0c2dfdf83c266",
+      "size": 580
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/composition-clean-v27-comparison-v1.json",
+      "sha256": "63a8ed467fb21cf7ee31444a60f3644df82755e423c41941d40602309c9a9d88",
+      "size": 752315
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/composition-clean-v27-comparison-v1.json",
+      "sha256": "ad1150fc83c2c01675ba2b1bded2eeefbb35059be3ae59ba3ead320219ecef48",
+      "size": 1862860
+    }
+  ],
+  "focused": {
+    "all_native_and_chromium_png_rgba_hashes_and_oracle_identities_unchanged": true,
+    "compared": 640,
+    "process_exit_code": 0,
+    "report_sha256": "70cda00519188f0d34cad9a895dfccb4a78cfddd36417046c57e85e39014f75b",
+    "results": {
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "profile_result_sha256": "3ac2748a83e58b04fdba8143b6649f9df5dafb994d03dfefeb605a1b10f7329b",
+      "total": 640
+    },
+    "source": {
+      "clean": true,
+      "commit": "8f45444e9884b7e492585f0ce8692b5ee1af3b43",
+      "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+      "source_tree_sha256": "a55f4a897adccbed84573ae5f07348af6f7779d3d9a9a687cbde95bf97234bbc",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "8f45444e9884b7e492585f0ce8692b5ee1af3b43",
+      "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+      "source_tree_sha256": "a55f4a897adccbed84573ae5f07348af6f7779d3d9a9a687cbde95bf97234bbc",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "suite": "focused"
+  },
+  "generated_inventory_commit": "2bc87b73",
+  "harness_note": "The qualification clone retains the previous generator count guard and style inventory. Main fixes those metadata checks at 2bc87b73: exactly one new consumed field, scrollbar_thumb_color (typed property 234), no unclassified field. The immutable qualification contract and oracle inputs do not change. Runtime Rust implementation files match, and fresh clean umbrella binaries reproduce all 850 native images and signatures. Pixel measurements do not claim all source/release checks pass in the older clone.",
+  "implementation_commit": "2ee78f2ed3ff5102a15bdd13937a3b3776ab053d",
+  "javascript_executed_by_openui": false,
+  "native": {
+    "delta_from_previous_recording": {
+      "after_differing_pixels": 29355,
+      "before_differing_pixels": 62232,
+      "changed_images": 122,
+      "exact_losses": 0,
+      "newly_exact": 3,
+      "removed_differing_pixels": 32877,
+      "worsened_differing_pixel_counts": 0
+    },
+    "direction_guards": {
+      "exact": 488,
+      "process_exit_code": 0,
+      "total": 600
+    },
+    "integer_scale_exact": 510,
+    "original": {
+      "exact": 196,
+      "process_exit_code": 0,
+      "total": 250
+    },
+    "remaining_fractional_failures": 166,
+    "rust_callbacks_and_teardowns": 850,
+    "scroll_offsets_owned_bounds_client_and_content_dimensions": {
+      "exact": 850,
+      "total": 850
+    },
+    "umbrella_reproduction": {
+      "all_850_images_geometry_and_difference_signatures_unchanged": true,
+      "both_process_exit_codes": 0
+    }
+  },
+  "native_umbrella_source": {
+    "clean": true,
+    "commit": "2ee78f2ed3ff5102a15bdd13937a3b3776ab053d",
+    "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+    "source_tree_sha256": "c596d7f43308bd72f8553133cf5eaf256496bc1d72aadcfb2b8a3592526bd8f7",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "negative_experiments": [
+    {
+      "finding": "Explicit three-strip texture replay changes none of the 850 native images; omitted.",
+      "source_commit": "78d9ae8c98f674df02a4b36d441a0a76f68200d7"
+    },
+    {
+      "finding": "A separate untagged N32 viewport composition stage changes none of the 850 images against the picture-path checkpoint; omitted.",
+      "source_commit": "b9ac268b3f4a98ecc8336b65c588e36f3150c231"
+    }
+  ],
+  "pending_full_matrices": {
+    "current": {
+      "expanded": {
+        "results_directory": "out/renderer-evidence/native-viewport-scroll-v1/picture-clean-expanded-v28",
+        "session_id": 83939,
+        "status": "running; incomplete and nonqualifying"
+      },
+      "full": {
+        "results_directory": "out/renderer-evidence/native-viewport-scroll-v1/picture-clean-full-v28",
+        "session_id": 47288,
+        "status": "running; incomplete and nonqualifying"
+      }
+    },
+    "current_source": {
+      "clean": true,
+      "commit": "8f45444e9884b7e492585f0ce8692b5ee1af3b43",
+      "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+      "source_tree_sha256": "a55f4a897adccbed84573ae5f07348af6f7779d3d9a9a687cbde95bf97234bbc",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "earlier": {
+      "expanded": {
+        "results_directory": "out/renderer-evidence/native-viewport-scroll-v1/combined-clean-expanded-v14",
+        "session_id": 39304,
+        "status": "running; no complete result claimed"
+      },
+      "full": {
+        "results_directory": "out/renderer-evidence/native-viewport-scroll-v1/combined-clean-full-v14",
+        "session_id": 22603,
+        "status": "running; no complete result claimed"
+      }
+    },
+    "earlier_excludes_current_recording_and_scroll_transform": true,
+    "earlier_source": "574864d0355f27b0b192834d53e191655fafb4d2"
+  },
+  "pixel_source": {
+    "clean": true,
+    "commit": "8f45444e9884b7e492585f0ce8692b5ee1af3b43",
+    "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+    "source_tree_sha256": "a55f4a897adccbed84573ae5f07348af6f7779d3d9a9a687cbde95bf97234bbc",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "pixel_target": "Pinned immutable Chromium 147.0.7727.50 captures; Open UI archive is historical provenance only",
+  "preserved_failed_attempts": [
+    {
+      "log": "backend-trace-v22.log",
+      "process_exit_code": 1,
+      "reason": "Incorrect browser WebSocket JSON key."
+    },
+    {
+      "log": "backend-trace-v23.log",
+      "process_exit_code": 1,
+      "reason": "File URL normalization prevented the navigation identity check."
+    },
+    {
+      "log": "composition-native-build-v26.log",
+      "process_exit_code": 101,
+      "reason": "PhysicalOffset has a zero() constructor, not ZERO."
+    },
+    {
+      "log": "umbrella-renderer-generator-v29.log",
+      "process_exit_code": 1,
+      "reason": "Stale 202-field guard rejected the new 203rd consumer; reviewed and regenerated without changing oracle inputs."
+    }
+  ],
+  "primitive": {
+    "all_native_and_chromium_png_rgba_hashes_and_oracle_identities_unchanged": true,
+    "compared": 960,
+    "process_exit_code": 0,
+    "report_sha256": "e648d2664653de9b3e52466ccc28cb5afa3e7bd1d724275d5d44181b55ba6ba9",
+    "results": {
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "profile_result_sha256": "9ade043d47b105dfb546e0b04cd38ab3a9d91b4772afb4b5cc1f9c24caacb74f",
+      "total": 960
+    },
+    "source": {
+      "clean": true,
+      "commit": "8f45444e9884b7e492585f0ce8692b5ee1af3b43",
+      "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+      "source_tree_sha256": "a55f4a897adccbed84573ae5f07348af6f7779d3d9a9a687cbde95bf97234bbc",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "8f45444e9884b7e492585f0ce8692b5ee1af3b43",
+      "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+      "source_tree_sha256": "a55f4a897adccbed84573ae5f07348af6f7779d3d9a9a687cbde95bf97234bbc",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "suite": "primitive"
+  },
+  "release_qualification": false,
+  "remaining_gaps": [
+    "166 native fractional pixel comparisons",
+    "Complete original and expanded results for the implemented runtime",
+    "892 original residual IDs without reviewed ownership at the prior completed census",
+    "Native scrollbar pointer/key/accessibility states",
+    "Nested scrolling ranges and full owned metrics qualification",
+    "Overflow propagation and transformed-root coverage",
+    "C scroll-metric exposure over the same Engine",
+    "Other renderer, compositor, native API, hardening, packaging and release-lab gates"
+  ],
+  "reviewed_findings": [
+    {
+      "evidence": "primary-scroll-transform-v20.json",
+      "finding": "Viewport scroll translations snap in physical coordinates while logical offsets and owned bounds remain unchanged.",
+      "owner": "openui-paint"
+    },
+    {
+      "evidence": "thumb-interior-clean-v21-comparison-v1.json",
+      "finding": "Enclose thumb quads in physical content coordinates; keep AA disabled on the inset quad and retain the rounded target mask.",
+      "owner": "openui-paint"
+    },
+    {
+      "evidence": "backend-trace-path-review-v28.json",
+      "finding": "Non-scrollable forced bars use full PictureLayer recordings, while user-scrollable viewport bars use PaintedScrollbarLayer resources. Full track raster and adjoining corner ownership must follow that shared distinction. Four traced captures reproduce immutable oracle PNG bytes.",
+      "owner": "openui-paint"
+    }
+  ],
+  "rust_implementation_files_match": [
+    {
+      "path": "bindings/rust/openui-engine/src/animation.rs",
+      "sha256": "a2462479670671a0cfbdbad3170f9b62c979c0195dcffb0cb7b72d357525b868"
+    },
+    {
+      "path": "bindings/rust/openui-engine/src/lib.rs",
+      "sha256": "2f48b4023d1ffa183785b1dd354629275df39298d3e83db2c6cadff74423314b"
+    },
+    {
+      "path": "bindings/rust/openui-layout/src/block.rs",
+      "sha256": "4f2f380f2414902ed40d3a9012c2ede6fc8fbcb073aa5e0cfb61b58e6a44d14e"
+    },
+    {
+      "path": "bindings/rust/openui-layout/src/fragment.rs",
+      "sha256": "e28e5197735f5573fcfc7ddab70de1e07573d195797ec6d15ac70f665324c772"
+    },
+    {
+      "path": "bindings/rust/openui-layout/src/lib.rs",
+      "sha256": "6e997578288b6a7468a2afb0775906e3e0a5f7d3bc2fa4495876211a7543b340"
+    },
+    {
+      "path": "bindings/rust/openui-layout/src/viewport.rs",
+      "sha256": "01920443eed69a51ad311dc0db8bdacaaa4ae67e37e5515b5adbfddbe4454d53"
+    },
+    {
+      "path": "bindings/rust/openui-paint/src/painter.rs",
+      "sha256": "4e62d6ce1931cc1b5fb5cd47a379308d8e02a0503fe0d7334a162f7dbe38ab64"
+    },
+    {
+      "path": "bindings/rust/openui-paint/src/render.rs",
+      "sha256": "bc307dd5d3d741cb93b7f69077aa27d7aba07aecba6a9e089c6bee5be2c30f2a"
+    },
+    {
+      "path": "bindings/rust/openui-paint/tests/text_paint_tests.rs",
+      "sha256": "abf5eeb76781db3ff26309201dedcb228b4df8de5f6c24cab08e8ddbce1ff507"
+    },
+    {
+      "path": "bindings/rust/openui/examples/native_viewport_scroll.rs",
+      "sha256": "2af17e8e112fa9b2d170929c8bb7ddab957e18780395b832e6a2ac0dc04ac454"
+    },
+    {
+      "path": "bindings/rust/openui/src/document.rs",
+      "sha256": "028a79160a5e43e70a36e1afde26e440c5935548b38787b533ed53cba88db690"
+    },
+    {
+      "path": "bindings/rust/openui/src/element.rs",
+      "sha256": "1e338e629d12f3c51782970e3f288d9ca336fa077b7dc589b0ac1321a3b13f51"
+    },
+    {
+      "path": "bindings/rust/openui/src/lib.rs",
+      "sha256": "1aced3e9486e6464520bf33fd00ff7889dea49473b41cc032c9dfa045217b99e"
+    },
+    {
+      "path": "bindings/rust/openui/src/prelude.rs",
+      "sha256": "64301cd49728a23d2f1de82f81b30cc4a997997a6bd8f5148f6e1de7b96c9b72"
+    },
+    {
+      "path": "bindings/rust/openui/tests/v02_conformance.rs",
+      "sha256": "b5cb08211059c5fa6789282a2ac28034316bb18496729e4e31cfea1acedda00a"
+    },
+    {
+      "path": "bindings/rust/pixel-compare/src/main.rs",
+      "sha256": "cf7a9ccf7ba17332031ade0c80cb44d76012bc201eae3149eef906009d7ace48"
+    }
+  ],
+  "schema_version": 1,
+  "workspace": {
+    "artifact": {
+      "before_sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871",
+      "produced_sha256": "23b3d97436ebb63a32051c3f17a8e5e50ebc136fd8b4b2b86a64d7a84bfa3b13",
+      "restored_sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871"
+    },
+    "command": [
+      "cargo",
+      "--config",
+      ".cargo/config.chromium.toml",
+      "test",
+      "--workspace",
+      "--locked"
+    ],
+    "failed": 0,
+    "ignored": 13,
+    "log_sha256": "314f000406474e4f23ab85284509f268ee3857c14e5e71f2ed28f85655ae41af",
+    "passed": 8498,
+    "process_exit_code": 0,
+    "source": {
+      "clean": true,
+      "commit": "8f45444e9884b7e492585f0ce8692b5ee1af3b43",
+      "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+      "source_tree_sha256": "a55f4a897adccbed84573ae5f07348af6f7779d3d9a9a687cbde95bf97234bbc",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "8f45444e9884b7e492585f0ce8692b5ee1af3b43",
+      "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+      "source_tree_sha256": "a55f4a897adccbed84573ae5f07348af6f7779d3d9a9a687cbde95bf97234bbc",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test_profile_debug": 0,
+    "test_result_lines": 147
+  }
+}
