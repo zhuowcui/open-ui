@@ -60,6 +60,23 @@ and owned bounds unchanged. It restores 18 of the earlier global prototype's
 regressions remain at that checkpoint. This does not establish a new complete
 original census.
 
+The later visible-quad opacity correction follows Chromium's choice of `Src`
+for opaque compositor quads and `SrcOver` for translucent quads. It checks
+the exposed source region and neighboring sampling taps without changing
+pixels. Together with the generated-tile format correction, it restores
+22 of the V2 prototype's 23 exact regressions in 312 affected guards. Those
+guards are 178/312 exact, with zero errors and unchanged Chromium references.
+One formerly exact SVG decoration still differs by one level in each RGB
+channel of one pixel; 13
+previously failing comparisons also worsen against the clean C9 renderer.
+The source and executable checks pass, but this is rejected development
+evidence and the renderer remains unapplied.
+
+The SVG decoration path also contains an existing `49/50` opacity adjustment.
+Its comment alone does not establish a Chromium paint rule. That adjustment
+needs source and command-trace review and a shared geometry/compositing repair;
+a coincidentally exact screenshot cannot justify a pixel correction.
+
 ## Release status
 
 The renderer patch remains unapplied. Its Skia build flag and opacity changes

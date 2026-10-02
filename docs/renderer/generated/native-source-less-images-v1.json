@@ -303,6 +303,57 @@
     "total": 1800,
     "worsened": 0
   },
+  "visible_opaque_scroll_followup": {
+    "affected_guard_report": {
+      "path": "out/renderer-evidence/native-generated-sampling-v1/changed-guards-v4/full-summary.json",
+      "sha256": "70a91664931091249c27653c0345e6f18fb75d68feeb68dc6e75a2d0e96ba27b"
+    },
+    "all_chromium_bytes_and_oracle_identities_unchanged": true,
+    "delta": {
+      "path": "out/renderer-evidence/native-generated-sampling-v1/changed-guards-delta-v4.json",
+      "sha256": "54760b04924fed49202a811ac81f049933a80ae6fa8ad94f5aa2f085d2fc9458"
+    },
+    "evidence": {
+      "binary_unchanged": true,
+      "kind": "diagnostic-census",
+      "qualification_backend_match": true,
+      "qualified": false,
+      "source_unchanged": true,
+      "tolerance_pixels": 0
+    },
+    "exit_code": 1,
+    "newly_exact_against_clean_c9": 17,
+    "qualified": false,
+    "remaining_exact_regressions": [
+      {
+        "after": 1,
+        "before": 0,
+        "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+        "profile": "legacy-800x600@1"
+      }
+    ],
+    "renderer_applied": false,
+    "restored_exact_comparisons_from_v2": 22,
+    "results": {
+      "different": 134,
+      "errors": 0,
+      "exact": 178,
+      "profile_result_sha256": "fbb9136dc570d92182879ad0c8b7fd48e16470a8e57c83c90024a34c1c058ad8",
+      "total": 312
+    },
+    "source": {
+      "clean": false,
+      "commit": "730e46ace9eaa3ca3c010772c5a1921bad5011b3",
+      "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+      "source_tree_sha256": "fb2b2b51df2041d41f6be886963c0cbed15b02b2aa1fe91cbf526d0843fa9686",
+      "status_sha256": "4ae5c0437517050a9ef7ed6837003ff53217cc6c4a53f9fb1523ea477be7c5d5"
+    },
+    "source_checked_build": {
+      "path": "out/renderer-evidence/native-generated-sampling-v1/visible-scroll-v4/build-identity.json",
+      "sha256": "d13eacfa8fc5f1cb60194f46bdd288ebd53f3c9ce8286ca8a9ac23d0d8c923a7"
+    },
+    "worsened_nonexact_comparisons_against_c9": 13
+  },
   "workspace": {
     "exit_code": 0,
     "failed": 0,
