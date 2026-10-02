@@ -211,9 +211,12 @@ matrices pass 640/640 and 960/960 exact, with all 1,600 images and oracle identi
 unchanged. Clean `64fa1a7c` then preserves coverage at the independent scrollbar
 corner and reaches 850/850 exact, plus 12/12 exact wider-viewport guards. All
 native geometry, callbacks and teardown checks remain exact; reference bytes
-remain unchanged. These prototypes are unapplied. Their full renderer and
-application qualification remain open; the corner candidate's workspace and
-replacement raster matrices are pending. Its first raster attempts were stopped
+remain unchanged. These prototypes are unapplied. The corner candidate's
+[completed workspace](../renderer/generated/native-viewport-full-v12.json)
+passes 8,498 tests, zero failures and 13 ignored, with tracked output restored
+and clean source unchanged. Its full renderer and application qualification
+remain open; replacement focused/primitive matrices and complete censuses are
+running after workspace restoration. Its first raster attempts were stopped
 with observed exits 143 because an overlapping workspace test can temporarily
 write a tracked PNG. Those partial outputs are preserved and do not qualify.
 

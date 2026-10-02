@@ -218,8 +218,11 @@ primitive matrices pass 640/640 and 960/960 exact with unchanged pixels and orac
 identities. Clean `64fa1a7c` adds shared exterior corner coverage and reaches
 850/850 exact native images plus 12/12 exact wider-viewport guards. Geometry,
 Rust callbacks, teardown and all reference bytes remain unchanged. Both
-prototypes remain unapplied. Full original and expanded qualification, the
-corner workspace, and its replacement raster matrices remain required. The
+prototypes remain unapplied. The corner candidate's
+[completed workspace](../renderer/generated/native-viewport-full-v12.json)
+passes 8,498 tests, zero failures and 13 ignored, with clean source unchanged
+after tracked output restoration. Full original and expanded qualification
+and replacement focused/primitive matrices are running and remain required. The
 first corner raster attempts were stopped with observed exits 143 after an
 overlapping workspace test was discovered; their partial outputs do not qualify.
 
