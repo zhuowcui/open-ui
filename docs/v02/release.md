@@ -71,22 +71,31 @@ while total channel error decreases; those residuals remain failures. The
 original pixel gate, normal published-consumer builds and residual ownership
 remain open; these controls add no admitted release passes.
 
-The separate [viewport scroll prototype](../renderer/generated/native-viewport-scroll-v2.json)
+The separate [viewport scroll prototype](../renderer/generated/native-viewport-scroll-v3.json)
 matches all 850 native offsets, owned element bounds, and visible/content
 dimensions for the proposed public Rust scroll-area snapshot. It is unapplied
-and unqualified: 154/250 original and 397/600 direction-guard images are exact
-after physical nine-patch replay; 288 comparisons improve without an exact loss.
+and unqualified: 196/250 original and 485/600 direction-guard images are exact.
+After the earlier physical nine-patch correction, recording viewport controls
+independently of document tiles makes another 130 images exact. All 154 changed
+comparisons improve, with no worsened color-channel cell or exact loss. The
+510 comparisons at scales 1, 2, and 3 are exact; 169 fractional-scale failures
+remain.
 Remaining scrollbar raster, native controls, nested scrolling, propagation,
 and C API parity must be completed and verified. No JavaScript runtime is part
-of that work. The combined prototype's full locked workspace passes 8,497 tests
-with 13 ignored at clean `574864d0`. Earlier raster gates lose 70 exact
+of that work. The latest prototype's full locked workspace passes 8,498 tests
+with 13 ignored at clean `ca49a1a6`; recorded controls also survive live style
+mutation and document drop. Clean raster reruns remain 640/640 focused and
+960/960 primitive exact, with every native and Chromium PNG/RGBA hash and oracle
+identity unchanged. Earlier raster gates lose 70 exact
 comparisons because the native fixture adapter omitted the existing capture
 harness's hidden-scrollbar input styles. That shared lowering is corrected
 through typed Rust properties; clean complete reruns restore 640/640 focused
 and 960/960 primitive exact results with unchanged images and oracle identities.
 Fresh combined-source builds reproduce all 850 native controls. Full original
-and expanded reruns remain pending; the remaining pixel and public API gaps
-are unqualified.
+and expanded reruns at the earlier `574864d0` remain pending and do not include
+the later recording change; its complete census is still needed. A physical
+thumb-quad experiment worsens 138 already failing comparisons and is rejected.
+The remaining pixel and public API gaps are unqualified.
 
 The [renderer source check](../renderer/renderer-build-identity.md) verifies
 the source recorded inside the comparison executable before accepting a run,
