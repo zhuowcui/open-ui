@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean census against cached Chromium captures | 21,308/22,924 exact, 1,616 different, 0 errors; three original images changed by the neutral gamma correction, no exact regression, Chromium images and identities unchanged |
+| Latest complete clean census against cached Chromium captures | Earlier native viewport `574864d0`: 21,292/22,924 exact, 1,632 different, 0 errors; 16 formerly exact regressions. The clipping repair restores all 16 in the affected selection; full current-runtime qualification remains open |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
@@ -29,7 +29,8 @@ remain open.
 
 The [neutral PNG gamma correction](../renderer/generated/native-png-sampling-v4.json)
 is committed at `63aeb672`. Both complete clean matrices have observed exit 1
-and retain the counts above; Chromium bytes and identities remain unchanged.
+and retain 21,308/22,924 original and 22,111/23,728 expanded exact results;
+Chromium bytes and identities remain unchanged.
 Three original images change, with lower total channel error and no loss of
 an exact result. Two still-failing images each gain nine differing green
 channel cells; these remain failures. The native PNG consumer gains 35 exact
@@ -70,12 +71,30 @@ Fresh complete focused and primitive gates pass 640/640 and 960/960 exact,
 with all 1,600 native and Chromium image hashes and oracle identities unchanged.
 Fresh clean umbrella binaries reproduce all 850 native images, geometry and
 difference signatures. Complete original/expanded reruns of the current
-runtime are running; incomplete results remain nonqualifying. Prior complete
-counts in the table remain attributed to the neutral gamma checkpoint.
+runtime are running; incomplete results remain nonqualifying.
+
+The [earlier complete viewport runs](../renderer/generated/native-viewport-full-v1.json)
+at `574864d0` have now finished with observed exit 1: 21,292/22,924 original
+and 22,095/23,728 expanded exact, zero errors. Their original rows agree;
+200/201 additions remain exact at every profile. Against neutral gamma,
+30 comparisons change and 16 lose exactness; all Chromium images and oracle
+identities remain fixed. The current `8f45444e` runtime reproduces every one
+of those 16 failed PNGs. These are owned by `openui-paint` and keep the gate
+failing.
+
+A shared clipping repair at clean `1366b72f` defers the outer viewport clip
+to final surface/tile assembly when no scrollbar gutter is reserved. It
+restores all 16 exact results in the 96-comparison affected selection and
+preserves all 850 native images, geometry and difference signatures. Reserved
+gutters retain their smaller client clip. The repair is not yet applied to
+the umbrella; workspace and broader renderer qualification remain pending.
+This selection does not establish a new complete census count.
 The strict generated inventory now accounts for the existing thumb-color
 property: 203 consumed public fields and zero unclassified fields. All eight
-generator checks, archive integrity and the 7/7 accountability audit pass. The earlier full runs at
-`574864d0` exclude the later recording, transform and picture changes. Native
+generator checks, archive integrity and the 7/7 accountability audit pass.
+All six ordinary hosted checks at `d5cd5f04` pass; five skipped hardening jobs
+remain unverified. The earlier full runs at `574864d0` exclude the later
+recording, transform and picture changes. Native
 scrollbar input/accessibility, nested scrolling ranges, propagation, C metrics,
 and remaining renderer/release qualification remain open. Open UI runs no
 JavaScript; all needed application operations remain public native Rust API
