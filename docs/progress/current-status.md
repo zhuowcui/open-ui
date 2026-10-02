@@ -127,12 +127,14 @@ at `cc056cee` instead selects ordinary picture rendering for a forced bar with
 no range while the opposite axis uses a composited scrollbar. Its adjacent
 corner shares the ordinary picture. All 850 native geometry/callback/teardown
 records stay unchanged; eight already failing images improve by 1,898 pixels,
-with zero exact loss and no new exact image. The candidate remains unapplied.
+with zero exact loss and no new exact image. The combined scrollbar and client
+clip corrections are now implemented in the umbrella after the complete
+[census comparison](../renderer/generated/native-viewport-full-v9.json).
 Its [completed raster checks](../renderer/generated/native-viewport-full-v5.json)
 pass 640/640 focused and 960/960 primitive exact, with all 1,600 native and
-Chromium images and difference signatures unchanged. Workspace and complete
-census qualification remain required. The 166 native fractional failures
-remain failures.
+Chromium images and difference signatures unchanged. The combined candidate's
+workspace and complete censuses are recorded below. The 166 native fractional
+failures remain failures.
 
 A subsequent clean client-scissor candidate at `079208f8` encloses the reserved
 viewport client clip in physical pixels, following Chromium's integer compositor
@@ -140,15 +142,19 @@ scissor. Four already failing images improve, removing 640 differing pixels;
 two retain their differing-pixel counts but improve color values. No changed
 color-channel cell worsens, no exact image is lost, and no new image becomes
 exact. All 850 native geometry, oracle, callback and teardown records remain
-unchanged. This candidate is also unapplied. Its
+unchanged. These corrections are now implemented in the umbrella. Its
 [completed clean workspace](../renderer/generated/native-viewport-full-v6.json)
 passes 8,498 tests with zero failures and 13 ignored, restoring the test's
 tracked output before verifying unchanged source. Its
 [completed focused and primitive matrices](../renderer/generated/native-viewport-full-v7.json)
 pass 640/640 and 960/960 exact, with observed exits 0 and all 1,600 native and
-Chromium images, oracle identities and differences unchanged. Its complete
-original and expanded runs are running on that immutable source; no result is
-claimed. The evidence also
+Chromium images, oracle identities and differences unchanged. Its
+[complete original and expanded runs](../renderer/generated/native-viewport-full-v9.json)
+have finished with observed exits 1: 21,308/22,924 and 22,111/23,728 exact,
+zero errors. Every original and addition image, oracle identity and difference
+is unchanged from the accepted clipping repair. All 8,282 tracked code, build,
+test, resource and workflow files match clean `079208f8`; a fresh umbrella
+executable is not yet claimed. The evidence also
 verifies all 804 expanded addition images unchanged from `574864d0`, retaining
 200/201 additions exact at all four profiles in the complete pre-repair run.
 
@@ -169,12 +175,29 @@ restoring tracked test output. Its
 pass 640/640 and 960/960 exact, with observed exits 0 and all 1,600 native and
 Chromium images, oracle identities and differences unchanged. Complete
 censuses and general clip/effect/transform metadata remain required; the six
-composition regressions still prevent acceptance.
+composition regressions prevented acceptance of that checkpoint.
 The earlier `80dd2353` attempt lost three exact images and is preserved as
 rejected evidence. No reference pixels or final output pixels are rewritten.
-All six ordinary hosted jobs at umbrella checkpoint `cea1d77c` pass; five
-skipped hardening jobs remain unverified. Later checkpoints require their own
-hosted results.
+The [solid-tile investigation](../renderer/generated/native-viewport-full-v9.json)
+confirms that Chromium draws the affected white edge tiles as solid-color
+quads, bypassing the background-hint clear used by ordinary raster tiles.
+Wider viewports expose their grey debug borders; switching debugging off
+restores all 12 normal captures byte-for-byte, including six existing oracles.
+The new private prototype retains owned paint operations and proves tile
+colors before raster. An intermediate attempt omitted thin recorded bands,
+losing improvements in 33 already failing comparisons. Clean `d64d3f7f`
+selects visible tiles before recording that fractional clip and reaches
+706/850 exact with 22 newly exact, zero exact losses, no worsened mismatch
+count or color-channel cell against `079208f8`. All geometry, callbacks and
+teardowns remain exact, and all 510 integer-scale images remain exact.
+Its 8,498 workspace tests pass, zero failures and 13 ignored. Twelve viewport
+guards retain exact geometry and callbacks, with four exact images; eight
+still fail. The prototype remains unapplied, with 144 fractional failures;
+its focused, primitive and complete census runs are in progress. No complete
+result or release qualification is claimed for it.
+All six ordinary hosted jobs at umbrella checkpoint `427f7df4` pass; five
+skipped hardening jobs remain unverified. Later checkpoints require their
+own hosted results.
 The strict generated inventory now accounts for the existing thumb-color
 property: 203 consumed public fields and zero unclassified fields. All eight
 generator checks, archive integrity and the 7/7 accountability audit pass.

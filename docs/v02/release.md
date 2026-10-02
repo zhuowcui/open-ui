@@ -9,10 +9,10 @@ claimed by source code alone.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | [Complete pre-repair native viewport census](../renderer/generated/native-viewport-full-v4.json) at `8f45444e`: 21,292/22,924 exact, 1,632 different, zero errors; all original images and signatures agree with earlier `574864d0`. The clipping repair restores the 16 formerly exact regressions in the affected selection; its complete census remains required. Neutral gamma was 21,308 exact; 892 residual IDs still lack reviewed ownership | fail |
+| Four-profile renderer matrix | [Complete clipping repair census](../renderer/generated/native-viewport-full-v7.json) at `1366b72f`: 21,308/22,924 exact, 1,616 different, zero errors. All 16 earlier exact results are restored across the complete census, with no new exact loss or worsened pixel count; Chromium images and identities are unchanged. Residual ownership review remains open | fail |
 | Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact on clean clipping repair source `1366b72f` in the [completed evidence](../renderer/generated/native-viewport-full-v2.json); every image and oracle identity unchanged from the preceding viewport implementation | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | [Complete pre-repair native viewport run](../renderer/generated/native-viewport-full-v4.json) at `8f45444e` is 22,095/23,728 exact, 1,633 different, zero errors; original rows agree with its separate census. Neutral gamma was 22,111 exact, with 200/201 additions exact at all four profiles. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | [Complete clipping repair run](../renderer/generated/native-viewport-full-v7.json) at `1366b72f` is 22,111/23,728 exact, 1,617 different, zero errors; original rows agree with its separate census. All 804 addition comparisons are unchanged, with 200/201 additions exact at all four profiles. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): locked headless and Linux checks passed | pass |
@@ -138,7 +138,8 @@ censuses above remain failures, and the 166 native fractional pixel failures
 still fail.
 
 The [per-axis scrollbar candidate](../renderer/generated/native-viewport-full-v4.json)
-at clean `cc056cee` remains unapplied. Eight fresh Chromium traces reproduce
+at clean `cc056cee` is included in the combined scrollbar and client clip
+correction now implemented in the umbrella. Eight fresh Chromium traces reproduce
 immutable oracle PNG bytes and show a forced bar with no range as an ordinary
 picture while the opposite axis uses a composited scrollbar. The candidate
 improves eight already failing images by 1,898 differing pixels, with no exact
@@ -146,21 +147,27 @@ loss, no new exact image and all 850 geometry/callback/teardown records
 unchanged. The 166 fractional failures remain failures. Its
 [completed focused and primitive checks](../renderer/generated/native-viewport-full-v5.json)
 pass 640/640 and 960/960 exact, with all 1,600 native/Chromium images and
-difference signatures unchanged. Workspace and complete census remain required.
+difference signatures unchanged. The combined workspace and complete census
+results are recorded below.
 
 A subsequent clean client-scissor candidate at `079208f8` follows Chromium's
 physical enclosing clip and improves four already failing images, removing 640
 differing pixels without a worsened color-channel cell. No exact image is lost
 or gained. All 850 geometry, oracle, callback and teardown checks remain
-unchanged. This candidate remains unapplied. Its
+unchanged. These corrections are now implemented in the umbrella. Its
 [clean workspace verification](../renderer/generated/native-viewport-full-v6.json)
 passes 8,498 tests with zero failures and 13 ignored, with tracked test output
 restored and source unchanged. Its
 [complete focused and primitive checks](../renderer/generated/native-viewport-full-v7.json)
 pass 640/640 and 960/960 exact with observed exits 0; all 1,600 native/Chromium
-images, oracle identities and differences remain unchanged. Complete original
-and expanded censuses are running on immutable clean `079208f8`, with no
-complete total claimed. The complete pre-repair
+images, oracle identities and differences remain unchanged. The
+[complete original and expanded censuses](../renderer/generated/native-viewport-full-v9.json)
+on clean `079208f8` have finished with observed exits 1: 21,308/22,924 and
+22,111/23,728 exact, zero errors. Every original and addition image, oracle
+identity and difference is unchanged from the accepted clipping repair.
+All 8,282 tracked code, build, test, resource and workflow files match the
+umbrella implementation; a fresh umbrella executable is not yet claimed.
+The complete pre-repair
 expanded run also retains all 804 addition images unchanged from `574864d0`
 and the same 200/201 additions exact at every required profile.
 
@@ -178,11 +185,24 @@ clean and unchanged. Its
 pass 640/640 and 960/960 exact with observed exits 0 and all 1,600 native and
 Chromium images, oracle identities and differences unchanged. Complete
 censuses and general layer clip/effect/transform metadata remain required;
-the six composition regressions still prevent acceptance.
+the six composition regressions prevented acceptance of that checkpoint.
 The earlier `80dd2353` attempt lost three exact images and remains rejected
-evidence. All six ordinary hosted checks at `cea1d77c` pass; five skipped
-hardening jobs are unverified. No final-release or later hosted result is
-claimed.
+evidence. The [solid-tile investigation](../renderer/generated/native-viewport-full-v9.json)
+confirms the white boundary tiles through pinned Chromium's grey tile debug
+borders. Disabling debugging restores all 12 normal captures byte-for-byte,
+including six existing oracles. The private implementation retains owned
+paint operations and derives tile colors before raster. An intermediate
+recording-time clip query lost improvements in 33 already failing comparisons;
+clean `d64d3f7f` selects visible tiles before recording the fractional band.
+It retains 706/850 exact, with 22 newly exact and no exact loss, worse mismatch
+count or worse color-channel cell against `079208f8`. All geometry, callbacks,
+teardowns and 510 integer-scale images remain exact. Its 8,498 workspace tests
+pass, zero failures and 13 ignored. Twelve viewport guards pass geometry and
+callbacks; four images are exact and eight still fail. The prototype remains
+unapplied, with 144 fractional failures and focused, primitive and complete
+census runs in progress. No complete total or release qualification is claimed.
+All six ordinary hosted checks at `427f7df4` pass; five skipped hardening jobs
+are unverified. No final-release or later hosted result is claimed.
 The generated consumer inventory is corrected to exactly 203 public fields,
 including the existing typed thumb-color property; no unclassified field is
 allowed. All eight generator checks, archive integrity and accountability pass. Runs at
