@@ -74,8 +74,23 @@ records real executable acceptance/rejection and an explicitly nonqualifying
 single-case integration. It also preserves an attribution error in the newer
 opacity development runs: their copied comparison binary was still the earlier
 prototype. Fresh replacement focused and primitive matrices are 640/640 and
-960/960 exact with unchanged images; the original replacement census is still
-running. The clean renderer counts above remain authoritative.
+960/960 exact with unchanged images. The
+[complete original replacement census](../renderer/generated/native-opacity-full-regression-v1.json)
+is 21,297/22,924 exact, with 1,627 differences and zero errors. Its 23
+formerly exact regressions prevent applying that prototype; all Chromium
+images and oracle identities remain unchanged. The clean renderer counts
+above remain authoritative.
+
+The [source-less image investigation](../renderer/native-source-less-images.md)
+adds 360 script-free states constructed by a consuming Rust app. Its unapplied
+V3 paint prototype is 1,673/1,800 exact, including 891/900 source-less image
+comparisons, with all owned bounds exact. It makes 582 reduced comparisons
+exact against the preceding opacity prototype and worsens none. Its locked
+workspace passes 8,491 tests with 13 ignored. These reduced cases do not
+replace the complete release census or waive the global regressions. The
+separate complete V2 original census is 21,302/22,924 exact, with 1,622
+differences, zero errors and 23 formerly exact regressions. Its source checks
+pass and all Chromium references remain unchanged; the prototype is rejected.
 
 The preceding `497e322d`
 [delta index](../renderer/generated/native-column-flex-full-delta-v1.json)

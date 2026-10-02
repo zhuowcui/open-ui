@@ -54,9 +54,17 @@ the source recorded inside the comparison executable before accepting a run,
 then checks the source and binary again after it. Its
 [verification](../renderer/generated/renderer-build-identity-v1.json) preserves
 the rejected attribution of older executable results to newer opacity source.
-Replacement development raster suites are exact; the complete original
-replacement census is still running. These measurements do not replace the
-clean release matrix above.
+Replacement development raster suites are exact. The
+[complete original replacement census](../renderer/generated/native-opacity-full-regression-v1.json)
+is 21,297/22,924 exact, with 1,627 differences, zero errors and 23 formerly
+exact regressions. That prototype remains unapplied; its Chromium references
+are unchanged. These measurements do not replace the clean release matrix
+above.
+
+The [source-less image prototype](../renderer/native-source-less-images.md)
+is 1,673/1,800 exact across 360 script-free native states and five scales,
+with all owned bounds exact. It remains unapplied and does not qualify the
+complete renderer or admit new release cases.
 
 The [native column paint and input checkpoint](../renderer/native-column-paint-phases.md)
 verifies public Rust position/opacity mutations, pointer queries and a Rust

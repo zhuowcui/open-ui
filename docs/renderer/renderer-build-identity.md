@@ -46,7 +46,11 @@ consumer comparisons used their rebuilt example executables.
 Replacement development matrices use the newly built executable under
 `fresh-runner-v10`. Focused and primitive matrices are 640/640 and 960/960
 exact, with all decoded images and Chromium identities unchanged from the
-clean checkpoint. The complete original census is still running. These
+clean checkpoint. The [complete original census](generated/native-opacity-full-regression-v1.json)
+is 21,297/22,924 exact, with 1,627 differences and zero errors. It regresses
+23 formerly exact comparisons and makes 12 comparisons exact. The prototype
+remains unapplied while those shared paint differences are investigated.
+All 22,924 Chromium images and oracle identities remain unchanged. These
 development measurements remain nonqualifying. The published clean
 `9b158cda` census remains the latest accepted renderer measurement. Chromium
 reference bytes and historical Open UI archives remain unchanged.
