@@ -39,6 +39,8 @@ identically. Open UI creates every state with Rust operations.
 | Earlier unapplied renderer prototypes, N32 image patches | 98/540 | 540/540 |
 | RGBA image patch format experiment, rejected | 95/540 | 540/540 |
 | Neutral PNG gamma interpretation prototype | 146/540 | 540/540 |
+| Raster decoration opacity with the earlier prototypes | 196/540 | 540/540 |
+| Isolated raster opacity change on the current renderer, unapplied | 148/540 | 540/540 |
 
 These are diagnostic cases; none has been admitted to the release manifest.
 The [evidence index](generated/native-png-sampling-v1.json) records source,
@@ -74,12 +76,47 @@ comparisons but worsens ten others at a different scale. It also regresses
 three previously exact native images. Changing the stored image representation
 does not establish correct sampling and compositing behavior.
 
+## Reviewed opacity difference
+
+Raster backgrounds and border images were missing from the sampled-image
+opacity classification. The resulting F16 intermediate changes fully covered
+PNG colors. For the green source at opacity 0.5 over white, Chromium produces
+`#7ebf7e`; the F16 path produces `#80bf80` at all five measured scales.
+
+The [isolated patch](evidence/native-png-sampling-v1/raster-image-opacity-standalone-v6.patch)
+uses the ordinary packed N32 intermediate for replaced images, raster
+backgrounds, and raster border images, including inside an ancestor's opacity
+group. It changes shared paint behavior, adds no build flags, and has no
+filename or test-ID condition. Its regression test paints a raster background
+inside a translucent parent at five scales.
+
+The [clean source measurements](generated/native-png-sampling-v2.json) improve
+all 270 changed PNG comparisons, make 74 more exact, and preserve all 540
+native callbacks, owned bounds, and teardown checks. The existing image-opacity
+consumer improves all 160 comparisons, making 109 exact. The 180 failed-image
+and clipping controls gain 27 exact results, with no loss of an exact result.
+One existing failure gets worse, from 83 to 105 differing pixels, and remains
+open under `openui-paint` ownership.
+
+All 8,492 workspace tests pass, with 13 ignored. The focused and primitive
+40-profile gates pass at 640/640 and 960/960, with every PNG and decoded pixel
+unchanged from C9. The 1,256 original image and opacity guards are also
+unchanged. The complete original census is still running; the expanded census
+has not run for this isolated patch. The patch remains unapplied to the
+umbrella branch and is not release qualification.
+
+Two separate edge trials are rejected: adding an analytic AA clip worsens
+51 native comparisons, and drawing an AA shader rectangle worsens 33. Neither
+increases the native suite's exact count. Their measurements are preserved
+in the same evidence index.
+
 ## Remaining work
 
 The decoder patch was measured together with other unapplied renderer and
 build changes. Its standalone release build and complete clean renderer
-matrices remain unqualified. The later diagnostic still has 394 native pixel
-failures. Remaining sampling, color conversion, coverage, and compositing
+matrices remain unqualified. The isolated opacity change still has 392 native
+PNG failures; the combined diagnostic has 344. Remaining sampling, color
+conversion, coverage, and compositing
 causes need minimized evidence and review in `openui-paint`; not every cause
 has been identified. The authoritative original census remains
 21,308/22,924 exact. Needed native APIs and exact pixels remain separate
