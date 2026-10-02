@@ -83,9 +83,11 @@ open. The former `49/50` SVG opacity adjustment is replaced in that prototype
 by viewport sizing and shared border drawing; no reference pixels change.
 Its complete original diagnostic now reaches 21,328/22,924 exact, with zero
 errors and no formerly exact regression against C9. Thirteen already failing
-image comparisons worsen, source is a development checkout, and complete
-expanded qualification remains open. This does not replace the clean renderer
-gate in the table above.
+image comparisons worsen and source is a development checkout. The complete
+expanded diagnostic is 22,131/23,728 exact, with zero errors and unchanged
+original results and addition images; 200/201 additions remain exact. Both
+runs have observed terminal exit 1. This does not replace the clean renderer
+gate in the table above or establish clean-source release qualification.
 
 The [native column paint and input checkpoint](../renderer/native-column-paint-phases.md)
 verifies public Rust position/opacity mutations, pointer queries and a Rust

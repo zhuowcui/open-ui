@@ -836,6 +836,46 @@
       "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/third_party/blink/renderer/core/paint/svg_root_painter.cc"
     }
   ],
+  "complete_expanded_census": {
+    "addition_cases": 201,
+    "addition_cases_exact_at_every_required_profile": 200,
+    "all_addition_native_bytes_unchanged": 804,
+    "all_chromium_bytes_and_identities_unchanged": true,
+    "baseline": "out/renderer-evidence/native-image-clean-9b158cda-rerun-v2/expanded/expanded-summary.json",
+    "baseline_sha256": "301b7ab0d3920b49d06c24c05fc5b44136ddbbc6e89b644430ca7d1f89a3899e",
+    "changed": 116,
+    "evidence": {
+      "binary_unchanged": true,
+      "kind": "diagnostic-census",
+      "qualification_backend_match": true,
+      "qualified": false,
+      "source_unchanged": true,
+      "tolerance_pixels": 0
+    },
+    "exact_regressions": 0,
+    "failing_addition_comparisons": [
+      {
+        "id": "wpt/css_display/display-contents-dynamic-fieldset-legend-001",
+        "mismatched_pixels": 1315,
+        "profile": "desktop-1280x720@1.25"
+      }
+    ],
+    "improved": 83,
+    "new_exact": 20,
+    "original_rows_identical_to_separate_v5_census": 22924,
+    "process_exit_code": 1,
+    "qualification": false,
+    "report": "out/renderer-evidence/native-svg-decoration-v1/wider-v5/expanded/expanded-summary.json",
+    "report_sha256": "0f88f1d987f8b515990f276d1eff19f1eac730d41734af0856478b860f6defc1",
+    "results": {
+      "different": 1597,
+      "errors": 0,
+      "exact": 22131,
+      "profile_result_sha256": "2cbd9755ca2ab938f4904e4c8ae77fa0cf744ee4f9484a009f070834e15a29c8",
+      "total": 23728
+    },
+    "worsened": 13
+  },
   "complete_original_census": {
     "delta_report": {
       "path": "out/renderer-evidence/native-svg-decoration-v1/wider-original-delta-v5.json",
@@ -1968,7 +2008,7 @@
     "346 native pixel failures",
     "54 previously failing native comparisons worsened against first viewport prototype",
     "13 previously failing WPT comparisons worsened against accepted C9 in affected guards",
-    "complete expanded census and clean-source qualification",
+    "complete clean-source release qualification",
     "SVG coordinate, transform, clipping and border behavior outside these reduced controls"
   ],
   "responsible_subsystems": [

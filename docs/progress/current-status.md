@@ -106,8 +106,10 @@ Its complete original diagnostic is now 21,328/22,924 exact, with 1,596
 differences and zero errors. It adds 20 exact comparisons against C9 and
 loses none, while 13 already failing image comparisons worsen. Every Chromium
 image and oracle identity remains unchanged, and source and executable
-identities stay fixed. The observed terminal exit is 1; clean qualification
-and the complete expanded run remain open.
+identities stay fixed. The complete expanded diagnostic is 22,131/23,728
+exact, with 1,597 differences and zero errors. All original rows agree and
+all 804 addition images are unchanged, retaining 200/201 exact additions.
+Both observed terminal exits are 1; clean release qualification remains open.
 
 The [native PNG application](../renderer/native-png-sampling.md) supplies real
 encoded resources through public Rust APIs and changes size and opacity from

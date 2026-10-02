@@ -81,8 +81,16 @@ All 22,924 Chromium images and oracle identities remain unchanged, and the
 source and executable stay fixed throughout the run. Compared with the
 earlier rejected source-less V2 prototype, all 36 changed images improve and
 26 become exact. The full run therefore confirms that every earlier exact
-regression has been restored. The expanded suite and clean-source release
-qualification remain outstanding.
+regression has been restored.
+
+The complete expanded diagnostic is 22,131/23,728 exact, with 1,597
+differences, zero errors, and observed terminal exit 1. All 22,924 original
+rows agree with the separate census. Every one of the 804 addition images
+is unchanged against C9, retaining 200 of 201 additions exact across all
+four profiles. The fieldset/legend addition still differs at scale 1.25 and
+remains in the declared contract. All Chromium references and the executable
+and source identities remain fixed. Clean-source release qualification is
+still outstanding.
 
 The standalone patch applies to the umbrella branch but remains unapplied.
 Its measured executable also contains earlier unapplied opacity, clip,
