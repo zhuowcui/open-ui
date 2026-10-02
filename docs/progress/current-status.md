@@ -22,7 +22,7 @@ remain open.
 | Application conformance scenarios | 58 across 10 domains |
 | Frozen / current C exports | 84 / 109 |
 | C examples / C++ consumers | 7 / 2, including native C/C++ window consumers |
-| Workspace tests | 8,494 pass; 13 ignored on clean neutral gamma umbrella checkpoint |
+| Workspace tests | 8,498 pass; 13 ignored on clean viewport clipping repair source `1366b72f` |
 | Python closure, qualification, accountability and packaging tests | 244 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
@@ -82,13 +82,23 @@ identities remain fixed. The current `8f45444e` runtime reproduces every one
 of those 16 failed PNGs. These are owned by `openui-paint` and keep the gate
 failing.
 
-A shared clipping repair at clean `1366b72f` defers the outer viewport clip
+A [shared clipping repair](../renderer/generated/native-viewport-full-v2.json)
+at clean `1366b72f` defers the outer viewport clip
 to final surface/tile assembly when no scrollbar gutter is reserved. It
 restores all 16 exact results in the 96-comparison affected selection and
 preserves all 850 native images, geometry and difference signatures. Reserved
-gutters retain their smaller client clip. The repair is not yet applied to
-the umbrella; workspace and broader renderer qualification remain pending.
-This selection does not establish a new complete census count.
+gutters retain their smaller client clip. The repair is now implemented in
+the umbrella, with identical renderer, build, harness, resources and inputs
+to that clean qualification source; only documentation differs. It passes
+8,498 locked workspace tests, 13 ignored, and complete 640/640 focused and
+960/960 primitive exact matrices with observed exits 0. All 1,600 native and
+Chromium images and oracle identities stay unchanged. Complete original and
+expanded repair runs remain running. The affected selection does not establish
+a new complete census count. All eight generator checks, immutable archive
+integrity, formatting, release-source verification and 7/7 repository metadata
+accountability checks pass. The ordinary audit without clean-checkout mode
+first failed on absent ignored historical PNGs; that log is retained, and
+the existing `--repository-only` mode passes without changing any audit rule.
 The strict generated inventory now accounts for the existing thumb-color
 property: 203 consumed public fields and zero unclassified fields. All eight
 generator checks, archive integrity and the 7/7 accountability audit pass.

@@ -10,7 +10,7 @@ claimed by source code alone.
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
 | Four-profile renderer matrix | [Earlier complete native viewport census](../renderer/generated/native-viewport-full-v1.json) at `574864d0`: 21,292/22,924 exact, 1,632 different, zero errors; 16 formerly exact regressions. The clipping repair restores all 16 in the affected selection; its complete census remains required. Neutral gamma was 21,308 exact; 892 residual IDs still lack reviewed ownership | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact on clean neutral gamma qualification source in the [completed evidence](../renderer/generated/native-png-sampling-v4.json); every image and oracle identity unchanged from C9 | pass |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact on clean clipping repair source `1366b72f` in the [completed evidence](../renderer/generated/native-viewport-full-v2.json); every image and oracle identity unchanged from the preceding viewport implementation | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
 | Expanded native final-state fixtures | [Earlier complete native viewport run](../renderer/generated/native-viewport-full-v1.json) is 22,095/23,728 exact, 1,633 different, zero errors; still 200/201 additions exact at all four profiles. Neutral gamma was 22,111 exact. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
@@ -100,11 +100,21 @@ All original rows agree between those runs, and 200/201 additions still pass
 all four profiles. Their 16 formerly exact regressions are reproduced by the
 current runtime and owned by `openui-paint`; Chromium inputs are unchanged.
 The [completed report index](../renderer/generated/native-viewport-full-v1.json)
-preserves this failure. A clean shared clipping repair at `1366b72f` restores
+preserves this failure. The [clean shared clipping repair](../renderer/generated/native-viewport-full-v2.json)
+at `1366b72f` restores
 all 16 in the 96-comparison affected selection, while retaining all 850 native
-control images, geometry and difference signatures. It is not yet applied;
-complete qualification remains required. Outer viewport clipping moves to
-final surface/tile assembly only when no scrollbar gutter is reserved.
+control images, geometry and difference signatures. It is now implemented
+on the umbrella, whose renderer/build/harness/resource inputs match the clean
+qualification source; documentation differs. The repair passes 8,498 locked
+workspace tests, 13 ignored, and complete 640/640 focused and 960/960 primitive
+exact matrices, with observed exits 0 and all 1,600 native/Chromium images and
+oracle identities unchanged. Its complete original and expanded runs remain
+running; no new full count is claimed. Outer viewport clipping moves to final
+surface/tile assembly only when no scrollbar gutter is reserved. Generated
+contracts, archive integrity, formatting, release-source verification and
+7/7 repository metadata accountability pass. The index preserves the first
+audit failure on absent ignored historical PNGs and the successful existing
+clean-checkout audit mode; the strict pixel gate remains unchanged.
 The generated consumer inventory is corrected to exactly 203 public fields,
 including the existing typed thumb-color property; no unclassified field is
 allowed. All eight generator checks, archive integrity and accountability pass. Runs at
