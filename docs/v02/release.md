@@ -166,7 +166,10 @@ on clean `079208f8` have finished with observed exits 1: 21,308/22,924 and
 22,111/23,728 exact, zero errors. Every original and addition image, oracle
 identity and difference is unchanged from the accepted clipping repair.
 All 8,282 tracked code, build, test, resource and workflow files match the
-umbrella implementation; a fresh umbrella executable is not yet claimed.
+umbrella implementation. The [fresh clean umbrella build](../renderer/generated/native-viewport-full-v10.json)
+at `a5547e7e` reproduces all 850 native images, geometry, oracle records,
+callbacks, teardowns and differences, with observed exits 0 and clean source
+unchanged through build and execution.
 The complete pre-repair
 expanded run also retains all 804 addition images unchanged from `574864d0`
 and the same 200/201 additions exact at every required profile.
@@ -199,8 +202,12 @@ count or worse color-channel cell against `079208f8`. All geometry, callbacks,
 teardowns and 510 integer-scale images remain exact. Its 8,498 workspace tests
 pass, zero failures and 13 ignored. Twelve viewport guards pass geometry and
 callbacks; four images are exact and eight still fail. The prototype remains
-unapplied, with 144 fractional failures and focused, primitive and complete
-census runs in progress. No complete total or release qualification is claimed.
+unapplied, with 144 fractional failures. Its
+[complete focused and primitive matrices](../renderer/generated/native-viewport-full-v10.json)
+pass 640/640 and 960/960 exact with observed exits 0, clean source unchanged,
+and all 1,600 native/Chromium images, oracle identities and differences
+unchanged. Complete original and expanded censuses remain in progress;
+no complete total or release qualification is claimed.
 All six ordinary hosted checks at `427f7df4` pass; five skipped hardening jobs
 are unverified. No final-release or later hosted result is claimed.
 The generated consumer inventory is corrected to exactly 203 public fields,

@@ -153,8 +153,11 @@ Chromium images, oracle identities and differences unchanged. Its
 have finished with observed exits 1: 21,308/22,924 and 22,111/23,728 exact,
 zero errors. Every original and addition image, oracle identity and difference
 is unchanged from the accepted clipping repair. All 8,282 tracked code, build,
-test, resource and workflow files match clean `079208f8`; a fresh umbrella
-executable is not yet claimed. The evidence also
+test, resource and workflow files match clean `079208f8`. The
+[fresh clean umbrella build](../renderer/generated/native-viewport-full-v10.json)
+at `a5547e7e` reproduces all 850 native images, geometry, oracle records,
+callbacks, teardowns and differences from that source, with observed exits 0.
+Source remains clean and unchanged. The evidence also
 verifies all 804 expanded addition images unchanged from `574864d0`, retaining
 200/201 additions exact at all four profiles in the complete pre-repair run.
 
@@ -192,9 +195,12 @@ count or color-channel cell against `079208f8`. All geometry, callbacks and
 teardowns remain exact, and all 510 integer-scale images remain exact.
 Its 8,498 workspace tests pass, zero failures and 13 ignored. Twelve viewport
 guards retain exact geometry and callbacks, with four exact images; eight
-still fail. The prototype remains unapplied, with 144 fractional failures;
-its focused, primitive and complete census runs are in progress. No complete
-result or release qualification is claimed for it.
+still fail. The prototype remains unapplied, with 144 fractional failures.
+Its [complete focused and primitive matrices](../renderer/generated/native-viewport-full-v10.json)
+pass 640/640 and 960/960 exact with observed exits 0, clean source unchanged,
+and all 1,600 native/Chromium images, oracle identities and differences
+unchanged. Its complete original and expanded censuses are in progress.
+No complete census result or release qualification is claimed for it.
 All six ordinary hosted jobs at umbrella checkpoint `427f7df4` pass; five
 skipped hardening jobs remain unverified. Later checkpoints require their
 own hosted results.
