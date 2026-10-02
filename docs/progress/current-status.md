@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean census against cached Chromium captures | 21,308/22,924 exact, 1,616 different, 0 errors; 17 newly exact comparisons, no exact regression, Chromium images and identities unchanged |
+| Latest complete clean census against cached Chromium captures | 21,308/22,924 exact, 1,616 different, 0 errors; three original images changed by the neutral gamma correction, no exact regression, Chromium images and identities unchanged |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
@@ -22,10 +22,36 @@ remain open.
 | Application conformance scenarios | 55 across 10 domains |
 | Frozen / current C exports | 84 / 109 |
 | C examples / C++ consumers | 7 / 2, including native C/C++ window consumers |
-| Workspace tests | 8,492 pass; 13 ignored on clean raster-opacity qualification source |
+| Workspace tests | 8,494 pass; 13 ignored on clean neutral gamma umbrella checkpoint |
 | Python closure, qualification, accountability and packaging tests | 244 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
+
+The [neutral PNG gamma correction](../renderer/generated/native-png-sampling-v4.json)
+is committed at `63aeb672`. Both complete clean matrices have observed exit 1
+and retain the counts above; Chromium bytes and identities remain unchanged.
+Three original images change, with lower total channel error and no loss of
+an exact result. Two still-failing images each gain nine differing green
+channel cells; these remain failures. The native PNG consumer gains 35 exact
+images, reaching 183/540, while all 880 native image, opacity and clipping
+bounds and teardown checks pass. Fresh clean umbrella binaries reproduce
+every image and difference signature from clean `ebbe2b6f`. The 40-profile
+matrices remain exact. All eight generated-contract checks, accountability
+and archive integrity checks pass. The 1,616 census differences and residual
+ownership review still keep the release gate open.
+
+A separate [native viewport prototype](../renderer/generated/native-viewport-scroll-v1.json)
+matches Chromium's offsets and owned
+element bounds in 850 comparisons. Its proposed public Rust
+`Element::scroll_metrics` snapshot also matches all 600 new direction checks
+for visible-area and content dimensions. It remains unapplied: only 148/250
+original and 389/600 direction-guard images are exact. The five-scale guards
+cover horizontal, vertical and sideways flow in both directions. Native
+scrollbar input states, nested containers, propagation, and full renderer
+qualification remain open; no JavaScript runtime or glue is involved.
+The prototype's full locked workspace passes 8,495 tests with 13 ignored at
+`b9dfda41`, after fixing two test fragment constructors. These tests establish
+native behavior checks, not pixel qualification or release admission.
 
 The complete clean checkpoint `9b158cda` is
 [21,308/22,924 exact](../renderer/generated/four-profile-census-v49.json),

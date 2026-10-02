@@ -9,8 +9,8 @@ claimed by source code alone.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | 21,308/22,924 exact, 1,616 different, zero errors in the [completed clean opacity census](../renderer/generated/native-png-sampling-v3.json); all pixels and oracle identities unchanged from the [C9 census](../renderer/generated/four-profile-census-v49.json); 892 residual IDs still lack reviewed ownership | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact on clean raster-opacity qualification source in the [completed evidence](../renderer/generated/native-png-sampling-v3.json); every image and oracle identity unchanged from C9 | pass |
+| Four-profile renderer matrix | 21,308/22,924 exact, 1,616 different, zero errors in the [completed neutral gamma census](../renderer/generated/native-png-sampling-v4.json); three original images change, no exact result is lost, Chromium images and identities stay fixed; 892 residual IDs still lack reviewed ownership | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact on clean neutral gamma qualification source in the [completed evidence](../renderer/generated/native-png-sampling-v4.json); every image and oracle identity unchanged from C9 | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
 | Expanded native final-state fixtures | Latest clean full expanded run retains 200 of 201 exact additions and [demotes one](../renderer/generated/expanded-requalification-v32.json); 22,111/23,728 total comparisons exact, 1,617 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
@@ -52,17 +52,34 @@ fixture does not close a native application API gap.
 The [native PNG application](../renderer/native-png-sampling.md) verifies
 resource registration, typed image styles, mutation through Rust callbacks,
 owned bounds, and teardown in 540 runs on the current branch. After the shared
-raster opacity correction, 148 of those images match Chromium exactly.
+raster opacity and neutral gamma corrections, 183 of those images match
+Chromium exactly.
 The [completed opacity evidence](../renderer/generated/native-png-sampling-v3.json)
 records unchanged full original and expanded matrices on clean source with
 the same code and build inputs as umbrella checkpoint `42cce619`, plus fresh
 clean umbrella consumer runs. The image-opacity and clipping consumers gain
 109 and 27 exact results respectively. No exact result is lost; one existing
 failed-image edge worsens and remains open. These cases add no admitted release
-passes. An unapplied PNG metadata prototype makes
-48 additional images exact against a preceding unapplied renderer, with no
-exact regression in the reduced sweep. Its standalone and complete clean
-qualification remain open; these controls add no admitted release passes.
+passes. The neutral gamma implementation is now committed at `63aeb672`;
+its [completed standalone evidence](../renderer/generated/native-png-sampling-v4.json)
+makes 35 additional native PNG images exact against the opacity checkpoint.
+Fresh clean umbrella binaries reproduce all 880 native images from clean
+`ebbe2b6f`, whose complete original and expanded matrices retain the table's
+exact counts with observed exit 1. All Chromium references remain unchanged.
+Two already failing images each acquire nine differing green-channel cells
+while total channel error decreases; those residuals remain failures. The
+original pixel gate, normal published-consumer builds and residual ownership
+remain open; these controls add no admitted release passes.
+
+The separate [viewport scroll prototype](../renderer/generated/native-viewport-scroll-v1.json)
+matches all 850 native offsets and owned element bounds and all 600 direction
+guards for the proposed public Rust scroll-area snapshot. It is unapplied and
+unqualified: 148/250 original and 389/600 direction-guard images are exact.
+Remaining scrollbar raster, native controls, nested scrolling, propagation,
+and C API parity must be completed and verified. No JavaScript runtime is part
+of that work. The prototype's full locked workspace passes 8,495 tests with
+13 ignored at clean `b9dfda41`; this does not qualify its remaining pixel or
+public API gaps.
 
 The [renderer source check](../renderer/renderer-build-identity.md) verifies
 the source recorded inside the comparison executable before accepting a run,
@@ -128,7 +145,7 @@ reviewed cause remains unknown. The clean census below remains evidence
 against those preserved cached captures, and final qualification requires
 oracle reconciliation. No cached reference was replaced or result promoted.
 
-The latest complete clean `9b158cda` [v49 census](../renderer/generated/four-profile-census-v49.json)
+The earlier complete clean `9b158cda` [v49 census](../renderer/generated/four-profile-census-v49.json)
 is 21,308/22,924 exact, 1,616 different and zero errors. Its
 [full delta](../renderer/generated/native-image-full-delta-v1.json)
 verifies 30 improved comparisons and 17 newly exact, with no worsened comparison

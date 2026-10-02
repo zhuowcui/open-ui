@@ -12,7 +12,7 @@ rendering evidence for that state. Each element behavior needed by a consuming
 application also requires a public Rust operation over the same engine; fixture
 lowering alone does not complete application API coverage.
 
-The complete clean `9b158cda` results are
+The earlier complete clean `9b158cda` results are
 [21,308/22,924 exact](generated/four-profile-census-v49.json) for the original
 four-profile suite and [22,111/23,728 exact](generated/expanded-requalification-v32.json)
 for the expanded suite, both with zero errors. The
@@ -36,6 +36,21 @@ umbrella builds reproduce all 880 native image controls. They gain 210 exact
 comparisons with no exact regression; one already failing clipped-image edge
 worsens and remains open. This is a renderer checkpoint, not a declaration
 of release qualification.
+
+The subsequent [neutral PNG gamma correction](generated/native-png-sampling-v4.json)
+is committed at `63aeb672`. Complete clean `ebbe2b6f` matrices retain the same
+original and expanded exact counts, with three original images changed and
+no exact regression. The border-image comparison improves from 500 to 241
+wrong pixels. Two already failing overflow-image comparisons keep 94 wrong
+pixels each; each has nine newly differing green-channel cells while its
+total absolute channel error falls from 211 to 195. Those residuals remain
+failures under `openui-paint` ownership. All Chromium images and identities
+remain fixed. The focused and primitive matrices remain 640/640 and 960/960
+exact, with unchanged pixels. Fresh clean umbrella builds reproduce all 880
+native images and owned bounds. Only documentation differs between the
+qualified source and umbrella code/build inputs; the full matrices are
+attributed to their actual clean source. No release gate is closed by these
+counts.
 
 Static media presentation may consume a generated first frame. Those pixels
 are decoded ahead of rendering by the Chromium-matched codec revision, bound

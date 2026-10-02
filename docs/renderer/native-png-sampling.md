@@ -10,8 +10,8 @@ weak element handle cannot keep the document alive after teardown.
 
 The current branch builds this consumer under the checked-in Chromium Cargo
 configuration. All 540 runs execute the callback exactly once, release the
-document, and match Chromium's element bounds. After the raster opacity
-correction, 148 images are pixel-exact.
+document, and match Chromium's element bounds. After the raster opacity and
+neutral gamma corrections, 183 images are pixel-exact.
 Working application APIs do not establish pixel qualification.
 
 For example, from `bindings/rust`, the retained green fixture can be rendered
@@ -37,12 +37,14 @@ identically. Open UI creates every state with Rust operations.
 | Diagnostic implementation | Exact pixels | Exact owned bounds and native callback checks |
 |---|---:|---:|
 | Previous renderer `9b158cda` | 74/540 | 540/540 |
-| Current branch renderer `42cce619` | 148/540 | 540/540 |
+| Raster opacity checkpoint `42cce619` | 148/540 | 540/540 |
+| Current neutral gamma checkpoint `63aeb672` | 183/540 | 540/540 |
 | Earlier unapplied renderer prototypes, N32 image patches | 98/540 | 540/540 |
 | RGBA image patch format experiment, rejected | 95/540 | 540/540 |
 | Neutral PNG gamma interpretation prototype | 146/540 | 540/540 |
 | Raster decoration opacity with the earlier prototypes | 196/540 | 540/540 |
 | Clean isolated raster opacity qualification source `fccbcccb` | 148/540 | 540/540 |
+| Clean isolated neutral gamma qualification source `ebbe2b6f` | 183/540 | 540/540 |
 
 These are diagnostic cases; none has been admitted to the release manifest.
 The [evidence index](generated/native-png-sampling-v1.json) records source,
@@ -60,11 +62,33 @@ See the pinned [PNG decoder](https://chromium.googlesource.com/chromium/src/+/14
 [Skia profile selection](https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/codec/SkPngRustCodec.cpp),
 and [Blink image color tagging](https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/third_party/blink/renderer/platform/image-decoders/image_decoder.cc).
 
-The [unapplied decoder patch](evidence/native-png-sampling-v1/png-neutral-gamma-prototype-v2.patch)
-implements this shared metadata rule. It bounds PNG chunk reads, checks the
+The [decoder implementation](../../bindings/rust/openui-paint/src/image_resource.rs)
+is committed at `63aeb672`; the earlier
+[patch](evidence/native-png-sampling-v1/png-neutral-gamma-prototype-v2.patch)
+remains provenance. The implementation follows this shared metadata rule.
+It bounds PNG chunk reads, checks the
 gamma chunk's CRC, preserves higher-precedence metadata, and reinterprets
 the original decoded channels as sRGB. It does not change encoded resources
 or reference pixels and has no test-ID or filename condition.
+
+The [completed standalone evidence](generated/native-png-sampling-v4.json)
+improves all 120 changed native PNG images, makes 35 more exact, and loses no
+exact result against the raster opacity checkpoint. Fresh clean umbrella
+binaries reproduce all 880 native PNG, image-opacity and clipping images,
+bounds and difference signatures from clean `ebbe2b6f`. All 8,494 workspace
+tests pass, with 13 ignored. The focused and primitive 40-profile matrices
+remain 640/640 and 960/960 exact, with unchanged pixels.
+
+The original and expanded clean matrices remain 21,308/22,924 and
+22,111/23,728 exact, with zero errors and observed exit 1. Three original
+images change: a border-image comparison improves from 500 to 241 wrong
+pixels; two overflow-image comparisons keep 94 wrong pixels while total
+absolute channel error decreases from 211 to 195 each. Each of those two
+comparisons also has nine newly differing green-channel cells. Their
+maximum channel difference remains one; zero tolerance still rejects them.
+The residual clipping and sampling work belongs to `openui-paint` and remains
+open. No exact comparison regresses, all Chromium bytes and identities stay
+fixed, and all original rows agree between the two complete suites.
 
 Against the preceding N32 prototype, all 120 changed native images improve,
 48 become exact, and no previously exact image regresses. All 540 bounds
@@ -133,11 +157,14 @@ the remaining edge's cause. Their pinned source hashes are in the v3 index.
 
 ## Remaining work
 
-The decoder patch was measured together with other unapplied renderer and
-build changes. Its standalone release build and complete clean renderer
-matrices remain unqualified. The isolated opacity change still has 392 native
-PNG failures; the combined diagnostic has 344. Remaining sampling, color
-conversion, coverage, and compositing
+The standalone neutral gamma correction is implemented and measured; ordinary
+published-consumer build qualification remains open. There are still 357
+native PNG failures. A separate viewport investigation finds exact image
+interiors in overflowing ICC and alpha cases, with their differences confined
+to missing native viewport scrollbars. Its prototype matches 850 native
+scroll offsets and element bounds, but fractional-scale scrollbar raster and
+other native scroll-container behavior remain open. Remaining sampling,
+color conversion, coverage, and compositing
 causes need minimized evidence and review in `openui-paint`; not every cause
 has been identified. The authoritative original census remains
 21,308/22,924 exact. Needed native APIs and exact pixels remain separate
