@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean census against cached Chromium captures | Pre-repair native viewport `8f45444e`: 21,292/22,924 exact, 1,632 different, 0 errors; all original images and difference signatures unchanged from `574864d0`. The clipping repair restores all 16 formerly exact regressions in the affected selection; full current-runtime qualification remains open |
+| Latest complete clean census against cached Chromium captures | Repaired native viewport `1366b72f`: 21,308/22,924 exact, 1,616 different, 0 errors; all 16 formerly exact regressions restored with zero new exact loss or worsened pixel count. The full pixel gate remains failing |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
@@ -96,9 +96,16 @@ the umbrella, with identical renderer, build, harness, resources and inputs
 to that clean qualification source; only documentation differs. It passes
 8,498 locked workspace tests, 13 ignored, and complete 640/640 focused and
 960/960 primitive exact matrices with observed exits 0. All 1,600 native and
-Chromium images and oracle identities stay unchanged. Complete original and
-expanded repair runs remain running. The affected selection does not establish
-a new complete census count. All eight generator checks, immutable archive
+Chromium images and oracle identities stay unchanged. The
+[complete repair runs](../renderer/generated/native-viewport-full-v7.json)
+have now finished with observed exits 1: 21,308/22,924 original and
+22,111/23,728 expanded exact, zero errors. All 16 earlier exact results are
+restored across the complete census, with no new exact loss or worsened pixel
+count. All 22,924 Chromium images and oracle identities remain unchanged;
+the original rows agree between both runs. All 804 addition comparisons remain
+unchanged, with 200/201 additions exact at every profile. Source remains clean
+and unchanged, and binary hashes stay fixed. These complete failures keep the pixel gate open.
+All eight generator checks, immutable archive
 integrity, formatting, release-source verification and 7/7 repository metadata
 accountability checks pass. The ordinary audit without clean-checkout mode
 first failed on absent ignored historical PNGs; that log is retained, and
@@ -136,14 +143,34 @@ exact. All 850 native geometry, oracle, callback and teardown records remain
 unchanged. This candidate is also unapplied. Its
 [completed clean workspace](../renderer/generated/native-viewport-full-v6.json)
 passes 8,498 tests with zero failures and 13 ignored, restoring the test's
-tracked output before verifying unchanged source. Its focused and primitive
-matrices are running; complete census qualification remains required. The evidence also
+tracked output before verifying unchanged source. Its
+[completed focused and primitive matrices](../renderer/generated/native-viewport-full-v7.json)
+pass 640/640 and 960/960 exact, with observed exits 0 and all 1,600 native and
+Chromium images, oracle identities and differences unchanged. Its complete
+original and expanded runs are running on that immutable source; no result is
+claimed. The evidence also
 verifies all 804 expanded addition images unchanged from `574864d0`, retaining
 200/201 additions exact at all four profiles in the complete pre-repair run.
 
-Pinned Chromium source also identifies opaque-layer boundary clearing and
-background-color selection as the next layer-data investigation; no output
-pixel correction is applied.
+A private [immutable content-layer prototype](../renderer/generated/native-viewport-full-v7.json)
+at clean `cae25afc` records content bounds, the background-color hint and a
+proven opaque rectangle before raster. Chromium's largest covered rectangle
+can omit part of the layer even when the canvas background is white; fresh
+traces and recorded paint confirm that decision. The prototype reaches
+706/850 native images exact, making 22 additional images exact without losing
+an exact result. All 850 geometry/oracle/callback/teardown records and all 510
+integer-scale results are unchanged. However, six already failing direction
+cases worsen beside the scrollbar, and 144 fractional failures remain.
+`openui-paint` owns the unresolved layer raster/composition differences.
+The prototype remains unapplied and unqualified. Its locked workspace passes
+8,498 tests, zero failures and 13 ignored, with clean source unchanged after
+restoring tracked test output. Focused and primitive matrices are running;
+complete censuses and general clip/effect/transform metadata remain required.
+The earlier `80dd2353` attempt lost three exact images and is preserved as
+rejected evidence. No reference pixels or final output pixels are rewritten.
+All six ordinary hosted jobs at umbrella checkpoint `cea1d77c` pass; five
+skipped hardening jobs remain unverified. Later checkpoints require their own
+hosted results.
 The strict generated inventory now accounts for the existing thumb-color
 property: 203 consumed public fields and zero unclassified fields. All eight
 generator checks, archive integrity and the 7/7 accountability audit pass.

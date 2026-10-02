@@ -113,9 +113,16 @@ on the umbrella, whose renderer/build/harness/resource inputs match the clean
 qualification source; documentation differs. The repair passes 8,498 locked
 workspace tests, 13 ignored, and complete 640/640 focused and 960/960 primitive
 exact matrices, with observed exits 0 and all 1,600 native/Chromium images and
-oracle identities unchanged. Its complete original and expanded runs remain
-running; no new full count is claimed. Outer viewport clipping moves to final
-surface/tile assembly only when no scrollbar gutter is reserved. Generated
+oracle identities unchanged. Its
+[complete original and expanded runs](../renderer/generated/native-viewport-full-v7.json)
+now have observed exits 1: 21,308/22,924 and 22,111/23,728 exact, zero errors.
+All 16 earlier exact results are restored, with no new exact loss or worsened
+pixel count. All Chromium images and oracle identities remain unchanged,
+original rows agree across both runs, and all 804 addition comparisons remain
+unchanged with 200/201 additions exact at every profile. Clean source and
+binary identities stay fixed. The full pixel gate still fails. Outer viewport
+clipping moves to final surface/tile assembly only when no scrollbar gutter is
+reserved. Generated
 contracts, archive integrity, formatting, release-source verification and
 7/7 repository metadata accountability pass. The index preserves the first
 audit failure on absent ignored historical PNGs and the successful existing
@@ -126,9 +133,9 @@ Fresh clean umbrella binaries at implementation checkpoint `28cde831`
 geometry, callbacks, teardowns and difference signatures from the clean repair
 source. The six renderer crates are cleaned before rebuilding. Source remains
 clean and unchanged through build and both native runs, with observed exit 0;
-fresh umbrella release-source verification passes too. Full original and
-expanded repair censuses remain incomplete, and the 166 native fractional
-pixel failures still fail.
+fresh umbrella release-source verification passes too. The complete repair
+censuses above remain failures, and the 166 native fractional pixel failures
+still fail.
 
 The [per-axis scrollbar candidate](../renderer/generated/native-viewport-full-v4.json)
 at clean `cc056cee` remains unapplied. Eight fresh Chromium traces reproduce
@@ -148,14 +155,30 @@ or gained. All 850 geometry, oracle, callback and teardown checks remain
 unchanged. This candidate remains unapplied. Its
 [clean workspace verification](../renderer/generated/native-viewport-full-v6.json)
 passes 8,498 tests with zero failures and 13 ignored, with tracked test output
-restored and source unchanged. Focused and primitive checks are running;
-complete census qualification remains required. The complete pre-repair
+restored and source unchanged. Its
+[complete focused and primitive checks](../renderer/generated/native-viewport-full-v7.json)
+pass 640/640 and 960/960 exact with observed exits 0; all 1,600 native/Chromium
+images, oracle identities and differences remain unchanged. Complete original
+and expanded censuses are running on immutable clean `079208f8`, with no
+complete total claimed. The complete pre-repair
 expanded run also retains all 804 addition images unchanged from `574864d0`
 and the same 200/201 additions exact at every required profile.
 
-The evidence also preserves the rejected unsnapped-scroll hypothesis
-and pinned primary-source findings about opaque-layer boundary clearing. Those
-layer-data changes are not yet implemented or qualified.
+The evidence also preserves the rejected unsnapped-scroll hypothesis and
+pinned primary sources for opaque-layer boundary clearing and background
+selection. A private immutable content-layer prototype at clean `cae25afc`
+reaches 706/850 native images exact, with 22 newly exact, zero exact losses and
+all geometry/oracle/callback/teardown records unchanged. All 510 integer-scale
+images remain exact. Six already failing direction cases worsen and 144
+fractional failures remain, so the prototype is unapplied and unqualified.
+`openui-paint` owns the unresolved layer raster/composition differences. Its
+8,498 locked workspace tests pass, zero failures and 13 ignored, with source
+clean and unchanged. Focused and primitive matrices are running; complete
+censuses and general layer clip/effect/transform metadata remain required.
+The earlier `80dd2353` attempt lost three exact images and remains rejected
+evidence. All six ordinary hosted checks at `cea1d77c` pass; five skipped
+hardening jobs are unverified. No final-release or later hosted result is
+claimed.
 The generated consumer inventory is corrected to exactly 203 public fields,
 including the existing typed thumb-color property; no unclassified field is
 allowed. All eight generator checks, archive integrity and accountability pass. Runs at
