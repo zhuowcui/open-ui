@@ -40,18 +40,27 @@ matrices remain exact. All eight generated-contract checks, accountability
 and archive integrity checks pass. The 1,616 census differences and residual
 ownership review still keep the release gate open.
 
-A separate [native viewport prototype](../renderer/generated/native-viewport-scroll-v1.json)
+A separate [native viewport prototype](../renderer/generated/native-viewport-scroll-v2.json)
 matches Chromium's offsets and owned
 element bounds in 850 comparisons. Its proposed public Rust
-`Element::scroll_metrics` snapshot also matches all 600 new direction checks
-for visible-area and content dimensions. It remains unapplied: only 148/250
-original and 389/600 direction-guard images are exact. The five-scale guards
+`Element::scroll_metrics` snapshot also matches all 850 checks
+for visible-area and content dimensions. Physical nine-patch replay makes
+14 more images exact and improves 288 comparisons without losing an exact
+result. It remains unapplied: only 154/250 original and 397/600 direction-guard
+images are exact. The five-scale guards
 cover horizontal, vertical and sideways flow in both directions. Native
 scrollbar input states, nested containers, propagation, and full renderer
 qualification remain open; no JavaScript runtime or glue is involved.
-The prototype's full locked workspace passes 8,495 tests with 13 ignored at
-`b9dfda41`, after fixing two test fragment constructors. These tests establish
-native behavior checks, not pixel qualification or release admission.
+The combined prototype's full locked workspace passes 8,497 tests with
+13 ignored at `574864d0`. The earlier `b9dfda41` raster runs lose 25 focused
+and 45 primitive exact comparisons because the native fixture builder omitted
+the existing Chromium harness's hidden-scrollbar styles. The shared fixture
+adapter now represents those same immutable input styles through typed Rust
+properties. Complete clean reruns restore 640/640 focused and 960/960 primitive
+exact results, with every accepted native and Chromium image and oracle
+identity unchanged. Fresh combined-source builds also reproduce all 850
+native controls. Full original and expanded reruns remain pending; this does
+not establish renderer qualification or release admission.
 
 The complete clean checkpoint `9b158cda` is
 [21,308/22,924 exact](../renderer/generated/four-profile-census-v49.json),

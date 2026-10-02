@@ -71,15 +71,22 @@ while total channel error decreases; those residuals remain failures. The
 original pixel gate, normal published-consumer builds and residual ownership
 remain open; these controls add no admitted release passes.
 
-The separate [viewport scroll prototype](../renderer/generated/native-viewport-scroll-v1.json)
-matches all 850 native offsets and owned element bounds and all 600 direction
-guards for the proposed public Rust scroll-area snapshot. It is unapplied and
-unqualified: 148/250 original and 389/600 direction-guard images are exact.
+The separate [viewport scroll prototype](../renderer/generated/native-viewport-scroll-v2.json)
+matches all 850 native offsets, owned element bounds, and visible/content
+dimensions for the proposed public Rust scroll-area snapshot. It is unapplied
+and unqualified: 154/250 original and 397/600 direction-guard images are exact
+after physical nine-patch replay; 288 comparisons improve without an exact loss.
 Remaining scrollbar raster, native controls, nested scrolling, propagation,
 and C API parity must be completed and verified. No JavaScript runtime is part
-of that work. The prototype's full locked workspace passes 8,495 tests with
-13 ignored at clean `b9dfda41`; this does not qualify its remaining pixel or
-public API gaps.
+of that work. The combined prototype's full locked workspace passes 8,497 tests
+with 13 ignored at clean `574864d0`. Earlier raster gates lose 70 exact
+comparisons because the native fixture adapter omitted the existing capture
+harness's hidden-scrollbar input styles. That shared lowering is corrected
+through typed Rust properties; clean complete reruns restore 640/640 focused
+and 960/960 primitive exact results with unchanged images and oracle identities.
+Fresh combined-source builds reproduce all 850 native controls. Full original
+and expanded reruns remain pending; the remaining pixel and public API gaps
+are unqualified.
 
 The [renderer source check](../renderer/renderer-build-identity.md) verifies
 the source recorded inside the comparison executable before accepting a run,
