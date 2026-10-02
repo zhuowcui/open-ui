@@ -68,7 +68,11 @@ restoring all 16 earlier exact regressions. Later native API and private
 renderer candidates require their own complete qualification. The
 [private sampling candidate](docs/renderer/generated/native-viewport-full-v14.json)
 loses 23 exact Chromium comparisons and gains 14 in its complete census;
-it remains unapplied. This repository is not yet
+it remains unapplied. A subsequent
+[generated-tile format trial](docs/renderer/generated-image-sampling.md)
+repairs 18 of those regressions in the affected selection, preserving all
+850 exact native controls; five regressions still prevent promotion.
+This repository is not yet
 declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia
 GPU qualification, retained per-node layers, compositor-owned animation

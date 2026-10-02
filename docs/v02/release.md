@@ -252,6 +252,16 @@ preceding accepted renderer. Those complete failures do not qualify a release.
 The first corner raster attempts were stopped with observed exits 143 after an
 overlapping workspace test was discovered; their partial outputs do not qualify.
 
+The [generated-image sampling investigation](../renderer/generated-image-sampling.md)
+identifies and repairs 18 generated-background exact regressions on clean
+private `16fc959d`. Its affected selection is 168/304 exact, zero errors;
+all 850 exact native controls remain unchanged. Five exact regressions still
+prevent promotion. Its focused and primitive matrices are 640/640 and
+960/960 exact, with all 1,600 comparison invariants unchanged. A strict
+image-rectangle scroll replay changes none of
+those results. The trials remain unapplied; the selected scope cannot prove
+full renderer qualification or close a release gate.
+
 All six ordinary hosted checks at `427f7df4` pass; five skipped hardening jobs
 are unverified. No final-release or later hosted result is claimed.
 The generated consumer inventory is corrected to exactly 203 public fields,

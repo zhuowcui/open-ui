@@ -23,6 +23,13 @@ completes both censuses with zero errors and 21,299/22,924 original and
 gains 14; every Chromium image and oracle identity is unchanged. A clean
 configuration-only selected sweep reproduces all changed rows. Its image
 sampling correction remains unresolved, and the candidate stays unapplied.
+The subsequent [generated-tile investigation](generated-image-sampling.md)
+identifies the generated background's backing format as the cause of 18 of
+those exact regressions. Clean private `16fc959d` repairs all 18 in the
+304-comparison selection and preserves all 850 exact native controls; five
+exact regressions remain. This selected diagnostic does not establish a new
+full-census result. The format correction and sampling configuration remain
+unapplied to the umbrella renderer.
 
 The earlier complete clean `9b158cda` results are
 [21,308/22,924 exact](generated/four-profile-census-v49.json) for the original

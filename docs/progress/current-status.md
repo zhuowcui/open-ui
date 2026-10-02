@@ -249,6 +249,21 @@ losses. The sampling flag change causes the measured regressions without
 requiring the corner change. Shared image sampling remains owned by
 `openui-paint` and raster build configuration, with the correction unresolved.
 The candidate is rejected for promotion and remains unapplied.
+The subsequent [generated-tile format correction](../renderer/generated-image-sampling.md)
+at clean private `16fc959d` repairs all 18 generated-background exact losses
+in the affected 304-comparison selection. That selection is 168 exact,
+136 different, zero errors, with observed exit 1. Twenty-eight images change;
+no differing-pixel count worsens against the private sampling candidate.
+All 850 native images, geometry, callbacks and teardown checks remain exact
+and unchanged. Complete focused and primitive matrices pass 640/640 and
+960/960 exact over all 40 profiles, with all 1,600 comparison invariants
+unchanged. Five exact regressions against the accepted renderer remain
+under `openui-paint` ownership. A separate strict image-rectangle scroll
+replay at `312806f6` changes none of the 304 selected rows or 850 native
+controls. Both trials remain unapplied and do not establish a new full-census
+total. The accepted native API code `9e0f0145` now has its own original and
+expanded censuses running from the unchanged clean checkout and pinned binary;
+no completed result is claimed for those processes.
 The older solid-tile candidate's complete censuses have finished with observed
 exits 1: 21,308/22,924 original and 22,111/23,728 expanded exact, zero errors.
 All native and Chromium images, oracle identities and difference signatures
