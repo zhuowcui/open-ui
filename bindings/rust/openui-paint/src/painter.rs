@@ -8216,26 +8216,24 @@ fn fragment_subtree_has_text(fragment: &Fragment) -> bool {
 }
 
 fn fragment_subtree_has_images(fragment: &Fragment, doc: &Document) -> bool {
-    (!fragment.node_id.is_none()
-        && {
-            let node = doc.node(fragment.node_id);
-            node.tag == ElementTag::Image
-                || node.replaced.is_some()
-                || node
-                    .style
-                    .background_layers
-                    .iter()
-                    .any(|layer| matches!(layer.image, CssImage::Raster(_)))
-                || node
-                    .style
-                    .border_image
-                    .as_ref()
-                    .is_some_and(|border| matches!(border.source, CssImage::Raster(_)))
-        })
-        || fragment
-            .children
-            .iter()
-            .any(|child| fragment_subtree_has_images(child, doc))
+    (!fragment.node_id.is_none() && {
+        let node = doc.node(fragment.node_id);
+        node.tag == ElementTag::Image
+            || node.replaced.is_some()
+            || node
+                .style
+                .background_layers
+                .iter()
+                .any(|layer| matches!(layer.image, CssImage::Raster(_)))
+            || node
+                .style
+                .border_image
+                .as_ref()
+                .is_some_and(|border| matches!(border.source, CssImage::Raster(_)))
+    }) || fragment
+        .children
+        .iter()
+        .any(|child| fragment_subtree_has_images(child, doc))
 }
 
 fn paint_list_marker(
