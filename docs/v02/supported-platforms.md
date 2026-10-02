@@ -29,8 +29,10 @@ Element lookup, focus, scrolling, and mutation are native engine operations.
 The consuming native application calls them through public Rust methods and
 Rust callbacks.
 Every browser-style element operation needed by a consuming native application
-must be exposed as a public Rust method. Lookup, mutation, geometry, focus,
-scrolling, controls, and event dispatch operate directly on the native engine:
+must be implemented in Rust and exposed as a public Rust method callable by
+that application. These operations require no JavaScript glue or script
+bindings. Lookup, mutation, geometry, focus, scrolling, controls, and event
+dispatch operate directly on the native engine:
 
 | Application task | Public Rust API |
 |---|---|

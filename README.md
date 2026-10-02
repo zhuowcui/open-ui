@@ -20,9 +20,10 @@ handle interaction in native Rust through `openui::Document`, `openui::Element`,
 signals, and Rust event callbacks. Document lookup by ID,
 element and text-node mutation, class lookup and updates, focus, scrolling,
 controls, and event handling use public Rust methods. When an application
-needs an operation analogous to a browser element API, Open UI must expose
-that behavior through a public native Rust method on the retained document
-or element. A missing native operation is unfinished API work. See the
+needs behavior commonly exposed by a browser element API, Open UI must
+implement it in Rust and expose a public method on the retained document or
+element. The consuming native app calls that method directly. A missing
+native operation is unfinished API work. See the
 [native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
 
 ## Verified status
