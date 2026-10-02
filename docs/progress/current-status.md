@@ -133,8 +133,11 @@ scissor. Four already failing images improve, removing 640 differing pixels;
 two retain their differing-pixel counts but improve color values. No changed
 color-channel cell worsens, no exact image is lost, and no new image becomes
 exact. All 850 native geometry, oracle, callback and teardown records remain
-unchanged. This candidate is also unapplied; its workspace run is pending and
-its raster and complete census checks remain required. The evidence also
+unchanged. This candidate is also unapplied. Its
+[completed clean workspace](../renderer/generated/native-viewport-full-v6.json)
+passes 8,498 tests with zero failures and 13 ignored, restoring the test's
+tracked output before verifying unchanged source. Its focused and primitive
+matrices are running; complete census qualification remains required. The evidence also
 verifies all 804 expanded addition images unchanged from `574864d0`, retaining
 200/201 additions exact at all four profiles in the complete pre-repair run.
 

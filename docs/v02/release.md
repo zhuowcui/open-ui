@@ -145,8 +145,11 @@ A subsequent clean client-scissor candidate at `079208f8` follows Chromium's
 physical enclosing clip and improves four already failing images, removing 640
 differing pixels without a worsened color-channel cell. No exact image is lost
 or gained. All 850 geometry, oracle, callback and teardown checks remain
-unchanged. This candidate remains unapplied, with workspace verification
-running and raster/full qualification still required. The complete pre-repair
+unchanged. This candidate remains unapplied. Its
+[clean workspace verification](../renderer/generated/native-viewport-full-v6.json)
+passes 8,498 tests with zero failures and 13 ignored, with tracked test output
+restored and source unchanged. Focused and primitive checks are running;
+complete census qualification remains required. The complete pre-repair
 expanded run also retains all 804 addition images unchanged from `574864d0`
 and the same 200/201 additions exact at every required profile.
 
