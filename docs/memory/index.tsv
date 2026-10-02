@@ -1,5 +1,5 @@
 # id	status	tags	title	updated	path
-0001	active	project standard	Project north star: Chromium pixel parity under strict accountability	2026-07-08	entries/0001-project-north-star-chromium-pixel-parity-under-s.md
+0001	active	project standard policy native-api	Project north star: Chromium pixel parity under strict accountability	2026-10-02	entries/0001-project-north-star-chromium-pixel-parity-under-s.md
 0002	superseded	state accountability	Authoritative WPT state (2026-06-30): 2671 pass / 735 fail / 0 err, audit 7/7	2026-08-19	entries/0002-authoritative-wpt-state-2026-06-30-2671-pass-735.md
 0003	active	direction text sp14	Direction: layout PAUSED, pivot to text (SP14+)	2026-07-08	entries/0003-direction-layout-paused-pivot-to-text-sp14.md
 0004	active	text finding port_wpt	Text pivot is porting+parity, NOT a from-scratch engine	2026-07-08	entries/0004-text-pivot-is-porting-parity-not-a-from-scratch.md
