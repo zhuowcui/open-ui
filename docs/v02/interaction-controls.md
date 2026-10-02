@@ -72,7 +72,7 @@ undo/redo, IME edits, and accessibility value changes cannot modify them.
 Accessibility snapshots report read-only state and advertise selection
 actions without advertising value-editing actions.
 
-The current public application suite has 55 scenarios. The textarea scenario
+The current public application suite has 58 scenarios. The textarea scenario
 checks UTF-8 selection replacement, one-step undo, callback cancellation,
 focus changes during callbacks, and absence of synthesized clicks. The new
 read-only scenario checks both text control kinds through the public Rust

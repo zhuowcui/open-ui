@@ -19,7 +19,7 @@ remain open.
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
-| Application conformance scenarios | 55 across 10 domains |
+| Application conformance scenarios | 58 across 10 domains |
 | Frozen / current C exports | 84 / 109 |
 | C examples / C++ consumers | 7 / 2, including native C/C++ window consumers |
 | Workspace tests | 8,494 pass; 13 ignored on clean neutral gamma umbrella checkpoint |
