@@ -31,8 +31,10 @@ Rust callbacks.
 Every browser-style element operation needed by a consuming native application
 must be implemented in Rust and exposed as a public Rust method callable by
 that application. These operations require no JavaScript glue or script
-bindings. Lookup, mutation, geometry, focus, scrolling, controls, and event
-dispatch operate directly on the native engine:
+bindings. A JavaScript example in browser documentation describes behavior
+to implement through a native Rust method that the consuming app can call.
+Lookup, mutation, geometry, focus, scrolling, controls, and event dispatch
+operate directly on the native engine:
 
 | Application task | Public Rust API |
 |---|---|

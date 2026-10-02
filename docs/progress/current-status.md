@@ -120,9 +120,24 @@ at `cc056cee` instead selects ordinary picture rendering for a forced bar with
 no range while the opposite axis uses a composited scrollbar. Its adjacent
 corner shares the ordinary picture. All 850 native geometry/callback/teardown
 records stay unchanged; eight already failing images improve by 1,898 pixels,
-with zero exact loss and no new exact image. The candidate remains unapplied;
-complete focused and primitive runs are pending, and workspace/full gates
-remain required. The 166 native fractional failures remain failures.
+with zero exact loss and no new exact image. The candidate remains unapplied.
+Its [completed raster checks](../renderer/generated/native-viewport-full-v5.json)
+pass 640/640 focused and 960/960 primitive exact, with all 1,600 native and
+Chromium images and difference signatures unchanged. Workspace and complete
+census qualification remain required. The 166 native fractional failures
+remain failures.
+
+A subsequent clean client-scissor candidate at `079208f8` encloses the reserved
+viewport client clip in physical pixels, following Chromium's integer compositor
+scissor. Four already failing images improve, removing 640 differing pixels;
+two retain their differing-pixel counts but improve color values. No changed
+color-channel cell worsens, no exact image is lost, and no new image becomes
+exact. All 850 native geometry, oracle, callback and teardown records remain
+unchanged. This candidate is also unapplied; its workspace run is pending and
+its raster and complete census checks remain required. The evidence also
+verifies all 804 expanded addition images unchanged from `574864d0`, retaining
+200/201 additions exact at all four profiles in the complete pre-repair run.
+
 Pinned Chromium source also identifies opaque-layer boundary clearing and
 background-color selection as the next layer-data investigation; no output
 pixel correction is applied.

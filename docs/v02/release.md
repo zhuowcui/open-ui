@@ -136,9 +136,21 @@ immutable oracle PNG bytes and show a forced bar with no range as an ordinary
 picture while the opposite axis uses a composited scrollbar. The candidate
 improves eight already failing images by 1,898 differing pixels, with no exact
 loss, no new exact image and all 850 geometry/callback/teardown records
-unchanged. The 166 fractional failures remain failures. Complete focused and
-primitive candidate runs are pending; workspace and complete census remain
-required. The evidence also preserves the rejected unsnapped-scroll hypothesis
+unchanged. The 166 fractional failures remain failures. Its
+[completed focused and primitive checks](../renderer/generated/native-viewport-full-v5.json)
+pass 640/640 and 960/960 exact, with all 1,600 native/Chromium images and
+difference signatures unchanged. Workspace and complete census remain required.
+
+A subsequent clean client-scissor candidate at `079208f8` follows Chromium's
+physical enclosing clip and improves four already failing images, removing 640
+differing pixels without a worsened color-channel cell. No exact image is lost
+or gained. All 850 geometry, oracle, callback and teardown checks remain
+unchanged. This candidate remains unapplied, with workspace verification
+running and raster/full qualification still required. The complete pre-repair
+expanded run also retains all 804 addition images unchanged from `574864d0`
+and the same 200/201 additions exact at every required profile.
+
+The evidence also preserves the rejected unsnapped-scroll hypothesis
 and pinned primary-source findings about opaque-layer boundary clearing. Those
 layer-data changes are not yet implemented or qualified.
 The generated consumer inventory is corrected to exactly 203 public fields,
