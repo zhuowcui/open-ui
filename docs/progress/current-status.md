@@ -164,8 +164,12 @@ cases worsen beside the scrollbar, and 144 fractional failures remain.
 `openui-paint` owns the unresolved layer raster/composition differences.
 The prototype remains unapplied and unqualified. Its locked workspace passes
 8,498 tests, zero failures and 13 ignored, with clean source unchanged after
-restoring tracked test output. Focused and primitive matrices are running;
-complete censuses and general clip/effect/transform metadata remain required.
+restoring tracked test output. Its
+[complete focused and primitive matrices](../renderer/generated/native-viewport-full-v8.json)
+pass 640/640 and 960/960 exact, with observed exits 0 and all 1,600 native and
+Chromium images, oracle identities and differences unchanged. Complete
+censuses and general clip/effect/transform metadata remain required; the six
+composition regressions still prevent acceptance.
 The earlier `80dd2353` attempt lost three exact images and is preserved as
 rejected evidence. No reference pixels or final output pixels are rewritten.
 All six ordinary hosted jobs at umbrella checkpoint `cea1d77c` pass; five

@@ -173,8 +173,12 @@ images remain exact. Six already failing direction cases worsen and 144
 fractional failures remain, so the prototype is unapplied and unqualified.
 `openui-paint` owns the unresolved layer raster/composition differences. Its
 8,498 locked workspace tests pass, zero failures and 13 ignored, with source
-clean and unchanged. Focused and primitive matrices are running; complete
-censuses and general layer clip/effect/transform metadata remain required.
+clean and unchanged. Its
+[complete focused and primitive matrices](../renderer/generated/native-viewport-full-v8.json)
+pass 640/640 and 960/960 exact with observed exits 0 and all 1,600 native and
+Chromium images, oracle identities and differences unchanged. Complete
+censuses and general layer clip/effect/transform metadata remain required;
+the six composition regressions still prevent acceptance.
 The earlier `80dd2353` attempt lost three exact images and remains rejected
 evidence. All six ordinary hosted checks at `cea1d77c` pass; five skipped
 hardening jobs are unverified. No final-release or later hosted result is
