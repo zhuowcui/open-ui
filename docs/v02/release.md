@@ -81,6 +81,11 @@ Its workspace passes 8,492 tests, but the patch remains unapplied: 346 native
 comparisons still differ and other required renderer qualification remains
 open. The former `49/50` SVG opacity adjustment is replaced in that prototype
 by viewport sizing and shared border drawing; no reference pixels change.
+Its complete original diagnostic now reaches 21,328/22,924 exact, with zero
+errors and no formerly exact regression against C9. Thirteen already failing
+image comparisons worsen, source is a development checkout, and complete
+expanded qualification remains open. This does not replace the clean renderer
+gate in the table above.
 
 The [native column paint and input checkpoint](../renderer/native-column-paint-phases.md)
 verifies public Rust position/opacity mutations, pointer queries and a Rust

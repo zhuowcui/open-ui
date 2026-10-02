@@ -837,10 +837,970 @@
     }
   ],
   "complete_original_census": {
-    "exit_code": null,
+    "delta_report": {
+      "path": "out/renderer-evidence/native-svg-decoration-v1/wider-original-delta-v5.json",
+      "sha256": "816632d659b2d8f9476a674f56181cd6d8f1296d19a72914bf82d573fdea5a06"
+    },
+    "deltas": {
+      "accepted_c9": {
+        "all_chromium_bytes_and_identities_unchanged": true,
+        "baseline": "out/renderer-evidence/native-image-clean-9b158cda-rerun-v2/original/full-summary.json",
+        "baseline_sha256": "d74a544b679a8b46d7d88ffa937113a2aa4937da25e604576503164d3a6f8877",
+        "changed": 116,
+        "changes": [
+          {
+            "after": 0,
+            "before": 562,
+            "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-image-4-ref",
+            "profile": "legacy-800x600@1"
+          },
+          {
+            "after": 428,
+            "before": 428,
+            "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius",
+            "profile": "legacy-800x600@1"
+          },
+          {
+            "after": 260,
+            "before": 633,
+            "id": "wpt/css_backgrounds/border-radius-clip-001",
+            "profile": "legacy-800x600@1"
+          },
+          {
+            "after": 2,
+            "before": 13,
+            "id": "wpt/css_backgrounds/border-radius-clip-002",
+            "profile": "legacy-800x600@1"
+          },
+          {
+            "after": 0,
+            "before": 77,
+            "id": "wpt/css_backgrounds/border-radius-content-edge-001",
+            "profile": "legacy-800x600@1"
+          },
+          {
+            "after": 0,
+            "before": 900,
+            "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-image-4-ref",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 4002,
+            "before": 3995,
+            "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 661,
+            "before": 1402,
+            "id": "wpt/css_backgrounds/border-radius-clip-001",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 0,
+            "before": 33,
+            "id": "wpt/css_backgrounds/border-radius-clip-002",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 115,
+            "before": 172,
+            "id": "wpt/css_backgrounds/border-radius-content-edge-001",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 0,
+            "before": 4,
+            "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 0,
+            "before": 189,
+            "id": "wpt/css_overflow/overflow-replaced-element-002",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 0,
+            "before": 189,
+            "id": "wpt/css_overflow/overflow-replaced-element-002-ref",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 0,
+            "before": 8,
+            "id": "wpt/css_sizing/aspect-ratio_large-aspect-ratio-crash",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 732,
+            "before": 361,
+            "id": "wpt/css_backgrounds/background-334",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 250,
+            "id": "wpt/css_backgrounds/background-attachment-fixed-border-radius-offset",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 250,
+            "id": "wpt/css_backgrounds/background-attachment-fixed-border-radius-offset-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 1061,
+            "before": 1688,
+            "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-image-4-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 4759,
+            "before": 4959,
+            "id": "wpt/css_backgrounds/background-clip_clip-content-box_with_radius",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 6812,
+            "before": 6769,
+            "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 503,
+            "before": 504,
+            "id": "wpt/css_backgrounds/background-image-cover-zoomed-1",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 2576,
+            "before": 2585,
+            "id": "wpt/css_backgrounds/background-repeat-space-1-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 163,
+            "before": 163,
+            "id": "wpt/css_backgrounds/background-repeat-space-2",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 163,
+            "before": 163,
+            "id": "wpt/css_backgrounds/background-repeat-space-2-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 1809,
+            "before": 1819,
+            "id": "wpt/css_backgrounds/background-repeat-space-3-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 2036,
+            "before": 2049,
+            "id": "wpt/css_backgrounds/background-repeat-space-4-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 2190,
+            "before": 2202,
+            "id": "wpt/css_backgrounds/background-repeat-space-5-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 3407,
+            "before": 3423,
+            "id": "wpt/css_backgrounds/background-repeat-space-6-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 3732,
+            "before": 3747,
+            "id": "wpt/css_backgrounds/background-repeat-space-7-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 222,
+            "before": 340,
+            "id": "wpt/css_backgrounds/background-repeat_background-repeat-no-repeat",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 290,
+            "before": 290,
+            "id": "wpt/css_backgrounds/background-size_background-size-cover",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 311,
+            "before": 249,
+            "id": "wpt/css_backgrounds/border-image-017",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 311,
+            "before": 249,
+            "id": "wpt/css_backgrounds/border-image-018",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 311,
+            "before": 249,
+            "id": "wpt/css_backgrounds/border-image-019",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 311,
+            "before": 249,
+            "id": "wpt/css_backgrounds/border-image-020",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 471,
+            "before": 500,
+            "id": "wpt/css_backgrounds/border-image-shorthand-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 852,
+            "before": 854,
+            "id": "wpt/css_backgrounds/border-image-shorthand-003",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 311,
+            "before": 249,
+            "id": "wpt/css_backgrounds/border-image-slice-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 311,
+            "before": 249,
+            "id": "wpt/css_backgrounds/border-image-slice-002",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 4191,
+            "before": 4209,
+            "id": "wpt/css_backgrounds/border-image-slice-005",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 4191,
+            "before": 4209,
+            "id": "wpt/css_backgrounds/border-image-slice-007",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 182,
+            "before": 182,
+            "id": "wpt/css_backgrounds/border-image-width-005",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 182,
+            "before": 182,
+            "id": "wpt/css_backgrounds/border-image-width-006",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 27,
+            "before": 60,
+            "id": "wpt/css_backgrounds/border-radius-013",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 505,
+            "before": 955,
+            "id": "wpt/css_backgrounds/border-radius-clip-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 20,
+            "id": "wpt/css_backgrounds/border-radius-clip-002",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 87,
+            "before": 195,
+            "id": "wpt/css_backgrounds/border-radius-content-edge-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 1030,
+            "before": 1135,
+            "id": "wpt/css_backgrounds/box-shadow_box-shadow-blur-definition-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 3,
+            "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 125,
+            "before": 250,
+            "id": "wpt/css_break/table_repeated-section_image.tentative",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 394,
+            "before": 394,
+            "id": "wpt/css_flexbox/flex-aspect-ratio-img-row-014",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 310,
+            "id": "wpt/css_flexbox/flex-item-z-ordering-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 125,
+            "id": "wpt/css_flexbox/flex-minimum-width-flex-items-013",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 742,
+            "before": 847,
+            "id": "wpt/css_flexbox/flexbox-basic-img-horiz-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 742,
+            "before": 847,
+            "id": "wpt/css_flexbox/flexbox-basic-img-horiz-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 942,
+            "before": 950,
+            "id": "wpt/css_flexbox/flexbox-basic-img-vert-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 940,
+            "before": 950,
+            "id": "wpt/css_flexbox/flexbox-basic-img-vert-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 626,
+            "before": 626,
+            "id": "wpt/css_flexbox/flexbox-min-width-auto-006",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 65,
+            "before": 63,
+            "id": "wpt/css_flexbox/flexbox-whitespace-handling-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 65,
+            "before": 63,
+            "id": "wpt/css_flexbox/flexbox-whitespace-handling-001a",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 65,
+            "before": 63,
+            "id": "wpt/css_flexbox/flexbox-whitespace-handling-001b",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 524,
+            "before": 524,
+            "id": "wpt/css_multicol/multicol-collapsing-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 450,
+            "before": 450,
+            "id": "wpt/css_multicol/multicol-rule-color-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 500,
+            "before": 500,
+            "id": "wpt/css_multicol/multicol-rule-fraction-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 2711,
+            "before": 3603,
+            "id": "wpt/css_overflow/overflow-replaced-element-002",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 2711,
+            "before": 3603,
+            "id": "wpt/css_overflow/overflow-replaced-element-002-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 123,
+            "before": 124,
+            "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-055",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 1576,
+            "id": "wpt/css_sizing/aspect-ratio_large-aspect-ratio-crash",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 125,
+            "id": "wpt/css_sizing/aspect-ratio_replaced-element-031",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 200,
+            "before": 200,
+            "id": "wpt/css_sizing/image-min-max-content-intrinsic-size-change-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 347,
+            "before": 348,
+            "id": "wpt/css_sizing/image-min-max-content-intrinsic-size-change-003-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 1064,
+            "before": 2132,
+            "id": "wpt/css_sizing/intrinsic-percent-replaced-009",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 1064,
+            "before": 2132,
+            "id": "wpt/css_sizing/intrinsic-percent-replaced-009-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 1617,
+            "before": 2381,
+            "id": "wpt/css_backgrounds/background-attachment-local_attachment-local-clipping-image-4-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 1293,
+            "before": 1256,
+            "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 1744,
+            "before": 1748,
+            "id": "wpt/css_backgrounds/background-repeat-space-1-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 1456,
+            "before": 1458,
+            "id": "wpt/css_backgrounds/background-repeat-space-3-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 1880,
+            "before": 1881,
+            "id": "wpt/css_backgrounds/background-repeat-space-4-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 1880,
+            "before": 1881,
+            "id": "wpt/css_backgrounds/background-repeat-space-5-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 2744,
+            "before": 2751,
+            "id": "wpt/css_backgrounds/background-repeat-space-6-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 2744,
+            "before": 2751,
+            "id": "wpt/css_backgrounds/background-repeat-space-7-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 145,
+            "before": 288,
+            "id": "wpt/css_backgrounds/background-repeat_background-repeat-no-repeat",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 761,
+            "before": 761,
+            "id": "wpt/css_backgrounds/background-size_background-size-cover",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 75,
+            "before": 225,
+            "id": "wpt/css_backgrounds/border-image-017",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 75,
+            "before": 225,
+            "id": "wpt/css_backgrounds/border-image-018",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 75,
+            "before": 225,
+            "id": "wpt/css_backgrounds/border-image-019",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 75,
+            "before": 225,
+            "id": "wpt/css_backgrounds/border-image-020",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 75,
+            "before": 225,
+            "id": "wpt/css_backgrounds/border-image-slice-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 75,
+            "before": 225,
+            "id": "wpt/css_backgrounds/border-image-slice-002",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 30,
+            "before": 58,
+            "id": "wpt/css_backgrounds/border-radius-013",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 421,
+            "before": 966,
+            "id": "wpt/css_backgrounds/border-radius-clip-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 25,
+            "id": "wpt/css_backgrounds/border-radius-clip-002",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 38,
+            "before": 226,
+            "id": "wpt/css_backgrounds/border-radius-content-edge-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 741,
+            "before": 742,
+            "id": "wpt/css_backgrounds/box-shadow_box-shadow-blur-definition-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 4,
+            "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 472,
+            "before": 472,
+            "id": "wpt/css_flexbox/flex-aspect-ratio-img-row-014",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 187,
+            "id": "wpt/css_flexbox/flex-item-z-ordering-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 856,
+            "before": 1622,
+            "id": "wpt/css_flexbox/flexbox-basic-img-horiz-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 856,
+            "before": 1622,
+            "id": "wpt/css_flexbox/flexbox-basic-img-horiz-001-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 1270,
+            "before": 2430,
+            "id": "wpt/css_flexbox/flexbox-basic-img-vert-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 1270,
+            "before": 2430,
+            "id": "wpt/css_flexbox/flexbox-basic-img-vert-001-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 602,
+            "before": 602,
+            "id": "wpt/css_flexbox/flexbox-min-width-auto-006",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 150,
+            "before": 156,
+            "id": "wpt/css_flexbox/flexbox-whitespace-handling-001-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 150,
+            "before": 156,
+            "id": "wpt/css_flexbox/flexbox-whitespace-handling-001a",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 150,
+            "before": 156,
+            "id": "wpt/css_flexbox/flexbox-whitespace-handling-001b",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 629,
+            "before": 629,
+            "id": "wpt/css_multicol/multicol-collapsing-001-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 360,
+            "before": 360,
+            "id": "wpt/css_multicol/multicol-rule-color-001-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 360,
+            "before": 360,
+            "id": "wpt/css_multicol/multicol-rule-fraction-001-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 7308,
+            "before": 7885,
+            "id": "wpt/css_overflow/overflow-replaced-element-002",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 7308,
+            "before": 7885,
+            "id": "wpt/css_overflow/overflow-replaced-element-002-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 149,
+            "before": 152,
+            "id": "wpt/css_sizing/aspect-ratio_flex-aspect-ratio-055",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 2855,
+            "id": "wpt/css_sizing/aspect-ratio_large-aspect-ratio-crash",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 121,
+            "before": 121,
+            "id": "wpt/css_sizing/image-min-max-content-intrinsic-size-change-001-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 211,
+            "before": 211,
+            "id": "wpt/css_sizing/image-min-max-content-intrinsic-size-change-003-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 3849,
+            "before": 3852,
+            "id": "wpt/css_sizing/intrinsic-percent-replaced-009",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 3849,
+            "before": 3852,
+            "id": "wpt/css_sizing/intrinsic-percent-replaced-009-ref",
+            "profile": "desktop-1920x1080@1.5"
+          }
+        ],
+        "exact_regressions": 0,
+        "improved": 83,
+        "new_exact": 20,
+        "worsened": 13
+      },
+      "rejected_source_less_v2": {
+        "all_chromium_bytes_and_identities_unchanged": true,
+        "baseline": "out/renderer-evidence/native-source-less-neighbors-v1/wider-v2/original/full-summary.json",
+        "baseline_sha256": "f47d7742d6d896c34b1ac10f7d228e5641c8783f913296cb789a11a5c888f806",
+        "changed": 36,
+        "changes": [
+          {
+            "after": 0,
+            "before": 4492,
+            "id": "wpt/css_backgrounds/background-position_background-position-bottom-right-repeat-round",
+            "profile": "legacy-800x600@1"
+          },
+          {
+            "after": 0,
+            "before": 1,
+            "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+            "profile": "legacy-800x600@1"
+          },
+          {
+            "after": 0,
+            "before": 20528,
+            "id": "wpt/css_backgrounds/background-position_background-position-bottom-right-repeat-round",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 0,
+            "before": 4,
+            "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+            "profile": "mobile-375x667@2"
+          },
+          {
+            "after": 0,
+            "before": 1314648,
+            "id": "wpt/css_backgrounds/background-attachment-margin-root-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 1314648,
+            "id": "wpt/css_backgrounds/background-attachment-margin-root-001-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 6,
+            "before": 596,
+            "id": "wpt/css_backgrounds/background-margin-iframe-root-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 1282299,
+            "id": "wpt/css_backgrounds/background-margin-root",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 1282170,
+            "id": "wpt/css_backgrounds/background-margin-root-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 1282170,
+            "id": "wpt/css_backgrounds/background-margin-transformed-root-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 1282299,
+            "id": "wpt/css_backgrounds/background-margin-will-change-root",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 1282170,
+            "id": "wpt/css_backgrounds/background-margin-will-change-root-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 7697,
+            "id": "wpt/css_backgrounds/background-position_background-position-bottom-right-repeat-round",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 6,
+            "before": 6591,
+            "id": "wpt/css_backgrounds/background-repeat-round-1-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 6,
+            "before": 6591,
+            "id": "wpt/css_backgrounds/background-repeat-round-1a",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 6,
+            "before": 6591,
+            "id": "wpt/css_backgrounds/background-repeat-round-1b",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 6,
+            "before": 6591,
+            "id": "wpt/css_backgrounds/background-repeat-round-1c",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 6,
+            "before": 6591,
+            "id": "wpt/css_backgrounds/background-repeat-round-1d",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 6,
+            "before": 6591,
+            "id": "wpt/css_backgrounds/background-repeat-round-1e",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 7680,
+            "id": "wpt/css_backgrounds/background-repeat-round-4",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 7680,
+            "id": "wpt/css_backgrounds/background-repeat-round-4-ref",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 3,
+            "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 1252,
+            "id": "wpt/css_flexbox/overflow-area-001",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 1253,
+            "id": "wpt/css_flexbox/overflow-area-002",
+            "profile": "desktop-1280x720@1.25"
+          },
+          {
+            "after": 0,
+            "before": 9396,
+            "id": "wpt/css_backgrounds/background-position_background-position-bottom-right-repeat-round",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 20,
+            "before": 8671,
+            "id": "wpt/css_backgrounds/background-repeat-round-1-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 8651,
+            "id": "wpt/css_backgrounds/background-repeat-round-1a",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 8651,
+            "id": "wpt/css_backgrounds/background-repeat-round-1b",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 20,
+            "before": 8671,
+            "id": "wpt/css_backgrounds/background-repeat-round-1c",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 8651,
+            "id": "wpt/css_backgrounds/background-repeat-round-1d",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 20,
+            "before": 8671,
+            "id": "wpt/css_backgrounds/background-repeat-round-1e",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 114,
+            "id": "wpt/css_backgrounds/background-repeat-round-4",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 114,
+            "id": "wpt/css_backgrounds/background-repeat-round-4-ref",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 4,
+            "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 2992,
+            "id": "wpt/css_flexbox/overflow-area-001",
+            "profile": "desktop-1920x1080@1.5"
+          },
+          {
+            "after": 0,
+            "before": 2992,
+            "id": "wpt/css_flexbox/overflow-area-002",
+            "profile": "desktop-1920x1080@1.5"
+          }
+        ],
+        "exact_regressions": 0,
+        "improved": 36,
+        "new_exact": 26,
+        "worsened": 0
+      }
+    },
+    "evidence": {
+      "binary_unchanged": true,
+      "kind": "diagnostic-census",
+      "qualification_backend_match": true,
+      "qualified": false,
+      "source_unchanged": true,
+      "tolerance_pixels": 0
+    },
+    "exit_code": 1,
     "qualifying": false,
-    "results_path": "out/renderer-evidence/native-svg-decoration-v1/wider-v5/original/full-summary.json",
-    "status": "running"
+    "report": {
+      "path": "out/renderer-evidence/native-svg-decoration-v1/wider-v5/original/full-summary.json",
+      "sha256": "5acd6903d0134897db6e7d46a8e8692257054ac3433d0aa36ceb6cfd4a6d6d00"
+    },
+    "results": {
+      "different": 1596,
+      "errors": 0,
+      "exact": 21328,
+      "profile_result_sha256": "86974bcaa89b71ce15ce38f86536df25fa0706a64a3123f36b1779d931ce7ac8",
+      "total": 22924
+    },
+    "status": "complete"
   },
   "focused_and_primitive": [
     {
@@ -1008,7 +1968,7 @@
     "346 native pixel failures",
     "54 previously failing native comparisons worsened against first viewport prototype",
     "13 previously failing WPT comparisons worsened against accepted C9 in affected guards",
-    "complete original and expanded censuses and clean-source qualification",
+    "complete expanded census and clean-source qualification",
     "SVG coordinate, transform, clipping and border behavior outside these reduced controls"
   ],
   "responsible_subsystems": [

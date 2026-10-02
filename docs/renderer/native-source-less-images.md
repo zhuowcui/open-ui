@@ -90,6 +90,10 @@ source-less V2 census is 21,302/22,924 exact, with 1,622 differences, zero
 errors and 23 formerly exact regressions. Its executable source check passes
 and all Chromium references are unchanged, but those regressions prevent
 adoption. That run does not establish V3 qualification.
+The later combined SVG/source-less diagnostic is 21,328/22,924 exact and
+restores every earlier exact regression in the complete original census.
+It still worsens 13 already failing image comparisons against C9; the
+standalone source-less patch and clean release matrices remain unqualified.
 These reduced cases are not admitted release cases. The clean `9b158cda`
 renderer remains 21,308/22,924 exact, with 1,616 differences and zero errors.
 

@@ -73,8 +73,16 @@ source and binary identities, not clean-source release qualification.
 
 ## Qualification status
 
-The complete original comparison run is still in progress. Its unfinished
-result is not qualifying evidence.
+The complete original diagnostic run is 21,328/22,924 exact, with 1,596
+differences, zero errors, and an observed terminal exit of 1. Compared with
+the accepted C9 renderer, 116 images change: 83 improve, 13 already failing
+comparisons worsen, and 20 become exact. No previously exact image regresses.
+All 22,924 Chromium images and oracle identities remain unchanged, and the
+source and executable stay fixed throughout the run. Compared with the
+earlier rejected source-less V2 prototype, all 36 changed images improve and
+26 become exact. The full run therefore confirms that every earlier exact
+regression has been restored. The expanded suite and clean-source release
+qualification remain outstanding.
 
 The standalone patch applies to the umbrella branch but remains unapplied.
 Its measured executable also contains earlier unapplied opacity, clip,

@@ -102,6 +102,12 @@ worsen against the first viewport prototype. The locked workspace passes
 adjustment is removed in the prototype in favor of fixed viewport geometry
 and shared border drawing. This remains diagnostic work; the accepted
 renderer and release counts are unchanged.
+Its complete original diagnostic is now 21,328/22,924 exact, with 1,596
+differences and zero errors. It adds 20 exact comparisons against C9 and
+loses none, while 13 already failing image comparisons worsen. Every Chromium
+image and oracle identity remains unchanged, and source and executable
+identities stay fixed. The observed terminal exit is 1; clean qualification
+and the complete expanded run remain open.
 
 The [native PNG application](../renderer/native-png-sampling.md) supplies real
 encoded resources through public Rust APIs and changes size and opacity from
