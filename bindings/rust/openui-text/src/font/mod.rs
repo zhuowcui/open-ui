@@ -18,6 +18,8 @@ mod platform;
 mod relative;
 
 pub use cache::FontCache;
+#[doc(hidden)]
+pub use collection::FontCacheLifetime;
 pub use collection::{
     FontAxisRange, FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat,
     FontFaceDescriptor, FontFaceHandle, FontFaceInfo, FontFeatureDefault, FontMetricOverrides,

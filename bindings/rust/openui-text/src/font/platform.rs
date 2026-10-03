@@ -12,6 +12,7 @@ use skia_safe::{
     FontStyle as SkFontStyle, GlyphId, Rect, Typeface,
 };
 
+use super::collection::FontCacheLifetime;
 use super::metrics::FontMetrics;
 use super::{FontFeatureDefault, FontMetricOverrides};
 
@@ -40,6 +41,9 @@ pub struct FontPlatformData {
     /// 0.0 for normal/italic styles. CSS default oblique is 14°.
     synthetic_oblique_angle: f32,
     feature_defaults: Vec<FontFeatureDefault>,
+    // Resolved font data can outlive the collection that selected it. Keep the
+    // strike cache lifetime active until these owned font objects are released.
+    _cache_lifetime: FontCacheLifetime,
 }
 
 /// OpenType `vhea`/`vmtx` data retained with a resolved face.
@@ -254,6 +258,7 @@ impl FontPlatformData {
         device_scale_factor: f64,
         configuration: ResolvedFontConfiguration,
     ) -> Self {
+        let cache_lifetime = FontCacheLifetime::new();
         // Font matching may return a regular face when a family has no bold
         // member (Ahem is the canonical example). CSS font synthesis requires
         // a synthetic bold face in that case; SkFont does not infer it from
@@ -346,6 +351,7 @@ impl FontPlatformData {
             synthetic_bold,
             synthetic_oblique_angle: oblique_angle,
             feature_defaults: configuration.feature_defaults,
+            _cache_lifetime: cache_lifetime,
         }
     }
 

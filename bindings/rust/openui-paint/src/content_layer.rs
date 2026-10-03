@@ -15,6 +15,8 @@ pub struct RecordedContentLayer {
     pub scroll_translation: (f32, f32),
     pub picture: Picture,
     pub(crate) paint_record: crate::paint_record::LayerPaintRecord,
+    // A caller may clone a content layer independently of its parent scene.
+    pub(crate) _font_cache_lifetime: openui_text::font::FontCacheLifetime,
 }
 
 impl RecordedContentLayer {

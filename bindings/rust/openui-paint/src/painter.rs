@@ -1619,6 +1619,7 @@ fn paint_fragment_contents(
                 && rect_known_to_be_opaque.bottom >= bounds.bottom,
             scroll_translation,
             picture,
+            _font_cache_lifetime: doc.font_collection().retain_cache_lifetime(),
         };
         layer.replay(canvas, doc.device_scale_factor());
         VIEWPORT_CONTENT_LAYER.with(|recorded| *recorded.borrow_mut() = Some(layer));

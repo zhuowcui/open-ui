@@ -103,6 +103,9 @@ pub struct RecordedPicture {
     /// Retains immutable registered bytes for every face referenced by a
     /// scene, even if the live document unregisters that face immediately.
     pub(crate) retained_font_bytes: Arc<[Arc<[u8]>]>,
+    // Recordings can be rasterized after their document is destroyed. Retire
+    // cached strikes only after every retained picture/font resource above.
+    pub(crate) _font_cache_lifetime: openui_text::font::FontCacheLifetime,
 }
 
 impl RecordedPicture {
@@ -228,6 +231,7 @@ pub fn record_fragment(
         direct_replay,
         content_requires_tiling,
         retained_font_bytes: doc.font_collection().retained_face_bytes(),
+        _font_cache_lifetime: doc.font_collection().retain_cache_lifetime(),
     })
 }
 
