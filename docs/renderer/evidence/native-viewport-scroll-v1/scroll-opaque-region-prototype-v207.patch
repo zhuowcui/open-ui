@@ -1,0 +1,393 @@
+diff --git a/bindings/rust/openui-paint/src/paint_record.rs b/bindings/rust/openui-paint/src/paint_record.rs
+index 8a3cfd71..ff857c45 100644
+--- a/bindings/rust/openui-paint/src/paint_record.rs
++++ b/bindings/rust/openui-paint/src/paint_record.rs
+@@ -186,6 +186,9 @@ impl dyn PaintCanvas + '_ {
+     pub(crate) fn is_clip_rect(&self) -> bool {
+         self.raw_untracked().is_clip_rect()
+     }
++    pub(crate) fn device_clip_bounds(&self) -> Option<skia_safe::IRect> {
++        self.raw_untracked().device_clip_bounds()
++    }
+ }
+ 
+ impl LayerPaintRecord {
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 6e17b7e3..5f3958f1 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -39,7 +39,7 @@ use skia_safe::{
+     color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, ClipOp, Color4f,
+     ColorSpace, ColorType, Data, FilterMode, IRect, Image, ImageInfo, Matrix, MipmapMode, Paint,
+     PaintStyle, PathBuilder, PathFillType, PathMeasure, PictureRecorder, Point, RRect, Rect,
+-    SamplingOptions, TileMode,
++    RoundOut, SamplingOptions, TileMode,
+ };
+ 
+ use std::cell::RefCell;
+@@ -150,6 +150,7 @@ thread_local! {
+     static RASTER_TILED_REPLAY: RefCell<bool> = const { RefCell::new(false) };
+     static DEFER_VIEWPORT_SCROLLBARS: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+     static CONTENT_BACKGROUND_ANNOTATIONS: RefCell<Option<Vec<(Color, f32, Option<Rect>)>>> = const { RefCell::new(None) };
++    static CONTENT_BACKGROUND_DEVICE_SPACE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+     static CONTENT_BACKGROUND_EFFECT: std::cell::Cell<(f32, bool)> = const { std::cell::Cell::new((1.0, true)) };
+     static VIEWPORT_CONTENT_LAYER: RefCell<Option<crate::RecordedContentLayer>> = const { RefCell::new(None) };
+     static BROKEN_IMAGE: RefCell<Option<Image>> = const { RefCell::new(None) };
+@@ -210,6 +211,8 @@ impl BackgroundEffectScope {
+                     && style.filter_blur == 0.0
+                     && style.filter_grayscale == 0.0
+                     && style.mask_layers.is_empty()
++                    && !(CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.get())
++                        && style.has_border_radius())
+                     && style.transform == openui_style::Transform2D::IDENTITY,
+             ));
+             previous
+@@ -220,6 +223,7 @@ impl BackgroundEffectScope {
+ struct BackgroundRecordingScope {
+     previous_annotations: Option<Vec<(Color, f32, Option<Rect>)>>,
+     previous_effect: (f32, bool),
++    previous_device_space: bool,
+ }
+ 
+ impl BackgroundRecordingScope {
+@@ -228,9 +232,17 @@ impl BackgroundRecordingScope {
+             previous_annotations: CONTENT_BACKGROUND_ANNOTATIONS
+                 .with(|annotations| annotations.replace(Some(Vec::new()))),
+             previous_effect: CONTENT_BACKGROUND_EFFECT.with(|effect| effect.replace((1.0, true))),
++            previous_device_space: CONTENT_BACKGROUND_DEVICE_SPACE
++                .with(|space| space.replace(false)),
+         }
+     }
+ 
++    fn for_raster() -> Self {
++        let scope = Self::new();
++        CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.set(true));
++        scope
++    }
++
+     fn annotations(&self) -> Vec<(Color, f32, Option<Rect>)> {
+         CONTENT_BACKGROUND_ANNOTATIONS
+             .with(|annotations| annotations.borrow().as_ref().cloned().unwrap_or_default())
+@@ -242,6 +254,7 @@ impl Drop for BackgroundRecordingScope {
+         CONTENT_BACKGROUND_ANNOTATIONS
+             .with(|annotations| annotations.replace(self.previous_annotations.take()));
+         CONTENT_BACKGROUND_EFFECT.with(|effect| effect.set(self.previous_effect));
++        CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.set(self.previous_device_space));
+     }
+ }
+ 
+@@ -252,6 +265,7 @@ impl Drop for BackgroundEffectScope {
+ }
+ 
+ fn annotate_content_background(
++    canvas: &Canvas,
+     mut color: Color,
+     rect: Rect,
+     opacity: f32,
+@@ -267,13 +281,32 @@ fn annotate_content_background(
+             annotations.push((
+                 color,
+                 rect.width() * rect.height(),
+-                opaque_rect.filter(|_| color.is_opaque()).map(|rect| {
+-                    Rect::from_ltrb(
++                opaque_rect.filter(|_| color.is_opaque()).and_then(|rect| {
++                    let mut rect = if CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.get()) {
++                        // In a raster backing, opacity belongs to fully covered
++                        // physical cells after the current transform and clip.
++                        // A rectangular AA clip is accepted by Skia only when
++                        // every retained sample has full coverage.
++                        let matrix = canvas.local_to_device_as_3x3();
++                        if !matrix.rect_stays_rect() || !canvas.is_clip_rect() {
++                            return None;
++                        }
++                        let mut mapped = matrix.map_rect(rect).0;
++                        let clip = Rect::from(canvas.device_clip_bounds()?);
++                        if !mapped.intersect(clip) {
++                            return None;
++                        }
++                        mapped
++                    } else {
++                        rect
++                    };
++                    rect = Rect::from_ltrb(
+                         rect.left.ceil(),
+                         rect.top.ceil(),
+                         rect.right.floor(),
+                         rect.bottom.floor(),
+-                    )
++                    );
++                    (!rect.is_empty() && rect.is_finite()).then_some(rect)
+                 }),
+             ));
+         }
+@@ -333,6 +366,17 @@ fn layer_opaque_rect(annotations: &[(Color, f32, Option<Rect>)]) -> Rect {
+         .fold(Rect::default(), maximum_covered_rect)
+ }
+ 
++/// Preserve every fully covered physical cell, including disjoint regions.
++/// Choosing the largest rectangle can discard a covering background when an
++/// inset child's painted area extends farther than its parent.
++fn layer_opaque_region(annotations: &[(Color, f32, Option<Rect>)]) -> skia_safe::Region {
++    let mut region = skia_safe::Region::new();
++    for rect in annotations.iter().filter_map(|(_, _, opaque)| *opaque) {
++        region.op_rect(rect.round_in(), skia_safe::region::RegionOp::Union);
++    }
++    region
++}
++
+ pub(crate) fn paint_document_fragments(
+     canvas: &Canvas,
+     fragment: &Fragment,
+@@ -9191,6 +9235,52 @@ fn scroll_backing_phase_adjustment(logical_origin: f32, backing_scale: f32) -> f
+     (compositor_phase - physical_phase).rem_euclid(1.0) / backing_scale
+ }
+ 
++/// Prove opacity for the source cells reached by the visible linear-sampled
++/// quad. This uses owned paint coverage, never an inspection of raster pixels.
++fn scroll_quad_has_opaque_samples(
++    canvas: &Canvas,
++    opaque: &skia_safe::Region,
++    source: Rect,
++    destination: Rect,
++    width: i32,
++    height: i32,
++) -> bool {
++    let matrix = canvas.local_to_device_as_3x3();
++    if opaque.is_empty() || !matrix.rect_stays_rect() {
++        return false;
++    }
++    let (Some(inverse), Some(clip)) = (matrix.invert(), canvas.device_clip_bounds()) else {
++        return false;
++    };
++    let mut visible = inverse.map_rect(Rect::from(clip)).0;
++    if !visible.intersect(destination) || !visible.is_finite() {
++        return false;
++    }
++    let scale_x = source.width() / destination.width();
++    let scale_y = source.height() / destination.height();
++    // Linear filtering reaches a neighboring source center on each side.
++    // The strict source rectangle clamps outside the backing image bounds.
++    let samples = Rect::from_ltrb(
++        (source.left + (visible.left - destination.left) * scale_x - 0.5)
++            .floor()
++            .max(0.0),
++        (source.top + (visible.top - destination.top) * scale_y - 0.5)
++            .floor()
++            .max(0.0),
++        (source.left + (visible.right - destination.left) * scale_x + 0.5)
++            .ceil()
++            .min(width as f32),
++        (source.top + (visible.bottom - destination.top) * scale_y + 0.5)
++            .ceil()
++            .min(height as f32),
++    );
++    if samples.is_empty() || !samples.is_finite() {
++        return false;
++    }
++    let samples: IRect = samples.round_out();
++    opaque.contains_rect(samples)
++}
++
+ fn paint_composited_scroll_contents(
+     canvas: &Canvas,
+     fragment: &Fragment,
+@@ -9264,6 +9354,7 @@ fn paint_composited_scroll_contents(
+         adjusted.border_image = None;
+         adjusted.box_shadow.retain(|shadow| shadow.inset);
+     });
++    let background_recording = BackgroundRecordingScope::for_raster();
+     paint_box_decoration_background(
+         surface.canvas(),
+         fragment,
+@@ -9293,6 +9384,9 @@ fn paint_composited_scroll_contents(
+     );
+     surface.canvas().restore();
+ 
++    let opaque_region = layer_opaque_region(&background_recording.annotations());
++    let composition_effect = background_recording.previous_effect;
++    drop(background_recording);
+     let image = surface.image_snapshot();
+     let destination = Rect::from_xywh(
+         layer_rect.left + scroll_backing_phase_adjustment(layer_rect.left, backing_scale),
+@@ -9302,11 +9396,6 @@ fn paint_composited_scroll_contents(
+     );
+     let mut paint = Paint::default();
+     paint.set_anti_alias(false);
+-    // The software compositor replaces destination cells for an opaque
+-    // scrolling layer. SrcOver would select a different packed sampler.
+-    if style.background_color.is_opaque() {
+-        paint.set_blend_mode(skia_safe::BlendMode::Src);
+-    }
+     let snapping = RasterSnapping::new(style.device_scale_factor);
+     let compositor_bounds = Rect::from_ltrb(
+         destination.left,
+@@ -9327,6 +9416,22 @@ fn paint_composited_scroll_contents(
+         compositor_bounds.width() * backing_scale,
+         compositor_bounds.height() * backing_scale,
+     );
++    // Chromium omits blending only for an opaque quad with full composition
++    // opacity. An opaque authored color alone cannot establish that: clipped
++    // or rounded backgrounds can leave transparent backing cells.
++    if composition_effect == (1.0, true)
++        && style.opacity == 1.0
++        && scroll_quad_has_opaque_samples(
++            canvas,
++            &opaque_region,
++            source,
++            compositor_bounds,
++            physical_width,
++            physical_height,
++        )
++    {
++        paint.set_blend_mode(skia_safe::BlendMode::Src);
++    }
+     canvas.draw_image_rect_with_sampling_options(
+         image,
+         Some((&source, SrcRectConstraint::Strict)),
+@@ -14880,7 +14985,7 @@ fn paint_scrolling_canvas_background(
+     paint.set_anti_alias(true);
+     set_paint_css_color(&mut paint, &color);
+     canvas.draw_rect(bounds, &paint);
+-    annotate_content_background(color, bounds, 1.0, Some(bounds));
++    annotate_content_background(canvas, color, bounds, 1.0, Some(bounds));
+     if let Some(source) = source {
+         let style = &doc.node(source).style;
+         let (positioning_rect, source_fragment) =
+@@ -17180,6 +17285,7 @@ fn paint_box_decoration_background(
+                 close_rect_at_physical_viewport_edge(bg_rect, style.device_scale_factor)
+             };
+             annotate_content_background(
++                canvas,
+                 style.background_color,
+                 bg_rect,
+                 opacity_multiplier,
+diff --git a/bindings/rust/openui/examples/native_scroll_layer_opacity.rs b/bindings/rust/openui/examples/native_scroll_layer_opacity.rs
+new file mode 100644
+index 00000000..173af07f
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_scroll_layer_opacity.rs
+@@ -0,0 +1,124 @@
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("scale required")?.parse()?;
++    let background_alpha: f32 = args.next().ok_or("background alpha required")?.parse()?;
++    let clip = match args.next().ok_or("background clip required")?.as_str() {
++        "border-box" => BackgroundClip::BorderBox,
++        "padding-box" => BackgroundClip::PaddingBox,
++        "content-box" => BackgroundClip::ContentBox,
++        _ => return Err("unknown clip".into()),
++    };
++    let radius: f32 = args.next().ok_or("radius required")?.parse()?;
++    let opacity: f32 = args.next().ok_or("opacity required")?.parse()?;
++    let blur: f32 = args.next().ok_or("blur required")?.parse()?;
++    let child_kind = args.next().ok_or("child kind required")?;
++    let request: f64 = args.next().ok_or("scroll request required")?.parse()?;
++    let phase: f32 = args.next().ok_or("phase required")?.parse()?;
++    let document =
++        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(320.0, 240.0, scale)?)?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_scrollbar_width(ScrollbarWidth::None)?;
++    let viewport = Element::create(&document, "div")?;
++    viewport.set_position(Position::Absolute)?;
++    viewport.set_left(Length::px(44.0 + phase))?;
++    viewport.set_top(Length::px(44.0 + phase))?;
++    viewport.set_display(Display::Flex)?;
++    viewport.set_width(LengthValue::px(80.0))?;
++    viewport.set_height(LengthValue::px(80.0))?;
++    viewport.set_padding(Edges::all(LengthValue::px(10.0)))?;
++    viewport.set_border(Border {
++        width: 3.0,
++        style: BorderStyle::Solid,
++        color: Color::from_rgba8(255, 165, 0, 255),
++    })?;
++    viewport.set_overflow(Overflow::Scroll)?;
++    viewport.set_scrollbar_width(ScrollbarWidth::None)?;
++    viewport.set_background_color(Color::WHITE)?;
++    root.append_child(&viewport)?;
++    let child = Element::create(&document, "div")?;
++    child.set_flex_shrink(0.0)?;
++    child.set_width(LengthValue::px(30.0))?;
++    child.set_height(LengthValue::px(30.0))?;
++    match child_kind.as_str() {
++        "reference" => {
++            viewport.set_padding(Edges::all(LengthValue::px(0.0)))?;
++            child.set_border(Border {
++                width: 30.0,
++                style: BorderStyle::Solid,
++                color: Color::from_rgba8(0, 255, 255, 255),
++            })?;
++            child.set_background_color(Color::from_rgba8(0, 128, 128, 255))?;
++        }
++        "opaque" => {
++            child.set_border(Border {
++                width: 50.0,
++                style: BorderStyle::Solid,
++                color: Color::from_rgba8(0, 255, 255, 255),
++            })?;
++            child.set_background_color(Color::from_rgba8(0, 128, 128, 255))?;
++        }
++        "translucent" => {
++            child.set_border(Border {
++                width: 50.0,
++                style: BorderStyle::Solid,
++                color: Color::from_rgba_f32(0.0, 1.0, 1.0, 0.5),
++            })?;
++            child.set_background_color(Color::from_rgba_f32(
++                0.0,
++                128.0 / 255.0,
++                128.0 / 255.0,
++                0.5,
++            ))?;
++        }
++        "partial" => {
++            child.set_background_color(Color::from_rgba8(0, 128, 128, 255))?;
++        }
++        _ => return Err("unknown child kind".into()),
++    }
++    viewport.append_child(&child)?;
++    let initial = document.render_to_png_buffer()?;
++    let calls = Rc::new(Cell::new(0));
++    let callback_calls = calls.clone();
++    let target = viewport.downgrade();
++    child.on("click", move |_| {
++        let viewport = target.upgrade().expect("viewport remains owned");
++        viewport
++            .set_background_color(Color::from_rgba_f32(0.0, 1.0, 1.0, background_alpha))
++            .expect("background");
++        viewport.set_background_clip(clip).expect("background clip");
++        viewport
++            .set_border_radius(CornerRadii(Edges::all(LengthValue::px(radius))))
++            .expect("radius");
++        viewport.set_opacity(opacity).expect("opacity");
++        viewport.set_filter_blur(blur).expect("filter");
++        viewport.scroll_to(request, request).expect("scroll");
++        callback_calls.set(callback_calls.get() + 1);
++    })?;
++    child.click()?;
++    assert_eq!(calls.get(), 1);
++    let bounds = viewport.bounding_rect()?.ok_or("viewport bounds missing")?;
++    let child_bounds = child.bounding_rect()?.ok_or("child bounds missing")?;
++    let metrics = viewport.scroll_metrics()?.ok_or("scroll metrics missing")?;
++    std::fs::create_dir_all(&output)?;
++    std::fs::write(output.join("initial.png"), initial)?;
++    std::fs::write(output.join("openui.png"), document.render_to_png_buffer()?)?;
++    std::fs::write(output.join("geometry.json"), format!(
++        "{{\"callback_count\":{},\"scroll\":{{\"x\":{},\"y\":{}}},\"client\":{{\"width\":{},\"height\":{}}},\"extent\":{{\"width\":{},\"height\":{}}},\"nodes\":{{\"viewport\":{{\"bounds\":{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}}},\"child\":{{\"bounds\":{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}}}}}}}\n",
++        calls.get(), viewport.scroll_left()?, viewport.scroll_top()?,
++        metrics.client_width, metrics.client_height, metrics.scroll_width, metrics.scroll_height,
++        bounds.x, bounds.y, bounds.width, bounds.height,
++        child_bounds.x, child_bounds.y, child_bounds.width, child_bounds.height,
++    ))?;
++    let target = viewport.downgrade();
++    drop(child);
++    drop(viewport);
++    drop(root);
++    drop(document);
++    assert!(target.upgrade().is_none(), "callback retained document");
++    Ok(())
++}

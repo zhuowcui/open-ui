@@ -16,8 +16,10 @@ The [native style/RGBA checkpoint](../v02/generated/native-primitive-styles-v1.j
 at clean `9e0f0145` verifies 35 primitive longhands through public Rust, C, and
 C++ consumers. Its locked workspace passes 8,515 tests with 13 ignored, and
 its complete focused/primitive matrices remain 640/640 and 960/960 exact.
-The full original and expanded contract still requires its own complete run
-on that source. The separate [private sampling/corner candidate](generated/native-viewport-full-v14.json)
+Its [own complete original and expanded runs](generated/native-viewport-full-v17.json)
+now finish with observed exits 1: 21,308/22,924 and 22,111/23,728 exact, zero
+errors. Every comparison invariant remains unchanged from the accepted
+viewport renderer. These complete failures keep the full pixel gate open. The separate [private sampling/corner candidate](generated/native-viewport-full-v14.json)
 completes both censuses with zero errors and 21,299/22,924 original and
 22,102/23,728 expanded exact. It loses 23 previously exact comparisons and
 gains 14; every Chromium image and oracle identity is unchanged. A clean
@@ -43,6 +45,20 @@ These results remain selected diagnostics, with no new full-census total.
 Its [complete raster evidence](generated/native-viewport-full-v16.json) is
 640/640 focused and 960/960 primitive exact, with observed exits 0 and all
 1,600 comparison invariants unchanged. These gates do not qualify the full renderer.
+
+The later clean `6368057f` [coverage-region trial](generated/native-viewport-full-v17.json)
+uses actual raster clips, transformed physical coverage, region union and the
+visible linear-sampling footprint. It retains every selected comparison from
+`b3c54ea8` and all 850 existing native controls. Its complete focused and
+primitive gates remain 640/640 and 960/960 exact. New consuming Rust apps
+exercise 180 neighboring states through public methods and Rust callbacks:
+95 pixels are exact; all owned bounds, offsets and client dimensions agree
+with Chromium, while every scroll extent still fails. Sixteen controls stop
+erasing the opaque canvas to transparency. The historical SVG `49/50`
+decoration alpha remains unmodeled by the coverage proof and must be removed
+through shared SVG layout/paint and native API work. These implementations
+remain unapplied; their complete candidate census and other release gates
+are still required. None of these new controls is admitted as a release pass.
 
 The earlier complete clean `9b158cda` results are
 [21,308/22,924 exact](generated/four-profile-census-v49.json) for the original

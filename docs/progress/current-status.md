@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean census against cached Chromium captures | Repaired native viewport `1366b72f`: 21,308/22,924 exact, 1,616 different, 0 errors; all 16 formerly exact regressions restored with zero new exact loss or worsened pixel count. The full pixel gate remains failing |
+| Latest complete clean census against cached Chromium captures | Native API checkpoint `9e0f0145`: 21,308/22,924 exact, 1,616 different, 0 errors; all original and expanded comparison invariants unchanged from the accepted viewport renderer. The full pixel gate remains failing |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact on clean native style/RGBA source `9e0f0145` |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
@@ -39,8 +39,12 @@ The full workspace passes 8,515 tests with zero failures and 13 ignored.
 Its complete focused and primitive matrices are 640/640 and 960/960 exact
 at zero tolerance. All 1,600 Open UI and Chromium images, oracle identities,
 and difference signatures remain unchanged against the previous exact raster
-evidence. The full original and expanded matrices still require their own
-complete result on this source.
+evidence. Its [own complete original and expanded matrices](../renderer/generated/native-viewport-full-v17.json)
+now finish with observed exits 1: 21,308/22,924 and 22,111/23,728 exact, zero
+errors. Every comparison invariant remains unchanged from the accepted
+viewport renderer, and all original rows agree between the two suites.
+The same 200 of 201 additions are exact at all four profiles; the original
+1,616 differences and fieldset/legend addition still fail.
 Own-checkpoint hosted CI has six successful jobs and five skipped hardening
 jobs; skips remain open results. Every needed public native operation still
 requires implementation and consuming-application verification. Open UI
@@ -261,9 +265,10 @@ unchanged. Five exact regressions against the accepted renderer remain
 under `openui-paint` ownership. A separate strict image-rectangle scroll
 replay at `312806f6` changes none of the 304 selected rows or 850 native
 controls. Both trials remain unapplied and do not establish a new full-census
-total. The accepted native API code `9e0f0145` now has its own original and
-expanded censuses running from the unchanged clean checkout and pinned binary;
-no completed result is claimed for those processes.
+total. The accepted native API code `9e0f0145` has now completed both of its
+own censuses from unchanged clean source and its pinned binary. Original and
+expanded counts remain 21,308/22,924 and 22,111/23,728 exact, with zero errors;
+all comparison invariants remain unchanged. The full pixel gate still fails.
 A later opaque-layer composition trial at clean `b3c54ea8` restores the four
 scrolling losses. Its affected selection is 172/304 exact, zero errors; all
 other 300 comparisons and all 850 exact native controls remain unchanged.
@@ -275,6 +280,21 @@ Its [completed own-source raster checks](../renderer/generated/native-viewport-f
 are 640/640 focused and 960/960 primitive exact, with observed exits 0 and all
 1,600 comparison invariants unchanged. All trials remain unapplied, and the
 accepted full-census counts remain unchanged.
+
+The [coverage-region follow-up](../renderer/generated/native-viewport-full-v17.json)
+at clean `6368057f` replaces the background-color shortcut with owned physical
+coverage and the visible sampling footprint. A first single-rectangle trial
+lost two matches by discarding a smaller covering background. Retaining the
+region union restores them: all 304 selected invariants and all 850 existing
+native controls match `b3c54ea8`, and its own complete focused/primitive gates
+are 640/640 and 960/960 exact. New public Rust consumers exercise 180 states
+without JavaScript. Their bounds, offsets, client dimensions, Rust callbacks
+and teardown checks pass; every scroll extent fails, and only 95 pixels are
+exact. Sixteen controls regain the opaque canvas underneath transparent
+backing samples. The SVG decoration alpha remains an unmodeled effect in the
+coverage proof. SVG/native API work, scroll extents/ranges, control pixels
+and complete candidate qualification remain required. The patches stay
+unapplied, and none of these new states is admitted to the release matrix.
 All hosted workflows at `fdac09eb` have now completed: six jobs passed and
 five hardening jobs were skipped. Skips remain open qualification work.
 The older solid-tile candidate's complete censuses have finished with observed

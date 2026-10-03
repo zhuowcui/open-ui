@@ -9,10 +9,10 @@ claimed by source code alone.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | [Complete clipping repair census](../renderer/generated/native-viewport-full-v7.json) at `1366b72f`: 21,308/22,924 exact, 1,616 different, zero errors. All 16 earlier exact results are restored across the complete census, with no new exact loss or worsened pixel count; Chromium images and identities are unchanged. Residual ownership review remains open | fail |
+| Four-profile renderer matrix | [Complete native API checkpoint census](../renderer/generated/native-viewport-full-v17.json) at `9e0f0145`: 21,308/22,924 exact, 1,616 different, zero errors. Every native image, Chromium image, oracle identity and comparison invariant remains unchanged from the accepted viewport renderer. Residual ownership review remains open | fail |
 | Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact on clean native style/RGBA source `9e0f0145` in the [completed evidence](generated/native-primitive-styles-v1.json); all 1,600 images, oracle identities and difference signatures unchanged from preceding exact raster evidence | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | [Complete clipping repair run](../renderer/generated/native-viewport-full-v7.json) at `1366b72f` is 22,111/23,728 exact, 1,617 different, zero errors; original rows agree with its separate census. All 804 addition comparisons are unchanged, with 200/201 additions exact at all four profiles. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | [Complete native API checkpoint run](../renderer/generated/native-viewport-full-v17.json) at `9e0f0145` is 22,111/23,728 exact, 1,617 different, zero errors; original rows agree with its separate census. All 804 addition comparisons are unchanged, with 200/201 additions exact at all four profiles. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | clean `9e0f0145`, Linux C feature enabled: 8,515 passed, zero failed, 13 ignored | pass |
 | Rust 1.85 MSRV | [Earlier hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): locked headless and Linux checks passed; own-source job at `9e0f0145` skipped | own-source qualification open |
@@ -57,9 +57,20 @@ transport. Shared raw-frame readback now returns the documented premultiplied
 RGBA order. All previous 110 exports and 30 layouts are unchanged. The full
 workspace and both 40-profile pixel suites pass, with eight generators,
 archive integrity, and accountability also passing. Six own-checkpoint hosted
-jobs pass; five skipped hardening jobs remain open. Full four-profile pixel
-qualification, complete needed native API coverage, and release-lab gates
-remain required.
+jobs pass; five skipped hardening jobs remain open. Its own complete original
+and expanded censuses now reproduce every accepted comparison invariant, with
+21,308/22,924 and 22,111/23,728 exact and zero errors. These full pixel failures,
+complete needed native API coverage, and release-lab gates remain open.
+
+The [scroll coverage trial](../renderer/generated/native-viewport-full-v17.json)
+preserves all four scrolling repairs, all 850 existing native controls and
+both complete 40-profile raster gates. New consuming Rust apps have 95/180
+exact pixels, with all bounds, offsets and client dimensions matching Chromium
+but every scroll extent failing. Sixteen transparent-canvas erasures are
+repaired. The historical SVG decoration alpha is still unmodeled by the
+coverage proof; shared SVG layout/paint and native API work must remove it.
+The renderer patches remain unapplied and have no complete candidate census.
+These new controls add no admitted release passes.
 
 The [native PNG application](../renderer/native-png-sampling.md) verifies
 resource registration, typed image styles, mutation through Rust callbacks,

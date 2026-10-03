@@ -86,6 +86,14 @@ five scales. Nested scrolling ranges, native scrollbar input/accessibility,
 remaining C property conversion, complete native API coverage, and complete
 pixel qualification still require work. Those are native implementation gaps.
 
+The [scroll-layer Rust consumer](../renderer/evidence/native-viewport-scroll-v1/native_scroll_layer_opacity.rs)
+changes background clipping, opacity, filters and scroll offsets from a Rust
+click callback. Its [private renderer evidence](../renderer/generated/native-viewport-full-v17.json)
+checks 180 states: all owned bounds, offsets, client dimensions, callback and
+teardown checks pass. Scroll extents still include border geometry incorrectly,
+and only 95 of the rendered states match Chromium exactly. These remain native
+API and renderer gaps; the new states are not admitted release passes.
+
 The [native flow-root application](../../bindings/rust/openui/examples/native_flow_root_geometry.rs)
 constructs a document, queries owned fragments, finds a child under the pointer
 and activates it through public Rust methods. A Rust click callback handles

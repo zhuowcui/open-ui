@@ -33,10 +33,10 @@ The current v0.2 release candidate has:
 
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
   on replay and 182 changed; these old screenshots are not pixel targets;
-- a [complete native viewport census](docs/renderer/generated/native-viewport-full-v9.json)
-  at `079208f8` with 21,308 of 22,924 comparisons exact, 1,616 different, and
-  zero render errors; the shared clipping repair restores all 16 earlier exact
-  regressions, and the full pixel gate remains failing;
+- a [complete native API checkpoint census](docs/renderer/generated/native-viewport-full-v17.json)
+  at `9e0f0145` with 21,308 of 22,924 comparisons exact, 1,616 different, and
+  zero render errors; every original and expanded comparison invariant remains
+  unchanged from the accepted clipping repair, and the full pixel gate still fails;
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
   comparisons exact in the [clipping repair evidence](docs/renderer/generated/native-viewport-full-v2.json);
 - 201 native final-state cases in the expanded contract, including one newly
@@ -73,8 +73,11 @@ it remains unapplied. A subsequent
 repairs 18 of those regressions in the affected selection, preserving all
 850 exact native controls. A later opaque-layer composition trial restores
 four more exact comparisons in that selection, leaving one SVG pixel
-regression. Conservative layer-opacity metadata and complete qualification
-remain required before promoting these changes.
+regression. A subsequent [coverage-region trial](docs/renderer/generated/native-viewport-full-v17.json)
+preserves those four matches and all 850 existing native controls while fixing
+transparent-canvas erasure in neighboring Rust consumers. The SVG decoration
+alpha, native scroll extents, remaining control pixels, and complete candidate
+qualification remain open before promotion.
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia

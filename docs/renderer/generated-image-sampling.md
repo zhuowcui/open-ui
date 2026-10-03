@@ -92,6 +92,48 @@ diagnostic note: [pinned `CheckFastPath`](https://skia.googlesource.com/skia/+/a
 simplifies `Src` to `SrcOver` only for an
 opaque solid color with no shader/filter, not for an opaque image shader.
 
+## Physical opacity coverage
+
+Clean `6368057f` replaces the authored-color shortcut with inward-rounded
+physical background coverage after the current transform and actual raster
+clip. It retains the union of covered regions and proves every source cell
+reached by the visible linear-sampled quad. Opacity, masks, filters, rounded
+ancestry and unsupported transforms keep the decision conservative. The
+renderer does not inspect image pixels to choose its blend mode.
+
+The first rectangle-only prototype discarded a covering background when an
+inset child had a larger painted area. It lost two exact 1.25-scale comparisons.
+The region union restores them. All 304 selected invariants now match
+`b3c54ea8`, preserving its four scrolling repairs. All 850 existing native
+images, geometry, callbacks and teardown checks stay exact and unchanged.
+The candidate's complete 40-profile gates finish with observed exits 0:
+640/640 focused and 960/960 primitive exact, all invariants unchanged.
+
+The [consuming Rust app](evidence/native-viewport-scroll-v1/native_scroll_layer_opacity.rs)
+uses public methods and a Rust click callback. Across 180 new neighboring
+states, 95 pixels are exact. Every owned bound, offset and client dimension
+matches Chromium; callback and teardown checks pass. Every scroll extent
+still fails because the query uses border-box overflow instead of the
+scrollable padding area. Sixteen controls stop erasing the existing opaque
+canvas to alpha 0 or 127, though their remaining pixel differences stay failures.
+No new control is admitted to the release matrix.
+
+The shared SVG `49/50` decoration alpha remains an unmodeled effect in this
+coverage proof. Its SVG layout, paint and public native API correction remains
+required, together with the remaining SVG exact regression, native scroll
+extents/ranges and control raster differences. The
+[coverage patch](evidence/native-viewport-scroll-v1/scroll-opaque-region-prototype-v207.patch)
+and [rejected single-rectangle patch](evidence/native-viewport-scroll-v1/scroll-opaque-coverage-prototype-v196.patch)
+remain unapplied. The [new index](generated/native-viewport-full-v17.json)
+pins 121 artifacts and records each actual terminal exit and clean source.
+
+The accepted native style/API checkpoint `9e0f0145` also completes its own
+original and expanded censuses with observed exits 1: 21,308/22,924 and
+22,111/23,728 exact, zero errors. Every comparison invariant matches the
+accepted viewport renderer; all original rows agree between the runs. The
+same 200 of 201 additions remain exact at every profile. These full failures
+do not qualify the private coverage candidate or the release.
+
 All trials remain outside the umbrella renderer. The sampling setting and
 prior solid-tile/corner changes remain unapplied. Qualification still requires
 complete original and expanded censuses without regressions, exact focused
