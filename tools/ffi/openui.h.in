@@ -20,6 +20,7 @@ typedef struct OuiResource OuiResource;
 typedef struct OuiFontFace OuiFontFace;
 typedef struct OuiListener OuiListener;
 typedef struct OuiBuffer OuiBuffer;
+typedef struct OuiAccessibilitySnapshot OuiAccessibilitySnapshot;
 
 typedef enum OuiStatus {
   OUI_OK = 0,
@@ -42,6 +43,19 @@ typedef enum OuiBackendPreference {
   OUI_BACKEND_OPENGL = 1,
   OUI_BACKEND_SOFTWARE = 2
 } OuiBackendPreference;
+
+/* Logical axes follow the target element's writing mode and direction. */
+typedef enum OuiScrollAlignment {
+  OUI_SCROLL_START = 0,
+  OUI_SCROLL_CENTER = 1,
+  OUI_SCROLL_END = 2,
+  OUI_SCROLL_NEAREST = 3
+} OuiScrollAlignment;
+
+typedef enum OuiScrollIntoViewContainer {
+  OUI_SCROLL_CONTAINERS_ALL = 0,
+  OUI_SCROLL_CONTAINER_NEAREST = 1
+} OuiScrollIntoViewContainer;
 
 typedef enum OuiElementTag {
   OUI_ELEMENT_DIV = 0,
@@ -82,7 +96,11 @@ typedef enum OuiElementTag {
   OUI_ELEMENT_FORM = 35,
   OUI_ELEMENT_EMBED = 36,
   OUI_ELEMENT_HTML = 37,
-  OUI_ELEMENT_BODY = 38
+  OUI_ELEMENT_BODY = 38,
+  /* Native SVG viewport for retained UI children. Width/height include border
+   * and padding. Uses the shared Rust foreignObject constructor and ordinary
+   * element handles, styles, events, and document ownership. */
+  OUI_ELEMENT_SVG_FOREIGN_OBJECT = 39
 } OuiElementTag;
 
 typedef enum OuiLengthUnit {
@@ -137,7 +155,11 @@ typedef enum OuiAlignItems {
   OUI_ALIGN_ITEMS_NORMAL = 0, OUI_ALIGN_ITEMS_STRETCH = 1,
   OUI_ALIGN_ITEMS_CENTER = 2, OUI_ALIGN_ITEMS_START = 3,
   OUI_ALIGN_ITEMS_END = 4, OUI_ALIGN_ITEMS_FLEX_START = 5,
-  OUI_ALIGN_ITEMS_FLEX_END = 6, OUI_ALIGN_ITEMS_BASELINE = 7
+  OUI_ALIGN_ITEMS_FLEX_END = 6, OUI_ALIGN_ITEMS_BASELINE = 7,
+  OUI_ALIGN_ITEMS_AUTO = 8, OUI_ALIGN_ITEMS_SELF_START = 9,
+  OUI_ALIGN_ITEMS_SELF_END = 10, OUI_ALIGN_ITEMS_LEFT = 11,
+  OUI_ALIGN_ITEMS_RIGHT = 12, OUI_ALIGN_ITEMS_LAST_BASELINE = 13,
+  OUI_ALIGN_ITEMS_LEGACY = 14
 } OuiAlignItems;
 
 typedef enum OuiJustifyContent {
@@ -146,7 +168,9 @@ typedef enum OuiJustifyContent {
   OUI_JUSTIFY_CONTENT_FLEX_START = 4, OUI_JUSTIFY_CONTENT_FLEX_END = 5,
   OUI_JUSTIFY_CONTENT_SPACE_BETWEEN = 6,
   OUI_JUSTIFY_CONTENT_SPACE_AROUND = 7,
-  OUI_JUSTIFY_CONTENT_SPACE_EVENLY = 8
+  OUI_JUSTIFY_CONTENT_SPACE_EVENLY = 8, OUI_JUSTIFY_CONTENT_STRETCH = 9,
+  OUI_JUSTIFY_CONTENT_BASELINE = 10, OUI_JUSTIFY_CONTENT_LAST_BASELINE = 11,
+  OUI_JUSTIFY_CONTENT_LEFT = 12, OUI_JUSTIFY_CONTENT_RIGHT = 13
 } OuiJustifyContent;
 
 typedef enum OuiCursor {
@@ -236,8 +260,69 @@ typedef enum OuiAccessibilityRole {
   OUI_ACCESSIBILITY_ROLE_DIALOG = 12,
   OUI_ACCESSIBILITY_ROLE_HEADING = 13,
   OUI_ACCESSIBILITY_ROLE_STATUS = 14,
-  OUI_ACCESSIBILITY_ROLE_ALERT = 15
+  OUI_ACCESSIBILITY_ROLE_ALERT = 15,
+  OUI_ACCESSIBILITY_ROLE_OTHER = 16
 } OuiAccessibilityRole;
+
+typedef enum OuiAccessibilityNodeFlags {
+  OUI_ACCESSIBILITY_NODE_HIDDEN = 1u << 0,
+  OUI_ACCESSIBILITY_NODE_REQUIRED = 1u << 1,
+  OUI_ACCESSIBILITY_NODE_READ_ONLY = 1u << 2,
+  OUI_ACCESSIBILITY_NODE_MODAL = 1u << 3,
+  OUI_ACCESSIBILITY_NODE_HAS_BOUNDS = 1u << 4
+} OuiAccessibilityNodeFlags;
+
+typedef enum OuiAccessibilityNodeActions {
+  OUI_ACCESSIBILITY_ACTION_CLICK_BIT = 1u << 0,
+  OUI_ACCESSIBILITY_ACTION_FOCUS_BIT = 1u << 1,
+  OUI_ACCESSIBILITY_ACTION_BLUR_BIT = 1u << 2,
+  OUI_ACCESSIBILITY_ACTION_INCREMENT_BIT = 1u << 3,
+  OUI_ACCESSIBILITY_ACTION_DECREMENT_BIT = 1u << 4,
+  OUI_ACCESSIBILITY_ACTION_EXPAND_BIT = 1u << 5,
+  OUI_ACCESSIBILITY_ACTION_COLLAPSE_BIT = 1u << 6,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_INTO_VIEW_BIT = 1u << 7,
+  OUI_ACCESSIBILITY_ACTION_SET_VALUE_BIT = 1u << 8,
+  OUI_ACCESSIBILITY_ACTION_REPLACE_SELECTED_TEXT_BIT = 1u << 9,
+  OUI_ACCESSIBILITY_ACTION_SET_TEXT_SELECTION_BIT = 1u << 10,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_DOWN_BIT = 1u << 11,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_UP_BIT = 1u << 12,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_LEFT_BIT = 1u << 13,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_RIGHT_BIT = 1u << 14
+} OuiAccessibilityNodeActions;
+
+typedef enum OuiAccessibilitySnapshotText {
+  OUI_ACCESSIBILITY_TEXT_LABEL = 0,
+  OUI_ACCESSIBILITY_TEXT_DESCRIPTION = 1,
+  OUI_ACCESSIBILITY_TEXT_VALUE = 2,
+  OUI_ACCESSIBILITY_TEXT_ROLE_NAME = 3,
+  OUI_ACCESSIBILITY_TEXT_PLACEHOLDER = 4
+} OuiAccessibilitySnapshotText;
+
+typedef enum OuiAccessibilityStateFlags {
+  OUI_ACCESSIBILITY_STATE_DISABLED = 1u << 0,
+  OUI_ACCESSIBILITY_STATE_HAS_SELECTED = 1u << 1,
+  OUI_ACCESSIBILITY_STATE_SELECTED = 1u << 2,
+  OUI_ACCESSIBILITY_STATE_HAS_EXPANDED = 1u << 3,
+  OUI_ACCESSIBILITY_STATE_EXPANDED = 1u << 4,
+  OUI_ACCESSIBILITY_STATE_HAS_TOGGLED = 1u << 5,
+  OUI_ACCESSIBILITY_STATE_TOGGLED_TRUE = 1u << 6,
+  OUI_ACCESSIBILITY_STATE_TOGGLED_MIXED = 1u << 7,
+  OUI_ACCESSIBILITY_STATE_HAS_NUMERIC_VALUE = 1u << 8,
+  OUI_ACCESSIBILITY_STATE_HAS_NUMERIC_MIN = 1u << 9,
+  OUI_ACCESSIBILITY_STATE_HAS_NUMERIC_MAX = 1u << 10,
+  OUI_ACCESSIBILITY_STATE_HAS_NUMERIC_STEP = 1u << 11,
+  OUI_ACCESSIBILITY_STATE_HAS_SCROLL_X = 1u << 12,
+  OUI_ACCESSIBILITY_STATE_HAS_SCROLL_Y = 1u << 13,
+  OUI_ACCESSIBILITY_STATE_HAS_TEXT_SELECTION = 1u << 14
+} OuiAccessibilityStateFlags;
+
+typedef enum OuiAccessibilitySnapshotIds {
+  OUI_ACCESSIBILITY_IDS_CHILDREN = 0,
+  OUI_ACCESSIBILITY_IDS_LABELLED_BY = 1,
+  OUI_ACCESSIBILITY_IDS_DESCRIBED_BY = 2,
+  OUI_ACCESSIBILITY_IDS_CONTROLS = 3,
+  OUI_ACCESSIBILITY_IDS_DETAILS = 4
+} OuiAccessibilitySnapshotIds;
 
 typedef enum OuiAccessibilityLive {
   OUI_ACCESSIBILITY_LIVE_OFF = 0,
@@ -336,6 +421,16 @@ typedef struct OuiDocumentConfig {
   OuiViewportMetrics viewport;
 } OuiDocumentConfig;
 
+/* Caller-owned client and content dimensions in logical CSS pixels. */
+typedef struct OuiScrollMetricsV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  double client_width;
+  double client_height;
+  double scroll_width;
+  double scroll_height;
+} OuiScrollMetricsV1;
+
 typedef enum OuiFontFaceStyle {
   OUI_FONT_FACE_STYLE_NORMAL = 0,
   OUI_FONT_FACE_STYLE_ITALIC = 1,
@@ -431,6 +526,7 @@ typedef struct OuiBitmap {
   uint32_t width;
   uint32_t height;
   size_t stride;
+  /* Owned top-to-bottom RGBA8888 rows; colors are premultiplied by alpha. */
   OuiBuffer* pixels;
 } OuiBitmap;
 
@@ -550,6 +646,59 @@ typedef struct OuiAccessibilityUpdate {
   uint16_t reserved;
 } OuiAccessibilityUpdate;
 
+/* New snapshot structs are append-only and start with size and ABI version. */
+typedef struct OuiAccessibilitySnapshotInfo {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint64_t generation;
+  uint64_t focus_id;
+  size_t node_count;
+  size_t changed_count;
+  size_t removed_count;
+  uint8_t full_tree;
+  uint8_t reduced_motion;
+  uint8_t reserved[6];
+} OuiAccessibilitySnapshotInfo;
+
+typedef struct OuiAccessibilityNodeInfo {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint64_t id;
+  uint32_t role;
+  uint32_t flags;
+  uint32_t actions;
+  uint32_t reserved;
+  OuiRect bounds;
+  size_t child_count;
+  size_t labelled_by_count;
+  size_t described_by_count;
+  size_t controls_count;
+  size_t details_count;
+  size_t label_length;
+  size_t description_length;
+  size_t value_length;
+  size_t role_name_length;
+} OuiAccessibilityNodeInfo;
+
+typedef struct OuiAccessibilityNodeState {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t flags;
+  uint32_t live; /* 0 absent; otherwise OuiAccessibilityLive + 1 */
+  double numeric_value;
+  double numeric_min;
+  double numeric_max;
+  double numeric_step;
+  double scroll_x;
+  double scroll_y;
+  size_t placeholder_length;
+  size_t character_lengths_count;
+  uint64_t selection_anchor_node;
+  size_t selection_anchor_index;
+  uint64_t selection_focus_node;
+  size_t selection_focus_index;
+} OuiAccessibilityNodeState;
+
 typedef struct OuiErrorInfo {
   uint32_t struct_size;
   uint32_t abi_version;
@@ -559,6 +708,80 @@ typedef struct OuiErrorInfo {
 } OuiErrorInfo;
 
 typedef void (*OuiEventCallback)(OuiEvent* event, void* user_data);
+
+typedef enum OuiPlatformEventType {
+  OUI_PLATFORM_BACKEND_CHANGED = 1,
+  OUI_PLATFORM_RESIZED = 2,
+  OUI_PLATFORM_POINTER = 3,
+  OUI_PLATFORM_WHEEL = 4,
+  OUI_PLATFORM_KEY = 5,
+  OUI_PLATFORM_TEXT_INPUT = 6,
+  OUI_PLATFORM_COMPOSITION_START = 7,
+  OUI_PLATFORM_COMPOSITION_UPDATE = 8,
+  OUI_PLATFORM_COMPOSITION_END = 9,
+  OUI_PLATFORM_FOCUSED = 10,
+  OUI_PLATFORM_DROPPED_FILE = 11,
+  OUI_PLATFORM_HOVERED_FILE = 12,
+  OUI_PLATFORM_HOVERED_FILE_CANCELLED = 13,
+  OUI_PLATFORM_PRESENTED = 14,
+  OUI_PLATFORM_CLOSE_REQUESTED = 15
+} OuiPlatformEventType;
+
+enum {
+  OUI_PLATFORM_FLAG_REPEAT = 1u << 0,
+  OUI_PLATFORM_FLAG_FOCUSED = 1u << 1,
+  OUI_PLATFORM_FLAG_FALLBACK = 1u << 2,
+  OUI_PLATFORM_POINTER_MOVE = 0,
+  OUI_PLATFORM_POINTER_DOWN = 1,
+  OUI_PLATFORM_POINTER_UP = 2,
+  OUI_PLATFORM_POINTER_CANCEL = 3,
+  OUI_PLATFORM_POINTER_LEAVE = 4,
+  OUI_PLATFORM_KEY_DOWN = 0,
+  OUI_PLATFORM_KEY_UP = 1
+};
+
+/* Append-only platform notification. Unused fields are zero. text is UTF-8;
+ * path is a length-delimited native Linux filename, which need not be UTF-8.
+ * button is 0=left, 1=middle, 2=right, or 3 plus the native other-button ID.
+ * pointer_id is the full native 64-bit ID; legacy OuiEvent uses its low 32 bits.
+ * A legacy event target may be NULL when no C element handle exists for it.
+ */
+typedef struct OuiPlatformEvent {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t event_type;
+  uint32_t phase;
+  uint32_t flags;
+  uint32_t backend;
+  uint64_t pointer_id;
+  float x;
+  float y;
+  float delta_x;
+  float delta_y;
+  int32_t key_code;
+  uint32_t modifiers;
+  uint32_t button;
+  uint32_t reserved;
+  uint64_t frame_number;
+  double time_ms;
+  OuiUtf8 text;
+  const uint8_t* path;
+  size_t path_length;
+  OuiViewportMetrics viewport;
+} OuiPlatformEvent;
+
+typedef void (*OuiPlatformEventCallback)(OuiApp* app,
+                                       const OuiPlatformEvent* event,
+                                       void* user_data);
+
+typedef struct OuiAppRunConfig {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t flags;
+  uint32_t reserved;
+  OuiPlatformEventCallback callback;
+  void* user_data;
+} OuiAppRunConfig;
 
 /*
  * Ownership and callback contract:
@@ -572,6 +795,11 @@ typedef void (*OuiEventCallback)(OuiEvent* event, void* user_data);
  *   remain valid until its OuiListener is destroyed.
  * - Setting OUI_EVENT_DEFAULT_PREVENTED or OUI_EVENT_PROPAGATION_STOPPED in a
  *   callback updates dispatch state; callbacks must not retain OuiEvent*.
+ * - Accessibility snapshots own their nodes and strings. A snapshot remains
+ *   readable after its document is destroyed, on the snapshot's owning thread.
+ *   Destroy each snapshot after use. Output strings are raw UTF-8 bytes without
+ *   a terminator. The first copy call may use NULL and zero capacity to query
+ *   the required length or count.
  */
 
 uint32_t oui_abi_version(void);
@@ -581,6 +809,20 @@ OuiStatus oui_error_copy_message(uint8_t* destination, size_t capacity, size_t* 
 OuiStatus oui_app_create(const OuiAppConfig* config, OuiApp** out_app);
 OuiStatus oui_app_destroy(OuiApp* app);
 OuiStatus oui_app_document(OuiApp* app, OuiDocument** out_document);
+
+/* Blocking Linux lifecycle, enabled by the SDK's linux feature. Call on the
+ * process's main/UI thread, using the app's existing retained document.
+ * An app may attempt run once. Nested runs return OUI_ERROR_REENTRANT.
+ * callback is optional; callback/user_data must remain valid until run returns.
+ * Callbacks run after document handling and engine/platform presentation
+ * borrows are released, may mutate retained elements and request exit, and
+ * must not unwind or retain event/text/path pointers. Copy payloads if needed.
+ * App destruction during run is rejected. Document handles remain usable.
+ * Request exit before run or within a UI-thread callback. Headless-only builds
+ * return OUI_ERROR_INVALID_STATE from run; the other app APIs remain available.
+ */
+OuiStatus oui_app_run(OuiApp* app, const OuiAppRunConfig* config);
+OuiStatus oui_app_request_exit(OuiApp* app);
 
 OuiStatus oui_document_create(const OuiDocumentConfig* config, OuiDocument** out_document);
 OuiStatus oui_document_destroy(OuiDocument* document);
@@ -593,11 +835,35 @@ OuiStatus oui_document_update(OuiDocument* document);
 OuiStatus oui_document_render_rgba(OuiDocument* document, OuiBitmap* out_bitmap);
 OuiStatus oui_document_render_png(OuiDocument* document, OuiBuffer** out_buffer);
 OuiStatus oui_document_dispatch_event(OuiDocument* document, OuiElement* target, OuiEvent* event);
+/*
+ * Native normalized input uses the focused control and the shared Rust/Linux
+ * default-action path. key->event_type is OUI_EVENT_KEY_DOWN or KEY_UP;
+ * key->text is the logical key name, distinct from committed_text. flags must
+ * be zero. The descriptor is not modified. Callbacks may cancel keydown or
+ * beforeinput; one input event follows a successful edit. Key-up, control/meta
+ * shortcuts and platform control characters do not insert committed_text.
+ * Both calls are synchronous and owning-thread-only. Descriptors and UTF-8
+ * slices need only remain readable through the call; callbacks and user_data
+ * obey the existing listener lifetime contract. No JavaScript is executed.
+ */
+OuiStatus oui_document_dispatch_key_input_v1(OuiDocument* document, const OuiEvent* key, OuiUtf8 committed_text);
+OuiStatus oui_document_dispatch_text_input_v1(OuiDocument* document, OuiUtf8 text);
 OuiStatus oui_document_dispatch_pointer_event(OuiDocument* document, OuiEvent* event);
 OuiStatus oui_document_hit_test(OuiDocument* document, float x, float y, OuiElement** out_element);
+/* Found elements return owned handles; destroy them with oui_element_destroy. */
+OuiStatus oui_document_element_by_id(OuiDocument* document, OuiUtf8 id, OuiElement** out_element);
 OuiStatus oui_document_advance_focus(OuiDocument* document, int32_t direction, OuiElement** out_element);
 OuiStatus oui_document_set_modal_root(OuiDocument* document, OuiElement* root);
 OuiStatus oui_document_accessibility_update(OuiDocument* document, OuiAccessibilityUpdate* out_update);
+OuiStatus oui_document_accessibility_snapshot(OuiDocument* document, const OuiAccessibilitySnapshot* previous, OuiAccessibilitySnapshot** out_snapshot);
+OuiStatus oui_accessibility_snapshot_destroy(OuiAccessibilitySnapshot* snapshot);
+OuiStatus oui_accessibility_snapshot_get_info(const OuiAccessibilitySnapshot* snapshot, OuiAccessibilitySnapshotInfo* out_info);
+OuiStatus oui_accessibility_snapshot_get_node(const OuiAccessibilitySnapshot* snapshot, size_t index, OuiAccessibilityNodeInfo* out_node);
+OuiStatus oui_accessibility_snapshot_get_node_state(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, OuiAccessibilityNodeState* out_state);
+OuiStatus oui_accessibility_snapshot_copy_text(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, uint32_t field, uint8_t* destination, size_t capacity, size_t* out_length);
+OuiStatus oui_accessibility_snapshot_copy_character_lengths(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, uint8_t* destination, size_t capacity, size_t* out_count);
+OuiStatus oui_accessibility_snapshot_copy_ids(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, uint32_t kind, uint64_t* destination, size_t capacity, size_t* out_count);
+OuiStatus oui_accessibility_snapshot_copy_changes(const OuiAccessibilitySnapshot* snapshot, uint8_t removed, uint64_t* destination, size_t capacity, size_t* out_count);
 OuiStatus oui_document_set_reduced_motion(OuiDocument* document, uint8_t reduced);
 OuiStatus oui_document_set_animation_time(OuiDocument* document, double time_ms);
 OuiStatus oui_document_is_animating(OuiDocument* document, uint8_t* out_animating);
@@ -624,6 +890,8 @@ OuiStatus oui_element_destroy(OuiElement* element);
 OuiStatus oui_element_append_child(OuiElement* parent, OuiElement* child);
 OuiStatus oui_element_insert_before(OuiElement* parent, OuiElement* child, OuiElement* before);
 OuiStatus oui_element_remove(OuiElement* element);
+/* Detach without invalidating the node handle; reattach with append/insert. */
+OuiStatus oui_element_detach(OuiElement* element);
 OuiStatus oui_element_remove_all_children(OuiElement* element);
 OuiStatus oui_element_set_text(OuiElement* element, OuiUtf8 text);
 OuiStatus oui_element_set_attribute(OuiElement* element, OuiUtf8 name, OuiUtf8 value);
@@ -632,7 +900,30 @@ OuiStatus oui_element_set_property(OuiElement* element, OuiStyleProperty propert
 OuiStatus oui_element_animate(OuiElement* element, OuiStyleProperty property, const OuiKeyframe* keyframes, size_t keyframe_count, const OuiAnimationOptions* options, const OuiAnimationTimeline* timeline, uint64_t* out_animation_id);
 OuiStatus oui_element_transition(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* target, const OuiAnimationOptions* options, uint64_t* out_animation_id);
 OuiStatus oui_element_get_bounds(OuiElement* element, OuiRect* out_rect);
+/* Logical viewport border boxes in layout order after scroll/transforms.
+ * Includes hidden, empty and pointer-ineligible boxes; excludes detached and
+ * display:none elements. rects=NULL, capacity=0 queries the required count.
+ * On OUI_ERROR_BUFFER_TOO_SMALL, out_count is updated and rects remains untouched.
+ * Copies are caller-owned. Layout may change between the count and copy calls.
+ * out_count and rects must be writable, nonoverlapping caller storage. */
+OuiStatus oui_element_get_client_rects_v1(OuiElement* element, OuiRect* rects, size_t capacity, size_t* out_count);
+/* Resolve pending layout and copy shared native-engine scroll dimensions.
+ * Initialize struct_size and abi_version. Both outputs must be writable and
+ * nonoverlapping. A valid element without a layout box returns OUI_OK,
+ * out_has_metrics=0 and four zero dimensions. Outputs remain unchanged on
+ * error. No handle or buffer needs releasing; copies survive later mutations
+ * and document destruction. Must be called on the document's owning thread. */
+OuiStatus oui_element_get_scroll_metrics_v1(OuiElement* element, OuiScrollMetricsV1* out_metrics, uint8_t* out_has_metrics);
 OuiStatus oui_element_scroll_to(OuiElement* element, double x, double y);
+/* Reveal through the same retained Engine operation used by Rust and
+ * accessibility. Detached/unboxed elements are no-ops. Values must be the
+ * constants above; stale/foreign handles and invalid values are errors. */
+OuiStatus oui_element_scroll_into_view_v1(OuiElement* element, uint32_t block_alignment, uint32_t inline_alignment, uint32_t container);
+/* CSS ease curve on the native document clock. Duration must be finite and
+ * non-negative. Zero duration and reduced motion settle immediately. Calling
+ * scroll_to on a participating container cancels its pending animation. */
+OuiStatus oui_element_smooth_scroll_into_view_v1(OuiElement* element, uint32_t block_alignment, uint32_t inline_alignment, uint32_t container, double duration_ms);
+/* Resolve pending layout before reading the retained logical scroll offsets. */
 OuiStatus oui_element_get_scroll_offset(OuiElement* element, double* out_x, double* out_y);
 OuiStatus oui_element_focus(OuiElement* element);
 OuiStatus oui_element_blur(OuiElement* element);
@@ -666,7 +957,15 @@ OuiStatus oui_corner_radii_create(const OuiLength values[4], OuiStyleCompound** 
 OuiStatus oui_transform_create(const OuiTransformOperation* operations, size_t operation_count, OuiStyleCompound** out_compound);
 /* Parses one schema-typed literal. If tag is OUI_STYLE_VALUE_COMPOUND, the
  * returned payload is owned by the caller and must be destroyed with
- * oui_style_compound_destroy after the value has been submitted. */
+ * oui_style_compound_destroy after the value has been submitted.
+ * ColumnCount uses the integer payload: 0 means auto, positive means count.
+ * Parsed C counts must fit int32_t; negative payloads are invalid. */
+/* Parse one native typed property value. Complex values that cannot use the
+ * property's scalar encoding return OUI_STYLE_VALUE_COMPOUND. Such values are
+ * bound to the selected property, preserve all native fields, and must be
+ * released with oui_style_compound_destroy after use. They are owned,
+ * thread-affine copies; the element clones them on submission. Existing scalar
+ * encodings are unchanged. No CSS stylesheet or JavaScript is executed. */
 OuiStatus oui_style_value_parse(OuiStyleProperty property, OuiUtf8 literal, OuiStyleValue* out_value);
 OuiStatus oui_style_compound_destroy(OuiStyleCompound* compound);
 

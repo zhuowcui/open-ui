@@ -1,0 +1,374 @@
+{
+  "baseline_report_sha256": "b20f90812863730358c238a1aeb48cfec6445377f5f4cf556b034368b6686a3f",
+  "baseline_source_commit": "9534c9f6ddf50a5177dce4089cf39be6b6beae93",
+  "changed_openui_comparisons": [
+    {
+      "after": {
+        "mismatched_pixels": 436,
+        "openui_rgba_sha256": "f085c008579ba734901e6be96426f446f86443253ecfc64fdedb1a8f1ceae0f2",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 460,
+        "openui_rgba_sha256": "b7ae89cd127273633cc08849e5cd4cbf2881f4f52b96ec22c1996b0d0ffb082a",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "5789c74a4fbd5ea1a07b6f521dfeb569c16dbbfa3e623af443b91b9d87798009",
+      "id": "wpt/css_break/flexbox_image-in-fragmented-flexbox-001-crash",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 1747,
+        "openui_rgba_sha256": "1ce67364ea24599130da07e36edb70c2790fa4679a7e74853defcf440e75ba89",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 1771,
+        "openui_rgba_sha256": "971cd331552398dc4a37d357385f3ba00b5df11d72fdf347ae48a1a5e4c4709c",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "74d6f53c3181a9270f98ee3319d7a25a7b42c35101c79123dde4ccea43011531",
+      "id": "wpt/css_display/display-none-inline-img-ref",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 67,
+        "openui_rgba_sha256": "bc012d2debf22cebbb3532d61441a7868166acc2060b4f3c7d9dfa54beeb043e",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 63,
+        "openui_rgba_sha256": "c86ea23acf9fdc936ca614f7e352f321a71ef3120b90f32253d0c2d3bc4435da",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "7d18509c98c72db22385e4b7254bd3a32da3d9c9bb6ab1eb4b2c613d93a1a49a",
+      "id": "wpt/css_overflow/overflow-img-scroll-non-replaced",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 193,
+        "openui_rgba_sha256": "bc012d2debf22cebbb3532d61441a7868166acc2060b4f3c7d9dfa54beeb043e",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 189,
+        "openui_rgba_sha256": "c86ea23acf9fdc936ca614f7e352f321a71ef3120b90f32253d0c2d3bc4435da",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "62aaadfa0ca446d30d081822d6e06598dcf2137c2bde0a3b748812f4f15bcd6d",
+      "id": "wpt/css_overflow/overflow-img-scroll-non-replaced-ref",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 550,
+        "openui_rgba_sha256": "bbb2d52e4beb2e51675fc0b606ef23b1a4945c238cf214a34740c323b8277214",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 574,
+        "openui_rgba_sha256": "012a9295e86e1ffa08ea770badf65f6187c043f918a48db7a1106a7da363dcb3",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "0579fb8fb938950aad28ccb1bbaab2912c3dcbc7239cd4312c1347d344b085e9",
+      "id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-003",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 350,
+        "openui_rgba_sha256": "3442a9f00f6bacd631e7ea60fa9f4342b6caed068afad05d821dd67b9db84559",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 374,
+        "openui_rgba_sha256": "ceccf1b6a66293489a0352709fffd8d36209e0e3e131338fa19731da221aea85",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "05150b0f1c4e909d64bc76d36cc0248b38bc4d13f8f871ea43448ed24864e4e4",
+      "id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-004",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 550,
+        "openui_rgba_sha256": "04d93c588ee0089cecde937a83414d1e1b9522a0432882a52e2b4f38975dba07",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 574,
+        "openui_rgba_sha256": "8386be2ba45c6389bb0d06486ec5d7b37e949225ca1b984308b5269e351f6008",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "1eb486ad8ba61e99cd4464e274ca17f1eb0606b326897ee5ddb4417b33bd1f7c",
+      "id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-005",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 200,
+        "openui_rgba_sha256": "4d939122fb82889b4b8b391f7eba86bbe4b6db6a7ca287957a57fff82cd7e6a5",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 224,
+        "openui_rgba_sha256": "d2d8b493469ddc7edd6a5f0830bb3773449a8a966c471b28df4bf1c859d9b318",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "4d8257ea4859523c6d5d42d36e8b57403cba12735b29a26b0d4eb0d6878e25fa",
+      "id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-006",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 296,
+        "openui_rgba_sha256": "0c5389e832bf1b4bc7116ed3a7b60eb93f761fb43fb4a9b634974cc42c1c3deb",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 320,
+        "openui_rgba_sha256": "4fcfee0025b4e2bc2f992d72ed41ccdb9dca5ced1198bcbd735095379dc590dc",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "e90a02c111ab04b7e2a99a707aee31b3faffb46f1bd8932e6bc29b20769007fb",
+      "id": "wpt/css_sizing/aspect-ratio_replaced-element-025",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 516,
+        "openui_rgba_sha256": "9f42bdedb9dd9c01826569f2fdabe1ff9901ebf54c276a68aed29590f2e165a1",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 616,
+        "openui_rgba_sha256": "493111ec62780a4efadcf9966ed97f7df8b03171cb4040dcfa3c695b6d26ee31",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "934b91f6aa033e489d4070e988019935a8204476f766f86db05bcbe739b5e9d7",
+      "id": "wpt/css_break/flexbox_image-in-fragmented-flexbox-001-crash",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 1638,
+        "openui_rgba_sha256": "d6d6cfa73d8899d81bfe823bf4c099bae104e9c4730a70d665ae38d9794c17b9",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 1738,
+        "openui_rgba_sha256": "e322d3d47330e0f42c7318e0ec1dcd5574c4a1a7e9a5e48cdc7ade9c8882813a",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "fda00887120c49c8da10dead1a96bd99ca99b7bc1afc6222f98ebf89da47c865",
+      "id": "wpt/css_display/display-none-inline-img-ref",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 96,
+        "openui_rgba_sha256": "17df47f28c8d7c912936a930dd8ebce642d62afb28edd73642348f2924ebd4bb",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 196,
+        "openui_rgba_sha256": "edc27d4b1845c7f8cda56e61ad59153e370fb10198794e86aecaa82bd1cbeca2",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "65def467240588bdfb6f225a18e5dbb8dc73e47aec597f41bf015ab85bcc30b4",
+      "id": "wpt/css_multicol/img-alt-as-multicol-crash",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 156,
+        "openui_rgba_sha256": "322f7947134a4f2d30e31efc72a2fe5c6857b69a3ca6b9be43e27f9d4929a10c",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 70,
+        "openui_rgba_sha256": "48876e858bd08a5170cae9cdc5bb70d99246e10216636659062e0e5f8e671695",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "8c9d9c34cb2d23558f2a067b47cbd88ff7628a4073519a03cc59e74a00dd05ee",
+      "id": "wpt/css_overflow/overflow-img-scroll-non-replaced",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 305,
+        "openui_rgba_sha256": "322f7947134a4f2d30e31efc72a2fe5c6857b69a3ca6b9be43e27f9d4929a10c",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 220,
+        "openui_rgba_sha256": "48876e858bd08a5170cae9cdc5bb70d99246e10216636659062e0e5f8e671695",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "7101cf2ce1d95a164ac9f67b2a2f9e12005ca95bd2a62d95b7e9a9ff4e8d1aeb",
+      "id": "wpt/css_overflow/overflow-img-scroll-non-replaced-ref",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 588,
+        "openui_rgba_sha256": "09b791bba357e0e3982f97192bc4728c4fc58fd5c864a3a4a9cc54ec923590f6",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 689,
+        "openui_rgba_sha256": "178ecc32213db2adf46947a9cb0d32f07a1848e4ca36cf86bc7f4d26ac1c8e5a",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "1349a1f714b4ceb2c52eeb116712395766aea09d16600e4ac9ec038f9677754d",
+      "id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-003",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 348,
+        "openui_rgba_sha256": "6cfd2acbafe94d49c976ae35a6463237faec5321e47cbbeac7f8ee32c78287ec",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 449,
+        "openui_rgba_sha256": "7f62d2fb24372547e4f88ddfc98cf5d88871cc1404574b279ee09b0b9bd619ce",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "ff2d9c68a912ac82d533353c01816943f3eabf3a4bb385dfcd15ed477bad8113",
+      "id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-004",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 588,
+        "openui_rgba_sha256": "7b82e5932eddffc0c71a6b6b5cc9a9b1b8d23652b42ab2d7cbdeaef68e3b99dd",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 689,
+        "openui_rgba_sha256": "09867c5cb4e583058c0a7fba27b9b5d37454ed1ee46769345fd91780b5739cd5",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "9ebc84529680d518127fbefbe98f82d4a4b94911ac3d367c4ddafe20a2f7c4c7",
+      "id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-005",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 168,
+        "openui_rgba_sha256": "c385fec14c711408e68d603e67ba36e88f76fab11fe72f00daeb9aa6d79b7eb2",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 269,
+        "openui_rgba_sha256": "6a79ec18b756d01b31987a5e30846b96f8c45302b6a77e2cec09640809900806",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "6be87c233807c66a199f5719aa25867805ccd8ca2926098c80a7c1a5cfd30dbc",
+      "id": "wpt/css_sizing/aspect-ratio_grid-aspect-ratio-006",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 348,
+        "openui_rgba_sha256": "7957680097873fa43ab6393c29851c94527ee9269ec0a6b879eb6a1dd3b31b9b",
+        "status": "different"
+      },
+      "before": {
+        "mismatched_pixels": 448,
+        "openui_rgba_sha256": "e347bfe45e9f4e5c24e8e40f7899cfe607fdc06958083b318136b2d6e6ab0b58",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "a8547028969a8f0ee4a259739b3968e9d1909dd64b62c3e2917785fc48d21ea5",
+      "id": "wpt/css_sizing/aspect-ratio_replaced-element-025",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "d258d265beeb3141c29fd419002b1de4ebb0337e43d688dd57871e0fd50a3981",
+        "status": "exact"
+      },
+      "before": {
+        "mismatched_pixels": 100,
+        "openui_rgba_sha256": "21843320e0bb80c78387024d3a6274a584c5da404cfc13016754c75b55c457ef",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "d258d265beeb3141c29fd419002b1de4ebb0337e43d688dd57871e0fd50a3981",
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-012",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "d258d265beeb3141c29fd419002b1de4ebb0337e43d688dd57871e0fd50a3981",
+        "status": "exact"
+      },
+      "before": {
+        "mismatched_pixels": 100,
+        "openui_rgba_sha256": "21843320e0bb80c78387024d3a6274a584c5da404cfc13016754c75b55c457ef",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "d258d265beeb3141c29fd419002b1de4ebb0337e43d688dd57871e0fd50a3981",
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-017",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "d258d265beeb3141c29fd419002b1de4ebb0337e43d688dd57871e0fd50a3981",
+        "status": "exact"
+      },
+      "before": {
+        "mismatched_pixels": 100,
+        "openui_rgba_sha256": "21843320e0bb80c78387024d3a6274a584c5da404cfc13016754c75b55c457ef",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "d258d265beeb3141c29fd419002b1de4ebb0337e43d688dd57871e0fd50a3981",
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-020",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "d258d265beeb3141c29fd419002b1de4ebb0337e43d688dd57871e0fd50a3981",
+        "status": "exact"
+      },
+      "before": {
+        "mismatched_pixels": 100,
+        "openui_rgba_sha256": "21843320e0bb80c78387024d3a6274a584c5da404cfc13016754c75b55c457ef",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "d258d265beeb3141c29fd419002b1de4ebb0337e43d688dd57871e0fd50a3981",
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-027",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "after": {
+        "mismatched_pixels": 0,
+        "openui_rgba_sha256": "d258d265beeb3141c29fd419002b1de4ebb0337e43d688dd57871e0fd50a3981",
+        "status": "exact"
+      },
+      "before": {
+        "mismatched_pixels": 100,
+        "openui_rgba_sha256": "21843320e0bb80c78387024d3a6274a584c5da404cfc13016754c75b55c457ef",
+        "status": "different"
+      },
+      "chromium_oracle_rgba_sha256": "d258d265beeb3141c29fd419002b1de4ebb0337e43d688dd57871e0fd50a3981",
+      "id": "wpt/css_sizing/grid-item-image-percentage-min-height-computes-as-0",
+      "profile": "desktop-1920x1080@1.5"
+    }
+  ],
+  "chromium_oracle_changes": 0,
+  "comparison_count": 22924,
+  "name": "broken-image-fixed-matrix-census-delta",
+  "new_report_sha256": "3e7a7f5f4b46af927594fd5f52a1d2e6dad82c4fb17cd879be36e651a1967fa2",
+  "new_source_commit": "09683348f3cf1b66a7952584e0286f330b06f1fb",
+  "newly_exact_comparisons": 5,
+  "previously_exact_regressions": 0,
+  "schema_version": 1
+}

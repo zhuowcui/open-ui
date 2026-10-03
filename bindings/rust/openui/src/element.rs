@@ -9,8 +9,8 @@ use openui_engine::{
     AnimationTimeline, NodeHandle, ScrollAnimationId, WeakNode,
 };
 use openui_style::{
-    AnimationOptions, Display, Keyframes, PropertyKeyframes, Style, StyleProperty, StyleValue,
-    TimelineAxis, TimelineRange,
+    AnimationOptions, ComputedStyle, Display, Keyframes, PropertyKeyframes, Style, StyleProperty,
+    StyleValue, TimelineAxis, TimelineRange,
 };
 use std::rc::{Rc, Weak};
 
@@ -49,14 +49,29 @@ impl WeakElement {
 }
 
 impl Element {
+    /// Create a native retained element. `foreignObject` creates an SVG
+    /// viewport for native UI children; like `div`, it has container kind
+    /// [`ElementTag::Div`]. No document scripts execute.
     pub fn create(document: &Document, tag: &str) -> Result<Self, Error> {
+        if tag.eq_ignore_ascii_case("foreignobject") {
+            return Self::create_svg_foreign_object(document);
+        }
         let (tag_kind, display) = tag_definition(tag)?;
-        let handle = document.with_engine_mut(|engine| engine.create_element(tag_kind))?;
+        let handle = document.with_engine_mut(|engine| engine.create_native_element(tag_kind))?;
         if let Some(display) = display {
             document.with_engine_mut(|engine| {
                 engine.set_property(handle, StyleProperty::Display, display.into())
             })?;
         }
+        Ok(Self::from_handle(document.clone(), handle))
+    }
+
+    /// Create an SVG viewport containing native retained UI elements.
+    /// Width and height specify the viewport bounds, including decoration.
+    /// Child mutation, events and ownership use the ordinary native API.
+    /// The container's native kind is [`ElementTag::Div`].
+    pub fn create_svg_foreign_object(document: &Document) -> Result<Self, Error> {
+        let handle = document.with_engine_mut(|engine| engine.create_svg_foreign_object())?;
         Ok(Self::from_handle(document.clone(), handle))
     }
 
@@ -71,12 +86,31 @@ impl Element {
         }
     }
 
+    /// Return this element's native kind. Several authored tag names can
+    /// share a kind; for example, `div` and `main` are both [`ElementTag::Div`].
+    pub fn kind(&self) -> Result<ElementTag, Error> {
+        self.document
+            .with_engine(|engine| engine.element_tag(self.handle))?
+            .map_err(Into::into)
+    }
+
     pub fn append_child(&self, child: &Element) -> Result<(), Error> {
         if !Rc::ptr_eq(&self.document.inner, &child.document.inner) {
             return Err(openui_engine::EngineError::WrongDocument.into());
         }
         self.document
             .with_engine_mut(|engine| engine.append_or_move_child(self.handle, child.handle))
+    }
+
+    /// Copy this element and its authored descendants into a detached tree.
+    /// The returned tree can be attached with [`Self::append_child`] or
+    /// [`Self::insert_before`]. Event listeners and running animations stay on
+    /// the original elements.
+    pub fn clone_subtree(&self) -> Result<Element, Error> {
+        let handle = self
+            .document
+            .with_engine_mut(|engine| engine.clone_subtree(self.handle))?;
+        Ok(Self::from_handle(self.document.clone(), handle))
     }
 
     pub fn insert_before(&self, child: &Element, before: &Element) -> Result<(), Error> {
@@ -107,30 +141,43 @@ impl Element {
         self.document.remove_node(self.handle)
     }
 
+    /// Detach this element while keeping its handle, descendants, state, and
+    /// Rust event listeners. Attach it again with [`Self::append_child`] or
+    /// [`Self::insert_before`]. Use [`Self::remove`] to destroy it instead.
+    pub fn detach(&self) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.detach(self.handle))
+    }
+
+    /// Return the first authored element child, skipping text nodes.
     pub fn first_child(&self) -> Result<Option<Element>, Error> {
-        let child = self
-            .document
-            .with_engine(|engine| engine.children(self.handle))??
-            .into_iter()
-            .next();
+        let child = self.document.with_engine(|engine| {
+            for handle in engine.children(self.handle)? {
+                if engine.is_authored_element(handle)? {
+                    return Ok(Some(handle));
+                }
+            }
+            Ok::<_, openui_engine::EngineError>(None)
+        })??;
         Ok(child.map(|handle| Self::from_handle(self.document.clone(), handle)))
     }
 
+    /// Return the next authored element sibling, skipping text nodes.
     pub fn next_sibling(&self) -> Result<Option<Element>, Error> {
-        let parent = self
-            .document
-            .with_engine(|engine| engine.parent(self.handle))??;
-        let Some(parent) = parent else {
-            return Ok(None);
-        };
-        let siblings = self
-            .document
-            .with_engine(|engine| engine.children(parent))??;
-        let next = siblings
-            .iter()
-            .position(|handle| *handle == self.handle)
-            .and_then(|index| siblings.get(index + 1))
-            .copied();
+        let next = self.document.with_engine(|engine| {
+            let Some(parent) = engine.parent(self.handle)? else {
+                return Ok(None);
+            };
+            let siblings = engine.children(parent)?;
+            if let Some(index) = siblings.iter().position(|handle| *handle == self.handle) {
+                for handle in siblings.into_iter().skip(index + 1) {
+                    if engine.is_authored_element(handle)? {
+                        return Ok(Some(handle));
+                    }
+                }
+            }
+            Ok::<_, openui_engine::EngineError>(None)
+        })??;
         Ok(next.map(|handle| Self::from_handle(self.document.clone(), handle)))
     }
 
@@ -149,6 +196,31 @@ impl Element {
             .with_engine_mut(|engine| engine.append_child(self.handle, handle))
     }
 
+    /// Attach or move an existing text node under this element.
+    pub fn append_text_child(&self, child: &crate::TextNode) -> Result<(), Error> {
+        if !Rc::ptr_eq(&self.document.inner, &child.document.inner) {
+            return Err(openui_engine::EngineError::WrongDocument.into());
+        }
+        self.document
+            .with_engine_mut(|engine| engine.append_or_move_child(self.handle, child.handle))
+    }
+
+    /// Insert or move a text node immediately before an element child.
+    pub fn insert_text_before(
+        &self,
+        child: &crate::TextNode,
+        before: &Element,
+    ) -> Result<(), Error> {
+        if !Rc::ptr_eq(&self.document.inner, &child.document.inner)
+            || !Rc::ptr_eq(&self.document.inner, &before.document.inner)
+        {
+            return Err(openui_engine::EngineError::WrongDocument.into());
+        }
+        self.document.with_engine_mut(|engine| {
+            engine.insert_before(self.handle, child.handle, before.handle)
+        })
+    }
+
     pub fn create_text_child(&self, text: &str) -> Result<crate::TextNode, Error> {
         let handle = self
             .document
@@ -165,6 +237,14 @@ impl Element {
     pub fn set_property(&self, property: StyleProperty, value: StyleValue) -> Result<(), Error> {
         self.document
             .with_engine_mut(|engine| engine.set_property(self.handle, property, value))
+    }
+
+    /// Return an owned snapshot of this element's resolved style.
+    /// Subsequent mutations do not change the returned value.
+    pub fn computed_style(&self) -> Result<ComputedStyle, Error> {
+        self.document
+            .with_engine(|engine| engine.computed_style(self.handle).cloned())?
+            .map_err(Into::into)
     }
 
     pub fn set_language(&self, language: &openui_style::LanguageTag) -> Result<(), Error> {
@@ -341,9 +421,57 @@ impl Element {
         self.set_attribute("class", classes)
     }
 
+    /// Check whether this element has a class token.
+    pub fn has_class(&self, class: &str) -> Result<bool, Error> {
+        validate_class_token(class)?;
+        Ok(self
+            .get_attribute("class")?
+            .is_some_and(|classes| class_tokens(&classes).any(|token| token == class)))
+    }
+
+    /// Add a class token, returning whether the attribute changed.
+    pub fn add_class(&self, class: &str) -> Result<bool, Error> {
+        validate_class_token(class)?;
+        let classes = self.get_attribute("class")?.unwrap_or_default();
+        let mut tokens: Vec<_> = class_tokens(&classes).collect();
+        if tokens.contains(&class) {
+            return Ok(false);
+        }
+        tokens.push(class);
+        self.set_class(&tokens.join(" "))?;
+        Ok(true)
+    }
+
+    /// Remove a class token, returning whether the attribute changed.
+    pub fn remove_class(&self, class: &str) -> Result<bool, Error> {
+        validate_class_token(class)?;
+        let Some(classes) = self.get_attribute("class")? else {
+            return Ok(false);
+        };
+        let tokens: Vec<_> = class_tokens(&classes).collect();
+        if !tokens.contains(&class) {
+            return Ok(false);
+        }
+        self.set_class(
+            &tokens
+                .into_iter()
+                .filter(|token| *token != class)
+                .collect::<Vec<_>>()
+                .join(" "),
+        )?;
+        Ok(true)
+    }
+
     pub fn set_text(&self, text: &str) -> Result<(), Error> {
         self.remove_all_children()?;
         self.append_text_node(text)
+    }
+
+    /// Return this element's authored text and descendant text in tree order.
+    pub fn text_content(&self) -> Result<String, Error> {
+        Ok(self
+            .document
+            .with_engine(|engine| engine.text_content(self.handle))??)
     }
 
     pub fn set_image_resource(
@@ -409,6 +537,18 @@ impl Element {
             .perform_accessibility_action(self.handle, action)
     }
 
+    /// Owned border-box rectangles for every layout fragment, in logical
+    /// viewport coordinates after scrolling and transforms. Includes empty,
+    /// hidden, clipped, and pointer-ineligible boxes. Detached elements and
+    /// `display: none` elements return an empty list. Reading flushes layout.
+    pub fn client_rects(&self) -> Result<Vec<Rect>, Error> {
+        self.document
+            .with_engine_mut(|engine| engine.client_rects(self.handle))
+    }
+
+    /// Bounds of all nonempty layout fragments in logical viewport
+    /// coordinates. Returns the final rectangle when every fragment is
+    /// empty, and `None` when the element has no layout box.
     pub fn bounding_rect(&self) -> Result<Option<Rect>, Error> {
         self.document
             .with_engine_mut(|engine| engine.bounds(self.handle))
@@ -425,14 +565,26 @@ impl Element {
     pub fn scroll_left(&self) -> Result<f64, Error> {
         Ok(self
             .document
-            .with_engine(|engine| engine.scroll_offset(self.handle))??
+            .with_engine_mut(|engine| {
+                engine.update()?;
+                engine.scroll_offset(self.handle)
+            })?
             .0)
+    }
+
+    /// Owned client and content dimensions after resolving pending layout.
+    pub fn scroll_metrics(&self) -> Result<Option<crate::ScrollMetrics>, Error> {
+        self.document
+            .with_engine_mut(|engine| engine.scroll_metrics(self.handle))
     }
 
     pub fn scroll_top(&self) -> Result<f64, Error> {
         Ok(self
             .document
-            .with_engine(|engine| engine.scroll_offset(self.handle))??
+            .with_engine_mut(|engine| {
+                engine.update()?;
+                engine.scroll_offset(self.handle)
+            })?
             .1)
     }
 
@@ -442,10 +594,28 @@ impl Element {
     }
 
     pub fn scroll_by(&self, dx: f64, dy: f64) -> Result<(), Error> {
-        let (x, y) = self
-            .document
-            .with_engine(|engine| engine.scroll_offset(self.handle))??;
-        self.scroll_to(x + dx, y + dy)
+        self.document
+            .with_engine_mut(|engine| engine.scroll_by(self.handle, dx, dy))
+    }
+
+    /// Reveal this element through enclosing scrollports and the native viewport.
+    /// Logical alignment follows this element's writing mode and direction.
+    pub fn scroll_into_view(&self, options: crate::ScrollIntoViewOptions) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.scroll_into_view(self.handle, options))
+    }
+
+    /// Reveal using the retained animation clock and CSS ease curve. Zero
+    /// duration and reduced motion settle immediately. No app callback runs
+    /// while the engine is borrowed.
+    pub fn smooth_scroll_into_view(
+        &self,
+        options: crate::ScrollIntoViewOptions,
+        duration_ms: f64,
+    ) -> Result<Vec<crate::ScrollAnimationId>, Error> {
+        self.document.with_engine_mut(|engine| {
+            engine.smooth_scroll_into_view(self.handle, options, duration_ms)
+        })
     }
 
     pub fn control_value(&self) -> Result<Option<String>, Error> {
@@ -497,7 +667,32 @@ impl Element {
     }
 
     pub fn is_open(&self) -> Result<bool, Error> {
+        if self
+            .document
+            .with_engine(|engine| engine.element_tag(self.handle))??
+            == ElementTag::Details
+        {
+            return Ok(self.get_attribute("open")?.is_some());
+        }
         self.control_flag(|state| state.open)
+    }
+
+    /// Set whether a native details element is expanded.
+    pub fn set_open(&self, open: bool) -> Result<(), Error> {
+        if self
+            .document
+            .with_engine(|engine| engine.element_tag(self.handle))??
+            != ElementTag::Details
+        {
+            return Err(Error::InvalidArgument(
+                "set_open requires a details element",
+            ));
+        }
+        if open {
+            self.set_attribute("open", "")
+        } else {
+            self.remove_attribute("open").map(|_| ())
+        }
     }
 
     pub fn is_indeterminate(&self) -> Result<bool, Error> {
@@ -527,18 +722,21 @@ impl Element {
     }
 
     pub fn focus(&self) -> Result<(), Error> {
-        self.document
-            .with_engine_mut(|engine| engine.focus(self.handle))
+        self.document.focus_element(self.handle)
     }
 
     pub fn blur(&self) -> Result<(), Error> {
-        self.document
-            .with_engine_mut(|engine| engine.blur(self.handle))
+        self.document.blur_element(self.handle)
     }
 
     pub fn has_focus(&self) -> Result<bool, Error> {
         self.document
             .with_engine(|engine| engine.focused() == Some(self.handle))
+    }
+
+    /// Dispatch a native click and run the element's default activation unless canceled.
+    pub fn click(&self) -> Result<(), Error> {
+        self.perform_accessibility_action(AccessibilityAction::Click)
     }
 
     pub fn set_pointer_capture(&self, pointer_id: u64) -> Result<(), Error> {
@@ -607,51 +805,67 @@ impl Element {
     }
 }
 
+pub(crate) fn class_tokens(classes: &str) -> impl Iterator<Item = &str> {
+    classes
+        .split(|ch| matches!(ch, ' ' | '\t' | '\n' | '\x0c' | '\r'))
+        .filter(|token| !token.is_empty())
+}
+
+pub(crate) fn validate_class_token(class: &str) -> Result<(), Error> {
+    if class.is_empty()
+        || class
+            .chars()
+            .any(|ch| matches!(ch, ' ' | '\t' | '\n' | '\x0c' | '\r'))
+    {
+        Err(Error::InvalidArgument("class must be one nonempty token"))
+    } else {
+        Ok(())
+    }
+}
+
 fn tag_definition(tag: &str) -> Result<(ElementTag, Option<Display>), Error> {
     use ElementTag as T;
     let normalized = tag.to_ascii_lowercase();
     let definition = match normalized.as_str() {
         "div" | "main" | "nav" | "header" | "footer" | "section" | "article" | "aside" | "p"
-        | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "ul" | "ol" | "hr" => {
-            (T::Div, Some(Display::Block))
-        }
+        | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "ul" | "ol" | "hr" => (T::Div, None),
         "li" => (T::Div, Some(Display::ListItem)),
-        "span" | "a" | "label" | "strong" | "em" | "small" => (T::Span, Some(Display::Inline)),
+        "span" | "a" | "label" | "strong" | "em" | "small" => (T::Span, None),
         "br" => (T::Break, None),
         "wbr" => (T::WordBreak, None),
-        "ruby" => (T::Ruby, Some(Display::Inline)),
-        "rt" => (T::RubyText, Some(Display::Inline)),
-        "table" => (T::Table, Some(Display::Table)),
-        "caption" => (T::TableCaption, Some(Display::TableCaption)),
-        "colgroup" => (T::TableColumnGroup, Some(Display::TableColumnGroup)),
-        "col" => (T::TableColumn, Some(Display::TableColumn)),
-        "thead" => (T::TableHead, Some(Display::TableHeaderGroup)),
-        "tbody" => (T::TableBody, Some(Display::TableRowGroup)),
-        "tfoot" => (T::TableFoot, Some(Display::TableFooterGroup)),
-        "tr" => (T::TableRow, Some(Display::TableRow)),
-        "td" => (T::TableCell, Some(Display::TableCell)),
-        "th" => (T::TableHeaderCell, Some(Display::TableCell)),
-        "img" => (T::Image, Some(Display::InlineBlock)),
-        "canvas" => (T::Canvas, Some(Display::InlineBlock)),
-        "svg" => (T::Svg, Some(Display::InlineBlock)),
-        "iframe" => (T::IFrame, Some(Display::InlineBlock)),
-        "object" => (T::Object, Some(Display::InlineBlock)),
-        "audio" => (T::Audio, Some(Display::InlineBlock)),
-        "video" => (T::Video, Some(Display::InlineBlock)),
-        "input" => (T::Input, Some(Display::InlineBlock)),
-        "button" => (T::Button, Some(Display::InlineBlock)),
-        "meter" => (T::Meter, Some(Display::InlineBlock)),
-        "progress" => (T::Progress, Some(Display::InlineBlock)),
-        "fieldset" => (T::Fieldset, Some(Display::Block)),
-        "legend" => (T::Legend, Some(Display::Block)),
-        "details" => (T::Details, Some(Display::Block)),
-        "summary" => (T::Summary, Some(Display::Block)),
-        "textarea" => (T::TextArea, Some(Display::InlineBlock)),
-        "select" => (T::Select, Some(Display::InlineBlock)),
-        "option" => (T::Option, Some(Display::Block)),
-        "optgroup" => (T::OptGroup, Some(Display::Block)),
-        "form" => (T::Form, Some(Display::Block)),
-        "embed" => (T::Embed, Some(Display::InlineBlock)),
+        "ruby" => (T::Ruby, None),
+        "rt" => (T::RubyText, None),
+        "table" => (T::Table, None),
+        "caption" => (T::TableCaption, None),
+        "colgroup" => (T::TableColumnGroup, None),
+        "col" => (T::TableColumn, None),
+        "thead" => (T::TableHead, None),
+        "tbody" => (T::TableBody, None),
+        "tfoot" => (T::TableFoot, None),
+        "tr" => (T::TableRow, None),
+        "td" => (T::TableCell, None),
+        "th" => (T::TableHeaderCell, None),
+        "img" => (T::Image, None),
+        "canvas" => (T::Canvas, None),
+        "svg" => (T::Svg, None),
+        "iframe" => (T::IFrame, None),
+        "object" => (T::Object, None),
+        "audio" => (T::Audio, None),
+        "video" => (T::Video, None),
+        "input" => (T::Input, None),
+        "button" => (T::Button, None),
+        "meter" => (T::Meter, None),
+        "progress" => (T::Progress, None),
+        "fieldset" => (T::Fieldset, None),
+        "legend" => (T::Legend, None),
+        "details" => (T::Details, None),
+        "summary" => (T::Summary, None),
+        "textarea" => (T::TextArea, None),
+        "select" => (T::Select, None),
+        "option" => (T::Option, None),
+        "optgroup" => (T::OptGroup, None),
+        "form" => (T::Form, None),
+        "embed" => (T::Embed, None),
         _ => return Err(Error::UnknownTag(tag.to_owned())),
     };
     Ok(definition)
@@ -661,8 +875,90 @@ fn tag_definition(tag: &str) -> Result<(ElementTag, Option<Display>), Error> {
 mod tests {
     use super::*;
     use crate::events::{EventPhase, Modifiers, MouseButton, MouseEventType};
-    use openui_style::{AnimationOptions, FillMode, Keyframes};
+    use openui_style::{AnimationOptions, FillMode, Keyframes, Overflow, OverflowClipBox};
     use std::cell::{Cell, RefCell};
+
+    #[test]
+    fn native_replaced_elements_use_chromium_host_clip_defaults() {
+        let document = Document::new(100, 100).unwrap();
+        for tag in ["img", "canvas", "video", "iframe", "embed"] {
+            let element = Element::create(&document, tag).unwrap();
+            let style = element.computed_style().unwrap();
+            assert_eq!(style.overflow_x, Overflow::Clip, "{tag}");
+            assert_eq!(style.overflow_y, Overflow::Clip, "{tag}");
+            assert_eq!(
+                style.overflow_clip_box,
+                OverflowClipBox::ContentBox,
+                "{tag}"
+            );
+        }
+
+        let image = Element::create(&document, "img").unwrap();
+        image.set_overflow_x(Overflow::Scroll).unwrap();
+        assert_eq!(image.computed_style().unwrap().overflow_x, Overflow::Scroll);
+        assert_eq!(image.computed_style().unwrap().overflow_y, Overflow::Clip);
+        // Object fallback children currently use a native block-flow path;
+        // its host clip needs separate qualification against Chromium.
+        assert_eq!(
+            Element::create(&document, "object")
+                .unwrap()
+                .computed_style()
+                .unwrap()
+                .overflow_x,
+            Overflow::Visible
+        );
+        assert_eq!(
+            Element::create(&document, "div")
+                .unwrap()
+                .computed_style()
+                .unwrap()
+                .overflow_x,
+            Overflow::Visible
+        );
+    }
+
+    #[test]
+    fn native_svg_viewport_bounds_survive_decoration_mutation_and_cloning() {
+        let document = Document::new(100, 100).unwrap();
+        let svg = Element::create(&document, "svg").unwrap();
+        svg.set_width(crate::typed_style::LengthValue::px(80.0))
+            .unwrap();
+        svg.set_height(crate::typed_style::LengthValue::px(60.0))
+            .unwrap();
+        document.body().append_child(&svg).unwrap();
+        let foreign = Element::create(&document, "foreignObject").unwrap();
+        foreign
+            .set_width(crate::typed_style::LengthValue::px(1.0))
+            .unwrap();
+        foreign
+            .set_height(crate::typed_style::LengthValue::px(1.0))
+            .unwrap();
+        svg.append_child(&foreign).unwrap();
+        let bounds = foreign.bounding_rect().unwrap().unwrap();
+        foreign.set_border_left_width(3).unwrap();
+        foreign
+            .set_border_left_style(openui_style::BorderStyle::Double)
+            .unwrap();
+        foreign
+            .set_padding(crate::typed_style::Edges::all(
+                crate::typed_style::LengthValue::px(2.0),
+            ))
+            .unwrap();
+        assert_eq!(foreign.bounding_rect().unwrap().unwrap(), bounds);
+        foreign
+            .set_box_sizing(openui_style::BoxSizing::BorderBox)
+            .unwrap();
+        assert_eq!(foreign.bounding_rect().unwrap().unwrap(), bounds);
+        let clone = foreign.clone_subtree().unwrap();
+        foreign.detach().unwrap();
+        svg.append_child(&clone).unwrap();
+        assert_eq!(clone.bounding_rect().unwrap().unwrap(), bounds);
+        clone
+            .set_width(crate::typed_style::LengthValue::px(8.0))
+            .unwrap();
+        let changed = clone.bounding_rect().unwrap().unwrap();
+        assert_eq!((changed.width, changed.height), (8.0, 1.0));
+    }
 
     #[test]
     fn typed_animation_uses_manual_clock_and_dispatches_events() {
@@ -708,6 +1004,74 @@ mod tests {
 
         let foreign = Element::create(&b, "div").unwrap();
         assert!(parent.append_child(&foreign).is_err());
+    }
+
+    #[test]
+    fn cloned_subtree_keeps_native_content_but_has_independent_handles() {
+        let document = Document::new(100, 100).unwrap();
+        let original = Element::create(&document, "div").unwrap();
+        original.set_id("original").unwrap();
+        original
+            .set_property(
+                StyleProperty::Width,
+                openui_style::LengthValue::px(42.0).into(),
+            )
+            .unwrap();
+        let input = Element::create(&document, "input").unwrap();
+        input.set_attribute("type", "text").unwrap();
+        input.set_control_value("edited").unwrap();
+        original.append_child(&input).unwrap();
+        document.body().append_child(&original).unwrap();
+
+        let clone = original.clone_subtree().unwrap();
+        assert!(clone.parent().unwrap().is_none());
+        assert_eq!(
+            clone.get_attribute("id").unwrap().as_deref(),
+            Some("original")
+        );
+        let cloned_input = clone.first_child().unwrap().unwrap();
+        assert_eq!(
+            cloned_input.control_value().unwrap().as_deref(),
+            Some("edited")
+        );
+        assert_eq!(
+            document
+                .with_engine(|engine| engine.computed_style(clone.handle).unwrap().width)
+                .unwrap(),
+            document
+                .with_engine(|engine| engine.computed_style(original.handle).unwrap().width)
+                .unwrap()
+        );
+
+        cloned_input.set_control_value("copy").unwrap();
+        clone
+            .set_property(
+                StyleProperty::Width,
+                openui_style::LengthValue::px(24.0).into(),
+            )
+            .unwrap();
+        clone.set_id("copy").unwrap();
+        document.body().append_child(&clone).unwrap();
+        assert_eq!(input.control_value().unwrap().as_deref(), Some("edited"));
+        assert_ne!(
+            document
+                .with_engine(|engine| engine.computed_style(clone.handle).unwrap().width)
+                .unwrap(),
+            document
+                .with_engine(|engine| engine.computed_style(original.handle).unwrap().width)
+                .unwrap()
+        );
+        assert_eq!(
+            original.get_attribute("id").unwrap().as_deref(),
+            Some("original")
+        );
+        assert!(document.element_by_id("copy").unwrap().is_some());
+        original.remove().unwrap();
+        assert!(original.clone_subtree().is_err());
+        assert_eq!(
+            cloned_input.control_value().unwrap().as_deref(),
+            Some("copy")
+        );
     }
 
     #[test]

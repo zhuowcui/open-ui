@@ -1,0 +1,762 @@
+diff --git a/bindings/rust/openui-paint/src/content_layer.rs b/bindings/rust/openui-paint/src/content_layer.rs
+index 414e02a3..d4a0579b 100644
+--- a/bindings/rust/openui-paint/src/content_layer.rs
++++ b/bindings/rust/openui-paint/src/content_layer.rs
+@@ -2,7 +2,7 @@
+ 
+ use openui_dom::NodeId;
+ use openui_style::Color;
+-use skia_safe::{BlendMode, Canvas, ClipOp, Picture, Rect};
++use skia_safe::{BlendMode, Canvas, ClipOp, Contains, Picture, Rect};
+ 
+ /// A retained scrolling content recording, independent of viewport controls.
+ #[derive(Clone)]
+@@ -14,6 +14,7 @@ pub struct RecordedContentLayer {
+     pub contents_opaque: bool,
+     pub scroll_translation: (f32, f32),
+     pub picture: Picture,
++    pub(crate) paint_record: crate::paint_record::LayerPaintRecord,
+ }
+ 
+ impl RecordedContentLayer {
+@@ -56,23 +57,121 @@ impl RecordedContentLayer {
+                         rect.bottom / scale,
+                     )
+                 };
++                // A picture recorder's logical clip query can discard a
++                // subpixel band which is visible after physical scaling.
++                // Select visible tiles from the parent clip before recording
++                // that band; raster playback owns its physical coverage.
++                let visible = canvas.local_clip_bounds();
+                 canvas.save();
+                 canvas.clip_rect(logical(outer), ClipOp::Intersect, false);
+                 if !inner.is_empty() {
+                     canvas.clip_rect(logical(inner), ClipOp::Difference, false);
+                 }
+-                canvas.draw_color(
+-                    skia_safe::Color4f::new(
+-                        self.background_color.r,
+-                        self.background_color.g,
+-                        self.background_color.b,
+-                        self.background_color.a,
++                self.clear_boundary_tiles(canvas, scale, physical, inner, visible);
++                canvas.restore();
++            }
++        }
++        canvas.draw_picture(&self.picture, None, None);
++    }
++
++    fn clear_boundary_tiles(
++        &self,
++        canvas: &Canvas,
++        scale: f32,
++        physical: Rect,
++        inner: Rect,
++        visible: Option<Rect>,
++    ) {
++        let background = skia_safe::Color4f::new(
++            self.background_color.r,
++            self.background_color.g,
++            self.background_color.b,
++            self.background_color.a,
++        );
++        if !self.paint_record.supports_analysis() {
++            canvas.draw_color(background, BlendMode::Src);
++            return;
++        }
++        let Some(visible) = visible else {
++            canvas.draw_color(background, BlendMode::Src);
++            return;
++        };
++        // Pinned Linux CPU tilings use 256 texels with one border texel.
++        // cc::TilingData partitions geometry at 255, 509, ... while each
++        // tile's analysis includes its border. Solid-color tiles bypass
++        // normal raster playback and therefore its background-hint clear.
++        let axis = |length: f32, visible_lo: f32, visible_hi: f32| {
++            let size = (f64::from(length.ceil()).min(f64::from(i32::MAX))) as i64;
++            let count = (1 + (size - 3) / 254).max(1);
++            let first = (((visible_lo - 1.0) / 254.0).floor() as i64).clamp(0, count - 1);
++            let last = ((visible_hi / 254.0).ceil() as i64).clamp(first, count - 1);
++            (first..=last)
++                .map(|index| {
++                    let lo = 254 * index + i64::from(index != 0);
++                    let hi = (254 * (index + 1) + 1 + i64::from(index + 1 == count)).min(size);
++                    (
++                        lo as f32,
++                        hi as f32,
++                        (254 * index) as f32,
++                        (254 * index + 256).min(size) as f32,
++                    )
++                })
++                .collect::<Vec<_>>()
++        };
++        let columns = axis(
++            self.bounds.width() * scale,
++            visible.left * scale - physical.left,
++            visible.right * scale - physical.left,
++        );
++        let rows = axis(
++            self.bounds.height() * scale,
++            visible.top * scale - physical.top,
++            visible.bottom * scale - physical.top,
++        );
++        for &(top, bottom, analysis_top, analysis_bottom) in &rows {
++            for &(left, right, analysis_left, analysis_right) in &columns {
++                let tile = Rect::from_ltrb(
++                    physical.left + left,
++                    physical.top + top,
++                    physical.left + right,
++                    physical.top + bottom,
++                );
++                if !inner.is_empty() && inner.contains(tile) {
++                    continue;
++                }
++                let query = Rect::from_ltrb(
++                    (self.bounds.left + analysis_left / scale)
++                        .floor()
++                        .max(self.bounds.left),
++                    (self.bounds.top + analysis_top / scale)
++                        .floor()
++                        .max(self.bounds.top),
++                    (self.bounds.left + analysis_right / scale)
++                        .ceil()
++                        .min(self.bounds.right),
++                    (self.bounds.top + analysis_bottom / scale)
++                        .ceil()
++                        .min(self.bounds.bottom),
++                );
++                let color = self
++                    .paint_record
++                    .solid_color(query)
++                    .filter(|color| color.a == 1.0)
++                    .unwrap_or(background);
++                canvas.save();
++                canvas.clip_rect(
++                    Rect::from_ltrb(
++                        tile.left / scale,
++                        tile.top / scale,
++                        tile.right / scale,
++                        tile.bottom / scale,
+                     ),
+-                    BlendMode::Src,
++                    ClipOp::Intersect,
++                    false,
+                 );
++                canvas.draw_color(color, BlendMode::Src);
+                 canvas.restore();
+             }
+         }
+-        canvas.draw_picture(&self.picture, None, None);
+     }
+ }
+diff --git a/bindings/rust/openui-paint/src/lib.rs b/bindings/rust/openui-paint/src/lib.rs
+index bba4437a..59f0e884 100644
+--- a/bindings/rust/openui-paint/src/lib.rs
++++ b/bindings/rust/openui-paint/src/lib.rs
+@@ -11,6 +11,7 @@ pub mod decoration_painter;
+ pub mod emphasis_painter;
+ pub mod image_resource;
+ pub mod paint_order;
++mod paint_record;
+ mod painter;
+ mod render;
+ pub mod text_painter;
+diff --git a/bindings/rust/openui-paint/src/paint_record.rs b/bindings/rust/openui-paint/src/paint_record.rs
+new file mode 100644
+index 00000000..8a3cfd71
+--- /dev/null
++++ b/bindings/rust/openui-paint/src/paint_record.rs
+@@ -0,0 +1,313 @@
++//! Paint operations retained with a content picture for analytic tile decisions.
++//!
++//! Unsupported operations keep ordinary picture raster. No output pixels are
++//! inspected to choose a color, and all calls reach the original Skia canvas.
++
++use skia_safe::{
++    surfaces, BlendMode, Canvas as SkiaCanvas, ClipOp, Color4f, Contains, Matrix, Paint,
++    PaintStyle, Rect, Vector,
++};
++use std::{cell::RefCell, ops::Deref};
++
++#[derive(Clone)]
++enum Operation {
++    Save,
++    Restore,
++    RestoreTo(usize),
++    Translate(Vector),
++    Scale((f32, f32)),
++    Concat(Matrix),
++    Clip(Rect, ClipOp, bool),
++    Rect(Rect, Paint),
++}
++
++#[derive(Clone, Default)]
++pub(crate) struct LayerPaintRecord {
++    operations: Vec<Operation>,
++    complete: bool,
++}
++
++struct Recording {
++    canvas: usize,
++    record: LayerPaintRecord,
++}
++
++thread_local! {
++    static RECORDING: RefCell<Option<Recording>> = const { RefCell::new(None) };
++}
++
++pub(crate) struct RecordingScope {
++    previous: Option<Recording>,
++}
++
++impl RecordingScope {
++    pub(crate) fn new(canvas: &SkiaCanvas) -> Self {
++        let previous = RECORDING.with(|state| {
++            state.replace(Some(Recording {
++                canvas: canvas as *const SkiaCanvas as usize,
++                record: LayerPaintRecord {
++                    operations: Vec::new(),
++                    complete: true,
++                },
++            }))
++        });
++        Self { previous }
++    }
++
++    pub(crate) fn snapshot(&self) -> LayerPaintRecord {
++        RECORDING.with(|state| {
++            state
++                .borrow()
++                .as_ref()
++                .expect("active paint recording")
++                .record
++                .clone()
++        })
++    }
++}
++
++impl Drop for RecordingScope {
++    fn drop(&mut self) {
++        RECORDING.with(|state| {
++            state.replace(self.previous.take());
++        });
++    }
++}
++
++fn capture(canvas: &SkiaCanvas, operation: impl FnOnce() -> Operation) {
++    RECORDING.with(|state| {
++        if let Some(recording) = state.borrow_mut().as_mut() {
++            if recording.canvas == canvas as *const SkiaCanvas as usize && recording.record.complete
++            {
++                recording.record.operations.push(operation());
++            }
++        }
++    });
++}
++
++fn unsupported(canvas: &SkiaCanvas) {
++    RECORDING.with(|state| {
++        if let Some(recording) = state.borrow_mut().as_mut() {
++            if recording.canvas == canvas as *const SkiaCanvas as usize {
++                recording.record.complete = false;
++            }
++        }
++    });
++}
++
++/// Internal canvas facade. Untracked Skia operations conservatively disable
++/// analytic color selection for this recording rather than guessing their effect.
++pub(crate) trait PaintCanvas {
++    fn raw_untracked(&self) -> &SkiaCanvas;
++}
++
++impl PaintCanvas for SkiaCanvas {
++    fn raw_untracked(&self) -> &SkiaCanvas {
++        self
++    }
++}
++
++impl Deref for dyn PaintCanvas + '_ {
++    type Target = SkiaCanvas;
++    fn deref(&self) -> &SkiaCanvas {
++        let canvas = self.raw_untracked();
++        unsupported(canvas);
++        canvas
++    }
++}
++
++impl dyn PaintCanvas + '_ {
++    pub(crate) fn save(&self) -> usize {
++        let c = self.raw_untracked();
++        capture(c, || Operation::Save);
++        c.save()
++    }
++    pub(crate) fn restore(&self) -> &Self {
++        let c = self.raw_untracked();
++        capture(c, || Operation::Restore);
++        c.restore();
++        self
++    }
++    pub(crate) fn restore_to_count(&self, count: usize) -> &Self {
++        let c = self.raw_untracked();
++        capture(c, || Operation::RestoreTo(count));
++        c.restore_to_count(count);
++        self
++    }
++    pub(crate) fn save_count(&self) -> usize {
++        self.raw_untracked().save_count()
++    }
++    pub(crate) fn translate(&self, offset: impl Into<Vector>) -> &Self {
++        let offset = offset.into();
++        let c = self.raw_untracked();
++        capture(c, || Operation::Translate(offset));
++        c.translate(offset);
++        self
++    }
++    pub(crate) fn scale(&self, scale: (f32, f32)) -> &Self {
++        let c = self.raw_untracked();
++        capture(c, || Operation::Scale(scale));
++        c.scale(scale);
++        self
++    }
++    pub(crate) fn concat(&self, matrix: &Matrix) -> &Self {
++        let c = self.raw_untracked();
++        capture(c, || Operation::Concat(*matrix));
++        c.concat(matrix);
++        self
++    }
++    pub(crate) fn clip_rect(
++        &self,
++        rect: impl AsRef<Rect>,
++        op: impl Into<Option<ClipOp>>,
++        aa: impl Into<Option<bool>>,
++    ) -> &Self {
++        let rect = *rect.as_ref();
++        let op = op.into().unwrap_or(ClipOp::Intersect);
++        let aa = aa.into().unwrap_or(false);
++        let c = self.raw_untracked();
++        capture(c, || Operation::Clip(rect, op, aa));
++        c.clip_rect(rect, op, aa);
++        self
++    }
++    pub(crate) fn draw_rect(&self, rect: impl AsRef<Rect>, paint: &Paint) -> &Self {
++        let rect = *rect.as_ref();
++        let c = self.raw_untracked();
++        capture(c, || Operation::Rect(rect, paint.clone()));
++        c.draw_rect(rect, paint);
++        self
++    }
++    pub(crate) fn local_clip_bounds(&self) -> Option<Rect> {
++        self.raw_untracked().local_clip_bounds()
++    }
++    pub(crate) fn local_to_device_as_3x3(&self) -> Matrix {
++        self.raw_untracked().local_to_device_as_3x3()
++    }
++    pub(crate) fn is_clip_rect(&self) -> bool {
++        self.raw_untracked().is_clip_rect()
++    }
++}
++
++impl LayerPaintRecord {
++    pub(crate) fn supports_analysis(&self) -> bool {
++        self.complete
++    }
++
++    pub(crate) fn solid_color(&self, rect: Rect) -> Option<Color4f> {
++        if !self.complete || rect.is_empty() {
++            return None;
++        }
++        // Chromium's SolidColorAnalyzer evaluates paint records with a
++        // SkNoDrawCanvas over the logical, layer-bounded tile query.
++        let mut surface = surfaces::null((rect.width() as i32, rect.height() as i32))?;
++        let canvas = surface.canvas();
++        canvas.translate((-rect.left, -rect.top));
++        canvas.clip_rect(rect, ClipOp::Intersect, false);
++        let mut color = Color4f::new(0.0, 0.0, 0.0, 0.0);
++        let mut solid = true;
++        let mut draws = 0;
++        for operation in &self.operations {
++            match operation {
++                Operation::Save => {
++                    canvas.save();
++                }
++                Operation::Restore => {
++                    canvas.restore();
++                }
++                Operation::RestoreTo(count) => {
++                    canvas.restore_to_count(*count);
++                }
++                Operation::Translate(offset) => {
++                    canvas.translate(*offset);
++                }
++                Operation::Scale(scale) => {
++                    canvas.scale(*scale);
++                }
++                Operation::Concat(matrix) => {
++                    canvas.concat(matrix);
++                }
++                Operation::Clip(rect, op, aa) => {
++                    if *op == ClipOp::Difference {
++                        return None;
++                    }
++                    canvas.clip_rect(rect, *op, *aa);
++                }
++                Operation::Rect(shape, paint) => {
++                    if paint.nothing_to_draw() {
++                        continue;
++                    }
++                    // These effects can move ink beyond the rectangle, so its
++                    // unexpanded bounds are insufficient for tile rejection.
++                    if paint.style() != PaintStyle::Fill
++                        || paint.image_filter().is_some()
++                        || paint.mask_filter().is_some()
++                        || paint.path_effect().is_some()
++                    {
++                        return None;
++                    }
++                    let matrix = canvas.local_to_device_as_3x3();
++                    let device_shape = matrix.map_rect(shape).0;
++                    let Some(clip) = canvas.device_clip_bounds() else {
++                        continue;
++                    };
++                    let clip = Rect::from(clip);
++                    if device_shape.right <= clip.left
++                        || device_shape.left >= clip.right
++                        || device_shape.bottom <= clip.top
++                        || device_shape.top >= clip.bottom
++                    {
++                        continue;
++                    }
++                    draws += 1;
++                    // cc::TileManager uses five analyzed draw operations.
++                    if draws > 5 {
++                        return None;
++                    }
++                    let full_clip = canvas.is_clip_rect()
++                        && clip.contains(Rect::from_xywh(0.0, 0.0, rect.width(), rect.height()));
++                    let covers = matrix.rect_stays_rect()
++                        && matrix
++                            .invert()
++                            .is_some_and(|inverse| shape.contains(inverse.map_rect(clip).0));
++                    let Some(mode) = paint.as_blend_mode() else {
++                        return None;
++                    };
++                    let plain = paint.style() == PaintStyle::Fill
++                        && paint.shader().is_none()
++                        && paint.color_filter().is_none()
++                        && paint.image_filter().is_none()
++                        && paint.mask_filter().is_none()
++                        && paint.path_effect().is_none();
++                    if !full_clip
++                        || !covers
++                        || !plain
++                        || !matches!(mode, BlendMode::Src | BlendMode::SrcOver)
++                    {
++                        solid = false;
++                        continue;
++                    }
++                    let source = paint.color4f();
++                    if mode == BlendMode::Src || source.a == 1.0 {
++                        color = source;
++                        solid = true;
++                    } else if solid {
++                        let alpha = source.a + color.a * (1.0 - source.a);
++                        if alpha == 0.0 {
++                            color = Color4f::new(0.0, 0.0, 0.0, 0.0);
++                        } else {
++                            let sw = source.a / alpha;
++                            let dw = color.a * (1.0 - source.a) / alpha;
++                            color = Color4f::new(
++                                source.r * sw + color.r * dw,
++                                source.g * sw + color.g * dw,
++                                source.b * sw + color.b * dw,
++                                alpha,
++                            );
++                        }
++                    }
++                }
++            }
++        }
++        solid.then_some(color)
++    }
++}
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index b12edab8..411f801e 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -36,9 +36,9 @@ use skia_safe::canvas::{SaveLayerFlags, SaveLayerRec, SrcRectConstraint};
+ use skia_safe::image::RequiredProperties;
+ use skia_safe::rrect::Corner as RRectCorner;
+ use skia_safe::{
+-    color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, Canvas, ClipOp,
+-    Color4f, ColorSpace, ColorType, Data, FilterMode, IRect, Image, ImageInfo, Matrix, MipmapMode,
+-    Paint, PaintStyle, PathBuilder, PathFillType, PathMeasure, PictureRecorder, Point, RRect, Rect,
++    color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, ClipOp, Color4f,
++    ColorSpace, ColorType, Data, FilterMode, IRect, Image, ImageInfo, Matrix, MipmapMode, Paint,
++    PaintStyle, PathBuilder, PathFillType, PathMeasure, PictureRecorder, Point, RRect, Rect,
+     SamplingOptions, TileMode,
+ };
+ 
+@@ -46,6 +46,8 @@ use std::cell::RefCell;
+ use std::collections::{BTreeMap, BTreeSet, HashSet};
+ use unicode_segmentation::UnicodeSegmentation;
+ 
++type Canvas = dyn crate::paint_record::PaintCanvas;
++
+ fn set_paint_css_color(paint: &mut Paint, color: &Color) {
+     set_paint_css_color_with_alpha(paint, color, 1.0);
+ }
+@@ -344,7 +346,7 @@ pub(crate) fn paint_document_fragments(
+         }
+     }
+     let _phase = RestoreScrollbarPhase(DEFER_VIEWPORT_SCROLLBARS.with(|value| value.replace(true)));
+-    paint_fragment(canvas, fragment, doc, offset);
++    paint_fragment_tracked(canvas, fragment, doc, offset);
+ }
+ 
+ fn uses_deterministic_text_profile(style: &ComputedStyle) -> bool {
+@@ -667,6 +669,15 @@ fn fragment_has_overflowing_in_flow_monolithic_descendant(
+ /// This is the main entry point — paints the fragment and all its children
+ /// recursively, with correct coordinate offsets.
+ pub fn paint_fragment(
++    canvas: &skia_safe::Canvas,
++    fragment: &Fragment,
++    doc: &Document,
++    offset: PhysicalOffset,
++) {
++    paint_fragment_tracked(canvas, fragment, doc, offset);
++}
++
++fn paint_fragment_tracked(
+     canvas: &Canvas,
+     fragment: &Fragment,
+     doc: &Document,
+@@ -1082,7 +1093,7 @@ fn paint_fragment_contents(
+                 }
+             });
+             for (overflow, parent_offset) in overflowing_monolithic {
+-                paint_fragment(canvas, overflow, doc, parent_offset);
++                paint_fragment_tracked(canvas, overflow, doc, parent_offset);
+             }
+         } else {
+             paint_children_with_stacking_order(
+@@ -1101,7 +1112,7 @@ fn paint_fragment_contents(
+     // anonymous boxes with no DOM node. Just recurse into children.
+     if fragment.node_id.is_none() {
+         for child in &fragment.children {
+-            paint_fragment(canvas, child, doc, abs_offset);
++            paint_fragment_tracked(canvas, child, doc, abs_offset);
+         }
+         return;
+     }
+@@ -1231,7 +1242,7 @@ fn paint_fragment_contents(
+                 LayoutUnit::from_f32(-bounds.left) - fragment.offset.left,
+                 LayoutUnit::from_f32(-bounds.top) - fragment.offset.top,
+             );
+-            paint_fragment(surface.canvas(), fragment, doc, raster_parent_offset);
++            paint_fragment_tracked(surface.canvas(), fragment, doc, raster_parent_offset);
+             RASTERIZING_PROMOTED_TRANSFORM.with(|active| *active.borrow_mut() = false);
+ 
+             let image = surface.image_snapshot();
+@@ -1508,7 +1519,9 @@ fn paint_fragment_contents(
+             (abs_offset.top + content.bottom()).round().to_f32(),
+         );
+         let mut recorder = PictureRecorder::new();
+-        let layer_canvas = recorder.begin_recording(bounds, false);
++        let layer_canvas: &Canvas = recorder.begin_recording(bounds, false);
++        let paint_recording =
++            crate::paint_record::RecordingScope::new(layer_canvas.raw_untracked());
+         let background_recording = BackgroundRecordingScope::new();
+         paint_scrolling_canvas_background(layer_canvas, doc, fragment, bounds);
+         paint_children_with_stacking_order(
+@@ -1520,6 +1533,8 @@ fn paint_fragment_contents(
+             style.display.is_flex() && fragmented_flex_has_internal_four_way_junction(fragment),
+         );
+         let annotations = background_recording.annotations();
++        let paint_record = paint_recording.snapshot();
++        drop(paint_recording);
+         drop(background_recording);
+         let picture = recorder
+             .finish_recording_as_picture(None)
+@@ -1530,6 +1545,7 @@ fn paint_fragment_contents(
+             bounds,
+             background_color: layer_background_color(&annotations, bounds),
+             rect_known_to_be_opaque,
++            paint_record,
+             contents_opaque: rect_known_to_be_opaque.left <= bounds.left
+                 && rect_known_to_be_opaque.top <= bounds.top
+                 && rect_known_to_be_opaque.right >= bounds.right
+@@ -5356,7 +5372,7 @@ fn paint_descendant_column_rules(
+ ) {
+     for child in children {
+         if child.kind == FragmentKind::ColumnRule {
+-            paint_fragment(canvas, child, doc, parent_offset);
++            paint_fragment_tracked(canvas, child, doc, parent_offset);
+             continue;
+         }
+         let child_offset = PhysicalOffset::new(
+@@ -5624,7 +5640,7 @@ fn repaint_fragmented_inline_source_range(
+         if in_source_range && fragment.is_inline_box_fragment {
+             canvas.save();
+             canvas.clip_rect(clip, ClipOp::Intersect, false);
+-            paint_fragment(canvas, fragment, doc, parent_offset);
++            paint_fragment_tracked(canvas, fragment, doc, parent_offset);
+             canvas.restore();
+             return;
+         }
+@@ -5802,13 +5818,13 @@ fn paint_shared_inline_oof_across_column_row(
+         .iter()
+         .filter(|child| child.kind == FragmentKind::ColumnRule)
+     {
+-        paint_fragment(canvas, rule, doc, offset);
++        paint_fragment_tracked(canvas, rule, doc, offset);
+     }
+     for column in children
+         .iter()
+         .filter(|child| child.kind == FragmentKind::ColumnBox)
+     {
+-        paint_fragment(canvas, column, doc, offset);
++        paint_fragment_tracked(canvas, column, doc, offset);
+     }
+     FRAGMENTED_INLINE_SKIP_AFTER.with(|source_after| *source_after.borrow_mut() = None);
+     for (group_index, (inline_parent_id, group_ids)) in inline_groups.iter().enumerate() {
+@@ -5825,7 +5841,7 @@ fn paint_shared_inline_oof_across_column_row(
+             });
+             canvas.save();
+             canvas.clip_rect(entry.clip, ClipOp::Intersect, false);
+-            paint_fragment(canvas, entry.fragment, doc, entry.parent_offset);
++            paint_fragment_tracked(canvas, entry.fragment, doc, entry.parent_offset);
+             canvas.restore();
+         }
+         for column in children
+@@ -6086,7 +6102,7 @@ fn paint_children_with_stacking_order(
+     // cover them in the gap.
+     for &idx in &in_flow {
+         if matches!(children[idx].kind, FragmentKind::ColumnRule) {
+-            paint_fragment(canvas, &children[idx], doc, offset);
++            paint_fragment_tracked(canvas, &children[idx], doc, offset);
+         }
+     }
+ 
+@@ -6216,7 +6232,7 @@ fn paint_children_with_stacking_order(
+             continue;
+         }
+         if children[idx].kind != FragmentKind::ColumnBox {
+-            paint_fragment(canvas, &children[idx], doc, offset);
++            paint_fragment_tracked(canvas, &children[idx], doc, offset);
+             in_flow_position += 1;
+             continue;
+         }
+@@ -6256,7 +6272,7 @@ fn paint_children_with_stacking_order(
+         }
+         for &row_idx in &in_flow[in_flow_position..row_position_end] {
+             if children[row_idx].kind != FragmentKind::ColumnRule {
+-                paint_fragment(canvas, &children[row_idx], doc, offset);
++                paint_fragment_tracked(canvas, &children[row_idx], doc, offset);
+             }
+         }
+         if !prepainted.is_empty() {
+@@ -7449,9 +7465,9 @@ fn paint_stacking_entry(
+     offset: PhysicalOffset,
+ ) {
+     match entry {
+-        StackingEntry::Direct(idx) => paint_fragment(canvas, &children[*idx], doc, offset),
++        StackingEntry::Direct(idx) => paint_fragment_tracked(canvas, &children[*idx], doc, offset),
+         StackingEntry::Descendant(fragment, parent_offset) => {
+-            paint_fragment(canvas, fragment, doc, *parent_offset)
++            paint_fragment_tracked(canvas, fragment, doc, *parent_offset)
+         }
+         StackingEntry::DescendantWithClip(fragment, parent_offset, clip_rect) => {
+             canvas.save();
+@@ -7460,7 +7476,7 @@ fn paint_stacking_entry(
+                 ClipOp::Intersect,
+                 false,
+             );
+-            paint_fragment(canvas, fragment, doc, *parent_offset);
++            paint_fragment_tracked(canvas, fragment, doc, *parent_offset);
+             canvas.restore();
+         }
+     }
+@@ -7959,7 +7975,7 @@ fn paint_flex_negative_stacking_children(
+     // and inverted peers such as z-index:-2 followed by z-index:-1.
+     entries.sort_by_key(|&(z, order, _, _)| (z, order));
+     for (_, _, child, parent_offset) in entries {
+-        paint_fragment(canvas, child, doc, parent_offset);
++        paint_fragment_tracked(canvas, child, doc, parent_offset);
+     }
+ }
+ 
+@@ -8339,7 +8355,7 @@ fn repaint_later_siblings_over_fragmented_outlines(
+                     deferred.remove(pointer);
+                 }
+             });
+-            paint_fragment(canvas, child, doc, parent_offset);
++            paint_fragment_tracked(canvas, child, doc, parent_offset);
+         }
+         preceding_fragmented_outline |=
+             fragmented_outline_crosses_slice(child, doc, parent_offset, slice, block_axis_is_x);
+@@ -9356,7 +9372,7 @@ fn paint_with_overflow_clip(
+         Vec::new()
+     };
+     for legend_content in &unclipped_fieldset_legend_content {
+-        paint_fragment(canvas, legend_content, doc, offset);
++        paint_fragment_tracked(canvas, legend_content, doc, offset);
+     }
+     let newly_skipped_legends: Vec<usize> = HOIST_SKIP.with(|skipped| {
+         let mut skipped = skipped.borrow_mut();
+@@ -22939,7 +22955,7 @@ mod tests {
+             surface.canvas().clear(skia_safe::Color::WHITE);
+             surface.canvas().scale((scale as f32, scale as f32));
+             let save_count = surface.canvas().save_count();
+-            paint_fragment(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
++            paint_fragment_tracked(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+             assert_eq!(surface.canvas().save_count(), save_count);
+             let pixels = surface_bytes(&mut surface);
+             // Repeated Chromium captures of the same RGB source at opacity
+@@ -23019,7 +23035,7 @@ mod tests {
+         let mut surface = surfaces::raster_n32_premul((81, 81)).expect("surface");
+         surface.canvas().clear(skia_safe::Color::WHITE);
+         let save_count = surface.canvas().save_count();
+-        paint_fragment(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
++        paint_fragment_tracked(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+         assert_eq!(surface.canvas().save_count(), save_count);
+ 
+         let pixels = surface_bytes(&mut surface);
+@@ -23063,7 +23079,7 @@ mod tests {
+         let mut surface = surfaces::raster_n32_premul((45, 45)).expect("surface");
+         surface.canvas().clear(skia_safe::Color::WHITE);
+         let save_count = surface.canvas().save_count();
+-        paint_fragment(
++        paint_fragment_tracked(
+             surface.canvas(),
+             &parent_fragment,
+             &doc,
+@@ -23165,7 +23181,7 @@ mod tests {
+         let mut surface = surfaces::raster_n32_premul((240, 180)).expect("surface");
+         surface.canvas().clear(skia_safe::Color::WHITE);
+         surface.canvas().scale((1.25, 1.25));
+-        paint_fragment(
++        paint_fragment_tracked(
+             surface.canvas(),
+             &button_fragment,
+             &doc,
+diff --git a/bindings/rust/openui/examples/native_viewport_scroll.rs b/bindings/rust/openui/examples/native_viewport_scroll.rs
+index a473db39..ef381ed1 100644
+--- a/bindings/rust/openui/examples/native_viewport_scroll.rs
++++ b/bindings/rust/openui/examples/native_viewport_scroll.rs
+@@ -34,8 +34,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+         _ => return Err("unknown direction".into()),
+     };
+     let left: f32 = args.next().unwrap_or_else(|| "27".into()).parse()?;
+-    let document =
+-        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(320.0, 240.0, scale)?)?;
++    let viewport_width: f32 = args.next().unwrap_or_else(|| "320".into()).parse()?;
++    let viewport_height: f32 = args.next().unwrap_or_else(|| "240".into()).parse()?;
++    let document = Document::with_viewport_metrics(ViewportMetrics::from_logical_size(
++        f64::from(viewport_width),
++        f64::from(viewport_height),
++        scale,
++    )?)?;
+     let root = document.body();
+     root.set_background_color(Color::WHITE)?;
+     root.set_overflow_x(overflow)?;

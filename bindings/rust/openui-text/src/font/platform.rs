@@ -12,6 +12,7 @@ use skia_safe::{
     FontStyle as SkFontStyle, GlyphId, Rect, Typeface,
 };
 
+use super::collection::FontCacheLifetime;
 use super::metrics::FontMetrics;
 use super::{FontFeatureDefault, FontMetricOverrides};
 
@@ -40,6 +41,9 @@ pub struct FontPlatformData {
     /// 0.0 for normal/italic styles. CSS default oblique is 14°.
     synthetic_oblique_angle: f32,
     feature_defaults: Vec<FontFeatureDefault>,
+    // Resolved font data can outlive the collection that selected it. Keep the
+    // strike cache lifetime active until these owned font objects are released.
+    _cache_lifetime: FontCacheLifetime,
 }
 
 /// OpenType `vhea`/`vmtx` data retained with a resolved face.
@@ -157,6 +161,16 @@ fn resolve_hinting(
         {
             FontHinting::None
         }
+        // At a fractional physical Ahem strike, Skia's light-fitting drops
+        // the trailing coverage cell that Chromium keeps. Integral strikes
+        // retain light fitting; removing it there regresses exact glyphs.
+        TextHinting::Slight
+            if requested_edging == TextEdging::SubpixelAntiAlias
+                && is_ahem
+                && (size - size.round()).abs() > 1.0e-4 =>
+        {
+            FontHinting::None
+        }
         TextHinting::Slight => FontHinting::Slight,
         TextHinting::Normal => FontHinting::Normal,
         TextHinting::Full => FontHinting::Full,
@@ -244,6 +258,7 @@ impl FontPlatformData {
         device_scale_factor: f64,
         configuration: ResolvedFontConfiguration,
     ) -> Self {
+        let cache_lifetime = FontCacheLifetime::new();
         // Font matching may return a regular face when a family has no bold
         // member (Ahem is the canonical example). CSS font synthesis requires
         // a synthetic bold face in that case; SkFont does not infer it from
@@ -336,6 +351,7 @@ impl FontPlatformData {
             synthetic_bold,
             synthetic_oblique_angle: oblique_angle,
             feature_defaults: configuration.feature_defaults,
+            _cache_lifetime: cache_lifetime,
         }
     }
 
@@ -523,6 +539,32 @@ mod tests {
             ),
             FontHinting::None
         );
+    }
+
+    #[test]
+    fn lcd_ahem_hinting_tracks_physical_strike_fraction() {
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "Ahem",
+                physical_font_size(50.0, 1.25),
+                1.25,
+            ),
+            FontHinting::None
+        );
+        for (css_size, scale) in [(16.0, 1.0), (16.0, 1.5), (50.0, 1.5)] {
+            assert_eq!(
+                resolve_hinting(
+                    TextHinting::Slight,
+                    TextEdging::SubpixelAntiAlias,
+                    "Ahem",
+                    physical_font_size(css_size, scale),
+                    scale,
+                ),
+                FontHinting::Slight
+            );
+        }
     }
 
     #[test]

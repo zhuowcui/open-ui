@@ -1,8 +1,9 @@
 use crate::types::{OuiEventCallback, OuiStatus, OuiUtf8};
 use openui_engine::{
-    AnimationEvent, Engine, EngineError, FontCollectionError, FontFaceHandle, NodeHandle,
+    AccessibilityNode, AccessibilityNodeId, AnimationEvent, Engine, EngineError,
+    FontCollectionError, FontFaceHandle, NodeHandle,
 };
-use openui_style::{ImageResourceId, StyleValue};
+use openui_style::{ImageResourceId, StyleProperty, StyleValue};
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::ffi::c_void;
@@ -22,17 +23,25 @@ pub(crate) enum HandleKind {
     FontFace,
     Listener,
     Buffer,
+    AccessibilitySnapshot,
 }
 
 #[derive(Clone)]
 pub(crate) struct AppState {
     pub document: Rc<DocumentState>,
-    pub _title: String,
-    pub _backend: u32,
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    pub title: String,
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    pub backend: u32,
+    pub running: Cell<bool>,
+    pub has_run: Cell<bool>,
+    pub exit_requested: Cell<bool>,
+    pub exit_handle: RefCell<Option<openui::AppExitHandle>>,
 }
 
 pub(crate) struct DocumentState {
-    pub engine: RefCell<Engine>,
+    pub engine: Rc<RefCell<Engine>>,
+    pub native: openui::Document,
     pub update_depth: Cell<u32>,
     pub listeners: RefCell<Vec<ListenerRecord>>,
     pub next_listener: Cell<u64>,
@@ -76,15 +85,29 @@ pub(crate) struct ListenerRecord {
 }
 
 #[derive(Clone)]
+pub(crate) struct AccessibilitySnapshotState {
+    pub document: Weak<DocumentState>,
+    pub generation: u64,
+    pub focus_id: u64,
+    pub reduced_motion: bool,
+    pub nodes: Vec<(AccessibilityNodeId, AccessibilityNode)>,
+    pub changed: Vec<u64>,
+    pub removed: Vec<u64>,
+    pub full_tree: bool,
+}
+
+#[derive(Clone)]
 pub(crate) enum LocalHandle {
     App(Rc<AppState>),
     Document(Rc<DocumentState>),
     Element(ElementRef),
     Compound(StyleValue),
+    PropertyCompound(StyleProperty, StyleValue),
     Resource(ResourceRef),
     FontFace(FontFaceRef),
     Listener(ListenerRef),
     Buffer(Rc<Vec<u8>>),
+    AccessibilitySnapshot(Rc<AccessibilitySnapshotState>),
 }
 
 impl LocalHandle {
@@ -93,11 +116,12 @@ impl LocalHandle {
             Self::App(_) => HandleKind::App,
             Self::Document(_) => HandleKind::Document,
             Self::Element(_) => HandleKind::Element,
-            Self::Compound(_) => HandleKind::Compound,
+            Self::Compound(_) | Self::PropertyCompound(..) => HandleKind::Compound,
             Self::Resource(_) => HandleKind::Resource,
             Self::FontFace(_) => HandleKind::FontFace,
             Self::Listener(_) => HandleKind::Listener,
             Self::Buffer(_) => HandleKind::Buffer,
+            Self::AccessibilitySnapshot(_) => HandleKind::AccessibilitySnapshot,
         }
     }
 }
@@ -318,6 +342,42 @@ pub(crate) fn destroy(address: usize, expected: HandleKind) -> Result<LocalHandl
         .map_err(|_| ApiError::new(OuiStatus::Internal, "handle registry is poisoned"))?
         .remove(&address);
     Ok(removed)
+}
+
+#[cfg(test)]
+mod miri_handle_tests {
+    use super::*;
+
+    #[test]
+    fn opaque_handles_reject_wrong_kind_thread_and_reuse() {
+        let first = register(LocalHandle::Buffer(Rc::new(vec![1, 2, 3]))).unwrap();
+        assert_eq!(
+            get(first, HandleKind::Document).err().unwrap().status,
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(
+            std::thread::spawn(move || get(first, HandleKind::Buffer).err().unwrap().status)
+                .join()
+                .unwrap(),
+            OuiStatus::WrongThread
+        );
+        assert!(matches!(
+            get(first, HandleKind::Buffer),
+            Ok(LocalHandle::Buffer(_))
+        ));
+        destroy(first, HandleKind::Buffer).unwrap_or_else(|error| panic!("{}", error.message));
+        assert_eq!(
+            get(first, HandleKind::Buffer).err().unwrap().status,
+            OuiStatus::InvalidHandle
+        );
+        let second = register(LocalHandle::Buffer(Rc::new(vec![4]))).unwrap();
+        assert_ne!(first, second);
+        assert_eq!(
+            get(first, HandleKind::Buffer).err().unwrap().status,
+            OuiStatus::InvalidHandle
+        );
+        destroy(second, HandleKind::Buffer).unwrap_or_else(|error| panic!("{}", error.message));
+    }
 }
 
 pub(crate) fn document(address: usize) -> Result<Rc<DocumentState>, ApiError> {

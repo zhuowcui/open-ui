@@ -1,0 +1,20 @@
+<!DOCTYPE html><html><head><style style="display:none!important">* { margin: 0; padding: 0; box-sizing: content-box; } *, *::before, *::after { animation-play-state: paused !important; } ::-webkit-scrollbar { display: none; } html { overflow: hidden; } body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; color: black; background-color: white; }</style></head><body><style>
+  #flex {
+    display: flex;
+    flex-wrap: wrap;
+    height: 150px;
+    background: green;
+    align-content: space-between;
+  }
+</style>
+<div style="width: 100px; height: 100px; columns: 2; column-gap: 0; column-fill: auto; position: relative; background: red;">
+  <div id="flex">
+    <div style="height: 50px; width: 50px;"></div>
+    <div style="height: 10px; width: 25px; align-self: center;"></div>
+    <div style="height: 50px; width: 25px; break-inside: avoid;"></div>
+    <div style="height: 25px; width: 50px; background: green;"></div>
+  </div>
+  <div style="position: absolute; height: 13px; width: 50px; background: transparent;"></div>
+  <div style="position: absolute; bottom: 0px; height: 13px; width: 50px; background: transparent;"></div>
+</div>
+<style style="display:none!important">body, body * { font-family: Ahem, "DejaVu Sans" !important; font-weight: normal !important; font-style: normal !important; font-synthesis: none !important; text-decoration: none !important; list-style: none !important; font-kerning: none !important; font-variant-ligatures: none !important; }</style></body></html>

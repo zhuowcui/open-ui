@@ -2,6 +2,18 @@
   "abi_version": "0x00020000",
   "pointer_width": 64,
   "types": {
+    "OuiAccessibilityNodeInfo": {
+      "align": 8,
+      "size": 120
+    },
+    "OuiAccessibilityNodeState": {
+      "align": 8,
+      "size": 112
+    },
+    "OuiAccessibilitySnapshotInfo": {
+      "align": 8,
+      "size": 56
+    },
     "OuiAccessibilityUpdate": {
       "align": 8,
       "size": 40
@@ -25,6 +37,10 @@
     "OuiAppConfig": {
       "align": 8,
       "size": 40
+    },
+    "OuiAppRunConfig": {
+      "align": 8,
+      "size": 32
     },
     "OuiBitmap": {
       "align": 8,
@@ -74,9 +90,17 @@
       "align": 4,
       "size": 8
     },
+    "OuiPlatformEvent": {
+      "align": 8,
+      "size": 152
+    },
     "OuiRect": {
       "align": 4,
       "size": 16
+    },
+    "OuiScrollMetricsV1": {
+      "align": 8,
+      "size": 40
     },
     "OuiStylePayload": {
       "align": 8,

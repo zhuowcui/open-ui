@@ -3,11 +3,14 @@
 mod accessibility;
 mod animation;
 mod interaction;
+mod scroll_into_view;
+
+pub use scroll_into_view::{ScrollAlignment, ScrollIntoViewContainer, ScrollIntoViewOptions};
 
 pub use accessibility::{
     AccessibilityAction, AccessibilityActionData, AccessibilityActionRequest, AccessibilityLive,
     AccessibilityNode, AccessibilityNodeId, AccessibilityPlatformAction, AccessibilityRelation,
-    AccessibilityRole, AccessibilityTreeUpdate,
+    AccessibilityRole, AccessibilityToggled, AccessibilityTreeUpdate,
 };
 
 pub use animation::{
@@ -31,8 +34,9 @@ pub use openui_geometry::{
 use openui_layout::Fragment;
 use openui_paint::record_fragment;
 use openui_style::{
-    apply_to_computed, Color, ComputedStyle, ImageResourceId, InvalidationClass, PseudoStyleTarget,
-    RendererInternalStyleValue, RendererStyleValue, Style, StyleProperty, StyleValue,
+    apply_to_computed, Color, ComputedStyle, Display, ImageResourceId, InvalidationClass,
+    PseudoStyleTarget, RendererInternalStyleValue, RendererStyleValue, Style, StyleProperty,
+    StyleValue,
 };
 pub use openui_text::{
     FontAxisRange, FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat,
@@ -54,6 +58,15 @@ pub struct NodeHandle {
     document: u64,
     index: u32,
     generation: u32,
+}
+
+/// Owned, resolved dimensions of an element's scrolling area, in logical pixels.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct ScrollMetrics {
+    pub client_width: f64,
+    pub client_height: f64,
+    pub scroll_width: f64,
+    pub scroll_height: f64,
 }
 
 impl NodeHandle {
@@ -281,6 +294,37 @@ impl Affine {
             self.b * x + self.d * y + self.f,
         )
     }
+
+    fn map_rect(self, width: f32, height: f32) -> SceneRect {
+        let corners = [
+            self.map(0.0, 0.0),
+            self.map(width, 0.0),
+            self.map(0.0, height),
+            self.map(width, height),
+        ];
+        let min_x = corners
+            .iter()
+            .map(|point| point.0)
+            .fold(f32::INFINITY, f32::min);
+        let max_x = corners
+            .iter()
+            .map(|point| point.0)
+            .fold(f32::NEG_INFINITY, f32::max);
+        let min_y = corners
+            .iter()
+            .map(|point| point.1)
+            .fold(f32::INFINITY, f32::min);
+        let max_y = corners
+            .iter()
+            .map(|point| point.1)
+            .fold(f32::NEG_INFINITY, f32::max);
+        SceneRect {
+            x: min_x,
+            y: min_y,
+            width: max_x - min_x,
+            height: max_y - min_y,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -294,7 +338,6 @@ struct HitClip {
 #[derive(Debug, Clone)]
 struct HitEntry {
     node: NodeId,
-    local_to_world: Affine,
     world_to_local: Affine,
     width: f32,
     height: f32,
@@ -331,6 +374,8 @@ pub struct Engine {
     latest_fragment: Option<Arc<Fragment>>,
     latest_scene: Option<SceneSnapshot>,
     hit_test: Vec<HitEntry>,
+    fragment_rects: HashMap<NodeId, Vec<SceneRect>>,
+    fragment_box_worlds: HashMap<NodeId, Affine>,
     focused: Option<NodeHandle>,
     pointer_capture: HashMap<u64, NodeHandle>,
     hover_paths: HashMap<u64, Vec<NodeHandle>>,
@@ -411,6 +456,8 @@ impl Engine {
             latest_fragment: None,
             latest_scene: None,
             hit_test: Vec::new(),
+            fragment_rects: HashMap::new(),
+            fragment_box_worlds: HashMap::new(),
             focused: None,
             pointer_capture: HashMap::new(),
             hover_paths: HashMap::new(),
@@ -596,6 +643,49 @@ impl Engine {
         Ok(())
     }
 
+    // A closed <details> keeps only its first direct <summary> in the visual
+    // tree. Apply this to the layout/paint view of the retained document, then
+    // restore authored styles so native tree inspection and later mutations
+    // still see the original elements and their display values.
+    fn hide_closed_details_content(&mut self) -> Vec<(NodeId, Display)> {
+        let details_nodes: Vec<_> = self
+            .slots
+            .iter()
+            .filter_map(|slot| slot.node)
+            .filter(|node| {
+                let data = self.document.node(*node);
+                data.tag == ElementTag::Details
+                    && !data.parent.is_none()
+                    && self.document.attribute(*node, "open").is_none()
+            })
+            .collect();
+        let mut hidden = Vec::new();
+        for details in details_nodes {
+            let mut first_summary_seen = false;
+            let children: Vec<_> = self.document.children(details).collect();
+            for child in children {
+                if self.document.node(child).tag == ElementTag::Summary && !first_summary_seen {
+                    first_summary_seen = true;
+                    continue;
+                }
+                let display = self.document.node(child).style.display;
+                if display != Display::None {
+                    hidden.push((child, display));
+                    self.document
+                        .update_resolved_style(child, |style| style.display = Display::None);
+                }
+            }
+        }
+        hidden
+    }
+
+    fn restore_closed_details_content(&mut self, hidden: Vec<(NodeId, Display)>) {
+        for (node, display) in hidden {
+            self.document
+                .update_resolved_style(node, |style| style.display = display);
+        }
+    }
+
     pub fn transaction<T>(
         &mut self,
         operation: impl FnOnce(&mut Self) -> Result<T, EngineError>,
@@ -608,6 +698,77 @@ impl Engine {
         let handle = self.register_native_node(node);
         self.initialize_control(handle, tag);
         self.mark_dirty(InvalidationClass::Subtree);
+        Ok(handle)
+    }
+
+    /// Create an application element with the native kind's display default.
+    /// Rust and C application bindings use this same constructor. The raw
+    /// `create_element` entry point retains its initial-style behavior for
+    /// Engine callers that supply a complete resolved style.
+    pub fn create_native_element(&mut self, tag: ElementTag) -> Result<NodeHandle, EngineError> {
+        let display = match tag {
+            ElementTag::Div
+            | ElementTag::Fieldset
+            | ElementTag::Legend
+            | ElementTag::Details
+            | ElementTag::Summary
+            | ElementTag::Option
+            | ElementTag::OptGroup
+            | ElementTag::Form
+            | ElementTag::Html
+            | ElementTag::Body
+            | ElementTag::Viewport => Display::Block,
+            ElementTag::Table => Display::Table,
+            ElementTag::TableCaption => Display::TableCaption,
+            ElementTag::TableColumnGroup => Display::TableColumnGroup,
+            ElementTag::TableColumn => Display::TableColumn,
+            ElementTag::TableHead => Display::TableHeaderGroup,
+            ElementTag::TableBody => Display::TableRowGroup,
+            ElementTag::TableFoot => Display::TableFooterGroup,
+            ElementTag::TableRow => Display::TableRow,
+            ElementTag::TableCell | ElementTag::TableHeaderCell => Display::TableCell,
+            ElementTag::Image
+            | ElementTag::Canvas
+            | ElementTag::Svg
+            | ElementTag::IFrame
+            | ElementTag::Object
+            | ElementTag::Audio
+            | ElementTag::Video
+            | ElementTag::Input
+            | ElementTag::Button
+            | ElementTag::Meter
+            | ElementTag::Progress
+            | ElementTag::TextArea
+            | ElementTag::Select
+            | ElementTag::Embed => Display::InlineBlock,
+            ElementTag::Span
+            | ElementTag::Text
+            | ElementTag::Break
+            | ElementTag::WordBreak
+            | ElementTag::Ruby
+            | ElementTag::RubyText
+            | ElementTag::Style => Display::Inline,
+        };
+        let handle = self.create_element(tag)?;
+        self.set_property(handle, StyleProperty::Display, display.into())?;
+        Ok(handle)
+    }
+
+    /// Create a native SVG foreignObject viewport for retained UI children.
+    /// Width and height describe the viewport, including the fragment bounds;
+    /// border and padding do not enlarge it. Authored children, style, events,
+    /// and lifecycle use the same engine as ordinary elements. Its native
+    /// container kind is [`ElementTag::Div`].
+    pub fn create_svg_foreign_object(&mut self) -> Result<NodeHandle, EngineError> {
+        let handle = self.create_element(ElementTag::Div)?;
+        let node = self.resolve(handle)?;
+        let data = self.document.node_mut(node);
+        data.is_svg_foreign_object = true;
+        data.style.update_derived(|style| {
+            style.display = Display::Block;
+            style.overflow_x = openui_style::Overflow::Hidden;
+            style.overflow_y = openui_style::Overflow::Hidden;
+        });
         Ok(handle)
     }
 
@@ -728,12 +889,139 @@ impl Engine {
             .collect())
     }
 
+    /// Duplicate an authored node and its descendants as a detached tree.
+    /// Runtime focus, scroll position, animations, and generated pseudo nodes
+    /// belong to the original presentation and are not copied.
+    pub fn clone_subtree(&mut self, source: NodeHandle) -> Result<NodeHandle, EngineError> {
+        let source_node = self.resolve(source)?;
+        if self.document.node(source_node).pseudo_kind.is_some() {
+            return Err(EngineError::InvalidInput("cannot clone a generated node"));
+        }
+        let mut pending = vec![(source, None)];
+        let mut root = None;
+        let mut clones = HashMap::new();
+        while let Some((original, parent)) = pending.pop() {
+            let node = self.resolve(original)?;
+            let mut data = self.document.node(node).clone();
+            if data.pseudo_kind.is_some() {
+                continue;
+            }
+            let children = self.children(original)?;
+            let authored = self.slots[original.index as usize].authored.clone();
+            let control = self.controls.get(&original.index).cloned();
+            let semantics = self.semantics.get(&original.index).cloned();
+            let duplicate = self.create_element(data.tag)?;
+            clones.insert(original, duplicate);
+            let duplicate_node = self.resolve(duplicate)?;
+            data.parent = NodeId::NONE;
+            data.first_child = NodeId::NONE;
+            data.last_child = NodeId::NONE;
+            data.next_sibling = NodeId::NONE;
+            data.prev_sibling = NodeId::NONE;
+            data.pseudo_origin = NodeId::NONE;
+            data.scroll_left = 0.0;
+            data.scroll_top = 0.0;
+            data.attributes.remove("data-oui-focused");
+            data.attributes.remove("data-oui-composition-start");
+            data.attributes.remove("data-oui-composition-end");
+            *self.document.node_mut(duplicate_node) = data;
+            self.slots[duplicate.index as usize].authored = authored;
+            if let Some(mut control) = control {
+                control.clear_composition();
+                self.controls.insert(duplicate.index, control);
+            }
+            if let Some(semantics) = semantics {
+                self.semantics.insert(duplicate.index, semantics);
+            }
+            if let Some(parent) = parent {
+                self.append_child(parent, duplicate)?;
+            } else {
+                root = Some(duplicate);
+            }
+            pending.extend(
+                children
+                    .into_iter()
+                    .rev()
+                    .map(|child| (child, Some(duplicate))),
+            );
+        }
+        for duplicate in clones.values() {
+            if let Some(semantics) = self.semantics.get_mut(&duplicate.index) {
+                semantics.remap_cloned_relations(&clones);
+            }
+        }
+        Ok(root.expect("validated source produces a root clone"))
+    }
+
+    /// Find the first attached element with this ID in document order.
+    pub fn element_by_id(&self, id: &str) -> Option<NodeHandle> {
+        let mut stack = vec![self.document.root()];
+        while let Some(node) = stack.pop() {
+            let data = self.document.node(node);
+            if data.attributes.get("id").is_some_and(|value| value == id) {
+                if let Some(index) = self.node_slots.get(&node) {
+                    return Some(self.handle_for_slot(*index));
+                }
+            }
+            let children: Vec<_> = self.document.children(node).collect();
+            stack.extend(children.into_iter().rev());
+        }
+        None
+    }
+
     pub fn remove_children(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
         let children = self.children(handle)?;
         for child in children {
             self.remove(child)?;
         }
         Ok(())
+    }
+
+    /// Detach an authored subtree without invalidating its handles or losing
+    /// its state. The caller may edit and reattach it later.
+    pub fn detach(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
+        if node == self.document.root() {
+            return Err(EngineError::RootRemoval);
+        }
+        if self.document.node(node).parent.is_none() {
+            return Ok(());
+        }
+        let mut descendants = Vec::new();
+        self.collect_subtree(node, &mut descendants);
+        self.document.detach(node);
+        let detached_handles: Vec<_> = descendants
+            .iter()
+            .filter_map(|node| self.node_slots.get(node))
+            .map(|index| self.handle_for_slot(*index))
+            .collect();
+        self.clear_subtree_presentation_state(&detached_handles);
+        self.mark_dirty(InvalidationClass::Subtree);
+        Ok(())
+    }
+
+    fn clear_subtree_presentation_state(&mut self, handles: &[NodeHandle]) {
+        self.cancel_animations_for_handles(handles);
+        if self
+            .focused
+            .is_some_and(|focused| handles.contains(&focused))
+        {
+            self.focused = None;
+        }
+        self.pointer_capture
+            .retain(|_, captured| !handles.contains(captured));
+        self.active_pointers
+            .retain(|_, active| !handles.contains(active));
+        self.hover_paths.retain(|_, path| {
+            path.retain(|node| !handles.contains(node));
+            !path.is_empty()
+        });
+        if self
+            .modal_root
+            .is_some_and(|modal| handles.contains(&modal))
+        {
+            self.modal_root = None;
+        }
     }
 
     pub fn remove(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
@@ -749,27 +1037,7 @@ impl Engine {
             .filter_map(|node| self.node_slots.get(node))
             .map(|index| self.handle_for_slot(*index))
             .collect();
-        self.cancel_animations_for_handles(&removed_handles);
-        if self
-            .focused
-            .is_some_and(|focused| removed_handles.contains(&focused))
-        {
-            self.focused = None;
-        }
-        self.pointer_capture
-            .retain(|_, captured| !removed_handles.contains(captured));
-        self.active_pointers
-            .retain(|_, active| !removed_handles.contains(active));
-        self.hover_paths.retain(|_, path| {
-            path.retain(|node| !removed_handles.contains(node));
-            !path.is_empty()
-        });
-        if self
-            .modal_root
-            .is_some_and(|modal| removed_handles.contains(&modal))
-        {
-            self.modal_root = None;
-        }
+        self.clear_subtree_presentation_state(&removed_handles);
         for node in &descendants {
             if let Some(index) = self.node_slots.remove(node) {
                 self.controls.remove(&index);
@@ -806,6 +1074,32 @@ impl Engine {
         Ok(())
     }
 
+    /// Return the data of an authored text node.
+    pub fn text_data(&self, handle: NodeHandle) -> Result<&str, EngineError> {
+        let node = self.document.node(self.resolve(handle)?);
+        if node.tag != ElementTag::Text || node.pseudo_kind.is_some() {
+            return Err(EngineError::InvalidInput("not an authored text node"));
+        }
+        Ok(node.text.as_deref().unwrap_or(""))
+    }
+
+    /// Concatenate authored text in tree order, excluding generated content.
+    pub fn text_content(&self, handle: NodeHandle) -> Result<String, EngineError> {
+        let mut content = String::new();
+        let mut pending = vec![handle];
+        while let Some(current) = pending.pop() {
+            let node = self.document.node(self.resolve(current)?);
+            if node.pseudo_kind.is_some() {
+                continue;
+            }
+            if let Some(text) = node.text.as_deref() {
+                content.push_str(text);
+            }
+            pending.extend(self.children(current)?.into_iter().rev());
+        }
+        Ok(content)
+    }
+
     pub fn set_attribute(
         &mut self,
         handle: NodeHandle,
@@ -828,7 +1122,13 @@ impl Engine {
             )?;
         }
         self.sync_control_attribute(handle, &name, &value);
-        self.mark_dirty(InvalidationClass::Accessibility);
+        self.mark_dirty(
+            if name == "open" && self.document.node(node).tag == ElementTag::Details {
+                InvalidationClass::Subtree
+            } else {
+                InvalidationClass::Accessibility
+            },
+        );
         Ok(())
     }
 
@@ -858,7 +1158,15 @@ impl Engine {
                 )?;
             }
             self.remove_control_attribute(handle, &name.to_ascii_lowercase());
-            self.mark_dirty(InvalidationClass::Accessibility);
+            self.mark_dirty(
+                if name.eq_ignore_ascii_case("open")
+                    && self.document.node(node).tag == ElementTag::Details
+                {
+                    InvalidationClass::Subtree
+                } else {
+                    InvalidationClass::Accessibility
+                },
+            );
         }
         Ok(removed)
     }
@@ -1167,10 +1475,41 @@ impl Engine {
         Ok(self.document.node(self.resolve(handle)?).tag)
     }
 
+    /// Whether this handle identifies an authored element rather than text or
+    /// a generated pseudo-element.
+    pub fn is_authored_element(&self, handle: NodeHandle) -> Result<bool, EngineError> {
+        let node = self.document.node(self.resolve(handle)?);
+        Ok(node.tag != ElementTag::Text && node.pseudo_kind.is_none())
+    }
+
     pub fn scroll_offset(&self, handle: NodeHandle) -> Result<(f64, f64), EngineError> {
         let node = self.resolve(handle)?;
         let node = self.document.node(node);
         Ok((node.scroll_left as f64, node.scroll_top as f64))
+    }
+
+    /// Resolve pending layout and return an owned scroll-area snapshot.
+    /// Elements without a layout box have no metrics.
+    pub fn scroll_metrics(
+        &mut self,
+        handle: NodeHandle,
+    ) -> Result<Option<ScrollMetrics>, EngineError> {
+        let node = self.resolve(handle)?;
+        if !self.node_is_connected(node) {
+            return Ok(None);
+        }
+        self.update()?;
+        let Some(area) = self.layout_scroll_area(node) else {
+            return Ok(None);
+        };
+        let client = area.client_rect.size;
+        let content = area.content_rect.size;
+        Ok(Some(ScrollMetrics {
+            client_width: client.width.to_f64(),
+            client_height: client.height.to_f64(),
+            scroll_width: content.width.to_f64(),
+            scroll_height: content.height.to_f64(),
+        }))
     }
 
     pub fn scroll_to(&mut self, handle: NodeHandle, x: f64, y: f64) -> Result<(), EngineError> {
@@ -1178,7 +1517,9 @@ impl Engine {
             return Err(EngineError::Render("scroll offsets must be finite".into()));
         }
         let node = self.resolve(handle)?;
-        let (x, y) = (x.max(0.0) as f32, y.max(0.0) as f32);
+        let (x, y) = self.clamp_scroll_offset(handle, x, y)?;
+        self.scroll_animations
+            .retain(|_, animation| animation.target != handle);
         if (
             self.document.node(node).scroll_left,
             self.document.node(node).scroll_top,
@@ -1186,14 +1527,105 @@ impl Engine {
         {
             return Ok(());
         }
-        self.scroll_animations
-            .retain(|_, animation| animation.target != handle);
         let data = self.document.node_mut(node);
         data.scroll_left = x;
         data.scroll_top = y;
-        self.dirty.hit_test = true;
-        self.mark_dirty(InvalidationClass::Composite);
+        self.invalidate_scroll(node);
         Ok(())
+    }
+
+    fn invalidate_scroll(&mut self, node: NodeId) {
+        // Sticky fragment positions currently resolve during layout. Invalidate
+        // that dependency only when this scrollport owns a sticky descendant;
+        // ordinary scrolling retains its existing compositor-only path.
+        let mut pending = self.document.children(node).collect::<Vec<_>>();
+        let mut sticky = false;
+        while let Some(descendant) = pending.pop() {
+            let style = &self.document.node(descendant).style;
+            if style.display == Display::None {
+                continue;
+            }
+            if style.position == openui_style::Position::Sticky {
+                sticky = true;
+                break;
+            }
+            if !style.is_scroll_container() {
+                pending.extend(self.document.children(descendant));
+            }
+        }
+        self.dirty.hit_test = true;
+        self.mark_dirty(if sticky {
+            InvalidationClass::Layout
+        } else {
+            InvalidationClass::Composite
+        });
+    }
+
+    pub fn scroll_by(&mut self, handle: NodeHandle, dx: f64, dy: f64) -> Result<(), EngineError> {
+        if !dx.is_finite() || !dy.is_finite() {
+            return Err(EngineError::InvalidInput("scroll deltas must be finite"));
+        }
+        self.resolve(handle)?;
+        self.update()?;
+        let (x, y) = self.scroll_offset(handle)?;
+        self.scroll_to(handle, x + dx, y + dy)
+    }
+
+    fn clamp_scroll_offset(
+        &mut self,
+        handle: NodeHandle,
+        x: f64,
+        y: f64,
+    ) -> Result<(f32, f32), EngineError> {
+        let node = self.resolve(handle)?;
+        self.update()?;
+        Ok(self
+            .layout_scroll_area(node)
+            .map_or((0.0, 0.0), |area| area.clamp_offset(x, y)))
+    }
+
+    fn layout_scroll_area(&self, node: NodeId) -> Option<openui_layout::ScrollArea> {
+        fn find(fragment: &Fragment, node: NodeId) -> Option<openui_layout::ScrollArea> {
+            if fragment.node_id == node {
+                if let Some(area) = fragment.scroll_area {
+                    return Some(area);
+                }
+            }
+            fragment.children.iter().find_map(|child| find(child, node))
+        }
+        self.latest_fragment
+            .as_ref()
+            .and_then(|root| find(root, node))
+    }
+
+    /// Apply user wheel input through the document-owned viewport geometry.
+    /// A hidden viewport remains available to programmatic scrolling only.
+    pub fn scroll_wheel(
+        &mut self,
+        handle: NodeHandle,
+        delta_x: f64,
+        delta_y: f64,
+    ) -> Result<bool, EngineError> {
+        if !delta_x.is_finite() || !delta_y.is_finite() {
+            return Err(EngineError::InvalidInput("wheel deltas must be finite"));
+        }
+        let node = self.resolve(handle)?;
+        self.update()?;
+        let (user_x, user_y) = self
+            .layout_scroll_area(node)
+            .map_or((false, false), |area| {
+                (
+                    area.overflow_x.is_scrollable(),
+                    area.overflow_y.is_scrollable(),
+                )
+            });
+        let before = self.scroll_offset(handle)?;
+        self.scroll_to(
+            handle,
+            before.0 + if user_x { delta_x } else { 0.0 },
+            before.1 + if user_y { delta_y } else { 0.0 },
+        )?;
+        Ok(self.scroll_offset(handle)? != before)
     }
 
     pub fn focus(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
@@ -1276,6 +1708,7 @@ impl Engine {
                 .as_ref()
                 .ok_or_else(|| EngineError::Render("missing initial scene".into()));
         }
+        let hidden_details_content = self.hide_closed_details_content();
         let width = self.viewport.logical_width();
         let height = self.viewport.logical_height();
         if self.dirty.layout || self.latest_fragment.is_none() {
@@ -1288,11 +1721,46 @@ impl Engine {
                 openui_geometry::LayoutUnit::from_f64(height),
                 direction,
             );
-            let fragment = Arc::new(openui_layout::block_layout(
+            let mut fragment =
+                openui_layout::block_layout(&self.document, self.document.root(), &space);
+            fn collect_clamped_offsets(
+                fragment: &Fragment,
+                document: &NativeDocument,
+                seen: &mut std::collections::HashSet<NodeId>,
+                changes: &mut Vec<(NodeId, f32, f32)>,
+            ) {
+                if let Some(area) = fragment.scroll_area {
+                    if seen.insert(fragment.node_id) {
+                        let node = document.node(fragment.node_id);
+                        let (x, y) =
+                            area.clamp_offset(node.scroll_left as f64, node.scroll_top as f64);
+                        if (node.scroll_left, node.scroll_top) != (x, y) {
+                            changes.push((fragment.node_id, x, y));
+                        }
+                    }
+                }
+                for child in &fragment.children {
+                    collect_clamped_offsets(child, document, seen, changes);
+                }
+            }
+            let mut changes = Vec::new();
+            collect_clamped_offsets(
+                &fragment,
                 &self.document,
-                self.document.root(),
-                &space,
-            ));
+                &mut std::collections::HashSet::new(),
+                &mut changes,
+            );
+            if !changes.is_empty() {
+                for (node, x, y) in changes {
+                    let node = self.document.node_mut(node);
+                    node.scroll_left = x;
+                    node.scroll_top = y;
+                }
+                // Sticky descendants also consume the retained offsets.
+                fragment =
+                    openui_layout::block_layout(&self.document, self.document.root(), &space);
+            }
+            let fragment = Arc::new(fragment);
             self.stats.layouts += 1;
             self.rebuild_hit_test(&fragment);
             self.latest_fragment = Some(fragment);
@@ -1302,8 +1770,9 @@ impl Engine {
             .as_ref()
             .expect("visual dirtiness always establishes a fragment")
             .clone();
-        let recording = record_fragment(&self.document, &fragment, self.viewport)
-            .map_err(EngineError::Render)?;
+        let recording = record_fragment(&self.document, &fragment, self.viewport);
+        self.restore_closed_details_content(hidden_details_content);
+        let recording = recording.map_err(EngineError::Render)?;
         self.stats.paints += 1;
         let generation = SceneGeneration(self.stats.scenes + 1);
         let damage = vec![SceneRect {
@@ -1344,44 +1813,64 @@ impl Engine {
         Ok(None)
     }
 
+    /// Owned border-box rectangles in layout order, in logical viewport
+    /// coordinates after scrolling and transforms. Input eligibility,
+    /// visibility, and clipping do not remove layout boxes from this query.
+    pub fn client_rects(&mut self, handle: NodeHandle) -> Result<Vec<SceneRect>, EngineError> {
+        let node = self.resolve(handle)?;
+        if !self.node_is_connected(node) {
+            return Ok(Vec::new());
+        }
+        self.update()?;
+        Ok(self.fragment_rects.get(&node).cloned().unwrap_or_default())
+    }
+
+    /// Bounds of all nonempty border-box fragments. If every fragment is
+    /// empty, return the final rectangle, matching Chromium's ordered union;
+    /// if there is no layout box, return `None`.
     pub fn bounds(&mut self, handle: NodeHandle) -> Result<Option<SceneRect>, EngineError> {
         let node = self.resolve(handle)?;
+        if !self.node_is_connected(node) {
+            return Ok(None);
+        }
         self.update()?;
-        Ok(self
-            .hit_test
+        Ok(self.node_bounds(node))
+    }
+
+    fn node_is_connected(&self, mut node: NodeId) -> bool {
+        // Chromium's UpdateStyleAndLayoutForNode skips detached nodes. A
+        // geometry read on a detached subtree must not flush unrelated
+        // attached layout or clamp its pending scroll positions.
+        while !node.is_none() {
+            if node == self.document.root() {
+                return true;
+            }
+            node = self.document.node(node).parent;
+        }
+        false
+    }
+
+    fn node_bounds(&self, node: NodeId) -> Option<SceneRect> {
+        let rects = self.fragment_rects.get(&node)?;
+        let bounds = rects
             .iter()
-            .rev()
-            .find(|entry| entry.node == node)
-            .map(|entry| {
-                let corners = [
-                    entry.local_to_world.map(0.0, 0.0),
-                    entry.local_to_world.map(entry.width, 0.0),
-                    entry.local_to_world.map(0.0, entry.height),
-                    entry.local_to_world.map(entry.width, entry.height),
-                ];
-                let min_x = corners
-                    .iter()
-                    .map(|point| point.0)
-                    .fold(f32::INFINITY, f32::min);
-                let max_x = corners
-                    .iter()
-                    .map(|point| point.0)
-                    .fold(f32::NEG_INFINITY, f32::max);
-                let min_y = corners
-                    .iter()
-                    .map(|point| point.1)
-                    .fold(f32::INFINITY, f32::min);
-                let max_y = corners
-                    .iter()
-                    .map(|point| point.1)
-                    .fold(f32::NEG_INFINITY, f32::max);
+            .copied()
+            .filter(|rect| rect.width > 0.0 && rect.height > 0.0)
+            .reduce(|a, b| {
+                let x = a.x.min(b.x);
+                let y = a.y.min(b.y);
                 SceneRect {
-                    x: min_x,
-                    y: min_y,
-                    width: max_x - min_x,
-                    height: max_y - min_y,
+                    x,
+                    y,
+                    width: (a.x + a.width).max(b.x + b.width) - x,
+                    height: (a.y + a.height).max(b.y + b.height) - y,
                 }
-            }))
+            });
+        // Chromium unions rectangles in layout order. An empty accumulator
+        // is replaced even by an empty next rectangle, so an entirely empty
+        // list retains its final rectangle. Once nonempty, empty boxes do
+        // not enlarge the bounds.
+        bounds.or_else(|| rects.last().copied())
     }
 
     fn handle_for_slot(&self, index: u32) -> NodeHandle {
@@ -1459,9 +1948,14 @@ impl Engine {
             parent_world: Affine,
             inherited_clips: &[HitClip],
             out: &mut Vec<HitEntry>,
+            rects: &mut HashMap<NodeId, Vec<SceneRect>>,
+            box_worlds: &mut HashMap<NodeId, Affine>,
         ) {
             let width = fragment.size.width.to_f32();
             let height = fragment.size.height.to_f32();
+            let border_box = fragment.border_box_rect();
+            let box_width = border_box.size.width.to_f32();
+            let box_height = border_box.size.height.to_f32();
             let translated = parent_world.then(Affine::translate(
                 fragment.offset.left.to_f32(),
                 fragment.offset.top.to_f32(),
@@ -1489,9 +1983,24 @@ impl Engine {
                     Some(style),
                 )
             };
-            let Some(world_to_local) = world.inverse() else {
-                return;
-            };
+            let box_world = world.then(Affine::translate(
+                border_box.offset.left.to_f32(),
+                border_box.offset.top.to_f32(),
+            ));
+            if node_style.is_some()
+                && document.node(fragment.node_id).tag != ElementTag::Text
+                && matches!(
+                    fragment.kind,
+                    openui_layout::FragmentKind::Box | openui_layout::FragmentKind::Viewport
+                )
+            {
+                rects
+                    .entry(fragment.node_id)
+                    .or_default()
+                    .push(box_world.map_rect(box_width, box_height));
+                box_worlds.entry(fragment.node_id).or_insert(box_world);
+            }
+            let world_to_local = box_world.inverse();
             let mut own_clips = inherited_clips.to_vec();
             if let Some(style) = node_style {
                 if let Some(inset) = style.clip_path_inset {
@@ -1504,16 +2013,16 @@ impl Engine {
                             0.0
                         }
                     };
-                    let top = resolve(&inset[0], height);
-                    let right = resolve(&inset[1], width);
-                    let bottom = resolve(&inset[2], height);
-                    let left = resolve(&inset[3], width);
-                    let clipped_world = world.then(Affine::translate(left, top));
+                    let top = resolve(&inset[0], box_height);
+                    let right = resolve(&inset[1], box_width);
+                    let bottom = resolve(&inset[2], box_height);
+                    let left = resolve(&inset[3], box_width);
+                    let clipped_world = box_world.then(Affine::translate(left, top));
                     if let Some(inverse) = clipped_world.inverse() {
                         own_clips.push(HitClip {
                             world_to_local: inverse,
-                            width: (width - left - right).max(0.0),
-                            height: (height - top - bottom).max(0.0),
+                            width: (box_width - left - right).max(0.0),
+                            height: (box_height - top - bottom).max(0.0),
                             radii: [(0.0, 0.0); 4],
                         });
                     }
@@ -1522,21 +2031,52 @@ impl Engine {
                 let pointer_eligible = node.tag != ElementTag::Text
                     && style.visibility == openui_style::Visibility::Visible
                     && style.pointer_events == openui_style::PointerEvents::Auto;
-                if pointer_eligible && width > 0.0 && height > 0.0 {
+                if let Some(world_to_local) = world_to_local
+                    .filter(|_| pointer_eligible && box_width > 0.0 && box_height > 0.0)
+                {
                     out.push(HitEntry {
                         node: fragment.node_id,
-                        local_to_world: world,
                         world_to_local,
-                        width,
-                        height,
+                        width: box_width,
+                        height: box_height,
                         clips: own_clips.clone(),
                     });
                 }
-                if fragment.has_overflow_clip {
+                // An authored overflow clip belongs to the element's border
+                // box. A synthetic continuation clip still bounds the larger
+                // flow extent carrying its visible descendants.
+                let clips_authored_box = style.overflow_x != openui_style::Overflow::Visible
+                    || style.overflow_y != openui_style::Overflow::Visible;
+                let (clip_world, clip_width, clip_height) =
+                    if let Some(scrollport) = fragment.viewport_scrollport {
+                        (
+                            world,
+                            scrollport.client_rect.width().to_f32(),
+                            scrollport.client_rect.height().to_f32(),
+                        )
+                    } else if let (Some(_), Some(area)) =
+                        (fragment.element_scrollbars, fragment.scroll_area)
+                    {
+                        (
+                            box_world.then(Affine::translate(
+                                area.client_rect.x().to_f32(),
+                                area.client_rect.y().to_f32(),
+                            )),
+                            area.client_rect.width().to_f32(),
+                            area.client_rect.height().to_f32(),
+                        )
+                    } else if clips_authored_box {
+                        (box_world, box_width, box_height)
+                    } else {
+                        (world, width, height)
+                    };
+                if let Some(world_to_local) =
+                    clip_world.inverse().filter(|_| fragment.has_overflow_clip)
+                {
                     own_clips.push(HitClip {
                         world_to_local,
-                        width,
-                        height,
+                        width: clip_width,
+                        height: clip_height,
                         radii: if fragment.ignore_border_radius {
                             [(0.0, 0.0); 4]
                         } else {
@@ -1565,19 +2105,68 @@ impl Engine {
                 };
                 (z, *order)
             });
-            for (_, child) in children {
-                walk(document, child, child_world, &own_clips, out);
+            let child_entries_start = out.len();
+            let mut paint_ranges = Vec::with_capacity(children.len());
+            for (order, child) in children {
+                let (z, phase) = if child.node_id.is_none() {
+                    (
+                        0,
+                        openui_paint::paint_order::InFlowPaintPhase::BlockBackground,
+                    )
+                } else {
+                    let style = &document.node(child.node_id).style;
+                    (
+                        style.z_index.unwrap_or(0),
+                        openui_paint::paint_order::in_flow_paint_phase(style),
+                    )
+                };
+                let start = out.len();
+                walk(
+                    document,
+                    child,
+                    child_world,
+                    &own_clips,
+                    out,
+                    rects,
+                    box_worlds,
+                );
+                paint_ranges.push(((z, phase, order), start, out.len()));
+            }
+            if paint_ranges.windows(2).any(|pair| pair[0].0 > pair[1].0) {
+                // Layout rectangle collection retains its original order.
+                // Only input entries move into their shared paint phases.
+                // Atomic flex/grid content is above later ordinary block
+                // backgrounds, while positioned/effect groups remain above it.
+                let mut entries: Vec<_> = out
+                    .split_off(child_entries_start)
+                    .into_iter()
+                    .map(Some)
+                    .collect();
+                paint_ranges.sort_by_key(|range| range.0);
+                for (_, start, end) in paint_ranges {
+                    out.extend(
+                        entries[start - child_entries_start..end - child_entries_start]
+                            .iter_mut()
+                            .filter_map(Option::take),
+                    );
+                }
             }
         }
         let mut entries = Vec::new();
+        let mut rects = HashMap::new();
+        let mut box_worlds = HashMap::new();
         walk(
             &self.document,
             fragment,
             Affine::IDENTITY,
             &[],
             &mut entries,
+            &mut rects,
+            &mut box_worlds,
         );
         self.hit_test = entries;
+        self.fragment_rects = rects;
+        self.fragment_box_worlds = box_worlds;
     }
 }
 

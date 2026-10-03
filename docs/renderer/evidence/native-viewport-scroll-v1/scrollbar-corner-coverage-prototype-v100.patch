@@ -1,0 +1,19 @@
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 411f801e..e7344f10 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -11459,9 +11459,13 @@ pub(crate) fn paint_viewport_scrollbars(
+         && scrollport.content_rect.width().to_f32() > client_width
+         && scrollport.content_rect.height().to_f32() > client_height
+     {
++        // The adjoining corner has exterior compositor edges on both axes.
++        // Preserve their coverage when its physical origin is fractional.
++        let mut corner = track.clone();
++        corner.set_anti_alias(true);
+         canvas.draw_rect(
+             Rect::from_xywh(client_width, client_height, thickness, thickness),
+-            &track,
++            &corner,
+         );
+     }
+     canvas.restore();

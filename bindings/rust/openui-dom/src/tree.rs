@@ -10,8 +10,8 @@ use openui_geometry::RasterConfiguration;
 use openui_style::{
     apply_to_computed, Color, ComputedStyle, ContainerCondition, Containment, CounterStyle,
     Display, FontFamily, GeneratedContentItem, GenericFontFamily, ImageResourceId, Overflow,
-    PropertyTypeError, QuotePair, RendererInternalStyleValue, ScrollMarkerGroup, Style,
-    StyleProperty, StyleValue,
+    OverflowClipBox, PropertyTypeError, QuotePair, RendererInternalStyleValue, ScrollMarkerGroup,
+    Style, StyleProperty, StyleValue,
 };
 
 /// Encoded raster or static-SVG bytes owned by a document.
@@ -274,9 +274,27 @@ pub struct NodeData {
 
 impl NodeData {
     fn new(tag: ElementTag) -> Self {
+        let mut style = ComputedStyle::initial();
+        if matches!(
+            tag,
+            ElementTag::Image
+                | ElementTag::Canvas
+                | ElementTag::Video
+                | ElementTag::IFrame
+                | ElementTag::Embed
+        ) {
+            // Blink's UA stylesheet clips these replaced hosts at their
+            // content box. Object fallback children still use native block
+            // flow; their host clip needs separate qualification.
+            style.update_derived(|fields| {
+                fields.overflow_x = Overflow::Clip;
+                fields.overflow_y = Overflow::Clip;
+                fields.overflow_clip_box = OverflowClipBox::ContentBox;
+            });
+        }
         Self {
             tag,
-            style: ComputedStyle::initial(),
+            style,
             pseudo_kind: None,
             pseudo_origin: NodeId::NONE,
             attributes: BTreeMap::new(),

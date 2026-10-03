@@ -180,7 +180,7 @@ pub fn decode_image_resource(doc: &Document, id: ImageResourceId) -> Result<Imag
         return Ok(image);
     }
 
-    let image = match resource.mime_type.as_str() {
+    let mut image = match resource.mime_type.as_str() {
         "image/png" | "image/jpeg" => Image::from_encoded(Data::new_copy(&resource.bytes))
             .ok_or_else(|| format!("failed to decode raster resource {}", resource.source))?,
         "image/x-openui-rgba8" => decode_rgba8_resource(resource)?,
@@ -195,12 +195,81 @@ pub fn decode_image_resource(doc: &Document, id: ImageResourceId) -> Result<Imag
             ));
         }
     };
+    // Chromium's SkPngRustCodec omits a custom profile when gAMA is neutral
+    // and no higher-precedence profile or chromaticity is present. Blink then
+    // tags those decoded source samples as sRGB. The libpng codec used by
+    // rust-skia otherwise gives these same bytes a power-2.2 profile, changing
+    // their colors at draw time. Reinterpret the source metadata, retaining
+    // the encoded channel values rather than converting them first.
+    if resource.mime_type == "image/png"
+        && png_has_neutral_gamma_without_color_profile(&resource.bytes)
+    {
+        image = image
+            .reinterpret_color_space(ColorSpace::new_srgb())
+            .ok_or_else(|| {
+                format!(
+                    "failed to retain PNG source color space {}",
+                    resource.source
+                )
+            })?;
+    }
     IMAGE_CACHE.with(|cache| {
         cache
             .borrow_mut()
             .insert(resource.sha256.clone(), image.clone());
     });
     Ok(image)
+}
+
+fn png_chunk_crc32(bytes: &[u8]) -> u32 {
+    let mut crc = u32::MAX;
+    for byte in bytes {
+        crc ^= u32::from(*byte);
+        for _ in 0..8 {
+            crc = (crc >> 1) ^ (0xedb8_8320 & 0_u32.wrapping_sub(crc & 1));
+        }
+    }
+    !crc
+}
+
+fn png_has_neutral_gamma_without_color_profile(bytes: &[u8]) -> bool {
+    if !bytes.starts_with(b"\x89PNG\r\n\x1a\n") {
+        return false;
+    }
+    let mut offset = 8_usize;
+    let mut gamma = None;
+    while let Some(header) = bytes.get(offset..).and_then(|tail| tail.get(..8)) {
+        let length = u32::from_be_bytes(header[..4].try_into().unwrap()) as usize;
+        let kind = &header[4..];
+        let Some(data_end) = offset
+            .checked_add(8)
+            .and_then(|start| start.checked_add(length))
+        else {
+            return false;
+        };
+        let Some(chunk_end) = data_end.checked_add(4).filter(|end| *end <= bytes.len()) else {
+            return false;
+        };
+        match kind {
+            b"cICP" | b"iCCP" | b"sRGB" | b"cHRM" => return false,
+            b"gAMA" if length == 4 => {
+                let expected = u32::from_be_bytes(bytes[data_end..chunk_end].try_into().unwrap());
+                if png_chunk_crc32(&bytes[offset + 4..data_end]) != expected {
+                    return false;
+                }
+                gamma = Some(u32::from_be_bytes(
+                    bytes[offset + 8..data_end].try_into().unwrap(),
+                ));
+            }
+            b"IDAT" => break,
+            _ => {}
+        }
+        offset = chunk_end;
+    }
+    gamma.is_some_and(|gamma| {
+        let relative_gamma = gamma as f32 / 100_000.0 * 2.2;
+        relative_gamma > 0.95 && relative_gamma < 1.05
+    })
 }
 
 /// A fully opaque one-pixel raster has the same sample at every repeated
@@ -1263,6 +1332,52 @@ pub fn physical_quantized_image_patch(
         floor_color_coverage,
         coverage_bounds,
         true,
+        false,
+    )
+}
+
+/// Resolve the broken-image slot with Chromium's legacy
+/// software image coordinate path. Its first sample is mapped through a f32
+/// inverse matrix at each analytic coverage span, then subsequent X samples
+/// advance in signed 32.32 fixed point. Coverage is applied by the draw, so
+/// the returned texels keep their sampled premultiplied colors.
+pub fn physical_quantized_broken_image_patch(
+    image: &Image,
+    source: Rect,
+    destination: Rect,
+    device_scale: f32,
+) -> Result<(Image, Rect, Option<(Rect, Rect)>), String> {
+    physical_quantized_broken_image_patch_with_clip(image, source, destination, device_scale, None)
+}
+
+pub(crate) fn physical_quantized_broken_image_patch_with_clip(
+    image: &Image,
+    source: Rect,
+    destination: Rect,
+    device_scale: f32,
+    clip: Option<Rect>,
+) -> Result<(Image, Rect, Option<(Rect, Rect)>), String> {
+    physical_quantized_image_patch_with_color_order(
+        image,
+        source,
+        destination,
+        device_scale,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        None,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        clip,
+        true,
+        true,
     )
 }
 
@@ -1300,8 +1415,48 @@ pub fn physical_quantized_replaced_profile_corners(
         false,
         coverage_bounds,
         false,
+        false,
     )?;
     Ok((patch, aligned_destination))
+}
+
+#[derive(Clone, Copy)]
+struct LegacyFixedImageAxis {
+    inverse_scale: f32,
+    inverse_translation: f32,
+    step_fixed: i64,
+}
+
+impl LegacyFixedImageAxis {
+    const FIXED_ONE: f64 = 4_294_967_296.0;
+
+    fn new(source_start: f32, source_extent: f32, device_start: f32, device_extent: f32) -> Self {
+        let forward_scale = device_extent / source_extent;
+        let inverse_scale = (1.0 / f64::from(forward_scale)) as f32;
+        let inverse_translation =
+            (f64::from(source_start) - f64::from(device_start) * f64::from(inverse_scale)) as f32;
+        let step_fixed = (inverse_scale * Self::FIXED_ONE as f32) as i64;
+        Self {
+            inverse_scale,
+            inverse_translation,
+            step_fixed,
+        }
+    }
+
+    fn first_fixed(self, device_pixel: i32) -> i64 {
+        let center = device_pixel as f32 + 0.5;
+        let mapped = center * self.inverse_scale + self.inverse_translation;
+        (mapped * Self::FIXED_ONE as f32) as i64 - (1_i64 << 31)
+    }
+
+    fn sample(self, device_pixel: i32) -> f64 {
+        self.first_fixed(device_pixel) as f64 / Self::FIXED_ONE
+    }
+
+    fn sample_from_first(self, first_device_pixel: i32, index: i32) -> f64 {
+        (self.first_fixed(first_device_pixel) + self.step_fixed * i64::from(index)) as f64
+            / Self::FIXED_ONE
+    }
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -1325,6 +1480,7 @@ fn physical_quantized_image_patch_with_color_order(
     floor_color_coverage: bool,
     coverage_bounds: Option<Rect>,
     convert_before_coverage: bool,
+    legacy_float_matrix: bool,
 ) -> Result<(Image, Rect, Option<(Rect, Rect)>), String> {
     if !device_scale.is_finite()
         || device_scale <= 0.0
@@ -1482,6 +1638,22 @@ fn physical_quantized_image_patch_with_color_order(
         f64::from(sampling_source.width()) / f64::from(physical_destination.width());
     let inverse_scale_y =
         f64::from(sampling_source.height()) / f64::from(physical_destination.height());
+    let legacy_x = legacy_float_matrix.then(|| {
+        LegacyFixedImageAxis::new(
+            sampling_source.left,
+            sampling_source.width(),
+            physical_destination.left,
+            physical_destination.width(),
+        )
+    });
+    let legacy_y = legacy_float_matrix.then(|| {
+        LegacyFixedImageAxis::new(
+            sampling_source.top,
+            sampling_source.height(),
+            physical_destination.top,
+            physical_destination.height(),
+        )
+    });
     // An integral one-to-one image mapping is a texel copy. The predecessor
     // closure used by translated nine-slice/filter paths must not turn exact
     // source coordinates into a 15/16 bilinear blend in this case.
@@ -1496,7 +1668,9 @@ fn physical_quantized_image_patch_with_color_order(
     let single_axis_background_repeat = !replaced && (coverage_repeats_x ^ coverage_repeats_y);
     for target_y in 0..height {
         let device_y = f64::from(physical_top + target_y) + 0.5;
-        let source_y = if full_precision_sampling && single_axis_background_repeat {
+        let source_y = if let Some(axis) = legacy_y {
+            axis.sample(physical_top + target_y)
+        } else if full_precision_sampling && single_axis_background_repeat {
             full_precision_repeated_source_coordinate(
                 sampling_source.top,
                 sampling_source.height(),
@@ -1607,7 +1781,17 @@ fn physical_quantized_image_patch_with_color_order(
                 )
             };
             let device_x = f64::from(physical_left + target_x) + 0.5;
-            let source_x = if full_precision_sampling && single_axis_background_repeat {
+            let source_x = if let Some(axis) = legacy_x {
+                let pixel = physical_left + target_x;
+                let span_start = coverage_left.ceil() as i32;
+                if pixel < span_start
+                    || (coverage_right.fract() != 0.0 && pixel >= coverage_right.floor() as i32)
+                {
+                    axis.sample(pixel)
+                } else {
+                    axis.sample_from_first(span_start, pixel - span_start)
+                }
+            } else if full_precision_sampling && single_axis_background_repeat {
                 full_precision_repeated_source_coordinate(
                     sampling_source.left,
                     sampling_source.width(),
@@ -1632,6 +1816,11 @@ fn physical_quantized_image_patch_with_color_order(
                 )
             });
             let repeated_fixed_x = wrap_x.then(|| {
+                // A round-adjusted tile at a physical half-pixel origin keeps
+                // the exact 8/16 horizontal tie. Other repeated paths retain
+                // the accumulated scanline phase when a half-texel tie occurs.
+                let round_half_origin = !rebase_repeat_x_across_raster_tiles
+                    && (physical_destination.left.rem_euclid(1.0) - 0.5).abs() <= 1.0e-5;
                 repeated_subrect_sample_fixed_at(
                     min_x,
                     max_x - min_x + 1,
@@ -1639,7 +1828,9 @@ fn physical_quantized_image_patch_with_color_order(
                     physical_destination.width(),
                     physical_left + target_x,
                     rebase_repeat_x_across_raster_tiles,
-                    close_exact_phase_to_predecessor && coverage_bounds.is_some(),
+                    close_exact_phase_to_predecessor
+                        && coverage_bounds.is_some()
+                        && !round_half_origin,
                 )
             });
             let closes_x_to_predecessor = close_exact_phase_to_predecessor
@@ -1737,7 +1928,10 @@ fn physical_quantized_image_patch_with_color_order(
                 // color channels with nearest premultiplication while alpha
                 // closes a non-empty fractional span upward. Replaying these
                 // pixels without another AA contour avoids double coverage.
-                let value = if (replaced || coverage_bounds.is_some()) && geometric_coverage < 255 {
+                let value = if !legacy_float_matrix
+                    && (replaced || coverage_bounds.is_some())
+                    && geometric_coverage < 255
+                {
                     if channel == 3 {
                         ((value * geometric_coverage + 255) >> 8).min(255)
                     } else if !replaced
@@ -2425,6 +2619,70 @@ fn svg_has_explicit_dimension(bytes: &[u8]) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn png_color_chunks(chunks: &[(&[u8; 4], &[u8])]) -> Vec<u8> {
+        let mut bytes = b"\x89PNG\r\n\x1a\n".to_vec();
+        for (kind, data) in chunks {
+            bytes.extend_from_slice(&(data.len() as u32).to_be_bytes());
+            let crc_start = bytes.len();
+            bytes.extend_from_slice(*kind);
+            bytes.extend_from_slice(data);
+            let crc = png_chunk_crc32(&bytes[crc_start..]);
+            bytes.extend_from_slice(&crc.to_be_bytes());
+        }
+        bytes
+    }
+
+    #[test]
+    fn png_neutral_gamma_respects_color_profile_precedence() {
+        let neutral = 45_455_u32.to_be_bytes();
+        assert!(png_has_neutral_gamma_without_color_profile(
+            &png_color_chunks(&[(b"gAMA", &neutral), (b"IDAT", &[]),])
+        ));
+        for kind in [b"cICP", b"iCCP", b"sRGB", b"cHRM"] {
+            for chunks in [
+                vec![(kind, &[][..]), (b"gAMA", &neutral[..])],
+                vec![(b"gAMA", &neutral[..]), (kind, &[][..])],
+            ] {
+                assert!(!png_has_neutral_gamma_without_color_profile(
+                    &png_color_chunks(&chunks)
+                ));
+            }
+        }
+        for gamma in [0_u32, 25_000, 100_000] {
+            assert!(!png_has_neutral_gamma_without_color_profile(
+                &png_color_chunks(&[(b"gAMA", &gamma.to_be_bytes()),])
+            ));
+        }
+    }
+
+    #[test]
+    fn png_neutral_gamma_rejects_corrupt_or_truncated_metadata() {
+        let bytes = png_color_chunks(&[(b"gAMA", &45_455_u32.to_be_bytes())]);
+        for length in 0..bytes.len() {
+            assert!(!png_has_neutral_gamma_without_color_profile(
+                &bytes[..length]
+            ));
+        }
+        let mut corrupt = bytes.clone();
+        *corrupt.last_mut().unwrap() ^= 1;
+        assert!(!png_has_neutral_gamma_without_color_profile(&corrupt));
+        let mut oversized = bytes;
+        oversized[8..12].copy_from_slice(&u32::MAX.to_be_bytes());
+        assert!(!png_has_neutral_gamma_without_color_profile(&oversized));
+    }
+
+    #[test]
+    fn broken_image_fixed_matrix_preserves_fractional_filter_phases() {
+        let weight = |coordinate: f64| ((coordinate.rem_euclid(1.0) * 16.0).floor()) as u32;
+        let at_150 = LegacyFixedImageAxis::new(0.0, 14.0, 30.0, 24.0);
+        assert_eq!(weight(at_150.sample_from_first(30, 1)), 5);
+        assert_eq!(weight(at_150.sample_from_first(30, 4)), 1);
+        assert_eq!(weight(at_150.sample_from_first(30, 7)), 13);
+
+        let at_125 = LegacyFixedImageAxis::new(0.0, 14.0, 25.0, 20.0);
+        assert_eq!(weight(at_125.sample_from_first(25, 7)), 12);
+    }
 
     #[test]
     fn svg_outer_edge_shortfall_tracks_the_composed_f32_phase() {

@@ -10,8 +10,24 @@ X11 and Wayland. Window, pointer, touch, wheel, keyboard, scale, resize, focus,
 file-drop, and IME notifications are normalized into logical coordinates before
 entering the framework. Application callbacks run after platform and engine
 borrows have been released. Redraws are requested for input, resize, expose,
-accessibility actions, or active animation; settled applications use winit's
+accessibility actions, active animation, or retained mutations from a platform
+callback; settled applications use winit's
 waiting control flow.
+
+`App::from_document` and `App::run_document` run an existing retained document.
+`App::exit_handle` supplies an owned UI-thread exit handle, and
+`App::on_platform_event` observes native notifications after document handling.
+`PlatformEvent::Presented` is sent after a successful buffer presentation;
+changing an element in this callback requests another frame. Logical key names
+and committed text are passed separately in `KeyboardInput`, so cancelling a
+keydown suppresses its text default and names such as `Escape` are never typed
+into a control. Text input on a noneditable control is ignored.
+
+The C ABI's opt-in `linux` feature exposes the same path through `oui_app_run`,
+`oui_app_request_exit`, `OuiAppRunConfig`, and `OuiPlatformEvent`. C listeners
+run through the Rust document's event route and can prevent native defaults.
+The [C ABI guide](../../bindings/rust/openui-ffi/README.md#native-linux-windows)
+defines callback ownership, main-thread requirements, and lifetime rules.
 
 Both presentation paths consume the exact frame produced from the engine's
 immutable scene. `Software` presents it through softbuffer. `OpenGl` creates an
@@ -21,12 +37,12 @@ OpenGL first and falls back to software during initialization or after a
 presentation failure. Every backend selection and fallback is reported through
 `PlatformEvent::BackendChanged`, including the diagnostic reason.
 
-The pinned rust-skia revision cannot currently compile its optional Ganesh GL
-API because its Rust `GpuStats` declaration is one field behind the bundled
-Skia C++ declaration. W8 therefore preserves the exact CPU Skia raster and uses
-OpenGL for composition/presentation. Direct picture replay into a Skia GPU
-surface remains blocked until that pinned dependency is repaired; the engine,
-scene generation, layout, damage, and resulting pixels are backend-independent.
+The pinned rust-skia revision now builds its optional Ganesh GL path. The
+renderer keeps CPU Skia as the portable qualification backend and uses OpenGL
+to present its frame. Direct picture replay into an offscreen Ganesh surface
+is explicitly selectable for comparison, but it is not a qualified release
+path until repeated runs are deterministic, the focused and primitive matrices
+are exact, and the complete census does not regress.
 
 Both paths tolerate zero-sized/minimized windows and resize their native
 surfaces before presentation. The software compositor caches the last raster by

@@ -42,6 +42,11 @@ pub struct OuiBuffer {
     _private: [u8; 0],
 }
 
+#[repr(C)]
+pub struct OuiAccessibilitySnapshot {
+    _private: [u8; 0],
+}
+
 #[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum OuiStatus {
@@ -132,6 +137,18 @@ pub struct OuiDocumentConfig {
     pub struct_size: u32,
     pub abi_version: u32,
     pub viewport: OuiViewportMetrics,
+}
+
+/// Caller-owned client and content dimensions in logical CSS pixels.
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct OuiScrollMetricsV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub client_width: f64,
+    pub client_height: f64,
+    pub scroll_width: f64,
+    pub scroll_height: f64,
 }
 
 #[repr(C)]
@@ -344,6 +361,70 @@ pub struct OuiAccessibilityUpdate {
     pub reserved: u16,
 }
 
+pub const OUI_ACCESSIBILITY_NODE_HIDDEN: u32 = 1 << 0;
+pub const OUI_ACCESSIBILITY_NODE_REQUIRED: u32 = 1 << 1;
+pub const OUI_ACCESSIBILITY_NODE_READ_ONLY: u32 = 1 << 2;
+pub const OUI_ACCESSIBILITY_NODE_MODAL: u32 = 1 << 3;
+pub const OUI_ACCESSIBILITY_NODE_HAS_BOUNDS: u32 = 1 << 4;
+
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct OuiAccessibilitySnapshotInfo {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub generation: u64,
+    pub focus_id: u64,
+    pub node_count: usize,
+    pub changed_count: usize,
+    pub removed_count: usize,
+    pub full_tree: u8,
+    pub reduced_motion: u8,
+    pub reserved: [u8; 6],
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiAccessibilityNodeInfo {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub id: u64,
+    pub role: u32,
+    pub flags: u32,
+    pub actions: u32,
+    pub reserved: u32,
+    pub bounds: OuiRect,
+    pub child_count: usize,
+    pub labelled_by_count: usize,
+    pub described_by_count: usize,
+    pub controls_count: usize,
+    pub details_count: usize,
+    pub label_length: usize,
+    pub description_length: usize,
+    pub value_length: usize,
+    pub role_name_length: usize,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct OuiAccessibilityNodeState {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub flags: u32,
+    pub live: u32,
+    pub numeric_value: f64,
+    pub numeric_min: f64,
+    pub numeric_max: f64,
+    pub numeric_step: f64,
+    pub scroll_x: f64,
+    pub scroll_y: f64,
+    pub placeholder_length: usize,
+    pub character_lengths_count: usize,
+    pub selection_anchor_node: u64,
+    pub selection_anchor_index: usize,
+    pub selection_focus_node: u64,
+    pub selection_focus_index: usize,
+}
+
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct OuiEvent {
@@ -376,3 +457,44 @@ pub struct OuiErrorInfo {
 }
 
 pub type OuiEventCallback = unsafe extern "C" fn(event: *mut OuiEvent, user_data: *mut c_void);
+
+/// Borrowed platform event; all text/path storage is valid only during callback.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiPlatformEvent {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub event_type: u32,
+    pub phase: u32,
+    pub flags: u32,
+    pub backend: u32,
+    pub pointer_id: u64,
+    pub x: f32,
+    pub y: f32,
+    pub delta_x: f32,
+    pub delta_y: f32,
+    pub key_code: i32,
+    pub modifiers: u32,
+    pub button: u32,
+    pub reserved: u32,
+    pub frame_number: u64,
+    pub time_ms: f64,
+    pub text: OuiUtf8,
+    pub path: *const u8,
+    pub path_length: usize,
+    pub viewport: OuiViewportMetrics,
+}
+
+pub type OuiPlatformEventCallback =
+    unsafe extern "C" fn(app: *mut OuiApp, event: *const OuiPlatformEvent, user_data: *mut c_void);
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiAppRunConfig {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub flags: u32,
+    pub reserved: u32,
+    pub callback: Option<OuiPlatformEventCallback>,
+    pub user_data: *mut c_void,
+}

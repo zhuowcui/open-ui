@@ -85,58 +85,25 @@ jobs:
             --locked --package openui-ffi
           python3 tools/ffi/verify_abi.py
 
-  frozen-pixel-replay:
-    name: frozen-pixel-replay
-    needs: rust-parity
+  historical-pixel-audit:
+    name: historical-pixel-audit
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
-    env:
-      BINDGEN_EXTRA_CLANG_ARGS: ""
-      CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS: ""
-      CC: clang
-      CLANGCC: clang
-      CLANGCXX: clang++
-      CXX: clang++
-      CXXFLAGS: ""
-      FORCE_SKIA_BUILD: "1"
-      LIBCLANG_PATH: /usr/lib/llvm-18/lib
-      PKG_CONFIG_SYSROOT_DIR: ""
-      RUST_MIN_STACK: "4194304"
-      SKIA_GN_ARGS: >-
-        extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP",
-        "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2",
-        "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing", "-msse3" ]
-      SKIA_NINJA_COMMAND: ninja
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install Rust and Skia build dependencies
+      - name: Verify historical archive integrity and comparator metadata
         run: |
-          sudo apt-get update
-          sudo apt-get install --yes --no-install-recommends \
-            build-essential clang curl libclang-18-dev libfontconfig1-dev \
-            libfreetype-dev libgl1-mesa-dev ninja-build pkg-config python3
-          rustup toolchain install 1.94.1 --profile minimal
-          rustup default 1.94.1
+          python3 tools/accountability/restore_frozen_openui_archive.py --check
+          python3 tools/accountability/audit_frozen_oracle.py \
+            --output "$RUNNER_TEMP/historical-pixel-audit.json"
 
-      - uses: actions/cache@v5
+      - name: Upload historical audit
+        uses: actions/upload-artifact@v4
         with:
-          path: |
-            ~/.cargo/git
-            ~/.cargo/registry
-            bindings/rust/target
-          key: rust-parity-v1-${{ runner.os }}-1.94.1-${{ hashFiles('bindings/rust/Cargo.lock', 'bindings/rust/Cargo.toml', 'bindings/rust/**/Cargo.toml') }}
-
-      - name: Restore immutable frozen OpenUI PNGs
-        run: python3 tools/accountability/restore_frozen_openui_archive.py --restore
-
-      - name: Replay frozen Open UI pixels
-        run: |
-          cargo build --manifest-path bindings/rust/Cargo.toml \
-            --config 'target.x86_64-unknown-linux-gnu.rustflags=[]' \
-            --locked --package pixel-compare
-          python3 tools/accountability/verify_frozen_openui_pixels.py \
-            --pixel-compare bindings/rust/target/debug/pixel_compare --jobs 4
+          name: historical-pixel-audit
+          path: ${{ runner.temp }}/historical-pixel-audit.json
+          if-no-files-found: error
 
   python-accountability:
     name: python-accountability
@@ -144,6 +111,13 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install renderer evidence test dependency
+        run: python3 -m pip install Pillow==12.2.0
 
       - uses: actions/setup-node@v4
         with:
@@ -179,9 +153,10 @@ jobs:
           printf 'CHROMIUM_WPT_ROOT=%s\nCHROMIUM_WPT_CSS=%s\n' \
             "$wpt_root" "$wpt_root/css" >> "$GITHUB_ENV"
 
-      - name: Run frozen closure and porter tests
+      - name: Run closure, porter, and renderer evidence tests
         run: |
           python3 -m unittest \
+            tools.accountability.test_audit_frozen_oracle \
             tools.wpt.test_sp13p_paint_closure \
             tools.wpt.test_sp13r_multicol_closure \
             tools.wpt.test_sp14_text_port \
@@ -190,7 +165,9 @@ jobs:
             tools.wpt.test_sp17_closure \
             tools.wpt.test_sp18_closure \
             tools.wpt.test_sp19_closure \
-            tools.wpt.test_sp20_closure
+            tools.wpt.test_sp20_closure \
+            tools.qualification.test_renderer_matrix \
+            tools.qualification.test_summarize_renderer_census
 
       - name: Verify immutable closure ledgers
         run: |

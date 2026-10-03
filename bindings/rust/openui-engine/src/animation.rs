@@ -99,19 +99,21 @@ impl Engine {
             ));
         }
         let node = self.resolve(target)?;
+        let clamped = self.clamp_scroll_offset(target, x, y)?;
         let source = self.document.node(node);
         let from = (source.scroll_left as f64, source.scroll_top as f64);
-        let to = (x.max(0.0), y.max(0.0));
+        let to = (clamped.0 as f64, clamped.1 as f64);
         self.scroll_animations
             .retain(|_, animation| animation.target != target);
         let id = ScrollAnimationId(self.next_scroll_animation_id);
         self.next_scroll_animation_id = self.next_scroll_animation_id.wrapping_add(1).max(1);
         if self.reduced_motion || duration_ms == 0.0 {
-            let data = self.document.node_mut(node);
-            data.scroll_left = to.0 as f32;
-            data.scroll_top = to.1 as f32;
-            self.dirty.hit_test = true;
-            self.mark_dirty(openui_style::InvalidationClass::Composite);
+            if from != to {
+                let data = self.document.node_mut(node);
+                data.scroll_left = to.0 as f32;
+                data.scroll_top = to.1 as f32;
+                self.invalidate_scroll(node);
+            }
             return Ok(id);
         }
         self.scroll_animations.insert(
@@ -536,13 +538,12 @@ impl Engine {
             .collect::<Vec<_>>();
         for (id, target, x, y, finished) in samples {
             let node = self.resolve(target)?;
+            let next = self.clamp_scroll_offset(target, x, y)?;
             let data = self.document.node_mut(node);
-            let next = (x.max(0.0) as f32, y.max(0.0) as f32);
             if (data.scroll_left, data.scroll_top) != next {
                 data.scroll_left = next.0;
                 data.scroll_top = next.1;
-                self.dirty.hit_test = true;
-                self.mark_dirty(openui_style::InvalidationClass::Composite);
+                self.invalidate_scroll(node);
             }
             if finished {
                 self.scroll_animations.remove(&id);
@@ -634,16 +635,13 @@ impl Engine {
             } => {
                 let node = self.resolve(subject)?;
                 let position = self
-                    .hit_test
-                    .iter()
-                    .rev()
-                    .find(|entry| entry.node == node)
-                    .map(|entry| match axis {
+                    .node_bounds(node)
+                    .map(|bounds| match axis {
                         TimelineAxis::Inline | TimelineAxis::X => {
-                            entry.local_to_world.map(entry.width * 0.5, 0.0).0 as f64
+                            (bounds.x + bounds.width * 0.5) as f64
                         }
                         TimelineAxis::Block | TimelineAxis::Y => {
-                            entry.local_to_world.map(0.0, entry.height * 0.5).1 as f64
+                            (bounds.y + bounds.height * 0.5) as f64
                         }
                     })
                     .unwrap_or_default();
@@ -696,7 +694,7 @@ mod tests {
     use super::*;
     use crate::ViewportMetrics;
     use openui_dom::ElementTag;
-    use openui_style::{FillMode, Keyframe};
+    use openui_style::{Display, FillMode, Keyframe, Overflow};
 
     fn opacity_frames() -> PropertyKeyframes {
         PropertyKeyframes::typed(
@@ -822,6 +820,23 @@ mod tests {
             Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
         let node = engine.create_element(ElementTag::Div).unwrap();
         engine.append_child(engine.root(), node).unwrap();
+        let content = engine.create_element(ElementTag::Div).unwrap();
+        engine.append_child(node, content).unwrap();
+        for (target, property, value) in [
+            (node, StyleProperty::Display, Display::Block.into()),
+            (node, StyleProperty::Width, LengthValue::px(100.0).into()),
+            (node, StyleProperty::Height, LengthValue::px(80.0).into()),
+            (node, StyleProperty::Overflow, Overflow::Hidden.into()),
+            (content, StyleProperty::Display, Display::Block.into()),
+            (content, StyleProperty::Width, LengthValue::px(300.0).into()),
+            (
+                content,
+                StyleProperty::Height,
+                LengthValue::px(240.0).into(),
+            ),
+        ] {
+            engine.set_property(target, property, value).unwrap();
+        }
         engine
             .smooth_scroll_to(node, 100.0, 40.0, 100.0, openui_style::Easing::Linear)
             .unwrap();

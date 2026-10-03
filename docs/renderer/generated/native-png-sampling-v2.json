@@ -1,0 +1,533 @@
+{
+  "accepted_renderer_unchanged": true,
+  "clean_source_identity": {
+    "fresh_build_exit_code": 0,
+    "fresh_build_log": "out/renderer-evidence/native-resolved-image-patches-v1/clean-native-app-build-v7.log",
+    "pinned_binaries": {
+      "native_image_opacity": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-opacity-v6/native_image_opacity",
+        "sha256": "f832b9fcb184e2321f77e46f4ff311ea7172a35e64aaf37a9ee7f609ec2ab05b"
+      },
+      "native_opacity_clip": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-opacity-v6/native_opacity_clip",
+        "sha256": "65da5013f8b35e578173bf06a5577eb425de1b7cc90e696422218b478d84c58d"
+      },
+      "native_png_sampling": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-opacity-v6/native_png_sampling",
+        "sha256": "520c0e1069524b2fa7d77ee62d600c9adff0f2def2a45463e3897906b8479328"
+      }
+    },
+    "release_qualification": false,
+    "source": {
+      "clean": true,
+      "commit": "fccbcccb0d6e055654a259f93529a051c0e81f90",
+      "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+      "source_tree_sha256": "604aea212c11b09731ba05fe4e4b51b7197fb92fe98f7bb12351d457ed927873",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "completed_original_and_focused_guards": [
+    {
+      "delta": {
+        "all_chromium_pixels_and_identities_unchanged": true,
+        "baseline_report_sha256": "c6d09c78793c77620780b47f254b80368af35153ec4afe8d41239d6888e60bc0",
+        "changed_images": 0,
+        "changes": [],
+        "comparison_count": 640,
+        "evidence": {
+          "binary_unchanged": true,
+          "kind": "qualification",
+          "qualification_backend_match": true,
+          "qualified": true,
+          "source_unchanged": true,
+          "tolerance_pixels": 0
+        },
+        "exact_regressions": [],
+        "improved": 0,
+        "new_exact": 0,
+        "process_exit_code": 0,
+        "report_sha256": "2f9263c9bf136d984a6d61db3785373bfd869b9ee20dc653bd65abc2437999f3",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "9225cea2f8554f113646c961dc472bf2fe02ff6b901c6aedcd30372c63851d0e",
+          "total": 640
+        },
+        "source": {
+          "clean": true,
+          "commit": "fccbcccb0d6e055654a259f93529a051c0e81f90",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "604aea212c11b09731ba05fe4e4b51b7197fb92fe98f7bb12351d457ed927873",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "worsened": 0
+      },
+      "delta_artifact": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-focused-delta-v6.json",
+        "sha256": "3901ab1f531cf98556eb836a0e43fa447658d794a5fc62616a47640e4bf1785c"
+      },
+      "suite": "focused"
+    },
+    {
+      "delta": {
+        "all_chromium_pixels_and_identities_unchanged": true,
+        "baseline_report_sha256": "e8b68b1620756643797ee5d2f96bbaeb85c96b96ceaca9b1acc583e69b2186d0",
+        "changed_images": 0,
+        "changes": [],
+        "comparison_count": 960,
+        "evidence": {
+          "binary_unchanged": true,
+          "kind": "qualification",
+          "qualification_backend_match": true,
+          "qualified": true,
+          "source_unchanged": true,
+          "tolerance_pixels": 0
+        },
+        "exact_regressions": [],
+        "improved": 0,
+        "new_exact": 0,
+        "process_exit_code": 0,
+        "report_sha256": "9c47edbee95d0c316eb8e961abbb3baa14a58981f5f4aa714c4c7236380b9935",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "16c4015d56314124257b043fcc2e6782b0e87d8dbb80b0162f772ee99bdf2f19",
+          "total": 960
+        },
+        "source": {
+          "clean": true,
+          "commit": "fccbcccb0d6e055654a259f93529a051c0e81f90",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "604aea212c11b09731ba05fe4e4b51b7197fb92fe98f7bb12351d457ed927873",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "worsened": 0
+      },
+      "delta_artifact": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-primitive-delta-v6.json",
+        "sha256": "3bad85bb3de6bd73b77d5d59810c8aafe6cbbdb06c4616e7a36090971a0a7530"
+      },
+      "suite": "primitive"
+    },
+    {
+      "delta": {
+        "all_chromium_pixels_and_identities_unchanged": true,
+        "baseline_report_sha256": "d74a544b679a8b46d7d88ffa937113a2aa4937da25e604576503164d3a6f8877",
+        "changed_images": 0,
+        "changes": [],
+        "comparison_count": 1256,
+        "evidence": {
+          "binary_unchanged": true,
+          "kind": "diagnostic-census",
+          "qualification_backend_match": true,
+          "qualified": false,
+          "source_unchanged": true,
+          "tolerance_pixels": 0
+        },
+        "exact_regressions": [],
+        "improved": 0,
+        "new_exact": 0,
+        "process_exit_code": 1,
+        "report_sha256": "f18bef7521b00ef184496272f228dca96c046ee4202e7b834320e1b6b9528341",
+        "results": {
+          "different": 145,
+          "errors": 0,
+          "exact": 1111,
+          "profile_result_sha256": "28bc610ae007b75ddcc74dcb98760d37a5c3fd8235b14753fad30a121b7e5788",
+          "total": 1256
+        },
+        "source": {
+          "clean": true,
+          "commit": "fccbcccb0d6e055654a259f93529a051c0e81f90",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "604aea212c11b09731ba05fe4e4b51b7197fb92fe98f7bb12351d457ed927873",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "worsened": 0
+      },
+      "delta_artifact": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-original-guard-delta-v6.json",
+        "sha256": "f5f3d0fdb927e834517534824d3113101fbc220852de4a8d519a58c300b59e9f"
+      },
+      "suite": "original-guard"
+    }
+  ],
+  "expanded_census": {
+    "complete": false,
+    "qualified": false,
+    "status": "not-run-for-this-prototype"
+  },
+  "full_original_census": {
+    "complete": false,
+    "expected_comparisons": 22924,
+    "log": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-original-execution-v6.log",
+    "process_exit_code": null,
+    "qualified": false,
+    "results_directory": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-original-v6",
+    "status": "running"
+  },
+  "javascript_executed_by_openui": false,
+  "known_worsened_native_failure": {
+    "after_mismatched_pixels": 105,
+    "before_mismatched_pixels": 83,
+    "case": "empty-parent-self50-0",
+    "maximum_channel_delta": 1,
+    "owned_bounds_exact": true,
+    "owner": "openui-paint failed-image clipping and coverage",
+    "scale": 1.25,
+    "status": "open; no tolerance or qualification waiver"
+  },
+  "native_measurements": [
+    {
+      "baseline_report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/branch-comparison-v1.json",
+        "sha256": "9848152bafa442bdf2cc16897afa3bb6d5d12102c7e7578d59769d6234432d58"
+      },
+      "delta": {
+        "after_exact": 148,
+        "before_exact": 74,
+        "before_total": 540,
+        "changed": 270,
+        "exact_regressions": 0,
+        "improved": 270,
+        "new_exact": 74,
+        "worsened": 0
+      },
+      "delta_artifact": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/native-standalone-delta-v6.json",
+        "sha256": "da6f9d66f1b8be063b7886d23dcd22444a357b1ccd5aa05d79e8c7e4645645e0"
+      },
+      "native_callback_once_and_teardown_checks": 540,
+      "owned_bounds_exact": 540,
+      "pixel_exact": 148,
+      "process_exit_code": 0,
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/clean-v7-comparison-v1.json",
+        "sha256": "4bca2f745d64214c9a8f7bced11f64bb2a1f9c4da1e5aba1bfcebc05a9bf7eff"
+      },
+      "suite": "png",
+      "total": 540
+    },
+    {
+      "baseline_report": {
+        "path": "out/renderer-evidence/native-image-opacity-v1/baseline-c9-v1-comparison-v1.json",
+        "sha256": "fd1784928b687307317528637663d61910b764af74ce595ad30211f0a24e1f60"
+      },
+      "delta": {
+        "after_exact": 109,
+        "before_exact": 0,
+        "before_total": 160,
+        "changed": 160,
+        "exact_regressions": 0,
+        "improved": 160,
+        "new_exact": 109,
+        "worsened": 0
+      },
+      "delta_artifact": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/native-image-opacity-v1-standalone-delta-v6.json",
+        "sha256": "c20368d7358edc421217c2fa36f026fd1f32ccbcca31a2ff1022e5a331ab930a"
+      },
+      "owned_bounds_exact": 160,
+      "pixel_exact": 109,
+      "process_exit_code": 0,
+      "report": {
+        "path": "out/renderer-evidence/native-image-opacity-v1/clean-v7-comparison-v1.json",
+        "sha256": "ace90c08d64a0070c85df1bb4ac4329b878791db4c24ee770597b7a143a350bb"
+      },
+      "suite": "image-opacity",
+      "total": 160
+    },
+    {
+      "baseline_report": {
+        "path": "out/renderer-evidence/native-opacity-clip-v1/baseline-c9-v1-comparison-v1.json",
+        "sha256": "5658cdc29d3a3b5f3bbc0a3b67b8eb7e1659668e0d6385cdf185e14c53405ff6"
+      },
+      "delta": {
+        "after_exact": 143,
+        "before_exact": 116,
+        "before_total": 180,
+        "changed": 56,
+        "exact_regressions": 0,
+        "improved": 55,
+        "new_exact": 27,
+        "worsened": 1
+      },
+      "delta_artifact": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/native-opacity-clip-v1-standalone-delta-v6.json",
+        "sha256": "2f0ad37cc7a178d6eba5bdb7bd30fb728902186670f360dd49ab01983634a3b4"
+      },
+      "owned_bounds_exact": 180,
+      "pixel_exact": 143,
+      "process_exit_code": 0,
+      "report": {
+        "path": "out/renderer-evidence/native-opacity-clip-v1/clean-v7-comparison-v1.json",
+        "sha256": "978ab65f23011a4b50c8035ca881a44cbbc7e744ba87e88938987a62eff30e8a"
+      },
+      "suite": "opacity-clip",
+      "total": 180
+    }
+  ],
+  "other_unapplied_trials": [
+    {
+      "accepted": false,
+      "delta_against_neutral_gamma": {
+        "all_chromium_bytes_unchanged": true,
+        "changed": 76,
+        "exact_regressions": 0,
+        "improved": 17,
+        "new_exact": 0,
+        "qualification": false,
+        "worsened": 51
+      },
+      "identity": {
+        "binary_sha256": "f53c69250c0d9c9af96cd2e1c8c713749a6d1a1f2c0db13413a8c89e3ab02789",
+        "build_exit_code": 0,
+        "pixel_compare": {
+          "binary_sha256": "a93863fcba5f1fe3eed4176d9a9e492555ef2e02c23bf64afe1979dfcb27da08",
+          "build_exit_code": 0,
+          "build_identity": {
+            "schema_version": 1,
+            "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_ENABLE_LEGACY_SHADERCONTEXT\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+            "source": {
+              "clean": false,
+              "commit": "841b81e075d8316d02b6b7f1cc1274d24efb322e",
+              "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+              "source_tree_sha256": "3b5cb218838a5352a77c7c97c77a9840b7be9d481b12d1e740a3a0af9ecf6cc1",
+              "status_sha256": "19fef92427d7387e5780b10f13ae049f7d17d95ad7e760f845ab155640c4e2a9"
+            }
+          }
+        },
+        "qualification": false,
+        "source": {
+          "clean": false,
+          "commit": "841b81e075d8316d02b6b7f1cc1274d24efb322e",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "3b5cb218838a5352a77c7c97c77a9840b7be9d481b12d1e740a3a0af9ecf6cc1",
+          "status_sha256": "19fef92427d7387e5780b10f13ae049f7d17d95ad7e760f845ab155640c4e2a9"
+        }
+      },
+      "label": "extra-analytic-clip",
+      "owned_bounds_exact": 540,
+      "pixel_exact": 146,
+      "process_exit_code": 0,
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/analytic-comparison-v1.json",
+        "sha256": "cde33a1d3f4b92d2935e685b9e8254e67b1fbef9f0ddb7679fc1b78aead3daee"
+      },
+      "total": 540
+    },
+    {
+      "accepted": false,
+      "delta_against_neutral_gamma": {
+        "changed": 67,
+        "exact_regressions": 0,
+        "improved": 30,
+        "new_exact": 0,
+        "worsened": 33
+      },
+      "identity": {
+        "binary_sha256": "ea85866dde11d9d54d366e57938b8894c99bcc632af86bd31c27923593ae2810",
+        "build_exit_code": 0,
+        "qualification": false,
+        "source": {
+          "clean": false,
+          "commit": "841b81e075d8316d02b6b7f1cc1274d24efb322e",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "bd84541b9f4d281da71d52c0e3ed52dd539bc2f9e96a81715089cfbc172de71f",
+          "status_sha256": "19fef92427d7387e5780b10f13ae049f7d17d95ad7e760f845ab155640c4e2a9"
+        }
+      },
+      "label": "aa-shader-rectangle",
+      "owned_bounds_exact": 540,
+      "pixel_exact": 146,
+      "process_exit_code": 0,
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/rect-v4-comparison-v1.json",
+        "sha256": "a36e00e41b4acfc4d145db3bf454d3de5a280342bf9534d5f068551295da2f29"
+      },
+      "total": 540
+    },
+    {
+      "accepted": false,
+      "delta_against_neutral_gamma": {
+        "changed": 150,
+        "exact_regressions": 0,
+        "improved": 150,
+        "new_exact": 50,
+        "worsened": 0
+      },
+      "identity": {
+        "binary_sha256": "b73d152c92cc5e2522eeb2f4c9de71f1ee9507741ba1b7a04eda9bfd2bbe407a",
+        "build_exit_code": 0,
+        "qualification": false,
+        "source": {
+          "clean": false,
+          "commit": "841b81e075d8316d02b6b7f1cc1274d24efb322e",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "8cbdcfcbf932809da09eabcb2638ad8c63b9eda91e5ab023ca911bb70aef816f",
+          "status_sha256": "19fef92427d7387e5780b10f13ae049f7d17d95ad7e760f845ab155640c4e2a9"
+        }
+      },
+      "label": "raster-decoration-opacity-with-other-prototypes",
+      "owned_bounds_exact": 540,
+      "pixel_exact": 196,
+      "process_exit_code": 0,
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/opacity-v5-comparison-v1.json",
+        "sha256": "f33825a16ed9f461b4ba9ffac2aa883f4fab95e266ca2028ff3042777f614940"
+      },
+      "total": 540
+    }
+  ],
+  "owner": "openui-paint opacity compositing and raster image coverage",
+  "pixel_tolerance": 0,
+  "pixel_tool_identity": {
+    "binary_sha256": "dc9a1d18514d70ee0b3f7c50c879adf09da49c657cbb720e5ee8a7833e756e72",
+    "build_exit_code": 0,
+    "build_identity": {
+      "schema_version": 1,
+      "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+      "source": {
+        "clean": true,
+        "commit": "fccbcccb0d6e055654a259f93529a051c0e81f90",
+        "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+        "source_tree_sha256": "604aea212c11b09731ba05fe4e4b51b7197fb92fe98f7bb12351d457ed927873",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "qualified": false,
+    "source": {
+      "clean": true,
+      "commit": "fccbcccb0d6e055654a259f93529a051c0e81f90",
+      "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+      "source_tree_sha256": "604aea212c11b09731ba05fe4e4b51b7197fb92fe98f7bb12351d457ed927873",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "policy": "Chromium is the sole pixel target. Application interactions use public native Rust methods and callbacks. Historical Open UI images are provenance only.",
+  "prototype_patch": {
+    "applied_to_umbrella": false,
+    "artifact": {
+      "path": "docs/renderer/evidence/native-png-sampling-v1/raster-image-opacity-standalone-v6.patch",
+      "sha256": "03c5dc78f2d767da5a28c3b0439b66a8e1fac223eab60d8b2731d0e873af5d05"
+    },
+    "new_build_flags": false
+  },
+  "readonly_checks": [
+    {
+      "log": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-check-renderer-v6.log",
+        "sha256": "a5cb69a55ba34209d98e5b82c74fe24ebf4bada5c3ebf2584fa5be3335a12b2c"
+      },
+      "name": "renderer",
+      "process_exit_code": 0
+    },
+    {
+      "log": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-check-release-v6.log",
+        "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+      },
+      "name": "release",
+      "process_exit_code": 0
+    },
+    {
+      "log": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-check-ffi-v6.log",
+        "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+      },
+      "name": "ffi",
+      "process_exit_code": 0
+    },
+    {
+      "log": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-check-style-v6.log",
+        "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+      },
+      "name": "style",
+      "process_exit_code": 0
+    },
+    {
+      "log": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-check-sp13r_multicol-v6.log",
+        "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+      },
+      "name": "sp13r_multicol",
+      "process_exit_code": 0
+    },
+    {
+      "log": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-check-sp17-v6.log",
+        "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+      },
+      "name": "sp17",
+      "process_exit_code": 0
+    },
+    {
+      "log": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-check-sp18-v6.log",
+        "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+      },
+      "name": "sp18",
+      "process_exit_code": 0
+    },
+    {
+      "log": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-check-sp20-v6.log",
+        "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+      },
+      "name": "sp20",
+      "process_exit_code": 0
+    },
+    {
+      "log": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-check-archive-v6.log",
+        "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+      },
+      "name": "archive",
+      "process_exit_code": 0
+    },
+    {
+      "log": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-check-accountability-v6.log",
+        "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+      },
+      "name": "accountability",
+      "process_exit_code": 0
+    }
+  ],
+  "regression_test": {
+    "log": {
+      "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-opacity-tests-v6.log",
+      "sha256": "9553a64b5ed86b21e83085c916a3d97de1efdf9680dc79b605ddfd7b3cb9c822"
+    },
+    "passed": 1,
+    "process_exit_code": 0,
+    "scales": [
+      1,
+      1.25,
+      1.5,
+      2,
+      3
+    ]
+  },
+  "release_qualification": false,
+  "remaining_work": [
+    "complete original and expanded clean censuses and audit every changed comparison",
+    "resolve the worsened native failed-image edge case",
+    "keep the full Chromium release gate open until all required results are exact"
+  ],
+  "reviewed_root_cause": "Raster backgrounds and border images were omitted from the sampled-image opacity-group classification. F16 groups alter fully covered image colors compared with the packed N32 intermediate.",
+  "schema_version": 2,
+  "workspace_tests": {
+    "failed": 0,
+    "ignored": 13,
+    "log": {
+      "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-workspace-tests-v6.log",
+      "sha256": "08db7205bd32cec9547327f32a7e994f347cb05e2cb4a4e628b4a5b91556e41f"
+    },
+    "passed": 8492,
+    "process_exit_code": 0
+  }
+}

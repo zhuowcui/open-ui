@@ -1,0 +1,372 @@
+{
+  "application": {
+    "path": "bindings/rust/openui/examples/native_opacity_clip.rs",
+    "sha256": "a0f7dd0d3e0e119db6041ef5100c8e408a3915dca33da93a1fea6698af89737d"
+  },
+  "case_manifest": {
+    "path": "docs/renderer/evidence/native-source-less-images-v1/cases.json",
+    "sha256": "cc533555745e31f1204ece10b78594c8261df5f088338f2af52fa0fca8e6ae09"
+  },
+  "generated_tile_format_followup": {
+    "affected_guard_report": {
+      "path": "out/renderer-evidence/native-generated-sampling-v1/changed-guards-v1/full-summary.json",
+      "sha256": "ea531eaa096bac96d0cbc31cee3afc4419aa94ce687fd299b41e8b8e852bf218"
+    },
+    "all_1800_native_controls_unchanged": true,
+    "all_chromium_bytes_and_oracle_identities_unchanged": true,
+    "delta": {
+      "path": "out/renderer-evidence/native-generated-sampling-v1/changed-guards-delta-v1.json",
+      "sha256": "41b808637ee00b22d6e0ccafed12fd3488dc80fbdd0735c81ce5842df21d588d"
+    },
+    "different": 138,
+    "errors": 0,
+    "exact": 166,
+    "guard_count": 304,
+    "matrix_exit_code": 1,
+    "primary_chromium_sources": {
+      "path": "out/renderer-evidence/native-generated-sampling-v1/pinned-source-v1/sources.json",
+      "sha256": "0ef691b6056373bb464e88576947960e3bf4a989104ce0d5aee44a7df6004cc6"
+    },
+    "primary_rust_skia_sources": {
+      "path": "out/renderer-evidence/native-generated-sampling-v1/pinned-source-v1/rust-skia-source-records.json",
+      "sha256": "092f48ca0d96694992d5ab3cf4521c49a2a2d366e33445b6b7b84a73b63c1cab"
+    },
+    "qualified": false,
+    "remaining_exact_regressions": 5,
+    "restored_formerly_exact_comparisons": 18,
+    "source_checked_build": {
+      "path": "out/renderer-evidence/native-generated-sampling-v1/tile-format-v1/build-identity.json",
+      "sha256": "cf190f285b9d685a63a84e9abff3b8b34401c1b242e47c018eb55bf3946fb681"
+    },
+    "traced_chromium_captures": {
+      "path": "out/renderer-evidence/native-generated-sampling-v1/picture-trace-v1/metadata.json",
+      "sha256": "045c7e3d0b61c639c982f353ea4fa8d06ee95c2aa5104d33679f25206abc3695"
+    }
+  },
+  "limitations": [
+    "These reduced 320x240 cases at five device scales are diagnostics; they are not admitted original or expanded release cases.",
+    "The V3 patch includes an unqualified Skia build flag and opacity/clip changes; its release adoption is prevented by the global regressions.",
+    "The complete V2 source-less original census is 21,302/22,924 exact, with 23 formerly exact regressions. It is rejected development evidence and does not establish V3 results.",
+    "Remaining native image pixels, renderer residual ownership, native API review, compositor and external qualification remain open."
+  ],
+  "picture_commands": {
+    "path": "out/renderer-evidence/native-source-less-neighbors-v1/neighbor-picture-commands-v2/metadata.json",
+    "sha256": "822ea6e04d50f89d671f5ec96e2c5c1e8f537c134830f004eb7f1337e4c1bcff"
+  },
+  "policy": "Chromium is the sole pixel target. Open UI never executes JavaScript. The consuming application calls public Rust methods and Rust callbacks. Historical Open UI images are provenance only.",
+  "primary_sources": [
+    {
+      "path": "image_painter.cc",
+      "sha256": "5e4c4934020eb42e3708ff7108ef2632d8a5a83c1e08009d615d75ae1aaff646",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/core/paint/image_painter.cc?format=TEXT"
+    },
+    {
+      "path": "replaced_painter.cc",
+      "sha256": "ba7977b207359dd561ebe5fad94228fd2afcff9f66e5de146c515735c1c40154",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/core/paint/replaced_painter.cc?format=TEXT"
+    },
+    {
+      "path": "paint_property_tree_builder.cc",
+      "sha256": "704f562b6af7466c0d66fe655008dc5538041c83361334e5ea51b1aa5247dcbc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/core/paint/paint_property_tree_builder.cc?format=TEXT"
+    }
+  ],
+  "prototype_build": {
+    "path": "out/renderer-evidence/native-source-less-small-v1/edge-v3/build-identity.json",
+    "sha256": "4d2e27acf24e1be32563d19021cab047e9f954ffcc585d910a4414299465eb73"
+  },
+  "release_qualification": false,
+  "remaining_source_less_cases": [
+    {
+      "bounds": {
+        "height": 99,
+        "width": 29,
+        "x": 35,
+        "y": 28
+      },
+      "case": "no-source-none-self50-0-transparent",
+      "mismatched_pixels": 128,
+      "scale": "1.25",
+      "suite": "neighbors"
+    },
+    {
+      "bounds": {
+        "height": 99,
+        "width": 30,
+        "x": 35,
+        "y": 30
+      },
+      "case": "no-source-none-self50-0.5-transparent",
+      "mismatched_pixels": 127,
+      "scale": "1.25",
+      "suite": "neighbors"
+    },
+    {
+      "bounds": {
+        "height": 99,
+        "width": 29,
+        "x": 35,
+        "y": 28
+      },
+      "case": "no-source-none-parent50-0-transparent",
+      "mismatched_pixels": 128,
+      "scale": "1.25",
+      "suite": "neighbors"
+    },
+    {
+      "bounds": {
+        "height": 99,
+        "width": 30,
+        "x": 35,
+        "y": 30
+      },
+      "case": "no-source-none-parent50-0.5-transparent",
+      "mismatched_pixels": 127,
+      "scale": "1.25",
+      "suite": "neighbors"
+    },
+    {
+      "bounds": {
+        "height": 49,
+        "width": 1,
+        "x": 62,
+        "y": 29
+      },
+      "case": "no-source-parent-self50-0-transparent",
+      "mismatched_pixels": 49,
+      "scale": "1.25",
+      "suite": "neighbors"
+    },
+    {
+      "bounds": {
+        "height": 49,
+        "width": 1,
+        "x": 63,
+        "y": 30
+      },
+      "case": "no-source-parent-self50-0.5-transparent",
+      "mismatched_pixels": 49,
+      "scale": "1.25",
+      "suite": "neighbors"
+    },
+    {
+      "bounds": {
+        "height": 108,
+        "width": 2,
+        "x": 42,
+        "y": 42
+      },
+      "case": "no-source-none-self50-0.5-rounded",
+      "mismatched_pixels": 2,
+      "scale": "1.5",
+      "suite": "neighbors"
+    },
+    {
+      "bounds": {
+        "height": 108,
+        "width": 2,
+        "x": 42,
+        "y": 42
+      },
+      "case": "no-source-none-parent50-0.5-rounded",
+      "mismatched_pixels": 2,
+      "scale": "1.5",
+      "suite": "neighbors"
+    },
+    {
+      "bounds": {
+        "height": 59,
+        "width": 1,
+        "x": 76,
+        "y": 36
+      },
+      "case": "no-source-parent-self50-0.5-transparent",
+      "mismatched_pixels": 59,
+      "scale": "1.5",
+      "suite": "neighbors"
+    }
+  ],
+  "renderer_prototype_applied": false,
+  "schema_version": 1,
+  "script_free_case_count": 360,
+  "source_less_v2_original_census": {
+    "all_chromium_bytes_and_oracle_identities_unchanged": true,
+    "build": {
+      "path": "out/renderer-evidence/native-source-less-neighbors-v1/prototype-runner-v2/build-identity.json",
+      "sha256": "967db5395bfb1832702802ebdffe04af86ea85e67a232392fa91bda8ee530149"
+    },
+    "delta": {
+      "path": "out/renderer-evidence/native-source-less-neighbors-v1/wider-original-delta-v2.json",
+      "sha256": "418acdb6b91bb263ae8458a2717fe5e408d381b29291e1ffd7f9d553bab4e0dd"
+    },
+    "evidence": {
+      "binary_unchanged": true,
+      "kind": "diagnostic-census",
+      "qualification_backend_match": true,
+      "qualified": false,
+      "source_unchanged": true,
+      "tolerance_pixels": 0
+    },
+    "exact_regressions": 23,
+    "exit_code": 1,
+    "newly_exact": 17,
+    "qualified": false,
+    "report": {
+      "path": "out/renderer-evidence/native-source-less-neighbors-v1/wider-v2/original/full-summary.json",
+      "sha256": "f47d7742d6d896c34b1ac10f7d228e5641c8783f913296cb789a11a5c888f806"
+    },
+    "results": {
+      "different": 1622,
+      "errors": 0,
+      "exact": 21302,
+      "profile_result_sha256": "ffca174fdb1de744a9e32bd5b3235513d09e415a40c1330f9272c73acfd49cb7",
+      "total": 22924
+    },
+    "source": {
+      "clean": false,
+      "commit": "c6f00a70208f7017d41c89314557ed26b3afb53a",
+      "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+      "source_tree_sha256": "d225829f4bea9a813f285038bf8bbc257fd50762f7c04aab60779c3d3b56ada5",
+      "status_sha256": "9d55ffc34687eddd9236c7f7e92abbe39021a9710991c2d7de035751c7e0ea2e"
+    }
+  },
+  "suites": [
+    {
+      "after_exact": 1118,
+      "all_chromium_pngs_unchanged": true,
+      "all_native_pngs_unchanged_by_tile_format_correction": true,
+      "before_exact": 836,
+      "improved": 291,
+      "newly_exact": 282,
+      "owned_bounds_exact": 1200,
+      "reports": {
+        "after": {
+          "path": "out/renderer-evidence/native-source-less-neighbors-v1/edge-v3-comparison-v1.json",
+          "sha256": "734845e1d4afb103699afb1632b14bd39d029db4923eb6865bf57d10e3f3214c"
+        },
+        "before": {
+          "path": "out/renderer-evidence/native-source-less-neighbors-v1/baseline-v8-v1-comparison-v1.json",
+          "sha256": "a318436d8a8e84d898654a2e5de73b3a4bbf3f00efcc70d9a4cde21061a67c73"
+        },
+        "tile_format": {
+          "path": "out/renderer-evidence/native-source-less-neighbors-v1/tile-format-v1-comparison-v1.json",
+          "sha256": "7f2581d227534406035068f808cf90feef233323eff7dbd40bb6c1a301efdfff"
+        }
+      },
+      "source_less_exact": 591,
+      "source_less_total": 600,
+      "suite": "neighbors",
+      "total": 1200,
+      "worsened": 0
+    },
+    {
+      "after_exact": 555,
+      "all_chromium_pngs_unchanged": true,
+      "all_native_pngs_unchanged_by_tile_format_correction": true,
+      "before_exact": 255,
+      "improved": 300,
+      "newly_exact": 300,
+      "owned_bounds_exact": 600,
+      "reports": {
+        "after": {
+          "path": "out/renderer-evidence/native-source-less-small-v1/edge-v3-comparison-v1.json",
+          "sha256": "0512b8b090c76cd9bceb29cab91ea16dcfab8032c2034bb5a65ff802c2b2719f"
+        },
+        "before": {
+          "path": "out/renderer-evidence/native-source-less-small-v1/baseline-v8-v1-comparison-v1.json",
+          "sha256": "1158009b5ec9e0c53c8c19a1852a403bfaa6e6695287063f027483f078702302"
+        },
+        "tile_format": {
+          "path": "out/renderer-evidence/native-source-less-small-v1/tile-format-v1-comparison-v1.json",
+          "sha256": "413f107e4eac10712a359d7cca7a2865f447b9efba5ee8722e2f2f167ea80a3c"
+        }
+      },
+      "source_less_exact": 300,
+      "source_less_total": 300,
+      "suite": "small",
+      "total": 600,
+      "worsened": 0
+    }
+  ],
+  "tested_unapplied_patch": {
+    "path": "docs/renderer/evidence/native-source-less-images-v1/renderer-prototype-v3.patch",
+    "sha256": "ee36a03d123a0ddc03643248342ab5129f7986e0cd629f2868825b097e7946a9"
+  },
+  "totals": {
+    "after_exact": 1673,
+    "before_exact": 1091,
+    "improved": 591,
+    "newly_exact": 582,
+    "owned_bounds_exact": 1800,
+    "source_less_exact": 891,
+    "source_less_total": 900,
+    "total": 1800,
+    "worsened": 0
+  },
+  "visible_opaque_scroll_followup": {
+    "affected_guard_report": {
+      "path": "out/renderer-evidence/native-generated-sampling-v1/changed-guards-v4/full-summary.json",
+      "sha256": "70a91664931091249c27653c0345e6f18fb75d68feeb68dc6e75a2d0e96ba27b"
+    },
+    "all_chromium_bytes_and_oracle_identities_unchanged": true,
+    "delta": {
+      "path": "out/renderer-evidence/native-generated-sampling-v1/changed-guards-delta-v4.json",
+      "sha256": "54760b04924fed49202a811ac81f049933a80ae6fa8ad94f5aa2f085d2fc9458"
+    },
+    "evidence": {
+      "binary_unchanged": true,
+      "kind": "diagnostic-census",
+      "qualification_backend_match": true,
+      "qualified": false,
+      "source_unchanged": true,
+      "tolerance_pixels": 0
+    },
+    "exit_code": 1,
+    "newly_exact_against_clean_c9": 17,
+    "qualified": false,
+    "remaining_exact_regressions": [
+      {
+        "after": 1,
+        "before": 0,
+        "id": "wpt/css_backgrounds/tiny-foreignObject-double-border-radius-crash",
+        "profile": "legacy-800x600@1"
+      }
+    ],
+    "renderer_applied": false,
+    "restored_exact_comparisons_from_v2": 22,
+    "results": {
+      "different": 134,
+      "errors": 0,
+      "exact": 178,
+      "profile_result_sha256": "fbb9136dc570d92182879ad0c8b7fd48e16470a8e57c83c90024a34c1c058ad8",
+      "total": 312
+    },
+    "source": {
+      "clean": false,
+      "commit": "730e46ace9eaa3ca3c010772c5a1921bad5011b3",
+      "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+      "source_tree_sha256": "fb2b2b51df2041d41f6be886963c0cbed15b02b2aa1fe91cbf526d0843fa9686",
+      "status_sha256": "4ae5c0437517050a9ef7ed6837003ff53217cc6c4a53f9fb1523ea477be7c5d5"
+    },
+    "source_checked_build": {
+      "path": "out/renderer-evidence/native-generated-sampling-v1/visible-scroll-v4/build-identity.json",
+      "sha256": "d13eacfa8fc5f1cb60194f46bdd288ebd53f3c9ce8286ca8a9ac23d0d8c923a7"
+    },
+    "worsened_nonexact_comparisons_against_c9": 13
+  },
+  "workspace": {
+    "exit_code": 0,
+    "failed": 0,
+    "ignored": 13,
+    "log": {
+      "path": "out/renderer-evidence/native-source-less-small-v1/edge-workspace-tests-v3.log",
+      "sha256": "a7b7008517f530cc257550c701db50bbcefbfd67e5e0dc2b807a25dfc6d5c496"
+    },
+    "passed": 8491,
+    "restoration": {
+      "path": "out/renderer-evidence/native-source-less-small-v1/edge-test-artifact-restoration-v3/result.json",
+      "sha256": "23e4524c09dfb7c6c64ba69857b362cdbbf61a165f7f74dc0ba17dea61b485ac"
+    },
+    "suite_count": 147
+  }
+}

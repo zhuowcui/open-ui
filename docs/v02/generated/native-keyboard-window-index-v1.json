@@ -1,0 +1,37 @@
+{
+  "header_sha256": "60e10ac3477bb4a212ec96a266cfc62955b4438648f4fd9ed758908d5329113d",
+  "kind": "clean_native_keyboard_text_c_cpp_window_functional_smoke",
+  "library_sha256": "a20064ec0fbc6068dbf2238f85b5d4b588d063c6ead4561967b765c88701d158",
+  "native_input_notifications_per_c_consumer": 2,
+  "physical_input_ime_and_at_spi_qualification": false,
+  "release_qualification": false,
+  "results": [
+    {
+      "backend": "software",
+      "passed": true,
+      "path": "docs/v02/generated/native-keyboard-window-x11-software-v1.json",
+      "protocol": "x11",
+      "release_qualification": false,
+      "sha256": "db3939b1184ed3569c4209cf0cd9280ec66172a290a0b8abbe020d616fe4502c"
+    },
+    {
+      "backend": "opengl",
+      "passed": true,
+      "path": "docs/v02/generated/native-keyboard-window-x11-opengl-v1.json",
+      "protocol": "x11",
+      "release_qualification": false,
+      "sha256": "42ba591c42f9662903bcde3563eb9dd503aef15443b0587d0f7eca183aec2ac7"
+    },
+    {
+      "backend": "software",
+      "passed": true,
+      "path": "docs/v02/generated/native-keyboard-window-wayland-software-v1.json",
+      "protocol": "wayland",
+      "release_qualification": false,
+      "sha256": "673a6155f8132e3e0708e3facbc098068bdd90a35d7c444a0ddd9f374356106d"
+    }
+  ],
+  "schema_version": 1,
+  "source_clean": true,
+  "source_commit": "07be54f91c7f24d06d70a49360f4221e685220ed"
+}

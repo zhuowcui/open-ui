@@ -14,9 +14,15 @@ experiment exists in the repository.
 
 ## Browser services
 
-- HTML loading, CSS text parsing, selectors, stylesheet injection, and a web
-  cascade exposed as application APIs.
-- JavaScript or WebAssembly execution inside documents.
+- HTML loading, CSS text parsing, CSS selector parsing, stylesheet injection,
+  and a web cascade exposed as application APIs. Native element lookup and
+  traversal remain part of the public Rust interaction contract.
+- JavaScript execution or script bindings inside documents are outside the
+  product design, including future versions. Application behavior uses public
+  native Rust methods and Rust event callbacks. Browser-like element behavior
+  needed by an application must be implemented as a native Rust API, even when
+  Chromium tests express that behavior with a script. WebAssembly execution
+  inside documents is also unsupported.
 - HTTP, URL fetching, cookies, browser navigation, storage, service workers,
   and developer tools.
 - Embedded interactive documents, iframes, and media playback.
@@ -40,18 +46,37 @@ experiment exists in the repository.
 
 These are implementation gaps, not accepted final-v0.2 omissions:
 
-- direct Skia GPU raster is blocked by the pinned rust-skia ABI; OpenGL
-  presentation currently uploads the exact CPU Skia frame;
+- direct Skia Ganesh raster builds behind an explicit selection but remains
+  unqualified; OpenGL presentation currently uploads the CPU Skia frame;
+- the current four-profile Chromium census does not meet its exact gate; the
+  focused and primitive 40-profile CPU matrices are exact;
+- complete coverage of needed element operations through public native Rust
+  APIs still requires review and verification from consuming applications;
+- native scroll-into-view is implemented through shared Rust/C/accessibility
+  operations, but scroll-margin/padding support, full option coverage and four
+  reduced endpoint pixel differences remain open; own umbrella geometry is
+  30/30 exact, while endpoint images remain 16/20 exact. The
+  [private inset candidate](../renderer/generated/native-scroll-insets-v1.json)
+  passes all 510 geometry states and both raster matrices, but 58/510 PNGs
+  differ at 1.25 scale; it remains unapplied and unqualified;
+- two live legacy contour calibration paths must be replaced by general
+  raster behavior and checked against Chromium without sample corrections;
 - retained per-node compositor layers and compositor-owned immutable animation
   curves are incomplete;
 - the strict 100 promoted animations while the UI thread is blocked gate has
   not been qualified;
 - automated AT-SPI operation and physical-GPU context-loss qualification remain
   to be run in the release lab;
-- the C ABI does not yet export the owned Linux event loop or a complete
-  platform accessibility tree, so native X11/Wayland C application parity is
-  incomplete even though retained engine/headless C parity is covered;
+- the C ABI exports owned accessibility-tree snapshots and the shared Rust
+  Linux event loop; release-lab AT-SPI operation, context loss, and packaged
+  native C/C++ application qualification remain open;
 - full preserve-3d/backface layer semantics remain incomplete.
 
 The release cannot be marked final until the release-candidate gaps are closed
 or the product contract is explicitly revised and independently reviewed.
+
+The native font-cache leak is repaired in `a41fdeb9`. Its own workspace and
+ten read-only checks pass, and all seven hosted hardening jobs pass, including
+both sanitizers and all five fuzz targets. Complete private original/expanded
+sweeps change no pixel result. The [recorded evidence](../renderer/generated/native-font-cache-lifetime-v4.json)
+preserves the prior failures and each successful job.

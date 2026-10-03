@@ -6,11 +6,16 @@
 // the remaining readable/writable-memory preconditions in its safety contract.
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
+mod accessibility_snapshot;
 mod generated;
+mod native_app;
+#[cfg(test)]
+mod native_app_tests;
 mod registry;
 mod types;
 mod value;
 
+pub use native_app::{oui_app_request_exit, oui_app_run};
 pub use types::*;
 
 use generated::{property_from_raw, valid_event_type};
@@ -32,8 +37,9 @@ use openui_style::{
 };
 use registry::{
     borrow_engine, borrow_engine_mut, bytes, destroy, document, element, element_document, ffi,
-    ffi_preserve, ffi_value, get, last_error, register, utf8, ApiError, AppState, DocumentState,
-    ElementRef, FontFaceRef, HandleKind, ListenerRecord, ListenerRef, LocalHandle, ResourceRef,
+    ffi_preserve, ffi_value, get, last_error, register, utf8, AccessibilitySnapshotState, ApiError,
+    AppState, DocumentState, ElementRef, FontFaceRef, HandleKind, ListenerRecord, ListenerRef,
+    LocalHandle, ResourceRef,
 };
 use std::cell::{Cell, RefCell};
 use std::ffi::c_void;
@@ -114,14 +120,28 @@ fn new_document(config: &OuiDocumentConfig) -> Result<Rc<DocumentState>, ApiErro
         size_of::<OuiDocumentConfig>(),
     )?;
     let viewport = viewport_metrics(&config.viewport)?;
-    Ok(Rc::new(DocumentState {
-        engine: RefCell::new(Engine::new(viewport)?),
+    let engine = Rc::new(RefCell::new(Engine::new(viewport)?));
+    let state = Rc::new(DocumentState {
+        native: openui::Document::from_shared_engine(engine.clone()),
+        engine,
         update_depth: Cell::new(0),
         listeners: RefCell::new(Vec::new()),
         next_listener: Cell::new(1),
         element_handles: RefCell::new(std::collections::HashMap::new()),
         animation_events: RefCell::new(Vec::new()),
-    }))
+    });
+    let weak = Rc::downgrade(&state);
+    state
+        .native
+        .set_foreign_event_handler(Rc::new(move |node, target, event, capture| {
+            if let Some(state) = weak.upgrade() {
+                native_app::dispatch_native_listener(&state, node, target, event, capture)
+                    .map_err(|error| openui::Error::Platform(error.message))?;
+            }
+            Ok(())
+        }))
+        .map_err(native_app::native_error)?;
+    Ok(state)
 }
 
 fn viewport_metrics(raw: &OuiViewportMetrics) -> Result<ViewportMetrics, ApiError> {
@@ -667,7 +687,7 @@ pub extern "C" fn oui_app_create(
         if config.backend > 2 {
             return Err(invalid("unknown backend preference"));
         }
-        let title = utf8(config.title, "title")?;
+        let _title = utf8(config.title, "title")?;
         let document_config = OuiDocumentConfig {
             struct_size: size_of::<OuiDocumentConfig>() as u32,
             abi_version: OUI_ABI_VERSION,
@@ -683,8 +703,14 @@ pub extern "C" fn oui_app_create(
         };
         let state = Rc::new(AppState {
             document: new_document(&document_config)?,
-            _title: title,
-            _backend: config.backend,
+            #[cfg(all(feature = "linux", target_os = "linux"))]
+            title: _title,
+            #[cfg(all(feature = "linux", target_os = "linux"))]
+            backend: config.backend,
+            running: Cell::new(false),
+            has_run: Cell::new(false),
+            exit_requested: Cell::new(false),
+            exit_handle: RefCell::new(None),
         });
         write_handle(out_app, LocalHandle::App(state))
     })
@@ -694,6 +720,13 @@ pub extern "C" fn oui_app_create(
 #[no_mangle]
 pub extern "C" fn oui_app_destroy(app: *mut OuiApp) -> OuiStatus {
     ffi(|| {
+        let state = native_app::app_state(app)?;
+        if state.running.get() {
+            return Err(ApiError::new(
+                OuiStatus::InvalidState,
+                "cannot destroy an app while its native run is active",
+            ));
+        }
         destroy(app as usize, HandleKind::App)?;
         Ok(())
     })
@@ -752,6 +785,31 @@ pub extern "C" fn oui_document_root(
         let state = document(document_handle as usize)?;
         let node = borrow_engine(&state)?.root();
         write_element_handle(out_root, &state, node)
+    })
+}
+
+// SAFETY CONTRACT: `document` is live, `id` names readable UTF-8 bytes, and
+// `out_element` is writable. A found result is an owned handle; release it
+// with `oui_element_destroy`. A missing ID writes null and returns success.
+#[no_mangle]
+pub extern "C" fn oui_document_element_by_id(
+    document_handle: *mut OuiDocument,
+    id: OuiUtf8,
+    out_element: *mut *mut OuiElement,
+) -> OuiStatus {
+    ffi(|| {
+        if out_element.is_null() {
+            return Err(invalid("out_element is null"));
+        }
+        // SAFETY: the caller guarantees storage for one output pointer.
+        unsafe { ptr::write(out_element, ptr::null_mut()) };
+        let state = document(document_handle as usize)?;
+        let id = utf8(id, "id")?;
+        let node = borrow_engine(&state)?.element_by_id(&id);
+        if let Some(node) = node {
+            write_element_handle(out_element, &state, node)?;
+        }
+        Ok(())
     })
 }
 
@@ -1159,7 +1217,14 @@ pub extern "C" fn oui_element_create(
             return Err(invalid("out_element is null"));
         }
         let state = document(document_handle as usize)?;
-        let node = borrow_engine_mut(&state)?.create_element(element_tag(tag)?)?;
+        let node = {
+            let mut engine = borrow_engine_mut(&state)?;
+            if tag == 39 {
+                engine.create_svg_foreign_object()?
+            } else {
+                engine.create_native_element(element_tag(tag)?)?
+            }
+        };
         write_element_handle(out_element, &state, node)
     })
 }
@@ -1250,6 +1315,13 @@ pub extern "C" fn oui_element_insert_before(
 #[no_mangle]
 pub extern "C" fn oui_element_remove(element_handle: *mut OuiElement) -> OuiStatus {
     ffi(|| with_element_mut(element_handle as usize, Engine::remove))
+}
+
+// SAFETY CONTRACT: `element` is a live node handle owned by this thread.
+// The retained node and handle remain valid for later reattachment.
+#[no_mangle]
+pub extern "C" fn oui_element_detach(element_handle: *mut OuiElement) -> OuiStatus {
+    ffi(|| with_element_mut(element_handle as usize, Engine::detach))
 }
 
 // SAFETY CONTRACT: `element` is a live element handle owned by this thread.
@@ -1440,6 +1512,78 @@ pub extern "C" fn oui_element_get_bounds(
     })
 }
 
+// SAFETY CONTRACT: `element` is live. `out_count` is writable. When copying,
+// `rects` is writable for `capacity` rectangles and does not overlap outputs.
+#[no_mangle]
+pub extern "C" fn oui_element_get_client_rects_v1(
+    element_handle: *mut OuiElement,
+    rects: *mut OuiRect,
+    capacity: usize,
+    out_count: *mut usize,
+) -> OuiStatus {
+    ffi(|| {
+        if out_count.is_null() {
+            return Err(invalid("rectangle count output is null"));
+        }
+        let source = element(element_handle as usize)?;
+        let state = element_document(&source)?;
+        let owned: Vec<_> = borrow_engine_mut(&state)?
+            .client_rects(source.node)?
+            .into_iter()
+            .map(|rect| OuiRect {
+                x: rect.x,
+                y: rect.y,
+                width: rect.width,
+                height: rect.height,
+            })
+            .collect();
+        copy_array_to_c(&owned, rects, capacity, out_count, "client rectangles")
+    })
+}
+
+// SAFETY CONTRACT: `out_metrics` has a readable initialized version header and,
+// when its declared size is sufficient, writable storage for the complete
+// structure. `out_has_metrics` is writable, nonoverlapping byte storage.
+// Both outputs are unchanged on error; a missing layout box returns zero sizes.
+#[no_mangle]
+pub extern "C" fn oui_element_get_scroll_metrics_v1(
+    element_handle: *mut OuiElement,
+    out_metrics: *mut OuiScrollMetricsV1,
+    out_has_metrics: *mut u8,
+) -> OuiStatus {
+    ffi(|| {
+        if out_metrics.is_null() || out_has_metrics.is_null() {
+            return Err(invalid("scroll metrics output is null"));
+        }
+        // Read the prefix before borrowing the full versioned structure. A
+        // caller with an older, shorter allocation can be rejected safely.
+        let struct_size = unsafe { ptr::read(out_metrics.cast::<u32>()) };
+        if struct_size < 2 * size_of::<u32>() as u32 {
+            return Err(invalid("scroll metrics header is too small"));
+        }
+        let abi_version = unsafe { ptr::read(out_metrics.cast::<u32>().add(1)) };
+        check_header(struct_size, abi_version, size_of::<OuiScrollMetricsV1>())?;
+        let source = element(element_handle as usize)?;
+        let state = element_document(&source)?;
+        let metrics = borrow_engine_mut(&state)?.scroll_metrics(source.node)?;
+        let output = OuiScrollMetricsV1 {
+            struct_size,
+            abi_version,
+            client_width: metrics.map_or(0.0, |value| value.client_width),
+            client_height: metrics.map_or(0.0, |value| value.client_height),
+            scroll_width: metrics.map_or(0.0, |value| value.scroll_width),
+            scroll_height: metrics.map_or(0.0, |value| value.scroll_height),
+        };
+        // SAFETY: both outputs were validated above and the C contract requires
+        // writable, properly aligned and nonoverlapping caller storage.
+        unsafe {
+            ptr::write(out_metrics, output);
+            ptr::write(out_has_metrics, u8::from(metrics.is_some()));
+        }
+        Ok(())
+    })
+}
+
 // SAFETY CONTRACT: `element` is live; offsets must be finite.
 #[no_mangle]
 pub extern "C" fn oui_element_scroll_to(
@@ -1450,6 +1594,70 @@ pub extern "C" fn oui_element_scroll_to(
     ffi(|| {
         with_element_mut(element_handle as usize, |engine, node| {
             engine.scroll_to(node, x, y)
+        })
+    })
+}
+
+fn scroll_into_view_options(
+    block: u32,
+    inline: u32,
+    container: u32,
+) -> Result<openui_engine::ScrollIntoViewOptions, ApiError> {
+    use openui_engine::{ScrollAlignment, ScrollIntoViewContainer, ScrollIntoViewOptions};
+    let alignment = |value| match value {
+        0 => Ok(ScrollAlignment::Start),
+        1 => Ok(ScrollAlignment::Center),
+        2 => Ok(ScrollAlignment::End),
+        3 => Ok(ScrollAlignment::Nearest),
+        _ => Err(invalid("invalid scroll alignment")),
+    };
+    Ok(ScrollIntoViewOptions {
+        block: alignment(block)?,
+        inline: alignment(inline)?,
+        container: match container {
+            0 => ScrollIntoViewContainer::All,
+            1 => ScrollIntoViewContainer::Nearest,
+            _ => return Err(invalid("invalid scroll container selection")),
+        },
+    })
+}
+
+// SAFETY CONTRACT: `element_handle` is a live element handle. All options are
+// validated before borrowing the shared Engine; panics remain contained.
+#[no_mangle]
+pub extern "C" fn oui_element_scroll_into_view_v1(
+    element_handle: *mut OuiElement,
+    block: u32,
+    inline: u32,
+    container: u32,
+) -> OuiStatus {
+    ffi(|| {
+        let options = scroll_into_view_options(block, inline, container)?;
+        with_element_mut(element_handle as usize, |engine, node| {
+            engine.scroll_into_view(node, options)
+        })
+    })
+}
+
+// SAFETY CONTRACT: `element_handle` is live. Duration is finite/non-negative.
+// No callback is invoked while the Engine/platform state is borrowed.
+#[no_mangle]
+pub extern "C" fn oui_element_smooth_scroll_into_view_v1(
+    element_handle: *mut OuiElement,
+    block: u32,
+    inline: u32,
+    container: u32,
+    duration_ms: f64,
+) -> OuiStatus {
+    ffi(|| {
+        let options = scroll_into_view_options(block, inline, container)?;
+        if !duration_ms.is_finite() || duration_ms < 0.0 {
+            return Err(invalid("scroll duration must be finite and non-negative"));
+        }
+        with_element_mut(element_handle as usize, |engine, node| {
+            engine
+                .smooth_scroll_into_view(node, options, duration_ms)
+                .map(|_| ())
         })
     })
 }
@@ -1467,7 +1675,11 @@ pub extern "C" fn oui_element_get_scroll_offset(
         }
         let source = element(element_handle as usize)?;
         let state = element_document(&source)?;
-        let (x, y) = borrow_engine(&state)?.scroll_offset(source.node)?;
+        let (x, y) = {
+            let mut engine = borrow_engine_mut(&state)?;
+            engine.update()?;
+            engine.scroll_offset(source.node)?
+        };
         // SAFETY: both pointers are caller-provided writable `double` slots.
         unsafe {
             ptr::write(out_x, x);
@@ -1707,7 +1919,8 @@ fn dispatch_event_to(
             }
             8 => borrow_engine_mut(state)?.insert_text(target, &text)?,
             10 => borrow_engine_mut(state)?.update_composition(target, &text)?,
-            11 => borrow_engine_mut(state)?.finish_composition(target)?,
+            11 if text.is_empty() => borrow_engine_mut(state)?.cancel_composition(target)?,
+            11 => borrow_engine_mut(state)?.commit_composition(target, &text)?,
             12 => {
                 borrow_engine_mut(state)?.focus_with_origin(target, FocusOrigin::Accessibility)?;
             }
@@ -1746,6 +1959,71 @@ pub extern "C" fn oui_document_dispatch_event(
     })
 }
 
+// SAFETY CONTRACT: document is an owning-thread handle; key is readable for its
+// declared versioned size and UTF-8 slices remain readable through the call.
+// Listener callbacks and user_data follow the existing synchronous contract.
+#[no_mangle]
+pub extern "C" fn oui_document_dispatch_key_input_v1(
+    document_handle: *mut OuiDocument,
+    key: *const OuiEvent,
+    committed_text: OuiUtf8,
+) -> OuiStatus {
+    ffi(|| {
+        let state = document(document_handle as usize)?;
+        if key.is_null() {
+            return Err(invalid("key descriptor is null"));
+        }
+        // SAFETY: a versioned descriptor begins with a readable size field.
+        let struct_size = unsafe { ptr::read(key.cast::<u32>()) };
+        if struct_size < 2 * size_of::<u32>() as u32 {
+            return Err(invalid("key descriptor header is too small"));
+        }
+        // SAFETY: the declared header covers the ABI-version field.
+        let abi_version = unsafe { ptr::read(key.cast::<u32>().add(1)) };
+        check_header(struct_size, abi_version, size_of::<OuiEvent>())?;
+        // SAFETY: the validated declared size covers the complete descriptor.
+        let key = unsafe { *key };
+        validate_event(&key)?;
+        if key.flags != 0 {
+            return Err(invalid("key descriptor flags must be zero"));
+        }
+        let event_type = match key.event_type {
+            6 => openui::KeyEventType::Down,
+            7 => openui::KeyEventType::Up,
+            _ => return Err(invalid("normalized key input requires key-down or key-up")),
+        };
+        let key_text = utf8(key.text, "logical key name")?;
+        let committed_text = utf8(committed_text, "committed text")?;
+        state
+            .native
+            .dispatch_key_input(
+                event_type,
+                key.key_code,
+                (!key_text.is_empty()).then_some(key_text.as_str()),
+                (!committed_text.is_empty()).then_some(committed_text.as_str()),
+                openui::Modifiers(key.modifiers),
+            )
+            .map_err(native_app::native_error)
+    })
+}
+
+// SAFETY CONTRACT: document is an owning-thread handle; text remains readable
+// through this call. Callbacks execute after engine and listener borrows end.
+#[no_mangle]
+pub extern "C" fn oui_document_dispatch_text_input_v1(
+    document_handle: *mut OuiDocument,
+    text: OuiUtf8,
+) -> OuiStatus {
+    ffi(|| {
+        let state = document(document_handle as usize)?;
+        let text = utf8(text, "committed text")?;
+        state
+            .native
+            .dispatch_text_input(&text)
+            .map_err(native_app::native_error)
+    })
+}
+
 // SAFETY CONTRACT: `document` is live and `event` is readable/writable for its
 // declared size through all synchronous callbacks. The event type is pointer
 // down, up, or move; hit testing supplies the target.
@@ -1765,6 +2043,7 @@ pub extern "C" fn oui_document_dispatch_pointer_event(
             1 => PointerEventKind::Down,
             2 => PointerEventKind::Up,
             3 => PointerEventKind::Move,
+            24 => PointerEventKind::Cancel,
             _ => return Err(invalid("pointer dispatch requires a pointer event type")),
         };
         let state = document(document_handle as usize)?;
@@ -2141,6 +2420,7 @@ pub extern "C" fn oui_element_set_accessibility_role(
             13 => AccessibilityRole::Heading,
             14 => AccessibilityRole::Status,
             15 => AccessibilityRole::Alert,
+            16 => AccessibilityRole::Unknown,
             _ => return Err(invalid("unknown accessibility role")),
         };
         engine.set_accessibility_role(element.node, role)?;
@@ -2540,36 +2820,51 @@ fn c_length(value: LengthValue) -> OuiLength {
 }
 
 fn c_enum(value: &StyleValue) -> Option<i32> {
-    use openui_style::{ContentDistribution, ContentPosition, ItemPosition};
+    use openui_style::{ContentDistribution, ContentPosition, ItemPosition, OverflowAlignment};
     Some(match value {
         StyleValue::Display(value) => *value as i32,
         StyleValue::Position(value) => *value as i32,
         StyleValue::Overflow(value) => *value as i32,
         StyleValue::FlexDirection(value) => *value as i32,
         StyleValue::FlexWrap(value) => *value as i32,
-        StyleValue::ItemAlignment(value) => match value.position {
-            ItemPosition::Normal => 0,
-            ItemPosition::Stretch => 1,
-            ItemPosition::Center => 2,
-            ItemPosition::Start => 3,
-            ItemPosition::End => 4,
-            ItemPosition::FlexStart => 5,
-            ItemPosition::FlexEnd => 6,
-            ItemPosition::Baseline => 7,
-            _ => return None,
-        },
-        StyleValue::ContentAlignment(value) => match (value.position, value.distribution) {
-            (ContentPosition::Normal, ContentDistribution::Default) => 0,
-            (ContentPosition::Start, _) => 1,
-            (ContentPosition::End, _) => 2,
-            (ContentPosition::Center, _) => 3,
-            (ContentPosition::FlexStart, _) => 4,
-            (ContentPosition::FlexEnd, _) => 5,
-            (_, ContentDistribution::SpaceBetween) => 6,
-            (_, ContentDistribution::SpaceAround) => 7,
-            (_, ContentDistribution::SpaceEvenly) => 8,
-            _ => return None,
-        },
+        StyleValue::ItemAlignment(value) if value.overflow == OverflowAlignment::Default => {
+            match value.position {
+                ItemPosition::Normal => 0,
+                ItemPosition::Stretch => 1,
+                ItemPosition::Center => 2,
+                ItemPosition::Start => 3,
+                ItemPosition::End => 4,
+                ItemPosition::FlexStart => 5,
+                ItemPosition::FlexEnd => 6,
+                ItemPosition::Baseline => 7,
+                ItemPosition::Auto => 8,
+                ItemPosition::SelfStart => 9,
+                ItemPosition::SelfEnd => 10,
+                ItemPosition::Left => 11,
+                ItemPosition::Right => 12,
+                ItemPosition::LastBaseline => 13,
+                ItemPosition::Legacy => 14,
+            }
+        }
+        StyleValue::ContentAlignment(value) if value.overflow == OverflowAlignment::Default => {
+            match (value.position, value.distribution) {
+                (ContentPosition::Normal, ContentDistribution::Default) => 0,
+                (ContentPosition::Start, ContentDistribution::Default) => 1,
+                (ContentPosition::End, ContentDistribution::Default) => 2,
+                (ContentPosition::Center, ContentDistribution::Default) => 3,
+                (ContentPosition::FlexStart, ContentDistribution::Default) => 4,
+                (ContentPosition::FlexEnd, ContentDistribution::Default) => 5,
+                (ContentPosition::Normal, ContentDistribution::SpaceBetween) => 6,
+                (ContentPosition::Normal, ContentDistribution::SpaceAround) => 7,
+                (ContentPosition::Normal, ContentDistribution::SpaceEvenly) => 8,
+                (ContentPosition::Normal, ContentDistribution::Stretch) => 9,
+                (ContentPosition::Baseline, ContentDistribution::Default) => 10,
+                (ContentPosition::LastBaseline, ContentDistribution::Default) => 11,
+                (ContentPosition::Left, ContentDistribution::Default) => 12,
+                (ContentPosition::Right, ContentDistribution::Default) => 13,
+                _ => return None,
+            }
+        }
         StyleValue::Cursor(value) => *value as i32,
         StyleValue::ListStyle(value) => *value as i32,
         StyleValue::PointerEvents(value) => *value as i32,
@@ -2595,33 +2890,65 @@ pub extern "C" fn oui_style_value_parse(
         let parsed =
             parse_literal(property, &literal).map_err(|error| invalid(error.to_string()))?;
         let tag = generated::expected_value_tag(property);
-        let data = match (tag, &parsed) {
-            (1, StyleValue::Length(value)) => OuiStylePayload {
-                length: c_length(*value),
-            },
-            (2, StyleValue::Number(value)) => OuiStylePayload { number: *value },
-            (2, StyleValue::FontWeight(value)) => OuiStylePayload { number: value.0 },
-            (3, StyleValue::Integer(value)) => OuiStylePayload { integer: *value },
-            (4, StyleValue::Color(value)) => OuiStylePayload {
-                color: OuiColor {
-                    red: (value.r * 255.0).round() as u8,
-                    green: (value.g * 255.0).round() as u8,
-                    blue: (value.b * 255.0).round() as u8,
-                    alpha: (value.a * 255.0).round() as u8,
+        let native_value = || -> Result<_, ApiError> {
+            Ok(OuiStylePayload {
+                compound: register(LocalHandle::PropertyCompound(property, parsed.clone()))?
+                    as *const OuiStyleCompound,
+            })
+        };
+        let (tag, data) = match (tag, &parsed) {
+            (1, StyleValue::Length(value)) => (
+                1,
+                OuiStylePayload {
+                    length: c_length(*value),
                 },
+            ),
+            (2, StyleValue::Number(value)) => (2, OuiStylePayload { number: *value }),
+            (2, StyleValue::FontWeight(value)) => (2, OuiStylePayload { number: value.0 }),
+            (3, StyleValue::Integer(value)) => (3, OuiStylePayload { integer: *value }),
+            (3, StyleValue::Renderer(openui_style::RendererStyleValue::ColumnCount(value))) => (
+                3,
+                OuiStylePayload {
+                    integer: match value {
+                        None => 0,
+                        Some(count) => i32::try_from(*count)
+                            .map_err(|_| invalid("column count exceeds the C integer range"))?,
+                    },
+                },
+            ),
+            (
+                3,
+                StyleValue::Renderer(
+                    openui_style::RendererStyleValue::Orphans(value)
+                    | openui_style::RendererStyleValue::Widows(value),
+                ),
+            ) => match i32::try_from(*value) {
+                Ok(value) => (3, OuiStylePayload { integer: value }),
+                Err(_) => (6, native_value()?),
             },
-            (5, value) => OuiStylePayload {
-                enum_value: c_enum(value)
-                    .ok_or_else(|| invalid("literal has no C enum encoding"))?,
+            (4, StyleValue::Color(value)) => (
+                4,
+                OuiStylePayload {
+                    color: OuiColor {
+                        red: (value.r * 255.0).round() as u8,
+                        green: (value.g * 255.0).round() as u8,
+                        blue: (value.b * 255.0).round() as u8,
+                        alpha: (value.a * 255.0).round() as u8,
+                    },
+                },
+            ),
+            (5, value) => match c_enum(value) {
+                Some(value) => (5, OuiStylePayload { enum_value: value }),
+                None => (6, native_value()?),
             },
-            (6, _) => OuiStylePayload {
-                compound: register(LocalHandle::Compound(parsed))? as *const OuiStyleCompound,
-            },
-            _ => {
-                return Err(invalid(
-                    "literal does not match generated property value tag",
-                ))
-            }
+            (6, _) => (
+                6,
+                OuiStylePayload {
+                    compound: register(LocalHandle::Compound(parsed.clone()))?
+                        as *const OuiStyleCompound,
+                },
+            ),
+            _ => (6, native_value()?),
         };
         // SAFETY: the caller promises writable storage and null was rejected.
         unsafe {
@@ -3142,6 +3469,13 @@ mod tests {
         );
         assert_eq!(
             (
+                size_of::<OuiScrollMetricsV1>(),
+                align_of::<OuiScrollMetricsV1>()
+            ),
+            (40, 8)
+        );
+        assert_eq!(
+            (
                 size_of::<OuiFontUnicodeRange>(),
                 align_of::<OuiFontUnicodeRange>()
             ),
@@ -3214,6 +3548,27 @@ mod tests {
                 align_of::<OuiAccessibilityUpdate>()
             ),
             (40, 8)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiAccessibilitySnapshotInfo>(),
+                align_of::<OuiAccessibilitySnapshotInfo>()
+            ),
+            (56, 8)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiAccessibilityNodeInfo>(),
+                align_of::<OuiAccessibilityNodeInfo>()
+            ),
+            (120, 8)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiAccessibilityNodeState>(),
+                align_of::<OuiAccessibilityNodeState>()
+            ),
+            (112, 8)
         );
         assert_eq!(
             (size_of::<OuiErrorInfo>(), align_of::<OuiErrorInfo>()),
@@ -3685,35 +4040,31 @@ mod tests {
 
     #[test]
     fn rust_and_c_paths_produce_identical_headless_pixels() {
-        let mut engine =
-            Engine::new(ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap()).unwrap();
-        let direct = engine.create_element(ElementTag::Div).unwrap();
-        engine.append_child(engine.root(), direct).unwrap();
-        engine
+        // Compare the consuming Rust and C application APIs, including their
+        // native element defaults. Raw Engine construction intentionally keeps
+        // CSS initial values for callers installing a complete resolved style.
+        let rust_document = openui::Document::new(64, 64).unwrap();
+        let direct = openui::Element::create(&rust_document, "div").unwrap();
+        rust_document.body().append_child(&direct).unwrap();
+        direct
             .set_property(
-                direct,
                 openui_style::StyleProperty::Width,
                 openui_style::LengthValue::px(32.0).into(),
             )
             .unwrap();
-        engine
+        direct
             .set_property(
-                direct,
                 openui_style::StyleProperty::Height,
                 openui_style::LengthValue::px(32.0).into(),
             )
             .unwrap();
-        engine
+        direct
             .set_property(
-                direct,
                 openui_style::StyleProperty::BackgroundColor,
                 Color::RED.into(),
             )
             .unwrap();
-        let expected = SoftwareCompositor::default()
-            .render(&engine.scene().unwrap())
-            .unwrap()
-            .pixels;
+        let expected = rust_document.render_to_bitmap().unwrap().pixels().to_vec();
 
         let document = create_document(64, 64);
         let mut root = ptr::null_mut();
@@ -3757,6 +4108,142 @@ mod tests {
     }
 
     #[test]
+    fn c_scroll_metrics_validate_output_headers_and_ownership() {
+        let document_handle = create_document(32, 32);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document_handle, &mut root), OuiStatus::Ok);
+        let mut output = OuiScrollMetricsV1 {
+            struct_size: size_of::<OuiScrollMetricsV1>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            client_width: -1.0,
+            client_height: -1.0,
+            scroll_width: -1.0,
+            scroll_height: -1.0,
+        };
+        let initial = output;
+        let mut found = 55;
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, ptr::null_mut(), &mut found),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output, ptr::null_mut()),
+            OuiStatus::InvalidArgument
+        );
+        output.abi_version = 1;
+        let wrong_version = output;
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output, &mut found),
+            OuiStatus::AbiMismatch
+        );
+        assert_eq!(output, wrong_version);
+        assert_eq!(found, 55);
+        output = initial;
+        let mut short_header = [8_u32, OUI_ABI_VERSION];
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, short_header.as_mut_ptr().cast(), &mut found),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(short_header, [8, OUI_ABI_VERSION]);
+        assert_eq!(found, 55);
+        let state = document(document_handle as usize).unwrap();
+        let held = borrow_engine(&state).unwrap();
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output, &mut found),
+            OuiStatus::Reentrant
+        );
+        assert_eq!(output, initial);
+        assert_eq!(found, 55);
+        drop(held);
+        drop(state);
+
+        let address = root as usize;
+        let wrong_thread = std::thread::spawn(move || {
+            let mut output = initial;
+            let mut found = 55;
+            let status = oui_element_get_scroll_metrics_v1(
+                address as *mut OuiElement,
+                &mut output,
+                &mut found,
+            );
+            assert_eq!(output, initial);
+            assert_eq!(found, 55);
+            status
+        })
+        .join()
+        .unwrap();
+        assert_eq!(wrong_thread, OuiStatus::WrongThread);
+        assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output, &mut found),
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(output, initial);
+        assert_eq!(found, 55);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_scroll_metrics_preserve_larger_caller_storage_and_absent_boxes() {
+        #[repr(C)]
+        struct Extended {
+            metrics: OuiScrollMetricsV1,
+            tail: u64,
+        }
+        let document = create_document(80, 50);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let mut output = Extended {
+            metrics: OuiScrollMetricsV1 {
+                struct_size: size_of::<Extended>() as u32,
+                abi_version: OUI_ABI_VERSION,
+                client_width: -1.0,
+                client_height: -1.0,
+                scroll_width: -1.0,
+                scroll_height: -1.0,
+            },
+            tail: 0xdead_beef_1234_5678,
+        };
+        let mut found = 0;
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output.metrics, &mut found),
+            OuiStatus::Ok
+        );
+        assert_eq!(found, 1);
+        assert_eq!(output.metrics.client_width, 80.0);
+        assert_eq!(output.metrics.client_height, 50.0);
+        assert_eq!(output.metrics.scroll_width, 80.0);
+        assert_eq!(output.metrics.scroll_height, 50.0);
+        assert_eq!(output.metrics.struct_size, size_of::<Extended>() as u32);
+        assert_eq!(output.tail, 0xdead_beef_1234_5678);
+        let owned = output.metrics;
+        let detached = create_element(document, 0, ptr::null_mut());
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(detached, &mut output.metrics, &mut found),
+            OuiStatus::Ok
+        );
+        assert_eq!(found, 0);
+        assert_eq!(output.metrics.client_width, 0.0);
+        assert_eq!(output.metrics.client_height, 0.0);
+        assert_eq!(output.metrics.scroll_width, 0.0);
+        assert_eq!(output.metrics.scroll_height, 0.0);
+        assert_eq!(output.tail, 0xdead_beef_1234_5678);
+        assert_eq!(oui_element_remove(detached), OuiStatus::Ok);
+        let absent = output.metrics;
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(detached, &mut output.metrics, &mut found),
+            OuiStatus::StaleHandle
+        );
+        assert_eq!(output.metrics, absent);
+        assert_eq!(found, 0);
+        assert_eq!(oui_element_destroy(detached), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+        assert_eq!(owned.client_width, 80.0);
+        assert_eq!(owned.client_height, 50.0);
+    }
+
+    #[test]
     fn app_and_document_handles_have_independent_explicit_lifetimes() {
         let title = "Open\0UI";
         let config = OuiAppConfig {
@@ -3774,6 +4261,46 @@ mod tests {
         assert_eq!(oui_app_document(app, &mut document), OuiStatus::Ok);
         assert_eq!(oui_app_destroy(app), OuiStatus::Ok);
         assert_eq!(oui_document_update(document), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_id_lookup_returns_owned_attached_element_handles() {
+        let document = create_document(64, 64);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let child = create_element(document, 0, root);
+        assert_eq!(
+            oui_element_set_attribute(child, text("id"), text("control")),
+            OuiStatus::Ok
+        );
+
+        let mut found = ptr::null_mut();
+        assert_eq!(
+            oui_document_element_by_id(document, text("control"), &mut found),
+            OuiStatus::Ok
+        );
+        assert!(!found.is_null());
+        assert_ne!(found, child);
+        assert_eq!(oui_element_detach(found), OuiStatus::Ok);
+
+        let mut missing = found;
+        assert_eq!(
+            oui_document_element_by_id(document, text("control"), &mut missing),
+            OuiStatus::Ok
+        );
+        assert!(missing.is_null());
+        assert_eq!(oui_element_append_child(root, child), OuiStatus::Ok);
+        assert_eq!(
+            oui_document_element_by_id(document, text("control"), &mut missing),
+            OuiStatus::Ok
+        );
+        assert!(!missing.is_null());
+
+        assert_eq!(oui_element_destroy(found), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(missing), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(child), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
     }
 
@@ -3802,6 +4329,36 @@ mod tests {
         assert_eq!(oui_element_destroy(second_element), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(first), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(second), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn detached_c_nodes_keep_their_handles_until_explicit_removal() {
+        let document = create_document(64, 64);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let parent = create_element(document, 0, root);
+        let child = create_element(document, 0, parent);
+        let mut text_node = ptr::null_mut();
+        assert_eq!(
+            oui_text_create(document, text("native"), &mut text_node),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_element_append_child(parent, text_node), OuiStatus::Ok);
+
+        assert_eq!(oui_element_detach(parent), OuiStatus::Ok);
+        assert_eq!(oui_element_detach(parent), OuiStatus::Ok);
+        assert_eq!(set_length(child, 4, 20.0), OuiStatus::Ok);
+        assert_eq!(oui_element_detach(text_node), OuiStatus::Ok);
+        assert_eq!(oui_element_append_child(parent, text_node), OuiStatus::Ok);
+        assert_eq!(oui_element_append_child(root, parent), OuiStatus::Ok);
+        assert_eq!(oui_element_remove(parent), OuiStatus::Ok);
+        assert_eq!(set_length(child, 4, 30.0), OuiStatus::StaleHandle);
+
+        assert_eq!(oui_element_destroy(text_node), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(child), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(parent), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
     }
 
     #[test]
@@ -4054,6 +4611,348 @@ mod tests {
     }
 
     #[test]
+    fn normalized_c_keyboard_and_text_share_cancelable_document_defaults() {
+        struct Observations {
+            target: *mut OuiElement,
+            cancel_key: bool,
+            cancel_text: bool,
+            make_read_only: bool,
+            events: Vec<(u32, String, String)>,
+        }
+        unsafe extern "C" fn observe(event: *mut OuiEvent, user_data: *mut c_void) {
+            // SAFETY: the test owns both values through synchronous dispatch.
+            let event = unsafe { &mut *event };
+            let seen = unsafe { &mut *user_data.cast::<Observations>() };
+            let mut value = [0; 64];
+            let mut length = 0;
+            assert_eq!(
+                oui_element_copy_control_value(
+                    seen.target,
+                    value.as_mut_ptr(),
+                    value.len(),
+                    &mut length
+                ),
+                OuiStatus::Ok
+            );
+            let event_text = if event.text.length == 0 {
+                String::new()
+            } else {
+                // SAFETY: event text remains readable through this callback.
+                String::from_utf8(
+                    unsafe { std::slice::from_raw_parts(event.text.data, event.text.length) }
+                        .to_vec(),
+                )
+                .unwrap()
+            };
+            seen.events.push((
+                event.event_type,
+                event_text,
+                String::from_utf8(value[..length].to_vec()).unwrap(),
+            ));
+            if (event.event_type == 6 && seen.cancel_key)
+                || (event.event_type == 18 && seen.cancel_text)
+            {
+                event.flags |= OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+            }
+            if event.event_type == 18 && seen.make_read_only {
+                assert_eq!(
+                    oui_element_set_attribute(seen.target, text("readonly"), empty_utf8()),
+                    OuiStatus::Ok
+                );
+            }
+        }
+        fn value(target: *mut OuiElement) -> String {
+            let mut bytes = [0; 64];
+            let mut length = 0;
+            assert_eq!(
+                oui_element_copy_control_value(
+                    target,
+                    bytes.as_mut_ptr(),
+                    bytes.len(),
+                    &mut length
+                ),
+                OuiStatus::Ok
+            );
+            String::from_utf8(bytes[..length].to_vec()).unwrap()
+        }
+        let document = create_document(160, 100);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let textarea = create_element(document, 31, root);
+        assert_eq!(
+            oui_element_set_control_value(textarea, text("é👍z")),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_element_set_selection(textarea, 2, 6), OuiStatus::Ok);
+        assert_eq!(oui_element_focus(textarea), OuiStatus::Ok);
+        let mut seen = Box::new(Observations {
+            target: textarea,
+            cancel_key: false,
+            cancel_text: false,
+            make_read_only: false,
+            events: Vec::new(),
+        });
+        let mut listeners = Vec::new();
+        for kind in [6, 18, 16, 4] {
+            let mut listener = ptr::null_mut();
+            assert_eq!(
+                oui_element_add_event_listener(
+                    textarea,
+                    kind,
+                    0,
+                    Some(observe),
+                    (&mut *seen as *mut Observations).cast(),
+                    &mut listener
+                ),
+                OuiStatus::Ok
+            );
+            listeners.push(listener);
+        }
+        let mut enter = event(6, "Enter");
+        enter.key_code = 13;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &enter, text("\r")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é\nz");
+        assert_eq!(
+            seen.events,
+            vec![
+                (6, "Enter".into(), "é👍z".into()),
+                (18, "\n".into(), "é👍z".into()),
+                (16, "\n".into(), "é\nz".into())
+            ]
+        );
+        let mut anchor = 0;
+        let mut focus = 0;
+        assert_eq!(
+            oui_element_get_selection(textarea, &mut anchor, &mut focus),
+            OuiStatus::Ok
+        );
+        assert_eq!((anchor, focus), (3, 3));
+        let mut key_up = event(7, "Enter");
+        key_up.key_code = 13;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key_up, text("\r")),
+            OuiStatus::Ok
+        );
+        let mut shortcut = event(6, "q");
+        shortcut.key_code = 81;
+        for modifiers in [2, 8] {
+            shortcut.modifiers = modifiers;
+            assert_eq!(
+                oui_document_dispatch_key_input_v1(document, &shortcut, text("q")),
+                OuiStatus::Ok
+            );
+            assert_eq!(value(textarea), "é\nz");
+        }
+        seen.events.clear();
+        seen.cancel_key = true;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &enter, text("\r")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é\nz");
+        assert_eq!(seen.events.len(), 1);
+        seen.cancel_key = false;
+        seen.cancel_text = true;
+        seen.events.clear();
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &enter, text("\r")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é\nz");
+        assert_eq!(seen.events.len(), 2);
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, text("blocked")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é\nz");
+        seen.cancel_text = false;
+        let mut undo = event(6, "z");
+        undo.key_code = 90;
+        undo.modifiers = 2;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &undo, text("z")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é👍z");
+        // Undo restores the value and collapses selection at the end. Establish
+        // the intended replacement range through the native application API.
+        assert_eq!(oui_element_set_selection(textarea, 2, 6), OuiStatus::Ok);
+        seen.events.clear();
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, text("!")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é!z");
+        assert_eq!(
+            seen.events,
+            vec![
+                (18, "!".into(), "é👍z".into()),
+                (16, "!".into(), "é!z".into())
+            ]
+        );
+        seen.make_read_only = true;
+        seen.events.clear();
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, text("blocked")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é!z");
+        assert_eq!(seen.events.len(), 1);
+        seen.events.clear();
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, text("blocked")),
+            OuiStatus::Ok
+        );
+        assert!(seen.events.is_empty());
+        let mut backspace = event(6, "Backspace");
+        backspace.key_code = 8;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &backspace, empty_utf8()),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é!z");
+        for listener in listeners {
+            assert_eq!(oui_listener_destroy(listener), OuiStatus::Ok);
+        }
+        assert_eq!(oui_element_destroy(textarea), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn normalized_c_input_validates_headers_utf8_and_thread_ownership() {
+        let document = create_document(100, 100);
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, ptr::null(), empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        let short_size = 4_u32;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(
+                document,
+                (&short_size as *const u32).cast(),
+                empty_utf8()
+            ),
+            OuiStatus::InvalidArgument
+        );
+        let short_header = [8_u32, OUI_ABI_VERSION];
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(
+                document,
+                short_header.as_ptr().cast(),
+                empty_utf8()
+            ),
+            OuiStatus::InvalidArgument
+        );
+        let mut key = event(6, "a");
+        key.key_code = 65;
+        key.abi_version = 1;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, text("a")),
+            OuiStatus::AbiMismatch
+        );
+        key.abi_version = OUI_ABI_VERSION;
+        key.event_type = 4;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        key.event_type = 6;
+        key.modifiers = 1 << 31;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        key.modifiers = 0;
+        key.flags = OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        key.flags = 0;
+        let invalid_bytes = [0xff_u8];
+        let invalid_text = OuiUtf8 {
+            data: invalid_bytes.as_ptr(),
+            length: 1,
+        };
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, invalid_text),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, invalid_text),
+            OuiStatus::InvalidArgument
+        );
+        key.text = invalid_text;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        key.text = text("a");
+        let address = document as usize;
+        let wrong_thread = std::thread::spawn(move || {
+            oui_document_dispatch_text_input_v1(address as *mut OuiDocument, text("a"))
+        })
+        .join()
+        .unwrap();
+        assert_eq!(wrong_thread, OuiStatus::WrongThread);
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, text("a")),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, empty_utf8()),
+            OuiStatus::InvalidHandle
+        );
+    }
+
+    #[test]
+    fn c_composition_dispatch_commits_final_text_and_restores_canceled_edits() {
+        let document = create_document(100, 100);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let input = create_element(document, 23, root);
+        assert_eq!(
+            oui_element_set_control_value(input, text("kept")),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_element_set_selection(input, 0, 4), OuiStatus::Ok);
+        for (kind, value) in [(9, ""), (10, "preview"), (10, ""), (11, "漢字")] {
+            let mut event = event(kind, value);
+            assert_eq!(
+                oui_document_dispatch_event(document, input, &mut event),
+                OuiStatus::Ok
+            );
+        }
+        let mut bytes = vec![0; "漢字".len()];
+        let mut written = 0;
+        assert_eq!(
+            oui_element_copy_control_value(input, bytes.as_mut_ptr(), bytes.len(), &mut written),
+            OuiStatus::Ok
+        );
+        assert_eq!(std::str::from_utf8(&bytes).unwrap(), "漢字");
+        for (kind, value) in [(9, ""), (10, "preview"), (11, "")] {
+            let mut event = event(kind, value);
+            assert_eq!(
+                oui_document_dispatch_event(document, input, &mut event),
+                OuiStatus::Ok
+            );
+        }
+        assert_eq!(
+            oui_element_copy_control_value(input, bytes.as_mut_ptr(), bytes.len(), &mut written),
+            OuiStatus::Ok
+        );
+        assert_eq!(std::str::from_utf8(&bytes).unwrap(), "漢字");
+        assert_eq!(oui_element_destroy(input), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
     fn c_accessibility_updates_actions_and_validation_share_engine_state() {
         let document = create_document(100, 100);
         let mut root = ptr::null_mut();
@@ -4147,11 +5046,53 @@ mod tests {
         );
         assert_eq!(update.full_tree, 1);
         assert!(update.updated_nodes >= 2);
+        let mut first_snapshot = ptr::null_mut();
+        assert_eq!(
+            accessibility_snapshot::oui_document_accessibility_snapshot(
+                document,
+                ptr::null(),
+                &mut first_snapshot,
+            ),
+            OuiStatus::Ok
+        );
+        let mut state = OuiAccessibilityNodeState {
+            struct_size: size_of::<OuiAccessibilityNodeState>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            ..Default::default()
+        };
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_node_state(
+                first_snapshot,
+                id,
+                &mut state,
+            ),
+            OuiStatus::Ok
+        );
+        assert_ne!(state.flags & (1 << 5), 0);
+        assert_eq!(state.flags & (1 << 6), 0);
         assert_eq!(
             oui_element_perform_accessibility_action(checkbox, 0, empty_utf8(), 0, 0),
             OuiStatus::Ok
         );
         assert_eq!(log, [42, 62, 72]);
+        let mut second_snapshot = ptr::null_mut();
+        assert_eq!(
+            accessibility_snapshot::oui_document_accessibility_snapshot(
+                document,
+                first_snapshot,
+                &mut second_snapshot,
+            ),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_node_state(
+                second_snapshot,
+                id,
+                &mut state,
+            ),
+            OuiStatus::Ok
+        );
+        assert_ne!(state.flags & (1 << 6), 0);
         assert_eq!(
             oui_document_accessibility_update(document, &mut update),
             OuiStatus::Ok
@@ -4165,12 +5106,71 @@ mod tests {
         );
         assert_eq!(update.reduced_motion, 1);
 
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_destroy(second_snapshot),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_destroy(first_snapshot),
+            OuiStatus::Ok
+        );
+
         assert_eq!(oui_listener_destroy(click_listener), OuiStatus::Ok);
         assert_eq!(oui_listener_destroy(input_listener), OuiStatus::Ok);
         assert_eq!(oui_listener_destroy(change_listener), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(checkbox), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_accessibility_snapshot_rejects_wrong_document_and_outlives_its_document() {
+        let first_document = create_document(40, 40);
+        let second_document = create_document(40, 40);
+        let mut first_snapshot = ptr::null_mut();
+        assert_eq!(
+            accessibility_snapshot::oui_document_accessibility_snapshot(
+                first_document,
+                ptr::null(),
+                &mut first_snapshot,
+            ),
+            OuiStatus::Ok
+        );
+        let mut unrelated_snapshot = ptr::null_mut();
+        assert_eq!(
+            accessibility_snapshot::oui_document_accessibility_snapshot(
+                second_document,
+                first_snapshot,
+                &mut unrelated_snapshot,
+            ),
+            OuiStatus::WrongDocument
+        );
+        assert!(unrelated_snapshot.is_null());
+        let mut info = OuiAccessibilitySnapshotInfo {
+            struct_size: size_of::<OuiAccessibilitySnapshotInfo>() as u32,
+            abi_version: OUI_ABI_VERSION + 1,
+            ..Default::default()
+        };
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_info(first_snapshot, &mut info),
+            OuiStatus::AbiMismatch
+        );
+        assert_eq!(oui_document_destroy(first_document), OuiStatus::Ok);
+        info.abi_version = OUI_ABI_VERSION;
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_info(first_snapshot, &mut info),
+            OuiStatus::Ok
+        );
+        assert!(info.node_count >= 1);
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_destroy(first_snapshot),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_info(first_snapshot, &mut info),
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(oui_document_destroy(second_document), OuiStatus::Ok);
     }
 
     #[test]
@@ -4237,5 +5237,212 @@ mod tests {
 
         assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn native_scalar_extensions_keep_owned_property_identity_and_full_values() {
+        use openui_style::{OverflowAlignment, StyleColor};
+        let document_handle = create_document(64, 64);
+        let element_handle = create_element(document_handle, 0, ptr::null_mut());
+        for (property, literal) in [
+            (StyleProperty::AlignSelf, "safe center"),
+            (StyleProperty::AlignContent, "unsafe end"),
+            (StyleProperty::BorderBottomColor, "currentcolor"),
+            (StyleProperty::ScrollbarTrackColor, "auto"),
+            (StyleProperty::Orphans, "4294967295"),
+        ] {
+            let mut parsed = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+            assert_eq!(
+                oui_style_value_parse(property as i32, text(literal), parsed.as_mut_ptr()),
+                OuiStatus::Ok
+            );
+            // SAFETY: successful parsing initialized the output and selected its payload.
+            let parsed = unsafe { parsed.assume_init() };
+            assert_eq!(parsed.tag, 6);
+            let compound = unsafe { parsed.data.compound } as usize;
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &parsed),
+                OuiStatus::Ok
+            );
+            let reference = element(element_handle as usize).unwrap();
+            let state = element_document(&reference).unwrap();
+            let snapshot = borrow_engine(&state)
+                .unwrap()
+                .computed_style(reference.node)
+                .unwrap()
+                .clone();
+            match property {
+                StyleProperty::AlignSelf => {
+                    assert_eq!(snapshot.align_self.overflow, OverflowAlignment::Safe)
+                }
+                StyleProperty::AlignContent => {
+                    assert_eq!(snapshot.align_content.overflow, OverflowAlignment::Unsafe)
+                }
+                StyleProperty::BorderBottomColor => {
+                    assert_eq!(snapshot.border_bottom_color, StyleColor::CurrentColor)
+                }
+                StyleProperty::ScrollbarTrackColor => {
+                    assert_eq!(snapshot.scrollbar_track_color, None)
+                }
+                StyleProperty::Orphans => assert_eq!(snapshot.orphans, u32::MAX),
+                _ => unreachable!(),
+            }
+            assert_eq!(
+                oui_element_set_property(element_handle, StyleProperty::Width as i32, &parsed),
+                OuiStatus::WrongValueType
+            );
+            assert_eq!(
+                oui_element_set_property(
+                    element_handle,
+                    StyleProperty::WritingMode as i32,
+                    &parsed
+                ),
+                OuiStatus::WrongValueType
+            );
+            let mut reserved = parsed;
+            reserved.reserved = 1;
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &reserved),
+                OuiStatus::WrongValueType
+            );
+            assert_eq!(
+                format!("{snapshot:?}"),
+                format!(
+                    "{:?}",
+                    borrow_engine(&state)
+                        .unwrap()
+                        .computed_style(reference.node)
+                        .unwrap()
+                )
+            );
+            std::thread::spawn(move || {
+                let own_document = create_document(16, 16);
+                let own_element = create_element(own_document, 0, ptr::null_mut());
+                let foreign = OuiStyleValue {
+                    tag: 6,
+                    reserved: 0,
+                    data: OuiStylePayload {
+                        compound: compound as *const OuiStyleCompound,
+                    },
+                };
+                assert_eq!(
+                    oui_element_set_property(own_element, property as i32, &foreign),
+                    OuiStatus::WrongThread
+                );
+                assert_eq!(
+                    oui_style_compound_destroy(compound as *mut OuiStyleCompound),
+                    OuiStatus::WrongThread
+                );
+                assert_eq!(oui_element_destroy(own_element), OuiStatus::Ok);
+                assert_eq!(oui_document_destroy(own_document), OuiStatus::Ok);
+            })
+            .join()
+            .unwrap();
+            assert_eq!(
+                oui_style_compound_destroy(compound as *mut OuiStyleCompound),
+                OuiStatus::Ok
+            );
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &parsed),
+                OuiStatus::InvalidHandle
+            );
+            // Submitting cloned the value into retained state before its carrier was released.
+            assert_eq!(
+                format!("{snapshot:?}"),
+                format!(
+                    "{:?}",
+                    borrow_engine(&state)
+                        .unwrap()
+                        .computed_style(reference.node)
+                        .unwrap()
+                )
+            );
+        }
+        assert_eq!(oui_element_destroy(element_handle), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn invalid_native_literals_preserve_output_and_existing_scalar_encodings() {
+        for (property, literal) in [
+            (StyleProperty::FilterBlur, "NaN"),
+            (StyleProperty::OverflowClipMargin, "inf"),
+            (StyleProperty::Left, "NaNpx"),
+            (StyleProperty::ColumnWidth, "infem"),
+            (StyleProperty::AlignSelf, "safe stretch"),
+            (StyleProperty::AlignContent, "safe space-between"),
+            (StyleProperty::Orphans, "-1"),
+            (StyleProperty::Widows, "4294967296"),
+        ] {
+            let mut output = OuiStyleValue {
+                tag: 77,
+                reserved: 42,
+                data: OuiStylePayload { integer: 123 },
+            };
+            assert_eq!(
+                oui_style_value_parse(property as i32, text(literal), &mut output),
+                OuiStatus::InvalidArgument
+            );
+            assert_eq!(
+                (output.tag, output.reserved, unsafe { output.data.integer }),
+                (77, 42, 123)
+            );
+        }
+        for (property, literals) in [
+            (
+                StyleProperty::AlignItems,
+                &[
+                    "normal",
+                    "stretch",
+                    "center",
+                    "start",
+                    "end",
+                    "flex-start",
+                    "flex-end",
+                    "baseline",
+                    "auto",
+                    "self-start",
+                    "self-end",
+                    "left",
+                    "right",
+                    "last baseline",
+                    "legacy",
+                ][..],
+            ),
+            (
+                StyleProperty::JustifyContent,
+                &[
+                    "normal",
+                    "start",
+                    "end",
+                    "center",
+                    "flex-start",
+                    "flex-end",
+                    "space-between",
+                    "space-around",
+                    "space-evenly",
+                    "stretch",
+                    "baseline",
+                    "last baseline",
+                    "left",
+                    "right",
+                ][..],
+            ),
+        ] {
+            for (number, literal) in literals.iter().enumerate() {
+                let mut output = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+                assert_eq!(
+                    oui_style_value_parse(property as i32, text(literal), output.as_mut_ptr()),
+                    OuiStatus::Ok
+                );
+                let output = unsafe { output.assume_init() };
+                assert_eq!(output.tag, 5);
+                assert_eq!(unsafe { output.data.enum_value }, number as i32);
+                assert_eq!(
+                    value::style_value(property, &output).unwrap(),
+                    parse_literal(property, literal).unwrap()
+                );
+            }
+        }
     }
 }

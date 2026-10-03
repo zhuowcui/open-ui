@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "docs/renderer/generated/qualification-contract-v2.json"
 STYLE_OUT = ROOT / "docs/renderer/generated/author-style-inventory.json"
 JS_OUT = ROOT / "docs/renderer/generated/javascript-disposition.json"
-JS_AST_OUT = ROOT / "docs/renderer/generated/javascript-mutation-audit-v2.json"
+JS_AST_OUT = ROOT / "docs/renderer/generated/javascript-mutation-audit-v3.json"
 MUTATION_IDS_OUT = ROOT / "tools/qualification/manifests/mutation-candidates-v1.json"
 LEGACY = ROOT / "docs/v02/generated/baseline.json"
 LEGACY_SHA256 = "787cd40ae63d06d5933efa89a4eba65a70d6327673b8056b83cae76ef3606001"
@@ -38,7 +38,7 @@ MAPPING = ROOT / "tools/accountability/data/wpt_mapping.csv"
 FULL_MANIFEST = ROOT / "tools/qualification/manifests/complete-5731.json"
 FOCUSED_MANIFEST = ROOT / "tools/qualification/manifests/focused-raster.json"
 PRIMITIVE_MANIFEST = ROOT / "tools/qualification/manifests/primitive-raster.json"
-EXPANDED_MANIFEST = ROOT / "tools/qualification/manifests/expanded-v1.json"
+EXPANDED_MANIFEST = ROOT / "tools/qualification/manifests/expanded-v18.json"
 RESIDUAL_OWNERSHIP = ROOT / "tools/qualification/residual-ownership-v2.json"
 MEDIA_FIRST_FRAMES = ROOT / "docs/renderer/generated/media-first-frames-v1.json"
 WPT_ROOT = Path(
@@ -417,8 +417,10 @@ def style_inventory() -> dict[str, object]:
             }
         )
     public_count = sum(row["classification"] == "public-typed" for row in rows)
-    if public_count != 202:
-        raise ValueError(f"expected 202 consumed author fields, found {public_count}")
+    # Native viewport controls now consume the existing typed thumb-color
+    # field (schema property 234), in addition to the previous 202 fields.
+    if public_count != 203:
+        raise ValueError(f"expected 203 consumed author fields, found {public_count}")
     return {
         "schema_version": 1,
         "source": str(COMPUTED.relative_to(ROOT)),

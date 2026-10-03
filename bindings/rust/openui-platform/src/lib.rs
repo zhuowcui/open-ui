@@ -109,6 +109,35 @@ pub enum PlatformEvent {
     DroppedFile(PathBuf),
     HoveredFile(PathBuf),
     HoveredFileCancelled,
+    Presented {
+        frame_number: u64,
+        time_ms: f64,
+    },
+    CloseRequested,
+}
+
+/// A native key notification and its separately supplied committed text.
+/// Logical key names such as `Escape` must never become text input.
+#[derive(Debug, Clone, PartialEq)]
+pub struct KeyboardInput {
+    pub phase: KeyPhase,
+    pub key_code: i32,
+    pub key_text: Option<String>,
+    pub text: Option<String>,
+    pub modifiers: Modifiers,
+    pub repeat: bool,
+}
+
+impl KeyboardInput {
+    pub fn key_event(&self) -> PlatformEvent {
+        PlatformEvent::Key {
+            phase: self.phase,
+            key_code: self.key_code,
+            text: self.key_text.clone(),
+            modifiers: self.modifiers,
+            repeat: self.repeat,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -126,6 +155,19 @@ pub trait PlatformApplication: 'static {
     fn render(&mut self, time_ms: f64) -> Result<SoftwareFrame, String>;
     fn exit_requested(&self) -> bool;
 
+    /// The default preserves the legacy key notification. Implementations with
+    /// cancellable keyboard defaults can process logical keys and committed
+    /// text separately; Open UI's Rust App implements that shared path.
+    fn key_input(&mut self, input: KeyboardInput) -> Result<(), String> {
+        self.event(PlatformEvent::Key {
+            phase: input.phase,
+            key_code: input.key_code,
+            text: input.text.or(input.key_text),
+            modifiers: input.modifiers,
+            repeat: input.repeat,
+        })
+    }
+
     fn clipboard_text(&self) -> Result<String, String> {
         Ok(String::new())
     }
@@ -135,6 +177,10 @@ pub trait PlatformApplication: 'static {
     }
 
     fn is_animating(&self) -> bool {
+        false
+    }
+
+    fn needs_redraw(&self) -> bool {
         false
     }
 

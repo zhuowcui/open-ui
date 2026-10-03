@@ -1,6 +1,10 @@
 //! # Open UI
 //!
 //! Safe, direct Rust framework over the pure-Rust Open UI retained engine.
+//! Application interaction uses Rust callbacks and native [`Document`] and
+//! [`Element`] methods. Browser-like element behavior needed by applications
+//! belongs in this public native Rust API. Open UI does not execute JavaScript
+//! or expose browser script bindings.
 //!
 //! ```no_run
 //! use openui::prelude::*;
@@ -38,12 +42,13 @@
 //! | [`dispose_scope`] | Tear down a scope and its children |
 //! | [`on_cleanup`] | Register a cleanup callback in the current scope |
 //!
-//! ## DOM wrappers
+//! ## Native document and element handles
 //!
 //! | Type | Purpose |
 //! |------|---------|
 //! | [`Document`] | Native retained document and rendering context |
-//! | [`Element`] | A node in the DOM tree |
+//! | [`Element`] | A node in the retained document tree |
+//! | [`TextNode`] | Native text data that can be created, edited, attached, and moved |
 //!
 //! ## View system
 //!
@@ -101,6 +106,7 @@ pub use signal::{create_memo, create_signal, Memo, Signal};
 pub use document::Document;
 pub use element::{Element, WeakElement};
 pub use events::{Event, EventPhase, KeyEventType, Modifiers, MouseButton, MouseEventType};
+pub use openui_dom::ElementTag;
 pub use style::{Bitmap, Error, Rect};
 pub use text_node::{TextNode, WeakTextNode};
 
@@ -108,7 +114,7 @@ pub use text_node::{TextNode, WeakTextNode};
 pub mod typed_style {
     pub use openui_style::*;
 }
-pub use openui_style::{Style, StyleProperty, StyleValue};
+pub use openui_style::{ComputedStyle, Style, StyleProperty, StyleValue};
 pub use openui_text::{
     FontAxisRange, FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat,
     FontFaceDescriptor, FontFaceHandle, FontFaceInfo, FontFeatureDefault, FontMetricOverrides,
@@ -126,16 +132,20 @@ pub use view_node::{mount_view, IntoView, ViewNode};
 // ─── Re-exports: application shell ─────────────────────────
 
 pub use app::{
-    App, AppBuilder, BackendPreference, HeadlessApp, LogicalSize, RenderOptions, WindowOptions,
+    App, AppBuilder, AppExitHandle, BackendPreference, HeadlessApp, LogicalSize, RenderOptions,
+    WindowOptions,
 };
 pub use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityNode, AccessibilityNodeId,
     AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole, AccessibilityTreeUpdate,
     AnimationEvent, AnimationEventKind, AnimationId, AnimationState, ControlAdjustment,
     EditCommand, EngineOptions, FocusOrigin, PointerEventKind, RasterConfiguration,
-    ScrollAnimationId, TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
+    ScrollAlignment, ScrollAnimationId, ScrollIntoViewContainer, ScrollIntoViewOptions,
+    ScrollMetrics, TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
     ViewportMetricsError,
 };
+#[cfg(all(feature = "linux", target_os = "linux"))]
+pub use openui_platform::{KeyboardInput, PlatformEvent};
 
 // ─── Re-exports: proc macros ────────────────────────────────
 

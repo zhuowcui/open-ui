@@ -925,6 +925,51 @@ impl RendererStyleValue {
         }
     }
 
+    pub(crate) fn from_author_value(
+        property: StyleProperty,
+        value: &StyleValue,
+        resolve_length: impl Fn(LengthValue) -> Length,
+    ) -> Option<Self> {
+        match (property, value) {
+            (StyleProperty::AlignContent, StyleValue::ContentAlignment(value)) => Some(Self::AlignContent(*value)),
+            (StyleProperty::AlignSelf, StyleValue::ItemAlignment(value)) => Some(Self::AlignSelf(*value)),
+            (StyleProperty::BorderBottomColor, StyleValue::Color(value)) => Some(Self::BorderBottomColor(StyleColor::Resolved(*value))),
+            (StyleProperty::BorderBottomWidth, StyleValue::Integer(value)) => Some(Self::BorderBottomWidth(*value)),
+            (StyleProperty::BorderLeftColor, StyleValue::Color(value)) => Some(Self::BorderLeftColor(StyleColor::Resolved(*value))),
+            (StyleProperty::BorderLeftWidth, StyleValue::Integer(value)) => Some(Self::BorderLeftWidth(*value)),
+            (StyleProperty::BorderRightColor, StyleValue::Color(value)) => Some(Self::BorderRightColor(StyleColor::Resolved(*value))),
+            (StyleProperty::BorderRightWidth, StyleValue::Integer(value)) => Some(Self::BorderRightWidth(*value)),
+            (StyleProperty::BorderTopColor, StyleValue::Color(value)) => Some(Self::BorderTopColor(StyleColor::Resolved(*value))),
+            (StyleProperty::BorderTopWidth, StyleValue::Integer(value)) => Some(Self::BorderTopWidth(*value)),
+            (StyleProperty::Bottom, StyleValue::Length(value)) => Some(Self::Bottom(resolve_length(*value))),
+            (StyleProperty::ColumnHeight, StyleValue::Length(value)) => Some(Self::ColumnHeight({ let value = resolve_length(*value); (!value.is_auto()).then_some(value) })),
+            (StyleProperty::ColumnRuleColor, StyleValue::Color(value)) => Some(Self::ColumnRuleColor(StyleColor::Resolved(*value))),
+            (StyleProperty::ColumnRuleWidth, StyleValue::Integer(value)) => Some(Self::ColumnRuleWidth(*value)),
+            (StyleProperty::ColumnWidth, StyleValue::Length(value)) => Some(Self::ColumnWidth({ let value = resolve_length(*value); (!value.is_auto()).then_some(value) })),
+            (StyleProperty::FilterBlur, StyleValue::Number(value)) => Some(Self::FilterBlur(*value)),
+            (StyleProperty::FilterGrayscale, StyleValue::Number(value)) => Some(Self::FilterGrayscale(*value)),
+            (StyleProperty::JustifyItems, StyleValue::ItemAlignment(value)) => Some(Self::JustifyItems(*value)),
+            (StyleProperty::JustifySelf, StyleValue::ItemAlignment(value)) => Some(Self::JustifySelf(*value)),
+            (StyleProperty::Left, StyleValue::Length(value)) => Some(Self::Left(resolve_length(*value))),
+            (StyleProperty::Order, StyleValue::Integer(value)) => Some(Self::Order(*value)),
+            (StyleProperty::Orphans, StyleValue::Integer(value)) => Some(Self::Orphans(u32::try_from(*value).ok()?)),
+            (StyleProperty::OutlineColor, StyleValue::Color(value)) => Some(Self::OutlineColor(StyleColor::Resolved(*value))),
+            (StyleProperty::OutlineOffset, StyleValue::Integer(value)) => Some(Self::OutlineOffset(*value)),
+            (StyleProperty::OverflowClipMargin, StyleValue::Number(value)) => Some(Self::OverflowClipMargin(*value)),
+            (StyleProperty::OverflowX, StyleValue::Overflow(value)) => Some(Self::OverflowX(*value)),
+            (StyleProperty::OverflowY, StyleValue::Overflow(value)) => Some(Self::OverflowY(*value)),
+            (StyleProperty::Right, StyleValue::Length(value)) => Some(Self::Right(resolve_length(*value))),
+            (StyleProperty::ScrollbarTrackColor, StyleValue::Color(value)) => Some(Self::ScrollbarTrackColor(Some(*value))),
+            (StyleProperty::Top, StyleValue::Length(value)) => Some(Self::Top(resolve_length(*value))),
+            (StyleProperty::Widows, StyleValue::Integer(value)) => Some(Self::Widows(u32::try_from(*value).ok()?)),
+            (StyleProperty::OutlineWidth, StyleValue::Integer(value)) => Some(Self::OutlineWidth(*value)),
+            (StyleProperty::ScrollbarThumbColor, StyleValue::Color(value)) => Some(Self::ScrollbarThumbColor(Some(*value))),
+            (StyleProperty::ShapeImageThreshold, StyleValue::Number(value)) => Some(Self::ShapeImageThreshold(*value)),
+            (StyleProperty::ShapeMargin, StyleValue::Length(value)) => Some(Self::ShapeMargin(resolve_length(*value))),
+            _ => None,
+        }
+    }
+
     pub(crate) fn from_computed(
         style: &ComputedStyle,
         property: StyleProperty,
@@ -1150,6 +1195,47 @@ impl RendererStyleValue {
             StyleProperty::ShapeOutside => Some(Self::ShapeOutside(style.fields.shape_outside.clone())),
             _ => None,
         }
+    }
+}
+
+fn parse_renderer_author_literal(property: StyleProperty, input: &str) -> Option<StyleValue> {
+    match property {
+        StyleProperty::AlignContent => content_alignment_literal(input).map(StyleValue::ContentAlignment),
+        StyleProperty::AlignSelf => item_alignment_literal(input).map(StyleValue::ItemAlignment),
+        StyleProperty::BorderBottomColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderBottomColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::BorderBottomWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::BorderLeftColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderLeftColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::BorderLeftWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::BorderRightColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderRightColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::BorderRightWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::BorderTopColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderTopColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::BorderTopWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::Bottom => length(input).map(StyleValue::Length),
+        StyleProperty::ColumnHeight => length(input).map(StyleValue::Length),
+        StyleProperty::ColumnRuleColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::ColumnRuleColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::ColumnRuleWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::ColumnWidth => length(input).map(StyleValue::Length),
+        StyleProperty::FilterBlur => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+        StyleProperty::FilterGrayscale => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+        StyleProperty::JustifyItems => item_alignment_literal(input).map(StyleValue::ItemAlignment),
+        StyleProperty::JustifySelf => item_alignment_literal(input).map(StyleValue::ItemAlignment),
+        StyleProperty::Left => length(input).map(StyleValue::Length),
+        StyleProperty::Order => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::Orphans => input.parse::<u32>().ok().map(|value| StyleValue::Renderer(RendererStyleValue::Orphans(value))),
+        StyleProperty::OutlineColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::OutlineColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::OutlineOffset => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::OverflowClipMargin => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+        StyleProperty::OverflowX => overflow_literal(input).map(StyleValue::Overflow),
+        StyleProperty::OverflowY => overflow_literal(input).map(StyleValue::Overflow),
+        StyleProperty::Right => length(input).map(StyleValue::Length),
+        StyleProperty::ScrollbarTrackColor => if input == "auto" { Some(StyleValue::Renderer(RendererStyleValue::ScrollbarTrackColor(None))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::Top => length(input).map(StyleValue::Length),
+        StyleProperty::Widows => input.parse::<u32>().ok().map(|value| StyleValue::Renderer(RendererStyleValue::Widows(value))),
+        StyleProperty::OutlineWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::ScrollbarThumbColor => if input == "auto" { Some(StyleValue::Renderer(RendererStyleValue::ScrollbarThumbColor(None))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::ShapeImageThreshold => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+        StyleProperty::ShapeMargin => length(input).map(StyleValue::Length),
+        _ => None,
     }
 }
 

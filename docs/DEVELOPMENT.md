@@ -4,6 +4,24 @@ The supported workspace is `bindings/rust`. It contains the one pure-Rust
 engine used by the safe Rust API, headless rendering, Linux runtime, and C ABI.
 A Chromium checkout is not required for ordinary builds.
 
+Application interaction runs in native Rust through public `Document` and
+`Element` methods and Rust event callbacks. Open UI does not execute JavaScript.
+When a consuming app needs a browser-like element operation, implement it as a
+public native Rust API over the retained engine that the app can call directly.
+Implement the behavior in Rust, including its state changes and events.
+WPT scripts may be read by offline qualification tools to identify a final
+visual state; they are never run by Open UI. See the
+[native interaction contract](v02/supported-platforms.md#native-interaction-api).
+
+Closing an interaction gap requires a public Rust method and coverage from a
+native consumer exercising its state changes, events, or rendered result.
+An internal Engine method or a test fixture alone does not complete that work.
+
+The renderer matrix checks the comparison executable's embedded build source
+against the current tree. Rebuild the `pixel-compare` package after source
+changes; building an application example does not update that executable.
+See [renderer executable source checks](renderer/renderer-build-identity.md).
+
 ## Prerequisites
 
 - Rust 1.85 or newer.
@@ -26,7 +44,7 @@ sudo apt-get install build-essential clang libclang-dev ninja-build pkg-config \
 ```bash
 cd bindings/rust
 cargo build --workspace --locked
-cargo test --workspace --locked
+RUST_MIN_STACK=4194304 cargo test --workspace --locked
 cargo run --locked --package hello
 cargo run --locked --package hello --features linux
 ```
@@ -35,6 +53,8 @@ Headless is the default: Linux window dependencies are behind the `linux`
 feature. Set `OUI_BACKEND=software` or `OUI_BACKEND=opengl` to force native
 presentation. `Auto` attempts OpenGL and reports/falls back to software without
 changing engine or scene semantics.
+The workspace test command uses the same 4 MiB libtest worker-thread stack as
+CI; a fragmented multicol integration case exceeds libtest's 2 MiB default.
 
 The public Rust graph is versioned together at 0.2.0. Internal dependencies
 must keep exact `version = "=0.2.0"` plus `path` so local work and crates.io
@@ -65,8 +85,9 @@ python3 tools/accountability/audit.py
 python3 tools/ffi/verify_abi.py
 ```
 
-The complete exact replay renders every frozen ID to a temporary directory and
-byte-compares it with the committed Open UI output:
+The optional historical replay renders every archived ID to a temporary
+directory and byte-compares it with the committed Open UI output. It records
+how the renderer changed; those old Open UI images are not expected pixels:
 
 ```bash
 cargo build --manifest-path bindings/rust/Cargo.toml --locked -p pixel-compare
@@ -75,9 +96,10 @@ python3 tools/accountability/verify_frozen_openui_pixels.py \
 ```
 
 Do not add test-ID branches, reference substitution, hidden fallback, synthetic
-geometry, text stripping, network access, or unclassified exclusions. A changed
-frozen pixel is a stop condition unless an independent compatibility review
-explicitly refreezes it.
+geometry, text stripping, network access, or unclassified exclusions. Qualify
+renderer changes against the pinned Chromium oracle at the required profiles.
+Keep the archived Open UI images and their provenance intact; record replay
+differences as historical changes, not renderer failures.
 
 ## Exact parity profile
 
@@ -103,8 +125,9 @@ undefined-behavior sanitizers. See [CI](CI.md) and
 
 ## Commits and historical code
 
-Keep changes scoped and run `git diff --check`. Renderer closure waves use a
-full exact replay before commit. The root GN/C++ Blink backend, `openui-build`,
+Keep changes scoped and run `git diff --check`. Renderer closure waves use the
+Chromium comparison matrix before commit and record the optional historical
+replay separately. The root GN/C++ Blink backend, `openui-build`,
 `openui-sys`, and SP2 Skia experiments are historical evidence only. Do not add
 new application features to them or include them in the Rust workspace or
 release packages.

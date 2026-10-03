@@ -8,6 +8,7 @@ import tempfile
 import unittest
 
 from PIL import Image
+from unittest.mock import patch
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -18,6 +19,122 @@ MATRIX = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
 sys.modules[SPEC.name] = MATRIX
 SPEC.loader.exec_module(MATRIX)
+import audit_chromium_oracles as ORACLE_AUDIT
+
+
+class RendererBuildIdentityTests(unittest.TestCase):
+    def setUp(self):
+        self.source = {
+            "commit": "commit", "clean": True, "status_sha256": "status",
+            "source_tree_sha256": "source", "harness_sha256": "harness",
+        }
+
+    def response(self, identity):
+        return subprocess.CompletedProcess([], 0, json.dumps(identity), "")
+
+    def test_executable_built_from_current_source_is_accepted(self):
+        identity = {"schema_version": 1, "source": self.source, "skia_gn_args": "flags"}
+        with patch.object(MATRIX.subprocess, "run", return_value=self.response(identity)) as run:
+            self.assertEqual(
+                MATRIX.renderer_build_source_identity(pathlib.Path("runner"), self.source),
+                identity,
+            )
+        self.assertEqual(run.call_args.args[0][-1], "build-source-identity")
+
+    def test_older_source_cannot_be_attributed_to_a_new_checkout(self):
+        for key in self.source:
+            with self.subTest(key=key):
+                old = {**self.source, key: "older"}
+                with patch.object(MATRIX.subprocess, "run", return_value=self.response({
+                    "schema_version": 1, "source": old,
+                })):
+                    with self.assertRaisesRegex(ValueError, key):
+                        MATRIX.renderer_build_source_identity(pathlib.Path("runner"), self.source)
+
+    def test_legacy_executable_without_embedded_identity_is_rejected(self):
+        legacy = subprocess.CompletedProcess([], 0, "Usage: pixel_compare list", "")
+        with patch.object(MATRIX.subprocess, "run", return_value=legacy):
+            with self.assertRaisesRegex(ValueError, "rebuild pixel_compare"):
+                MATRIX.renderer_build_source_identity(pathlib.Path("runner"), self.source)
+
+    def test_missing_or_unsupported_manifest_is_rejected(self):
+        for identity in [None, {}, {"schema_version": 2}, {"schema_version": 1}]:
+            with self.subTest(identity=identity):
+                with patch.object(MATRIX.subprocess, "run", return_value=self.response(identity)):
+                    with self.assertRaises(ValueError):
+                        MATRIX.renderer_build_source_identity(pathlib.Path("runner"), self.source)
+
+    def test_executable_probe_failure_is_rejected(self):
+        with patch.object(MATRIX.subprocess, "run", side_effect=subprocess.TimeoutExpired("runner", 30)):
+            with self.assertRaisesRegex(ValueError, "build source identity"):
+                MATRIX.renderer_build_source_identity(pathlib.Path("runner"), self.source)
+
+
+class ChromiumOracleAuditTests(unittest.TestCase):
+    def write_report(self, path, rgba, *, identity="oracle", png="png", source="capture"):
+        rows = [{
+            "id": "native-font-case",
+            "status": "exact",
+            "chromium_oracle_identity_sha256": identity,
+            "chromium_rgba_sha256": rgba,
+            "chromium_oracle_rgba_sha256": rgba,
+            "chromium_png_sha256": png,
+            "chromium_oracle_source": source,
+        }]
+        report = {
+            "schema_version": 2,
+            "evidence": {"tolerance_pixels": 0},
+            "source": {"clean": False},
+            "complete_contract_scope": False,
+            "contract_sha256": "contract",
+            "font_byte_hashes": {},
+            "resource_hashes": {},
+            "chromium": {"build_identity": "pinned", "binary_sha256": "browser",
+                         "capture_harness_sha256": "harness"},
+            "profiles": [{"profile": "profile", "tests": rows,
+                          "result_sha256": MATRIX.canonical_sha256(rows)}],
+        }
+        path.write_text(json.dumps(report))
+
+    def test_fresh_capture_conflict_is_reported_despite_renderer_exact_status(self):
+        with tempfile.TemporaryDirectory() as directory:
+            first, second = [pathlib.Path(directory) / name for name in ("old.json", "fresh.json")]
+            self.write_report(first, "old-pixels", source="cache")
+            self.write_report(second, "fresh-pixels")
+            result = ORACLE_AUDIT.audit([first, second])
+            self.assertEqual(result["status"], "contradicted-oracle-identity")
+            self.assertEqual(result["contradicted_identity_count"], 1)
+            self.assertEqual(result["fresh_capture_observation_count"], 1)
+            self.assertFalse(result["renderer_qualification"])
+
+    def test_encoding_changes_with_same_decoded_pixels_are_consistent(self):
+        with tempfile.TemporaryDirectory() as directory:
+            first, second = [pathlib.Path(directory) / name for name in ("a.json", "b.json")]
+            self.write_report(first, "pixels", png="encoding-a")
+            self.write_report(second, "pixels", png="encoding-b")
+            result = ORACLE_AUDIT.audit([first, second])
+            self.assertEqual(result["status"], "consistent-observations")
+            self.assertEqual(result["fresh_capture_observation_count"], 2)
+            self.assertFalse(result["renderer_qualification"])
+
+    def test_distinct_capture_protocols_do_not_alias_one_oracle(self):
+        with tempfile.TemporaryDirectory() as directory:
+            first, second = [pathlib.Path(directory) / name for name in ("a.json", "b.json")]
+            self.write_report(first, "old-pixels", identity="old-protocol")
+            self.write_report(second, "new-pixels", identity="new-protocol")
+            result = ORACLE_AUDIT.audit([first, second])
+            self.assertEqual(result["contradicted_identity_count"], 0)
+            self.assertEqual(result["observed_identity_count"], 2)
+
+    def test_changed_rows_cannot_reuse_a_profile_evidence_digest(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = pathlib.Path(directory) / "report.json"
+            self.write_report(path, "pixels")
+            report = json.loads(path.read_text())
+            report["profiles"][0]["tests"][0]["chromium_rgba_sha256"] = "changed"
+            path.write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError, "changed profile results"):
+                ORACLE_AUDIT.audit([path])
 
 
 class RendererMatrixTests(unittest.TestCase):
@@ -62,6 +179,33 @@ class RendererMatrixTests(unittest.TestCase):
             self.assertEqual(first_hash, second_hash)
             self.assertNotEqual(MATRIX.sha256(first), MATRIX.sha256(second))
 
+    def test_pixel_comparison_counts_each_changed_pixel_across_all_channels(self):
+        with tempfile.TemporaryDirectory() as directory:
+            expected = pathlib.Path(directory) / "expected.png"
+            actual = pathlib.Path(directory) / "actual.png"
+            first = Image.new("RGBA", (4, 1), (10, 20, 30, 255))
+            second = first.copy()
+            second.putpixel((0, 0), (11, 20, 30, 255))
+            second.putpixel((1, 0), (10, 20, 30, 254))
+            second.putpixel((2, 0), (10, 21, 31, 255))
+            first.save(expected)
+            second.save(actual)
+            mismatched, first_hash, second_hash = MATRIX.compare_images(expected, actual)
+            self.assertEqual(mismatched, 3)
+            self.assertNotEqual(first_hash, second_hash)
+            self.assertEqual(
+                MATRIX.residuals.analyze_image_difference(expected, actual)["mismatched_pixels"],
+                mismatched,
+            )
+
+    def test_pixel_comparison_rejects_size_mismatch(self):
+        with tempfile.TemporaryDirectory() as directory:
+            expected = pathlib.Path(directory) / "expected.png"
+            actual = pathlib.Path(directory) / "actual.png"
+            Image.new("RGBA", (2, 1), (0, 0, 0, 255)).save(expected)
+            Image.new("RGBA", (3, 1), (0, 0, 0, 255)).save(actual)
+            self.assertEqual(MATRIX.compare_images(expected, actual)[0], -1)
+
     def test_canonical_result_hash_ignores_mapping_insertion_order(self):
         self.assertEqual(
             MATRIX.canonical_sha256({"a": 1, "b": 2}),
@@ -76,7 +220,7 @@ class RendererMatrixTests(unittest.TestCase):
         self.assertEqual(len(full_ids), 5731)
         self.assertEqual(len(focused_ids), 16)
         self.assertEqual(len(primitive_ids), 24)
-        self.assertEqual(len(expanded_ids), len(full_ids) + 200)
+        self.assertEqual(len(expanded_ids), len(full_ids) + 201)
         self.assertTrue(set(full_ids) < set(expanded_ids))
         self.assertEqual(len(set(expanded_ids)), len(expanded_ids))
         self.assertTrue(set(focused_ids) < set(full_ids))

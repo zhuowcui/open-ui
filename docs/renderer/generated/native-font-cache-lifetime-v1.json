@@ -1,0 +1,113 @@
+{
+  "artifacts": [
+    {
+      "path": "docs/renderer/generated/native-nested-scroll-v9.json",
+      "sha256": "404ef937017bdc3a7d8262035386c41cc4305d5da861fb39af1b415e0a8674bc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-fontconfig-ownership-review-v593.json",
+      "sha256": "f003af1e128834a0e84b07a872fc2805bd085eb1464a8fe36a717bff0670adab"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-hardening-fuzz-review-v586.json",
+      "sha256": "eadc1b1df35d6067a7fc42fa6d1511cc8e1d8181d446f061b3eafbf62be51cea"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-tests-v598/receipt.json",
+      "sha256": "2395c4ad7dc43d397ec9e4bca32c3d524b0df571796751c3301a50a9e19787d7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-tests-v601/receipt.json",
+      "sha256": "cb2bd4d6841557cea89bc9d2e802d4a3c9404b4b3463cf768ed59f539317ade7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-tests-v603/receipt.json",
+      "sha256": "5181675152cc9f28666cc730159cc49e9e56d0636eeb622bc3cf270c51c5e0e6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-complete-v602.json",
+      "sha256": "2ca5fffebf31c7a170308d173980b6807f5feb68d06b66dbc7212a0e2a3d7070"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-lifetime-candidate-v604/receipt.json",
+      "sha256": "8cc3b117037bc00b8b00e3b86a4e1898315beff8a8a9a780432bf465261f2fd0"
+    },
+    {
+      "path": "docs/renderer/evidence/native-font-cache-v2/native-font-cache-lifetime-v2.patch",
+      "sha256": "b9b1176b037d4ec311cb3b845f922a2387d19f4548c5f2f4d21a811b2cd592c6"
+    }
+  ],
+  "current_umbrella": {
+    "candidate_applied": false,
+    "commit": "ac1b37b2d085fb6ea5da8807d249366cfabebfef",
+    "different": 1590,
+    "errors": 0,
+    "original_exact": 21334,
+    "original_total": 22924,
+    "renderer_api_checkpoint": "d174ea0b397a65dae76691db4b72c750f02b9914",
+    "required_pixel_gate": "fail"
+  },
+  "hosted_documentation_head": {
+    "completed_workflows": 3,
+    "manual_address_leak_and_fuzz": "fail; unchanged",
+    "skipped_jobs": 5,
+    "skips_are_passes": false,
+    "success_jobs": 6
+  },
+  "interaction": "No JavaScript execution in Open UI, in any version. Needed application element behavior requires complete public native Rust APIs.",
+  "private_candidate": {
+    "applied_to_umbrella": false,
+    "first_extended_test_attempt": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-tests-v601/receipt.json",
+      "result": "Font concurrency passes; recording test compilation fails on attempted direct computed-style assignment. Corrected to the typed style-property operation and re-run at the clean source above."
+    },
+    "open_gates": [
+      "own-source ASan and LSan",
+      "recovered four-byte fuzz input and all five fuzz targets",
+      "complete workspace and ABI consumers",
+      "clean static Chromium focused/primitive/full/expanded qualification"
+    ],
+    "patch": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-lifetime-candidate-v604/native-font-cache-lifetime-v2.patch",
+      "sha256": "b9b1176b037d4ec311cb3b845f922a2387d19f4548c5f2f4d21a811b2cd592c6"
+    },
+    "raw_skia_escape_boundary": "Caller-owned raw Skia Picture/Font/Typeface clones are not framework recording lifetime tokens; native retained snapshots and content-layer objects are covered. Skia permits cache purging while raw typefaces remain valid.",
+    "release_qualification": false,
+    "review": {
+      "collection_after_recording": "Weak registry references expire after the document and fragments drop; replay remains valid",
+      "cross_thread_lifetime": "Owned scene and layer replay/drop on presentation thread; eight font-client threads run sixteen acquisition/retirement cycles each",
+      "dependency_pin_changed": false,
+      "field_drop_order": "FontCacheLifetime fields are last; referenced Skia/font resources drop first",
+      "global_fontconfig_shutdown": false,
+      "immutable_recording_ownership": "Independent opaque cache-lifetime tokens; no retained mutable font registry, DOM or application callbacks",
+      "last_client_retirement": "Purge only the font strike cache after all tracked collection, resolved font, recording and content-layer resources are dropped",
+      "leak_suppression": false,
+      "public_signature_and_c_layout_changes": false,
+      "root_cause": "Skia global strike cache retains Fontconfig-backed typefaces after document-owned managers and fonts are released",
+      "unchanged_frame": "Engine layout/paint/scene counters unchanged; compositor rasterized once, then reused frame",
+      "warm_other_clients": "A surviving resolved font or layer prevents unrelated document teardown from retiring its cache"
+    },
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "09fbc363b36145201e07e9217b9eb108b67fcc51",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "a598c2358d6bd7d3f67e544924c2fcacd0f151a89e9296ea9d132ea30ae78d4b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tests": {
+      "failed": 0,
+      "ignored": 0,
+      "passed": 551,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-tests-v603/receipt.json",
+      "sha256": "5181675152cc9f28666cc730159cc49e9e56d0636eeb622bc3cf270c51c5e0e6"
+    },
+    "tracked_patch": {
+      "path": "docs/renderer/evidence/native-font-cache-v2/native-font-cache-lifetime-v2.patch",
+      "sha256": "b9b1176b037d4ec311cb3b845f922a2387d19f4548c5f2f4d21a811b2cd592c6"
+    }
+  },
+  "reference": "Pinned Chromium only; historical Open UI PNGs are provenance",
+  "release_qualification": false,
+  "schema_version": 1
+}

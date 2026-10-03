@@ -1,0 +1,51 @@
+{
+  "chromium": {
+    "binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "build_identity": "147.0.7727.50",
+    "capture_harness_sha256": "1aa6f07a50e71c82ae715502b86f974915128f057c6963a6dfd49319fba3f582"
+  },
+  "contract_sha256": "bd31f7168671d23139ea9de51965f3612a3d7e88df89302c725be085ba4c5e09",
+  "entries": [],
+  "focused": {
+    "different": 0,
+    "errors": 0,
+    "exact": 640,
+    "profile_result_sha256": "52a9e7d465625aed19ba88e5341074e6522b6b19a2d7d210a98e49e9f7a8fd3b",
+    "total": 640
+  },
+  "input_reports": {
+    "focused": "2da5a5b31a59a7997e9af82fb78a3a7bdcbdded9933031c5a7d14bb4e59c1956",
+    "primitive": "670380d01761587436b38de78c09082b6ded62cb7417d690bf70bdb2de10dc0f"
+  },
+  "openui": {
+    "binary_sha256": "b2695113139b898730cf67c22c586ed6de98d8daa0d807be90f012088380611c",
+    "raster_backend_identity": {
+      "backend": "cpu-skia",
+      "color_type": "N32-premultiplied",
+      "driver": null,
+      "gl_renderer": null,
+      "gl_version": null,
+      "sample_count": 0,
+      "surface_properties": "scene-raster-configuration-v1"
+    }
+  },
+  "output_sha256": "925ee10e624b1119a71ab7244c47b048f957247d7252e94a750191bed6b04bc1",
+  "ownership_input_sha256": "ca8d04dce8056248f785e0be572827462abe44fbf7b75c459abd08de9b110f7d",
+  "primitive": {
+    "different": 0,
+    "errors": 0,
+    "exact": 960,
+    "profile_result_sha256": "1b2dc8ae9577801f501c462d24b0e2b2db9e5168868092ffcdecaff80ca29f1f",
+    "total": 960
+  },
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "814a200523b642c5b7ad5cdee4d97f8152421834",
+    "harness_sha256": "b2638f1e1ad8b683528946073086d01419aa5e9b71134eedd5bf259b2a76114b",
+    "source_tree_sha256": "5ce24781ae7d5094d1f0a2e766b995f83df7f61e127725360fa6d9c8cc04cb12",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "status": "exact",
+  "unowned_residual_test_count": 0
+}

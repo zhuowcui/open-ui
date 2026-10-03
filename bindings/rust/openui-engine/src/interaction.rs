@@ -51,6 +51,7 @@ pub struct PointerUpdate {
 pub enum FocusOrigin {
     Pointer,
     Keyboard,
+    /// Legacy name for focus requested by native code. No script is executed.
     Script,
     Accessibility,
 }
@@ -112,6 +113,7 @@ pub struct ControlState {
     pub max: f64,
     pub step: f64,
     pub password: bool,
+    composition_original: Option<(String, usize, usize)>,
     history: Vec<String>,
     future: Vec<String>,
 }
@@ -145,6 +147,7 @@ impl ControlState {
             max: 100.0,
             step: 1.0,
             password: false,
+            composition_original: None,
             history: Vec::new(),
             future: Vec::new(),
         })
@@ -175,6 +178,7 @@ impl ControlState {
     }
 
     fn replace_selection(&mut self, replacement: &str) {
+        self.finish_composition();
         let (start, end) = self.selection();
         self.checkpoint();
         self.value.replace_range(start..end, replacement);
@@ -184,7 +188,50 @@ impl ControlState {
         self.composition = None;
     }
 
+    fn update_composition(&mut self, replacement: &str) {
+        if self.composition_original.is_none() {
+            self.composition_original = Some((
+                self.value.clone(),
+                self.selection_anchor,
+                self.selection_focus,
+            ));
+        }
+        let (start, end) = self.composition.unwrap_or_else(|| self.selection());
+        self.value.replace_range(start..end, replacement);
+        let caret = start + replacement.len();
+        self.selection_anchor = caret;
+        self.selection_focus = caret;
+        self.composition = Some((start, caret));
+    }
+
+    pub(crate) fn finish_composition(&mut self) {
+        if let Some((original, _, _)) = self.composition_original.take() {
+            if original != self.value {
+                if self.history.last() != Some(&original) {
+                    self.history.push(original);
+                }
+                self.future.clear();
+            }
+        }
+        self.composition = None;
+    }
+
+    fn cancel_composition(&mut self) {
+        if let Some((value, anchor, focus)) = self.composition_original.take() {
+            self.value = value;
+            self.selection_anchor = anchor;
+            self.selection_focus = focus;
+        }
+        self.composition = None;
+    }
+
+    pub(crate) fn clear_composition(&mut self) {
+        self.composition = None;
+        self.composition_original = None;
+    }
+
     fn move_selection(&mut self, direction: TextDirection, unit: TextUnit, extend: bool) {
+        self.finish_composition();
         let (_, end) = self.selection();
         let caret = if !extend && self.selection_anchor != self.selection_focus {
             match direction {
@@ -215,6 +262,7 @@ impl ControlState {
     }
 
     fn undo(&mut self) {
+        self.finish_composition();
         let Some(previous) = self.history.pop() else {
             return;
         };
@@ -226,6 +274,7 @@ impl ControlState {
     }
 
     fn redo(&mut self) {
+        self.finish_composition();
         let Some(next) = self.future.pop() else {
             return;
         };
@@ -480,7 +529,7 @@ impl Engine {
         control.value = value.clone();
         control.selection_anchor = value.len();
         control.selection_focus = value.len();
-        control.composition = None;
+        control.clear_composition();
         control.history.clear();
         control.future.clear();
         self.document.set_attribute(node, "value", value);
@@ -506,6 +555,7 @@ impl Engine {
         if anchor > control.value.len() || focus > control.value.len() {
             return Err(EngineError::InvalidSelection);
         }
+        control.finish_composition();
         control.selection_anchor = anchor;
         control.selection_focus = focus;
         control.clamp_selection();
@@ -514,16 +564,26 @@ impl Engine {
         Ok(())
     }
 
+    /// Whether user text input may modify this control. Native application
+    /// value setters and selection queries remain available for read-only controls.
+    pub fn can_edit_text(&self, handle: NodeHandle) -> Result<bool, EngineError> {
+        let node = self.resolve(handle)?;
+        Ok(self.controls.get(&handle.index).is_some_and(|control| {
+            !control.disabled
+                && is_editable_role(control.role)
+                && self.document.attribute(node, "readonly").is_none()
+        }))
+    }
+
     pub fn insert_text(&mut self, handle: NodeHandle, text: &str) -> Result<(), EngineError> {
-        self.resolve(handle)?;
+        if !self.can_edit_text(handle)? {
+            return Err(EngineError::NotEditable);
+        }
         let value = {
             let control = self
                 .controls
                 .get_mut(&handle.index)
                 .ok_or(EngineError::NotEditable)?;
-            if control.disabled || !is_editable_role(control.role) {
-                return Err(EngineError::NotEditable);
-            }
             control.replace_selection(text);
             control.value.clone()
         };
@@ -540,6 +600,11 @@ impl Engine {
         command: EditCommand,
     ) -> Result<(), EngineError> {
         self.resolve(handle)?;
+        if !matches!(command, EditCommand::Move { .. } | EditCommand::SelectAll)
+            && !self.can_edit_text(handle)?
+        {
+            return Err(EngineError::NotEditable);
+        }
         let (value, changed) = {
             let control = self
                 .controls
@@ -548,6 +613,7 @@ impl Engine {
             if control.disabled || !is_editable_role(control.role) {
                 return Err(EngineError::NotEditable);
             }
+            control.finish_composition();
             let before = control.value.clone();
             match command {
                 EditCommand::Move {
@@ -581,22 +647,15 @@ impl Engine {
         handle: NodeHandle,
         text: &str,
     ) -> Result<(), EngineError> {
-        self.resolve(handle)?;
+        if !self.can_edit_text(handle)? {
+            return Err(EngineError::NotEditable);
+        }
         let value = {
             let control = self
                 .controls
                 .get_mut(&handle.index)
                 .ok_or(EngineError::NotEditable)?;
-            if control.disabled || !is_editable_role(control.role) {
-                return Err(EngineError::NotEditable);
-            }
-            if let Some((start, end)) = control.composition.take() {
-                control.selection_anchor = start;
-                control.selection_focus = end;
-            }
-            let start = control.selection().0;
-            control.replace_selection(text);
-            control.composition = Some((start, start + text.len()));
+            control.update_composition(text);
             control.value.clone()
         };
         let node = self.resolve(handle)?;
@@ -612,8 +671,40 @@ impl Engine {
             .controls
             .get_mut(&handle.index)
             .ok_or(EngineError::NotEditable)?;
-        control.composition = None;
+        control.finish_composition();
         self.sync_selection_attributes(handle);
+        self.mark_dirty(openui_style::InvalidationClass::Paint);
+        Ok(())
+    }
+
+    /// Replace the preedit range with the final text as one undoable edit.
+    pub fn commit_composition(
+        &mut self,
+        handle: NodeHandle,
+        text: &str,
+    ) -> Result<(), EngineError> {
+        self.update_composition(handle, text)?;
+        self.finish_composition(handle)
+    }
+
+    /// Restore the value and selection from before the first preedit update.
+    pub fn cancel_composition(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
+        let control = self
+            .controls
+            .get_mut(&handle.index)
+            .ok_or(EngineError::NotEditable)?;
+        let before = control.value.clone();
+        control.cancel_composition();
+        let changed = before != control.value;
+        let value = control.value.clone();
+        self.document.set_attribute(node, "value", value);
+        self.sync_selection_attributes(handle);
+        self.mark_dirty(if changed {
+            openui_style::InvalidationClass::Intrinsic
+        } else {
+            openui_style::InvalidationClass::Paint
+        });
         Ok(())
     }
 
@@ -944,6 +1035,7 @@ impl Engine {
             "open" => control.open = true,
             "indeterminate" => control.indeterminate = true,
             "value" => {
+                control.clear_composition();
                 control.value = value.to_owned();
                 control.selection_anchor = value.len();
                 control.selection_focus = value.len();

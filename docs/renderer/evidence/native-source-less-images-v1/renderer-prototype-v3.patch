@@ -1,0 +1,584 @@
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -149,6 +149,8 @@
+     static BROKEN_IMAGE: RefCell<Option<Image>> = const { RefCell::new(None) };
+     static BROKEN_IMAGE_HIGH_RES: RefCell<Option<Image>> = const { RefCell::new(None) };
+     static RASTERIZING_PROMOTED_TRANSFORM: RefCell<bool> = const { RefCell::new(false) };
++    static IMAGE_LAYER_RASTER_ORIGIN: RefCell<(i32, i32)> = const { RefCell::new((0, 0)) };
++    static RASTER_CLIP_ORIGIN: RefCell<(i32, i32)> = const { RefCell::new((0, 0)) };
+     static DEFERRED_OPAQUE_OUTLINE_COVERS: RefCell<Vec<OutlineCoverageKey>> = const { RefCell::new(Vec::new()) };
+     static DEFERRED_OUTLINE_REPLAYS: RefCell<HashSet<usize>> = RefCell::new(HashSet::new());
+     // Cross-cutting paint phases (fragment edges and late source-order
+@@ -161,6 +163,32 @@
+     // enclosing ColumnBox can discover the same contour, so retain ownership
+     // by fragment identity for the duration of one picture recording.
+     static PAINTED_FRAGMENTED_OUTLINES: RefCell<HashSet<usize>> = RefCell::new(HashSet::new());
++}
++
++/// Physical lower bound of the device clip that sizes a nested image layer.
++/// Keep authored fractional edges until after device scale: rounding the clip
++/// in CSS pixels first can choose a different backing origin and image sample.
++struct RasterClipOriginGuard((i32, i32));
++
++impl RasterClipOriginGuard {
++    fn intersect(canvas: &Canvas, rect: Rect, scale: f32) -> Self {
++        let rect = canvas.local_to_device_as_3x3().map_rect(rect).0;
++        let next = (
++            (rect.left * scale).floor() as i32,
++            (rect.top * scale).floor() as i32,
++        );
++        RASTER_CLIP_ORIGIN.with(|origin| {
++            let previous = *origin.borrow();
++            *origin.borrow_mut() = (previous.0.max(next.0), previous.1.max(next.1));
++            Self(previous)
++        })
++    }
++}
++
++impl Drop for RasterClipOriginGuard {
++    fn drop(&mut self) {
++        RASTER_CLIP_ORIGIN.with(|origin| *origin.borrow_mut() = self.0);
++    }
+ }
+
+ #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+@@ -1191,11 +1219,29 @@
+     // PaintLayerPainter::PaintLayerWithAdjustedRoot() using saveLayerAlphaf().
+     let flattens_opacity = can_flatten_box_opacity(fragment, style);
+     let needs_layer = style.opacity < 1.0 && !flattens_opacity;
++    let image_group_bounds = (needs_layer && fragment_subtree_has_images(fragment, doc))
++        .then(|| image_opacity_bounds(fragment, doc, abs_offset))
++        .flatten();
++    struct ImageLayerOriginGuard((i32, i32));
++    impl Drop for ImageLayerOriginGuard {
++        fn drop(&mut self) {
++            IMAGE_LAYER_RASTER_ORIGIN.with(|origin| origin.replace(self.0));
++        }
++    }
++    let _image_layer_origin = image_group_bounds.map(|bounds| {
++        let scale = style.device_scale_factor as f32;
++        let clip_origin = RASTER_CLIP_ORIGIN.with(|origin| *origin.borrow());
++        let origin = (
++            ((bounds.left * scale).floor().max(0.0) as i32).max(clip_origin.0),
++            ((bounds.top * scale).floor().max(0.0) as i32).max(clip_origin.1),
++        );
++        ImageLayerOriginGuard(IMAGE_LAYER_RASTER_ORIGIN.with(|current| current.replace(origin)))
++    });
+     if needs_layer {
+-        if fragment_subtree_has_text(fragment) {
+-            // Text-backed opacity groups use Chromium's ordinary N32
++        if fragment_subtree_has_text(fragment) || fragment_subtree_has_images(fragment, doc) {
++            // Text and sampled images use Chromium's ordinary N32
+             // intermediate. Its packed alpha is observably different from
+-            // an F16 layer for fully covered glyph cells.
++            // an F16 layer for fully covered glyph or image cells.
+             canvas.save_layer_alpha_f(None, style.opacity);
+         } else {
+             // Solid/vector-only groups retain float color until the final
+@@ -4126,6 +4172,81 @@
+     has_cells.then(|| path.detach())
+ }
+
++/// A sized native image without resource bytes or alternative text has a
++/// replaced background and a separate frame decoration. Blink paints the
++/// background under the content clip, then restores that clip before the frame.
++fn is_source_less_image_frame(doc: &Document, node_id: NodeId, style: &ComputedStyle) -> bool {
++    let node = doc.node(node_id);
++    node.tag == ElementTag::Image
++        && node.replaced.is_none()
++        && doc.attribute(node_id, "src").is_none()
++        && doc
++            .attribute(node_id, "alt")
++            .is_none_or(|alt| alt.is_empty())
++        && ((!style.width.is_auto() && !style.height.is_auto())
++            || (style.aspect_ratio.is_some()
++                && (!style.width.is_auto() || !style.height.is_auto())))
++}
++
++fn paint_source_less_image_frame(
++    canvas: &Canvas,
++    fragment: &Fragment,
++    style: &ComputedStyle,
++    abs_offset: PhysicalOffset,
++    opacity_multiplier: f32,
++) {
++    let left = abs_offset.left + fragment.border.left + fragment.padding.left;
++    let top = abs_offset.top + fragment.border.top + fragment.padding.top;
++    let right =
++        abs_offset.left + fragment.size.width - fragment.border.right - fragment.padding.right;
++    let bottom =
++        abs_offset.top + fragment.size.height - fragment.border.bottom - fragment.padding.bottom;
++    // ImagePainter tests the layout content size before pixel snapping. A
++    // fractional size above 2px can still produce a 2px snapped frame.
++    if (right - left).to_f32() <= 2.0 || (bottom - top).to_f32() <= 2.0 {
++        return;
++    }
++    let rect = Rect::from_ltrb(
++        left.round().to_f32(),
++        top.round().to_f32(),
++        right.round().to_f32(),
++        bottom.round().to_f32(),
++    );
++    let _clip = (style.has_border_radius() && !fragment.ignore_border_radius).then(|| {
++        let guard = skia_safe::AutoCanvasRestore::guard(canvas, true);
++        canvas.clip_rrect(
++            build_clip_rrect(
++                &rect,
++                fragment,
++                style,
++                OverflowClipBox::ContentBox,
++                0.0,
++                0.0,
++            ),
++            ClipOp::Intersect,
++            true,
++        );
++        guard
++    });
++    let mut frame = Paint::default();
++    frame.set_style(PaintStyle::Stroke);
++    frame.set_stroke_width(1.0);
++    frame.set_anti_alias(true);
++    frame.set_color4f(
++        Color4f::new(0.7529412, 0.7529412, 0.7529412, opacity_multiplier),
++        None::<&ColorSpace>,
++    );
++    canvas.draw_rect(
++        Rect::from_ltrb(
++            rect.left + 0.5,
++            rect.top + 0.5,
++            rect.right - 0.5,
++            rect.bottom - 0.5,
++        ),
++        &frame,
++    );
++}
++
+ fn paint_missing_image(
+     canvas: &Canvas,
+     fragment: &Fragment,
+@@ -4147,6 +4268,10 @@
+             && !source_less_alt
+             && !source_less_sized)
+     {
++        return;
++    }
++    if is_source_less_image_frame(doc, fragment.node_id, style) {
++        paint_source_less_image_frame(canvas, fragment, style, abs_offset, opacity_multiplier);
+         return;
+     }
+     let Some(image) = broken_image_resource(style.device_scale_factor) else {
+@@ -4464,6 +4589,18 @@
+             device_destination.bottom.min(clip.bottom),
+         )
+     });
++    let visible_destination = VIEWPORT_SIZE.with(|viewport| {
++        if !canvas.local_to_device_as_3x3().is_identity() {
++            return visible_destination;
++        }
++        let (width, height) = *viewport.borrow();
++        Rect::from_ltrb(
++            visible_destination.left.max(0.0),
++            visible_destination.top.max(0.0),
++            visible_destination.right.min(width),
++            visible_destination.bottom.min(height),
++        )
++    });
+     if visible_destination.is_empty() {
+         return;
+     }
+@@ -4480,6 +4617,7 @@
+                 device_destination,
+                 device_scale,
+                 Some(visible_destination),
++                IMAGE_LAYER_RASTER_ORIGIN.with(|origin| *origin.borrow()),
+             )
+             .ok()
+         } else {
+@@ -8213,6 +8351,139 @@
+     fragment.kind == FragmentKind::Text || fragment.children.iter().any(fragment_subtree_has_text)
+ }
+
++fn fragment_subtree_has_images(fragment: &Fragment, doc: &Document) -> bool {
++    (!fragment.node_id.is_none()
++        && (doc.node(fragment.node_id).tag == ElementTag::Image
++            || doc.node(fragment.node_id).replaced.is_some()))
++        || fragment
++            .children
++            .iter()
++            .any(|child| fragment_subtree_has_images(child, doc))
++}
++
++fn image_opacity_bounds(
++    fragment: &Fragment,
++    doc: &Document,
++    offset: PhysicalOffset,
++) -> Option<Rect> {
++    fn collect(
++        fragment: &Fragment,
++        doc: &Document,
++        offset: PhysicalOffset,
++        inherited_transform: Matrix,
++        is_group_root: bool,
++        bounds: &mut Option<Rect>,
++    ) {
++        let mut transform = inherited_transform;
++        if !is_group_root && !fragment.node_id.is_none() {
++            let style = &doc.node(fragment.node_id).style;
++            if style.transform != openui_style::Transform2D::IDENTITY {
++                transform.pre_concat(&fragment_transform_matrix(style, fragment, offset));
++            }
++        }
++        if !fragment.node_id.is_none() {
++            let node = doc.node(fragment.node_id);
++            let style = &node.style;
++            let background = fragment
++                .paint_background_color_override
++                .unwrap_or(style.background_color);
++            let own_content = fragment.kind == FragmentKind::Text
++                || node.tag == ElementTag::Image
++                || node.replaced.is_some()
++                || !background.is_transparent()
++                || !style.background_layers.is_empty()
++                || style.background_linear_gradient.is_some()
++                || style.effective_border_top() > 0
++                || style.effective_border_right() > 0
++                || style.effective_border_bottom() > 0
++                || style.effective_border_left() > 0
++                || style.has_outline()
++                || !style.box_shadow.is_empty();
++            if style.visibility == Visibility::Visible && own_content {
++                let owned = fragment.border_box_rect();
++                let mut rect = Rect::from_xywh(
++                    offset.left.to_f32() + owned.offset.left.to_f32(),
++                    offset.top.to_f32() + owned.offset.top.to_f32(),
++                    owned.size.width.to_f32(),
++                    owned.size.height.to_f32(),
++                );
++                if fragment.kind != FragmentKind::Text
++                    && node.tag != ElementTag::Image
++                    && node.replaced.is_none()
++                {
++                    rect = Rect::from_ltrb(
++                        rect.left.round(),
++                        rect.top.round(),
++                        rect.right.round(),
++                        rect.bottom.round(),
++                    );
++                }
++                if !rect.is_empty() {
++                    let border_rect = rect;
++                    if style.has_outline() {
++                        let extent =
++                            (style.effective_outline_width() + style.outline_offset).max(0) as f32;
++                        rect.join(Rect::from_ltrb(
++                            border_rect.left - extent,
++                            border_rect.top - extent,
++                            border_rect.right + extent,
++                            border_rect.bottom + extent,
++                        ));
++                    }
++                    for shadow in &style.box_shadow {
++                        if !shadow.inset {
++                            let extent = (3.0 * css_shadow_blur_sigma(shadow.blur_radius)).ceil()
++                                + shadow.spread_radius;
++                            rect.join(Rect::from_ltrb(
++                                border_rect.left + shadow.offset_x - extent,
++                                border_rect.top + shadow.offset_y - extent,
++                                border_rect.right + shadow.offset_x + extent,
++                                border_rect.bottom + shadow.offset_y + extent,
++                            ));
++                        }
++                    }
++                    let rect = transform.map_rect(rect).0;
++                    match bounds {
++                        Some(bounds) => bounds.join(rect),
++                        None => *bounds = Some(rect),
++                    }
++                }
++            }
++        }
++        for child in &fragment.children {
++            collect(
++                child,
++                doc,
++                PhysicalOffset::new(
++                    offset.left + child.offset.left,
++                    offset.top + child.offset.top,
++                ),
++                transform,
++                false,
++                bounds,
++            );
++        }
++    }
++
++    let mut bounds = None;
++    collect(
++        fragment,
++        doc,
++        offset,
++        Matrix::new_identity(),
++        true,
++        &mut bounds,
++    );
++    bounds.map(|bounds| {
++        Rect::from_ltrb(
++            bounds.left.floor(),
++            bounds.top.floor(),
++            bounds.right.ceil(),
++            bounds.bottom.ceil(),
++        )
++    })
++}
++
+ fn paint_list_marker(
+     canvas: &Canvas,
+     fragment: &Fragment,
+@@ -9379,7 +9650,7 @@
+
+     // When border-radius is set, clip to a rounded rect so children are
+     // clipped along the curves. Otherwise use a simple rect clip.
+-    if let Some(rrect) = rounded_clip_rrect {
++    let _raster_clip_origin = if let Some(rrect) = rounded_clip_rrect {
+         let top_left = rrect.radii(RRectCorner::UpperLeft);
+         if fragment.decoration_slice.is_some() && top_left.x > 0.0 && top_left.y > 0.0 {
+             fragmented_top_left_tangent = Some((rrect.rect().left, rrect.rect().top + top_left.y));
+@@ -9387,6 +9658,7 @@
+         if packed_rounded_mask.is_none() {
+             canvas.clip_rrect(rrect, ClipOp::Intersect, true);
+         }
++        None
+     } else {
+         // Axis-aligned rectangular overflow clips are pixel-snapped in CSS
+         // space above. They remain hard only when that edge also lands on the
+@@ -9434,7 +9706,12 @@
+             ClipOp::Intersect,
+             antialias_transformed_clip,
+         );
+-    }
++        Some(RasterClipOriginGuard::intersect(
++            canvas,
++            raster_clip_rect,
++            style.device_scale_factor as f32,
++        ))
++    };
+
+     // Paint children inside the clip (with stacking order).
+     let is_sc = is_fragment_stacking_context(fragment, doc);
+@@ -15747,6 +16024,14 @@
+ /// An anonymous line may wrap an atomic inline box without changing where
+ /// that box paints; include that line's offset when testing coverage.
+ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Document) -> bool {
++    opaque_in_flow_child_covers_inner_border_box_with_replaced(fragment, doc, true)
++}
++
++fn opaque_in_flow_child_covers_inner_border_box_with_replaced(
++    fragment: &Fragment,
++    doc: &Document,
++    allow_replaced: bool,
++) -> bool {
+     let inner_left = fragment.border.left;
+     let inner_top = fragment.border.top;
+     let inner_right = fragment.size.width - fragment.border.right;
+@@ -15792,7 +16077,15 @@
+             return false;
+         }
+
+-        let child_style = &doc.node(child.node_id).style;
++        let child_node = doc.node(child.node_id);
++        // A replaced image's opaque background still has independent AA
++        // coverage at its edge. The parent's color remains visible there.
++        // Geometry coverage for a scroll backing has no such requirement.
++        if !allow_replaced && (child_node.tag == ElementTag::Image || child_node.replaced.is_some())
++        {
++            return false;
++        }
++        let child_style = &child_node.style;
+         let background_color = child
+             .paint_background_color_override
+             .as_ref()
+@@ -15983,6 +16276,30 @@
+     if w <= 0.0 || h <= 0.0 {
+         return;
+     }
++
++    // A no-resource replaced image paints its box decorations through the
++    // snapped outer contour. The foreground frame has its own clip below;
++    // keep this decoration clip local so it also covers the authored border.
++    let source_less_frame = is_source_less_image_frame(doc, fragment.node_id, style);
++    let _source_less_decoration_clip = source_less_frame.then(|| {
++        let guard = skia_safe::AutoCanvasRestore::guard(canvas, true);
++        let radii = fragment_border_radii(
++            style,
++            fragment,
++            &border_box_rect,
++            style.effective_border_top() as f32,
++        );
++        if has_any_radius(&radii) {
++            canvas.clip_rrect(
++                RRect::new_rect_radii(border_box_rect, &radii),
++                ClipOp::Intersect,
++                true,
++            );
++        } else {
++            canvas.clip_rect(border_box_rect, ClipOp::Intersect, true);
++        }
++        guard
++    });
+
+     let decoration_clip_saved = decoration_block_size.is_some();
+     if decoration_clip_saved {
+@@ -16266,7 +16583,7 @@
+             *width > 0.0 && *border_style == BorderStyle::Solid && color.is_opaque()
+         }) || (side_specs.iter().all(|(width, _, _)| *width == 0.0)
+             && borderless_background_can_be_occluded(fragment, doc)))
+-        && opaque_in_flow_child_covers_inner_border_box(fragment, doc);
++        && opaque_in_flow_child_covers_inner_border_box_with_replaced(fragment, doc, false);
+     let background_color_is_occluded = opacity_multiplier >= 1.0
+         && (opaque_child_occludes_background
+             || style.background_layers.last().is_some_and(|layer| {
+@@ -16411,7 +16728,9 @@
+             } else {
+                 close_rect_at_physical_viewport_edge(bg_rect, style.device_scale_factor)
+             };
+-            if has_radius {
++            if source_less_frame && effective_background_clip == BackgroundClip::BorderBox {
++                canvas.draw_rect(bg_rect, &paint);
++            } else if has_radius {
+                 // Compute radii adjusted for background-clip box (CSS Backgrounds §5.3).
+                 // Inner corner radii = outer radii - inset on each side, clamped to 0.
+                 let outer_radii = if all_effective_borders_transparent(style) {
+--- a/bindings/rust/openui-paint/src/image_resource.rs
++++ b/bindings/rust/openui-paint/src/image_resource.rs
+@@ -1264,6 +1264,7 @@
+         coverage_bounds,
+         true,
+         false,
++        (0, 0),
+     )
+ }
+
+@@ -1278,7 +1279,14 @@
+     destination: Rect,
+     device_scale: f32,
+ ) -> Result<(Image, Rect, Option<(Rect, Rect)>), String> {
+-    physical_quantized_broken_image_patch_with_clip(image, source, destination, device_scale, None)
++    physical_quantized_broken_image_patch_with_clip(
++        image,
++        source,
++        destination,
++        device_scale,
++        None,
++        (0, 0),
++    )
+ }
+
+ pub(crate) fn physical_quantized_broken_image_patch_with_clip(
+@@ -1287,6 +1295,7 @@
+     destination: Rect,
+     device_scale: f32,
+     clip: Option<Rect>,
++    raster_origin: (i32, i32),
+ ) -> Result<(Image, Rect, Option<(Rect, Rect)>), String> {
+     physical_quantized_image_patch_with_color_order(
+         image,
+@@ -1309,6 +1318,7 @@
+         clip,
+         true,
+         true,
++        raster_origin,
+     )
+ }
+
+@@ -1347,6 +1357,7 @@
+         coverage_bounds,
+         false,
+         false,
++        (0, 0),
+     )?;
+     Ok((patch, aligned_destination))
+ }
+@@ -1356,26 +1367,39 @@
+     inverse_scale: f32,
+     inverse_translation: f32,
+     step_fixed: i64,
++    device_origin: i32,
+ }
+
+ impl LegacyFixedImageAxis {
+     const FIXED_ONE: f64 = 4_294_967_296.0;
+
+     fn new(source_start: f32, source_extent: f32, device_start: f32, device_extent: f32) -> Self {
++        Self::in_raster_device(source_start, source_extent, device_start, device_extent, 0)
++    }
++
++    fn in_raster_device(
++        source_start: f32,
++        source_extent: f32,
++        device_start: f32,
++        device_extent: f32,
++        device_origin: i32,
++    ) -> Self {
+         let forward_scale = device_extent / source_extent;
+         let inverse_scale = (1.0 / f64::from(forward_scale)) as f32;
+-        let inverse_translation =
+-            (f64::from(source_start) - f64::from(device_start) * f64::from(inverse_scale)) as f32;
++        let inverse_translation = (f64::from(source_start)
++            - f64::from(device_start - device_origin as f32) * f64::from(inverse_scale))
++            as f32;
+         let step_fixed = (inverse_scale * Self::FIXED_ONE as f32) as i64;
+         Self {
+             inverse_scale,
+             inverse_translation,
+             step_fixed,
++            device_origin,
+         }
+     }
+
+     fn first_fixed(self, device_pixel: i32) -> i64 {
+-        let center = device_pixel as f32 + 0.5;
++        let center = (device_pixel - self.device_origin) as f32 + 0.5;
+         let mapped = center * self.inverse_scale + self.inverse_translation;
+         (mapped * Self::FIXED_ONE as f32) as i64 - (1_i64 << 31)
+     }
+@@ -1412,6 +1436,7 @@
+     coverage_bounds: Option<Rect>,
+     convert_before_coverage: bool,
+     legacy_float_matrix: bool,
++    raster_origin: (i32, i32),
+ ) -> Result<(Image, Rect, Option<(Rect, Rect)>), String> {
+     if !device_scale.is_finite()
+         || device_scale <= 0.0
+@@ -1570,19 +1595,21 @@
+     let inverse_scale_y =
+         f64::from(sampling_source.height()) / f64::from(physical_destination.height());
+     let legacy_x = legacy_float_matrix.then(|| {
+-        LegacyFixedImageAxis::new(
++        LegacyFixedImageAxis::in_raster_device(
+             sampling_source.left,
+             sampling_source.width(),
+             physical_destination.left,
+             physical_destination.width(),
++            raster_origin.0,
+         )
+     });
+     let legacy_y = legacy_float_matrix.then(|| {
+-        LegacyFixedImageAxis::new(
++        LegacyFixedImageAxis::in_raster_device(
+             sampling_source.top,
+             sampling_source.height(),
+             physical_destination.top,
+             physical_destination.height(),
++            raster_origin.1,
+         )
+     });
+     // An integral one-to-one image mapping is a texel copy. The predecessor
+--- a/bindings/rust/.cargo/config.chromium.toml
++++ b/bindings/rust/.cargo/config.chromium.toml
+@@ -19,4 +19,4 @@
+ SKIA_NINJA_COMMAND = "/home/nero/chromium/src/third_party/ninja/ninja"
+ PKG_CONFIG_SYSROOT_DIR = "/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot"
+ CXXFLAGS = "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot"
+-SKIA_GN_ARGS = 'extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP", "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2", "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing", "-msse3", "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot" ]'
++SKIA_GN_ARGS = 'extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP", "-DSK_ENABLE_LEGACY_SHADERCONTEXT", "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2", "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing", "-msse3", "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot" ]'

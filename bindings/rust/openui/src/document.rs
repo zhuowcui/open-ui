@@ -1,12 +1,12 @@
 //! Safe, single-thread-affine document API over `openui-engine`.
 
-use crate::element::Element;
+use crate::element::{class_tokens, validate_class_token, Element};
 use crate::events::{
     Event, EventPhase, KeyEventType, Listener, Modifiers, MouseButton, MouseEventType,
 };
 use crate::style::{Bitmap, Error};
 use openui_compositor::SoftwareCompositor;
-use openui_dom::FormControlRole;
+use openui_dom::{ElementTag, FormControlRole};
 use openui_engine::{
     AccessibilityAction, AccessibilityTreeUpdate, AnimationEvent, AnimationEventKind, AnimationId,
     AnimationState, ControlAdjustment, EditCommand, Engine, EventPhase as EngineEventPhase,
@@ -24,14 +24,21 @@ use std::rc::Rc;
 
 type ListenerKey = (NodeHandle, String);
 type ResourceProvider = dyn Fn(&str) -> Option<Vec<u8>>;
+#[cfg(feature = "ffi-integration")]
+type ForeignEventHandler =
+    dyn Fn(NodeHandle, NodeHandle, &Event, Option<bool>) -> Result<(), Error>;
 
 pub(crate) struct DocumentInner {
-    pub engine: RefCell<Engine>,
+    pub engine: Rc<RefCell<Engine>>,
     pub listeners: RefCell<HashMap<ListenerKey, Vec<Listener>>>,
     pub resource_provider: RefCell<Option<Box<ResourceProvider>>>,
     pub clipboard: RefCell<String>,
+    composition_target: Cell<Option<NodeHandle>>,
+    composition_generation: Cell<u64>,
     animation_events: RefCell<Vec<AnimationEvent>>,
     transaction_depth: Cell<usize>,
+    #[cfg(feature = "ffi-integration")]
+    foreign_event_handler: RefCell<Option<Rc<ForeignEventHandler>>>,
 }
 
 /// Cloneable owner reference for one retained native document.
@@ -61,19 +68,115 @@ impl Document {
     ) -> Result<Self, Error> {
         Ok(Self {
             inner: Rc::new(DocumentInner {
-                engine: RefCell::new(Engine::new_with_font_collection(viewport, font_collection)?),
+                engine: Rc::new(RefCell::new(Engine::new_with_font_collection(
+                    viewport,
+                    font_collection,
+                )?)),
                 listeners: RefCell::new(HashMap::new()),
                 resource_provider: RefCell::new(None),
                 clipboard: RefCell::new(String::new()),
+                composition_target: Cell::new(None),
+                composition_generation: Cell::new(0),
                 animation_events: RefCell::new(Vec::new()),
                 transaction_depth: Cell::new(0),
+                #[cfg(feature = "ffi-integration")]
+                foreign_event_handler: RefCell::new(None),
             }),
         })
+    }
+
+    /// Integration boundary for another native language facade over this engine.
+    /// The shared cell remains confined to its owning thread. Callers must release
+    /// every borrow before dispatching input or invoking application callbacks.
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn from_shared_engine(engine: Rc<RefCell<Engine>>) -> Self {
+        Self {
+            inner: Rc::new(DocumentInner {
+                engine,
+                listeners: RefCell::new(HashMap::new()),
+                resource_provider: RefCell::new(None),
+                clipboard: RefCell::new(String::new()),
+                composition_target: Cell::new(None),
+                composition_generation: Cell::new(0),
+                animation_events: RefCell::new(Vec::new()),
+                transaction_depth: Cell::new(0),
+                foreign_event_handler: RefCell::new(None),
+            }),
+        }
+    }
+
+    /// Install a native facade's listener bridge. The handler runs without
+    /// document, engine, or listener-list borrows and must not retain the event.
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn set_foreign_event_handler(&self, handler: Rc<ForeignEventHandler>) -> Result<(), Error> {
+        *self
+            .inner
+            .foreign_event_handler
+            .try_borrow_mut()
+            .map_err(|_| Error::ReentrantMutation)? = Some(handler);
+        Ok(())
     }
 
     pub fn body(&self) -> Element {
         let handle = self.inner.engine.borrow().root();
         Element::from_handle(self.clone(), handle)
+    }
+
+    /// Create a detached text node that can be attached through an element.
+    pub fn create_text_node(&self, data: &str) -> Result<crate::TextNode, Error> {
+        let handle = self.with_engine_mut(|engine| engine.create_text(data))?;
+        Ok(crate::TextNode::from_handle(self.clone(), handle, false))
+    }
+
+    /// Find the first attached element with this ID in document order.
+    pub fn element_by_id(&self, id: &str) -> Result<Option<Element>, Error> {
+        let handle = self.with_engine(|engine| engine.element_by_id(id))?;
+        Ok(handle.map(|handle| Element::from_handle(self.clone(), handle)))
+    }
+
+    /// Find attached elements with a class token in document order.
+    pub fn elements_with_class(&self, class: &str) -> Result<Vec<Element>, Error> {
+        validate_class_token(class)?;
+        let handles = self.with_engine(|engine| {
+            let mut matches = Vec::new();
+            let mut pending = vec![engine.root()];
+            while let Some(handle) = pending.pop() {
+                if engine
+                    .attribute(handle, "class")?
+                    .is_some_and(|classes| class_tokens(classes).any(|token| token == class))
+                {
+                    matches.push(handle);
+                }
+                pending.extend(engine.children(handle)?.into_iter().rev());
+            }
+            Ok::<_, openui_engine::EngineError>(matches)
+        })??;
+        Ok(handles
+            .into_iter()
+            .map(|handle| Element::from_handle(self.clone(), handle))
+            .collect())
+    }
+
+    /// Find attached authored elements of this native kind in document order.
+    /// Some authored tag names share a kind, such as `div` and `main`.
+    pub fn elements_of_kind(&self, kind: ElementTag) -> Result<Vec<Element>, Error> {
+        let handles = self.with_engine(|engine| {
+            let mut matches = Vec::new();
+            let mut pending = vec![engine.root()];
+            while let Some(handle) = pending.pop() {
+                if engine.is_authored_element(handle)? && engine.element_tag(handle)? == kind {
+                    matches.push(handle);
+                }
+                pending.extend(engine.children(handle)?.into_iter().rev());
+            }
+            Ok::<_, openui_engine::EngineError>(matches)
+        })??;
+        Ok(handles
+            .into_iter()
+            .map(|handle| Element::from_handle(self.clone(), handle))
+            .collect())
     }
 
     pub fn transaction<T>(
@@ -389,7 +492,7 @@ impl Document {
                 modifiers,
             );
             event.set_phase(EventPhase::Target);
-            self.invoke(node, &event, None)?;
+            self.invoke(node, node, &event, None)?;
         }
         for node in update.entered {
             let event = Event::pointer(
@@ -401,7 +504,7 @@ impl Document {
                 modifiers,
             );
             event.set_phase(EventPhase::Target);
-            self.invoke(node, &event, None)?;
+            self.invoke(node, node, &event, None)?;
         }
         let Some(target) = update.target else {
             return Ok(());
@@ -456,46 +559,82 @@ impl Document {
         key_text: Option<&str>,
         modifiers: Modifiers,
     ) -> Result<(), Error> {
+        self.dispatch_key_event_default(event_type, key_code, key_text, modifiers)
+            .map(|_| ())
+    }
+
+    /// Dispatch a logical key and its separately committed text through the
+    /// same cancelable defaults as the native platform adapter. Key-up never
+    /// commits text; control characters and control/meta shortcuts are filtered.
+    pub fn dispatch_key_input(
+        &self,
+        event_type: KeyEventType,
+        key_code: i32,
+        key_text: Option<&str>,
+        text: Option<&str>,
+        modifiers: Modifiers,
+    ) -> Result<(), Error> {
+        let allowed = self.dispatch_key_event_default(event_type, key_code, key_text, modifiers)?;
+        if allowed
+            && event_type == KeyEventType::Down
+            && !modifiers.contains(Modifiers::CTRL)
+            && !modifiers.contains(Modifiers::META)
+        {
+            if let Some(text) = text.filter(|text| {
+                !text.is_empty() && text.chars().all(|character| !character.is_control())
+            }) {
+                self.dispatch_text_input(text)?;
+            }
+        }
+        Ok(())
+    }
+
+    fn dispatch_key_event_default(
+        &self,
+        event_type: KeyEventType,
+        key_code: i32,
+        key_text: Option<&str>,
+        modifiers: Modifiers,
+    ) -> Result<bool, Error> {
+        // A committed character is text input, not an input notification.
+        // The shared path emits beforeinput and then input only after an edit.
+        if event_type == KeyEventType::Char {
+            if let Some(text) = key_text.filter(|text| !text.is_empty()) {
+                self.dispatch_text_input(text)?;
+            }
+            return Ok(true);
+        }
         let target =
             self.with_engine(|engine| engine.focused().unwrap_or_else(|| engine.root()))?;
         let event = Event::keyboard(event_type.name(), key_code, key_text, modifiers);
         self.dispatch_to(target, &event)?;
         if event.default_prevented() {
-            return Ok(());
-        }
-        if event_type == KeyEventType::Char {
-            if let Some(text) = key_text.filter(|text| !text.is_empty()) {
-                if self
-                    .with_engine_mut(|engine| engine.insert_text(target, text))
-                    .is_ok()
-                {
-                    self.dispatch_to(target, &Event::keyboard("input", 0, Some(text), modifiers))?;
-                }
-            }
-            return Ok(());
+            return Ok(false);
         }
         if event_type != KeyEventType::Down {
-            return Ok(());
+            return Ok(true);
         }
         let key = key_text.unwrap_or_default();
         if key_code == 9 || key.eq_ignore_ascii_case("tab") {
-            return self.advance_focus(if modifiers.contains(Modifiers::SHIFT) {
-                -1
-            } else {
-                1
-            });
+            return self
+                .advance_focus(if modifiers.contains(Modifiers::SHIFT) {
+                    -1
+                } else {
+                    1
+                })
+                .map(|_| true);
         }
         if modifiers.contains(Modifiers::CTRL) || modifiers.contains(Modifiers::META) {
             match key.to_ascii_lowercase().as_str() {
-                "a" => return self.edit_focused(EditCommand::SelectAll),
+                "a" => return self.edit_focused(EditCommand::SelectAll).map(|_| true),
                 "z" if modifiers.contains(Modifiers::SHIFT) => {
-                    return self.edit_focused(EditCommand::Redo)
+                    return self.edit_focused(EditCommand::Redo).map(|_| true)
                 }
-                "z" => return self.edit_focused(EditCommand::Undo),
-                "y" => return self.edit_focused(EditCommand::Redo),
-                "c" => return self.copy_selection(false),
-                "x" => return self.copy_selection(true),
-                "v" => return self.paste_clipboard(),
+                "z" => return self.edit_focused(EditCommand::Undo).map(|_| true),
+                "y" => return self.edit_focused(EditCommand::Redo).map(|_| true),
+                "c" => return self.copy_selection(false).map(|_| true),
+                "x" => return self.copy_selection(true).map(|_| true),
+                "v" => return self.paste_clipboard().map(|_| true),
                 _ => {}
             }
         }
@@ -523,7 +662,7 @@ impl Document {
         })?;
         if adjustable {
             if let Some(adjustment) = adjustment {
-                return self.adjust_focused(adjustment);
+                return self.adjust_focused(adjustment).map(|_| true);
             }
         }
         let command = match (key_code, key.to_ascii_lowercase().as_str()) {
@@ -574,9 +713,30 @@ impl Document {
             _ => None,
         };
         if let Some(command) = command {
-            return self.edit_focused(command);
+            return self.edit_focused(command).map(|_| true);
         }
         if key_code == 13 || key_code == 32 || key == "Enter" || key == " " {
+            let role = self.with_engine(|engine| {
+                engine
+                    .control_state(target)
+                    .ok()
+                    .flatten()
+                    .map(|state| state.role)
+            })?;
+            if matches!(
+                role,
+                Some(FormControlRole::TextInput | FormControlRole::TextArea)
+            ) {
+                // Text controls edit through the same cancelable input path
+                // as native committed text; these keys do not activate them.
+                if role == Some(FormControlRole::TextArea)
+                    && (key_code == 13 || key == "Enter")
+                    && self.with_engine(Engine::focused)? == Some(target)
+                {
+                    self.dispatch_text_input("\n")?;
+                }
+                return Ok(true);
+            }
             let click = Event::keyboard("click", key_code, key_text, modifiers);
             self.dispatch_to(target, &click)?;
             if !click.default_prevented() {
@@ -587,7 +747,7 @@ impl Document {
                 }
             }
         }
-        Ok(())
+        Ok(true)
     }
 
     pub fn dispatch_wheel_event(
@@ -605,16 +765,10 @@ impl Document {
             if !event.default_prevented() {
                 let mut current = Some(target);
                 while let Some(node) = current {
-                    let scrollable = self.with_engine(|engine| {
-                        engine.computed_style(node).is_ok_and(|style| {
-                            style.overflow_x.is_scrollable() || style.overflow_y.is_scrollable()
-                        })
+                    let scrolled = self.with_engine_mut(|engine| {
+                        engine.scroll_wheel(node, delta_x as f64, delta_y as f64)
                     })?;
-                    if scrollable {
-                        self.with_engine_mut(|engine| {
-                            let (left, top) = engine.scroll_offset(node)?;
-                            engine.scroll_to(node, left + delta_x as f64, top + delta_y as f64)
-                        })?;
+                    if scrolled {
                         break;
                     }
                     current = self.with_engine(|engine| engine.parent(node))??;
@@ -651,9 +805,15 @@ impl Document {
         let Some(target) = self.with_engine(|engine| engine.focused())? else {
             return Ok(());
         };
+        if !self.is_editable_target(target)? {
+            return Ok(());
+        }
         let before = Event::keyboard("beforeinput", 0, Some(text), Modifiers::NONE);
         self.dispatch_to(target, &before)?;
-        if !before.default_prevented() {
+        if !before.default_prevented()
+            && self.with_engine(Engine::focused)? == Some(target)
+            && self.is_editable_target(target)?
+        {
             self.with_engine_mut(|engine| engine.insert_text(target, text))?;
             self.dispatch_to(
                 target,
@@ -663,35 +823,108 @@ impl Document {
         Ok(())
     }
 
+    /// Begin an IME edit on the focused, enabled text control. Focus changes
+    /// cancel the edit; later updates cannot move it to a different control.
     pub fn dispatch_composition_start(&self) -> Result<(), Error> {
-        if let Some(target) = self.with_engine(|engine| engine.focused())? {
-            self.dispatch_to(target, &Event::composition("compositionstart", ""))?;
+        self.dispatch_composition_cancel()?;
+        let Some(target) = self.with_engine(Engine::focused)? else {
+            return Ok(());
+        };
+        if !self.is_editable_target(target)? {
+            return Ok(());
+        }
+        let generation = self.inner.composition_generation.get().wrapping_add(1);
+        self.inner.composition_generation.set(generation);
+        self.inner.composition_target.set(Some(target));
+        let event = Event::composition("compositionstart", "");
+        self.dispatch_to(target, &event)?;
+        if event.default_prevented() && self.inner.composition_generation.get() == generation {
+            self.dispatch_composition_cancel()?;
         }
         Ok(())
     }
 
+    /// Replace the active edit's preview. An empty preview clears its visible
+    /// text while retaining the edit for a later commit or cancellation.
     pub fn dispatch_composition_update(&self, text: &str) -> Result<(), Error> {
-        let Some(target) = self.with_engine(|engine| engine.focused())? else {
+        let Some(target) = self.active_composition_target()? else {
             return Ok(());
         };
+        let generation = self.inner.composition_generation.get();
         let event = Event::composition("compositionupdate", text);
         self.dispatch_to(target, &event)?;
-        if !event.default_prevented() {
+        if !event.default_prevented()
+            && self.inner.composition_generation.get() == generation
+            && self.active_composition_target()? == Some(target)
+        {
             self.with_engine_mut(|engine| engine.update_composition(target, text))?;
         }
         Ok(())
     }
 
+    /// Commit the final text, which may differ from the last preview. Empty
+    /// text cancels the edit. A native `beforeinput` callback may cancel it too.
     pub fn dispatch_composition_end(&self, text: &str) -> Result<(), Error> {
-        let Some(target) = self.with_engine(|engine| engine.focused())? else {
+        if text.is_empty() {
+            return self.dispatch_composition_cancel();
+        }
+        let Some(target) = self.active_composition_target()? else {
             return Ok(());
         };
-        self.with_engine_mut(|engine| engine.finish_composition(target))?;
+        let generation = self.inner.composition_generation.get();
+        let before = Event::keyboard("beforeinput", 0, Some(text), Modifiers::NONE);
+        self.dispatch_to(target, &before)?;
+        if self.inner.composition_generation.get() != generation {
+            return Ok(());
+        }
+        if before.default_prevented() {
+            return self.dispatch_composition_cancel();
+        }
+        if self.active_composition_target()? != Some(target) {
+            return Ok(());
+        }
+        self.with_engine_mut(|engine| engine.commit_composition(target, text))?;
+        self.inner.composition_target.set(None);
         self.dispatch_to(target, &Event::composition("compositionend", text))?;
-        self.dispatch_to(
-            target,
-            &Event::keyboard("input", 0, Some(text), Modifiers::NONE),
-        )
+        if self.target_is_live(target)? {
+            self.dispatch_to(
+                target,
+                &Event::keyboard("input", 0, Some(text), Modifiers::NONE),
+            )?;
+        }
+        Ok(())
+    }
+
+    /// Cancel an active IME edit without generating an `input` event or an
+    /// undo entry. Native platform adapters also call this on focus loss.
+    pub fn dispatch_composition_cancel(&self) -> Result<(), Error> {
+        let Some(target) = self.inner.composition_target.take() else {
+            return Ok(());
+        };
+        if !self.target_is_live(target)? {
+            return Ok(());
+        }
+        self.with_engine_mut(|engine| engine.cancel_composition(target))?;
+        self.dispatch_to(target, &Event::composition("compositionend", ""))
+    }
+
+    fn active_composition_target(&self) -> Result<Option<NodeHandle>, Error> {
+        let Some(target) = self.inner.composition_target.get() else {
+            return Ok(None);
+        };
+        if self.with_engine(Engine::focused)? == Some(target) && self.is_editable_target(target)? {
+            return Ok(Some(target));
+        }
+        self.dispatch_composition_cancel()?;
+        Ok(None)
+    }
+
+    fn target_is_live(&self, target: NodeHandle) -> Result<bool, Error> {
+        self.with_engine(|engine| target.downgrade().upgrade(engine).is_ok())
+    }
+
+    fn is_editable_target(&self, target: NodeHandle) -> Result<bool, Error> {
+        self.with_engine(|engine| engine.can_edit_text(target).unwrap_or(false))
     }
 
     pub fn clipboard_text(&self) -> Result<String, Error> {
@@ -846,7 +1079,7 @@ impl Document {
                 EngineEventPhase::Bubble => (EventPhase::Bubble, Some(false)),
             };
             event.set_phase(phase);
-            self.invoke(step.node, event, capture)?;
+            self.invoke(step.node, target, event, capture)?;
             if event.propagation_stopped() {
                 return Ok(());
             }
@@ -854,7 +1087,25 @@ impl Document {
         Ok(())
     }
 
-    fn invoke(&self, node: NodeHandle, event: &Event, capture: Option<bool>) -> Result<(), Error> {
+    fn invoke(
+        &self,
+        node: NodeHandle,
+        _target: NodeHandle,
+        event: &Event,
+        capture: Option<bool>,
+    ) -> Result<(), Error> {
+        #[cfg(feature = "ffi-integration")]
+        {
+            let handler = self
+                .inner
+                .foreign_event_handler
+                .try_borrow()
+                .map_err(|_| Error::ReentrantMutation)?
+                .clone();
+            if let Some(handler) = handler {
+                handler(node, _target, event, capture)?;
+            }
+        }
         let callbacks: Vec<_> = self
             .inner
             .listeners
@@ -883,6 +1134,21 @@ impl Document {
         self.dispatch_focus_change(previous, Some(target))
     }
 
+    pub(crate) fn focus_element(&self, target: NodeHandle) -> Result<(), Error> {
+        let previous =
+            self.with_engine_mut(|engine| engine.focus_with_origin(target, FocusOrigin::Script))?;
+        self.dispatch_focus_change(previous, Some(target))
+    }
+
+    pub(crate) fn blur_element(&self, target: NodeHandle) -> Result<(), Error> {
+        let previous = self.with_engine(Engine::focused)?;
+        self.with_engine_mut(|engine| engine.blur(target))?;
+        if previous == Some(target) {
+            self.dispatch_focus_change(previous, None)?;
+        }
+        Ok(())
+    }
+
     fn dispatch_focus_change(
         &self,
         previous: Option<NodeHandle>,
@@ -890,6 +1156,14 @@ impl Document {
     ) -> Result<(), Error> {
         if previous == next {
             return Ok(());
+        }
+        if self
+            .inner
+            .composition_target
+            .get()
+            .is_some_and(|target| Some(target) != next)
+        {
+            self.dispatch_composition_cancel()?;
         }
         if let Some(previous) = previous {
             self.dispatch_to(previous, &Event::keyboard("blur", 0, None, Modifiers::NONE))?;
@@ -993,6 +1267,54 @@ mod tests {
             .set_property(StyleProperty::Height, LengthValue::px(40.0).into())
             .unwrap();
         element
+    }
+
+    #[test]
+    fn programmatic_focus_uses_native_event_path_after_engine_borrow() {
+        let document = Document::new(200, 100).unwrap();
+        let first = mounted(&document, "button");
+        let second = mounted(&document, "button");
+        let events = Rc::new(RefCell::new(Vec::new()));
+
+        let observed = events.clone();
+        let mutating_element = first.clone();
+        first
+            .on("focus", move |_| {
+                mutating_element
+                    .set_attribute("data-focus-event", "delivered")
+                    .unwrap();
+                observed.borrow_mut().push("first-focus");
+            })
+            .unwrap();
+        let observed = events.clone();
+        first
+            .on("blur", move |_| observed.borrow_mut().push("first-blur"))
+            .unwrap();
+        let observed = events.clone();
+        second
+            .on("focus", move |_| observed.borrow_mut().push("second-focus"))
+            .unwrap();
+        let observed = events.clone();
+        second
+            .on("blur", move |_| observed.borrow_mut().push("second-blur"))
+            .unwrap();
+
+        first.focus().unwrap();
+        first.focus().unwrap();
+        assert_eq!(
+            first.get_attribute("data-focus-event").unwrap().as_deref(),
+            Some("delivered")
+        );
+        second.focus().unwrap();
+        first.blur().unwrap();
+        second.blur().unwrap();
+        second.blur().unwrap();
+
+        assert_eq!(
+            events.borrow().as_slice(),
+            ["first-focus", "first-blur", "second-focus", "second-blur"]
+        );
+        assert!(document.focused_element().unwrap().is_none());
     }
 
     #[test]
@@ -1155,5 +1477,82 @@ mod tests {
         assert_eq!(clicks.get(), 1);
         assert!(checkbox.is_checked().unwrap());
         assert_eq!(document.accessibility_update().unwrap().nodes.len(), 1);
+    }
+
+    #[test]
+    fn native_element_click_runs_callbacks_then_control_activation() {
+        let document = Document::new(200, 100).unwrap();
+        let checkbox = mounted(&document, "input");
+        checkbox.set_attribute("type", "checkbox").unwrap();
+        let cancel = Rc::new(Cell::new(true));
+        let observed = Rc::new(Cell::new(0));
+        let cancel_in_callback = cancel.clone();
+        let observed_in_callback = observed.clone();
+        let checkbox_in_callback = checkbox.clone();
+        checkbox
+            .on("click", move |event| {
+                observed_in_callback.set(observed_in_callback.get() + 1);
+                checkbox_in_callback.set_id("clicked").unwrap();
+                if cancel_in_callback.get() {
+                    event.prevent_default();
+                }
+            })
+            .unwrap();
+
+        checkbox.click().unwrap();
+        assert_eq!(observed.get(), 1);
+        assert!(!checkbox.is_checked().unwrap());
+        assert!(document.element_by_id("clicked").unwrap().is_some());
+
+        cancel.set(false);
+        checkbox.click().unwrap();
+        assert_eq!(observed.get(), 2);
+        assert!(checkbox.is_checked().unwrap());
+
+        let details = mounted(&document, "details");
+        details.set_open(true).unwrap();
+        assert!(details.is_open().unwrap());
+        details.set_open(false).unwrap();
+        assert!(!details.is_open().unwrap());
+        let summary = Element::create(&document, "summary").unwrap();
+        let content = Element::create(&document, "div").unwrap();
+        content
+            .set_property(StyleProperty::Width, LengthValue::px(20.0).into())
+            .unwrap();
+        content
+            .set_property(StyleProperty::Height, LengthValue::px(20.0).into())
+            .unwrap();
+        details.append_child(&summary).unwrap();
+        details.append_child(&content).unwrap();
+        assert!(content.bounding_rect().unwrap().is_none());
+        let content_id = document
+            .with_engine(|engine| engine.accessibility_node_id(content.handle))
+            .unwrap()
+            .unwrap();
+        assert!(!document
+            .accessibility_update()
+            .unwrap()
+            .nodes
+            .iter()
+            .any(|(id, _)| *id == content_id));
+        details.set_open(true).unwrap();
+        assert!(content.bounding_rect().unwrap().is_some());
+        assert!(document
+            .accessibility_update()
+            .unwrap()
+            .nodes
+            .iter()
+            .any(|(id, _)| *id == content_id));
+        summary.click().unwrap();
+        assert!(!details.is_open().unwrap());
+        assert!(content.bounding_rect().unwrap().is_none());
+        details
+            .perform_accessibility_action(AccessibilityAction::Expand)
+            .unwrap();
+        assert!(content.bounding_rect().unwrap().is_some());
+        details
+            .perform_accessibility_action(AccessibilityAction::Collapse)
+            .unwrap();
+        assert!(content.bounding_rect().unwrap().is_none());
     }
 }

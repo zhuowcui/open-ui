@@ -14,26 +14,172 @@ headless clock ─────────────────────�
 
 The supported application path has no Blink/Chromium runtime, resource pack,
 HTML loader, CSS text parser, JavaScript engine, or network stack. Chromium 147
-is retained only as the frozen reference used to prove renderer compatibility.
+is the pinned rendering reference used to prove renderer compatibility.
+Open UI never executes JavaScript, in this or future versions. Applications
+handle interaction in native Rust through `openui::Document`, `openui::Element`,
+signals, and Rust event callbacks. Document lookup by ID,
+element and text-node mutation, class lookup and updates, focus, scrolling,
+controls, and event handling use public Rust methods. Element operations do
+not require JavaScript: browsers expose them through JavaScript, and Open UI
+must implement any needed equivalent in Rust and expose it as a public method
+on the retained document or element. The consuming native app calls that
+method directly. A missing public native operation is unfinished API work,
+even when an internal test fixture can already produce the same visual state. See the
+[native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
 
 ## Verified status
 
 The current v0.2 release candidate has:
 
-- 5,731 of 5,731 frozen SP20 renders byte-identical at zero tolerance;
+- a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
+  on replay and 182 changed; these old screenshots are not pixel targets;
+- a [complete clean umbrella census](docs/renderer/generated/native-nested-scroll-v9.json)
+  at `d174ea0b` with 21,334 of 22,924 comparisons exact, 1,590 different, and
+  zero render errors; all Chromium images and identities remain unchanged,
+  and the full pixel gate still fails;
+- clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
+  comparisons exact in the [clipping repair evidence](docs/renderer/generated/native-viewport-full-v2.json);
+- 201 native final-state cases in the expanded contract, including one newly
+  added case; 200 of 201 meet the four-profile gate in the earlier complete
+  viewport run, and one remains a failure in the
+  [expanded evidence](docs/renderer/generated/native-viewport-full-v9.json).
+  The other 35 AST-lowered cases remain pending;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
-- 36 application scenarios covering retained updates, controls, editing,
+- 58 application scenarios covering retained updates, controls, editing,
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;
-- 84 frozen retained-engine/headless C exports with checked layouts and an ABI
-  checksum;
-- sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates in CI.
+- 84 frozen retained-engine/headless C exports, with 112 current exports and
+  checked layouts and an ABI checksum; the [native scroll and inset consumers](docs/v02/native-scroll-metrics.md)
+  and [native style consumers](bindings/rust/openui-ffi/README.md#native-style-operations)
+  pass through public Rust, C and C++ APIs; the clean umbrella checkpoint
+  passes 8,526 workspace tests with 13 ignored; the tested font-lifetime code
+  preserves the exact
+  640/640 focused and 960/960 primitive pixel suites;
+- sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates defined
+  in CI; several remain open or failing.
 
-This repository is not yet declaring the final v0.2 release. Physical-GPU and
-reference-machine qualification, automated AT-SPI operation, direct Skia GPU
-rendering, retained per-node layers, compositor-owned animation curves, a
-C-owned native event loop, and signed publication still remain. See
+Chromium is the sole pixel target. The archived Open UI bytes disagree with
+Chromium for some fixtures, which is why replaying old screenshots cannot be a
+release gate. A [font oracle audit](docs/renderer/scaled-lcd-hinting-oracle-investigation.md)
+also found one older cached Chromium capture that differs from six fresh
+captures under the same recorded identity; that evidence needs reconciliation.
+The latest clean umbrella census has 1,590 differences. Against the SVG
+checkpoint, nine comparisons become exact and none lose exactness, while four
+already failing comparisons worsen. Every residual still requires review.
+Earlier renderer measurements below remain attributed to their named sources. The
+[private sampling candidate](docs/renderer/generated/native-viewport-full-v14.json)
+loses 23 exact Chromium comparisons and gains 14 in its complete census;
+it remains unapplied. A subsequent
+[generated-tile format trial](docs/renderer/generated-image-sampling.md)
+repairs 18 of those regressions in the affected selection, preserving all
+850 exact native controls. A later opaque-layer composition trial restores
+four more exact comparisons in that selection, leaving one SVG pixel
+regression. A subsequent [coverage-region trial](docs/renderer/generated/native-viewport-full-v17.json)
+preserves those four matches and all 850 existing native controls while fixing
+transparent-canvas erasure in neighboring Rust consumers. The SVG decoration
+alpha, native scroll extents, remaining control pixels, and complete candidate
+qualification remain open before promotion.
+The [clean private SVG work](docs/renderer/generated/native-svg-viewport-v11.json)
+adds native viewport creation and corrects shared curved-border painting.
+Two complete original censuses finish at 21,325/22,924 exact, zero errors:
+17 comparisons become exact, none lose exactness, and 13 already failing
+comparisons worsen. The solid-border source also passes both complete
+40-profile raster suites. These private results do not replace the accepted
+renderer's census. The work is now rebased over the current native APIs.
+Its Rust consumers preserve every SVG and scrolling image; 1,176/1,920 SVG
+states and all 850 existing scrolling controls match Chromium exactly.
+All SVG owned bounds, callbacks and teardown checks pass. C/C++ consumers
+verify the shared viewport constructor and native sizing callbacks, preserving
+110 exports and existing layouts. Its Linux-enabled workspace passes 8,516
+tests with zero failures and 13 ignored. Its fresh 40-profile matrices pass
+640/640 focused and 960/960 primitive comparisons, with unchanged results.
+Its own complete original census also finishes at 21,325/22,924 exact,
+1,599 different and zero errors, with all comparison invariants unchanged
+from the double-border source. Its complete expanded run is 22,128/23,728
+exact, 1,600 different and zero errors. All original rows agree between the
+two suites, and all 804 additions stay unchanged: 200/201 cases meet all four
+profiles. Both complete pixel gates still fail.
+Complete rebased qualification, the 744
+remaining SVG pixel failures, transforms and scrolling ranges remain open.
+The [reviewable source patch](docs/renderer/evidence/native-svg-decoration-v1/native-svg-rebase-api-v293.patch)
+is applied in this umbrella checkpoint together with the reviewed scrolling
+repair and native reveal API. Its complete clean umbrella pixel gate still fails.
+Earlier disk failures are preserved.
+
+The [nested scrolling work](docs/v02/native-scroll-metrics.md#nested-scrolling-candidate)
+implements shared native dimensions, ranges, offset rounding and detached
+queries. Its earlier complete `6e255ca3` run is 21,321/22,924 original exact
+and 22,124/23,728 expanded exact, zero errors. Eight comparisons worsen and
+four lose exactness because anonymous lines omit child overflow. The next
+clean `02c0296e` repairs that shared propagation and native sticky invalidation.
+It restores all eight comparisons in the partial sticky sweep, matches all
+50 reduced Rust application states, and gains 12 exact native scroll images
+with zero loss versus `6e255ca3`: 1,775/2,560 pixels and 2,320/2,560 dimensions.
+Its shared Rust/C constructor passes nine C and four C++ consumer processes;
+8,516 Linux-enabled workspace tests and both 40-profile raster gates pass.
+Its complete original census is 21,332/22,924 exact and expanded is
+22,135/23,728 exact, zero errors, with actual exits 1. All Chromium inputs stay
+unchanged. It gains nine original exact matches but loses two flex-overflow
+matches at scale 1.25; three fragmentation comparisons also worsen. Six paint
+reviews remain open, so this source cannot be promoted. A later clean block
+scrollbar candidate at `b5a2044f` repairs all 240 missing geometry states:
+2,560/2,560 match Chromium. Pixels remain 1,775/2,560 exact, with no exact
+image lost. Its workspace, C/C++ consumers, 50 reduced Rust states and both
+40-profile raster matrices pass. Its partial sticky gate still fails in four
+states, and no complete census is inferred for that source.
+[Versioned evidence](docs/renderer/generated/native-nested-scroll-v7.json)
+and unapplied patches preserve earlier failures. These private results do not
+replace the accepted renderer's census.
+
+The complete `3f95e617` runs finish at 21,319/22,924 original and
+22,122/23,728 expanded exact, zero errors, with actual exits 1. They expose
+15 lost exact comparisons against the SVG checkpoint. The shared scrollbar
+capture precedence and clip-margin correction at `83d45e0c` restores all 15
+in the affected selection: 157/172 exact, 15 different, zero errors. Four
+already-failing comparisons still worsen against SVG; no full result is
+inferred for this correction.
+
+This umbrella checkpoint applies the reviewed SVG and scroll repairs and adds
+public Rust `scroll_into_view` and `smooth_scroll_into_view`, backed by the same
+Engine operation as accessibility and two additive C functions. The private
+API source passes 35 Engine tests and ten C/four C++ consumers; all 30 reduced
+native geometry states match Chromium, while 16/20 endpoint images are exact.
+Scroll-margin/padding support, broader alignment coverage, four scale-1.25
+pixel failures and two legacy contour calibration paths remain open.
+[Versioned evidence](docs/renderer/generated/native-nested-scroll-v9.json)
+preserves every earlier failure. Own clean umbrella runs complete at
+21,334/22,924 original and 22,137/23,728 expanded exact, zero errors, with
+observed exits 1. All original rows agree, all 804 additions stay unchanged,
+and 200/201 additions meet all four profiles. The workspace, ten C/four C++
+headless consumers, 249 Python tests and ten read-only checks pass.
+
+The font-cache lifetime fix is applied and pushed at `a41fdeb9`. Its own
+Linux-enabled workspace passes 8,526 tests, zero failures and 13 ignored;
+all ten read-only checks pass, with source unchanged. The
+[latest lifetime evidence](docs/renderer/generated/native-font-cache-lifetime-v4.json)
+records complete clean private original and expanded pixel sweeps. Every
+comparison invariant agrees with `d174ea0b`: the fix changes no rendered
+pixels and leaves the full pixel failures open. Its earlier local sanitizer,
+fuzz and ABI checks and failed attempts remain preserved.
+
+All three pull-request workflows at this checkpoint pass. The separate
+[manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/37149510887)
+passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux windows,
+MSRV and all five fuzz targets. Skipped pull-request jobs remain open results.
+The [private scroll-inset candidate](docs/renderer/generated/native-scroll-insets-v1.json)
+adds 18 Rust/C setters and passes its 8,532-test workspace, C/C++ consumers and
+both raster matrices. All 510 geometry states match Chromium; 58 of their
+PNGs still differ at 1.25 scale, under paint/raster investigation. That
+candidate remains unapplied and unqualified.
+
+This repository is not yet
+declaring the final v0.2 release. Physical-GPU
+and reference-machine qualification, automated AT-SPI operation, direct Skia
+GPU qualification, retained per-node layers, compositor-owned animation
+curves, release-lab C/C++ application qualification, and signed publication
+still remain. The C ABI now runs native Linux windows through the Rust `App`
+and retained `Document`. See
 [current status](docs/progress/current-status.md)
 and [release qualification](docs/v02/release.md).
 
@@ -117,7 +263,7 @@ release workflow. See [packaging instructions](docs/v02/packaging.md).
 | `bindings/rust/openui-{style,layout,text,paint}` | Exact rendering pipeline |
 | `include/` | Generated v0.2 C headers |
 | `examples/c_v02/` | C examples matching the Rust examples |
-| `tools/accountability/` | Frozen exact-render inventory and audit |
+| `tools/accountability/` | Chromium comparison inventory and historical evidence audit |
 | `tools/release/` | Contract generation and reproducible packaging |
 | `docs/v02/` | Supported architecture and release contract |
 

@@ -4,7 +4,7 @@ use crate::types::{OuiLength, OuiStatus, OuiStyleValue};
 use openui_style::{
     Color, ContentAlignment, ContentDistribution, ContentPosition, Cursor, Display, FlexDirection,
     FlexWrap, FontWeight, ItemAlignment, ItemPosition, LengthValue, ListStyleType, Overflow,
-    PointerEvents, Position, StyleProperty, StyleValue,
+    PointerEvents, Position, RendererStyleValue, StyleProperty, StyleValue,
 };
 
 pub(crate) fn length(value: OuiLength) -> Result<LengthValue, ApiError> {
@@ -41,7 +41,27 @@ pub(crate) fn style_value(
     value: &OuiStyleValue,
 ) -> Result<StyleValue, ApiError> {
     let expected = expected_value_tag(property);
-    if value.tag != expected || value.reserved != 0 {
+    if value.reserved != 0 {
+        return Err(ApiError::new(
+            OuiStatus::WrongValueType,
+            "style value reserved field must be zero",
+        ));
+    }
+    if value.tag == 6 {
+        // A property-bound native value retains information that a scalar
+        // payload cannot represent. It cannot be reused as another property.
+        let address = unsafe { value.data.compound as usize };
+        return match get(address, HandleKind::Compound)? {
+            LocalHandle::PropertyCompound(owner, value) if owner == property => Ok(value),
+            LocalHandle::Compound(value) if expected == 6 => Ok(value),
+            _ => Err(ApiError::new(
+                OuiStatus::WrongValueType,
+                "compound value does not match property",
+            )
+            .detail(property as u32)),
+        };
+    }
+    if value.tag != expected {
         return Err(ApiError::new(
             OuiStatus::WrongValueType,
             format!(
@@ -77,6 +97,20 @@ pub(crate) fn style_value(
                     Ok(StyleValue::Number(number))
                 }
             }
+            3 if property == StyleProperty::ColumnCount => {
+                let count = value.data.integer;
+                if count < 0 {
+                    return Err(ApiError::new(
+                        OuiStatus::InvalidArgument,
+                        "column count must be zero (auto) or positive",
+                    ));
+                }
+                Ok(StyleValue::Renderer(
+                    openui_style::RendererStyleValue::ColumnCount(
+                        (count != 0).then_some(count as u32),
+                    ),
+                ))
+            }
             3 => Ok(StyleValue::Integer(value.data.integer)),
             4 => {
                 let color = value.data.color;
@@ -88,13 +122,6 @@ pub(crate) fn style_value(
                 )))
             }
             5 => enum_value(property, value.data.enum_value),
-            6 => {
-                let address = value.data.compound as usize;
-                match get(address, HandleKind::Compound)? {
-                    LocalHandle::Compound(value) => Ok(value),
-                    _ => unreachable!("kind checked by registry"),
-                }
-            }
             _ => Err(ApiError::new(
                 OuiStatus::WrongValueType,
                 "unknown style value tag",
@@ -140,7 +167,7 @@ fn enum_value(property: StyleProperty, value: i32) -> Result<StyleValue, ApiErro
             _ => None,
         }
         .map(StyleValue::Position),
-        P::Overflow => match value {
+        P::Overflow | P::OverflowX | P::OverflowY => match value {
             0 => Some(Overflow::Visible),
             1 => Some(Overflow::Hidden),
             2 => Some(Overflow::Scroll),
@@ -148,7 +175,11 @@ fn enum_value(property: StyleProperty, value: i32) -> Result<StyleValue, ApiErro
             4 => Some(Overflow::Clip),
             _ => None,
         }
-        .map(StyleValue::Overflow),
+        .map(|value| match property {
+            P::OverflowX => StyleValue::Renderer(RendererStyleValue::OverflowX(value)),
+            P::OverflowY => StyleValue::Renderer(RendererStyleValue::OverflowY(value)),
+            _ => StyleValue::Overflow(value),
+        }),
         P::FlexDirection => match value {
             0 => Some(FlexDirection::Row),
             1 => Some(FlexDirection::RowReverse),
@@ -164,7 +195,7 @@ fn enum_value(property: StyleProperty, value: i32) -> Result<StyleValue, ApiErro
             _ => None,
         }
         .map(StyleValue::FlexWrap),
-        P::AlignItems => match value {
+        P::AlignItems | P::AlignSelf | P::JustifyItems | P::JustifySelf => match value {
             0 => Some(ItemPosition::Normal),
             1 => Some(ItemPosition::Stretch),
             2 => Some(ItemPosition::Center),
@@ -173,10 +204,25 @@ fn enum_value(property: StyleProperty, value: i32) -> Result<StyleValue, ApiErro
             5 => Some(ItemPosition::FlexStart),
             6 => Some(ItemPosition::FlexEnd),
             7 => Some(ItemPosition::Baseline),
+            8 => Some(ItemPosition::Auto),
+            9 => Some(ItemPosition::SelfStart),
+            10 => Some(ItemPosition::SelfEnd),
+            11 => Some(ItemPosition::Left),
+            12 => Some(ItemPosition::Right),
+            13 => Some(ItemPosition::LastBaseline),
+            14 => Some(ItemPosition::Legacy),
             _ => None,
         }
-        .map(|value| StyleValue::ItemAlignment(ItemAlignment::new(value))),
-        P::JustifyContent => match value {
+        .map(|value| {
+            let value = ItemAlignment::new(value);
+            match property {
+                P::AlignSelf => StyleValue::Renderer(RendererStyleValue::AlignSelf(value)),
+                P::JustifyItems => StyleValue::Renderer(RendererStyleValue::JustifyItems(value)),
+                P::JustifySelf => StyleValue::Renderer(RendererStyleValue::JustifySelf(value)),
+                _ => StyleValue::ItemAlignment(value),
+            }
+        }),
+        P::JustifyContent | P::AlignContent => match value {
             0 => Some(ContentAlignment::default()),
             1 => Some(ContentAlignment::new(ContentPosition::Start)),
             2 => Some(ContentAlignment::new(ContentPosition::End)),
@@ -192,9 +238,19 @@ fn enum_value(property: StyleProperty, value: i32) -> Result<StyleValue, ApiErro
             8 => Some(ContentAlignment::with_distribution(
                 ContentDistribution::SpaceEvenly,
             )),
+            9 => Some(ContentAlignment::with_distribution(
+                ContentDistribution::Stretch,
+            )),
+            10 => Some(ContentAlignment::new(ContentPosition::Baseline)),
+            11 => Some(ContentAlignment::new(ContentPosition::LastBaseline)),
+            12 => Some(ContentAlignment::new(ContentPosition::Left)),
+            13 => Some(ContentAlignment::new(ContentPosition::Right)),
             _ => None,
         }
-        .map(StyleValue::ContentAlignment),
+        .map(|value| match property {
+            P::AlignContent => StyleValue::Renderer(RendererStyleValue::AlignContent(value)),
+            _ => StyleValue::ContentAlignment(value),
+        }),
         P::Cursor => match value {
             0 => Some(Cursor::Auto),
             1 => Some(Cursor::Default),

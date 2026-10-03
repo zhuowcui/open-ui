@@ -1,0 +1,88 @@
+{
+  "case": "height-69",
+  "geometry": {
+    "hit": "border",
+    "nodes": {
+      "border": {
+        "bounds": {
+          "height": 72,
+          "width": 272,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 72,
+            "width": 56,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "height": 72,
+            "width": 56,
+            "x": 108,
+            "y": 0
+          },
+          {
+            "height": 62,
+            "width": 56,
+            "x": 216,
+            "y": 0
+          }
+        ]
+      },
+      "columns": {
+        "bounds": {
+          "height": 72,
+          "width": 300,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 72,
+            "width": 300,
+            "x": 0,
+            "y": 0
+          }
+        ]
+      },
+      "limit": {
+        "bounds": {
+          "height": 72,
+          "width": 300,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 72,
+            "width": 84,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "height": 72,
+            "width": 84,
+            "x": 108,
+            "y": 0
+          },
+          {
+            "height": 16,
+            "width": 84,
+            "x": 216,
+            "y": 0
+          }
+        ]
+      }
+    },
+    "viewport": {
+      "dpr": 1,
+      "height": 340,
+      "width": 320
+    }
+  },
+  "input_sha256": "fe2bad862b5e489947e0479934e6ac7a7b17ce47897ee1de1a44b0dc61f1cf27",
+  "png_sha256": "99234057e36258415962293ddbb8766d77b229513e5946c609fc39e721d5f741",
+  "repeated_query_equal": true
+}

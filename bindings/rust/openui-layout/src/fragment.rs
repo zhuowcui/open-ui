@@ -9,7 +9,7 @@ use openui_dom::NodeId;
 use openui_geometry::{
     BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize, WritingDirectionMode,
 };
-use openui_style::{ComputedStyle, TextOrientation, WritingMode};
+use openui_style::{ComputedStyle, Overflow, TextOrientation, WritingMode};
 use openui_text::ShapeResult;
 use std::sync::Arc;
 
@@ -30,6 +30,24 @@ pub enum FragmentKind {
     /// An anonymous column box in a multicol container.
     /// Clips content to column boundaries (CSS Multicol §3.1).
     ColumnBox,
+}
+
+/// Immutable geometry of the document's viewport scroll container.
+///
+/// Scrollbar gutters belong to the viewport, rather than to an authored
+/// element's border or padding. Layout, paint and native input consume this
+/// same geometry.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ViewportScrollport {
+    pub client_rect: PhysicalRect,
+    pub content_rect: PhysicalRect,
+    pub horizontal_scrollbar: bool,
+    pub vertical_scrollbar: bool,
+    pub scrollbar_thickness: LayoutUnit,
+    pub overflow_x: Overflow,
+    pub overflow_y: Overflow,
+    pub negative_x: bool,
+    pub negative_y: bool,
 }
 
 /// Resolved orientation of one shaped text run in physical fragment storage.
@@ -198,8 +216,16 @@ pub struct Fragment {
     /// Offset from the parent fragment's top-left corner.
     pub offset: PhysicalOffset,
 
-    /// The fragment's border-box size.
+    /// The fragment's layout extent, including any continuation space needed
+    /// to carry visible in-flow overflow.
     pub size: PhysicalSize,
+
+    /// The fragment's own border box in local coordinates when its layout
+    /// extent also carries visible child overflow. Geometry and input use
+    /// this box; children retain their independently positioned fragments.
+    /// `None` means the border box fills `size`. This is layout ownership
+    /// data, independent of decoration ink and paint clipping.
+    pub principal_box_rect: Option<PhysicalRect>,
 
     /// Resolved padding (in LayoutUnit).
     pub padding: BoxStrut,
@@ -259,6 +285,17 @@ pub struct Fragment {
     /// Blink: `PhysicalBoxFragment::ScrollableOverflow()`.
     pub overflow_rect: Option<PhysicalRect>,
 
+    /// Layout-owned viewport client and content extents. Scrollbar space is
+    /// separate from authored borders and padding.
+    pub viewport_scrollport: Option<ViewportScrollport>,
+
+    /// Classic element scrollbar gutters, independent of CSS box edges.
+    pub element_scrollbars: Option<crate::ElementScrollbars>,
+
+    /// Layout-owned client, reachable content and scroll directions for the
+    /// principal box. Native queries and input consume this same snapshot.
+    pub scroll_area: Option<crate::ScrollArea>,
+
     /// Whether this fragment clips overflowing content.
     ///
     /// Set to `true` when the element's `overflow-x` or `overflow-y` is not
@@ -312,6 +349,10 @@ pub struct Fragment {
     /// Optional block-axis limit for this fragment's own decorations
     /// (background/border/shadow), while leaving children free to overflow.
     pub decoration_paint_block_size: Option<LayoutUnit>,
+
+    /// The decoration limit only trims a fragmentainer-expanded block tail;
+    /// preserve the normal fractional coverage of its inline edge.
+    pub decoration_limit_preserves_inline_coverage: bool,
 
     /// Whether this structural fragment delegates its background and border
     /// to a synthetic child with the same source style. Table wrappers use
@@ -475,6 +516,7 @@ impl Fragment {
             kind: FragmentKind::Box,
             offset: PhysicalOffset::zero(),
             size,
+            principal_box_rect: None,
             padding: BoxStrut::zero(),
             border: BoxStrut::zero(),
             margin: BoxStrut::zero(),
@@ -488,6 +530,9 @@ impl Fragment {
             baseline_offset: 0.0,
             text_combine: None,
             overflow_rect: None,
+            viewport_scrollport: None,
+            element_scrollbars: None,
+            scroll_area: None,
             has_overflow_clip: false,
             block_axis_clip_only: false,
             inline_axis_clip_only: false,
@@ -500,6 +545,7 @@ impl Fragment {
             multicol_fragmentation: None,
             fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
+            decoration_limit_preserves_inline_coverage: false,
             skip_box_decoration: false,
             ignore_border_radius: false,
             paint_border_after_children: false,
@@ -539,6 +585,7 @@ impl Fragment {
             kind: FragmentKind::Text,
             offset: PhysicalOffset::zero(),
             size,
+            principal_box_rect: None,
             padding: BoxStrut::zero(),
             border: BoxStrut::zero(),
             margin: BoxStrut::zero(),
@@ -552,6 +599,9 @@ impl Fragment {
             baseline_offset: 0.0,
             text_combine: None,
             overflow_rect: None,
+            viewport_scrollport: None,
+            element_scrollbars: None,
+            scroll_area: None,
             has_overflow_clip: false,
             block_axis_clip_only: false,
             inline_axis_clip_only: false,
@@ -564,6 +614,7 @@ impl Fragment {
             multicol_fragmentation: None,
             fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
+            decoration_limit_preserves_inline_coverage: false,
             skip_box_decoration: false,
             ignore_border_radius: false,
             paint_border_after_children: false,
@@ -648,10 +699,11 @@ impl Fragment {
             .unwrap_or_else(|| PhysicalRect::new(PhysicalOffset::zero(), self.size))
     }
 
-    /// The border-box rect with offset at zero (local coordinates).
+    /// The fragment's own border-box rect in local coordinates.
     #[inline]
     pub fn border_box_rect(&self) -> PhysicalRect {
-        PhysicalRect::new(PhysicalOffset::zero(), self.size)
+        self.principal_box_rect
+            .unwrap_or_else(|| PhysicalRect::new(PhysicalOffset::zero(), self.size))
     }
 }
 

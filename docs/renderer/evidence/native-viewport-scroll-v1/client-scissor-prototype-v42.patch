@@ -1,0 +1,24 @@
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 5e33c406..0564a0bb 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -1328,11 +1328,14 @@ fn paint_fragment_contents(
+         // A reserved scrollbar gutter still needs the smaller client clip.
+         if scrollport.horizontal_scrollbar || scrollport.vertical_scrollbar {
+             canvas.clip_rect(
+-                Rect::from_xywh(
+-                    abs_offset.left.to_f32(),
+-                    abs_offset.top.to_f32(),
+-                    scrollport.client_rect.width().to_f32(),
+-                    scrollport.client_rect.height().to_f32(),
++                outward_snap_rect_to_physical(
++                    Rect::from_xywh(
++                        abs_offset.left.to_f32(),
++                        abs_offset.top.to_f32(),
++                        scrollport.client_rect.width().to_f32(),
++                        scrollport.client_rect.height().to_f32(),
++                    ),
++                    doc.device_scale_factor(),
+                 ),
+                 ClipOp::Intersect,
+                 false,

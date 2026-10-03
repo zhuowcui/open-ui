@@ -1,0 +1,126 @@
+{
+  "binaries": {
+    "constrained_box_geometry-combined-v2": "4f7d52fdfdcd6da233c6a8ba6f6f6ada85bf937914f7cf81d24b597fdc2bdea9",
+    "libopenui_ffi-column-flex-combined-linux-v2.so": "7470ac73a502274385797ad72c1d94ae25c45c8857517e6d895e5614634270f9",
+    "native_column_flex_geometry-combined-v2": "ff30f6946a4b8953b8807f17537884af6e3b39507eab7a3631ea4090dbde542c"
+  },
+  "component_evidence": [
+    "native-column-flex-overflow-v1.json",
+    "native-empty-fragment-bounds-v1.json"
+  ],
+  "javascript_executed_by_openui": false,
+  "qualification_remaining": [
+    "Complete clean four-profile original and expanded matrices",
+    "Clean focused and primitive 40-profile matrices",
+    "All remaining native API behavior",
+    "Reviewed renderer residual ownership and exactness",
+    "Hosted hardening and release-lab gates"
+  ],
+  "release_qualification": false,
+  "remaining_native_behavior": [
+    {
+      "case": "following-sibling",
+      "owner": "openui-paint in-flow backgrounds and atomic item paint order"
+    },
+    {
+      "case": "row",
+      "owner": "openui-layout row-flex multicolumn measurement"
+    },
+    {
+      "case": "reverse",
+      "owner": "openui-layout reversed column-flex fragmentation"
+    },
+    {
+      "case": "clone-border-padding",
+      "owner": "openui-layout cloned box decoration and source-flow accounting"
+    }
+  ],
+  "reports": {
+    "atomic": {
+      "all_png_bytes_unchanged_from_column_flex_v1": true,
+      "binary_sha256": "4f7d52fdfdcd6da233c6a8ba6f6f6ada85bf937914f7cf81d24b597fdc2bdea9",
+      "path": "out/renderer-evidence/native-column-flex-overflow-v2/atomic-neighbor-replay-combined-v2/comparison.json",
+      "sha256": "d56d39eaa8b490e1b04b382ffedb047af1381d78610752fabee6505903c7729d"
+    },
+    "original": {
+      "all_png_bytes_unchanged_from_column_flex_v1": true,
+      "binary_sha256": "4f7d52fdfdcd6da233c6a8ba6f6f6ada85bf937914f7cf81d24b597fdc2bdea9",
+      "path": "out/renderer-evidence/native-column-flex-overflow-v2/comparison-combined-v2.json",
+      "sha256": "caafcd82b3bf026c7beff35d961eff0414dcf7718e7df9358d63ac04a138100b"
+    },
+    "public": {
+      "all_png_bytes_unchanged_from_column_flex_v1": true,
+      "binary_sha256": "ff30f6946a4b8953b8807f17537884af6e3b39507eab7a3631ea4090dbde542c",
+      "path": "out/renderer-evidence/native-column-flex-overflow-v2/public-rust-comparison-combined-v2.json",
+      "sha256": "d72e3080d97de9948879cda65aad98520a4abea867906a42125021bb53edc347"
+    }
+  },
+  "results": {
+    "atomic": {
+      "complete_geometry_exact": 144,
+      "geometry_and_pixels_exact": 144,
+      "pixels_exact": 144,
+      "total": 144
+    },
+    "original": {
+      "complete_geometry_exact": 60,
+      "geometry_and_pixels_exact": 60,
+      "pixels_exact": 60,
+      "total": 65
+    },
+    "public": {
+      "complete_geometry_exact": 45,
+      "geometry_and_pixels_exact": 40,
+      "pixels_exact": 43,
+      "total": 55
+    }
+  },
+  "schema_version": 1,
+  "source": {
+    "checkpoint": "57ff8889f97fc1367337ee591fb5831a559b3fd9",
+    "clean": false,
+    "code_file_sha256": {
+      "bindings/rust/openui-engine/src/lib.rs": "617e1a90e166ad0e1505349ccf121e5434aea9c555e7d77f821ada5c8981ac9a",
+      "bindings/rust/openui-layout/src/block.rs": "71cf4376420fa6dec27bd0d196ef8a782d58e21d07758159e2ff0094fe9b8955",
+      "bindings/rust/openui/examples/native_column_flex_geometry.rs": "741ffb5d05080a53702c8b0fed8930c404dddb56a00ba5f3b96b524ab20efcb6",
+      "examples/c_v02/geometry.c": "7c7227e8563892f9b2435ea99b15d79d7dd24a05c19fb88eaaed32e092d5d397",
+      "tools/qualification/probe_native_geometry_oracle.py": "651ed963936b50c0af2c2d27262e2ff4219370910b4fc52f79e2d6b4f2a3e194"
+    }
+  },
+  "verification": {
+    "c_consumers_passed": 6,
+    "c_exports": 109,
+    "cpp_consumers_passed": 1,
+    "linux_application_scenarios_passed": 55,
+    "logs": {
+      "abi": {
+        "path": "/tmp/openui-column-flex-combined-abi-v2.log",
+        "sha256": "2121d16f817e0436fc4c5b0f7040b052e8672c3558392a7c7a6c40e11a54403f"
+      },
+      "ffi_linux_build": {
+        "path": "/tmp/openui-column-flex-combined-ffi-build-v2.log",
+        "sha256": "4beecf1501d41378d4d0b53711b6241c41d604bc715c779521246d1fa55bf67d"
+      },
+      "linux_conformance": {
+        "path": "/tmp/openui-column-flex-combined-linux-conformance-v2.log",
+        "sha256": "cabaed6f91bd830a6f4903e315089033c2c89a92cd192edf6218bbc1cd6566eb"
+      },
+      "native_build": {
+        "path": "/tmp/openui-column-flex-combined-native-build-v2.log",
+        "sha256": "8ffce64c0f019d6aa046417a739a24bface81b3145fb133b46ba13f9cb55b2a1"
+      },
+      "negative_c7_guard": {
+        "path": "/tmp/openui-column-flex-combined-c-negative-v3.log",
+        "sha256": "f5d6a6482d323d849d57f6f32107f50a474942b79fecba268437fef53a3566e8"
+      },
+      "workspace": {
+        "path": "/tmp/openui-column-flex-combined-workspace-v2.log",
+        "sha256": "6a7852e3ac4e79912f0bf8e256dee419015d3ce1c8a5e2c10829ccb7e0de5cd0"
+      }
+    },
+    "new_c_geometry_guard_rejects_c7_library": "SIGABRT at the first new column-flex fragment-count assertion; loader/compile failures are not accepted",
+    "workspace_ignored": 13,
+    "workspace_passed": 8491,
+    "workspace_suites": 147
+  }
+}

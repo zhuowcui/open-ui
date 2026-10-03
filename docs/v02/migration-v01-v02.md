@@ -10,6 +10,11 @@ every inventoried Rust and C symbol to a v0.2 replacement or removal.
 
 ## Rust applications
 
+Application behavior remains native Rust. Use the public `Document` and
+`Element` methods for element creation, updates, events, focus, scrolling, and
+controls; retain element handles rather than relying on a browser DOM or a
+JavaScript runtime. See the [native interaction API](supported-platforms.md#native-interaction-api).
+
 Replace infallible, frame-count-oriented setup:
 
 ```rust,ignore

@@ -1,5 +1,11 @@
 # Open UI — Sprint Progress Record
 
+This is a historical record. References below to JavaScript or
+`needs_javascript` describe scripts in Chromium test sources and past test
+classification. Open UI executes no JavaScript. Applications use public native
+Rust APIs for element interaction; the current contract is in
+[supported platforms](../v02/supported-platforms.md#native-interaction-api).
+
 ## Sprint Overview
 
 | Sprint | Title | Tests | Review Rounds | Status |
@@ -258,7 +264,9 @@ classified as SP12-owned layout bugs. Top owners include:
 - SP13 fragmentation and multicol,
 - SP15 inline layout and root/body viewport propagation,
 - SP11 font metrics,
-- future JavaScript/test harness support,
+- Chromium WPT scripts needing native final-state assessment (historically
+  called "future JavaScript/test harness support"; no Open UI JavaScript
+  runtime is planned),
 - future advanced selectors, writing modes, table/grid layout, generated content,
   form controls, canvas/SVG, and paint-quality features.
 

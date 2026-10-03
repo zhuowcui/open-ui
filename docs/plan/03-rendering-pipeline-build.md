@@ -1,5 +1,9 @@
 # Sub-Project 3: Rendering Pipeline Build
 
+> **Historical plan only.** Open UI v0.2 uses a pure-Rust renderer and does not
+> embed Chromium or V8. It executes no JavaScript. Application interaction uses
+> the [public native Rust API](../v02/supported-platforms.md#native-interaction-api).
+
 > Extract Chromium's rendering code (style, layout, paint, cc/, Skia) and build it as a standalone library.
 
 ## Objective
