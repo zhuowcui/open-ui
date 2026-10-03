@@ -41,30 +41,33 @@ including 70 C inset cases. All ten read-only checks pass. Focused and primitive
 40-profile matrices remain 640/640 and 960/960 exact, with every comparison
 invariant unchanged from `d174ea0b`.
 
-The consuming Rust app checks 170 cases at five scales against two identical
-fresh Chromium captures per case. All 510 initial/instant/smooth geometry
-states match; 452/510 PNGs are exact. The 58 differences are at 1.25 scale,
-along one or two horizontal pixel regions at the green edges. The existing
-30 no-inset states keep the same native images and geometry; all 20 endpoint
-oracle hashes and detailed channel/region differences are unchanged.
-Paint/raster ownership is recorded, while the shared phase/coverage correction
-remains under investigation. No tolerance or test-ID pixel fix is used.
-These new states are not admitted release passes. Full original/expanded
-censuses, other reveal options, containing-block/fixed traversal and complete
-needed native API coverage remain required. Open UI runs no JavaScript.
+The earlier consuming Rust run checks 170 cases at five scales against two
+identical fresh Chromium captures per case. It records 510/510 matching geometry
+states and 452/510 exact images, with 58 edge differences at 1.25 scale.
+Its complete original and expanded censuses now finish with observed exits 1:
+21,334/22,924 and 22,137/23,728 exact, zero errors. Every comparison invariant,
+including all Chromium bytes and identities, agrees with the umbrella renderer.
 
-The [smaller native phase matrix](../renderer/generated/native-scroll-insets-v2.json)
-isolates the paint failures: all 100 geometry checks agree, while 83/100 PNGs
-are exact across five scales and four container positions. Ordinary and
-single-clip static controls are exact. Twelve scrolling images expose missing
-container-origin rounding; five static nested-clip images expose repeated
-coverage at the shared edge. Eight fresh traced captures preserve the earlier
-Chromium PNG bytes. The exact pinned Chromium sources confirm that scrolling
-uses the realized screen transform, including its rounding correction.
-A separate `dac78e25` prototype includes that origin in direct scroll paint.
-Its reviewable patch is prepared; compilation and corrected pixels are still
-unverified. Cargo waits for both existing complete image sweeps to finish.
-Clip fusion, transformed/backing paths and the full renderer gates remain open.
+The [latest screen-origin correction](../renderer/generated/native-scroll-insets-v3.json)
+at clean `dac78e25` recovers all 58 differences: the same 510 initial, instant
+and smooth states now match Chromium in geometry and pixels. Every earlier
+exact image, owned geometry state and callback count stays unchanged. The
+shared painter includes the containing screen origin and realized ancestor
+translations when snapping scroll movement. It changes neither logical scroll
+offsets nor reference bytes and uses no test-ID or output-pixel correction.
+All 8,532 workspace tests and ten read-only checks pass. Focused and primitive
+matrices remain 640/640 and 960/960 exact, with every comparison invariant fixed.
+
+The smaller C matrix checks 175 states at five scales and seven integer/fractional
+container positions. All geometry agrees; 165/175 images are exact, gaining 22
+with no exact losses. Its ten remaining static nested-clip differences are
+unchanged under paint ownership. Pinned Chromium combines compatible rectangular
+clips before rasterization; native replay still repeats their edge coverage.
+Full screen-correction censuses are running. Both reviewable patches remain
+unapplied, and these cases are not admitted release passes. Clip combination,
+transformed/backing paths, other reveal options, containing-block/fixed traversal
+and complete needed public native API coverage remain required. Open UI runs
+no JavaScript; consuming applications use native Rust operations and callbacks.
 
 ## Verification
 

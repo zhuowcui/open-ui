@@ -167,16 +167,20 @@ All three pull-request workflows at this checkpoint pass. The separate
 [manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/37149510887)
 passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux windows,
 MSRV and all five fuzz targets. Skipped pull-request jobs remain open results.
-The [private scroll-inset candidate](docs/renderer/generated/native-scroll-insets-v1.json)
-adds 18 Rust/C setters and passes its 8,532-test workspace, C/C++ consumers and
-both raster matrices. All 510 geometry states match Chromium; 58 of their
-PNGs still differ at 1.25 scale, under paint/raster investigation. That
-candidate remains unapplied and unqualified.
+The [latest private scroll-inset evidence](docs/renderer/generated/native-scroll-insets-v3.json)
+records clean `dac78e25`, with 18 public Rust/C setters and a shared screen-origin
+scroll correction. All 510 consuming Rust app states now match Chromium in
+geometry and pixels, recovering all 58 earlier differences. Its workspace
+passes 8,532 tests, zero failures and 13 ignored; ten read-only checks pass.
+The focused and primitive matrices remain 640/640 and 960/960 exact, with
+every comparison invariant unchanged from the umbrella renderer.
 
-The [smaller native phase checks](docs/renderer/generated/native-scroll-insets-v2.json)
-match all 100 geometry states, with 17 image differences. They isolate scroll
-rounding and nested clip coverage. A shared transform prototype is prepared;
-its corrected pixels are not yet verified.
+The smaller C matrix is 175/175 exact in geometry and 165/175 exact in pixels:
+22 images become exact and none lose exactness. Ten independent static nested
+clip differences remain unchanged under paint ownership. The preceding inset
+candidate's complete original and expanded censuses preserve every umbrella
+comparison result. Complete censuses for the screen correction are running;
+the APIs and correction remain unapplied, and no new release passes are admitted.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU

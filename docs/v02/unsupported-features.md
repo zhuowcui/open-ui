@@ -56,9 +56,12 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   operations, but scroll-margin/padding support, full option coverage and four
   reduced endpoint pixel differences remain open; own umbrella geometry is
   30/30 exact, while endpoint images remain 16/20 exact. The
-  [private inset candidate](../renderer/generated/native-scroll-insets-v1.json)
-  passes all 510 geometry states and both raster matrices, but 58/510 PNGs
-  differ at 1.25 scale; it remains unapplied and unqualified;
+  [latest private inset candidate](../renderer/generated/native-scroll-insets-v3.json)
+  now matches all 510 native Rust geometry and image states after a shared
+  screen-origin correction, and both raster matrices remain exact. Its smaller
+  C matrix still has ten static nested-clip failures among 175 states. Complete
+  screen-correction censuses are running; the APIs and correction remain
+  unapplied and unqualified;
 - two live legacy contour calibration paths must be replaced by general
   raster behavior and checked against Chromium without sample corrections;
 - retained per-node compositor layers and compositor-owned immutable animation

@@ -55,20 +55,22 @@ passes all seven jobs: both sanitizers, Miri, C UBSan, MSRV, Linux windows and
 all five fuzz targets. The full renderer, needed native API, hardware and
 publication gates remain open.
 
-The [private scroll-inset candidate](../renderer/generated/native-scroll-insets-v1.json)
-adds 18 Rust/C setters and preserves existing IDs/ABI layouts. Its clean
-8,532-test workspace, fourteen headless consumers and both exact raster
-matrices pass. All 510 owned geometry states match Chromium; only 452/510
-PNGs are exact. The 58 remaining 1.25-scale edge differences have paint/raster
-ownership, and the no-inset controls preserve every prior result. The patch
-remains unapplied, and these new states do not count as admitted release passes.
+The [latest private scroll-inset evidence](../renderer/generated/native-scroll-insets-v3.json)
+records 18 Rust/C setters and the shared screen-origin correction at clean
+`dac78e25`. Its 8,532-test workspace and ten read-only checks pass. All 510 native
+Rust states now match Chromium in geometry and pixels, recovering 58 differences;
+earlier exact images, geometry and callbacks stay fixed. Focused and primitive
+matrices are 640/640 and 960/960 exact, with every comparison invariant unchanged.
+The smaller C matrix is 175/175 exact in geometry and 165/175 exact in pixels,
+gaining 22 with no exact losses. Ten unchanged static nested-clip differences
+still fail under paint ownership.
 
-The [smaller native phase matrix](../renderer/generated/native-scroll-insets-v2.json)
-is 100/100 exact in geometry and 83/100 exact in pixels. It isolates missing
-screen-origin rounding during scrolling and repeated nested clip coverage.
-All eight fresh traced Chromium images match the saved references byte for
-byte. A reviewable direct-scroll prototype is prepared at `dac78e25`; it has
-not been compiled or pixel-verified. Both fixes and full qualification remain open.
+The preceding clean `45ddd7a4` inset candidate's complete original and expanded
+censuses preserve every umbrella comparison invariant: 21,334/22,924 and
+22,137/23,728 exact, zero errors, observed exits 1. Complete screen-correction
+censuses are running. Both patches remain unapplied and no new cases are admitted
+as release passes. Clip combination, transformed/backing paths, needed native
+API coverage and full qualification remain open.
 
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.

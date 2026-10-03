@@ -38,21 +38,24 @@ are skipped. Its separate seven-job
 passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux window
 tests, MSRV and all five fuzz targets. Complete logs and individual conclusions
 are retained. The earlier failed `d174ea0b` jobs remain historical evidence.
-The [private scroll-inset candidate](../renderer/generated/native-scroll-insets-v1.json)
-has 18 public Rust/C setters and passes 8,532 workspace tests, ten C/four C++
-consumers and all 1,600 focused/primitive comparisons. All 510 native geometry
-states match Chromium; 452/510 PNGs are exact. The 58 differences remain at
-1.25 scale under paint/raster ownership; default controls keep every earlier
-image and geometry result. The candidate remains unapplied and unqualified.
-Missing needed native operations remain unfinished API work.
+The [latest private scroll-inset evidence](../renderer/generated/native-scroll-insets-v3.json)
+records clean `dac78e25`, including 18 public Rust/C setters and the shared
+screen-origin scroll correction. Its workspace passes 8,532 tests, zero failures
+and 13 ignored; all ten read-only checks pass. All 510 consuming Rust app states
+now match Chromium in geometry and pixels, recovering all 58 earlier failures.
+The smaller C matrix is 175/175 exact in geometry and 165/175 exact in pixels:
+22 comparisons become exact and none lose exactness. The ten remaining static
+nested-clip failures retain every earlier native pixel and difference detail.
+Paint ownership and the pinned Chromium clip-combination behavior are recorded.
 
-The [native phase investigation](../renderer/generated/native-scroll-insets-v2.json)
-checks 100 smaller app states: geometry is 100/100 exact, pixels 83/100 exact.
-Static controls isolate twelve scroll-origin rounding failures and five nested
-clip-coverage failures. Fresh Chromium traces preserve all eight reference
-images; pinned source review supports rounding the complete screen transform.
-An unapplied `dac78e25` prototype is prepared, with compilation and pixel
-verification pending the existing full image sweeps. No repaired pass is claimed.
+Its focused and primitive matrices are 640/640 and 960/960 exact; every comparison
+invariant agrees with the implemented umbrella renderer. The earlier clean
+`45ddd7a4` inset candidate's complete original and expanded censuses also preserve
+every umbrella comparison invariant: 21,334/22,924 and 22,137/23,728 exact, zero
+errors, observed exits 1. Complete screen-correction censuses are running.
+The candidate remains unapplied and unqualified; no new states are admitted.
+Needed public native operations, clip combination and transformed/backing paths
+remain required work. Open UI never runs JavaScript.
 
 ## Verified repository state
 
