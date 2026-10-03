@@ -316,7 +316,7 @@ is 1,673/1,800 exact across 360 script-free native states and five scales,
 with all owned bounds exact. It remains unapplied and does not qualify the
 complete renderer or admit new release cases.
 
-The [current clean SVG evidence](../renderer/generated/native-svg-viewport-v6.json)
+The [current clean SVG evidence](../renderer/generated/native-svg-viewport-v8.json)
 records two complete original censuses at 21,325/22,924 exact, zero errors,
 terminal exits 1. They gain 17 exact comparisons and lose none; 13 already
 failing comparisons worsen. The solid-border source passes both full
@@ -325,7 +325,9 @@ the current native API/ABI and adds C viewport creation through the shared
 Rust constructor. Nine headless C and four C++ consumers pass, including
 native sizing callbacks and teardown; existing exports and layouts remain
 unchanged. Its Linux-enabled workspace passes 8,516 tests, zero failures and
-13 ignored, on unchanged clean source. Its Rust controls preserve all
+13 ignored, on unchanged clean source. Its own focused and primitive matrices
+finish at 640/640 and 960/960 exact, with all comparison invariants unchanged
+and observed exits 0. Its Rust controls preserve all
 1,920 SVG images and 850 existing
 scrolling images, while 744 SVG comparisons and all 180 scroll-layer extents
 still fail. Complete rebased pixel qualification, SVG transforms and nested

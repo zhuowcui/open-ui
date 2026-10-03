@@ -74,7 +74,7 @@ source and binary identities, not clean-source release qualification.
 
 ## Clean native checkpoints
 
-The [clean evidence](generated/native-svg-viewport-v6.json) rebases the viewport
+The [clean evidence](generated/native-svg-viewport-v8.json) rebases the viewport
 work onto private coverage-region source `6368057f`. Clean `4daf1876` exposes
 `Element::create_svg_foreign_object` and the existing string constructor path
 over the shared Engine. The consuming Rust application mutates decoration
@@ -195,8 +195,10 @@ The clean default workspace passes 8,505 tests; its Linux-enabled counterpart
 passes 8,516, both with zero failures and 13 ignored. The additional Linux
 checks are run explicitly. Both preserve the produced diagnostic PNG before
 restoring its tracked original, and source and all successful pins remain
-unchanged. Fresh rebased focused, primitive and original matrices are running;
-the expanded run is queued after the original.
+unchanged. The rebased focused and primitive matrices finish with observed
+exits 0: 640/640 and 960/960 exact. All 1,600 comparison invariants remain
+unchanged from the solid-border source. The original census is running and
+the expanded run is queued after it.
 Complete rebased matrices, SVG coordinate/transform behavior and nested scroll
 ranges remain required. The source patch remains unapplied and no new native
 control is admitted as a release pass.

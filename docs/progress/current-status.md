@@ -50,7 +50,7 @@ jobs; skips remain open results. Every needed public native operation still
 requires implementation and consuming-application verification. Open UI
 executes no JavaScript, in any version.
 
-The [clean private SVG evidence](../renderer/generated/native-svg-viewport-v6.json)
+The [clean private SVG evidence](../renderer/generated/native-svg-viewport-v8.json)
 records complete original runs at `4daf1876` and `169fc7fe`: each is
 21,325/22,924 exact, 1,599 different, zero errors, with terminal exit 1.
 Against the accepted renderer, 17 comparisons become exact and none lose
@@ -78,8 +78,9 @@ pinned binaries remain unchanged; test-produced diagnostic bytes are preserved
 before restoring the tracked PNG. Ten read-only checks pass: eight generators,
 archive integrity and repository accountability. Hosted umbrella `59c5a292`
 finishes six successful jobs and five skipped hardening jobs; skips stay open.
-Fresh rebased focused, primitive and original matrices are running; the expanded
-run is queued behind the original run.
+The rebased focused and primitive matrices finish with observed exits 0:
+640/640 and 960/960 exact, with all 1,600 comparison invariants unchanged.
+The original census remains running; the expanded run is queued behind it.
 
 The [source patch and C/C++ consumer](../renderer/evidence/native-svg-decoration-v1/)
 remain unapplied. Complete rebased pixel qualification, SVG transforms, nested

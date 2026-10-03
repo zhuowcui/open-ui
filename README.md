@@ -78,7 +78,7 @@ preserves those four matches and all 850 existing native controls while fixing
 transparent-canvas erasure in neighboring Rust consumers. The SVG decoration
 alpha, native scroll extents, remaining control pixels, and complete candidate
 qualification remain open before promotion.
-The [clean private SVG work](docs/renderer/generated/native-svg-viewport-v6.json)
+The [clean private SVG work](docs/renderer/generated/native-svg-viewport-v8.json)
 adds native viewport creation and corrects shared curved-border painting.
 Two complete original censuses finish at 21,325/22,924 exact, zero errors:
 17 comparisons become exact, none lose exactness, and 13 already failing
@@ -90,7 +90,9 @@ states and all 850 existing scrolling controls match Chromium exactly.
 All SVG owned bounds, callbacks and teardown checks pass. C/C++ consumers
 verify the shared viewport constructor and native sizing callbacks, preserving
 110 exports and existing layouts. Its Linux-enabled workspace passes 8,516
-tests with zero failures and 13 ignored. Complete rebased qualification, the 744
+tests with zero failures and 13 ignored. Its fresh 40-profile matrices pass
+640/640 focused and 960/960 primitive comparisons, with unchanged results.
+Complete rebased qualification, the 744
 remaining SVG pixel failures, transforms and scrolling ranges remain open.
 The [reviewable source patch](docs/renderer/evidence/native-svg-decoration-v1/native-svg-rebase-api-v293.patch)
 remains unapplied. Earlier disk failures are preserved.
