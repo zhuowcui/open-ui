@@ -1,0 +1,253 @@
+{
+  "artifacts": [
+    {
+      "path": "docs/renderer/generated/native-font-cache-lifetime-v1.json",
+      "sha256": "dde52edab85169658e9f07859a4e8628024ebd8ccd11e7b96c9f43711cbc2dc3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-docs-ci-complete-v608.json",
+      "sha256": "5a2dc7a69d44f82fa33f81857d36929ade0fce3ed212d84f1f42e853922c9828"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-toolchain-v609.json",
+      "sha256": "32e33ec6b9aadf60847efb1009ecdda90976271e1043e11f571ba43c150774ce"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-sanitizers-v610/setup-failure.json",
+      "sha256": "e192b4798287fe5ee0730d8ac7c404e776fa08b2db16421009c8beb214c7526a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-sanitizers-v611/receipt.json",
+      "sha256": "50e22da8f888bfe741f273950873f01933bcbfdf87d56567693a355d64a91ef1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-sanitizers-v612/receipt.json",
+      "sha256": "2e23acda1595d02eb759972439b02037f4e40fef7fa79e2c2ae130d755a872fe"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-cargo-fuzz-v613/receipt.json",
+      "sha256": "cc621b8d8e6ba10961f1c1b863e4172e5f664114de8e29e6ed0e9fd203214673"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-fuzz-v614/receipt.json",
+      "sha256": "75b44df4ce1c29976f23df214976a2b9463520eac559fa2d6bcc13932735f25f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-workspace-v615/receipt.json",
+      "sha256": "9b58b204288acbe8936ba0e7c02f3d69738e646b7a24370d6aacf8cdfcf8028a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-fuzz-lock-v616/receipt.json",
+      "sha256": "90b4586314210e9e63fd4ebb8ca975ce2811cfdf690ccb24c11350245823f577"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-fuzz-v617/receipt.json",
+      "sha256": "1d95f2362ed64f86c7c3a72094cc3ad88f06ace15f8a77387c5e68b79610e091"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-lock-code-audit-v618.json",
+      "sha256": "1bf4addd4a4ed65094d392cd3f5274c04d75f6c5aec83e6f0c23b9125bfdeda7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v619.json",
+      "sha256": "5a42df583f0d7d88e045efac50210d206c09afde9af01fc02373fc781eebdde7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-checks-helper-failure-v620.json",
+      "sha256": "bfe3b4fc141af89b6502c44be0935fa16088efc54f7dd71cf545f93ff0f6294a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-clean-v621/build.json",
+      "sha256": "65111ea5a772eb0cb9241ffb2fb59af92b3bd0cc675432d1ccafa68361464f57"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v622.json",
+      "sha256": "51c3b40f5c6395e04ffdc7062469e70215e9bc0a66aa61e3ff2b71c88d5f43e0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-fuzz-audit-v623.json",
+      "sha256": "3102079f884ab5c4fa49f1207cebae918c5584de2b34a7c27032e26b9fc3559d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-ffi-v624/receipt.json",
+      "sha256": "6532a83c590e42f9a07cda24af41f2738b1612d140bf7c65cfed87d60a7ed73d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-raster-audit-v626.json",
+      "sha256": "cac15322b26b51bfa96ed712bcef5083c461f051c88f131c57e08be09d2ecd4c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-clean-focused-v625/focused-summary.json",
+      "sha256": "cc76a5050a1800793a51541fa0735dcd8c89e5d83ca82eeb2fe84746bacc06cc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-clean-primitive-v625/primitive-summary.json",
+      "sha256": "f344e412e3d1a3cb0a4988e1f53226edfe6587ff16a914662d04c71c8fbbb92c"
+    }
+  ],
+  "fuzz_lock_correction": {
+    "ci_gate": "locked metadata before fuzzing and unchanged source after each of five targets",
+    "new_dependency_pin": false,
+    "synchronizes": "already-declared native 0.2.0 packages and a31b86ba rust-skia pin"
+  },
+  "hosted_documentation_checkpoint": {
+    "commit": "067cc79463bbc9baefe8f7e29435cc1cb99bba33",
+    "manual_failed_source": "d174ea0b; local candidate results do not replace its failed hosted jobs",
+    "skipped_jobs": 5,
+    "skips_are_passes": false,
+    "success_jobs": 6,
+    "workflows_completed": 3
+  },
+  "interaction": "Open UI executes no JavaScript in any version. Needed application element behavior requires complete public native Rust APIs and callbacks over the shared engine.",
+  "previous_snapshot": {
+    "path": "docs/renderer/generated/native-font-cache-lifetime-v1.json",
+    "sha256": "dde52edab85169658e9f07859a4e8628024ebd8ccd11e7b96c9f43711cbc2dc3",
+    "unchanged": true
+  },
+  "private_candidate": {
+    "abi": {
+      "exports": 112,
+      "header_checksum": "sha256:f351719823bc6bded0199b48a94e3c22e38935cd8a414abf0a994de1cf168780",
+      "headless_c_consumers": 10,
+      "headless_cpp_consumers": 4,
+      "observed_exit_code": 0,
+      "source": {
+        "clean": true,
+        "commit": "ed52e817fb7c0308faed4600e2f150cfc68e10e6",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "6162fb2b05c2c6af54359f74cc4455eb0a27a990f5aee61ed40745147ca8ef28",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "applied_to_umbrella": false,
+    "difference_from_that_source": "standalone fuzz lock metadata only; code identity audited",
+    "focused_and_primitive": {
+      "all_eight_comparison_invariants_unchanged_vs_d174ea0b": true,
+      "focused_exact": 640,
+      "primitive_exact": 960,
+      "source": {
+        "clean": true,
+        "commit": "ed52e817fb7c0308faed4600e2f150cfc68e10e6",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "6162fb2b05c2c6af54359f74cc4455eb0a27a990f5aee61ed40745147ca8ef28",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tolerance_pixels": 0
+    },
+    "full_and_expanded_pixel_checks": "running at this snapshot; no result admitted from incomplete sweeps",
+    "fuzz": {
+      "candidate_observed_exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "each_target_seconds_at_least": 30,
+      "negative_control": "Clean 79ad3af8 reproduces 2606 leaked bytes / 59 allocations; cargo-fuzz exits 1",
+      "recovered_input_pass": true,
+      "recovered_input_sha256": "edfd2713ee5680062680cadd6b1efe88101bc3592b0f21012eedcebbf05408a0",
+      "source": {
+        "clean": true,
+        "commit": "ed52e817fb7c0308faed4600e2f150cfc68e10e6",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "6162fb2b05c2c6af54359f74cc4455eb0a27a990f5aee61ed40745147ca8ef28",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_unchanged": true,
+      "targets": [
+        "ffi_style_values",
+        "tree_mutations",
+        "event_sequences",
+        "resources",
+        "animation_sampling"
+      ],
+      "targets_completed": 5
+    },
+    "native_runtime_unchanged_from": "09fbc363b36145201e07e9217b9eb108b67fcc51",
+    "open_gates": [
+      "complete clean original and expanded pixel comparison against the umbrella",
+      "apply candidate and verify umbrella source",
+      "own-source hosted hardening on the applied candidate",
+      "remaining renderer, native API, contour, compositor/3D, lab, package and release gates"
+    ],
+    "read_only_checks": {
+      "clean_candidate": 10,
+      "clean_umbrella_lock_checkpoint": 10,
+      "each_observed_exit_code": 0
+    },
+    "sanitizers": {
+      "address": {
+        "failed": 0,
+        "passed": 32,
+        "sanitizer_reports": 0
+      },
+      "global_fontconfig_shutdown": false,
+      "leak": {
+        "failed": 0,
+        "passed": 32,
+        "sanitizer_reports": 0
+      },
+      "negative_control": "Clean d174ea0b passes 29 FFI assertions then exits 23 on 2619 leaked bytes / 59 allocations",
+      "scope": "Pinned existing CPU Skia archive reused; bindings and Rust/std compile under the selected sanitizer. Hosted workflow likewise sanitizes Rust; local results do not replace hosted qualification.",
+      "suppression": false,
+      "tested_source": {
+        "clean": true,
+        "commit": "09fbc363b36145201e07e9217b9eb108b67fcc51",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "a598c2358d6bd7d3f67e544924c2fcacd0f151a89e9296ea9d132ea30ae78d4b",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "source": {
+      "clean": true,
+      "commit": "ed52e817fb7c0308faed4600e2f150cfc68e10e6",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "6162fb2b05c2c6af54359f74cc4455eb0a27a990f5aee61ed40745147ca8ef28",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "linux_c_feature": true,
+      "observed_exit_code": 0,
+      "passed": 8526,
+      "source_unchanged": true,
+      "tested_source": {
+        "clean": true,
+        "commit": "09fbc363b36145201e07e9217b9eb108b67fcc51",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "a598c2358d6bd7d3f67e544924c2fcacd0f151a89e9296ea9d132ea30ae78d4b",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  "reference": "Pinned Chromium only; historical Open UI PNGs are immutable provenance",
+  "release_qualification": false,
+  "retained_failed_attempts": {
+    "v610": "wrong Skia source path; no test execution",
+    "v611": "host linker startup/sysroot failure; no successful test execution",
+    "v614": "negative-control leak reproduced, but Cargo silently changed stale fuzz lock; diagnostic only",
+    "v620": "helper log-path failure; retry v622 records actual child exits"
+  },
+  "schema_version": 2,
+  "umbrella": {
+    "candidate_applied": false,
+    "expanded": {
+      "different": 1591,
+      "errors": 0,
+      "exact": 22137,
+      "total": 23728
+    },
+    "lock_and_source_gate_checkpoint": "79ad3af87a675f47c836d3ccce94f5f1ae230a64",
+    "original": {
+      "different": 1590,
+      "errors": 0,
+      "exact": 21334,
+      "total": 22924
+    },
+    "renderer_api_checkpoint": "d174ea0b397a65dae76691db4b72c750f02b9914",
+    "required_pixel_gate": "fail"
+  }
+}

@@ -28,10 +28,20 @@ at clean `09fbc363` extends cache ownership through immutable recordings and
 independently cloned scrolling layers. It passes 551 tests: three isolated
 lifetime tests plus 548 text/paint/engine/compositor library tests. Cross-thread
 replay after document destruction, concurrent font teardown and unchanged-frame
-reuse pass. The candidate remains unapplied; its sanitizer, fuzz, complete
-workspace/ABI and Chromium pixel checks remain open. All three hosted workflows
-at documentation checkpoint `ac1b37b2` complete successfully: six jobs pass,
-five are skipped. Skips do not close the failed manual hardening gates.
+reuse pass. The [next evidence snapshot](../renderer/generated/native-font-cache-lifetime-v2.json)
+records the same native code passing 8,526 Linux-enabled workspace tests, zero
+failures and 13 ignored, and 32 tests under each local address/leak sanitizer.
+Clean `ed52e817` synchronizes only the standalone fuzz lock over that candidate;
+it passes the recovered input, all five 30-second fuzz targets, ten C/four C++
+headless consumers, 112 exports and ten read-only checks. Its focused/primitive
+matrices are 640/640 and 960/960 exact, with all eight comparison invariants
+unchanged from `d174ea0b`. Failed setups and the first dirty fuzz-lock attempt
+are retained. Umbrella `79ad3af8` applies the lock correction and strengthens CI
+source checks, with native renderer/API bytes unchanged. The font candidate
+remains unapplied; complete original/expanded pixel sweeps and own-source
+hosted hardening remain open. All three hosted workflows at documentation
+checkpoint `067cc794` complete successfully: six jobs pass, five are skipped.
+Skips and local results do not close the failed manual hardening gates.
 
 ## Verified repository state
 

@@ -47,15 +47,45 @@ At clean private checkpoint `09fbc363`, the
 - the first extended attempt's compilation failure, corrected by applying the
   test's scrolling style through the typed style-property operation.
 
-These checks verify ownership and replay behavior. They do not establish exact
-Chromium pixels or a sanitizer pass. Caller-owned raw Skia object clones have
-their own lifetimes; the tokens cover framework recording and layer objects.
+Those earlier checks establish ownership and replay behavior. Caller-owned raw
+Skia object clones have their own lifetimes; the tokens cover framework
+recording and layer objects.
 
-The candidate remains unapplied to the umbrella PR. Its own-source ASan/LSan,
-recovered fuzz input, all five fuzz targets, complete workspace, ABI consumers,
-and clean Chromium focused/primitive/original/expanded checks remain open.
+The [next immutable snapshot](generated/native-font-cache-lifetime-v2.json)
+records the completed local checks:
+
+- At clean `09fbc363`, address and leak sanitizers each pass 29 FFI assertions
+  and the three isolated lifetime tests, with no sanitizer report. A clean
+  `d174ea0b` negative control reproduces 2,619 leaked bytes in 59 allocations
+  after passing its 29 assertions. Rust/std and bindings compile under the
+  sanitizer; the existing pinned CPU Skia archive is reused. This local scope
+  does not replace hosted qualification.
+- The same source passes 8,526 locked Linux-enabled workspace tests, zero
+  failures and 13 ignored, with source identity unchanged.
+- Clean `ed52e817` differs only in standalone fuzz-lock metadata. It handles
+  the recovered input without a leak and completes all five fuzz targets for
+  at least 30 seconds each, with actual exits 0 and source unchanged. Clean
+  umbrella `79ad3af8` still reproduces the 2,606-byte/59-allocation fuzz leak.
+- Its fresh pinned build runs ten C and four C++ headless consumers, preserving
+  112 exports and the header checksum. All ten read-only checks pass.
+- Its clean 40-profile matrices are 640/640 focused and 960/960 primitive
+  exact. Every native/Chromium image hash, oracle identity, difference
+  signature, status and differing-pixel count agrees with `d174ea0b`.
+
+The first sanitizer setup used a wrong Skia source path; the next exposed a
+host linker/sysroot setup failure. Neither qualifies as a test pass. The first
+fuzz negative control also let Cargo rewrite a stale standalone lockfile;
+that run remains diagnostic. The corrected lock synchronizes already-declared
+native 0.2.0 versions and the existing Skia pin. It adds no dependency upgrade.
+CI now checks locked metadata before fuzzing and unchanged source after each
+target. A read-only helper path failure and its successful retry are retained.
+
+The font candidate remains unapplied to the umbrella PR. Its complete original
+and expanded pixel sweeps are running; incomplete results are not admitted as
+qualification. Application and own-source hosted hardening remain required.
 Earlier failed reports and references remain unchanged.
 
-All three hosted workflows at the umbrella documentation checkpoint
-`ac1b37b2` completed successfully, with six passing jobs and five skipped jobs.
-Those skips do not qualify the failed manual sanitizer and fuzz gates.
+All three hosted workflows at umbrella documentation checkpoint `067cc794`
+completed successfully, with six passing jobs and five skipped jobs. Those
+skips and the private local results do not close the failed manual sanitizer
+and fuzz gates. The full renderer, native API and release-lab gates remain open.

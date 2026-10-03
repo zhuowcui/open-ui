@@ -160,10 +160,16 @@ retiring that font cache clears the measured leak. The native Rust lifetime
 candidate now retains the cache lifetime through saved scenes and independently
 cloned content layers. Its clean private source passes 551 tests, including
 cross-thread replay after document destruction, concurrent font teardown, and
-unchanged-frame reuse. The [lifetime evidence](docs/renderer/native-font-cache-lifetime.md)
-records the fix and the failed first test compilation. The candidate remains
-unapplied; its sanitizer, fuzz, workspace/ABI and Chromium pixel checks remain
-open. These results do not qualify the release.
+unchanged-frame reuse. The [updated lifetime evidence](docs/renderer/generated/native-font-cache-lifetime-v2.json)
+records 8,526 Linux-enabled workspace tests passing, 13 ignored; 32 tests under
+each local address/leak sanitizer; the recovered fuzz input and all five
+30-second fuzz targets; and ten C/four C++ headless consumers with 112 exports.
+Its fresh focused and primitive suites preserve all 1,600 comparison invariants
+against the umbrella renderer. The first failed setups and stale fuzz-lock
+attempt remain recorded. The lock now matches the already-declared packages
+and Skia pin, and CI requires unchanged source after every fuzz target.
+The candidate remains unapplied; complete original/expanded pixel sweeps and
+its own hosted hardening remain open. These results do not qualify the release.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
