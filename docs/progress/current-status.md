@@ -97,7 +97,7 @@ Cargo builds and pixel matrices run separately. No selected result is used to
 infer a complete census or release pass. The accepted original census remains
 21,308/22,924 exact.
 
-The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v5.json)
+The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v6.json)
 preserves complete `6e255ca3` results: 21,321/22,924 original exact and
 22,124/23,728 expanded exact, zero errors, observed exits 1. All Chromium
 bytes and identities remain unchanged. Eight comparisons worsen, including
@@ -128,10 +128,26 @@ keeping the same mismatch count. All six paint investigations have an owner
 and unchanged layout dumps. The source cannot be promoted.
 Earlier offset-only snapping loses four RTL matches, and the reduced sticky
 app initially fails 20/40 states; those failures and subsequent source fixes
-are preserved. All candidate patches remain unapplied. Prior umbrella `851e5622`
+are preserved. All candidate patches remain unapplied. Prior umbrella `b3254cdd`
 passes all ten read-only checks and finishes six successful hosted jobs with
 five skipped hardening jobs; skips stay open and each later umbrella head
 needs its own results.
+
+The later clean block scrollbar source `b5a2044f` repairs all 240 geometry
+failures: all 2,560 native states match Chromium in dimensions, offsets and
+owned bounds. Pixels remain 1,775/2,560 exact with zero exact loss; all 785
+remaining image differences are paint work. The Linux workspace finishes with
+8,516 passed, zero failed and 13 ignored. Ten read-only checks, all clean
+builds, nine C and four C++ consumer processes pass. All 850 root controls,
+50 reduced Rust sticky states and both complete 40-profile raster matrices
+remain exact. All 180 layer dimensions agree, with 95 exact images; SVG bounds
+remain exact, with 1,176/1,920 exact images. The partial sticky gate remains
+124/128 and fails on four prior differences. Both earlier compile failures
+are preserved, with zero tests executed. Flex, grid, table and replaced
+scrollbar layout, native scrollbar input/accessibility and the six complete
+census paint reviews remain open. No full or expanded result is inferred for
+this unapplied source.
+
 Open UI runs no JavaScript. Needed interaction remains shared native Engine
 work exposed through public Rust methods and callbacks.
 

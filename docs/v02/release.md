@@ -62,7 +62,7 @@ and expanded censuses now reproduce every accepted comparison invariant, with
 21,308/22,924 and 22,111/23,728 exact and zero errors. These full pixel failures,
 complete needed native API coverage, and release-lab gates remain open.
 
-The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v5.json)
+The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v6.json)
 records complete `6e255ca3` results: 21,321/22,924 original exact and
 22,124/23,728 expanded exact, zero errors, observed exits 1. Eight comparisons
 worsen, four losing exactness, because anonymous line fragments omit child
@@ -84,7 +84,17 @@ Chromium inputs and all addition rows remain unchanged. Nine original exact
 matches are gained and two flex-overflow matches are lost at scale 1.25;
 three fragmentation rows also worsen. Six paint investigations remain open,
 so this source cannot be promoted. Earlier failed trials remain preserved and all
-source patches remain unapplied. These checks add no release qualification.
+source patches remain unapplied. The later clean block scrollbar source
+`b5a2044f` repairs all 240 geometry failures, matching Chromium in all 2,560
+native states. Pixels remain 1,775/2,560 exact, with no exact image lost;
+785 paint failures remain. Its Linux workspace passes 8,516 tests with zero
+failed and 13 ignored. Ten read-only checks, all clean builds, nine C and four
+C++ consumers pass. All 850 root controls, 50 reduced Rust sticky states and
+both complete 40-profile raster matrices stay exact. The partial sticky gate
+still fails at 124/128. Flex/grid/table/replaced scrollbar layout, native
+scrollbar operation and the earlier six complete-census paint reviews remain
+open. No complete original or expanded result is inferred for this source.
+These checks add no release qualification.
 Native interaction uses Rust APIs and callbacks; no JavaScript runtime or
 glue is part of the work.
 

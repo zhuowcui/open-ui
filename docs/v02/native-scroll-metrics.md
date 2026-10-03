@@ -166,7 +166,7 @@ Clean `02c0296e` passes 8,516 Linux-enabled workspace tests, zero failures,
 invariants are unchanged. All 850 root controls remain exact. All 180 layer
 dimensions agree; layer pixels remain 95/180, with no exact image lost.
 
-The [current evidence](../renderer/generated/native-nested-scroll-v5.json)
+The [current evidence](../renderer/generated/native-nested-scroll-v6.json)
 records 1,775/2,560 native scroll images and 2,320/2,560 geometry states exact.
 The 240 missing scrollbar-layout states and 545 additional paint failures
 remain owned work. The complete original run finishes at 21,332/22,924 exact
@@ -179,12 +179,24 @@ worsen. A sixth image changes with the same mismatch count. All six paint
 investigations have an owner; layout dumps are unchanged. This source cannot
 be promoted. All patches remain unapplied to the umbrella renderer.
 
-The next [block scrollbar candidate](../renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v9.patch)
+The next [block scrollbar candidate](../renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v10.patch)
 retains physical scrollbar space separately from authored border and padding.
 Block child sizing, native ranges, clipping, hit testing and shared theme paint
 consume that geometry. Its first compile fails because a flex-child constraint
 initializer omits the new optional input. The failure and zero executed tests
-are preserved; the initializer is repaired in clean `23d819fc`. Ten read-only
-checks pass on that source, and its own workspace is running. No native image
-gain or qualification is inferred. Flex, grid, table and replaced sizing, and
-native scrollbar pointer/keyboard operation remain open.
+are preserved. The next source also fails before running tests because two
+existing painter test fragment literals omit the optional field. Clean
+`b5a2044f` repairs both without changing assertions. Its Linux workspace has
+8,516 passed, zero failed and 13 ignored; ten read-only checks, all clean
+builds, nine C and four C++ consumer processes pass.
+
+All 2,560 native states now match Chromium in metrics and owned geometry,
+repairing the 240 layout failures. Pixels remain 1,775/2,560 exact, with no
+exact image lost. The remaining 785 native image differences are paint work.
+All 850 root controls and 50 reduced public Rust sticky states stay exact;
+the complete focused and primitive matrices remain 640/640 and 960/960 exact.
+The partial sticky gate remains 124/128, with four prior differences, and
+fails. No complete original or expanded census is inferred for this source.
+Flex, grid, table and replaced sizing, native scrollbar pointer/keyboard and
+accessibility operation, and the earlier six complete-census paint reviews
+remain open. All patches remain unapplied; no release qualification is added.

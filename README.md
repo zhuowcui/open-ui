@@ -23,8 +23,8 @@ controls, and event handling use public Rust methods. Element operations do
 not require JavaScript: browsers expose them through JavaScript, and Open UI
 must implement any needed equivalent in Rust and expose it as a public method
 on the retained document or element. The consuming native app calls that
-method directly. A missing
-public native operation is unfinished API work, even when an internal test
+method directly. A missing public native operation is unfinished API work,
+even when an internal test
 fixture can already produce the same visual state. See the
 [native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
 
@@ -119,9 +119,13 @@ Its complete original census is 21,332/22,924 exact and expanded is
 22,135/23,728 exact, zero errors, with actual exits 1. All Chromium inputs stay
 unchanged. It gains nine original exact matches but loses two flex-overflow
 matches at scale 1.25; three fragmentation comparisons also worsen. Six paint
-reviews remain open, so this source cannot be promoted. The 240 missing
-scrollbar-layout states, 545 additional native paint failures and complete
-qualification remain open. [Versioned evidence](docs/renderer/generated/native-nested-scroll-v5.json)
+reviews remain open, so this source cannot be promoted. A later clean block
+scrollbar candidate at `b5a2044f` repairs all 240 missing geometry states:
+2,560/2,560 match Chromium. Pixels remain 1,775/2,560 exact, with no exact
+image lost. Its workspace, C/C++ consumers, 50 reduced Rust states and both
+40-profile raster matrices pass. Its partial sticky gate still fails in four
+states, and no complete census is inferred for that source.
+[Versioned evidence](docs/renderer/generated/native-nested-scroll-v6.json)
 and unapplied patches preserve earlier failures. These private results do not
 replace the accepted renderer's census.
 
