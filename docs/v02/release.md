@@ -62,7 +62,7 @@ and expanded censuses now reproduce every accepted comparison invariant, with
 21,308/22,924 and 22,111/23,728 exact and zero errors. These full pixel failures,
 complete needed native API coverage, and release-lab gates remain open.
 
-The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v4.json)
+The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v5.json)
 records complete `6e255ca3` results: 21,321/22,924 original exact and
 22,124/23,728 expanded exact, zero errors, observed exits 1. Eight comparisons
 worsen, four losing exactness, because anonymous line fragments omit child
@@ -78,8 +78,12 @@ Native metrics match in 2,320/2,560 states and pixels in 1,775/2,560, gaining
 12 exact images with zero loss versus `6e255ca3`. All 850 root controls remain
 exact and all 180 layer dimensions agree; layer pixels remain 95/180.
 The 240 scrollbar-layout failures and 545 additional native paint failures
-remain open. Its complete original and expanded censuses are running; no
-complete result is inferred. Earlier failed trials remain preserved and all
+remain open. Its complete original and expanded runs finish at
+21,332/22,924 and 22,135/23,728 exact, zero errors, with actual exits 1.
+Chromium inputs and all addition rows remain unchanged. Nine original exact
+matches are gained and two flex-overflow matches are lost at scale 1.25;
+three fragmentation rows also worsen. Six paint investigations remain open,
+so this source cannot be promoted. Earlier failed trials remain preserved and all
 source patches remain unapplied. These checks add no release qualification.
 Native interaction uses Rust APIs and callbacks; no JavaScript runtime or
 glue is part of the work.

@@ -97,7 +97,7 @@ Cargo builds and pixel matrices run separately. No selected result is used to
 infer a complete census or release pass. The accepted original census remains
 21,308/22,924 exact.
 
-The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v4.json)
+The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v5.json)
 preserves complete `6e255ca3` results: 21,321/22,924 original exact and
 22,124/23,728 expanded exact, zero errors, observed exits 1. All Chromium
 bytes and identities remain unchanged. Eight comparisons worsen, including
@@ -119,13 +119,19 @@ Its native scroll sweep gains 12 exact images with zero loss versus
 `6e255ca3`: 1,775/2,560 pixels and 2,320/2,560 geometry/dimension states exact.
 All 850 root controls remain exact. All 180 scroll-layer dimensions agree;
 pixels remain 95/180, with no exact loss. The 240 missing scrollbar-layout
-states and 545 additional native paint failures remain open. Both complete
-censuses are running for this new source; no full result is inferred.
+states and 545 additional native paint failures remain open. Its complete original census is
+21,332/22,924 exact and expanded is 22,135/23,728 exact, zero errors, with
+actual exits 1. All Chromium bytes and identities remain unchanged. Nine
+original comparisons gain exactness and two flex-overflow comparisons lose it
+at scale 1.25. Three fragmentation rows worsen; a sixth image changes while
+keeping the same mismatch count. All six paint investigations have an owner
+and unchanged layout dumps. The source cannot be promoted.
 Earlier offset-only snapping loses four RTL matches, and the reduced sticky
 app initially fails 20/40 states; those failures and subsequent source fixes
-are preserved. All candidate patches remain unapplied. Umbrella `b96c24e0`
-finishes six successful hosted jobs and five skipped hardening jobs; skips
-stay open and each later umbrella head needs its own hosted results.
+are preserved. All candidate patches remain unapplied. Prior umbrella `851e5622`
+passes all ten read-only checks and finishes six successful hosted jobs with
+five skipped hardening jobs; skips stay open and each later umbrella head
+needs its own results.
 Open UI runs no JavaScript. Needed interaction remains shared native Engine
 work exposed through public Rust methods and callbacks.
 

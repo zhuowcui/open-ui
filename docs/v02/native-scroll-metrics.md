@@ -166,9 +166,25 @@ Clean `02c0296e` passes 8,516 Linux-enabled workspace tests, zero failures,
 invariants are unchanged. All 850 root controls remain exact. All 180 layer
 dimensions agree; layer pixels remain 95/180, with no exact image lost.
 
-The [current evidence](../renderer/generated/native-nested-scroll-v4.json)
+The [current evidence](../renderer/generated/native-nested-scroll-v5.json)
 records 1,775/2,560 native scroll images and 2,320/2,560 geometry states exact.
 The 240 missing scrollbar-layout states and 545 additional paint failures
-remain owned work. Its complete original and expanded censuses are running;
-no complete total or release qualification is inferred. All source patches
-remain unapplied to the umbrella renderer.
+remain owned work. The complete original run finishes at 21,332/22,924 exact
+and expanded at 22,135/23,728, zero errors, with actual exits 1. Every Chromium
+image and identity remains unchanged; original rows agree between suites and
+all 804 additions stay unchanged. The earlier eight sticky regressions are
+exact in the complete census. Nine original comparisons gain exactness, but
+two flex-overflow matches are lost at scale 1.25 and three fragmentation rows
+worsen. A sixth image changes with the same mismatch count. All six paint
+investigations have an owner; layout dumps are unchanged. This source cannot
+be promoted. All patches remain unapplied to the umbrella renderer.
+
+The next [block scrollbar candidate](../renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v9.patch)
+retains physical scrollbar space separately from authored border and padding.
+Block child sizing, native ranges, clipping, hit testing and shared theme paint
+consume that geometry. Its first compile fails because a flex-child constraint
+initializer omits the new optional input. The failure and zero executed tests
+are preserved; the initializer is repaired in clean `23d819fc`. Ten read-only
+checks pass on that source, and its own workspace is running. No native image
+gain or qualification is inferred. Flex, grid, table and replaced sizing, and
+native scrollbar pointer/keyboard operation remain open.

@@ -115,9 +115,13 @@ It restores all eight comparisons in the partial sticky sweep, matches all
 with zero loss versus `6e255ca3`: 1,775/2,560 pixels and 2,320/2,560 dimensions.
 Its shared Rust/C constructor passes nine C and four C++ consumer processes;
 8,516 Linux-enabled workspace tests and both 40-profile raster gates pass.
-Its own complete original and expanded censuses are running. The 240 missing
+Its complete original census is 21,332/22,924 exact and expanded is
+22,135/23,728 exact, zero errors, with actual exits 1. All Chromium inputs stay
+unchanged. It gains nine original exact matches but loses two flex-overflow
+matches at scale 1.25; three fragmentation comparisons also worsen. Six paint
+reviews remain open, so this source cannot be promoted. The 240 missing
 scrollbar-layout states, 545 additional native paint failures and complete
-qualification remain open. [Versioned evidence](docs/renderer/generated/native-nested-scroll-v4.json)
+qualification remain open. [Versioned evidence](docs/renderer/generated/native-nested-scroll-v5.json)
 and unapplied patches preserve earlier failures. These private results do not
 replace the accepted renderer's census.
 
