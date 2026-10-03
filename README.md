@@ -103,6 +103,18 @@ Complete rebased qualification, the 744
 remaining SVG pixel failures, transforms and scrolling ranges remain open.
 The [reviewable source patch](docs/renderer/evidence/native-svg-decoration-v1/native-svg-rebase-api-v293.patch)
 remains unapplied. Earlier disk failures are preserved.
+
+The [nested scrolling candidate](docs/v02/native-scroll-metrics.md#nested-scrolling-candidate)
+implements shared native dimensions, ranges, offset rounding and detached
+queries. Clean `6e255ca3` matches Chromium geometry in 2,320/2,560 states and
+pixels in 1,763/2,560, gaining 179 exact images without an exact loss. It passes
+8,516 Linux-enabled workspace tests and both 40-profile raster gates. Missing
+nested scrollbar space, fractional drawing and a C constructor discrepancy
+remain open; its complete original and expanded suites are still running.
+The shared native constructor repair is implemented in the reviewable patch
+and awaits its own build and consumer checks. These candidate results do not
+replace the accepted renderer's census.
+
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia

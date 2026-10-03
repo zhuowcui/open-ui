@@ -62,6 +62,19 @@ and expanded censuses now reproduce every accepted comparison invariant, with
 21,308/22,924 and 22,111/23,728 exact and zero errors. These full pixel failures,
 complete needed native API coverage, and release-lab gates remain open.
 
+The [nested scrolling candidate](../renderer/generated/native-nested-scroll-v1.json)
+at clean `6e255ca3` passes 8,516 Linux-enabled workspace tests, ten read-only
+checks and both complete 40-profile raster matrices. Native metrics and
+geometry match Chromium in 2,320/2,560 states; pixels match in 1,763/2,560.
+All 850 root controls remain exact and all 180 scroll-layer extents now agree.
+Nested scrollbar layout and fractional paint failures remain open. Its
+complete original and expanded suites are still running at this checkpoint.
+The C consumer fails on different Rust/C element defaults. A shared native
+constructor repair is implemented in the next patch, but its build and
+consumer verification are pending. These unapplied candidates add no release
+qualification. Native interaction uses Rust APIs and callbacks; no JavaScript
+runtime or glue is part of the work.
+
 The [scroll coverage trial](../renderer/generated/native-viewport-full-v17.json)
 preserves all four scrolling repairs, all 850 existing native controls and
 both complete 40-profile raster gates. New consuming Rust apps have 95/180

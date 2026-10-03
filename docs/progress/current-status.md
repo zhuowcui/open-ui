@@ -97,6 +97,27 @@ Cargo builds and pixel matrices run separately. No selected result is used to
 infer a complete census or release pass. The accepted original census remains
 21,308/22,924 exact.
 
+The [nested scrolling checkpoint](../renderer/generated/native-nested-scroll-v1.json)
+records clean `6e255ca3`: 8,516 Linux-enabled workspace tests pass, zero fail,
+13 are ignored, and ten read-only checks pass. Its own focused and primitive
+matrices finish at 640/640 and 960/960 exact, with all 1,600 comparison
+invariants unchanged. Both complete censuses are still running at this
+checkpoint. Public Rust consumers match Chromium geometry and dimensions in
+2,320/2,560 states and pixels in 1,763/2,560. Offset rounding gains 270 exact
+geometry states and 179 exact images, with no exact image lost. All 850 root
+controls stay exact, and all 180 scroll-layer extents now agree; layer pixels
+remain 95/180. The 240 remaining dimension failures require actual nested
+scrollbar space in layout. Fractional drawing also remains open.
+
+The C gate fails a new content-dimension assertion because its element factory
+used initial inline style while Rust applied native block defaults. The
+shared native factory repair is implemented at clean `31a9f705`, with ten
+read-only checks passing; its build, workspace, consumers and pixels are
+pending. All candidate patches remain unapplied. Umbrella `09d9d1f3` finishes
+six successful hosted jobs and five skipped hardening jobs; skips stay open.
+Open UI runs no JavaScript. Needed interaction remains shared native Engine
+work exposed through public Rust methods and callbacks.
+
 The [neutral PNG gamma correction](../renderer/generated/native-png-sampling-v4.json)
 is committed at `63aeb672`. Both complete clean matrices have observed exit 1
 and retain 21,308/22,924 original and 22,111/23,728 expanded exact results;
