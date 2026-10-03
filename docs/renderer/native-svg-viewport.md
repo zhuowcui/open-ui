@@ -73,7 +73,7 @@ source and binary identities, not clean-source release qualification.
 
 ## Clean native checkpoints
 
-The [clean evidence](generated/native-svg-viewport-v3.json) rebases the viewport
+The [clean evidence](generated/native-svg-viewport-v4.json) rebases the viewport
 work onto private coverage-region source `6368057f`. Clean `4daf1876` exposes
 `Element::create_svg_foreign_object` and the existing string constructor path
 over the shared Engine. The consuming Rust application mutates decoration
@@ -112,11 +112,38 @@ evidence. The double-border 40-profile suites finish with observed exits 0:
 640/640 focused and 960/960 primitive exact. All 1,600 comparison invariants
 remain unchanged from the earlier clean SVG source. Eight read-only generator
 checks, archive integrity and repository accountability also pass on clean
-umbrella `71217f2b`. The complete original reruns are running; expanded reruns
-and full workspace verification remain pending. No complete census count is
-inferred from these selections.
+umbrella `71217f2b`. The complete original reruns later stopped on disk exhaustion;
+expanded reruns and full candidate qualification remain pending. No complete
+census count is inferred from these selections.
 The [reviewable patches and consuming app](evidence/native-svg-decoration-v1/)
 preserve the exact implementations and inputs used by the clean builds.
+
+## Solid-border contour correction
+
+Clean `d94b55f8` extends the shared curved-edge path to opaque solid borders.
+Chromium's `Paint` clips the outer and inner contours; `DrawCurvedBoxSide`
+fills the edge through a side clip that includes its corner tangents. Open UI's
+previous solid-side clip removed tangent pixels beyond the straight border
+width. A 24×18 viewport with a 3-pixel left border and 7-pixel radius lost 16
+pixels in its two corners. The shared correction restores those pixels without
+inspecting raster output or selecting a test case.
+
+The original native controls reach 304/480 exact, gaining 58; top/right/bottom
+controls reach 872/1,440, gaining 178. Combined, 1,176/1,920 are exact, with no
+exact loss and all 368 changed images improved. All owned bounds, Rust callbacks
+and teardown checks pass. The selected original guards preserve all 304
+comparison invariants. The remaining 744 pixel failures still include rounded
+child clipping, group opacity and fractional coverage. The patch is unapplied.
+
+The solid-border raster suites and a debug workspace build stopped on disk
+exhaustion. Their incomplete outputs, logs and terminal exits are retained.
+Fifteen unused build executables have verified compressed copies; successful
+pins remain unchanged. A workspace-package clean reclaims 12.9 GiB of
+reproducible outputs after an earlier cleanup command rejected a wrong package
+name. A smaller workspace retry is running in an independent clean checkout;
+pixel qualification will run separately from Cargo builds. No incomplete run
+is counted as a pass. Hosted umbrella `3836e9de` completes six successful jobs
+and five skipped hardening jobs; skips remain unverified.
 
 ## Earlier development qualification status
 

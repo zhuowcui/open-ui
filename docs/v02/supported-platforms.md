@@ -93,10 +93,11 @@ API and renderer gaps; the new states are not admitted release passes.
 The [private SVG consumer](../renderer/evidence/native-svg-decoration-v1/native_svg_foreign_object_curved_v234.rs)
 creates a viewport for native UI children through a proposed public Rust
 constructor and mutates it from a Rust callback. Its
-[clean evidence](../renderer/generated/native-svg-viewport-v3.json) checks
+[clean evidence](../renderer/generated/native-svg-viewport-v4.json) checks
 1,920 states across four border sides and five scales. Every owned bound,
-callback and teardown check passes; 940 rendered states match Chromium
-exactly, while 980 still differ. The constructor and shared rendering patches
+callback and teardown check passes; a later shared solid-border correction
+makes 1,176 rendered states match Chromium exactly, while 744 still differ.
+The constructor and shared rendering patches
 remain unapplied; complete census, native SVG coordinate/transform and C API
 qualification are open. These are native implementation gaps, with no
 JavaScript execution or script bindings.

@@ -50,7 +50,7 @@ jobs; skips remain open results. Every needed public native operation still
 requires implementation and consuming-application verification. Open UI
 executes no JavaScript, in any version.
 
-The [clean private SVG checkpoints](../renderer/generated/native-svg-viewport-v3.json)
+The [clean private SVG checkpoints](../renderer/generated/native-svg-viewport-v4.json)
 implement a public native Rust viewport constructor and replace the historical
 SVG decoration alpha with fixed viewport layout and shared border painting.
 Source `4daf1876` passes 480 owned-bounds, Rust callback and teardown checks,
@@ -63,10 +63,22 @@ surface to 940/1,920 exact rendered states and 1,920/1,920 exact owned bounds,
 with all native callback and teardown checks passing. The other 980 pixel
 results remain failures. Both later complete raster suites finish with exits
 0: 640/640 focused and 960/960 primitive exact, with all 1,600 comparison
-invariants unchanged. Both complete original censuses are running after
-preserved disk-exhaustion failures; expanded runs and full workspace
-verification remain pending. The patches stay unapplied, and the
+invariants unchanged. Both complete original reruns later stopped on disk
+exhaustion; their failures and partial outputs remain preserved. Expanded
+runs and complete candidate qualification remain pending. The patches stay unapplied, and the
 accepted full census remains 21,308/22,924 exact.
+
+Clean `d94b55f8` extends the shared contour path to lone rounded solid borders.
+It gains another 236 exact native states, with all 368 changed images improved
+and no exact loss. Across all four sides, 1,176/1,920 rendered states and every
+owned bound match Chromium; all Rust callback and teardown checks pass. Its
+304 selected original comparisons retain every invariant. The remaining 744
+native pixel failures stay open. Its raster suites and first workspace build
+also stopped on disk exhaustion. All successful pins, reports and source commits
+are preserved; 15 unused executables have verified compressed copies, and
+12.9 GiB of reproducible workspace outputs were reclaimed. A smaller workspace
+retry is running separately from pixel qualification. No complete result or
+release qualification is claimed.
 
 The [neutral PNG gamma correction](../renderer/generated/native-png-sampling-v4.json)
 is committed at `63aeb672`. Both complete clean matrices have observed exit 1

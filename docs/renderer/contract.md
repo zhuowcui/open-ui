@@ -12,7 +12,7 @@ rendering evidence for that state. Each element behavior needed by a consuming
 application also requires a public Rust operation over the same engine; fixture
 lowering alone does not complete application API coverage.
 
-The [clean private SVG evidence](generated/native-svg-viewport-v3.json)
+The [clean private SVG evidence](generated/native-svg-viewport-v4.json)
 implements a typed Rust foreignObject viewport constructor over the shared
 Engine, verifies native mutation callbacks and teardown, and removes the
 historical decoration alpha through shared layout and painting. Its later
@@ -22,9 +22,18 @@ all four physical border sides, every owned bound and callback/teardown check
 passes; 940 rendered states are exact and 980 remain failures. Both clean SVG
 checkpoints pass the complete 40-profile gates with every comparison invariant
 unchanged: 640/640 focused and 960/960 primitive exact, observed exits 0.
-Complete original reruns are running; expanded and workspace qualification
-remain pending. These unapplied patches
+Complete original reruns later stopped on disk exhaustion; expanded and
+candidate qualification remain pending. These unapplied patches
 do not establish a new accepted full-census result or completed SVG support.
+
+Clean `d94b55f8` extends that shared contour path to lone rounded solid edges,
+retaining the curved corner tangents. It gains 236 more exact native states,
+with all 368 changed images improved and no exact loss: 1,176/1,920 rendered
+states and all owned bounds match Chromium. Rust callbacks and teardown pass;
+all 304 selected original invariants remain unchanged. Its raster runs and
+first workspace build also stopped on disk exhaustion, with failures preserved.
+A smaller workspace retry is running separately; the 744 native pixel failures,
+complete matrices and public SVG coordinate/transform and C API work remain open.
 
 The [native style/RGBA checkpoint](../v02/generated/native-primitive-styles-v1.json)
 at clean `9e0f0145` verifies 35 primitive longhands through public Rust, C, and

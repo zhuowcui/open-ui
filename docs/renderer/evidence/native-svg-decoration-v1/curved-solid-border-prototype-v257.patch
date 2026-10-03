@@ -1,0 +1,91 @@
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index b136ba13..8955c4ed 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -17979,20 +17979,18 @@ fn paint_native_fieldset_corner_samples(
+     }
+ }
+ 
+-/// Paint borders around the border-box.
+-///
+-/// Extracted from Blink's `BoxBorderPainter` (box_border_painter.cc).
+-/// A lone opaque curved double edge follows BoxBorderPainter's complex
++/// A lone opaque curved solid or double edge follows BoxBorderPainter's complex
+ /// contour path: clip the outer/inner border, restrict the owning side, then
+-/// clip each stripe using inset rounded contours. Straight side polygons
+-/// lose the curvature of the stripe's inner edge.
+-fn paint_sole_curved_double_border(
++/// fill the solid edge or clip each double stripe using inset rounded contours.
++/// The side clip retains the full corner tangents even when the edge is narrow.
++fn paint_sole_curved_border(
+     canvas: &Canvas,
+     fragment: &Fragment,
+     style: &ComputedStyle,
+     rect: Rect,
+     side: usize,
+     width: f32,
++    border_style: BorderStyle,
+ ) -> bool {
+     let color = match side {
+         0 => style.border_top_color,
+@@ -18070,20 +18068,27 @@ fn paint_sole_curved_double_border(
+         );
+     }
+     canvas.clip_rect(side_rect, ClipOp::Intersect, true);
+-    for (inset, op) in [
+-        ((width * 2.0 / 3.0).round(), ClipOp::Intersect),
+-        ((width / 3.0).round(), ClipOp::Difference),
+-    ] {
+-        let (stripe, stripe_radii) = contour(inset);
+-        canvas.save();
+-        canvas.clip_rrect(RRect::new_rect_radii(stripe, &stripe_radii), op, true);
++    if border_style == BorderStyle::Solid {
+         canvas.draw_rect(rect, &paint);
+-        canvas.restore();
++    } else {
++        for (inset, op) in [
++            ((width * 2.0 / 3.0).round(), ClipOp::Intersect),
++            ((width / 3.0).round(), ClipOp::Difference),
++        ] {
++            let (stripe, stripe_radii) = contour(inset);
++            canvas.save();
++            canvas.clip_rrect(RRect::new_rect_radii(stripe, &stripe_radii), op, true);
++            canvas.draw_rect(rect, &paint);
++            canvas.restore();
++        }
+     }
+     canvas.restore();
+     true
+ }
+ 
++/// Paint borders around the border-box.
++///
++/// Extracted from Blink's `BoxBorderPainter` (box_border_painter.cc).
+ fn paint_borders(
+     canvas: &Canvas,
+     fragment: &Fragment,
+@@ -18133,16 +18138,21 @@ fn paint_borders(
+         let used_width = width.min(box_extent);
+         let effective_solid = border_style == BorderStyle::Solid
+             || (border_style == BorderStyle::Double && used_width < 3.0);
+-        if border_style == BorderStyle::Double
+-            && used_width >= 3.0
++        if ((effective_solid && width < box_extent)
++            || (border_style == BorderStyle::Double && used_width >= 3.0))
+             && !outer_rrect_clipped
+-            && paint_sole_curved_double_border(
++            && paint_sole_curved_border(
+                 canvas,
+                 fragment,
+                 style,
+                 Rect::from_xywh(x, y, w, h),
+                 side,
+                 used_width,
++                if effective_solid {
++                    BorderStyle::Solid
++                } else {
++                    BorderStyle::Double
++                },
+             )
+         {
+             return;
