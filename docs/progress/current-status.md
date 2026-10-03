@@ -50,7 +50,7 @@ jobs; skips remain open results. Every needed public native operation still
 requires implementation and consuming-application verification. Open UI
 executes no JavaScript, in any version.
 
-The [clean private SVG checkpoints](../renderer/generated/native-svg-viewport-v4.json)
+The [clean private SVG checkpoints](../renderer/generated/native-svg-viewport-v5.json)
 implement a public native Rust viewport constructor and replace the historical
 SVG decoration alpha with fixed viewport layout and shared border painting.
 Source `4daf1876` passes 480 owned-bounds, Rust callback and teardown checks,
@@ -76,9 +76,12 @@ owned bound match Chromium; all Rust callback and teardown checks pass. Its
 native pixel failures stay open. Its raster suites and first workspace build
 also stopped on disk exhaustion. All successful pins, reports and source commits
 are preserved; 15 unused executables have verified compressed copies, and
-12.9 GiB of reproducible workspace outputs were reclaimed. A smaller workspace
-retry is running separately from pixel qualification. No complete result or
-release qualification is claimed.
+12.9 GiB of reproducible workspace outputs were reclaimed. The smaller workspace
+retry passes 8,499 tests, zero failures and 13 ignored, on unchanged clean source.
+Replacement pixel runs are running separately from Cargo builds. The private
+source differs from the accepted 8,515-test native API source; these renderer
+fixes require rebase and independent qualification over the current public
+API/ABI before adoption. No complete census or release qualification is claimed.
 
 The [neutral PNG gamma correction](../renderer/generated/native-png-sampling-v4.json)
 is committed at `63aeb672`. Both complete clean matrices have observed exit 1

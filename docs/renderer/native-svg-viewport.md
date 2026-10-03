@@ -73,7 +73,7 @@ source and binary identities, not clean-source release qualification.
 
 ## Clean native checkpoints
 
-The [clean evidence](generated/native-svg-viewport-v4.json) rebases the viewport
+The [clean evidence](generated/native-svg-viewport-v5.json) rebases the viewport
 work onto private coverage-region source `6368057f`. Clean `4daf1876` exposes
 `Element::create_svg_foreign_object` and the existing string constructor path
 over the shared Engine. The consuming Rust application mutates decoration
@@ -140,9 +140,15 @@ exhaustion. Their incomplete outputs, logs and terminal exits are retained.
 Fifteen unused build executables have verified compressed copies; successful
 pins remain unchanged. A workspace-package clean reclaims 12.9 GiB of
 reproducible outputs after an earlier cleanup command rejected a wrong package
-name. A smaller workspace retry is running in an independent clean checkout;
-pixel qualification will run separately from Cargo builds. No incomplete run
-is counted as a pass. Hosted umbrella `3836e9de` completes six successful jobs
+name. A smaller workspace retry finishes in an independent clean checkout:
+8,499 tests pass, zero fail and 13 are ignored. Source stays clean and unchanged;
+the tracked diagnostic PNG is preserved before restoration and every pinned
+runner stays unchanged. Replacement pixel runs are running separately from
+Cargo builds. The private source predates the later native style/API changes;
+its 8,499-test result does not replace the accepted 8,515-test checkpoint.
+These renderer fixes require rebase and independent qualification over the
+current public API/ABI before adoption. No incomplete run is counted as a pass.
+Hosted umbrella `3836e9de` completes six successful jobs
 and five skipped hardening jobs; skips remain unverified.
 
 ## Earlier development qualification status

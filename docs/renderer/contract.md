@@ -12,7 +12,7 @@ rendering evidence for that state. Each element behavior needed by a consuming
 application also requires a public Rust operation over the same engine; fixture
 lowering alone does not complete application API coverage.
 
-The [clean private SVG evidence](generated/native-svg-viewport-v4.json)
+The [clean private SVG evidence](generated/native-svg-viewport-v5.json)
 implements a typed Rust foreignObject viewport constructor over the shared
 Engine, verifies native mutation callbacks and teardown, and removes the
 historical decoration alpha through shared layout and painting. Its later
@@ -32,7 +32,10 @@ with all 368 changed images improved and no exact loss: 1,176/1,920 rendered
 states and all owned bounds match Chromium. Rust callbacks and teardown pass;
 all 304 selected original invariants remain unchanged. Its raster runs and
 first workspace build also stopped on disk exhaustion, with failures preserved.
-A smaller workspace retry is running separately; the 744 native pixel failures,
+The smaller workspace retry passes 8,499 tests with zero failures and 13 ignored;
+replacement pixel runs are running separately from Cargo builds. This private
+source predates later native API changes and requires rebase and independent
+qualification over the current public API/ABI. The 744 native pixel failures,
 complete matrices and public SVG coordinate/transform and C API work remain open.
 
 The [native style/RGBA checkpoint](../v02/generated/native-primitive-styles-v1.json)
