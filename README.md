@@ -24,8 +24,7 @@ not require JavaScript: browsers expose them through JavaScript, and Open UI
 must implement any needed equivalent in Rust and expose it as a public method
 on the retained document or element. The consuming native app calls that
 method directly. A missing public native operation is unfinished API work,
-even when an internal test
-fixture can already produce the same visual state. See the
+even when an internal test fixture can already produce the same visual state. See the
 [native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
 
 ## Verified status
@@ -158,9 +157,13 @@ The manual hardening run passes MSRV, Miri, C UBSan and hosted Linux
 conformance. Address/leak sanitizer and fuzz fail on font allocation reports.
 A standalone pinned-Skia C++ case reproduces the metrics cache retention;
 retiring that font cache clears the measured leak. The native Rust lifetime
-candidate remains unapplied and uncompiled, with retained-scene ownership and
-complete hardening verification still required. These results do not qualify
-the release.
+candidate now retains the cache lifetime through saved scenes and independently
+cloned content layers. Its clean private source passes 551 tests, including
+cross-thread replay after document destruction, concurrent font teardown, and
+unchanged-frame reuse. The [lifetime evidence](docs/renderer/native-font-cache-lifetime.md)
+records the fix and the failed first test compilation. The candidate remains
+unapplied; its sanitizer, fuzz, workspace/ABI and Chromium pixel checks remain
+open. These results do not qualify the release.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU

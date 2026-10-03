@@ -57,8 +57,9 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   reduced endpoint pixel differences remain open; own umbrella geometry is
   30/30 exact, while endpoint images remain 16/20 exact;
 - own-source address/leak sanitizer and fuzz gates fail; the measured font-cache
-  retention has a private retirement candidate, but owned snapshot lifetimes
-  and complete hardening reruns still require verification;
+  retention has a private retirement candidate whose saved-scene, content-layer,
+  concurrent teardown and unchanged-frame tests pass; the candidate is unapplied
+  and complete hardening and Chromium pixel reruns remain open;
 - two live legacy contour calibration paths must be replaced by general
   raster behavior and checked against Chromium without sample corrections;
 - retained per-node compositor layers and compositor-owned immutable animation

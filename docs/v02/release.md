@@ -26,7 +26,7 @@ claimed by source code alone.
 | Local performance smoke | 0.108 ms p95, 308 UI-thread animation fps, 1.389% RSS growth | non-qualifying pass |
 | X11/Wayland software and Mesa GL | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576) passed native C/C++ windows and Rust smoke paths at `d174ea0b`; physical release-lab tests remain open | provisional pass |
 | Miri C handle ownership | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576): opaque-handle ownership test passed under pinned Miri at `d174ea0b` | pass |
-| ASan/LSan/fuzz | Own-source address/leak jobs each pass 29 FFI assertions then report 2,619 leaked bytes in 59 allocations. Fuzz completes the first target, fails tree mutations on 2,606 bytes/59 allocations, and never runs the remaining three targets. Font-cache retirement candidate is unapplied and uncompiled | fail |
+| ASan/LSan/fuzz | Own-source address/leak jobs each pass 29 FFI assertions then report 2,619 leaked bytes in 59 allocations. Fuzz completes the first target, fails tree mutations on 2,606 bytes/59 allocations, and never runs the remaining three targets. The [private font-cache retirement candidate](../renderer/native-font-cache-lifetime.md) passes 551 lifetime/core tests but remains unapplied; its sanitizer/fuzz runs are pending | fail |
 | Native C UBSan | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576): ABI consumers passed at `d174ea0b` | pass |
 | x86-64/AArch64 SDK, deb, rpm | deterministic source pipeline and tag matrix | pending tag build |
 | Clean Ubuntu/Fedora install | release workflow consumer jobs | pending tag build |

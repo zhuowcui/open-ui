@@ -23,9 +23,15 @@ JavaScript in any version, and applications call public native Rust APIs.
 Manual hardening at this source finishes four jobs successfully and fails
 address/leak sanitizer and fuzz. The pinned-Skia C++ metrics reproducer leaks
 2,597 bytes in 59 allocations per manager; font-cache retirement clears the
-measured leak. The private Rust lifetime candidate `418f7242` remains unapplied
-and uncompiled. Retained-scene ownership, concurrency and complete own-source
-hardening still require verification.
+measured leak. The [private Rust lifetime candidate](../renderer/native-font-cache-lifetime.md)
+at clean `09fbc363` extends cache ownership through immutable recordings and
+independently cloned scrolling layers. It passes 551 tests: three isolated
+lifetime tests plus 548 text/paint/engine/compositor library tests. Cross-thread
+replay after document destruction, concurrent font teardown and unchanged-frame
+reuse pass. The candidate remains unapplied; its sanitizer, fuzz, complete
+workspace/ABI and Chromium pixel checks remain open. All three hosted workflows
+at documentation checkpoint `ac1b37b2` complete successfully: six jobs pass,
+five are skipped. Skips do not close the failed manual hardening gates.
 
 ## Verified repository state
 
