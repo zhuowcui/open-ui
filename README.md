@@ -78,18 +78,22 @@ preserves those four matches and all 850 existing native controls while fixing
 transparent-canvas erasure in neighboring Rust consumers. The SVG decoration
 alpha, native scroll extents, remaining control pixels, and complete candidate
 qualification remain open before promotion.
-The [clean private SVG work](docs/renderer/generated/native-svg-viewport-v5.json)
-adds a native Rust viewport constructor and corrects curved border painting.
-The double-border change gains 112 exact native images; a later solid-border
-change gains another 236, with no exact loss. Across all four border sides,
-1,176/1,920 rendered states and every owned bound match Chromium; callbacks
-and teardown pass. Both earlier sources pass the complete 40-profile suites.
-Later censuses, raster suites and a workspace build stopped on disk exhaustion;
-their failures are preserved. The smaller workspace retry passes 8,499 tests,
-zero failures and 13 ignored tests; replacement pixel runs are running.
-The private source predates later native API changes and requires a rebase
-and independent qualification over the current public API/ABI. Complete
-candidate qualification remains pending, and the patches remain unapplied.
+The [clean private SVG work](docs/renderer/generated/native-svg-viewport-v6.json)
+adds native viewport creation and corrects shared curved-border painting.
+Two complete original censuses finish at 21,325/22,924 exact, zero errors:
+17 comparisons become exact, none lose exactness, and 13 already failing
+comparisons worsen. The solid-border source also passes both complete
+40-profile raster suites. These private results do not replace the accepted
+renderer's census. The work is now rebased over the current native APIs.
+Its Rust consumers preserve every SVG and scrolling image; 1,176/1,920 SVG
+states and all 850 existing scrolling controls match Chromium exactly.
+All SVG owned bounds, callbacks and teardown checks pass. C/C++ consumers
+verify the shared viewport constructor and native sizing callbacks, preserving
+110 exports and existing layouts. Its Linux-enabled workspace passes 8,516
+tests with zero failures and 13 ignored. Complete rebased qualification, the 744
+remaining SVG pixel failures, transforms and scrolling ranges remain open.
+The [reviewable source patch](docs/renderer/evidence/native-svg-decoration-v1/native-svg-rebase-api-v293.patch)
+remains unapplied. Earlier disk failures are preserved.
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia

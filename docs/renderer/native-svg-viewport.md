@@ -1,7 +1,8 @@
 # Native SVG viewport investigation
 
 Open UI runs no JavaScript. The diagnostic Rust consumer creates a
-`foreignObject` viewport through a proposed public `Element::create` path,
+`foreignObject` viewport through a proposed public
+`Element::create_svg_foreign_object` method,
 changes typed styles, reads owned bounds and renders through the shared
 Engine. The public API addition and renderer changes are still unapplied.
 The [consumer and patch](evidence/native-svg-decoration-v1/) are reviewable
@@ -73,7 +74,7 @@ source and binary identities, not clean-source release qualification.
 
 ## Clean native checkpoints
 
-The [clean evidence](generated/native-svg-viewport-v5.json) rebases the viewport
+The [clean evidence](generated/native-svg-viewport-v6.json) rebases the viewport
 work onto private coverage-region source `6368057f`. Clean `4daf1876` exposes
 `Element::create_svg_foreign_object` and the existing string constructor path
 over the shared Engine. The consuming Rust application mutates decoration
@@ -112,9 +113,10 @@ evidence. The double-border 40-profile suites finish with observed exits 0:
 640/640 focused and 960/960 primitive exact. All 1,600 comparison invariants
 remain unchanged from the earlier clean SVG source. Eight read-only generator
 checks, archive integrity and repository accountability also pass on clean
-umbrella `71217f2b`. The complete original reruns later stopped on disk exhaustion;
-expanded reruns and full candidate qualification remain pending. No complete
-census count is inferred from these selections.
+umbrella `71217f2b`. Earlier original reruns stopped on disk exhaustion; their
+replacement runs now finish, as recorded below. Expanded reruns and full
+candidate qualification remain pending. No complete census count is inferred
+from these selections.
 The [reviewable patches and consuming app](evidence/native-svg-decoration-v1/)
 preserve the exact implementations and inputs used by the clean builds.
 
@@ -143,13 +145,61 @@ reproducible outputs after an earlier cleanup command rejected a wrong package
 name. A smaller workspace retry finishes in an independent clean checkout:
 8,499 tests pass, zero fail and 13 are ignored. Source stays clean and unchanged;
 the tracked diagnostic PNG is preserved before restoration and every pinned
-runner stays unchanged. Replacement pixel runs are running separately from
-Cargo builds. The private source predates the later native style/API changes;
+runner stays unchanged. Replacement solid-border raster runs finish with
+observed exits 0: 640/640 focused and 960/960 primitive exact. All 1,600
+comparison invariants remain unchanged from the double-border source.
+The private source predates the later native style/API changes;
 its 8,499-test result does not replace the accepted 8,515-test checkpoint.
 These renderer fixes require rebase and independent qualification over the
 current public API/ABI before adoption. No incomplete run is counted as a pass.
 Hosted umbrella `3836e9de` completes six successful jobs
 and five skipped hardening jobs; skips remain unverified.
+
+## Complete original runs and native API rebase
+
+The replacement original runs at clean `4daf1876` and `169fc7fe` each finish
+at 21,325/22,924 exact, 1,599 different and zero errors, with observed exit 1.
+Every comparison invariant agrees between those sources. Against the accepted
+native API renderer, 17 comparisons become exact and none lose exactness.
+Of the 113 changed rows, 80 improve, 13 worsen and 20 retain their differing
+pixel count. The worsened rows concern rounded background clipping, image
+borders, a background case and flex whitespace; they remain open under paint
+ownership. All 22,924 Chromium images and oracle identities are unchanged.
+These are complete private failures, not a new accepted renderer result.
+
+Clean `8d5a58a1` rebases the shared renderer over umbrella `59c5a292`, retaining
+the current native inset/style APIs and explicit RGBA readback. The reviewable
+[combined patch](evidence/native-svg-decoration-v1/native-svg-rebase-api-v293.patch)
+also adds C viewport creation through the same Rust Engine constructor.
+`OUI_ELEMENT_SVG_FOREIGN_OBJECT = 39` follows the previous 39 element tags;
+all 110 exports, existing layouts and the ABI version stay unchanged. The
+generated header checksum records that additive enum value.
+
+The first C run exposed missing `box-sizing` literal conversion. The shared
+Rust path now accepts both sizing values. The
+[C and C++ consumers](evidence/native-svg-decoration-v1/native-c-v293/)
+change sizing from a native click callback: an ordinary box changes from
+31×22 to 24×18, while the SVG viewport keeps its fixed dimensions. Their owned
+bounds, detach/reattach and listener/document teardown checks pass at five
+scales. All nine headless C and four C++ consumers compile and run. The failed
+initial run and corrected clean build remain preserved.
+
+The clean rebased Rust consumers reproduce all 1,920 SVG images and owned
+bounds: 1,176 pixel results are exact and 744 still fail. All 850 existing
+scrolling controls remain exact. All 180 scroll-layer states retain their
+earlier results: 95 pixel comparisons and all bounds, offsets and client
+dimensions match, but every content extent remains wrong. Callback and
+teardown checks pass. Ten read-only checks pass over unchanged clean source:
+eight generators, historical archive integrity and repository accountability.
+The clean default workspace passes 8,505 tests; its Linux-enabled counterpart
+passes 8,516, both with zero failures and 13 ignored. The additional Linux
+checks are run explicitly. Both preserve the produced diagnostic PNG before
+restoring its tracked original, and source and all successful pins remain
+unchanged. Fresh rebased focused, primitive and original matrices are running;
+the expanded run is queued after the original.
+Complete rebased matrices, SVG coordinate/transform behavior and nested scroll
+ranges remain required. The source patch remains unapplied and no new native
+control is admitted as a release pass.
 
 ## Earlier development qualification status
 

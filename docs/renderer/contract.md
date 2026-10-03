@@ -12,31 +12,30 @@ rendering evidence for that state. Each element behavior needed by a consuming
 application also requires a public Rust operation over the same engine; fixture
 lowering alone does not complete application API coverage.
 
-The [clean private SVG evidence](generated/native-svg-viewport-v5.json)
-implements a typed Rust foreignObject viewport constructor over the shared
-Engine, verifies native mutation callbacks and teardown, and removes the
-historical decoration alpha through shared layout and painting. Its later
-curved double-border painter gains 112 exact native comparisons, with all
-240 changed images improved and no exact loss. Across 1,920 controls covering
-all four physical border sides, every owned bound and callback/teardown check
-passes; 940 rendered states are exact and 980 remain failures. Both clean SVG
-checkpoints pass the complete 40-profile gates with every comparison invariant
-unchanged: 640/640 focused and 960/960 primitive exact, observed exits 0.
-Complete original reruns later stopped on disk exhaustion; expanded and
-candidate qualification remain pending. These unapplied patches
-do not establish a new accepted full-census result or completed SVG support.
+The [clean private SVG evidence](generated/native-svg-viewport-v6.json)
+implements viewport creation over the shared Rust Engine and removes the
+historical decoration alpha through fixed viewport layout and shared border
+painting. Sources `4daf1876` and `169fc7fe` finish their complete original
+censuses at 21,325/22,924 exact, 1,599 different, zero errors, terminal exit 1.
+They gain 17 exact comparisons and lose none against the accepted renderer;
+13 already failing comparisons worsen and remain open. All Chromium images
+and oracle identities remain unchanged. The solid-border source `d94b55f8`
+passes both complete 40-profile matrices: 640/640 focused and 960/960 primitive,
+with all comparison invariants unchanged.
 
-Clean `d94b55f8` extends that shared contour path to lone rounded solid edges,
-retaining the curved corner tangents. It gains 236 more exact native states,
-with all 368 changed images improved and no exact loss: 1,176/1,920 rendered
-states and all owned bounds match Chromium. Rust callbacks and teardown pass;
-all 304 selected original invariants remain unchanged. Its raster runs and
-first workspace build also stopped on disk exhaustion, with failures preserved.
-The smaller workspace retry passes 8,499 tests with zero failures and 13 ignored;
-replacement pixel runs are running separately from Cargo builds. This private
-source predates later native API changes and requires rebase and independent
-qualification over the current public API/ABI. The 744 native pixel failures,
-complete matrices and public SVG coordinate/transform and C API work remain open.
+Clean `8d5a58a1` rebases that work over the current native API/ABI and exposes
+viewport creation to C through the shared Rust constructor. Its native C/C++
+consumers also verify shared box-sizing conversion, callback mutation, owned
+bounds, detach/reattach and teardown. All nine headless C and four C++ consumers
+run, preserving every existing export and layout. Rust consumers preserve all
+1,920 SVG and 850 scrolling images. All SVG bounds agree with Chromium;
+1,176/1,920 SVG pixel results are exact and the other 744 remain failures.
+The 180 scroll-layer controls preserve their earlier results, including the
+incorrect scroll extents. The clean Linux-enabled workspace passes 8,516 tests, with zero failures and
+13 ignored. Source and successful executable pins stay unchanged.
+The source patch remains unapplied. Complete rebased
+qualification, native SVG transforms and nested scrolling remain required;
+no new state is admitted as a release pass.
 
 The [native style/RGBA checkpoint](../v02/generated/native-primitive-styles-v1.json)
 at clean `9e0f0145` verifies 35 primitive longhands through public Rust, C, and

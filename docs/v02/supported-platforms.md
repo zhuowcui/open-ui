@@ -93,14 +93,17 @@ API and renderer gaps; the new states are not admitted release passes.
 The [private SVG consumer](../renderer/evidence/native-svg-decoration-v1/native_svg_foreign_object_curved_v234.rs)
 creates a viewport for native UI children through a proposed public Rust
 constructor and mutates it from a Rust callback. Its
-[clean evidence](../renderer/generated/native-svg-viewport-v5.json) checks
+[clean evidence](../renderer/generated/native-svg-viewport-v6.json) checks
 1,920 states across four border sides and five scales. Every owned bound,
-callback and teardown check passes; a later shared solid-border correction
-makes 1,176 rendered states match Chromium exactly, while 744 still differ.
-The constructor and shared rendering patches
-remain unapplied; complete census, native SVG coordinate/transform and C API
-qualification are open. These are native implementation gaps, with no
-JavaScript execution or script bindings.
+callback and teardown check passes; shared solid-border painting makes
+1,176 rendered states match Chromium exactly, while 744 still differ.
+The rebased [C/C++ consumers](../renderer/evidence/native-svg-decoration-v1/native-c-v293/)
+create the same viewport and change border, padding and box sizing from native
+callbacks. Their bounds, detach/reattach and teardown checks pass at five scales.
+The additive tag preserves the 110 exports and existing layouts. The constructor
+and shared renderer patches remain unapplied; complete rebased qualification
+and native SVG coordinate/transform APIs remain open. These are native
+implementation gaps, with no JavaScript execution or script bindings.
 
 The [native flow-root application](../../bindings/rust/openui/examples/native_flow_root_geometry.rs)
 constructs a document, queries owned fragments, finds a child under the pointer

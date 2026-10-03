@@ -50,38 +50,44 @@ jobs; skips remain open results. Every needed public native operation still
 requires implementation and consuming-application verification. Open UI
 executes no JavaScript, in any version.
 
-The [clean private SVG checkpoints](../renderer/generated/native-svg-viewport-v5.json)
-implement a public native Rust viewport constructor and replace the historical
-SVG decoration alpha with fixed viewport layout and shared border painting.
-Source `4daf1876` passes 480 owned-bounds, Rust callback and teardown checks,
-its native API unit test, and both complete 40-profile pixel suites. It makes
-the tiny SVG guard exact at all four required profiles. Later `169fc7fe`
-corrects curved double-border stripes on all four physical sides: the original
-native suite gains 112 exact images with no exact loss, and all 240 changed
-images improve. Fresh neighboring controls bring the measured native SVG
-surface to 940/1,920 exact rendered states and 1,920/1,920 exact owned bounds,
-with all native callback and teardown checks passing. The other 980 pixel
-results remain failures. Both later complete raster suites finish with exits
-0: 640/640 focused and 960/960 primitive exact, with all 1,600 comparison
-invariants unchanged. Both complete original reruns later stopped on disk
-exhaustion; their failures and partial outputs remain preserved. Expanded
-runs and complete candidate qualification remain pending. The patches stay unapplied, and the
-accepted full census remains 21,308/22,924 exact.
+The [clean private SVG evidence](../renderer/generated/native-svg-viewport-v6.json)
+records complete original runs at `4daf1876` and `169fc7fe`: each is
+21,325/22,924 exact, 1,599 different, zero errors, with terminal exit 1.
+Against the accepted renderer, 17 comparisons become exact and none lose
+exactness; 13 already failing comparisons worsen and remain open under paint
+ownership. Every Chromium image and oracle identity is unchanged. The later
+solid-border source `d94b55f8` passes 640/640 focused and 960/960 primitive
+comparisons, with all invariants unchanged from the double-border source.
+Its earlier 8,499-test workspace result remains attributed to that source.
 
-Clean `d94b55f8` extends the shared contour path to lone rounded solid borders.
-It gains another 236 exact native states, with all 368 changed images improved
-and no exact loss. Across all four sides, 1,176/1,920 rendered states and every
-owned bound match Chromium; all Rust callback and teardown checks pass. Its
-304 selected original comparisons retain every invariant. The remaining 744
-native pixel failures stay open. Its raster suites and first workspace build
-also stopped on disk exhaustion. All successful pins, reports and source commits
-are preserved; 15 unused executables have verified compressed copies, and
-12.9 GiB of reproducible workspace outputs were reclaimed. The smaller workspace
-retry passes 8,499 tests, zero failures and 13 ignored, on unchanged clean source.
-Replacement pixel runs are running separately from Cargo builds. The private
-source differs from the accepted 8,515-test native API source; these renderer
-fixes require rebase and independent qualification over the current public
-API/ABI before adoption. No complete census or release qualification is claimed.
+Clean `8d5a58a1` rebases the shared renderer over current native APIs and adds
+C viewport creation through the same Rust constructor. The new tag is appended
+after the previous 39 values; all 110 exports and existing layouts are unchanged.
+A C consumer exposed missing `box-sizing` conversion, now repaired in the shared
+Rust path. All nine headless C and four C++ consumers compile and run, including
+sizing mutations from native callbacks, owned bounds, detach/reattach and teardown.
+The Rust controls preserve all 1,920 SVG images and owned bounds, all 850 exact
+scrolling controls, and all 180 scroll-layer states. SVG pixels remain
+1,176/1,920 exact; scroll-layer pixels remain 95/180, with every scroll extent
+still wrong. These native implementation gaps remain open.
+
+The clean Linux-enabled workspace passes 8,516 tests, zero failures and
+13 ignored tests. The default workspace passes 8,505; the extra Linux tests
+are checked separately rather than assumed from the smaller run. Source and
+pinned binaries remain unchanged; test-produced diagnostic bytes are preserved
+before restoring the tracked PNG. Ten read-only checks pass: eight generators,
+archive integrity and repository accountability. Hosted umbrella `59c5a292`
+finishes six successful jobs and five skipped hardening jobs; skips stay open.
+Fresh rebased focused, primitive and original matrices are running; the expanded
+run is queued behind the original run.
+
+The [source patch and C/C++ consumer](../renderer/evidence/native-svg-decoration-v1/)
+remain unapplied. Complete rebased pixel qualification, SVG transforms, nested
+scroll ranges and the other renderer/release gates remain required. Earlier
+disk failures, partial outputs and exact source/binary identities are preserved;
+Cargo builds and pixel matrices run separately. No selected result is used to
+infer a complete census or release pass. The accepted original census remains
+21,308/22,924 exact.
 
 The [neutral PNG gamma correction](../renderer/generated/native-png-sampling-v4.json)
 is committed at `63aeb672`. Both complete clean matrices have observed exit 1

@@ -316,7 +316,24 @@ is 1,673/1,800 exact across 360 script-free native states and five scales,
 with all owned bounds exact. It remains unapplied and does not qualify the
 complete renderer or admit new release cases.
 
-The [native SVG viewport investigation](../renderer/native-svg-viewport.md)
+The [current clean SVG evidence](../renderer/generated/native-svg-viewport-v6.json)
+records two complete original censuses at 21,325/22,924 exact, zero errors,
+terminal exits 1. They gain 17 exact comparisons and lose none; 13 already
+failing comparisons worsen. The solid-border source passes both full
+40-profile raster suites. Clean `8d5a58a1` rebases those renderer changes over
+the current native API/ABI and adds C viewport creation through the shared
+Rust constructor. Nine headless C and four C++ consumers pass, including
+native sizing callbacks and teardown; existing exports and layouts remain
+unchanged. Its Linux-enabled workspace passes 8,516 tests, zero failures and
+13 ignored, on unchanged clean source. Its Rust controls preserve all
+1,920 SVG images and 850 existing
+scrolling images, while 744 SVG comparisons and all 180 scroll-layer extents
+still fail. Complete rebased pixel qualification, SVG transforms and nested
+scrolling remain open. The source patch stays unapplied and the accepted
+renderer totals in the release table are unchanged. Earlier disk failures
+and partial outputs remain preserved.
+
+The earlier [native SVG viewport investigation](../renderer/native-svg-viewport.md)
 uses a proposed public Rust element constructor, with 134/480 exact pixel
 comparisons and 480/480 exact owned bounds across 96 script-free controls.
 Its workspace passes 8,492 tests, but the patch remains unapplied: 346 native
