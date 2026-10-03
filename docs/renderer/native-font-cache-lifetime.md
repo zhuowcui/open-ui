@@ -1,7 +1,7 @@
 # Native font-cache lifetime
 
 Open UI executes no JavaScript. Applications use native Rust methods and
-callbacks. Chromium remains the pixel reference. This private lifecycle fix
+callbacks. Chromium remains the pixel reference. This lifecycle fix
 does not change the measured umbrella renderer result: 21,334/22,924 exact,
 1,590 different, zero render errors. The pixel gate still fails.
 
@@ -18,7 +18,7 @@ times that amount. Retiring Skia's font cache clears those reports. The
 [ownership review](generated/native-nested-scroll-v9.json) preserves the
 source, logs, failed setups and corrected fuzz-input interpretation.
 
-The private Rust candidate tracks font-cache ownership in font collections,
+The applied Rust implementation tracks font-cache ownership in font collections,
 resolved fonts, immutable paint recordings and independently cloned scrolling
 content layers. Each owner releases its Skia resources before releasing its
 cache-lifetime token. Only the last token retires the shared font cache.
@@ -80,12 +80,26 @@ native 0.2.0 versions and the existing Skia pin. It adds no dependency upgrade.
 CI now checks locked metadata before fuzzing and unchanged source after each
 target. A read-only helper path failure and its successful retry are retained.
 
-The font candidate remains unapplied to the umbrella PR. Its complete original
-and expanded pixel sweeps are running; incomplete results are not admitted as
-qualification. Application and own-source hosted hardening remain required.
-Earlier failed reports and references remain unchanged.
+The [next snapshot](generated/native-font-cache-lifetime-v4.json) records both
+complete private pixel sweeps at clean `ed52e817`: 21,334/22,924 original and
+22,137/23,728 expanded exact, zero errors, with actual exits 1. Every native and
+Chromium image hash, oracle identity, difference signature, status and pixel
+count agrees with `d174ea0b`. All 804 additions are unchanged; 200 of 201 cases
+are exact at every required profile. The full pixel gate still fails.
 
-All three hosted workflows at umbrella documentation checkpoint `067cc794`
-completed successfully, with six passing jobs and five skipped jobs. Those
-skips and the private local results do not close the failed manual sanitizer
-and fuzz gates. The full renderer, native API and release-lab gates remain open.
+The fix is applied and pushed in umbrella checkpoint `a41fdeb9`. Native source,
+tools, headers and examples are identical to the tested private candidate.
+Its own Linux-enabled workspace passes 8,526 tests, zero failures and 13
+ignored, with clean source unchanged. All ten read-only checks pass. The first
+workspace wrapper mishandled the tracked diagnostic PNG; its actual test exit
+0 and wrapper exit 1 are preserved. The diagnostic was saved and restored,
+and the corrected run passes with matching source identities.
+
+All three pull-request workflows at `a41fdeb9` pass, with six successful jobs
+and five skipped jobs. The separate seven-job
+[manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/37149510887)
+passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux conformance
+and windows, MSRV and all five fuzz targets. Each sanitizer passes 29 FFI
+assertions with no report; all seven complete logs are preserved. Pull-request
+skips remain open results. The original renderer failures, complete needed
+native API coverage and release-lab gates remain open.

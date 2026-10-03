@@ -56,13 +56,6 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   operations, but scroll-margin/padding support, full option coverage and four
   reduced endpoint pixel differences remain open; own umbrella geometry is
   30/30 exact, while endpoint images remain 16/20 exact;
-- own-source address/leak sanitizer and fuzz gates fail; the measured font-cache
-  retention has a private retirement candidate whose saved-scene, content-layer,
-  concurrent teardown and unchanged-frame tests pass. Its local address/leak
-  sanitizers, recovered fuzz input, all five fuzz targets, Linux workspace,
-  C/C++ consumers and focused/primitive raster gates now pass. The candidate
-  is unapplied; complete original/expanded pixels and own-source hosted
-  hardening remain open;
 - two live legacy contour calibration paths must be replaced by general
   raster behavior and checked against Chromium without sample corrections;
 - retained per-node compositor layers and compositor-owned immutable animation
@@ -78,3 +71,9 @@ These are implementation gaps, not accepted final-v0.2 omissions:
 
 The release cannot be marked final until the release-candidate gaps are closed
 or the product contract is explicitly revised and independently reviewed.
+
+The native font-cache leak is repaired in `a41fdeb9`. Its own workspace and
+ten read-only checks pass, and all seven hosted hardening jobs pass, including
+both sanitizers and all five fuzz targets. Complete private original/expanded
+sweeps change no pixel result. The [recorded evidence](../renderer/generated/native-font-cache-lifetime-v4.json)
+preserves the prior failures and each successful job.

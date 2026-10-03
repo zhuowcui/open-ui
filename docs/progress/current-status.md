@@ -20,28 +20,27 @@ Python tests, ten C/four C++ headless consumers and both 40-profile raster
 gates pass. Chromium remains the sole pixel target; Open UI executes no
 JavaScript in any version, and applications call public native Rust APIs.
 
-Manual hardening at this source finishes four jobs successfully and fails
-address/leak sanitizer and fuzz. The pinned-Skia C++ metrics reproducer leaks
-2,597 bytes in 59 allocations per manager; font-cache retirement clears the
-measured leak. The [private Rust lifetime candidate](../renderer/native-font-cache-lifetime.md)
-at clean `09fbc363` extends cache ownership through immutable recordings and
-independently cloned scrolling layers. It passes 551 tests: three isolated
-lifetime tests plus 548 text/paint/engine/compositor library tests. Cross-thread
-replay after document destruction, concurrent font teardown and unchanged-frame
-reuse pass. The [next evidence snapshot](../renderer/generated/native-font-cache-lifetime-v2.json)
-records the same native code passing 8,526 Linux-enabled workspace tests, zero
-failures and 13 ignored, and 32 tests under each local address/leak sanitizer.
-Clean `ed52e817` synchronizes only the standalone fuzz lock over that candidate;
-it passes the recovered input, all five 30-second fuzz targets, ten C/four C++
-headless consumers, 112 exports and ten read-only checks. Its focused/primitive
-matrices are 640/640 and 960/960 exact, with all eight comparison invariants
-unchanged from `d174ea0b`. Failed setups and the first dirty fuzz-lock attempt
-are retained. Umbrella `79ad3af8` applies the lock correction and strengthens CI
-source checks, with native renderer/API bytes unchanged. The font candidate
-remains unapplied; complete original/expanded pixel sweeps and own-source
-hosted hardening remain open. All three hosted workflows at documentation
-checkpoint `067cc794` complete successfully: six jobs pass, five are skipped.
-Skips and local results do not close the failed manual hardening gates.
+The font-cache lifetime fix is now applied and pushed in `a41fdeb9`. The
+[new evidence snapshot](../renderer/generated/native-font-cache-lifetime-v4.json)
+preserves complete clean private original and expanded sweeps: every comparison
+invariant agrees with `d174ea0b`, including all 804 additions. The full pixel
+gates still fail at 21,334/22,924 and 22,137/23,728 exact, zero errors.
+Native source, tools, headers and examples are identical to that tested candidate.
+The applied checkpoint passes 8,526 Linux-enabled workspace tests, zero
+failures and 13 ignored, and all ten read-only checks, with source unchanged.
+The earlier local sanitizer/fuzz/ABI checks remain attributed to their named
+sources. Failed attempts, the tracked-diagnostic recovery and corrected run
+are preserved.
+
+All three pull-request workflows at `a41fdeb9` pass: six jobs succeed and five
+are skipped. Its separate seven-job
+[manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/37149510887)
+passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux window
+tests, MSRV and all five fuzz targets. Complete logs and individual conclusions
+are retained. The earlier failed `d174ea0b` jobs remain historical evidence.
+Native scroll margins and padding have a private Rust/C candidate with 18
+public setters; compilation and complete qualification are in progress.
+Missing needed native operations remain unfinished API work.
 
 ## Verified repository state
 
@@ -61,7 +60,7 @@ Skips and local results do not close the failed manual hardening gates.
 | Application conformance scenarios | 58 across 10 domains |
 | Frozen / current C exports | 84 / 112; own-source ABI and runtime consumers pass; existing symbols/layouts preserved |
 | C examples / C++ consumers | 11 / 5 sources, including native windows; ten C and four C++ headless consumers run on own source; hosted native windows pass, release lab open |
-| Workspace tests | 8,523 pass; 0 failed; 13 ignored on clean umbrella source `d174ea0b`, with the Linux C feature enabled |
+| Workspace tests | 8,526 pass; 0 failed; 13 ignored on clean font-lifetime checkpoint `a41fdeb9`, with the Linux C feature enabled |
 | Python closure, qualification, accountability and packaging tests | 249 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |

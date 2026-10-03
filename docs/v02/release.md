@@ -14,7 +14,7 @@ claimed by source code alone.
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
 | Expanded native final-state fixtures | [Complete clean umbrella run](../renderer/generated/native-nested-scroll-v9.json) at `d174ea0b` is 22,137/23,728 exact, 1,591 different, zero errors; actual exit 1. Original rows agree with the separate census; all 804 additions stay unchanged, with 200/201 exact at all four profiles. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
-| Rust workspace and docs | clean `d174ea0b`, Linux C feature enabled: 8,523 passed, zero failed, 13 ignored | pass |
+| Rust workspace and docs | clean font-lifetime checkpoint `a41fdeb9`, Linux C feature enabled: 8,526 passed, zero failed, 13 ignored; source unchanged | pass |
 | Rust 1.85 MSRV | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576): locked headless and Linux checks passed at `d174ea0b` | pass |
 | Rust/C application contract | 58 scenarios, 112 current exports, ten C and four C++ headless consumers pass on own source; existing symbols and layouts preserved | remaining API review and lab qualification open |
 | Native element interaction | Public Rust `Document`, `Element`, and `TextNode` APIs cover ID/class/native-kind lookup, class-token updates, retained detach/reattach, mutation, callbacks, activation, focus, scrolling, and controls; browser-style operations needed by applications must be exposed through native APIs | core implemented; remaining API coverage review open |
@@ -26,7 +26,7 @@ claimed by source code alone.
 | Local performance smoke | 0.108 ms p95, 308 UI-thread animation fps, 1.389% RSS growth | non-qualifying pass |
 | X11/Wayland software and Mesa GL | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576) passed native C/C++ windows and Rust smoke paths at `d174ea0b`; physical release-lab tests remain open | provisional pass |
 | Miri C handle ownership | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576): opaque-handle ownership test passed under pinned Miri at `d174ea0b` | pass |
-| ASan/LSan/fuzz | Hosted `d174ea0b` fails address/leak and tree-mutation fuzz. The [private font-cache candidate](../renderer/generated/native-font-cache-lifetime-v2.json) passes 32 tests under each local sanitizer, the recovered input and all five 30-second fuzz targets; clean baselines reproduce the measured leaks. Its 8,526 workspace tests, 112 exports, ten C/four C++ consumers and exact 1,600 raster comparisons also pass. The candidate remains unapplied; complete pixel sweeps and own-source hosted hardening remain open | umbrella fail; local candidate passes scoped checks |
+| ASan/LSan/fuzz | Font-cache fix applied at `a41fdeb9`; [new snapshot](../renderer/generated/native-font-cache-lifetime-v4.json) preserves all previous local checks and complete original/expanded pixel invariants. Own workspace: 8,526 passed, zero failed, 13 ignored; ten read-only checks pass. All seven hosted manual hardening jobs pass, including both sanitizers, Miri, C UBSan, MSRV, Linux windows and all five fuzz targets | pass for this checkpoint |
 | Native C UBSan | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576): ABI consumers passed at `d174ea0b` | pass |
 | x86-64/AArch64 SDK, deb, rpm | deterministic source pipeline and tag matrix | pending tag build |
 | Clean Ubuntu/Fedora install | release workflow consumer jobs | pending tag build |
@@ -45,6 +45,15 @@ Against SVG, nine comparisons become exact and none lose exactness; four
 already failing comparisons worsen. All seven manual hardening jobs complete:
 four pass and three fail. See the
 [versioned implementation evidence](../renderer/generated/native-nested-scroll-v9.json).
+
+The font-cache fix is applied in `a41fdeb9`; its native source, tools, headers
+and examples match the completely measured private candidate. All pixel
+comparison invariants stay unchanged, and its own workspace and ten read-only
+checks pass. The earlier failed hardening run above remains historical.
+The new [manual run](https://github.com/zhuowcui/open-ui/actions/runs/37149510887)
+passes all seven jobs: both sanitizers, Miri, C UBSan, MSRV, Linux windows and
+all five fuzz targets. The full renderer, needed native API, hardware and
+publication gates remain open.
 
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.

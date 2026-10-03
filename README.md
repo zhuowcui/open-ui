@@ -53,7 +53,8 @@ The current v0.2 release candidate has:
   checked layouts and an ABI checksum; the [native scroll and inset consumers](docs/v02/native-scroll-metrics.md)
   and [native style consumers](bindings/rust/openui-ffi/README.md#native-style-operations)
   pass through public Rust, C and C++ APIs; the clean umbrella checkpoint
-  passes 8,523 workspace tests with 13 ignored and preserves the exact
+  passes 8,526 workspace tests with 13 ignored; the tested font-lifetime code
+  preserves the exact
   640/640 focused and 960/960 primitive pixel suites;
 - sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates defined
   in CI; several remain open or failing.
@@ -153,23 +154,21 @@ observed exits 1. All original rows agree, all 804 additions stay unchanged,
 and 200/201 additions meet all four profiles. The workspace, ten C/four C++
 headless consumers, 249 Python tests and ten read-only checks pass.
 
-The manual hardening run passes MSRV, Miri, C UBSan and hosted Linux
-conformance. Address/leak sanitizer and fuzz fail on font allocation reports.
-A standalone pinned-Skia C++ case reproduces the metrics cache retention;
-retiring that font cache clears the measured leak. The native Rust lifetime
-candidate now retains the cache lifetime through saved scenes and independently
-cloned content layers. Its clean private source passes 551 tests, including
-cross-thread replay after document destruction, concurrent font teardown, and
-unchanged-frame reuse. The [updated lifetime evidence](docs/renderer/generated/native-font-cache-lifetime-v2.json)
-records 8,526 Linux-enabled workspace tests passing, 13 ignored; 32 tests under
-each local address/leak sanitizer; the recovered fuzz input and all five
-30-second fuzz targets; and ten C/four C++ headless consumers with 112 exports.
-Its fresh focused and primitive suites preserve all 1,600 comparison invariants
-against the umbrella renderer. The first failed setups and stale fuzz-lock
-attempt remain recorded. The lock now matches the already-declared packages
-and Skia pin, and CI requires unchanged source after every fuzz target.
-The candidate remains unapplied; complete original/expanded pixel sweeps and
-its own hosted hardening remain open. These results do not qualify the release.
+The font-cache lifetime fix is applied and pushed at `a41fdeb9`. Its own
+Linux-enabled workspace passes 8,526 tests, zero failures and 13 ignored;
+all ten read-only checks pass, with source unchanged. The
+[latest lifetime evidence](docs/renderer/generated/native-font-cache-lifetime-v4.json)
+records complete clean private original and expanded pixel sweeps. Every
+comparison invariant agrees with `d174ea0b`: the fix changes no rendered
+pixels and leaves the full pixel failures open. Its earlier local sanitizer,
+fuzz and ABI checks and failed attempts remain preserved.
+
+All three pull-request workflows at this checkpoint pass. The separate
+[manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/37149510887)
+passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux windows,
+MSRV and all five fuzz targets. Skipped pull-request jobs remain open results.
+Native scroll margins and padding are being implemented through 18 public
+Rust/C setters; that private candidate is not yet qualified or applied.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
