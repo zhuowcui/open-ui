@@ -62,7 +62,7 @@ and expanded censuses now reproduce every accepted comparison invariant, with
 21,308/22,924 and 22,111/23,728 exact and zero errors. These full pixel failures,
 complete needed native API coverage, and release-lab gates remain open.
 
-The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v6.json)
+The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v7.json)
 records complete `6e255ca3` results: 21,321/22,924 original exact and
 22,124/23,728 expanded exact, zero errors, observed exits 1. Eight comparisons
 worsen, four losing exactness, because anonymous line fragments omit child
@@ -97,6 +97,17 @@ open. No complete original or expanded result is inferred for this source.
 These checks add no release qualification.
 Native interaction uses Rust APIs and callbacks; no JavaScript runtime or
 glue is part of the work.
+
+Clean `3f95e617` repairs shared scroll-transform ownership. Its partial
+152-comparison gate restores both flex exact losses and three earlier
+fragmentation images: 142 exact, ten different, zero errors, actual exit 1.
+The Linux workspace, ten read-only checks, clean builds, C/C++ consumers and
+both complete 40-profile raster matrices pass. Native geometry is
+2,560/2,560 exact and pixels remain 1,775/2,560; 267 already-failing images
+change, with no exact gain or loss. Complete original and expanded censuses
+are running, so no full no-regression or release claim is inferred. All
+source patches remain unapplied. Public native scroll-into-view and replacing
+the two live legacy contour calibration functions remain required work.
 
 The [scroll coverage trial](../renderer/generated/native-viewport-full-v17.json)
 preserves all four scrolling repairs, all 850 existing native controls and

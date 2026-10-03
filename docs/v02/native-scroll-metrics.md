@@ -166,7 +166,7 @@ Clean `02c0296e` passes 8,516 Linux-enabled workspace tests, zero failures,
 invariants are unchanged. All 850 root controls remain exact. All 180 layer
 dimensions agree; layer pixels remain 95/180, with no exact image lost.
 
-The [current evidence](../renderer/generated/native-nested-scroll-v6.json)
+The [current evidence](../renderer/generated/native-nested-scroll-v7.json)
 records 1,775/2,560 native scroll images and 2,320/2,560 geometry states exact.
 The 240 missing scrollbar-layout states and 545 additional paint failures
 remain owned work. The complete original run finishes at 21,332/22,924 exact
@@ -200,3 +200,25 @@ fails. No complete original or expanded census is inferred for this source.
 Flex, grid, table and replaced sizing, native scrollbar pointer/keyboard and
 accessibility operation, and the earlier six complete-census paint reviews
 remain open. All patches remain unapplied; no release qualification is added.
+
+The later [shared scroll-recording repair](../renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v12.patch)
+at clean `3f95e617` makes synthetic fragmentation clips retain their own
+coordinates and keeps physical scroll snapping outside independently
+rasterized backing content. The selected 152 original comparisons restore
+both flex-overflow exact matches and three earlier fragmentation images.
+The selection finishes 142 exact, ten different and zero errors, actual exit
+1. Full original and expanded censuses are running; no complete result or
+full no-regression claim is inferred.
+
+This source passes the Linux workspace, all native consumer guards, and both
+complete 40-profile raster matrices. Native dimensions remain 2,560/2,560
+exact and pixels remain 1,775/2,560, with no exact gain or loss; 267
+already-failing images change. All previous reference bytes remain fixed.
+The [reversed native Rust app](../renderer/evidence/native-nested-scroll-v1/native-reversed-scroll-v1.json)
+adds fractional relative requests and weak native callbacks to a compact
+reproducer; its source is prepared but has not been compiled or run.
+
+Applications still need a public Rust scroll-into-view operation. The existing
+private accessibility method is not that public API and needs a shared
+coordinate repair and independent native-app verification. This remains
+framework work; it does not require JavaScript.

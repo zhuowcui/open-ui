@@ -125,9 +125,17 @@ scrollbar candidate at `b5a2044f` repairs all 240 missing geometry states:
 image lost. Its workspace, C/C++ consumers, 50 reduced Rust states and both
 40-profile raster matrices pass. Its partial sticky gate still fails in four
 states, and no complete census is inferred for that source.
-[Versioned evidence](docs/renderer/generated/native-nested-scroll-v6.json)
+[Versioned evidence](docs/renderer/generated/native-nested-scroll-v7.json)
 and unapplied patches preserve earlier failures. These private results do not
 replace the accepted renderer's census.
+
+The later clean `3f95e617` source corrects shared scroll-transform ownership.
+Its 152-comparison selection restores both flex-overflow exact matches and
+three earlier fragmentation images, with 142 exact and ten prior differences.
+The workspace, native consumer guards and both 40-profile raster matrices
+pass. Complete original and expanded censuses are running; no full result or
+qualification is inferred. Public native scroll-into-view and two legacy
+contour calibration paths also remain unfinished work.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU

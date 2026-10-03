@@ -97,7 +97,7 @@ Cargo builds and pixel matrices run separately. No selected result is used to
 infer a complete census or release pass. The accepted original census remains
 21,308/22,924 exact.
 
-The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v6.json)
+The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v7.json)
 preserves complete `6e255ca3` results: 21,321/22,924 original exact and
 22,124/23,728 expanded exact, zero errors, observed exits 1. All Chromium
 bytes and identities remain unchanged. Eight comparisons worsen, including
@@ -150,6 +150,32 @@ this unapplied source.
 
 Open UI runs no JavaScript. Needed interaction remains shared native Engine
 work exposed through public Rust methods and callbacks.
+
+Clean `3f95e617` limits scroll-origin snapping to real scroll containers and
+keeps independently rasterized scroll backings in their logical recording
+coordinates. The 152-comparison selection restores both flex-overflow exact
+matches and three earlier fragmentation images: 142 exact, ten different,
+zero errors, actual exit 1. The remaining differences stay failures.
+Its Linux workspace passes 8,516 tests with zero failed and 13 ignored; ten
+read-only checks, all clean builds and nine C/four C++ consumers pass. Native
+geometry remains 2,560/2,560 exact, pixels 1,775/2,560 with no exact gain or
+loss; 267 already-failing images change. All 850 root and 50 reduced Rust
+states remain exact; layer and SVG guards are preserved. Complete focused and
+primitive matrices pass with all 1,600 comparison invariants unchanged.
+Complete original and expanded censuses are running, with no completed total
+or full no-regression claim inferred. The first workspace attempt stopped at
+the disk-space guard before running tests; its failure is preserved. A
+byte-verified copy of 6,398 Cargo output files to available storage allowed
+the unchanged test command to complete.
+
+The native API audit finds no public Rust scroll-into-view method. The private
+accessibility operation uses viewport bounds as ancestor offsets and stops at
+the first non-visible overflow. Its shared native repair and consuming-app
+verification remain required. Two live legacy contour calibration functions
+also need a general raster implementation. A
+[new public Rust reproducer](../renderer/evidence/native-nested-scroll-v1/native-reversed-scroll-v1.json)
+is prepared for reversed scrolling and fractional callbacks but has not been
+compiled or run; it adds no application or pixel pass.
 
 The [neutral PNG gamma correction](../renderer/generated/native-png-sampling-v4.json)
 is committed at `63aeb672`. Both complete clean matrices have observed exit 1

@@ -83,6 +83,13 @@ five scales. Nested scrolling ranges, native scrollbar input/accessibility,
 remaining C property conversion, complete native API coverage, and complete
 pixel qualification still require work. Those are native implementation gaps.
 
+Scrolling an element into view is another native API gap: there is no public
+Rust method for it. The private accessibility operation currently uses
+viewport bounds as ancestor offsets and stops after its first overflow
+ancestor. It needs a shared Engine correction, a public Rust method, and
+independent consuming-app verification for nested scrolling and alignment.
+Its private presence does not complete the application API.
+
 The [scroll-layer Rust consumer](../renderer/evidence/native-viewport-scroll-v1/native_scroll_layer_opacity.rs)
 changes background clipping, opacity, filters and scroll offsets from a Rust
 click callback. Its [private renderer evidence](../renderer/generated/native-viewport-full-v17.json)

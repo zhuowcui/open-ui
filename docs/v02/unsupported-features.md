@@ -52,6 +52,10 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   focused and primitive 40-profile CPU matrices are exact;
 - complete coverage of needed element operations through public native Rust
   APIs still requires review and verification from consuming applications;
+- a public native scroll-into-view operation and the shared accessibility
+  coordinate behavior remain incomplete;
+- two live legacy contour calibration paths must be replaced by general
+  raster behavior and checked against Chromium without sample corrections;
 - retained per-node compositor layers and compositor-owned immutable animation
   curves are incomplete;
 - the strict 100 promoted animations while the UI thread is blocked gate has
