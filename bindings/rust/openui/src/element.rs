@@ -49,14 +49,29 @@ impl WeakElement {
 }
 
 impl Element {
+    /// Create a native retained element. `foreignObject` creates an SVG
+    /// viewport for native UI children; like `div`, it has container kind
+    /// [`ElementTag::Div`]. No document scripts execute.
     pub fn create(document: &Document, tag: &str) -> Result<Self, Error> {
+        if tag.eq_ignore_ascii_case("foreignobject") {
+            return Self::create_svg_foreign_object(document);
+        }
         let (tag_kind, display) = tag_definition(tag)?;
-        let handle = document.with_engine_mut(|engine| engine.create_element(tag_kind))?;
+        let handle = document.with_engine_mut(|engine| engine.create_native_element(tag_kind))?;
         if let Some(display) = display {
             document.with_engine_mut(|engine| {
                 engine.set_property(handle, StyleProperty::Display, display.into())
             })?;
         }
+        Ok(Self::from_handle(document.clone(), handle))
+    }
+
+    /// Create an SVG viewport containing native retained UI elements.
+    /// Width and height specify the viewport bounds, including decoration.
+    /// Child mutation, events and ownership use the ordinary native API.
+    /// The container's native kind is [`ElementTag::Div`].
+    pub fn create_svg_foreign_object(document: &Document) -> Result<Self, Error> {
+        let handle = document.with_engine_mut(|engine| engine.create_svg_foreign_object())?;
         Ok(Self::from_handle(document.clone(), handle))
     }
 
@@ -583,6 +598,26 @@ impl Element {
             .with_engine_mut(|engine| engine.scroll_by(self.handle, dx, dy))
     }
 
+    /// Reveal this element through enclosing scrollports and the native viewport.
+    /// Logical alignment follows this element's writing mode and direction.
+    pub fn scroll_into_view(&self, options: crate::ScrollIntoViewOptions) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.scroll_into_view(self.handle, options))
+    }
+
+    /// Reveal using the retained animation clock and CSS ease curve. Zero
+    /// duration and reduced motion settle immediately. No app callback runs
+    /// while the engine is borrowed.
+    pub fn smooth_scroll_into_view(
+        &self,
+        options: crate::ScrollIntoViewOptions,
+        duration_ms: f64,
+    ) -> Result<Vec<crate::ScrollAnimationId>, Error> {
+        self.document.with_engine_mut(|engine| {
+            engine.smooth_scroll_into_view(self.handle, options, duration_ms)
+        })
+    }
+
     pub fn control_value(&self) -> Result<Option<String>, Error> {
         self.document
             .with_engine(|engine| {
@@ -793,46 +828,44 @@ fn tag_definition(tag: &str) -> Result<(ElementTag, Option<Display>), Error> {
     let normalized = tag.to_ascii_lowercase();
     let definition = match normalized.as_str() {
         "div" | "main" | "nav" | "header" | "footer" | "section" | "article" | "aside" | "p"
-        | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "ul" | "ol" | "hr" => {
-            (T::Div, Some(Display::Block))
-        }
+        | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "ul" | "ol" | "hr" => (T::Div, None),
         "li" => (T::Div, Some(Display::ListItem)),
-        "span" | "a" | "label" | "strong" | "em" | "small" => (T::Span, Some(Display::Inline)),
+        "span" | "a" | "label" | "strong" | "em" | "small" => (T::Span, None),
         "br" => (T::Break, None),
         "wbr" => (T::WordBreak, None),
-        "ruby" => (T::Ruby, Some(Display::Inline)),
-        "rt" => (T::RubyText, Some(Display::Inline)),
-        "table" => (T::Table, Some(Display::Table)),
-        "caption" => (T::TableCaption, Some(Display::TableCaption)),
-        "colgroup" => (T::TableColumnGroup, Some(Display::TableColumnGroup)),
-        "col" => (T::TableColumn, Some(Display::TableColumn)),
-        "thead" => (T::TableHead, Some(Display::TableHeaderGroup)),
-        "tbody" => (T::TableBody, Some(Display::TableRowGroup)),
-        "tfoot" => (T::TableFoot, Some(Display::TableFooterGroup)),
-        "tr" => (T::TableRow, Some(Display::TableRow)),
-        "td" => (T::TableCell, Some(Display::TableCell)),
-        "th" => (T::TableHeaderCell, Some(Display::TableCell)),
-        "img" => (T::Image, Some(Display::InlineBlock)),
-        "canvas" => (T::Canvas, Some(Display::InlineBlock)),
-        "svg" => (T::Svg, Some(Display::InlineBlock)),
-        "iframe" => (T::IFrame, Some(Display::InlineBlock)),
-        "object" => (T::Object, Some(Display::InlineBlock)),
-        "audio" => (T::Audio, Some(Display::InlineBlock)),
-        "video" => (T::Video, Some(Display::InlineBlock)),
-        "input" => (T::Input, Some(Display::InlineBlock)),
-        "button" => (T::Button, Some(Display::InlineBlock)),
-        "meter" => (T::Meter, Some(Display::InlineBlock)),
-        "progress" => (T::Progress, Some(Display::InlineBlock)),
-        "fieldset" => (T::Fieldset, Some(Display::Block)),
-        "legend" => (T::Legend, Some(Display::Block)),
-        "details" => (T::Details, Some(Display::Block)),
-        "summary" => (T::Summary, Some(Display::Block)),
-        "textarea" => (T::TextArea, Some(Display::InlineBlock)),
-        "select" => (T::Select, Some(Display::InlineBlock)),
-        "option" => (T::Option, Some(Display::Block)),
-        "optgroup" => (T::OptGroup, Some(Display::Block)),
-        "form" => (T::Form, Some(Display::Block)),
-        "embed" => (T::Embed, Some(Display::InlineBlock)),
+        "ruby" => (T::Ruby, None),
+        "rt" => (T::RubyText, None),
+        "table" => (T::Table, None),
+        "caption" => (T::TableCaption, None),
+        "colgroup" => (T::TableColumnGroup, None),
+        "col" => (T::TableColumn, None),
+        "thead" => (T::TableHead, None),
+        "tbody" => (T::TableBody, None),
+        "tfoot" => (T::TableFoot, None),
+        "tr" => (T::TableRow, None),
+        "td" => (T::TableCell, None),
+        "th" => (T::TableHeaderCell, None),
+        "img" => (T::Image, None),
+        "canvas" => (T::Canvas, None),
+        "svg" => (T::Svg, None),
+        "iframe" => (T::IFrame, None),
+        "object" => (T::Object, None),
+        "audio" => (T::Audio, None),
+        "video" => (T::Video, None),
+        "input" => (T::Input, None),
+        "button" => (T::Button, None),
+        "meter" => (T::Meter, None),
+        "progress" => (T::Progress, None),
+        "fieldset" => (T::Fieldset, None),
+        "legend" => (T::Legend, None),
+        "details" => (T::Details, None),
+        "summary" => (T::Summary, None),
+        "textarea" => (T::TextArea, None),
+        "select" => (T::Select, None),
+        "option" => (T::Option, None),
+        "optgroup" => (T::OptGroup, None),
+        "form" => (T::Form, None),
+        "embed" => (T::Embed, None),
         _ => return Err(Error::UnknownTag(tag.to_owned())),
     };
     Ok(definition)
@@ -882,6 +915,49 @@ mod tests {
                 .overflow_x,
             Overflow::Visible
         );
+    }
+
+    #[test]
+    fn native_svg_viewport_bounds_survive_decoration_mutation_and_cloning() {
+        let document = Document::new(100, 100).unwrap();
+        let svg = Element::create(&document, "svg").unwrap();
+        svg.set_width(crate::typed_style::LengthValue::px(80.0))
+            .unwrap();
+        svg.set_height(crate::typed_style::LengthValue::px(60.0))
+            .unwrap();
+        document.body().append_child(&svg).unwrap();
+        let foreign = Element::create(&document, "foreignObject").unwrap();
+        foreign
+            .set_width(crate::typed_style::LengthValue::px(1.0))
+            .unwrap();
+        foreign
+            .set_height(crate::typed_style::LengthValue::px(1.0))
+            .unwrap();
+        svg.append_child(&foreign).unwrap();
+        let bounds = foreign.bounding_rect().unwrap().unwrap();
+        foreign.set_border_left_width(3).unwrap();
+        foreign
+            .set_border_left_style(openui_style::BorderStyle::Double)
+            .unwrap();
+        foreign
+            .set_padding(crate::typed_style::Edges::all(
+                crate::typed_style::LengthValue::px(2.0),
+            ))
+            .unwrap();
+        assert_eq!(foreign.bounding_rect().unwrap().unwrap(), bounds);
+        foreign
+            .set_box_sizing(openui_style::BoxSizing::BorderBox)
+            .unwrap();
+        assert_eq!(foreign.bounding_rect().unwrap().unwrap(), bounds);
+        let clone = foreign.clone_subtree().unwrap();
+        foreign.detach().unwrap();
+        svg.append_child(&clone).unwrap();
+        assert_eq!(clone.bounding_rect().unwrap().unwrap(), bounds);
+        clone
+            .set_width(crate::typed_style::LengthValue::px(8.0))
+            .unwrap();
+        let changed = clone.bounding_rect().unwrap().unwrap();
+        assert_eq!((changed.width, changed.height), (8.0, 1.0));
     }
 
     #[test]

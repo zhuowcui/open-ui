@@ -179,6 +179,9 @@ impl LineClampContext {
 /// Source: `constraint_space.h` (1,652 lines in Blink).
 #[derive(Debug, Clone)]
 pub struct ConstraintSpace {
+    /// Scrollbar geometry for this principal box. The owner prevents cloned
+    /// child constraint spaces from inheriting an ancestor's gutters.
+    pub element_scrollbars: Option<(openui_dom::NodeId, crate::ElementScrollbars)>,
     // ── Coordinate system ───────────────────────────────────────────
     /// Writing direction that defines the inline/block axes of every logical
     /// size and offset stored in this space.
@@ -289,6 +292,7 @@ impl ConstraintSpace {
         };
         Self {
             writing_direction,
+            element_scrollbars: None,
             available_inline_size: inline_size,
             available_block_size: block_size,
             percentage_resolution_inline_size: inline_size,
@@ -343,6 +347,7 @@ impl ConstraintSpace {
     ) -> Self {
         Self {
             writing_direction,
+            element_scrollbars: None,
             available_inline_size,
             available_block_size,
             percentage_resolution_inline_size: percentage_inline,
@@ -434,6 +439,7 @@ impl ConstraintSpace {
     ) -> Self {
         Self {
             writing_direction,
+            element_scrollbars: None,
             available_inline_size,
             available_block_size,
             percentage_resolution_inline_size: percentage_inline,

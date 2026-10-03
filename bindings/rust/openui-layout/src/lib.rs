@@ -24,6 +24,8 @@ pub mod new_formatting_context;
 pub mod out_of_flow;
 pub mod relative;
 pub mod ruby;
+mod scroll_area;
+mod scrollbars;
 pub mod size_constraints;
 pub mod sticky;
 pub mod table;
@@ -65,6 +67,8 @@ pub use new_formatting_context::{creates_new_formatting_context, layout_new_form
 pub use out_of_flow::{layout_out_of_flow_children, OutOfFlowCandidate, StaticPositionEdge};
 pub use relative::apply_relative_offset;
 pub use ruby::{clamp_overhang, compute_ruby_layout, max_ruby_overhang, RubyInfo, RubyLayout};
+pub use scroll_area::ScrollArea;
+pub use scrollbars::ElementScrollbars;
 pub use size_constraints::{
     apply_box_sizing_adjustment, constrain_block_size, constrain_inline_size, resolve_block_size,
     resolve_inline_size, resolve_size_constraints, SizeConstraint,

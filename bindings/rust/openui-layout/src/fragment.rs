@@ -289,6 +289,13 @@ pub struct Fragment {
     /// separate from authored borders and padding.
     pub viewport_scrollport: Option<ViewportScrollport>,
 
+    /// Classic element scrollbar gutters, independent of CSS box edges.
+    pub element_scrollbars: Option<crate::ElementScrollbars>,
+
+    /// Layout-owned client, reachable content and scroll directions for the
+    /// principal box. Native queries and input consume this same snapshot.
+    pub scroll_area: Option<crate::ScrollArea>,
+
     /// Whether this fragment clips overflowing content.
     ///
     /// Set to `true` when the element's `overflow-x` or `overflow-y` is not
@@ -524,6 +531,8 @@ impl Fragment {
             text_combine: None,
             overflow_rect: None,
             viewport_scrollport: None,
+            element_scrollbars: None,
+            scroll_area: None,
             has_overflow_clip: false,
             block_axis_clip_only: false,
             inline_axis_clip_only: false,
@@ -591,6 +600,8 @@ impl Fragment {
             text_combine: None,
             overflow_rect: None,
             viewport_scrollport: None,
+            element_scrollbars: None,
+            scroll_area: None,
             has_overflow_clip: false,
             block_axis_clip_only: false,
             inline_axis_clip_only: false,

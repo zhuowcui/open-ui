@@ -44,6 +44,19 @@ typedef enum OuiBackendPreference {
   OUI_BACKEND_SOFTWARE = 2
 } OuiBackendPreference;
 
+/* Logical axes follow the target element's writing mode and direction. */
+typedef enum OuiScrollAlignment {
+  OUI_SCROLL_START = 0,
+  OUI_SCROLL_CENTER = 1,
+  OUI_SCROLL_END = 2,
+  OUI_SCROLL_NEAREST = 3
+} OuiScrollAlignment;
+
+typedef enum OuiScrollIntoViewContainer {
+  OUI_SCROLL_CONTAINERS_ALL = 0,
+  OUI_SCROLL_CONTAINER_NEAREST = 1
+} OuiScrollIntoViewContainer;
+
 typedef enum OuiElementTag {
   OUI_ELEMENT_DIV = 0,
   OUI_ELEMENT_SPAN = 1,
@@ -83,7 +96,11 @@ typedef enum OuiElementTag {
   OUI_ELEMENT_FORM = 35,
   OUI_ELEMENT_EMBED = 36,
   OUI_ELEMENT_HTML = 37,
-  OUI_ELEMENT_BODY = 38
+  OUI_ELEMENT_BODY = 38,
+  /* Native SVG viewport for retained UI children. Width/height include border
+   * and padding. Uses the shared Rust foreignObject constructor and ordinary
+   * element handles, styles, events, and document ownership. */
+  OUI_ELEMENT_SVG_FOREIGN_OBJECT = 39
 } OuiElementTag;
 
 typedef enum OuiLengthUnit {
@@ -921,6 +938,14 @@ OuiStatus oui_element_get_client_rects_v1(OuiElement* element, OuiRect* rects, s
  * and document destruction. Must be called on the document's owning thread. */
 OuiStatus oui_element_get_scroll_metrics_v1(OuiElement* element, OuiScrollMetricsV1* out_metrics, uint8_t* out_has_metrics);
 OuiStatus oui_element_scroll_to(OuiElement* element, double x, double y);
+/* Reveal through the same retained Engine operation used by Rust and
+ * accessibility. Detached/unboxed elements are no-ops. Values must be the
+ * constants above; stale/foreign handles and invalid values are errors. */
+OuiStatus oui_element_scroll_into_view_v1(OuiElement* element, uint32_t block_alignment, uint32_t inline_alignment, uint32_t container);
+/* CSS ease curve on the native document clock. Duration must be finite and
+ * non-negative. Zero duration and reduced motion settle immediately. Calling
+ * scroll_to on a participating container cancels its pending animation. */
+OuiStatus oui_element_smooth_scroll_into_view_v1(OuiElement* element, uint32_t block_alignment, uint32_t inline_alignment, uint32_t container, double duration_ms);
 /* Resolve pending layout before reading the retained logical scroll offsets. */
 OuiStatus oui_element_get_scroll_offset(OuiElement* element, double* out_x, double* out_y);
 OuiStatus oui_element_focus(OuiElement* element);

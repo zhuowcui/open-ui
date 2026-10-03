@@ -34,6 +34,7 @@ static ACTIVE_RASTER_CONFIGURATION: OnceLock<RasterConfiguration> = OnceLock::ne
 /// document nor mutable computed styles.
 pub struct FixtureEngine {
     inner: Engine,
+    authored_scrollbar_widths: std::collections::HashMap<NodeId, ScrollbarWidth>,
 }
 
 impl FixtureEngine {
@@ -45,14 +46,18 @@ impl FixtureEngine {
                 raster_configuration: active_raster_configuration(),
             },
         )?;
-        // Both immutable Chromium capture styles hide every scrollbar with
-        // `::-webkit-scrollbar { display: none; }`. Represent that input through
-        // the typed native style before applying authored fixture declarations.
+        // The immutable capture styles hide webkit scrollbar pseudo-elements.
+        // Standard non-auto width/color declarations take precedence over
+        // those pseudo-elements in Chromium. Resolve that capture policy in
+        // this adapter; native scrollbar-width:none always remains hidden.
         inner.set_renderer_style(
             inner.root(),
             RendererStyleValue::ScrollbarWidth(ScrollbarWidth::None),
         )?;
-        Ok(Self { inner })
+        Ok(Self {
+            inner,
+            authored_scrollbar_widths: std::collections::HashMap::new(),
+        })
     }
 
     fn into_engine(self) -> Engine {
@@ -87,9 +92,37 @@ impl FixtureEngine {
     }
 
     fn set_style(&mut self, node: NodeId, value: RendererStyleValue) {
+        let affects_scrollbars = matches!(
+            &value,
+            RendererStyleValue::ScrollbarWidth(_)
+                | RendererStyleValue::ScrollbarThumbColor(_)
+                | RendererStyleValue::ScrollbarTrackColor(_)
+        );
+        if let RendererStyleValue::ScrollbarWidth(width) = &value {
+            self.authored_scrollbar_widths.insert(node, *width);
+        }
         self.inner
             .set_renderer_style(node, value)
-            .expect("schema-validated fixture style")
+            .expect("schema-validated fixture style");
+        if affects_scrollbars {
+            let authored = self
+                .authored_scrollbar_widths
+                .get(&node)
+                .copied()
+                .unwrap_or(ScrollbarWidth::Auto);
+            let computed = self.inner.computed_style(node).expect("fixture style read");
+            let effective = if authored != ScrollbarWidth::Auto
+                || computed.scrollbar_thumb_color.is_some()
+                || computed.scrollbar_track_color.is_some()
+            {
+                authored
+            } else {
+                ScrollbarWidth::None
+            };
+            self.inner
+                .set_renderer_style(node, RendererStyleValue::ScrollbarWidth(effective))
+                .expect("capture scrollbar precedence");
+        }
     }
 
     fn set_internal_style(&mut self, node: NodeId, value: RendererInternalStyleValue) {

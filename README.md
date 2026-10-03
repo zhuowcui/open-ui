@@ -50,7 +50,7 @@ The current v0.2 release candidate has:
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;
-- 84 frozen retained-engine/headless C exports, with 110 current exports and
+- 84 frozen retained-engine/headless C exports, with 112 current exports and
   checked layouts and an ABI checksum; the [native scroll and inset consumers](docs/v02/native-scroll-metrics.md)
   and [native style consumers](bindings/rust/openui-ffi/README.md#native-style-operations)
   pass through public Rust, C and C++ APIs; the clean native style checkpoint
@@ -102,7 +102,9 @@ profiles. Both complete pixel gates still fail.
 Complete rebased qualification, the 744
 remaining SVG pixel failures, transforms and scrolling ranges remain open.
 The [reviewable source patch](docs/renderer/evidence/native-svg-decoration-v1/native-svg-rebase-api-v293.patch)
-remains unapplied. Earlier disk failures are preserved.
+is applied in this umbrella checkpoint together with the reviewed scrolling
+repair and native reveal API. Own clean umbrella qualification is pending.
+Earlier disk failures are preserved.
 
 The [nested scrolling work](docs/v02/native-scroll-metrics.md#nested-scrolling-candidate)
 implements shared native dimensions, ranges, offset rounding and detached
@@ -129,13 +131,24 @@ states, and no complete census is inferred for that source.
 and unapplied patches preserve earlier failures. These private results do not
 replace the accepted renderer's census.
 
-The later clean `3f95e617` source corrects shared scroll-transform ownership.
-Its 152-comparison selection restores both flex-overflow exact matches and
-three earlier fragmentation images, with 142 exact and ten prior differences.
-The workspace, native consumer guards and both 40-profile raster matrices
-pass. Complete original and expanded censuses are running; no full result or
-qualification is inferred. Public native scroll-into-view and two legacy
-contour calibration paths also remain unfinished work.
+The complete `3f95e617` runs finish at 21,319/22,924 original and
+22,122/23,728 expanded exact, zero errors, with actual exits 1. They expose
+15 lost exact comparisons against the SVG checkpoint. The shared scrollbar
+capture precedence and clip-margin correction at `83d45e0c` restores all 15
+in the affected selection: 157/172 exact, 15 different, zero errors. Four
+already-failing comparisons still worsen against SVG; no full result is
+inferred for this correction.
+
+This umbrella checkpoint applies the reviewed SVG and scroll repairs and adds
+public Rust `scroll_into_view` and `smooth_scroll_into_view`, backed by the same
+Engine operation as accessibility and two additive C functions. The private
+API source passes 35 Engine tests and ten C/four C++ consumers; all 30 reduced
+native geometry states match Chromium, while 16/20 endpoint images are exact.
+Scroll-margin/padding support, broader alignment coverage, four scale-1.25
+pixel failures and two legacy contour calibration paths remain open.
+[Versioned evidence](docs/renderer/generated/native-nested-scroll-v8.json)
+preserves every earlier failure. Own clean umbrella workspace, consumer and
+pixel qualification remains pending; this is not a release pass.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU

@@ -1217,7 +1217,14 @@ pub extern "C" fn oui_element_create(
             return Err(invalid("out_element is null"));
         }
         let state = document(document_handle as usize)?;
-        let node = borrow_engine_mut(&state)?.create_element(element_tag(tag)?)?;
+        let node = {
+            let mut engine = borrow_engine_mut(&state)?;
+            if tag == 39 {
+                engine.create_svg_foreign_object()?
+            } else {
+                engine.create_native_element(element_tag(tag)?)?
+            }
+        };
         write_element_handle(out_element, &state, node)
     })
 }
@@ -1587,6 +1594,70 @@ pub extern "C" fn oui_element_scroll_to(
     ffi(|| {
         with_element_mut(element_handle as usize, |engine, node| {
             engine.scroll_to(node, x, y)
+        })
+    })
+}
+
+fn scroll_into_view_options(
+    block: u32,
+    inline: u32,
+    container: u32,
+) -> Result<openui_engine::ScrollIntoViewOptions, ApiError> {
+    use openui_engine::{ScrollAlignment, ScrollIntoViewContainer, ScrollIntoViewOptions};
+    let alignment = |value| match value {
+        0 => Ok(ScrollAlignment::Start),
+        1 => Ok(ScrollAlignment::Center),
+        2 => Ok(ScrollAlignment::End),
+        3 => Ok(ScrollAlignment::Nearest),
+        _ => Err(invalid("invalid scroll alignment")),
+    };
+    Ok(ScrollIntoViewOptions {
+        block: alignment(block)?,
+        inline: alignment(inline)?,
+        container: match container {
+            0 => ScrollIntoViewContainer::All,
+            1 => ScrollIntoViewContainer::Nearest,
+            _ => return Err(invalid("invalid scroll container selection")),
+        },
+    })
+}
+
+// SAFETY CONTRACT: `element_handle` is a live element handle. All options are
+// validated before borrowing the shared Engine; panics remain contained.
+#[no_mangle]
+pub extern "C" fn oui_element_scroll_into_view_v1(
+    element_handle: *mut OuiElement,
+    block: u32,
+    inline: u32,
+    container: u32,
+) -> OuiStatus {
+    ffi(|| {
+        let options = scroll_into_view_options(block, inline, container)?;
+        with_element_mut(element_handle as usize, |engine, node| {
+            engine.scroll_into_view(node, options)
+        })
+    })
+}
+
+// SAFETY CONTRACT: `element_handle` is live. Duration is finite/non-negative.
+// No callback is invoked while the Engine/platform state is borrowed.
+#[no_mangle]
+pub extern "C" fn oui_element_smooth_scroll_into_view_v1(
+    element_handle: *mut OuiElement,
+    block: u32,
+    inline: u32,
+    container: u32,
+    duration_ms: f64,
+) -> OuiStatus {
+    ffi(|| {
+        let options = scroll_into_view_options(block, inline, container)?;
+        if !duration_ms.is_finite() || duration_ms < 0.0 {
+            return Err(invalid("scroll duration must be finite and non-negative"));
+        }
+        with_element_mut(element_handle as usize, |engine, node| {
+            engine
+                .smooth_scroll_into_view(node, options, duration_ms)
+                .map(|_| ())
         })
     })
 }
@@ -3969,35 +4040,31 @@ mod tests {
 
     #[test]
     fn rust_and_c_paths_produce_identical_headless_pixels() {
-        let mut engine =
-            Engine::new(ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap()).unwrap();
-        let direct = engine.create_element(ElementTag::Div).unwrap();
-        engine.append_child(engine.root(), direct).unwrap();
-        engine
+        // Compare the consuming Rust and C application APIs, including their
+        // native element defaults. Raw Engine construction intentionally keeps
+        // CSS initial values for callers installing a complete resolved style.
+        let rust_document = openui::Document::new(64, 64).unwrap();
+        let direct = openui::Element::create(&rust_document, "div").unwrap();
+        rust_document.body().append_child(&direct).unwrap();
+        direct
             .set_property(
-                direct,
                 openui_style::StyleProperty::Width,
                 openui_style::LengthValue::px(32.0).into(),
             )
             .unwrap();
-        engine
+        direct
             .set_property(
-                direct,
                 openui_style::StyleProperty::Height,
                 openui_style::LengthValue::px(32.0).into(),
             )
             .unwrap();
-        engine
+        direct
             .set_property(
-                direct,
                 openui_style::StyleProperty::BackgroundColor,
                 Color::RED.into(),
             )
             .unwrap();
-        let expected = SoftwareCompositor::default()
-            .render(&engine.scene().unwrap())
-            .unwrap()
-            .pixels;
+        let expected = rust_document.render_to_bitmap().unwrap().pixels().to_vec();
 
         let document = create_document(64, 64);
         let mut root = ptr::null_mut();

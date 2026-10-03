@@ -3,6 +3,9 @@
 mod accessibility;
 mod animation;
 mod interaction;
+mod scroll_into_view;
+
+pub use scroll_into_view::{ScrollAlignment, ScrollIntoViewContainer, ScrollIntoViewOptions};
 
 pub use accessibility::{
     AccessibilityAction, AccessibilityActionData, AccessibilityActionRequest, AccessibilityLive,
@@ -372,6 +375,7 @@ pub struct Engine {
     latest_scene: Option<SceneSnapshot>,
     hit_test: Vec<HitEntry>,
     fragment_rects: HashMap<NodeId, Vec<SceneRect>>,
+    fragment_box_worlds: HashMap<NodeId, Affine>,
     focused: Option<NodeHandle>,
     pointer_capture: HashMap<u64, NodeHandle>,
     hover_paths: HashMap<u64, Vec<NodeHandle>>,
@@ -453,6 +457,7 @@ impl Engine {
             latest_scene: None,
             hit_test: Vec::new(),
             fragment_rects: HashMap::new(),
+            fragment_box_worlds: HashMap::new(),
             focused: None,
             pointer_capture: HashMap::new(),
             hover_paths: HashMap::new(),
@@ -693,6 +698,77 @@ impl Engine {
         let handle = self.register_native_node(node);
         self.initialize_control(handle, tag);
         self.mark_dirty(InvalidationClass::Subtree);
+        Ok(handle)
+    }
+
+    /// Create an application element with the native kind's display default.
+    /// Rust and C application bindings use this same constructor. The raw
+    /// `create_element` entry point retains its initial-style behavior for
+    /// Engine callers that supply a complete resolved style.
+    pub fn create_native_element(&mut self, tag: ElementTag) -> Result<NodeHandle, EngineError> {
+        let display = match tag {
+            ElementTag::Div
+            | ElementTag::Fieldset
+            | ElementTag::Legend
+            | ElementTag::Details
+            | ElementTag::Summary
+            | ElementTag::Option
+            | ElementTag::OptGroup
+            | ElementTag::Form
+            | ElementTag::Html
+            | ElementTag::Body
+            | ElementTag::Viewport => Display::Block,
+            ElementTag::Table => Display::Table,
+            ElementTag::TableCaption => Display::TableCaption,
+            ElementTag::TableColumnGroup => Display::TableColumnGroup,
+            ElementTag::TableColumn => Display::TableColumn,
+            ElementTag::TableHead => Display::TableHeaderGroup,
+            ElementTag::TableBody => Display::TableRowGroup,
+            ElementTag::TableFoot => Display::TableFooterGroup,
+            ElementTag::TableRow => Display::TableRow,
+            ElementTag::TableCell | ElementTag::TableHeaderCell => Display::TableCell,
+            ElementTag::Image
+            | ElementTag::Canvas
+            | ElementTag::Svg
+            | ElementTag::IFrame
+            | ElementTag::Object
+            | ElementTag::Audio
+            | ElementTag::Video
+            | ElementTag::Input
+            | ElementTag::Button
+            | ElementTag::Meter
+            | ElementTag::Progress
+            | ElementTag::TextArea
+            | ElementTag::Select
+            | ElementTag::Embed => Display::InlineBlock,
+            ElementTag::Span
+            | ElementTag::Text
+            | ElementTag::Break
+            | ElementTag::WordBreak
+            | ElementTag::Ruby
+            | ElementTag::RubyText
+            | ElementTag::Style => Display::Inline,
+        };
+        let handle = self.create_element(tag)?;
+        self.set_property(handle, StyleProperty::Display, display.into())?;
+        Ok(handle)
+    }
+
+    /// Create a native SVG foreignObject viewport for retained UI children.
+    /// Width and height describe the viewport, including the fragment bounds;
+    /// border and padding do not enlarge it. Authored children, style, events,
+    /// and lifecycle use the same engine as ordinary elements. Its native
+    /// container kind is [`ElementTag::Div`].
+    pub fn create_svg_foreign_object(&mut self) -> Result<NodeHandle, EngineError> {
+        let handle = self.create_element(ElementTag::Div)?;
+        let node = self.resolve(handle)?;
+        let data = self.document.node_mut(node);
+        data.is_svg_foreign_object = true;
+        data.style.update_derived(|style| {
+            style.display = Display::Block;
+            style.overflow_x = openui_style::Overflow::Hidden;
+            style.overflow_y = openui_style::Overflow::Hidden;
+        });
         Ok(handle)
     }
 
@@ -1419,28 +1495,15 @@ impl Engine {
         handle: NodeHandle,
     ) -> Result<Option<ScrollMetrics>, EngineError> {
         let node = self.resolve(handle)?;
-        self.update()?;
-        fn find(fragment: &Fragment, node: NodeId) -> Option<&Fragment> {
-            if fragment.node_id == node {
-                return Some(fragment);
-            }
-            fragment.children.iter().find_map(|child| find(child, node))
+        if !self.node_is_connected(node) {
+            return Ok(None);
         }
-        let Some(fragment) = self
-            .latest_fragment
-            .as_ref()
-            .and_then(|root| find(root, node))
-        else {
+        self.update()?;
+        let Some(area) = self.layout_scroll_area(node) else {
             return Ok(None);
         };
-        let (client, content) = if let Some(scrollport) = fragment.viewport_scrollport {
-            (scrollport.client_rect.size, scrollport.content_rect.size)
-        } else {
-            (
-                fragment.padding_box_size(),
-                fragment.scrollable_overflow().size,
-            )
-        };
+        let client = area.client_rect.size;
+        let content = area.content_rect.size;
         Ok(Some(ScrollMetrics {
             client_width: client.width.to_f64(),
             client_height: client.height.to_f64(),
@@ -1467,9 +1530,35 @@ impl Engine {
         let data = self.document.node_mut(node);
         data.scroll_left = x;
         data.scroll_top = y;
-        self.dirty.hit_test = true;
-        self.mark_dirty(InvalidationClass::Composite);
+        self.invalidate_scroll(node);
         Ok(())
+    }
+
+    fn invalidate_scroll(&mut self, node: NodeId) {
+        // Sticky fragment positions currently resolve during layout. Invalidate
+        // that dependency only when this scrollport owns a sticky descendant;
+        // ordinary scrolling retains its existing compositor-only path.
+        let mut pending = self.document.children(node).collect::<Vec<_>>();
+        let mut sticky = false;
+        while let Some(descendant) = pending.pop() {
+            let style = &self.document.node(descendant).style;
+            if style.display == Display::None {
+                continue;
+            }
+            if style.position == openui_style::Position::Sticky {
+                sticky = true;
+                break;
+            }
+            if !style.is_scroll_container() {
+                pending.extend(self.document.children(descendant));
+            }
+        }
+        self.dirty.hit_test = true;
+        self.mark_dirty(if sticky {
+            InvalidationClass::Layout
+        } else {
+            InvalidationClass::Composite
+        });
     }
 
     pub fn scroll_by(&mut self, handle: NodeHandle, dx: f64, dy: f64) -> Result<(), EngineError> {
@@ -1489,52 +1578,24 @@ impl Engine {
         y: f64,
     ) -> Result<(f32, f32), EngineError> {
         let node = self.resolve(handle)?;
-        if node != self.document.root() {
-            // Nested scroll containers retain their existing path while
-            // their geometry and writing-direction ranges are qualified.
-            return Ok((
-                x.max(0.0).min(f32::MAX as f64) as f32,
-                y.max(0.0).min(f32::MAX as f64) as f32,
-            ));
-        }
         self.update()?;
-        let scrollport = self
-            .latest_fragment
-            .as_ref()
-            .and_then(|fragment| fragment.viewport_scrollport)
-            .expect("viewport layout establishes a scrollport");
-        let (x_range, y_range) = self.viewport_scroll_limits(scrollport);
-        Ok((
-            x.clamp(x_range.0, x_range.1) as f32,
-            y.clamp(y_range.0, y_range.1) as f32,
-        ))
+        Ok(self
+            .layout_scroll_area(node)
+            .map_or((0.0, 0.0), |area| area.clamp_offset(x, y)))
     }
 
-    fn viewport_scroll_limits(
-        &self,
-        scrollport: openui_layout::ViewportScrollport,
-    ) -> ((f64, f64), (f64, f64)) {
-        let x_range = if scrollport.negative_x {
-            (scrollport.content_rect.x().to_f64().min(0.0), 0.0)
-        } else {
-            (
-                0.0,
-                (scrollport.content_rect.right() - scrollport.client_rect.width())
-                    .to_f64()
-                    .max(0.0),
-            )
-        };
-        let y_range = if scrollport.negative_y {
-            (scrollport.content_rect.y().to_f64().min(0.0), 0.0)
-        } else {
-            (
-                0.0,
-                (scrollport.content_rect.bottom() - scrollport.client_rect.height())
-                    .to_f64()
-                    .max(0.0),
-            )
-        };
-        (x_range, y_range)
+    fn layout_scroll_area(&self, node: NodeId) -> Option<openui_layout::ScrollArea> {
+        fn find(fragment: &Fragment, node: NodeId) -> Option<openui_layout::ScrollArea> {
+            if fragment.node_id == node {
+                if let Some(area) = fragment.scroll_area {
+                    return Some(area);
+                }
+            }
+            fragment.children.iter().find_map(|child| find(child, node))
+        }
+        self.latest_fragment
+            .as_ref()
+            .and_then(|root| find(root, node))
     }
 
     /// Apply user wheel input through the document-owned viewport geometry.
@@ -1549,24 +1610,15 @@ impl Engine {
             return Err(EngineError::InvalidInput("wheel deltas must be finite"));
         }
         let node = self.resolve(handle)?;
-        let (user_x, user_y) = if node == self.document.root() {
-            self.update()?;
-            let scrollport = self
-                .latest_fragment
-                .as_ref()
-                .and_then(|fragment| fragment.viewport_scrollport)
-                .expect("viewport layout establishes a scrollport");
-            (
-                scrollport.overflow_x.is_scrollable(),
-                scrollport.overflow_y.is_scrollable(),
-            )
-        } else {
-            let style = &self.document.node(node).style;
-            (
-                style.overflow_x.is_scrollable(),
-                style.overflow_y.is_scrollable(),
-            )
-        };
+        self.update()?;
+        let (user_x, user_y) = self
+            .layout_scroll_area(node)
+            .map_or((false, false), |area| {
+                (
+                    area.overflow_x.is_scrollable(),
+                    area.overflow_y.is_scrollable(),
+                )
+            });
         let before = self.scroll_offset(handle)?;
         self.scroll_to(
             handle,
@@ -1671,23 +1723,42 @@ impl Engine {
             );
             let mut fragment =
                 openui_layout::block_layout(&self.document, self.document.root(), &space);
-            if let Some(scrollport) = fragment.viewport_scrollport {
-                let (x_range, y_range) = self.viewport_scroll_limits(scrollport);
-                let root = self.document.root();
-                let old = (
-                    self.document.node(root).scroll_left,
-                    self.document.node(root).scroll_top,
-                );
-                let next = (
-                    (old.0 as f64).clamp(x_range.0, x_range.1) as f32,
-                    (old.1 as f64).clamp(y_range.0, y_range.1) as f32,
-                );
-                if old != next {
-                    self.document.node_mut(root).scroll_left = next.0;
-                    self.document.node_mut(root).scroll_top = next.1;
-                    // Sticky layout consumes the retained offset too.
-                    fragment = openui_layout::block_layout(&self.document, root, &space);
+            fn collect_clamped_offsets(
+                fragment: &Fragment,
+                document: &NativeDocument,
+                seen: &mut std::collections::HashSet<NodeId>,
+                changes: &mut Vec<(NodeId, f32, f32)>,
+            ) {
+                if let Some(area) = fragment.scroll_area {
+                    if seen.insert(fragment.node_id) {
+                        let node = document.node(fragment.node_id);
+                        let (x, y) =
+                            area.clamp_offset(node.scroll_left as f64, node.scroll_top as f64);
+                        if (node.scroll_left, node.scroll_top) != (x, y) {
+                            changes.push((fragment.node_id, x, y));
+                        }
+                    }
                 }
+                for child in &fragment.children {
+                    collect_clamped_offsets(child, document, seen, changes);
+                }
+            }
+            let mut changes = Vec::new();
+            collect_clamped_offsets(
+                &fragment,
+                &self.document,
+                &mut std::collections::HashSet::new(),
+                &mut changes,
+            );
+            if !changes.is_empty() {
+                for (node, x, y) in changes {
+                    let node = self.document.node_mut(node);
+                    node.scroll_left = x;
+                    node.scroll_top = y;
+                }
+                // Sticky descendants also consume the retained offsets.
+                fragment =
+                    openui_layout::block_layout(&self.document, self.document.root(), &space);
             }
             let fragment = Arc::new(fragment);
             self.stats.layouts += 1;
@@ -1747,6 +1818,9 @@ impl Engine {
     /// visibility, and clipping do not remove layout boxes from this query.
     pub fn client_rects(&mut self, handle: NodeHandle) -> Result<Vec<SceneRect>, EngineError> {
         let node = self.resolve(handle)?;
+        if !self.node_is_connected(node) {
+            return Ok(Vec::new());
+        }
         self.update()?;
         Ok(self.fragment_rects.get(&node).cloned().unwrap_or_default())
     }
@@ -1756,8 +1830,24 @@ impl Engine {
     /// if there is no layout box, return `None`.
     pub fn bounds(&mut self, handle: NodeHandle) -> Result<Option<SceneRect>, EngineError> {
         let node = self.resolve(handle)?;
+        if !self.node_is_connected(node) {
+            return Ok(None);
+        }
         self.update()?;
         Ok(self.node_bounds(node))
+    }
+
+    fn node_is_connected(&self, mut node: NodeId) -> bool {
+        // Chromium's UpdateStyleAndLayoutForNode skips detached nodes. A
+        // geometry read on a detached subtree must not flush unrelated
+        // attached layout or clamp its pending scroll positions.
+        while !node.is_none() {
+            if node == self.document.root() {
+                return true;
+            }
+            node = self.document.node(node).parent;
+        }
+        false
     }
 
     fn node_bounds(&self, node: NodeId) -> Option<SceneRect> {
@@ -1859,6 +1949,7 @@ impl Engine {
             inherited_clips: &[HitClip],
             out: &mut Vec<HitEntry>,
             rects: &mut HashMap<NodeId, Vec<SceneRect>>,
+            box_worlds: &mut HashMap<NodeId, Affine>,
         ) {
             let width = fragment.size.width.to_f32();
             let height = fragment.size.height.to_f32();
@@ -1907,6 +1998,7 @@ impl Engine {
                     .entry(fragment.node_id)
                     .or_default()
                     .push(box_world.map_rect(box_width, box_height));
+                box_worlds.entry(fragment.node_id).or_insert(box_world);
             }
             let world_to_local = box_world.inverse();
             let mut own_clips = inherited_clips.to_vec();
@@ -1961,6 +2053,17 @@ impl Engine {
                             world,
                             scrollport.client_rect.width().to_f32(),
                             scrollport.client_rect.height().to_f32(),
+                        )
+                    } else if let (Some(_), Some(area)) =
+                        (fragment.element_scrollbars, fragment.scroll_area)
+                    {
+                        (
+                            box_world.then(Affine::translate(
+                                area.client_rect.x().to_f32(),
+                                area.client_rect.y().to_f32(),
+                            )),
+                            area.client_rect.width().to_f32(),
+                            area.client_rect.height().to_f32(),
                         )
                     } else if clips_authored_box {
                         (box_world, box_width, box_height)
@@ -2018,7 +2121,15 @@ impl Engine {
                     )
                 };
                 let start = out.len();
-                walk(document, child, child_world, &own_clips, out, rects);
+                walk(
+                    document,
+                    child,
+                    child_world,
+                    &own_clips,
+                    out,
+                    rects,
+                    box_worlds,
+                );
                 paint_ranges.push(((z, phase, order), start, out.len()));
             }
             if paint_ranges.windows(2).any(|pair| pair[0].0 > pair[1].0) {
@@ -2043,6 +2154,7 @@ impl Engine {
         }
         let mut entries = Vec::new();
         let mut rects = HashMap::new();
+        let mut box_worlds = HashMap::new();
         walk(
             &self.document,
             fragment,
@@ -2050,9 +2162,11 @@ impl Engine {
             &[],
             &mut entries,
             &mut rects,
+            &mut box_worlds,
         );
         self.hit_test = entries;
         self.fragment_rects = rects;
+        self.fragment_box_worlds = box_worlds;
     }
 }
 

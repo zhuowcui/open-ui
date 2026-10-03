@@ -36,15 +36,17 @@ use skia_safe::canvas::{SaveLayerFlags, SaveLayerRec, SrcRectConstraint};
 use skia_safe::image::RequiredProperties;
 use skia_safe::rrect::Corner as RRectCorner;
 use skia_safe::{
-    color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, Canvas, ClipOp,
-    Color4f, ColorSpace, ColorType, Data, FilterMode, IRect, Image, ImageInfo, Matrix, MipmapMode,
-    Paint, PaintStyle, PathBuilder, PathFillType, PathMeasure, PictureRecorder, Point, RRect, Rect,
-    SamplingOptions, TileMode,
+    color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, ClipOp, Color4f,
+    ColorSpace, ColorType, Data, FilterMode, IRect, Image, ImageInfo, Matrix, MipmapMode, Paint,
+    PaintStyle, PathBuilder, PathFillType, PathMeasure, PictureRecorder, Point, RRect, Rect,
+    RoundOut, SamplingOptions, TileMode,
 };
 
 use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet, HashSet};
 use unicode_segmentation::UnicodeSegmentation;
+
+type Canvas = dyn crate::paint_record::PaintCanvas;
 
 fn set_paint_css_color(paint: &mut Paint, color: &Color) {
     set_paint_css_color_with_alpha(paint, color, 1.0);
@@ -147,6 +149,10 @@ thread_local! {
     static VIEWPORT_SIZE: RefCell<(f32, f32)> = const { RefCell::new((800.0, 600.0)) };
     static RASTER_TILED_REPLAY: RefCell<bool> = const { RefCell::new(false) };
     static DEFER_VIEWPORT_SCROLLBARS: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+    static CONTENT_BACKGROUND_ANNOTATIONS: RefCell<Option<Vec<(Color, f32, Option<Rect>)>>> = const { RefCell::new(None) };
+    static CONTENT_BACKGROUND_DEVICE_SPACE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+    static CONTENT_BACKGROUND_EFFECT: std::cell::Cell<(f32, bool)> = const { std::cell::Cell::new((1.0, true)) };
+    static VIEWPORT_CONTENT_LAYER: RefCell<Option<crate::RecordedContentLayer>> = const { RefCell::new(None) };
     static BROKEN_IMAGE: RefCell<Option<Image>> = const { RefCell::new(None) };
     static BROKEN_IMAGE_HIGH_RES: RefCell<Option<Image>> = const { RefCell::new(None) };
     static RASTERIZING_PROMOTED_TRANSFORM: RefCell<bool> = const { RefCell::new(false) };
@@ -181,6 +187,194 @@ pub(crate) fn set_paint_raster_tiled(tiled: bool) {
 pub(crate) fn reset_picture_paint_state() {
     PAINTED_FRAGMENTED_OUTLINES.with(|painted| painted.borrow_mut().clear());
     EXTERNALLY_DEFERRED_OUTLINES.with(|deferred| deferred.borrow_mut().clear());
+    VIEWPORT_CONTENT_LAYER.with(|layer| *layer.borrow_mut() = None);
+}
+
+pub(crate) fn take_viewport_content_layer() -> Option<crate::RecordedContentLayer> {
+    VIEWPORT_CONTENT_LAYER.with(|layer| layer.borrow_mut().take())
+}
+
+struct BackgroundEffectScope((f32, bool));
+
+impl BackgroundEffectScope {
+    fn new(fragment: &Fragment, style: &ComputedStyle) -> Self {
+        Self(CONTENT_BACKGROUND_EFFECT.with(|effect| {
+            let previous = effect.get();
+            effect.set((
+                previous.0
+                    * if can_flatten_box_opacity(fragment, style) {
+                        1.0
+                    } else {
+                        style.opacity
+                    },
+                previous.1
+                    && style.filter_blur == 0.0
+                    && style.filter_grayscale == 0.0
+                    && style.mask_layers.is_empty()
+                    && !(CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.get())
+                        && style.has_border_radius())
+                    && style.transform == openui_style::Transform2D::IDENTITY,
+            ));
+            previous
+        }))
+    }
+}
+
+struct BackgroundRecordingScope {
+    previous_annotations: Option<Vec<(Color, f32, Option<Rect>)>>,
+    previous_effect: (f32, bool),
+    previous_device_space: bool,
+}
+
+impl BackgroundRecordingScope {
+    fn new() -> Self {
+        Self {
+            previous_annotations: CONTENT_BACKGROUND_ANNOTATIONS
+                .with(|annotations| annotations.replace(Some(Vec::new()))),
+            previous_effect: CONTENT_BACKGROUND_EFFECT.with(|effect| effect.replace((1.0, true))),
+            previous_device_space: CONTENT_BACKGROUND_DEVICE_SPACE
+                .with(|space| space.replace(false)),
+        }
+    }
+
+    fn for_raster() -> Self {
+        let scope = Self::new();
+        CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.set(true));
+        scope
+    }
+
+    fn annotations(&self) -> Vec<(Color, f32, Option<Rect>)> {
+        CONTENT_BACKGROUND_ANNOTATIONS
+            .with(|annotations| annotations.borrow().as_ref().cloned().unwrap_or_default())
+    }
+}
+
+impl Drop for BackgroundRecordingScope {
+    fn drop(&mut self) {
+        CONTENT_BACKGROUND_ANNOTATIONS
+            .with(|annotations| annotations.replace(self.previous_annotations.take()));
+        CONTENT_BACKGROUND_EFFECT.with(|effect| effect.set(self.previous_effect));
+        CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.set(self.previous_device_space));
+    }
+}
+
+impl Drop for BackgroundEffectScope {
+    fn drop(&mut self) {
+        CONTENT_BACKGROUND_EFFECT.with(|effect| effect.set(self.0));
+    }
+}
+
+fn annotate_content_background(
+    canvas: &Canvas,
+    mut color: Color,
+    rect: Rect,
+    opacity: f32,
+    opaque_rect: Option<Rect>,
+) {
+    let effect = CONTENT_BACKGROUND_EFFECT.with(|effect| effect.get());
+    if !effect.1 {
+        return;
+    }
+    color.a *= opacity * effect.0;
+    CONTENT_BACKGROUND_ANNOTATIONS.with(|annotations| {
+        if let Some(annotations) = annotations.borrow_mut().as_mut() {
+            annotations.push((
+                color,
+                rect.width() * rect.height(),
+                opaque_rect.filter(|_| color.is_opaque()).and_then(|rect| {
+                    let mut rect = if CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.get()) {
+                        // In a raster backing, opacity belongs to fully covered
+                        // physical cells after the current transform and clip.
+                        // A rectangular AA clip is accepted by Skia only when
+                        // every retained sample has full coverage.
+                        let matrix = canvas.local_to_device_as_3x3();
+                        if !matrix.rect_stays_rect() || !canvas.is_clip_rect() {
+                            return None;
+                        }
+                        let mut mapped = matrix.map_rect(rect).0;
+                        let clip = Rect::from(canvas.device_clip_bounds()?);
+                        if !mapped.intersect(clip) {
+                            return None;
+                        }
+                        mapped
+                    } else {
+                        rect
+                    };
+                    rect = Rect::from_ltrb(
+                        rect.left.ceil(),
+                        rect.top.ceil(),
+                        rect.right.floor(),
+                        rect.bottom.floor(),
+                    );
+                    (!rect.is_empty() && rect.is_finite()).then_some(rect)
+                }),
+            ));
+        }
+    });
+}
+
+fn layer_background_color(annotations: &[(Color, f32, Option<Rect>)], bounds: Rect) -> Color {
+    let minimum_area = 0.5 * bounds.width() * bounds.height();
+    let mut colors = Vec::new();
+    for &(color, area, _) in annotations.iter().rev() {
+        if color.a > 0.0 && area >= minimum_area {
+            colors.push(color);
+            if color.is_opaque() {
+                break;
+            }
+        }
+    }
+    let mut result = Color::TRANSPARENT;
+    for color in colors.into_iter().rev() {
+        let alpha = color.a + result.a * (1.0 - color.a);
+        if alpha > 0.0 {
+            result = Color::from_rgba_f32(
+                (color.r * color.a + result.r * result.a * (1.0 - color.a)) / alpha,
+                (color.g * color.a + result.g * result.a * (1.0 - color.a)) / alpha,
+                (color.b * color.a + result.b * result.a * (1.0 - color.a)) / alpha,
+                alpha,
+            );
+        }
+    }
+    result
+}
+
+fn maximum_covered_rect(a: Rect, b: Rect) -> Rect {
+    let area = |rect: Rect| rect.width().max(0.0) * rect.height().max(0.0);
+    let mut maximum = if area(b) > area(a) { b } else { a };
+    let left = a.left.max(b.left);
+    let top = a.top.max(b.top);
+    let right = a.right.min(b.right);
+    let bottom = a.bottom.min(b.bottom);
+    if right >= left && bottom >= top && (right > left || bottom > top) {
+        let vertical = Rect::from_ltrb(left, a.top.min(b.top), right, a.bottom.max(b.bottom));
+        if area(vertical) > area(maximum) {
+            maximum = vertical;
+        }
+        let horizontal = Rect::from_ltrb(a.left.min(b.left), top, a.right.max(b.right), bottom);
+        if area(horizontal) > area(maximum) {
+            maximum = horizontal;
+        }
+    }
+    maximum
+}
+
+fn layer_opaque_rect(annotations: &[(Color, f32, Option<Rect>)]) -> Rect {
+    annotations
+        .iter()
+        .filter_map(|(_, _, opaque)| *opaque)
+        .fold(Rect::default(), maximum_covered_rect)
+}
+
+/// Preserve every fully covered physical cell, including disjoint regions.
+/// Choosing the largest rectangle can discard a covering background when an
+/// inset child's painted area extends farther than its parent.
+fn layer_opaque_region(annotations: &[(Color, f32, Option<Rect>)]) -> skia_safe::Region {
+    let mut region = skia_safe::Region::new();
+    for rect in annotations.iter().filter_map(|(_, _, opaque)| *opaque) {
+        region.op_rect(rect.round_in(), skia_safe::region::RegionOp::Union);
+    }
+    region
 }
 
 pub(crate) fn paint_document_fragments(
@@ -196,7 +390,7 @@ pub(crate) fn paint_document_fragments(
         }
     }
     let _phase = RestoreScrollbarPhase(DEFER_VIEWPORT_SCROLLBARS.with(|value| value.replace(true)));
-    paint_fragment(canvas, fragment, doc, offset);
+    paint_fragment_tracked(canvas, fragment, doc, offset);
 }
 
 fn uses_deterministic_text_profile(style: &ComputedStyle) -> bool {
@@ -519,6 +713,15 @@ fn fragment_has_overflowing_in_flow_monolithic_descendant(
 /// This is the main entry point — paints the fragment and all its children
 /// recursively, with correct coordinate offsets.
 pub fn paint_fragment(
+    canvas: &skia_safe::Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+) {
+    paint_fragment_tracked(canvas, fragment, doc, offset);
+}
+
+fn paint_fragment_tracked(
     canvas: &Canvas,
     fragment: &Fragment,
     doc: &Document,
@@ -549,7 +752,30 @@ pub fn paint_fragment(
             false,
         );
     }
-    paint_fragment_contents(canvas, fragment, doc, offset);
+    if !fragment.node_id.is_none() && doc.node(fragment.node_id).is_svg_foreign_object {
+        // SVG root placement is pixel-snapped before the foreignObject's
+        // local CSS decoration is replayed. Keep that translation separate
+        // from its local edge snapping (SVGRootPainter and
+        // SVGForeignObjectPainter); combining them changes fractional widths.
+        let viewport_origin = PhysicalOffset::new(
+            offset.left + fragment.offset.left,
+            offset.top + fragment.offset.top,
+        );
+        canvas.save();
+        canvas.translate((
+            viewport_origin.left.round().to_f32(),
+            viewport_origin.top.round().to_f32(),
+        ));
+        paint_fragment_contents(
+            canvas,
+            fragment,
+            doc,
+            PhysicalOffset::new(-fragment.offset.left, -fragment.offset.top),
+        );
+        canvas.restore();
+    } else {
+        paint_fragment_contents(canvas, fragment, doc, offset);
+    }
     if clips_fractional_terminal_column {
         canvas.restore();
     }
@@ -934,7 +1160,7 @@ fn paint_fragment_contents(
                 }
             });
             for (overflow, parent_offset) in overflowing_monolithic {
-                paint_fragment(canvas, overflow, doc, parent_offset);
+                paint_fragment_tracked(canvas, overflow, doc, parent_offset);
             }
         } else {
             paint_children_with_stacking_order(
@@ -953,7 +1179,7 @@ fn paint_fragment_contents(
     // anonymous boxes with no DOM node. Just recurse into children.
     if fragment.node_id.is_none() {
         for child in &fragment.children {
-            paint_fragment(canvas, child, doc, abs_offset);
+            paint_fragment_tracked(canvas, child, doc, abs_offset);
         }
         return;
     }
@@ -985,6 +1211,7 @@ fn paint_fragment_contents(
     } else {
         canvas_adjusted_style.as_ref().unwrap_or(original_style)
     };
+    let _background_effect = BackgroundEffectScope::new(fragment, style);
     let promoted_transform_parent_offset = PhysicalOffset::new(
         abs_offset.left - fragment.offset.left,
         abs_offset.top - fragment.offset.top,
@@ -1082,7 +1309,7 @@ fn paint_fragment_contents(
                 LayoutUnit::from_f32(-bounds.left) - fragment.offset.left,
                 LayoutUnit::from_f32(-bounds.top) - fragment.offset.top,
             );
-            paint_fragment(surface.canvas(), fragment, doc, raster_parent_offset);
+            paint_fragment_tracked(surface.canvas(), fragment, doc, raster_parent_offset);
             RASTERIZING_PROMOTED_TRANSFORM.with(|active| *active.borrow_mut() = false);
 
             let image = surface.image_snapshot();
@@ -1346,18 +1573,55 @@ fn paint_fragment_contents(
         // Keep the retained offset and geometry logical while preserving the
         // unscrolled paint phase when composing the document at a new offset.
         let snapping = RasterSnapping::new(doc.device_scale_factor());
-        canvas.translate((
+        let scroll_translation = (
             snapping.logical_coordinate(-node.scroll_left, PhysicalSnap::Nearest),
             snapping.logical_coordinate(-node.scroll_top, PhysicalSnap::Nearest),
-        ));
+        );
+        canvas.translate(scroll_translation);
+        let content = scrollport.content_rect;
+        let bounds = Rect::from_ltrb(
+            (abs_offset.left + content.x()).round().to_f32(),
+            (abs_offset.top + content.y()).round().to_f32(),
+            (abs_offset.left + content.right()).round().to_f32(),
+            (abs_offset.top + content.bottom()).round().to_f32(),
+        );
+        let mut recorder = PictureRecorder::new();
+        let layer_canvas: &Canvas = recorder.begin_recording(bounds, false);
+        let paint_recording =
+            crate::paint_record::RecordingScope::new(layer_canvas.raw_untracked());
+        let background_recording = BackgroundRecordingScope::new();
+        paint_scrolling_canvas_background(layer_canvas, doc, fragment, bounds);
         paint_children_with_stacking_order(
-            canvas,
+            layer_canvas,
             &fragment.children,
             doc,
             abs_offset,
             true,
             style.display.is_flex() && fragmented_flex_has_internal_four_way_junction(fragment),
         );
+        let annotations = background_recording.annotations();
+        let paint_record = paint_recording.snapshot();
+        drop(paint_recording);
+        drop(background_recording);
+        let picture = recorder
+            .finish_recording_as_picture(None)
+            .expect("viewport content recording must finish");
+        let rect_known_to_be_opaque = layer_opaque_rect(&annotations);
+        let layer = crate::RecordedContentLayer {
+            node_id: fragment.node_id,
+            bounds,
+            background_color: layer_background_color(&annotations, bounds),
+            rect_known_to_be_opaque,
+            paint_record,
+            contents_opaque: rect_known_to_be_opaque.left <= bounds.left
+                && rect_known_to_be_opaque.top <= bounds.top
+                && rect_known_to_be_opaque.right >= bounds.right
+                && rect_known_to_be_opaque.bottom >= bounds.bottom,
+            scroll_translation,
+            picture,
+        };
+        layer.replay(canvas, doc.device_scale_factor());
+        VIEWPORT_CONTENT_LAYER.with(|recorded| *recorded.borrow_mut() = Some(layer));
         canvas.restore();
         if !DEFER_VIEWPORT_SCROLLBARS.with(|deferred| deferred.get()) {
             paint_viewport_scrollbars(canvas, fragment, doc, abs_offset);
@@ -5175,7 +5439,7 @@ fn paint_descendant_column_rules(
 ) {
     for child in children {
         if child.kind == FragmentKind::ColumnRule {
-            paint_fragment(canvas, child, doc, parent_offset);
+            paint_fragment_tracked(canvas, child, doc, parent_offset);
             continue;
         }
         let child_offset = PhysicalOffset::new(
@@ -5443,7 +5707,7 @@ fn repaint_fragmented_inline_source_range(
         if in_source_range && fragment.is_inline_box_fragment {
             canvas.save();
             canvas.clip_rect(clip, ClipOp::Intersect, false);
-            paint_fragment(canvas, fragment, doc, parent_offset);
+            paint_fragment_tracked(canvas, fragment, doc, parent_offset);
             canvas.restore();
             return;
         }
@@ -5621,13 +5885,13 @@ fn paint_shared_inline_oof_across_column_row(
         .iter()
         .filter(|child| child.kind == FragmentKind::ColumnRule)
     {
-        paint_fragment(canvas, rule, doc, offset);
+        paint_fragment_tracked(canvas, rule, doc, offset);
     }
     for column in children
         .iter()
         .filter(|child| child.kind == FragmentKind::ColumnBox)
     {
-        paint_fragment(canvas, column, doc, offset);
+        paint_fragment_tracked(canvas, column, doc, offset);
     }
     FRAGMENTED_INLINE_SKIP_AFTER.with(|source_after| *source_after.borrow_mut() = None);
     for (group_index, (inline_parent_id, group_ids)) in inline_groups.iter().enumerate() {
@@ -5644,7 +5908,7 @@ fn paint_shared_inline_oof_across_column_row(
             });
             canvas.save();
             canvas.clip_rect(entry.clip, ClipOp::Intersect, false);
-            paint_fragment(canvas, entry.fragment, doc, entry.parent_offset);
+            paint_fragment_tracked(canvas, entry.fragment, doc, entry.parent_offset);
             canvas.restore();
         }
         for column in children
@@ -5905,7 +6169,7 @@ fn paint_children_with_stacking_order(
     // cover them in the gap.
     for &idx in &in_flow {
         if matches!(children[idx].kind, FragmentKind::ColumnRule) {
-            paint_fragment(canvas, &children[idx], doc, offset);
+            paint_fragment_tracked(canvas, &children[idx], doc, offset);
         }
     }
 
@@ -6035,7 +6299,7 @@ fn paint_children_with_stacking_order(
             continue;
         }
         if children[idx].kind != FragmentKind::ColumnBox {
-            paint_fragment(canvas, &children[idx], doc, offset);
+            paint_fragment_tracked(canvas, &children[idx], doc, offset);
             in_flow_position += 1;
             continue;
         }
@@ -6075,7 +6339,7 @@ fn paint_children_with_stacking_order(
         }
         for &row_idx in &in_flow[in_flow_position..row_position_end] {
             if children[row_idx].kind != FragmentKind::ColumnRule {
-                paint_fragment(canvas, &children[row_idx], doc, offset);
+                paint_fragment_tracked(canvas, &children[row_idx], doc, offset);
             }
         }
         if !prepainted.is_empty() {
@@ -7268,9 +7532,9 @@ fn paint_stacking_entry(
     offset: PhysicalOffset,
 ) {
     match entry {
-        StackingEntry::Direct(idx) => paint_fragment(canvas, &children[*idx], doc, offset),
+        StackingEntry::Direct(idx) => paint_fragment_tracked(canvas, &children[*idx], doc, offset),
         StackingEntry::Descendant(fragment, parent_offset) => {
-            paint_fragment(canvas, fragment, doc, *parent_offset)
+            paint_fragment_tracked(canvas, fragment, doc, *parent_offset)
         }
         StackingEntry::DescendantWithClip(fragment, parent_offset, clip_rect) => {
             canvas.save();
@@ -7279,7 +7543,7 @@ fn paint_stacking_entry(
                 ClipOp::Intersect,
                 false,
             );
-            paint_fragment(canvas, fragment, doc, *parent_offset);
+            paint_fragment_tracked(canvas, fragment, doc, *parent_offset);
             canvas.restore();
         }
     }
@@ -7778,7 +8042,7 @@ fn paint_flex_negative_stacking_children(
     // and inverted peers such as z-index:-2 followed by z-index:-1.
     entries.sort_by_key(|&(z, order, _, _)| (z, order));
     for (_, _, child, parent_offset) in entries {
-        paint_fragment(canvas, child, doc, parent_offset);
+        paint_fragment_tracked(canvas, child, doc, parent_offset);
     }
 }
 
@@ -8158,7 +8422,7 @@ fn repaint_later_siblings_over_fragmented_outlines(
                     deferred.remove(pointer);
                 }
             });
-            paint_fragment(canvas, child, doc, parent_offset);
+            paint_fragment_tracked(canvas, child, doc, parent_offset);
         }
         preceding_fragmented_outline |=
             fragmented_outline_crosses_slice(child, doc, parent_offset, slice, block_axis_is_x);
@@ -8418,13 +8682,20 @@ fn paint_list_marker(
 /// Per CSS spec, overflow clips to the **padding box** — the border-box
 /// inset by each side's border width. Returns `(x, y, width, height)`.
 pub fn compute_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> (f32, f32, f32, f32) {
+    let insets = fragment
+        .element_scrollbars
+        .map_or(openui_geometry::BoxStrut::zero(), |s| s.insets);
     // Pixel-snap the padding box edges independently for crisp clipping.
-    let clip_left = (offset.left + fragment.border.left).round().to_f32();
-    let clip_top = (offset.top + fragment.border.top).round().to_f32();
-    let clip_right = (offset.left + fragment.size.width - fragment.border.right)
+    let clip_left = (offset.left + fragment.border.left + insets.left)
         .round()
         .to_f32();
-    let clip_bottom = (offset.top + fragment.size.height - fragment.border.bottom)
+    let clip_top = (offset.top + fragment.border.top + insets.top)
+        .round()
+        .to_f32();
+    let clip_right = (offset.left + fragment.size.width - fragment.border.right - insets.right)
+        .round()
+        .to_f32();
+    let clip_bottom = (offset.top + fragment.size.height - fragment.border.bottom - insets.bottom)
         .round()
         .to_f32();
     let clip_w = (clip_right - clip_left).max(0.0);
@@ -8994,6 +9265,103 @@ fn scroll_backing_phase_adjustment(logical_origin: f32, backing_scale: f32) -> f
     (compositor_phase - physical_phase).rem_euclid(1.0) / backing_scale
 }
 
+/// Scroll translations without an authored transform ancestry use the same
+/// physical snapping as the viewport. Chromium creates a snapped compositor
+/// transform for every scroll node, including non-composited scrollers.
+/// Retained offsets and geometry stay logical; only paint movement is snapped.
+///
+/// An authored transform or SVG viewport supplies another screen-space
+/// origin. That path still needs the complete retained transform tree rather
+/// than independently snapping a local delta at the document's device scale.
+fn element_scroll_paint_translation(
+    fragment: &Fragment,
+    doc: &Document,
+    scroll_x: f32,
+    scroll_y: f32,
+) -> (f32, f32) {
+    // Fragmentation also installs overflow clips and records a scroll area,
+    // but those slices have no scroll transform. Only an authored scroll
+    // container owns the origin and physical translation below.
+    if fragment.node_id.is_none() || !doc.node(fragment.node_id).style.is_scroll_container() {
+        return (-scroll_x, -scroll_y);
+    }
+    let mut ancestor = fragment.node_id;
+    while !ancestor.is_none() {
+        let node = doc.node(ancestor);
+        if node.style.transform != openui_style::Transform2D::IDENTITY
+            || node.is_svg_foreign_object
+            || node.tag == openui_dom::ElementTag::Svg
+        {
+            return (-scroll_x, -scroll_y);
+        }
+        ancestor = node.parent;
+    }
+    let snapping = RasterSnapping::new(doc.device_scale_factor());
+    // Chromium snaps the translation of ScrollPosition = ScrollOrigin +
+    // ScrollOffset, and adds ScrollOrigin to its contents paint offset.
+    // Reversed axes can have a nonzero origin even at API offset zero.
+    let (origin_x, origin_y) = fragment.scroll_area.map_or((0.0, 0.0), |area| {
+        (
+            (area.client_rect.x() - area.content_rect.x())
+                .to_f32()
+                .floor(),
+            (area.client_rect.y() - area.content_rect.y())
+                .to_f32()
+                .floor(),
+        )
+    });
+    (
+        origin_x + snapping.logical_coordinate(-(scroll_x + origin_x), PhysicalSnap::Nearest),
+        origin_y + snapping.logical_coordinate(-(scroll_y + origin_y), PhysicalSnap::Nearest),
+    )
+}
+
+/// Prove opacity for the source cells reached by the visible linear-sampled
+/// quad. This uses owned paint coverage, never an inspection of raster pixels.
+fn scroll_quad_has_opaque_samples(
+    canvas: &Canvas,
+    opaque: &skia_safe::Region,
+    source: Rect,
+    destination: Rect,
+    width: i32,
+    height: i32,
+) -> bool {
+    let matrix = canvas.local_to_device_as_3x3();
+    if opaque.is_empty() || !matrix.rect_stays_rect() {
+        return false;
+    }
+    let (Some(inverse), Some(clip)) = (matrix.invert(), canvas.device_clip_bounds()) else {
+        return false;
+    };
+    let mut visible = inverse.map_rect(Rect::from(clip)).0;
+    if !visible.intersect(destination) || !visible.is_finite() {
+        return false;
+    }
+    let scale_x = source.width() / destination.width();
+    let scale_y = source.height() / destination.height();
+    // Linear filtering reaches a neighboring source center on each side.
+    // The strict source rectangle clamps outside the backing image bounds.
+    let samples = Rect::from_ltrb(
+        (source.left + (visible.left - destination.left) * scale_x - 0.5)
+            .floor()
+            .max(0.0),
+        (source.top + (visible.top - destination.top) * scale_y - 0.5)
+            .floor()
+            .max(0.0),
+        (source.left + (visible.right - destination.left) * scale_x + 0.5)
+            .ceil()
+            .min(width as f32),
+        (source.top + (visible.bottom - destination.top) * scale_y + 0.5)
+            .ceil()
+            .min(height as f32),
+    );
+    if samples.is_empty() || !samples.is_finite() {
+        return false;
+    }
+    let samples: IRect = samples.round_out();
+    opaque.contains_rect(samples)
+}
+
 fn paint_composited_scroll_contents(
     canvas: &Canvas,
     fragment: &Fragment,
@@ -9067,6 +9435,7 @@ fn paint_composited_scroll_contents(
         adjusted.border_image = None;
         adjusted.box_shadow.retain(|shadow| shadow.inset);
     });
+    let background_recording = BackgroundRecordingScope::for_raster();
     paint_box_decoration_background(
         surface.canvas(),
         fragment,
@@ -9083,8 +9452,12 @@ fn paint_composited_scroll_contents(
         (node.scroll_left, node.scroll_top)
     };
     surface.canvas().save();
-    if scroll_x != 0.0 || scroll_y != 0.0 {
-        surface.canvas().translate((-scroll_x, -scroll_y));
+    // The backing owns its raster and composition phase. Keep the retained
+    // offset logical inside it; direct-scroll snapping must not move these
+    // children independently of the background recorded above.
+    let translation = (-scroll_x, -scroll_y);
+    if translation != (0.0, 0.0) {
+        surface.canvas().translate(translation);
     }
     paint_children_with_stacking_order(
         surface.canvas(),
@@ -9096,6 +9469,9 @@ fn paint_composited_scroll_contents(
     );
     surface.canvas().restore();
 
+    let opaque_region = layer_opaque_region(&background_recording.annotations());
+    let composition_effect = background_recording.previous_effect;
+    drop(background_recording);
     let image = surface.image_snapshot();
     let destination = Rect::from_xywh(
         layer_rect.left + scroll_backing_phase_adjustment(layer_rect.left, backing_scale),
@@ -9104,19 +9480,7 @@ fn paint_composited_scroll_contents(
         physical_height as f32 / backing_scale,
     );
     let mut paint = Paint::default();
-    let image_matrix = Matrix::scale_translate(
-        (
-            destination.width() / physical_width as f32,
-            destination.height() / physical_height as f32,
-        ),
-        (destination.left, destination.top),
-    );
     paint.set_anti_alias(false);
-    paint.set_shader(image.to_shader(
-        (TileMode::Clamp, TileMode::Clamp),
-        SamplingOptions::from(FilterMode::Linear),
-        &image_matrix,
-    ));
     let snapping = RasterSnapping::new(style.device_scale_factor);
     let compositor_bounds = Rect::from_ltrb(
         destination.left,
@@ -9128,7 +9492,38 @@ fn paint_composited_scroll_contents(
             .bottom
             .max(snapping.logical_coordinate(layer_rect.bottom, PhysicalSnap::Ceil)),
     );
-    canvas.draw_rect(compositor_bounds, &paint);
+    // SoftwareRenderer replays a texture quad with DrawImageRect and a
+    // strict source rectangle. Preserve the backing's mapping when its
+    // physical compositor bounds extend beyond the content destination.
+    let source = Rect::from_xywh(
+        0.0,
+        0.0,
+        compositor_bounds.width() * backing_scale,
+        compositor_bounds.height() * backing_scale,
+    );
+    // Chromium omits blending only for an opaque quad with full composition
+    // opacity. An opaque authored color alone cannot establish that: clipped
+    // or rounded backgrounds can leave transparent backing cells.
+    if composition_effect == (1.0, true)
+        && style.opacity == 1.0
+        && scroll_quad_has_opaque_samples(
+            canvas,
+            &opaque_region,
+            source,
+            compositor_bounds,
+            physical_width,
+            physical_height,
+        )
+    {
+        paint.set_blend_mode(skia_safe::BlendMode::Src);
+    }
+    canvas.draw_image_rect_with_sampling_options(
+        image,
+        Some((&source, SrcRectConstraint::Strict)),
+        compositor_bounds,
+        SamplingOptions::from(FilterMode::Linear),
+        &paint,
+    );
     true
 }
 
@@ -9175,7 +9570,7 @@ fn paint_with_overflow_clip(
         Vec::new()
     };
     for legend_content in &unclipped_fieldset_legend_content {
-        paint_fragment(canvas, legend_content, doc, offset);
+        paint_fragment_tracked(canvas, legend_content, doc, offset);
     }
     let newly_skipped_legends: Vec<usize> = HOIST_SKIP.with(|skipped| {
         let mut skipped = skipped.borrow_mut();
@@ -9533,8 +9928,9 @@ fn paint_with_overflow_clip(
             let node = doc.node(fragment.node_id);
             (node.scroll_left, node.scroll_top)
         };
-        if scroll_x != 0.0 || scroll_y != 0.0 {
-            canvas.translate((-scroll_x, -scroll_y));
+        let translation = element_scroll_paint_translation(fragment, doc, scroll_x, scroll_y);
+        if translation != (0.0, 0.0) {
+            canvas.translate(translation);
         }
         paint_children_with_stacking_order(
             canvas,
@@ -9601,7 +9997,9 @@ fn paint_with_overflow_clip(
         });
     }
 
-    paint_scrollbars_if_needed(canvas, fragment, style, &clip_rect);
+    if fragment.element_scrollbars.is_none() {
+        paint_scrollbars_if_needed(canvas, fragment, style, &clip_rect);
+    }
     paint_resize_handle_if_needed(canvas, style, &clip_rect);
 
     if let Some((mask, destination)) = packed_rounded_mask {
@@ -9621,6 +10019,7 @@ fn paint_with_overflow_clip(
     }
 
     canvas.restore();
+    paint_element_scrollbars(canvas, fragment, doc, offset);
 }
 
 /// Rasterize an axis-aligned rounded overflow clip on the qualification
@@ -11073,6 +11472,53 @@ pub(crate) fn paint_viewport_scrollbars(
         doc.document_element().unwrap_or(fragment.node_id)
     };
     let style = &doc.node(source).style;
+    paint_native_scrollbars(canvas, fragment, doc, offset, scrollport, style, false);
+}
+
+fn paint_element_scrollbars(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+) {
+    let (Some(bars), Some(area)) = (fragment.element_scrollbars, fragment.scroll_area) else {
+        return;
+    };
+    let scrollport = openui_layout::ViewportScrollport {
+        client_rect: area.client_rect,
+        content_rect: area.content_rect,
+        horizontal_scrollbar: bars.horizontal,
+        vertical_scrollbar: bars.vertical,
+        scrollbar_thickness: bars.thickness,
+        overflow_x: area.overflow_x,
+        overflow_y: area.overflow_y,
+        negative_x: area.negative_x,
+        negative_y: area.negative_y,
+    };
+    paint_native_scrollbars(
+        canvas,
+        fragment,
+        doc,
+        offset,
+        scrollport,
+        &doc.node(fragment.node_id).style,
+        doc.node(fragment.node_id)
+            .style
+            .writing_mode
+            .is_horizontal()
+            && doc.node(fragment.node_id).style.direction == openui_style::Direction::Rtl,
+    );
+}
+
+fn paint_native_scrollbars(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+    scrollport: openui_layout::ViewportScrollport,
+    style: &ComputedStyle,
+    vertical_on_left: bool,
+) {
     let thickness = scrollport.scrollbar_thickness.to_f32();
     let client_width = scrollport.client_rect.width().to_f32();
     let client_height = scrollport.client_rect.height().to_f32();
@@ -11089,7 +11535,15 @@ pub(crate) fn paint_viewport_scrollbars(
         set_paint_css_color(&mut thumb, &color);
     }
     canvas.save();
-    canvas.translate((offset.left.to_f32(), offset.top.to_f32()));
+    canvas.translate((
+        (offset.left + scrollport.client_rect.x()).to_f32(),
+        (offset.top + scrollport.client_rect.y()).to_f32(),
+    ));
+    let vertical_x = if vertical_on_left {
+        -thickness
+    } else {
+        client_width
+    };
     let user_scrollable = (scrollport.horizontal_scrollbar
         && scrollport.content_rect.width().to_f32() > client_width)
         || (scrollport.vertical_scrollbar
@@ -11117,7 +11571,7 @@ pub(crate) fn paint_viewport_scrollbars(
             let outer = if horizontal {
                 Rect::from_xywh(0.0, client_height, length, thickness)
             } else {
-                Rect::from_xywh(client_width, 0.0, thickness, length)
+                Rect::from_xywh(vertical_x, 0.0, thickness, length)
             };
             paint_fluent_scrollbar_picture(
                 canvas,
@@ -11163,7 +11617,7 @@ pub(crate) fn paint_viewport_scrollbars(
             let outer = if horizontal {
                 Rect::from_xywh(0.0, client_height, length, thickness)
             } else {
-                Rect::from_xywh(client_width, 0.0, thickness, length)
+                Rect::from_xywh(vertical_x, 0.0, thickness, length)
             };
             paint_fluent_scrollbar_picture(
                 canvas,
@@ -11207,7 +11661,7 @@ pub(crate) fn paint_viewport_scrollbars(
         let outer = if horizontal {
             Rect::from_xywh(0.0, client_height, length, thickness)
         } else {
-            Rect::from_xywh(client_width, 0.0, thickness, length)
+            Rect::from_xywh(vertical_x, 0.0, thickness, length)
         };
         paint_fluent_scrollbar_track(
             canvas,
@@ -11227,7 +11681,7 @@ pub(crate) fn paint_viewport_scrollbars(
             )
         } else {
             Rect::from_xywh(
-                client_width + (thickness - thumb_thickness) / 2.0,
+                vertical_x + (thickness - thumb_thickness) / 2.0,
                 button + position,
                 thumb_thickness,
                 thumb_length,
@@ -11262,9 +11716,13 @@ pub(crate) fn paint_viewport_scrollbars(
         && scrollport.content_rect.width().to_f32() > client_width
         && scrollport.content_rect.height().to_f32() > client_height
     {
+        // The adjoining corner has exterior compositor edges on both axes.
+        // Preserve their coverage when its physical origin is fractional.
+        let mut corner = track.clone();
+        corner.set_anti_alias(true);
         canvas.draw_rect(
-            Rect::from_xywh(client_width, client_height, thickness, thickness),
-            &track,
+            Rect::from_xywh(vertical_x, client_height, thickness, thickness),
+            &corner,
         );
     }
     canvas.restore();
@@ -13164,8 +13622,17 @@ fn paint_css_image_tile(
         // period alternate colors.
         let phase_x = generated_image_raster_phase(physical_left, uses_repeated_shader);
         let phase_y = generated_image_raster_phase(physical_top, uses_repeated_shader);
-        let Some(mut surface) = surfaces::raster_n32_premul((width + phase_x, height + phase_y))
-        else {
+        // SkPictureShader caches an eight-bit generated tile in RGBA8888,
+        // tagged with the destination color space (sRGB for an untagged
+        // canvas). Retain that representation for the concrete-tile path;
+        // native N32 would select a different legacy image sampler.
+        let tile_info = ImageInfo::new(
+            (width + phase_x, height + phase_y),
+            ColorType::RGBA8888,
+            AlphaType::Premul,
+            ColorSpace::new_srgb(),
+        );
+        let Some(mut surface) = surfaces::raster(&tile_info, None, None) else {
             return;
         };
         surface.canvas().clear(skia_safe::Color::TRANSPARENT);
@@ -14640,6 +15107,47 @@ pub(crate) fn paint_canvas_background(
     );
 }
 
+fn paint_scrolling_canvas_background(
+    canvas: &Canvas,
+    doc: &Document,
+    root_fragment: &Fragment,
+    bounds: Rect,
+) {
+    // ViewPainter's document background fills the pixel-snapped scrolling
+    // contents, combining the base backdrop with the propagated CSS color.
+    let source = doc.canvas_background_source();
+    let authored = source.map_or(Color::TRANSPARENT, |source| {
+        doc.node(source).style.background_color
+    });
+    let color = Color::from_rgba_f32(
+        authored.r * authored.a + 1.0 - authored.a,
+        authored.g * authored.a + 1.0 - authored.a,
+        authored.b * authored.a + 1.0 - authored.a,
+        1.0,
+    );
+    let mut paint = Paint::default();
+    paint.set_anti_alias(true);
+    set_paint_css_color(&mut paint, &color);
+    canvas.draw_rect(bounds, &paint);
+    annotate_content_background(canvas, color, bounds, 1.0, Some(bounds));
+    if let Some(source) = source {
+        let style = &doc.node(source).style;
+        let (positioning_rect, source_fragment) =
+            fragment_rect_for_node(root_fragment, source, PhysicalOffset::zero())
+                .map_or((bounds, None), |(rect, fragment)| (rect, Some(fragment)));
+        paint_background_layers(
+            canvas,
+            doc,
+            source_fragment,
+            style,
+            positioning_rect,
+            1.0,
+            Some(bounds),
+            true,
+        );
+    }
+}
+
 fn resolve_border_image_slice(value: &BorderImageLength, source_extent: f32) -> f32 {
     match value {
         BorderImageLength::Number(value) => *value,
@@ -15983,59 +16491,6 @@ fn paint_fragment_box_decoration(
         return;
     }
     if fragment.decoration_clip_rects.is_empty() {
-        let clip_svg_foreign_object = node.is_svg_foreign_object;
-        if clip_svg_foreign_object {
-            let x = abs_offset.left.round().to_f32();
-            let y = abs_offset.top.round().to_f32();
-            let border_box = Rect::from_xywh(
-                x,
-                y,
-                fragment.size.width.to_f32(),
-                fragment.size.height.to_f32(),
-            );
-            let viewport_width = (fragment.size.width
-                - fragment.border.left
-                - fragment.border.right
-                - fragment.padding.left
-                - fragment.padding.right)
-                .clamp_negative_to_zero()
-                .to_f32();
-            let viewport_height = (fragment.size.height
-                - fragment.border.top
-                - fragment.border.bottom
-                - fragment.padding.top
-                - fragment.padding.bottom)
-                .clamp_negative_to_zero()
-                .to_f32();
-            canvas.save();
-            canvas.clip_rect(
-                Rect::from_xywh(x, y, viewport_width, viewport_height),
-                ClipOp::Intersect,
-                false,
-            );
-            if style.has_border_radius() {
-                let representative_border = fragment
-                    .border
-                    .top
-                    .max_of(fragment.border.right)
-                    .max_of(fragment.border.bottom)
-                    .max_of(fragment.border.left)
-                    .to_f32();
-                canvas.clip_rrect(
-                    RRect::new_rect_radii(
-                        border_box,
-                        &fragment_border_radii(style, fragment, &border_box, representative_border),
-                    ),
-                    ClipOp::Intersect,
-                    true,
-                );
-            }
-            // SVG foreignObject decoration is first rasterized into its SVG
-            // viewport and then composited through the CSS rounded contour.
-            // Chromium's tiny subpixel contour retains forty-nine fiftieths
-            // of the covered source sample at the doubly-clipped corner.
-            canvas.save_layer_alpha_f(border_box, 49.0 / 50.0);
-        }
         if (native_button_theme || native_scroll_button_theme || native_color_theme)
             && fragment.size.width >= LayoutUnit::from_i32(6)
             && fragment.size.height >= LayoutUnit::from_i32(6)
@@ -16056,10 +16511,6 @@ fn paint_fragment_box_decoration(
             opacity_multiplier,
         );
         paint_native_marker_group_scrollbar_arrows(canvas, fragment, node, style, abs_offset);
-        if clip_svg_foreign_object {
-            canvas.restore();
-            canvas.restore();
-        }
         if clip_native_text_control_corners {
             canvas.restore();
         }
@@ -16920,6 +17371,13 @@ fn paint_box_decoration_background(
             } else {
                 close_rect_at_physical_viewport_edge(bg_rect, style.device_scale_factor)
             };
+            annotate_content_background(
+                canvas,
+                style.background_color,
+                bg_rect,
+                opacity_multiplier,
+                (!has_radius && !use_layer).then_some(bg_rect),
+            );
             if has_radius {
                 // Compute radii adjusted for background-clip box (CSS Backgrounds §5.3).
                 // Inner corner radii = outer radii - inset on each side, clamped to 0.
@@ -17642,6 +18100,113 @@ fn paint_native_fieldset_corner_samples(
     }
 }
 
+/// A lone opaque curved solid or double edge follows BoxBorderPainter's complex
+/// contour path: clip the outer/inner border, restrict the owning side, then
+/// fill the solid edge or clip each double stripe using inset rounded contours.
+/// The side clip retains the full corner tangents even when the edge is narrow.
+fn paint_sole_curved_border(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    rect: Rect,
+    side: usize,
+    width: f32,
+    border_style: BorderStyle,
+) -> bool {
+    let color = match side {
+        0 => style.border_top_color,
+        1 => style.border_right_color,
+        2 => style.border_bottom_color,
+        _ => style.border_left_color,
+    }
+    .resolve(&style.color);
+    if !color.is_opaque() {
+        return false;
+    }
+    let radii = fragment_border_radii(style, fragment, &rect, width);
+    let contour = |inset: f32| {
+        let (top, right, bottom, left) = match side {
+            0 => (inset, 0.0, 0.0, 0.0),
+            1 => (0.0, inset, 0.0, 0.0),
+            2 => (0.0, 0.0, inset, 0.0),
+            _ => (0.0, 0.0, 0.0, inset),
+        };
+        let inner = Rect::from_xywh(
+            rect.left + left,
+            rect.top + top,
+            (rect.width() - left - right).max(0.0),
+            (rect.height() - top - bottom).max(0.0),
+        );
+        let inner_radii = [
+            Point::new((radii[0].x - left).max(0.0), (radii[0].y - top).max(0.0)),
+            Point::new((radii[1].x - right).max(0.0), (radii[1].y - top).max(0.0)),
+            Point::new(
+                (radii[2].x - right).max(0.0),
+                (radii[2].y - bottom).max(0.0),
+            ),
+            Point::new((radii[3].x - left).max(0.0), (radii[3].y - bottom).max(0.0)),
+        ];
+        (inner, inner_radii)
+    };
+    let (inner, inner_radii) = contour(width);
+    if inner.width() > 0.0 && inner.height() > 0.0 && radii_exceed_rect(&inner, &inner_radii) {
+        // Non-renderable inner contours require the shared adjusted-inner
+        // decomposition; keep them on that path.
+        return false;
+    }
+    let side_rect = match side {
+        0 => Rect::from_xywh(
+            rect.left,
+            rect.top,
+            rect.width(),
+            width.max(radii[0].y).max(radii[1].y),
+        ),
+        1 => {
+            let extent = width.max(radii[1].x).max(radii[2].x);
+            Rect::from_xywh(rect.right - extent, rect.top, extent, rect.height())
+        }
+        2 => {
+            let extent = width.max(radii[2].y).max(radii[3].y);
+            Rect::from_xywh(rect.left, rect.bottom - extent, rect.width(), extent)
+        }
+        _ => Rect::from_xywh(
+            rect.left,
+            rect.top,
+            width.max(radii[0].x).max(radii[3].x),
+            rect.height(),
+        ),
+    };
+    let mut paint = Paint::default();
+    paint.set_anti_alias(true);
+    set_paint_css_color(&mut paint, &color);
+    canvas.save();
+    canvas.clip_rrect(RRect::new_rect_radii(rect, &radii), ClipOp::Intersect, true);
+    if inner.width() > 0.0 && inner.height() > 0.0 {
+        canvas.clip_rrect(
+            RRect::new_rect_radii(inner, &inner_radii),
+            ClipOp::Difference,
+            true,
+        );
+    }
+    canvas.clip_rect(side_rect, ClipOp::Intersect, true);
+    if border_style == BorderStyle::Solid {
+        canvas.draw_rect(rect, &paint);
+    } else {
+        for (inset, op) in [
+            ((width * 2.0 / 3.0).round(), ClipOp::Intersect),
+            ((width / 3.0).round(), ClipOp::Difference),
+        ] {
+            let (stripe, stripe_radii) = contour(inset);
+            canvas.save();
+            canvas.clip_rrect(RRect::new_rect_radii(stripe, &stripe_radii), op, true);
+            canvas.draw_rect(rect, &paint);
+            canvas.restore();
+        }
+    }
+    canvas.restore();
+    true
+}
+
 /// Paint borders around the border-box.
 ///
 /// Extracted from Blink's `BoxBorderPainter` (box_border_painter.cc).
@@ -17666,6 +18231,85 @@ fn paint_borders(
     // No borders to paint
     if bt == 0.0 && br == 0.0 && bb == 0.0 && bl == 0.0 {
         return;
+    }
+
+    // BoxBorderPainter clamps each used edge to the snapped border-box
+    // dimension. A double edge narrower than three CSS pixels becomes
+    // solid. With an empty inner contour, a lone curved edge fills the box
+    // through its rounded outer contour and authored side rectangle.
+    let visible_sides = [
+        (bt, style.border_top_style),
+        (br, style.border_right_style),
+        (bb, style.border_bottom_style),
+        (bl, style.border_left_style),
+    ];
+    let mut visible_sides_iter =
+        visible_sides
+            .iter()
+            .enumerate()
+            .filter(|(_, (width, border_style))| {
+                *width > 0.0 && !matches!(border_style, BorderStyle::None | BorderStyle::Hidden)
+            });
+    let sole_side = visible_sides_iter
+        .next()
+        .filter(|_| visible_sides_iter.next().is_none());
+    if let Some((side, _)) = sole_side.filter(|_| has_border_radius) {
+        let (width, border_style) = visible_sides[side];
+        let box_extent = if side == 0 || side == 2 { h } else { w };
+        let used_width = width.min(box_extent);
+        let effective_solid = border_style == BorderStyle::Solid
+            || (border_style == BorderStyle::Double && used_width < 3.0);
+        if ((effective_solid && width < box_extent)
+            || (border_style == BorderStyle::Double && used_width >= 3.0))
+            && !outer_rrect_clipped
+            && paint_sole_curved_border(
+                canvas,
+                fragment,
+                style,
+                Rect::from_xywh(x, y, w, h),
+                side,
+                used_width,
+                if effective_solid {
+                    BorderStyle::Solid
+                } else {
+                    BorderStyle::Double
+                },
+            )
+        {
+            return;
+        }
+        if width >= box_extent && effective_solid {
+            let border_rect = Rect::from_xywh(x, y, w, h);
+            let outer_radii = fragment_border_radii(style, fragment, &border_rect, width);
+            let side_rect = match side {
+                0 => Rect::from_xywh(x, y, w, width),
+                1 => Rect::from_xywh(x + w - width, y, width, h),
+                2 => Rect::from_xywh(x, y + h - width, w, width),
+                _ => Rect::from_xywh(x, y, width, h),
+            };
+            let color = match side {
+                0 => style.border_top_color,
+                1 => style.border_right_color,
+                2 => style.border_bottom_color,
+                _ => style.border_left_color,
+            }
+            .resolve(&style.color);
+            let mut paint = Paint::default();
+            paint.set_anti_alias(true);
+            set_paint_css_color(&mut paint, &color);
+            canvas.save();
+            if !outer_rrect_clipped {
+                canvas.clip_rrect(
+                    RRect::new_rect_radii(border_rect, &outer_radii),
+                    ClipOp::Intersect,
+                    true,
+                );
+            }
+            canvas.clip_rect(side_rect, ClipOp::Intersect, true);
+            canvas.draw_rect(border_rect, &paint);
+            canvas.restore();
+            return;
+        }
     }
 
     let inherited_color = &style.color;
@@ -22711,7 +23355,7 @@ mod tests {
             surface.canvas().clear(skia_safe::Color::WHITE);
             surface.canvas().scale((scale as f32, scale as f32));
             let save_count = surface.canvas().save_count();
-            paint_fragment(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+            paint_fragment_tracked(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
             assert_eq!(surface.canvas().save_count(), save_count);
             let pixels = surface_bytes(&mut surface);
             // Repeated Chromium captures of the same RGB source at opacity
@@ -22791,7 +23435,7 @@ mod tests {
         let mut surface = surfaces::raster_n32_premul((81, 81)).expect("surface");
         surface.canvas().clear(skia_safe::Color::WHITE);
         let save_count = surface.canvas().save_count();
-        paint_fragment(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+        paint_fragment_tracked(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
         assert_eq!(surface.canvas().save_count(), save_count);
 
         let pixels = surface_bytes(&mut surface);
@@ -22835,7 +23479,7 @@ mod tests {
         let mut surface = surfaces::raster_n32_premul((45, 45)).expect("surface");
         surface.canvas().clear(skia_safe::Color::WHITE);
         let save_count = surface.canvas().save_count();
-        paint_fragment(
+        paint_fragment_tracked(
             surface.canvas(),
             &parent_fragment,
             &doc,
@@ -22937,7 +23581,7 @@ mod tests {
         let mut surface = surfaces::raster_n32_premul((240, 180)).expect("surface");
         surface.canvas().clear(skia_safe::Color::WHITE);
         surface.canvas().scale((1.25, 1.25));
-        paint_fragment(
+        paint_fragment_tracked(
             surface.canvas(),
             &button_fragment,
             &doc,

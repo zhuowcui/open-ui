@@ -1,0 +1,1342 @@
+{
+  "artifacts": [
+    {
+      "bytes": 3340,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-contract-v355.json",
+      "sha256": "a7ab9603e80bfe0dea5a07d8f1c568e0d30ade3241b6faabcf28eff031162e5e"
+    },
+    {
+      "bytes": 5514,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-clean-v345/build.json",
+      "sha256": "689037919094ad3b78eef03b53cef536f5ee752440a8768474949ddaef18b5c6"
+    },
+    {
+      "bytes": 6392,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-linux-workspace-v343/receipt.json",
+      "sha256": "9c8fcd579eb596ef2a71e86b60784cfd9423daf2d66fbe27b7598e3100623516"
+    },
+    {
+      "bytes": 6100,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-linux-workspace-v346/receipt.json",
+      "sha256": "5da5f4943dee5103e2cd451b7f2591ef2555523b25840902c640694a62494403"
+    },
+    {
+      "bytes": 4760,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-checks-v347.json",
+      "sha256": "459ac5407777b3e2405675a3501e007093ca9d76c442a854b44dcb1ed2cd24da"
+    },
+    {
+      "bytes": 9464839,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-recheck-v350/comparison.json",
+      "sha256": "1053d961cddde4a9e29ddf772604e6fdcaca07a2f59719659398309599e975f3"
+    },
+    {
+      "bytes": 3102258,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-viewport-v352/comparison.json",
+      "sha256": "455249c8f80bac29a27f68ca375b2438b83d994635a50c37b0334b9fec38996b"
+    },
+    {
+      "bytes": 813921,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-layer-controls-v353/comparison.json",
+      "sha256": "ac93d9a2d4a17678641258e2eb04a57a3ebd0fd10a79e5b74c48ca52250d8bbf"
+    },
+    {
+      "bytes": 2119,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-ffi-v351/receipt.json",
+      "sha256": "60f6324aec5848eb0077a0aec0611c7ed47e1e0c8574ce0e669a9396c497c357"
+    },
+    {
+      "bytes": 2760,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-raster-delta-v358.json",
+      "sha256": "c3611367dd07b2b2d15e4071b882ac2cd95b978572eaa29e4dc14893974b3278"
+    },
+    {
+      "bytes": 1646449,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-clean-focused-v354/focused-summary.json",
+      "sha256": "fe51c7b09ea3295b82e577735a8c3818669f954b29ee9783ebbafa05209c4ca3"
+    },
+    {
+      "bytes": 2455655,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-clean-primitive-v354/primitive-summary.json",
+      "sha256": "45d9f0e73e73eedeb7f3747dfb8b17049651e1125bb56e31b3f652b7b9e5f958"
+    },
+    {
+      "bytes": 896,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-focused-exit-v354.json",
+      "sha256": "abe90cd1bbb61a21ed83d364235b42f7e51f11b44ec3c313d05cee1a3ca4bad3"
+    },
+    {
+      "bytes": 902,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-primitive-exit-v354.json",
+      "sha256": "9eea17cb14ffb8cdedb11baefbbf00b993b6d0b5a07b206c7053e85f579f73e2"
+    },
+    {
+      "bytes": 10493672,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-controls-v322/comparison.json",
+      "sha256": "8e2eb588945b8c991518522117e7f12a61ae278f18624015b2ea2a65771356be"
+    },
+    {
+      "bytes": 9464839,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-recheck-v328/comparison.json",
+      "sha256": "c1f653d6104b038155c4f85b2deb93630f8f15a5bfc024c597cf56c16fad61b8"
+    },
+    {
+      "bytes": 91959,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-rounding-delta-v341.json",
+      "sha256": "22c444dcbd4870ede88cdecbd1669dd8b1de1f3ff34ffa106d9824374cb73e03"
+    },
+    {
+      "bytes": 12060,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-detach-oracle-v342/comparison.json",
+      "sha256": "ee974cee71c6f799d95559205b7092dc5c25b3b4122896a23e6bad2bf872eeb0"
+    },
+    {
+      "bytes": 5677,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-backend-trace-v349/metadata.json",
+      "sha256": "72efadfb8ee79c5b6883b7a91e990707b11022c7624d953b47aa47db138f76bc"
+    },
+    {
+      "bytes": 460,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/named-color-source-v326.json",
+      "sha256": "cc74161b43dc1340c118439bd6fa94af47e352dc274551efa980598552b3629d"
+    },
+    {
+      "bytes": 729,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v340.json",
+      "sha256": "f09f66735b16324a56db5611f4246cfc22f821a87171293089fa6f8fdeaaa32e"
+    },
+    {
+      "bytes": 729,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v348.json",
+      "sha256": "0c5145828e7441fc56e275ad13ea150647cdab29a661a04361eca09d943f7448"
+    },
+    {
+      "bytes": 839,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v357.json",
+      "sha256": "acb9f59ff05b991ab8039c1479e7bf94622e415fbb8fda248869271337a24d44"
+    },
+    {
+      "bytes": 4760,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-element-defaults-checks-v356.json",
+      "sha256": "48650d3852d24acf3f05a3f591152d1a94f138703aee8feff4f371dd58166ef6"
+    },
+    {
+      "bytes": 4434,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-target-clean-v334/receipt.json",
+      "sha256": "04225b9e3027b5064f45e6a0d453bfd487de14de04083ad9f7e8ebc828e4f878"
+    },
+    {
+      "bytes": 1924,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-clean-v319/build.json",
+      "sha256": "f4b181cdbfff65dd7933395045fed397b0336ed3eb81462ac233f9ab0ac47114"
+    },
+    {
+      "bytes": 2119,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-ffi-v323/receipt.json",
+      "sha256": "2860d0aae4474e80ef150c1240d021a27b77ac64968c131dd4818a67641030a5"
+    },
+    {
+      "bytes": 2121,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-ffi-v329/receipt.json",
+      "sha256": "adf8e6828b7c8f51bdfe759d041614110b8fb876c25ccfbd580bcaca25ce7615"
+    },
+    {
+      "bytes": 6387,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-linux-workspace-v332/receipt.json",
+      "sha256": "e5d7c2910ffdbcdaf8906b071c37c1c378ea7f72d7a51e8b9ed45d8a1367878e"
+    },
+    {
+      "bytes": 6388,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-linux-workspace-v335/receipt.json",
+      "sha256": "bc0ee56abc4992bc4c31d10fb6c0e017559db6b1e81b090a193ada68db4bfb0f"
+    },
+    {
+      "bytes": 6390,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-linux-workspace-v337/receipt.json",
+      "sha256": "de9148d9d8dccbb74f77b14cab46df99be05320605f7c2d4e43ff923173f5d45"
+    },
+    {
+      "bytes": 4780,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-checks-v317.json",
+      "sha256": "b1a3c1369a0994dc742254d974779dd46bc93c8591869147b4bd890718230780"
+    },
+    {
+      "bytes": 25060,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-ci-v320.json",
+      "sha256": "4ecb4912834ff758133517a9229febbb3c820c432cebe051dc8b7b7e89413be5"
+    },
+    {
+      "bytes": 5671,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-source-audit-v372/receipt.json",
+      "sha256": "53bb8ef76c1069dd732aa5507c1640d382bcdc8d5ddba10fbddfed3d15455b67"
+    },
+    {
+      "bytes": 8957,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-residual-review-v373.json",
+      "sha256": "82daca0f12a738d669012e17c6d84eb64fdf2a5a91b4b067f635948bccb4458a"
+    },
+    {
+      "bytes": 4760,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-snap-checks-v374.json",
+      "sha256": "fb5c652e9597f9a9cfb0d01c3f33c0356dfc7224e5f28ea2f8fc938bda575e3c"
+    },
+    {
+      "bytes": 2403,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v375.json",
+      "sha256": "830ad8e9c92b9d0e828caa6842b950b52600014c946788efb470ae7c26cd7189"
+    },
+    {
+      "bytes": 4810,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-docs-checks-v360.json",
+      "sha256": "f1f9c53a7ef54eaa450d987061a7972afaad7eb3b3915294e36f4fe1eeee7160"
+    },
+    {
+      "bytes": 25060,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-docs-ci-v361.json",
+      "sha256": "082d8332bfc00530ffee91e45346a0b137fbb373bb3fbeb62366bb754547b7f3"
+    },
+    {
+      "bytes": 70446875,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-clean-full-v354/full-summary.json",
+      "sha256": "a83191d9c353f9461369a8c64d243684a53b75ec41ae47e9168742d1b2a94497"
+    },
+    {
+      "bytes": 72483854,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-clean-expanded-v354/expanded-summary.json",
+      "sha256": "e92a503ace7ca1146fba95169baa655227b2c9cc13f983b9dae38b023b3f4cbd"
+    },
+    {
+      "bytes": 887,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-full-exit-v354.json",
+      "sha256": "b125b288e17fd644c3f9085ad1911248c11be6be6f950cf6bd2feb64a8848fcf"
+    },
+    {
+      "bytes": 899,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-expanded-exit-v354.json",
+      "sha256": "5177b1c2d3b2e96d3f71071f0182c27edd88dfed62a703bd2e9dbaeb435c2cbc"
+    },
+    {
+      "bytes": 44446,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-full-delta-v376.json",
+      "sha256": "1f303b13e4f9e178892ab9d605a36d6c8e0fabbabc6a76e814cf400a62d92ad7"
+    },
+    {
+      "bytes": 3539,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-expanded-delta-v377.json",
+      "sha256": "733d3e2077d1997569018dc68ad56a9f282b517522ba7548288ed75ed7700da8"
+    },
+    {
+      "bytes": 4860,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-snap-docs-checks-v378.json",
+      "sha256": "78833a17af6fdedf7655d9d9a571090c4ee15d97f20480ce81e4261024a87d3d"
+    },
+    {
+      "bytes": 25060,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-docs-ci-v380.json",
+      "sha256": "2993e69e55fe5c8dc4e9080f09cecce1763cbdae08887566f31ff66442aa9b32"
+    },
+    {
+      "bytes": 7353,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-element-defaults-workspace-v362/receipt.json",
+      "sha256": "e0fd53f7cc32e2190cc31cb2b16708e9f5752061086d2335f0268f4814c7c792"
+    },
+    {
+      "bytes": 7351,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-element-defaults-workspace-v381/receipt.json",
+      "sha256": "5a2a4bdf273edc6fdc9300cf7ff8c9e43f4159768e9c69940146511e8dec2a42"
+    },
+    {
+      "bytes": 4760,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-element-defaults-checks-v382.json",
+      "sha256": "9c742268acb5d230367c139eccaae1f598d3fddf75bf7b9d1cbac181462b0896"
+    },
+    {
+      "bytes": 1498,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-element-defaults-pipeline-v370.json",
+      "sha256": "6a62b98e5c643acf663184f0a2a0465c879b8c9002b34e3d28301a9bb811ba1e"
+    },
+    {
+      "bytes": 1100,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-sticky-regression-layout-v383/receipt.json",
+      "sha256": "47efaa576adc04733ce123064b208303ffc6a01aef765f2e364eddf5dc3afc72"
+    },
+    {
+      "bytes": 7354,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-workspace-v384/receipt.json",
+      "sha256": "87ed17958dde37f1fb3a254b8547e1dd3bd18f9ea4421b27144bb245968f4056"
+    },
+    {
+      "bytes": 4760,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-checks-v385.json",
+      "sha256": "7e55f93fbb54ba9e964ce0cf8717a1961d04a37a75b42c8b6302f2d8c71f5e76"
+    },
+    {
+      "bytes": 6907,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-clean-v386/build.json",
+      "sha256": "457c5e4abf309bf62fc24211d22cdc1baf24cd8d6ee1186be117ebffa55ffab2"
+    },
+    {
+      "bytes": 53670,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-sticky-regression-review-v387.json",
+      "sha256": "cd4f50291661bdd1858e39e80bb69d00bf25a2ae8d8541a8695010314556422f"
+    },
+    {
+      "bytes": 2492,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v388.json",
+      "sha256": "06c0437f81b30e9ee7ba1b5eb83a300b7d4dcf37c2fadd6971f55e32612a16f6"
+    },
+    {
+      "bytes": 4656,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-pipeline-v390.json",
+      "sha256": "4bd9c002ecb96b6fe0ae8c92587faf3009a24cf644d5b8718db3da63caf22baf"
+    },
+    {
+      "bytes": 2126,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-ffi-v391/receipt.json",
+      "sha256": "e02a4fb7688707fb3b5d66dda36de2f4587a14cc51adc9c3dc62fbd570828bfb"
+    },
+    {
+      "bytes": 337135,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-sticky-v392/results/full-summary.json",
+      "sha256": "e6a2a3a2fa83ad26904cafb8281cf3ad4d31d434f376c006603ccea4a5edb65c"
+    },
+    {
+      "bytes": 1245,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-sticky-v392/exit.json",
+      "sha256": "96e60186289e7c749ca044af0746099b8e56c36625e0175514d79c4b64c45f68"
+    },
+    {
+      "bytes": 9513160,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-nested-v393/comparison.json",
+      "sha256": "c4abd561bd990f088d11eb62ca2ef89c9f7599f381f9384b15736f8ee5492791"
+    },
+    {
+      "bytes": 3120108,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-viewport-v394/comparison.json",
+      "sha256": "3fca32f2cd7b3bb5738a905ae9f0ec23d19d349c86ac89e61b9a579169971c7a"
+    },
+    {
+      "bytes": 2276432,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-svg-v396/comparison.json",
+      "sha256": "72bfe487036c65c61de82b0b6bee7ad29956aa021f4024e32f84fd434b5cd402"
+    },
+    {
+      "bytes": 6981428,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-neighbors-v397/comparison.json",
+      "sha256": "490b4b9eb2cef6e5da1a1e89fc564504c0b6bbbd03c345abaa307f5921874770"
+    },
+    {
+      "bytes": 139860,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-oracle-v399/comparison.json",
+      "sha256": "f1b82c6dbee18b7f4d5b9d0cc80090ea1fe8044d642746a50f15daf275bf44bb"
+    },
+    {
+      "bytes": 820359,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-layer-v400/comparison.json",
+      "sha256": "bb3eb31c4e9f909e7cb55094ab4d0a58c062a8aa9c57ec3f29f52e108fdae413"
+    },
+    {
+      "bytes": 1800,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-source-audit-v401/receipt.json",
+      "sha256": "50509346eafddeb462be3c00cd112923e45adb665e1688705f79fc7e5cb9411b"
+    },
+    {
+      "bytes": 4760,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-checks-v402.json",
+      "sha256": "5491aca7d7f2aab680205e515c0d915455b78870fb1eafc05ebe3f93fe33c81a"
+    },
+    {
+      "bytes": 8753,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-workspace-v403/receipt.json",
+      "sha256": "4026e0436d73a81517f61a849d3d2159ac5fca8abc47f89e796c38bfbf125d2b"
+    },
+    {
+      "bytes": 391,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-pipeline-v413.json",
+      "sha256": "2e58b78fa1bd7727e9ab8646971e768d4b4e9f82daa52fd02ed6ac5926b1924a"
+    },
+    {
+      "bytes": 33090,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-review-v412.json",
+      "sha256": "ef05903f98d835890184d66ce0b64e938416156848397c97755b7a5876568420"
+    },
+    {
+      "bytes": 2774,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-raster-delta-v416.json",
+      "sha256": "b55e6eb3cfad791772adfa60f4c92fcff17416bec1e35bf577c9b90482f1c4e0"
+    },
+    {
+      "bytes": 2455,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v420.json",
+      "sha256": "f4b06be5014b11b85ac18771b7708ecddc99b794f208e83ce51677ae42227720"
+    },
+    {
+      "bytes": 4760,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-checks-v422.json",
+      "sha256": "0b61deea7c55c6279a62cee45407c7d13c072e2c3dde36bcba2282713f9f4f91"
+    },
+    {
+      "bytes": 2455,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v436.json",
+      "sha256": "e1e380c4faf7746c5fd7265fb703fcb92f7191093f71ff56c2362f6e3b363e2f"
+    },
+    {
+      "bytes": 8757,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-workspace-v421/receipt.json",
+      "sha256": "adde892de1468e288472f6eaf240a3e75475a37fa40d03e60e5cb5b560741611"
+    },
+    {
+      "bytes": 4760,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-checks-v422.json",
+      "sha256": "0b61deea7c55c6279a62cee45407c7d13c072e2c3dde36bcba2282713f9f4f91"
+    },
+    {
+      "bytes": 6907,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-clean-v423/build.json",
+      "sha256": "aa80f1da7e33d09b26c4531404fd2eb0d50866f148a6f06821dff4574c95a779"
+    },
+    {
+      "bytes": 2126,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-ffi-v424/receipt.json",
+      "sha256": "f84eb5114ce8fcb4dea582d8923aa14fc8f29069d48127d68673a74f3af679b1"
+    },
+    {
+      "bytes": 9509799,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-nested-v425/comparison.json",
+      "sha256": "68cd4f3809f37618dfbe56fe8c643bcc138e10cb144aac75c9ea2980186b59be"
+    },
+    {
+      "bytes": 3120108,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-viewport-v426/comparison.json",
+      "sha256": "089a46a69a518aa19067e514948958aeb303215446de26a5f442366e220cc384"
+    },
+    {
+      "bytes": 820359,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-layer-v427/comparison.json",
+      "sha256": "511f7c87d8ebe3c2e0acf67fa78331af8a49ee1a500ffacd3816dbbbfeda427a"
+    },
+    {
+      "bytes": 2276432,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-svg-v428/comparison.json",
+      "sha256": "8f9b74494e31ae9ae435c60c3fb8ed2822cc20c71c2afb1497d14bf51f953f52"
+    },
+    {
+      "bytes": 6981428,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-neighbors-v429/comparison.json",
+      "sha256": "1d95da19a9c705014dbc30022dd16b067426a45ee4a14496cf983f2302812c8d"
+    },
+    {
+      "bytes": 337135,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-sticky-v432/results/full-summary.json",
+      "sha256": "58950ff01cd46ff5a7f8219711c133cfb7f552a07eb7c7d2f47c6fe4f41d4c39"
+    },
+    {
+      "bytes": 1245,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-sticky-v432/exit.json",
+      "sha256": "0d306979dfe3fa0c928e1a1cddc1bd17794bdf1c7be33ba66dc5c0d02d953aae"
+    },
+    {
+      "bytes": 163229,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-oracle-v431/comparison.json",
+      "sha256": "bcdd9a689b8c319ee087214ebbdf29bcde08f19ec0cf22ab8bf17f573cd2805b"
+    },
+    {
+      "bytes": 4656,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-pipeline-v433.json",
+      "sha256": "576160885c39b30a565a3daae7256215d643ba60e468e42ea68d0e5b3b58a917"
+    },
+    {
+      "bytes": 41165,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-review-v434.json",
+      "sha256": "44370ef9f1c4a22c9ec1a7e64551a6537d2c5ca91e9201ee56da9fd92530be27"
+    },
+    {
+      "bytes": 2774,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-raster-delta-v417.json",
+      "sha256": "542190ad465b637868783220ae19e13dadffa20549df1ba4e2c027fd0e24379c"
+    },
+    {
+      "bytes": 70437661,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-clean-full-v430/full-summary.json",
+      "sha256": "7de881f94bd82ccbf2e4863d9b717d777cc505046eaae8baef60df1d6f16512d"
+    },
+    {
+      "bytes": 901,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-full-exit-v430.json",
+      "sha256": "6c1652793484788cb9d0036f760b2679df71b5d9fd26df08cf85ac8b79fcc862"
+    },
+    {
+      "bytes": 72474640,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-clean-expanded-v430/expanded-summary.json",
+      "sha256": "40c3bd218f8866b538eab4d3d659a8164680331a4b69752256acea1f178524f2"
+    },
+    {
+      "bytes": 913,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-expanded-exit-v430.json",
+      "sha256": "6b67490d8461fc8f1885c858eb7395ecd800e4b978089b2eb7ee3328374daeb7"
+    },
+    {
+      "bytes": 82467,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-full-delta-v437.json",
+      "sha256": "a5f3548091901ca9b40519b16da189b63cbfd8c31829703b1fa800ca72fba4b2"
+    },
+    {
+      "bytes": 4426,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-expanded-delta-v438.json",
+      "sha256": "64f997d9b4547d502be79a5cd86f401df3ce7611ef7e012cf9174ced9a009bdc"
+    },
+    {
+      "bytes": 44269,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-complete-review-v467.json",
+      "sha256": "64b3cce5c23b55fe39c2355a3851769292d6eba0341dc24981e357f1314869f7"
+    },
+    {
+      "bytes": 4810,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v435.json",
+      "sha256": "a4b089d17a519dbe1c1b85ea024530e06068d3f231368e6e16e7ac64c99246e0"
+    },
+    {
+      "bytes": 25060,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-v440.json",
+      "sha256": "ec3ca5a6fbb34b234fc00f22b1dbc0f03a9cfd5c29bb9dba25029aa1b363bd78"
+    },
+    {
+      "bytes": 4800,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-checks-v442.json",
+      "sha256": "8f532e5543436fe8f612ba074960c692da32e79af11ea6ce8d5763297a032a7b"
+    },
+    {
+      "bytes": 4800,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-checks-v456.json",
+      "sha256": "7d19cc8e6e5e112173c085bd44ac553949ad55e1117c4d01c4c7256946f6ba33"
+    },
+    {
+      "bytes": 2567,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v458.json",
+      "sha256": "6eb7f2eb43f290fd61f5b151a2510b28b0692e1520666e93707adea579e3dbf9"
+    },
+    {
+      "bytes": 10156,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-workspace-v443/receipt.json",
+      "sha256": "b1ea638c14298a97039e904ea8588d63758f37fa2333024187c071a444f8bd0c"
+    },
+    {
+      "bytes": 391,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-pipeline-v455.json",
+      "sha256": "8a543dcb50ab381110dc22ef4a36b3bd0aa824556367037c90910a91e099d3a8"
+    },
+    {
+      "bytes": 4800,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-checks-v464.json",
+      "sha256": "833198e9d01bd6c94da8f7c6298304ae7e7577a6383ba5447e599218aaaa89c5"
+    },
+    {
+      "bytes": 2567,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v468.json",
+      "sha256": "7f87c481f9e261ffac227901163bbc63290206ff954357c5b5794c5c2059fb96"
+    },
+    {
+      "bytes": 48718,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-complete-review-v459.json",
+      "sha256": "74332fe3c26da2aed359b405ec1800f3f557d119713c6fa62a574f10e2379e41"
+    },
+    {
+      "bytes": 8570,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-regression-layout-v466/receipt.json",
+      "sha256": "fd456555b66dd10468b89bf137af3437aee271f4867cc215552b93b1288d3268"
+    },
+    {
+      "bytes": 4810,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v469.json",
+      "sha256": "b74246d366ae8fa679985b65def94799e2425de324cb1762eaa751ef92ffdb1f"
+    },
+    {
+      "bytes": 25060,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-v470.json",
+      "sha256": "06d952b40eb267a12841a3204ae7966578aaaa53b3c100098bd1a74bf1acd3f2"
+    },
+    {
+      "bytes": 10156,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-workspace-v461/receipt.json",
+      "sha256": "1723dd6420ec770facf3a93280074bd2ac84b75da90c8e7c19ef81d8a633bcf4"
+    },
+    {
+      "bytes": 391,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-pipeline-v465.json",
+      "sha256": "1685f5b3128e6a79032675a2fc33efbcf4dc905c4131d54ef1dfdc441ae523d9"
+    },
+    {
+      "bytes": 10160,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-workspace-v472/receipt.json",
+      "sha256": "6163b1e0df9817a2188e433df49da219bea483c3d42b7fbbc92606c74b4f2b71"
+    },
+    {
+      "bytes": 4800,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-checks-v474.json",
+      "sha256": "dedd5ec470265e605d4ec972d6823c621098796f31a9683be70ef1a4a813f605"
+    },
+    {
+      "bytes": 6886,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-clean-v444/build.json",
+      "sha256": "65b7d0f4c500be48b037a41f92eae0ad51ab9d04d59c0b6bc1bc527346f9781e"
+    },
+    {
+      "bytes": 2120,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-ffi-v445/receipt.json",
+      "sha256": "9a5ec7cb05f521386e1814eb7525b5f30dbdcda6c765b74526d7da157ed388c6"
+    },
+    {
+      "bytes": 9767920,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-nested-v446/comparison.json",
+      "sha256": "38af5b6b103e827b33a086f83c171e705e717444983cecee06c7f2d6a924bef7"
+    },
+    {
+      "bytes": 3112458,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-viewport-v447/comparison.json",
+      "sha256": "c645e8e82efc2af614d06560cfd87ecd9a2eeaca8fa5b80f3b811933491f9075"
+    },
+    {
+      "bytes": 818739,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-layer-v448/comparison.json",
+      "sha256": "09977ed2e8f9cd2db2ba1c8a0f51cbe4d256efe7984a7adb216b35a5e191dafd"
+    },
+    {
+      "bytes": 2272112,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-svg-v449/comparison.json",
+      "sha256": "e929327da18776f00b0a14cc0e99c5cc2c0b9870711019d020c6c53da6c4be93"
+    },
+    {
+      "bytes": 6968468,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-neighbors-v450/comparison.json",
+      "sha256": "ced53f5c617e5664694323a7c9085114a1cbeb7a1fa473f4c0093f688f5ca735"
+    },
+    {
+      "bytes": 163046,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-oracle-v451/comparison.json",
+      "sha256": "a806b3179005e768d7958116e1598a4caa50eaabbe1b4b3d812ab23ee0d85ebd"
+    },
+    {
+      "bytes": 901,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-focused-exit-v452.json",
+      "sha256": "7b5eb89ab2787638cdb13735d3d3d9e535cc7f06f1605ce00ef02d9fd552c59f"
+    },
+    {
+      "bytes": 907,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-primitive-exit-v452.json",
+      "sha256": "1677531ab01ad53a846f01c6361aeca9c02f7ce97f7d2d1d2c89eb42f0e6b994"
+    },
+    {
+      "bytes": 1646446,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-clean-focused-v452/focused-summary.json",
+      "sha256": "64af10d71648caa741387236884f2df663b14f577182c8182931a75e57cbeeaa"
+    },
+    {
+      "bytes": 2455652,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-clean-primitive-v452/primitive-summary.json",
+      "sha256": "ec00a2b56990f155be182eb4c8ec9938bf66f2f84d26831fad6cf1328c66dd26"
+    },
+    {
+      "bytes": 337132,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-sticky-v454/results/full-summary.json",
+      "sha256": "8a51a9ab8b710c8beeb86a432faa9e7d62967a2e267c3ce7e7877afe210aac9c"
+    },
+    {
+      "bytes": 4590,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-pipeline-v473.json",
+      "sha256": "cd22492f89d9662380fde4f175910d3c9b153e49806c89c45eac174352ea666b"
+    },
+    {
+      "bytes": 2804,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v475.json",
+      "sha256": "872270c6ae891bb6c4d3ec8d3e3afe92d1ede064ce19d65ec1d6b4bceefe2f7d"
+    },
+    {
+      "bytes": 55359,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbars-review-v476.json",
+      "sha256": "0f64d24fd952e56dcfbe94bec4eaa228cf1c2fcddac1ee98aec49a6db5aa094e"
+    },
+    {
+      "bytes": 4810,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v478.json",
+      "sha256": "5546a2c188a2e29fbf1ad96410f019cf75889f882fbb02f4c439ce8402c177c7"
+    },
+    {
+      "bytes": 25060,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-v479.json",
+      "sha256": "286736dc4a8d1d4afff622cb409c48e9f1ee076bc5b1b659fb00654e78b8bed4"
+    },
+    {
+      "bytes": 2992,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-ownership-clean-v480/build.json",
+      "sha256": "1d9f817ea044a7f40f09f9ade021d947c92a954e41f847eb4e0544a47561e186"
+    },
+    {
+      "bytes": 4930,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-ownership-checks-v481.json",
+      "sha256": "3285fbce4234d5417f53d2c19ebdd0972f5ff6c4c9aeb58e0ee47d29eaa6e156"
+    },
+    {
+      "bytes": 416555,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-ownership-selection-v482/results/full-summary.json",
+      "sha256": "1872dac4946002e1cb37a105eb41a73a28fc644836382fc6e349c54be2037aff"
+    },
+    {
+      "bytes": 1319,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-ownership-selection-v482/exit.json",
+      "sha256": "8f9366b2223ee5220f76ee9e2b68e71fe326cd73e0c1f66144d7002ff5053fae"
+    },
+    {
+      "bytes": 13662,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-origin-ownership-delta-v483.json",
+      "sha256": "ba6653419d7fad2329c44bb0aa3528010ff07b2adab5cfed3a4e89b3b43c53e2"
+    },
+    {
+      "bytes": 4910,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-checks-v485.json",
+      "sha256": "e8310548a908c8ad1facedc5179d26542b531a54dc32d16cbe9e73cd270b7e4e"
+    },
+    {
+      "bytes": 11740,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-workspace-v486/receipt.json",
+      "sha256": "1c72894119015891ba32d7c25e23539257046d07c84c2212ae6b944736caf2e7"
+    },
+    {
+      "bytes": 391,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-pipeline-v496.json",
+      "sha256": "b8205e1cdc06581e3f06f929a93b60e943fcba76c6f759cada64fe89a4cffabd"
+    },
+    {
+      "bytes": 1550,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-build-cache-v499.json",
+      "sha256": "4fe9d53fd8212e7a4936af52211c99f7c40947eed09d222dd695d2f5dcf38cb2"
+    },
+    {
+      "bytes": 11914,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-workspace-v500/receipt.json",
+      "sha256": "d84a6a49b88654c1a73a7db0d8fe2ddecddc593b1414cf8d90e68ba49c7eccb9"
+    },
+    {
+      "bytes": 374,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-workspace-retry-v502.json",
+      "sha256": "9eccec84c0971881fd638c70928d5c364b99238f0fe3b00f57ae5f79f7d11ef0"
+    },
+    {
+      "bytes": 7028,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-clean-v484/build.json",
+      "sha256": "300d1419d9ef131e18946ab8761a28fb7927836772359fba517fd712dc743801"
+    },
+    {
+      "bytes": 2144,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-ffi-v488/receipt.json",
+      "sha256": "7c19b8bf2fc8c5d4305aa1e878fde7d47bbf543ec55483c333e0abd33888d43b"
+    },
+    {
+      "bytes": 9852248,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-nested-v489/comparison.json",
+      "sha256": "b79a1b2245a9d166b7ffb72a4a50541884e45de261a7e38c0b242613c66d8697"
+    },
+    {
+      "bytes": 3140508,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-viewport-v490/comparison.json",
+      "sha256": "27d9b39c96c09b96e6336c56151184b9995427b7c6edaee51f990e8d4778427d"
+    },
+    {
+      "bytes": 825488,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-layer-v491/comparison.json",
+      "sha256": "0d9e86404dce15ae0cde2e32ddf2acfd9e1b9726b58662cb9e4ec9fb0c3ff3c9"
+    },
+    {
+      "bytes": 2287952,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-svg-v492/comparison.json",
+      "sha256": "c14c3bc7cfffaf2dc9b4da81967965dfb04efa3d9578eecacd2d36fb4c98ccb9"
+    },
+    {
+      "bytes": 7015988,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-neighbors-v493/comparison.json",
+      "sha256": "c915f646145b83747068f1c89fb4c66cf10768ca33ffed51f822e0f7f27f0d65"
+    },
+    {
+      "bytes": 163717,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-oracle-v494/comparison.json",
+      "sha256": "0d2f525ca24315b88db343a8133c2ba0d6232b3212e77c52de3119f64bde04c0"
+    },
+    {
+      "bytes": 411184,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-selection-v487/results/full-summary.json",
+      "sha256": "3ef4a54cd04c23197f12c8cfda2a060f833a7b6927e73953f0cb1a7f0f30efd4"
+    },
+    {
+      "bytes": 1313,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-selection-v487/exit.json",
+      "sha256": "64352508153ca4fd9f5234208870fd9a0c88ff678b6df19e0fc01273a6e9f17c"
+    },
+    {
+      "bytes": 1646459,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-clean-focused-v495/focused-summary.json",
+      "sha256": "4cbd90baa2dfa782a42aa69d9e8210acafc3641b170aa2f1a7ff9aab468adac6"
+    },
+    {
+      "bytes": 2455665,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-clean-primitive-v495/primitive-summary.json",
+      "sha256": "e04e6f52ba8fd4e269cd71af6dab562a9af59215631bb9013f73b276fb0a973d"
+    },
+    {
+      "bytes": 936,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-focused-exit-v495.json",
+      "sha256": "0595b4c5d43d2b192fc6a0f1ec5caf22978fecb9a1de0a7af2510520fb2e8334"
+    },
+    {
+      "bytes": 942,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-primitive-exit-v495.json",
+      "sha256": "45649a7fbad8da904c032983af9778a7869d1ad2bb7b254792baaef06fd973d7"
+    },
+    {
+      "bytes": 4841,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-pipeline-v501.json",
+      "sha256": "47a5e00274d446500f3a64d8156751ea6feee37db6922d5f9e06520b8dd05a7a"
+    },
+    {
+      "bytes": 2701,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-into-view-api-audit-v505.json",
+      "sha256": "8f1c7fdc639cd7c311a2100dc064e741be6440fa7b05860fa609cf3bb5dc72b5"
+    },
+    {
+      "bytes": 58968,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-review-v506.json",
+      "sha256": "4b26a46c0ba2d9f66e6e5d4d5ddfaf7615eb857842060ea1a69b41a4fd765ff8"
+    },
+    {
+      "bytes": 2753,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v507.json",
+      "sha256": "765748cfc958825842e918705bd16d57c8bdbfdfe56d029d674beed19f6d4152"
+    },
+    {
+      "bytes": 2901,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nested-scroll-patch-stack-v508.json",
+      "sha256": "687095c834049708c3b9620d45bb5c3722ca8f7a1ab453c48fe6398eac8c20a3"
+    },
+    {
+      "bytes": 5167,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-legacy-contour-calibration-audit-v509.json",
+      "sha256": "c56ecb14b8a331a7d4dcb77a8bc6336055b0f770af379547c45a8861700af14f"
+    },
+    {
+      "bytes": 4810,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v511.json",
+      "sha256": "8986356fd7f93dfd2171103c59dcdb87fef74e2a52ad77e4d5fb3cc74bf2cb86"
+    },
+    {
+      "bytes": 25060,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-v512.json",
+      "sha256": "8af85794b09a9aecff943ce1d6f73b5f4fdf7381c6d53fa5a368053d676528e2"
+    },
+    {
+      "bytes": 70438352,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-clean-full-v495/full-summary.json",
+      "sha256": "4c19b0ef2bdbeaf715ab557007bcbcd353863e34448d53c6d3a6c33f4aac8318"
+    },
+    {
+      "bytes": 72475331,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-clean-expanded-v495/expanded-summary.json",
+      "sha256": "bf165795a1b99ef90ceb0095c418fa29f836c3af87ec690c2c6adbf9fb132fa1"
+    },
+    {
+      "bytes": 927,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-full-exit-v495.json",
+      "sha256": "7527dad9db5b46ef8f56cc71533b292c1305b1b5d69810c7a7416fceb9c51fe8"
+    },
+    {
+      "bytes": 939,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-expanded-exit-v495.json",
+      "sha256": "6d5c77e38d52c5826b4e09defb4d14b9058a7f82a4e198c49f2f81439149dc11"
+    },
+    {
+      "bytes": 149705,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-full-delta-v514.json",
+      "sha256": "531aafd78b0c7163f8f69277530a449b0858dd7024c3dc7b92a5d639a32d511a"
+    },
+    {
+      "bytes": 6088,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-expanded-delta-v515.json",
+      "sha256": "60a7c1f6f953cbbc1058fb964e6f737acb0de8f4927ec459e8f14bdd8c74c1b3"
+    },
+    {
+      "bytes": 1177566,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-backing-origin-complete-review-v518.json",
+      "sha256": "8d7b497cac4de663b9f1475e7b9c8a09b8dee4ef34f6bec35cb15470b3c8ed0d"
+    },
+    {
+      "bytes": 71815,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-into-view-oracle-v519/oracle.json",
+      "sha256": "ae99680f08b9d5feb1c84211d35555756a7f8d394823e51e1f3bb43436150fad"
+    },
+    {
+      "bytes": 3373,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-into-view-clean-v521/build.json",
+      "sha256": "7361e807356bc2d920ef49604a5c26b30e13d0ed9a24b91407211e2bf1744daf"
+    },
+    {
+      "bytes": 3373,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-into-view-clean-v526/build.json",
+      "sha256": "23bf2381f4f38748d63ff86b4668924eb5dbe05322d6486d5709d05c29e8d391"
+    },
+    {
+      "bytes": 2173,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-into-view-ffi-v524/receipt.json",
+      "sha256": "7595171395a70c029aa5332be13ed55bd4e12af2a912368dbccd7d56bf174abb"
+    },
+    {
+      "bytes": 2173,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-into-view-ffi-v528/receipt.json",
+      "sha256": "b79166e80787d7e4fb05fcefe7deccb59c65d463afcc7b8aa3aaafdb0ddab3af"
+    },
+    {
+      "bytes": 118046,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-into-view-consumers-v523/comparison.json",
+      "sha256": "7d50b06728d39e97ced39fbf0bbfcb79f8d825426a41ad28652c3dcb3142b4cf"
+    },
+    {
+      "bytes": 118046,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-into-view-consumers-v530/comparison.json",
+      "sha256": "ffc1c530bb88e4ae8fc0cafc889c78f4a14e1a1b3b730734b4c595b305a44278"
+    },
+    {
+      "bytes": 2806,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-capture-clean-v522/build.json",
+      "sha256": "0c43d9bc1ef493de43f7755535e3ffd86c7a17c1bcc40607d1f5549faa99e6aa"
+    },
+    {
+      "bytes": 470574,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-capture-selection-v525/results/full-summary.json",
+      "sha256": "52126fd7d479a2bee8e2f17bba52d3cfedeff40ff3fb4bba98e3fb032f9d9df3"
+    },
+    {
+      "bytes": 1184,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-capture-selection-v525/exit.json",
+      "sha256": "b08d656e7a72d7a427810abb86ea319bec3d1d99bd67f254d2454399c7e00c7e"
+    },
+    {
+      "bytes": 1815,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-clean-v527/build.json",
+      "sha256": "0ba2a230867c63d3b6fbb748cdcfc0d97d0c65de57ef02ac087bb4078af15e6e"
+    },
+    {
+      "bytes": 11608,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-clean-v529/build.json",
+      "sha256": "5db524ebc0831fdb365d8786bbb53755f45e299caa4e72f54212722e3e8c7cde"
+    },
+    {
+      "bytes": 469825,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-capture-selection-v531/results/full-summary.json",
+      "sha256": "f60c761974c4989974ad6e91200f88a9a02246d45ac6e26e8c3ebd52b6bf0b56"
+    },
+    {
+      "bytes": 1188,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-capture-selection-v531/exit.json",
+      "sha256": "3137595948fa78447c85c617fb98c1f1bd8900b4b23ea686ae20c92835284301"
+    },
+    {
+      "bytes": 1646459,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-clean-focused-v532/focused-summary.json",
+      "sha256": "a263644e958e20098d35992c9b6fed260de242c80fa3d5dcea1fe93b88086744"
+    },
+    {
+      "bytes": 2455665,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-clean-primitive-v532/primitive-summary.json",
+      "sha256": "7d7205cf23ec2f2a7183754675e157219b580d32fb2a7067244b8facdcc61de8"
+    },
+    {
+      "bytes": 936,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-focused-exit-v532.json",
+      "sha256": "e10bfe2b1cbbba859b1ccec2e711a765e03f38f97116135bf56dd6e3418c5c3a"
+    },
+    {
+      "bytes": 942,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-primitive-exit-v532.json",
+      "sha256": "d70605693fe3fac75377d4959bb7975f3390f8a3fa7732f64fff627260631492"
+    },
+    {
+      "bytes": 2965,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-primary-source-v533/audit.json",
+      "sha256": "f88b3c9f5bc2a0d7ea148ea29586b86a9e6453ffc7bd4328070dc7dd19718de4"
+    },
+    {
+      "bytes": 3480,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-source-patches-v534.json",
+      "sha256": "80dc865539a039cac00b997b2ec270328cfadfac785101d8bc8104b00df10fe6"
+    },
+    {
+      "bytes": 11607,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-clean-v535/build.json",
+      "sha256": "1bb4c6bb910617d178fde3022afd8bd6bc28400b1dfb69570adebb0e0cec2b31"
+    },
+    {
+      "bytes": 468990,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-capture-selection-v536/results/full-summary.json",
+      "sha256": "8eef6f6a1cbe8371a72ce3299c9918eafc075f5ae7dd8060cb9b061fb622d3e6"
+    },
+    {
+      "bytes": 1188,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-capture-selection-v536/exit.json",
+      "sha256": "e06c8e90dc294dcd369cadabc1d4ca0bec9ce7671b43c719f898139fa2781b96"
+    },
+    {
+      "bytes": 1646459,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-clean-focused-v537/focused-summary.json",
+      "sha256": "0e0c31b574ff3465f6ed9edbffa3314a6d61c908d264e5746efac2c88b213523"
+    },
+    {
+      "bytes": 2455665,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-clean-primitive-v537/primitive-summary.json",
+      "sha256": "ea3cbdd9977a8ae31e4bf0a8c5f297023d3a81666628df3435364855cd54a365"
+    },
+    {
+      "bytes": 936,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-focused-exit-v537.json",
+      "sha256": "31ffd0da234a82bf804da0158dcff514360af5becddd141ac4dfe2c34d4cb1fb"
+    },
+    {
+      "bytes": 942,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-primitive-exit-v537.json",
+      "sha256": "5f5402e98b78a9e90b281ee00ea46c68e57f02e05f7a361dd82b9ff7426d5c00"
+    },
+    {
+      "bytes": 5161,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-checks-v538.json",
+      "sha256": "0669d1b9d21484aa197999403819dae0c6ca1be69f37416ae5dc3068e35d1e6b"
+    },
+    {
+      "bytes": 295884,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-selection-review-v539.json",
+      "sha256": "40558a9581e28531413359ddb24fc27d224f4dcac76896c1c099467eaef50a58"
+    },
+    {
+      "bytes": 3590,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-into-view-gaps-v540.json",
+      "sha256": "55d1c9ea2acf4520d09d36057c6543f1358e0be1a8fd9b54d60abff5ae380cb5"
+    },
+    {
+      "bytes": 1142,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-source-patch-v541.json",
+      "sha256": "1b5197dd4a9b44beab6ee249c3deb06fb5d432219a5b6a129ae97b2db4464cdc"
+    },
+    {
+      "bytes": 3311,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-apply-v546.json",
+      "sha256": "4a78f6c514bbd55ca9453bd7d3ee0466353950b5a8235e50f6140e119e6887e2"
+    },
+    {
+      "bytes": 2593,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-raster-audit-v547.json",
+      "sha256": "2ef667f0372c3fe7d0c5051f27a6d0297d51bbbb495859ac061881896e331f76"
+    }
+  ],
+  "completed_backing_candidate": {
+    "addition_count": 201,
+    "all_804_addition_invariants_unchanged": true,
+    "all_chromium_inputs_unchanged": true,
+    "delta_vs_svg": {
+      "different": 1605,
+      "exact": 21319,
+      "exact_losses": 15,
+      "improved": 9,
+      "new_exact": 9,
+      "same_pixel_count": 1,
+      "worsened": 20
+    },
+    "expanded_observed_exit_code": 1,
+    "expanded_results": {
+      "different": 1606,
+      "errors": 0,
+      "exact": 22122,
+      "profile_result_sha256": "4a479a5263fba9e46b9c25bca373549743e59d0699e9e2b93381bdf4a9b20a47",
+      "total": 23728
+    },
+    "native_already_failing_image_changes": {
+      "improved": 6,
+      "same_count": 219,
+      "worsened": 42
+    },
+    "original_observed_exit_code": 1,
+    "original_results": {
+      "different": 1605,
+      "errors": 0,
+      "exact": 21319,
+      "profile_result_sha256": "13a512b16937a6ef54001f43a93b877c89331fdc21afa6cdde83d0e776eeed5c",
+      "total": 22924
+    },
+    "quad_exact_additions": 200,
+    "source": {
+      "clean": true,
+      "commit": "3f95e617f3b27fdfd945c4286ee4a633649b33b1",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "c73754e260e89cecd84ec0f7304f11a7195d2eced1d808d77837a693a8cd2614",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "3f95e617f3b27fdfd945c4286ee4a633649b33b1",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "c73754e260e89cecd84ec0f7304f11a7195d2eced1d808d77837a693a8cd2614",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "status": "failed and preserved;15 exact losses vs SVG,20 worsened comparisons; source not qualifying"
+  },
+  "javascript_executed_by_openui": false,
+  "last_accepted_renderer": {
+    "commit": "9e0f01457621cff9757914b71d956d403e4ff117",
+    "errors": 0,
+    "evidence_path": "docs/renderer/generated/native-viewport-full-v17.json",
+    "expanded_exact": 22111,
+    "expanded_total": 23728,
+    "original_exact": 21308,
+    "original_total": 22924
+  },
+  "native_reveal_implementation": {
+    "c_consumer_observed_exit_code": 0,
+    "c_consumers": 10,
+    "c_operations": [
+      "oui_element_scroll_into_view_v1",
+      "oui_element_smooth_scroll_into_view_v1"
+    ],
+    "consumer_observed_exit_code": 1,
+    "cpp_consumers": 4,
+    "engine_tests_failed": 0,
+    "engine_tests_passed": 35,
+    "existing_struct_layouts_preserved": true,
+    "exports": 112,
+    "four_endpoint_pixel_differences_at_scale_1_25": 52,
+    "frozen_exports": 84,
+    "header_checksum": "sha256:f351719823bc6bded0199b48a94e3c22e38935cd8a414abf0a994de1cf168780",
+    "native_geometry_exact": 30,
+    "native_states": 30,
+    "open_gaps": [
+      {
+        "operation": "Native scroll-margin and scroll-padding styles in element reveal",
+        "owner": "openui-style/openui-layout/openui-engine",
+        "reviewed_evidence": "No style fields, typed properties or reveal-plan handling exist under those names; pinned Chromium expands the expose rectangle by ScrollMarginStrut and aligns within VisibleScrollSnapportRect. This source audit establishes absent public support; no unrun runtime result is inferred.",
+        "status": "open; implement native properties and independent consuming-app coverage"
+      },
+      {
+        "operation": "All start/center/end/nearest options and oversized targets across writing modes, root and containing blocks",
+        "owner": "openui-engine/openui-layout",
+        "reviewed_evidence": "Seven newly added reveal tests and the two five-scale consuming fixtures do not exercise this complete cross-product. The plan walks DOM parents, whereas pinned Chromium follows layout containing boxes and treats fixed-to-frame elements explicitly.",
+        "status": "open; expand independent native geometry and pixel guards before complete API qualification"
+      },
+      {
+        "operation": "Exact hidden and clip reveal endpoints at scale1.25",
+        "owner": "openui-paint",
+        "reviewed_evidence": "Four measured endpoints differ in52pixels each while all30 owned geometry states agree. Reduced Rust consumer and immutable oracle capture are preserved.",
+        "status": "open; generic clipping/coverage repair required"
+      }
+    ],
+    "pixel_endpoints_exact": 16,
+    "pixel_endpoints_total": 20,
+    "pixel_tolerance": 0,
+    "public_rust_methods": [
+      "Element::scroll_into_view",
+      "Element::smooth_scroll_into_view"
+    ],
+    "shared_accessibility_operation": true,
+    "source": {
+      "clean": true,
+      "commit": "65147ab217a9a38fd37ba6fd7b1627e5cdb0ef0b",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "481a147d38a51492d1dc22ba993f9e332b7d25ea963777b4d1f4fc8c79aec4d2",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "65147ab217a9a38fd37ba6fd7b1627e5cdb0ef0b",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "481a147d38a51492d1dc22ba993f9e332b7d25ea963777b4d1f4fc8c79aec4d2",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "status": "implemented and applied; scoped private verification only; own umbrella verification and complete API qualification pending"
+  },
+  "open_work": [
+    "All original22924 comparisons must be exact with zero errors; full clean combined-source census and residual ownership/reproducers remain required.",
+    "All admitted expanded final states require exact results at four profiles;35 AST-lowered candidates remain pending.",
+    "Four already-failing clip-margin selection rows still worsen at scale1.5 against SVG; minimized shared paint review remains required.",
+    "Native scroll-margin/padding, complete reveal option/writing-mode/root/containing-block qualification and four scale1.25 endpoint pixels remain open.",
+    "All785 native scroll pixel failures and744 SVG pixel failures remain open; flex/grid/table/replaced scrollbar layout and scrollbar input/accessibility remain incomplete.",
+    "Two live legacy contour-specific sample calibrations need general raster replacements; exact pixels do not qualify fixture-specific output corrections.",
+    "Compositor-owned retained layers/animation,3D behavior, hardening failures/skips, lab accessibility/GPU tests, dual-architecture packaging, signing and approved publication remain open."
+  ],
+  "policy": "Pinned Chromium is the sole pixel target. Open UI never executes JavaScript. Native app behavior must use public Rust methods over the shared Engine; C uses the same operation. Zero pixel tolerance. Historical images and failed evidence stay immutable.",
+  "prior_evidence": {
+    "immutable": true,
+    "path": "docs/renderer/generated/native-nested-scroll-v7.json",
+    "sha256": "e18e77ea4f5f4b1fec9606bdba6988b7e9620a541c1e83f82e97cfc06775bb07"
+  },
+  "qualification_summary": "No release qualification.15 known original exact losses restored only in172-row private selection;157exact15different0errors.640focused+960primitive remain bit-identical. Public native Rust/C reveal is implemented with35Engine passes,C10/C++4,30/30geometry and16/20pixel endpoints on a private source. Reviewed renderer/API code is applied; own clean combined-source gates are pending. Historical Chromium/oracle/archive inputs are unchanged.",
+  "release_qualification": false,
+  "reviewed_shared_correction": {
+    "all_15_known_exact_losses_restored_in_selection": true,
+    "all_1600_comparison_invariants_unchanged": true,
+    "complete_original_and_expanded": "not run; no complete result inferred",
+    "layout_tests_failed": 0,
+    "layout_tests_ignored": 2,
+    "layout_tests_passed": 5847,
+    "raster_gates": [
+      {
+        "all_eight_comparison_invariants_unchanged_vs_backing": true,
+        "observed_exit_code": 0,
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-clean-focused-v537/focused-summary.json",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "c3642c1058823d91e8411ebc5066b6528314ec7c3a2a0170bec742ff28ae79de",
+          "total": 640
+        },
+        "sha256": "0e0c31b574ff3465f6ed9edbffa3314a6d61c908d264e5746efac2c88b213523",
+        "source": {
+          "clean": true,
+          "commit": "83d45e0c482390624b6acfb1334f6af6e0056ac2",
+          "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+          "source_tree_sha256": "09b68f69bd833d8df2a1683bcd6f266dc9c52e78ac57d77320fa42f0eee7c2a7",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "suite": "focused"
+      },
+      {
+        "all_eight_comparison_invariants_unchanged_vs_backing": true,
+        "observed_exit_code": 0,
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scrollbar-clip-margin-clean-primitive-v537/primitive-summary.json",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "88573fa19a574cbf7877a37f07d8b445362add6bca54b462d3796477bcc338ff",
+          "total": 960
+        },
+        "sha256": "ea3cbdd9977a8ae31e4bf0a8c5f297023d3a81666628df3435364855cd54a365",
+        "source": {
+          "clean": true,
+          "commit": "83d45e0c482390624b6acfb1334f6af6e0056ac2",
+          "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+          "source_tree_sha256": "09b68f69bd833d8df2a1683bcd6f266dc9c52e78ac57d77320fa42f0eee7c2a7",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "suite": "primitive"
+      }
+    ],
+    "read_only_checks": {
+      "failed": 1,
+      "failure": "author-style-inventory drift after shared capture adapter change; regenerated on umbrella application",
+      "passed": 9
+    },
+    "selected_prior_failing_rows_worse_vs_svg": 4,
+    "selection_complete_contract_scope": false,
+    "selection_deltas": {
+      "backing": {
+        "comparisons": 172,
+        "exact_gains": 15,
+        "exact_losses": 0,
+        "improved": 20
+      },
+      "clip_without_paint": {
+        "comparisons": 172,
+        "exact_gains": 2,
+        "exact_losses": 0,
+        "improved": 4
+      },
+      "origin": {
+        "comparisons": 172,
+        "exact_gains": 2,
+        "exact_losses": 0,
+        "improved": 5,
+        "worsened": 4
+      },
+      "svg": {
+        "comparisons": 172,
+        "exact_gains": 9,
+        "exact_losses": 0,
+        "improved": 9,
+        "same_count": 1,
+        "worsened": 4
+      }
+    },
+    "selection_observed_exit_code": 1,
+    "selection_results": {
+      "different": 15,
+      "errors": 0,
+      "exact": 157,
+      "profile_result_sha256": "fbee96908dd6b88cafbe2865cc8876bc736b4166ec8a928955ddbf4be4160c88",
+      "total": 172
+    },
+    "source": {
+      "clean": true,
+      "commit": "83d45e0c482390624b6acfb1334f6af6e0056ac2",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "09b68f69bd833d8df2a1683bcd6f266dc9c52e78ac57d77320fa42f0eee7c2a7",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "83d45e0c482390624b6acfb1334f6af6e0056ac2",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "09b68f69bd833d8df2a1683bcd6f266dc9c52e78ac57d77320fa42f0eee7c2a7",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "status": "shared renderer code applied; private partial results do not qualify the combined umbrella source"
+  },
+  "schema_version": 1,
+  "source_patches": [
+    {
+      "applied_in_current_umbrella_stack": true,
+      "bytes": 106756,
+      "path": "docs/renderer/evidence/native-svg-decoration-v1/native-svg-rebase-api-v293.patch",
+      "sha256": "e5eeed1d899a626ba47754d3a4aa9df3b6653bdee64e1a633188611b6fd352b9"
+    },
+    {
+      "applied_in_current_umbrella_stack": false,
+      "bytes": 117437,
+      "path": "docs/renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v13.patch",
+      "sha256": "55ec04b8c7ef87b87460e67de8c1ed6b586fa8f49f2c13696debc96b134987fb"
+    },
+    {
+      "applied_in_current_umbrella_stack": false,
+      "bytes": 120440,
+      "path": "docs/renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v14.patch",
+      "sha256": "4e1f0ecb45b6cc1887b960469a1b52ec7a5cb06a00fcbe9dbee3045071d36858"
+    },
+    {
+      "applied_in_current_umbrella_stack": false,
+      "bytes": 120450,
+      "path": "docs/renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v15.patch",
+      "sha256": "463e1276d41cbc7f922dd6a8252e9566cf72ca58bb7978be9b6c44eafe7e523e"
+    },
+    {
+      "applied_in_current_umbrella_stack": true,
+      "bytes": 121001,
+      "path": "docs/renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v16.patch",
+      "sha256": "bd6a4e9bae33d0ee9f9fd01f9961920ed1e4c7602f1cf7c782ca22bc3608db17"
+    },
+    {
+      "applied_in_current_umbrella_stack": false,
+      "bytes": 44379,
+      "path": "docs/renderer/evidence/native-nested-scroll-v1/native-scroll-into-view-v1.patch",
+      "sha256": "7c16f5c824886cf6b37ec9cdcf4af85215cd4615797cacad652e9b575889d343"
+    },
+    {
+      "applied_in_current_umbrella_stack": true,
+      "bytes": 44535,
+      "path": "docs/renderer/evidence/native-nested-scroll-v1/native-scroll-into-view-v2.patch",
+      "sha256": "b262319f061ba28c249bf5d31726b6105ea760cb13e351ed682e7c2c9722c4ae"
+    }
+  ],
+  "umbrella_implementation": {
+    "api_candidate": "65147ab217a9a38fd37ba6fd7b1627e5cdb0ef0b",
+    "applied": true,
+    "generated_author_style_inventory_regenerated": true,
+    "own_clean_consumers": "pending",
+    "own_clean_focused_primitive": "pending",
+    "own_clean_original_expanded": "pending",
+    "own_clean_workspace": "pending",
+    "private_results_are_not_umbrella_qualification": true,
+    "renderer_candidate": "83d45e0c482390624b6acfb1334f6af6e0056ac2",
+    "stack_byte_equivalence_verified": true
+  }
+}

@@ -44,7 +44,7 @@ operate directly on the native engine:
 | Supply image bytes and display an image, background, or border image | `Document::register_image_resource`, `set_resource_provider`, `load_image_resource`; `Element::set_image_resource`, `set_background_layers`, `set_border_image` |
 | Handle input or activate an element | `Element::on`, `on_capture`, `click`; Rust callbacks in `view!` |
 | Inject normalized keyboard or committed text input | `Document::dispatch_key_input`, `dispatch_key_event`, `dispatch_text_input` |
-| Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `scroll_metrics`, `client_rects`, `bounding_rect`; `Document::hit_test` |
+| Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `scroll_metrics`, `scroll_into_view`, `smooth_scroll_into_view`, `client_rects`, `bounding_rect`; `Document::hit_test` |
 | Update form controls or details | `set_control_value`, `set_selection`, `set_checked`, `set_open` |
 | Inject or cancel native IME input | `Document::dispatch_composition_start`, `dispatch_composition_update`, `dispatch_composition_end`, `dispatch_composition_cancel` |
 
@@ -83,12 +83,14 @@ five scales. Nested scrolling ranges, native scrollbar input/accessibility,
 remaining C property conversion, complete native API coverage, and complete
 pixel qualification still require work. Those are native implementation gaps.
 
-Scrolling an element into view is another native API gap: there is no public
-Rust method for it. The private accessibility operation currently uses
-viewport bounds as ancestor offsets and stops after its first overflow
-ancestor. It needs a shared Engine correction, a public Rust method, and
-independent consuming-app verification for nested scrolling and alignment.
-Its private presence does not complete the application API.
+Native reveal now has public `Element::scroll_into_view` and
+`smooth_scroll_into_view` methods, shared with accessibility and additive C
+operations. The [native reveal evidence](native-scroll-metrics.md#native-scroll-into-view)
+records 35 Engine tests, ten C/four C++ consumers and 30/30 reduced geometry
+states on the private API source. Four of 20 endpoint images still differ.
+Native scroll-margin/padding support and broader alignment, writing-mode and
+containing-block qualification remain open. Own combined umbrella verification
+is pending; the public methods do not complete every native element API.
 
 The [scroll-layer Rust consumer](../renderer/evidence/native-viewport-scroll-v1/native_scroll_layer_opacity.rs)
 changes background clipping, opacity, filters and scroll offsets from a Rust
@@ -109,7 +111,7 @@ The rebased [C/C++ consumers](../renderer/evidence/native-svg-decoration-v1/nati
 create the same viewport and change border, padding and box sizing from native
 callbacks. Their bounds, detach/reattach and teardown checks pass at five scales.
 The additive tag preserves the 110 exports and existing layouts. The constructor
-and shared renderer patches remain unapplied; complete rebased qualification
+and shared renderer source are now applied; own combined-source qualification
 and native SVG coordinate/transform APIs remain open. These are native
 implementation gaps, with no JavaScript execution or script bindings.
 

@@ -1519,10 +1519,17 @@ fn project_oof_candidate_to_physical(
 ///
 /// Returns a `Fragment` with resolved sizes and positioned children.
 pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
-    if doc.node(node_id).tag == ElementTag::Viewport {
-        return crate::viewport::layout(doc, node_id, space);
+    let mut fragment = if doc.node(node_id).tag == ElementTag::Viewport {
+        crate::viewport::layout(doc, node_id, space)
+    } else {
+        crate::scrollbars::layout(doc, node_id, space)
+    };
+    // Ancestors can resize and project child fragments. Capture scroll
+    // geometry once, after the document's final physical layout is complete.
+    if node_id == doc.root() {
+        crate::scroll_area::populate(doc, &mut fragment);
     }
-    block_layout_contents(doc, node_id, space)
+    fragment
 }
 
 pub(crate) fn block_layout_contents(
@@ -1531,6 +1538,56 @@ pub(crate) fn block_layout_contents(
     space: &ConstraintSpace,
 ) -> Fragment {
     let physical_style = &doc.node(node_id).style;
+
+    // SVG foreignObject width/height describe its viewport, including the
+    // physical fragment, regardless of CSS box-sizing and border/padding.
+    // LayoutSVGForeignObject::UpdateSVGLayout supplies fixed logical sizes
+    // to BlockNode::Layout without inflating them to fit the decoration.
+    let svg_space = doc.node(node_id).is_svg_foreign_object.then(|| {
+        let (width_basis, height_basis) = if space.writing_direction.is_horizontal() {
+            (
+                space.percentage_resolution_inline_size,
+                space.percentage_resolution_block_size,
+            )
+        } else {
+            (
+                space.percentage_resolution_block_size,
+                space.percentage_resolution_inline_size,
+            )
+        };
+        let width = resolve_length(
+            &physical_style.width,
+            width_basis,
+            LayoutUnit::zero(),
+            LayoutUnit::zero(),
+        )
+        .clamp_negative_to_zero();
+        let height = resolve_length(
+            &physical_style.height,
+            height_basis,
+            LayoutUnit::zero(),
+            LayoutUnit::zero(),
+        )
+        .clamp_negative_to_zero();
+        let mut viewport_space = space.clone();
+        (
+            viewport_space.available_inline_size,
+            viewport_space.available_block_size,
+        ) = if space.writing_direction.is_horizontal() {
+            (width, height)
+        } else {
+            (height, width)
+        };
+        viewport_space.percentage_resolution_inline_size = viewport_space.available_inline_size;
+        viewport_space.percentage_resolution_block_size = viewport_space.available_block_size;
+        viewport_space.is_fixed_inline_size = true;
+        viewport_space.is_fixed_block_size = true;
+        viewport_space.is_new_formatting_context = true;
+        viewport_space.is_initial_block_size_indefinite = false;
+        viewport_space.exclusion_space = None;
+        viewport_space
+    });
+    let space = svg_space.as_ref().unwrap_or(space);
 
     if doc.node(node_id).replaced.is_some() {
         return replaced_layout(doc, node_id, space);
@@ -1625,6 +1682,20 @@ pub(crate) fn block_layout_contents(
 
     let border_padding_inline = border.left + border.right + padding.left + padding.right;
     let border_padding_block = border.top + border.bottom + padding.top + padding.bottom;
+
+    let element_scrollbars = space
+        .element_scrollbars
+        .filter(|(owner, _)| *owner == node_id)
+        .map(|(_, scrollbars)| scrollbars);
+    let physical_scrollbar_insets =
+        element_scrollbars.map_or(BoxStrut::zero(), |scrollbars| scrollbars.insets);
+    let scrollbar_insets = if space.writing_direction.is_horizontal() {
+        physical_scrollbar_insets
+    } else {
+        algorithm_box_from_logical_strut(
+            physical_scrollbar_insets.to_logical(space.writing_direction),
+        )
+    };
 
     // ── Step 2: Resolve width ────────────────────────────────────────
     // Blink: ComputeBlockSizeForFragment / ResolveMainInlineLength
@@ -1745,7 +1816,9 @@ pub(crate) fn block_layout_contents(
     }
 
     // The total border-box inline size
-    let border_box_inline = if style.box_sizing == BoxSizing::BorderBox {
+    let border_box_inline = if doc.node(node_id).is_svg_foreign_object {
+        space.available_inline_size
+    } else if style.box_sizing == BoxSizing::BorderBox {
         content_inline_size.max_of(border_padding_inline)
     } else {
         content_inline_size + border_padding_inline
@@ -1757,25 +1830,8 @@ pub(crate) fn block_layout_contents(
     } else {
         content_inline_size
     };
-    // The pinned Chromium profile uses overlay-width `auto` scrollbars and a
-    // 10px gutter for `thin`. A stable gutter consumes the logical inline-end
-    // of the padding box; `both-edges` mirrors it at inline-start.
-    let scrollbar_gutter = if physical_style.scrollbar_gutter.is_stable()
-        && physical_style.scrollbar_width == openui_style::ScrollbarWidth::Thin
-    {
-        LayoutUnit::from_i32(10)
-    } else {
-        LayoutUnit::zero()
-    };
-    let scrollbar_gutter_start = if physical_style.scrollbar_gutter.both_edges() {
-        scrollbar_gutter
-    } else {
-        LayoutUnit::zero()
-    };
-    let scrollbar_gutter_end = scrollbar_gutter;
     let child_available_inline =
-        (raw_child_available_inline - scrollbar_gutter_start - scrollbar_gutter_end)
-            .clamp_negative_to_zero();
+        (raw_child_available_inline - scrollbar_insets.inline_sum()).clamp_negative_to_zero();
 
     // ── Multicol dispatch ────────────────────────────────────────────
     // CSS Multi-column Layout §3-4: if column-count or column-width is set,
@@ -1996,7 +2052,17 @@ pub(crate) fn block_layout_contents(
         space.available_block_size // auto height: pass through
     };
 
-    let content_edge = border.top + padding.top;
+    let child_percentage_block_size = if child_percentage_block_size.is_indefinite() {
+        child_percentage_block_size
+    } else {
+        (child_percentage_block_size - scrollbar_insets.block_sum()).clamp_negative_to_zero()
+    };
+    let children_available_block_size = if children_available_block_size.is_indefinite() {
+        children_available_block_size
+    } else {
+        (children_available_block_size - scrollbar_insets.block_sum()).clamp_negative_to_zero()
+    };
+    let content_edge = border.top + padding.top + scrollbar_insets.top;
     let mut block_offset = content_edge;
     let mut margin_strut = MarginStrut::new();
     let mut child_fragments: Vec<Fragment> = Vec::new();
@@ -4798,7 +4864,7 @@ pub(crate) fn block_layout_contents(
     //   - no bottom padding or border separates them
     //   - parent doesn't establish a new BFC
     // When any of these conditions fails, the margin strut is consumed.
-    let bottom_edge = border.bottom + padding.bottom;
+    let bottom_edge = border.bottom + padding.bottom + scrollbar_insets.bottom;
     let height_is_effectively_auto = style.height.is_auto()
         || style.height.is_content_or_intrinsic()
         || (style.height.length_type() == openui_geometry::LengthType::Percent
@@ -4990,7 +5056,8 @@ pub(crate) fn block_layout_contents(
     // sequence as one alignment subject.  This is also what centers a short
     // paragraph inside a definite-height carousel item.
     let resolved_content_block_size =
-        (resolved_block_size - border_padding_block).clamp_negative_to_zero();
+        (resolved_block_size - border_padding_block - scrollbar_insets.block_sum())
+            .clamp_negative_to_zero();
     let laid_out_content_block_size =
         (intrinsic_block_size - bottom_edge - content_edge).clamp_negative_to_zero();
     let alignment_free_space = resolved_content_block_size - laid_out_content_block_size;
@@ -5176,7 +5243,9 @@ pub(crate) fn block_layout_contents(
         // Update containing block to use this block's resolved dimensions.
         // CSS 2.1 §10.1: The containing block for abspos descendants is
         // the padding box of the nearest positioned ancestor.
-        let cb_block_size = resolved_block_size - border.top - border.bottom;
+        let cb_block_size =
+            (resolved_block_size - border.top - border.bottom - scrollbar_insets.block_sum())
+                .clamp_negative_to_zero();
         let cb_inline_size = child_available_inline + padding.left + padding.right;
         let logical_cb_size = LogicalSize::new(cb_inline_size, cb_block_size);
         let physical_cb_size =
@@ -5194,6 +5263,10 @@ pub(crate) fn block_layout_contents(
                 c.containing_block_size = physical_cb_size;
                 c.containing_block_direction = style.direction;
                 c.containing_block_node = node_id;
+                c.containing_block_offset.left += physical_scrollbar_insets.left;
+                c.containing_block_offset.top += physical_scrollbar_insets.top;
+                c.static_position.left += physical_scrollbar_insets.left;
+                c.static_position.top += physical_scrollbar_insets.top;
             }
             apply_anchor_position_area(doc, c, &child_fragments);
         }
@@ -5242,9 +5315,9 @@ pub(crate) fn block_layout_contents(
         WritingModeConverter::new(space.writing_direction, provisional_physical_size)
             .to_physical_size(logical_border_box_size);
 
-    if scrollbar_gutter_start > LayoutUnit::zero() {
+    if scrollbar_insets.left > LayoutUnit::zero() {
         for child in &mut child_fragments[..oof_children_start] {
-            child.offset.left = child.offset.left + scrollbar_gutter_start;
+            child.offset.left = child.offset.left + scrollbar_insets.left;
         }
     }
 
@@ -5273,6 +5346,7 @@ pub(crate) fn block_layout_contents(
     }
 
     let mut fragment = Fragment::new_box(node_id, border_box_size);
+    fragment.element_scrollbars = element_scrollbars;
     fragment.border = physical_border;
     fragment.padding = physical_padding;
     fragment.children = child_fragments;
@@ -5600,22 +5674,36 @@ pub(crate) fn apply_sticky_descendants_in_scrollport(
         )
     };
     let viewport_offset = PhysicalOffset::new(
-        scroll_container.border.left + scroll_container.padding.left,
-        scroll_container.border.top + scroll_container.padding.top,
+        scroll_container.border.left
+            + scroll_container.padding.left
+            + scroll_container
+                .element_scrollbars
+                .map_or(LayoutUnit::zero(), |s| s.insets.left),
+        scroll_container.border.top
+            + scroll_container.padding.top
+            + scroll_container
+                .element_scrollbars
+                .map_or(LayoutUnit::zero(), |s| s.insets.top),
     );
     let viewport_size = PhysicalSize::new(
         (scroll_container.size.width
             - scroll_container.border.left
             - scroll_container.border.right
             - scroll_container.padding.left
-            - scroll_container.padding.right)
-            .clamp_negative_to_zero(),
+            - scroll_container.padding.right
+            - scroll_container
+                .element_scrollbars
+                .map_or(LayoutUnit::zero(), |s| s.insets.inline_sum()))
+        .clamp_negative_to_zero(),
         (scroll_container.size.height
             - scroll_container.border.top
             - scroll_container.border.bottom
             - scroll_container.padding.top
-            - scroll_container.padding.bottom)
-            .clamp_negative_to_zero(),
+            - scroll_container.padding.bottom
+            - scroll_container
+                .element_scrollbars
+                .map_or(LayoutUnit::zero(), |s| s.insets.block_sum()))
+        .clamp_negative_to_zero(),
     );
     let viewport = PhysicalRect::new(viewport_offset, viewport_size);
 
@@ -8329,6 +8417,9 @@ fn resolve_block_size(
     content_inline_size: LayoutUnit,
     is_viewport: bool,
 ) -> LayoutUnit {
+    if doc.node(node_id).is_svg_foreign_object {
+        return space.available_block_size;
+    }
     // When flex layout determines the exact block size, use it directly.
     if space.is_fixed_block_size || space.stretch_block_size {
         let available = space.available_block_size;

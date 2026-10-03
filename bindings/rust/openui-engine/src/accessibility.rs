@@ -311,7 +311,14 @@ impl Engine {
                 Ok(ActivationResult { changed: vec![] })
             }
             AccessibilityAction::ScrollIntoView => {
-                self.scroll_into_view(handle)?;
+                self.scroll_into_view(
+                    handle,
+                    crate::ScrollIntoViewOptions {
+                        block: crate::ScrollAlignment::Nearest,
+                        inline: crate::ScrollAlignment::Nearest,
+                        ..Default::default()
+                    },
+                )?;
                 Ok(ActivationResult { changed: vec![] })
             }
             AccessibilityAction::ScrollBy { delta_x, delta_y } => {
@@ -631,26 +638,6 @@ impl Engine {
                 (bounds.y + bounds.height) as f64,
             )
         })
-    }
-
-    fn scroll_into_view(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
-        let bounds = self.bounds(handle)?;
-        let Some(bounds) = bounds else {
-            return Ok(());
-        };
-        let mut ancestor = self.parent(handle)?;
-        while let Some(node) = ancestor {
-            let style = self.computed_style(node)?;
-            if style.overflow_x != openui_style::Overflow::Visible
-                || style.overflow_y != openui_style::Overflow::Visible
-            {
-                let (x, y) = self.scroll_offset(node)?;
-                self.scroll_to(node, x.max(bounds.x as f64), y.max(bounds.y as f64))?;
-                break;
-            }
-            ancestor = self.parent(node)?;
-        }
-        Ok(())
     }
 }
 

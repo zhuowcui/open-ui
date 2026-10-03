@@ -40,6 +40,84 @@ static OuiStyleValue overflow_value(int value) {
   return result;
 }
 
+typedef struct NestedScrollCallback {
+  OuiElement* viewport;
+  unsigned calls;
+} NestedScrollCallback;
+
+static void nested_clicked(OuiEvent* event, void* data) {
+  NestedScrollCallback* state = (NestedScrollCallback*)data;
+  assert(event->event_type == OUI_EVENT_CLICK);
+  assert(oui_element_scroll_to(state->viewport, 1000.0, 1000.0) == OUI_OK);
+  ++state->calls;
+}
+
+static void nested(double scale) {
+  OuiDocumentConfig config = {sizeof(config),
+                              OUI_ABI_VERSION,
+                              {320.0, 240.0, (uint32_t)(320.0 * scale), (uint32_t)(240.0 * scale),
+                               scale, OUI_VIEWPORT_LOGICAL, 0}};
+  OuiDocument* document = NULL;
+  OuiElement* root = NULL;
+  OuiElement* viewport = NULL;
+  OuiElement* child = NULL;
+  assert(oui_document_create(&config, &document) == OUI_OK);
+  assert(oui_document_root(document, &root) == OUI_OK);
+  assert(oui_element_create(document, OUI_ELEMENT_DIV, &viewport) == OUI_OK);
+  assert(oui_element_create(document, OUI_ELEMENT_DIV, &child) == OUI_OK);
+  assert(oui_element_append_child(root, viewport) == OUI_OK);
+  assert(oui_element_append_child(viewport, child) == OUI_OK);
+  property(viewport, OUI_STYLE_PROPERTY_POSITION, "absolute");
+  property(viewport, OUI_STYLE_PROPERTY_LEFT, "40px");
+  property(viewport, OUI_STYLE_PROPERTY_TOP, "40px");
+  property(viewport, OUI_STYLE_PROPERTY_WIDTH, "80px");
+  property(viewport, OUI_STYLE_PROPERTY_HEIGHT, "80px");
+  property(viewport, OUI_STYLE_PROPERTY_PADDING, "10px");
+  property(viewport, OUI_STYLE_PROPERTY_BORDER, "3px solid orange");
+  property(viewport, OUI_STYLE_PROPERTY_OVERFLOW, "hidden");
+  property(viewport, OUI_STYLE_PROPERTY_SCROLLBAR_WIDTH, "none");
+  property(child, OUI_STYLE_PROPERTY_WIDTH, "130px");
+  property(child, OUI_STYLE_PROPERTY_HEIGHT, "120px");
+  OuiScrollMetricsV1 original = metrics(viewport);
+  assert(original.client_width == 100.0 && original.client_height == 100.0);
+  assert(original.scroll_width == 150.0 && original.scroll_height == 140.0);
+  NestedScrollCallback state = {viewport, 0};
+  OuiListener* listener = NULL;
+  assert(oui_element_add_event_listener(viewport, OUI_EVENT_CLICK, 0, nested_clicked, &state,
+                                        &listener) == OUI_OK);
+  OuiEvent event;
+  memset(&event, 0, sizeof(event));
+  event.struct_size = sizeof(event);
+  event.abi_version = OUI_ABI_VERSION;
+  event.event_type = OUI_EVENT_CLICK;
+  assert(oui_document_dispatch_event(document, viewport, &event) == OUI_OK);
+  assert(state.calls == 1);
+  double x = 0.0, y = 0.0;
+  assert(oui_element_get_scroll_offset(viewport, &x, &y) == OUI_OK && x == 50.0 && y == 40.0);
+  OuiRect bounds;
+  assert(oui_element_get_bounds(child, &bounds) == OUI_OK && bounds.x == 3.0f && bounds.y == 13.0f);
+  property(viewport, OUI_STYLE_PROPERTY_DIRECTION, "rtl");
+  assert(oui_element_scroll_to(viewport, -1000.0, 1000.0) == OUI_OK);
+  assert(oui_element_get_scroll_offset(viewport, &x, &y) == OUI_OK && x == -50.0 && y == 40.0);
+  property(child, OUI_STYLE_PROPERTY_WIDTH, "30px");
+  property(child, OUI_STYLE_PROPERTY_HEIGHT, "20px");
+  assert(oui_element_get_scroll_offset(viewport, &x, &y) == OUI_OK && x == 0.0 && y == 0.0);
+  OuiScrollMetricsV1 small = metrics(viewport);
+  assert(small.scroll_width == 100.0 && small.scroll_height == 100.0);
+  property(viewport, OUI_STYLE_PROPERTY_WIDTH, "140px");
+  property(viewport, OUI_STYLE_PROPERTY_HEIGHT, "140px");
+  OuiScrollMetricsV1 resized = metrics(viewport);
+  assert(resized.client_width == 160.0 && resized.client_height == 160.0);
+  assert(resized.scroll_width == 160.0 && resized.scroll_height == 160.0);
+  assert(original.scroll_width == 150.0 && original.scroll_height == 140.0);
+  assert(oui_listener_destroy(listener) == OUI_OK);
+  assert(oui_element_destroy(child) == OUI_OK);
+  assert(oui_element_destroy(viewport) == OUI_OK);
+  assert(oui_element_destroy(root) == OUI_OK);
+  assert(oui_document_destroy(document) == OUI_OK);
+  printf("native C nested scroll metrics: scale=%g passed\n", scale);
+}
+
 static void viewport(double scale) {
   OuiDocumentConfig config = {sizeof(config),
                               OUI_ABI_VERSION,
@@ -136,7 +214,9 @@ static void viewport(double scale) {
 
 int main(void) {
   const double scales[] = {1.0, 1.25, 1.5, 2.0, 3.0};
-  for (size_t i = 0; i < sizeof(scales) / sizeof(scales[0]); ++i)
+  for (size_t i = 0; i < sizeof(scales) / sizeof(scales[0]); ++i) {
     viewport(scales[i]);
+    nested(scales[i]);
+  }
   return 0;
 }

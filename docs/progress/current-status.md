@@ -5,13 +5,23 @@ product. Waves W0 through W10 are locally committed. W11 source packaging and
 documentation are implemented, but final external and hardware qualifications
 remain open.
 
+## Current implementation checkpoint
+
+The umbrella now applies the shared SVG and scrolling source, including the
+capture scrollbar precedence and paint-contained clip-margin repair, and
+public native Rust/C scroll-into-view operations. The
+[versioned evidence](../renderer/generated/native-nested-scroll-v8.json)
+keeps private-source results separate from this combined source. Its own clean
+workspace, consumer and pixel runs are pending. Chromium remains the sole
+pixel target; Open UI executes no JavaScript.
+
 ## Verified repository state
 
 | Evidence | Result |
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean census against cached Chromium captures | Native API checkpoint `9e0f0145`: 21,308/22,924 exact, 1,616 different, 0 errors; all original and expanded comparison invariants unchanged from the accepted viewport renderer. The full pixel gate remains failing |
+| Last accepted complete clean census against cached Chromium captures | Native API checkpoint `9e0f0145`: 21,308/22,924 exact, 1,616 different, 0 errors; all original and expanded comparison invariants unchanged from the accepted viewport renderer. The full pixel gate remains failing |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact on clean native style/RGBA source `9e0f0145` |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
@@ -20,8 +30,8 @@ remain open.
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
 | Application conformance scenarios | 58 across 10 domains |
-| Frozen / current C exports | 84 / 110 |
-| C examples / C++ consumers | 9 / 4, including native C/C++ window consumers; eight C and three C++ headless consumers run on clean `9e0f0145` |
+| Frozen / current C exports | 84 / 112; additive reveal symbols, own runtime verification pending |
+| C examples / C++ consumers | 11 / 5 sources, including native windows; private reveal source runs ten C and four C++ headless consumers; own combined-source/lab verification pending |
 | Workspace tests | 8,515 pass; 13 ignored on clean native style/RGBA source `9e0f0145`, with the Linux C feature enabled |
 | Python closure, qualification, accountability and packaging tests | 244 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
@@ -90,7 +100,7 @@ exact at all four profiles. The fieldset/legend addition still fails at 1.25
 scale. Both complete pixel gates fail.
 
 The [source patch and C/C++ consumer](../renderer/evidence/native-svg-decoration-v1/)
-remain unapplied. Complete rebased pixel qualification, SVG transforms, nested
+are applied in this umbrella checkpoint. Own combined-source qualification, SVG transforms, nested
 scroll ranges and the other renderer/release gates remain required. Earlier
 disk failures, partial outputs and exact source/binary identities are preserved;
 Cargo builds and pixel matrices run separately. No selected result is used to
@@ -128,7 +138,8 @@ keeping the same mismatch count. All six paint investigations have an owner
 and unchanged layout dumps. The source cannot be promoted.
 Earlier offset-only snapping loses four RTL matches, and the reduced sticky
 app initially fails 20/40 states; those failures and subsequent source fixes
-are preserved. All candidate patches remain unapplied. Prior umbrella `b3254cdd`
+are preserved. The later reviewed stack is now applied; its own qualification
+is pending. Prior umbrella `b3254cdd`
 passes all ten read-only checks and finishes six successful hosted jobs with
 five skipped hardening jobs; skips stay open and each later umbrella head
 needs its own results.
@@ -162,17 +173,34 @@ geometry remains 2,560/2,560 exact, pixels 1,775/2,560 with no exact gain or
 loss; 267 already-failing images change. All 850 root and 50 reduced Rust
 states remain exact; layer and SVG guards are preserved. Complete focused and
 primitive matrices pass with all 1,600 comparison invariants unchanged.
-Complete original and expanded censuses are running, with no completed total
-or full no-regression claim inferred. The first workspace attempt stopped at
+Complete original and expanded runs finish with actual exits 1:
+21,319/22,924 and 22,122/23,728 exact, zero errors. Against SVG, nine original
+comparisons improve to exact, 20 worsen and 15 lose exactness. All Chromium
+bytes and identities remain fixed; all 804 additions are unchanged, with
+200/201 exact at all four profiles. Of the 267 changed native images, six
+improve, 42 worsen and 219 retain the same mismatch count; none gains or loses
+exactness. This source cannot qualify. The first workspace attempt stopped at
 the disk-space guard before running tests; its failure is preserved. A
 byte-verified copy of 6,398 Cargo output files to available storage allowed
 the unchanged test command to complete.
 
-The native API audit finds no public Rust scroll-into-view method. The private
-accessibility operation uses viewport bounds as ancestor offsets and stops at
-the first non-visible overflow. Its shared native repair and consuming-app
-verification remain required. Two live legacy contour calibration functions
-also need a general raster implementation. A
+The later `83d45e0c` corrects shared capture scrollbar precedence and
+scrollable overflow through clip margins, including paint containment.
+The affected selection restores all 15 lost exact comparisons: 157/172 exact,
+15 different, zero errors, actual exit 1. Four already-failing rows worsen
+against SVG. Its 5,847 layout tests pass; a renderer generator check fails on
+a stale author-style inventory, regenerated when applying the umbrella code.
+No complete census is inferred for this private correction.
+
+The native reveal implementation at `65147ab2` exposes public instant and
+smooth Rust methods and two append-only C functions, using the shared Engine
+plan for accessibility. All 35 Engine tests, ten C and four C++ consumers pass.
+All 30 reduced native geometry states agree with Chromium; 16/20 endpoint
+images are exact. Four scale-1.25 endpoints each differ in 52 pixels. Native
+scroll-margin/padding support, alignment/writing-mode/containing-block coverage
+and complete API qualification remain open. The reviewed renderer and API
+stack is now applied, with own clean umbrella results pending. Two live legacy
+contour calibration functions also need a general raster implementation. A
 [new public Rust reproducer](../renderer/evidence/native-nested-scroll-v1/native-reversed-scroll-v1.json)
 is prepared for reversed scrolling and fractional callbacks but has not been
 compiled or run; it adds no application or pixel pass.

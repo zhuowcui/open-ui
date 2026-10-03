@@ -93,6 +93,8 @@ pub struct RecordedPicture {
     pub(crate) content_picture: Picture,
     /// Viewport controls are compositor quads, replayed after document tiles.
     pub(crate) viewport_overlay: Option<Picture>,
+    /// Owned viewport content bounds, background and display-list recording.
+    pub(crate) viewport_content_layer: Option<crate::RecordedContentLayer>,
     pub viewport: ViewportMetrics,
     pub raster_configuration: RasterConfiguration,
     pub(crate) lcd_surface: bool,
@@ -115,6 +117,10 @@ impl RecordedPicture {
     /// Immutable viewport-control recording, independent of document tiling.
     pub fn viewport_overlay_picture(&self) -> Option<&Picture> {
         self.viewport_overlay.as_ref()
+    }
+
+    pub fn viewport_content_layer(&self) -> Option<&crate::RecordedContentLayer> {
+        self.viewport_content_layer.as_ref()
     }
 }
 
@@ -161,19 +167,24 @@ pub fn record_fragment(
     let mut recorder = PictureRecorder::new();
     let recording_canvas = recorder.begin_recording(bounds, false);
     recording_canvas.clear(SkColor::WHITE);
-    crate::painter::paint_canvas_background(
-        recording_canvas,
-        doc,
-        fragment,
-        width as f32,
-        height as f32,
-    );
+    if fragment.viewport_scrollport.is_none() {
+        crate::painter::paint_canvas_background(
+            recording_canvas,
+            doc,
+            fragment,
+            width as f32,
+            height as f32,
+        );
+    } else {
+        crate::painter::set_paint_viewport_size(width as f32, height as f32);
+    }
     paint_document_fragments(
         recording_canvas,
         fragment,
         doc,
         openui_geometry::PhysicalOffset::zero(),
     );
+    let viewport_content_layer = crate::painter::take_viewport_content_layer();
     let content_picture = recorder
         .finish_recording_as_picture(None)
         .ok_or_else(|| "Failed to record paint commands".to_string())?;
@@ -210,6 +221,7 @@ pub fn record_fragment(
         picture,
         content_picture,
         viewport_overlay,
+        viewport_content_layer,
         viewport,
         raster_configuration,
         lcd_surface,

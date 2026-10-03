@@ -61,8 +61,9 @@ qualification also remain open.
 The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v2.json)
 records additional shared Engine and layout work. Its
 [source patch](../renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v2.patch)
-is based on the private SVG checkpoint `8d5a58a1`; it remains unapplied to the
-umbrella renderer while complete pixel qualification is open.
+is based on the private SVG checkpoint `8d5a58a1`. The later reviewed stack
+and native reveal operations are now applied to the umbrella; own combined
+source qualification is pending, and historical evidence remains immutable.
 
 The candidate derives native client and content dimensions from the final
 physical layout. Client dimensions exclude borders. Reachable content includes
@@ -177,7 +178,8 @@ exact in the complete census. Nine original comparisons gain exactness, but
 two flex-overflow matches are lost at scale 1.25 and three fragmentation rows
 worsen. A sixth image changes with the same mismatch count. All six paint
 investigations have an owner; layout dumps are unchanged. This source cannot
-be promoted. All patches remain unapplied to the umbrella renderer.
+be promoted. Its failed source remains preserved; the later reviewed stack
+is applied with its own umbrella qualification pending.
 
 The next [block scrollbar candidate](../renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v10.patch)
 retains physical scrollbar space separately from authored border and padding.
@@ -199,7 +201,7 @@ The partial sticky gate remains 124/128, with four prior differences, and
 fails. No complete original or expanded census is inferred for this source.
 Flex, grid, table and replaced sizing, native scrollbar pointer/keyboard and
 accessibility operation, and the earlier six complete-census paint reviews
-remain open. All patches remain unapplied; no release qualification is added.
+remain open. The later stack is now applied; no release qualification is added.
 
 The later [shared scroll-recording repair](../renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v12.patch)
 at clean `3f95e617` makes synthetic fragmentation clips retain their own
@@ -207,8 +209,10 @@ coordinates and keeps physical scroll snapping outside independently
 rasterized backing content. The selected 152 original comparisons restore
 both flex-overflow exact matches and three earlier fragmentation images.
 The selection finishes 142 exact, ten different and zero errors, actual exit
-1. Full original and expanded censuses are running; no complete result or
-full no-regression claim is inferred.
+1. Both complete runs finish with actual exit 1: 21,319/22,924 original and
+22,122/23,728 expanded exact, zero errors. Against SVG, 15 original exact
+matches are lost and 20 comparisons worsen. The unchanged Chromium inputs and
+804 addition rows are audited; 200/201 additions meet all four profiles.
 
 This source passes the Linux workspace, all native consumer guards, and both
 complete 40-profile raster matrices. Native dimensions remain 2,560/2,560
@@ -218,7 +222,45 @@ The [reversed native Rust app](../renderer/evidence/native-nested-scroll-v1/nati
 adds fractional relative requests and weak native callbacks to a compact
 reproducer; its source is prepared but has not been compiled or run.
 
-Applications still need a public Rust scroll-into-view operation. The existing
-private accessibility method is not that public API and needs a shared
-coordinate repair and independent native-app verification. This remains
-framework work; it does not require JavaScript.
+The later `83d45e0c` repairs shared scrollbar capture precedence and clip-margin
+propagation through overflow clips and paint containment. All 15 lost exact
+comparisons recover in the 172-row selection: 157 exact, 15 different, zero
+errors. Four previously failing comparisons still worsen against SVG; a full
+census is required. The shared code is applied in this umbrella checkpoint.
+
+## Native scroll-into-view
+
+`Element::scroll_into_view(ScrollIntoViewOptions)` and
+`Element::smooth_scroll_into_view(ScrollIntoViewOptions, duration_ms)` call a
+shared Engine plan over owned element and enclosing scrollport geometry.
+Accessibility reveal uses that same plan. Applications construct and mutate
+the document in Rust; Open UI executes no JavaScript.
+
+`ScrollIntoViewOptions` selects block and inline alignment (`Start`, `Center`,
+`End`, `Nearest`) and enclosing containers (`All`, `Nearest`). Defaults are
+block-start, inline-nearest and all containers. Pending layout is resolved
+before planning; hidden overflow is scrollable, while visible and clip
+containers are skipped. Detached or unboxed targets are no-ops. Foreign and
+stale handles return errors. Smooth reveal uses the existing native clock,
+returns owned animation IDs, and settles immediately for zero duration or
+reduced motion. Duration must be finite and non-negative.
+
+The append-only C functions `oui_element_scroll_into_view_v1` and
+`oui_element_smooth_scroll_into_view_v1` use the same Engine operation.
+Alignment/container values and duration are validated before borrowing the
+Engine. Existing symbols and struct layouts are preserved; the ABI remains
+`0x00020000`, with 112 exports. C callback and user-data lifetime/thread rules
+remain those of the retained document API.
+
+The [Rust consumer](../../bindings/rust/openui/examples/native_scroll_into_view.rs)
+and [C consumer](../../examples/c_v02/scroll_into_view.c) create nested hidden
+and clip containers, reveal through native callbacks, reset and smooth-scroll,
+inspect owned geometry, and check teardown. Private clean `65147ab2` passes
+35 Engine tests and all ten C/four C++ consumer processes. Its 30 geometry
+states agree with two independent fresh Chromium captures at five scales;
+16/20 endpoint images are exact. Four scale-1.25 endpoints each differ in
+52 pixels and remain paint work. Broader alignment, oversized targets, writing
+modes, root/containing-block behavior, native scroll-margin/padding properties,
+and complete API qualification remain open. The code is now applied; own
+clean umbrella consumer, workspace and pixel results are pending. No private
+result is relabeled as an umbrella or release pass.

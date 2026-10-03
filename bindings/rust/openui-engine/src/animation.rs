@@ -108,11 +108,12 @@ impl Engine {
         let id = ScrollAnimationId(self.next_scroll_animation_id);
         self.next_scroll_animation_id = self.next_scroll_animation_id.wrapping_add(1).max(1);
         if self.reduced_motion || duration_ms == 0.0 {
-            let data = self.document.node_mut(node);
-            data.scroll_left = to.0 as f32;
-            data.scroll_top = to.1 as f32;
-            self.dirty.hit_test = true;
-            self.mark_dirty(openui_style::InvalidationClass::Composite);
+            if from != to {
+                let data = self.document.node_mut(node);
+                data.scroll_left = to.0 as f32;
+                data.scroll_top = to.1 as f32;
+                self.invalidate_scroll(node);
+            }
             return Ok(id);
         }
         self.scroll_animations.insert(
@@ -542,8 +543,7 @@ impl Engine {
             if (data.scroll_left, data.scroll_top) != next {
                 data.scroll_left = next.0;
                 data.scroll_top = next.1;
-                self.dirty.hit_test = true;
-                self.mark_dirty(openui_style::InvalidationClass::Composite);
+                self.invalidate_scroll(node);
             }
             if finished {
                 self.scroll_animations.remove(&id);
@@ -694,7 +694,7 @@ mod tests {
     use super::*;
     use crate::ViewportMetrics;
     use openui_dom::ElementTag;
-    use openui_style::{FillMode, Keyframe};
+    use openui_style::{Display, FillMode, Keyframe, Overflow};
 
     fn opacity_frames() -> PropertyKeyframes {
         PropertyKeyframes::typed(
@@ -820,6 +820,23 @@ mod tests {
             Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
         let node = engine.create_element(ElementTag::Div).unwrap();
         engine.append_child(engine.root(), node).unwrap();
+        let content = engine.create_element(ElementTag::Div).unwrap();
+        engine.append_child(node, content).unwrap();
+        for (target, property, value) in [
+            (node, StyleProperty::Display, Display::Block.into()),
+            (node, StyleProperty::Width, LengthValue::px(100.0).into()),
+            (node, StyleProperty::Height, LengthValue::px(80.0).into()),
+            (node, StyleProperty::Overflow, Overflow::Hidden.into()),
+            (content, StyleProperty::Display, Display::Block.into()),
+            (content, StyleProperty::Width, LengthValue::px(300.0).into()),
+            (
+                content,
+                StyleProperty::Height,
+                LengthValue::px(240.0).into(),
+            ),
+        ] {
+            engine.set_property(target, property, value).unwrap();
+        }
         engine
             .smooth_scroll_to(node, 100.0, 40.0, 100.0, openui_style::Easing::Linear)
             .unwrap();

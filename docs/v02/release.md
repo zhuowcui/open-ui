@@ -36,6 +36,12 @@ claimed by source code alone.
 | Two signed reproducible builds | tag workflow, keyless signatures/attestations | open |
 | crates.io publication | credentials and final release approval | open |
 
+The current umbrella applies the reviewed shared SVG and scrolling repairs and
+native Rust/C/accessibility reveal operations. Its own clean workspace,
+consumer and complete pixel results are pending. The table retains measured
+historical-source evidence and does not qualify this combined source. See the
+[versioned implementation evidence](../renderer/generated/native-nested-scroll-v8.json).
+
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
 
@@ -84,7 +90,7 @@ Chromium inputs and all addition rows remain unchanged. Nine original exact
 matches are gained and two flex-overflow matches are lost at scale 1.25;
 three fragmentation rows also worsen. Six paint investigations remain open,
 so this source cannot be promoted. Earlier failed trials remain preserved and all
-source patches remain unapplied. The later clean block scrollbar source
+the failed source remains preserved. The later clean block scrollbar source
 `b5a2044f` repairs all 240 geometry failures, matching Chromium in all 2,560
 native states. Pixels remain 1,775/2,560 exact, with no exact image lost;
 785 paint failures remain. Its Linux workspace passes 8,516 tests with zero
@@ -104,10 +110,27 @@ fragmentation images: 142 exact, ten different, zero errors, actual exit 1.
 The Linux workspace, ten read-only checks, clean builds, C/C++ consumers and
 both complete 40-profile raster matrices pass. Native geometry is
 2,560/2,560 exact and pixels remain 1,775/2,560; 267 already-failing images
-change, with no exact gain or loss. Complete original and expanded censuses
-are running, so no full no-regression or release claim is inferred. All
-source patches remain unapplied. Public native scroll-into-view and replacing
-the two live legacy contour calibration functions remain required work.
+change, with no exact gain or loss: six improve, 42 worsen and 219 keep the
+same mismatch count. Both complete censuses finish with actual exits 1:
+21,319/22,924 original and 22,122/23,728 expanded exact, zero errors. Against
+SVG, 15 exact matches are lost and 20 comparisons worsen; this source fails
+qualification. Every Chromium input and all addition rows remain unchanged.
+
+The later `83d45e0c` fixes shared capture scrollbar precedence and clip-margin
+propagation, restoring all 15 exact losses in the affected selection:
+157/172 exact, 15 different, zero errors, actual exit 1. Four previously failing
+rows still worsen against SVG. Its layout tests pass; its stale generated
+style inventory is regenerated when applying the umbrella code. No full
+census is inferred for this private correction.
+
+The reviewed source is now applied with public native instant/smooth reveal,
+shared accessibility behavior and two append-only C operations. Private
+`65147ab2` passes 35 Engine tests and ten C/four C++ consumers; all 30 reduced
+geometry states agree with Chromium, while 16/20 endpoint images are exact.
+Native scroll-margin/padding, full option coverage and four scale-1.25 pixel
+failures remain open. Own clean umbrella verification and replacement of the
+two live legacy contour calibration functions remain required. No release
+qualification is inferred.
 
 The [scroll coverage trial](../renderer/generated/native-viewport-full-v17.json)
 preserves all four scrolling repairs, all 850 existing native controls and
@@ -116,7 +139,8 @@ exact pixels, with all bounds, offsets and client dimensions matching Chromium
 but every scroll extent failing. Sixteen transparent-canvas erasures are
 repaired. The historical SVG decoration alpha is still unmodeled by the
 coverage proof; shared SVG layout/paint and native API work must remove it.
-The renderer patches remain unapplied and have no complete candidate census.
+Those earlier trial patches remain preserved. The later reviewed source is
+now applied, with its own combined-source census pending.
 These new controls add no admitted release passes.
 
 The [native PNG application](../renderer/native-png-sampling.md) verifies

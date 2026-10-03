@@ -34,8 +34,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         _ => return Err("unknown direction".into()),
     };
     let left: f32 = args.next().unwrap_or_else(|| "27".into()).parse()?;
-    let document =
-        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(320.0, 240.0, scale)?)?;
+    let viewport_width: f32 = args.next().unwrap_or_else(|| "320".into()).parse()?;
+    let viewport_height: f32 = args.next().unwrap_or_else(|| "240".into()).parse()?;
+    let document = Document::with_viewport_metrics(ViewportMetrics::from_logical_size(
+        f64::from(viewport_width),
+        f64::from(viewport_height),
+        scale,
+    )?)?;
     let root = document.body();
     root.set_background_color(Color::WHITE)?;
     root.set_overflow_x(overflow)?;

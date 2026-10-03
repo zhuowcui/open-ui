@@ -1,0 +1,1095 @@
+diff --git a/bindings/rust/openui-engine/src/accessibility.rs b/bindings/rust/openui-engine/src/accessibility.rs
+index f2685feb..46cdaa21 100644
+--- a/bindings/rust/openui-engine/src/accessibility.rs
++++ b/bindings/rust/openui-engine/src/accessibility.rs
+@@ -311,7 +311,14 @@ impl Engine {
+                 Ok(ActivationResult { changed: vec![] })
+             }
+             AccessibilityAction::ScrollIntoView => {
+-                self.scroll_into_view(handle)?;
++                self.scroll_into_view(
++                    handle,
++                    crate::ScrollIntoViewOptions {
++                        block: crate::ScrollAlignment::Nearest,
++                        inline: crate::ScrollAlignment::Nearest,
++                        ..Default::default()
++                    },
++                )?;
+                 Ok(ActivationResult { changed: vec![] })
+             }
+             AccessibilityAction::ScrollBy { delta_x, delta_y } => {
+@@ -632,26 +639,6 @@ impl Engine {
+             )
+         })
+     }
+-
+-    fn scroll_into_view(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
+-        let bounds = self.bounds(handle)?;
+-        let Some(bounds) = bounds else {
+-            return Ok(());
+-        };
+-        let mut ancestor = self.parent(handle)?;
+-        while let Some(node) = ancestor {
+-            let style = self.computed_style(node)?;
+-            if style.overflow_x != openui_style::Overflow::Visible
+-                || style.overflow_y != openui_style::Overflow::Visible
+-            {
+-                let (x, y) = self.scroll_offset(node)?;
+-                self.scroll_to(node, x.max(bounds.x as f64), y.max(bounds.y as f64))?;
+-                break;
+-            }
+-            ancestor = self.parent(node)?;
+-        }
+-        Ok(())
+-    }
+ }
+ 
+ fn populate_control_accessibility(node: &mut Node, control: &crate::ControlState, editable: bool) {
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 4ce098d2..e71258b1 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -3,6 +3,9 @@
+ mod accessibility;
+ mod animation;
+ mod interaction;
++mod scroll_into_view;
++
++pub use scroll_into_view::{ScrollAlignment, ScrollIntoViewContainer, ScrollIntoViewOptions};
+ 
+ pub use accessibility::{
+     AccessibilityAction, AccessibilityActionData, AccessibilityActionRequest, AccessibilityLive,
+@@ -372,6 +375,7 @@ pub struct Engine {
+     latest_scene: Option<SceneSnapshot>,
+     hit_test: Vec<HitEntry>,
+     fragment_rects: HashMap<NodeId, Vec<SceneRect>>,
++    fragment_box_worlds: HashMap<NodeId, Affine>,
+     focused: Option<NodeHandle>,
+     pointer_capture: HashMap<u64, NodeHandle>,
+     hover_paths: HashMap<u64, Vec<NodeHandle>>,
+@@ -453,6 +457,7 @@ impl Engine {
+             latest_scene: None,
+             hit_test: Vec::new(),
+             fragment_rects: HashMap::new(),
++            fragment_box_worlds: HashMap::new(),
+             focused: None,
+             pointer_capture: HashMap::new(),
+             hover_paths: HashMap::new(),
+@@ -1944,6 +1949,7 @@ impl Engine {
+             inherited_clips: &[HitClip],
+             out: &mut Vec<HitEntry>,
+             rects: &mut HashMap<NodeId, Vec<SceneRect>>,
++            box_worlds: &mut HashMap<NodeId, Affine>,
+         ) {
+             let width = fragment.size.width.to_f32();
+             let height = fragment.size.height.to_f32();
+@@ -1992,6 +1998,7 @@ impl Engine {
+                     .entry(fragment.node_id)
+                     .or_default()
+                     .push(box_world.map_rect(box_width, box_height));
++                box_worlds.entry(fragment.node_id).or_insert(box_world);
+             }
+             let world_to_local = box_world.inverse();
+             let mut own_clips = inherited_clips.to_vec();
+@@ -2114,7 +2121,15 @@ impl Engine {
+                     )
+                 };
+                 let start = out.len();
+-                walk(document, child, child_world, &own_clips, out, rects);
++                walk(
++                    document,
++                    child,
++                    child_world,
++                    &own_clips,
++                    out,
++                    rects,
++                    box_worlds,
++                );
+                 paint_ranges.push(((z, phase, order), start, out.len()));
+             }
+             if paint_ranges.windows(2).any(|pair| pair[0].0 > pair[1].0) {
+@@ -2139,6 +2154,7 @@ impl Engine {
+         }
+         let mut entries = Vec::new();
+         let mut rects = HashMap::new();
++        let mut box_worlds = HashMap::new();
+         walk(
+             &self.document,
+             fragment,
+@@ -2146,9 +2162,11 @@ impl Engine {
+             &[],
+             &mut entries,
+             &mut rects,
++            &mut box_worlds,
+         );
+         self.hit_test = entries;
+         self.fragment_rects = rects;
++        self.fragment_box_worlds = box_worlds;
+     }
+ }
+ 
+diff --git a/bindings/rust/openui-engine/src/scroll_into_view.rs b/bindings/rust/openui-engine/src/scroll_into_view.rs
+new file mode 100644
+index 00000000..a2c01596
+--- /dev/null
++++ b/bindings/rust/openui-engine/src/scroll_into_view.rs
+@@ -0,0 +1,451 @@
++//! Native reveal operations over the retained fragment geometry.
++
++use crate::{Affine, Engine, EngineError, NodeHandle, ScrollAnimationId};
++use openui_compositor::SceneRect;
++use openui_style::{Direction, Overflow, WritingMode};
++
++/// Alignment along a logical writing axis.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub enum ScrollAlignment {
++    Start,
++    Center,
++    End,
++    Nearest,
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use crate::{AccessibilityAction, ViewportMetrics};
++    use openui_dom::ElementTag;
++    use openui_style::{LengthValue, Position, ScrollbarWidth, StyleProperty};
++
++    fn box_node(engine: &mut Engine, parent: NodeHandle, width: f32, height: f32) -> NodeHandle {
++        let node = engine.create_native_element(ElementTag::Div).unwrap();
++        engine
++            .set_property(node, StyleProperty::Width, LengthValue::px(width).into())
++            .unwrap();
++        engine
++            .set_property(node, StyleProperty::Height, LengthValue::px(height).into())
++            .unwrap();
++        engine
++            .set_property(
++                node,
++                StyleProperty::ScrollbarWidth,
++                openui_style::StyleValue::Renderer(
++                    openui_style::RendererStyleValue::ScrollbarWidth(ScrollbarWidth::None),
++                ),
++            )
++            .unwrap();
++        engine.append_child(parent, node).unwrap();
++        node
++    }
++
++    fn nested() -> (Engine, NodeHandle, NodeHandle, NodeHandle) {
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let root = engine.root();
++        engine
++            .set_property(
++                root,
++                StyleProperty::ScrollbarWidth,
++                openui_style::StyleValue::Renderer(
++                    openui_style::RendererStyleValue::ScrollbarWidth(ScrollbarWidth::None),
++                ),
++            )
++            .unwrap();
++        let outer = box_node(&mut engine, root, 100.0, 80.0);
++        engine
++            .set_property(outer, StyleProperty::Position, Position::Absolute.into())
++            .unwrap();
++        engine
++            .set_property(outer, StyleProperty::Left, LengthValue::px(40.0).into())
++            .unwrap();
++        engine
++            .set_property(outer, StyleProperty::Top, LengthValue::px(30.0).into())
++            .unwrap();
++        engine
++            .set_property(outer, StyleProperty::Overflow, Overflow::Hidden.into())
++            .unwrap();
++        let _spacer = box_node(&mut engine, outer, 200.0, 200.0);
++        let inner = box_node(&mut engine, outer, 200.0, 100.0);
++        engine
++            .set_property(inner, StyleProperty::Overflow, Overflow::Hidden.into())
++            .unwrap();
++        let target = box_node(&mut engine, inner, 20.0, 20.0);
++        engine
++            .set_property(
++                target,
++                StyleProperty::MarginLeft,
++                LengthValue::px(150.0).into(),
++            )
++            .unwrap();
++        engine
++            .set_property(
++                target,
++                StyleProperty::MarginTop,
++                LengthValue::px(120.0).into(),
++            )
++            .unwrap();
++        (engine, outer, inner, target)
++    }
++
++    fn nearest() -> ScrollIntoViewOptions {
++        ScrollIntoViewOptions {
++            block: ScrollAlignment::Nearest,
++            inline: ScrollAlignment::Nearest,
++            ..Default::default()
++        }
++    }
++
++    #[test]
++    fn reveal_nested_hidden_scrollports_and_preserve_unchanged_frame() {
++        let (mut engine, outer, inner, target) = nested();
++        engine.scroll_into_view(target, nearest()).unwrap();
++        assert_eq!(engine.scroll_offset(inner).unwrap(), (0.0, 40.0));
++        assert_eq!(engine.scroll_offset(outer).unwrap(), (70.0, 220.0));
++        let bounds = engine.bounds(target).unwrap().unwrap();
++        assert_eq!(
++            (bounds.x, bounds.y, bounds.width, bounds.height),
++            (120.0, 90.0, 20.0, 20.0)
++        );
++        let scene = engine.scene().unwrap();
++        let stats = engine.stats();
++        engine.scroll_into_view(target, nearest()).unwrap();
++        assert_eq!(scene.generation(), engine.scene().unwrap().generation());
++        assert_eq!(stats, engine.stats());
++    }
++
++    #[test]
++    fn nearest_container_does_not_scroll_its_parent() {
++        let (mut engine, outer, inner, target) = nested();
++        let mut options = nearest();
++        options.container = ScrollIntoViewContainer::Nearest;
++        engine.scroll_into_view(target, options).unwrap();
++        assert_eq!(engine.scroll_offset(inner).unwrap(), (0.0, 40.0));
++        assert_eq!(engine.scroll_offset(outer).unwrap(), (0.0, 0.0));
++    }
++
++    #[test]
++    fn accessibility_reveal_uses_the_same_nested_nearest_operation() {
++        let (mut engine, outer, inner, target) = nested();
++        engine
++            .perform_accessibility_action(target, AccessibilityAction::ScrollIntoView)
++            .unwrap();
++        assert_eq!(engine.scroll_offset(inner).unwrap(), (0.0, 40.0));
++        assert_eq!(engine.scroll_offset(outer).unwrap(), (70.0, 220.0));
++    }
++
++    #[test]
++    fn clip_is_not_a_scroll_container() {
++        let (mut engine, outer, inner, target) = nested();
++        engine
++            .set_property(inner, StyleProperty::Overflow, Overflow::Clip.into())
++            .unwrap();
++        engine.scroll_into_view(target, nearest()).unwrap();
++        assert_eq!(engine.scroll_offset(inner).unwrap(), (0.0, 0.0));
++        // Clip does not establish a formatting context: the 120px target
++        // margin collapses through the inner box. Pinned Chromium confirms
++        // a 420px outer extent and this 260px nearest reveal at all five scales.
++        assert_eq!(engine.scroll_offset(outer).unwrap(), (70.0, 260.0));
++    }
++
++    #[test]
++    fn smooth_reveal_plans_outer_destination_from_final_inner_view() {
++        let (mut engine, outer, inner, target) = nested();
++        let ids = engine
++            .smooth_scroll_into_view(target, nearest(), 100.0)
++            .unwrap();
++        assert_eq!(ids.len(), 2);
++        assert_eq!(engine.scroll_offset(inner).unwrap(), (0.0, 0.0));
++        assert_eq!(engine.scroll_offset(outer).unwrap(), (0.0, 0.0));
++        engine.set_animation_time(100.0).unwrap();
++        assert_eq!(engine.scroll_offset(inner).unwrap(), (0.0, 40.0));
++        assert_eq!(engine.scroll_offset(outer).unwrap(), (70.0, 220.0));
++        assert!(!engine.is_animating());
++    }
++
++    #[test]
++    fn reduced_motion_and_zero_duration_settle_and_invalid_duration_is_atomic() {
++        for reduced in [false, true] {
++            let (mut engine, outer, inner, target) = nested();
++            engine.set_prefers_reduced_motion(reduced);
++            assert!(engine
++                .smooth_scroll_into_view(target, nearest(), f64::NAN)
++                .is_err());
++            assert_eq!(engine.scroll_offset(outer).unwrap(), (0.0, 0.0));
++            assert_eq!(engine.scroll_offset(inner).unwrap(), (0.0, 0.0));
++            engine
++                .smooth_scroll_into_view(target, nearest(), if reduced { 100.0 } else { 0.0 })
++                .unwrap();
++            assert_eq!(engine.scroll_offset(outer).unwrap(), (70.0, 220.0));
++            assert_eq!(engine.scroll_offset(inner).unwrap(), (0.0, 40.0));
++            assert!(!engine.is_animating());
++        }
++    }
++
++    #[test]
++    fn detached_foreign_and_stale_targets_keep_handle_rules() {
++        let (mut engine, _, _, target) = nested();
++        let detached = engine.create_native_element(ElementTag::Div).unwrap();
++        let stats = engine.stats();
++        engine.scroll_into_view(detached, nearest()).unwrap();
++        assert_eq!(engine.stats(), stats);
++        let other =
++            Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
++        assert_eq!(
++            engine.scroll_into_view(other.root(), nearest()),
++            Err(EngineError::WrongDocument)
++        );
++        engine.remove(target).unwrap();
++        assert!(engine.scroll_into_view(target, nearest()).is_err());
++    }
++}
++
++/// Which enclosing scroll containers a reveal operation may move.
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
++pub enum ScrollIntoViewContainer {
++    #[default]
++    All,
++    Nearest,
++}
++
++/// Native element reveal policy. The default aligns block-start and reveals
++/// the nearest inline edge through all enclosing containers and the viewport.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub struct ScrollIntoViewOptions {
++    pub block: ScrollAlignment,
++    pub inline: ScrollAlignment,
++    pub container: ScrollIntoViewContainer,
++}
++
++impl Default for ScrollIntoViewOptions {
++    fn default() -> Self {
++        Self {
++            block: ScrollAlignment::Start,
++            inline: ScrollAlignment::Nearest,
++            container: ScrollIntoViewContainer::All,
++        }
++    }
++}
++
++fn map_rect(transform: Affine, rect: SceneRect) -> SceneRect {
++    transform
++        .then(Affine::translate(rect.x, rect.y))
++        .map_rect(rect.width, rect.height)
++}
++
++fn alignment_delta(
++    start: f32,
++    end: f32,
++    client_start: f32,
++    client_end: f32,
++    alignment: ScrollAlignment,
++    reversed: bool,
++) -> f64 {
++    let low = (start - client_start) as f64;
++    let high = (end - client_end) as f64;
++    match alignment {
++        ScrollAlignment::Start => {
++            if reversed {
++                high
++            } else {
++                low
++            }
++        }
++        ScrollAlignment::End => {
++            if reversed {
++                low
++            } else {
++                high
++            }
++        }
++        ScrollAlignment::Center => (low + high) / 2.0,
++        ScrollAlignment::Nearest => {
++            // Fully contained and oversized rectangles spanning both edges
++            // already expose as much as this scrollport can show.
++            if (low >= 0.0 && high <= 0.0) || (low < 0.0 && high > 0.0) {
++                0.0
++            } else if low < 0.0 {
++                if end - start <= client_end - client_start {
++                    low
++                } else {
++                    high
++                }
++            } else if high > 0.0 {
++                if end - start <= client_end - client_start {
++                    high
++                } else {
++                    low
++                }
++            } else {
++                0.0
++            }
++        }
++    }
++}
++
++impl Engine {
++    /// Reveal an element using owned viewport and scrollport geometry. Pending
++    /// layout is resolved before planning. Detached and unboxed elements are
++    /// no-ops; stale and foreign handles remain errors.
++    pub fn scroll_into_view(
++        &mut self,
++        target: NodeHandle,
++        options: ScrollIntoViewOptions,
++    ) -> Result<(), EngineError> {
++        for (ancestor, x, y) in self.scroll_into_view_plan(target, options)? {
++            self.scroll_to(ancestor, x, y)?;
++        }
++        Ok(())
++    }
++
++    /// Reveal through the same scroll plan using the retained animation clock
++    /// and CSS ease curve. Reduced motion and a zero duration settle immediately.
++    /// Returns owned animation IDs in inner-to-outer container order.
++    pub fn smooth_scroll_into_view(
++        &mut self,
++        target: NodeHandle,
++        options: ScrollIntoViewOptions,
++        duration_ms: f64,
++    ) -> Result<Vec<ScrollAnimationId>, EngineError> {
++        if !duration_ms.is_finite() || duration_ms < 0.0 {
++            return Err(EngineError::InvalidInput(
++                "scroll duration must be finite and non-negative",
++            ));
++        }
++        self.scroll_into_view_plan(target, options)?
++            .into_iter()
++            .map(|(ancestor, x, y)| {
++                self.smooth_scroll_to(
++                    ancestor,
++                    x,
++                    y,
++                    duration_ms,
++                    openui_style::Easing::CubicBezier {
++                        x1: 0.25,
++                        y1: 0.1,
++                        x2: 0.25,
++                        y2: 1.0,
++                    },
++                )
++            })
++            .collect()
++    }
++
++    fn scroll_into_view_plan(
++        &mut self,
++        target: NodeHandle,
++        options: ScrollIntoViewOptions,
++    ) -> Result<Vec<(NodeHandle, f64, f64)>, EngineError> {
++        let target_node = self.resolve(target)?;
++        if !self.node_is_connected(target_node) {
++            return Ok(Vec::new());
++        }
++        self.update()?;
++        let Some(mut exposed) = self.node_bounds(target_node) else {
++            return Ok(Vec::new());
++        };
++        // Blink resolves logical alignment using the target's writing mode.
++        let style = &self.document.node(target_node).style;
++        let horizontal = style.writing_mode.is_horizontal();
++        let inline_reversed =
++            (style.direction == Direction::Rtl) ^ (style.writing_mode == WritingMode::SidewaysLr);
++        let (x_align, y_align, x_reversed, y_reversed) = if horizontal {
++            (options.inline, options.block, inline_reversed, false)
++        } else {
++            (
++                options.block,
++                options.inline,
++                style.writing_mode.is_flipped_blocks(),
++                inline_reversed,
++            )
++        };
++        // Chromium gives degenerate expose rectangles one logical pixel.
++        exposed.width = exposed.width.max(1.0);
++        exposed.height = exposed.height.max(1.0);
++        let mut plan = Vec::new();
++        let mut ancestor = self.parent(target)?;
++        while let Some(handle) = ancestor {
++            let node = self.resolve(handle)?;
++            ancestor = self.parent(handle)?;
++            let Some(area) = self.layout_scroll_area(node) else {
++                continue;
++            };
++            if matches!(area.overflow_x, Overflow::Visible | Overflow::Clip)
++                && matches!(area.overflow_y, Overflow::Visible | Overflow::Clip)
++            {
++                continue;
++            }
++            let Some(world) = self.fragment_box_worlds.get(&node).copied() else {
++                continue;
++            };
++            let Some(inverse) = world.inverse() else {
++                continue;
++            };
++            let local = map_rect(inverse, exposed);
++            let client = area.client_rect;
++            let (x, y) = self.scroll_offset(handle)?;
++            let (new_x, new_y) = area.clamp_offset(
++                (x + alignment_delta(
++                    local.x,
++                    local.x + local.width,
++                    client.x().to_f32(),
++                    client.right().to_f32(),
++                    x_align,
++                    x_reversed,
++                ))
++                .round(),
++                (y + alignment_delta(
++                    local.y,
++                    local.y + local.height,
++                    client.y().to_f32(),
++                    client.bottom().to_f32(),
++                    y_align,
++                    y_reversed,
++                ))
++                .round(),
++            );
++            // Propagate the final visible rectangle. Outer containers must
++            // reveal the part exposed by the inner scrollport, including when
++            // the inner move is scheduled as an animation rather than applied.
++            let shifted = SceneRect {
++                x: local.x - (new_x as f64 - x) as f32,
++                y: local.y - (new_y as f64 - y) as f32,
++                ..local
++            };
++            let left = shifted.x.max(client.x().to_f32());
++            let top = shifted.y.max(client.y().to_f32());
++            let right = (shifted.x + shifted.width).min(client.right().to_f32());
++            let bottom = (shifted.y + shifted.height).min(client.bottom().to_f32());
++            exposed = map_rect(
++                world,
++                if right > left && bottom > top {
++                    SceneRect {
++                        x: left,
++                        y: top,
++                        width: right - left,
++                        height: bottom - top,
++                    }
++                } else {
++                    shifted
++                },
++            );
++            // Include an unchanged target when a smooth scroll is already
++            // running so an explicit reveal replaces that pending destination.
++            if x != new_x as f64
++                || y != new_y as f64
++                || self
++                    .scroll_animations
++                    .values()
++                    .any(|animation| animation.target == handle)
++            {
++                plan.push((handle, new_x as f64, new_y as f64));
++            }
++            if options.container == ScrollIntoViewContainer::Nearest {
++                break;
++            }
++        }
++        Ok(plan)
++    }
++}
+diff --git a/bindings/rust/openui-ffi/openui.map b/bindings/rust/openui-ffi/openui.map
+index 7301886f..c0756bf9 100644
+--- a/bindings/rust/openui-ffi/openui.map
++++ b/bindings/rust/openui-ffi/openui.map
+@@ -76,6 +76,7 @@ OPENUI_0.2 {
+     oui_element_remove;
+     oui_element_remove_all_children;
+     oui_element_remove_attribute;
++    oui_element_scroll_into_view_v1;
+     oui_element_scroll_to;
+     oui_element_set_accessibility_description;
+     oui_element_set_accessibility_hidden;
+@@ -93,6 +94,7 @@ OPENUI_0.2 {
+     oui_element_set_property;
+     oui_element_set_selection;
+     oui_element_set_text;
++    oui_element_smooth_scroll_into_view_v1;
+     oui_element_transition;
+     oui_error_copy_message;
+     oui_error_get_last;
+diff --git a/bindings/rust/openui-ffi/src/lib.rs b/bindings/rust/openui-ffi/src/lib.rs
+index 7a1ef904..8086019f 100644
+--- a/bindings/rust/openui-ffi/src/lib.rs
++++ b/bindings/rust/openui-ffi/src/lib.rs
+@@ -1598,6 +1598,67 @@ pub extern "C" fn oui_element_scroll_to(
+     })
+ }
+ 
++fn scroll_into_view_options(
++    block: u32,
++    inline: u32,
++    container: u32,
++) -> Result<openui_engine::ScrollIntoViewOptions, ApiError> {
++    use openui_engine::{ScrollAlignment, ScrollIntoViewContainer, ScrollIntoViewOptions};
++    let alignment = |value| match value {
++        0 => Ok(ScrollAlignment::Start),
++        1 => Ok(ScrollAlignment::Center),
++        2 => Ok(ScrollAlignment::End),
++        3 => Ok(ScrollAlignment::Nearest),
++        _ => Err(invalid("invalid scroll alignment")),
++    };
++    Ok(ScrollIntoViewOptions {
++        block: alignment(block)?,
++        inline: alignment(inline)?,
++        container: match container {
++            0 => ScrollIntoViewContainer::All,
++            1 => ScrollIntoViewContainer::Nearest,
++            _ => return Err(invalid("invalid scroll container selection")),
++        },
++    })
++}
++
++// SAFETY CONTRACT: `element_handle` is a live element handle. All options are
++// validated before borrowing the shared Engine; panics remain contained.
++#[no_mangle]
++pub extern "C" fn oui_element_scroll_into_view_v1(
++    element_handle: *mut OuiElement,
++    block: u32,
++    inline: u32,
++    container: u32,
++) -> OuiStatus {
++    ffi(|| {
++        let options = scroll_into_view_options(block, inline, container)?;
++        with_element_mut(element_handle as usize, |engine, node| {
++            engine.scroll_into_view(node, options)
++        })
++    })
++}
++
++// SAFETY CONTRACT: `element_handle` is live. Duration is finite/non-negative.
++// No callback is invoked while the Engine/platform state is borrowed.
++#[no_mangle]
++pub extern "C" fn oui_element_smooth_scroll_into_view_v1(
++    element_handle: *mut OuiElement,
++    block: u32,
++    inline: u32,
++    container: u32,
++    duration_ms: f64,
++) -> OuiStatus {
++    ffi(|| {
++        let options = scroll_into_view_options(block, inline, container)?;
++        with_element_mut(element_handle as usize, |engine, node| {
++            engine
++                .smooth_scroll_into_view(node, options, duration_ms)
++                .map(|_| ())
++        })
++    })
++}
++
+ // SAFETY CONTRACT: `element` is live and both output pointers are writable.
+ #[no_mangle]
+ pub extern "C" fn oui_element_get_scroll_offset(
+diff --git a/bindings/rust/openui/examples/native_scroll_into_view.rs b/bindings/rust/openui/examples/native_scroll_into_view.rs
+new file mode 100644
+index 00000000..1086e3c2
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_scroll_into_view.rs
+@@ -0,0 +1,128 @@
++//! Consuming Rust app: nested reveal through native callbacks and owned queries.
++use openui::prelude::*;
++use openui::{ScrollAlignment, ScrollIntoViewContainer, ScrollIntoViewOptions};
++use std::{cell::Cell, path::Path, rc::Rc};
++
++fn block(document: &Document, parent: &Element, width: f32, height: f32) -> Result<Element, Error> {
++    let element = Element::create(document, "div")?;
++    element.set_width(LengthValue::px(width))?;
++    element.set_height(LengthValue::px(height))?;
++    element.set_scrollbar_width(ScrollbarWidth::None)?;
++    parent.append_child(&element)?;
++    Ok(element)
++}
++
++fn snapshot(
++    document: &Document,
++    nodes: [&Element; 3],
++    output: &Path,
++    state: &str,
++    calls: u32,
++) -> Result<String, Box<dyn std::error::Error>> {
++    let mut records = Vec::new();
++    for (name, element) in ["outer", "inner", "target"].into_iter().zip(nodes) {
++        let bounds = element.bounding_rect()?.ok_or("missing native bounds")?;
++        let metrics = element.scroll_metrics()?.ok_or("missing native metrics")?;
++        records.push(format!("\"{name}\":{{\"bounds\":{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}},\"scroll\":{{\"x\":{},\"y\":{}}},\"client\":{{\"width\":{},\"height\":{}}},\"extent\":{{\"width\":{},\"height\":{}}}}}",bounds.x,bounds.y,bounds.width,bounds.height,element.scroll_left()?,element.scroll_top()?,metrics.client_width,metrics.client_height,metrics.scroll_width,metrics.scroll_height));
++    }
++    std::fs::write(
++        output.join(format!("{state}.png")),
++        document.render_to_png_buffer()?,
++    )?;
++    Ok(format!(
++        "{{\"state\":\"{state}\",\"callback_count\":{calls},\"nodes\":{{{}}}}}",
++        records.join(",")
++    ))
++}
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = std::path::PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("scale required")?.parse()?;
++    let overflow = match args.next().as_deref() {
++        Some("hidden") => Overflow::Hidden,
++        Some("clip") => Overflow::Clip,
++        _ => return Err("expected hidden or clip".into()),
++    };
++    std::fs::create_dir_all(&output)?;
++    let document =
++        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(320.0, 240.0, scale)?)?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_scrollbar_width(ScrollbarWidth::None)?;
++    let outer = block(&document, &root, 100.0, 80.0)?;
++    outer.set_position(Position::Absolute)?;
++    outer.set_left(Length::px(40.0))?;
++    outer.set_top(Length::px(30.0))?;
++    outer.set_overflow(Overflow::Hidden)?;
++    let spacer = block(&document, &outer, 200.0, 200.0)?;
++    let inner = block(&document, &outer, 200.0, 100.0)?;
++    inner.set_overflow(overflow)?;
++    let target = block(&document, &inner, 20.0, 20.0)?;
++    target.set_margin_left(LengthValue::px(150.0))?;
++    target.set_margin_top(LengthValue::px(120.0))?;
++    target.set_background_color(Color::from_rgba8(0, 128, 0, 255))?;
++    let options = ScrollIntoViewOptions {
++        block: ScrollAlignment::Nearest,
++        inline: ScrollAlignment::Nearest,
++        container: ScrollIntoViewContainer::All,
++    };
++    let calls = Rc::new(Cell::new(0));
++    let stage = Rc::new(Cell::new(0));
++    let callback_calls = calls.clone();
++    let callback_stage = stage.clone();
++    let weak_target = target.downgrade();
++    target.on("click", move |_| {
++        let target = weak_target.upgrade().expect("live native target");
++        if callback_stage.get() == 0 {
++            target.scroll_into_view(options).expect("native reveal");
++        } else {
++            target
++                .smooth_scroll_into_view(options, 100.0)
++                .expect("native smooth reveal");
++        }
++        callback_calls.set(callback_calls.get() + 1);
++    })?;
++    let owned = outer.scroll_metrics()?.ok_or("missing initial metrics")?;
++    let mut records = vec![snapshot(
++        &document,
++        [&outer, &inner, &target],
++        &output,
++        "initial",
++        calls.get(),
++    )?];
++    target.click()?;
++    records.push(snapshot(
++        &document,
++        [&outer, &inner, &target],
++        &output,
++        "reveal",
++        calls.get(),
++    )?);
++    outer.scroll_to(0.0, 0.0)?;
++    inner.scroll_to(0.0, 0.0)?;
++    stage.set(1);
++    target.click()?;
++    document.advance_time(100.0)?;
++    records.push(snapshot(
++        &document,
++        [&outer, &inner, &target],
++        &output,
++        "smooth-end",
++        calls.get(),
++    )?);
++    assert_eq!(calls.get(), 2);
++    assert_eq!(owned.client_width, 100.0);
++    assert!(!document.is_animating()?);
++    std::fs::write(
++        output.join("geometry.json"),
++        format!("[{}]\n", records.join(",")),
++    )?;
++    let weak = target.downgrade();
++    drop((target, inner, spacer, outer, root, document));
++    assert!(
++        weak.upgrade().is_none(),
++        "native callback retained document"
++    );
++    Ok(())
++}
+diff --git a/bindings/rust/openui/src/element.rs b/bindings/rust/openui/src/element.rs
+index 50dac3dc..b4202b38 100644
+--- a/bindings/rust/openui/src/element.rs
++++ b/bindings/rust/openui/src/element.rs
+@@ -598,6 +598,26 @@ impl Element {
+             .with_engine_mut(|engine| engine.scroll_by(self.handle, dx, dy))
+     }
+ 
++    /// Reveal this element through enclosing scrollports and the native viewport.
++    /// Logical alignment follows this element's writing mode and direction.
++    pub fn scroll_into_view(&self, options: crate::ScrollIntoViewOptions) -> Result<(), Error> {
++        self.document
++            .with_engine_mut(|engine| engine.scroll_into_view(self.handle, options))
++    }
++
++    /// Reveal using the retained animation clock and CSS ease curve. Zero
++    /// duration and reduced motion settle immediately. No app callback runs
++    /// while the engine is borrowed.
++    pub fn smooth_scroll_into_view(
++        &self,
++        options: crate::ScrollIntoViewOptions,
++        duration_ms: f64,
++    ) -> Result<Vec<crate::ScrollAnimationId>, Error> {
++        self.document.with_engine_mut(|engine| {
++            engine.smooth_scroll_into_view(self.handle, options, duration_ms)
++        })
++    }
++
+     pub fn control_value(&self) -> Result<Option<String>, Error> {
+         self.document
+             .with_engine(|engine| {
+diff --git a/bindings/rust/openui/src/lib.rs b/bindings/rust/openui/src/lib.rs
+index 9806c7f2..112a5a85 100644
+--- a/bindings/rust/openui/src/lib.rs
++++ b/bindings/rust/openui/src/lib.rs
+@@ -140,7 +140,8 @@ pub use openui_engine::{
+     AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole, AccessibilityTreeUpdate,
+     AnimationEvent, AnimationEventKind, AnimationId, AnimationState, ControlAdjustment,
+     EditCommand, EngineOptions, FocusOrigin, PointerEventKind, RasterConfiguration,
+-    ScrollAnimationId, ScrollMetrics, TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
++    ScrollAlignment, ScrollAnimationId, ScrollIntoViewContainer, ScrollIntoViewOptions,
++    ScrollMetrics, TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
+     ViewportMetricsError,
+ };
+ #[cfg(all(feature = "linux", target_os = "linux"))]
+diff --git a/docs/v02/generated/openui-ffi-checksum.txt b/docs/v02/generated/openui-ffi-checksum.txt
+index d0ac21a7..36503ab8 100644
+--- a/docs/v02/generated/openui-ffi-checksum.txt
++++ b/docs/v02/generated/openui-ffi-checksum.txt
+@@ -1 +1 @@
+-sha256:b328744e7d5f17980ff5d5947f83fdf7dbb692ed004d119cffc3efbba04814e3
++sha256:f351719823bc6bded0199b48a94e3c22e38935cd8a414abf0a994de1cf168780
+diff --git a/docs/v02/generated/openui-ffi-symbols.txt b/docs/v02/generated/openui-ffi-symbols.txt
+index dc62b192..e4f1aa4b 100644
+--- a/docs/v02/generated/openui-ffi-symbols.txt
++++ b/docs/v02/generated/openui-ffi-symbols.txt
+@@ -74,6 +74,7 @@ oui_element_release_pointer_capture
+ oui_element_remove
+ oui_element_remove_all_children
+ oui_element_remove_attribute
++oui_element_scroll_into_view_v1
+ oui_element_scroll_to
+ oui_element_set_accessibility_description
+ oui_element_set_accessibility_hidden
+@@ -91,6 +92,7 @@ oui_element_set_pointer_capture
+ oui_element_set_property
+ oui_element_set_selection
+ oui_element_set_text
++oui_element_smooth_scroll_into_view_v1
+ oui_element_transition
+ oui_error_copy_message
+ oui_error_get_last
+diff --git a/examples/c_v02/CMakeLists.txt b/examples/c_v02/CMakeLists.txt
+index 15c946f2..baffdad7 100644
+--- a/examples/c_v02/CMakeLists.txt
++++ b/examples/c_v02/CMakeLists.txt
+@@ -3,7 +3,7 @@ project(OpenUIV02Examples LANGUAGES C CXX)
+ 
+ find_package(OpenUI 0.2 CONFIG REQUIRED)
+ 
+-foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics primitive_styles svg_viewport)
++foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics scroll_into_view primitive_styles svg_viewport)
+   add_executable(openui_${example} ${example}.c)
+   target_link_libraries(openui_${example} PRIVATE OpenUI::OpenUI)
+ endforeach()
+diff --git a/examples/c_v02/scroll_into_view.c b/examples/c_v02/scroll_into_view.c
+new file mode 100644
+index 00000000..bfe89ca5
+--- /dev/null
++++ b/examples/c_v02/scroll_into_view.c
+@@ -0,0 +1,113 @@
++/* Consuming C app. Checks remain active in release SDK builds. */
++#ifdef NDEBUG
++#undef NDEBUG
++#endif
++#include <assert.h>
++#include <math.h>
++#include <string.h>
++
++#include "openui.h"
++
++static void property(OuiElement* e, OuiStyleProperty id, const char* literal) {
++  OuiUtf8 text = {(const uint8_t*)literal, strlen(literal)};
++  OuiStyleValue value;
++  assert(oui_style_value_parse(id, text, &value) == OUI_OK);
++  assert(oui_element_set_property(e, id, &value) == OUI_OK);
++  if (value.tag == OUI_STYLE_VALUE_COMPOUND)
++    assert(oui_style_compound_destroy((OuiStyleCompound*)value.data.compound) == OUI_OK);
++}
++
++static OuiElement* block(OuiDocument* d, OuiElement* parent, const char* w, const char* h) {
++  OuiElement* e = NULL;
++  assert(oui_element_create(d, OUI_ELEMENT_DIV, &e) == OUI_OK);
++  property(e, OUI_STYLE_PROPERTY_WIDTH, w);
++  property(e, OUI_STYLE_PROPERTY_HEIGHT, h);
++  property(e, OUI_STYLE_PROPERTY_SCROLLBAR_WIDTH, "none");
++  assert(oui_element_append_child(parent, e) == OUI_OK);
++  return e;
++}
++
++static void offset(OuiElement* e, double expected_x, double expected_y) {
++  double x, y;
++  assert(oui_element_get_scroll_offset(e, &x, &y) == OUI_OK);
++  assert(x == expected_x && y == expected_y);
++}
++
++typedef struct Reveal {
++  unsigned calls;
++} Reveal;
++static void clicked(OuiEvent* event, void* user_data) {
++  Reveal* state = (Reveal*)user_data;
++  assert(event->event_type == OUI_EVENT_CLICK);
++  assert(oui_element_scroll_into_view_v1(event->target, OUI_SCROLL_NEAREST, OUI_SCROLL_NEAREST,
++                                         OUI_SCROLL_CONTAINERS_ALL) == OUI_OK);
++  ++state->calls;
++}
++
++static void run(double scale, const char* overflow, double final_y) {
++  OuiDocumentConfig config = {sizeof(config),
++                              OUI_ABI_VERSION,
++                              {320.0, 240.0, (uint32_t)(320.0 * scale), (uint32_t)(240.0 * scale),
++                               scale, OUI_VIEWPORT_LOGICAL, 0}};
++  OuiDocument* d = NULL;
++  OuiElement* root = NULL;
++  assert(oui_document_create(&config, &d) == OUI_OK);
++  assert(oui_document_root(d, &root) == OUI_OK);
++  property(root, OUI_STYLE_PROPERTY_SCROLLBAR_WIDTH, "none");
++  OuiElement* outer = block(d, root, "100px", "80px");
++  property(outer, OUI_STYLE_PROPERTY_POSITION, "absolute");
++  property(outer, OUI_STYLE_PROPERTY_LEFT, "40px");
++  property(outer, OUI_STYLE_PROPERTY_TOP, "30px");
++  property(outer, OUI_STYLE_PROPERTY_OVERFLOW, "hidden");
++  OuiElement* spacer = block(d, outer, "200px", "200px");
++  OuiElement* inner = block(d, outer, "200px", "100px");
++  property(inner, OUI_STYLE_PROPERTY_OVERFLOW, overflow);
++  OuiElement* target = block(d, inner, "20px", "20px");
++  property(target, OUI_STYLE_PROPERTY_MARGIN_LEFT, "150px");
++  property(target, OUI_STYLE_PROPERTY_MARGIN_TOP, "120px");
++  assert(oui_element_scroll_into_view_v1(target, 99, OUI_SCROLL_NEAREST,
++                                         OUI_SCROLL_CONTAINERS_ALL) == OUI_ERROR_INVALID_ARGUMENT);
++  assert(oui_element_smooth_scroll_into_view_v1(target, OUI_SCROLL_NEAREST, OUI_SCROLL_NEAREST,
++                                                OUI_SCROLL_CONTAINERS_ALL,
++                                                NAN) == OUI_ERROR_INVALID_ARGUMENT);
++  offset(outer, 0, 0);
++  Reveal state = {0};
++  OuiListener* listener = NULL;
++  assert(oui_element_add_event_listener(target, OUI_EVENT_CLICK, 0, clicked, &state, &listener) ==
++         OUI_OK);
++  OuiEvent event;
++  memset(&event, 0, sizeof(event));
++  event.struct_size = sizeof(event);
++  event.abi_version = OUI_ABI_VERSION;
++  event.event_type = OUI_EVENT_CLICK;
++  assert(oui_document_dispatch_event(d, target, &event) == OUI_OK);
++  assert(state.calls == 1);
++  offset(outer, 70, final_y);
++  offset(inner, 0, strcmp(overflow, "clip") == 0 ? 0 : 40);
++  OuiRect bounds;
++  assert(oui_element_get_bounds(target, &bounds) == OUI_OK);
++  assert(bounds.x == 120 && bounds.y == 90 && bounds.width == 20 && bounds.height == 20);
++  assert(oui_element_scroll_to(outer, 0, 0) == OUI_OK);
++  assert(oui_element_scroll_to(inner, 0, 0) == OUI_OK);
++  assert(oui_element_smooth_scroll_into_view_v1(target, OUI_SCROLL_NEAREST, OUI_SCROLL_NEAREST,
++                                                OUI_SCROLL_CONTAINERS_ALL, 100) == OUI_OK);
++  offset(outer, 0, 0);
++  assert(oui_document_set_animation_time(d, 100) == OUI_OK);
++  offset(outer, 70, final_y);
++  assert(oui_listener_destroy(listener) == OUI_OK);
++  assert(oui_element_destroy(target) == OUI_OK);
++  assert(oui_element_destroy(inner) == OUI_OK);
++  assert(oui_element_destroy(spacer) == OUI_OK);
++  assert(oui_element_destroy(outer) == OUI_OK);
++  assert(oui_element_destroy(root) == OUI_OK);
++  assert(oui_document_destroy(d) == OUI_OK);
++}
++
++int main(void) {
++  const double scales[] = {1, 1.25, 1.5, 2, 3};
++  for (unsigned i = 0; i < sizeof(scales) / sizeof(scales[0]); ++i) {
++    run(scales[i], "hidden", 220);
++    run(scales[i], "clip", 260);
++  }
++  return 0;
++}
+diff --git a/include/openui.h b/include/openui.h
+index 9a7ef5de..31c6625d 100644
+--- a/include/openui.h
++++ b/include/openui.h
+@@ -44,6 +44,19 @@ typedef enum OuiBackendPreference {
+   OUI_BACKEND_SOFTWARE = 2
+ } OuiBackendPreference;
+ 
++/* Logical axes follow the target element's writing mode and direction. */
++typedef enum OuiScrollAlignment {
++  OUI_SCROLL_START = 0,
++  OUI_SCROLL_CENTER = 1,
++  OUI_SCROLL_END = 2,
++  OUI_SCROLL_NEAREST = 3
++} OuiScrollAlignment;
++
++typedef enum OuiScrollIntoViewContainer {
++  OUI_SCROLL_CONTAINERS_ALL = 0,
++  OUI_SCROLL_CONTAINER_NEAREST = 1
++} OuiScrollIntoViewContainer;
++
+ typedef enum OuiElementTag {
+   OUI_ELEMENT_DIV = 0,
+   OUI_ELEMENT_SPAN = 1,
+@@ -925,6 +938,14 @@ OuiStatus oui_element_get_client_rects_v1(OuiElement* element, OuiRect* rects, s
+  * and document destruction. Must be called on the document's owning thread. */
+ OuiStatus oui_element_get_scroll_metrics_v1(OuiElement* element, OuiScrollMetricsV1* out_metrics, uint8_t* out_has_metrics);
+ OuiStatus oui_element_scroll_to(OuiElement* element, double x, double y);
++/* Reveal through the same retained Engine operation used by Rust and
++ * accessibility. Detached/unboxed elements are no-ops. Values must be the
++ * constants above; stale/foreign handles and invalid values are errors. */
++OuiStatus oui_element_scroll_into_view_v1(OuiElement* element, uint32_t block_alignment, uint32_t inline_alignment, uint32_t container);
++/* CSS ease curve on the native document clock. Duration must be finite and
++ * non-negative. Zero duration and reduced motion settle immediately. Calling
++ * scroll_to on a participating container cancels its pending animation. */
++OuiStatus oui_element_smooth_scroll_into_view_v1(OuiElement* element, uint32_t block_alignment, uint32_t inline_alignment, uint32_t container, double duration_ms);
+ /* Resolve pending layout before reading the retained logical scroll offsets. */
+ OuiStatus oui_element_get_scroll_offset(OuiElement* element, double* out_x, double* out_y);
+ OuiStatus oui_element_focus(OuiElement* element);
+diff --git a/tools/ffi/openui.h.in b/tools/ffi/openui.h.in
+index 4c5764b7..168937da 100644
+--- a/tools/ffi/openui.h.in
++++ b/tools/ffi/openui.h.in
+@@ -44,6 +44,19 @@ typedef enum OuiBackendPreference {
+   OUI_BACKEND_SOFTWARE = 2
+ } OuiBackendPreference;
+ 
++/* Logical axes follow the target element's writing mode and direction. */
++typedef enum OuiScrollAlignment {
++  OUI_SCROLL_START = 0,
++  OUI_SCROLL_CENTER = 1,
++  OUI_SCROLL_END = 2,
++  OUI_SCROLL_NEAREST = 3
++} OuiScrollAlignment;
++
++typedef enum OuiScrollIntoViewContainer {
++  OUI_SCROLL_CONTAINERS_ALL = 0,
++  OUI_SCROLL_CONTAINER_NEAREST = 1
++} OuiScrollIntoViewContainer;
++
+ typedef enum OuiElementTag {
+   OUI_ELEMENT_DIV = 0,
+   OUI_ELEMENT_SPAN = 1,
+@@ -902,6 +915,14 @@ OuiStatus oui_element_get_client_rects_v1(OuiElement* element, OuiRect* rects, s
+  * and document destruction. Must be called on the document's owning thread. */
+ OuiStatus oui_element_get_scroll_metrics_v1(OuiElement* element, OuiScrollMetricsV1* out_metrics, uint8_t* out_has_metrics);
+ OuiStatus oui_element_scroll_to(OuiElement* element, double x, double y);
++/* Reveal through the same retained Engine operation used by Rust and
++ * accessibility. Detached/unboxed elements are no-ops. Values must be the
++ * constants above; stale/foreign handles and invalid values are errors. */
++OuiStatus oui_element_scroll_into_view_v1(OuiElement* element, uint32_t block_alignment, uint32_t inline_alignment, uint32_t container);
++/* CSS ease curve on the native document clock. Duration must be finite and
++ * non-negative. Zero duration and reduced motion settle immediately. Calling
++ * scroll_to on a participating container cancels its pending animation. */
++OuiStatus oui_element_smooth_scroll_into_view_v1(OuiElement* element, uint32_t block_alignment, uint32_t inline_alignment, uint32_t container, double duration_ms);
+ /* Resolve pending layout before reading the retained logical scroll offsets. */
+ OuiStatus oui_element_get_scroll_offset(OuiElement* element, double* out_x, double* out_y);
+ OuiStatus oui_element_focus(OuiElement* element);

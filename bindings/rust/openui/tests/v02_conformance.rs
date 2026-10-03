@@ -19,6 +19,18 @@ fn sized(element: &Element, width: f32, height: f32) {
     element.set_height(LengthValue::px(height)).unwrap();
 }
 
+// Scroll operations need reachable content; empty boxes have zero range.
+fn nested_scroll_fixture(document: &Document) -> Element {
+    let scroller = child(document, "div");
+    sized(&scroller, 100.0, 80.0);
+    scroller.set_overflow(Overflow::Scroll).unwrap();
+    scroller.set_scrollbar_width(ScrollbarWidth::None).unwrap();
+    let content = Element::create(document, "div").unwrap();
+    sized(&content, 300.0, 240.0);
+    scroller.append_child(&content).unwrap();
+    scroller
+}
+
 fn animation_options(duration_ms: f64) -> AnimationOptions {
     AnimationOptions {
         duration_ms,
@@ -559,55 +571,88 @@ fn native_geometry_preserves_empty_and_singular_boxes() {
 
 #[test]
 fn native_geometry_updates_after_scroll_transform_and_detachment() {
-    let document = document();
-    let scroller = child(&document, "div");
-    sized(&scroller, 80.0, 50.0);
-    scroller.set_overflow(Overflow::Hidden).unwrap();
-    let target = Element::create(&document, "div").unwrap();
-    sized(&target, 120.0, 100.0);
-    scroller.append_child(&target).unwrap();
-    let original = target.client_rects().unwrap();
-    assert_eq!(
-        (
-            original[0].x,
-            original[0].y,
-            original[0].width,
-            original[0].height
-        ),
-        (0.0, 0.0, 120.0, 100.0)
-    );
-
-    scroller.scroll_to(20.0, 30.0).unwrap();
-    let scrolled = target.bounding_rect().unwrap().unwrap();
-    assert_eq!(
-        (scrolled.x, scrolled.y, scrolled.width, scrolled.height),
-        (-20.0, -30.0, 120.0, 100.0)
-    );
-    target
-        .set_transform(TransformList(vec![TransformOperation::Translate(
-            LengthValue::px(15.0),
-            LengthValue::px(7.0),
-        )]))
+    for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+        let document = Document::with_viewport_metrics(
+            ViewportMetrics::from_logical_size(320.0, 240.0, scale).unwrap(),
+        )
         .unwrap();
-    let transformed = target.bounding_rect().unwrap().unwrap();
-    assert_eq!(
-        (
-            transformed.x,
-            transformed.y,
-            transformed.width,
-            transformed.height
-        ),
-        (-5.0, -23.0, 120.0, 100.0)
-    );
-    assert_eq!((original[0].x, original[0].y), (0.0, 0.0));
+        let scroller = child(&document, "div");
+        sized(&scroller, 80.0, 50.0);
+        scroller.set_overflow(Overflow::Hidden).unwrap();
+        let target = Element::create(&document, "div").unwrap();
+        sized(&target, 120.0, 100.0);
+        scroller.append_child(&target).unwrap();
+        let original = target.client_rects().unwrap();
+        assert_eq!(
+            (
+                original[0].x,
+                original[0].y,
+                original[0].width,
+                original[0].height
+            ),
+            (0.0, 0.0, 120.0, 100.0)
+        );
 
-    target.detach().unwrap();
-    assert!(target.client_rects().unwrap().is_empty());
-    assert!(target.bounding_rect().unwrap().is_none());
-    scroller.append_child(&target).unwrap();
-    assert_eq!(target.client_rects().unwrap(), [transformed]);
-    target.remove().unwrap();
-    assert!(target.client_rects().is_err());
+        scroller.scroll_to(20.0, 30.0).unwrap();
+        let scrolled = target.bounding_rect().unwrap().unwrap();
+        assert_eq!(
+            (scrolled.x, scrolled.y, scrolled.width, scrolled.height),
+            (-20.0, -30.0, 120.0, 100.0)
+        );
+        target
+            .set_transform(TransformList(vec![TransformOperation::Translate(
+                LengthValue::px(15.0),
+                LengthValue::px(7.0),
+            )]))
+            .unwrap();
+        let transformed = target.bounding_rect().unwrap().unwrap();
+        assert_eq!(
+            (
+                transformed.x,
+                transformed.y,
+                transformed.width,
+                transformed.height
+            ),
+            (-5.0, -23.0, 120.0, 100.0)
+        );
+        assert_eq!((original[0].x, original[0].y), (0.0, 0.0));
+
+        target.detach().unwrap();
+        assert!(target.client_rects().unwrap().is_empty());
+        assert!(target.bounding_rect().unwrap().is_none());
+        scroller.append_child(&target).unwrap();
+        assert_eq!(target.client_rects().unwrap(), [transformed]);
+
+        // A detached query skips unrelated layout; an attached query is a
+        // layout barrier and clamps the parent's now-empty scrolling range.
+        target.detach().unwrap();
+        assert!(target.client_rects().unwrap().is_empty());
+        assert!(target.bounding_rect().unwrap().is_none());
+        assert!(target.scroll_metrics().unwrap().is_none());
+        let empty = scroller.scroll_metrics().unwrap().unwrap();
+        assert_eq!((empty.scroll_width, empty.scroll_height), (80.0, 50.0));
+        assert_eq!(
+            (
+                scroller.scroll_left().unwrap(),
+                scroller.scroll_top().unwrap()
+            ),
+            (0.0, 0.0)
+        );
+        scroller.append_child(&target).unwrap();
+        let after_barrier = target.bounding_rect().unwrap().unwrap();
+        assert_eq!(
+            (
+                after_barrier.x,
+                after_barrier.y,
+                after_barrier.width,
+                after_barrier.height
+            ),
+            (15.0, 7.0, 120.0, 100.0)
+        );
+        assert_eq!((original[0].x, original[0].y), (0.0, 0.0));
+        target.remove().unwrap();
+        assert!(target.client_rects().is_err());
+    }
 }
 
 #[test]
@@ -1451,9 +1496,7 @@ fn hover_and_active_state_follow_pointer() {
 #[test]
 fn nested_scroll_container_consumes_wheel() {
     let document = document();
-    let scroller = child(&document, "div");
-    sized(&scroller, 100.0, 80.0);
-    scroller.set_overflow(Overflow::Scroll).unwrap();
+    let scroller = nested_scroll_fixture(&document);
     document.update_all().unwrap();
     document
         .dispatch_wheel_event(10.0, 10.0, 4.0, 12.0, Modifiers::NONE)
@@ -1585,7 +1628,7 @@ fn viewport_smooth_scroll_clamps_its_target_and_tracks_content_shrink() {
 #[test]
 fn smooth_scroll_uses_manual_clock() {
     let document = document();
-    let scroller = child(&document, "div");
+    let scroller = nested_scroll_fixture(&document);
     scroller
         .smooth_scroll_to(100.0, 50.0, 100.0, Easing::Linear)
         .unwrap();
@@ -1602,7 +1645,7 @@ fn smooth_scroll_uses_manual_clock() {
 #[test]
 fn scroll_snap_selects_nearest_point() {
     let document = document();
-    let scroller = child(&document, "div");
+    let scroller = nested_scroll_fixture(&document);
     scroller.scroll_to(70.0, 0.0).unwrap();
     scroller
         .settle_scroll_snap(&[0.0, 100.0], &[], 100.0, Easing::Linear)
@@ -1686,7 +1729,7 @@ fn reduced_motion_finishes_animation() {
 #[test]
 fn scroll_timeline_samples_from_offset() {
     let document = document();
-    let scroller = child(&document, "div");
+    let scroller = nested_scroll_fixture(&document);
     let target = child(&document, "div");
     target
         .animate_on_scroll(

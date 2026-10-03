@@ -603,19 +603,25 @@ fn content_alignment_literal(input: &str) -> Option<ContentAlignment> {
 }
 
 fn color(input: &str) -> Option<Color> {
-    match input.trim().to_ascii_lowercase().as_str() {
-        "transparent" => Some(Color::TRANSPARENT),
-        "black" => Some(Color::BLACK),
-        "white" => Some(Color::WHITE),
-        "red" => Some(Color::RED),
-        "green" => Some(Color::GREEN),
-        "blue" => Some(Color::BLUE),
-        value if value.starts_with('#') && (value.len() == 7 || value.len() == 9) => {
-            u32::from_str_radix(&value[1..], 16)
-                .ok()
-                .map(|hex| Color::from_hex(hex, value.len() == 9))
+    let input = input.trim();
+    if let Some(hex) = input.strip_prefix('#') {
+        if !hex.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+            return None;
         }
-        _ => None,
+        let (value, alpha) = match hex.len() {
+            3 | 4 => {
+                let value = hex
+                    .chars()
+                    .flat_map(|digit| [digit, digit])
+                    .collect::<String>();
+                (u32::from_str_radix(&value, 16).ok()?, hex.len() == 4)
+            }
+            6 | 8 => (u32::from_str_radix(hex, 16).ok()?, hex.len() == 8),
+            _ => return None,
+        };
+        Some(Color::from_hex(value, alpha))
+    } else {
+        Color::from_named(input)
     }
 }
 
@@ -1662,6 +1668,22 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
         }
         .map(StyleValue::Position),
         P::Overflow => overflow_literal(input).map(StyleValue::Overflow),
+        P::ScrollbarWidth => match input.trim() {
+            "auto" => Some(ScrollbarWidth::Auto),
+            "thin" => Some(ScrollbarWidth::Thin),
+            "none" => Some(ScrollbarWidth::None),
+            _ => None,
+        }
+        .map(|value| StyleValue::Renderer(RendererStyleValue::ScrollbarWidth(value))),
+        P::ScrollbarGutter => match input.split_whitespace().collect::<Vec<_>>().as_slice() {
+            ["auto"] => Some(ScrollbarGutter::Auto),
+            ["stable"] => Some(ScrollbarGutter::Stable),
+            ["stable", "both-edges"] | ["both-edges", "stable"] => {
+                Some(ScrollbarGutter::StableBothEdges)
+            }
+            _ => None,
+        }
+        .map(|value| StyleValue::Renderer(RendererStyleValue::ScrollbarGutter(value))),
         P::Width
         | P::Height
         | P::MinWidth
@@ -1782,6 +1804,12 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(StyleValue::PointerEvents),
+        P::BoxSizing => match input {
+            "content-box" => Some(BoxSizing::ContentBox),
+            "border-box" => Some(BoxSizing::BorderBox),
+            _ => None,
+        }
+        .map(|value| StyleValue::Renderer(RendererStyleValue::BoxSizing(value))),
         P::ColumnCount => {
             if input == "auto" {
                 Some(StyleValue::Renderer(RendererStyleValue::ColumnCount(None)))

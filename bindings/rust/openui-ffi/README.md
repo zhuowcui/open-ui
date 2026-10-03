@@ -16,7 +16,7 @@ schemas:
 Regenerate with `python3 tools/ffi/generate_ffi.py`, or verify without writing
 with `python3 tools/ffi/generate_ffi.py --check`. After building the crate,
 `python3 tools/ffi/verify_abi.py` checks exact exports, compiles C and C++
-consumers, and runs eight headless C examples and three C++ consumers.
+consumers, and runs nine headless C examples and four C++ consumers.
 
 All opaque handles are generation-checked and thread-affine. Strings are
 length-delimited UTF-8. Every status failure records a thread-local structured
@@ -29,6 +29,23 @@ later lookups while preserving its existing handles for reattachment.
 The owned `OuiAccessibilitySnapshot` API exposes node metadata, ordered
 relations, focus, and changed/removed IDs without retaining engine borrows.
 Snapshots remain readable after document destruction on their owning thread.
+
+## Native element reveal
+
+`oui_element_scroll_into_view_v1` and
+`oui_element_smooth_scroll_into_view_v1` use the same Engine reveal plan as
+public Rust methods and accessibility. `OuiScrollAlignment` selects start,
+center, end or nearest on each logical axis; `OuiScrollIntoViewContainer`
+selects all or the nearest enclosing scrollport. These constants are passed
+as `uint32_t` values. Smooth duration must be finite and non-negative.
+Invalid values return `OUI_ERROR_INVALID_ARGUMENT` before any Engine mutation.
+
+The [C consumer](../../../examples/c_v02/scroll_into_view.c) exercises native
+callbacks, nested hidden/clip scrolling, instant and smooth endpoints, owned
+geometry, invalid arguments and document teardown. Existing exports and
+struct layouts remain intact. Scoped private C/C++ consumers pass; complete
+API and own combined-source qualification remains open. See the
+[native reveal contract](../../../docs/v02/native-scroll-metrics.md#native-scroll-into-view).
 
 ## Native style operations
 
@@ -83,6 +100,28 @@ The [C consumer](../../../examples/c_v02/scroll_metrics.c) and its C++ build
 exercise these operations directly through the public native API at five
 scales. Nested scrolling, scrollbar pointer/keyboard input, and accessibility
 qualification remain separate work.
+
+## Native SVG viewport
+
+`oui_element_create(document, OUI_ELEMENT_SVG_FOREIGN_OBJECT, &element)` calls
+the shared Rust foreignObject viewport constructor. Width and height describe
+the fixed viewport, including border and padding, regardless of box sizing.
+The native container uses ordinary element handles, styles, events and document
+ownership; place it under a native `OUI_ELEMENT_SVG` parent for SVG content.
+The new element-tag value is appended after the existing 0–38 values. All
+110 exports, struct layouts and the ABI version remain unchanged; the generated
+header checksum records the additive enum value.
+
+The [C consumer](../../../examples/c_v02/svg_viewport.c) and its
+[C++ build](../../../examples/c_v02/svg_viewport.cc) exercise viewport bounds,
+border/padding and box-sizing mutation from a native click callback,
+detach/reattach and document teardown at five scales. An ordinary native block
+also changes from content-box to border-box sizing through the same callback;
+the SVG viewport keeps its fixed dimensions. Both sizing literals use the
+shared Rust style conversion and an owned C compound value. This implementation is
+pending consuming-application verification and complete renderer qualification;
+SVG coordinate/transform APIs and release-lab operation remain open. It does
+not execute JavaScript.
 
 ## Native keyboard and text input
 
