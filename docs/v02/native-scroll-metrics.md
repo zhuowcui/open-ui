@@ -23,6 +23,36 @@ retained style state. A consuming Rust app sets lengths from a Rust click
 callback, reads owned bounds, changes to percentage right/bottom positioning,
 and resizes its viewport. No internal fixture or script supplies those changes.
 
+
+## Private scroll margin and padding qualification
+
+The [private candidate](../renderer/generated/native-scroll-insets-v1.json)
+at clean `45ddd7a4` adds 18 physical and logical scroll-margin/padding setters
+for consuming Rust and C apps. Earlier property IDs, 112 exports and 30
+existing layouts are preserved. Ordered aliases and relative units survive
+writing-mode, font and viewport changes; invalid values leave the document
+unchanged. Instant, smooth and accessibility reveal use the shared plan.
+The [reviewable patch](../renderer/evidence/native-scroll-insets-v1/native-scroll-insets-v1.patch)
+is unapplied to the umbrella implementation.
+
+Its complete Linux-enabled workspace passes 8,532 tests, zero failures and
+13 ignored, with source unchanged. Ten C and four C++ headless consumers run,
+including 70 C inset cases. All ten read-only checks pass. Focused and primitive
+40-profile matrices remain 640/640 and 960/960 exact, with every comparison
+invariant unchanged from `d174ea0b`.
+
+The consuming Rust app checks 170 cases at five scales against two identical
+fresh Chromium captures per case. All 510 initial/instant/smooth geometry
+states match; 452/510 PNGs are exact. The 58 differences are at 1.25 scale,
+along one or two horizontal pixel regions at the green edges. The existing
+30 no-inset states keep the same native images and geometry; all 20 endpoint
+oracle hashes and detailed channel/region differences are unchanged.
+Paint/raster ownership is recorded, while the shared phase/coverage correction
+remains under investigation. No tolerance or test-ID pixel fix is used.
+These new states are not admitted release passes. Full original/expanded
+censuses, other reveal options, containing-block/fixed traversal and complete
+needed native API coverage remain required. Open UI runs no JavaScript.
+
 ## Verification
 
 The [clean evidence](generated/native-c-scroll-metrics-v1.json) records source

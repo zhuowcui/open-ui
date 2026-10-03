@@ -38,8 +38,12 @@ are skipped. Its separate seven-job
 passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux window
 tests, MSRV and all five fuzz targets. Complete logs and individual conclusions
 are retained. The earlier failed `d174ea0b` jobs remain historical evidence.
-Native scroll margins and padding have a private Rust/C candidate with 18
-public setters; compilation and complete qualification are in progress.
+The [private scroll-inset candidate](../renderer/generated/native-scroll-insets-v1.json)
+has 18 public Rust/C setters and passes 8,532 workspace tests, ten C/four C++
+consumers and all 1,600 focused/primitive comparisons. All 510 native geometry
+states match Chromium; 452/510 PNGs are exact. The 58 differences remain at
+1.25 scale under paint/raster ownership; default controls keep every earlier
+image and geometry result. The candidate remains unapplied and unqualified.
 Missing needed native operations remain unfinished API work.
 
 ## Verified repository state

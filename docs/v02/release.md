@@ -55,6 +55,14 @@ passes all seven jobs: both sanitizers, Miri, C UBSan, MSRV, Linux windows and
 all five fuzz targets. The full renderer, needed native API, hardware and
 publication gates remain open.
 
+The [private scroll-inset candidate](../renderer/generated/native-scroll-insets-v1.json)
+adds 18 Rust/C setters and preserves existing IDs/ABI layouts. Its clean
+8,532-test workspace, fourteen headless consumers and both exact raster
+matrices pass. All 510 owned geometry states match Chromium; only 452/510
+PNGs are exact. The 58 remaining 1.25-scale edge differences have paint/raster
+ownership, and the no-inset controls preserve every prior result. The patch
+remains unapplied, and these new states do not count as admitted release passes.
+
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
 

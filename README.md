@@ -167,8 +167,11 @@ All three pull-request workflows at this checkpoint pass. The separate
 [manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/37149510887)
 passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux windows,
 MSRV and all five fuzz targets. Skipped pull-request jobs remain open results.
-Native scroll margins and padding are being implemented through 18 public
-Rust/C setters; that private candidate is not yet qualified or applied.
+The [private scroll-inset candidate](docs/renderer/generated/native-scroll-insets-v1.json)
+adds 18 Rust/C setters and passes its 8,532-test workspace, C/C++ consumers and
+both raster matrices. All 510 geometry states match Chromium; 58 of their
+PNGs still differ at 1.25 scale, under paint/raster investigation. That
+candidate remains unapplied and unqualified.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
