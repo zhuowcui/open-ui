@@ -12,6 +12,19 @@ rendering evidence for that state. Each element behavior needed by a consuming
 application also requires a public Rust operation over the same engine; fixture
 lowering alone does not complete application API coverage.
 
+The [clean private SVG evidence](generated/native-svg-viewport-v2.json)
+implements a typed Rust foreignObject viewport constructor over the shared
+Engine, verifies native mutation callbacks and teardown, and removes the
+historical decoration alpha through shared layout and painting. Its later
+curved double-border painter gains 112 exact native comparisons, with all
+240 changed images improved and no exact loss. Across 1,920 controls covering
+all four physical border sides, every owned bound and callback/teardown check
+passes; 940 rendered states are exact and 980 remain failures. The earlier clean SVG
+checkpoint passes both complete 40-profile gates with every comparison
+invariant unchanged. Complete original and later raster reruns are running;
+expanded and workspace qualification remain pending. These unapplied patches
+do not establish a new accepted full-census result or completed SVG support.
+
 The [native style/RGBA checkpoint](../v02/generated/native-primitive-styles-v1.json)
 at clean `9e0f0145` verifies 35 primitive longhands through public Rust, C, and
 C++ consumers. Its locked workspace passes 8,515 tests with 13 ignored, and

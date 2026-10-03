@@ -1,0 +1,175 @@
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 890e0dd1..b136ba13 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -17982,6 +17982,108 @@ fn paint_native_fieldset_corner_samples(
+ /// Paint borders around the border-box.
+ ///
+ /// Extracted from Blink's `BoxBorderPainter` (box_border_painter.cc).
++/// A lone opaque curved double edge follows BoxBorderPainter's complex
++/// contour path: clip the outer/inner border, restrict the owning side, then
++/// clip each stripe using inset rounded contours. Straight side polygons
++/// lose the curvature of the stripe's inner edge.
++fn paint_sole_curved_double_border(
++    canvas: &Canvas,
++    fragment: &Fragment,
++    style: &ComputedStyle,
++    rect: Rect,
++    side: usize,
++    width: f32,
++) -> bool {
++    let color = match side {
++        0 => style.border_top_color,
++        1 => style.border_right_color,
++        2 => style.border_bottom_color,
++        _ => style.border_left_color,
++    }
++    .resolve(&style.color);
++    if !color.is_opaque() {
++        return false;
++    }
++    let radii = fragment_border_radii(style, fragment, &rect, width);
++    let contour = |inset: f32| {
++        let (top, right, bottom, left) = match side {
++            0 => (inset, 0.0, 0.0, 0.0),
++            1 => (0.0, inset, 0.0, 0.0),
++            2 => (0.0, 0.0, inset, 0.0),
++            _ => (0.0, 0.0, 0.0, inset),
++        };
++        let inner = Rect::from_xywh(
++            rect.left + left,
++            rect.top + top,
++            (rect.width() - left - right).max(0.0),
++            (rect.height() - top - bottom).max(0.0),
++        );
++        let inner_radii = [
++            Point::new((radii[0].x - left).max(0.0), (radii[0].y - top).max(0.0)),
++            Point::new((radii[1].x - right).max(0.0), (radii[1].y - top).max(0.0)),
++            Point::new(
++                (radii[2].x - right).max(0.0),
++                (radii[2].y - bottom).max(0.0),
++            ),
++            Point::new((radii[3].x - left).max(0.0), (radii[3].y - bottom).max(0.0)),
++        ];
++        (inner, inner_radii)
++    };
++    let (inner, inner_radii) = contour(width);
++    if inner.width() > 0.0 && inner.height() > 0.0 && radii_exceed_rect(&inner, &inner_radii) {
++        // Non-renderable inner contours require the shared adjusted-inner
++        // decomposition; keep them on that path.
++        return false;
++    }
++    let side_rect = match side {
++        0 => Rect::from_xywh(
++            rect.left,
++            rect.top,
++            rect.width(),
++            width.max(radii[0].y).max(radii[1].y),
++        ),
++        1 => {
++            let extent = width.max(radii[1].x).max(radii[2].x);
++            Rect::from_xywh(rect.right - extent, rect.top, extent, rect.height())
++        }
++        2 => {
++            let extent = width.max(radii[2].y).max(radii[3].y);
++            Rect::from_xywh(rect.left, rect.bottom - extent, rect.width(), extent)
++        }
++        _ => Rect::from_xywh(
++            rect.left,
++            rect.top,
++            width.max(radii[0].x).max(radii[3].x),
++            rect.height(),
++        ),
++    };
++    let mut paint = Paint::default();
++    paint.set_anti_alias(true);
++    set_paint_css_color(&mut paint, &color);
++    canvas.save();
++    canvas.clip_rrect(RRect::new_rect_radii(rect, &radii), ClipOp::Intersect, true);
++    if inner.width() > 0.0 && inner.height() > 0.0 {
++        canvas.clip_rrect(
++            RRect::new_rect_radii(inner, &inner_radii),
++            ClipOp::Difference,
++            true,
++        );
++    }
++    canvas.clip_rect(side_rect, ClipOp::Intersect, true);
++    for (inset, op) in [
++        ((width * 2.0 / 3.0).round(), ClipOp::Intersect),
++        ((width / 3.0).round(), ClipOp::Difference),
++    ] {
++        let (stripe, stripe_radii) = contour(inset);
++        canvas.save();
++        canvas.clip_rrect(RRect::new_rect_radii(stripe, &stripe_radii), op, true);
++        canvas.draw_rect(rect, &paint);
++        canvas.restore();
++    }
++    canvas.restore();
++    true
++}
++
+ fn paint_borders(
+     canvas: &Canvas,
+     fragment: &Fragment,
+@@ -18031,6 +18133,20 @@ fn paint_borders(
+         let used_width = width.min(box_extent);
+         let effective_solid = border_style == BorderStyle::Solid
+             || (border_style == BorderStyle::Double && used_width < 3.0);
++        if border_style == BorderStyle::Double
++            && used_width >= 3.0
++            && !outer_rrect_clipped
++            && paint_sole_curved_double_border(
++                canvas,
++                fragment,
++                style,
++                Rect::from_xywh(x, y, w, h),
++                side,
++                used_width,
++            )
++        {
++            return;
++        }
+         if width >= box_extent && effective_solid {
+             let border_rect = Rect::from_xywh(x, y, w, h);
+             let outer_radii = fragment_border_radii(style, fragment, &border_rect, width);
+diff --git a/bindings/rust/openui/examples/native_svg_foreign_object.rs b/bindings/rust/openui/examples/native_svg_foreign_object.rs
+index 0f299758..71ced2d0 100644
+--- a/bindings/rust/openui/examples/native_svg_foreign_object.rs
++++ b/bindings/rust/openui/examples/native_svg_foreign_object.rs
+@@ -29,6 +29,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+         "vertical-rl" => WritingMode::VerticalRl,
+         _ => return Err("unknown writing mode".into()),
+     };
++    let border_side = args.next().unwrap_or_else(|| "left".into());
++    if !matches!(border_side.as_str(), "top" | "right" | "bottom" | "left") {
++        return Err("unknown border side".into());
++    }
+     let document =
+         Document::with_viewport_metrics(ViewportMetrics::from_logical_size(320.0, 240.0, scale)?)?;
+     let root = document.body();
+@@ -64,13 +68,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     let target = foreign.downgrade();
+     foreign.on("click", move |_| {
+         let foreign = target.upgrade().expect("viewport remains owned");
+-        foreign
+-            .set_border_left(Border {
+-                width: border_width,
+-                style: border_style,
+-                color: Color::BLACK,
+-            })
+-            .expect("native border mutation");
++        let border = Border {
++            width: border_width,
++            style: border_style,
++            color: Color::BLACK,
++        };
++        match border_side.as_str() {
++            "top" => foreign.set_border_top(border),
++            "right" => foreign.set_border_right(border),
++            "bottom" => foreign.set_border_bottom(border),
++            _ => foreign.set_border_left(border),
++        }
++        .expect("native border mutation");
+         foreign
+             .set_border_radius(CornerRadii(Edges::all(LengthValue::px(radius))))
+             .expect("native radius mutation");

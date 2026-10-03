@@ -18,21 +18,17 @@ network access.
 
 ## Native interaction API
 
-All application behavior runs through native APIs; Open UI never runs
-JavaScript. The public `openui` crate exposes
-retained `Document` and `Element` handles; the application may keep those
-handles and call native methods from Rust callbacks. C applications use the
-versioned C ABI over the same engine. There is no JavaScript execution,
-`eval`, script binding, or embedded browser runtime in the application path.
-Element APIs can be called directly from Rust; they do not require JavaScript.
-Element lookup, focus, scrolling, and mutation are native engine operations.
-The consuming native application calls them through public Rust methods and
-Rust callbacks.
-Every browser-style element operation needed by a consuming native application
-must be implemented in Rust and exposed as a public Rust method callable by
-that application. These operations require no JavaScript glue or script
-bindings. A JavaScript example in browser documentation describes behavior
-to implement through a native Rust method that the consuming app can call.
+Open UI runs no JavaScript, in any version. Application interaction runs in
+native Rust. The public `openui` crate exposes retained `Document` and
+`Element` handles and Rust event callbacks. C applications use the versioned
+C ABI over the same engine.
+
+Browser documentation often shows JavaScript calling an element API. When a
+native application needs that behavior, Open UI must implement it in the shared
+Rust engine and expose a public Rust method for the application to call. There
+is no JavaScript glue, script binding, `eval`, or embedded browser runtime.
+A missing native method is unfinished API work.
+
 Lookup, mutation, geometry, focus, scrolling, controls, and event dispatch
 operate directly on the native engine:
 
@@ -93,6 +89,17 @@ checks 180 states: all owned bounds, offsets, client dimensions, callback and
 teardown checks pass. Scroll extents still include border geometry incorrectly,
 and only 95 of the rendered states match Chromium exactly. These remain native
 API and renderer gaps; the new states are not admitted release passes.
+
+The [private SVG consumer](../renderer/evidence/native-svg-decoration-v1/native_svg_foreign_object_curved_v234.rs)
+creates a viewport for native UI children through a proposed public Rust
+constructor and mutates it from a Rust callback. Its
+[clean evidence](../renderer/generated/native-svg-viewport-v2.json) checks
+1,920 states across four border sides and five scales. Every owned bound,
+callback and teardown check passes; 940 rendered states match Chromium
+exactly, while 980 still differ. The constructor and shared rendering patches
+remain unapplied; complete census, native SVG coordinate/transform and C API
+qualification are open. These are native implementation gaps, with no
+JavaScript execution or script bindings.
 
 The [native flow-root application](../../bindings/rust/openui/examples/native_flow_root_geometry.rs)
 constructs a document, queries owned fragments, finds a child under the pointer

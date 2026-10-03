@@ -71,7 +71,50 @@ primitive 40-profile matrices remain 640/640 and 960/960 exact, with unchanged
 native and Chromium images against C9. These are development runs with stable
 source and binary identities, not clean-source release qualification.
 
-## Qualification status
+## Clean native checkpoints
+
+The [clean evidence](generated/native-svg-viewport-v2.json) rebases the viewport
+work onto private coverage-region source `6368057f`. Clean `4daf1876` exposes
+`Element::create_svg_foreign_object` and the existing string constructor path
+over the shared Engine. The consuming Rust application mutates decoration
+from a Rust click callback, reads owned bounds and checks document teardown.
+All 480 bounds, callback and teardown checks pass; its 134 exact pixel results
+and all 480 images reproduce the earlier development prototype. The native
+API unit test also checks decoration mutation, box sizing, cloning and resize.
+Both complete 40-profile suites pass: 640/640 focused and 960/960 primitive,
+with all 1,600 comparison invariants unchanged from the preceding candidate.
+The affected original selection is 176/304 exact: the tiny SVG control is now
+exact at every required profile, and the other 300 comparisons stay unchanged.
+
+Clean `169fc7fe` follows Chromium's complex border path for a lone opaque
+rounded double edge. It clips the outer and inner contours, restricts the
+owning side, then draws the two stripes through inset rounded contours.
+This shared painter handles all four physical sides without reading output
+pixels or selecting a fixture. It makes 112 more of the original native
+comparisons exact, reaching 246/480. All 240 changed images improve, no exact
+image is lost, and all bounds, callbacks and teardown checks still pass.
+
+Fresh repeated Chromium captures add 1,440 top/right/bottom controls. All
+1,440 owned bounds and native callback/teardown checks pass; 694 pixel results
+are exact. Across all four sides, 940/1,920 pixel comparisons are exact and
+every owned-bounds check passes. The 980 remaining pixel failures require
+further work on solid contours, rounded child clipping, group opacity and
+fractional coverage. The double-border trial preserves every invariant in
+the 304-comparison selection. These new controls are not admitted release
+cases, and the Rust API and renderer patches remain unapplied to the umbrella.
+Native SVG coordinates, transforms and C parity also remain open.
+
+Disk exhaustion stopped earlier full, selected and neighboring-control
+attempts; their partial outputs and failed/empty receipts are retained.
+Clean inactive checkouts and reproducible target copies were reclaimed while
+preserving all source commits, branches, successful executable pins and prior
+evidence. The complete original reruns and the double-border 40-profile
+suites are running; expanded reruns and full workspace verification remain
+pending. No complete census count is inferred from these selections.
+The [reviewable patches and consuming app](evidence/native-svg-decoration-v1/)
+preserve the exact implementations and inputs used by the clean builds.
+
+## Earlier development qualification status
 
 The complete original diagnostic run is 21,328/22,924 exact, with 1,596
 differences, zero errors, and an observed terminal exit of 1. Compared with

@@ -78,6 +78,12 @@ preserves those four matches and all 850 existing native controls while fixing
 transparent-canvas erasure in neighboring Rust consumers. The SVG decoration
 alpha, native scroll extents, remaining control pixels, and complete candidate
 qualification remain open before promotion.
+The [clean private SVG work](docs/renderer/generated/native-svg-viewport-v2.json)
+adds a native Rust viewport constructor and corrects curved double-border
+painting. It gains 112 exact native images with no exact loss. Across all
+four border sides, 940/1,920 rendered states and 1,920/1,920 owned bounds match Chromium;
+callbacks and teardown pass. Complete candidate censuses are running, and
+the patches remain unapplied.
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia

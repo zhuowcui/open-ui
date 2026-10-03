@@ -50,6 +50,22 @@ jobs; skips remain open results. Every needed public native operation still
 requires implementation and consuming-application verification. Open UI
 executes no JavaScript, in any version.
 
+The [clean private SVG checkpoints](../renderer/generated/native-svg-viewport-v2.json)
+implement a public native Rust viewport constructor and replace the historical
+SVG decoration alpha with fixed viewport layout and shared border painting.
+Source `4daf1876` passes 480 owned-bounds, Rust callback and teardown checks,
+its native API unit test, and both complete 40-profile pixel suites. It makes
+the tiny SVG guard exact at all four required profiles. Later `169fc7fe`
+corrects curved double-border stripes on all four physical sides: the original
+native suite gains 112 exact images with no exact loss, and all 240 changed
+images improve. Fresh neighboring controls bring the measured native SVG
+surface to 940/1,920 exact rendered states and 1,920/1,920 exact owned bounds, with all
+native callback and teardown checks passing. The other 980 pixel results
+remain failures. Both complete original censuses and the later raster suites
+are running after preserved disk-exhaustion failures; expanded runs and full
+workspace verification remain pending. The patches stay unapplied, and the
+accepted full census remains 21,308/22,924 exact.
+
 The [neutral PNG gamma correction](../renderer/generated/native-png-sampling-v4.json)
 is committed at `63aeb672`. Both complete clean matrices have observed exit 1
 and retain 21,308/22,924 original and 22,111/23,728 expanded exact results;
