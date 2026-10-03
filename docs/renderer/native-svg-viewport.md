@@ -73,7 +73,7 @@ source and binary identities, not clean-source release qualification.
 
 ## Clean native checkpoints
 
-The [clean evidence](generated/native-svg-viewport-v2.json) rebases the viewport
+The [clean evidence](generated/native-svg-viewport-v3.json) rebases the viewport
 work onto private coverage-region source `6368057f`. Clean `4daf1876` exposes
 `Element::create_svg_foreign_object` and the existing string constructor path
 over the shared Engine. The consuming Rust application mutates decoration
@@ -108,9 +108,13 @@ Disk exhaustion stopped earlier full, selected and neighboring-control
 attempts; their partial outputs and failed/empty receipts are retained.
 Clean inactive checkouts and reproducible target copies were reclaimed while
 preserving all source commits, branches, successful executable pins and prior
-evidence. The complete original reruns and the double-border 40-profile
-suites are running; expanded reruns and full workspace verification remain
-pending. No complete census count is inferred from these selections.
+evidence. The double-border 40-profile suites finish with observed exits 0:
+640/640 focused and 960/960 primitive exact. All 1,600 comparison invariants
+remain unchanged from the earlier clean SVG source. Eight read-only generator
+checks, archive integrity and repository accountability also pass on clean
+umbrella `71217f2b`. The complete original reruns are running; expanded reruns
+and full workspace verification remain pending. No complete census count is
+inferred from these selections.
 The [reviewable patches and consuming app](evidence/native-svg-decoration-v1/)
 preserve the exact implementations and inputs used by the clean builds.
 
