@@ -53,6 +53,19 @@ These new states are not admitted release passes. Full original/expanded
 censuses, other reveal options, containing-block/fixed traversal and complete
 needed native API coverage remain required. Open UI runs no JavaScript.
 
+The [smaller native phase matrix](../renderer/generated/native-scroll-insets-v2.json)
+isolates the paint failures: all 100 geometry checks agree, while 83/100 PNGs
+are exact across five scales and four container positions. Ordinary and
+single-clip static controls are exact. Twelve scrolling images expose missing
+container-origin rounding; five static nested-clip images expose repeated
+coverage at the shared edge. Eight fresh traced captures preserve the earlier
+Chromium PNG bytes. The exact pinned Chromium sources confirm that scrolling
+uses the realized screen transform, including its rounding correction.
+A separate `dac78e25` prototype includes that origin in direct scroll paint.
+Its reviewable patch is prepared; compilation and corrected pixels are still
+unverified. Cargo waits for both existing complete image sweeps to finish.
+Clip fusion, transformed/backing paths and the full renderer gates remain open.
+
 ## Verification
 
 The [clean evidence](generated/native-c-scroll-metrics-v1.json) records source

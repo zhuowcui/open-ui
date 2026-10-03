@@ -63,6 +63,13 @@ PNGs are exact. The 58 remaining 1.25-scale edge differences have paint/raster
 ownership, and the no-inset controls preserve every prior result. The patch
 remains unapplied, and these new states do not count as admitted release passes.
 
+The [smaller native phase matrix](../renderer/generated/native-scroll-insets-v2.json)
+is 100/100 exact in geometry and 83/100 exact in pixels. It isolates missing
+screen-origin rounding during scrolling and repeated nested clip coverage.
+All eight fresh traced Chromium images match the saved references byte for
+byte. A reviewable direct-scroll prototype is prepared at `dac78e25`; it has
+not been compiled or pixel-verified. Both fixes and full qualification remain open.
+
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
 

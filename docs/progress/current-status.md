@@ -46,6 +46,14 @@ states match Chromium; 452/510 PNGs are exact. The 58 differences remain at
 image and geometry result. The candidate remains unapplied and unqualified.
 Missing needed native operations remain unfinished API work.
 
+The [native phase investigation](../renderer/generated/native-scroll-insets-v2.json)
+checks 100 smaller app states: geometry is 100/100 exact, pixels 83/100 exact.
+Static controls isolate twelve scroll-origin rounding failures and five nested
+clip-coverage failures. Fresh Chromium traces preserve all eight reference
+images; pinned source review supports rounding the complete screen transform.
+An unapplied `dac78e25` prototype is prepared, with compilation and pixel
+verification pending the existing full image sweeps. No repaired pass is claimed.
+
 ## Verified repository state
 
 | Evidence | Result |

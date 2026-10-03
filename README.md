@@ -173,6 +173,11 @@ both raster matrices. All 510 geometry states match Chromium; 58 of their
 PNGs still differ at 1.25 scale, under paint/raster investigation. That
 candidate remains unapplied and unqualified.
 
+The [smaller native phase checks](docs/renderer/generated/native-scroll-insets-v2.json)
+match all 100 geometry states, with 17 image differences. They isolate scroll
+rounding and nested clip coverage. A shared transform prototype is prepared;
+its corrected pixels are not yet verified.
+
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia
