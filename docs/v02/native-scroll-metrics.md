@@ -58,7 +58,7 @@ qualification also remain open.
 
 ## Nested scrolling candidate
 
-The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v1.json)
+The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v2.json)
 records additional shared Engine and layout work. Its
 [source patch](../renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v2.patch)
 is based on the private SVG checkpoint `8d5a58a1`; it remains unapplied to the
@@ -110,3 +110,24 @@ with an initial inline style. The [next source patch](../renderer/evidence/nativ
 adds one shared native constructor used by both bindings. Its ten read-only
 checks pass, but its build, workspace, consumer and pixel verification are
 pending. No consumer assertion is changed to hide that discrepancy.
+
+### Element paint movement
+
+The next [paint candidate](../renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v4.patch)
+addresses unsnapped scroll movement in ordinary elements. Chromium snaps a
+scroll transform to physical pixels even when the element has no separate
+compositor layer, through its [property tree](https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/cc/trees/property_tree.cc#893).
+Open UI already does this for the root viewport. The
+candidate applies the same physical rule to direct element paint and its
+software backing, while keeping API offsets and bounds logical. At scale
+1.25, a logical offset of 50 moves paint by 63 physical pixels.
+
+The [source review](../renderer/generated/native-nested-scroll-v2.json) pins
+the exact Chromium `147.0.7727.50` tag files. Relevant snapping, promotion,
+layout-box and overflow files match the local `.24` checkout byte for byte;
+an unrelated border-shape call differs in the paint-property builder.
+The candidate's ten read-only checks pass. Its build and pixels remain
+unverified. Transformed and SVG ancestry still require full screen-space
+transform ownership. The 240 scrollbar-layout failures and 557 additional
+fractional paint failures are measured failures, with no candidate passes
+inferred from this source repair.
