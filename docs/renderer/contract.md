@@ -12,7 +12,7 @@ rendering evidence for that state. Each element behavior needed by a consuming
 application also requires a public Rust operation over the same engine; fixture
 lowering alone does not complete application API coverage.
 
-The [clean private SVG evidence](generated/native-svg-viewport-v8.json)
+The [clean private SVG evidence](generated/native-svg-viewport-v11.json)
 implements viewport creation over the shared Rust Engine and removes the
 historical decoration alpha through fixed viewport layout and shared border
 painting. Sources `4daf1876` and `169fc7fe` finish their complete original
@@ -35,6 +35,13 @@ incorrect scroll extents. The clean Linux-enabled workspace passes 8,516 tests, 
 13 ignored. Source and successful executable pins stay unchanged. Its fresh
 focused and primitive matrices pass 640/640 and 960/960 exact comparisons,
 with all 1,600 invariants unchanged from the solid-border source.
+Its own complete original census finishes at 21,325/22,924 exact,
+1,599 different and zero errors, with observed exit 1. All 22,924 comparison
+invariants agree with the double-border source. Its complete expanded run is
+22,128/23,728 exact, 1,600 different and zero errors, with observed exit 1.
+All original rows agree between the two suites, and all 804 addition
+invariants remain unchanged from the accepted renderer. The same 200/201
+addition cases are exact at all four profiles; both complete pixel gates fail.
 The source patch remains unapplied. Complete rebased
 qualification, native SVG transforms and nested scrolling remain required;
 no new state is admitted as a release pass.

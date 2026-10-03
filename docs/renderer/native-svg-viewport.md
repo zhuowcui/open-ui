@@ -74,7 +74,7 @@ source and binary identities, not clean-source release qualification.
 
 ## Clean native checkpoints
 
-The [clean evidence](generated/native-svg-viewport-v8.json) rebases the viewport
+The [clean evidence](generated/native-svg-viewport-v11.json) rebases the viewport
 work onto private coverage-region source `6368057f`. Clean `4daf1876` exposes
 `Element::create_svg_foreign_object` and the existing string constructor path
 over the shared Engine. The consuming Rust application mutates decoration
@@ -197,8 +197,14 @@ checks are run explicitly. Both preserve the produced diagnostic PNG before
 restoring its tracked original, and source and all successful pins remain
 unchanged. The rebased focused and primitive matrices finish with observed
 exits 0: 640/640 and 960/960 exact. All 1,600 comparison invariants remain
-unchanged from the solid-border source. The original census is running and
-the expanded run is queued after it.
+unchanged from the solid-border source. Its own complete original census
+finishes at 21,325/22,924 exact, 1,599 different and zero errors, with observed
+exit 1. All 22,924 comparison invariants agree with the double-border source.
+Its own complete expanded run finishes at 22,128/23,728 exact, 1,600
+different and zero errors, with observed exit 1. All original rows agree with
+its separate census, and all 804 addition invariants stay unchanged from the
+accepted renderer. The same 200/201 cases meet all four profiles; the
+fieldset/legend case still differs at 1.25 scale. Both complete pixel gates fail.
 Complete rebased matrices, SVG coordinate/transform behavior and nested scroll
 ranges remain required. The source patch remains unapplied and no new native
 control is admitted as a release pass.

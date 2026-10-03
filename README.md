@@ -19,10 +19,11 @@ Open UI never executes JavaScript, in this or future versions. Applications
 handle interaction in native Rust through `openui::Document`, `openui::Element`,
 signals, and Rust event callbacks. Document lookup by ID,
 element and text-node mutation, class lookup and updates, focus, scrolling,
-controls, and event handling use public Rust methods. When an application
-needs behavior commonly exposed by a browser element API, Open UI must
-implement it in Rust and expose a public method on the retained document or
-element. The consuming native app calls that method directly. A missing
+controls, and event handling use public Rust methods. Element operations do
+not require JavaScript: browsers expose them through JavaScript, and Open UI
+must implement any needed equivalent in Rust and expose it as a public method
+on the retained document or element. The consuming native app calls that
+method directly. A missing
 public native operation is unfinished API work, even when an internal test
 fixture can already produce the same visual state. See the
 [native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
@@ -78,7 +79,7 @@ preserves those four matches and all 850 existing native controls while fixing
 transparent-canvas erasure in neighboring Rust consumers. The SVG decoration
 alpha, native scroll extents, remaining control pixels, and complete candidate
 qualification remain open before promotion.
-The [clean private SVG work](docs/renderer/generated/native-svg-viewport-v8.json)
+The [clean private SVG work](docs/renderer/generated/native-svg-viewport-v11.json)
 adds native viewport creation and corrects shared curved-border painting.
 Two complete original censuses finish at 21,325/22,924 exact, zero errors:
 17 comparisons become exact, none lose exactness, and 13 already failing
@@ -92,6 +93,12 @@ verify the shared viewport constructor and native sizing callbacks, preserving
 110 exports and existing layouts. Its Linux-enabled workspace passes 8,516
 tests with zero failures and 13 ignored. Its fresh 40-profile matrices pass
 640/640 focused and 960/960 primitive comparisons, with unchanged results.
+Its own complete original census also finishes at 21,325/22,924 exact,
+1,599 different and zero errors, with all comparison invariants unchanged
+from the double-border source. Its complete expanded run is 22,128/23,728
+exact, 1,600 different and zero errors. All original rows agree between the
+two suites, and all 804 additions stay unchanged: 200/201 cases meet all four
+profiles. Both complete pixel gates still fail.
 Complete rebased qualification, the 744
 remaining SVG pixel failures, transforms and scrolling ranges remain open.
 The [reviewable source patch](docs/renderer/evidence/native-svg-decoration-v1/native-svg-rebase-api-v293.patch)

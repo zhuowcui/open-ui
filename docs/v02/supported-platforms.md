@@ -23,8 +23,9 @@ native Rust. The public `openui` crate exposes retained `Document` and
 `Element` handles and Rust event callbacks. C applications use the versioned
 C ABI over the same engine.
 
-Browser documentation often shows JavaScript calling an element API. When a
-native application needs that behavior, Open UI must implement it in the shared
+Element operations do not require JavaScript. Browsers expose them through
+JavaScript; Open UI exposes them through native Rust. When a native application
+needs that behavior, Open UI must implement it in the shared
 Rust engine and expose a public Rust method for the application to call. There
 is no JavaScript glue, script binding, `eval`, or embedded browser runtime.
 A missing native method is unfinished API work.
@@ -93,7 +94,7 @@ API and renderer gaps; the new states are not admitted release passes.
 The [private SVG consumer](../renderer/evidence/native-svg-decoration-v1/native_svg_foreign_object_curved_v234.rs)
 creates a viewport for native UI children through a proposed public Rust
 constructor and mutates it from a Rust callback. Its
-[clean evidence](../renderer/generated/native-svg-viewport-v8.json) checks
+[clean evidence](../renderer/generated/native-svg-viewport-v11.json) checks
 1,920 states across four border sides and five scales. Every owned bound,
 callback and teardown check passes; shared solid-border painting makes
 1,176 rendered states match Chromium exactly, while 744 still differ.

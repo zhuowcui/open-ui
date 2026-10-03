@@ -50,7 +50,7 @@ jobs; skips remain open results. Every needed public native operation still
 requires implementation and consuming-application verification. Open UI
 executes no JavaScript, in any version.
 
-The [clean private SVG evidence](../renderer/generated/native-svg-viewport-v8.json)
+The [clean private SVG evidence](../renderer/generated/native-svg-viewport-v11.json)
 records complete original runs at `4daf1876` and `169fc7fe`: each is
 21,325/22,924 exact, 1,599 different, zero errors, with terminal exit 1.
 Against the accepted renderer, 17 comparisons become exact and none lose
@@ -76,11 +76,18 @@ The clean Linux-enabled workspace passes 8,516 tests, zero failures and
 are checked separately rather than assumed from the smaller run. Source and
 pinned binaries remain unchanged; test-produced diagnostic bytes are preserved
 before restoring the tracked PNG. Ten read-only checks pass: eight generators,
-archive integrity and repository accountability. Hosted umbrella `59c5a292`
+archive integrity and repository accountability. Hosted umbrella `3baa26f7`
 finishes six successful jobs and five skipped hardening jobs; skips stay open.
 The rebased focused and primitive matrices finish with observed exits 0:
 640/640 and 960/960 exact, with all 1,600 comparison invariants unchanged.
-The original census remains running; the expanded run is queued behind it.
+Its own complete original census finishes with observed exit 1:
+21,325/22,924 exact, 1,599 different and zero errors. All 22,924 comparison
+invariants agree with the double-border source. Its own expanded run also
+finishes with observed exit 1: 22,128/23,728 exact, 1,600 different and zero
+errors. All original rows agree with its separate census; all 804 addition
+invariants remain unchanged from the accepted renderer, with 200/201 cases
+exact at all four profiles. The fieldset/legend addition still fails at 1.25
+scale. Both complete pixel gates fail.
 
 The [source patch and C/C++ consumer](../renderer/evidence/native-svg-decoration-v1/)
 remain unapplied. Complete rebased pixel qualification, SVG transforms, nested
