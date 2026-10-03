@@ -100,16 +100,23 @@ Clean source `6e255ca3` passes 8,516 Linux-enabled workspace tests, with zero
 failures and 13 ignored, and all ten read-only checks. Its own focused and
 primitive matrices finish at 640/640 and 960/960 exact; every comparison
 invariant remains unchanged from the prior SVG checkpoint. The complete
-original and expanded suites are still running at this evidence checkpoint.
+original and expanded suites finish with observed exits 1: 21,321/22,924 and
+22,124/23,728 exact, zero errors. All Chromium images and identities are
+unchanged. Eight comparisons worsen, including four exact losses, in two
+sticky tests. Anonymous nowrap line wrappers omit child overflow from the
+new range calculation, causing valid scrolling to clamp to zero.
 All 850 root scrolling controls remain exact. All 180 scroll-layer dimension
 checks now match Chromium; their pixels remain 95/180 exact.
 
-The C consumer still fails its new content-dimension assertion. Rust's public
+The earlier C consumer fails its new content-dimension assertion. Rust's public
 constructor gives a `div` block layout, while C called the raw Engine factory
 with an initial inline style. The [next source patch](../renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v3.patch)
-adds one shared native constructor used by both bindings. Its ten read-only
-checks pass, but its build, workspace, consumer and pixel verification are
-pending. No consumer assertion is changed to hide that discrepancy.
+adds one shared native constructor used by both bindings. Later clean
+`02c0296e` passes nine C and four C++ consumer processes, including nested
+scrolling at five scales. The existing pixel equality assertion now compares
+public Rust `Document`/`Element` construction with C application construction;
+the raw Engine retains initial CSS values for complete resolved-style callers.
+Earlier failed workspace attempts and their causes are preserved.
 
 ### Element paint movement
 
@@ -126,8 +133,42 @@ The [source review](../renderer/generated/native-nested-scroll-v2.json) pins
 the exact Chromium `147.0.7727.50` tag files. Relevant snapping, promotion,
 layout-box and overflow files match the local `.24` checkout byte for byte;
 an unrelated border-shape call differs in the paint-property builder.
-The candidate's ten read-only checks pass. Its build and pixels remain
-unverified. Transformed and SVG ancestry still require full screen-space
-transform ownership. The 240 scrollbar-layout failures and 557 additional
-fractional paint failures are measured failures, with no candidate passes
-inferred from this source repair.
+An offset-only snapping trial gains six native matches but loses four in RTL
+scrolling. Chromium snaps `ScrollPosition = ScrollOrigin + ScrollOffset`, and
+adds the origin to contents paint coordinates. The later source includes
+that reversed origin, including at API offset zero. Its native sweep gains
+12 exact images with zero loss versus `6e255ca3`. Transformed, SVG and animated
+ancestry still require complete screen-space transform ownership.
+
+### Verified native sticky interaction
+
+The [current source patch](../renderer/evidence/native-nested-scroll-v1/native-nested-scroll-v7.patch)
+also propagates child overflow through anonymous line fragments. It restores
+all eight affected original comparisons in a 128-comparison sticky diagnostic.
+That diagnostic is 124/128 exact; four unchanged fractional paint failures
+remain. It does not establish a complete census result.
+
+Native scroll-to/by and smooth-scroll samples previously retained sticky
+positions from the old layout. The shared Engine now refreshes the sticky
+dependencies owned by the scrolled container. Ordinary scrolling retains
+compositor invalidation, and unchanged offsets keep the zero-work path.
+
+The reduced consuming Rust application uses public methods and Rust click
+callbacks for extreme, relative and smooth scrolling, content shrink and
+resize. All [50 geometry and pixel states](../renderer/evidence/native-nested-scroll-v1/native-sticky-oracle-v1.json)
+match two fresh Chromium sequences at five scales. Owned snapshots and weak
+callback teardown pass. The [reference HTML](../renderer/evidence/native-nested-scroll-v1/native-sticky-oracle-v1.html)
+is external oracle data; Open UI runs only the native Rust application.
+
+Clean `02c0296e` passes 8,516 Linux-enabled workspace tests, zero failures,
+13 ignored, ten read-only checks, nine C/four C++ consumer processes, and its
+640/640 focused plus 960/960 primitive matrices. All 1,600 raster comparison
+invariants are unchanged. All 850 root controls remain exact. All 180 layer
+dimensions agree; layer pixels remain 95/180, with no exact image lost.
+
+The [current evidence](../renderer/generated/native-nested-scroll-v4.json)
+records 1,775/2,560 native scroll images and 2,320/2,560 geometry states exact.
+The 240 missing scrollbar-layout states and 545 additional paint failures
+remain owned work. Its complete original and expanded censuses are running;
+no complete total or release qualification is inferred. All source patches
+remain unapplied to the umbrella renderer.

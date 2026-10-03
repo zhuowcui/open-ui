@@ -97,24 +97,35 @@ Cargo builds and pixel matrices run separately. No selected result is used to
 infer a complete census or release pass. The accepted original census remains
 21,308/22,924 exact.
 
-The [nested scrolling checkpoint](../renderer/generated/native-nested-scroll-v1.json)
-records clean `6e255ca3`: 8,516 Linux-enabled workspace tests pass, zero fail,
-13 are ignored, and ten read-only checks pass. Its own focused and primitive
-matrices finish at 640/640 and 960/960 exact, with all 1,600 comparison
-invariants unchanged. Both complete censuses are still running at this
-checkpoint. Public Rust consumers match Chromium geometry and dimensions in
-2,320/2,560 states and pixels in 1,763/2,560. Offset rounding gains 270 exact
-geometry states and 179 exact images, with no exact image lost. All 850 root
-controls stay exact, and all 180 scroll-layer extents now agree; layer pixels
-remain 95/180. The 240 remaining dimension failures require actual nested
-scrollbar space in layout. Fractional drawing also remains open.
+The [nested scrolling evidence](../renderer/generated/native-nested-scroll-v4.json)
+preserves complete `6e255ca3` results: 21,321/22,924 original exact and
+22,124/23,728 expanded exact, zero errors, observed exits 1. All Chromium
+bytes and identities remain unchanged. Eight comparisons worsen, including
+four exact losses, because anonymous line fragments omit overflowing children
+and valid scrolling is clamped away. All 804 expanded additions are unchanged.
 
-The C gate fails a new content-dimension assertion because its element factory
-used initial inline style while Rust applied native block defaults. The
-shared native factory repair is implemented at clean `31a9f705`, with ten
-read-only checks passing; its build, workspace, consumers and pixels are
-pending. All candidate patches remain unapplied. Umbrella `09d9d1f3` finishes
-six successful hosted jobs and five skipped hardening jobs; skips stay open.
+Later clean `02c0296e` repairs that propagation and shared Rust/C element
+defaults. Nine C and four C++ consumer processes pass, including nested
+scroll dimensions at five scales. Its own Linux-enabled workspace passes
+8,516 tests, zero failures, 13 ignored, and ten read-only checks. Both complete
+40-profile matrices are 640/640 and 960/960 exact; all 1,600 invariants stay
+unchanged. All eight regressed comparisons are exact in a partial sticky
+sweep, which is 124/128 exact with four prior paint failures unchanged.
+The reduced public Rust app matches Chromium in all 50 states, including
+native callback scroll-to/by, sampled smooth scrolling, shrink and resize.
+The Engine refreshes sticky dependencies owned by the scrolled container.
+
+Its native scroll sweep gains 12 exact images with zero loss versus
+`6e255ca3`: 1,775/2,560 pixels and 2,320/2,560 geometry/dimension states exact.
+All 850 root controls remain exact. All 180 scroll-layer dimensions agree;
+pixels remain 95/180, with no exact loss. The 240 missing scrollbar-layout
+states and 545 additional native paint failures remain open. Both complete
+censuses are running for this new source; no full result is inferred.
+Earlier offset-only snapping loses four RTL matches, and the reduced sticky
+app initially fails 20/40 states; those failures and subsequent source fixes
+are preserved. All candidate patches remain unapplied. Umbrella `b96c24e0`
+finishes six successful hosted jobs and five skipped hardening jobs; skips
+stay open and each later umbrella head needs its own hosted results.
 Open UI runs no JavaScript. Needed interaction remains shared native Engine
 work exposed through public Rust methods and callbacks.
 
