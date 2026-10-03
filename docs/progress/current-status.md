@@ -10,10 +10,22 @@ remain open.
 The umbrella now applies the shared SVG and scrolling source, including the
 capture scrollbar precedence and paint-contained clip-margin repair, and
 public native Rust/C scroll-into-view operations. The
-[versioned evidence](../renderer/generated/native-nested-scroll-v8.json)
-keeps private-source results separate from this combined source. Its own clean
-workspace, consumer and pixel runs are pending. Chromium remains the sole
-pixel target; Open UI executes no JavaScript.
+[versioned evidence](../renderer/generated/native-nested-scroll-v9.json)
+records its own clean `d174ea0b` runs: 21,334/22,924 original and 22,137/23,728
+expanded exact, zero errors, with actual exits 1. Nine comparisons become
+exact against the SVG checkpoint; none lose exactness, but four already
+failing comparisons worsen. All Chromium bytes and identities stay fixed.
+The workspace passes 8,523 tests, 13 ignored; all ten read-only checks, 249
+Python tests, ten C/four C++ headless consumers and both 40-profile raster
+gates pass. Chromium remains the sole pixel target; Open UI executes no
+JavaScript in any version, and applications call public native Rust APIs.
+
+Manual hardening at this source finishes four jobs successfully and fails
+address/leak sanitizer and fuzz. The pinned-Skia C++ metrics reproducer leaks
+2,597 bytes in 59 allocations per manager; font-cache retirement clears the
+measured leak. The private Rust lifetime candidate `418f7242` remains unapplied
+and uncompiled. Retained-scene ownership, concurrency and complete own-source
+hardening still require verification.
 
 ## Verified repository state
 
@@ -21,19 +33,20 @@ pixel target; Open UI executes no JavaScript.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
+| Latest complete clean umbrella census | `d174ea0b`: 21,334/22,924 exact, 1,590 different, 0 errors; original and expanded exits 1; 882 residual original IDs |
 | Last accepted complete clean census against cached Chromium captures | Native API checkpoint `9e0f0145`: 21,308/22,924 exact, 1,616 different, 0 errors; all original and expanded comparison invariants unchanged from the accepted viewport renderer. The full pixel gate remains failing |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
-| Focused / primitive 40-profile matrices | 640/640 / 960/960 exact on clean native style/RGBA source `9e0f0145` |
+| Focused / primitive 40-profile matrices | 640/640 / 960/960 exact on clean umbrella source `d174ea0b`; all 1,600 comparison invariants retained |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
 | Pending native final-state candidates | 0/35 exact at all four profiles after the latest clean recheck |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
 | Application conformance scenarios | 58 across 10 domains |
-| Frozen / current C exports | 84 / 112; additive reveal symbols, own runtime verification pending |
-| C examples / C++ consumers | 11 / 5 sources, including native windows; private reveal source runs ten C and four C++ headless consumers; own combined-source/lab verification pending |
-| Workspace tests | 8,515 pass; 13 ignored on clean native style/RGBA source `9e0f0145`, with the Linux C feature enabled |
-| Python closure, qualification, accountability and packaging tests | 244 pass |
+| Frozen / current C exports | 84 / 112; own-source ABI and runtime consumers pass; existing symbols/layouts preserved |
+| C examples / C++ consumers | 11 / 5 sources, including native windows; ten C and four C++ headless consumers run on own source; hosted native windows pass, release lab open |
+| Workspace tests | 8,523 pass; 0 failed; 13 ignored on clean umbrella source `d174ea0b`, with the Linux C feature enabled |
+| Python closure, qualification, accountability and packaging tests | 249 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 

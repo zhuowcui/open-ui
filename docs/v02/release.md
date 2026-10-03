@@ -9,14 +9,14 @@ claimed by source code alone.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | [Complete native API checkpoint census](../renderer/generated/native-viewport-full-v17.json) at `9e0f0145`: 21,308/22,924 exact, 1,616 different, zero errors. Every native image, Chromium image, oracle identity and comparison invariant remains unchanged from the accepted viewport renderer. Residual ownership review remains open | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact on clean native style/RGBA source `9e0f0145` in the [completed evidence](generated/native-primitive-styles-v1.json); all 1,600 images, oracle identities and difference signatures unchanged from preceding exact raster evidence | pass |
+| Four-profile renderer matrix | [Complete clean umbrella census](../renderer/generated/native-nested-scroll-v9.json) at `d174ea0b`: 21,334/22,924 exact, 1,590 different, zero errors; actual exit 1. All Chromium inputs stay fixed; 882 residual original IDs need closure | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact on clean umbrella source `d174ea0b`; all 1,600 comparison invariants retained | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | [Complete native API checkpoint run](../renderer/generated/native-viewport-full-v17.json) at `9e0f0145` is 22,111/23,728 exact, 1,617 different, zero errors; original rows agree with its separate census. All 804 addition comparisons are unchanged, with 200/201 additions exact at all four profiles. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | [Complete clean umbrella run](../renderer/generated/native-nested-scroll-v9.json) at `d174ea0b` is 22,137/23,728 exact, 1,591 different, zero errors; actual exit 1. Original rows agree with the separate census; all 804 additions stay unchanged, with 200/201 exact at all four profiles. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
-| Rust workspace and docs | clean `9e0f0145`, Linux C feature enabled: 8,515 passed, zero failed, 13 ignored | pass |
-| Rust 1.85 MSRV | [Earlier hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): locked headless and Linux checks passed; own-source job at `9e0f0145` skipped | own-source qualification open |
-| Rust/C application contract | 58 scenarios, 110 current exports, eight headless C examples and three C++ consumers, plus native C/C++ window consumers; [native style evidence](generated/native-primitive-styles-v1.json) preserves all previous symbols and layouts | remaining API review and lab qualification open |
+| Rust workspace and docs | clean `d174ea0b`, Linux C feature enabled: 8,523 passed, zero failed, 13 ignored | pass |
+| Rust 1.85 MSRV | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576): locked headless and Linux checks passed at `d174ea0b` | pass |
+| Rust/C application contract | 58 scenarios, 112 current exports, ten C and four C++ headless consumers pass on own source; existing symbols and layouts preserved | remaining API review and lab qualification open |
 | Native element interaction | Public Rust `Document`, `Element`, and `TextNode` APIs cover ID/class/native-kind lookup, class-token updates, retained detach/reattach, mutation, callbacks, activation, focus, scrolling, and controls; browser-style operations needed by applications must be exposed through native APIs | core implemented; remaining API coverage review open |
 | C-owned X11/Wayland application loop | `oui_app_run` and `oui_app_request_exit` use Rust `App` and the same retained document; versioned platform callbacks and [clean native C/C++ window runs](native-c-lifecycle-evidence.md) cover X11 software/GL and Wayland software | implemented; release-lab qualification open |
 | C platform accessibility | owned full-tree snapshots, node metadata/relations/focus, and changed/removed IDs export from the shared engine; automated AT-SPI operation in a C window remains unqualified | open |
@@ -24,10 +24,10 @@ claimed by source code alone.
 | No-work frame | zero layout, paint, and raster on unchanged snapshots | pass |
 | Mutation ownership | 10,000-iteration soak, no owned-object leak | pass |
 | Local performance smoke | 0.108 ms p95, 308 UI-thread animation fps, 1.389% RSS growth | non-qualifying pass |
-| X11/Wayland software and Mesa GL | [Own-checkpoint hardening](https://github.com/zhuowcui/open-ui/actions/runs/37064659223) passed native/window smoke paths at `9e0f0145`; physical release-lab tests remain open | provisional pass |
-| Miri C handle ownership | [Earlier hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): opaque-handle ownership test passed under pinned Miri; own-source job at `9e0f0145` skipped | own-source qualification open |
-| ASan/LSan/fuzz | [Earlier hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): all 25 FFI tests passed, then both sanitizers reported 10,476 bytes through Fontconfig at process exit; fuzz stopped on a 2,606-byte Fontconfig allocation report. Own-source jobs at `9e0f0145` skipped | earlier failures unresolved; own-source qualification open |
-| Native C UBSan | [Earlier hardening](https://github.com/zhuowcui/open-ui/actions/runs/36840619251): ABI consumers passed; own-source job at `9e0f0145` skipped | own-source qualification open |
+| X11/Wayland software and Mesa GL | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576) passed native C/C++ windows and Rust smoke paths at `d174ea0b`; physical release-lab tests remain open | provisional pass |
+| Miri C handle ownership | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576): opaque-handle ownership test passed under pinned Miri at `d174ea0b` | pass |
+| ASan/LSan/fuzz | Own-source address/leak jobs each pass 29 FFI assertions then report 2,619 leaked bytes in 59 allocations. Fuzz completes the first target, fails tree mutations on 2,606 bytes/59 allocations, and never runs the remaining three targets. Font-cache retirement candidate is unapplied and uncompiled | fail |
+| Native C UBSan | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576): ABI consumers passed at `d174ea0b` | pass |
 | x86-64/AArch64 SDK, deb, rpm | deterministic source pipeline and tag matrix | pending tag build |
 | Clean Ubuntu/Fedora install | release workflow consumer jobs | pending tag build |
 | Physical GPU/context loss | release-lab profile | open |
@@ -37,10 +37,14 @@ claimed by source code alone.
 | crates.io publication | credentials and final release approval | open |
 
 The current umbrella applies the reviewed shared SVG and scrolling repairs and
-native Rust/C/accessibility reveal operations. Its own clean workspace,
-consumer and complete pixel results are pending. The table retains measured
-historical-source evidence and does not qualify this combined source. See the
-[versioned implementation evidence](../renderer/generated/native-nested-scroll-v8.json).
+native Rust/C/accessibility reveal operations. Its own clean workspace and
+consumers pass. Its complete original and expanded pixel runs fail, at
+21,334/22,924 and 22,137/23,728 exact, zero errors. All original rows agree;
+all 804 additions stay unchanged, with 200/201 exact at every required profile.
+Against SVG, nine comparisons become exact and none lose exactness; four
+already failing comparisons worsen. All seven manual hardening jobs complete:
+four pass and three fail. See the
+[versioned implementation evidence](../renderer/generated/native-nested-scroll-v9.json).
 
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.

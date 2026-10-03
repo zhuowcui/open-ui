@@ -34,10 +34,10 @@ The current v0.2 release candidate has:
 
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
   on replay and 182 changed; these old screenshots are not pixel targets;
-- a [complete native API checkpoint census](docs/renderer/generated/native-viewport-full-v17.json)
-  at `9e0f0145` with 21,308 of 22,924 comparisons exact, 1,616 different, and
-  zero render errors; every original and expanded comparison invariant remains
-  unchanged from the accepted clipping repair, and the full pixel gate still fails;
+- a [complete clean umbrella census](docs/renderer/generated/native-nested-scroll-v9.json)
+  at `d174ea0b` with 21,334 of 22,924 comparisons exact, 1,590 different, and
+  zero render errors; all Chromium images and identities remain unchanged,
+  and the full pixel gate still fails;
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
   comparisons exact in the [clipping repair evidence](docs/renderer/generated/native-viewport-full-v2.json);
 - 201 native final-state cases in the expanded contract, including one newly
@@ -53,8 +53,8 @@ The current v0.2 release candidate has:
 - 84 frozen retained-engine/headless C exports, with 112 current exports and
   checked layouts and an ABI checksum; the [native scroll and inset consumers](docs/v02/native-scroll-metrics.md)
   and [native style consumers](bindings/rust/openui-ffi/README.md#native-style-operations)
-  pass through public Rust, C and C++ APIs; the clean native style checkpoint
-  passes 8,515 workspace tests with 13 ignored and preserves the exact
+  pass through public Rust, C and C++ APIs; the clean umbrella checkpoint
+  passes 8,523 workspace tests with 13 ignored and preserves the exact
   640/640 focused and 960/960 primitive pixel suites;
 - sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates defined
   in CI; several remain open or failing.
@@ -64,9 +64,10 @@ Chromium for some fixtures, which is why replaying old screenshots cannot be a
 release gate. A [font oracle audit](docs/renderer/scaled-lcd-hinting-oracle-investigation.md)
 also found one older cached Chromium capture that differs from six fresh
 captures under the same recorded identity; that evidence needs reconciliation.
-The latest complete census for the accepted renderer has 1,616 differences after
-restoring all 16 earlier exact regressions. Later native API and private
-renderer candidates require their own complete qualification. The
+The latest clean umbrella census has 1,590 differences. Against the SVG
+checkpoint, nine comparisons become exact and none lose exactness, while four
+already failing comparisons worsen. Every residual still requires review.
+Earlier renderer measurements below remain attributed to their named sources. The
 [private sampling candidate](docs/renderer/generated/native-viewport-full-v14.json)
 loses 23 exact Chromium comparisons and gains 14 in its complete census;
 it remains unapplied. A subsequent
@@ -103,7 +104,7 @@ Complete rebased qualification, the 744
 remaining SVG pixel failures, transforms and scrolling ranges remain open.
 The [reviewable source patch](docs/renderer/evidence/native-svg-decoration-v1/native-svg-rebase-api-v293.patch)
 is applied in this umbrella checkpoint together with the reviewed scrolling
-repair and native reveal API. Own clean umbrella qualification is pending.
+repair and native reveal API. Its complete clean umbrella pixel gate still fails.
 Earlier disk failures are preserved.
 
 The [nested scrolling work](docs/v02/native-scroll-metrics.md#nested-scrolling-candidate)
@@ -146,9 +147,20 @@ API source passes 35 Engine tests and ten C/four C++ consumers; all 30 reduced
 native geometry states match Chromium, while 16/20 endpoint images are exact.
 Scroll-margin/padding support, broader alignment coverage, four scale-1.25
 pixel failures and two legacy contour calibration paths remain open.
-[Versioned evidence](docs/renderer/generated/native-nested-scroll-v8.json)
-preserves every earlier failure. Own clean umbrella workspace, consumer and
-pixel qualification remains pending; this is not a release pass.
+[Versioned evidence](docs/renderer/generated/native-nested-scroll-v9.json)
+preserves every earlier failure. Own clean umbrella runs complete at
+21,334/22,924 original and 22,137/23,728 expanded exact, zero errors, with
+observed exits 1. All original rows agree, all 804 additions stay unchanged,
+and 200/201 additions meet all four profiles. The workspace, ten C/four C++
+headless consumers, 249 Python tests and ten read-only checks pass.
+
+The manual hardening run passes MSRV, Miri, C UBSan and hosted Linux
+conformance. Address/leak sanitizer and fuzz fail on font allocation reports.
+A standalone pinned-Skia C++ case reproduces the metrics cache retention;
+retiring that font cache clears the measured leak. The native Rust lifetime
+candidate remains unapplied and uncompiled, with retained-scene ownership and
+complete hardening verification still required. These results do not qualify
+the release.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
