@@ -24,6 +24,18 @@ candidates remain unapplied.
 Applications continue to use public native Rust methods and Rust callbacks;
 Open UI executes no JavaScript.
 
+The separate [native inheritance candidate](../renderer/generated/native-scroll-insets-v17.json)
+at clean `f328ed62` repairs the shared Engine's parent-style propagation,
+relative font/length computation and ordered shorthand/longhand updates.
+Its public Rust app reproduces the earlier black child under a red parent,
+then passes native callbacks, reparenting, clones and owned snapshots after
+the repair. All ten before/after images match Chromium exactly at five scales;
+both independent Chromium captures agree byte for byte. Seven fresh build
+stages, 8,530 workspace tests, ten read-only checks, workspace Rust formatting
+and eleven C/five C++ consumers pass. Existing 113 exports and all ABI artifact
+bytes are unchanged. The broader raster suites are running; full-census and
+release qualification are not claimed. The source patch remains unapplied.
+
 The umbrella now applies the shared SVG and scrolling source, including the
 capture scrollbar precedence and paint-contained clip-margin repair, and
 public native Rust/C scroll-into-view operations. The

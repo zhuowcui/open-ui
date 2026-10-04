@@ -261,6 +261,16 @@ skipped hardening jobs remain unverified on this source. The margin and
 writing-mode repairs remain separate, unapplied candidates; no new full
 census or release pass is claimed.
 
+The [native inheritance candidate](docs/renderer/generated/native-scroll-insets-v17.json)
+at private `f328ed62` fixes parent-style propagation through the shared Engine,
+including retained tree changes, relative sizes and ordered shorthand updates.
+Its consuming Rust app uses existing public methods and a Rust callback;
+all ten before/after images match Chromium at five scales. Its seven fresh
+build stages, 8,530 workspace tests, eleven C/five C++ consumers and ten
+read-only checks pass. All 113 exports and ABI artifacts remain unchanged.
+The broader raster suites are running; no complete census or release pass is
+claimed. The reviewable source patch remains unapplied.
+
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia

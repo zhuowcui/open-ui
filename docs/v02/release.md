@@ -162,6 +162,17 @@ Rust library, ten read-only checks, and all three hosted workflows: six jobs
 succeed and five hardening jobs are skipped. No new Rust build, full census,
 manual hardening or release qualification is claimed for that correction.
 
+The [native inheritance candidate](../renderer/generated/native-scroll-insets-v17.json)
+at private `f328ed62` fixes shared parent-style propagation and ordered native
+declarations. Two actual failing Engine checks and a consuming Rust app's
+failure are preserved; the repaired source passes both checks and all ten
+before/after images against repeated Chromium captures at five scales.
+Its seven fresh build stages, 8,530 workspace tests, eleven C/five C++
+consumers, ten read-only checks and workspace Rust formatting pass, with all
+113 exports and ABI artifacts unchanged. The broader raster suites are
+running. Full censuses, wider native behavior and source hardening remain
+unqualified; the reviewable patch is unapplied and no new release state is admitted.
+
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
 
