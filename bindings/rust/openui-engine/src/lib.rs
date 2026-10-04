@@ -2495,6 +2495,142 @@ mod tests {
     };
 
     #[test]
+    fn native_resolved_computed_defaults_preserve_snapshots_and_native_inheritance() {
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
+        let parent = engine.root();
+        engine
+            .set_property(
+                parent,
+                StyleProperty::TextIndent,
+                LengthValue::px(20.0).into(),
+            )
+            .unwrap();
+        engine
+            .set_property(parent, StyleProperty::Color, Color::RED.into())
+            .unwrap();
+        let computed = engine.create_native_element(ElementTag::Span).unwrap();
+        engine
+            .set_renderer_style(computed, RendererStyleValue::FontSize(16.0))
+            .unwrap();
+        engine.append_child(parent, computed).unwrap();
+        let initial = engine.computed_style(computed).unwrap();
+        assert_eq!(initial.text_indent.value(), 0.0);
+        assert_eq!(initial.color, Color::BLACK);
+        let native = engine.create_native_element(ElementTag::Span).unwrap();
+        engine
+            .set_property(native, StyleProperty::Display, Display::Inline.into())
+            .unwrap();
+        engine.append_child(parent, native).unwrap();
+        assert_eq!(
+            engine.computed_style(native).unwrap().text_indent.value(),
+            20.0
+        );
+        assert_eq!(engine.computed_style(native).unwrap().color, Color::RED);
+        let descendant = engine.create_native_element(ElementTag::Span).unwrap();
+        engine.append_child(computed, descendant).unwrap();
+        engine
+            .set_renderer_style(computed, RendererStyleValue::Color(Color::GREEN))
+            .unwrap();
+        assert_eq!(
+            engine.computed_style(descendant).unwrap().color,
+            Color::GREEN
+        );
+        engine
+            .set_property(
+                parent,
+                StyleProperty::TextIndent,
+                LengthValue::px(28.0).into(),
+            )
+            .unwrap();
+        assert_eq!(
+            engine.computed_style(native).unwrap().text_indent.value(),
+            28.0
+        );
+        assert_eq!(
+            engine.computed_style(computed).unwrap().text_indent.value(),
+            0.0
+        );
+        let clone = engine.clone_subtree(computed).unwrap();
+        engine.append_child(parent, clone).unwrap();
+        assert_eq!(
+            engine.computed_style(clone).unwrap().text_indent.value(),
+            0.0
+        );
+        assert_eq!(engine.computed_style(clone).unwrap().color, Color::GREEN);
+        assert_eq!(initial.color, Color::BLACK);
+        assert_eq!(initial.text_indent.value(), 0.0);
+    }
+
+    #[test]
+    fn native_resolved_style_animation_refreshes_target_and_native_dependents() {
+        use openui_style::{AnimationOptions, FillMode, Keyframes, PropertyKeyframes};
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
+        let target = engine.create_native_element(ElementTag::Div).unwrap();
+        let mut style = ComputedStyle::initial();
+        style.update_derived(|fields| fields.font_size = 20.0);
+        engine.install_derived_style(target, style).unwrap();
+        engine.append_child(engine.root(), target).unwrap();
+        engine
+            .set_property(target, StyleProperty::Width, LengthValue::Em(3.0).into())
+            .unwrap();
+        let child = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(target, child).unwrap();
+        engine
+            .set_property(child, StyleProperty::Width, LengthValue::Em(2.0).into())
+            .unwrap();
+        let before = engine.computed_style(target).unwrap();
+        let animation = engine
+            .animate(
+                target,
+                PropertyKeyframes::typed(
+                    StyleProperty::FontSize,
+                    Keyframes::from_values(LengthValue::Em(1.0), LengthValue::Em(2.0)),
+                )
+                .unwrap(),
+                AnimationOptions {
+                    duration_ms: 100.0,
+                    fill: FillMode::Both,
+                    ..AnimationOptions::default()
+                },
+                AnimationTimeline::Document,
+            )
+            .unwrap();
+        assert_eq!(engine.computed_style(target).unwrap().font_size, 16.0);
+        assert_eq!(engine.computed_style(target).unwrap().width.value(), 48.0);
+        assert_eq!(engine.computed_style(child).unwrap().width.value(), 32.0);
+        engine.set_animation_time(50.0).unwrap();
+        assert_eq!(engine.computed_style(target).unwrap().font_size, 24.0);
+        assert_eq!(engine.computed_style(target).unwrap().width.value(), 72.0);
+        assert_eq!(engine.computed_style(child).unwrap().width.value(), 48.0);
+        engine.cancel_animation(animation).unwrap();
+        assert_eq!(engine.computed_style(target).unwrap().font_size, 20.0);
+        assert_eq!(engine.computed_style(target).unwrap().width.value(), 60.0);
+        assert_eq!(engine.computed_style(child).unwrap().width.value(), 40.0);
+        assert_eq!(before.font_size, 20.0);
+        assert_eq!(before.width.value(), 60.0);
+    }
+
+    #[test]
+    fn native_resolved_style_replacement_drops_previous_native_declarations() {
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
+        let target = engine.create_native_element(ElementTag::Div).unwrap();
+        engine
+            .set_property(target, StyleProperty::Color, Color::RED.into())
+            .unwrap();
+        let mut style = ComputedStyle::initial();
+        style.update_derived(|fields| fields.color = Color::BLUE);
+        engine.install_derived_style(target, style).unwrap();
+        assert_eq!(engine.computed_style(target).unwrap().color, Color::BLUE);
+        engine
+            .set_property(target, StyleProperty::Color, Color::RED.into())
+            .unwrap();
+        assert_eq!(engine.computed_style(target).unwrap().color, Color::RED);
+    }
+
+    #[test]
     fn native_inherited_styles_follow_parent_mutations_and_tree_changes() {
         use openui_style::{Direction, LengthValue, Visibility};
         let mut engine =
