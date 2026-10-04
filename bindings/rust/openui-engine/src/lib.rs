@@ -2581,7 +2581,8 @@ mod tests {
             engine
                 .set_property(absolute, StyleProperty::Position, Position::Absolute.into())
                 .unwrap();
-            engine.set_text(absolute, "XXXXX").unwrap();
+            let text = engine.create_text("XXXXX").unwrap();
+            engine.append_child(absolute, text).unwrap();
             engine.append_child(root, absolute).unwrap();
             let initial = engine.bounds(absolute).unwrap().unwrap();
             assert_eq!(initial.width, 80.015625, "scale={scale} initial");
