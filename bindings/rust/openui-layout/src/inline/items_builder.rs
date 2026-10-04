@@ -986,6 +986,17 @@ impl<'a> InlineItemsBuilder<'a> {
             return;
         }
 
+        // Inline replaced content still creates one atomic box. Walking its
+        // children as an ordinary inline element loses its natural size and
+        // aspect-ratio contribution (images and canvases need no children).
+        if node.style.display == Display::Inline
+            && (node.replaced.is_some() || crate::intrinsic_sizing::is_replaced_element(node.tag))
+        {
+            let style = node.style.clone();
+            self.append_atomic_inline(child_id, &style);
+            return;
+        }
+
         match node.tag {
             ElementTag::Text => {
                 if let Some(ref text) = node.text {

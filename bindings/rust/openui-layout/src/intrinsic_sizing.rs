@@ -3551,7 +3551,7 @@ fn compute_replaced_intrinsic_sizes_with_natural(
 /// but this function provides the extension point. The caller can mark
 /// elements as replaced through the style (e.g., explicit width+height
 /// on an img-like element).
-fn is_replaced_element(tag: ElementTag) -> bool {
+pub(crate) fn is_replaced_element(tag: ElementTag) -> bool {
     matches!(
         tag,
         ElementTag::Image
