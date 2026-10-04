@@ -34873,7 +34873,7 @@ mod tests {
             assert_eq!(wrapper_fragment.offset.top, LayoutUnit::from_i32(index as i32 * 100));
             assert_eq!(fragment_for_node(&fragment, floated).unwrap().offset.top, LayoutUnit::zero());
         }
-        assert_eq!(fragment.size.height, LayoutUnit::from_i32(600));
+        assert_eq!(fragment.size.height, LayoutUnit::from_i32(160));
     }
 
     #[test]
@@ -34929,7 +34929,9 @@ mod tests {
                 .unwrap()
                 .float_exclusions
                 .len(),
-            3
+            // Only this container's two floats propagate. The leading float
+            // already belongs to the ancestor BFC and must not be repeated.
+            2
         );
         assert_eq!(
             fragment_for_node(&fragment, flow_root).unwrap().size.height,
