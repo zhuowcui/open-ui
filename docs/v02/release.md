@@ -55,22 +55,25 @@ passes all seven jobs: both sanitizers, Miri, C UBSan, MSRV, Linux windows and
 all five fuzz targets. The full renderer, needed native API, hardware and
 publication gates remain open.
 
-The [latest private scroll-inset evidence](../renderer/generated/native-scroll-insets-v3.json)
-records 18 Rust/C setters and the shared screen-origin correction at clean
-`dac78e25`. Its 8,532-test workspace and ten read-only checks pass. All 510 native
-Rust states now match Chromium in geometry and pixels, recovering 58 differences;
-earlier exact images, geometry and callbacks stay fixed. Focused and primitive
-matrices are 640/640 and 960/960 exact, with every comparison invariant unchanged.
-The smaller C matrix is 175/175 exact in geometry and 165/175 exact in pixels,
-gaining 22 with no exact losses. Ten unchanged static nested-clip differences
-still fail under paint ownership.
+The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v4.json)
+records complete `dac78e25` runs at 21,340/22,924 original and 22,143/23,728
+expanded exact, zero errors, with actual exits 1. Eight become exact and two lose
+exactness; the screen correction remains unapplied pending repair of both
+paint-owned regressions. Chromium inputs and all 804 addition results are fixed.
 
-The preceding clean `45ddd7a4` inset candidate's complete original and expanded
-censuses preserve every umbrella comparison invariant: 21,334/22,924 and
-22,137/23,728 exact, zero errors, observed exits 1. Complete screen-correction
-censuses are running. Both patches remain unapplied and no new cases are admitted
-as release passes. Clip combination, transformed/backing paths, needed native
-API coverage and full qualification remain open.
+Separate clean `cf59ea29` repairs all ten nested rectangular-clip differences:
+175/175 C and 510/510 Rust geometry/image states are exact, without losing prior
+exactness. All 1,600 focused/primitive comparison invariants stay unchanged and
+exact. Its workspace passes 8,532 tests and ten read-only checks; complete
+original and expanded censuses are running.
+
+Separate clean `6d6768a8` fixes native reveal container traversal and containing
+blocks created or removed through public transforms. All 90 Rust and 60 C
+geometry/image states match Chromium; the 510 existing Rust states retain all
+pixels, geometry and callbacks. Its workspace passes 8,535 tests and ten
+read-only checks. Its raster gates are running. Reviewable patches remain
+unapplied and unqualified; no new release cases are admitted. Broader native
+API coverage, transform/fragmentation paths and full qualification remain open.
 
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.

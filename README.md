@@ -167,20 +167,27 @@ All three pull-request workflows at this checkpoint pass. The separate
 [manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/37149510887)
 passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux windows,
 MSRV and all five fuzz targets. Skipped pull-request jobs remain open results.
-The [latest private scroll-inset evidence](docs/renderer/generated/native-scroll-insets-v3.json)
-records clean `dac78e25`, with 18 public Rust/C setters and a shared screen-origin
-scroll correction. All 510 consuming Rust app states now match Chromium in
-geometry and pixels, recovering all 58 earlier differences. Its workspace
-passes 8,532 tests, zero failures and 13 ignored; ten read-only checks pass.
-The focused and primitive matrices remain 640/640 and 960/960 exact, with
-every comparison invariant unchanged from the umbrella renderer.
+The [latest private scroll evidence](docs/renderer/generated/native-scroll-insets-v4.json)
+records complete `dac78e25` runs at 21,340/22,924 original and 22,143/23,728
+expanded exact, zero errors, with actual exits 1. Eight comparisons become exact
+but two lose exactness; the screen correction remains unapplied. The two losses
+are owned by painting and must be repaired before promotion.
 
-The smaller C matrix is 175/175 exact in geometry and 165/175 exact in pixels:
-22 images become exact and none lose exactness. Ten independent static nested
-clip differences remain unchanged under paint ownership. The preceding inset
-candidate's complete original and expanded censuses preserve every umbrella
-comparison result. Complete censuses for the screen correction are running;
-the APIs and correction remain unapplied, and no new release passes are admitted.
+A separate clean `cf59ea29` combines compatible nested rectangular clips before
+rasterization. Its C matrix now matches all 175 geometry and pixel states,
+repairing the remaining ten clip differences with no exact losses. All 510 Rust
+states and all 1,600 focused/primitive comparisons stay unchanged and exact.
+Its workspace passes 8,532 tests, zero failures and 13 ignored; ten read-only
+checks pass. Complete original and expanded runs are in progress.
+
+The separate `6d6768a8` fixes native reveal traversal through layout containers
+and containing-block ownership when public transforms are added or removed.
+All 90 Rust and 60 C geometry and pixel states match Chromium; the C test gains
+25 geometry matches and 15 pixel matches without losing an exact image.
+All 510 existing Rust states stay byte-identical. Its workspace passes 8,535
+tests, zero failures and 13 ignored, and ten read-only checks. Its raster gates
+are running. Reviewable source patches are retained; these private changes
+remain unapplied and unqualified, and no new release passes are admitted.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU

@@ -56,12 +56,18 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   operations, but scroll-margin/padding support, full option coverage and four
   reduced endpoint pixel differences remain open; own umbrella geometry is
   30/30 exact, while endpoint images remain 16/20 exact. The
-  [latest private inset candidate](../renderer/generated/native-scroll-insets-v3.json)
+  [private screen candidate](../renderer/generated/native-scroll-insets-v3.json)
   now matches all 510 native Rust geometry and image states after a shared
   screen-origin correction, and both raster matrices remain exact. Its smaller
-  C matrix still has ten static nested-clip failures among 175 states. Complete
-  screen-correction censuses are running; the APIs and correction remain
-  unapplied and unqualified;
+  C matrix has ten static nested-clip failures among 175 states. Its complete
+  censuses now finish at 21,340/22,924 original and 22,143/23,728 expanded exact,
+  with two exact losses preventing promotion. The
+  [latest separate candidates](../renderer/generated/native-scroll-insets-v4.json)
+  repair all ten C clip failures at `cf59ea29` while preserving all 510 Rust and
+  1,600 raster comparisons, and fix native absolute/fixed reveal traversal and
+  transform containing blocks at `6d6768a8`, with 90/90 Rust and 60/60 C states
+  exact and all 510 existing Rust states unchanged. Complete clip censuses and
+  reveal raster gates are running. The patches remain unapplied and unqualified;
 - two live legacy contour calibration paths must be replaced by general
   raster behavior and checked against Chromium without sample corrections;
 - retained per-node compositor layers and compositor-owned immutable animation

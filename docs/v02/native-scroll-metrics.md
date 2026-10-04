@@ -48,7 +48,7 @@ Its complete original and expanded censuses now finish with observed exits 1:
 21,334/22,924 and 22,137/23,728 exact, zero errors. Every comparison invariant,
 including all Chromium bytes and identities, agrees with the umbrella renderer.
 
-The [latest screen-origin correction](../renderer/generated/native-scroll-insets-v3.json)
+The [screen-origin correction](../renderer/generated/native-scroll-insets-v3.json)
 at clean `dac78e25` recovers all 58 differences: the same 510 initial, instant
 and smooth states now match Chromium in geometry and pixels. Every earlier
 exact image, owned geometry state and callback count stays unchanged. The
@@ -63,11 +63,41 @@ container positions. All geometry agrees; 165/175 images are exact, gaining 22
 with no exact losses. Its ten remaining static nested-clip differences are
 unchanged under paint ownership. Pinned Chromium combines compatible rectangular
 clips before rasterization; native replay still repeats their edge coverage.
-Full screen-correction censuses are running. Both reviewable patches remain
-unapplied, and these cases are not admitted release passes. Clip combination,
-transformed/backing paths, other reveal options, containing-block/fixed traversal
-and complete needed public native API coverage remain required. Open UI runs
-no JavaScript; consuming applications use native Rust operations and callbacks.
+Its now-complete original and expanded censuses are 21,340/22,924 and
+22,143/23,728 exact, zero errors, with actual exits 1. Eight comparisons become
+exact but two lose exactness: an unscrolled scrollport's trailing coverage
+changes after the new screen snap. Both losses have paint ownership. The
+correction remains unapplied and cannot be promoted with those regressions.
+
+The [latest evidence](../renderer/generated/native-scroll-insets-v4.json) records
+two separate follow-ups. Clean `cf59ea29` skips a redundant rectangular mask
+when a compatible child clip contains the existing parent clip. The tighter
+vector clip remains active; effects, rounded clips, transforms and scroll
+boundaries retain their own property spaces. All 175 C geometry/image states
+are now exact, with ten gains and no losses. All 510 Rust states and all 1,600
+focused/primitive comparison invariants stay unchanged and exact. Its workspace
+passes 8,532 tests and ten read-only checks. Its complete censuses are running.
+The [source patch](../renderer/evidence/native-clip-containment-v1/native-clip-containment-v1.patch)
+is available for review.
+
+Clean `6d6768a8` makes reveal follow the retained fragment-box containers used
+by bounds and hit testing. Public native transforms now establish a containing
+block even when their matrix is identity; removing a transform removes that
+containing block and requests layout. Instant and smooth Rust callbacks and
+instant C callbacks reproduce six flow/absolute/fixed cases at five scales:
+90/90 Rust and 60/60 C geometry/image states are exact. C gains 25 geometry and
+15 pixel matches without losing an exact image; all 510 existing Rust states
+remain byte-identical. Its workspace passes 8,535 tests and ten read-only
+checks. Its raster gates are running. The
+[source and Rust consumer patch](../renderer/evidence/native-reveal-containers-v1/native-reveal-containers-v1.patch)
+and [C consumer](../renderer/evidence/native-reveal-containers-v1/native-reveal-containers.c)
+are reviewable.
+
+These private patches remain unapplied and unqualified; no new cases are
+admitted as release passes. General clip intersections, broader transformed,
+fragmented and fixed-viewport traversal, other reveal options and complete
+needed public native API coverage remain required. Open UI runs no JavaScript;
+consuming applications use native Rust operations and callbacks.
 
 ## Verification
 
