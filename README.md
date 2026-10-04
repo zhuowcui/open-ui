@@ -268,8 +268,18 @@ Its consuming Rust app uses existing public methods and a Rust callback;
 all ten before/after images match Chromium at five scales. Its seven fresh
 build stages, 8,530 workspace tests, eleven C/five C++ consumers and ten
 read-only checks pass. All 113 exports and ABI artifacts remain unchanged.
-The broader raster suites are running; no complete census or release pass is
-claimed. The reviewable source patch remains unapplied.
+Its focused and primitive matrices are now 640/640 and 960/960 exact, with all
+1,600 comparison invariants unchanged. The complete censuses are running;
+the reviewable source patch remains unapplied.
+
+The [native style follow-up](docs/renderer/generated/native-scroll-insets-v18.json)
+preserves four geometry mismatches from eight native C states against two
+matching Chromium runs. A separate Rust candidate repairs relative font
+animations, transition targets, calculated font sizes and stale pseudo styles.
+It adds five regression tests and a consuming Rust app, plus the public
+`LengthValue::calc_percent_px` constructor. Ten read-only checks pass;
+its own Rust builds and pixel checks are queued after the current censuses.
+The patch remains unapplied and unqualified. Open UI runs no JavaScript.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU

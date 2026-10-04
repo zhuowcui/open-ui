@@ -33,8 +33,22 @@ the repair. All ten before/after images match Chromium exactly at five scales;
 both independent Chromium captures agree byte for byte. Seven fresh build
 stages, 8,530 workspace tests, ten read-only checks, workspace Rust formatting
 and eleven C/five C++ consumers pass. Existing 113 exports and all ABI artifact
-bytes are unchanged. The broader raster suites are running; full-census and
-release qualification are not claimed. The source patch remains unapplied.
+bytes are unchanged. Its own focused and primitive matrices now pass 640/640
+and 960/960, with all 1,600 comparison invariants unchanged. The complete
+censuses are running; the source patch remains unapplied.
+
+The [native style follow-up](../renderer/generated/native-scroll-insets-v18.json)
+finds four shared Engine geometry failures among eight native C states;
+two independent Chromium runs agree. Relative font animations resolve against
+the wrong size, font changes leave dependent lengths stale, and a transition
+can lose a previously unauthored target. Clean private `3f1d296f` repairs those
+paths, calculated font sizes and pseudo styles after origin mutations.
+Five new regression tests and a public Rust app are committed, including
+native callbacks and owned snapshots. `LengthValue::calc_percent_px` supplies
+a public typed constructor. Ten own read-only checks pass; baseline/fixed Rust
+probes, full workspace/ABI builds and pixel sweeps are queued after the existing
+censuses. None has run on this candidate yet. The reviewable patch remains
+unapplied and unqualified; no new release state is admitted.
 
 The umbrella now applies the shared SVG and scrolling source, including the
 capture scrollbar precedence and paint-contained clip-margin repair, and

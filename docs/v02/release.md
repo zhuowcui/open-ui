@@ -169,9 +169,21 @@ failure are preserved; the repaired source passes both checks and all ten
 before/after images against repeated Chromium captures at five scales.
 Its seven fresh build stages, 8,530 workspace tests, eleven C/five C++
 consumers, ten read-only checks and workspace Rust formatting pass, with all
-113 exports and ABI artifacts unchanged. The broader raster suites are
-running. Full censuses, wider native behavior and source hardening remain
-unqualified; the reviewable patch is unapplied and no new release state is admitted.
+113 exports and ABI artifacts unchanged. Its focused and primitive suites
+now pass 640/640 and 960/960, with all 1,600 comparison invariants unchanged.
+The complete censuses are running. Wider native behavior and source hardening
+remain unqualified; the reviewable patch is unapplied and no new release state
+is admitted.
+
+The [native style follow-up](../renderer/generated/native-scroll-insets-v18.json)
+preserves four Engine-owned geometry failures among eight native C states
+against two matching Chromium runs. Private `3f1d296f` addresses relative font
+animations, stale dependent lengths, transition author order, calculated font
+sizes and retained pseudo declarations. It adds five regression tests, a public
+Rust app and `LengthValue::calc_percent_px`. Ten own read-only checks pass;
+its Rust probes, complete workspace/ABI build and pixel matrices are queued
+after the prior censuses. Those checks have not run yet, and the source patch
+remains unapplied. This evidence closes no release gate and admits no new case.
 
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
