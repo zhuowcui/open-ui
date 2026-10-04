@@ -53,8 +53,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
-            "/../../../tools/accountability/data/wpt_assets/sp20/",
-            "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe.png"
+            "/tests/assets/green-200.png"
         ))
         .to_vec(),
     )?;
