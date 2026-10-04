@@ -60,10 +60,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     for (index, phase) in phases.iter().enumerate() {
         let text = Element::create(&document, "div")?;
         text.set_position(Position::Absolute)?;
-        text.set_left(LengthValue::px(
+        text.set_left(Length::px(
             20.0 + (index % 8) as f32 * 92.0 + f32::from(*phase) / 64.0,
         ))?;
-        text.set_top(LengthValue::px(20.0 + (index / 8) as f32 * 60.0))?;
+        text.set_top(Length::px(20.0 + (index / 8) as f32 * 60.0))?;
         text.set_font_family(FontFamilyList::single(family.clone()))?;
         text.set_font_size(LengthValue::px(size))?;
         text.set_line_height(LineHeight::Number(1.0))?;
