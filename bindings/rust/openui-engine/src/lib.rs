@@ -2568,6 +2568,226 @@ mod tests {
     }
 
     #[test]
+    fn native_inheritance_computes_calculated_font_sizes_against_parent() {
+        use openui_geometry::Length;
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
+        let root = engine.root();
+        let child = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(root, child).unwrap();
+        engine
+            .set_property(root, StyleProperty::FontSize, LengthValue::px(20.0).into())
+            .unwrap();
+        engine
+            .set_property(
+                child,
+                StyleProperty::FontSize,
+                LengthValue::Computed(Length::calc_percent_px(150.0, -2.0)).into(),
+            )
+            .unwrap();
+        engine
+            .set_property(child, StyleProperty::Width, LengthValue::Em(3.0).into())
+            .unwrap();
+        let before = engine.computed_style(child).unwrap().clone();
+        assert_eq!(before.font_size, 28.0);
+        assert_eq!(before.width.value(), 84.0);
+        engine
+            .set_property(root, StyleProperty::FontSize, LengthValue::px(24.0).into())
+            .unwrap();
+        assert_eq!(engine.computed_style(child).unwrap().font_size, 34.0);
+        assert_eq!(engine.computed_style(child).unwrap().width.value(), 102.0);
+        assert_eq!(before.font_size, 28.0);
+    }
+
+    #[test]
+    fn native_inheritance_distinguishes_percentage_and_unitless_line_heights() {
+        use openui_style::LineHeight;
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
+        let root = engine.root();
+        let child = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(root, child).unwrap();
+        engine
+            .set_property(root, StyleProperty::FontSize, LengthValue::px(24.0).into())
+            .unwrap();
+        engine
+            .set_property(child, StyleProperty::FontSize, LengthValue::px(40.0).into())
+            .unwrap();
+        engine
+            .set_property(
+                root,
+                StyleProperty::LineHeight,
+                LineHeight::Percentage(150.0).into(),
+            )
+            .unwrap();
+        let before = engine.computed_style(child).unwrap().clone();
+        assert_eq!(before.line_height, LineHeight::Length(36.0));
+        engine
+            .set_property(
+                root,
+                StyleProperty::LineHeight,
+                LineHeight::Number(1.5).into(),
+            )
+            .unwrap();
+        assert_eq!(
+            engine.computed_style(child).unwrap().line_height,
+            LineHeight::Number(1.5)
+        );
+        assert_eq!(before.line_height, LineHeight::Length(36.0));
+    }
+
+    #[test]
+    fn native_inheritance_refreshes_authored_pseudo_styles_after_origin_mutation() {
+        use openui_style::{FontWeight, PseudoStyleTarget};
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
+        let root = engine.root();
+        let child = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(root, child).unwrap();
+        engine
+            .set_property(root, StyleProperty::FontSize, LengthValue::px(20.0).into())
+            .unwrap();
+        engine
+            .set_property(root, StyleProperty::Color, Color::RED.into())
+            .unwrap();
+        engine
+            .set_pseudo_style(
+                child,
+                PseudoStyleTarget::FirstLine,
+                &Style::default()
+                    .font_size(LengthValue::Em(2.0))
+                    .font_weight(FontWeight::BOLD),
+            )
+            .unwrap();
+        let before = engine
+            .computed_style(child)
+            .unwrap()
+            .first_line_style
+            .as_ref()
+            .unwrap()
+            .as_ref()
+            .clone();
+        assert_eq!(before.font_size, 40.0);
+        assert_eq!(before.color, Color::RED);
+        engine
+            .set_property(root, StyleProperty::FontSize, LengthValue::px(24.0).into())
+            .unwrap();
+        engine
+            .set_property(root, StyleProperty::Color, Color::BLUE.into())
+            .unwrap();
+        let after = engine
+            .computed_style(child)
+            .unwrap()
+            .first_line_style
+            .as_ref()
+            .unwrap();
+        assert_eq!(after.font_size, 48.0);
+        assert_eq!(after.color, Color::BLUE);
+        assert_eq!(after.font_weight, FontWeight::BOLD);
+        let clone = engine.clone_subtree(child).unwrap();
+        engine.append_child(root, clone).unwrap();
+        let cloned = engine
+            .computed_style(clone)
+            .unwrap()
+            .first_line_style
+            .as_ref()
+            .unwrap();
+        assert_eq!(cloned.font_size, 48.0);
+        assert_eq!(cloned.color, Color::BLUE);
+        engine.detach(child).unwrap();
+        let detached = engine
+            .computed_style(child)
+            .unwrap()
+            .first_line_style
+            .as_ref()
+            .unwrap();
+        assert_eq!(detached.font_size, 32.0);
+        assert_eq!(detached.color, Color::BLACK);
+        assert_eq!(before.font_size, 40.0);
+        assert_eq!(before.color, Color::RED);
+    }
+
+    #[test]
+    fn native_inheritance_animated_font_resolves_relative_to_parent() {
+        use openui_style::{AnimationOptions, FillMode, Keyframes, PropertyKeyframes};
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
+        let root = engine.root();
+        let child = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(root, child).unwrap();
+        engine
+            .set_property(root, StyleProperty::FontSize, LengthValue::px(20.0).into())
+            .unwrap();
+        engine
+            .set_property(child, StyleProperty::Width, LengthValue::Em(3.0).into())
+            .unwrap();
+        let animation = engine
+            .animate(
+                root,
+                PropertyKeyframes::typed(
+                    StyleProperty::FontSize,
+                    Keyframes::from_values(LengthValue::Em(1.0), LengthValue::Em(2.0)),
+                )
+                .unwrap(),
+                AnimationOptions {
+                    duration_ms: 100.0,
+                    fill: FillMode::Both,
+                    ..AnimationOptions::default()
+                },
+                AnimationTimeline::Document,
+            )
+            .unwrap();
+        assert_eq!(engine.computed_style(root).unwrap().font_size, 16.0);
+        assert_eq!(engine.computed_style(child).unwrap().width.value(), 48.0);
+        engine.set_animation_time(50.0).unwrap();
+        assert_eq!(engine.computed_style(root).unwrap().font_size, 24.0);
+        assert_eq!(engine.computed_style(child).unwrap().width.value(), 72.0);
+        engine.cancel_animation(animation).unwrap();
+        assert_eq!(engine.computed_style(root).unwrap().font_size, 20.0);
+        assert_eq!(engine.computed_style(child).unwrap().width.value(), 60.0);
+    }
+
+    #[test]
+    fn native_inheritance_transition_retains_a_previously_unauthored_target() {
+        use openui_style::{AnimationOptions, FillMode};
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
+        let root = engine.root();
+        let child = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(root, child).unwrap();
+        engine
+            .set_property(root, StyleProperty::FontSize, LengthValue::px(20.0).into())
+            .unwrap();
+        engine
+            .set_property(child, StyleProperty::Width, LengthValue::Em(3.0).into())
+            .unwrap();
+        let animation = engine
+            .transition(
+                child,
+                StyleProperty::FontSize,
+                LengthValue::px(40.0),
+                AnimationOptions {
+                    duration_ms: 100.0,
+                    fill: FillMode::Both,
+                    ..AnimationOptions::default()
+                },
+            )
+            .unwrap();
+        engine.cancel_animation(animation).unwrap();
+        assert_eq!(engine.computed_style(child).unwrap().font_size, 40.0);
+        engine
+            .set_property(root, StyleProperty::Color, Color::BLUE.into())
+            .unwrap();
+        assert_eq!(engine.computed_style(child).unwrap().font_size, 40.0);
+        assert_eq!(engine.computed_style(child).unwrap().width.value(), 120.0);
+        engine
+            .set_viewport(ViewportMetrics::from_logical_size(640.0, 240.0, 1.0).unwrap())
+            .unwrap();
+        assert_eq!(engine.computed_style(child).unwrap().font_size, 40.0);
+        assert_eq!(engine.computed_style(child).unwrap().width.value(), 120.0);
+    }
+
+    #[test]
     fn stale_and_cross_document_handles_are_rejected() {
         let mut a =
             Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
