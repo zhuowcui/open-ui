@@ -7,6 +7,16 @@ remain open.
 
 ## Current implementation checkpoint
 
+The standalone native float-color C constructor and public Rust/C/C++
+consumers are now applied to the umbrella branch. All 112 preceding exports
+and all struct layouts are preserved; the new total is 113. The ABI artifacts
+are regenerated from the umbrella source. Its own clean build and consumer
+checks are queued behind the private image guards; earlier private passes
+remain attributed to their sources. No new umbrella API, workspace or pixel
+pass is claimed yet. Margin, clip and writing-mode candidates remain unapplied.
+Applications continue to use public native Rust methods and Rust callbacks;
+Open UI executes no JavaScript.
+
 The umbrella now applies the shared SVG and scrolling source, including the
 capture scrollbar precedence and paint-contained clip-margin repair, and
 public native Rust/C scroll-into-view operations. The

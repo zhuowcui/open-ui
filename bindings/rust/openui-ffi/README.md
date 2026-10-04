@@ -49,6 +49,21 @@ API and own combined-source qualification remains open. See the
 
 ## Native style operations
 
+`oui_style_value_color_f32_v1` constructs a native sRGB color from normalized,
+unpremultiplied float channels for every color longhand, including text decoration
+and emphasis. It preserves `Color::from_rgba_f32` precision through the shared
+Rust engine. The returned property-bound compound is owned by the creating
+thread; set the property, then release the compound. The element keeps its own
+copy. Invalid channels or properties leave the output unchanged. Existing
+`OuiColor` byte channels and all struct layouts are preserved. The
+[`float_colors.c`](../../../examples/c_v02/float_colors.c) and C++ consumers
+exercise all twelve properties, callback mutation, rendering and owned buffers
+at five scales. The constructor and consumers are applied to the umbrella
+branch. Its own build and runtime verification are queued; the earlier private
+verification is recorded in the
+[v15 evidence](../../../docs/renderer/generated/native-scroll-insets-v15.json).
+Existing calls and struct layouts remain compatible.
+
 Native apps mutate retained style through public Rust setters or
 `oui_element_set_property`. The shared engine now accepts author values for
 35 additional primitive longhands, including independent border colors and

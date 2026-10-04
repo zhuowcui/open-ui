@@ -49,7 +49,7 @@ The current v0.2 release candidate has:
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;
-- 84 frozen retained-engine/headless C exports, with 112 current exports and
+- 84 frozen retained-engine/headless C exports, with 113 current exports and
   checked layouts and an ABI checksum; the [native scroll and inset consumers](docs/v02/native-scroll-metrics.md)
   and [native style consumers](bindings/rust/openui-ffi/README.md#native-style-operations)
   pass through public Rust, C and C++ APIs; the clean umbrella checkpoint
@@ -246,6 +246,14 @@ attachment. The shared Engine repair passes all eight clean build stages,
 vertical failures are repaired without exact losses or changed Chromium inputs.
 Its pixel guards are running. Other inherited properties and pixel
 qualification remain separate work.
+
+The standalone float-color constructor and public Rust/C/C++ consumers are
+now applied to the umbrella branch. The existing Rust API supplies float
+colors directly; C uses the new owned `oui_style_value_color_f32_v1` operation
+over the same Engine. Its own umbrella build and consumer verification are
+queued behind the private image guards. Earlier private passes are attributed
+to their source; no umbrella API or pixel pass is inferred. The margin and
+writing-mode repairs remain separate, unapplied candidates.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU

@@ -2965,6 +2965,73 @@ pub extern "C" fn oui_style_value_parse(
     })
 }
 
+// SAFETY CONTRACT: `out_value` points to one writable tagged-value record.
+// The returned property-bound compound is owned by the calling thread.
+#[no_mangle]
+pub extern "C" fn oui_style_value_color_f32_v1(
+    property: i32,
+    red: f32,
+    green: f32,
+    blue: f32,
+    alpha: f32,
+    out_value: *mut OuiStyleValue,
+) -> OuiStatus {
+    ffi(|| {
+        if out_value.is_null() {
+            return Err(invalid("style value output is null"));
+        }
+        let property = property_from_raw(property)
+            .ok_or_else(|| invalid("unknown style property identifier"))?;
+        if ![red, green, blue, alpha]
+            .into_iter()
+            .all(|channel| channel.is_finite() && (0.0..=1.0).contains(&channel))
+        {
+            return Err(invalid(
+                "color channels must be finite and in the range 0..=1",
+            ));
+        }
+        let color = Color::from_rgba_f32(red, green, blue, alpha);
+        let value = match property {
+            StyleProperty::TextDecorationColor => {
+                StyleValue::Renderer(openui_style::RendererStyleValue::TextDecorationColor(
+                    openui_style::StyleColor::Resolved(color),
+                ))
+            }
+            StyleProperty::TextEmphasisColor => {
+                StyleValue::Renderer(openui_style::RendererStyleValue::TextEmphasisColor(
+                    openui_style::StyleColor::Resolved(color),
+                ))
+            }
+            _ if property.metadata().value_kind == openui_style::ValueKind::Color => {
+                StyleValue::Color(color)
+            }
+            _ => {
+                return Err(ApiError::new(
+                    OuiStatus::WrongValueType,
+                    "property does not accept a color value",
+                )
+                .detail(property as u32));
+            }
+        };
+        let compound = register(LocalHandle::PropertyCompound(property, value))?;
+        // SAFETY: the caller promises writable storage; null was rejected.
+        // All validation and allocation have succeeded before changing it.
+        unsafe {
+            ptr::write(
+                out_value,
+                OuiStyleValue {
+                    tag: 6,
+                    reserved: 0,
+                    data: OuiStylePayload {
+                        compound: compound as *const OuiStyleCompound,
+                    },
+                },
+            );
+        }
+        Ok(())
+    })
+}
+
 // SAFETY CONTRACT: `compound` is a live immutable compound handle.
 #[no_mangle]
 pub extern "C" fn oui_style_compound_destroy(compound: *mut OuiStyleCompound) -> OuiStatus {
@@ -5360,6 +5427,180 @@ mod tests {
         }
         assert_eq!(oui_element_destroy(element_handle), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn native_float_colors_preserve_precision_property_identity_and_ownership() {
+        use openui_style::StyleColor;
+        let document_handle = create_document(64, 64);
+        let element_handle = create_element(document_handle, 0, ptr::null_mut());
+        let color = Color::from_rgba_f32(0.123456, 0.234567, 0.345678, 0.5);
+        let properties = [
+            StyleProperty::BackgroundColor,
+            StyleProperty::Color,
+            StyleProperty::BorderTopColor,
+            StyleProperty::BorderRightColor,
+            StyleProperty::BorderBottomColor,
+            StyleProperty::BorderLeftColor,
+            StyleProperty::ColumnRuleColor,
+            StyleProperty::OutlineColor,
+            StyleProperty::ScrollbarTrackColor,
+            StyleProperty::ScrollbarThumbColor,
+            StyleProperty::TextDecorationColor,
+            StyleProperty::TextEmphasisColor,
+        ];
+        for property in properties {
+            let mut output = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+            assert_eq!(
+                oui_style_value_color_f32_v1(
+                    property as i32,
+                    color.r,
+                    color.g,
+                    color.b,
+                    color.a,
+                    output.as_mut_ptr()
+                ),
+                OuiStatus::Ok
+            );
+            // SAFETY: success initialized the tagged record and compound payload.
+            let output = unsafe { output.assume_init() };
+            assert_eq!((output.tag, output.reserved), (6, 0));
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &output),
+                OuiStatus::Ok
+            );
+            let reference = element(element_handle as usize).unwrap();
+            let state = element_document(&reference).unwrap();
+            let snapshot = borrow_engine(&state)
+                .unwrap()
+                .computed_style(reference.node)
+                .unwrap()
+                .clone();
+            let resolved = match property {
+                StyleProperty::BackgroundColor => snapshot.background_color,
+                StyleProperty::Color => snapshot.color,
+                StyleProperty::BorderTopColor => snapshot.border_top_color.resolve(&color),
+                StyleProperty::BorderRightColor => snapshot.border_right_color.resolve(&color),
+                StyleProperty::BorderBottomColor => snapshot.border_bottom_color.resolve(&color),
+                StyleProperty::BorderLeftColor => snapshot.border_left_color.resolve(&color),
+                StyleProperty::ColumnRuleColor => snapshot.column_rule_color.resolve(&color),
+                StyleProperty::OutlineColor => snapshot.outline_color.resolve(&color),
+                StyleProperty::ScrollbarTrackColor => snapshot.scrollbar_track_color.unwrap(),
+                StyleProperty::ScrollbarThumbColor => snapshot.scrollbar_thumb_color.unwrap(),
+                StyleProperty::TextDecorationColor => {
+                    assert_eq!(snapshot.text_decoration_color, StyleColor::Resolved(color));
+                    snapshot.text_decoration_color.resolve(&color)
+                }
+                StyleProperty::TextEmphasisColor => {
+                    assert_eq!(snapshot.text_emphasis_color, StyleColor::Resolved(color));
+                    snapshot.text_emphasis_color.resolve(&color)
+                }
+                _ => unreachable!(),
+            };
+            assert_eq!(resolved, color);
+            assert_ne!(resolved.a, 128.0 / 255.0);
+            assert_eq!(
+                oui_element_set_property(element_handle, StyleProperty::Width as i32, &output),
+                OuiStatus::WrongValueType
+            );
+            let other_color = if property == StyleProperty::Color {
+                StyleProperty::BackgroundColor
+            } else {
+                StyleProperty::Color
+            };
+            assert_eq!(
+                oui_element_set_property(element_handle, other_color as i32, &output),
+                OuiStatus::WrongValueType
+            );
+            let compound = unsafe { output.data.compound } as usize;
+            std::thread::spawn(move || {
+                assert_eq!(
+                    oui_style_compound_destroy(compound as *mut OuiStyleCompound),
+                    OuiStatus::WrongThread
+                );
+            })
+            .join()
+            .unwrap();
+            assert_eq!(
+                oui_style_compound_destroy(compound as *mut OuiStyleCompound),
+                OuiStatus::Ok
+            );
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &output),
+                OuiStatus::InvalidHandle
+            );
+            assert_eq!(
+                format!("{snapshot:?}"),
+                format!(
+                    "{:?}",
+                    borrow_engine(&state)
+                        .unwrap()
+                        .computed_style(reference.node)
+                        .unwrap()
+                )
+            );
+        }
+        assert_eq!(oui_element_destroy(element_handle), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn invalid_float_colors_leave_output_unchanged() {
+        for index in 0..4 {
+            for invalid_channel in [f32::NAN, f32::INFINITY, f32::NEG_INFINITY, -0.01, 1.01] {
+                let mut channels = [0.5; 4];
+                channels[index] = invalid_channel;
+                let mut output = OuiStyleValue {
+                    tag: 77,
+                    reserved: 42,
+                    data: OuiStylePayload { integer: 123 },
+                };
+                assert_eq!(
+                    oui_style_value_color_f32_v1(
+                        StyleProperty::Color as i32,
+                        channels[0],
+                        channels[1],
+                        channels[2],
+                        channels[3],
+                        &mut output
+                    ),
+                    OuiStatus::InvalidArgument
+                );
+                assert_eq!(
+                    (output.tag, output.reserved, unsafe { output.data.integer }),
+                    (77, 42, 123)
+                );
+            }
+        }
+        for (property, expected) in [
+            (i32::MAX, OuiStatus::InvalidArgument),
+            (StyleProperty::Width as i32, OuiStatus::WrongValueType),
+        ] {
+            let mut output = OuiStyleValue {
+                tag: 77,
+                reserved: 42,
+                data: OuiStylePayload { integer: 123 },
+            };
+            assert_eq!(
+                oui_style_value_color_f32_v1(property, 0.0, 0.0, 0.0, 1.0, &mut output),
+                expected
+            );
+            assert_eq!(
+                (output.tag, output.reserved, unsafe { output.data.integer }),
+                (77, 42, 123)
+            );
+        }
+        assert_eq!(
+            oui_style_value_color_f32_v1(
+                StyleProperty::Color as i32,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                ptr::null_mut()
+            ),
+            OuiStatus::InvalidArgument
+        );
     }
 
     #[test]

@@ -967,6 +967,15 @@ OuiStatus oui_transform_create(const OuiTransformOperation* operations, size_t o
  * thread-affine copies; the element clones them on submission. Existing scalar
  * encodings are unchanged. No CSS stylesheet or JavaScript is executed. */
 OuiStatus oui_style_value_parse(OuiStyleProperty property, OuiUtf8 literal, OuiStyleValue* out_value);
+/* Construct a native sRGB color with normalized, unpremultiplied float channels.
+ * Each channel must be finite and in [0,1]. Supports every color longhand,
+ * including text-decoration-color and text-emphasis-color. Returns an owned,
+ * property-bound OUI_STYLE_VALUE_COMPOUND without quantizing to OuiColor's byte
+ * channels. Submit with oui_element_set_property, then release its compound
+ * with oui_style_compound_destroy. Both calls use the creating thread; the
+ * element retains its own copy. Failure leaves out_value unchanged.
+ * The v1 constructor preserves all existing value and struct layouts. */
+OuiStatus oui_style_value_color_f32_v1(OuiStyleProperty property, float red, float green, float blue, float alpha, OuiStyleValue* out_value);
 OuiStatus oui_style_compound_destroy(OuiStyleCompound* compound);
 
 OuiStatus oui_document_register_image(OuiDocument* document, OuiUtf8 source, OuiUtf8 mime_type, OuiUtf8 sha256, const uint8_t* bytes, size_t byte_length, OuiResource** out_resource);
