@@ -11,6 +11,10 @@ test fixture that reaches a state through native Engine operations establishes
 rendering evidence for that state. Each element behavior needed by a consuming
 application also requires a public Rust operation over the same engine; fixture
 lowering alone does not complete application API coverage.
+Browser APIs used by reference tests describe behavior to implement in native
+Rust. They never require JavaScript in Open UI. A needed operation is complete
+only when a consuming app can call its public Rust API and receive the expected
+state changes and events through the shared engine.
 
 The [clean private SVG evidence](generated/native-svg-viewport-v11.json)
 implements viewport creation over the shared Rust Engine and removes the

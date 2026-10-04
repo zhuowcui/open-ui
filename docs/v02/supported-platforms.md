@@ -36,6 +36,12 @@ Rust engine and expose a public Rust method for the application to call. There
 is no JavaScript glue, script binding, `eval`, or embedded browser runtime.
 A missing native method is unfinished API work.
 
+When a browser API supplies behavior we need, implement that behavior in the
+shared Rust engine, expose it through the public `openui` API, and verify it
+from a consuming native Rust app. The app calls the method directly and handles
+events with Rust callbacks. This requirement applies even when the corresponding
+Chromium test uses JavaScript or is excluded from the pixel matrix.
+
 Lookup, mutation, geometry, focus, scrolling, controls, and event dispatch
 operate directly on the native engine:
 
