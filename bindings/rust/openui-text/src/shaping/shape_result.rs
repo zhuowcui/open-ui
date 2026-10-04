@@ -929,6 +929,51 @@ mod tests {
     use skia_safe::{font::Edging, FontHinting};
 
     #[test]
+    fn fontations_preserves_requested_mask_and_position_settings() {
+        use crate::font::{Font, FontCollection, FontDescription};
+        use crate::shaping::{TextDirection, TextRasterPolicy, TextShaper};
+        use openui_style::FontFamilyList;
+
+        let font = Font::new_in_collection(
+            FontDescription {
+                family: FontFamilyList::single("DejaVu Serif"),
+                size: 17.0,
+                specified_size: 17.0,
+                ..FontDescription::default()
+            },
+            FontCollection::deterministic_test(),
+        );
+        let shaped = TextShaper::new().shape("Xe", &font, TextDirection::Ltr);
+        let run = shaped.runs.first().unwrap();
+        for policy in [
+            TextRasterPolicy::ChromiumAuthorLcd,
+            TextRasterPolicy::ChromiumNativeControl,
+            TextRasterPolicy::ChromiumEmbeddedDocument,
+            TextRasterPolicy::ChromiumAliased,
+        ] {
+            for edging in [Edging::Alias, Edging::AntiAlias, Edging::SubpixelAntiAlias] {
+                for subpixel in [false, true] {
+                    for autohint in [false, true] {
+                        let mut source = run.font_data.sk_font().clone();
+                        source.set_edging(edging);
+                        source.set_hinting(FontHinting::None);
+                        source.set_subpixel(subpixel);
+                        source.set_linear_metrics(subpixel);
+                        source.set_force_auto_hinting(autohint);
+                        let converted =
+                            super::fontations_compatible_font(&source, &run.glyphs, policy)
+                                .unwrap();
+                        assert_eq!(converted.edging(), edging, "{policy:?}");
+                        assert_eq!(converted.is_subpixel(), subpixel, "{policy:?}");
+                        assert_eq!(converted.is_linear_metrics(), subpixel, "{policy:?}");
+                        assert_eq!(converted.is_force_auto_hinting(), autohint, "{policy:?}");
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
     fn fontations_lcd_hints_at_physical_size_before_replay() {
         use crate::font::{Font, FontCollection, FontDescription};
         use crate::shaping::{TextDirection, TextRasterPolicy, TextShaper};
