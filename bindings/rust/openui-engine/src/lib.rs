@@ -2206,6 +2206,139 @@ mod tests {
     };
 
     #[test]
+    fn native_inherited_styles_follow_parent_mutations_and_tree_changes() {
+        use openui_style::{Direction, LengthValue, Visibility};
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
+        let parent = engine.create_native_element(ElementTag::Div).unwrap();
+        let child = engine.create_native_element(ElementTag::Div).unwrap();
+        let text = engine.create_text("native text").unwrap();
+        engine.append_child(child, text).unwrap();
+        engine.append_child(engine.root(), parent).unwrap();
+        for (property, value) in [
+            (StyleProperty::Color, Color::RED.into()),
+            (StyleProperty::FontSize, LengthValue::px(20.0).into()),
+            (StyleProperty::Direction, Direction::Rtl.into()),
+            (StyleProperty::Visibility, Visibility::Hidden.into()),
+        ] {
+            engine.set_property(parent, property, value).unwrap();
+        }
+        engine.append_child(parent, child).unwrap();
+        let initial = engine.computed_style(text).unwrap().clone();
+        assert_eq!(initial.color, Color::RED);
+        assert_eq!(initial.font_size, 20.0);
+        assert_eq!(initial.direction, Direction::Rtl);
+        assert_eq!(initial.visibility, Visibility::Hidden);
+        engine
+            .set_property(child, StyleProperty::Color, Color::BLACK.into())
+            .unwrap();
+        engine
+            .set_property(parent, StyleProperty::Color, Color::BLUE.into())
+            .unwrap();
+        engine
+            .set_property(
+                parent,
+                StyleProperty::FontSize,
+                LengthValue::px(24.0).into(),
+            )
+            .unwrap();
+        assert_eq!(engine.computed_style(text).unwrap().color, Color::BLACK);
+        assert_eq!(engine.computed_style(text).unwrap().font_size, 24.0);
+        engine.detach(child).unwrap();
+        assert_eq!(engine.computed_style(text).unwrap().font_size, 16.0);
+        assert_eq!(
+            engine.computed_style(text).unwrap().direction,
+            Direction::Ltr
+        );
+        assert_eq!(
+            engine.computed_style(text).unwrap().visibility,
+            Visibility::Visible
+        );
+        engine.append_child(parent, child).unwrap();
+        let duplicate = engine.clone_subtree(child).unwrap();
+        assert_eq!(engine.computed_style(duplicate).unwrap().font_size, 16.0);
+        assert_eq!(
+            engine.computed_style(duplicate).unwrap().color,
+            Color::BLACK
+        );
+        engine.append_child(parent, duplicate).unwrap();
+        assert_eq!(engine.computed_style(duplicate).unwrap().font_size, 24.0);
+        let resolved = engine.create_native_element(ElementTag::Div).unwrap();
+        engine
+            .install_derived_style(resolved, ComputedStyle::initial())
+            .unwrap();
+        engine.append_child(parent, resolved).unwrap();
+        assert_eq!(engine.computed_style(resolved).unwrap().color, Color::BLACK);
+        assert_eq!(engine.computed_style(resolved).unwrap().font_size, 16.0);
+        engine.remove(parent).unwrap();
+        assert_eq!(initial.color, Color::RED);
+        assert_eq!(initial.font_size, 20.0);
+    }
+
+    #[test]
+    fn native_inheritance_recomputes_relative_lengths_and_preserves_declaration_order() {
+        use openui_style::{LengthValue, TextWrapMode, WhiteSpace};
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
+        let parent = engine.create_native_element(ElementTag::Div).unwrap();
+        let child = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(engine.root(), parent).unwrap();
+        engine
+            .set_property(
+                parent,
+                StyleProperty::FontSize,
+                LengthValue::px(20.0).into(),
+            )
+            .unwrap();
+        engine
+            .set_property(child, StyleProperty::FontSize, LengthValue::Em(2.0).into())
+            .unwrap();
+        engine
+            .set_property(child, StyleProperty::Width, LengthValue::Em(3.0).into())
+            .unwrap();
+        engine
+            .set_property(child, StyleProperty::WhiteSpace, WhiteSpace::Pre.into())
+            .unwrap();
+        engine
+            .set_property(
+                child,
+                StyleProperty::TextWrapMode,
+                TextWrapMode::Wrap.into(),
+            )
+            .unwrap();
+        engine.append_child(parent, child).unwrap();
+        assert_eq!(engine.computed_style(child).unwrap().font_size, 40.0);
+        assert_eq!(engine.computed_style(child).unwrap().width.value(), 120.0);
+        assert_eq!(
+            engine.computed_style(child).unwrap().white_space,
+            WhiteSpace::PreWrap
+        );
+        engine
+            .set_property(
+                parent,
+                StyleProperty::FontSize,
+                LengthValue::px(24.0).into(),
+            )
+            .unwrap();
+        assert_eq!(engine.computed_style(child).unwrap().font_size, 48.0);
+        assert_eq!(engine.computed_style(child).unwrap().width.value(), 144.0);
+        assert_eq!(
+            engine.computed_style(child).unwrap().white_space,
+            WhiteSpace::PreWrap
+        );
+        engine
+            .set_property(child, StyleProperty::WhiteSpace, WhiteSpace::Pre.into())
+            .unwrap();
+        engine
+            .set_property(parent, StyleProperty::Color, Color::BLUE.into())
+            .unwrap();
+        assert_eq!(
+            engine.computed_style(child).unwrap().white_space,
+            WhiteSpace::Pre
+        );
+    }
+
+    #[test]
     fn stale_and_cross_document_handles_are_rejected() {
         let mut a =
             Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
