@@ -64,7 +64,7 @@ This candidate is unapplied and unqualified; no new release state is admitted.
 Open UI runs no JavaScript in any version. Needed interaction uses public
 native Rust methods and Rust callbacks over the shared Engine.
 
-The [intrinsic sizing follow-up](../renderer/generated/native-scroll-insets-v26.json) reviews the
+The [intrinsic sizing follow-up](../renderer/generated/native-scroll-insets-v27.json) reviews the
 missing width behavior against 120 repeated Chromium advance observations and
 2,000 neighboring measurements at five scales. Chromium retains positive
 shaped-width remainders on its 1/64px layout grid and includes first-line
@@ -102,8 +102,21 @@ but none of its 120 pixel comparisons are exact. The remaining differences
 are in glyph coverage. Explicit Chromium LCD settings still selected the
 portable author outline path; a shared policy fix is prepared and has ten
 passing read-only checks. Its pixel effect and full build are unverified.
-The sizing source's focused, primitive and complete censuses are running or
-queued in the frozen observation. Full Chromium pixel parity remains open. No runtime
+The sizing source now completes all 640 focused and 960 primitive comparisons
+exactly. All 1,600 native and Chromium image, oracle, status and difference
+invariants remain unchanged from the earlier clean renderer. Its complete
+original and expanded censuses remain running or queued in the new observation.
+
+Source review also found a compositor cache bug: scene generations restart for
+each document, but both compositors checked only that number before reusing a
+frame. A different document can receive the previous document's pixels.
+A shared fix now requires the immutable recording's identity and keeps it owned
+while its frame is cached. It includes native document, viewport, resource
+lifetime and explicit Ganesh guards. Ten read-only checks pass at `107e2e36`;
+its baseline regression, fixed tests, builds and pixels have not run. Its
+pipeline waits for both earlier image pipelines to terminate before Cargo.
+The candidate remains unapplied and unqualified. Full Chromium pixel parity
+and retained compositor animation remain open. No runtime
 promotion or new pixel admission is claimed. Prior snapshots and all
 reference bytes remain unchanged.
 
