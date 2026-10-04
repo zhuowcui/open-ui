@@ -301,7 +301,7 @@ This candidate is unapplied and unqualified; no new release state is admitted.
 Open UI runs no JavaScript in any version. Needed interaction uses public
 native Rust methods and Rust callbacks over the shared Engine.
 
-The [intrinsic sizing follow-up](docs/renderer/generated/native-scroll-insets-v25.json) reviews the
+The [intrinsic sizing follow-up](docs/renderer/generated/native-scroll-insets-v26.json) reviews the
 missing width behavior against 120 repeated Chromium advance observations and
 2,000 neighboring measurements at five scales. Chromium retains positive
 shaped-width remainders on its 1/64px layout grid and includes first-line
@@ -330,9 +330,17 @@ fix propagates only newly added floats. All 61 block tests pass, and the full
 native app now finishes at five scales with peak RSS below 85 MiB. It matches
 700/1,000 Chromium size measurements; 300 still differ. Correct JSON number
 formatting removes six diagnostic false differences without changing layout
-or adding tolerance. Further shared inline-block and preserved-newline fixes
-are prepared for verification. Their full workspace, native geometry, pixels
-and censuses are not yet verified. No runtime
+or adding tolerance. The subsequent shared inline-block, preserved-newline and wrapping fixes now
+match all 1,000 native sizing measurements exactly. That clean source passes
+all nine build stages, 8,544 workspace tests, ten read-only checks and the same
+eleven C/five C++ consumers with 113 exports. The static-position app matches
+all 120 bounds measurements at both raster settings, with repeatable output,
+but none of its 120 pixel comparisons are exact. The remaining differences
+are in glyph coverage. Explicit Chromium LCD settings still selected the
+portable author outline path; a shared policy fix is prepared and has ten
+passing read-only checks. Its pixel effect and full build are unverified.
+The sizing source's focused, primitive and complete censuses are running or
+queued in the frozen observation. Full Chromium pixel parity remains open. No runtime
 promotion or new pixel admission is claimed. Prior snapshots and all
 reference bytes remain unchanged.
 
