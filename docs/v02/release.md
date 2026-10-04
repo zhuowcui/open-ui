@@ -162,41 +162,42 @@ Rust library, ten read-only checks, and all three hosted workflows: six jobs
 succeed and five hardening jobs are skipped. No new Rust build, full census,
 manual hardening or release qualification is claimed for that correction.
 
-The [native inheritance candidate](../renderer/generated/native-scroll-insets-v17.json)
-at private `f328ed62` repairs shared parent-style propagation and ordered native
-declarations. Its public Rust app passes all ten before/after images against
-repeated Chromium captures at five scales. Seven fresh build stages,
-8,530 workspace tests, eleven C/five C++ consumers, ten read-only checks and
-Rust formatting pass; all 113 exports and ABI bytes remain unchanged. Its
-focused and primitive gates pass 640/640 and 960/960 exact. The
-[completed census audit](../renderer/generated/native-scroll-insets-v19.json)
-records 21,312/22,924 original and 22,115/23,728 expanded exact, zero errors,
-actual exits 1. All 48 changed comparisons worsen, losing 22 exact matches
-across twelve static-position tests. All Chromium bytes and identities, fonts,
-resources and 804 added comparison invariants remain unchanged. Engine
-ownership is assigned; root-cause review is pending. This patch is unapplied
-and fails both complete pixel gates.
+The [native inheritance and style trials](../renderer/generated/native-scroll-insets-v20.json)
+remain separate from the accepted renderer. The earlier `f328ed62` complete
+censuses fail at 21,312/22,924 original and 22,115/23,728 expanded exact,
+losing 22 exact matches across twelve static-position tests. Its `3f1d296f`
+follow-up passes 8,535 workspace tests, eight native C geometry states,
+50 native Rust images and both complete 40-profile raster matrices; that
+checkpoint has no own complete census.
 
-The [native style follow-up](../renderer/generated/native-scroll-insets-v19.json)
-at clean private `3f1d296f` repairs relative font animations, stale dependent
-lengths, transition author order, calculated font sizes and pseudo declarations.
-Five new regression tests, a public Rust app and `LengthValue::calc_percent_px`
-exercise the native application path. The baseline Engine probe has four
-failures; its consumer build fails on an unavailable direct crate import and
-does not run. The fixed source passes seven targeted tests, seven fresh build
-stages, 8,535 workspace tests, Rust formatting, eleven C/five C++ consumers and
-ten read-only checks. All eight native C geometry states and 50 native Rust
-images are exact against repeated Chromium references. Its own 40-profile
-gates pass 640/640 focused and 960/960 primitive, preserving all 1,600 comparison
-invariants. An earlier wrapper failed before matrix startup on a nonexistent
-directory; the failure is preserved and the corrected run is separate.
-No full or expanded census has run on this follow-up. It retains unresolved
-base regressions and remains unapplied; no new release case is admitted.
+The clean private `5cc75147` follow-up identifies and repairs the regression:
+resolved computed fixture values had been sent through the normal inheritance
+path, replacing descendant indentation zero with the parent's 20px. Two
+independent Chromium queries verify the original reset behavior. The shared
+Engine now preserves computed snapshots while native app declarations still
+inherit. All 48 selected comparison invariants return to the applied baseline,
+restoring all 22 lost exact matches. The other 26 selected failures remain.
+Chromium images, source fixtures, fonts and resources stay unchanged.
 
-The preceding documentation source `27e848d5` passes ten read-only checks and
-all three hosted workflows: six successful and five skipped jobs. Skips are
-not hardening passes or qualification of the private candidates. Open UI
-executes no JavaScript; consuming apps call public native Rust APIs and callbacks.
+Five new guards also cover snapshot replacement, inherited animations,
+unchanged work and percentage line-height transports. The public typed
+line-height setter already passed; the generic Renderer payload is repaired.
+The fresh eight-stage build passes 8,540 workspace tests, zero failures and
+13 ignored, eleven C/five C++ consumers, ten read-only checks and Rust
+formatting. All 113 exports and ABI layouts are preserved. Its own native
+relative guards retain all eight exact C geometry states and 50 exact Rust
+images against repeated Chromium captures.
+
+The new public Rust static-position example passes all 30 callback and owned
+snapshot runs. Its 60 bounds and 60 pixel comparisons all fail the exact gate.
+Absolute auto widths omit inherited indentation; subpixel text advances and
+glyph painting also require review. Layout, text and paint ownership is
+recorded, with minimized inputs, repeated Chromium captures, bounds, connected
+regions and channel deltas. Failed capture probes remain separate evidence.
+Its own raster matrices and original/expanded censuses are queued or running as recorded in the versioned snapshot. Incomplete runs establish no qualification pass.
+This candidate is unapplied and unqualified; no new release state is admitted.
+Open UI runs no JavaScript in any version. Needed interaction uses public
+native Rust methods and Rust callbacks over the shared Engine.
 
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.

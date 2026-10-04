@@ -261,33 +261,42 @@ skipped hardening jobs remain unverified on this source. The margin and
 writing-mode repairs remain separate, unapplied candidates; no new full
 census or release pass is claimed.
 
-The [native inheritance candidate](docs/renderer/generated/native-scroll-insets-v17.json)
-at private `f328ed62` fixes parent-style propagation through the shared Engine,
-including retained tree changes, relative sizes and ordered shorthand updates.
-Its consuming Rust app uses public methods and a Rust callback; all ten
-before/after images match Chromium at five scales. Its seven fresh build stages,
-8,530 workspace tests, eleven C/five C++ consumers and ten read-only checks pass.
-Its focused and primitive matrices are 640/640 and 960/960 exact. The
-[completed census audit](docs/renderer/generated/native-scroll-insets-v19.json)
-records 21,312/22,924 original and 22,115/23,728 expanded exact, zero errors.
-All 48 changed comparisons worsen, losing 22 exact matches across twelve
-static-position tests. Chromium bytes, fonts and resources remain unchanged;
-all 804 added comparisons also remain unchanged. The patch remains unapplied
-while the Engine/layout cause is investigated.
+The [native inheritance and style trials](docs/renderer/generated/native-scroll-insets-v20.json)
+remain separate from the accepted renderer. The earlier `f328ed62` complete
+censuses fail at 21,312/22,924 original and 22,115/23,728 expanded exact,
+losing 22 exact matches across twelve static-position tests. Its `3f1d296f`
+follow-up passes 8,535 workspace tests, eight native C geometry states,
+50 native Rust images and both complete 40-profile raster matrices; that
+checkpoint has no own complete census.
 
-The [native style follow-up](docs/renderer/generated/native-scroll-insets-v19.json)
-at private `3f1d296f` repairs relative font animations, transition targets,
-calculated font sizes and stale pseudo styles through the shared Engine.
-Its public Rust app uses Rust callbacks and `LengthValue::calc_percent_px`.
-The clean build passes 8,535 workspace tests and eleven C/five C++ consumers;
-seven targeted Engine tests and ten read-only checks pass. All eight native C
-geometry states and all 50 native Rust images match repeated Chromium runs.
-Both 40-profile raster matrices pass: 640/640 focused and 960/960 primitive,
-with all 1,600 comparison invariants unchanged. An earlier wrapper failed
-before starting the matrix because it selected a nonexistent directory; that
-failure is preserved separately. No complete census has run on this follow-up.
-It retains the base candidate's unresolved regressions and remains unapplied
-and unqualified. Open UI runs no JavaScript; apps call native Rust methods.
+The clean private `5cc75147` follow-up identifies and repairs the regression:
+resolved computed fixture values had been sent through the normal inheritance
+path, replacing descendant indentation zero with the parent's 20px. Two
+independent Chromium queries verify the original reset behavior. The shared
+Engine now preserves computed snapshots while native app declarations still
+inherit. All 48 selected comparison invariants return to the applied baseline,
+restoring all 22 lost exact matches. The other 26 selected failures remain.
+Chromium images, source fixtures, fonts and resources stay unchanged.
+
+Five new guards also cover snapshot replacement, inherited animations,
+unchanged work and percentage line-height transports. The public typed
+line-height setter already passed; the generic Renderer payload is repaired.
+The fresh eight-stage build passes 8,540 workspace tests, zero failures and
+13 ignored, eleven C/five C++ consumers, ten read-only checks and Rust
+formatting. All 113 exports and ABI layouts are preserved. Its own native
+relative guards retain all eight exact C geometry states and 50 exact Rust
+images against repeated Chromium captures.
+
+The new public Rust static-position example passes all 30 callback and owned
+snapshot runs. Its 60 bounds and 60 pixel comparisons all fail the exact gate.
+Absolute auto widths omit inherited indentation; subpixel text advances and
+glyph painting also require review. Layout, text and paint ownership is
+recorded, with minimized inputs, repeated Chromium captures, bounds, connected
+regions and channel deltas. Failed capture probes remain separate evidence.
+Its own raster matrices and original/expanded censuses are queued or running as recorded in the versioned snapshot. Incomplete runs establish no qualification pass.
+This candidate is unapplied and unqualified; no new release state is admitted.
+Open UI runs no JavaScript in any version. Needed interaction uses public
+native Rust methods and Rust callbacks over the shared Engine.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
