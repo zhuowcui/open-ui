@@ -130,6 +130,23 @@ A separate owned float-color C API preserves every existing export and struct
 layout and adds one symbol; its own runtime verification is running. These
 patches remain unapplied and unqualified, with no new release admission.
 
+The [v15 evidence](../renderer/generated/native-scroll-insets-v15.json)
+authenticates the private float-color API's completed six-stage build, 8,542
+workspace tests and public Rust/C/C++ consumers. All original float-color
+reference inputs and all 32 earlier native control images remain unchanged.
+The eight native process failures are resolved; all 40 geometry states agree,
+but only 11 images are exact. The 29 paint failures remain open.
+
+A clean native Rust check proves that attached descendants retain the wrong
+writing mode. Private `944068e1` repairs shared Engine inheritance across parent
+and tree mutations. Its own eight-stage build, 8,542 workspace tests and ten
+read-only checks pass; all 765 Rust / 45 C native states are exact, with 210
+gains and no exact losses. All Chromium measurements remain unchanged. Its
+pixel guards are running; other inherited-property behavior remains separate
+work. Documentation source `e345cf69` passes all three hosted workflows,
+with six successful and five skipped jobs. None of these private changes is
+promoted or admitted as a release pass by this checkpoint.
+
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
 

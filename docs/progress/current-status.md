@@ -165,6 +165,29 @@ are preserved, with one additive export. No private runtime pass is inherited.
 Documentation source `f6b841db` passes all three hosted workflows, with six
 successful and five skipped jobs; skips do not qualify private runtime.
 
+The [v15 evidence](../renderer/generated/native-scroll-insets-v15.json)
+records the completed private float-color API checks: all six build stages,
+8,542 workspace tests, five Rust runs, eleven C and five C++ consumers pass.
+The original eight unsupported-RGBA process failures are preserved and resolved
+through typed native calls. The unchanged float-color references now yield
+40/40 geometry states and 11/40 exact images; all 32 earlier native images
+retain their bytes. The 29 paint failures remain open. All 112 earlier exports
+and all struct layouts are preserved, with one additive color constructor.
+
+A clean native Rust check at `6953dfad` proves missing writing-mode inheritance:
+children retain `horizontal-tb` when attached to vertical parents. Its Engine
+test and both vertical app runs fail with actual exit 101; the horizontal app
+passes. Private `944068e1` adds shared propagation across retained tree and
+parent mutations, with guards for authored overrides, text, clones and resolved
+snapshots. Ten read-only checks, all eight clean build stages and 8,542 workspace
+tests pass. Its public native consumers are 765/765 Rust and 45/45 C exact,
+with 210 gains and no exact loss. All Chromium measurements remain unchanged;
+native processes and owned snapshots pass. Its pixel guards are running.
+This repair covers writing mode; other inherited-property behavior remains
+separate work. Documentation checkpoint `e345cf69` passes ten read-only checks
+and all three hosted workflows: six jobs succeed and five are skipped. No
+private runtime is promoted or admitted by this documentation checkpoint.
+
 ## Verified repository state
 
 | Evidence | Result |

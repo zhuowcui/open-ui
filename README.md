@@ -230,9 +230,22 @@ addition results stay unchanged. Corrected margin source `2240ee9c` passes
 8,540 workspace tests and all 45 C mutation states, but its wider Rust probe is
 555/765 exact, with 210 vertical empty-block failures. Its pixel guards did not
 start. A separate owned float-color C API and public Rust/C/C++ consumers are
-implemented in a private checkpoint; their own runtime build is running.
+implemented in a private checkpoint; their own runtime build and native
+consumers now pass, as recorded in the
+[v15 evidence](docs/renderer/generated/native-scroll-insets-v15.json).
 The opaque-scroll review owns 29 of 40 neighboring pixel failures. None of
 these private changes is promoted or admitted as a release pass.
+
+The float-color candidate passes 8,542 workspace tests and all public Rust,
+eleven C and five C++ consumers. It resolves the eight native process failures
+using the original float-color inputs; all 40 geometry states agree, but only
+11 images are exact. All 32 earlier native control images stay unchanged.
+A public Rust check confirms missing writing-mode inheritance on native
+attachment. The shared Engine repair passes all eight clean build stages,
+8,542 workspace tests, 765/765 Rust states and 45/45 C states. All 210 prior
+vertical failures are repaired without exact losses or changed Chromium inputs.
+Its pixel guards are running. Other inherited properties and pixel
+qualification remain separate work.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU

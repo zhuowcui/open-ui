@@ -249,6 +249,19 @@ The wider public Rust consumer is 555/765 exact; 210 vertical empty-block
 states still fail. Native processes and owned snapshots pass, but the failed
 API gate prevents image sweeps. Public native behavior remains unfinished.
 
+The [v15 investigation](../renderer/generated/native-scroll-insets-v15.json)
+confirms an Engine gap behind the vertical cases: unstyled native descendants
+do not inherit their parent's writing mode. A consuming Rust app checks its
+owned computed-style snapshots and fails for both vertical modes, while its
+horizontal neighbor passes. The Engine regression test also fails. Private
+`944068e1` repairs propagation on attachment, mutation, detach, moves and clones,
+while preserving explicit values and fully resolved anonymous/pseudo snapshots.
+It passes ten read-only checks, all eight clean build stages, 8,542 workspace
+tests and all 765 Rust / 45 C native states. All 210 prior vertical failures are
+repaired with no exact loss. Owned snapshots and unchanged Chromium measurements
+are checked. Its pixel guards are running. Writing-mode repair does not
+complete other inherited properties or qualify pixels.
+
 ## Verification
 
 The [clean evidence](generated/native-c-scroll-metrics-v1.json) records source
