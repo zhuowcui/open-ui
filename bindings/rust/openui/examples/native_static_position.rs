@@ -7,6 +7,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let output = PathBuf::from(args.next().ok_or("output directory required")?);
     let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
     let case = args.next().ok_or("case required")?;
+    let raster_name = args.next().unwrap_or_else(|| "default".to_owned());
+    let raster_configuration = match raster_name.as_str() {
+        "default" => RasterConfiguration::default(),
+        "chromium-linux-lcd" => RasterConfiguration::chromium_linux_lcd(),
+        _ => return Err("invalid raster configuration".into()),
+    };
     if args.next().is_some()
         || !matches!(
             case.as_str(),
@@ -23,10 +29,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let is_block = case.starts_with("block");
     let reset = case.ends_with("reset");
     let relative = case.contains("relative");
-    let document = Document::with_font_collection(
+    let document = Document::with_font_collection_and_options(
         ViewportMetrics::from_logical_size(320.0, 160.0, scale)?,
         FontCollection::deterministic_test(),
+        EngineOptions {
+            raster_configuration,
+        },
     )?;
+    assert_eq!(document.raster_configuration()?, raster_configuration);
     let root = document.body();
     root.set_background_color(Color::WHITE)?;
     root.set_overflow(Overflow::Hidden)?;
@@ -178,7 +188,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ),
     )?;
     println!(
-        "native static positions: case={case} scale={scale} callback=1 owned-snapshots=2 passed"
+        "native static positions: case={case} scale={scale} raster={raster_name} callback=1 owned-snapshots=2 passed"
     );
     Ok(())
 }

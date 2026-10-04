@@ -5,7 +5,7 @@ use crate::scope::{create_scope, dispose_scope};
 use crate::style::{Bitmap, Error};
 use crate::view_node::{mount_view, IntoView};
 use crate::{Document, ScopeId};
-use openui_engine::ViewportMetrics;
+use openui_engine::{EngineOptions, RasterConfiguration, ViewportMetrics};
 use std::cell::Cell;
 #[cfg(all(feature = "linux", target_os = "linux"))]
 use std::cell::RefCell;
@@ -51,6 +51,7 @@ impl Default for WindowOptions {
 #[derive(Debug, Clone, Default)]
 pub struct AppBuilder {
     options: WindowOptions,
+    engine_options: EngineOptions,
 }
 
 /// Cloneable shutdown request for the application's owning UI thread.
@@ -79,6 +80,12 @@ impl AppBuilder {
         self
     }
 
+    /// Select the document's raster policy before creating the retained engine.
+    pub fn raster_configuration(mut self, configuration: RasterConfiguration) -> Self {
+        self.engine_options.raster_configuration = configuration;
+        self
+    }
+
     pub fn build(self) -> Result<App, Error> {
         let viewport = ViewportMetrics::from_logical_size(
             self.options.size.width,
@@ -86,7 +93,7 @@ impl AppBuilder {
             1.0,
         )?;
         Ok(App {
-            document: Document::with_viewport_metrics(viewport)?,
+            document: Document::with_options(viewport, self.engine_options)?,
             options: self.options,
             root_scope: None,
             exit_requested: AppExitHandle::default(),
@@ -465,9 +472,14 @@ pub struct HeadlessApp {
 
 impl HeadlessApp {
     pub fn new(viewport: ViewportMetrics) -> Result<Self, Error> {
+        Self::with_options(viewport, EngineOptions::default())
+    }
+
+    /// Create a headless app with an explicit, immutable raster policy.
+    pub fn with_options(viewport: ViewportMetrics, options: EngineOptions) -> Result<Self, Error> {
         Ok(Self {
             app: App {
-                document: Document::with_viewport_metrics(viewport)?,
+                document: Document::with_options(viewport, options)?,
                 options: WindowOptions {
                     size: LogicalSize::new(viewport.logical_width(), viewport.logical_height()),
                     ..WindowOptions::default()
@@ -527,6 +539,41 @@ mod tests {
             .size(LogicalSize::new(0.0, 10.0))
             .build()
             .is_err());
+    }
+
+    #[test]
+    fn native_and_headless_apps_preserve_explicit_raster_selection() {
+        let policy = RasterConfiguration::chromium_linux_lcd();
+        let app = App::builder()
+            .size(LogicalSize::new(80.0, 40.0))
+            .raster_configuration(policy)
+            .build()
+            .unwrap();
+        assert_eq!(app.document().raster_configuration().unwrap(), policy);
+        let document = app.document().clone();
+        let presented = App::from_document(document, WindowOptions::default()).unwrap();
+        assert_eq!(presented.document().raster_configuration().unwrap(), policy);
+
+        let viewport = ViewportMetrics::from_logical_size(80.0, 40.0, 1.25).unwrap();
+        let mut headless = HeadlessApp::with_options(
+            viewport,
+            EngineOptions {
+                raster_configuration: policy,
+            },
+        )
+        .unwrap();
+        headless
+            .mount(|| view! { <div>"native text"</div> })
+            .unwrap();
+        let frame = headless.render_at(0.0).unwrap();
+        assert_eq!((frame.width(), frame.height()), (100, 50));
+        headless
+            .document()
+            .set_viewport(ViewportMetrics::from_logical_size(80.0, 40.0, 2.0).unwrap())
+            .unwrap();
+        assert_eq!(headless.document().raster_configuration().unwrap(), policy);
+        let resized = headless.render_at(0.0).unwrap();
+        assert_eq!((resized.width(), resized.height()), (160, 80));
     }
 
     #[test]

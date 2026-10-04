@@ -9,9 +9,9 @@ use openui_compositor::SoftwareCompositor;
 use openui_dom::{ElementTag, FormControlRole};
 use openui_engine::{
     AccessibilityAction, AccessibilityTreeUpdate, AnimationEvent, AnimationEventKind, AnimationId,
-    AnimationState, ControlAdjustment, EditCommand, Engine, EventPhase as EngineEventPhase,
-    FocusOrigin, NodeHandle, PointerEventKind, ScrollAnimationId, TextDirection, TextUnit,
-    ViewportMetrics,
+    AnimationState, ControlAdjustment, EditCommand, Engine, EngineOptions,
+    EventPhase as EngineEventPhase, FocusOrigin, NodeHandle, PointerEventKind, RasterConfiguration,
+    ScrollAnimationId, TextDirection, TextUnit, ViewportMetrics,
 };
 use openui_style::ImageResourceId;
 use openui_text::{
@@ -62,15 +62,32 @@ impl Document {
         Self::with_font_collection(viewport, FontCollection::system())
     }
 
+    /// Create a document with an explicit, immutable raster configuration.
+    /// Resizing the viewport preserves this selection. No backend is probed
+    /// or selected from the application's environment.
+    pub fn with_options(viewport: ViewportMetrics, options: EngineOptions) -> Result<Self, Error> {
+        Self::with_font_collection_and_options(viewport, FontCollection::system(), options)
+    }
+
     pub fn with_font_collection(
         viewport: ViewportMetrics,
         font_collection: std::sync::Arc<FontCollection>,
     ) -> Result<Self, Error> {
+        Self::with_font_collection_and_options(viewport, font_collection, EngineOptions::default())
+    }
+
+    /// Create a document with application-owned fonts and explicit engine options.
+    pub fn with_font_collection_and_options(
+        viewport: ViewportMetrics,
+        font_collection: std::sync::Arc<FontCollection>,
+        options: EngineOptions,
+    ) -> Result<Self, Error> {
         Ok(Self {
             inner: Rc::new(DocumentInner {
-                engine: Rc::new(RefCell::new(Engine::new_with_font_collection(
+                engine: Rc::new(RefCell::new(Engine::new_with_font_collection_and_options(
                     viewport,
                     font_collection,
+                    options,
                 )?)),
                 listeners: RefCell::new(HashMap::new()),
                 resource_provider: RefCell::new(None),
@@ -203,6 +220,11 @@ impl Document {
 
     pub fn set_viewport(&self, viewport: ViewportMetrics) -> Result<(), Error> {
         self.with_engine_mut(|engine| engine.set_viewport(viewport))
+    }
+
+    /// Return the immutable raster policy shared by this document and its scenes.
+    pub fn raster_configuration(&self) -> Result<RasterConfiguration, Error> {
+        self.with_engine(Engine::raster_configuration)
     }
 
     pub fn register_font_face(
@@ -1267,6 +1289,40 @@ mod tests {
             .set_property(StyleProperty::Height, LengthValue::px(40.0).into())
             .unwrap();
         element
+    }
+
+    #[test]
+    fn explicit_raster_policy_survives_native_mutations_resize_and_owned_scenes() {
+        for policy in [
+            RasterConfiguration::default(),
+            RasterConfiguration::chromium_linux_lcd(),
+            RasterConfiguration::deterministic_aliased(true),
+        ] {
+            let document = Document::with_font_collection_and_options(
+                ViewportMetrics::from_logical_size(80.0, 40.0, 1.0).unwrap(),
+                FontCollection::deterministic_test(),
+                EngineOptions {
+                    raster_configuration: policy,
+                },
+            )
+            .unwrap();
+            let child = mounted(&document, "div");
+            let before = document.with_engine_mut(|engine| engine.scene()).unwrap();
+            assert_eq!(before.raster_configuration(), policy);
+            let retained = document.clone();
+            child.set_text("native mutation").unwrap();
+            retained
+                .set_viewport(ViewportMetrics::from_logical_size(96.0, 48.0, 1.5).unwrap())
+                .unwrap();
+            let after = retained.with_engine_mut(|engine| engine.scene()).unwrap();
+            assert_eq!(document.raster_configuration().unwrap(), policy);
+            assert_eq!(after.raster_configuration(), policy);
+            assert_eq!(child.computed_style().unwrap().raster_configuration, policy);
+            assert_eq!(child.computed_style().unwrap().device_scale_factor, 1.5);
+            assert_eq!(before.raster_configuration(), policy);
+            assert_eq!(before.viewport().device_scale_factor(), 1.0);
+            assert_eq!(after.viewport().device_scale_factor(), 1.5);
+        }
     }
 
     #[test]
