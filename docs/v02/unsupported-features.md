@@ -62,12 +62,15 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   C matrix has ten static nested-clip failures among 175 states. Its complete
   censuses now finish at 21,340/22,924 original and 22,143/23,728 expanded exact,
   with two exact losses preventing promotion. The
-  [latest separate candidates](../renderer/generated/native-scroll-insets-v4.json)
+  [latest separate candidates](../renderer/generated/native-scroll-insets-v5.json)
   repair all ten C clip failures at `cf59ea29` while preserving all 510 Rust and
   1,600 raster comparisons, and fix native absolute/fixed reveal traversal and
   transform containing blocks at `6d6768a8`, with 90/90 Rust and 60/60 C states
-  exact and all 510 existing Rust states unchanged. Complete clip censuses and
-  reveal raster gates are running. The patches remain unapplied and unqualified;
+  exact and all 510 existing Rust states unchanged. Its 1,600 raster comparison
+  invariants also stay unchanged and exact. A wider 20-state viewport test still
+  has five failures: revealing an offscreen fixed target incorrectly scrolls
+  the document. The shared fix at `2cc950e0` is prepared but uncompiled; complete
+  clip censuses are running. The patches remain unapplied and unqualified;
 - two live legacy contour calibration paths must be replaced by general
   raster behavior and checked against Chromium without sample corrections;
 - retained per-node compositor layers and compositor-owned immutable animation

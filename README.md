@@ -167,7 +167,7 @@ All three pull-request workflows at this checkpoint pass. The separate
 [manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/37149510887)
 passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux windows,
 MSRV and all five fuzz targets. Skipped pull-request jobs remain open results.
-The [latest private scroll evidence](docs/renderer/generated/native-scroll-insets-v4.json)
+The [latest private scroll evidence](docs/renderer/generated/native-scroll-insets-v5.json)
 records complete `dac78e25` runs at 21,340/22,924 original and 22,143/23,728
 expanded exact, zero errors, with actual exits 1. Eight comparisons become exact
 but two lose exactness; the screen correction remains unapplied. The two losses
@@ -185,8 +185,11 @@ and containing-block ownership when public transforms are added or removed.
 All 90 Rust and 60 C geometry and pixel states match Chromium; the C test gains
 25 geometry matches and 15 pixel matches without losing an exact image.
 All 510 existing Rust states stay byte-identical. Its workspace passes 8,535
-tests, zero failures and 13 ignored, and ten read-only checks. Its raster gates
-are running. Reviewable source patches are retained; these private changes
+tests, zero failures and 13 ignored, and ten read-only checks. Both raster gates
+pass with all 1,600 comparison invariants unchanged. A further 20-state check
+finds five failures: revealing an offscreen viewport-fixed element incorrectly
+scrolls the document. A separate shared fix is prepared but not compiled.
+Reviewable source patches are retained; these private changes
 remain unapplied and unqualified, and no new release passes are admitted.
 
 This repository is not yet

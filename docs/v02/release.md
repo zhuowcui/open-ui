@@ -55,7 +55,7 @@ passes all seven jobs: both sanitizers, Miri, C UBSan, MSRV, Linux windows and
 all five fuzz targets. The full renderer, needed native API, hardware and
 publication gates remain open.
 
-The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v4.json)
+The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v5.json)
 records complete `dac78e25` runs at 21,340/22,924 original and 22,143/23,728
 expanded exact, zero errors, with actual exits 1. Eight become exact and two lose
 exactness; the screen correction remains unapplied pending repair of both
@@ -71,7 +71,11 @@ Separate clean `6d6768a8` fixes native reveal container traversal and containing
 blocks created or removed through public transforms. All 90 Rust and 60 C
 geometry/image states match Chromium; the 510 existing Rust states retain all
 pixels, geometry and callbacks. Its workspace passes 8,535 tests and ten
-read-only checks. Its raster gates are running. Reviewable patches remain
+read-only checks. Its raster gates pass with all 1,600 comparison invariants
+unchanged. A wider 20-state check remains 15/20 exact because viewport-fixed
+reveal wrongly moves the document at all five scales. The Engine fix at
+`2cc950e0` is prepared and passes ten read-only checks but is uncompiled;
+its fresh build is queued after both clip censuses terminate. Reviewable patches remain
 unapplied and unqualified; no new release cases are admitted. Broader native
 API coverage, transform/fragmentation paths and full qualification remain open.
 

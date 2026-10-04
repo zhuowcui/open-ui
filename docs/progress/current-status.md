@@ -38,7 +38,7 @@ are skipped. Its separate seven-job
 passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux window
 tests, MSRV and all five fuzz targets. Complete logs and individual conclusions
 are retained. The earlier failed `d174ea0b` jobs remain historical evidence.
-The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v4.json)
+The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v5.json)
 records complete `dac78e25` original and expanded runs: 21,340/22,924 and
 22,143/23,728 exact, zero errors, observed exits 1. Eight comparisons become
 exact and two lose exactness; nine comparisons worsen in total. All Chromium
@@ -57,7 +57,13 @@ C geometry/image states match Chromium; C gains 25 geometry and 15 pixel matches
 without losing exactness. Rust and C agree on every shared state, and all 510
 existing Rust states retain their bytes, geometry and callback counts. Its
 workspace passes 8,535 tests, zero failures and 13 ignored; all ten read-only
-checks pass. Its raster gates are running. The source patches remain reviewable,
+checks pass. Both raster gates pass with all 1,600 comparison invariants unchanged.
+A broader 20-state viewport check is only 15/20 exact: an offscreen fixed target
+incorrectly scrolls the document at all five scales, with Engine ownership.
+The follow-up `2cc950e0` stops reveal ancestry at viewport-anchored fixed boxes;
+ten read-only checks pass, but it is uncompiled and no repair is inferred.
+Its fresh build is queued after both clip censuses terminate.
+The source patches remain reviewable,
 unapplied and unqualified, with no new release states admitted. Broader native
 API coverage, transform/fragmentation paths and full rendering remain open.
 Open UI never runs JavaScript.

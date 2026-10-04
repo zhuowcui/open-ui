@@ -69,7 +69,7 @@ exact but two lose exactness: an unscrolled scrollport's trailing coverage
 changes after the new screen snap. Both losses have paint ownership. The
 correction remains unapplied and cannot be promoted with those regressions.
 
-The [latest evidence](../renderer/generated/native-scroll-insets-v4.json) records
+The [latest evidence](../renderer/generated/native-scroll-insets-v5.json) records
 two separate follow-ups. Clean `cf59ea29` skips a redundant rectangular mask
 when a compatible child clip contains the existing parent clip. The tighter
 vector clip remains active; effects, rounded clips, transforms and scroll
@@ -88,10 +88,24 @@ instant C callbacks reproduce six flow/absolute/fixed cases at five scales:
 90/90 Rust and 60/60 C geometry/image states are exact. C gains 25 geometry and
 15 pixel matches without losing an exact image; all 510 existing Rust states
 remain byte-identical. Its workspace passes 8,535 tests and ten read-only
-checks. Its raster gates are running. The
+checks. Both raster gates pass with every comparison invariant unchanged. The
 [source and Rust consumer patch](../renderer/evidence/native-reveal-containers-v1/native-reveal-containers-v1.patch)
 and [C consumer](../renderer/evidence/native-reveal-containers-v1/native-reveal-containers.c)
 are reviewable.
+
+A wider viewport test checks fixed and absolute targets outside a scrollable
+document's viewport at five scales. Only 15/20 geometry/image states are exact:
+native reveal wrongly scrolls the document by 280 CSS pixels for the fixed
+target, moving its bounds from y=500 to y=220. Chromium keeps both unchanged.
+The neighboring absolute-target case is exact. All processes and owned
+teardowns pass; the five failures have Engine ownership. Clean `2cc950e0`
+prepares a shared cutoff at viewport-anchored fixed boxes while preserving
+their own scrollports and root transform/containment cases. The
+[source patch](../renderer/evidence/native-reveal-root-v1/native-reveal-root-v1.patch)
+and [C reproducer](../renderer/evidence/native-reveal-root-v1/native-reveal-root.c)
+are reviewable. Ten read-only checks pass; compilation and pixel qualification
+are pending, so no repair is inferred. Fresh Cargo is queued after both clip
+image censuses terminate.
 
 These private patches remain unapplied and unqualified; no new cases are
 admitted as release passes. General clip intersections, broader transformed,
