@@ -1,0 +1,125 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-composition-review-v821/receipt.json",
+      "sha256": "eaeb72dbf0c91e73578734fe221b47ddfe91d0a9966059fc04e96c3e4a9ffc58"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-compositor-log-v820/receipt.json",
+      "sha256": "da54ab534b29b247c37d502b6227fa97373fb0dd03bd358d51e3f9fdad820bb2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-edge-two-children-v815/receipt.json",
+      "sha256": "e7c36e7e8f579b82b5a17b6099cfc113257b545a28c41f130b7d8e9991c800ce"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-edge-two-children-review-v817.json",
+      "sha256": "fcf64b9538b0877a04ea74714aa4942a1e078a345d8dccff9ea8226d630af4af"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-lcd-policy-checks-v823/receipt.json",
+      "sha256": "e38f7f5587bc4eb37381151e0b91f40291128344e7c95120d3697d2115a12e02"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v811/receipt.json",
+      "sha256": "af894e7c8ea95d5768cf124f8e220b010bcf745335b4209c55e4b81f41823f97"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-complete-v813.json",
+      "sha256": "511957a25959028f0d6f68c4ef3860e73c2cb6e0d00854fbee587950ef9f5249"
+    }
+  ],
+  "composition_finding": {
+    "actual_screenshot_viewport_property_trees_only": true,
+    "all_four_inspected_pngs_exact_to_immutable_reference": true,
+    "exact_release_tag": "147.0.7727.50",
+    "owner": "openui-paint",
+    "policy_limits": [
+      "Direct compositing reasons and opaque scrolling paint chunks can also composite below DPR 1.5.",
+      "This reduced evidence does not qualify the entire original or expanded census.",
+      "Inspector LayerTree snapshot attempt v819 failed and remains a recorded diagnostic failure."
+    ],
+    "primary_sources": [
+      {
+        "method_sha256": "5b9005d402712048b3b36cb2960750a00bf9bbceb06a0067be5d8e5934d1c46c",
+        "path": "third_party/blink/renderer/platform/widget/widget_base.cc",
+        "sha256": "38bc4f0927c5ba56268f69da1ac0f7d5a778b91ba33856e02faa697c67d585d6",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/widget/widget_base.cc?format=TEXT"
+      },
+      {
+        "method_sha256": "384f86dbae90d1436d8b512cd20a9430289afe7b0a64594078f059bacbd541d5",
+        "path": "third_party/blink/renderer/platform/graphics/compositing/paint_artifact_compositor.cc",
+        "sha256": "8f8728ed4ec7068598f82066c59f01acc791d50c63d797d07b20eb36eff52dba",
+        "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/graphics/compositing/paint_artifact_compositor.cc?format=TEXT"
+      }
+    ],
+    "scale_1_25_scroll_composited": false,
+    "scale_1_5_scroll_composited": true
+  },
+  "documentation_checkpoint_890c6a78": {
+    "all_three_hosted_workflows_complete_success": true,
+    "private_runtime_qualification": false,
+    "read_only_checks_passed": 10,
+    "skipped_jobs": 5,
+    "skipped_jobs_are_not_passes": true,
+    "successful_jobs": 6
+  },
+  "javascript_executed_by_openui": false,
+  "native_two_child_guard": {
+    "after_exact": 31,
+    "before_exact": 28,
+    "gains_at_1_25": 7,
+    "geometry_exact": 70,
+    "losses_at_1_5": 4,
+    "phases": [
+      0,
+      0.25,
+      0.5,
+      0.75,
+      1,
+      2,
+      3
+    ],
+    "pixels_exact": 59,
+    "qualification": false,
+    "scales": [
+      1,
+      1.25,
+      1.5,
+      2,
+      3
+    ],
+    "states": 70
+  },
+  "new_release_states_admitted": 0,
+  "next_candidate": {
+    "adds_public_native_rust_consumer": "bindings/rust/openui/examples/native_scroll_clip.rs",
+    "build_status": "queued after both complete 4dd50621 image censuses and their strict audit",
+    "pixel_status": "not run",
+    "promotion_allowed": false,
+    "read_only_checks_passed": 10,
+    "scope": "Restore hard compositor-owned scroll clipping at high DPI; low-DPI opaque and direct-composition paths remain open",
+    "source": {
+      "clean": true,
+      "commit": "b6a62a9bc8314459c441b4a0b638e91b62af7edc",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "6572dd98877b8c69752fdee91d9358f8966d122a8804c96d6fa0523c21e17dbd",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "pixel_target": "Pinned Chromium only, zero tolerance",
+  "previous_index": {
+    "path": "docs/renderer/generated/native-scroll-insets-v9.json",
+    "sha256": "ff0638281b405f17584c132e9e68f91adb9d4fecf27c65ea351a84f4530563d8"
+  },
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "remaining": [
+    "Complete original/expanded Chromium pixel exactness",
+    "Low-DPI scrolling paint-chunk ownership and direct-composition paths",
+    "Broader native API coverage and transformed/fragmented reveal paths",
+    "Compositor/3D, hardware, packaging and release gates"
+  ],
+  "schema_version": 1
+}

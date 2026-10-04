@@ -4,6 +4,11 @@ Open UI runs no JavaScript. Rust and C applications call native methods over
 the same retained engine. Missing browser-style element behavior remains
 framework work to implement and expose to the consuming application.
 
+The framework never executes JavaScript, in any version. Needed element
+operations must be callable through public Rust methods and Rust callbacks.
+Separate reference tools may inspect or run scripts inside Chromium; those
+tools are not part of the application framework.
+
 Rust applications already use `Element::scroll_metrics`. C applications now
 use `oui_element_get_scroll_metrics_v1` to read the same client and content
 dimensions in logical pixels. Initialize the versioned output header; the
@@ -22,6 +27,27 @@ The same consumer checks exposed incomplete inset length handling. Native
 retained style state. A consuming Rust app sets lengths from a Rust click
 callback, reads owned bounds, changes to percentage right/bottom positioning,
 and resizes its viewport. No internal fixture or script supplies those changes.
+
+
+## Scroll clip ownership investigation
+
+The [composition review](../renderer/generated/native-scroll-insets-v10.json)
+preserves a native two-child scroll box across seven origins and five scales.
+The analytic-clip candidate gains seven exact images at 1.25 scale and loses
+four at 1.5; every geometry state remains exact. Four diagnostic Chromium
+captures preserve the original reference bytes while logging the compositor's
+property trees. At 1.25 the scroll node is not composited and its overflow clip
+stays in paint. At 1.5 the scroll node is composited and a clip in its parent
+paint-offset space belongs to the compositor.
+
+Chromium's exact release-tag source confirms that its text policy stops
+strongly preferring LCD text at DPR 1.5, allowing ordinary user-scrollable
+contents to be composited. CPU replay must preserve this clip ownership without
+implicitly selecting a GPU backend. The private `b6a62a9b` correction and its
+public Rust consumer await a fresh build and pixel qualification. Ten read-only
+checks pass. Opaque scrolling paint chunks and direct compositing reasons can
+also composite below the threshold and remain unfinished ownership work.
+No test ID, output-pixel correction or changed reference is used.
 
 
 ## Private scroll margin and padding qualification
@@ -69,7 +95,7 @@ exact but two lose exactness: an unscrolled scrollport's trailing coverage
 changes after the new screen snap. Both losses have paint ownership. The
 correction remains unapplied and cannot be promoted with those regressions.
 
-The [latest evidence](../renderer/generated/native-scroll-insets-v9.json) records
+The [previous evidence](../renderer/generated/native-scroll-insets-v9.json) records
 two separate follow-ups. Clean `cf59ea29` skips a redundant rectangular mask
 when a compatible child clip contains the existing parent clip. The tighter
 vector clip remains active; effects, rounded clips, transforms and scroll

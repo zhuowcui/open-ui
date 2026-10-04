@@ -89,6 +89,21 @@ unapplied and unqualified, with no new release states admitted. Broader native
 API coverage, transform/fragmentation paths and full rendering remain open.
 Open UI never runs JavaScript.
 
+The [scroll composition review](../renderer/generated/native-scroll-insets-v10.json)
+now explains the scale-dependent regression. Four Chromium captures with
+compositor logging remain byte-identical to the immutable references. Their
+actual screenshot property trees show a noncomposited scroll node at 1.25
+scale and a composited node with its own scrollport clip at 1.5. Primary source
+retrieved at the exact `147.0.7727.50` tag confirms Chromium's LCD-text policy
+switch at 1.5. Applying an analytic paint clip to both paths repeats coverage
+on the composited path. A two-child native C reduction gains seven exact
+images at 1.25 but loses four at 1.5; all 70 geometry states agree. The separate
+`b6a62a9b` candidate restores the high-DPI hard clip and adds a consuming Rust
+example. Its ten read-only checks pass; its fresh build and pixel checks are
+queued after the current complete censuses. Opaque scrolling chunks and direct
+compositing reasons below the threshold still need retained ownership.
+The candidate remains unapplied and unqualified.
+
 ## Verified repository state
 
 | Evidence | Result |
