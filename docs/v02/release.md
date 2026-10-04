@@ -118,6 +118,18 @@ Ten read-only checks pass; its clean build and native probes are queued after
 the locked image sweeps. Its 765 fresh Chromium metric states are references,
 not native API passes. No prior workspace, pixel or hardening pass is inherited.
 
+The [v14 evidence](../renderer/generated/native-scroll-insets-v14.json)
+completes `45ddeee3` at 21,350/22,924 original and 22,153/23,728 expanded
+exact, zero errors, actual exits 1. One multicolumn exact loss against the
+applied renderer remains. All Chromium inputs and 804 addition results stay
+unchanged. Corrected margin source `2240ee9c` passes 8,540 workspace tests and
+45/45 C states, but only 555/765 wider Rust states; the 210 vertical empty-block
+failures stop its pixel guards. Both preceding compiler exits 101 are retained.
+The reduced opaque-scroll review still fails 29/40 pixels under paint ownership.
+A separate owned float-color C API preserves every existing export and struct
+layout and adds one symbol; its own runtime verification is running. These
+patches remain unapplied and unqualified, with no new release admission.
+
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
 

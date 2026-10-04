@@ -222,6 +222,18 @@ checks pass; its clean build and native probes are queued behind the immutable
 image sweeps. All 765 fresh Chromium metric states are reference observations,
 not native passes. No rendering or API qualification is claimed for this source.
 
+The [v14 follow-up evidence](docs/renderer/generated/native-scroll-insets-v14.json)
+completes the private `45ddeee3` censuses: 21,350/22,924 original and
+22,153/23,728 expanded exact, zero errors, actual exits 1. One multicolumn
+regression against the applied renderer remains; all Chromium inputs and 804
+addition results stay unchanged. Corrected margin source `2240ee9c` passes
+8,540 workspace tests and all 45 C mutation states, but its wider Rust probe is
+555/765 exact, with 210 vertical empty-block failures. Its pixel guards did not
+start. A separate owned float-color C API and public Rust/C/C++ consumers are
+implemented in a private checkpoint; their own runtime build is running.
+The opaque-scroll review owns 29 of 40 neighboring pixel failures. None of
+these private changes is promoted or admitted as a release pass.
+
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia

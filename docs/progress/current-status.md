@@ -138,6 +138,33 @@ Chromium metric states agree. The `ca5dc7f1` documentation checkpoint's three
 hosted workflows succeed: six jobs pass and five are skipped, with all logs
 retained. This does not qualify private runtime changes.
 
+The [v14 checkpoint](../renderer/generated/native-scroll-insets-v14.json)
+finishes both `45ddeee3` censuses with actual exits 1: 21,350/22,924 original
+and 22,153/23,728 expanded exact, zero errors, 875 residual original IDs. It
+gains nine exact comparisons without loss against `4dd50621`, while retaining
+one 250-pixel multicolumn regression against the applied renderer. All
+Chromium inputs and all 804 addition results stay unchanged.
+
+Two compile failures are preserved. Corrected margin source `2240ee9c` passes
+all eight clean build stages and 8,540 workspace tests, with 13 ignored. Its C
+probe fixes all 20 failures and is 45/45 exact. The wider Rust probe is
+555/765 exact, with 210 failures confined to vertical empty-block cases. All
+native processes and owned snapshots pass; actual API exit 1 prevents its
+pixel sweeps from starting. Native behavior remains unqualified.
+
+Forty reduced scroll neighbors reproduce their Chromium images twice; all
+geometry agrees, but only 11 images are exact. The 29 paint-owned failures
+expose missing opaque-content/clip/effect ownership in the CPU scroll policy;
+the exact high-DPI edge-raster step remains open. The first eight unsupported
+RGBA-text process failures and their references are preserved. A separate
+typed RGBA8 trial uses new inputs and does not qualify those float-color inputs.
+Private `9cf13fcc` adds an owned float-color C constructor and public Rust/C/C++
+consumers for all twelve color longhands. Ten read-only checks pass; its own
+runtime build is running. The existing 112 exports and every struct layout
+are preserved, with one additive export. No private runtime pass is inherited.
+Documentation source `f6b841db` passes all three hosted workflows, with six
+successful and five skipped jobs; skips do not qualify private runtime.
+
 ## Verified repository state
 
 | Evidence | Result |

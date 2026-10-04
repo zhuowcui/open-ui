@@ -239,6 +239,16 @@ fragmented and fixed-viewport traversal, other reveal options and complete
 needed public native API coverage remain required. Open UI runs no JavaScript;
 consuming applications use native Rust operations and callbacks.
 
+The [v14 follow-up](../renderer/generated/native-scroll-insets-v14.json)
+finishes the preceding `45ddeee3` image censuses at 21,350/22,924 original and
+22,153/23,728 expanded exact, with zero errors and actual exits 1. Chromium
+inputs and all 804 addition results are unchanged; one multicolumn regression
+against the applied renderer remains. Corrected margin source `2240ee9c`
+passes all eight build stages, 8,540 workspace tests and 45/45 public C states.
+The wider public Rust consumer is 555/765 exact; 210 vertical empty-block
+states still fail. Native processes and owned snapshots pass, but the failed
+API gate prevents image sweeps. Public native behavior remains unfinished.
+
 ## Verification
 
 The [clean evidence](generated/native-c-scroll-metrics-v1.json) records source
