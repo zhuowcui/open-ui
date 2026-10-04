@@ -193,10 +193,32 @@ impl std::fmt::Display for CompositorError {
 
 impl std::error::Error for CompositorError {}
 
+/// Retain the immutable recording while its frame is cached. Scene generations
+/// belong to individual documents, so a generation alone cannot identify pixels.
+struct CachedFrame {
+    picture: Arc<RecordedPicture>,
+    frame: Frame,
+}
+
+impl CachedFrame {
+    fn new(scene: &SceneSnapshot, frame: Frame) -> Self {
+        Self {
+            picture: Arc::clone(&scene.picture),
+            frame,
+        }
+    }
+
+    fn frame_for(&self, scene: &SceneSnapshot) -> Option<Frame> {
+        (self.frame.scene_generation == scene.generation
+            && Arc::ptr_eq(&self.picture, &scene.picture))
+        .then(|| self.frame.clone())
+    }
+}
+
 #[derive(Default)]
 pub struct SoftwareCompositor {
     last_presented: Option<SceneGeneration>,
-    last_frame: Option<Frame>,
+    last_frame: Option<CachedFrame>,
     stats: CompositorStats,
 }
 
@@ -208,11 +230,13 @@ impl SoftwareCompositor {
             ));
         }
         self.stats.submitted += 1;
-        if self.last_presented == Some(scene.generation) {
-            if let Some(frame) = self.last_frame.clone() {
-                self.stats.reused += 1;
-                return Ok(frame);
-            }
+        if let Some(frame) = self
+            .last_frame
+            .as_ref()
+            .and_then(|cached| cached.frame_for(scene))
+        {
+            self.stats.reused += 1;
+            return Ok(frame);
         }
         let mut surface = rasterize_picture(&scene.picture).map_err(CompositorError::Raster)?;
         let image = surface.image_snapshot();
@@ -245,7 +269,7 @@ impl SoftwareCompositor {
         };
         self.stats.rasterized += 1;
         self.last_presented = Some(scene.generation);
-        self.last_frame = Some(frame.clone());
+        self.last_frame = Some(CachedFrame::new(scene, frame.clone()));
         Ok(frame)
     }
 
@@ -339,6 +363,16 @@ impl SceneMailbox {
 mod tests {
     use super::*;
 
+    fn recorded_scene(
+        viewport: ViewportMetrics,
+        configuration: RasterConfiguration,
+    ) -> SceneSnapshot {
+        let mut document = openui_dom::Document::new();
+        document.set_raster_context(configuration, viewport.device_scale_factor());
+        let (fragment, picture) = openui_paint::record_document(&document, viewport).unwrap();
+        SceneSnapshot::new(SceneGeneration(1), picture, Arc::new(fragment), Vec::new())
+    }
+
     #[test]
     fn immutable_scenes_can_cross_render_threads() {
         fn assert_send_sync<T: Send + Sync>() {}
@@ -389,6 +423,93 @@ mod tests {
         );
         assert_eq!(compositor.stats().rasterized, 1);
         assert_eq!(compositor.stats().reused, 1);
+    }
+
+    #[test]
+    fn software_frame_cache_accepts_new_viewports_with_equal_generations() {
+        let first = recorded_scene(
+            ViewportMetrics::from_logical_size(10.0, 10.0, 1.0).unwrap(),
+            RasterConfiguration::default(),
+        );
+        let second = recorded_scene(
+            ViewportMetrics::from_logical_size(16.0, 12.0, 2.0).unwrap(),
+            RasterConfiguration::chromium_linux_lcd(),
+        );
+        let mut compositor = SoftwareCompositor::default();
+        assert_eq!(compositor.render(&first).unwrap().width, 10);
+        let frame = compositor.render(&second).unwrap();
+        assert_eq!((frame.width, frame.height), (32, 24));
+        assert_eq!(frame.viewport, second.viewport());
+        assert_eq!(frame.raster_configuration, second.raster_configuration());
+        assert_eq!(compositor.render(&second.clone()).unwrap(), frame);
+        assert_eq!(compositor.stats().rasterized, 2);
+        assert_eq!(compositor.stats().reused, 1);
+    }
+
+    #[test]
+    fn frame_cache_releases_recordings_on_replacement_png_and_drop() {
+        let viewport = ViewportMetrics::from_logical_size(10.0, 10.0, 1.0).unwrap();
+        let first = recorded_scene(viewport, RasterConfiguration::default());
+        let first_picture = Arc::downgrade(&first.picture);
+        let mut compositor = SoftwareCompositor::default();
+        compositor.render(&first).unwrap();
+        drop(first);
+        assert!(first_picture.upgrade().is_some());
+
+        let second = recorded_scene(viewport, RasterConfiguration::default());
+        let second_picture = Arc::downgrade(&second.picture);
+        compositor.render(&second).unwrap();
+        assert!(first_picture.upgrade().is_none());
+        drop(second);
+        assert!(second_picture.upgrade().is_some());
+
+        let third = recorded_scene(viewport, RasterConfiguration::default());
+        let third_picture = Arc::downgrade(&third.picture);
+        compositor.render_png(&third).unwrap();
+        assert!(second_picture.upgrade().is_none());
+        drop(third);
+        assert!(third_picture.upgrade().is_none());
+
+        let fourth = recorded_scene(viewport, RasterConfiguration::default());
+        let fourth_picture = Arc::downgrade(&fourth.picture);
+        compositor.render(&fourth).unwrap();
+        drop(fourth);
+        assert!(fourth_picture.upgrade().is_some());
+        drop(compositor);
+        assert!(fourth_picture.upgrade().is_none());
+    }
+
+    #[cfg(feature = "ganesh-gl")]
+    #[test]
+    fn ganesh_frame_cache_distinguishes_recordings_and_rejects_cpu_scenes() {
+        let first = recorded_scene(
+            ViewportMetrics::from_logical_size(10.0, 10.0, 1.0).unwrap(),
+            RasterConfiguration::chromium_linux_ganesh(),
+        );
+        let second = recorded_scene(
+            ViewportMetrics::from_logical_size(16.0, 12.0, 2.0).unwrap(),
+            RasterConfiguration::chromium_linux_ganesh(),
+        );
+        let cpu = recorded_scene(first.viewport(), RasterConfiguration::default());
+        let mut compositor = GaneshGlCompositor::new().unwrap();
+        let first_frame = compositor.render(&first).unwrap();
+        assert_eq!(compositor.render(&first.clone()).unwrap(), first_frame);
+        assert!(matches!(
+            compositor.render(&cpu),
+            Err(CompositorError::Raster(_))
+        ));
+        assert_eq!(compositor.stats().rasterized, 1);
+        assert_eq!(compositor.stats().reused, 1);
+
+        let second_frame = compositor.render(&second).unwrap();
+        assert_eq!((second_frame.width, second_frame.height), (32, 24));
+        assert_eq!(compositor.render(&second.clone()).unwrap(), second_frame);
+        assert_eq!(compositor.stats().rasterized, 2);
+        assert_eq!(compositor.stats().reused, 2);
+        compositor.render_png(&first).unwrap();
+        assert_eq!(compositor.render(&second).unwrap(), second_frame);
+        assert_eq!(compositor.stats().rasterized, 4);
+        assert_eq!(compositor.stats().reused, 2);
     }
 
     #[test]
