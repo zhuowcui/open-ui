@@ -1,0 +1,446 @@
+{
+  "accepted_renderer": {
+    "admitted_additions": 201,
+    "admitted_additions_quad_exact": 200,
+    "changed_by_this_candidate": false,
+    "expanded_comparisons": 23728,
+    "expanded_different": 1591,
+    "expanded_errors": 0,
+    "expanded_exact": 22137,
+    "full_pixel_gate": "FAIL",
+    "original_comparisons": 22924,
+    "original_different": 1590,
+    "original_errors": 0,
+    "original_exact": 21334,
+    "source": "d174ea0b"
+  },
+  "actual_read_only_checks": {
+    "checks": [
+      {
+        "command": [
+          "python3",
+          "tools/qualification/generate_renderer_contract.py",
+          "--check"
+        ],
+        "log_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+        "name": "renderer",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp13r_multicol_closure.py",
+          "--check"
+        ],
+        "log_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+        "name": "multicol",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp17_closure.py",
+          "--check"
+        ],
+        "log_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+        "name": "sp17",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp18_closure.py",
+          "--check"
+        ],
+        "log_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+        "name": "sp18",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp20_closure.py",
+          "--check"
+        ],
+        "log_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+        "name": "sp20",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/release/generate_v02_contract.py",
+          "--check"
+        ],
+        "log_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+        "name": "v02",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/style/generate_properties.py",
+          "--check"
+        ],
+        "log_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+        "name": "style",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/ffi/generate_ffi.py",
+          "--check"
+        ],
+        "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+        "name": "ffi",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/accountability/restore_frozen_openui_archive.py",
+          "--check"
+        ],
+        "log_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+        "name": "archive",
+        "observed_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/accountability/audit.py",
+          "--repository-only"
+        ],
+        "log_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+        "name": "accountability",
+        "observed_exit_code": 0
+      }
+    ],
+    "release_qualification": false,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "5ef50aacaf98f5877b76ead68c2606c006103f48",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "36571d27dba156ede2457a2d4fcc1b52f579b66a5084dc6aa5ea487d34152348",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "5ef50aacaf98f5877b76ead68c2606c006103f48",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "36571d27dba156ede2457a2d4fcc1b52f579b66a5084dc6aa5ea487d34152348",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "applied_to_umbrella": false,
+  "artifacts": {
+    "docs/renderer/evidence/native-default-strike-v1/baseline-guard-v1.patch": {
+      "bytes": 4310,
+      "sha256": "7c16bb9922502faf78d3c10be6c919eefcb4f14200d3bd4e951a7948bb7c711e"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/cache-expanded-audit-v1335.json": {
+      "bytes": 64322,
+      "sha256": "d683c2b8a81add8178d871b3aa65721b683948115790932d3fa610e32bfe372e"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/cache-original-audit-v1331.json": {
+      "bytes": 53882,
+      "sha256": "0b3a1384e88b3c20345c9100c22b46cdfa3c5a43b4bc965d75d4227c16f43b13"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/default-pipeline-corrected-v1338.py": {
+      "bytes": 6884,
+      "sha256": "cf91c645f005d1dce7968de24ab0a38921bf1310de1fc6e4a63f6a2b3ca4231e"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/expanded-audit-probe-corrected-v1335.py": {
+      "bytes": 7416,
+      "sha256": "e6aed985077f1d7a8b3778472f843a202d50cae22a018febb038d5b6f7380088"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/fields-pipeline-corrected-v1337.py": {
+      "bytes": 6615,
+      "sha256": "23cdec763580f54c089e83129bd33afacbbc26d1840747a868d7b0e9a366e24d"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/fieldset-selected-delta-v1339.json": {
+      "bytes": 3742,
+      "sha256": "b9f0d303d7605f3a0c5c4ad69c328202ecb8aa7cac8b598aad647adce2e241ab"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/native-default-strike-v1.patch": {
+      "bytes": 11158,
+      "sha256": "379de14939c92d80fce2297df42656a1f56d53e123b97beb885807467bf5bf88"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/native_control_raster.rs": {
+      "bytes": 5175,
+      "sha256": "ab8ee37cca5d486bc7372dfd007c7a020aac4a5e8fc27728f6ec5b276b66d67f"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/pipeline-at-observation-v1338.json": {
+      "bytes": 3271,
+      "sha256": "5aec97ab5c31e3a5ad8e14bcb30aaee2e81170a20a1cae63cbcf070dc8f599c1"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/probe-application-v1333.py": {
+      "bytes": 9842,
+      "sha256": "851092eeb423d9430ffe493665707a2aab7ecebe42de43910ce5159b06b78e37"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/probe-build-v1333.py": {
+      "bytes": 7380,
+      "sha256": "882bff6f7988582eca32999a8eb467f6843f59253d9c31fdb726fcf1e9bb1208"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/probe-consumer-v1333.py": {
+      "bytes": 14675,
+      "sha256": "c640a861a5b06db6863935cd5930b083db2dd791e51d15888a3e21491a882891"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/probe-controls-v1333.py": {
+      "bytes": 5704,
+      "sha256": "dc2556cf4760b982fa197cef4287f12cd59ecc17351f7eb0952b0a1250e1e88c"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/probe-guards-v1333.py": {
+      "bytes": 5553,
+      "sha256": "de971804723e43571572d4d2b43a20c562aa3bcd3db61e992ebba48df432166b"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/probe-matrices-v1333.py": {
+      "bytes": 2054,
+      "sha256": "0f5c7c04668804b438b0d6e054516672a48e081ca11a7302c33552127ea7e9f3"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/probe-sizing-v1333.py": {
+      "bytes": 3803,
+      "sha256": "a5d23f79a41ebde30ef513e32d9af4f5ec3ad3274ec14f6d737ee1127bae0f1c"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/probe-static-v1333.py": {
+      "bytes": 5915,
+      "sha256": "3c89bca93293a5bf1d09cdb1f468c102b2d8ed2439ad8829753ae3e5c42254ef"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/queue-retirement-v1336.json": {
+      "bytes": 1707,
+      "sha256": "8419829bfd7d8040e9e0b74f0069fa56c98460da119e5db4ca0c83268e962e63"
+    },
+    "docs/renderer/evidence/native-default-strike-v1/read-only-v1332.json": {
+      "bytes": 3524,
+      "sha256": "abadc04a6a688792daa9b7790bcaf0dbb3b41fe450ed417864fe3cf69041cd26"
+    }
+  },
+  "baseline_guard_verified": false,
+  "changes": [
+    "Fit custom native and embedded outlines at the physical strike for default Skia and explicit backend selection.",
+    "Keep logical geometry and existing explicit Chromium CPU routing; no implicit GPU selection.",
+    "Add a native Rust app creating retained file-input labels and changing opacity from a Rust callback; no file-picker behavior added."
+  ],
+  "checkpoint_commits": {
+    "public_native_control_app": "5ef50aac",
+    "shared_physical_strike": "e12bf951",
+    "test_only": "d01f9a17"
+  },
+  "clean_cache_completed": {
+    "all_46652_comparison_invariants_unchanged": true,
+    "all_commands_terminal": true,
+    "applied": false,
+    "expanded_results": {
+      "different": 1591,
+      "errors": 0,
+      "exact": 22137,
+      "profile_result_sha256": "eabad62744ac96b2ae7ae058ca7866c63e6cf41c9890f4f5d2860e79eccf6c67",
+      "total": 23728
+    },
+    "hosted_hardening_run": 37242643825,
+    "hosted_status": "observed separately; current-source receipt required",
+    "original_pixel_gate": "FAIL",
+    "original_results": {
+      "different": 1590,
+      "errors": 0,
+      "exact": 21334,
+      "profile_result_sha256": "faa4ca3d3fea7a5e8b9758a40cc7c9c998691cab5bf0d50c183351e1bd0baa1c",
+      "total": 22924
+    },
+    "source": {
+      "clean": true,
+      "commit": "3ff5f8af8ad5442f636fd15a0299e23b5e8694da",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "07c441f963b5155bd83cfdd5b72b830f69b4cee635ec394f29c29917dff022fb",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stage_exits": [
+      {
+        "actual_exit": 0,
+        "name": "regression-guards"
+      },
+      {
+        "actual_exit": 0,
+        "name": "native-build"
+      },
+      {
+        "actual_exit": 0,
+        "name": "focused"
+      },
+      {
+        "actual_exit": 0,
+        "name": "primitive"
+      },
+      {
+        "actual_exit": 1,
+        "name": "full"
+      },
+      {
+        "actual_exit": 1,
+        "name": "expanded"
+      }
+    ]
+  },
+  "compilation_verified": false,
+  "fieldset_retry": {
+    "applied": false,
+    "build_stages_passed": 10,
+    "full_pipeline_terminal": false,
+    "guard_baseline_actual_exit": 101,
+    "guard_fixed_actual_exit": 0,
+    "public_app_partial": {
+      "complete": false,
+      "does_not_qualify": true,
+      "failure": "unstable reference surface",
+      "observed_exit_code": 1,
+      "planned_images": 128,
+      "recorded_cases": 31,
+      "recorded_geometry_exact": 62,
+      "recorded_images": 62,
+      "recorded_pixel_exact": 50
+    },
+    "selected_delta_against_intrinsic_parent": {
+      "changed": 8,
+      "exact_gains": 6,
+      "exact_losses": 0
+    },
+    "selected_losses_against_accepted_renderer": 64,
+    "selected_results": {
+      "different": 131,
+      "errors": 0,
+      "exact": 149,
+      "total": 280
+    },
+    "source": "abed078d"
+  },
+  "fixed_guard_verified": false,
+  "javascript_executed_by_openui": false,
+  "native_application_verified": false,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "original_pixel_gate_remains_required": true,
+  "owner": "openui-paint physical outline fitting for default/native/embedded text",
+  "pipeline_observation": {
+    "all_commands_terminal": false,
+    "consumer_compile_correction_only": false,
+    "expanded_summary_filename_corrected": true,
+    "immutable_probe_hashes": {
+      "/tmp/openui-native-default-strike-application-v1333.py": "851092eeb423d9430ffe493665707a2aab7ecebe42de43910ce5159b06b78e37",
+      "/tmp/openui-native-default-strike-build-v1333.py": "882bff6f7988582eca32999a8eb467f6843f59253d9c31fdb726fcf1e9bb1208",
+      "/tmp/openui-native-default-strike-consumer-v1333.py": "c640a861a5b06db6863935cd5930b083db2dd791e51d15888a3e21491a882891",
+      "/tmp/openui-native-default-strike-controls-v1333.py": "dc2556cf4760b982fa197cef4287f12cd59ecc17351f7eb0952b0a1250e1e88c",
+      "/tmp/openui-native-default-strike-guards-v1333.py": "de971804723e43571572d4d2b43a20c562aa3bcd3db61e992ebba48df432166b",
+      "/tmp/openui-native-default-strike-matrices-v1333.py": "0f5c7c04668804b438b0d6e054516672a48e081ca11a7302c33552127ea7e9f3",
+      "/tmp/openui-native-default-strike-sizing-v1333.py": "a5d23f79a41ebde30ef513e32d9af4f5ec3ad3274ec14f6d737ee1127bae0f1c",
+      "/tmp/openui-native-default-strike-static-v1333.py": "3c89bca93293a5bf1d09cdb1f468c102b2d8ed2439ad8829753ae3e5c42254ef"
+    },
+    "javascript_executed_by_openui": false,
+    "new_release_states_admitted": 0,
+    "old_openui_pixels_are_provenance_only": true,
+    "ordered_build_and_image_stages": true,
+    "original_pixel_gate_remains_required": true,
+    "prior_whole_pipelines": [
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json"
+    ],
+    "probe_sha256": "cf91c645f005d1dce7968de24ab0a38921bf1310de1fc6e4a63f6a2b3ca4231e",
+    "promotion_allowed": false,
+    "release_qualification": false,
+    "renderer_production_unchanged_from_prior_candidate": false,
+    "schema_version": 1,
+    "selection_hashes": {},
+    "source": {
+      "clean": true,
+      "commit": "5ef50aacaf98f5877b76ead68c2606c006103f48",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "36571d27dba156ede2457a2d4fcc1b52f579b66a5084dc6aa5ea487d34152348",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "5ef50aacaf98f5877b76ead68c2606c006103f48",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "36571d27dba156ede2457a2d4fcc1b52f579b66a5084dc6aa5ea487d34152348",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_and_stage_probes_unchanged": true,
+    "state": "awaiting-all-entire-prior-pipelines-expanded-filename-corrected",
+    "steps": [],
+    "supersedes_waiting_pipeline": "native-default-strike-pipeline-v1333"
+  },
+  "pixel_improvement_verified": false,
+  "planned_verification": {
+    "chromium_font_cases": 200,
+    "chromium_font_images": 400,
+    "chromium_logical_origin_states": 25600,
+    "clean_build_stages": 17,
+    "expanded_required": 23728,
+    "focused_required": 640,
+    "named_baseline_failures_required": 1,
+    "named_fixed_guards_required": 4,
+    "native_control_cases": 60,
+    "native_control_images": 120,
+    "native_control_states": 7680,
+    "native_intrinsic_states": 1000,
+    "native_only_contract_checks_are_chromium_qualification": false,
+    "original_required": 22924,
+    "physical_strike_byte_comparisons": 240,
+    "primitive_required": 960,
+    "public_raster_fields_cases": 840,
+    "stages": 11,
+    "starts_only_after_entire_pipelines": [
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json"
+    ]
+  },
+  "prior_snapshot": {
+    "path": "docs/renderer/generated/native-scroll-insets-v33.json",
+    "sha256": "c8d9039d1b465b675267cf282326c9d4c0a96b1dd06fc0447fd4dd2ace405902"
+  },
+  "promotion_allowed": false,
+  "queue_correction": {
+    "observed_owner_exits": [
+      143,
+      143
+    ],
+    "old_waiting_pipelines_retired": [
+      "native-raster-fields-pipeline-v1322",
+      "native-default-strike-pipeline-v1333"
+    ],
+    "reason": "expanded stage terminal filename must be expanded-summary.json",
+    "replacement_pipelines": [
+      "native-raster-fields-pipeline-v1337",
+      "native-default-strike-pipeline-v1338"
+    ],
+    "source_and_stage_probes_changed": false,
+    "zero_executed_stages_before_retirement": true
+  },
+  "reference_inputs_changed": false,
+  "release_qualification": false,
+  "required_work_still_open": [
+    "Compile and verify the named baseline/fixed guards and public native apps.",
+    "Review all family/size hinting and mask overrides; variable, synthetic, color-font, transforms and vertical text remain unqualified.",
+    "Complete all original/expanded/focused/primitive gates and review every residual against unchanged Chromium references.",
+    "Preserve mismatched consecutive Chromium captures and investigate instability; an incomplete native test is not a pass.",
+    "Qualify and integrate the independent cache repair; current 1590 original differences remain open.",
+    "Implement and verify every needed public native API, retained layers/3D and presentation-owned animation.",
+    "Complete Linux hardware, AT-SPI, performance, packaging, provenance and approved publication."
+  ],
+  "rust_format_verified": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "5ef50aacaf98f5877b76ead68c2606c006103f48",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "36571d27dba156ede2457a2d4fcc1b52f579b66a5084dc6aa5ea487d34152348",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

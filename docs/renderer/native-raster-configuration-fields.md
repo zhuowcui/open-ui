@@ -62,14 +62,42 @@ author-style inventory drift after emphasis began using a shared settings
 helper. Normal regeneration corrected it; both check receipts are preserved.
 Rust formatting passes. No runtime or pixel pass is inferred from those checks.
 
+## Prepared default native physical strike
+
+Clean private `5ef50aac` extends the correction above. Its
+[v34 evidence](generated/native-scroll-insets-v34.json) preserves the test-only
+baseline `d01f9a17`, shared paint correction `e12bf951`, and a consuming
+[native Rust control app](evidence/native-default-strike-v1/native_control_raster.rs).
+Custom native and embedded outlines must be fitted at their physical font size
+before painting. Scaling an outline already fitted at its logical size changes
+the ink. The default Skia path must use the same physical-strike behavior as
+the explicitly selected CPU paths.
+
+The new guard compares all output bytes for 240 combinations of text role,
+family, logical size, device scale and backend. The app creates native file-input
+labels and changes opacity from a Rust callback. Its planned 60-case run checks
+120 images and 7,680 control states, owned bounds, repeatability and teardown.
+It adds no file-picker behavior. These native checks are not Chromium pixel
+qualification.
+
+Ten read-only checks and Rust formatting pass. Compilation, the named baseline
+failure and fixed guards, native execution and Chromium comparisons remain
+pending. Neither this source nor its raster-field parent is applied.
+
+The original waiting queues had an incorrect expanded-summary filename. Both
+owners were stopped with actual exit 143 before any stage ran. Their scripts
+and published snapshots remain unchanged. Corrected queues `v1337` and `v1338`
+retain the same sources and stage probes, and still wait for every command in
+the earlier pipelines.
+
 ## Open work
 
 The candidate still needs compilation and consuming-app verification. Existing
 family/size hinting and FreeType aliased-profile overrides require review.
-Default Skia native text still bypasses the explicit CPU physical-strike branch
-for custom outlines. Variable, synthetic, color-font and transformed/vertical
-text behavior also need qualification. Copying configuration into the Engine
-does not prove those behaviors complete.
+The default native physical-strike correction above still needs qualification.
+Variable, synthetic, color-font and transformed/vertical text behavior also
+need qualification. Copying configuration into the Engine does not prove those
+behaviors complete.
 
 The accepted umbrella renderer remains 21,334/22,924 exact, with 1,590
 differences and zero errors. This candidate changes no accepted result, export

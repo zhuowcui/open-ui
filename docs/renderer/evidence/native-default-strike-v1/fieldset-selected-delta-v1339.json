@@ -1,0 +1,111 @@
+{
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-clean-full-v1212/full-summary.json",
+      "sha256": "617140dec4a8ae26e654198ae01c1dae4147b2bc117155d5387984f9a8832b67"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-clean-selection-v1310/full-summary.json",
+      "sha256": "5b3fafcbc3735ff8f6047a0b85214607a978dca19486d349f7c833b78a12e02c"
+    }
+  ],
+  "changes": [
+    {
+      "id": "wpt/css_sizing/intrinsic-percent-replaced-022",
+      "new_diff": 0,
+      "new_status": "exact",
+      "old_diff": 10000,
+      "old_status": "different",
+      "owner": "openui-layout fieldset percentage-height intrinsic sizing",
+      "profile": "legacy-800x600@1"
+    },
+    {
+      "id": "wpt/css_sizing/intrinsic-percent-replaced-023",
+      "new_diff": 0,
+      "new_status": "exact",
+      "old_diff": 12694,
+      "old_status": "different",
+      "owner": "openui-layout fieldset percentage-height intrinsic sizing",
+      "profile": "legacy-800x600@1"
+    },
+    {
+      "id": "wpt/css_sizing/intrinsic-percent-replaced-022",
+      "new_diff": 0,
+      "new_status": "exact",
+      "old_diff": 40000,
+      "old_status": "different",
+      "owner": "openui-layout fieldset percentage-height intrinsic sizing",
+      "profile": "mobile-375x667@2"
+    },
+    {
+      "id": "wpt/css_sizing/intrinsic-percent-replaced-023",
+      "new_diff": 0,
+      "new_status": "exact",
+      "old_diff": 50776,
+      "old_status": "different",
+      "owner": "openui-layout fieldset percentage-height intrinsic sizing",
+      "profile": "mobile-375x667@2"
+    },
+    {
+      "id": "wpt/css_sizing/intrinsic-percent-replaced-022",
+      "new_diff": 0,
+      "new_status": "exact",
+      "old_diff": 15625,
+      "old_status": "different",
+      "owner": "openui-layout fieldset percentage-height intrinsic sizing",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "id": "wpt/css_sizing/intrinsic-percent-replaced-023",
+      "new_diff": 89,
+      "new_status": "different",
+      "old_diff": 19879,
+      "old_status": "different",
+      "owner": "openui-layout fieldset percentage-height intrinsic sizing",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "id": "wpt/css_sizing/intrinsic-percent-replaced-022",
+      "new_diff": 0,
+      "new_status": "exact",
+      "old_diff": 22500,
+      "old_status": "different",
+      "owner": "openui-layout fieldset percentage-height intrinsic sizing",
+      "profile": "desktop-1920x1080@1.5"
+    },
+    {
+      "id": "wpt/css_sizing/intrinsic-percent-replaced-023",
+      "new_diff": 2,
+      "new_status": "different",
+      "old_diff": 28558,
+      "old_status": "different",
+      "owner": "openui-layout fieldset percentage-height intrinsic sizing",
+      "profile": "desktop-1920x1080@1.5"
+    }
+  ],
+  "comparison_scope": "70 selected cases, four profiles; not complete census qualification",
+  "delta_counts": {
+    "all_nine_unchanged": 272,
+    "changed": 8,
+    "exact_gains": 6,
+    "exact_losses": 0,
+    "total": 280
+  },
+  "reference_inputs_changed": false,
+  "release_qualification": false,
+  "results": {
+    "different": 131,
+    "errors": 0,
+    "exact": 149,
+    "profile_result_sha256": "1b4db4a9da26996775c12963e9762442ebad65f429b512549bd62c2820710671",
+    "total": 280
+  },
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "abed078ddb2c8c2442155d14571cbadcb3b94758",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "06533d8e6fbd039e36dd039f7e9d956b51a5b69d3ac457c06c977c8ae917771a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

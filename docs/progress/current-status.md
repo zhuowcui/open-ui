@@ -54,6 +54,22 @@ in the four earlier pipelines. Default native raster and remaining font-policy
 overrides are still open. Accepted pixels, 113 exports and release admission
 stay unchanged.
 
+Clean private `5ef50aac` prepares default native physical-strike fitting and a
+consuming Rust control app. The [v34 evidence](../renderer/generated/native-scroll-insets-v34.json)
+preserves its baseline guard, source patch and verification programs. Ten
+read-only checks and Rust formatting pass; compilation, native execution and
+pixel improvement remain unverified. Corrected raster queues `v1337` and
+`v1338` replace two owners stopped before any stage ran because their expanded
+summary filename was wrong. Source and stage probes are unchanged.
+
+Independent cache source `3ff5f8af` finishes both complete censuses: 21,334/22,924
+original and 22,137/23,728 expanded exact, zero errors, actual exits 1. All
+46,652 native/Chromium comparison invariants agree with the accepted renderer;
+all 804 additions are unchanged and 200/201 cases remain exact at all four
+profiles. Its guards, build and focused/primitive gates pass. Its own-source
+seven-job hosted hardening is observed separately; integration remains open.
+The original pixel gate still fails.
+
 The cache `107e2e36` completes both censuses with all 46,652 comparison
 invariants unchanged against its LCD parent, including all 804 additions.
 It remains unqualified at 20,771/22,924 original and 21,570/23,728 expanded
@@ -62,8 +78,17 @@ its named baseline/fixed difference, but the font workspace build then fails
 before running tests on the example's position types. The fieldset guard also
 fails to compile on an integer border width. Corrected `ffb10c21` font and
 `abed078d` fieldset consumers preserve coordinates, zero border widths and all
-renderer production code. Their compilation, native and full pixel gates
-remain pending. A compiler failure is not a reproduced renderer failure.
+renderer production code. The corrected fieldset guard now fails by name on
+its baseline and passes on the fix. All ten build stages and 1,000 intrinsic
+geometry observations pass; focused pixels remain 640/640 exact. Its selected
+280-comparison run restores six exact matches and improves two other rows
+against its intrinsic parent, with no new exact losses. It still carries 64
+selected exact losses against the accepted renderer. The native app run stops
+on two unequal consecutive Chromium captures after recording 62 of 128 images:
+62 geometry results and 50 pixel results are exact. That incomplete run is not
+a pass, and it reaches no fieldset cases. Its complete pixel pipeline is still
+running. Font and C runtime verification remain pending. A compiler failure is
+not a reproduced renderer failure.
 
 The [native inheritance and style trials](../renderer/generated/native-scroll-insets-v21.json)
 remain separate from the accepted renderer. The earlier `f328ed62` complete
