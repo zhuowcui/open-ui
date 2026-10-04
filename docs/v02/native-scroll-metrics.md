@@ -69,14 +69,18 @@ exact but two lose exactness: an unscrolled scrollport's trailing coverage
 changes after the new screen snap. Both losses have paint ownership. The
 correction remains unapplied and cannot be promoted with those regressions.
 
-The [latest evidence](../renderer/generated/native-scroll-insets-v6.json) records
+The [latest evidence](../renderer/generated/native-scroll-insets-v7.json) records
 two separate follow-ups. Clean `cf59ea29` skips a redundant rectangular mask
 when a compatible child clip contains the existing parent clip. The tighter
 vector clip remains active; effects, rounded clips, transforms and scroll
 boundaries retain their own property spaces. All 175 C geometry/image states
 are now exact, with ten gains and no losses. All 510 Rust states and all 1,600
 focused/primitive comparison invariants stay unchanged and exact. Its workspace
-passes 8,532 tests and ten read-only checks. Its complete censuses are running.
+passes 8,532 tests and ten read-only checks. Its complete censuses finish at
+21,340/22,924 original and 22,143/23,728 expanded exact, zero errors, observed
+exits 1. Every comparison invariant agrees with `dac78e25`; no original or
+expanded result changes. All Chromium bytes/identities and 804 addition results
+stay fixed. The two screen-snap regressions remain open.
 The [source patch](../renderer/evidence/native-clip-containment-v1/native-clip-containment-v1.patch)
 is available for review.
 
@@ -104,8 +108,8 @@ their own scrollports and root transform/containment cases. The
 [source patch](../renderer/evidence/native-reveal-root-v1/native-reveal-root-v1.patch)
 and [C reproducer](../renderer/evidence/native-reveal-root-v1/native-reveal-root.c)
 are reviewable. Ten read-only checks pass; compilation and pixel qualification
-are pending, so no repair is inferred. Fresh Cargo is queued after both clip
-image censuses terminate.
+are pending, so no repair is inferred. Fresh Cargo is now in progress after
+both complete clip image censuses terminated.
 
 The [scroll-edge prototype](../renderer/evidence/native-scroll-clip-v1/native-scroll-clip-v1.patch)
 at clean `c5769f2d` retains partial scrollport-edge coverage for `overflow: scroll`

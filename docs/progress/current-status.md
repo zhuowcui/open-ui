@@ -38,7 +38,7 @@ are skipped. Its separate seven-job
 passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux window
 tests, MSRV and all five fuzz targets. Complete logs and individual conclusions
 are retained. The earlier failed `d174ea0b` jobs remain historical evidence.
-The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v6.json)
+The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v7.json)
 records complete `dac78e25` original and expanded runs: 21,340/22,924 and
 22,143/23,728 exact, zero errors, observed exits 1. Eight comparisons become
 exact and two lose exactness; nine comparisons worsen in total. All Chromium
@@ -49,7 +49,10 @@ Separate clean `cf59ea29` repairs the ten static nested rectangular-clip
 differences. All 175 C geometry/image states are exact, with ten gains and no
 losses. All 510 Rust states and all 1,600 focused/primitive comparison invariants
 remain unchanged and exact. Its workspace passes 8,532 tests, zero failures and
-13 ignored; all ten read-only checks pass. Complete censuses are running.
+13 ignored; all ten read-only checks pass. Both complete censuses finish:
+21,340/22,924 original and 22,143/23,728 expanded exact, zero errors, actual exits
+1. Every comparison invariant remains unchanged from `dac78e25`, including all
+Chromium inputs and all 804 additions. Both known exact losses remain open.
 
 Separate clean `6d6768a8` fixes native reveal container traversal and containing
 blocks created or removed through public transform setters. All 90 Rust and 60
@@ -61,8 +64,8 @@ checks pass. Both raster gates pass with all 1,600 comparison invariants unchang
 A broader 20-state viewport check is only 15/20 exact: an offscreen fixed target
 incorrectly scrolls the document at all five scales, with Engine ownership.
 The follow-up `2cc950e0` stops reveal ancestry at viewport-anchored fixed boxes;
-ten read-only checks pass, but it is uncompiled and no repair is inferred.
-Its fresh build is queued after both clip censuses terminate.
+ten read-only checks pass; its fresh build is in progress and no pixel repair
+is inferred. Both complete clip censuses have terminated.
 Two further clean prototypes are reviewable: `c5769f2d` restores analytic
 fractional scrollport-edge coverage for explicit scrolling; `4dd50621` combines
 that change and compatible clip containment with viewport-fixed paint, bounds
