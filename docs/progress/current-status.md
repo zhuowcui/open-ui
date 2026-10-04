@@ -64,7 +64,7 @@ This candidate is unapplied and unqualified; no new release state is admitted.
 Open UI runs no JavaScript in any version. Needed interaction uses public
 native Rust methods and Rust callbacks over the shared Engine.
 
-The [intrinsic sizing follow-up](../renderer/generated/native-scroll-insets-v29.json) reviews the
+The [intrinsic sizing follow-up](../renderer/generated/native-scroll-insets-v30.json) reviews the
 missing width behavior against 120 repeated Chromium advance observations and
 2,000 neighboring measurements at five scales. Chromium retains positive
 shaped-width remainders on its 1/64px layout grid and includes first-line
@@ -104,7 +104,10 @@ portable author outline path. The separate policy trial now passes its full
 build and fixes 24/60 native LCD text images; default text remains 0/60 exact.
 All 120 bounds agree and repeated outputs are identical. Its focused suite
 loses one multicol case at every profile, finishing at 600/640 exact; primitive
-remains 960/960. Full trial censuses are still running, and it stays unapplied.
+remains 960/960. Its full trial censuses now finish at 20,771/22,924 original
+and 21,570/23,728 expanded exact, zero errors, actual exits 1. Each loses 493
+exact comparisons and gains none against the sizing parent. Every Chromium
+input remains unchanged, and it stays unapplied.
 The sizing source now completes all 640 focused and 960 primitive comparisons
 exactly. All 1,600 native and Chromium image, oracle, status and difference
 invariants remain unchanged from the earlier clean renderer. Its complete
@@ -118,6 +121,17 @@ exact at all four profiles. All Chromium inputs remain unchanged. The changed
 causes still need minimized reproducers and review; this candidate and its
 descendants remain unapplied. The 1,000 native geometry matches and exact
 focused suites do not override those full-census failures.
+
+The [font engine investigation](../renderer/native-font-engines.md) finds that
+all 493 LCD exact losses use a real-font reference explicitly selecting
+FreeType, while the trial sends authored LCD text through Fontations. Scaled
+LCD outlines also fit at logical size before replay. Clean private `0601cd30`
+preserves FreeType, adds explicit immutable Fontations selection and fits
+compatible outlines at physical strike size. Its public native Rust app uses
+callbacks and owned bounds; ten read-only checks pass. Compilation and all
+native pixel verification remain pending behind the entire cache and fieldset
+pipelines. No source is promoted and no original oracle input is replaced.
+The versioned C raster-configuration transport remains required API work.
 
 Two independent Chromium processes now query all 34 changed original/expanded
 cases at eight profiles, with 544 observations, matching independent repeats,

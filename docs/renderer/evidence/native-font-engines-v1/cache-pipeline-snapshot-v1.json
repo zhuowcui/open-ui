@@ -1,0 +1,69 @@
+{
+  "all_commands_terminal": false,
+  "current_process": {
+    "pid": 2983010,
+    "program": "openui-scene-recording-cache-matrices-v1237.py"
+  },
+  "new_release_states_admitted": 0,
+  "prior_terminal_pipeline_sha256": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-followup-pipeline-v1208/receipt.json": "351a59344a4b40d768098029875e7ede06a3e5d35b6b7994159e224623bff782",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-lcd-pipeline-v1219/receipt.json": "f3afb2548a0d2e1d275096ac5fa8db74fa1749f9f46f250aaf0f451b392e951a"
+  },
+  "probe_sha256": "4dfeb0c3cffa3dcfc35d7d7b976c1e38fc41270bf840ae63137ae9db4b5d5476",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "107e2e36c3a0fb57ddb85cac14d9c4fdb1dcf2da",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "ef67a5b541e9ebf2c2d9eed8d3a2406ea9a488ed514eba3563fd7a8716f8020a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "107e2e36c3a0fb57ddb85cac14d9c4fdb1dcf2da",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "ef67a5b541e9ebf2c2d9eed8d3a2406ea9a488ed514eba3563fd7a8716f8020a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "running-selection",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-scene-recording-cache-guards-v1232.py"
+      ],
+      "log_sha256": "cd0ce64f27a04229ed08cb6498a598909d45ba6749b3d049912e7dbc27dc4d56",
+      "name": "regression-guards",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-scene-recording-cache-build-v1234.py"
+      ],
+      "log_sha256": "2d8fa4c60a69de3c9040d763fc5c626084536369c7e0584e0ae680ecc5e85563",
+      "name": "native-build",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-scene-recording-cache-consumer-v1235.py"
+      ],
+      "log_sha256": "d97ba269425182339aa4beea38910b72e63ccc2cf27e45467e65d731792612c2",
+      "name": "intrinsic-native",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-scene-recording-cache-static-v1236.py"
+      ],
+      "log_sha256": "28f51fa672c91842de32c97e279cd1f08de96daf8c209ba0bd5c7778dd08ea87",
+      "name": "static-native",
+      "observed_exit_code": 1
+    }
+  ]
+}

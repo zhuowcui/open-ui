@@ -67,6 +67,11 @@ captures under the same recorded identity; that evidence needs reconciliation.
 The latest clean umbrella census has 1,590 differences. Against the SVG
 checkpoint, nine comparisons become exact and none lose exactness, while four
 already failing comparisons worsen. Every residual still requires review.
+The separate [font engine trial](docs/renderer/native-font-engines.md) loses
+493 exact comparisons. A shared routing discrepancy selects a different
+authored text path from the explicit FreeType reference. The correction and
+native Rust callback consumer are prepared; compilation and pixel verification
+remain pending.
 Earlier renderer measurements below remain attributed to their named sources. The
 [private sampling candidate](docs/renderer/generated/native-viewport-full-v14.json)
 loses 23 exact Chromium comparisons and gains 14 in its complete census;

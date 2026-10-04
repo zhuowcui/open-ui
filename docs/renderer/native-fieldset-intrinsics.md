@@ -10,7 +10,7 @@ The private intrinsic-sizing source `c170aa7e` loses 70 original exact
 comparisons and four expanded comparisons. Two independent Chromium processes
 now query every changed case at eight profiles: 544 queries over 34 cases.
 Their observations agree. These queries produce no screenshots and establish
-no native pixel passes. The [versioned evidence](generated/native-scroll-insets-v29.json)
+no native pixel passes. The [versioned evidence](generated/native-scroll-insets-v30.json)
 preserves the measurements and the earlier failures.
 
 A reduced case uses a natural 200 × 200 image with `height: 100%` inside a
@@ -62,6 +62,10 @@ text fixes 24/60 static-position images; default text remains 0/60 exact. All
 120 native bounds agree and all repeated outputs are identical. Its focused
 suite is 600/640 exact: `multicol-block-no-clip-001` loses exactness in every
 one of the 40 profiles. The primitive suite remains 960/960 exact. Chromium,
-font, resource and oracle inputs are unchanged. Full censuses are still
-running. The glyph-coverage cause requires a minimized native raster case and
-review; this trial remains unapplied.
+font, resource and oracle inputs are unchanged. Both full censuses are now
+complete. The original suite is 20,771/22,924 exact and the expanded suite is
+21,570/23,728 exact, both with zero errors and actual exit 1. It loses 493
+previously exact comparisons, all using the explicit FreeType capture profile.
+The [font engine investigation](native-font-engines.md) records the shared
+routing discrepancy and prepared physical-outline correction. Native
+causation and correction verification remain pending; this trial is unapplied.
