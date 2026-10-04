@@ -5,9 +5,14 @@ owns a generation-numbered Skia picture, retained fragment tree, viewport, and
 damage list. It contains no application callback, signal, DOM borrow, or other
 mutable UI-thread state.
 
-`SoftwareCompositor` caches the completed RGBA frame for its last scene
-generation. Submitting the same generation returns that immutable result
-without replaying paint commands. `SceneMailbox` is a synchronized one-slot
+`SoftwareCompositor` and the explicitly selected `GaneshGlCompositor` cache the
+completed RGBA frame together with its immutable recording. Reusing that same
+recording and generation returns the frame without replaying paint commands.
+Scene generations belong to individual documents: equal generation numbers
+from different documents do not identify the same frame. The cache retains
+the recording until replacement, PNG rendering, or compositor destruction;
+Ganesh releases its retained recording before its graphics context.
+`SceneMailbox` is a synchronized one-slot
 queue: a producer replaces any unconsumed scene, and a consumer receives only
 the newest complete snapshot. The mailbox exposes deterministic submission and
 coalescing counters for tests and diagnostics.

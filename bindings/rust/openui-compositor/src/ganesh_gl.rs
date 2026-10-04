@@ -1,7 +1,8 @@
 //! Explicit offscreen EGL/Mesa Ganesh compositor.
 
 use super::{
-    CompositorError, CompositorStats, Frame, RasterBackendIdentity, SceneGeneration, SceneSnapshot,
+    CachedFrame, CompositorError, CompositorStats, Frame, RasterBackendIdentity, SceneGeneration,
+    SceneSnapshot,
 };
 use glutin::api::egl::{context::PossiblyCurrentContext, device::Device, display::Display};
 use glutin::config::{ConfigSurfaceTypes, ConfigTemplateBuilder, GlConfig};
@@ -15,12 +16,13 @@ use skia_safe::{
 use std::ffi::CStr;
 
 pub struct GaneshGlCompositor {
-    // Field order is intentional: Ganesh must be destroyed before EGL.
+    // Field order is intentional: recordings must be destroyed before Ganesh,
+    // and Ganesh must be destroyed before EGL.
+    last_frame: Option<CachedFrame>,
     direct_context: gpu::DirectContext,
     _gl_context: PossiblyCurrentContext,
     identity: RasterBackendIdentity,
     last_presented: Option<SceneGeneration>,
-    last_frame: Option<Frame>,
     stats: CompositorStats,
 }
 
@@ -184,11 +186,13 @@ impl GaneshGlCompositor {
 
     pub fn render(&mut self, scene: &SceneSnapshot) -> Result<Frame, CompositorError> {
         self.stats.submitted += 1;
-        if self.last_presented == Some(scene.generation) {
-            if let Some(frame) = self.last_frame.clone() {
-                self.stats.reused += 1;
-                return Ok(frame);
-            }
+        if let Some(frame) = self
+            .last_frame
+            .as_ref()
+            .and_then(|cached| cached.frame_for(scene))
+        {
+            self.stats.reused += 1;
+            return Ok(frame);
         }
         let mut surface = self.render_surface(scene)?;
         let width = scene.viewport.physical_width();
@@ -220,7 +224,7 @@ impl GaneshGlCompositor {
         };
         self.stats.rasterized += 1;
         self.last_presented = Some(scene.generation);
-        self.last_frame = Some(frame.clone());
+        self.last_frame = Some(CachedFrame::new(scene, frame.clone()));
         Ok(frame)
     }
 
