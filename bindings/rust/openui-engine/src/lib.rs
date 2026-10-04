@@ -2545,6 +2545,62 @@ mod tests {
     };
 
     #[test]
+    fn native_intrinsic_absolute_width_preserves_shaped_grid_and_indentation() {
+        use openui_style::{FontFamilyList, LineHeight, Position};
+
+        // Independent pinned Chromium queries measure XXXXX as
+        // 80.00015258789062px and snap its intrinsic width up to 80.015625px.
+        // Inherited indentation contributes to the auto width as well.
+        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+            let mut engine = Engine::new_with_font_collection(
+                ViewportMetrics::from_logical_size(320.0, 160.0, scale).unwrap(),
+                FontCollection::deterministic_test(),
+            )
+            .unwrap();
+            let root = engine.root();
+            engine
+                .set_property(
+                    root,
+                    StyleProperty::FontFamily,
+                    StyleValue::Renderer(RendererStyleValue::FontFamily(
+                        FontFamilyList::single("Ahem"),
+                    )),
+                )
+                .unwrap();
+            engine
+                .set_property(root, StyleProperty::FontSize, LengthValue::px(16.0).into())
+                .unwrap();
+            engine
+                .set_property(
+                    root,
+                    StyleProperty::LineHeight,
+                    StyleValue::Renderer(RendererStyleValue::LineHeight(LineHeight::Number(1.0))),
+                )
+                .unwrap();
+            let absolute = engine.create_native_element(ElementTag::Div).unwrap();
+            engine
+                .set_property(absolute, StyleProperty::Position, Position::Absolute.into())
+                .unwrap();
+            engine.set_text(absolute, "XXXXX").unwrap();
+            engine.append_child(root, absolute).unwrap();
+            let initial = engine.bounds(absolute).unwrap().unwrap();
+            assert_eq!(initial.width, 80.015625, "scale={scale} initial");
+            for (indent, expected) in [(20.0, 100.015625), (28.0, 108.015625)] {
+                engine
+                    .set_property(root, StyleProperty::TextIndent, LengthValue::px(indent).into())
+                    .unwrap();
+                let bounds = engine.bounds(absolute).unwrap().unwrap();
+                assert_eq!(bounds.width, expected, "scale={scale} indent={indent}");
+            }
+            engine
+                .set_property(absolute, StyleProperty::TextIndent, LengthValue::px(0.0).into())
+                .unwrap();
+            assert_eq!(engine.bounds(absolute).unwrap().unwrap().width, 80.015625);
+            assert_eq!(initial.width, 80.015625, "owned earlier bounds");
+        }
+    }
+
+    #[test]
     fn native_resolved_computed_defaults_preserve_snapshots_and_native_inheritance() {
         let mut engine =
             Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
