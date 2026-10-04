@@ -17,6 +17,16 @@ queue: a producer replaces any unconsumed scene, and a consumer receives only
 the newest complete snapshot. The mailbox exposes deterministic submission and
 coalescing counters for tests and diagnostics.
 
+The recording-ownership repair is applied in `289d5516`. Its
+[qualification evidence](../renderer/generated/native-scroll-insets-v35.json)
+records the named failing baseline and passing CPU/Ganesh cache guards at
+clean `3ff5f8af`, whose native, build-tool and workflow inputs match the applied
+checkpoint. All seven hosted hardening jobs pass. The complete original and
+expanded Chromium comparisons retain every pixel invariant; their existing
+failures stay open. The applied checkpoint's own build and matrices are queued.
+This does not qualify per-layer animation, direct Ganesh raster or release
+hardware behavior.
+
 On Linux, `BackendPreference::Auto` selects an EGL/GLX OpenGL presenter when a
 context and shaders can be initialized. The presenter retains its texture and
 only reallocates texture storage when the logical frame size changes. Resize,

@@ -1,0 +1,208 @@
+{
+  "actual_baseline_and_guard_exits": [
+    101,
+    0,
+    0,
+    0
+  ],
+  "actual_build_stages": 6,
+  "actual_c_consumers_passed": 11,
+  "actual_complete_expanded": {
+    "different": 1591,
+    "errors": 0,
+    "exact": 22137,
+    "profile_result_sha256": "eabad62744ac96b2ae7ae058ca7866c63e6cf41c9890f4f5d2860e79eccf6c67",
+    "total": 23728
+  },
+  "actual_complete_original": {
+    "different": 1590,
+    "errors": 0,
+    "exact": 21334,
+    "profile_result_sha256": "faa4ca3d3fea7a5e8b9758a40cc7c9c998691cab5bf0d50c183351e1bd0baa1c",
+    "total": 22924
+  },
+  "actual_cpp_consumers_passed": 5,
+  "actual_fixed_and_software_and_ganesh_guards_passed": true,
+  "actual_focused_exact": 640,
+  "actual_focused_required": 640,
+  "actual_full_exits": [
+    1,
+    1
+  ],
+  "actual_named_baseline_guard_failed": true,
+  "actual_primitive_exact": 960,
+  "actual_primitive_required": 960,
+  "actual_workspace_failed": 0,
+  "actual_workspace_ignored": 13,
+  "actual_workspace_passed": 8532,
+  "addition_cases_exact_all_four_profiles": 200,
+  "addition_cases_total": 201,
+  "all_46652_comparison_invariants_unchanged": true,
+  "all_804_addition_invariants_unchanged": true,
+  "applied_commits": {
+    "shared_cache": "289d5516",
+    "test_only": "639e9c80"
+  },
+  "applied_to_umbrella": true,
+  "artifacts": {
+    "docs/renderer/evidence/native-owned-recording-cache-v1/baseline-guard.patch": {
+      "bytes": 2975,
+      "sha256": "9f10e09e7efac0cc572c0c6d58dad3e0359e27d449e3fd98ebb0bdf67be6962c"
+    },
+    "docs/renderer/evidence/native-owned-recording-cache-v1/build-v1289.json": {
+      "bytes": 4910,
+      "sha256": "e45f325b874cbb71e7691d04433d4397adcef960205b3b0f0dc9e431dd6931ee"
+    },
+    "docs/renderer/evidence/native-owned-recording-cache-v1/guards-v1288.json": {
+      "bytes": 6216,
+      "sha256": "7d18ab156014e33bf8143b617be3199d864407d8fced02446672b520f5c9807a"
+    },
+    "docs/renderer/evidence/native-owned-recording-cache-v1/hosted-hardening-complete-v1334.json": {
+      "bytes": 18594,
+      "sha256": "932befde26367e8c6ebb6823927289cf61cb4557bcdc7e95d2af7f5dd6c67087"
+    },
+    "docs/renderer/evidence/native-owned-recording-cache-v1/hosted-hardening-run-37242643825.json": {
+      "bytes": 16039,
+      "sha256": "57c4ec57d9efae49527275f17c44e677875289f984da339504dccc7ee59ebe34"
+    },
+    "docs/renderer/evidence/native-owned-recording-cache-v1/own-build-v1340.py": {
+      "bytes": 4293,
+      "sha256": "895ad0f81abd254a2f9ea91b27f00121999e4b52e05c4740f0d643abaffb8a2d"
+    },
+    "docs/renderer/evidence/native-owned-recording-cache-v1/own-guards-v1340.py": {
+      "bytes": 5190,
+      "sha256": "6dc693ad946f409e311ef600bb0ed3b766ea3e7c831c5b5a92452d620c374341"
+    },
+    "docs/renderer/evidence/native-owned-recording-cache-v1/own-matrices-v1340.py": {
+      "bytes": 2068,
+      "sha256": "553f6a6e0f6f60a4c3d67aeaa388761c2129a5c581854a579f7b92da7b34dfbf"
+    },
+    "docs/renderer/evidence/native-owned-recording-cache-v1/own-pipeline-at-observation-v1341.json": {
+      "bytes": 2663,
+      "sha256": "e4bcbff0d0dc6422045b0e9bf4c2578de879f8bb0c5afa13b7561575508db4d2"
+    },
+    "docs/renderer/evidence/native-owned-recording-cache-v1/own-pipeline-v1341.py": {
+      "bytes": 5775,
+      "sha256": "f36ab95f286bfaf075e9e2291659d5172311c0bdf66ccd7e793b7ee415456ca4"
+    },
+    "docs/renderer/evidence/native-owned-recording-cache-v1/owned-recording-cache.patch": {
+      "bytes": 13813,
+      "sha256": "9b064ab2ecbda13bcabf262c6d563c75864a0841b6911c9df86dda6ee2a510a1"
+    },
+    "docs/renderer/evidence/native-owned-recording-cache-v1/pipeline-complete-v1291.json": {
+      "bytes": 4000,
+      "sha256": "95da859e07156b9162940ee12d3a3a437d56f1a44dd5f55ce080fc84cf19a1aa"
+    }
+  },
+  "cause": "Scene generations belong to documents; generation equality alone reused pixels from a different immutable recording.",
+  "existing_c_exports_preserved": 113,
+  "external_artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-full-audit-v1331.json",
+      "sha256": "0b3a1384e88b3c20345c9100c22b46cdfa3c5a43b4bc965d75d4227c16f43b13"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-expanded-audit-v1335.json",
+      "sha256": "d683c2b8a81add8178d871b3aa65721b683948115790932d3fa610e32bfe372e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-hardening-v1334/37242643825.log",
+      "sha256": "4ec601ec133b6bd491aaa79ab3e6818da2abda1bb213eef9198a64a67591138c"
+    }
+  ],
+  "hosted_hardening": {
+    "actual_exit": 0,
+    "all_terminal": true,
+    "own_source_native_linux_x11_and_pure_wayland_jobs_passed": true,
+    "physical_release_lab_qualified": false,
+    "run_id": 37242643825,
+    "skipped_jobs": 0,
+    "source": "3ff5f8af8ad5442f636fd15a0299e23b5e8694da",
+    "successful_jobs": 7,
+    "url": "https://github.com/zhuowcui/open-ui/actions/runs/37242643825"
+  },
+  "implementation": "Retain the recording Arc with the frame; reuse requires recording identity and generation equality. Release recordings before the Ganesh context and on replacement/PNG/drop.",
+  "javascript_executed_by_openui": false,
+  "native_build_tool_and_workflow_inputs_identical": true,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "original_pixel_gate_remains_required": true,
+  "own_umbrella_build_and_hosted_gates_pending": true,
+  "own_umbrella_local_verification_pending": true,
+  "own_umbrella_pipeline_observation": {
+    "all_commands_terminal": false,
+    "applied_umbrella_runtime_checkpoint": true,
+    "consumer_compile_correction_only": false,
+    "immutable_probe_hashes": {
+      "/tmp/openui-cache-integration-build-v1340.py": "895ad0f81abd254a2f9ea91b27f00121999e4b52e05c4740f0d643abaffb8a2d",
+      "/tmp/openui-cache-integration-guards-v1340.py": "6dc693ad946f409e311ef600bb0ed3b766ea3e7c831c5b5a92452d620c374341",
+      "/tmp/openui-cache-integration-matrices-v1340.py": "553f6a6e0f6f60a4c3d67aeaa388761c2129a5c581854a579f7b92da7b34dfbf"
+    },
+    "inherits_intrinsic_or_lcd_trial_source": false,
+    "javascript_executed_by_openui": false,
+    "new_release_states_admitted": 0,
+    "old_openui_pixels_are_provenance_only": true,
+    "ordered_build_and_image_stages": true,
+    "original_pixel_gate_remains_required": true,
+    "prior_whole_pipelines": [
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json"
+    ],
+    "probe_sha256": "f36ab95f286bfaf075e9e2291659d5172311c0bdf66ccd7e793b7ee415456ca4",
+    "promotion_allowed": false,
+    "release_qualification": false,
+    "renderer_production_unchanged_from_prior_candidate": false,
+    "schema_version": 1,
+    "selection_hashes": {},
+    "source": {
+      "clean": true,
+      "commit": "289d5516dcbacd17f1a5b60046771bdfe28061a6",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "89e0849ae447e918edc932afb04de92a9832675b132b7656df30f603948d9aac",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "289d5516dcbacd17f1a5b60046771bdfe28061a6",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "89e0849ae447e918edc932afb04de92a9832675b132b7656df30f603948d9aac",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "state": "awaiting-all-six-entire-prior-pipelines",
+    "steps": []
+  },
+  "owner": "openui-compositor immutable recording ownership",
+  "prior_snapshot": {
+    "path": "docs/renderer/generated/native-scroll-insets-v34.json",
+    "sha256": "33fdf3ceeac70b4795a0d103a05f459391953293147e2d0e8492eca9eefe1bcb"
+  },
+  "qualification_source": {
+    "clean": true,
+    "commit": "3ff5f8af8ad5442f636fd15a0299e23b5e8694da",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "07c441f963b5155bd83cfdd5b72b830f69b4cee635ec394f29c29917dff022fb",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "reference_inputs_changed": false,
+  "release_qualification": false,
+  "remaining_original_differences": 1590,
+  "required_work_still_open": [
+    "Current umbrella own-source hosted and clean local build verification; tested input equality does not relabel the old source identities.",
+    "All original and admitted expanded Chromium pixel comparisons, residual ownership and immutable-oracle reconciliation.",
+    "Prepared native font/raster/C APIs need compilation and actual consuming-app and pixel verification.",
+    "Retained per-layer composition, presentation-owned animation through a UI-thread stall, preserve-3D and hit testing.",
+    "Hardware, accessibility, performance, packaging, provenance and approved signed publication."
+  ],
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "289d5516dcbacd17f1a5b60046771bdfe28061a6",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "89e0849ae447e918edc932afb04de92a9832675b132b7656df30f603948d9aac",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

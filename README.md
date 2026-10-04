@@ -84,6 +84,11 @@ now carries requested Fontations settings and applies LCD phase during paint.
 It removes two 10px-only adjustments and adds native application checks. Ten
 read-only checks pass; compilation and exact Chromium verification are queued.
 Default native raster and remaining font-policy overrides still require work.
+The [recording cache repair](docs/renderer/generated/native-scroll-insets-v35.json)
+is applied. Its clean qualification source passes the CPU/Ganesh cache guards,
+8,532 workspace tests and all seven hosted hardening jobs. Every original and
+expanded pixel comparison remains unchanged. The umbrella checkpoint's own
+build and matrices are queued; the full Chromium pixel gate still fails.
 Earlier renderer measurements below remain attributed to their named sources. The
 [private sampling candidate](docs/renderer/generated/native-viewport-full-v14.json)
 loses 23 exact Chromium comparisons and gains 14 in its complete census;

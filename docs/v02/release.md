@@ -22,6 +22,7 @@ claimed by source code alone.
 | C platform accessibility | owned full-tree snapshots, node metadata/relations/focus, and changed/removed IDs export from the shared engine; automated AT-SPI operation in a C window remains unqualified | open |
 | Generated sources | style, ABI, migration, closure generators are read-only clean | pass |
 | No-work frame | zero layout, paint, and raster on unchanged snapshots | pass |
+| Compositor recording ownership | Repair applied at `289d5516`; [clean qualification](../renderer/generated/native-scroll-insets-v35.json) at native-input-identical `3ff5f8af` passes baseline/fixed cache guards, 8,532 workspace tests, eleven C/five C++ consumers and all seven hosted hardening jobs. Every original/expanded comparison invariant is unchanged; own umbrella build/matrices are queued | implemented; own umbrella verification pending |
 | Mutation ownership | 10,000-iteration soak, no owned-object leak | pass |
 | Local performance smoke | 0.108 ms p95, 308 UI-thread animation fps, 1.389% RSS growth | non-qualifying pass |
 | X11/Wayland software and Mesa GL | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576) passed native C/C++ windows and Rust smoke paths at `d174ea0b`; physical release-lab tests remain open | provisional pass |

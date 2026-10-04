@@ -7,6 +7,18 @@ remain open.
 
 ## Current implementation checkpoint
 
+The compositor cache repair is now applied in `289d5516`, with its regression
+guard in `639e9c80`. Equal scene numbers from different documents no longer
+reuse another recording's frame. The [v35 evidence](../renderer/generated/native-scroll-insets-v35.json)
+records qualification at clean `3ff5f8af`: the named baseline fails, all fixed
+CPU/Ganesh cache guards pass, 8,532 workspace tests and eleven C/five C++
+consumers pass, and both full pixel suites retain every comparison invariant.
+All seven own-source hosted hardening jobs pass, with zero skips. Native,
+build-tool and workflow inputs are identical at the applied umbrella checkpoint.
+Its own clean build and complete matrices are queued after every earlier
+pipeline; current umbrella hosted gates still need review. This repairs frame
+ownership without changing the accepted pixel totals or qualifying v0.2.
+
 The standalone native float-color C constructor and public Rust/C/C++
 consumers are now applied to the umbrella branch. All 112 preceding exports
 and all struct layouts are preserved; the new total is 113. The ABI artifacts
@@ -66,9 +78,9 @@ Independent cache source `3ff5f8af` finishes both complete censuses: 21,334/22,9
 original and 22,137/23,728 expanded exact, zero errors, actual exits 1. All
 46,652 native/Chromium comparison invariants agree with the accepted renderer;
 all 804 additions are unchanged and 200/201 cases remain exact at all four
-profiles. Its guards, build and focused/primitive gates pass. Its own-source
-seven-job hosted hardening is observed separately; integration remains open.
-The original pixel gate still fails.
+profiles. Its guards, build and focused/primitive gates pass. All seven
+own-source hosted hardening jobs pass; the repair is applied as described
+above. The original pixel gate still fails.
 
 The cache `107e2e36` completes both censuses with all 46,652 comparison
 invariants unchanged against its LCD parent, including all 804 additions.
