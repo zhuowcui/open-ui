@@ -2737,6 +2737,23 @@ mod tests {
             engine.computed_style(child).unwrap().line_height,
             LineHeight::Length(30.0)
         );
+        engine
+            .set_property(
+                root,
+                StyleProperty::LineHeight,
+                StyleValue::Renderer(RendererStyleValue::LineHeight(LineHeight::Percentage(
+                    150.0,
+                ))),
+            )
+            .unwrap();
+        assert_eq!(
+            engine.computed_style(root).unwrap().line_height,
+            LineHeight::Length(30.0)
+        );
+        assert_eq!(
+            engine.computed_style(child).unwrap().line_height,
+            LineHeight::Length(30.0)
+        );
     }
 
     #[test]
