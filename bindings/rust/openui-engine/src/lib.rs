@@ -2514,7 +2514,7 @@ mod tests {
             .set_renderer_style(computed, RendererStyleValue::FontSize(16.0))
             .unwrap();
         engine.append_child(parent, computed).unwrap();
-        let initial = engine.computed_style(computed).unwrap();
+        let initial = engine.computed_style(computed).unwrap().clone();
         assert_eq!(initial.text_indent.value(), 0.0);
         assert_eq!(initial.color, Color::BLACK);
         let native = engine.create_native_element(ElementTag::Span).unwrap();
@@ -2580,7 +2580,7 @@ mod tests {
         engine
             .set_property(child, StyleProperty::Width, LengthValue::Em(2.0).into())
             .unwrap();
-        let before = engine.computed_style(target).unwrap();
+        let before = engine.computed_style(target).unwrap().clone();
         let animation = engine
             .animate(
                 target,
