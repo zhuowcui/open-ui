@@ -24,6 +24,18 @@ candidates remain unapplied.
 Applications continue to use public native Rust methods and Rust callbacks;
 Open UI executes no JavaScript.
 
+Clean private `3395cefa` prepares the missing immutable raster configuration
+for C apps over the same Rust engine. The
+[v31 evidence](../renderer/generated/native-scroll-insets-v31.json) preserves
+the source patch, owned versioned transport, five boundary tests and C/C++
+consumers. Ten read-only checks pass; the generated metadata preserves all
+113 exports and all 30 existing layouts, with 117 exports proposed.
+Compilation, runtime callbacks, strict-provenance Miri and exact Chromium
+pixels have not run. Its pipeline waits for every earlier cache, fieldset,
+font and clean-cache command to finish. The umbrella still has 113 exports;
+this candidate is unapplied and admits no release state. See the
+[prepared native C contract](../v02/native-c-raster-configuration.md).
+
 The [native inheritance and style trials](../renderer/generated/native-scroll-insets-v21.json)
 remain separate from the accepted renderer. The earlier `f328ed62` complete
 censuses fail at 21,312/22,924 original and 22,115/23,728 expanded exact,

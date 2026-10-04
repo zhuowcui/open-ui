@@ -72,6 +72,12 @@ The separate [font engine trial](docs/renderer/native-font-engines.md) loses
 authored text path from the explicit FreeType reference. The correction and
 native Rust callback consumer are prepared; compilation and pixel verification
 remain pending.
+The [native C raster configuration](docs/v02/native-c-raster-configuration.md)
+is also prepared on a private checkpoint. It copies the same immutable Rust
+options into the shared engine and adds C/C++ callback consumers. Ten read-only
+checks pass and ABI metadata preserves all 113 existing exports and 30 layouts.
+Compilation, consuming-application execution, Miri and exact pixels are pending;
+the umbrella branch still has 113 exports and admits no new release case.
 Earlier renderer measurements below remain attributed to their named sources. The
 [private sampling candidate](docs/renderer/generated/native-viewport-full-v14.json)
 loses 23 exact Chromium comparisons and gains 14 in its complete census;

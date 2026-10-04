@@ -78,7 +78,15 @@ local Cargo builds and image sweeps remain separate. It then preserves the
 1,000 native sizing measurements, checks 880 selected original comparisons,
 both complete 40-profile matrices and both complete censuses.
 
-The versioned C raster-configuration transport and consuming C/C++ verification
-remain required API work. This private source also inherits the other intrinsic
+The [versioned C raster-configuration transport](../v02/native-c-raster-configuration.md)
+is prepared at clean private `3395cefa`, with a reviewable patch and owned
+configuration over the same Rust engine. All 113 preceding exports and 30
+layouts remain intact in the generated metadata; the candidate adds four
+exports. Its five boundary tests and native C/C++ consumers are uncompiled.
+The planned shared Rust/C/C++ sweep covers 1,200 images and 76,800 logical phase
+states against unchanged Chromium references. Runtime, Miri, pixel qualification,
+every field's rendering behavior and default native pixels remain required.
+
+This private source also inherits the other intrinsic
 regressions and the cache candidate. It is unapplied, admits no release case,
 and does not change the accepted renderer's totals or release status.
