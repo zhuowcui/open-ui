@@ -11,11 +11,16 @@ mod generated;
 mod native_app;
 #[cfg(test)]
 mod native_app_tests;
+mod raster_configuration;
 mod registry;
 mod types;
 mod value;
 
 pub use native_app::{oui_app_request_exit, oui_app_run};
+pub use raster_configuration::{
+    oui_app_create_with_raster_configuration_v1, oui_document_create_with_raster_configuration_v1,
+    oui_document_get_raster_configuration_v1, oui_raster_configuration_init_v1,
+};
 pub use types::*;
 
 use generated::{property_from_raw, valid_event_type};
@@ -114,13 +119,25 @@ fn element_address(state: &DocumentState, node: NodeHandle) -> Result<usize, Api
 }
 
 fn new_document(config: &OuiDocumentConfig) -> Result<Rc<DocumentState>, ApiError> {
+    new_document_with_raster_configuration(config, openui_geometry::RasterConfiguration::default())
+}
+
+fn new_document_with_raster_configuration(
+    config: &OuiDocumentConfig,
+    raster_configuration: openui_geometry::RasterConfiguration,
+) -> Result<Rc<DocumentState>, ApiError> {
     check_header(
         config.struct_size,
         config.abi_version,
         size_of::<OuiDocumentConfig>(),
     )?;
     let viewport = viewport_metrics(&config.viewport)?;
-    let engine = Rc::new(RefCell::new(Engine::new(viewport)?));
+    let engine = Rc::new(RefCell::new(Engine::new_with_options(
+        viewport,
+        openui_engine::EngineOptions {
+            raster_configuration,
+        },
+    )?));
     let state = Rc::new(DocumentState {
         native: openui::Document::from_shared_engine(engine.clone()),
         engine,
@@ -676,44 +693,57 @@ pub extern "C" fn oui_app_create(
         }
         // SAFETY: the caller guarantees a readable `OuiAppConfig`.
         let config = unsafe { &*config };
-        check_header(
-            config.struct_size,
-            config.abi_version,
-            size_of::<OuiAppConfig>(),
-        )?;
-        if config.reserved != 0 {
-            return Err(invalid("reserved app configuration fields must be zero"));
-        }
-        if config.backend > 2 {
-            return Err(invalid("unknown backend preference"));
-        }
-        let _title = utf8(config.title, "title")?;
-        let document_config = OuiDocumentConfig {
-            struct_size: size_of::<OuiDocumentConfig>() as u32,
-            abi_version: OUI_ABI_VERSION,
-            viewport: OuiViewportMetrics {
-                logical_width: f64::from(config.width),
-                logical_height: f64::from(config.height),
-                physical_width: config.width,
-                physical_height: config.height,
-                device_scale_factor: 1.0,
-                authority: 1,
-                reserved: 0,
-            },
-        };
-        let state = Rc::new(AppState {
-            document: new_document(&document_config)?,
-            #[cfg(all(feature = "linux", target_os = "linux"))]
-            title: _title,
-            #[cfg(all(feature = "linux", target_os = "linux"))]
-            backend: config.backend,
-            running: Cell::new(false),
-            has_run: Cell::new(false),
-            exit_requested: Cell::new(false),
-            exit_handle: RefCell::new(None),
-        });
-        write_handle(out_app, LocalHandle::App(state))
+        write_handle(
+            out_app,
+            LocalHandle::App(new_app_with_raster_configuration(
+                config,
+                openui_geometry::RasterConfiguration::default(),
+            )?),
+        )
     })
+}
+
+fn new_app_with_raster_configuration(
+    config: &OuiAppConfig,
+    raster_configuration: openui_geometry::RasterConfiguration,
+) -> Result<Rc<AppState>, ApiError> {
+    check_header(
+        config.struct_size,
+        config.abi_version,
+        size_of::<OuiAppConfig>(),
+    )?;
+    if config.reserved != 0 {
+        return Err(invalid("reserved app configuration fields must be zero"));
+    }
+    if config.backend > 2 {
+        return Err(invalid("unknown backend preference"));
+    }
+    let _title = utf8(config.title, "title")?;
+    let document_config = OuiDocumentConfig {
+        struct_size: size_of::<OuiDocumentConfig>() as u32,
+        abi_version: OUI_ABI_VERSION,
+        viewport: OuiViewportMetrics {
+            logical_width: f64::from(config.width),
+            logical_height: f64::from(config.height),
+            physical_width: config.width,
+            physical_height: config.height,
+            device_scale_factor: 1.0,
+            authority: 1,
+            reserved: 0,
+        },
+    };
+    let state = Rc::new(AppState {
+        document: new_document_with_raster_configuration(&document_config, raster_configuration)?,
+        #[cfg(all(feature = "linux", target_os = "linux"))]
+        title: _title,
+        #[cfg(all(feature = "linux", target_os = "linux"))]
+        backend: config.backend,
+        running: Cell::new(false),
+        has_run: Cell::new(false),
+        exit_requested: Cell::new(false),
+        exit_handle: RefCell::new(None),
+    });
+    Ok(state)
 }
 
 // SAFETY CONTRACT: `app` is either null or an Open UI app handle owned by this thread.
@@ -3505,6 +3535,20 @@ mod tests {
 
     #[test]
     fn frozen_layout_metadata_matches_rust() {
+        assert_eq!(
+            (
+                size_of::<OuiRasterConfigurationV1>(),
+                align_of::<OuiRasterConfigurationV1>()
+            ),
+            (72, 4)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiTextRasterConfigurationV1>(),
+                align_of::<OuiTextRasterConfigurationV1>()
+            ),
+            (16, 4)
+        );
         assert_eq!((size_of::<OuiUtf8>(), align_of::<OuiUtf8>()), (16, 8));
         assert_eq!((size_of::<OuiLength>(), align_of::<OuiLength>()), (8, 4));
         assert_eq!((size_of::<OuiColor>(), align_of::<OuiColor>()), (4, 1));

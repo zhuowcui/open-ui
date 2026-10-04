@@ -10,6 +10,7 @@ OPENUI_0.2 {
     oui_accessibility_snapshot_get_node;
     oui_accessibility_snapshot_get_node_state;
     oui_app_create;
+    oui_app_create_with_raster_configuration_v1;
     oui_app_destroy;
     oui_app_document;
     oui_app_request_exit;
@@ -31,6 +32,7 @@ OPENUI_0.2 {
     oui_document_animation_set_playback_rate;
     oui_document_begin_update;
     oui_document_create;
+    oui_document_create_with_raster_configuration_v1;
     oui_document_destroy;
     oui_document_dispatch_event;
     oui_document_dispatch_key_input_v1;
@@ -38,6 +40,7 @@ OPENUI_0.2 {
     oui_document_dispatch_text_input_v1;
     oui_document_element_by_id;
     oui_document_end_update;
+    oui_document_get_raster_configuration_v1;
     oui_document_get_viewport;
     oui_document_hit_test;
     oui_document_is_animating;
@@ -107,6 +110,7 @@ OPENUI_0.2 {
     oui_font_family_create;
     oui_gap_create;
     oui_listener_destroy;
+    oui_raster_configuration_init_v1;
     oui_resource_destroy;
     oui_style_compound_destroy;
     oui_style_value_color_f32_v1;

@@ -141,6 +141,11 @@ jobs:
       - name: Exercise opaque handle ownership under Miri
         working-directory: bindings/rust
         run: cargo +nightly-2026-09-01 miri test --package openui-ffi opaque_handles_reject_wrong_kind_thread_and_reuse
+      - name: Exercise versioned raster prefixes under Miri
+        working-directory: bindings/rust
+        env:
+          MIRIFLAGS: -Zmiri-strict-provenance
+        run: cargo +nightly-2026-09-01 miri test --locked --package openui-ffi --lib raster_configuration::tests::c_raster_options_reject_short_headers_bad_fields_and_preserve_outputs -- --exact
 
   native-sanitizers:
     if: github.event_name != 'pull_request'

@@ -139,6 +139,31 @@ pub struct OuiDocumentConfig {
     pub viewport: OuiViewportMetrics,
 }
 
+/// Owned nested text policy. Flags: subpixel positioning (1), autohint (2).
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct OuiTextRasterConfigurationV1 {
+    pub edging: u32,
+    pub hinting: u32,
+    pub flags: u32,
+    pub lcd_phase_64ths: i32,
+}
+
+/// Caller-owned immutable raster selection, copied during construction.
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct OuiRasterConfigurationV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub backend: u32,
+    pub pixel_geometry: u32,
+    pub gamma_milli: u32,
+    pub contrast_milli: u32,
+    pub author_text: OuiTextRasterConfigurationV1,
+    pub native_text: OuiTextRasterConfigurationV1,
+    pub embedded_text: OuiTextRasterConfigurationV1,
+}
+
 /// Caller-owned client and content dimensions in logical CSS pixels.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]

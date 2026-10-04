@@ -421,6 +421,68 @@ typedef struct OuiDocumentConfig {
   OuiViewportMetrics viewport;
 } OuiDocumentConfig;
 
+typedef enum OuiRasterBackendV1 {
+  OUI_RASTER_BACKEND_SKIA = 0,
+  OUI_RASTER_BACKEND_CHROMIUM_CPU = 1,
+  OUI_RASTER_BACKEND_GANESH_GL = 2,
+  OUI_RASTER_BACKEND_CHROMIUM_FONTATIONS_CPU = 3
+} OuiRasterBackendV1;
+
+typedef enum OuiRasterPresetV1 {
+  OUI_RASTER_DEFAULT = 0,
+  OUI_RASTER_ALIASED = 1,
+  OUI_RASTER_ALIASED_SUBPIXEL_POSITIONING = 2,
+  OUI_RASTER_CHROMIUM_FREETYPE_LCD = 3,
+  OUI_RASTER_CHROMIUM_FONTATIONS_LCD = 4,
+  OUI_RASTER_CHROMIUM_GANESH_LCD = 5
+} OuiRasterPresetV1;
+
+typedef enum OuiTextEdgingV1 {
+  OUI_TEXT_EDGING_ALIAS = 0,
+  OUI_TEXT_EDGING_ANTI_ALIAS = 1,
+  OUI_TEXT_EDGING_SUBPIXEL_ANTI_ALIAS = 2
+} OuiTextEdgingV1;
+
+typedef enum OuiTextHintingV1 {
+  OUI_TEXT_HINTING_NONE = 0,
+  OUI_TEXT_HINTING_SLIGHT = 1,
+  OUI_TEXT_HINTING_NORMAL = 2,
+  OUI_TEXT_HINTING_FULL = 3
+} OuiTextHintingV1;
+
+typedef enum OuiRasterPixelGeometryV1 {
+  OUI_RASTER_PIXEL_UNKNOWN = 0,
+  OUI_RASTER_PIXEL_RGB_HORIZONTAL = 1,
+  OUI_RASTER_PIXEL_BGR_HORIZONTAL = 2,
+  OUI_RASTER_PIXEL_RGB_VERTICAL = 3,
+  OUI_RASTER_PIXEL_BGR_VERTICAL = 4
+} OuiRasterPixelGeometryV1;
+
+enum {
+  OUI_TEXT_RASTER_SUBPIXEL_POSITIONING = 1u << 0,
+  OUI_TEXT_RASTER_FORCE_AUTOHINT = 1u << 1
+};
+
+/* Owned nested values within the v1 raster transport. No pointers. */
+typedef struct OuiTextRasterConfigurationV1 {
+  uint32_t edging;
+  uint32_t hinting;
+  uint32_t flags;
+  int32_t lcd_phase_64ths; /* Physical pixel phase; signed 16-bit range. */
+} OuiTextRasterConfigurationV1;
+
+typedef struct OuiRasterConfigurationV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t backend;
+  uint32_t pixel_geometry;
+  uint32_t gamma_milli; /* Same u16 range as Rust; 1200 means 1.2. */
+  uint32_t contrast_milli; /* Same u16 range as Rust; 200 means 0.2. */
+  OuiTextRasterConfigurationV1 author_text;
+  OuiTextRasterConfigurationV1 native_text;
+  OuiTextRasterConfigurationV1 embedded_text;
+} OuiRasterConfigurationV1;
+
 /* Caller-owned client and content dimensions in logical CSS pixels. */
 typedef struct OuiScrollMetricsV1 {
   uint32_t struct_size;
@@ -825,6 +887,23 @@ OuiStatus oui_app_run(OuiApp* app, const OuiAppRunConfig* config);
 OuiStatus oui_app_request_exit(OuiApp* app);
 
 OuiStatus oui_document_create(const OuiDocumentConfig* config, OuiDocument** out_document);
+/* Additive immutable Rust Engine options. Initialize every version header with
+ * sizeof(the structure) and OUI_ABI_VERSION. Initialization/query write only
+ * the v1 prefix, preserve larger caller tails and leave outputs untouched on
+ * error. Input configurations are copied and may be released after creation.
+ * Changes to input memory, viewport, styles or document state never change
+ * a live document's raster policy. Query returns owned fields, with no borrows.
+ * Presentation preference in OuiAppConfig is independent of raster policy.
+ * These calls do not inspect environment variables or initialize a GPU.
+ * Ganesh configuration requires an explicitly available Ganesh compositor;
+ * CPU replay rejects it. Direct Ganesh release qualification remains open.
+ * init owns no object and may run on any thread; other calls follow the normal
+ * owning-thread handle rules. Callbacks use the same retained Rust document.
+ */
+OuiStatus oui_raster_configuration_init_v1(uint32_t preset, OuiRasterConfigurationV1* out_config);
+OuiStatus oui_document_create_with_raster_configuration_v1(const OuiDocumentConfig* config, const OuiRasterConfigurationV1* raster, OuiDocument** out_document);
+OuiStatus oui_app_create_with_raster_configuration_v1(const OuiAppConfig* config, const OuiRasterConfigurationV1* raster, OuiApp** out_app);
+OuiStatus oui_document_get_raster_configuration_v1(OuiDocument* document, OuiRasterConfigurationV1* out_config);
 OuiStatus oui_document_destroy(OuiDocument* document);
 OuiStatus oui_document_root(OuiDocument* document, OuiElement** out_root);
 OuiStatus oui_document_set_viewport(OuiDocument* document, const OuiDocumentConfig* viewport);

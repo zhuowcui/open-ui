@@ -16,7 +16,7 @@ schemas:
 Regenerate with `python3 tools/ffi/generate_ffi.py`, or verify without writing
 with `python3 tools/ffi/generate_ffi.py --check`. After building the crate,
 `python3 tools/ffi/verify_abi.py` checks exact exports, compiles C and C++
-consumers, and runs eleven headless C examples and five C++ consumers.
+consumers, and runs twelve headless C examples and six C++ consumers.
 
 All opaque handles are generation-checked and thread-affine. Strings are
 length-delimited UTF-8. Every status failure records a thread-local structured
@@ -29,6 +29,38 @@ later lookups while preserving its existing handles for reattachment.
 The owned `OuiAccessibilitySnapshot` API exposes node metadata, ordered
 relations, focus, and changed/removed IDs without retaining engine borrows.
 Snapshots remain readable after document destruction on their owning thread.
+
+## Immutable raster configuration
+
+`oui_document_create_with_raster_configuration_v1` and
+`oui_app_create_with_raster_configuration_v1` copy the same immutable
+`RasterConfiguration` used by public Rust `Document` and `EngineOptions`.
+Initialize `OuiRasterConfigurationV1.struct_size` and `abi_version`, then
+call `oui_raster_configuration_init_v1` with a named preset or provide the
+typed fields directly. `oui_document_get_raster_configuration_v1` returns an
+owned copy. The configuration needs no release operation and the input
+storage may be reused immediately after construction. Element mutations,
+callbacks and viewport changes keep the selected configuration.
+
+The configuration covers the raster backend, pixel geometry, gamma, contrast
+and separate authored, native and embedded text policies. Unknown enum values
+and flag bits, out-of-range scalar values, short headers and incompatible ABI
+versions fail without changing outputs. Larger caller structures keep their
+trailing bytes. Existing constructors still use the existing Rust default;
+all preceding 113 exports and struct layouts are unchanged.
+
+App presentation preference remains separate from document raster selection.
+Selecting Ganesh copies its policy but does not initialize a GPU context;
+CPU document rendering rejects that selection. Ganesh release qualification
+and complete C GPU operation remain open.
+
+The [C consumer](../../../examples/c_v02/raster_configuration.c) and its
+[C++ build](../../../examples/c_v02/raster_configuration.cc) exercise native
+callbacks, input ownership, resize and retained frames at five scales. Their
+optional font mode registers supplied font bytes and compares the same
+64 logical text positions used by the public Rust app against Chromium.
+This private candidate is prepared, not compiled or pixel-qualified. See the
+[configuration contract](../../../docs/v02/native-c-raster-configuration.md).
 
 ## Native element reveal
 

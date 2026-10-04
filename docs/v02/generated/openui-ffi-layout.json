@@ -94,6 +94,10 @@
       "align": 8,
       "size": 152
     },
+    "OuiRasterConfigurationV1": {
+      "align": 4,
+      "size": 72
+    },
     "OuiRect": {
       "align": 4,
       "size": 16
@@ -108,6 +112,10 @@
     },
     "OuiStyleValue": {
       "align": 8,
+      "size": 16
+    },
+    "OuiTextRasterConfigurationV1": {
+      "align": 4,
       "size": 16
     },
     "OuiTransformOperation": {
