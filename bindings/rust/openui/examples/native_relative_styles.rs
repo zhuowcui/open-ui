@@ -1,6 +1,5 @@
 //! Native font, animation and pseudo-style operations from a consuming Rust app.
 use openui::prelude::*;
-use openui_geometry::Length;
 use std::{cell::Cell, path::Path, rc::Rc};
 
 fn check<T: std::fmt::Debug + PartialEq>(
@@ -166,7 +165,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         &mut failures,
     )?;
     root.set_font_size(LengthValue::px(20.0))?;
-    child.set_font_size(LengthValue::Computed(Length::calc_percent_px(150.0, -2.0)))?;
+    child.set_font_size(LengthValue::calc_percent_px(150.0, -2.0))?;
     observe(
         &document,
         &child,
@@ -208,7 +207,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     pseudo.set_pseudo_style(
         PseudoStyleTarget::FirstLine,
         &Style::default()
-            .font_size(LengthValue::Computed(Length::calc_percent_px(150.0, 2.0)))
+            .font_size(LengthValue::calc_percent_px(150.0, 2.0))
             .font_weight(FontWeight::BOLD),
     )?;
     let owned_pseudo = pseudo

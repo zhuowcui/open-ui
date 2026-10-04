@@ -198,13 +198,19 @@ impl Engine {
         if !openui_style::value_matches_property(property, &to) {
             return Err(EngineError::PropertyType { property });
         }
+        options
+            .validate()
+            .map_err(|error| EngineError::Render(error.to_string()))?;
         let from = value_from_computed(&self.document.node(node).style, property);
-        self.slots[target.index as usize]
-            .authored
-            .insert(property as u16, to.clone());
         let keyframes =
             PropertyKeyframes::typed(property, Keyframes::from_values(from, to.clone()))
                 .map_err(|error| EngineError::Render(error.to_string()))?;
+        self.slots[target.index as usize]
+            .authored
+            .insert(property as u16, to.clone());
+        let order = &mut self.slots[target.index as usize].authored_order;
+        order.retain(|id| *id != property as u16);
+        order.push(property as u16);
         self.start_animation(
             target,
             keyframes,
@@ -475,11 +481,24 @@ impl Engine {
             });
             let next_value = sampled.as_ref().unwrap_or(&snapshot.underlying);
             if snapshot.last_applied.as_ref() != sampled.as_ref() {
-                self.apply_animation_value(
+                // Inherited values recompute this node and its descendants.
+                // Publish this sample before rebuilding the computed style so
+                // the rebuild sees the new frame rather than the previous one.
+                self.animations
+                    .get_mut(&id)
+                    .expect("live animation")
+                    .last_applied = sampled.clone();
+                if let Err(error) = self.apply_animation_value(
                     snapshot.target,
                     snapshot.keyframes.property(),
                     next_value,
-                )?;
+                ) {
+                    self.animations
+                        .get_mut(&id)
+                        .expect("live animation")
+                        .last_applied = snapshot.last_applied;
+                    return Err(error);
+                }
             }
 
             let mut events = Vec::new();
@@ -574,19 +593,23 @@ impl Engine {
         value: &StyleValue,
     ) -> Result<(), EngineError> {
         let node = self.resolve(target)?;
-        self.document
-            .apply_style_property(
-                node,
+        if property.metadata().inherited {
+            self.refresh_inherited_styles(node)?;
+        } else {
+            let viewport = (
+                self.viewport.logical_width() as f32,
+                self.viewport.logical_height() as f32,
+            );
+            let resolved = Self::resolve_native_lengths(
                 property,
                 value,
-                (
-                    self.viewport.logical_width() as f32,
-                    self.viewport.logical_height() as f32,
-                ),
-            )
-            .map_err(|_| EngineError::PropertyType { property })?;
-        if property.metadata().inherited {
-            self.refresh_inherited_descendants(node)?;
+                self.document.node(node).style.font_size,
+                self.document.node(self.document.root()).style.font_size,
+                viewport,
+            );
+            self.document
+                .apply_style_property(node, property, &resolved, viewport)
+                .map_err(|_| EngineError::PropertyType { property })?;
         }
         self.dirty.hit_test = true;
         self.mark_dirty(property.metadata().invalidation);

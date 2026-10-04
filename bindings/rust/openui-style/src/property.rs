@@ -120,6 +120,12 @@ impl LengthValue {
         Self::Computed(Length::percent(value))
     }
 
+    /// A native length containing a percentage and a fixed pixel offset.
+    /// For example, `calc_percent_px(150.0, -2.0)` means 150% minus 2px.
+    pub const fn calc_percent_px(percent: f32, px_offset: f32) -> Self {
+        Self::Computed(Length::calc_percent_px(percent, px_offset))
+    }
+
     pub const fn auto() -> Self {
         Self::Computed(Length::auto())
     }
