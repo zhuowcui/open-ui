@@ -104,7 +104,12 @@ states and 640 focused comparisons are exact. The reduced 176-comparison run
 retains one earlier multicolumn exact loss and cannot qualify a complete census.
 Pinned Chromium inspection confirms a missing native trailing-margin extent
 and a non-overflowing `auto` box whose clip stays in paint. A clean shared Rust
-correction is implemented; its own build and pixel gates remain open. No
+correction now passes seven fresh build stages, 8,539 workspace tests, all 935
+earlier native states and both exact raster matrices, restoring the eight
+gradient failures. The [latest native guards](../renderer/generated/native-scroll-insets-v12.json)
+still fail 14 opaque white images and 20 of 45 collapsed-margin dimension/bounds
+states, including ten newly wrong scroll-height fields. Both full image
+censuses are running; the candidate remains unapplied and unqualified. No
 reference bytes, tolerance or required gate changed.
 
 The checked-in performance artifact is a WSL2 smoke result and explicitly has

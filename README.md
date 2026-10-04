@@ -210,8 +210,12 @@ The [new scroll investigation](docs/renderer/generated/native-scroll-insets-v11.
 records a missing native trailing-margin extent and a clip policy applied to
 an `auto` box without a scroll transform. The high-DPI candidate passes its
 native consumers and focused matrix, but fails eight primitive comparisons.
-A clean Rust follow-up is implemented and awaits its own build and pixel
-results. It remains unapplied and unqualified.
+A clean Rust follow-up passes 8,539 workspace tests, all 935 earlier native
+states and both exact raster matrices; the eight gradient regressions are
+repaired. All 105 new dimension queries match, but 14 opaque white images and
+20 wider collapsed-margin API states still fail. Complete image censuses are
+running. The [latest guards](docs/renderer/generated/native-scroll-insets-v12.json)
+retain every failure; the patch remains unapplied and unqualified.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU

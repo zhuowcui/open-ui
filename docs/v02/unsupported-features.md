@@ -85,8 +85,12 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   The [later scroll investigation](../renderer/generated/native-scroll-insets-v11.json)
   also finds missing native trailing-margin extents and eight primitive
   regressions from assigning compositor clip ownership to a non-overflowing
-  `auto` box. The shared Rust correction awaits its own build and pixel gates.
-  Collapsed margins and opaque scrolling paint-chunk ownership remain open.
+  `auto` box. The [shared Rust correction](../renderer/generated/native-scroll-insets-v12.json)
+  repairs all eight raster failures and passes 8,539 workspace tests and all
+  935 earlier native states. Fourteen opaque white images and 20 collapsed-margin
+  API states still fail, including ten newly wrong scroll-height fields.
+  Full image censuses are running. Collapsed margins and opaque scrolling
+  paint-chunk ownership remain open.
   The patches remain unapplied and unqualified;
 - two live legacy contour calibration paths must be replaced by general
   raster behavior and checked against Chromium without sample corrections;

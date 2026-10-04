@@ -1,0 +1,170 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-range-clean-v898/build.json",
+      "sha256": "9048f7d1020c08be136934be4fdd4b6046ce9da699e772e0b279783f00469fab"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-range-checks-v897/receipt.json",
+      "sha256": "518802a979ac81aa2eefd680489c814cdc2a3e518fd066a06138a4f15440817c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-range-two-children-v900/receipt.json",
+      "sha256": "8508721b05776c5bbc16b4f91a46f7dd65660e49fe1fd0c58c63f54bb494fa4e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-range-metrics-v901/receipt.json",
+      "sha256": "a71d85032bec6bbe03c223fc422aa3e8e60aa333d5a5785c1b6fd807bc2deb25"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-range-native-audit-v912.json",
+      "sha256": "d24c774d0a4966e7c72ef85144a15abe453c0de9c1beff766e6283e0e215f1e9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-clip-range-raster-audit-v913.json",
+      "sha256": "3ef56a1137f6cb5d104201fbdc372a069143a5a61bf52dfaf31225aae42062ba"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapsed-margins-v919/receipt.json",
+      "sha256": "a0d29da8f2a199e7c04244a85eb2d5de8a847b014fa04955fee0e6cb95d9ac40"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapsed-baseline-v920/receipt.json",
+      "sha256": "c7ba9ce62cb9ed5392a19b7709cdd5eb56f32b0b6360f132a1f7f41f90c60792"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapsed-review-v921.json",
+      "sha256": "8dbc1c49b701771eb6ceb35ea6a8c124628005bd1b81e106c1433e2d7b1a6596"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v916/receipt.json",
+      "sha256": "078986ba1ccfeab3b4190b759cbeda022ab4f722af0c6e8e62c17bba78e1775b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-v917/receipt.json",
+      "sha256": "98b5e8444a79ec8d7908bb94ab2464ef34d8667f07d0ee125a993bf2a119a250"
+    }
+  ],
+  "clean_build": {
+    "earlier_compile_failure_preserved": true,
+    "read_only_checks_passed": 10,
+    "source_and_binaries_verified": true,
+    "stages_passed": 7,
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "passed": 8539
+    }
+  },
+  "collapsed_margin_api_guards": {
+    "actual_probe_exits": [
+      1,
+      1
+    ],
+    "after_exact": 25,
+    "all_chromium_observations_unchanged": true,
+    "api_failures": 20,
+    "before_exact": 15,
+    "findings": [
+      {
+        "finding": "Nested collapsed margin: scrollHeight100 instead of120.",
+        "owner": "openui-layout/openui-engine"
+      },
+      {
+        "finding": "Empty child margin counted again: scrollHeight160 instead of130; ten height fields regress.",
+        "owner": "openui-layout/openui-engine"
+      },
+      {
+        "finding": "Inherited empty child position: y150 instead of140; normal-flow position and collapsed end strut are separate.",
+        "owner": "openui-layout/openui-engine"
+      }
+    ],
+    "images_rendered": 0,
+    "native_process_errors": 0,
+    "owned_snapshots_survive_mutation_and_teardown": true,
+    "required_native_api_gate": "fail",
+    "scroll_height_field_regressions": 10,
+    "total": 45,
+    "whole_state_exact_losses": 0,
+    "whole_state_gains": 10
+  },
+  "documentation_checkpoint_cddb5bb3": {
+    "all_three_hosted_workflows_complete_success": true,
+    "private_runtime_qualification": false,
+    "skipped_jobs": 5,
+    "skipped_jobs_are_not_passes": true,
+    "successful_jobs": 6
+  },
+  "full_census_status": {
+    "expanded": "Running from immutable clean45ddeee3; no complete result claimed.",
+    "expanded_required_comparisons": 23728,
+    "original": "Running from immutable clean45ddeee3; no complete result claimed.",
+    "original_required_comparisons": 22924,
+    "qualifying": false
+  },
+  "javascript_executed_by_openui": false,
+  "native_existing_guards": {
+    "pinned_chromium_inputs_unchanged": true,
+    "prescrolled_c_exact_losses": 0,
+    "prescrolled_c_geometry_and_pixel_gains": 10,
+    "previous_885_geometry_callbacks_and_pixels_unchanged": true,
+    "states_exact": 935
+  },
+  "new_native_guards": {
+    "dimension_query_total": 105,
+    "no_pixel_qualification_claimed": true,
+    "opaque_white_failure_owner": "openui-paint",
+    "opaque_white_pixel_failures": 14,
+    "opaque_white_pixels_exact": 21,
+    "opaque_white_pixels_total": 35,
+    "opaque_white_probe_actual_exit": 1,
+    "public_rust_c_dimension_queries_exact": 105,
+    "single_child_green_rust_c_pixels_exact": 70,
+    "two_child_rust_c_states_exact": 70
+  },
+  "new_release_states_admitted": 0,
+  "permanent_application_contract": "Open UI executes no JavaScript in any version. Consuming apps use public native Rust methods and callbacks. C/accessibility share the Rust Engine. Offline reference tooling alone may run scripts inside separate Chromium.",
+  "pixel_target": "Pinned Chromium only, zero tolerance",
+  "previous_index": {
+    "path": "docs/renderer/generated/native-scroll-insets-v11.json",
+    "sha256": "5329d9553886d846f734fb7251c6b4ee4b60140a8629d1efffd16a4f6e8ebc71"
+  },
+  "promotion_allowed": false,
+  "public_c_reproducer": {
+    "path": "docs/renderer/evidence/native-scroll-clip-range-v1/native-scroll-collapsed-margins.c",
+    "sha256": "7df4e543f3bd6faa18faf00a56dac86e7b9f5ed91af2492f103a7a44e3241a68"
+  },
+  "raster_guards": {
+    "actual_exits": [
+      0,
+      0
+    ],
+    "all_1600_eight_comparison_invariants_unchanged_vs_applied_umbrella": true,
+    "all_eight_prior_primitive_exact_losses_repaired": true,
+    "focused_exact": 640,
+    "focused_total": 640,
+    "primitive_exact": 960,
+    "primitive_total": 960
+  },
+  "release_qualification": false,
+  "remaining": [
+    "Complete original/expanded Chromium exactness",
+    "Fourteen opaque white scrolling images",
+    "Collapsed margin scroll extent and self-collapsing child position",
+    "All needed public native Rust APIs, compositor/3D and full own-source hardening",
+    "Physical hardware, AT-SPI, packaging, provenance and approved publication"
+  ],
+  "reviewable_patch": {
+    "path": "docs/renderer/evidence/native-scroll-clip-range-v1/native-scroll-clip-range-v1.patch",
+    "sha256": "1cb0e29743292730000e27e3a857651bb5f818c5465bca00727316b2b489da12"
+  },
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "45ddeee3b5abceca5f8e0f0a752aa1e9d10ac14e",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "30baddc5d5196b40436bcc6b5c9e6906808df9c300460f2db1e72c4ff96c6e0f",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

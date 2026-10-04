@@ -115,11 +115,17 @@ extents, and the high-DPI clip policy was applied to an `auto` box that has no
 scroll transform. Seventy fresh Chromium metric captures and five compositor
 captures preserve their immutable image references. The clean `45ddeee3`
 follow-up retains the missing margins and uses reachable scroll geometry for
-both paint translation and clip ownership. Its ten read-only checks pass;
-fresh build and pixel qualification remain open. The earlier test compile
-failure is preserved. Opaque scrolling chunks, collapsed margins and complete
-property spaces still need work. The private candidates remain unapplied and
-unqualified.
+both paint translation and clip ownership. Its
+[completed guards](../renderer/generated/native-scroll-insets-v12.json) pass
+seven fresh build stages, 8,539 workspace tests, ten read-only checks, all 935
+existing native states and both raster gates, with all 1,600 comparison
+invariants unchanged. The eight gradient regressions are repaired. New two-child
+Rust/C states are 70/70 exact, and all 105 public dimension queries match.
+Fourteen opaque white images still differ. A wider 45-state native mutation
+check is only 25 exact: nested collapsed extents and empty-child bounds remain
+wrong, and ten height fields regress. Both actual API probe exits remain 1.
+Complete original and expanded image censuses are running. The earlier test
+compile failure is preserved. The candidates remain unapplied and unqualified.
 
 ## Verified repository state
 

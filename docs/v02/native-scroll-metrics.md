@@ -65,12 +65,29 @@ from authored overflow alone.
 Clean `45ddeee3` retains child margins in scroll extents and shares reachable
 scroll geometry between paint translation and clip ownership. Its public Rust
 consumer reads owned metrics for one or two children, and a native mutation
-regression checks margin growth, shrinkage and offset clamping. Ten read-only
-checks pass; its fresh build and pixel qualification remain open. The earlier
+regression checks margin growth, shrinkage and offset clamping. The
+[completed guards](../renderer/generated/native-scroll-insets-v12.json) pass all
+seven fresh build stages, 8,539 workspace tests and ten read-only checks.
+Both raster matrices are exact: 640/640 focused and 960/960 primitive, with all
+1,600 comparison invariants unchanged. All 935 previous native states and 70
+new two-child Rust/C states are exact. All 105 public dimension queries match
+Chromium; the green images are 70/70 exact, while 14 of 35 opaque white images
+still differ. Complete original and expanded censuses are running. The earlier
 compile failure at `2cc6b8d5` is retained. The
 [source patch](../renderer/evidence/native-scroll-clip-range-v1/native-scroll-clip-range-v1.patch)
 remains unapplied. Collapsed margins, low-DPI opaque paint chunks and complete
 property-space ownership still need implementation and native checks.
+
+A [public C mutation reproducer](../renderer/evidence/native-scroll-clip-range-v1/native-scroll-collapsed-margins.c)
+now checks leaf, nested and empty-child margins at five scales. It uses the
+same Rust Engine, preserves owned metric snapshots through mutation and
+document teardown, and renders no images. Its 45 dimension/bounds states are
+25 exact, gaining ten without a whole-state exact loss. Twenty states still
+fail: nested collapsed margins return scrollHeight=100 instead of 120; empty
+children return 160 instead of 130, with ten newly wrong height fields. Their
+initial bounds are also ten pixels too low on both old and new sources.
+The scroll extent and normal-flow position need retained collapsed-margin
+data. Both actual probe exits remain 1; this candidate is unqualified.
 
 
 ## Private scroll margin and padding qualification
