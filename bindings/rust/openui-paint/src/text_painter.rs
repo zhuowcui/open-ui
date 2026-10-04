@@ -173,10 +173,18 @@ pub fn paint_text_with_raster_policy(
 }
 
 fn uses_chromium_author_lcd(style: &ComputedStyle) -> bool {
-    if style.native_control_text
-        || style.embedded_document_text
-        || style.raster_configuration.author_text.edging != TextEdging::Alias
+    if style.native_control_text || style.embedded_document_text {
+        return false;
+    }
+    if style.raster_configuration.backend == RasterBackend::ChromiumLinux
+        && style.raster_configuration.author_text.edging == TextEdging::SubpixelAntiAlias
     {
+        // Explicit Chromium LCD selection also selects its outline policy.
+        // Choosing LCD surface properties alone leaves author glyphs on the
+        // portable Skia outline path instead of the compatible outline path.
+        return true;
+    }
+    if style.raster_configuration.author_text.edging != TextEdging::Alias {
         return false;
     }
     match style.font_family.families.first() {
