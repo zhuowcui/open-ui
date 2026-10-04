@@ -823,6 +823,9 @@ pub struct InlineItemsBuilder<'a> {
     /// elements for DOM order, but an explicit marker-group collection must
     /// admit them into that pseudo box's inline formatting context.
     include_scroll_markers: bool,
+    /// Anonymous fieldset content has no definite available block-size when
+    /// computing intrinsic contributions, even if the fieldset has a height.
+    intrinsic_block_size_indefinite: bool,
 }
 
 impl<'a> InlineItemsBuilder<'a> {
@@ -840,6 +843,7 @@ impl<'a> InlineItemsBuilder<'a> {
             positioned_inline_stack: Vec::new(),
             block_in_inline: Vec::new(),
             include_scroll_markers: false,
+            intrinsic_block_size_indefinite: false,
         }
     }
 
@@ -851,12 +855,29 @@ impl<'a> InlineItemsBuilder<'a> {
         Self::collect_with_floats(doc, block_node_id).0
     }
 
+    pub(crate) fn collect_for_intrinsic_sizes(
+        doc: &Document,
+        block_node_id: NodeId,
+    ) -> InlineItemsData {
+        Self::collect_with_mode(doc, block_node_id, true).0
+    }
+
     /// Collect inline items and the source-order float insertion boundaries.
     pub(crate) fn collect_with_floats(
         doc: &Document,
         block_node_id: NodeId,
     ) -> (InlineItemsData, Vec<FloatPlaceholder>) {
+        Self::collect_with_mode(doc, block_node_id, false)
+    }
+
+    fn collect_with_mode(
+        doc: &Document,
+        block_node_id: NodeId,
+        measuring_intrinsics: bool,
+    ) -> (InlineItemsData, Vec<FloatPlaceholder>) {
         let mut builder = InlineItemsBuilder::new(doc);
+        builder.intrinsic_block_size_indefinite =
+            measuring_intrinsics && doc.node(block_node_id).tag == ElementTag::Fieldset;
         let block_style = &doc.node(block_node_id).style;
         builder.include_scroll_markers =
             doc.node(block_node_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup);
@@ -1480,6 +1501,13 @@ impl<'a> InlineItemsBuilder<'a> {
             && child_direction.is_horizontal()
             && (style.width.is_auto() || style.width.is_content_or_intrinsic()))
         .then(|| {
+            if self.intrinsic_block_size_indefinite && !style.position.is_absolutely_positioned() {
+                // FieldsetLayoutAlgorithm measures its anonymous content
+                // with an indefinite available block-size. Percentage-height
+                // images therefore keep their natural intrinsic width here;
+                // normal layout still resolves the displayed image's height.
+                return None;
+            }
             let parent_id = self.doc.node(node_id).parent;
             if parent_id.is_none() {
                 return None;

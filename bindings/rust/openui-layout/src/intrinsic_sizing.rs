@@ -348,7 +348,7 @@ fn intrinsic_close_rounding_excess(data: &InlineItemsData, close_item_index: usi
 /// white-space processing and emitted explicit open/close decoration items.
 fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> MinMaxSizes {
     let container_style = &doc.node(node_id).style;
-    let mut data = InlineItemsBuilder::collect(doc, node_id);
+    let mut data = InlineItemsBuilder::collect_for_intrinsic_sizes(doc, node_id);
     let base_direction = if container_style.unicode_bidi == openui_style::UnicodeBidi::Plaintext {
         None
     } else if container_style.direction == openui_style::Direction::Rtl {
