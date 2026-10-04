@@ -301,7 +301,7 @@ This candidate is unapplied and unqualified; no new release state is admitted.
 Open UI runs no JavaScript in any version. Needed interaction uses public
 native Rust methods and Rust callbacks over the shared Engine.
 
-The [intrinsic sizing follow-up](docs/renderer/generated/native-scroll-insets-v23.json) reviews the
+The [intrinsic sizing follow-up](docs/renderer/generated/native-scroll-insets-v24.json) reviews the
 missing width behavior against 120 repeated Chromium advance observations and
 2,000 neighboring measurements at five scales. Chromium retains positive
 shaped-width remainders on its 1/64px layout grid and includes first-line
@@ -316,9 +316,15 @@ one failure before the workspace stopped; the two raster API guards passed.
 The corrected guard attaches actual native text children. It now proves the
 old 80px width fails the 80.015625px Chromium result, and the fixed source
 passes at all five scales, including inherited indentation and a reset. Ten
-read-only checks pass. Its fresh complete workspace build and native/raster
-comparisons are running or queued in the frozen observation. The full fixed
-workspace, native pixels and censuses are not yet verified. No runtime
+read-only checks pass. The complete build then stopped after 5,763 passing
+tests and one real regression: an inline canvas lost its natural width. The
+new intrinsic sequence exposed that replaced content was collected as an
+ordinary inline wrapper. The shared fix collects it as an atomic box. All 26
+existing canvas, image and positioning guards now pass, and the native width
+guard still passes. The revised source has ten passing read-only checks and
+a new workspace build followed by native/raster comparisons running or queued
+in the frozen observation. Its complete workspace, native pixels and censuses
+are not yet verified. No runtime
 promotion or new pixel admission is claimed. Prior snapshots and all
 reference bytes remain unchanged.
 
