@@ -264,22 +264,30 @@ census or release pass is claimed.
 The [native inheritance candidate](docs/renderer/generated/native-scroll-insets-v17.json)
 at private `f328ed62` fixes parent-style propagation through the shared Engine,
 including retained tree changes, relative sizes and ordered shorthand updates.
-Its consuming Rust app uses existing public methods and a Rust callback;
-all ten before/after images match Chromium at five scales. Its seven fresh
-build stages, 8,530 workspace tests, eleven C/five C++ consumers and ten
-read-only checks pass. All 113 exports and ABI artifacts remain unchanged.
-Its focused and primitive matrices are now 640/640 and 960/960 exact, with all
-1,600 comparison invariants unchanged. The complete censuses are running;
-the reviewable source patch remains unapplied.
+Its consuming Rust app uses public methods and a Rust callback; all ten
+before/after images match Chromium at five scales. Its seven fresh build stages,
+8,530 workspace tests, eleven C/five C++ consumers and ten read-only checks pass.
+Its focused and primitive matrices are 640/640 and 960/960 exact. The
+[completed census audit](docs/renderer/generated/native-scroll-insets-v19.json)
+records 21,312/22,924 original and 22,115/23,728 expanded exact, zero errors.
+All 48 changed comparisons worsen, losing 22 exact matches across twelve
+static-position tests. Chromium bytes, fonts and resources remain unchanged;
+all 804 added comparisons also remain unchanged. The patch remains unapplied
+while the Engine/layout cause is investigated.
 
-The [native style follow-up](docs/renderer/generated/native-scroll-insets-v18.json)
-preserves four geometry mismatches from eight native C states against two
-matching Chromium runs. A separate Rust candidate repairs relative font
-animations, transition targets, calculated font sizes and stale pseudo styles.
-It adds five regression tests and a consuming Rust app, plus the public
-`LengthValue::calc_percent_px` constructor. Ten read-only checks pass;
-its own Rust builds and pixel checks are queued after the current censuses.
-The patch remains unapplied and unqualified. Open UI runs no JavaScript.
+The [native style follow-up](docs/renderer/generated/native-scroll-insets-v19.json)
+at private `3f1d296f` repairs relative font animations, transition targets,
+calculated font sizes and stale pseudo styles through the shared Engine.
+Its public Rust app uses Rust callbacks and `LengthValue::calc_percent_px`.
+The clean build passes 8,535 workspace tests and eleven C/five C++ consumers;
+seven targeted Engine tests and ten read-only checks pass. All eight native C
+geometry states and all 50 native Rust images match repeated Chromium runs.
+Both 40-profile raster matrices pass: 640/640 focused and 960/960 primitive,
+with all 1,600 comparison invariants unchanged. An earlier wrapper failed
+before starting the matrix because it selected a nonexistent directory; that
+failure is preserved separately. No complete census has run on this follow-up.
+It retains the base candidate's unresolved regressions and remains unapplied
+and unqualified. Open UI runs no JavaScript; apps call native Rust methods.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
