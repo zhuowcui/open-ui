@@ -21,9 +21,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let policy = args.next().ok_or("font raster policy required")?;
     let family = args.next().unwrap_or_else(|| "Ahem".into());
     let size: f32 = args.next().unwrap_or_else(|| "20".into()).parse()?;
-    let phase: u8 = args.next().unwrap_or_else(|| "0".into()).parse()?;
-    let width: f64 = args.next().unwrap_or_else(|| "320".into()).parse()?;
-    let height: f64 = args.next().unwrap_or_else(|| "160".into()).parse()?;
+    let phase = args.next().unwrap_or_else(|| "all".into());
+    let phases: Vec<u8> = if phase == "all" {
+        (0..64).collect()
+    } else {
+        vec![phase.parse()?]
+    };
+    let width: f64 = args.next().unwrap_or_else(|| "800".into()).parse()?;
+    let height: f64 = args.next().unwrap_or_else(|| "600".into()).parse()?;
     if args.next().is_some()
         || !matches!(
             family.as_str(),
@@ -31,7 +36,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )
         || !size.is_finite()
         || size <= 0.0
-        || phase > 63
+        || phases.iter().any(|phase| *phase > 63)
     {
         return Err("invalid native font arguments".into());
     }
@@ -51,56 +56,88 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let root = document.body();
     root.set_background_color(Color::WHITE)?;
     root.set_overflow(Overflow::Hidden)?;
-    let text = Element::create(&document, "div")?;
-    text.set_position(Position::Absolute)?;
-    text.set_left(LengthValue::px(20.0 + f32::from(phase) / 64.0))?;
-    text.set_top(LengthValue::px(20.0))?;
-    text.set_font_family(FontFamilyList::single(family))?;
-    text.set_font_size(LengthValue::px(size))?;
-    text.set_line_height(LineHeight::Number(1.0))?;
-    text.set_color(Color::BLACK)?;
-    text.set_text("X")?;
-    root.append_child(&text)?;
+    let mut texts = Vec::new();
+    for (index, phase) in phases.iter().enumerate() {
+        let text = Element::create(&document, "div")?;
+        text.set_position(Position::Absolute)?;
+        text.set_left(LengthValue::px(
+            20.0 + (index % 8) as f32 * 92.0 + f32::from(*phase) / 64.0,
+        ))?;
+        text.set_top(LengthValue::px(20.0 + (index / 8) as f32 * 60.0))?;
+        text.set_font_family(FontFamilyList::single(family.clone()))?;
+        text.set_font_size(LengthValue::px(size))?;
+        text.set_line_height(LineHeight::Number(1.0))?;
+        text.set_color(Color::BLACK)?;
+        text.set_text("X")?;
+        root.append_child(&text)?;
+        texts.push(text);
+    }
     std::fs::create_dir_all(&output)?;
-    let before = bounds_json(&text)?;
-    let owned_before = text.bounding_rect()?.ok_or("owned text bounds required")?;
+    let before = texts
+        .iter()
+        .map(bounds_json)
+        .collect::<Result<Vec<_>, _>>()?
+        .join(",");
+    let owned_before = texts
+        .iter()
+        .map(|text| -> Result<_, Box<dyn std::error::Error>> {
+            Ok(text.bounding_rect()?.ok_or("owned text bounds required")?)
+        })
+        .collect::<Result<Vec<_>, _>>()?;
     std::fs::write(output.join("before.png"), document.render_to_png_buffer()?)?;
 
     let calls = Rc::new(Cell::new(0));
     let observed = Rc::clone(&calls);
-    let target = text.downgrade();
-    text.on("click", move |_| {
-        let text = target.upgrade().expect("mounted native text");
-        text.set_text("XX").unwrap();
-        text.set_color(Color::BLUE).unwrap();
+    let targets: Vec<_> = texts.iter().map(Element::downgrade).collect();
+    root.on("click", move |_| {
+        for target in &targets {
+            let text = target.upgrade().expect("mounted native text");
+            text.set_text("XX").unwrap();
+            text.set_color(Color::BLUE).unwrap();
+        }
         observed.set(observed.get() + 1);
     })?;
-    text.click()?;
-    if calls.get() != 1 || text.text_content()? != "XX" {
+    root.click()?;
+    if calls.get() != 1
+        || texts
+            .iter()
+            .any(|text| !matches!(text.text_content().as_deref(), Ok("XX")))
+    {
         return Err("native font callback failed".into());
     }
     assert_eq!(document.raster_configuration()?, raster_configuration);
-    let after = bounds_json(&text)?;
+    let after = texts
+        .iter()
+        .map(bounds_json)
+        .collect::<Result<Vec<_>, _>>()?
+        .join(",");
     assert_eq!(
         before,
-        format!(
-            "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
-            f64::from(owned_before.x),
-            f64::from(owned_before.y),
-            f64::from(owned_before.width),
-            f64::from(owned_before.height),
-        )
+        owned_before
+            .iter()
+            .map(|bounds| format!(
+                "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
+                f64::from(bounds.x),
+                f64::from(bounds.y),
+                f64::from(bounds.width),
+                f64::from(bounds.height),
+            ))
+            .collect::<Vec<_>>()
+            .join(",")
     );
     std::fs::write(output.join("after.png"), document.render_to_png_buffer()?)?;
     std::fs::write(
         output.join("geometry.json"),
-        format!("{{\"before\":{before},\"after\":{after}}}\n"),
+        format!(
+            "{{\"before\":[{before}],\"after\":[{after}],\"callback_count\":{}}}\n",
+            calls.get()
+        ),
     )?;
-    let weak = text.downgrade();
-    drop(text);
+    let weak: Vec<_> = texts.iter().map(Element::downgrade).collect();
+    drop(texts);
     drop(root);
     drop(document);
-    if weak.upgrade().is_some() {
+    if weak.iter().any(|text| text.upgrade().is_some()) {
         return Err("native font callback retained document".into());
     }
     Ok(())
