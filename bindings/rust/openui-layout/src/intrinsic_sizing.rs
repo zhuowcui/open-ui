@@ -280,21 +280,11 @@ fn active_clone_end_edges(stack: &[IntrinsicInlineBox]) -> LayoutUnit {
 
 /// Convert a shaped advance to Blink's 1/64px intrinsic-size grid.
 ///
-/// Font backends can return an advance a few floating-point ulps above an
-/// exact LayoutUnit boundary (for example, 48.000004px). Ceil-converting that
-/// value creates a synthetic 1/64px intrinsic contribution. Normalize only
-/// values already within 1/4096px of the fixed-point grid; other advances
-/// retain the conservative ceil used to avoid unintended wrapping.
+/// Blink's ShapeResult::SnappedWidth preserves the shaped advance and
+/// ceil-converts it. Even a small positive remainder is observable through
+/// native bounds and must not be rounded away before this conversion.
 fn intrinsic_text_width(width: f32) -> LayoutUnit {
-    let nearest = LayoutUnit::from_f32_round(width);
-    let backend_roundoff = (32.0 * f32::EPSILON * width.abs().max(1.0))
-        .max(1.0 / 4096.0)
-        .min(1.0 / 256.0);
-    if (width - nearest.to_f32()).abs() <= backend_roundoff {
-        nearest
-    } else {
-        LayoutUnit::from_f32_ceil(width)
-    }
+    LayoutUnit::from_f32_ceil(width)
 }
 
 fn intrinsic_close_rounding_excess(data: &InlineItemsData, close_item_index: usize) -> LayoutUnit {
@@ -368,17 +358,42 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
     };
     data.apply_bidi(base_direction);
     data.split_shaping_runs();
+    // Indentation belongs to the first forced line, rather than to every
+    // recursive child contribution. Percentage indentation is cyclic during
+    // intrinsic sizing, so its basis is zero while calc's fixed part remains.
+    // Empty content has no line and therefore no indentation contribution.
+    let has_line_content = data.items.iter().any(|item| match item.item_type {
+        InlineItemType::Text => !item.text_range.is_empty(),
+        InlineItemType::Control | InlineItemType::AtomicInline => true,
+        InlineItemType::OpenTag => {
+            inline_start_edge(&data.styles[item.style_index]) != LayoutUnit::zero()
+        }
+        InlineItemType::CloseTag => {
+            inline_end_edge(&data.styles[item.style_index]) != LayoutUnit::zero()
+        }
+        InlineItemType::BlockInInline => false,
+    });
+    let first_line_indent = if has_line_content {
+        resolve_length(
+            &container_style.text_indent,
+            LayoutUnit::zero(),
+            LayoutUnit::zero(),
+            LayoutUnit::zero(),
+        )
+    } else {
+        LayoutUnit::zero()
+    };
     data.shape_text();
 
     let mut stack: Vec<IntrinsicInlineBox> = Vec::new();
     let mut pending_open_edges = LayoutUnit::zero();
-    let mut min_segment = LayoutUnit::zero();
+    let mut min_segment = first_line_indent;
     let mut min_content = LayoutUnit::zero();
     let mut soft_break_pending = false;
     let mut soft_break_after_pending_edges = false;
     let mut last_content_was_text = false;
 
-    let mut max_line = LayoutUnit::zero();
+    let mut max_line = first_line_indent;
     let mut max_content = LayoutUnit::zero();
     let mut pending_collapsible_space = LayoutUnit::zero();
     let mut pending_min_collapsible_space = LayoutUnit::zero();
@@ -561,10 +576,9 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                     }
 
                     if byte_index > run_start {
-                        let width =
-                            intrinsic_text_width(shape.width_for_range(run_start_char, index));
                         let max_width = intrinsic_text_width(shape.width_for_range(0, index))
                             - intrinsic_text_width(shape.width_for_range(0, run_start_char));
+                        let width = max_width;
                         min_segment = min_segment + pending_min_collapsible_space;
                         pending_min_collapsible_space = LayoutUnit::zero();
                         if soft_break_pending {
@@ -610,9 +624,9 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                             &mut pending_collapsible_space,
                         );
                     } else if is_break_all_character {
-                        let width = intrinsic_text_width(shape.width_for_range(index, char_end));
                         let max_width = intrinsic_text_width(shape.width_for_range(0, char_end))
                             - intrinsic_text_width(shape.width_for_range(0, index));
+                        let width = max_width;
                         min_segment = min_segment + pending_min_collapsible_space;
                         pending_min_collapsible_space = LayoutUnit::zero();
                         if soft_break_pending {
@@ -636,9 +650,9 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                         soft_break_after_pending_edges = false;
                         last_content_was_text = true;
                     } else {
-                        let width = intrinsic_text_width(shape.width_for_range(index, char_end));
                         let max_width = intrinsic_text_width(shape.width_for_range(0, char_end))
                             - intrinsic_text_width(shape.width_for_range(0, index));
+                        let width = max_width;
                         if collapses {
                             pending_collapsible_space = max_width;
                         } else {
@@ -669,12 +683,10 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                 }
 
                 if run_start < text.len() {
-                    let width = intrinsic_text_width(
-                        shape.width_for_range(run_start_char, shape.num_characters),
-                    );
                     let max_width =
                         intrinsic_text_width(shape.width_for_range(0, shape.num_characters))
                             - intrinsic_text_width(shape.width_for_range(0, run_start_char));
+                    let width = max_width;
                     min_segment = min_segment + pending_min_collapsible_space;
                     pending_min_collapsible_space = LayoutUnit::zero();
                     if soft_break_pending {
@@ -713,7 +725,9 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
     min_segment = min_segment + pending_open_edges;
     min_content = min_content.max_of(min_segment + active_clone_end_edges(&stack));
     max_content = max_content.max_of(max_line);
-    MinMaxSizes::new(min_content, max_content)
+    // With a negative first-line indent, a later unbreakable segment may
+    // contribute more to min-content than the forced line does to max-content.
+    MinMaxSizes::new(min_content, max_content.max_of(min_content))
 }
 
 // ── Block container intrinsic sizing ─────────────────────────────────────
@@ -1032,7 +1046,8 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     //
     // Blink: BlockNode::ComputeMinMaxSizes → runs inline layout to
     // determine block-size contribution from inline formatting contexts.
-    let has_inline_children = crate::inline::algorithm::has_inline_children(doc, node_id);
+    let has_inline_children = node.text.as_deref().is_some_and(|text| !text.is_empty())
+        || crate::inline::algorithm::has_inline_children(doc, node_id);
     let has_block_children = crate::block::has_block_children(doc, node_id);
 
     if has_inline_children && !has_block_children {
@@ -1044,17 +1059,14 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         // when it lives just inside an inline boundary. Use the same flattened
         // item stream as line layout so decoration edges, forced breaks, and
         // cross-node whitespace collapsing all participate in the result.
-        let has_decorated_inline_sequence = doc.children(node_id).any(|child_id| {
-            let child_style = &doc.node(child_id).style;
-            child_style.display == openui_style::Display::Inline
-                && (child_style.effective_border_left() != 0
-                    || child_style.effective_border_right() != 0
-                    || child_style.padding_left.value() != 0.0
-                    || child_style.padding_left.calc_offset() != 0.0
-                    || child_style.padding_right.value() != 0.0
-                    || child_style.padding_right.calc_offset() != 0.0)
-        });
-        if has_decorated_inline_sequence {
+        // The recursive float walk above also tracks clearance-separated
+        // rows. The inline item stream excludes float placeholders, so it
+        // cannot replace that row accumulator. Ordinary IFCs use the complete
+        // shaped sequence, including undecorated and element-owned text.
+        let has_float_children = ordered_child_ids
+            .iter()
+            .any(|child| doc.node(*child).style.float != openui_style::Float::None);
+        if !has_float_children {
             let inline_sizes = compute_inline_sequence_intrinsic_sizes(doc, node_id);
             min_inline = inline_sizes.min;
             max_inline = inline_sizes.max;
@@ -3024,7 +3036,13 @@ fn compute_text_intrinsic_sizes_impl(
     }
 
     let font = doc.resolve_font(style_to_font_description(style));
-    let measure = |run: &str| intrinsic_text_width(font.width(run));
+    let shaper = openui_text::TextShaper::new();
+    let direction = if style.direction == openui_style::Direction::Rtl {
+        openui_text::TextDirection::Rtl
+    } else {
+        openui_text::TextDirection::Ltr
+    };
+    let measure = |run: &str| intrinsic_text_width(shaper.shape(run, &font, direction).width);
     let forced_lines = processed.split('\n');
     let max_content = forced_lines
         .clone()
@@ -4020,10 +4038,10 @@ mod tests {
     }
 
     #[test]
-    fn intrinsic_text_width_normalizes_backend_roundoff_at_layout_unit_boundaries() {
+    fn intrinsic_text_width_preserves_positive_remainders_at_layout_unit_boundaries() {
         assert_eq!(
             intrinsic_text_width(208.000_396_729),
-            LayoutUnit::from_i32(208)
+            LayoutUnit::from_raw(208 * 64 + 1)
         );
         assert_eq!(
             intrinsic_text_width(48.01),

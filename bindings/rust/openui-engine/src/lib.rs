@@ -2562,9 +2562,9 @@ mod tests {
                 .set_property(
                     root,
                     StyleProperty::FontFamily,
-                    StyleValue::Renderer(RendererStyleValue::FontFamily(
-                        FontFamilyList::single("Ahem"),
-                    )),
+                    StyleValue::Renderer(RendererStyleValue::FontFamily(FontFamilyList::single(
+                        "Ahem",
+                    ))),
                 )
                 .unwrap();
             engine
@@ -2587,13 +2587,21 @@ mod tests {
             assert_eq!(initial.width, 80.015625, "scale={scale} initial");
             for (indent, expected) in [(20.0, 100.015625), (28.0, 108.015625)] {
                 engine
-                    .set_property(root, StyleProperty::TextIndent, LengthValue::px(indent).into())
+                    .set_property(
+                        root,
+                        StyleProperty::TextIndent,
+                        LengthValue::px(indent).into(),
+                    )
                     .unwrap();
                 let bounds = engine.bounds(absolute).unwrap().unwrap();
                 assert_eq!(bounds.width, expected, "scale={scale} indent={indent}");
             }
             engine
-                .set_property(absolute, StyleProperty::TextIndent, LengthValue::px(0.0).into())
+                .set_property(
+                    absolute,
+                    StyleProperty::TextIndent,
+                    LengthValue::px(0.0).into(),
+                )
                 .unwrap();
             assert_eq!(engine.bounds(absolute).unwrap().unwrap().width, 80.015625);
             assert_eq!(initial.width, 80.015625, "owned earlier bounds");

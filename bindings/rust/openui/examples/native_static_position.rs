@@ -101,7 +101,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let before_bounds = absolute
         .bounding_rect()?
         .ok_or("native absolute bounds required")?;
-    assert_eq!(before_bounds.width, if reset { 80.015625 } else { 100.015625 });
+    assert_eq!(
+        before_bounds.width,
+        if reset { 80.015625 } else { 100.015625 }
+    );
     let before = document.render_to_png_buffer()?;
     let calls = Rc::new(Cell::new(0));
     let callback_calls = calls.clone();
@@ -124,7 +127,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let after_bounds = absolute
         .bounding_rect()?
         .ok_or("native absolute bounds required")?;
-    assert_eq!(after_bounds.width, if reset { 80.015625 } else { 108.015625 });
+    assert_eq!(
+        after_bounds.width,
+        if reset { 80.015625 } else { 108.015625 }
+    );
     let after = document.render_to_png_buffer()?;
     // Exercise the public typed line-height setter as well as the generic
     // property transport. Percentages compute on the parent before inheritance.
