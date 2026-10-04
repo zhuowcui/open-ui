@@ -1292,6 +1292,110 @@ mod tests {
     }
 
     #[test]
+    fn native_fieldset_intrinsics_keep_natural_image_width_before_percentage_height() {
+        use openui_geometry::Length;
+        use openui_style::{Border, BorderStyle, BoxSizing, Color, LineHeight};
+
+        const PNG: &[u8] = include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp20/",
+            "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe.png"
+        ));
+        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+            for tag in ["div", "fieldset"] {
+                let document = Document::with_font_collection(
+                    ViewportMetrics::from_logical_size(800.0, 600.0, scale).unwrap(),
+                    FontCollection::deterministic_test(),
+                )
+                .unwrap();
+                let root = document.body();
+                root.set_line_height(LineHeight::Number(1.0)).unwrap();
+                let resource = document
+                    .register_image_resource(
+                        "native-green-image",
+                        "image/png",
+                        "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
+                        PNG.to_vec(),
+                    )
+                    .unwrap();
+                let container = Element::create(&document, tag).unwrap();
+                container.set_display(Display::Block).unwrap();
+                container
+                    .set_width(LengthValue::Computed(Length::fit_content()))
+                    .unwrap();
+                container.set_height(LengthValue::px(100.0)).unwrap();
+                container.set_box_sizing(BoxSizing::ContentBox).unwrap();
+                let border = || Border {
+                    width: 0,
+                    style: BorderStyle::None,
+                    color: Color::BLACK,
+                };
+                container.set_border_top(border()).unwrap();
+                container.set_border_right(border()).unwrap();
+                container.set_border_bottom(border()).unwrap();
+                container.set_border_left(border()).unwrap();
+                container.set_margin_top(LengthValue::px(0.0)).unwrap();
+                container.set_margin_right(LengthValue::px(0.0)).unwrap();
+                container.set_margin_bottom(LengthValue::px(0.0)).unwrap();
+                container.set_margin_left(LengthValue::px(0.0)).unwrap();
+                container.set_padding_top(LengthValue::px(0.0)).unwrap();
+                container.set_padding_right(LengthValue::px(0.0)).unwrap();
+                container.set_padding_bottom(LengthValue::px(0.0)).unwrap();
+                container.set_padding_left(LengthValue::px(0.0)).unwrap();
+                root.append_child(&container).unwrap();
+                let image = Element::create(&document, "img").unwrap();
+                image.set_display(Display::Inline).unwrap();
+                image.set_height(LengthValue::percent(100.0)).unwrap();
+                image
+                    .set_image_resource(resource, Some((200.0, 200.0)))
+                    .unwrap();
+                container.append_child(&image).unwrap();
+                // Pinned Chromium keeps the anonymous fieldset content's
+                // block-size indefinite during intrinsic measurement. Its
+                // natural 200px contribution differs from the div's 100px
+                // transferred contribution, while both displayed images are
+                // 100px wide after layout resolves their percentage height.
+                let before = container.bounding_rect().unwrap().unwrap();
+                let before_image = image.bounding_rect().unwrap().unwrap();
+                assert_eq!(before.width, if tag == "fieldset" { 200.0 } else { 100.0 });
+                assert_eq!(before.height, 100.0);
+                assert_eq!(before_image.width, 100.0);
+                assert_eq!(before_image.height, 100.0);
+
+                let calls = Rc::new(Cell::new(0));
+                let observed = calls.clone();
+                let target = container.downgrade();
+                container
+                    .on("click", move |_| {
+                        target
+                            .upgrade()
+                            .unwrap()
+                            .set_height(LengthValue::px(150.0))
+                            .unwrap();
+                        observed.set(observed.get() + 1);
+                    })
+                    .unwrap();
+                container.click().unwrap();
+                let after = container.bounding_rect().unwrap().unwrap();
+                let after_image = image.bounding_rect().unwrap().unwrap();
+                assert_eq!(calls.get(), 1);
+                assert_eq!(after.width, if tag == "fieldset" { 200.0 } else { 150.0 });
+                assert_eq!(after.height, 150.0);
+                assert_eq!(after_image.width, 150.0);
+                assert_eq!(after_image.height, 150.0);
+                assert_eq!(before.width, if tag == "fieldset" { 200.0 } else { 100.0 });
+                assert_eq!(before_image.width, 100.0);
+                let weak = image.downgrade();
+                drop(image);
+                drop(container);
+                drop(root);
+                drop(document);
+                assert!(weak.upgrade().is_none());
+            }
+        }
+    }
+
+    #[test]
     fn explicit_raster_policy_survives_native_mutations_resize_and_owned_scenes() {
         for policy in [
             RasterConfiguration::default(),
