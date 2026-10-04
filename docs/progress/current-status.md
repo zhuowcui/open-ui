@@ -82,8 +82,11 @@ The combined `4dd50621` repair completes all six fresh build stages and passes
 935 native Rust/C geometry/image states and both raster gates. All 885 previous
 states retain their geometry, callbacks and pixels. The already-scrolled C
 check recovers all ten geometry/image failures; all shared Rust/C states agree.
-Its earlier generated-inventory failure is retained. Complete original and
-expanded censuses are running. The inherited clip regressions remain open.
+Its earlier generated-inventory failure is retained. Both complete censuses
+finish with actual exits 1: 21,341/22,924 original and 22,144/23,728 expanded
+exact, zero errors, with 881 residual original IDs. Six comparisons lose
+exactness against `cf59ea29` and five against the applied umbrella. All Chromium
+inputs and 804 addition results remain unchanged. Those losses prevent promotion.
 The source patches remain reviewable,
 unapplied and unqualified, with no new release states admitted. Broader native
 API coverage, transform/fragmentation paths and full rendering remain open.
@@ -99,10 +102,24 @@ switch at 1.5. Applying an analytic paint clip to both paths repeats coverage
 on the composited path. A two-child native C reduction gains seven exact
 images at 1.25 but loses four at 1.5; all 70 geometry states agree. The separate
 `b6a62a9b` candidate restores the high-DPI hard clip and adds a consuming Rust
-example. Its ten read-only checks pass; its fresh build and pixel checks are
-queued after the current complete censuses. Opaque scrolling chunks and direct
-compositing reasons below the threshold still need retained ownership.
-The candidate remains unapplied and unqualified.
+example. Seven fresh build stages pass, including 8,538 workspace tests; ten
+read-only checks, 935 existing native states and 70 new Rust/C states pass.
+The focused matrix is 640/640 exact, but the primitive gate fails at 952/960,
+with eight new gradient failures at 1.5 scale. The wider 44-case selection is
+108/176 exact and retains one earlier exact loss in multicolumn scrolling.
+Complete censuses were not started after the primitive failure.
+
+The [latest investigation](../renderer/generated/native-scroll-insets-v11.json)
+finds two shared gaps: child trailing margins are missing from native scroll
+extents, and the high-DPI clip policy was applied to an `auto` box that has no
+scroll transform. Seventy fresh Chromium metric captures and five compositor
+captures preserve their immutable image references. The clean `45ddeee3`
+follow-up retains the missing margins and uses reachable scroll geometry for
+both paint translation and clip ownership. Its ten read-only checks pass;
+fresh build and pixel qualification remain open. The earlier test compile
+failure is preserved. Opaque scrolling chunks, collapsed margins and complete
+property spaces still need work. The private candidates remain unapplied and
+unqualified.
 
 ## Verified repository state
 

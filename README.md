@@ -195,13 +195,23 @@ viewport-fixed controls on an already-scrolled page.
 The combined `4dd50621` repair passes all six fresh build stages, 8,538 workspace
 tests, ten read-only checks, all 935 native Rust/C geometry/image states and
 both raster gates. It preserves all 885 earlier states and recovers all ten
-fixed-control failures. Its complete original/expanded censuses are running.
+fixed-control failures. Its complete censuses finish at 21,341/22,924 original
+and 22,144/23,728 expanded exact, zero errors, actual exits 1. Six comparisons
+lose exactness against `cf59ea29` and five against the applied umbrella; all
+Chromium inputs and 804 addition results remain unchanged.
 The included scroll-edge change at `c5769f2d` repairs the two earlier exact
 losses in a 144-comparison selection, but introduces three new exact losses
 against `dac78e25` at 1.5 scale. That blocks promotion; reduced results do not
 establish a complete census result.
 Reviewable source patches are retained; these private changes
 remain unapplied and unqualified, and no new release passes are admitted.
+
+The [new scroll investigation](docs/renderer/generated/native-scroll-insets-v11.json)
+records a missing native trailing-margin extent and a clip policy applied to
+an `auto` box without a scroll transform. The high-DPI candidate passes its
+native consumers and focused matrix, but fails eight primitive comparisons.
+A clean Rust follow-up is implemented and awaits its own build and pixel
+results. It remains unapplied and unqualified.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU

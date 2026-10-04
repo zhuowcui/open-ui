@@ -43,11 +43,34 @@ paint-offset space belongs to the compositor.
 Chromium's exact release-tag source confirms that its text policy stops
 strongly preferring LCD text at DPR 1.5, allowing ordinary user-scrollable
 contents to be composited. CPU replay must preserve this clip ownership without
-implicitly selecting a GPU backend. The private `b6a62a9b` correction and its
-public Rust consumer await a fresh build and pixel qualification. Ten read-only
-checks pass. Opaque scrolling paint chunks and direct compositing reasons can
+implicitly selecting a GPU backend. The private `b6a62a9b` correction completes
+seven fresh build stages, with 8,538 workspace tests and ten read-only checks
+passing. All 935 existing native states and 70 new Rust/C states are exact.
+The focused matrix passes 640/640, but the primitive matrix fails at 952/960:
+eight gradient images lose exactness at 1.5 scale. Its 44-case selection is
+108/176 exact and retains one earlier exact loss in multicolumn scrolling.
+Complete censuses were not started after the primitive failure. Opaque
+scrolling paint chunks and direct compositing reasons can
 also composite below the threshold and remain unfinished ownership work.
 No test ID, output-pixel correction or changed reference is used.
+
+The [next evidence](../renderer/generated/native-scroll-insets-v11.json) records
+two shared causes. Native scroll dimensions omit a child's trailing margin:
+eight of sixteen public C queries return a height of 300 instead of Chromium's
+320. Separately, five fresh captures of a non-overflowing `auto` box reproduce
+the immutable Chromium images and show no element scroll transform at any
+scale. That box's clip remains in paint; the high-DPI policy cannot be selected
+from authored overflow alone.
+
+Clean `45ddeee3` retains child margins in scroll extents and shares reachable
+scroll geometry between paint translation and clip ownership. Its public Rust
+consumer reads owned metrics for one or two children, and a native mutation
+regression checks margin growth, shrinkage and offset clamping. Ten read-only
+checks pass; its fresh build and pixel qualification remain open. The earlier
+compile failure at `2cc6b8d5` is retained. The
+[source patch](../renderer/evidence/native-scroll-clip-range-v1/native-scroll-clip-range-v1.patch)
+remains unapplied. Collapsed margins, low-DPI opaque paint chunks and complete
+property-space ownership still need implementation and native checks.
 
 
 ## Private scroll margin and padding qualification
@@ -178,8 +201,11 @@ All 935 native Rust/C geometry/image states are exact. All 885 previous states
 retain their geometry, callbacks and image bytes; the already-scrolled C check
 recovers ten geometry and ten image matches without loss. Rust and C agree on
 all shared states. Both raster gates pass with all 1,600 comparison invariants
-unchanged. Complete original and expanded censuses are running; the inherited
-scroll-edge regressions remain open.
+unchanged. Both complete censuses now finish with actual exits 1:
+21,341/22,924 original and 22,144/23,728 expanded exact, zero errors. There are
+881 residual original IDs. Six comparisons lose exactness against `cf59ea29`
+and five against the applied umbrella; all Chromium inputs and 804 addition
+results remain unchanged. Those regressions prevent promotion.
 
 These private patches remain unapplied and unqualified; no new cases are
 admitted as release passes. General clip intersections, broader transformed,

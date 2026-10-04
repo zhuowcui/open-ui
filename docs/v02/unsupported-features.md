@@ -74,11 +74,19 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   The combined `4dd50621` fix passes 8,538 workspace tests, ten read-only checks,
   all 935 native Rust/C geometry/image states and both raster gates. All 885
   earlier states stay unchanged; all ten fixed-control failures are repaired.
-  Its original and expanded censuses are running. The included `c5769f2d`
+  Its original/expanded censuses finish at 21,341/22,924 and 22,144/23,728 exact,
+  zero errors, actual exits 1. Six exact matches are lost against `cf59ea29`
+  and five against the applied umbrella; all Chromium inputs and 804 addition
+  results stay unchanged. The included `c5769f2d`
   scroll-edge change repairs two earlier exact losses in a 144-comparison
   selection, but introduces three new exact losses against `dac78e25` at
   1.5 scale. Those paint-owned regressions prevent promotion. Both complete
   clip censuses preserve every `dac78e25` result, including its two exact losses.
+  The [later scroll investigation](../renderer/generated/native-scroll-insets-v11.json)
+  also finds missing native trailing-margin extents and eight primitive
+  regressions from assigning compositor clip ownership to a non-overflowing
+  `auto` box. The shared Rust correction awaits its own build and pixel gates.
+  Collapsed margins and opaque scrolling paint-chunk ownership remain open.
   The patches remain unapplied and unqualified;
 - two live legacy contour calibration paths must be replaced by general
   raster behavior and checked against Chromium without sample corrections;

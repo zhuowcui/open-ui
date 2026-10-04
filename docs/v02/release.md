@@ -84,8 +84,11 @@ in bounds and pixels. Its ten failures have Engine/paint ownership. The
 combined `4dd50621` patch now passes six fresh build stages, 8,538 workspace
 tests, ten read-only checks, all 935 native Rust/C geometry/image states and
 both raster gates. All 885 previous states remain unchanged, and the C check
-recovers all ten fixed-control failures without loss. Complete original and
-expanded censuses are running. Its included `c5769f2d` scroll-edge change
+recovers all ten fixed-control failures without loss. Complete censuses finish
+at 21,341/22,924 original and 22,144/23,728 expanded exact, zero errors, actual
+exits 1. Six comparisons lose exactness against `cf59ea29` and five against the
+applied umbrella; all Chromium inputs and 804 addition results stay unchanged.
+Its included `c5769f2d` scroll-edge change
 repairs the two old exact losses in a reduced 144-comparison selection, but
 introduces three exact losses against `dac78e25` at 1.5 scale. That selection
 finishes 85/144 exact, 59 different, zero errors, actual exit 1. It blocks
@@ -93,6 +96,16 @@ promotion and cannot establish a complete census result.
 Patches remain unapplied and unqualified;
 no new release states are admitted. Full renderer and native API gates remain
 open.
+
+The [next scroll evidence](../renderer/generated/native-scroll-insets-v11.json)
+preserves the `b6a62a9b` primitive failure: 952/960 exact, eight gradient
+regressions at 1.5 scale, actual exit 1. Its 935 existing and 70 new native
+states and 640 focused comparisons are exact. The reduced 176-comparison run
+retains one earlier multicolumn exact loss and cannot qualify a complete census.
+Pinned Chromium inspection confirms a missing native trailing-margin extent
+and a non-overflowing `auto` box whose clip stays in paint. A clean shared Rust
+correction is implemented; its own build and pixel gates remain open. No
+reference bytes, tolerance or required gate changed.
 
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
