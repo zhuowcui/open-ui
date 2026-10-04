@@ -69,7 +69,7 @@ exact but two lose exactness: an unscrolled scrollport's trailing coverage
 changes after the new screen snap. Both losses have paint ownership. The
 correction remains unapplied and cannot be promoted with those regressions.
 
-The [latest evidence](../renderer/generated/native-scroll-insets-v8.json) records
+The [latest evidence](../renderer/generated/native-scroll-insets-v9.json) records
 two separate follow-ups. Clean `cf59ea29` skips a redundant rectangular mask
 when a compatible child clip contains the existing parent clip. The tighter
 vector clip remains active; effects, rounded clips, transforms and scroll
@@ -103,8 +103,8 @@ Clean `2cc950e0` now completes all six fresh build steps, with 8,537 workspace
 tests passing, zero failures and 13 ignored. All 20 C and 30 Rust new states
 match Chromium; all 660 prior Rust/C states retain every image byte, geometry
 state and callback count. The C viewport check gains five geometry and five
-pixel matches with no exact losses. Ten read-only checks pass. Its two raster
-gates are still running. The
+pixel matches with no exact losses. Ten read-only checks and both raster
+gates pass with all 1,600 comparison invariants unchanged. The
 [source patch](../renderer/evidence/native-reveal-root-v1/native-reveal-root-v1.patch)
 and [C reproducer](../renderer/evidence/native-reveal-root-v1/native-reveal-root.c)
 remain reviewable and unapplied.
@@ -120,9 +120,22 @@ inferred before its build and pixel checks.
 
 The [scroll-edge prototype](../renderer/evidence/native-scroll-clip-v1/native-scroll-clip-v1.patch)
 at clean `c5769f2d` retains partial scrollport-edge coverage for `overflow: scroll`
-at fractional scale, matching the pinned Chromium clip conversion's use of
-analytic coverage. Ten read-only checks pass; it has not been compiled or
-compared, so the two known exact losses remain open.
+at fractional scale. Its five fresh build stages pass, with 8,532 workspace
+tests, zero failures and 13 ignored. Ten read-only checks, all 685 native
+geometry/image states and both raster gates pass unchanged. The reduced
+144-comparison selection repairs the two earlier exact losses but introduces
+three new exact losses against `dac78e25` at 1.5 scale. It finishes 85/144
+exact, 59 different, zero errors, actual exit 1. Applying an analytic mask
+through direct scroll replay does not fully reproduce Chromium's transform
+and clip conversion. The three failures have paint ownership and prevent
+promotion; this selection cannot establish a complete census result.
+
+A separate [small native C consumer](../renderer/evidence/native-scroll-clip-v1/native-scroll-edge.c)
+reduces the edge investigation to two scroll boxes, seven integer/fractional
+positions and five scales. Its two captured native builds give 140/140 exact
+geometry states and 90/140 exact images against identical fresh Chromium
+repeats. All native operations and owned teardowns pass. These remain
+diagnostic failures under paint ownership; no release states are admitted.
 
 The [combined viewport-fixed prototype](../renderer/evidence/native-viewport-fixed-v1/native-viewport-fixed-v1.patch)
 at clean `4dd50621` shares fixed-containing-block ownership between geometry
@@ -133,8 +146,14 @@ visible fixed and absolute targets on an already-scrolled page; the
 [C consumer](../renderer/evidence/native-viewport-fixed-v1/native-viewport-fixed.c)
 uses the same native Engine. This source also combines the two private clip
 changes. Ten read-only checks pass after adding two generated inventory
-consumer paths; the earlier failed check remains evidence. Compilation and
-all new pixel comparisons are pending. No repair is inferred.
+consumer paths; the earlier failed check remains evidence. All six fresh build
+stages now pass, with 8,538 workspace tests, zero failures and 13 ignored.
+All 935 native Rust/C geometry/image states are exact. All 885 previous states
+retain their geometry, callbacks and image bytes; the already-scrolled C check
+recovers ten geometry and ten image matches without loss. Rust and C agree on
+all shared states. Both raster gates pass with all 1,600 comparison invariants
+unchanged. Complete original and expanded censuses are running; the inherited
+scroll-edge regressions remain open.
 
 These private patches remain unapplied and unqualified; no new cases are
 admitted as release passes. General clip intersections, broader transformed,

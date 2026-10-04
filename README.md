@@ -167,7 +167,7 @@ All three pull-request workflows at this checkpoint pass. The separate
 [manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/37149510887)
 passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux windows,
 MSRV and all five fuzz targets. Skipped pull-request jobs remain open results.
-The [latest private scroll evidence](docs/renderer/generated/native-scroll-insets-v8.json)
+The [latest private scroll evidence](docs/renderer/generated/native-scroll-insets-v9.json)
 records complete `dac78e25` runs at 21,340/22,924 original and 22,143/23,728
 expanded exact, zero errors, with actual exits 1. Eight comparisons become exact
 but two lose exactness; the screen correction remains unapplied. The two losses
@@ -178,7 +178,9 @@ rasterization. Its C matrix now matches all 175 geometry and pixel states,
 repairing the remaining ten clip differences with no exact losses. All 510 Rust
 states and all 1,600 focused/primitive comparisons stay unchanged and exact.
 Its workspace passes 8,532 tests, zero failures and 13 ignored; ten read-only
-checks pass. Complete original and expanded runs are in progress.
+checks pass. Complete original and expanded runs finish at 21,340/22,924 and
+22,143/23,728 exact, zero errors, actual exits 1. Every comparison invariant
+agrees with `dac78e25`, including both known exact losses.
 
 The separate `6d6768a8` fixes native reveal traversal through layout containers
 and containing-block ownership when public transforms are added or removed.
@@ -186,9 +188,18 @@ All 90 Rust and 60 C geometry and pixel states match Chromium; the C test gains
 25 geometry matches and 15 pixel matches without losing an exact image.
 All 510 existing Rust states stay byte-identical. Its workspace passes 8,535
 tests, zero failures and 13 ignored, and ten read-only checks. Both raster gates
-pass with all 1,600 comparison invariants unchanged. A further 20-state check
-finds five failures: revealing an offscreen viewport-fixed element incorrectly
-scrolls the document. A separate shared fix is prepared but not compiled.
+pass with all 1,600 comparison invariants unchanged. The viewport cutoff at
+`2cc950e0` recovers five C geometry/image matches, preserving all 660 previous
+states and both raster gates. A wider check then finds ten failures for
+viewport-fixed controls on an already-scrolled page.
+The combined `4dd50621` repair passes all six fresh build stages, 8,538 workspace
+tests, ten read-only checks, all 935 native Rust/C geometry/image states and
+both raster gates. It preserves all 885 earlier states and recovers all ten
+fixed-control failures. Its complete original/expanded censuses are running.
+The included scroll-edge change at `c5769f2d` repairs the two earlier exact
+losses in a 144-comparison selection, but introduces three new exact losses
+against `dac78e25` at 1.5 scale. That blocks promotion; reduced results do not
+establish a complete census result.
 Reviewable source patches are retained; these private changes
 remain unapplied and unqualified, and no new release passes are admitted.
 

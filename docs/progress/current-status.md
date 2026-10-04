@@ -38,7 +38,7 @@ are skipped. Its separate seven-job
 passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux window
 tests, MSRV and all five fuzz targets. Complete logs and individual conclusions
 are retained. The earlier failed `d174ea0b` jobs remain historical evidence.
-The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v8.json)
+The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v9.json)
 records complete `dac78e25` original and expanded runs: 21,340/22,924 and
 22,143/23,728 exact, zero errors, observed exits 1. Eight comparisons become
 exact and two lose exactness; nine comparisons worsen in total. All Chromium
@@ -65,19 +65,25 @@ The viewport cutoff at `2cc950e0` now completes all six fresh build stages,
 with 8,537 workspace tests passing, zero failures and 13 ignored. All 20 C and
 30 Rust new geometry/image states are exact, recovering five C matches without
 loss. All 660 prior states retain their bytes, geometry and callbacks. Ten
-read-only checks pass; both raster gates are still running. A fresh check of
+read-only checks pass; both raster gates pass with all 1,600 comparison
+invariants unchanged. A fresh check of
 visible fixed controls on an already-scrolled page is only 10/20 exact: root
 scrollTop=120 wrongly moves their paint and bounds from y=180 to y=60. Absolute
 neighbors are exact. The ten failures have Engine/paint ownership and complete
 region/channel evidence; both Chromium repeats agree.
-Two further clean prototypes are reviewable: `c5769f2d` restores analytic
-fractional scrollport-edge coverage for explicit scrolling; `4dd50621` combines
-that change and compatible clip containment with viewport-fixed paint, bounds
-and hit-test ownership. Both pass ten read-only checks. The combined source
-adds an already-scrolled Rust consumer and a native C check; its earlier
-generated-inventory failure is retained and its two consumer paths are updated.
-Both are uncompiled, with pixels unverified. Serial build/image verification
-is queued; the existing failures remain open.
+Clean `c5769f2d` completes five fresh build stages and passes 8,532 workspace
+tests, ten read-only checks, 685 native geometry/image states and both raster
+gates. Its 144-comparison selection repairs the two earlier exact losses, but
+introduces three new exact losses against `dac78e25` at 1.5 scale. It finishes
+85/144 exact, 59 different, zero errors, actual exit 1. The three losses have
+paint ownership and prevent promotion. This selection is incomplete.
+The combined `4dd50621` repair completes all six fresh build stages and passes
+8,538 workspace tests, zero failures and 13 ignored, ten read-only checks,
+935 native Rust/C geometry/image states and both raster gates. All 885 previous
+states retain their geometry, callbacks and pixels. The already-scrolled C
+check recovers all ten geometry/image failures; all shared Rust/C states agree.
+Its earlier generated-inventory failure is retained. Complete original and
+expanded censuses are running. The inherited clip regressions remain open.
 The source patches remain reviewable,
 unapplied and unqualified, with no new release states admitted. Broader native
 API coverage, transform/fragmentation paths and full rendering remain open.

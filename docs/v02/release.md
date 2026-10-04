@@ -55,7 +55,7 @@ passes all seven jobs: both sanitizers, Miri, C UBSan, MSRV, Linux windows and
 all five fuzz targets. The full renderer, needed native API, hardware and
 publication gates remain open.
 
-The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v8.json)
+The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v9.json)
 records complete `dac78e25` runs at 21,340/22,924 original and 22,143/23,728
 expanded exact, zero errors, with actual exits 1. Eight become exact and two lose
 exactness; the screen correction remains unapplied pending repair of both
@@ -77,11 +77,20 @@ read-only checks. Its raster gates pass with all 1,600 comparison invariants
 unchanged. The viewport cutoff at `2cc950e0` now passes all six fresh build
 stages, 8,537 workspace tests, ten read-only checks and all 20 C/30 Rust new
 states. It preserves all 660 previous states and recovers five C matches with
-zero loss; its raster gates are still running. An already-scrolled viewport
+zero loss; both raster gates pass with all 1,600 comparison invariants unchanged.
+An already-scrolled viewport
 check remains 10/20 exact: fixed controls wrongly move with document scroll
 in bounds and pixels. Its ten failures have Engine/paint ownership. The
-combined `4dd50621` patch is prepared and passes read-only checks, but remains
-uncompiled and pixel-unverified. Patches remain unapplied and unqualified;
+combined `4dd50621` patch now passes six fresh build stages, 8,538 workspace
+tests, ten read-only checks, all 935 native Rust/C geometry/image states and
+both raster gates. All 885 previous states remain unchanged, and the C check
+recovers all ten fixed-control failures without loss. Complete original and
+expanded censuses are running. Its included `c5769f2d` scroll-edge change
+repairs the two old exact losses in a reduced 144-comparison selection, but
+introduces three exact losses against `dac78e25` at 1.5 scale. That selection
+finishes 85/144 exact, 59 different, zero errors, actual exit 1. It blocks
+promotion and cannot establish a complete census result.
+Patches remain unapplied and unqualified;
 no new release states are admitted. Full renderer and native API gates remain
 open.
 

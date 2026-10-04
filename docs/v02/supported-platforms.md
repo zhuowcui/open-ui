@@ -23,6 +23,12 @@ native Rust. The public `openui` crate exposes retained `Document` and
 `Element` handles and Rust event callbacks. C applications use the versioned
 C ABI over the same engine.
 
+The consuming application calls Rust methods to look up elements, change
+their state, read their geometry, and handle input. Every needed equivalent
+of a browser element operation must have a public native Rust API. The
+framework must implement any missing operation and verify it from a native
+application before claiming that behavior is complete.
+
 Element operations do not require JavaScript. Browsers expose them through
 JavaScript; Open UI exposes them through native Rust. When a native application
 needs that behavior, Open UI must implement it in the shared
@@ -209,7 +215,9 @@ the separate test oracle. Offline qualification tooling may read Chromium's
 WPT scripts as source data to identify a deterministic final visual state;
 Open UI constructs that state with native Rust operations. The script is input
 to offline qualification tooling only; no script is shipped to or executed by
-Open UI. Needed element behaviors become native Rust APIs, not script bindings.
+Open UI. The separate capture tools may run JavaScript inside Chromium to
+prepare its reference images. Application behavior always uses public native
+Rust methods and Rust callbacks.
 
 ## Deferred
 

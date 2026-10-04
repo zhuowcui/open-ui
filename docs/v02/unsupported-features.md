@@ -62,16 +62,22 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   C matrix has ten static nested-clip failures among 175 states. Its complete
   censuses now finish at 21,340/22,924 original and 22,143/23,728 expanded exact,
   with two exact losses preventing promotion. The
-  [latest separate candidates](../renderer/generated/native-scroll-insets-v8.json)
+  [latest separate candidates](../renderer/generated/native-scroll-insets-v9.json)
   repair all ten C clip failures at `cf59ea29` while preserving all 510 Rust and
   1,600 raster comparisons, and fix native absolute/fixed reveal traversal and
   transform containing blocks at `6d6768a8`, with 90/90 Rust and 60/60 C states
   exact and all 510 existing Rust states unchanged. Its 1,600 raster comparison
   invariants also stay unchanged and exact. The viewport cutoff `2cc950e0`
   now passes 8,537 workspace tests and all 20 C/30 Rust new states, preserving
-  all 660 earlier states. Its raster gates remain running. An already-scrolled
+  all 660 earlier states. Both raster gates pass unchanged. An already-scrolled
   page still moves fixed controls in bounds and paint: 10/20 states are exact.
-  The combined `4dd50621` fix is uncompiled and pixel-unverified. Both complete
+  The combined `4dd50621` fix passes 8,538 workspace tests, ten read-only checks,
+  all 935 native Rust/C geometry/image states and both raster gates. All 885
+  earlier states stay unchanged; all ten fixed-control failures are repaired.
+  Its original and expanded censuses are running. The included `c5769f2d`
+  scroll-edge change repairs two earlier exact losses in a 144-comparison
+  selection, but introduces three new exact losses against `dac78e25` at
+  1.5 scale. Those paint-owned regressions prevent promotion. Both complete
   clip censuses preserve every `dac78e25` result, including its two exact losses.
   The patches remain unapplied and unqualified;
 - two live legacy contour calibration paths must be replaced by general
