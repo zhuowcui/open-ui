@@ -55,7 +55,7 @@ passes all seven jobs: both sanitizers, Miri, C UBSan, MSRV, Linux windows and
 all five fuzz targets. The full renderer, needed native API, hardware and
 publication gates remain open.
 
-The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v7.json)
+The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v8.json)
 records complete `dac78e25` runs at 21,340/22,924 original and 22,143/23,728
 expanded exact, zero errors, with actual exits 1. Eight become exact and two lose
 exactness; the screen correction remains unapplied pending repair of both
@@ -74,12 +74,16 @@ blocks created or removed through public transforms. All 90 Rust and 60 C
 geometry/image states match Chromium; the 510 existing Rust states retain all
 pixels, geometry and callbacks. Its workspace passes 8,535 tests and ten
 read-only checks. Its raster gates pass with all 1,600 comparison invariants
-unchanged. A wider 20-state check remains 15/20 exact because viewport-fixed
-reveal wrongly moves the document at all five scales. The Engine fix at
-`2cc950e0` is prepared and passes ten read-only checks; its fresh build is in
-progress after both clip censuses terminated, with pixels pending. Reviewable patches remain
-unapplied and unqualified; no new release cases are admitted. Broader native
-API coverage, transform/fragmentation paths and full qualification remain open.
+unchanged. The viewport cutoff at `2cc950e0` now passes all six fresh build
+stages, 8,537 workspace tests, ten read-only checks and all 20 C/30 Rust new
+states. It preserves all 660 previous states and recovers five C matches with
+zero loss; its raster gates are still running. An already-scrolled viewport
+check remains 10/20 exact: fixed controls wrongly move with document scroll
+in bounds and pixels. Its ten failures have Engine/paint ownership. The
+combined `4dd50621` patch is prepared and passes read-only checks, but remains
+uncompiled and pixel-unverified. Patches remain unapplied and unqualified;
+no new release states are admitted. Full renderer and native API gates remain
+open.
 
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.

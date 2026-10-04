@@ -69,7 +69,7 @@ exact but two lose exactness: an unscrolled scrollport's trailing coverage
 changes after the new screen snap. Both losses have paint ownership. The
 correction remains unapplied and cannot be promoted with those regressions.
 
-The [latest evidence](../renderer/generated/native-scroll-insets-v7.json) records
+The [latest evidence](../renderer/generated/native-scroll-insets-v8.json) records
 two separate follow-ups. Clean `cf59ea29` skips a redundant rectangular mask
 when a compatible child clip contains the existing parent clip. The tighter
 vector clip remains active; effects, rounded clips, transforms and scroll
@@ -97,19 +97,26 @@ checks. Both raster gates pass with every comparison invariant unchanged. The
 and [C consumer](../renderer/evidence/native-reveal-containers-v1/native-reveal-containers.c)
 are reviewable.
 
-A wider viewport test checks fixed and absolute targets outside a scrollable
-document's viewport at five scales. Only 15/20 geometry/image states are exact:
-native reveal wrongly scrolls the document by 280 CSS pixels for the fixed
-target, moving its bounds from y=500 to y=220. Chromium keeps both unchanged.
-The neighboring absolute-target case is exact. All processes and owned
-teardowns pass; the five failures have Engine ownership. Clean `2cc950e0`
-prepares a shared cutoff at viewport-anchored fixed boxes while preserving
-their own scrollports and root transform/containment cases. The
+A wider viewport test first exposed five Engine failures on `6d6768a8`:
+revealing an offscreen fixed target incorrectly moved the document and target.
+Clean `2cc950e0` now completes all six fresh build steps, with 8,537 workspace
+tests passing, zero failures and 13 ignored. All 20 C and 30 Rust new states
+match Chromium; all 660 prior Rust/C states retain every image byte, geometry
+state and callback count. The C viewport check gains five geometry and five
+pixel matches with no exact losses. Ten read-only checks pass. Its two raster
+gates are still running. The
 [source patch](../renderer/evidence/native-reveal-root-v1/native-reveal-root-v1.patch)
 and [C reproducer](../renderer/evidence/native-reveal-root-v1/native-reveal-root.c)
-are reviewable. Ten read-only checks pass; compilation and pixel qualification
-are pending, so no repair is inferred. Fresh Cargo is now in progress after
-both complete clip image censuses terminated.
+remain reviewable and unapplied.
+
+A fresh already-scrolled check is only 10/20 exact on that source. With root
+scrollTop=120, a viewport-fixed control authored at y=180 wrongly paints and
+reports bounds at y=60; Chromium keeps it at y=180. The absolute neighbor is
+exact. Both fresh Chromium repeats agree; all native processes, callbacks and
+owned teardowns pass. All ten failures retain connected regions, channel
+deltas and five-scale behavior, with Engine/paint ownership. The following
+combined prototype addresses that broader transform ownership; no repair is
+inferred before its build and pixel checks.
 
 The [scroll-edge prototype](../renderer/evidence/native-scroll-clip-v1/native-scroll-clip-v1.patch)
 at clean `c5769f2d` retains partial scrollport-edge coverage for `overflow: scroll`
