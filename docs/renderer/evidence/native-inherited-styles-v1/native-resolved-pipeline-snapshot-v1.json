@@ -1,0 +1,27 @@
+{
+  "all_commands_terminal": false,
+  "build_receipt_sha256": "47bbe3450dc413505ef55b855f8cd62eebf68e341529a4e264ede6d05b3502d1",
+  "new_release_states_admitted": 0,
+  "probe_sha256": "3eeb5fe9e707d0c896e792ffa9d9b91fcab7a62c137489ce7aab5fc3661ace36",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "5cc75147b89e74198102314657689ab6bec1f77c",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "ede290a86642a93227b44509da846fc2b22821f235129c93c8d79d54c6a0f5ff",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "5cc75147b89e74198102314657689ab6bec1f77c",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "ede290a86642a93227b44509da846fc2b22821f235129c93c8d79d54c6a0f5ff",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "awaiting-relative-and-focused-terminal-reports",
+  "static_consumer_all_images_exact": false,
+  "static_consumer_receipt_sha256": "99afaf711b8e1df30ed72f3cba48471a4c40c634c89887309c281d1fa91c2fd2",
+  "steps": []
+}

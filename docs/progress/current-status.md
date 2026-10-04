@@ -24,7 +24,7 @@ candidates remain unapplied.
 Applications continue to use public native Rust methods and Rust callbacks;
 Open UI executes no JavaScript.
 
-The [native inheritance and style trials](../renderer/generated/native-scroll-insets-v20.json)
+The [native inheritance and style trials](../renderer/generated/native-scroll-insets-v21.json)
 remain separate from the accepted renderer. The earlier `f328ed62` complete
 censuses fail at 21,312/22,924 original and 22,115/23,728 expanded exact,
 losing 22 exact matches across twelve static-position tests. Its `3f1d296f`

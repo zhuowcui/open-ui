@@ -261,7 +261,7 @@ skipped hardening jobs remain unverified on this source. The margin and
 writing-mode repairs remain separate, unapplied candidates; no new full
 census or release pass is claimed.
 
-The [native inheritance and style trials](docs/renderer/generated/native-scroll-insets-v20.json)
+The [native inheritance and style trials](docs/renderer/generated/native-scroll-insets-v21.json)
 remain separate from the accepted renderer. The earlier `f328ed62` complete
 censuses fail at 21,312/22,924 original and 22,115/23,728 expanded exact,
 losing 22 exact matches across twelve static-position tests. Its `3f1d296f`
