@@ -56,10 +56,27 @@ Absolute auto widths omit inherited indentation; subpixel text advances and
 glyph painting also require review. Layout, text and paint ownership is
 recorded, with minimized inputs, repeated Chromium captures, bounds, connected
 regions and channel deltas. Failed capture probes remain separate evidence.
-Its own raster matrices and original/expanded censuses are queued or running as recorded in the versioned snapshot. Incomplete runs establish no qualification pass.
+Its own complete matrices now finish at 640/640 focused, 960/960 primitive,
+21,334/22,924 original and 22,137/23,728 expanded exact. All comparison
+invariants restore the applied baseline, including all 804 additions. Both
+complete census commands exit 1; the full pixel gate still fails.
 This candidate is unapplied and unqualified; no new release state is admitted.
 Open UI runs no JavaScript in any version. Needed interaction uses public
 native Rust methods and Rust callbacks over the shared Engine.
+
+The [intrinsic sizing follow-up](../renderer/generated/native-scroll-insets-v22.json) reviews the
+missing width behavior against 120 repeated Chromium advance observations and
+2,000 neighboring measurements at five scales. Chromium retains positive
+shaped-width remainders on its 1/64px layout grid and includes first-line
+indentation. The private source preserves both, uses shaped intrinsic text,
+and adds a consuming Rust app for 200 sizing cases. It also exposes immutable
+raster choice through native `Document`, `AppBuilder` and `HeadlessApp`
+constructors; the previous document API always used the default. Ten read-only
+checks pass. The new Engine guard fails on the retained baseline as expected.
+The fixed source's Rust tests, native comparisons and raster gates are running
+or queued in the frozen observation. No fixed-source pass, runtime promotion
+or new pixel admission is claimed. Prior snapshots and reference bytes remain
+unchanged.
 
 The umbrella now applies the shared SVG and scrolling source, including the
 capture scrollbar precedence and paint-contained clip-margin repair, and

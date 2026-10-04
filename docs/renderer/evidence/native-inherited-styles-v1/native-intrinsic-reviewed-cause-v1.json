@@ -1,0 +1,145 @@
+{
+  "artifacts": [
+    {
+      "name": "advance_queries",
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-query-v1146/receipt.json",
+      "sha256": "de1e3aef62d3460029961fb0cd6a8a59dc77c95b32a07f37eb93f0c8d949dcf8"
+    },
+    {
+      "name": "neighbors",
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-neighbors-v1147/receipt.json",
+      "sha256": "9eed6b988cc0543e6145613e23fbd676ec333cea306b5126b4464c4ccb20253d"
+    },
+    {
+      "name": "static_before_fix",
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-static-oracle-v1129/receipt.json",
+      "sha256": "99afaf711b8e1df30ed72f3cba48471a4c40c634c89887309c281d1fa91c2fd2"
+    },
+    {
+      "name": "read_only_checks",
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-checks-v1156/receipt.json",
+      "sha256": "c6579ec5c77fd861c07aec13b8463aa26ab6daa966709b2670ad4e26cce2f028"
+    }
+  ],
+  "implementation_compiled": false,
+  "implementation_tested": false,
+  "javascript_executed_by_openui": false,
+  "local_blink_source_review": {
+    "checkout_commit": "09d377d9438dc95267369f74a073acd81bdde38f",
+    "files": [
+      {
+        "matching_lines": [
+          {
+            "line": 167,
+            "text": "LayoutUnit SnappedWidth() const { return LayoutUnit::FromFloatCeil(width_); }"
+          }
+        ],
+        "path": "/home/nero/chromium/src/third_party/blink/renderer/platform/fonts/shaping/shape_result.h",
+        "sha256": "e50c79ebfe50be5d66bec042bee4d904187bae5aadbe8ac51a72699676a4816e"
+      },
+      {
+        "matching_lines": [
+          {
+            "line": 2111,
+            "text": "position += line_info.TextIndent();"
+          }
+        ],
+        "path": "/home/nero/chromium/src/third_party/blink/renderer/core/layout/inline/inline_node.cc",
+        "sha256": "d6b72f4ff24ce4dae2eb0df87f18edf4136ef32e473791a030cf51020eeee336"
+      },
+      {
+        "matching_lines": [
+          {
+            "line": 112,
+            "text": "system_style = QuerySystemRenderStyle(family, text_size,"
+          },
+          {
+            "line": 226,
+            "text": "WebFontRenderStyle FontPlatformData::QuerySystemRenderStyle("
+          },
+          {
+            "line": 234,
+            "text": "// If the font name is missing (i.e. probably a web font) or the sandbox is"
+          }
+        ],
+        "path": "/home/nero/chromium/src/third_party/blink/renderer/platform/fonts/font_platform_data.cc",
+        "sha256": "f3905ac7d26d5653b1f7d79a4efb5155ccb6a4ffe553789aecd91c96431c46e1"
+      },
+      {
+        "matching_lines": [
+          {
+            "line": 99,
+            "text": "font->setEdging(SkFont::Edging::kSubpixelAntiAlias);"
+          },
+          {
+            "line": 101,
+            "text": "font->setEdging(SkFont::Edging::kAntiAlias);"
+          },
+          {
+            "line": 103,
+            "text": "font->setEdging(SkFont::Edging::kAlias);"
+          },
+          {
+            "line": 111,
+            "text": "font->setSubpixel(force_subpixel_positioning || use_subpixel_positioning);"
+          }
+        ],
+        "path": "/home/nero/chromium/src/third_party/blink/renderer/platform/fonts/web_font_render_style.cc",
+        "sha256": "e33fefd03429d5a8bda033a3b9ad559ee51cfa1084e42aadfbd11015ea784bf5"
+      }
+    ],
+    "local_source_is_not_substituted_for_pinned_binary_observations": true
+  },
+  "native_raster_api_gap": {
+    "chromium_static_references_have_lcd_color_edges": true,
+    "default_native_author_edging": "AntiAlias",
+    "note": "Policy mismatch is established from source and retained pixels. The exact glyph paint result still requires the queued two-policy native consumer comparison; no reference is changed.",
+    "paint_owner": "openui-paint text raster policy and glyph coverage",
+    "pixel_fix_verified": false,
+    "prepared_public_api": [
+      "Document::with_options",
+      "Document::with_font_collection_and_options",
+      "Document::raster_configuration",
+      "AppBuilder::raster_configuration",
+      "HeadlessApp::with_options"
+    ],
+    "reviewed_source_fact": "Engine exposes immutable raster options; public Document, AppBuilder and HeadlessApp constructors did not expose them."
+  },
+  "new_release_states_admitted": 0,
+  "observed_chromium": {
+    "five_glyph_auto_width_css_px": 80.015625,
+    "five_glyph_canvas_advance_css_px": 80.00015258789062,
+    "font": "custom Ahem, font data and resolved font confirmed by CDP",
+    "glyph_advance_css_px": 16.000030517578125,
+    "independent_advance_observations": 120,
+    "independent_neighbor_observations": 2000,
+    "inherited_20px_indent_auto_width_css_px": 100.015625,
+    "inherited_28px_indent_auto_width_css_px": 108.015625,
+    "scales": [
+      1,
+      1.25,
+      1.5,
+      2,
+      3
+    ],
+    "screenshots_generated": 0
+  },
+  "owner": "openui-layout intrinsic sizing and openui-text shaped advances",
+  "probe_sha256": "3262d8825bfdb5c4906a0b1d4a69c78bb284565e954958979891583bf6882431",
+  "promotion_allowed": false,
+  "reference_inputs_changed": false,
+  "release_qualification": false,
+  "reviewed_root_causes": [
+    "Intrinsic width discarded positive shaped-advance remainders before LayoutUnit ceiling; Chromium retains them.",
+    "Ordinary inline sequences and element-owned native text bypassed shaped intrinsic sequence sizing, and first-line text indentation was omitted.",
+    "Intrinsic fallback used direct SkFont measurement rather than the shaped run used by inline layout."
+  ],
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "c4a74a6d9a77a6f597601370d07343f16bbe5f0a",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "65947a145d6643aa41d56c7017209397df8acb2949c2fd6fe8780f0b8e98968e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
