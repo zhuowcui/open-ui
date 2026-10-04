@@ -34,7 +34,7 @@ use openui_style::{Color, ComputedStyle, FontFamily, StyleColor, TextEmphasisMar
 use openui_text::emphasis::should_draw_emphasis_mark;
 use openui_text::shaping::ShapeResult;
 
-use crate::text_painter::to_sk_color4f;
+use crate::text_painter::{lcd_raster_origin, text_raster_configuration, to_sk_color4f};
 
 /// Emphasis font size as a fraction of the text font size.
 ///
@@ -102,7 +102,8 @@ pub fn paint_emphasis_marks(
     let color = resolve_emphasis_color(&style.text_emphasis_color, &style.color);
 
     let mut paint = Paint::default();
-    let aliased = style.raster_configuration.author_text.edging == TextEdging::Alias;
+    let settings = text_raster_configuration(style);
+    let aliased = settings.edging == TextEdging::Alias;
     paint.set_anti_alias(!aliased);
     paint.set_style(PaintStyle::Fill);
     paint.set_color4f(to_sk_color4f(&color), None::<&ColorSpace>);
@@ -131,11 +132,14 @@ pub fn paint_emphasis_marks(
         // Center the emphasis mark horizontally over the character.
         let mut mark_x = base_x + char_x + (char_advance - mark_width) / 2.0;
         let mut mark_y = baseline_y + mark_offset_y;
-        if !style.raster_configuration.author_text.subpixel_positioning {
+        if !settings.subpixel_positioning {
             let snapping = RasterSnapping::new(style.device_scale_factor);
             mark_x = snapping.logical_coordinate(mark_x, PhysicalSnap::Nearest);
             mark_y = snapping.logical_coordinate(mark_y, PhysicalSnap::Nearest);
         }
+
+        let (mark_x, mark_y) =
+            lcd_raster_origin((mark_x, mark_y), settings, style.device_scale_factor);
 
         canvas.draw_str(
             &emphasis_str,
@@ -188,7 +192,7 @@ fn create_emphasis_font(
     let first_run = shape_result.runs.first()?;
     let typeface = first_run.font_data.typeface().clone();
     let mut font = SkFont::from_typeface(typeface, size);
-    let settings = style.raster_configuration.author_text;
+    let settings = text_raster_configuration(style);
     font.set_subpixel(settings.subpixel_positioning);
     font.set_hinting(match settings.hinting {
         TextHinting::None => skia_safe::FontHinting::None,

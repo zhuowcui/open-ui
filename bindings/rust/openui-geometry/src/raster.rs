@@ -47,7 +47,9 @@ pub struct TextRasterConfiguration {
     pub hinting: TextHinting,
     pub subpixel_positioning: bool,
     pub force_autohint: bool,
-    /// Horizontal LCD phase in 1/64 physical pixel units.
+    /// Horizontal LCD raster-origin offset in 1/64 physical pixel units.
+    /// Applies to subpixel-antialiased glyph ink, independently of logical
+    /// advances, layout boxes and hit testing. Zero leaves the origin unchanged.
     pub lcd_phase_64ths: i16,
 }
 
