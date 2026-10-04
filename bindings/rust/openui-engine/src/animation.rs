@@ -585,6 +585,9 @@ impl Engine {
                 ),
             )
             .map_err(|_| EngineError::PropertyType { property })?;
+        if property.metadata().inherited {
+            self.refresh_inherited_descendants(node)?;
+        }
         self.dirty.hit_test = true;
         self.mark_dirty(property.metadata().invalidation);
         Ok(())
