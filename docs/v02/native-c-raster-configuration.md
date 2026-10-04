@@ -18,6 +18,12 @@ structures. It has not yet been compiled or exercised by consuming
 applications. The umbrella branch still has 113 exports. This candidate has
 117, preserving every preceding export and all 30 existing layouts.
 
+The later [shared raster-field candidate](../renderer/native-raster-configuration-fields.md)
+prepares actual paint behavior for phase and Fontations settings over this
+same configuration. It remains uncompiled and unapplied. Its native Rust
+consumer and complete pixel gates are queued; the C transport alone does not
+complete the renderer or public API behavior.
+
 | Operation | C API |
 |---|---|
 | Initialize an explicit raster preset | `oui_raster_configuration_init_v1` |

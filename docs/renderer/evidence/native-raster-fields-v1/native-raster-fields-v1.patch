@@ -1,0 +1,951 @@
+diff --git a/bindings/rust/openui-geometry/src/raster.rs b/bindings/rust/openui-geometry/src/raster.rs
+index 8644d68d..b0f19011 100644
+--- a/bindings/rust/openui-geometry/src/raster.rs
++++ b/bindings/rust/openui-geometry/src/raster.rs
+@@ -47,7 +47,9 @@ pub struct TextRasterConfiguration {
+     pub hinting: TextHinting,
+     pub subpixel_positioning: bool,
+     pub force_autohint: bool,
+-    /// Horizontal LCD phase in 1/64 physical pixel units.
++    /// Horizontal LCD raster-origin offset in 1/64 physical pixel units.
++    /// Applies to subpixel-antialiased glyph ink, independently of logical
++    /// advances, layout boxes and hit testing. Zero leaves the origin unchanged.
+     pub lcd_phase_64ths: i16,
+ }
+ 
+diff --git a/bindings/rust/openui-paint/src/emphasis_painter.rs b/bindings/rust/openui-paint/src/emphasis_painter.rs
+index 07eccef5..652bc5af 100644
+--- a/bindings/rust/openui-paint/src/emphasis_painter.rs
++++ b/bindings/rust/openui-paint/src/emphasis_painter.rs
+@@ -34,7 +34,7 @@ use openui_style::{Color, ComputedStyle, FontFamily, StyleColor, TextEmphasisMar
+ use openui_text::emphasis::should_draw_emphasis_mark;
+ use openui_text::shaping::ShapeResult;
+ 
+-use crate::text_painter::to_sk_color4f;
++use crate::text_painter::{lcd_raster_origin, text_raster_configuration, to_sk_color4f};
+ 
+ /// Emphasis font size as a fraction of the text font size.
+ ///
+@@ -102,7 +102,8 @@ pub fn paint_emphasis_marks(
+     let color = resolve_emphasis_color(&style.text_emphasis_color, &style.color);
+ 
+     let mut paint = Paint::default();
+-    let aliased = style.raster_configuration.author_text.edging == TextEdging::Alias;
++    let settings = text_raster_configuration(style);
++    let aliased = settings.edging == TextEdging::Alias;
+     paint.set_anti_alias(!aliased);
+     paint.set_style(PaintStyle::Fill);
+     paint.set_color4f(to_sk_color4f(&color), None::<&ColorSpace>);
+@@ -131,12 +132,15 @@ pub fn paint_emphasis_marks(
+         // Center the emphasis mark horizontally over the character.
+         let mut mark_x = base_x + char_x + (char_advance - mark_width) / 2.0;
+         let mut mark_y = baseline_y + mark_offset_y;
+-        if !style.raster_configuration.author_text.subpixel_positioning {
++        if !settings.subpixel_positioning {
+             let snapping = RasterSnapping::new(style.device_scale_factor);
+             mark_x = snapping.logical_coordinate(mark_x, PhysicalSnap::Nearest);
+             mark_y = snapping.logical_coordinate(mark_y, PhysicalSnap::Nearest);
+         }
+ 
++        let (mark_x, mark_y) =
++            lcd_raster_origin((mark_x, mark_y), settings, style.device_scale_factor);
++
+         canvas.draw_str(
+             &emphasis_str,
+             Point::new(mark_x, mark_y),
+@@ -188,7 +192,7 @@ fn create_emphasis_font(
+     let first_run = shape_result.runs.first()?;
+     let typeface = first_run.font_data.typeface().clone();
+     let mut font = SkFont::from_typeface(typeface, size);
+-    let settings = style.raster_configuration.author_text;
++    let settings = text_raster_configuration(style);
+     font.set_subpixel(settings.subpixel_positioning);
+     font.set_hinting(match settings.hinting {
+         TextHinting::None => skia_safe::FontHinting::None,
+diff --git a/bindings/rust/openui-paint/src/text_painter.rs b/bindings/rust/openui-paint/src/text_painter.rs
+index f0a86819..d6367fd7 100644
+--- a/bindings/rust/openui-paint/src/text_painter.rs
++++ b/bindings/rust/openui-paint/src/text_painter.rs
+@@ -22,7 +22,9 @@ use skia_safe::{
+     Canvas, Color4f, ColorSpace, Paint, PaintStyle, Point, Rect, TextBlob, TextBlobBuilder,
+ };
+ 
+-use openui_geometry::{PhysicalSnap, RasterBackend, RasterSnapping, TextEdging};
++use openui_geometry::{
++    PhysicalSnap, RasterBackend, RasterSnapping, TextEdging, TextRasterConfiguration,
++};
+ use openui_layout::inline::text_combine::TextCombineLayout;
+ use openui_style::{Color, ComputedStyle, FontFamily, GenericFontFamily};
+ use openui_text::font::FontMetrics;
+@@ -58,7 +60,11 @@ pub fn paint_text(
+     } else if style.embedded_document_text {
+         TextRasterPolicy::ChromiumEmbeddedDocument
+     } else if author_lcd {
+-        TextRasterPolicy::ChromiumAuthorLcd
++        if style.raster_configuration.author_text.edging == TextEdging::Alias {
++            TextRasterPolicy::ChromiumAliased
++        } else {
++            TextRasterPolicy::ChromiumAuthorLcd
++        }
+     } else {
+         TextRasterPolicy::Skia
+     };
+@@ -73,13 +79,7 @@ pub fn paint_text_with_raster_policy(
+     style: &ComputedStyle,
+     raster_policy: TextRasterPolicy,
+ ) {
+-    let text_raster = if style.native_control_text {
+-        style.raster_configuration.native_text
+-    } else if style.embedded_document_text {
+-        style.raster_configuration.embedded_text
+-    } else {
+-        style.raster_configuration.author_text
+-    };
++    let text_raster = text_raster_configuration(style);
+     let aliased_ahem = text_raster.edging == TextEdging::Alias
+         && !shape_result.runs.is_empty()
+         && shape_result.runs.iter().all(|run| {
+@@ -109,19 +109,18 @@ pub fn paint_text_with_raster_policy(
+     let lcd_origin = (style.native_control_text
+         || raster_policy == TextRasterPolicy::ChromiumAuthorLcd
+         || text_raster.edging == TextEdging::SubpixelAntiAlias)
+-        .then(|| {
+-            origin.0
+-                + if style.native_control_text {
+-                    f32::from(style.raster_configuration.native_text.lcd_phase_64ths)
+-                        / 64.0
+-                        / style.device_scale_factor as f32
+-                } else {
+-                    0.0
+-                }
+-        });
+-    if let Some(logical_blob) =
+-        shape_result.to_text_blob_with_raster_policy(lcd_origin, raster_policy)
+-    {
++        .then_some(origin.0);
++    // Fit glyph positions at their retained layout origin, then apply the
++    // caller's physical phase exactly once to the draw origin. Re-rounding
++    // the shifted origin to logical LayoutUnits would change its physical
++    // distance at fractional device scales. Layout advances stay unchanged.
++    let origin = lcd_raster_origin(origin, text_raster, style.device_scale_factor);
++    if let Some(logical_blob) = shape_result.to_text_blob_with_raster_policy_and_geometry_at_scale(
++        lcd_origin,
++        raster_policy,
++        1.0,
++        style.raster_configuration.pixel_geometry,
++    ) {
+         // Cull against the glyphs' logical ink bounds before Skia applies its
+         // LCD coverage filter.  Skia's filter taps extend one device pixel
+         // beyond those bounds; if a run begins exactly at a hard overflow
+@@ -155,11 +154,14 @@ pub fn paint_text_with_raster_policy(
+         if style.raster_configuration.backend.is_chromium_cpu()
+             && (physical_scale - 1.0).abs() > f32::EPSILON
+         {
+-            if let Some(physical_blob) = shape_result.to_text_blob_with_raster_policy_at_scale(
+-                lcd_origin,
+-                raster_policy,
+-                physical_scale,
+-            ) {
++            if let Some(physical_blob) = shape_result
++                .to_text_blob_with_raster_policy_and_geometry_at_scale(
++                    lcd_origin,
++                    raster_policy,
++                    physical_scale,
++                    style.raster_configuration.pixel_geometry,
++                )
++            {
+                 canvas.save();
+                 canvas.translate(origin);
+                 canvas.scale((1.0 / physical_scale, 1.0 / physical_scale));
+@@ -172,13 +174,35 @@ pub fn paint_text_with_raster_policy(
+     }
+ }
+ 
++pub(crate) fn text_raster_configuration(style: &ComputedStyle) -> TextRasterConfiguration {
++    if style.native_control_text {
++        style.raster_configuration.native_text
++    } else if style.embedded_document_text {
++        style.raster_configuration.embedded_text
++    } else {
++        style.raster_configuration.author_text
++    }
++}
++
++pub(crate) fn lcd_raster_origin(
++    origin: (f32, f32),
++    settings: TextRasterConfiguration,
++    device_scale: f64,
++) -> (f32, f32) {
++    if settings.edging != TextEdging::SubpixelAntiAlias || settings.lcd_phase_64ths == 0 {
++        return origin;
++    }
++    (
++        origin.0 + f32::from(settings.lcd_phase_64ths) / 64.0 / device_scale as f32,
++        origin.1,
++    )
++}
++
+ fn uses_chromium_author_lcd(style: &ComputedStyle) -> bool {
+     if style.native_control_text || style.embedded_document_text {
+         return false;
+     }
+-    if style.raster_configuration.backend == RasterBackend::ChromiumLinuxFontations
+-        && style.raster_configuration.author_text.edging == TextEdging::SubpixelAntiAlias
+-    {
++    if style.raster_configuration.backend == RasterBackend::ChromiumLinuxFontations {
+         // Fontations is an explicit authored-outline choice. The ordinary
+         // Chromium Linux LCD constructor preserves its FreeType path, as
+         // required by captures that select FontDataServiceLinux Freetype.
+@@ -227,25 +251,30 @@ pub fn paint_vertical_text(
+     }
+ 
+     let mut builder = TextBlobBuilder::new();
++    let text_raster = text_raster_configuration(style);
+     let physical_scale = style.device_scale_factor as f32;
+     let physical_strike = style.raster_configuration.backend.is_chromium_cpu()
+         && (physical_scale - 1.0).abs() > f32::EPSILON;
+-    let (vertical_baseline_x, top_y) =
+-        if style.raster_configuration.author_text.subpixel_positioning
+-            || (style.device_scale_factor - 1.0).abs() <= f64::EPSILON
+-        {
+-            (vertical_baseline_x, top_y)
+-        } else {
+-            let snapping = RasterSnapping::new(style.device_scale_factor);
+-            (
+-                // Upright vertical glyphs use an aliased physical strike.
+-                // Blink selects the containing block-axis device column;
+-                // nearest rounding advances every glyph by one column when
+-                // the exported baseline lands on an exact half-pixel.
+-                snapping.logical_coordinate(vertical_baseline_x, PhysicalSnap::Nearest),
+-                snapping.logical_coordinate(top_y, PhysicalSnap::Nearest),
+-            )
+-        };
++    let (vertical_baseline_x, top_y) = if text_raster.subpixel_positioning
++        || (style.device_scale_factor - 1.0).abs() <= f64::EPSILON
++    {
++        (vertical_baseline_x, top_y)
++    } else {
++        let snapping = RasterSnapping::new(style.device_scale_factor);
++        (
++            // Upright vertical glyphs use an aliased physical strike.
++            // Blink selects the containing block-axis device column;
++            // nearest rounding advances every glyph by one column when
++            // the exported baseline lands on an exact half-pixel.
++            snapping.logical_coordinate(vertical_baseline_x, PhysicalSnap::Nearest),
++            snapping.logical_coordinate(top_y, PhysicalSnap::Nearest),
++        )
++    };
++    let (vertical_baseline_x, top_y) = lcd_raster_origin(
++        (vertical_baseline_x, top_y),
++        text_raster,
++        style.device_scale_factor,
++    );
+     let mut run_y = top_y;
+     for run in &shape_result.runs {
+         if run.num_glyphs == 0 {
+@@ -459,8 +488,11 @@ pub fn paint_text_combine(
+     canvas.save();
+ 
+     // Translate to the centering position within the character cell.
+-    let draw_x = origin.0 + translate_x;
+-    let draw_y = origin.1 + translate_y;
++    let (draw_x, draw_y) = lcd_raster_origin(
++        (origin.0 + translate_x, origin.1 + translate_y),
++        text_raster_configuration(style),
++        style.device_scale_factor,
++    );
+ 
+     // Apply horizontal compression if the combined text exceeds one em.
+     if layout.needs_compression {
+diff --git a/bindings/rust/openui-paint/tests/text_raster_configuration_tests.rs b/bindings/rust/openui-paint/tests/text_raster_configuration_tests.rs
+new file mode 100644
+index 00000000..31f6b8ac
+--- /dev/null
++++ b/bindings/rust/openui-paint/tests/text_raster_configuration_tests.rs
+@@ -0,0 +1,75 @@
++//! Raster configuration must change the raster, independently of layout.
++
++use openui_geometry::RasterConfiguration;
++use openui_paint::text_painter::paint_text;
++use openui_style::{ComputedStyle, FontFamilyList};
++use openui_text::{Font, FontCollection, FontDescription, TextDirection, TextShaper};
++use skia_safe::{surfaces, Color, ImageInfo, PixelGeometry, SurfaceProps, SurfacePropsFlags};
++
++fn render(role: usize, scale: f64, phase: i16) -> Vec<u8> {
++    let mut style = ComputedStyle::default();
++    let fields = style.fields_mut();
++    fields.font_family = FontFamilyList::single("DejaVu Sans");
++    fields.font_size = 17.0;
++    fields.device_scale_factor = scale;
++    fields.native_control_text = role == 1;
++    fields.embedded_document_text = role == 2;
++    fields.raster_configuration = RasterConfiguration::chromium_linux_fontations_lcd();
++    let settings = match role {
++        0 => &mut fields.raster_configuration.author_text,
++        1 => &mut fields.raster_configuration.native_text,
++        _ => &mut fields.raster_configuration.embedded_text,
++    };
++    settings.lcd_phase_64ths = phase;
++    let font = Font::new_in_collection(
++        FontDescription::from_computed_style(&style),
++        FontCollection::deterministic_test(),
++    );
++    let shaped = TextShaper::new().shape("Xe", &font, TextDirection::Ltr);
++    assert_eq!(shaped.num_glyphs(), 2);
++    let info = ImageInfo::new_n32_premul((160, 100), None);
++    let props = SurfaceProps::new(SurfacePropsFlags::default(), PixelGeometry::RGBH);
++    let mut surface = surfaces::raster(&info, None, Some(&props)).unwrap();
++    let canvas = surface.canvas();
++    canvas.clear(Color::WHITE);
++    canvas.scale((scale as f32, scale as f32));
++    paint_text(canvas, &shaped, (12.0, 25.0), &style);
++    let mut pixels = vec![0; info.compute_byte_size(info.min_row_bytes())];
++    assert!(surface.image_snapshot().read_pixels(
++        &info,
++        &mut pixels,
++        info.min_row_bytes(),
++        (0, 0),
++        skia_safe::image::CachingHint::Disallow,
++    ));
++    assert!(pixels.chunks_exact(4).any(|pixel| pixel[..3] != [255; 3]));
++    pixels
++}
++
++#[test]
++fn lcd_phase_moves_ink_by_physical_pixels_for_each_text_role() {
++    for role in 0..3 {
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            let original = render(role, scale, 0);
++            for phase in [-128, -64, 64, 128] {
++                let shifted = render(role, scale, phase);
++                let delta = i32::from(phase) / 64;
++                for y in 0..100 {
++                    for x in 0..160 {
++                        let source_x = x - delta;
++                        let actual = &shifted[(y * 160 + x) as usize * 4..][..4];
++                        let expected = if (0..160).contains(&source_x) {
++                            &original[(y * 160 + source_x) as usize * 4..][..4]
++                        } else {
++                            &[255; 4]
++                        };
++                        assert_eq!(
++                            actual, expected,
++                            "role {role}, scale {scale}, phase {phase}, pixel ({x}, {y})"
++                        );
++                    }
++                }
++            }
++        }
++    }
++}
+diff --git a/bindings/rust/openui-text/src/font/platform.rs b/bindings/rust/openui-text/src/font/platform.rs
+index 8fa16a8a..e4f37361 100644
+--- a/bindings/rust/openui-text/src/font/platform.rs
++++ b/bindings/rust/openui-text/src/font/platform.rs
+@@ -287,6 +287,8 @@ impl FontPlatformData {
+         // still receives Chromium's ordinary LCD/subpixel raster policy.
+         let escapes_aliased_profile = !native_control_text
+             && !embedded_document_text
++            && raster_configuration.backend
++                != openui_geometry::RasterBackend::ChromiumLinuxFontations
+             && raster_configuration.author_text.edging == TextEdging::Alias
+             && !deterministic_aliased_face;
+         let settings = if native_control_text {
+diff --git a/bindings/rust/openui-text/src/shaping/shape_result.rs b/bindings/rust/openui-text/src/shaping/shape_result.rs
+index 20daf88d..b0158109 100644
+--- a/bindings/rust/openui-text/src/shaping/shape_result.rs
++++ b/bindings/rust/openui-text/src/shaping/shape_result.rs
+@@ -6,6 +6,7 @@
+ 
+ use std::sync::Arc;
+ 
++use openui_geometry::RasterPixelGeometry;
+ use skia_safe::{
+     font::Edging, utils::CustomTypefaceBuilder, FontHinting, FontMetrics, PathBuilder, Point,
+     TextBlob, TextBlobBuilder,
+@@ -13,8 +14,8 @@ use skia_safe::{
+ use skrifa::{
+     instance::{LocationRef, Size},
+     outline::{
+-        DrawSettings, Engine, GlyphStyles, HintingInstance, HintingOptions, OutlinePen, SmoothMode,
+-        Target,
++        DrawSettings, Engine, GlyphStyles, HintingInstance, HintingOptions, OutlineGlyphFormat,
++        OutlinePen, SmoothMode, Target,
+     },
+     FontRef, GlyphId as SkrifaGlyphId, MetadataProvider,
+ };
+@@ -34,40 +35,6 @@ pub enum TextRasterPolicy {
+     ChromiumAliased,
+ }
+ 
+-/// Match Chromium's retained 10px LCD mask in the one fixed-point phase cell
+-/// where direct Skia switches to the following cached mask early. Larger
+-/// strikes use Skia's native phase boundary.
+-fn chromium_lcd_raster_x(device_x: f32, font_size: f32) -> f32 {
+-    let phase = device_x.rem_euclid(1.0);
+-    if (font_size - 10.0).abs() < f32::EPSILON && (24.0 / 64.0..25.0 / 64.0).contains(&phase) {
+-        device_x - phase + 1.0 / 3.0
+-    } else {
+-        device_x
+-    }
+-}
+-
+-fn chromium_lcd_strike_y_offset(
+-    device_scale: f32,
+-    edging: Edging,
+-    hinting: FontHinting,
+-    font_size: f32,
+-    family: &str,
+-) -> f32 {
+-    // Chromium's retained 10px no-hint LCD strike keeps its origin one
+-    // logical pixel above Skia's direct scaled replay. Ahem is a synthetic
+-    // geometric face and does not use this outline-strike origin.
+-    if (device_scale - 1.0).abs() > f32::EPSILON
+-        && edging == Edging::SubpixelAntiAlias
+-        && hinting == FontHinting::None
+-        && (font_size - 10.0).abs() < f32::EPSILON
+-        && !family.eq_ignore_ascii_case("Ahem")
+-    {
+-        1.0
+-    } else {
+-        0.0
+-    }
+-}
+-
+ struct SkiaPathPen(PathBuilder);
+ 
+ impl Default for SkiaPathPen {
+@@ -98,75 +65,102 @@ impl OutlinePen for SkiaPathPen {
+     }
+ }
+ 
++#[cfg(test)]
+ fn fontations_compatible_font(
+     source_font: &skia_safe::Font,
+     glyphs: &[u16],
+     raster_policy: TextRasterPolicy,
+ ) -> Option<skia_safe::Font> {
++    fontations_compatible_font_with_geometry(
++        source_font,
++        glyphs,
++        raster_policy,
++        RasterPixelGeometry::RgbHorizontal,
++    )
++}
++
++fn fontations_compatible_font_with_geometry(
++    source_font: &skia_safe::Font,
++    glyphs: &[u16],
++    raster_policy: TextRasterPolicy,
++    pixel_geometry: RasterPixelGeometry,
++) -> Option<skia_safe::Font> {
++    if raster_policy == TextRasterPolicy::Skia {
++        return None;
++    }
+     let (font_data, ttc_index) = source_font.typeface().to_font_data()?;
+     let font_ref = FontRef::from_index(&font_data, ttc_index as u32).ok()?;
+     let outlines = font_ref.outline_glyphs();
+     let size = source_font.size();
+     let location = LocationRef::default();
+-    let hinting = match raster_policy {
+-        TextRasterPolicy::ChromiumNativeControl
+-        | TextRasterPolicy::ChromiumAuthorLcd
+-        | TextRasterPolicy::ChromiumEmbeddedDocument => {
+-            let glyph_styles = GlyphStyles::new(&outlines);
+-            HintingInstance::new(
+-                &outlines,
+-                Size::new(size),
+-                location,
+-                HintingOptions {
+-                    engine: Engine::Auto(Some(glyph_styles)),
+-                    target: Target::Smooth {
+-                        mode: SmoothMode::Light,
+-                        symmetric_rendering: true,
+-                        preserve_linear_metrics: false,
+-                    },
+-                },
+-            )
+-            .ok()?
+-        }
+-        TextRasterPolicy::ChromiumAliased => HintingInstance::new(
+-            &outlines,
+-            Size::new(size),
+-            location,
+-            skrifa::outline::HintingMode::Strong,
+-        )
+-        .ok()?,
+-        TextRasterPolicy::Skia => return None,
++    // Match SkTypeface_fontations.cpp's scaler settings. Text provenance
++    // selects this outline engine; the configured font selects its hinting
++    // and mask. A pre-hinted path must not silently force LCD or autohinting.
++    let hinting_options = if outlines.require_interpreter() {
++        Some(skrifa::outline::HintingMode::Strong.into())
++    } else if source_font.hinting() == FontHinting::None {
++        None
++    } else if source_font.edging() == Edging::Alias {
++        Some(skrifa::outline::HintingMode::Strong.into())
++    } else {
++        let slight = source_font.hinting() == FontHinting::Slight;
++        let lcd = source_font.hinting() == FontHinting::Full
++            && source_font.edging() == Edging::SubpixelAntiAlias;
++        let mode = if slight {
++            SmoothMode::Light
++        } else if lcd {
++            match pixel_geometry {
++                RasterPixelGeometry::RgbVertical | RasterPixelGeometry::BgrVertical => {
++                    SmoothMode::VerticalLcd
++                }
++                _ => SmoothMode::Lcd,
++            }
++        } else {
++            SmoothMode::Normal
++        };
++        // Light fitting forces autohinting for TrueType. CFF keeps its
++        // interpreter unless the caller explicitly requests autohinting.
++        let engine = if source_font.is_force_auto_hinting()
++            || (slight && outlines.format() == Some(OutlineGlyphFormat::Glyf))
++        {
++            Engine::Auto(Some(GlyphStyles::new(&outlines)))
++        } else {
++            Engine::AutoFallback
++        };
++        Some(HintingOptions {
++            engine,
++            target: Target::Smooth {
++                mode,
++                symmetric_rendering: true,
++                preserve_linear_metrics: false,
++            },
++        })
+     };
++    let hinting = hinting_options
++        .map(|options| HintingInstance::new(&outlines, Size::new(size), location, options))
++        .transpose()
++        .ok()?;
+ 
+     let mut builder = CustomTypefaceBuilder::new();
+     builder.set_metrics(&FontMetrics::default(), 1.0);
+     for &glyph_id in glyphs {
+         let glyph = outlines.get(SkrifaGlyphId::new(glyph_id as u32))?;
+         let mut pen = SkiaPathPen::default();
+-        glyph
+-            .draw(DrawSettings::hinted(&hinting, false), &mut pen)
+-            .ok()?;
++        let settings = hinting.as_ref().map_or_else(
++            || DrawSettings::unhinted(Size::new(size), location),
++            |instance| DrawSettings::hinted(instance, false),
++        );
++        glyph.draw(settings, &mut pen).ok()?;
+         let path = pen.0.detach();
+         builder.set_glyph(glyph_id, 0.0, &path);
+     }
+     let typeface = builder.detach()?;
+     let mut font = source_font.with_size(1.0)?;
+     font.set_typeface(typeface);
++    // Outlines are already fitted at the physical strike size. Preserve
++    // edging, subpixel, linear-metric and force-autohint flags from the
++    // configured source font; only avoid applying hinting a second time.
+     font.set_hinting(FontHinting::None);
+-    let native_control = matches!(
+-        raster_policy,
+-        TextRasterPolicy::ChromiumNativeControl | TextRasterPolicy::ChromiumAuthorLcd
+-    );
+-    let embedded_document = raster_policy == TextRasterPolicy::ChromiumEmbeddedDocument;
+-    font.set_subpixel(true);
+-    font.set_linear_metrics(native_control);
+-    font.set_edging(if native_control {
+-        Edging::SubpixelAntiAlias
+-    } else if embedded_document {
+-        Edging::AntiAlias
+-    } else {
+-        Edging::Alias
+-    });
+     Some(font)
+ }
+ 
+@@ -442,13 +436,8 @@ impl ShapeResult {
+         self.to_text_blob_with_raster_policy(None, TextRasterPolicy::Skia)
+     }
+ 
+-    /// Build a text blob using Chromium's Linux 10px LCD phase boundary.
+-    ///
+-    /// Skia's direct FreeType path changes its cached RGB mask at 24/64 px,
+-    /// while the pinned Chromium FreeType display-list path retains the prior
+-    /// phase until 25/64 px. Positions in that single fixed-point cell are
+-    /// represented at the middle third without changing logical advances or
+-    /// fragment geometry.
++    /// Build a text blob retaining an absolute LCD origin for glyph placement.
++    /// Logical positions and advances remain independent of raster settings.
+     pub fn to_text_blob_with_lcd_origin(&self, device_origin_x: Option<f32>) -> Option<TextBlob> {
+         self.to_text_blob_with_raster_policy(device_origin_x, TextRasterPolicy::Skia)
+     }
+@@ -470,6 +459,23 @@ impl ShapeResult {
+         device_origin_x: Option<f32>,
+         raster_policy: TextRasterPolicy,
+         device_scale: f32,
++    ) -> Option<TextBlob> {
++        self.to_text_blob_with_raster_policy_and_geometry_at_scale(
++            device_origin_x,
++            raster_policy,
++            device_scale,
++            RasterPixelGeometry::RgbHorizontal,
++        )
++    }
++
++    /// Build a physical strike using the caller's immutable LCD orientation.
++    /// Existing blob builders retain their horizontal RGB default.
++    pub fn to_text_blob_with_raster_policy_and_geometry_at_scale(
++        &self,
++        device_origin_x: Option<f32>,
++        raster_policy: TextRasterPolicy,
++        device_scale: f32,
++        pixel_geometry: RasterPixelGeometry,
+     ) -> Option<TextBlob> {
+         if self.runs.is_empty() || self.num_glyphs() == 0 {
+             return None;
+@@ -506,7 +512,12 @@ impl ShapeResult {
+             };
+             let compatible_font = (raster_policy != TextRasterPolicy::Skia)
+                 .then(|| {
+-                    fontations_compatible_font(compatible_source_font, &run.glyphs, raster_policy)
++                    fontations_compatible_font_with_geometry(
++                        compatible_source_font,
++                        &run.glyphs,
++                        raster_policy,
++                        pixel_geometry,
++                    )
+                 })
+                 .flatten();
+             let sk_font = compatible_font.as_ref().unwrap_or(source_font);
+@@ -544,20 +555,10 @@ impl ShapeResult {
+                         // pixel boundary before Skia selects its LCD phase.
+                         device_x = (device_x * 64.0).round() / 64.0;
+                     }
+-                    chromium_lcd_raster_x(device_x, source_font.size()) - origin
++                    device_x - origin
+                 });
+-                positions_out[i] = Point::new(
+-                    raster_x * device_scale,
+-                    (run.offsets[i].1
+-                        - chromium_lcd_strike_y_offset(
+-                            device_scale,
+-                            source_font.edging(),
+-                            source_font.hinting(),
+-                            source_font.size(),
+-                            &source_font.typeface().family_name(),
+-                        ))
+-                        * device_scale,
+-                );
++                positions_out[i] =
++                    Point::new(raster_x * device_scale, run.offsets[i].1 * device_scale);
+                 x += run.advances[i];
+             }
+             run_x = x;
+@@ -925,9 +926,53 @@ impl std::fmt::Debug for ShapeResultRun {
+ 
+ #[cfg(test)]
+ mod tests {
+-    use super::{chromium_lcd_raster_x, chromium_lcd_strike_y_offset};
+     use skia_safe::{font::Edging, FontHinting};
+ 
++    #[test]
++    fn fontations_preserves_requested_mask_and_position_settings() {
++        use crate::font::{Font, FontCollection, FontDescription};
++        use crate::shaping::{TextDirection, TextRasterPolicy, TextShaper};
++        use openui_style::FontFamilyList;
++
++        let font = Font::new_in_collection(
++            FontDescription {
++                family: FontFamilyList::single("DejaVu Serif"),
++                size: 17.0,
++                specified_size: 17.0,
++                ..FontDescription::default()
++            },
++            FontCollection::deterministic_test(),
++        );
++        let shaped = TextShaper::new().shape("Xe", &font, TextDirection::Ltr);
++        let run = shaped.runs.first().unwrap();
++        for policy in [
++            TextRasterPolicy::ChromiumAuthorLcd,
++            TextRasterPolicy::ChromiumNativeControl,
++            TextRasterPolicy::ChromiumEmbeddedDocument,
++            TextRasterPolicy::ChromiumAliased,
++        ] {
++            for edging in [Edging::Alias, Edging::AntiAlias, Edging::SubpixelAntiAlias] {
++                for subpixel in [false, true] {
++                    for autohint in [false, true] {
++                        let mut source = run.font_data.sk_font().clone();
++                        source.set_edging(edging);
++                        source.set_hinting(FontHinting::None);
++                        source.set_subpixel(subpixel);
++                        source.set_linear_metrics(subpixel);
++                        source.set_force_auto_hinting(autohint);
++                        let converted =
++                            super::fontations_compatible_font(&source, &run.glyphs, policy)
++                                .unwrap();
++                        assert_eq!(converted.edging(), edging, "{policy:?}");
++                        assert_eq!(converted.is_subpixel(), subpixel, "{policy:?}");
++                        assert_eq!(converted.is_linear_metrics(), subpixel, "{policy:?}");
++                        assert_eq!(converted.is_force_auto_hinting(), autohint, "{policy:?}");
++                    }
++                }
++            }
++        }
++    }
++
+     #[test]
+     fn fontations_lcd_hints_at_physical_size_before_replay() {
+         use crate::font::{Font, FontCollection, FontDescription};
+@@ -977,69 +1022,4 @@ mod tests {
+             );
+         }
+     }
+-
+-    #[test]
+-    fn chromium_lcd_phase_retains_only_the_24_to_25_sixty_fourths_cell() {
+-        let retained = chromium_lcd_raster_x(269.384_77, 10.0);
+-        assert!((retained - (269.0 + 1.0 / 3.0)).abs() < 0.000_01);
+-        assert_eq!(chromium_lcd_raster_x(269.390_625, 10.0), 269.390_625);
+-        assert_eq!(chromium_lcd_raster_x(269.374_97, 10.0), 269.374_97);
+-        assert_eq!(chromium_lcd_raster_x(269.384_77, 20.0), 269.384_77);
+-    }
+-
+-    #[test]
+-    fn chromium_lcd_strike_y_offset_is_limited_to_scaled_10px_outline_faces() {
+-        assert_eq!(
+-            chromium_lcd_strike_y_offset(
+-                1.25,
+-                Edging::SubpixelAntiAlias,
+-                FontHinting::None,
+-                10.0,
+-                "DejaVu Sans Mono",
+-            ),
+-            1.0
+-        );
+-        for (scale, edging, hinting, size, family) in [
+-            (
+-                1.0,
+-                Edging::SubpixelAntiAlias,
+-                FontHinting::None,
+-                10.0,
+-                "DejaVu Sans Mono",
+-            ),
+-            (
+-                1.25,
+-                Edging::AntiAlias,
+-                FontHinting::None,
+-                10.0,
+-                "DejaVu Sans Mono",
+-            ),
+-            (
+-                1.25,
+-                Edging::SubpixelAntiAlias,
+-                FontHinting::Slight,
+-                10.0,
+-                "DejaVu Sans Mono",
+-            ),
+-            (
+-                1.25,
+-                Edging::SubpixelAntiAlias,
+-                FontHinting::None,
+-                16.0,
+-                "DejaVu Sans",
+-            ),
+-            (
+-                1.25,
+-                Edging::SubpixelAntiAlias,
+-                FontHinting::None,
+-                10.0,
+-                "aHeM",
+-            ),
+-        ] {
+-            assert_eq!(
+-                chromium_lcd_strike_y_offset(scale, edging, hinting, size, family),
+-                0.0
+-            );
+-        }
+-    }
+ }
+diff --git a/bindings/rust/openui/examples/native_raster_fields.rs b/bindings/rust/openui/examples/native_raster_fields.rs
+new file mode 100644
+index 00000000..c00c336a
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_raster_fields.rs
+@@ -0,0 +1,165 @@
++//! Native raster fields applied through public Rust options and callbacks.
++
++use openui::prelude::*;
++use openui_geometry::{TextEdging, TextHinting, TextRasterConfiguration};
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn bounds_json(element: &Element) -> Result<String, Box<dyn std::error::Error>> {
++    let bounds = element.bounding_rect()?.ok_or("text box required")?;
++    Ok(format!(
++        "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
++        f64::from(bounds.x),
++        f64::from(bounds.y),
++        f64::from(bounds.width),
++        f64::from(bounds.height),
++    ))
++}
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
++    let policy = args.next().ok_or("font raster policy required")?;
++    let family = args.next().ok_or("font family required")?;
++    let size: f32 = args.next().ok_or("font size required")?.parse()?;
++    let edging = match args.next().as_deref() {
++        Some("alias") => TextEdging::Alias,
++        Some("aa") => TextEdging::AntiAlias,
++        Some("lcd") => TextEdging::SubpixelAntiAlias,
++        _ => return Err("expected alias, aa or lcd".into()),
++    };
++    let hinting = match args.next().as_deref() {
++        Some("none") => TextHinting::None,
++        Some("slight") => TextHinting::Slight,
++        Some("normal") => TextHinting::Normal,
++        Some("full") => TextHinting::Full,
++        _ => return Err("expected none, slight, normal or full".into()),
++    };
++    let subpixel_positioning: bool = args
++        .next()
++        .ok_or("subpixel positioning required")?
++        .parse()?;
++    let force_autohint: bool = args.next().ok_or("autohint choice required")?.parse()?;
++    let lcd_phase_64ths: i16 = args.next().ok_or("physical LCD phase required")?.parse()?;
++    if args.next().is_some()
++        || !matches!(
++            family.as_str(),
++            "Ahem" | "DejaVu Sans" | "DejaVu Serif" | "DejaVu Sans Mono"
++        )
++        || !size.is_finite()
++        || size <= 0.0
++    {
++        return Err("invalid native raster arguments".into());
++    }
++    let settings = TextRasterConfiguration {
++        edging,
++        hinting,
++        subpixel_positioning,
++        force_autohint,
++        lcd_phase_64ths,
++    };
++    let mut raster_configuration = match policy.as_str() {
++        "freetype" => RasterConfiguration::chromium_linux_lcd(),
++        "fontations" => RasterConfiguration::chromium_linux_fontations_lcd(),
++        _ => return Err("expected freetype or fontations".into()),
++    };
++    raster_configuration.author_text = settings;
++    let phases: Vec<u8> = (0..64).collect();
++    let (width, height) = (800.0, 600.0);
++    let document = Document::with_font_collection_and_options(
++        ViewportMetrics::from_logical_size(width, height, scale)?,
++        FontCollection::deterministic_test(),
++        EngineOptions {
++            raster_configuration,
++        },
++    )?;
++    assert_eq!(document.raster_configuration()?, raster_configuration);
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_overflow(Overflow::Hidden)?;
++    let mut texts = Vec::new();
++    for (index, phase) in phases.iter().enumerate() {
++        let text = Element::create(&document, "div")?;
++        text.set_position(Position::Absolute)?;
++        text.set_left(Length::px(
++            20.0 + (index % 8) as f32 * 92.0 + f32::from(*phase) / 64.0,
++        ))?;
++        text.set_top(Length::px(20.0 + (index / 8) as f32 * 60.0))?;
++        text.set_font_family(FontFamilyList::single(family.clone()))?;
++        text.set_font_size(LengthValue::px(size))?;
++        text.set_line_height(LineHeight::Number(1.0))?;
++        text.set_color(Color::BLACK)?;
++        text.set_text("X")?;
++        root.append_child(&text)?;
++        texts.push(text);
++    }
++    std::fs::create_dir_all(&output)?;
++    let before = texts
++        .iter()
++        .map(bounds_json)
++        .collect::<Result<Vec<_>, _>>()?
++        .join(",");
++    let owned_before = texts
++        .iter()
++        .map(|text| -> Result<_, Box<dyn std::error::Error>> {
++            Ok(text.bounding_rect()?.ok_or("owned text bounds required")?)
++        })
++        .collect::<Result<Vec<_>, _>>()?;
++    std::fs::write(output.join("before.png"), document.render_to_png_buffer()?)?;
++
++    let calls = Rc::new(Cell::new(0));
++    let observed = Rc::clone(&calls);
++    let targets: Vec<_> = texts.iter().map(Element::downgrade).collect();
++    root.on("click", move |_| {
++        for target in &targets {
++            let text = target.upgrade().expect("mounted native text");
++            text.set_text("XX").unwrap();
++            text.set_color(Color::BLUE).unwrap();
++        }
++        observed.set(observed.get() + 1);
++    })?;
++    root.click()?;
++    if calls.get() != 1
++        || texts
++            .iter()
++            .any(|text| !matches!(text.text_content().as_deref(), Ok("XX")))
++    {
++        return Err("native font callback failed".into());
++    }
++    assert_eq!(document.raster_configuration()?, raster_configuration);
++    let after = texts
++        .iter()
++        .map(bounds_json)
++        .collect::<Result<Vec<_>, _>>()?
++        .join(",");
++    assert_eq!(
++        before,
++        owned_before
++            .iter()
++            .map(|bounds| format!(
++                "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
++                f64::from(bounds.x),
++                f64::from(bounds.y),
++                f64::from(bounds.width),
++                f64::from(bounds.height),
++            ))
++            .collect::<Vec<_>>()
++            .join(",")
++    );
++    std::fs::write(output.join("after.png"), document.render_to_png_buffer()?)?;
++    std::fs::write(
++        output.join("geometry.json"),
++        format!(
++            "{{\"before\":[{before}],\"after\":[{after}],\"callback_count\":{},\"lcd_phase_64ths\":{lcd_phase_64ths},\"subpixel_positioning\":{subpixel_positioning},\"force_autohint\":{force_autohint}}}\n",
++            calls.get()
++        ),
++    )?;
++    let weak: Vec<_> = texts.iter().map(Element::downgrade).collect();
++    drop(texts);
++    drop(root);
++    drop(document);
++    if weak.iter().any(|text| text.upgrade().is_some()) {
++        return Err("native font callback retained document".into());
++    }
++    Ok(())
++}
+diff --git a/docs/renderer/generated/author-style-inventory.json b/docs/renderer/generated/author-style-inventory.json
+index 9d964bdd..95c6c925 100644
+--- a/docs/renderer/generated/author-style-inventory.json
++++ b/docs/renderer/generated/author-style-inventory.json
+@@ -2376,7 +2376,6 @@
+       "classification": "internal",
+       "consumers": [
+         "bindings/rust/openui-layout/src/table.rs",
+-        "bindings/rust/openui-paint/src/emphasis_painter.rs",
+         "bindings/rust/openui-paint/src/painter.rs",
+         "bindings/rust/openui-paint/src/render.rs",
+         "bindings/rust/openui-paint/src/text_painter.rs"

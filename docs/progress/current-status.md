@@ -42,6 +42,18 @@ The umbrella still has 113 exports;
 this candidate is unapplied and admits no release state. See the
 [prepared native C contract](../v02/native-c-raster-configuration.md).
 
+Clean private `bcb7063f` prepares the shared
+[raster-field correction](../renderer/native-raster-configuration-fields.md).
+It applies LCD phase to ink in physical units, retains configured Fontations
+settings and backend choice, carries LCD orientation, and removes two
+10px-only adjustments. The test-only baseline, public Rust app and ten-stage
+pipeline are preserved in [v33 evidence](../renderer/generated/native-scroll-insets-v33.json).
+Ten read-only checks and Rust formatting pass; no new compilation, native
+execution or pixel improvement is claimed. Its queue follows every command
+in the four earlier pipelines. Default native raster and remaining font-policy
+overrides are still open. Accepted pixels, 113 exports and release admission
+stay unchanged.
+
 The cache `107e2e36` completes both censuses with all 46,652 comparison
 invariants unchanged against its LCD parent, including all 804 additions.
 It remains unqualified at 20,771/22,924 original and 21,570/23,728 expanded
