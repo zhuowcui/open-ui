@@ -5,6 +5,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
+
 #include "openui.h"
 
 static void property(OuiElement* element, OuiStyleProperty id, const char* literal) {
@@ -16,8 +17,12 @@ static void property(OuiElement* element, OuiStyleProperty id, const char* liter
     assert(oui_style_compound_destroy((OuiStyleCompound*)value.data.compound) == OUI_OK);
 }
 
-static void color(OuiElement* element, OuiStyleProperty id,
-                  float red, float green, float blue, float alpha) {
+static void color(OuiElement* element,
+                  OuiStyleProperty id,
+                  float red,
+                  float green,
+                  float blue,
+                  float alpha) {
   OuiStyleValue value;
   assert(oui_style_value_color_f32_v1(id, red, green, blue, alpha, &value) == OUI_OK);
   assert(value.tag == OUI_STYLE_VALUE_COMPOUND && value.reserved == 0);
@@ -41,9 +46,10 @@ static void clicked(OuiEvent* event, void* data) {
 }
 
 static void native_colors(double scale) {
-  OuiDocumentConfig config = {sizeof(config), OUI_ABI_VERSION,
-      {64, 64, (uint32_t)(64 * scale), (uint32_t)(64 * scale),
-       scale, OUI_VIEWPORT_LOGICAL, 0}};
+  OuiDocumentConfig config = {
+      sizeof(config),
+      OUI_ABI_VERSION,
+      {64, 64, (uint32_t)(64 * scale), (uint32_t)(64 * scale), scale, OUI_VIEWPORT_LOGICAL, 0}};
   OuiDocument* document = NULL;
   OuiElement *root = NULL, *card = NULL;
   assert(oui_document_create(&config, &document) == OUI_OK);
@@ -55,10 +61,10 @@ static void native_colors(double scale) {
   property(card, OUI_STYLE_PROPERTY_WIDTH, "32px");
   property(card, OUI_STYLE_PROPERTY_HEIGHT, "32px");
   const OuiStyleProperty properties[] = {
-      OUI_STYLE_PROPERTY_BACKGROUND_COLOR, OUI_STYLE_PROPERTY_COLOR,
-      OUI_STYLE_PROPERTY_BORDER_TOP_COLOR, OUI_STYLE_PROPERTY_BORDER_RIGHT_COLOR,
-      OUI_STYLE_PROPERTY_BORDER_BOTTOM_COLOR, OUI_STYLE_PROPERTY_BORDER_LEFT_COLOR,
-      OUI_STYLE_PROPERTY_COLUMN_RULE_COLOR, OUI_STYLE_PROPERTY_OUTLINE_COLOR,
+      OUI_STYLE_PROPERTY_BACKGROUND_COLOR,      OUI_STYLE_PROPERTY_COLOR,
+      OUI_STYLE_PROPERTY_BORDER_TOP_COLOR,      OUI_STYLE_PROPERTY_BORDER_RIGHT_COLOR,
+      OUI_STYLE_PROPERTY_BORDER_BOTTOM_COLOR,   OUI_STYLE_PROPERTY_BORDER_LEFT_COLOR,
+      OUI_STYLE_PROPERTY_COLUMN_RULE_COLOR,     OUI_STYLE_PROPERTY_OUTLINE_COLOR,
       OUI_STYLE_PROPERTY_SCROLLBAR_TRACK_COLOR, OUI_STYLE_PROPERTY_SCROLLBAR_THUMB_COLOR,
       OUI_STYLE_PROPERTY_TEXT_DECORATION_COLOR, OUI_STYLE_PROPERTY_TEXT_EMPHASIS_COLOR};
   for (size_t i = 0; i < sizeof(properties) / sizeof(properties[0]); ++i)
