@@ -1,0 +1,87 @@
+{
+  "all_commands_terminal": false,
+  "current_process": {
+    "pid": 2923546,
+    "program": "openui-native-lcd-matrices-v1224.py"
+  },
+  "new_release_states_admitted": 0,
+  "prior_terminal_pipeline_sha256": "351a59344a4b40d768098029875e7ede06a3e5d35b6b7994159e224623bff782",
+  "probe_sha256": "2f220a9de4be5328999e1fc1c9fac9a9ce3bf5c63fdf312a6e06d1d9f68c3aa2",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "52788b83f72025430614c046065aae526230ae75",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "8e470497ebaae7b57f6c6572ba612cdc7cfde3c6558c1b1d0bdad310e3df5acb",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "52788b83f72025430614c046065aae526230ae75",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "8e470497ebaae7b57f6c6572ba612cdc7cfde3c6558c1b1d0bdad310e3df5acb",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "running-full",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-lcd-build-v1218.py"
+      ],
+      "log_sha256": "643f38c673a16a678d747ca807ebadd5af53c8a3f9bc4214a3a72e71f134490b",
+      "name": "native-build",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-lcd-consumer-v1222.py"
+      ],
+      "log_sha256": "cc1674bb819aec84cdc655ea45dd5cdbc6f9b6a403543d53e6c4920230aa9da5",
+      "name": "intrinsic-native",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-lcd-static-v1223.py"
+      ],
+      "log_sha256": "28f51fa672c91842de32c97e279cd1f08de96daf8c209ba0bd5c7778dd08ea87",
+      "name": "static-native",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-lcd-matrices-v1224.py",
+        "selection"
+      ],
+      "log_sha256": "8f4810de51b0ab7ed3f7b3c96308d096618d1707d0f2d25741c2888efe0543b8",
+      "name": "selection",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-lcd-matrices-v1224.py",
+        "focused"
+      ],
+      "log_sha256": "fba80ca047dc8f68d5abac01c9f2ee3aba483a78f1ca6d1fae8a4afd5186864d",
+      "name": "focused",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-lcd-matrices-v1224.py",
+        "primitive"
+      ],
+      "log_sha256": "6d9d2d0fe2ee6619a4a9f90edbe8fb2495d155d52204a4c05b0d42206030bcb7",
+      "name": "primitive",
+      "observed_exit_code": 0
+    }
+  ]
+}

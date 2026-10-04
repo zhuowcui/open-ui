@@ -64,7 +64,7 @@ This candidate is unapplied and unqualified; no new release state is admitted.
 Open UI runs no JavaScript in any version. Needed interaction uses public
 native Rust methods and Rust callbacks over the shared Engine.
 
-The [intrinsic sizing follow-up](../renderer/generated/native-scroll-insets-v28.json) reviews the
+The [intrinsic sizing follow-up](../renderer/generated/native-scroll-insets-v29.json) reviews the
 missing width behavior against 120 repeated Chromium advance observations and
 2,000 neighboring measurements at five scales. Chromium retains positive
 shaped-width remainders on its 1/64px layout grid and includes first-line
@@ -100,8 +100,11 @@ eleven C/five C++ consumers with 113 exports. The static-position app matches
 all 120 bounds measurements at both raster settings, with repeatable output,
 but none of its 120 pixel comparisons are exact. The remaining differences
 are in glyph coverage. Explicit Chromium LCD settings still selected the
-portable author outline path; a shared policy fix is prepared and has ten
-passing read-only checks. Its pixel effect and full build are unverified.
+portable author outline path. The separate policy trial now passes its full
+build and fixes 24/60 native LCD text images; default text remains 0/60 exact.
+All 120 bounds agree and repeated outputs are identical. Its focused suite
+loses one multicol case at every profile, finishing at 600/640 exact; primitive
+remains 960/960. Full trial censuses are still running, and it stays unapplied.
 The sizing source now completes all 640 focused and 960 primitive comparisons
 exactly. All 1,600 native and Chromium image, oracle, status and difference
 invariants remain unchanged from the earlier clean renderer. Its complete
@@ -115,6 +118,18 @@ exact at all four profiles. All Chromium inputs remain unchanged. The changed
 causes still need minimized reproducers and review; this candidate and its
 descendants remain unapplied. The 1,000 native geometry matches and exact
 focused suites do not override those full-census failures.
+
+Two independent Chromium processes now query all 34 changed original/expanded
+cases at eight profiles, with 544 observations, matching independent repeats,
+and no screenshots.
+A [reduced fieldset investigation](../renderer/native-fieldset-intrinsics.md)
+isolates intrinsic measurement from used percentage-height layout. Chromium
+keeps the fieldset's intrinsic width at 200px while its image changes from
+100px to 150px; an ordinary div follows the image's width. The private shared
+context correction at `2518bdcd` and its consuming Rust app have ten passing
+read-only checks. Their baseline/fixed guard, build and pixels remain queued
+behind the complete LCD and cache pipelines. No framework JavaScript is
+executed, and no new renderer source is promoted.
 
 Source review also found a compositor cache bug: scene generations restart for
 each document, but both compositors checked only that number before reusing a
