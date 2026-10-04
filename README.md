@@ -216,6 +216,11 @@ repaired. All 105 new dimension queries match, but 14 opaque white images and
 20 wider collapsed-margin API states still fail. Complete image censuses are
 running. The [latest guards](docs/renderer/generated/native-scroll-insets-v12.json)
 retain every failure; the patch remains unapplied and unqualified.
+The [collapsed-margin follow-up](docs/renderer/generated/native-scroll-insets-v13.json)
+retains shared layout data and adds a consuming Rust app. Its ten read-only
+checks pass; its clean build and native probes are queued behind the immutable
+image sweeps. All 765 fresh Chromium metric states are reference observations,
+not native passes. No rendering or API qualification is claimed for this source.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU

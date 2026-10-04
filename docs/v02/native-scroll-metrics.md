@@ -4,6 +4,15 @@ Open UI runs no JavaScript. Rust and C applications call native methods over
 the same retained engine. Missing browser-style element behavior remains
 framework work to implement and expose to the consuming application.
 
+The [latest private trial](../renderer/generated/native-scroll-insets-v13.json)
+retains collapsed end margins in shared layout data, separately from an empty
+child's position. Its consuming Rust app reads dimensions and bounds, scrolls
+and mutates margins through public methods. Ten read-only checks pass; the
+clean build and native probes are queued after the locked image sweeps.
+The 765 fresh Chromium states are references, not Open UI passes. All 45 prior
+reference states remain unchanged. The 20 earlier native failures and 14 white
+pixel failures remain open until the new source is tested.
+
 The framework never executes JavaScript, in any version. Needed element
 operations must be callable through public Rust methods and Rust callbacks.
 Separate reference tools may inspect or run scripts inside Chromium; those

@@ -127,6 +127,17 @@ wrong, and ten height fields regress. Both actual API probe exits remain 1.
 Complete original and expanded image censuses are running. The earlier test
 compile failure is preserved. The candidates remain unapplied and unqualified.
 
+The [private collapsed-margin follow-up](../renderer/generated/native-scroll-insets-v13.json)
+at `af89e377` retains the block-end strut contribution separately from an
+empty child's position, and adds a consuming public Rust app. Ten read-only
+checks pass. The clean build, 765 Rust query/mutation states and 45 C states
+are queued behind the immutable image sweeps; no own-source build, API or pixel
+pass is inherited or claimed. Fresh Chromium observations cover three writing
+modes, five scales, negative margins and following siblings. All 45 earlier
+Chromium metric states agree. The `ca5dc7f1` documentation checkpoint's three
+hosted workflows succeed: six jobs pass and five are skipped, with all logs
+retained. This does not qualify private runtime changes.
+
 ## Verified repository state
 
 | Evidence | Result |

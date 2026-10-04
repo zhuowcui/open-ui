@@ -112,6 +112,12 @@ states, including ten newly wrong scroll-height fields. Both full image
 censuses are running; the candidate remains unapplied and unqualified. No
 reference bytes, tolerance or required gate changed.
 
+The [private collapsed-margin trial](../renderer/generated/native-scroll-insets-v13.json)
+at `af89e377` retains shared layout data and adds a consuming public Rust app.
+Ten read-only checks pass; its clean build and native probes are queued after
+the locked image sweeps. Its 765 fresh Chromium metric states are references,
+not native API passes. No prior workspace, pixel or hardening pass is inherited.
+
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
 
