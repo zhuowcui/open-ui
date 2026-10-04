@@ -10,13 +10,13 @@ claimed by source code alone.
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
 | Four-profile renderer matrix | [Complete clean umbrella census](../renderer/generated/native-nested-scroll-v9.json) at `d174ea0b`: 21,334/22,924 exact, 1,590 different, zero errors; actual exit 1. All Chromium inputs stay fixed; 882 residual original IDs need closure | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact on clean umbrella source `d174ea0b`; all 1,600 comparison invariants retained | pass |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact on clean float-API umbrella source `580539c2`; all 1,600 comparison invariants retained from `d174ea0b` | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
 | Expanded native final-state fixtures | [Complete clean umbrella run](../renderer/generated/native-nested-scroll-v9.json) at `d174ea0b` is 22,137/23,728 exact, 1,591 different, zero errors; actual exit 1. Original rows agree with the separate census; all 804 additions stay unchanged, with 200/201 exact at all four profiles. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
-| Rust workspace and docs | clean font-lifetime checkpoint `a41fdeb9`, Linux C feature enabled: 8,526 passed, zero failed, 13 ignored; source unchanged | pass |
+| Rust workspace and docs | clean float-API checkpoint `580539c2`, Linux C feature enabled: 8,528 passed, zero failed, 13 ignored; source unchanged | pass |
 | Rust 1.85 MSRV | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576): locked headless and Linux checks passed at `d174ea0b` | pass |
-| Rust/C application contract | 58 scenarios; 113 current exports with all preceding symbols and layouts preserved. Ten C and four C++ headless consumers passed on the preceding source; own checks for the applied float-color constructor and expanded consumers are queued | verification, remaining API review and lab qualification open |
+| Rust/C application contract | 58 scenarios; 113 current exports with all preceding symbols and layouts preserved. Own clean `580539c2` build and eleven C/five C++ headless consumers pass; public Rust float-color consumers pass at five scales | scoped verification pass; remaining API review and lab qualification open |
 | Native element interaction | Public Rust `Document`, `Element`, and `TextNode` APIs cover ID/class/native-kind lookup, class-token updates, retained detach/reattach, mutation, callbacks, activation, focus, scrolling, and controls; browser-style operations needed by applications must be exposed through native APIs | core implemented; remaining API coverage review open |
 | C-owned X11/Wayland application loop | `oui_app_run` and `oui_app_request_exit` use Rust `App` and the same retained document; versioned platform callbacks and [clean native C/C++ window runs](native-c-lifecycle-evidence.md) cover X11 software/GL and Wayland software | implemented; release-lab qualification open |
 | C platform accessibility | owned full-tree snapshots, node metadata/relations/focus, and changed/removed IDs export from the shared engine; automated AT-SPI operation in a C window remains unqualified | open |
@@ -127,8 +127,9 @@ unchanged. Corrected margin source `2240ee9c` passes 8,540 workspace tests and
 failures stop its pixel guards. Both preceding compiler exits 101 are retained.
 The reduced opaque-scroll review still fails 29/40 pixels under paint ownership.
 A separate owned float-color C API preserves every existing export and struct
-layout and adds one symbol; its own runtime verification is running. These
-patches remain unapplied and unqualified, with no new release admission.
+layout and adds one symbol; its own private runtime verification is recorded
+below. The renderer patches remain unapplied and unqualified, with no new
+release admission.
 
 The [v15 evidence](../renderer/generated/native-scroll-insets-v15.json)
 authenticates the private float-color API's completed six-stage build, 8,542
@@ -142,10 +143,24 @@ writing mode. Private `944068e1` repairs shared Engine inheritance across parent
 and tree mutations. Its own eight-stage build, 8,542 workspace tests and ten
 read-only checks pass; all 765 Rust / 45 C native states are exact, with 210
 gains and no exact losses. All Chromium measurements remain unchanged. Its
-pixel guards are running; other inherited-property behavior remains separate
-work. Documentation source `e345cf69` passes all three hosted workflows,
+pixel guards now preserve all 935 earlier native states and 1,600 raster
+comparisons exactly, with 70/70 two-child states and 105/105 dimension queries
+agreeing. Fourteen opaque white images still fail with paint ownership and
+actual metrics-probe exit 1. Its full censuses were not started. Other
+inherited-property behavior remains separate work. Documentation source
+`e345cf69` passes all three hosted workflows,
 with six successful and five skipped jobs. None of these private changes is
-promoted or admitted as a release pass by this checkpoint.
+promoted or admitted as a release pass by that checkpoint.
+
+The standalone float-color API and public consumers are now applied on the
+umbrella branch. The [v16 evidence](../renderer/generated/native-scroll-insets-v16.json)
+records clean `580539c2`: six build stages, 8,528 workspace tests, five Rust
+runs, eleven C/five C++ consumers, and unchanged exact focused/primitive
+matrices. Its first hosted format failure is retained. Whitespace-only
+`aeed821c` passes C/C++ formatting, rebuilt consumers against the unchanged
+Rust library, ten read-only checks, and all three hosted workflows: six jobs
+succeed and five hardening jobs are skipped. No new Rust build, full census,
+manual hardening or release qualification is claimed for that correction.
 
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.

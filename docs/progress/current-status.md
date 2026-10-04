@@ -10,10 +10,17 @@ remain open.
 The standalone native float-color C constructor and public Rust/C/C++
 consumers are now applied to the umbrella branch. All 112 preceding exports
 and all struct layouts are preserved; the new total is 113. The ABI artifacts
-are regenerated from the umbrella source. Its own clean build and consumer
-checks are queued behind the private image guards; earlier private passes
-remain attributed to their sources. No new umbrella API, workspace or pixel
-pass is claimed yet. Margin, clip and writing-mode candidates remain unapplied.
+are regenerated from the umbrella source. The
+[v16 evidence](../renderer/generated/native-scroll-insets-v16.json) records
+six fresh build stages, 8,528 workspace tests, zero failures and 13 ignored,
+five Rust runs and eleven C/five C++ consumers at clean `580539c2`. Both raster
+matrices are exact and preserve all 1,600 comparison invariants. The initial
+hosted C formatting failure is retained; `aeed821c` changes only C whitespace,
+passes all 56 C/C++ formatting checks, recompiles/runs the consumers against
+the unchanged Rust library, and passes all three hosted workflows. Six jobs
+succeed and five hardening jobs are skipped. No fresh Rust build or full
+census is claimed for the whitespace correction. Margin, clip and writing-mode
+candidates remain unapplied.
 Applications continue to use public native Rust methods and Rust callbacks;
 Open UI executes no JavaScript.
 
@@ -192,7 +199,12 @@ parent mutations, with guards for authored overrides, text, clones and resolved
 snapshots. Ten read-only checks, all eight clean build stages and 8,542 workspace
 tests pass. Its public native consumers are 765/765 Rust and 45/45 C exact,
 with 210 gains and no exact loss. All Chromium measurements remain unchanged;
-native processes and owned snapshots pass. Its pixel guards are running.
+native processes and owned snapshots pass. Its pixel guards now preserve all
+935 prior native states and 1,600 raster comparisons exactly; all 70 two-child
+states and 105 dimension queries agree. Fourteen opaque white images still
+differ, with actual metrics-probe exit 1 and paint ownership. Full censuses
+were not started on this candidate. The v16 evidence corrects an earlier
+report's build-stage count from seven to eight and preserves that report.
 This repair covers writing mode; other inherited-property behavior remains
 separate work. Documentation checkpoint `e345cf69` passes ten read-only checks
 and all three hosted workflows: six jobs succeed and five are skipped. No
@@ -207,16 +219,16 @@ private runtime is promoted or admitted by this documentation checkpoint.
 | Latest complete clean umbrella census | `d174ea0b`: 21,334/22,924 exact, 1,590 different, 0 errors; original and expanded exits 1; 882 residual original IDs |
 | Last accepted complete clean census against cached Chromium captures | Native API checkpoint `9e0f0145`: 21,308/22,924 exact, 1,616 different, 0 errors; all original and expanded comparison invariants unchanged from the accepted viewport renderer. The full pixel gate remains failing |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
-| Focused / primitive 40-profile matrices | 640/640 / 960/960 exact on clean umbrella source `d174ea0b`; all 1,600 comparison invariants retained |
+| Focused / primitive 40-profile matrices | 640/640 / 960/960 exact on clean umbrella float-API source `580539c2`; all 1,600 comparison invariants retained from `d174ea0b` |
 | Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
 | Pending native final-state candidates | 0/35 exact at all four profiles after the latest clean recheck |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
 | Application conformance scenarios | 58 across 10 domains |
-| Frozen / current C exports | 84 / 112; own-source ABI and runtime consumers pass; existing symbols/layouts preserved |
-| C examples / C++ consumers | 11 / 5 sources, including native windows; ten C and four C++ headless consumers run on own source; hosted native windows pass, release lab open |
-| Workspace tests | 8,526 pass; 0 failed; 13 ignored on clean font-lifetime checkpoint `a41fdeb9`, with the Linux C feature enabled |
+| Frozen / current C exports | 84 / 113; own-source ABI and runtime consumers pass; existing symbols/layouts preserved |
+| C examples / C++ consumers | 12 / 6 sources, including native windows; eleven C and five C++ headless consumers run on own source; preceding hosted native windows pass, current-source hardening and release lab open |
+| Workspace tests | 8,528 pass; 0 failed; 13 ignored on clean float-API checkpoint `580539c2`, with the Linux C feature enabled |
 | Python closure, qualification, accountability and packaging tests | 249 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |

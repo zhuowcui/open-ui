@@ -16,7 +16,7 @@ schemas:
 Regenerate with `python3 tools/ffi/generate_ffi.py`, or verify without writing
 with `python3 tools/ffi/generate_ffi.py --check`. After building the crate,
 `python3 tools/ffi/verify_abi.py` checks exact exports, compiles C and C++
-consumers, and runs nine headless C examples and four C++ consumers.
+consumers, and runs eleven headless C examples and five C++ consumers.
 
 All opaque handles are generation-checked and thread-affine. Strings are
 length-delimited UTF-8. Every status failure records a thread-local structured
@@ -59,9 +59,13 @@ copy. Invalid channels or properties leave the output unchanged. Existing
 [`float_colors.c`](../../../examples/c_v02/float_colors.c) and C++ consumers
 exercise all twelve properties, callback mutation, rendering and owned buffers
 at five scales. The constructor and consumers are applied to the umbrella
-branch. Its own build and runtime verification are queued; the earlier private
-verification is recorded in the
-[v15 evidence](../../../docs/renderer/generated/native-scroll-insets-v15.json).
+branch. The [v16 evidence](../../../docs/renderer/generated/native-scroll-insets-v16.json)
+records its own six-stage clean build, 8,528 workspace tests, five Rust runs,
+eleven C and five C++ consumers. Callback mutations and owned snapshots and
+frames survive teardown. All preceding 112 exports and layouts remain intact.
+The C formatting correction recompiles and runs the same consumers against
+the unchanged Rust library; all three hosted workflows pass, with five
+hardening jobs skipped. Complete native API and renderer qualification remains open.
 Existing calls and struct layouts remain compatible.
 
 Native apps mutate retained style through public Rust setters or

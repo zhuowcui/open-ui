@@ -89,8 +89,15 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   repairs all eight raster failures and passes 8,539 workspace tests and all
   935 earlier native states. Fourteen opaque white images and 20 collapsed-margin
   API states still fail, including ten newly wrong scroll-height fields.
-  Full image censuses are running. Collapsed margins and opaque scrolling
-  paint-chunk ownership remain open.
+  The [completed follow-up](../renderer/generated/native-scroll-insets-v16.json)
+  records 21,350/22,924 original and 22,153/23,728 expanded exact at private
+  `45ddeee3`, zero errors, actual exits 1. One multicolumn exact regression
+  prevents promotion. Private `944068e1` repairs native writing-mode
+  inheritance and passes all 765 Rust/45 C collapsed-margin states, all 935
+  prior native images and both raster matrices unchanged. Fourteen opaque
+  white images still fail; full censuses were not started on that candidate.
+  Other inherited-property behavior and opaque scrolling paint-chunk
+  ownership remain open.
   The patches remain unapplied and unqualified;
 - two live legacy contour calibration paths must be replaced by general
   raster behavior and checked against Chromium without sample corrections;

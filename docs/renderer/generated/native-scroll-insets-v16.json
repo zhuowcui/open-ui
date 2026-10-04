@@ -1,0 +1,204 @@
+{
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-color-f32-umbrella-clean-v1044/build.json",
+      "sha256": "9886687a1ddceabcceb8d0d5dafc90ee5d11ccba6606401335a6a03d7859855c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-color-f32-umbrella-rust-v1045/receipt.json",
+      "sha256": "9c5bc825a7bc3032d7331a28fba6c8cf9a9f0bdece766ca00ed69e35f4767fe5"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-color-f32-umbrella-raster-audit-v1056.json",
+      "sha256": "649b76e75cd7f41d188f06ff40ed478e01beb2663d2680e887f04360cec2546d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-color-f32-umbrella-format-audit-v1058.json",
+      "sha256": "00449eb07e8916e7155301cefa0da04b94c76335d4ed2b823d498db482865430"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v1057/receipt.json",
+      "sha256": "da74510aacec024101e4b2ac6074cad75869badaf237a4c8b14ee8a831be66b7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-color-f32-umbrella-ci-v1053/receipt.json",
+      "sha256": "7c1e10226551c5a633a0c2b4fb07322a1394f03f9e8f5f17d237ea1efa22c7f1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-color-f32-umbrella-ci-v1059/receipt.json",
+      "sha256": "4f22d67add2a69af61f4995ce5733debf82efb0c34df74cb549d122d69e06d81"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-writing-mode-native-audit-v1048.json",
+      "sha256": "787f1a6684c0a3a088300432f5460155c30bf2752a32e4811d7fe7e83a9c05b0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-writing-mode-raster-audit-v1047.json",
+      "sha256": "ff30dcb9a39c42242933b3f7f9d82764723e5fb4711ee6f73a6e38298d10171d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-collapse-after-build-v1027/receipt.json",
+      "sha256": "6888d40bc5f4bda5d671c0ff1c8c245a68b75f719e74d39a7e7c5add1ece0b24"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-writing-mode-native-audit-v1046.json",
+      "sha256": "e4d6d342fbc97106871cc0caf0f0708f66fc35730c962990fa3fcb550b41de93"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-color-f32-umbrella-hosted-format-v1054/receipt.json",
+      "sha256": "eb29029e5b10d4c7e62fb8d8282f23e16f6b2a1d2ef79cd798025aa14282919a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v1029/receipt.json",
+      "sha256": "f8c3e8345f456946374b88e2191e3a581a1b873d0f58cf9f01c2407fbab562b6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-v1030/receipt.json",
+      "sha256": "b7c2b21e363e8289bc46ab701a01b541d7dcc88b9bef50a9cd3d41e739989108"
+    }
+  ],
+  "corrected_hosted": {
+    "all_three_workflows_success": true,
+    "all_three_workflows_terminal": true,
+    "job_conclusions": {
+      "skipped": 5,
+      "success": 6
+    },
+    "manual_hardening_not_run_on_this_source": true,
+    "skipped_jobs_are_not_passes": true,
+    "source": "aeed821cd27ae9fd5c7abac81859b344c4e64dcc"
+  },
+  "earlier_private_native_report_count_correction": {
+    "actual_verified_build_stages": 8,
+    "incorrect_report_field": 7,
+    "original_report_preserved": true,
+    "path": "native-writing-mode-native-audit-v1046.json",
+    "sha256": "e4d6d342fbc97106871cc0caf0f0708f66fc35730c962990fa3fcb550b41de93"
+  },
+  "formatting_correction": {
+    "all_11_c_and_5_cpp_consumers_recompiled_and_run": true,
+    "all_56_c_cpp_files_format_clean": true,
+    "all_ten_readonly_checks_zero": true,
+    "new_rust_build_claimed": false,
+    "only_c_consumer_whitespace_changed": true,
+    "runtime_build_source": "580539c2be86ddcaad46c3b506f46caa878290e4",
+    "rust_runtime_and_abi_artifacts_unchanged": true,
+    "source": {
+      "clean": true,
+      "commit": "aeed821cd27ae9fd5c7abac81859b344c4e64dcc",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "86695c8ec8f01ff60102940d379efc241de4563c8c62f385bbc4b18384abd133",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "initial_hosted_failure": {
+    "all_three_workflows_terminal": true,
+    "failed_jobs": 1,
+    "failure": "New C consumer rejected by clang-format-18; failure and full logs retained.",
+    "skipped_jobs": 5,
+    "source": "580539c2be86ddcaad46c3b506f46caa878290e4",
+    "successful_jobs": 5
+  },
+  "latest_complete_umbrella_census": {
+    "actual_exit": 1,
+    "errors": 0,
+    "expanded_exact": 22137,
+    "expanded_total": 23728,
+    "not_a_new_census_of_the_float_api_source": true,
+    "original_different": 1590,
+    "original_exact": 21334,
+    "original_total": 22924,
+    "source": "d174ea0b"
+  },
+  "new_release_states_admitted": 0,
+  "old_openui_images": "Immutable provenance, never expected pixels or a release gate",
+  "owned_float_color_api": {
+    "all_1600_eight_comparison_invariants_unchanged": true,
+    "all_struct_layouts_unchanged": true,
+    "api_pass_does_not_qualify_unresolved_margin_or_pixels": true,
+    "applied_to_umbrella": true,
+    "c_consumers_passed": 11,
+    "color_properties_verified": 12,
+    "cpp_consumers_passed": 5,
+    "current_exports": 113,
+    "focused_exact": 640,
+    "fresh_build_stages_passed": 6,
+    "full_census_not_run_on_this_source": true,
+    "previous_exports_preserved": 112,
+    "primitive_exact": 960,
+    "public_rust_consumers_passed": 5,
+    "source": {
+      "clean": true,
+      "commit": "580539c2be86ddcaad46c3b506f46caa878290e4",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "7dfc053a680a6cb8fb0905b0d0973870f3a238efd8b74959efd3e849a0bc56a2",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "verified_native_callback_mutation_and_owned_snapshot_lifetime": true,
+    "workspace_failed": 0,
+    "workspace_ignored": 13,
+    "workspace_passed": 8528
+  },
+  "permanent_application_contract": "Open UI executes no JavaScript in any version. Native applications use public Rust APIs and Rust callbacks. Every needed element behavior is shared Rust Engine work and must be exposed to consuming applications. C and accessibility use that same Engine. Separate offline reference tools may execute scripts inside Chromium only.",
+  "pixel_target": "Pinned Chromium only, zero tolerance",
+  "previous_index": {
+    "path": "docs/renderer/generated/native-scroll-insets-v15.json",
+    "sha256": "e90110465b2d385be70e70ac75f7af687d4814510de5d97fa6c4de44739550e5"
+  },
+  "release_qualification": false,
+  "remaining": [
+    "Full original and expanded Chromium pixel gates remain failing.",
+    "Private margin/clip/writing-mode repairs remain unapplied, with 14 white scroll pixel failures and a previously measured multicolumn exact regression.",
+    "Other inherited-property behavior and complete needed public native API coverage remain open.",
+    "Oracle consistency, retained compositor layers/3D/animations, complete hardening, physical hardware, accessibility, packaging and publication remain open."
+  ],
+  "schema_version": 1,
+  "writing_mode_candidate": {
+    "all_1600_eight_comparison_invariants_unchanged": true,
+    "all_210_prior_native_failures_reviewed_and_repaired": true,
+    "all_885_prior_geometry_callbacks_and_images_unchanged": true,
+    "all_935_previous_native_geometry_and_image_states_exact": true,
+    "all_eight_build_stages_zero": true,
+    "all_original_chromium_observations_unchanged": true,
+    "all_owned_snapshots_survive_mutation_and_teardown": true,
+    "all_ten_readonly_checks_zero": true,
+    "applied_to_umbrella": false,
+    "base_commit": "2240ee9ce61d2d0533bb55eb6733372dc33230bf",
+    "c_states_exact": 45,
+    "c_states_total": 45,
+    "exact_gains": 210,
+    "exact_losses": 0,
+    "focused_exact": 640,
+    "full_censuses_not_started": true,
+    "implementation": "Shared Engine propagation on attachment, parent mutation, detach, reparent, insert and clone; authored initial values and fully resolved anonymous/pseudo snapshots retain their values.",
+    "initial_pixel_guards_complete": true,
+    "initial_pixel_guards_running": false,
+    "native_process_errors": 0,
+    "new_native_metrics_exact": 105,
+    "new_native_metrics_total": 105,
+    "new_two_child_states_exact": 70,
+    "opaque_white_failure_owner": "openui-paint",
+    "opaque_white_pixel_failures": 14,
+    "opaque_white_pixels_exact": 21,
+    "opaque_white_pixels_total": 35,
+    "patch": "docs/renderer/evidence/native-writing-mode-v1/native-writing-mode-v1.patch",
+    "patch_reverse_check_actual_exit": 0,
+    "pixel_probe_actual_exit": 1,
+    "primitive_exact": 960,
+    "promotion_allowed": false,
+    "rust_states_exact": 765,
+    "rust_states_total": 765,
+    "scope": "Inherited writing-mode only; other inherited property behavior remains separate implementation work.",
+    "single_child_green_pixels_exact": 70,
+    "source": {
+      "clean": true,
+      "commit": "944068e171d3041b6e74733e6af275ae91c68fde",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "e5a090eb16308409ae400671319d6176aba0215b328c115f5bb6a6ae2db377dd",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace_failed": 0,
+    "workspace_ignored": 13,
+    "workspace_passed": 8542
+  }
+}

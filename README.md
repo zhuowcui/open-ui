@@ -53,9 +53,9 @@ The current v0.2 release candidate has:
   checked layouts and an ABI checksum; the [native scroll and inset consumers](docs/v02/native-scroll-metrics.md)
   and [native style consumers](bindings/rust/openui-ffi/README.md#native-style-operations)
   pass through public Rust, C and C++ APIs; the clean umbrella checkpoint
-  passes 8,526 workspace tests with 13 ignored; the tested font-lifetime code
-  preserves the exact
-  640/640 focused and 960/960 primitive pixel suites;
+  passes 8,528 workspace tests with 13 ignored at `580539c2`; its own
+  640/640 focused and 960/960 primitive pixel suites remain exact, with all
+  1,600 comparison invariants unchanged;
 - sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates defined
   in CI; several remain open or failing.
 
@@ -244,16 +244,22 @@ A public Rust check confirms missing writing-mode inheritance on native
 attachment. The shared Engine repair passes all eight clean build stages,
 8,542 workspace tests, 765/765 Rust states and 45/45 C states. All 210 prior
 vertical failures are repaired without exact losses or changed Chromium inputs.
-Its pixel guards are running. Other inherited properties and pixel
-qualification remain separate work.
+Its pixel guards now pass all 935 earlier native states, 70 two-child states
+and both raster matrices unchanged. All 105 dimension queries agree, but
+14 opaque white images still differ. Other inherited properties and pixel
+qualification remain separate work; this candidate remains unapplied.
 
 The standalone float-color constructor and public Rust/C/C++ consumers are
 now applied to the umbrella branch. The existing Rust API supplies float
 colors directly; C uses the new owned `oui_style_value_color_f32_v1` operation
-over the same Engine. Its own umbrella build and consumer verification are
-queued behind the private image guards. Earlier private passes are attributed
-to their source; no umbrella API or pixel pass is inferred. The margin and
-writing-mode repairs remain separate, unapplied candidates.
+over the same Engine. The [v16 evidence](docs/renderer/generated/native-scroll-insets-v16.json)
+records six fresh umbrella build stages, 8,528 workspace tests, five Rust runs,
+eleven C and five C++ consumers, and both exact raster matrices. The first
+hosted checkpoint failed C formatting; `aeed821c` corrects only C whitespace,
+passes the rebuilt C/C++ consumers and all three hosted workflows. Five
+skipped hardening jobs remain unverified on this source. The margin and
+writing-mode repairs remain separate, unapplied candidates; no new full
+census or release pass is claimed.
 
 This repository is not yet
 declaring the final v0.2 release. Physical-GPU
