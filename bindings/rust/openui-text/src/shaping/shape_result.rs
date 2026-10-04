@@ -931,6 +931,56 @@ mod tests {
     use skia_safe::{font::Edging, FontHinting};
 
     #[test]
+    fn fontations_lcd_hints_at_physical_size_before_replay() {
+        use crate::font::{Font, FontCollection, FontDescription};
+        use crate::shaping::{TextDirection, TextRasterPolicy, TextShaper};
+        use openui_geometry::RasterConfiguration;
+        use openui_style::FontFamilyList;
+
+        let collection = FontCollection::deterministic_test();
+        let shaper = TextShaper::new();
+        let ink_bounds = |size, scale| {
+            let description = FontDescription {
+                family: FontFamilyList::single("Ahem"),
+                size,
+                specified_size: size,
+                device_scale_factor: f64::from(scale),
+                raster_configuration: RasterConfiguration::chromium_linux_lcd(),
+                ..FontDescription::default()
+            };
+            let font = Font::new_in_collection(description, std::sync::Arc::clone(&collection));
+            let result = shaper.shape("X", &font, TextDirection::Ltr);
+            assert_eq!(result.num_glyphs(), 1);
+            let blob = result
+                .to_text_blob_with_raster_policy_at_scale(
+                    Some(0.0),
+                    TextRasterPolicy::ChromiumAuthorLcd,
+                    scale,
+                )
+                .unwrap();
+            *blob.bounds()
+        };
+
+        // A single glyph at the same physical font size has the same hinted
+        // outline regardless of how the logical size and device scale divide
+        // that size. Hinting at CSS size and then scaling the fitted outline
+        // changes its ink bounds at fractional scales.
+        for (size, scale) in [
+            (16.0, 1.25),
+            (16.0, 1.5),
+            (16.0, 2.0),
+            (16.0, 3.0),
+            (10.0, 2.5),
+        ] {
+            assert_eq!(
+                ink_bounds(size, scale),
+                ink_bounds(size * scale, 1.0),
+                "logical size {size}, device scale {scale}"
+            );
+        }
+    }
+
+    #[test]
     fn chromium_lcd_phase_retains_only_the_24_to_25_sixty_fourths_cell() {
         let retained = chromium_lcd_raster_x(269.384_77, 10.0);
         assert!((retained - (269.0 + 1.0 / 3.0)).abs() < 0.000_01);
