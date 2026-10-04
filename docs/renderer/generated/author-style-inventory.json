@@ -2797,7 +2797,8 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
       ],
       "css_name": "text-indent",
       "field": "text_indent",
