@@ -26,15 +26,32 @@ Open UI executes no JavaScript.
 
 Clean private `3395cefa` prepares the missing immutable raster configuration
 for C apps over the same Rust engine. The
-[v31 evidence](../renderer/generated/native-scroll-insets-v31.json) preserves
+[v32 evidence](../renderer/generated/native-scroll-insets-v32.json) preserves
 the source patch, owned versioned transport, five boundary tests and C/C++
 consumers. Ten read-only checks pass; the generated metadata preserves all
 113 exports and all 30 existing layouts, with 117 exports proposed.
 Compilation, runtime callbacks, strict-provenance Miri and exact Chromium
 pixels have not run. Its pipeline waits for every earlier cache, fieldset,
-font and clean-cache command to finish. The umbrella still has 113 exports;
+font and clean-cache command to finish. Its waiting pipeline is now retired
+before any build: the parent font example has two typed position errors.
+`ac08ec56` corrects those calls, with a new queue after the complete clean-cache,
+fieldset and font retries. Each corrected source passes ten read-only checks.
+Authored/embedded phase settings and forced Fontations text settings remain
+native implementation gaps, preserved in the source review.
+The umbrella still has 113 exports;
 this candidate is unapplied and admits no release state. See the
 [prepared native C contract](../v02/native-c-raster-configuration.md).
+
+The cache `107e2e36` completes both censuses with all 46,652 comparison
+invariants unchanged against its LCD parent, including all 804 additions.
+It remains unqualified at 20,771/22,924 original and 21,570/23,728 expanded
+exact, with actual exits 1 and zero errors. The physical outline guard proves
+its named baseline/fixed difference, but the font workspace build then fails
+before running tests on the example's position types. The fieldset guard also
+fails to compile on an integer border width. Corrected `ffb10c21` font and
+`abed078d` fieldset consumers preserve coordinates, zero border widths and all
+renderer production code. Their compilation, native and full pixel gates
+remain pending. A compiler failure is not a reproduced renderer failure.
 
 The [native inheritance and style trials](../renderer/generated/native-scroll-insets-v21.json)
 remain separate from the accepted renderer. The earlier `f328ed62` complete

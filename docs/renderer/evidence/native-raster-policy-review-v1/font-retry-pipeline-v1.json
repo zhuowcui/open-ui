@@ -1,0 +1,44 @@
+{
+  "all_commands_terminal": false,
+  "consumer_compile_correction_only": true,
+  "immutable_probe_hashes": {
+    "/tmp/openui-native-font-retry-build-v1311.py": "7c0db30e44eb298bd0ecc27f9d0e3c5deec13a303e014c3ce6f969bc79b82e8f",
+    "/tmp/openui-native-font-retry-consumer-v1311.py": "07ea4b200842d6c258f564419c0e05ceb62a48147e697610c9497aea4696b818",
+    "/tmp/openui-native-font-retry-matrices-v1311.py": "0765551aa1a938ee0827c7ba357a409a84579fb0d540651edea29e81e97043f4",
+    "/tmp/openui-native-font-retry-sizing-v1311.py": "4dabd40655f4873cdd2189f5d9b6743841f0ceb5d0c644faff3361672b2823c9",
+    "/tmp/openui-native-font-retry-static-v1311.py": "0ac55fbc42043faf5de8165b1bc9692399062e1b49e25317d38c8b2e507c3dd5"
+  },
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "ordered_build_and_image_stages": true,
+  "original_pixel_gate_remains_required": true,
+  "prior_whole_pipelines": [
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json"
+  ],
+  "probe_sha256": "a61bcb6c85f3e87ebc6262af8083e90313eb17187296ad5ff174e8f7ac502031",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "renderer_production_unchanged_from_prior_candidate": true,
+  "schema_version": 1,
+  "selection_hashes": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-selection-v1311.json": "ca51d8b03dbff3b5c47f3f0dabf93fc631b37772947350a50e56f9e1bdbb00e2"
+  },
+  "source": {
+    "clean": true,
+    "commit": "ffb10c211ef53ce2c6a507c475eff70af15807db",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "092cddb040a5894917e73b0c7661f635f5d4031e40395b7a76e89bca291c6bf7",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "ffb10c211ef53ce2c6a507c475eff70af15807db",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "092cddb040a5894917e73b0c7661f635f5d4031e40395b7a76e89bca291c6bf7",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "awaiting-entire-clean-cache-and-fieldset-retry-pipelines",
+  "steps": []
+}

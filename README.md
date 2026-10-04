@@ -69,9 +69,10 @@ checkpoint, nine comparisons become exact and none lose exactness, while four
 already failing comparisons worsen. Every residual still requires review.
 The separate [font engine trial](docs/renderer/native-font-engines.md) loses
 493 exact comparisons. A shared routing discrepancy selects a different
-authored text path from the explicit FreeType reference. The correction and
-native Rust callback consumer are prepared; compilation and pixel verification
-remain pending.
+authored text path from the explicit FreeType reference. The named physical
+outline guard now fails on its baseline and passes on the correction. The full
+build stops on two position types in the native Rust example. Its corrected
+consumer is prepared; complete compilation and pixel verification remain pending.
 The [native C raster configuration](docs/v02/native-c-raster-configuration.md)
 is also prepared on a private checkpoint. It copies the same immutable Rust
 options into the shared engine and adds C/C++ callback consumers. Ten read-only

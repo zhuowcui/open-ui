@@ -71,15 +71,20 @@ font bytes for both engines. They do not replace the original oracle inputs.
 Each image is captured twice in each of two independent Chromium processes;
 the native app also runs twice. Existing static references remain unchanged.
 
-Ten read-only repository checks pass. The baseline physical-outline guard,
-fixed guard, compilation and native pixel verification have not run yet.
-The pipeline waits for the entire cache and fieldset pipelines to finish;
-local Cargo builds and image sweeps remain separate. It then preserves the
+The named physical-outline guard now fails on its test-only baseline with
+actual exit 101 and passes on `0601cd30` with exit 0. The complete workspace
+build then stops before running tests: the native example supplies
+`LengthValue` to `set_left` and `set_top`, which require `Length`.
+`ffb10c21` corrects the two calls with unchanged coordinates and passes ten
+read-only checks. Its fresh pipeline waits for the entire clean-cache and
+fieldset retry pipelines; local Cargo builds and image sweeps remain separate.
+It then preserves the
 1,000 native sizing measurements, checks 880 selected original comparisons,
 both complete 40-profile matrices and both complete censuses.
 
 The [versioned C raster-configuration transport](../v02/native-c-raster-configuration.md)
-is prepared at clean private `3395cefa`, with a reviewable patch and owned
+is prepared at clean private `3395cefa`, with the position correction at
+`ac08ec56`, a reviewable patch and owned
 configuration over the same Rust engine. All 113 preceding exports and 30
 layouts remain intact in the generated metadata; the candidate adds four
 exports. Its five boundary tests and native C/C++ consumers are uncompiled.
@@ -90,3 +95,21 @@ every field's rendering behavior and default native pixels remain required.
 This private source also inherits the other intrinsic
 regressions and the cache candidate. It is unapplied, admits no release case,
 and does not change the accepted renderer's totals or release status.
+
+## Complete cache comparison and unresolved settings
+
+The cache descendant `107e2e36` finishes both censuses at the LCD parent's
+totals: 20,771/22,924 original and 21,570/23,728 expanded exact, zero errors,
+actual exits 1. All 46,652 comparison records retain their nine pixel/oracle
+invariants, including all 804 additions. This proves that the recording cache
+does not change these pixels; it does not qualify the inherited failures.
+The [complete audits](generated/native-scroll-insets-v32.json) preserve that
+distinction and the terminal pipeline.
+
+The same evidence records a source review of unfinished raster settings:
+authored and embedded LCD phase fields lack a production reader, the native
+phase participates in an origin that is subtracted again, and custom
+Fontations policies force some text settings. Every needed native field must
+be implemented and tested before the Rust or C configuration API is complete.
+Default native rendering and the existing special 10px corrections also
+remain required qualification work.

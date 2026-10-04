@@ -78,10 +78,34 @@ effects, default native rendering, and release-lab operation remain open.
 Preset selection alone does not establish Chromium equality. No new release
 state is admitted by this prepared implementation.
 
-The queued pipeline waits for all commands in the earlier cache, fieldset,
-font and clean-cache pipelines to finish before it builds or captures images.
+The corrected pipeline below waits for every command in the clean-cache,
+fieldset retry and font retry pipelines before it builds or captures images.
 Its thirteen build stages include the five Rust boundary tests, the Linux
 workspace, native examples and all twelve C/six C++ ABI consumers. The new
 Miri prefix test and the complete focused, primitive, original and expanded
 pixel suites remain pending. The accepted renderer remains 21,334/22,924
 exact, with 1,590 differences and zero errors; the full pixel gate fails.
+
+## Consumer corrections and remaining field behavior
+
+The parent font workspace build stopped before running tests: its native
+example passed `LengthValue` to position setters that require `Length`.
+`ffb10c21` corrects those two calls without changing their coordinates.
+The C candidate's `ac08ec56` follow-up includes that correction. The waiting
+`3395cefa` C pipeline was retired before any build or image stage, preserving
+its receipt and source. The corrected C pipeline follows the entire clean-cache,
+fieldset and font retry pipelines. Each corrected source passes ten read-only
+checks. Compilation and native verification still remain pending.
+
+The [source review](../renderer/evidence/native-raster-policy-review-v1/native-field-source-review-v1.json)
+also identifies unfinished rendering behavior. Authored and embedded LCD phase
+settings have no production reader. The native phase is included in a blob
+origin that is subtracted again, with effects dependent on rounding and the
+existing special phase correction. Custom Fontations construction forces
+hinting and edging choices by its text policy. The special 10px phase and
+vertical-origin corrections also need a general shared cause and pixel proof.
+
+These are native renderer and API gaps to fix. Correctly copying every field
+into an engine does not prove that every field works. The
+[v32 evidence](../renderer/generated/native-scroll-insets-v32.json) preserves
+the source review, failed builds, corrected consumer patches and new queues.
