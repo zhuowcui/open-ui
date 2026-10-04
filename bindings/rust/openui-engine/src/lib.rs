@@ -2280,7 +2280,9 @@ mod tests {
 
     #[test]
     fn native_inheritance_recomputes_relative_lengths_and_preserves_declaration_order() {
-        use openui_style::{LengthValue, TextWrapMode, WhiteSpace};
+        use openui_style::{
+            LengthValue, TextWrapMode, WhiteSpace, WhiteSpaceCollapse, WhiteSpaceShorthand,
+        };
         let mut engine =
             Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
         let parent = engine.create_native_element(ElementTag::Div).unwrap();
@@ -2303,7 +2305,11 @@ mod tests {
             .set_property(
                 child,
                 StyleProperty::WhiteSpace,
-                StyleValue::WhiteSpace(WhiteSpace::Pre),
+                WhiteSpaceShorthand {
+                    collapse: WhiteSpaceCollapse::Preserve,
+                    wrap: TextWrapMode::Nowrap,
+                }
+                .into(),
             )
             .unwrap();
         engine
@@ -2337,7 +2343,11 @@ mod tests {
             .set_property(
                 child,
                 StyleProperty::WhiteSpace,
-                StyleValue::WhiteSpace(WhiteSpace::Pre),
+                WhiteSpaceShorthand {
+                    collapse: WhiteSpaceCollapse::Preserve,
+                    wrap: TextWrapMode::Nowrap,
+                }
+                .into(),
             )
             .unwrap();
         engine
