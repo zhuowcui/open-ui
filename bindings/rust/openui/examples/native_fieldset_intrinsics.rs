@@ -64,7 +64,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     container.set_height(LengthValue::px(100.0))?;
     container.set_background_color(Color::RED)?;
     let border = || Border {
-        width: 0,
+        width: 0.0,
         style: BorderStyle::None,
         color: Color::BLACK,
     };
