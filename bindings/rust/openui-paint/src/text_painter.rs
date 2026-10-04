@@ -151,9 +151,13 @@ pub fn paint_text_with_raster_policy(
         paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
 
         let physical_scale = style.device_scale_factor as f32;
-        if style.raster_configuration.backend.is_chromium_cpu()
-            && (physical_scale - 1.0).abs() > f32::EPSILON
-        {
+        // Custom Fontations paths are fitted before Skia records the blob.
+        // Fit them at the physical strike for every selected backend,
+        // including the default Skia path. Scaling an already fitted logical
+        // outline changes coverage even though its layout advances agree.
+        let physical_strike = style.raster_configuration.backend.is_chromium_cpu()
+            || raster_policy != TextRasterPolicy::Skia;
+        if physical_strike && (physical_scale - 1.0).abs() > f32::EPSILON {
             if let Some(physical_blob) = shape_result
                 .to_text_blob_with_raster_policy_and_geometry_at_scale(
                     lcd_origin,
