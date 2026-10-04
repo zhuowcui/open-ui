@@ -6,8 +6,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut args = std::env::args().skip(1);
     let output = PathBuf::from(args.next().ok_or("output path required")?);
     let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
-    let selected_case: Option<usize> = args.next().map(|arg| arg.parse()).transpose()?;
-    if args.next().is_some() || selected_case.is_some_and(|index| index >= 200) {
+    let selected_cases = args
+        .next()
+        .map(|arg| -> Result<std::ops::Range<usize>, Box<dyn std::error::Error>> {
+            match arg.split_once(':') {
+                Some((start, end)) => Ok(start.parse()?..end.parse()?),
+                None => {
+                    let index: usize = arg.parse()?;
+                    Ok(index..index.checked_add(1).ok_or("case index overflow")?)
+                }
+            }
+        })
+        .transpose()?;
+    if args.next().is_some()
+        || selected_cases
+            .as_ref()
+            .is_some_and(|range| range.start >= range.end || range.end > 200)
+    {
         return Err("unexpected arguments".into());
     }
     let document = Document::with_font_collection(
@@ -53,7 +68,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .enumerate()
             {
                 let index = context_index * 40 + variant_index * 5 + indent_index;
-                if selected_case.is_some_and(|selected| selected != index) {
+                if selected_cases
+                    .as_ref()
+                    .is_some_and(|range| !range.contains(&index))
+                {
                     continue;
                 }
                 eprintln!("creating native case-{index}: {context} {variant} {indent}");
@@ -119,7 +137,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let bounds = element.bounding_rect()?.ok_or("native bounds required")?;
         rows.push(format!(
             "{{\"id\":\"case-{index}\",\"context\":\"{context}\",\"variant\":\"{variant}\",\"indent\":\"{indent}\",\"width\":{},\"height\":{}}}",
-            bounds.width, bounds.height
+            f64::from(bounds.width), f64::from(bounds.height)
         ));
     }
     let callback_calls = Rc::new(Cell::new(0));
