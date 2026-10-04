@@ -782,10 +782,12 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
 
 ### SP17 W1M: flex abspos alignment matrix closure
 
-- Restricted JavaScript admission to the exact inert check-layout harness and
-  stripped it from comparison templates, including quoted `>` selectors.
-  Inline mutation, unknown scripts, extra handlers, and dynamic alignment are
-  still rejected.
+- Admitted Chromium test sources containing scripts only when they used the
+  exact inert check-layout harness, and stripped that harness from comparison
+  templates, including quoted `>` selectors. Open UI executed no JavaScript.
+  Sources with inline mutation, unknown scripts, extra handlers, or dynamic
+  alignment remained excluded from that sprint's test import. Needed element
+  behavior still requires a public native Rust API.
 - Completed one-time flex abspos resolution for distribution fallbacks,
   physical/logical and flex edges, reverse/wrap reversal, writing mode,
   direction, self alignment, safe overflow, margins, and ignored

@@ -23,11 +23,14 @@ calls public Rust methods on retained `Document` and `Element` handles and
 handles interaction with Rust callbacks. C applications use the versioned C
 ABI over the same engine.
 
-When we need behavior provided by a browser element API, implement that
-behavior in the shared Rust engine and expose a public native Rust method for
-the app to call. This includes the resulting state changes, geometry and
-events. There is no JavaScript glue, script binding, `eval`, or embedded
-browser runtime, in this or future versions.
+Browser element APIs provide operations such as finding an element, changing
+its state, focusing it, scrolling it, and handling events. Browsers let apps
+call these operations through JavaScript; the operations themselves do not
+require JavaScript. Each needed operation must be implemented in the shared
+Rust engine and exposed as a public native Rust method for the consuming app
+to call. This includes the resulting state changes, geometry and events.
+There is no JavaScript glue, script binding, `eval`, or embedded browser
+runtime, in this or future versions.
 
 A missing public native method is unfinished API work. Verify each needed
 operation from a consuming Rust app before claiming it is complete. This
