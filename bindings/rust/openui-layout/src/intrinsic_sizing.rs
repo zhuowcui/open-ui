@@ -560,6 +560,9 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
 
                 let mut run_start = 0usize;
                 let mut run_start_char = 0usize;
+                // A forced newline starts a separately snapped line. Soft
+                // breaks retain cumulative advance rounding within that line.
+                let mut line_start_char = 0usize;
                 let chars: Vec<(usize, char)> = text.char_indices().collect();
                 for (index, &(byte_index, ch)) in chars.iter().enumerate() {
                     let char_end = index + 1;
@@ -576,8 +579,11 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                     }
 
                     if byte_index > run_start {
-                        let max_width = intrinsic_text_width(shape.width_for_range(0, index))
-                            - intrinsic_text_width(shape.width_for_range(0, run_start_char));
+                        let max_width =
+                            intrinsic_text_width(shape.width_for_range(line_start_char, index))
+                                - intrinsic_text_width(
+                                    shape.width_for_range(line_start_char, run_start_char),
+                                );
                         let width = max_width;
                         min_segment = min_segment + pending_min_collapsible_space;
                         pending_min_collapsible_space = LayoutUnit::zero();
@@ -623,9 +629,13 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                             &mut max_content,
                             &mut pending_collapsible_space,
                         );
+                        line_start_char = char_end;
                     } else if is_break_all_character {
-                        let max_width = intrinsic_text_width(shape.width_for_range(0, char_end))
-                            - intrinsic_text_width(shape.width_for_range(0, index));
+                        let max_width =
+                            intrinsic_text_width(shape.width_for_range(line_start_char, char_end))
+                                - intrinsic_text_width(
+                                    shape.width_for_range(line_start_char, index),
+                                );
                         let width = max_width;
                         min_segment = min_segment + pending_min_collapsible_space;
                         pending_min_collapsible_space = LayoutUnit::zero();
@@ -650,8 +660,11 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                         soft_break_after_pending_edges = false;
                         last_content_was_text = true;
                     } else {
-                        let max_width = intrinsic_text_width(shape.width_for_range(0, char_end))
-                            - intrinsic_text_width(shape.width_for_range(0, index));
+                        let max_width =
+                            intrinsic_text_width(shape.width_for_range(line_start_char, char_end))
+                                - intrinsic_text_width(
+                                    shape.width_for_range(line_start_char, index),
+                                );
                         let width = max_width;
                         if collapses {
                             pending_collapsible_space = max_width;
@@ -683,9 +696,11 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                 }
 
                 if run_start < text.len() {
-                    let max_width =
-                        intrinsic_text_width(shape.width_for_range(0, shape.num_characters))
-                            - intrinsic_text_width(shape.width_for_range(0, run_start_char));
+                    let max_width = intrinsic_text_width(
+                        shape.width_for_range(line_start_char, shape.num_characters),
+                    ) - intrinsic_text_width(
+                        shape.width_for_range(line_start_char, run_start_char),
+                    );
                     let width = max_width;
                     min_segment = min_segment + pending_min_collapsible_space;
                     pending_min_collapsible_space = LayoutUnit::zero();

@@ -8,15 +8,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
     let selected_cases = args
         .next()
-        .map(|arg| -> Result<std::ops::Range<usize>, Box<dyn std::error::Error>> {
-            match arg.split_once(':') {
-                Some((start, end)) => Ok(start.parse()?..end.parse()?),
-                None => {
-                    let index: usize = arg.parse()?;
-                    Ok(index..index.checked_add(1).ok_or("case index overflow")?)
+        .map(
+            |arg| -> Result<std::ops::Range<usize>, Box<dyn std::error::Error>> {
+                match arg.split_once(':') {
+                    Some((start, end)) => Ok(start.parse()?..end.parse()?),
+                    None => {
+                        let index: usize = arg.parse()?;
+                        Ok(index..index.checked_add(1).ok_or("case index overflow")?)
+                    }
                 }
-            }
-        })
+            },
+        )
         .transpose()?;
     if args.next().is_some()
         || selected_cases

@@ -34869,9 +34869,19 @@ mod tests {
         );
         for (index, (wrapper, floated)) in wrappers.into_iter().enumerate() {
             let wrapper_fragment = fragment_for_node(&fragment, wrapper).unwrap();
-            assert_eq!(wrapper_fragment.float_exclusions.len(), 1, "wrapper {index}");
-            assert_eq!(wrapper_fragment.offset.top, LayoutUnit::from_i32(index as i32 * 100));
-            assert_eq!(fragment_for_node(&fragment, floated).unwrap().offset.top, LayoutUnit::zero());
+            assert_eq!(
+                wrapper_fragment.float_exclusions.len(),
+                1,
+                "wrapper {index}"
+            );
+            assert_eq!(
+                wrapper_fragment.offset.top,
+                LayoutUnit::from_i32(index as i32 * 100)
+            );
+            assert_eq!(
+                fragment_for_node(&fragment, floated).unwrap().offset.top,
+                LayoutUnit::zero()
+            );
         }
         assert_eq!(fragment.size.height, LayoutUnit::from_i32(160));
     }
