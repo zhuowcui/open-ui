@@ -64,7 +64,7 @@ This candidate is unapplied and unqualified; no new release state is admitted.
 Open UI runs no JavaScript in any version. Needed interaction uses public
 native Rust methods and Rust callbacks over the shared Engine.
 
-The [intrinsic sizing follow-up](../renderer/generated/native-scroll-insets-v24.json) reviews the
+The [intrinsic sizing follow-up](../renderer/generated/native-scroll-insets-v25.json) reviews the
 missing width behavior against 120 repeated Chromium advance observations and
 2,000 neighboring measurements at five scales. Chromium retains positive
 shaped-width remainders on its 1/64px layout grid and includes first-line
@@ -84,10 +84,18 @@ tests and one real regression: an inline canvas lost its natural width. The
 new intrinsic sequence exposed that replaced content was collected as an
 ordinary inline wrapper. The shared fix collects it as an atomic box. All 26
 existing canvas, image and positioning guards now pass, and the native width
-guard still passes. The revised source has ten passing read-only checks and
-a new workspace build followed by native/raster comparisons running or queued
-in the frozen observation. Its complete workspace, native pixels and censuses
-are not yet verified. No runtime
+guard still passes. That source completed all nine build stages: 8,543 workspace tests passed,
+none failed and 13 were ignored; eleven C and five C++ consumers passed with
+113 exports. The combined 200-case native sizing app then failed in float
+layout after reaching about 43 GiB RSS. Individual cases all finished, and a
+bounded group probe isolated duplicate inherited float exclusions. The shared
+fix propagates only newly added floats. All 61 block tests pass, and the full
+native app now finishes at five scales with peak RSS below 85 MiB. It matches
+700/1,000 Chromium size measurements; 300 still differ. Correct JSON number
+formatting removes six diagnostic false differences without changing layout
+or adding tolerance. Further shared inline-block and preserved-newline fixes
+are prepared for verification. Their full workspace, native geometry, pixels
+and censuses are not yet verified. No runtime
 promotion or new pixel admission is claimed. Prior snapshots and all
 reference bytes remain unchanged.
 

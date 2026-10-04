@@ -1,0 +1,180 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-clean-v1182/build.json",
+      "sha256": "f32972a3428f3336f04d26eb2952cb3cb0883506cfc6fb25f59725ffe00dbd44"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-consumer-resource-failure-v1192.json",
+      "sha256": "068222ee572345ceb231e98aabff3fde8d187a1b89cc18a4ee6fb779738863e4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-case-probe-v1193/receipt.json",
+      "sha256": "5c5e7e116440e81696089c35393cb8992cc5bc8bf5cde52c7c604c48c46eebe1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-debug-v1194/receipt.json",
+      "sha256": "36d8d1d28e1362ba07b401c61520467725aeb93c5eefc1b1094d6ee20287f1da"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-range-probe-v1195/receipt.json",
+      "sha256": "7f6e49836b679bac9ec5c21c1b6e52466297a01466cc79bd6064be6cf8a0af9b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-float-baseline-v1196/receipt.json",
+      "sha256": "05d82d202b29d8ad9915657fb376bf80c2964dcc9a77a5d4c5d199db9de176e5"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-float-baseline-v1197/receipt.json",
+      "sha256": "429d2d6f437e981657e002a39fbca5247e65fb6e3174b22845d6bbe0fdc4a14e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-float-fixed-v1198/receipt.json",
+      "sha256": "137513a931a70524f25c39b1ac119eb556e7a70abdb396418f1576f315c0d588"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-float-consumer-v1199/receipt.json",
+      "sha256": "57d2a9af984850d1a9e87d20f6f81adccc3055d21bf1bfb87739928b675ef6d0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-float-consumer-v1200/receipt.json",
+      "sha256": "e24ce10124da97b16fa9584f25bcfe1a71f225ed9ef2dd33c9830648de0b2952"
+    }
+  ],
+  "contract": "Open UI executes no JavaScript in any version. Consuming apps call public native Rust APIs and Rust callbacks over the shared Engine. Needed browser element behavior must be implemented in Rust and tested from a consuming app. Chromium alone supplies expected pixels with zero tolerance; old Open UI screenshots are immutable provenance.",
+  "diagnostic_correction": {
+    "exact_matches_after_new_encoding": 140,
+    "json_f32_display_false_deltas": 6,
+    "new_encoding": "Widen exact f32 bounds to f64 before JSON formatting. No tolerance, layout or reference change.",
+    "old_isolated_geometry_matches": 134,
+    "old_isolated_geometry_total": 200,
+    "old_isolated_runs_passed": 200
+  },
+  "javascript_executed_by_openui": false,
+  "local_builds_and_image_sweeps_are_separate": true,
+  "native_consumer": {
+    "all_commands_terminal": true,
+    "all_geometry_exact": false,
+    "cases_per_scale": 200,
+    "geometry_exact": 700,
+    "geometry_total": 1000,
+    "no_memory_guard_triggered": true,
+    "observed_comparison_exit_code": 1,
+    "owner": "openui-layout intrinsic sizing and line construction",
+    "peak_rss_bytes": 88248320,
+    "pixel_comparisons_total": 0,
+    "remaining_cohorts": [
+      "Native inline-blocks still use the legacy measurement outside a selected font profile.",
+      "Preserved newlines carry rounding from the preceding line.",
+      "Percentage indentation allows an incorrect wrap inside adjacent spans."
+    ],
+    "rss_limit_bytes": 536870912,
+    "runs_passed": 5,
+    "wall_limit_seconds": 60
+  },
+  "new_public_rust_api": [
+    "Document::with_options",
+    "Document::with_font_collection_and_options",
+    "Document::raster_configuration",
+    "AppBuilder::raster_configuration",
+    "HeadlessApp::with_options"
+  ],
+  "new_release_states_admitted": 0,
+  "prepared_followup": {
+    "complete_workspace_verified": false,
+    "native_geometry_verified": false,
+    "native_pixels_verified": false,
+    "patch": {
+      "bytes": 11730,
+      "path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-shared-sizing-v5.patch",
+      "sha256": "d1915c8eab716b0a39fb3aad7ff3d235a937d96588cb4f207da938f94777af2d"
+    },
+    "qualified": false,
+    "shared_changes": [
+      "Use full intrinsic min/max for native atomic boxes independently of font profile.",
+      "Start independent intrinsic rounding after each forced newline."
+    ],
+    "source": {
+      "clean": true,
+      "commit": "ea54f577932e5afc49d29ae556eec27a1a603889",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "edac9d6116aa09c571f838cef3c77d48efa7e55904ea20d2ce5bda92bf77175a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "prior_complete_build": {
+    "c_consumers": 11,
+    "c_exports": 113,
+    "cpp_consumers": 5,
+    "receipt": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-clean-v1182/build.json",
+      "sha256": "f32972a3428f3336f04d26eb2952cb3cb0883506cfc6fb25f59725ffe00dbd44"
+    },
+    "source": {
+      "clean": true,
+      "commit": "ee6167d91dda131348ae40d1abb68af94ff7b9d0",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "cbc3e5738bff1ef09a0dc18485ff7aa652a97f9794830ac7d4bd46657dff1eb8",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stages_passed": 9,
+    "workspace_failed": 0,
+    "workspace_ignored": 13,
+    "workspace_passed": 8543
+  },
+  "prior_snapshot": {
+    "path": "docs/renderer/generated/native-scroll-insets-v24.json",
+    "sha256": "78e5ae6471cd5f73821efd396a4a04c1114655827a546c93c8fe8a4b7c314f2e"
+  },
+  "probe_sha256": "c7308a691e213ba5538dcd9dbabe113f3b4b1d9c612df212bab7d159ebead69a",
+  "promotion_allowed": false,
+  "reference_inputs_changed": false,
+  "regression_guard": {
+    "expected_wrapper_1_exclusions": 1,
+    "fixed_block_tests_passed": 61,
+    "fixed_failed": 0,
+    "guard_corrections": [
+      "The root is a 160px viewport, not the 600px descendant extent.",
+      "The nested-container test previously expected its two floats plus one inherited ancestor float; it now verifies only its two additions while preserving the same exact 100px geometry."
+    ],
+    "old_observed_exit_code": 101,
+    "old_source": {
+      "clean": true,
+      "commit": "e4d16c77e4880e95e0295abafa8ee36c4d86e2e3",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "734637264f6b400e15811e401b1352fa32dfb68c110f8a2cdbbcbc8fdf5fd303",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "old_wrapper_1_exclusions": 2
+  },
+  "release_qualification": false,
+  "required_work_still_open": [
+    "Complete original and expanded Chromium equality with reviewed residual ownership.",
+    "Fix native absolute intrinsic widths and review glyph advance and paint discrepancies.",
+    "Complete all needed public native Rust element APIs and shared C/accessibility parity.",
+    "Complete compositor/3D, blocked-UI animation, hardening, hardware, accessibility, performance, packaging, provenance and approved signed publication."
+  ],
+  "resource_failure": {
+    "all_owned_commands_terminated": true,
+    "later_scale_1_25_manually_stopped": true,
+    "observed_peak_rss_kib": 45227280,
+    "observed_scale_1_native_exit_code": -9,
+    "owner": "openui-layout float-exclusion propagation",
+    "reviewed_root_cause": "Pure block wrappers returned inherited float exclusions with their new entries. Parent and sibling accumulation duplicated and retransformed prior exclusions, producing exponential growth.",
+    "shared_fix": "Snapshot inherited exclusions at block entry and propagate only additions, matching the existing inline path. No fixture IDs or raster output changes."
+  },
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "0217f84da2928829a20866029bc53a68ab361522",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "9f0910e1920161b06f80e3e90ecfed14e4077d36c08d8222162d04d64950dfac",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_patch": {
+    "bytes": 40024,
+    "path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-and-raster-options-v4.patch",
+    "sha256": "89cae4570b805bac780b08fe37466726c705e852475c59b9762a44fe33681b00"
+  }
+}
