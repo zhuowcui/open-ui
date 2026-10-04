@@ -1067,6 +1067,15 @@ impl<'a> LineBreaker<'a> {
                             return;
                         }
                         *state = LineState::Done;
+                    } else if self
+                        .continues_first_unbreakable_text_unit(text_start, text_end, line, style)
+                    {
+                        // An inline or shaping boundary inside the first
+                        // unbreakable unit cannot become a soft wrap. Keep its
+                        // continuation on this overflowing line.
+                        self.force_text_through_next_logical_break(
+                            item_index, text_start, text_width, line, style,
+                        );
                     } else {
                         // Break before this item (it goes to next line)
                         *state = LineState::Done;
@@ -1074,6 +1083,57 @@ impl<'a> LineBreaker<'a> {
                 }
             }
         }
+    }
+
+    fn continues_first_unbreakable_text_unit(
+        &self,
+        text_start: usize,
+        text_end: usize,
+        line: &LineInfo,
+        style: &ComputedStyle,
+    ) -> bool {
+        let mut first_start = None;
+        let mut previous_end = None;
+        for result in &line.items {
+            match result.item_type {
+                InlineItemType::OpenTag | InlineItemType::CloseTag => {}
+                InlineItemType::Text => {
+                    let preceding = &self.items_data.styles
+                        [self.items_data.items[result.item_index].style_index];
+                    if preceding.word_break != style.word_break
+                        || preceding.overflow_wrap != style.overflow_wrap
+                        || preceding.line_break != style.line_break
+                        || allows_line_wrap(preceding.white_space)
+                            != allows_line_wrap(style.white_space)
+                    {
+                        return false;
+                    }
+                    first_start.get_or_insert(result.text_range.start);
+                    previous_end = Some(result.text_range.end);
+                }
+                InlineItemType::AtomicInline
+                | InlineItemType::Control
+                | InlineItemType::BlockInInline => return false,
+            }
+        }
+        let Some(first_start) = first_start else {
+            return false;
+        };
+        if previous_end != Some(text_start) || first_start >= text_start {
+            return false;
+        }
+        // Include both sides of the boundary: UAX #14 depends on following
+        // characters, and checking either item alone invents an end-of-text
+        // break. Real whitespace, CJK and break-all opportunities remain.
+        let boundary = text_start - first_start;
+        !find_break_opportunities(
+            &self.items_data.text[first_start..text_end],
+            style.word_break,
+            style.overflow_wrap,
+            style.line_break,
+        )
+        .into_iter()
+        .any(|offset| offset <= boundary)
     }
 
     fn has_attached_nonbreaking_suffix(&self, item_index: usize) -> bool {
