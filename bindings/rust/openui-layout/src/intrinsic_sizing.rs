@@ -1046,8 +1046,7 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     //
     // Blink: BlockNode::ComputeMinMaxSizes → runs inline layout to
     // determine block-size contribution from inline formatting contexts.
-    let has_inline_children = node.text.as_deref().is_some_and(|text| !text.is_empty())
-        || crate::inline::algorithm::has_inline_children(doc, node_id);
+    let has_inline_children = crate::inline::algorithm::has_inline_children(doc, node_id);
     let has_block_children = crate::block::has_block_children(doc, node_id);
 
     if has_inline_children && !has_block_children {
@@ -1062,7 +1061,7 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         // The recursive float walk above also tracks clearance-separated
         // rows. The inline item stream excludes float placeholders, so it
         // cannot replace that row accumulator. Ordinary IFCs use the complete
-        // shaped sequence, including undecorated and element-owned text.
+        // shaped sequence, including undecorated native text children.
         let has_float_children = ordered_child_ids
             .iter()
             .any(|child| doc.node(*child).style.float != openui_style::Float::None);
