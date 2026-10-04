@@ -1482,9 +1482,7 @@ impl Engine {
                 }
             })?;
             style.update_derived(|fields| fields.font_size = font_size);
-            if matches!(property, StyleProperty::Font | StyleProperty::LineHeight)
-                && !matches!(value, StyleValue::Renderer(_))
-            {
+            if matches!(property, StyleProperty::Font | StyleProperty::LineHeight) {
                 authored_line_height = true;
             }
         }
