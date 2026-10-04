@@ -593,23 +593,33 @@ impl Engine {
         value: &StyleValue,
     ) -> Result<(), EngineError> {
         let node = self.resolve(target)?;
+        let viewport = (
+            self.viewport.logical_width() as f32,
+            self.viewport.logical_height() as f32,
+        );
+        let font = if property == StyleProperty::FontSize {
+            let parent = self.document.node(node).parent;
+            if parent.is_none() {
+                openui_style::ComputedStyle::initial().font_size
+            } else {
+                self.document.node(parent).style.font_size
+            }
+        } else {
+            self.document.node(node).style.font_size
+        };
+        let root_font = if node == self.document.root() && property == StyleProperty::FontSize {
+            openui_style::ComputedStyle::initial().font_size
+        } else {
+            self.document.node(self.document.root()).style.font_size
+        };
+        let resolved = Self::resolve_native_lengths(property, value, font, root_font, viewport);
+        // Publish to resolved targets as well as authored targets. The shared
+        // refresh then updates relative lengths and native descendants.
+        self.document
+            .apply_style_property(node, property, &resolved, viewport)
+            .map_err(|_| EngineError::PropertyType { property })?;
         if property.metadata().inherited {
             self.refresh_inherited_styles(node)?;
-        } else {
-            let viewport = (
-                self.viewport.logical_width() as f32,
-                self.viewport.logical_height() as f32,
-            );
-            let resolved = Self::resolve_native_lengths(
-                property,
-                value,
-                self.document.node(node).style.font_size,
-                self.document.node(self.document.root()).style.font_size,
-                viewport,
-            );
-            self.document
-                .apply_style_property(node, property, &resolved, viewport)
-                .map_err(|_| EngineError::PropertyType { property })?;
         }
         self.dirty.hit_test = true;
         self.mark_dirty(property.metadata().invalidation);

@@ -1259,17 +1259,58 @@ impl Engine {
         Ok(())
     }
 
-    /// Apply a schema-generated computed longhand value. This is used by
-    /// generated renderer fixtures whose values are already resolved; normal
-    /// applications should prefer `set_property` or generated framework
-    /// setters.
+    /// Apply a schema-generated computed longhand to a resolved snapshot.
+    /// Omitted fields retain their computed defaults; they must not inherit
+    /// again. This input freezes the current author declarations into computed
+    /// state. Native applications use `set_property` or framework setters to
+    /// retain declarations that respond to parent and viewport changes.
     #[doc(hidden)]
     pub fn set_renderer_style(
         &mut self,
         handle: NodeHandle,
         value: RendererStyleValue,
     ) -> Result<(), EngineError> {
-        self.set_property(handle, value.property(), StyleValue::Renderer(value))
+        let node = self.resolve(handle)?;
+        let property = value.property();
+        let value = StyleValue::Renderer(value);
+        let slot = &self.slots[handle.index as usize];
+        if slot.resolved_style_snapshot
+            && slot.authored.is_empty()
+            && slot.authored_pseudo.iter().all(Option::is_none)
+            && !self
+                .animations
+                .values()
+                .any(|animation| animation.target == handle)
+            && openui_style::value_from_computed(&self.document.node(node).style, property) == value
+        {
+            return Ok(());
+        }
+        let viewport = (
+            self.viewport.logical_width() as f32,
+            self.viewport.logical_height() as f32,
+        );
+        self.document
+            .apply_style_property(node, property, &value, viewport)
+            .map_err(|_| EngineError::PropertyType { property })?;
+        let slot = &mut self.slots[handle.index as usize];
+        slot.authored.clear();
+        slot.authored_order.clear();
+        slot.resolved_style_snapshot = true;
+        self.refresh_inherited_styles(node)?;
+        let mut has_animation = false;
+        for animation in self.animations.values_mut().filter(|animation| {
+            animation.target == handle && animation.keyframes.property() == property
+        }) {
+            animation.underlying = value.clone();
+            animation.last_applied = None;
+            has_animation = true;
+        }
+        self.dirty.hit_test = true;
+        self.mark_dirty(property.metadata().invalidation);
+        if has_animation {
+            self.sample_animations()?;
+        }
+        Ok(())
     }
 
     /// Apply engine-owned derived style state. These values are explicitly
@@ -1296,7 +1337,11 @@ impl Engine {
     ) -> Result<(), EngineError> {
         let node = self.resolve(handle)?;
         self.document.install_resolved_style(node, style);
-        self.slots[handle.index as usize].resolved_style_snapshot = true;
+        let slot = &mut self.slots[handle.index as usize];
+        slot.authored.clear();
+        slot.authored_order.clear();
+        slot.authored_pseudo = std::array::from_fn(|_| None);
+        slot.resolved_style_snapshot = true;
         self.refresh_inherited_descendants(node)?;
         self.dirty.hit_test = true;
         self.mark_dirty(InvalidationClass::Subtree);
@@ -1315,7 +1360,12 @@ impl Engine {
         while let Some(node) = pending.pop() {
             if let Some(index) = self.node_slots.get(&node).copied() {
                 let slot = &self.slots[index as usize];
-                if !slot.resolved_style_snapshot {
+                if !slot.resolved_style_snapshot
+                    || !slot.authored.is_empty()
+                    || self.animations.values().any(|animation| {
+                        animation.target.index == index && animation.last_applied.is_some()
+                    })
+                {
                     let declarations: Vec<_> = slot
                         .authored_order
                         .iter()
@@ -1358,7 +1408,9 @@ impl Engine {
                         self.document.node(self.document.root()).style.font_size
                     };
                     let mut style = self.document.node(node).style.clone();
-                    style.inherit_properties_from(&parent);
+                    if !slot.resolved_style_snapshot {
+                        style.inherit_properties_from(&parent);
+                    }
                     let style = Self::resolve_native_declarations(
                         style,
                         &declarations,
@@ -2628,6 +2680,63 @@ mod tests {
             .set_property(target, StyleProperty::Color, Color::RED.into())
             .unwrap();
         assert_eq!(engine.computed_style(target).unwrap().color, Color::RED);
+    }
+
+    #[test]
+    fn native_resolved_repeated_computed_value_preserves_unchanged_work() {
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
+        let target = engine.create_native_element(ElementTag::Div).unwrap();
+        engine
+            .set_renderer_style(target, RendererStyleValue::Color(Color::GREEN))
+            .unwrap();
+        engine.append_child(engine.root(), target).unwrap();
+        engine.scene().unwrap();
+        let before = engine.dirty_generations();
+        engine
+            .set_renderer_style(target, RendererStyleValue::Color(Color::GREEN))
+            .unwrap();
+        assert_eq!(engine.dirty_generations(), before);
+        engine.scene().unwrap();
+        assert_eq!(engine.dirty_generations(), before);
+    }
+
+    #[test]
+    fn native_inheritance_computes_renderer_line_height_percentages() {
+        use openui_style::LineHeight;
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
+        let root = engine.root();
+        engine
+            .set_property(root, StyleProperty::FontSize, LengthValue::px(24.0).into())
+            .unwrap();
+        engine
+            .set_property(
+                root,
+                StyleProperty::LineHeight,
+                LineHeight::Percentage(150.0).into(),
+            )
+            .unwrap();
+        let child = engine.create_native_element(ElementTag::Span).unwrap();
+        engine
+            .set_property(child, StyleProperty::FontSize, LengthValue::px(40.0).into())
+            .unwrap();
+        engine.append_child(root, child).unwrap();
+        assert_eq!(
+            engine.computed_style(root).unwrap().line_height,
+            LineHeight::Length(36.0)
+        );
+        assert_eq!(
+            engine.computed_style(child).unwrap().line_height,
+            LineHeight::Length(36.0)
+        );
+        engine
+            .set_property(root, StyleProperty::FontSize, LengthValue::px(20.0).into())
+            .unwrap();
+        assert_eq!(
+            engine.computed_style(child).unwrap().line_height,
+            LineHeight::Length(30.0)
+        );
     }
 
     #[test]
