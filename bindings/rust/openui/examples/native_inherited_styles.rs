@@ -19,7 +19,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let child = Element::create(&document, "div")?;
     child.set_width(LengthValue::Em(4.0))?;
     child.set_height(LengthValue::px(32.0))?;
-    child.set_border_top_width(LengthValue::px(4.0))?;
+    child.set_border_top_width(4)?;
     child.set_border_top_style(BorderStyle::Solid)?;
     root.append_child(&child)?;
     let initial = child.computed_style()?;

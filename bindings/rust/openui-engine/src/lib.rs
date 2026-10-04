@@ -2219,7 +2219,10 @@ mod tests {
             (StyleProperty::Color, Color::RED.into()),
             (StyleProperty::FontSize, LengthValue::px(20.0).into()),
             (StyleProperty::Direction, Direction::Rtl.into()),
-            (StyleProperty::Visibility, Visibility::Hidden.into()),
+            (
+                StyleProperty::Visibility,
+                StyleValue::Renderer(RendererStyleValue::Visibility(Visibility::Hidden)),
+            ),
         ] {
             engine.set_property(parent, property, value).unwrap();
         }
@@ -2297,7 +2300,11 @@ mod tests {
             .set_property(child, StyleProperty::Width, LengthValue::Em(3.0).into())
             .unwrap();
         engine
-            .set_property(child, StyleProperty::WhiteSpace, WhiteSpace::Pre.into())
+            .set_property(
+                child,
+                StyleProperty::WhiteSpace,
+                StyleValue::WhiteSpace(WhiteSpace::Pre),
+            )
             .unwrap();
         engine
             .set_property(
@@ -2327,7 +2334,11 @@ mod tests {
             WhiteSpace::PreWrap
         );
         engine
-            .set_property(child, StyleProperty::WhiteSpace, WhiteSpace::Pre.into())
+            .set_property(
+                child,
+                StyleProperty::WhiteSpace,
+                StyleValue::WhiteSpace(WhiteSpace::Pre),
+            )
             .unwrap();
         engine
             .set_property(parent, StyleProperty::Color, Color::BLUE.into())
