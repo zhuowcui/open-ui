@@ -1324,7 +1324,7 @@ mod tests {
                 container.set_height(LengthValue::px(100.0)).unwrap();
                 container.set_box_sizing(BoxSizing::ContentBox).unwrap();
                 let border = || Border {
-                    width: 0,
+                    width: 0.0,
                     style: BorderStyle::None,
                     color: Color::BLACK,
                 };
