@@ -202,19 +202,26 @@ This candidate is unapplied and unqualified; no new release state is admitted.
 Open UI runs no JavaScript in any version. Needed interaction uses public
 native Rust methods and Rust callbacks over the shared Engine.
 
-The [intrinsic sizing follow-up](../renderer/generated/native-scroll-insets-v22.json) reviews the
+The [intrinsic sizing follow-up](../renderer/generated/native-scroll-insets-v23.json) reviews the
 missing width behavior against 120 repeated Chromium advance observations and
 2,000 neighboring measurements at five scales. Chromium retains positive
 shaped-width remainders on its 1/64px layout grid and includes first-line
 indentation. The private source preserves both, uses shaped intrinsic text,
 and adds a consuming Rust app for 200 sizing cases. It also exposes immutable
 raster choice through native `Document`, `AppBuilder` and `HeadlessApp`
-constructors; the previous document API always used the default. Ten read-only
-checks pass. The new Engine guard fails on the retained baseline as expected.
-The fixed source's Rust tests, native comparisons and raster gates are running
-or queued in the frozen observation. No fixed-source pass, runtime promotion
-or new pixel admission is claimed. Prior snapshots and reference bytes remain
-unchanged.
+constructors; the previous document API always used the default.
+
+The initial new Engine guard used the wrong text setup and measured an empty
+box on both sources. Its failed build is preserved, with 208 tests passed and
+one failure before the workspace stopped; the two raster API guards passed.
+The corrected guard attaches actual native text children. It now proves the
+old 80px width fails the 80.015625px Chromium result, and the fixed source
+passes at all five scales, including inherited indentation and a reset. Ten
+read-only checks pass. Its fresh complete workspace build and native/raster
+comparisons are running or queued in the frozen observation. The full fixed
+workspace, native pixels and censuses are not yet verified. No runtime
+promotion or new pixel admission is claimed. Prior snapshots and all
+reference bytes remain unchanged.
 
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
