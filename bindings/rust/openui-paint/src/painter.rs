@@ -5377,7 +5377,7 @@ fn paint_composited_svg_edge_samples(
     destination: Rect,
     opacity_multiplier: f32,
 ) {
-    if style.raster_configuration.backend != RasterBackend::ChromiumLinux
+    if !style.raster_configuration.backend.is_chromium_cpu()
         || opacity_multiplier < 1.0
         || !style.background_color.is_opaque()
     {
@@ -20053,9 +20053,7 @@ fn paint_same_color_solid_border(
     // maps it onto the physical raster grid. Keep edge coverage enabled so a
     // one-sided border ending on a fractional device pixel receives the same
     // partial physical row as other CSS box edges.
-    paint.set_anti_alias(
-        backend == RasterBackend::ChromiumLinux || (device_scale - 1.0).abs() > f64::EPSILON,
-    );
+    paint.set_anti_alias(backend.is_chromium_cpu() || (device_scale - 1.0).abs() > f64::EPSILON);
     set_paint_css_color(&mut paint, &color);
 
     let fixed_inner_block_extent =

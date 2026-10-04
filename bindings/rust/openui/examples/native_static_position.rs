@@ -11,6 +11,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let raster_configuration = match raster_name.as_str() {
         "default" => RasterConfiguration::default(),
         "chromium-linux-lcd" => RasterConfiguration::chromium_linux_lcd(),
+        "chromium-linux-fontations-lcd" => RasterConfiguration::chromium_linux_fontations_lcd(),
         _ => return Err("invalid raster configuration".into()),
     };
     if args.next().is_some()

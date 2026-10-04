@@ -262,6 +262,9 @@ fn parse_viewport_options(
                         RasterConfiguration::deterministic_aliased(true)
                     }
                     "chromium-linux-lcd" => RasterConfiguration::chromium_linux_lcd(),
+                    "chromium-linux-fontations-lcd" => {
+                        RasterConfiguration::chromium_linux_fontations_lcd()
+                    }
                     "legacy-deterministic-alias" => {
                         RasterConfiguration::legacy_deterministic_aliased(false)
                     }

@@ -152,7 +152,7 @@ pub fn paint_text_with_raster_policy(
         paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
 
         let physical_scale = style.device_scale_factor as f32;
-        if style.raster_configuration.backend == RasterBackend::ChromiumLinux
+        if style.raster_configuration.backend.is_chromium_cpu()
             && (physical_scale - 1.0).abs() > f32::EPSILON
         {
             if let Some(physical_blob) = shape_result.to_text_blob_with_raster_policy_at_scale(
@@ -176,12 +176,12 @@ fn uses_chromium_author_lcd(style: &ComputedStyle) -> bool {
     if style.native_control_text || style.embedded_document_text {
         return false;
     }
-    if style.raster_configuration.backend == RasterBackend::ChromiumLinux
+    if style.raster_configuration.backend == RasterBackend::ChromiumLinuxFontations
         && style.raster_configuration.author_text.edging == TextEdging::SubpixelAntiAlias
     {
-        // Explicit Chromium LCD selection also selects its outline policy.
-        // Choosing LCD surface properties alone leaves author glyphs on the
-        // portable Skia outline path instead of the compatible outline path.
+        // Fontations is an explicit authored-outline choice. The ordinary
+        // Chromium Linux LCD constructor preserves its FreeType path, as
+        // required by captures that select FontDataServiceLinux Freetype.
         return true;
     }
     if style.raster_configuration.author_text.edging != TextEdging::Alias {
@@ -228,7 +228,7 @@ pub fn paint_vertical_text(
 
     let mut builder = TextBlobBuilder::new();
     let physical_scale = style.device_scale_factor as f32;
-    let physical_strike = style.raster_configuration.backend == RasterBackend::ChromiumLinux
+    let physical_strike = style.raster_configuration.backend.is_chromium_cpu()
         && (physical_scale - 1.0).abs() > f32::EPSILON;
     let (vertical_baseline_x, top_y) =
         if style.raster_configuration.author_text.subpixel_positioning

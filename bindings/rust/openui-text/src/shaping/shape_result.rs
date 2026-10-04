@@ -489,14 +489,13 @@ impl ShapeResult {
                 continue;
             }
             let source_font = run.font_data.sk_font();
-            // Chromium asks FreeType/fontations for the device-size aliased
-            // strike. Building the compatible outline at the CSS size and
-            // scaling its already grid-fitted path widened every rotated Ahem
-            // glyph by another device pixel (and two pixels at 1.5x/2x).
-            // Hint at the physical size once and keep that custom outline at
-            // its unit font size; glyph positions are converted below.
+            // Chromium builds hinted outlines at the physical strike size.
+            // Scaling an outline already fitted at CSS size changes its ink
+            // bounds. This applies to aliased and LCD outlines alike. Keep
+            // the custom outline at unit size after fitting once; glyph
+            // positions are converted to physical coordinates below.
             let mut physical_source_font;
-            let compatible_source_font = if raster_policy == TextRasterPolicy::ChromiumAliased
+            let compatible_source_font = if raster_policy != TextRasterPolicy::Skia
                 && (device_scale - 1.0).abs() > f32::EPSILON
             {
                 physical_source_font = source_font.clone();
@@ -512,9 +511,8 @@ impl ShapeResult {
                 .flatten();
             let sk_font = compatible_font.as_ref().unwrap_or(source_font);
             let mut physical_font;
-            let compatible_outline_is_physical = compatible_font.is_some()
-                && raster_policy == TextRasterPolicy::ChromiumAliased
-                && (device_scale - 1.0).abs() > f32::EPSILON;
+            let compatible_outline_is_physical =
+                compatible_font.is_some() && (device_scale - 1.0).abs() > f32::EPSILON;
             let raster_font =
                 if (device_scale - 1.0).abs() > f32::EPSILON && !compatible_outline_is_physical {
                     physical_font = sk_font.clone();

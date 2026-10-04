@@ -6,6 +6,15 @@ pub enum RasterBackend {
     Skia,
     ChromiumLinux,
     GaneshGl,
+    /// CPU replay with Chromium's Fontations outline path for authored text.
+    ChromiumLinuxFontations,
+}
+
+impl RasterBackend {
+    /// CPU policies that select glyph strikes in physical pixels.
+    pub const fn is_chromium_cpu(self) -> bool {
+        matches!(self, Self::ChromiumLinux | Self::ChromiumLinuxFontations)
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -105,6 +114,19 @@ impl RasterConfiguration {
             gamma_milli: 1200,
             contrast_milli: 200,
         }
+    }
+
+    /// Explicit Fontations counterpart of the Linux FreeType LCD policy.
+    ///
+    /// Chromium supports both typeface engines. Captures that explicitly
+    /// select FreeType retain `chromium_linux_lcd`; applications comparing
+    /// Fontations authored text select this constructor. Surface and layout
+    /// settings are otherwise identical, and the engine never changes this
+    /// selection based on a font family, fixture ID or machine environment.
+    pub const fn chromium_linux_fontations_lcd() -> Self {
+        let mut configuration = Self::chromium_linux_lcd();
+        configuration.backend = RasterBackend::ChromiumLinuxFontations;
+        configuration
     }
 
     /// Chromium-aligned Linux text policy replayed through Ganesh OpenGL.
