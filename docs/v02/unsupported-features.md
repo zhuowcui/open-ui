@@ -62,7 +62,7 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   C matrix has ten static nested-clip failures among 175 states. Its complete
   censuses now finish at 21,340/22,924 original and 22,143/23,728 expanded exact,
   with two exact losses preventing promotion. The
-  [latest separate candidates](../renderer/generated/native-scroll-insets-v5.json)
+  [latest separate candidates](../renderer/generated/native-scroll-insets-v6.json)
   repair all ten C clip failures at `cf59ea29` while preserving all 510 Rust and
   1,600 raster comparisons, and fix native absolute/fixed reveal traversal and
   transform containing blocks at `6d6768a8`, with 90/90 Rust and 60/60 C states

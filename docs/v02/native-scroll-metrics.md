@@ -69,7 +69,7 @@ exact but two lose exactness: an unscrolled scrollport's trailing coverage
 changes after the new screen snap. Both losses have paint ownership. The
 correction remains unapplied and cannot be promoted with those regressions.
 
-The [latest evidence](../renderer/generated/native-scroll-insets-v5.json) records
+The [latest evidence](../renderer/generated/native-scroll-insets-v6.json) records
 two separate follow-ups. Clean `cf59ea29` skips a redundant rectangular mask
 when a compatible child clip contains the existing parent clip. The tighter
 vector clip remains active; effects, rounded clips, transforms and scroll
@@ -106,6 +106,24 @@ and [C reproducer](../renderer/evidence/native-reveal-root-v1/native-reveal-root
 are reviewable. Ten read-only checks pass; compilation and pixel qualification
 are pending, so no repair is inferred. Fresh Cargo is queued after both clip
 image censuses terminate.
+
+The [scroll-edge prototype](../renderer/evidence/native-scroll-clip-v1/native-scroll-clip-v1.patch)
+at clean `c5769f2d` retains partial scrollport-edge coverage for `overflow: scroll`
+at fractional scale, matching the pinned Chromium clip conversion's use of
+analytic coverage. Ten read-only checks pass; it has not been compiled or
+compared, so the two known exact losses remain open.
+
+The [combined viewport-fixed prototype](../renderer/evidence/native-viewport-fixed-v1/native-viewport-fixed-v1.patch)
+at clean `4dd50621` shares fixed-containing-block ownership between geometry
+and paint. It cancels document scrolling for viewport-fixed bounds, hit testing
+and painted content, while authored transform/containment and descendant
+scrollports retain their own transforms. A consuming Rust app now prepares
+visible fixed and absolute targets on an already-scrolled page; the
+[C consumer](../renderer/evidence/native-viewport-fixed-v1/native-viewport-fixed.c)
+uses the same native Engine. This source also combines the two private clip
+changes. Ten read-only checks pass after adding two generated inventory
+consumer paths; the earlier failed check remains evidence. Compilation and
+all new pixel comparisons are pending. No repair is inferred.
 
 These private patches remain unapplied and unqualified; no new cases are
 admitted as release passes. General clip intersections, broader transformed,

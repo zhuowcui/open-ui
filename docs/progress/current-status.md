@@ -38,7 +38,7 @@ are skipped. Its separate seven-job
 passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux window
 tests, MSRV and all five fuzz targets. Complete logs and individual conclusions
 are retained. The earlier failed `d174ea0b` jobs remain historical evidence.
-The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v5.json)
+The [latest private scroll evidence](../renderer/generated/native-scroll-insets-v6.json)
 records complete `dac78e25` original and expanded runs: 21,340/22,924 and
 22,143/23,728 exact, zero errors, observed exits 1. Eight comparisons become
 exact and two lose exactness; nine comparisons worsen in total. All Chromium
@@ -63,6 +63,14 @@ incorrectly scrolls the document at all five scales, with Engine ownership.
 The follow-up `2cc950e0` stops reveal ancestry at viewport-anchored fixed boxes;
 ten read-only checks pass, but it is uncompiled and no repair is inferred.
 Its fresh build is queued after both clip censuses terminate.
+Two further clean prototypes are reviewable: `c5769f2d` restores analytic
+fractional scrollport-edge coverage for explicit scrolling; `4dd50621` combines
+that change and compatible clip containment with viewport-fixed paint, bounds
+and hit-test ownership. Both pass ten read-only checks. The combined source
+adds an already-scrolled Rust consumer and a native C check; its earlier
+generated-inventory failure is retained and its two consumer paths are updated.
+Both are uncompiled, with pixels unverified. Serial build/image verification
+is queued; the existing failures remain open.
 The source patches remain reviewable,
 unapplied and unqualified, with no new release states admitted. Broader native
 API coverage, transform/fragmentation paths and full rendering remain open.

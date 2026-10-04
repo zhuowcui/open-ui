@@ -167,7 +167,7 @@ All three pull-request workflows at this checkpoint pass. The separate
 [manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/37149510887)
 passes all seven jobs: address/leak sanitizers, Miri, C UBSan, Linux windows,
 MSRV and all five fuzz targets. Skipped pull-request jobs remain open results.
-The [latest private scroll evidence](docs/renderer/generated/native-scroll-insets-v5.json)
+The [latest private scroll evidence](docs/renderer/generated/native-scroll-insets-v6.json)
 records complete `dac78e25` runs at 21,340/22,924 original and 22,143/23,728
 expanded exact, zero errors, with actual exits 1. Eight comparisons become exact
 but two lose exactness; the screen correction remains unapplied. The two losses
