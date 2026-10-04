@@ -6,9 +6,10 @@ A Chromium checkout is not required for ordinary builds.
 
 Application interaction runs in native Rust through public `Document` and
 `Element` methods and Rust event callbacks. Open UI does not execute JavaScript.
-When a consuming app needs a browser-like element operation, implement it as a
-public native Rust API over the retained engine that the app can call directly.
-Implement the behavior in Rust, including its state changes and events.
+When a consuming app needs behavior provided by a browser element API,
+implement that behavior in the shared Rust engine and expose a public Rust
+method for the app to call directly. Include its state changes, geometry and
+events; the app handles interaction with Rust callbacks.
 WPT scripts may be read by offline qualification tools to identify a final
 visual state; they are never run by Open UI. See the
 [native interaction contract](v02/supported-platforms.md#native-interaction-api).

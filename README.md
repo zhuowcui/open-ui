@@ -301,7 +301,7 @@ This candidate is unapplied and unqualified; no new release state is admitted.
 Open UI runs no JavaScript in any version. Needed interaction uses public
 native Rust methods and Rust callbacks over the shared Engine.
 
-The [intrinsic sizing follow-up](docs/renderer/generated/native-scroll-insets-v27.json) reviews the
+The [intrinsic sizing follow-up](docs/renderer/generated/native-scroll-insets-v28.json) reviews the
 missing width behavior against 120 repeated Chromium advance observations and
 2,000 neighboring measurements at five scales. Chromium retains positive
 shaped-width remainders on its 1/64px layout grid and includes first-line
@@ -342,7 +342,16 @@ passing read-only checks. Its pixel effect and full build are unverified.
 The sizing source now completes all 640 focused and 960 primitive comparisons
 exactly. All 1,600 native and Chromium image, oracle, status and difference
 invariants remain unchanged from the earlier clean renderer. Its complete
-original and expanded censuses remain running or queued in the new observation.
+original census now finishes at 21,264/22,924 exact, 1,660 different and zero
+errors, with actual exit 1. Against `5cc75147`, it loses 70 exact comparisons
+and gains none; 115 comparisons change across 33 test IDs. The expanded run
+finishes at 22,063/23,728 exact, 1,665 different and zero errors, also exit 1.
+All original rows agree with the separate census. It loses four more exact
+comparisons in the broken-image multicol addition, leaving 199/201 additions
+exact at all four profiles. All Chromium inputs remain unchanged. The changed
+causes still need minimized reproducers and review; this candidate and its
+descendants remain unapplied. The 1,000 native geometry matches and exact
+focused suites do not override those full-census failures.
 
 Source review also found a compositor cache bug: scene generations restart for
 each document, but both compositors checked only that number before reusing a
@@ -350,8 +359,12 @@ frame. A different document can receive the previous document's pixels.
 A shared fix now requires the immutable recording's identity and keeps it owned
 while its frame is cached. It includes native document, viewport, resource
 lifetime and explicit Ganesh guards. Ten read-only checks pass at `107e2e36`;
-its baseline regression, fixed tests, builds and pixels have not run. Its
-pipeline waits for both earlier image pipelines to terminate before Cargo.
+its local baseline regression, fixed tests, builds and pixels have not run.
+Its own hosted hardening run passes all seven jobs with none skipped, including
+native Linux consumers, MSRV, Miri, sanitizers and fuzz smoke. Those jobs do not
+execute the new direct cache and Ganesh unit guards. Its local pipeline waits
+for the LCD pipeline to terminate before Cargo; the intrinsic pipeline is now
+terminal. The inherited sizing regressions also prevent promotion.
 The candidate remains unapplied and unqualified. Full Chromium pixel parity
 and retained compositor animation remain open. No runtime
 promotion or new pixel admission is claimed. Prior snapshots and all

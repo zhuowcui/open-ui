@@ -18,29 +18,22 @@ network access.
 
 ## Native interaction API
 
-Open UI runs no JavaScript, in any version. Application interaction runs in
-native Rust. The public `openui` crate exposes retained `Document` and
-`Element` handles and Rust event callbacks. C applications use the versioned
-C ABI over the same engine.
+Open UI is a native framework and never runs JavaScript. The consuming app
+calls public Rust methods on retained `Document` and `Element` handles and
+handles interaction with Rust callbacks. C applications use the versioned C
+ABI over the same engine.
 
-The consuming application calls Rust methods to look up elements, change
-their state, read their geometry, and handle input. Every needed equivalent
-of a browser element operation must have a public native Rust API. The
-framework must implement any missing operation and verify it from a native
-application before claiming that behavior is complete.
+When we need behavior provided by a browser element API, implement that
+behavior in the shared Rust engine and expose a public native Rust method for
+the app to call. This includes the resulting state changes, geometry and
+events. There is no JavaScript glue, script binding, `eval`, or embedded
+browser runtime, in this or future versions.
 
-Element operations do not require JavaScript. Browsers expose them through
-JavaScript; Open UI exposes them through native Rust. When a native application
-needs that behavior, Open UI must implement it in the shared
-Rust engine and expose a public Rust method for the application to call. There
-is no JavaScript glue, script binding, `eval`, or embedded browser runtime.
-A missing native method is unfinished API work.
-
-When a browser API supplies behavior we need, implement that behavior in the
-shared Rust engine, expose it through the public `openui` API, and verify it
-from a consuming native Rust app. The app calls the method directly and handles
-events with Rust callbacks. This requirement applies even when the corresponding
-Chromium test uses JavaScript or is excluded from the pixel matrix.
+A missing public native method is unfinished API work. Verify each needed
+operation from a consuming Rust app before claiming it is complete. This
+requirement also applies when the corresponding Chromium test uses JavaScript
+or is excluded from the pixel matrix. An internal Engine operation or a
+test-only fixture does not complete the public application API.
 
 Lookup, mutation, geometry, focus, scrolling, controls, and event dispatch
 operate directly on the native engine:

@@ -38,3 +38,28 @@ The exact raster root cause remains unreviewed, so no ownership entry or
 release pass is claimed. The next investigation needs a minimized Engine-backed
 Ahem case and a comparison of physical-strike mask generation against
 Chromium before changing the shared text raster policy.
+
+## Reduced geometry at the first failing legend
+
+Two independent Chromium processes at five scales agree on the first failing
+legend's geometry and font selection. The [reduced HTML input](reproducers/fieldset-legend-fractional-origin-v1.html)
+has the same `LEGEND` bounds and text range as the original document's second
+legend: `x=22, y=39, width=60, height=10` in logical pixels. At scale 1.25,
+its physical bottom is 61.25, beside the first differing row at `y=61`.
+The original first legend ends at physical `y=40` and already matches; the
+earlier reduction of that legend is a neighboring guard rather than evidence
+of the failing pixels.
+
+The [query evidence](evidence/fieldset-legend-origin-query-v1.json) preserves
+all 20 full/reduced observations, pinned input and tool identities, and prior
+probe errors. Chromium reports the Ahem face and six glyphs. With the Canvas
+font explicitly reconstructed from CSS longhands, `LEGEND` measures 60px
+wide, with 8px ascent and 2px descent. An earlier probe assigned an empty CSS
+font shorthand to Canvas and measured its default font; those Canvas metrics
+are invalid. Its DOM geometry and platform-font observations remain valid.
+
+These queries generated no screenshots or Canvas pixels and ran no JavaScript
+inside Open UI. They establish a reduced Chromium geometry input, not an
+Engine-backed raster reproducer or a pixel pass. The native reduction and
+exact shared raster cause still require verification. All original Open UI
+and Chromium images remain unchanged.

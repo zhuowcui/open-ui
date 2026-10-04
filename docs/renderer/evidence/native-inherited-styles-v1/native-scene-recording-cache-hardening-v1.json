@@ -1,0 +1,52 @@
+{
+  "all_observed_jobs_passed": true,
+  "direct_cache_regression_qualification": false,
+  "jobs": [
+    {
+      "conclusion": "success",
+      "name": "conformance-and-platform",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "miri-handles",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "c-undefined-sanitizer",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "msrv",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "native-sanitizers (address)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "fuzz-smoke",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "native-sanitizers (leak)",
+      "status": "completed"
+    }
+  ],
+  "observed_watch_exit_code": 0,
+  "receipt": {
+    "path": "out/renderer-evidence/native-viewport-scroll-v1/scene-recording-cache-hardening-v1245/receipt.json",
+    "sha256": "ed90d4d339ebceb700c46287279136b8b5f96421e31d4dc15e439861bd4ffb55"
+  },
+  "release_qualification": false,
+  "run_id": 37216268089,
+  "scope": "Hosted conformance, Linux consumers, MSRV, Miri, sanitizers and fuzz smoke. Direct cache baseline/fixed and Ganesh unit guards are still queued.",
+  "skipped_jobs": 0,
+  "source_commit": "107e2e36c3a0fb57ddb85cac14d9c4fdb1dcf2da",
+  "successful_jobs": 7
+}
