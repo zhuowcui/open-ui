@@ -34838,6 +34838,42 @@ mod tests {
     }
 
     #[test]
+    fn sibling_block_wrappers_propagate_each_float_once() {
+        let mut doc = Document::new();
+        let mut wrappers = Vec::new();
+        for _ in 0..6 {
+            let wrapper = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(wrapper, |style| {
+                style.display = Display::Block;
+                style.width = Length::px(240.0);
+                style.height = Length::px(100.0);
+            });
+            doc.append_child(doc.root(), wrapper);
+            let floated = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(floated, |style| {
+                style.display = Display::Block;
+                style.float = Float::Left;
+                style.width = Length::px(80.0);
+                style.height = Length::px(16.0);
+            });
+            doc.append_child(wrapper, floated);
+            wrappers.push((wrapper, floated));
+        }
+        let fragment = block_layout(
+            &doc,
+            doc.root(),
+            &ConstraintSpace::for_root(LayoutUnit::from_i32(320), LayoutUnit::from_i32(160)),
+        );
+        for (index, (wrapper, floated)) in wrappers.into_iter().enumerate() {
+            let wrapper_fragment = fragment_for_node(&fragment, wrapper).unwrap();
+            assert_eq!(wrapper_fragment.float_exclusions.len(), 1, "wrapper {index}");
+            assert_eq!(wrapper_fragment.offset.top, LayoutUnit::from_i32(index as i32 * 100));
+            assert_eq!(fragment_for_node(&fragment, floated).unwrap().offset.top, LayoutUnit::zero());
+        }
+        assert_eq!(fragment.size.height, LayoutUnit::from_i32(600));
+    }
+
+    #[test]
     fn flow_root_contains_floats_from_nested_pure_inline_context() {
         let mut doc = Document::new();
         let flow_root = doc.create_node(ElementTag::Div);
