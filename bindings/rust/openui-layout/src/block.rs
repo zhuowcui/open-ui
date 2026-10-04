@@ -4120,6 +4120,7 @@ pub(crate) fn block_layout_contents(
     } else {
         // ── Pure block formatting context ────────────────────────────
         let mut exclusion_space = initial_exclusion_space(space);
+        let inherited_exclusion_space = exclusion_space.clone();
         let mut physical_clamp_marker_suppressed = false;
 
         let is_scroll_marker_group = virtual_marker_children.is_some();
@@ -4771,8 +4772,9 @@ pub(crate) fn block_layout_contents(
         }
 
         // CSS 2.1 §9.5: Floats participate in the nearest BFC's exclusion space.
-        // If this block is NOT a new formatting context, propagate all float
-        // exclusions upward so the parent can absorb them.
+        // A non-BFC block propagates only floats added by its descendants.
+        // The parent already owns the inherited entries; returning them again
+        // duplicates and retranslates them at each sibling and ancestor.
         if exclusion_space.has_floats() {
             if space.is_new_formatting_context {
                 // A BFC root contains floats propagated through transparent
@@ -4786,7 +4788,8 @@ pub(crate) fn block_layout_contents(
                     .map(|exclusion| exclusion.rect.end_offset.block_offset)
                     .fold(max_float_bottom, LayoutUnit::max_of);
             } else {
-                float_exclusions_result = exclusion_space.all_exclusions();
+                float_exclusions_result =
+                    exclusion_space.added_exclusions_since(&inherited_exclusion_space);
             }
         }
     } // end block children
