@@ -1293,13 +1293,11 @@ mod tests {
 
     #[test]
     fn native_fieldset_intrinsics_keep_natural_image_width_before_percentage_height() {
-        use openui_geometry::Length;
-        use openui_style::{Border, BorderStyle, BoxSizing, Color, LineHeight};
+        use openui_style::{Border, BorderStyle, BoxSizing, Color, Length, LineHeight};
 
         const PNG: &[u8] = include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
-            "/../../../tools/accountability/data/wpt_assets/sp20/",
-            "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe.png"
+            "/tests/assets/green-200.png"
         ));
         for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
             for tag in ["div", "fieldset"] {
