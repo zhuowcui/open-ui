@@ -60,7 +60,11 @@ pub fn paint_text(
     } else if style.embedded_document_text {
         TextRasterPolicy::ChromiumEmbeddedDocument
     } else if author_lcd {
-        TextRasterPolicy::ChromiumAuthorLcd
+        if style.raster_configuration.author_text.edging == TextEdging::Alias {
+            TextRasterPolicy::ChromiumAliased
+        } else {
+            TextRasterPolicy::ChromiumAuthorLcd
+        }
     } else {
         TextRasterPolicy::Skia
     };
@@ -198,9 +202,7 @@ fn uses_chromium_author_lcd(style: &ComputedStyle) -> bool {
     if style.native_control_text || style.embedded_document_text {
         return false;
     }
-    if style.raster_configuration.backend == RasterBackend::ChromiumLinuxFontations
-        && style.raster_configuration.author_text.edging == TextEdging::SubpixelAntiAlias
-    {
+    if style.raster_configuration.backend == RasterBackend::ChromiumLinuxFontations {
         // Fontations is an explicit authored-outline choice. The ordinary
         // Chromium Linux LCD constructor preserves its FreeType path, as
         // required by captures that select FontDataServiceLinux Freetype.

@@ -2376,7 +2376,6 @@
       "classification": "internal",
       "consumers": [
         "bindings/rust/openui-layout/src/table.rs",
-        "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs",
         "bindings/rust/openui-paint/src/text_painter.rs"

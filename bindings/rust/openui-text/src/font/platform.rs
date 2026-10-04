@@ -287,6 +287,8 @@ impl FontPlatformData {
         // still receives Chromium's ordinary LCD/subpixel raster policy.
         let escapes_aliased_profile = !native_control_text
             && !embedded_document_text
+            && raster_configuration.backend
+                != openui_geometry::RasterBackend::ChromiumLinuxFontations
             && raster_configuration.author_text.edging == TextEdging::Alias
             && !deterministic_aliased_face;
         let settings = if native_control_text {
