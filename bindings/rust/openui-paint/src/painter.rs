@@ -19375,9 +19375,9 @@ fn paint_borders(
                     (outer_radii[3].y - bt).max(0.0),
                 ),
             ];
-            // Blink lowers a renderable uniform circular border to one
-            // antialiased stroked rrect. Use that representation whenever no
-            // outer clip would evaluate the same contour a second time.
+            // GraphicsContext::FillDRRect lowers every simple circular ring
+            // to a stroked rrect, independently of its color's alpha. Use the
+            // same coverage operation whenever no outer clip is already active.
             let simple_stroked_rrect = !radii_exceed_rect(&inner_rect, &inner_radii)
                 && outer_radii
                     .iter()
@@ -19391,7 +19391,7 @@ fn paint_borders(
                                 && (outer.x - inner.x - bt).abs() < 0.01
                         }
                     });
-            if simple_stroked_rrect && !outer_rrect_clipped && resolved.is_opaque() {
+            if simple_stroked_rrect && !outer_rrect_clipped {
                 let center_radii = outer_radii.map(|radius| {
                     Point::new((radius.x - half).max(0.0), (radius.y - half).max(0.0))
                 });
@@ -19497,106 +19497,13 @@ fn paint_borders(
                 let outer_rect = Rect::from_xywh(x, y, w, h);
                 let outer_radii = normalize_radii_to_rect(outer_radii, &outer_rect);
                 let outer_rrect = RRect::new_rect_radii(outer_rect, &outer_radii);
-                if resolved.a < 1.0 && simple_stroked_rrect {
-                    // Blink's uniform rounded-border fast path is one
-                    // DrawDRRect, including for translucent colors. Keeping
-                    // the two contours in the same coverage operation also
-                    // avoids intermediate layer/color quantization and
-                    // independently clipped tangent spans.
-                    canvas.draw_drrect(outer_rrect, inner_rrect, &fill_paint);
-                    return;
-                }
-                // A double rounded rectangle evaluates both contours in one
-                // coverage operation for non-circular and elliptical cases.
-                let packed_translucent_spans = resolved.a < 1.0 && simple_stroked_rrect;
+                // The simple circular ring already returned through the
+                // stroke path above. Non-circular contours retain their
+                // established double-rrect/layer behavior.
                 if resolved.a < 1.0 {
                     canvas.save_layer_alpha_f(outer_rect, 1.0);
                 }
-                if packed_translucent_spans {
-                    for corner_clip in [
-                        Rect::from_ltrb(
-                            outer_rect.left,
-                            outer_rect.top,
-                            outer_rect.left + outer_radii[0].x,
-                            outer_rect.top + outer_radii[0].y,
-                        ),
-                        Rect::from_ltrb(
-                            outer_rect.right - outer_radii[1].x,
-                            outer_rect.top,
-                            outer_rect.right,
-                            outer_rect.top + outer_radii[1].y,
-                        ),
-                        Rect::from_ltrb(
-                            outer_rect.right - outer_radii[2].x,
-                            outer_rect.bottom - outer_radii[2].y,
-                            outer_rect.right,
-                            outer_rect.bottom,
-                        ),
-                        Rect::from_ltrb(
-                            outer_rect.left,
-                            outer_rect.bottom - outer_radii[3].y,
-                            outer_rect.left + outer_radii[3].x,
-                            outer_rect.bottom,
-                        ),
-                    ] {
-                        canvas.save();
-                        canvas.clip_rect(corner_clip, ClipOp::Intersect, false);
-                        canvas.draw_drrect(outer_rrect, inner_rrect, &fill_paint);
-                        canvas.restore();
-                    }
-                    let scale = style.device_scale_factor.max(f64::EPSILON) as f32;
-                    let snap_tangent = |value: f32| (value * scale + 0.5).floor() / scale;
-                    for (tangent_span, coverage_packing) in [
-                        (
-                            Rect::from_ltrb(
-                                snap_tangent(outer_rect.left + outer_radii[0].x),
-                                outer_rect.top,
-                                snap_tangent(outer_rect.right - outer_radii[1].x),
-                                inner_rect.top,
-                            ),
-                            PhysicalCoveragePacking::TrailingY,
-                        ),
-                        (
-                            Rect::from_ltrb(
-                                snap_tangent(outer_rect.left + outer_radii[3].x),
-                                inner_rect.bottom,
-                                snap_tangent(outer_rect.right - outer_radii[2].x),
-                                outer_rect.bottom,
-                            ),
-                            PhysicalCoveragePacking::LeadingY,
-                        ),
-                        (
-                            Rect::from_ltrb(
-                                outer_rect.left,
-                                snap_tangent(outer_rect.top + outer_radii[0].y),
-                                inner_rect.left,
-                                snap_tangent(outer_rect.bottom - outer_radii[3].y),
-                            ),
-                            PhysicalCoveragePacking::TrailingX,
-                        ),
-                        (
-                            Rect::from_ltrb(
-                                inner_rect.right,
-                                snap_tangent(outer_rect.top + outer_radii[1].y),
-                                outer_rect.right,
-                                snap_tangent(outer_rect.bottom - outer_radii[2].y),
-                            ),
-                            PhysicalCoveragePacking::LeadingX,
-                        ),
-                    ] {
-                        if tangent_span.width() > 0.0 && tangent_span.height() > 0.0 {
-                            draw_css_coverage_rect(
-                                canvas,
-                                tangent_span,
-                                &resolved,
-                                style.device_scale_factor,
-                                coverage_packing,
-                            );
-                        }
-                    }
-                } else {
-                    canvas.draw_drrect(outer_rrect, inner_rrect, &fill_paint);
-                }
+                canvas.draw_drrect(outer_rrect, inner_rrect, &fill_paint);
                 if resolved.a < 1.0 {
                     erase_translucent_rounded_border_gpu_overdraw(
                         canvas,
