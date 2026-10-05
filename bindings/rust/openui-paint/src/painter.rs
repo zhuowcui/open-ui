@@ -16783,7 +16783,8 @@ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Docum
             && child_bottom >= inner_bottom;
         covers_inner_border_box
             && (background_color.is_opaque()
-                || (fragment.node_id != doc.root()
+                || (!fragment.node_id.is_none()
+                    && fragment.node_id != doc.root()
                     && doc.node(fragment.node_id).style.box_shadow.is_empty()
                     && opaque_image_covers_border_box(child, doc)))
     })
@@ -16806,7 +16807,7 @@ fn opaque_image_covers_border_box(fragment: &Fragment, doc: &Document) -> bool {
         || style.establishes_transform_containing_block
         || style.will_change_transform
         || style.filter_grayscale > 0.0
-        || style.shape_outside.is_some()
+        || !matches!(style.shape_outside, openui_style::ShapeOutside::None)
         || !matches!(style.object_fit, ObjectFit::Fill | ObjectFit::Cover)
         || !matches!(style.object_position.x, BackgroundPosition::Percent(value) if value == 50.0)
         || !matches!(style.object_position.y, BackgroundPosition::Percent(value) if value == 50.0)
@@ -22123,13 +22124,14 @@ mod tests {
             &fragment, &doc
         ));
         let original_style = doc.node(image_node).style.clone();
-        let changes: [fn(&mut ComputedStyle); 6] = [
+        let changes: [fn(&mut ComputedStyle); 7] = [
             |style: &mut ComputedStyle| style.opacity = 0.5,
             |style: &mut ComputedStyle| style.filter_blur = 1.0,
             |style: &mut ComputedStyle| style.filter_grayscale = 0.5,
             |style: &mut ComputedStyle| style.will_change_transform = true,
             |style: &mut ComputedStyle| style.establishes_transform_containing_block = true,
             |style: &mut ComputedStyle| style.object_position.x = BackgroundPosition::start(),
+            |style: &mut ComputedStyle| style.shape_outside = openui_style::ShapeOutside::BorderBox,
         ];
         for change in changes {
             doc.update_resolved_style(image_node, |style| {
