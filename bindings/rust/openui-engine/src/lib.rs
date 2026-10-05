@@ -2608,7 +2608,10 @@ mod tests {
                 );
                 assert_eq!(engine.client_rects(element).unwrap(), vec![bounds]);
                 assert!(14.0 >= bounds.x && 14.0 < bounds.x + bounds.width);
-                assert!(sample_y >= bounds.y && sample_y < bounds.y + bounds.height);
+                assert!(
+                    sample_y >= f64::from(bounds.y)
+                        && sample_y < f64::from(bounds.y + bounds.height)
+                );
                 let scene = engine.scene().unwrap();
                 let mut compositor = SoftwareCompositor::default();
                 let frame = compositor.render(&scene).unwrap();
