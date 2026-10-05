@@ -29,12 +29,13 @@ call these operations through JavaScript; the operations themselves do not
 require JavaScript. Each needed operation must be implemented in the shared
 Rust engine and exposed as a public native Rust method for the consuming app
 to call. This includes the resulting state changes, geometry and events.
+The Rust API provides the operation itself, without calling a browser or
+executing a script. If that API is missing, implementing it is required
+framework work.
 There is no JavaScript glue, script binding, `eval`, or embedded browser
 runtime, in this or future versions.
-No element interaction requires adding JavaScript to the framework or the app.
-The framework implements the behavior in Rust; the consuming app calls its
-public native API and handles events with Rust callbacks. Scripts used by
-offline Chromium reference tools are separate from the application runtime.
+The consuming app handles events with Rust callbacks. Scripts used by offline
+Chromium reference tools are separate from the application runtime.
 
 A missing public native method is unfinished API work. Verify each needed
 operation from a consuming Rust app before claiming it is complete. This

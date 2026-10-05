@@ -1,0 +1,58 @@
+{
+  "all_commands_terminal": true,
+  "executed_build_or_image_stages": 0,
+  "local_miri_stage_not_queued": "Own-source hosted Miri checks include the named version-prefix test; previous source 0e1f12ff passes that test under strict provenance. Own corrected-source hosted run remains required.",
+  "preserves_unexecuted_previous_raster_probes": true,
+  "probes": [
+    {
+      "kind": "guards",
+      "path": "/tmp/openui-native-raster-consumer-guards-v1397.py",
+      "sha256": "22443c5bf538c58d83e1671e48f3a74cd88664a3d6d0328921fc83703ea39d2d"
+    },
+    {
+      "kind": "build",
+      "path": "/tmp/openui-native-raster-consumer-build-v1397.py",
+      "sha256": "7c6c325714c58fd8adf093a8bc6e80a0975850a437f82bcb292dc1b67b9c791f"
+    },
+    {
+      "kind": "controls",
+      "path": "/tmp/openui-native-raster-consumer-controls-v1397.py",
+      "sha256": "9a59a1fb14cc2056b2104402b737e4c1b67dd69ff096d47defc086ca31de77c9"
+    },
+    {
+      "kind": "application",
+      "path": "/tmp/openui-native-raster-consumer-application-v1397.py",
+      "sha256": "683259aa7114f25749fa9a35bb0ab5701b6c2da6b7d9d34068cb12dabd58204b"
+    },
+    {
+      "kind": "sizing",
+      "path": "/tmp/openui-native-raster-consumer-sizing-v1397.py",
+      "sha256": "ce35761e8ffa80b471bf21fb75935106f56125c32590d9f9501740d020c4e708"
+    },
+    {
+      "kind": "consumer",
+      "path": "/tmp/openui-native-raster-consumer-consumer-v1397.py",
+      "sha256": "72572d48c8eba39c67deccb8825f0727caf188d62d1c60e1c397ace475b3bacc"
+    },
+    {
+      "kind": "static",
+      "path": "/tmp/openui-native-raster-consumer-static-v1397.py",
+      "sha256": "1c3b038550530a15dd168088e632d0d8797cf18ea6ee6f3991d9801e62cf356c"
+    },
+    {
+      "kind": "matrices",
+      "path": "/tmp/openui-native-raster-consumer-matrices-v1397.py",
+      "sha256": "acbd64564c21848365d7c8a694b1e1c69a0f0fe5ecb412abd345691068a1078c"
+    }
+  ],
+  "release_qualification": false,
+  "schema_version": 1,
+  "selection": {
+    "four_profile_comparisons": 880,
+    "ids": 220,
+    "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-selection-v1311.json",
+    "sha256": "ca51d8b03dbff3b5c47f3f0dabf93fc631b37772947350a50e56f9e1bdbb00e2"
+  },
+  "source_commit": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3",
+  "source_root": "/dev/shm/openui-native-raster-consumer-0e1f12ff"
+}

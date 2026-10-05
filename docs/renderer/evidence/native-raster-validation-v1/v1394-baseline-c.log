@@ -1,0 +1,10 @@
+/dev/shm/openui-native-raster-validation-5ef50aac/examples/c_v02/raster_configuration.c:223:56: error: too many arguments to function call, expected 2, have 3
+  223 |     assert(oui_element_get_bounds(nodes[phase], &rect, &present) == OUI_OK && present == 1);
+      |            ~~~~~~~~~~~~~~~~~~~~~~                      ^~~~~~~~
+/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/include/assert.h:98:7: note: expanded from macro 'assert'
+   98 |     ((expr)                                                             \
+      |       ^~~~
+/dev/shm/openui-native-raster-validation-5ef50aac/include/openui.h:1004:11: note: 'oui_element_get_bounds' declared here
+ 1004 | OuiStatus oui_element_get_bounds(OuiElement* element, OuiRect* out_rect);
+      |           ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.

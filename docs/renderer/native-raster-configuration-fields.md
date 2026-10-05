@@ -4,6 +4,32 @@ Applications configure and change their retained documents through public Rust
 methods and Rust callbacks. Open UI executes no JavaScript. Chromium remains
 the sole pixel target, with zero tolerance.
 
+## Current validation checkpoint
+
+The [v38 evidence](generated/native-scroll-insets-v38.json) preserves
+`0e1f12ff`, which replaces two invalid test-only `fields_mut` calls with the
+existing `update_derived` closure. Test assertions and renderer production
+code are unchanged from `5ef50aac`. The corresponding corrected test-only
+baselines are `b7284ac9` for phase/settings and `5390b683` for the default
+physical strike. Their required named failures and fixed passes remain pending.
+
+The parent hosted run finishes with six passing jobs and one failure. Strict
+Miri passes the C version-prefix test. C UBSan stops while compiling an invalid
+three-argument `oui_element_get_bounds` call in the new example. Private
+`3d4eea11` uses the existing two-argument API; `OUI_OK` already requires a
+layout box. Both old C/C++ consumers reproduce the compilation failure, and
+both corrected consumers pass strict syntax checks. Public headers, exports,
+Rust production code and workflows are unchanged by this consumer correction.
+
+Both corrected sources pass ten read-only checks. The new source's own hosted
+checks are running. Its local queue cleans all 18 workspace packages at every
+source switch, requires all three named baseline failures, then runs a clean
+17-stage build, native control/phase/geometry and Rust/C/C++ font consumers,
+the 880-comparison selection and all four complete matrices. Builds and image
+sweeps remain separate; all ten earlier whole pipelines must be terminal.
+Compilation and pixel failures remain required failures. This source is
+unapplied and inherits the unqualified raster production changes below.
+
 ## Prepared shared renderer correction
 
 Clean private `bcb7063f` follows the C configuration consumer correction

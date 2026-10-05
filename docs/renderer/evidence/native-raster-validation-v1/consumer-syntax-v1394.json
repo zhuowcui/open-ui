@@ -1,0 +1,14 @@
+{
+  "all_commands_terminal": true,
+  "cargo_commands": 0,
+  "generated_images": 0,
+  "logs": {
+    "baseline-c.log": "cbfdd6465f03c2c07b88a20dc1f75601e46fe4f95a2195d5545ff2314e029c33",
+    "baseline-cpp.log": "56c04ea95a086f2f5d4967f4979eeb6a7f22c32d3e004f6ab68478231f9184b8"
+  },
+  "observed_exit_code": 1,
+  "reason": "C++ correctly rejects the three-argument call using no matching function; the probe only accepted the C wording too many arguments. Fixed consumer commands had not executed.",
+  "release_qualification": false,
+  "schema_version": 1,
+  "state": "failed-on-overly-specific-diagnostic-assertion"
+}

@@ -7,6 +7,26 @@ remain open.
 
 ## Current implementation checkpoint
 
+The [v38 raster validation evidence](../renderer/generated/native-scroll-insets-v38.json)
+preserves corrected regression-test setup at `0e1f12ff` and the native C/C++
+bounds-query correction at private `3d4eea11`. Both old consumers fail strict
+compiler checks and both corrected consumers pass. Each source passes ten
+read-only repository checks. Renderer code, public headers and ABI are
+unchanged by these setup and consumer corrections; the inherited raster trial
+remains unqualified and unapplied.
+
+The completed parent-source hosted run passes six jobs and fails one: C UBSan
+stops compiling the example's invalid three-argument bounds call before
+sanitizer execution. The new version-prefix test passes under strict Miri.
+Corrected-source [own hosted checks](https://github.com/zhuowcui/open-ui/actions/runs/37255347853)
+are running. Its twelve local stages, including the clean 17-stage build,
+Rust/C/C++ consumers, selected pixels and four complete matrices, wait for
+every command in all ten preceding whole pipelines. No native execution or
+new pixel pass is claimed. Separately, 4,500 Chromium geometry observations
+are identical across two processes and five scales; no images are generated.
+They distinguish collapsed ASCII whitespace from nonbreaking spaces, forced
+breaks and decorated inline boxes. Native measurements are the next step.
+
 The compositor cache repair is now applied in `289d5516`, with its regression
 guard in `639e9c80`. Equal scene numbers from different documents no longer
 reuse another recording's frame. The [v35 evidence](../renderer/generated/native-scroll-insets-v35.json)

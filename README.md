@@ -16,15 +16,13 @@ The supported application path has no Blink/Chromium runtime, resource pack,
 HTML loader, CSS text parser, JavaScript engine, or network stack. Chromium 147
 is the pinned rendering reference used to prove renderer compatibility.
 Open UI never executes JavaScript, in this or future versions. Applications
-handle interaction in native Rust through `openui::Document`, `openui::Element`,
-signals, and Rust event callbacks. Document lookup by ID,
-element and text-node mutation, class lookup and updates, focus, scrolling,
-controls, and event handling use public Rust methods. Element operations do
-not require JavaScript: browsers expose them through JavaScript, and Open UI
-must implement any needed equivalent in Rust and expose it as a public method
-on the retained document or element. The consuming native app calls that
-method directly. A missing public native operation is unfinished API work,
-even when an internal test fixture can already produce the same visual state. See the
+handle interaction through public native Rust APIs, signals, and Rust event
+callbacks. The consuming app calls `openui::Document` and `openui::Element`
+methods to create, find, change, measure, focus, and scroll elements and operate
+controls. Every needed browser element operation must be implemented in Rust
+and exposed through this public application API, including its state changes
+and events. A missing method is unfinished framework work, even when an
+internal test fixture can already produce the same visual state. See the
 [native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
 
 ## Verified status
@@ -107,6 +105,14 @@ layout causes. Private `7d723caa` prepares corrections and a consuming Rust
 callback app. Ten read-only checks pass; its own native and pixel verification
 is queued with all 18 workspace packages cleaned at every source switch.
 It remains unapplied and admits no release state.
+The [raster validation checkpoint](docs/renderer/generated/native-scroll-insets-v38.json)
+corrects test setup through the existing style API and fixes the C/C++ example's
+bounds query. Strict C/C++ compiler checks and ten repository checks pass on
+private `3d4eea11`; native execution and exact pixel comparisons are queued.
+Its parent hosted run passes six jobs, including the new strict Miri prefix
+test, and fails C consumer compilation. Corrected-source hosted checks are
+running. The same evidence preserves 4,500 repeatable Chromium geometry
+observations without generating images; native verification remains required.
 Earlier renderer measurements below remain attributed to their named sources. The
 [private sampling candidate](docs/renderer/generated/native-viewport-full-v14.json)
 loses 23 exact Chromium comparisons and gains 14 in its complete census;

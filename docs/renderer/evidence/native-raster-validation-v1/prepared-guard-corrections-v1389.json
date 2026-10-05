@@ -1,0 +1,72 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": {
+    "fixed-integration.patch": {
+      "bytes": 3700,
+      "sha256": "e0e289cd859a2523f4c19b317506f8409130e16820007e83632c9777c5b5f1e9"
+    },
+    "phase-baseline.patch": {
+      "bytes": 1975,
+      "sha256": "704731f925d5b35fa6b168be34e19653f33f3d19913b9ee748791ffe056a2357"
+    },
+    "strike-baseline.patch": {
+      "bytes": 3700,
+      "sha256": "e0e289cd859a2523f4c19b317506f8409130e16820007e83632c9777c5b5f1e9"
+    }
+  },
+  "checks_receipt_sha256": "2fa4a2611c93943fc80c76ee4dcb863d64025302ee9d1e2a3881a28714a61aef",
+  "correction": "Use the existing update_derived closure for detached style snapshots in raster guard setup; no public mutable computed-style reference is added.",
+  "existing_umbrella_c_exports": 113,
+  "inherits_unqualified_intrinsic_font_and_c_raster_source": true,
+  "local_build_and_pixels": "pending",
+  "local_pipeline_queued": false,
+  "new_release_states_admitted": 0,
+  "own_hosted_hardening_dispatched": true,
+  "own_hosted_observer": "native-raster-validation-hardening-v1388",
+  "production_changes_from_5ef50aac": false,
+  "promotion_allowed": false,
+  "proposed_source_c_exports": 117,
+  "read_only_checks_passed": 10,
+  "release_qualification": false,
+  "rustfmt_observed_exit_code": 0,
+  "schema_version": 1,
+  "source_candidates": [
+    {
+      "base": "ee3d4134ccf0a3d10cab1d1c950f1bc1841a8d58",
+      "role": "phase-baseline",
+      "root": "/dev/shm/openui-native-phase-guard-ee3d4134",
+      "source": {
+        "clean": true,
+        "commit": "b7284ac9fb733d22f4314561c0ae19166007f444",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "8759c5279fe6379037948848568641bdb44c0ece95452465e740add9da49e30d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "base": "d01f9a17b139d5f87e7645c2b7ecac201762ed99",
+      "role": "strike-baseline",
+      "root": "/dev/shm/openui-native-strike-guard-d01f9a17",
+      "source": {
+        "clean": true,
+        "commit": "5390b683c6b7898d79f36450f1034f0d6a89d37d",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "44e861dd4e2d16ba3885a6fa7541dceb0f406adfc165aac35ab74f9ae6f125a4",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "base": "5ef50aacaf98f5877b76ead68c2606c006103f48",
+      "role": "fixed-integration",
+      "root": "/dev/shm/openui-native-raster-validation-5ef50aac",
+      "source": {
+        "clean": true,
+        "commit": "0e1f12ff6bf971e4c5940f298521895cd8d933fb",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "f321bf534cf3c8f923dde882df9e35907184c3cc7db0236c7d01b065d297a752",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "test_assertions_unchanged": true
+}

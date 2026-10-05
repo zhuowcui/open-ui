@@ -4,6 +4,27 @@ Open UI runs no JavaScript. Rust applications use public methods and Rust
 callbacks over the retained engine. The C ABI provides equivalent operations
 over that same engine; it does not have a separate renderer.
 
+## Current validation checkpoint
+
+The [v38 evidence](../renderer/generated/native-scroll-insets-v38.json)
+records six successful hosted jobs at `0e1f12ff`, including the new raster
+version-prefix test under strict Miri. C UBSan fails before sanitizer execution
+because the example passes three arguments to the existing two-argument
+bounds query. Private `3d4eea11` corrects this shared C/C++ example. Both old
+consumers reproduce the compile error, and both corrected consumers pass
+strict syntax checks. Ten read-only checks pass on the corrected source;
+headers, ABI, Rust renderer and workflows remain identical to the parent.
+
+Corrected-source hosted checks are running. The local queue waits for all ten
+preceding entire pipelines. Its clean 17-stage build includes the boundary
+tests, Linux workspace, native examples, ABI consumers and linked C/C++ raster
+consumers. The subsequent Rust/C/C++ font matrix requires 1,200 exact images
+against separately pinned Chromium, with repeated native runs and preserved
+reference capture pairs. Complete pixel matrices remain required. Syntax
+checks and the scoped Miri pass do not establish native renderer completion.
+The proposal remains unapplied: the umbrella has 113 exports, the candidate
+has 117, and no new release state is admitted.
+
 ## Prepared implementation
 
 Clean private source `3395cefa` follows the unqualified native font candidate
@@ -14,13 +35,13 @@ checks pass; Rust and C formatting checks pass. No local compilation or native
 runtime verification is claimed.
 
 This private candidate adds four versioned functions and two owned value
-structures. It has not yet been compiled or exercised by consuming
-applications. The umbrella branch still has 113 exports. This candidate has
+structures. The initial evidence contained no compilation or consuming-app
+execution; current validation is recorded above. The umbrella branch still has 113 exports. This candidate has
 117, preserving every preceding export and all 30 existing layouts.
 
 The later [shared raster-field candidate](../renderer/native-raster-configuration-fields.md)
 prepares actual paint behavior for phase and Fontations settings over this
-same configuration. It remains uncompiled and unapplied. Its native Rust
+same configuration. It remains unqualified and unapplied. Its native Rust
 consumer and complete pixel gates are queued; the C transport alone does not
 complete the renderer or public API behavior.
 

@@ -18,12 +18,11 @@ experiment exists in the repository.
   and a web cascade exposed as application APIs. Native element lookup and
   traversal remain part of the public Rust interaction contract.
 - JavaScript execution or script bindings inside documents are outside the
-  product design, including future versions. Application behavior uses public
-  native Rust methods and Rust event callbacks. Browser-like element behavior
-  needed by an application must be implemented as a native Rust API, even when
-  Chromium tests express that behavior with a script. Excluding JavaScript
-  execution does not exclude the needed element behavior or its native API.
-  WebAssembly execution
+  product design, including future versions. Applications call public native
+  Rust methods and handle events with Rust callbacks. Every needed browser
+  element operation must be implemented in Rust and exposed to the consuming
+  app. A missing public method belongs under implementation gaps, even when
+  the corresponding Chromium test uses JavaScript. WebAssembly execution
   inside documents is also unsupported.
 - HTTP, URL fetching, cookies, browser navigation, storage, service workers,
   and developer tools.
