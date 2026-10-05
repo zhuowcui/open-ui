@@ -41,7 +41,7 @@ invariants stay fixed. The native consuming-app capture gate is incomplete
 after an unstable reference pair; both captures remain preserved. Accepted
 renderer results and release admission stay unchanged.
 
-The [latest native review](../renderer/generated/native-review-v2.json)
+The [earlier terminal review](../renderer/generated/native-review-v2.json)
 records the terminal results of all five subsequent pipelines. Raster source
 `e0dc491e` stops after its harness tries to restore a nonexistent branch; no
 fixed tests or matrices run. Image source `1413a862` fails its fixed geometry
@@ -49,8 +49,8 @@ assertion: an explicitly sized inline image reports a 0 × 19 box. Rounded
 source `9e0c8ec5` fails its fixed pixel assertion and worsens the checked sample;
 its stroke hypothesis remains unqualified. Bevel `cbcbc9fb` passes its named
 baseline/fixed guard, then its workspace child is terminated by the disk guard.
-The enum baseline clean is also terminated by that guard. Every whole owner
-is terminal. These candidates remain unapplied; none establishes a new
+The enum baseline clean is also terminated by that guard. All five whole owners
+are terminal. These candidates remain unapplied; none establishes a new
 renderer or release pass. Original receipts and logs remain preserved.
 
 The [isolated inline replaced correction](../renderer/native-inline-replaced.md)
@@ -66,9 +66,13 @@ match Chromium; two native runs and 240 Chromium captures are stable. Owned
 geometry, hide/restore, detach/reattach and teardown assertions pass. The
 [terminal scoped audit](../renderer/generated/native-table-progress-v1.json)
 verifies 640/640 focused and 960/960 primitive comparisons exact, with all
-1,600 comparison invariants unchanged. Complete original and expanded matrices
-are still running. Their gates remain pending; accepted renderer totals stay
-unchanged and this candidate remains unapplied.
+1,600 comparison invariants unchanged. The
+[terminal full review](../renderer/generated/native-review-v3.json) leaves
+the original census unchanged at 21,334/22,924 exact. Expanded results drop to
+22,133/23,728 exact: `multicol-on-broken-image-alt-text` loses equality at all
+four profiles, with no exact gains. All Chromium inputs remain fixed. Both
+full gates exit 1. The candidate is rejected for application; accepted renderer
+totals stay unchanged.
 
 The [native repeated-table correction](../renderer/native-table-progress.md)
 is prepared at clean private `4b3cb72c`, over test-only baseline `4318f606`.
@@ -76,15 +80,24 @@ Two independent Chromium runs agree on 96 ordered geometry observations,
 including a one-pixel continuation when the remaining space is half a pixel.
 The shared implementation removes the declared-column cap and advances body
 source progress. Its consuming Rust example uses typed setters, owned
-rectangles, Rust callbacks and teardown checks. Eleven read-only checks pass;
-native tests, application execution and all four pixel matrices remain pending
-in exclusive owner `1548`, after every stage of owner `1529` is terminal.
-The candidate is unapplied and admits no release state.
+rectangles, Rust callbacks and teardown checks. Eleven read-only checks pass.
+Its baseline and fixed guard both fail with exit 101: four fragments instead
+of Chromium's 41. Whole owner `1548` is terminal with exit 1; workspace,
+application and all four matrices do not execute. Two further Chromium runs
+confirm the native app's absolute placement with 96 identical geometry queries.
+Seven own-source hosted hardening jobs pass, zero skips. The candidate remains
+unapplied and unqualified.
 
-Hosted CI for umbrella documentation checkpoint `b7e28e56` has completed:
+The fresh raster retry at `e0dc491e` passes its complete guard stage: three
+named baseline assertions fail, all fixed and neighboring guards pass, and
+text, paint, engine, software and Ganesh suites pass. Its source root and probes
+are separate from the preserved harness failure. The native build and remaining
+consumer and pixel stages are pending in exclusive whole owner `1560`.
+
+Hosted CI for umbrella documentation checkpoint `4144c85a` has completed:
 all three workflows succeed, with six successful jobs and five skipped jobs.
 Skipped jobs are not passes or release qualification. The
-[same evidence index](../renderer/generated/native-table-progress-v1.json)
+[same terminal evidence index](../renderer/generated/native-review-v3.json)
 preserves every job conclusion and all three workflow logs.
 
 That earlier review also preserves native constructor candidate `893ea292`, its

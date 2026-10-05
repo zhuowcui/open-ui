@@ -29,10 +29,13 @@ produce the same visual state. See the
 
 ## Verified status
 
-The [native repeated-table correction](docs/renderer/native-table-progress.md)
-is prepared with a consuming Rust callback application. Two Chromium runs
-agree on all 96 geometry queries and eleven read-only checks pass. Native
-execution and pixel qualification remain pending; the correction is unapplied.
+The [latest native review](docs/renderer/generated/native-review-v3.json)
+rejects the inline-image candidate: its native app passes, but one expanded
+case loses pixel equality at all four profiles. The
+[repeated-table candidate](docs/renderer/native-table-progress.md) fails its
+geometry guard: both baseline and proposed correction produce four fragments
+where Chromium produces 41. Neither change is applied. The raster retry passes
+its regression guards; its native build and pixel gates remain pending.
 
 The current v0.2 release candidate has:
 

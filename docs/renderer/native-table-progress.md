@@ -46,11 +46,20 @@ ownership checks. An internal fixture is insufficient to complete a needed
 public native API.
 
 All eleven read-only generator, accountability, archive and formatting checks
-pass. The baseline assertion, fixed guards, locked workspace, consuming
-application and all four complete renderer matrices remain **pending**. Whole
-owner `1548` waits for every prior whole Cargo/image pipeline to finish and
-then executes those stages in order. The current source and its probes are
-frozen for that run.
+pass. The [terminal review](generated/native-review-v3.json) records the failed
+native guard: both baseline and corrected source produce four table fragments
+where Chromium produces 41 at outer height 40 and body height 100. Both named
+assertions exit 101 after successful compilation. The whole owner stops with
+exit 1; workspace tests, native application and pixel matrices do not execute.
+All seven own-source hosted hardening jobs pass with zero skips, which does
+not resolve the native geometry failure.
+
+Two further Chromium runs verify the application's absolute positioning with
+96 geometry queries. Every query agrees between runs; the table and body
+rectangles at the application's viewport also agree with the earlier margin
+placement. The expected fragment count remains 41. Investigate the shared
+continuation and fragment propagation before another qualification run; keep
+the failed source, assertions and probes unchanged.
 
 The [preserved evidence](generated/native-table-progress-v1.json) contains the
 queries, unchanged inputs, source patches, checks and verification probes.

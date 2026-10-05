@@ -18,6 +18,13 @@ Closing an interaction gap requires a public Rust method and coverage from a
 native consumer exercising its state changes, events, or rendered result.
 An internal Engine method or a test fixture alone does not complete that work.
 
+Implement browser-style element behavior as native framework behavior. The
+consuming Rust application must be able to perform the operation directly,
+without a script, script binding, or JavaScript glue. A WPT label such as
+`needs_javascript` describes the reference test's source; it does not defer
+the native API. Keep missing public operations recorded as implementation
+gaps until a consuming Rust application verifies them.
+
 The renderer matrix checks the comparison executable's embedded build source
 against the current tree. Rebuild the `pixel-compare` package after source
 changes; building an application example does not update that executable.

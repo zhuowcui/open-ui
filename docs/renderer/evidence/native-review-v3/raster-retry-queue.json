@@ -1,0 +1,61 @@
+{
+  "branch": "agent/native-raster-fields-retry-v1557",
+  "cargo_commands_run": 0,
+  "checks_receipt_sha256": "a2f3088a2e58304f7c6913a9e393274b18fe1331d26acb1aadfba8833475c021",
+  "javascript_executed_by_openui": false,
+  "native_and_pixel_results_pending": true,
+  "new_release_states_admitted": 0,
+  "old_failure_root": "/dev/shm/openui-native-raster-fields-public-fb284c54",
+  "old_failure_root_and_probes_unchanged": true,
+  "old_failure_root_commit": "5390b683c6b7898d79f36450f1034f0d6a89d37d",
+  "old_openui_pixels_are_provenance_only": true,
+  "original_guard_assertions_and_strict_capture_conditions_unchanged": true,
+  "original_probe_sha256": {
+    "/tmp/openui-native-raster-fields-public-application-v1468.py": "915219b21edfbe7ec59f2d10884e533163fba05d1490d09257a78b7b2d58732e",
+    "/tmp/openui-native-raster-fields-public-build-v1468.py": "05fe789ee7de87e12c336dd2fd16c85be1ea4a705d8062131ebc19bab789ac6b",
+    "/tmp/openui-native-raster-fields-public-consumer-v1468.py": "b0854a98f99313461358404935394fa0d94c7c19602fe3b87eab099ed529356a",
+    "/tmp/openui-native-raster-fields-public-controls-v1468.py": "79d659d13a127b6e554d86f524d47b247a28f761c3c246bb680f640f6205b028",
+    "/tmp/openui-native-raster-fields-public-guards-v1468.py": "afff85e6826d90b9c6e73820592c6e45f654e1be3565937be88b64f6e2582edc",
+    "/tmp/openui-native-raster-fields-public-matrices-v1468.py": "c70bafdbc4cb3f23c0f1c4470b0cdeeb3638c9cb4198466da49d56e78a3ad7f4",
+    "/tmp/openui-native-raster-fields-public-sizing-v1468.py": "a77891cfa52cc076cb43606bde6e3f9e0ed4b4de05398f1f4e0c2040f6b0a3a8",
+    "/tmp/openui-native-raster-fields-public-static-v1468.py": "2228981aebfbc5c2e1dab2bae03171e6b467736d46702b032c50cf247f011042"
+  },
+  "pixel_tolerance": 0,
+  "prior_whole_owners": 28,
+  "probe_sha256": "2b3b43eecaae92b1e11f42425620203e9beeeb779e4d07cf0488ce41c879908e",
+  "promotion_allowed": false,
+  "public_native_rust_api_required": true,
+  "read_only_checks_passed": 10,
+  "release_qualification": false,
+  "required_stages": 12,
+  "restore_branch_corrected": true,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "scripts": {
+    "/tmp/openui-native-raster-fields-retry-application-v1559.py": "b31121e8805edea8f72046ed5c0aaebc14529e7e62988cf0f8b35f88727ea925",
+    "/tmp/openui-native-raster-fields-retry-build-v1559.py": "c825b33cb6c2187ea5d7a779339c6d81f7a9357c8999f5b575d0858f518003be",
+    "/tmp/openui-native-raster-fields-retry-consumer-v1559.py": "e63e40424c1a4de418106d5500ae0e9c597c2880604a9993fdfc1c275ad39eed",
+    "/tmp/openui-native-raster-fields-retry-controls-v1559.py": "2dfeb1398480de7a5d47af035f83ed20d5d3ffa1292634cb5721b98c4bdb23b3",
+    "/tmp/openui-native-raster-fields-retry-guards-v1559.py": "a83f5445615ee0bf6a88c761724563ddf476892fc94225db301d06f99ddc8ca0",
+    "/tmp/openui-native-raster-fields-retry-matrices-v1559.py": "77b2ffaf549a6875e86892622b7acf52f345a367ab72853d8293e400886ece32",
+    "/tmp/openui-native-raster-fields-retry-pipeline-v1560.py": "ec2f8969d7f40c9ff96ae6cc2cca25c6def47b208971c207d403c54f864a0b20",
+    "/tmp/openui-native-raster-fields-retry-sizing-v1559.py": "f38e79bd95be46f6d5ed739d86996b15068d52ef9f74b6d2a80b8eb66bd3a829",
+    "/tmp/openui-native-raster-fields-retry-static-v1559.py": "a4c8ad0e0af2c4b8bd6cbc5f5b0c16b4bd92d5614536f7f918806bd9d073459d"
+  },
+  "selection_receipt_sha256": "ca51d8b03dbff3b5c47f3f0dabf93fc631b37772947350a50e56f9e1bdbb00e2",
+  "source": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_bytes_unchanged_from_e0_candidate": true
+}

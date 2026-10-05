@@ -4,7 +4,7 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
-The [latest native review](../renderer/generated/native-review-v2.json)
+The [earlier terminal review](../renderer/generated/native-review-v2.json)
 supersedes the pending queue descriptions below for five candidates: raster
 `e0dc491e`, image `1413a862`, rounded border `9e0c8ec5`, bevel `cbcbc9fb` and
 native values `893ea292` are terminal and unqualified. The first stops in its
@@ -15,19 +15,28 @@ two fixed guards and thirteen read-only checks. Its
 passes 8,538 tests, twelve C and six C++ consumers, and all sixty Rust images
 and bounds against 240 stable Chromium captures. Focused 640/640 and primitive
 960/960 comparisons are exact, with all 1,600 comparison invariants unchanged.
-Complete original and expanded matrices remain pending. No candidate is promoted or
-admitted. Chromium remains the sole pixel target. Application interaction
+The [terminal review](../renderer/generated/native-review-v3.json) leaves its
+original census unchanged at 21,334/22,924 exact, while expanded results fall
+to 22,133/23,728 exact. One broken-image fallback case loses equality at all
+four profiles, with no exact gains. Both full gates exit 1; all Chromium inputs
+remain fixed. This candidate is rejected for application. Chromium remains
+the sole pixel target. Application interaction
 uses public native Rust APIs and callbacks; every needed operation remains
 required even when its Chromium test uses JavaScript.
 
 The [native repeated-table correction](../renderer/native-table-progress.md)
 is prepared at private `4b3cb72c`. Two pinned Chromium runs agree on all 96
 ordered geometry observations, including fractional capacity and body
-shrink/restore. Eleven read-only checks pass. The shared source and consuming
-Rust callback example await native tests and all four pixel matrices after
-whole owner `1529` finishes. This candidate is unapplied and unqualified.
-The [preserved index](../renderer/generated/native-table-progress-v1.json)
-also records completed umbrella CI at `b7e28e56`: three successful workflows,
+shrink/restore. Eleven read-only checks pass. The fixed Engine geometry guard
+fails after the baseline fails:
+both produce four fragments instead of Chromium's 41. The assertions exit 101;
+workspace, application and all four matrices do not execute. Two further runs
+confirm the absolute-positioned app's Chromium geometry with 96 queries. Seven
+own-source hosted hardening jobs pass, zero skips; native geometry still fails.
+This candidate is unapplied and unqualified. The fresh raster retry passes
+its baseline/fixed guards; the native build and pixel gates remain pending.
+The [preserved terminal index](../renderer/generated/native-review-v3.json)
+also records completed umbrella CI at `4144c85a`: three successful workflows,
 six successful jobs and five skips. Skips do not satisfy required release gates.
 
 | Area | Current evidence | State |

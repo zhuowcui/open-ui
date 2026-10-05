@@ -55,7 +55,22 @@ are stable. All callback, owned-bound, hide/restore, detach/reattach and
 teardown assertions pass. The 503 preserved artifacts include every measured
 native image and repeated Chromium capture.
 
-The same exclusive pipeline now runs all four complete pixel matrices.
-Those gates remain pending. The source remains unapplied. Accepted renderer
-counts and release admission are unchanged; the full exact Chromium gate
-still fails.
+## Completed matrix review: rejected
+
+The [terminal review](generated/native-review-v3.json) records all seven stages.
+Focused 640/640 and primitive 960/960 comparisons are exact. The original
+census is unchanged at 21,334/22,924 exact, 1,590 different and zero errors.
+The expanded census is 22,133/23,728 exact, 1,595 different and zero errors:
+four previously exact comparisons fail, with no newly exact comparison. Both
+full gates exit 1. Every Chromium image and oracle identity remains unchanged.
+
+All four losses belong to `multicol-on-broken-image-alt-text`. Its retained
+image has fallback children and no decoded replaced resource. The generic
+image-tag classification sends that fallback host through atomic inline
+layout, exposing its authored red background outside the green cover. The
+shared layout must distinguish an actual replaced image from fallback flow.
+The reduced resource-backed app does not exercise this fallback behavior.
+
+The candidate is rejected for application to the umbrella branch. Its source,
+tests, captures and failed results remain preserved. Accepted renderer counts
+and release admission are unchanged; the full exact Chromium gate still fails.

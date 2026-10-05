@@ -1,0 +1,24 @@
+   Compiling openui-text v0.2.0 (/dev/shm/openui-native-raster-fields-retry-e0dc491e/bindings/rust/openui-text)
+    Finished `test` profile [unoptimized] target(s) in 5.03s
+     Running unittests src/lib.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui_text-de4e58fa992bd64b)
+
+running 1 test
+test shaping::shape_result::tests::fontations_preserves_requested_mask_and_position_settings ... FAILED
+
+failures:
+
+---- shaping::shape_result::tests::fontations_preserves_requested_mask_and_position_settings stdout ----
+
+thread 'shaping::shape_result::tests::fontations_preserves_requested_mask_and_position_settings' (3699693) panicked at openui-text/src/shaping/shape_result.rs:966:25:
+assertion `left == right` failed: ChromiumAuthorLcd
+  left: SubpixelAntiAlias
+ right: Alias
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    shaping::shape_result::tests::fontations_preserves_requested_mask_and_position_settings
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 342 filtered out; finished in 0.86s
+
+error: test failed, to rerun pass `-p openui-text --lib`

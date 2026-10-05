@@ -1,0 +1,152 @@
+{
+  "addition_cases": 201,
+  "addition_cases_exact_at_all_four_profiles": 199,
+  "addition_comparisons": 804,
+  "all_22924_original_rows_identical_to_separate_census": true,
+  "all_23728_chromium_inputs_unchanged": true,
+  "all_scoped_census_commands_terminal": true,
+  "applied_to_umbrella": false,
+  "cargo_commands_run": 0,
+  "changed": [
+    {
+      "after_native_rgba_sha256": "e7a40bfdccfd500e9529174f73faff54bdec526c0d99baaeae1d624c43530652",
+      "after_pixels": 50000,
+      "after_status": "different",
+      "before_native_rgba_sha256": "c3bd607098b2ca40bf0371e0f83bd8fdf565243090cd037c6c3d5a75bda8f722",
+      "before_pixels": 0,
+      "before_status": "exact",
+      "id": "wpt/css_multicol/multicol-on-broken-image-alt-text",
+      "kind": "exact-loss",
+      "profile": "legacy-800x600@1"
+    },
+    {
+      "after_native_rgba_sha256": "1bfa5e8baa4ce3fd9b1e54eef0d13f1a668ee6546ed2268888168482b8fad924",
+      "after_pixels": 200000,
+      "after_status": "different",
+      "before_native_rgba_sha256": "003451be61b83ae8f7893ed1500b93b42d2da147f8a75b7d0294e397accc25e7",
+      "before_pixels": 0,
+      "before_status": "exact",
+      "id": "wpt/css_multicol/multicol-on-broken-image-alt-text",
+      "kind": "exact-loss",
+      "profile": "mobile-375x667@2"
+    },
+    {
+      "after_native_rgba_sha256": "ff60a7da9db22fcfd34014a7b4e54386fddcd94e3c3aa4fae384afa91a911b7e",
+      "after_pixels": 78125,
+      "after_status": "different",
+      "before_native_rgba_sha256": "6851d1536539d4d51c021bc089b3a40d037b84b002e4c32ec2b90f6d1079ba88",
+      "before_pixels": 0,
+      "before_status": "exact",
+      "id": "wpt/css_multicol/multicol-on-broken-image-alt-text",
+      "kind": "exact-loss",
+      "profile": "desktop-1280x720@1.25"
+    },
+    {
+      "after_native_rgba_sha256": "c5c762e2057a838c13c338342a728841c39c6f91ee99c7b694975dba5902a936",
+      "after_pixels": 112500,
+      "after_status": "different",
+      "before_native_rgba_sha256": "3dccaba38a61e0f6de136079c7ec963f4d1952c66965f50723a50a741cb6e528",
+      "before_pixels": 0,
+      "before_status": "exact",
+      "id": "wpt/css_multicol/multicol-on-broken-image-alt-text",
+      "kind": "exact-loss",
+      "profile": "desktop-1920x1080@1.5"
+    }
+  ],
+  "changed_comparisons": 4,
+  "changed_kinds": {
+    "changed-existing-difference": 0,
+    "exact-gain": 0,
+    "exact-loss": 4,
+    "worse-existing-difference": 0
+  },
+  "exact_regressions_forbid_promotion": true,
+  "expanded_gate_passed": false,
+  "expanded_pending": false,
+  "expanded_residual_ids": 884,
+  "file_hashes": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-expanded-v1456/expanded-summary.json": "f97df7d44847097030e747e78e4d7439222c74ae2fafe8224497ddcf7e539b11",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-clean-expanded-v1528.log": "a2d299ed424092518cecce0e311f82dfc4fdc9bffc1181e8652079f88383a55f",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-clean-expanded-v1528/expanded-summary.json": "f9c29107a209adaef652f038fe2fc7b7a13c9f0901d3a86b9ab3a05927889d3a",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-clean-full-v1528/full-summary.json": "f73b3b26ecdae589d05ff823fd0a9f302fb6f65a4fa0c5e9fa78091dd1952b27",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-clean-v1528/build.json": "eb6fdd7b423ff3f41207a51f276ab5701483e431e75a0f262103aa25823aed2b",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-expanded-exit-v1528.json": "1de0cd5d2fc9879fc36316379bd9f7f6bbf1ecfbfe93403054330c93260a45d0",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-pipeline-v1529/receipt.json": "943b1102c78235a6cdd57d80b4ceee4b04d59f307548dadb68f0ba1fe2d5210b"
+  },
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "observed_exit_code": 1,
+  "pixel_tolerance": 0,
+  "prior_audit_failure": {
+    "actual_exit": 1,
+    "probe": "/tmp/openui-native-inline-replaced-full-audit-v1555.py",
+    "probe_sha256": "e03aee384a4aed6c3bbe51201db4f8565d669c0fcb66e0773064feed26fce7ca",
+    "reason": "Results contain the canonical profile hash in addition to the five aggregate counts; the first audit compared unlike schemas."
+  },
+  "prior_results": {
+    "different": 1591,
+    "errors": 0,
+    "exact": 22137,
+    "profile_result_sha256": "9022d4819c578703b70bde9f26c57d9a1514bcbe131918355324fb7ec89fa7de",
+    "total": 23728
+  },
+  "probe_sha256": "3cacecf72a63fae8b87fc5a42d9a8701c195d52c3f99b0c65b033f101af77213",
+  "profiles": [
+    {
+      "different": 43,
+      "errors": 0,
+      "exact": 5889,
+      "profile": "legacy-800x600@1",
+      "total": 5932
+    },
+    {
+      "different": 248,
+      "errors": 0,
+      "exact": 5684,
+      "profile": "mobile-375x667@2",
+      "total": 5932
+    },
+    {
+      "different": 762,
+      "errors": 0,
+      "exact": 5170,
+      "profile": "desktop-1280x720@1.25",
+      "total": 5932
+    },
+    {
+      "different": 542,
+      "errors": 0,
+      "exact": 5390,
+      "profile": "desktop-1920x1080@1.5",
+      "total": 5932
+    }
+  ],
+  "promotion_allowed": false,
+  "public_native_rust_api_required": true,
+  "release_qualification": false,
+  "results": {
+    "different": 1595,
+    "errors": 0,
+    "exact": 22133,
+    "total": 23728
+  },
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "c92e2d08163779f5e55784f14e556ecaa9d16e7f",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "161deb9aa4a63ea5c5e66f7b7198d1d04acaf9f14e4593a949a771b1f838fc97",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "c92e2d08163779f5e55784f14e556ecaa9d16e7f",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "161deb9aa4a63ea5c5e66f7b7198d1d04acaf9f14e4593a949a771b1f838fc97",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "unchanged_nine_invariant_comparisons": 23724,
+  "whole_owner_receipt_sha256": "943b1102c78235a6cdd57d80b4ceee4b04d59f307548dadb68f0ba1fe2d5210b",
+  "whole_pipeline_terminal": true
+}
