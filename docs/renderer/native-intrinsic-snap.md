@@ -47,8 +47,9 @@ the consuming Rust callback test at all five scales. C text parity, the
 Workspace, 600 Rust/C/C++ images, 38,400 geometry states and all four renderer
 matrices have not executed on this width correction. Own-source hosted run
 `37373688613` initially passes five jobs and cancels two before their steps
-execute. Its failed-job retry is in progress in the preserved observation;
-cancelled or pending jobs are not passes.
+execute. Its [completed retry](generated/native-intrinsic-snap-v4.json) passes
+all seven jobs with zero skips. Both attempts and all available logs remain
+preserved. Hosted hardening does not replace the unexecuted full pixel checks.
 
 Whole guard owner `1703` and text/style integration owner `1710` are terminal.
 The earlier full owner `1697` and glyph owner `1690` are unlaunched. The

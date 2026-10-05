@@ -32,7 +32,8 @@ and passes the fixed callback at all five scales, C text parity, 10,000-update
 storage, 58 conformance scenarios and nine inherited-style guards. Workspace,
 apps and matrices remain unexecuted on this width source. Own-source hosted
 run `37373688613` initially passes five jobs and cancels two without steps;
-its failed-job retry is in progress in the preserved observation. Full owner
+its [completed retry](../renderer/generated/native-intrinsic-snap-v4.json)
+passes all seven jobs, zero skips. Full owner
 `1697` remains unlaunched. The
 [fresh full queue](../renderer/generated/native-intrinsic-snap-v3.json)
 includes all 42 prior owners; its clean build, app and matrices are unexecuted.
@@ -71,8 +72,13 @@ a GN formatting job cancelled without steps: six jobs pass and five skip.
 Its [hosted evidence](../renderer/generated/native-text-inheritance-v4.json)
 preserves both attempts. The earlier `95426acf` archive cancellations remain
 historical failures. Skipped jobs do not satisfy release gates, and these
-results are not attributed to the new integration head. The required full
-Chromium pixel gate still fails.
+results are not attributed to the new integration head. At `987c20d9`, hosted
+clang-format finds one long line in the new C example; GN formatting passes.
+The [preserved correction](../renderer/generated/native-text-inheritance-v7.json)
+changes only whitespace using CI's clang-format 18.1.3 and passes all 58
+tracked C/C++ format checks. Rust, ABI, renderer, oracle and workflows are
+unchanged by that correction. New-head hosted results remain required. The
+full Chromium pixel gate still fails.
 
 The [native text replacement review](../renderer/native-text-content.md) finds
 why all 800 C/C++ font images are blank at `e0dc491e`: the C setter stores

@@ -12,7 +12,8 @@ checks pass. The named baseline fails and the fixed callback passes at all
 five scales; neighboring C text, storage, style and conformance guards pass.
 Workspace, apps and all four renderer matrices have not run on this width
 source. Own-source hosted hardening initially has five passing jobs and two
-cancelled without steps; its retry is in progress in the preserved observation.
+cancelled without steps; the [completed retry](../renderer/generated/native-intrinsic-snap-v4.json)
+passes all seven jobs, zero skips. Earlier cancellations remain preserved.
 The source remains unapplied and
 unqualified. It does not close the default font-raster or release gates.
 
@@ -45,7 +46,11 @@ formatting retry, with six jobs passing and five skipped. The
 preserves the cancelled GN job and successful retry. Earlier archive
 cancellations at `95426acf` remain historical failures. Skips are not release
 passes, and this older-head result does not qualify the new integration head.
-The independent full Chromium pixel gate remains failed.
+The independent full Chromium pixel gate remains failed. At `987c20d9`, the
+new C example fails clang-format on one long line; GN formatting passes. The
+[whitespace correction](../renderer/generated/native-text-inheritance-v7.json)
+uses clang-format 18.1.3 and passes all 58 tracked C/C++ formatting checks.
+Its new-head hosted result is still required; the failure is not rewritten.
 
 The [native text replacement review](../renderer/native-text-content.md)
 assigns all 800 blank C/C++ font images to the C setter's container-data path.

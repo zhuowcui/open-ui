@@ -1,0 +1,108 @@
+{
+  "all_available_hosted_logs_preserved": true,
+  "all_hosted_jobs_terminal": true,
+  "artifact_bytes": 292132,
+  "artifact_count": 11,
+  "artifacts": [
+    {
+      "bytes": 33673,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v4/hosted-attempt2-terminal.json",
+      "sha256": "c55b6ea844c5e2bf1b0744bcecf25f2819da46f23e05bc7f3f1e28fe4c6661d4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-retry-v1727/receipt.json"
+    },
+    {
+      "bytes": 16055,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v4/hosted-attempt2.json",
+      "sha256": "30ecbf7d8c4004d7c210bfbdee907e6041dc79a019f04f405e5b9644de4e1226",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-retry-v1727/attempt2.json"
+    },
+    {
+      "bytes": 2157,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v4/hosted-retry-observer.py",
+      "sha256": "00f1807102961b9e34a686893a2c776560a8b9f793878ccb8d012052e5b6dbc7",
+      "source_path": "/tmp/openui-native-intrinsic-snap-hosted-retry-v1727.py"
+    },
+    {
+      "bytes": 94655,
+      "decompressed_bytes": 901973,
+      "decompressed_sha256": "4f58dbc5e66e372b8d925a7bf522bec3d8935b7f0ba1ef38825f5761832bb1fe",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v4/111995252497.log.gz",
+      "sha256": "3d35bc09731dd61a20b6d91a15679d053993bbda6920cc835803dde45ef7cd23",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-retry-v1727/111995252497.log"
+    },
+    {
+      "bytes": 20533,
+      "decompressed_bytes": 185534,
+      "decompressed_sha256": "95abd30d8df0ed5477ac24e17f98a6b13d45256c03e91b6e424e7c558c5b78be",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v4/111995252971.log.gz",
+      "sha256": "44d859b205769695484b449302c669e97264822d73436f13599df5851a8256f9",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-retry-v1727/111995252971.log"
+    },
+    {
+      "bytes": 15865,
+      "decompressed_bytes": 109617,
+      "decompressed_sha256": "669a25370e609bc79f34a4c52c1ece56ef84ac629df515dc175f1a357be9ddbc",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v4/111995254673.log.gz",
+      "sha256": "6c22e6b3f0cf8ec1c2ae7b5cddccfa97edee686d9e142ae8181f9a4bbe352879",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-retry-v1727/111995254673.log"
+    },
+    {
+      "bytes": 16804,
+      "decompressed_bytes": 114400,
+      "decompressed_sha256": "b400d79c96d6bcdafc6108f8f2a00652fa27f960d1d937d20b4b92e42e04975f",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v4/111995254682.log.gz",
+      "sha256": "dcba12ed54fb8dbd14258cf1275ff6950a216f808d71ec9636c3f6e841970009",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-retry-v1727/111995254682.log"
+    },
+    {
+      "bytes": 42740,
+      "decompressed_bytes": 325814,
+      "decompressed_sha256": "1550bb40a303fe32395c205bb40383273a432b3169946b2a03805bf86eac8b34",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v4/111995289978.log.gz",
+      "sha256": "6c0d5f1a6c4c33082e96ab0ae45ef66b76706260ef2f5d2f0a10b3c988c497ee",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-retry-v1727/111995289978.log"
+    },
+    {
+      "bytes": 22821,
+      "decompressed_bytes": 151617,
+      "decompressed_sha256": "04cfe27cc5a699ac07ad759fe767a710a6c4b644bf4b7dcb6d451f461af0553f",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v4/111995312617.log.gz",
+      "sha256": "b2922fa9dd4d2bd10a263699c52731550906eaacd9be75fb352be479f3404bf4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-retry-v1727/111995312617.log"
+    },
+    {
+      "bytes": 20226,
+      "decompressed_bytes": 161695,
+      "decompressed_sha256": "a0efa3682b005ad043023e6284fd5d785e92a2e22d1ec0f9bc1f54edeb9bb552",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v4/111995317838.log.gz",
+      "sha256": "74600d22ce32189d21b50d5b2cbc159151584191014bce8a511c367baace9eb3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-retry-v1727/111995317838.log"
+    },
+    {
+      "bytes": 6603,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v4/preserver.py",
+      "sha256": "03b611cdff78c92ae4044d0e531acf1ddeec85d89e105a140126c0a7328b7795",
+      "source_path": "/tmp/openui-native-format-and-hosted-preserve-v1728.py"
+    }
+  ],
+  "candidate_applied_to_umbrella": false,
+  "full_native_app_and_renderer_matrices_unexecuted": true,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "pixel_tolerance": 0,
+  "previous_cancelled_jobs_preserved_in_v2": true,
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "retry_attempt": 2,
+  "schema_version": 1,
+  "skipped_jobs": 0,
+  "source": "727da10e580c9439f5db83d36bfc3e2340168207",
+  "successful_jobs": 7
+}

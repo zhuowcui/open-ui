@@ -88,6 +88,12 @@ The [clean integration build](generated/native-text-inheritance-v6.json) at
 their actual `41b616c3` source identity; they are not relabelled as a new census.
 Integration fixes the native API behavior without claiming release qualification.
 
+Hosted formatting at later checkpoint `987c20d9` finds one long line in the
+C example. The [format follow-up](generated/native-text-inheritance-v7.json)
+preserves that failure and the passing GN job. A whitespace-only correction
+using CI's clang-format 18.1.3 passes all 58 tracked C/C++ files. Rust renderer,
+ABI and oracle inputs remain unchanged; new-head hosted results are still required.
+
 Two unlaunched preparations and one build-harness failure are also preserved.
 Preflight catches an incomplete test-name filter before execution; a later
 build probe refers to uppercase `RAW` where only lowercase `raw` exists and

@@ -209,8 +209,8 @@ int main(int argc, char** argv) {
     OuiElement* nodes[] = {label};
     Mutation mutation = {nodes, 1, 0, 1};
     OuiListener* listener = NULL;
-    assert(oui_element_add_event_listener(root, OUI_EVENT_CLICK, 0, clicked, &mutation, &listener) ==
-           OUI_OK);
+    assert(oui_element_add_event_listener(root, OUI_EVENT_CLICK, 0, clicked, &mutation,
+                                          &listener) == OUI_OK);
     click(document, root);
     assert(mutation.calls == 1);
     OuiRect bounds;
