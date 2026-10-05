@@ -13,11 +13,22 @@ stop at the disk guard. The isolated native inline correction `c92e2d08` passes
 two fixed guards and thirteen read-only checks. Its
 [clean native verification](../renderer/generated/native-inline-replaced-v1.json)
 passes 8,538 tests, twelve C and six C++ consumers, and all sixty Rust images
-and bounds against 240 stable Chromium captures. All four complete pixel
-matrices remain pending. No candidate is promoted or
+and bounds against 240 stable Chromium captures. Focused 640/640 and primitive
+960/960 comparisons are exact, with all 1,600 comparison invariants unchanged.
+Complete original and expanded matrices remain pending. No candidate is promoted or
 admitted. Chromium remains the sole pixel target. Application interaction
 uses public native Rust APIs and callbacks; every needed operation remains
 required even when its Chromium test uses JavaScript.
+
+The [native repeated-table correction](../renderer/native-table-progress.md)
+is prepared at private `4b3cb72c`. Two pinned Chromium runs agree on all 96
+ordered geometry observations, including fractional capacity and body
+shrink/restore. Eleven read-only checks pass. The shared source and consuming
+Rust callback example await native tests and all four pixel matrices after
+whole owner `1529` finishes. This candidate is unapplied and unqualified.
+The [preserved index](../renderer/generated/native-table-progress-v1.json)
+also records completed umbrella CI at `b7e28e56`: three successful workflows,
+six successful jobs and five skips. Skips do not satisfy required release gates.
 
 | Area | Current evidence | State |
 |---|---|---|

@@ -29,6 +29,11 @@ produce the same visual state. See the
 
 ## Verified status
 
+The [native repeated-table correction](docs/renderer/native-table-progress.md)
+is prepared with a consuming Rust callback application. Two Chromium runs
+agree on all 96 geometry queries and eleven read-only checks pass. Native
+execution and pixel qualification remain pending; the correction is unapplied.
+
 The current v0.2 release candidate has:
 
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical

@@ -1,0 +1,28 @@
+{
+  "all_binary_bytes_preserved": true,
+  "all_historical_censuses_terminal": true,
+  "build_receipt_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-v80/pixel-build.json",
+  "build_receipt_sha256": "e2ffd971525bb05c488e5ad55333a90b92246f62da50e37a76e895805232d0dc",
+  "bytes": 339607808,
+  "cargo_commands_run": 0,
+  "destination": "/mnt/e/openui-v02-qualification-d174ea0b/completed-binary-v1544/pixel_compare",
+  "no_active_inputs_or_cache_moved": true,
+  "no_owner_roots_or_probes_changed": true,
+  "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-v80/pixel_compare",
+  "probe_sha256": "b2473c902986f3a0cb55fd4d03be2f5f9eeaddac3c118188b9358f7a7188947f",
+  "release_qualification": false,
+  "root_free_bytes_after": 897851392,
+  "root_free_bytes_before": 564137984,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "sha256": "682c225d52fa9bd1a7bfe21d197f6118067cc542c8fd84fe02d5bd86080becf4",
+  "source": {
+    "clean": true,
+    "commit": "d64d3f7f14c1c066af092b6e7ec277e35fb3e94d",
+    "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+    "source_tree_sha256": "e09a79c07ea0f2e4f6dafe625421be45fa8489ea160b94a4c179a3e3552cb75c",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "terminal_index_path": "/home/nero/code/open-ui/docs/renderer/generated/native-viewport-full-v13.json",
+  "terminal_index_sha256": "a314e365f946fcdea546a32d39e848bd605147d021245acf7ba7ac1a9b6c6235"
+}

@@ -1,0 +1,292 @@
+{
+  "accepted_renderer_unchanged": true,
+  "applied_to_umbrella": false,
+  "artifact_bytes": 5929539,
+  "artifact_count": 39,
+  "artifacts": [
+    {
+      "bytes": 4145,
+      "path": "docs/renderer/evidence/native-table-progress-v1/read-only-checks.json",
+      "sha256": "6f13862236e13c107079e3a8a91643c18d38f64c5f5e97d7acfa89367589a993"
+    },
+    {
+      "bytes": 81,
+      "path": "docs/renderer/evidence/native-table-progress-v1/check-renderer.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    {
+      "bytes": 59,
+      "path": "docs/renderer/evidence/native-table-progress-v1/check-multicol.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    {
+      "bytes": 86,
+      "path": "docs/renderer/evidence/native-table-progress-v1/check-sp17.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    {
+      "bytes": 121,
+      "path": "docs/renderer/evidence/native-table-progress-v1/check-sp18.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    {
+      "bytes": 142,
+      "path": "docs/renderer/evidence/native-table-progress-v1/check-sp20.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    {
+      "bytes": 63,
+      "path": "docs/renderer/evidence/native-table-progress-v1/check-v02.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    {
+      "bytes": 37,
+      "path": "docs/renderer/evidence/native-table-progress-v1/check-style.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    {
+      "bytes": 32,
+      "path": "docs/renderer/evidence/native-table-progress-v1/check-ffi.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    {
+      "bytes": 45,
+      "path": "docs/renderer/evidence/native-table-progress-v1/check-archive.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    {
+      "bytes": 2867,
+      "path": "docs/renderer/evidence/native-table-progress-v1/check-accountability.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-table-progress-v1/check-rust-format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3974145,
+      "path": "docs/renderer/evidence/native-table-progress-v1/chromium-geometry.json",
+      "sha256": "02127455718d6b3afb374fab94d05cfafce197eee620ca10b4ef14f4b96dd6f8"
+    },
+    {
+      "bytes": 1438,
+      "path": "docs/renderer/evidence/native-table-progress-v1/height-40.html",
+      "sha256": "5c960c30d2bd4e1a947057785b0265dba93ed82b52f4e0434ee8bdfafa4b0cfc"
+    },
+    {
+      "bytes": 1438,
+      "path": "docs/renderer/evidence/native-table-progress-v1/height-30.html",
+      "sha256": "7d0658d7f141199ce92f460ff349f447c2ebf10e8dfcfbeff88f85b58a697aa4"
+    },
+    {
+      "bytes": 1438,
+      "path": "docs/renderer/evidence/native-table-progress-v1/height-20.html",
+      "sha256": "d1630a60551fb131a47420a6507de050d0586470fee1c9fd5cbe8cf5b6fc01ed"
+    },
+    {
+      "bytes": 1440,
+      "path": "docs/renderer/evidence/native-table-progress-v1/height-40.5.html",
+      "sha256": "720b3680717db028f31a66bb8c4e757f07ad8f0f32640de2fe0c607b496bf011"
+    },
+    {
+      "bytes": 2555,
+      "path": "docs/renderer/evidence/native-table-progress-v1/queue-prepared.json",
+      "sha256": "b451c4a6d3f947398dab0d12691ac9c49a370aad249b532b0702cb85c20ed29d"
+    },
+    {
+      "bytes": 6313,
+      "path": "docs/renderer/evidence/native-table-progress-v1/openui-native-table-progress-build-v1547.py",
+      "sha256": "aa255f7ed0790f6c3780b797b78e771db3a457629842f826fe4e405d33b2db0a"
+    },
+    {
+      "bytes": 8247,
+      "path": "docs/renderer/evidence/native-table-progress-v1/openui-native-table-progress-consumer-v1547.py",
+      "sha256": "79b5281872449e6cc3a289db4101563758a257ac14d56220c48196e75e84cf9b"
+    },
+    {
+      "bytes": 7841,
+      "path": "docs/renderer/evidence/native-table-progress-v1/openui-native-table-progress-guards-v1547.py",
+      "sha256": "39f3bc844a47ca0a13f4fc7d78c42ffcb4ac65926af1e0b029376438b2346f96"
+    },
+    {
+      "bytes": 2088,
+      "path": "docs/renderer/evidence/native-table-progress-v1/openui-native-table-progress-matrices-v1547.py",
+      "sha256": "4b92cae18560d145df44c5ad18c912f1115dd401d5a4b9446b7a240e592bf1b1"
+    },
+    {
+      "bytes": 7811,
+      "path": "docs/renderer/evidence/native-table-progress-v1/openui-native-table-progress-pipeline-v1548.py",
+      "sha256": "1b1bb74fc37a9b7acc1c525929d8456e5a4c3b431fa014c6b2994cafa6c3bda6"
+    },
+    {
+      "bytes": 5046,
+      "path": "docs/renderer/evidence/native-table-progress-v1/openui-native-table-progress-geometry-v1545.py",
+      "sha256": "bc08012b9719f7d4e49770210d78438b423d7c12829b9e45939db61bae003bb3"
+    },
+    {
+      "bytes": 2137,
+      "path": "docs/renderer/evidence/native-table-progress-v1/openui-native-table-progress-checks-v1546.py",
+      "sha256": "20592b8102dac01fc4f2a411c3de27232bdc25701b4e44db177ad963d8053fe4"
+    },
+    {
+      "bytes": 7263,
+      "path": "docs/renderer/evidence/native-table-progress-v1/openui-native-table-progress-prepare-v1547.py",
+      "sha256": "b04dda4a2a615cce9d50f19004115a05c8e5576b175babc48638e92f922e7386"
+    },
+    {
+      "bytes": 24670,
+      "path": "docs/renderer/evidence/native-table-progress-v1/guard-source.patch",
+      "sha256": "4000a3f3a501198ea4fab374e12e14a9b548c81e81dd93e79499e3fdd6a44d8f"
+    },
+    {
+      "bytes": 10484,
+      "path": "docs/renderer/evidence/native-table-progress-v1/renderer-source.patch",
+      "sha256": "e7140c06a5084b829acc599b1ff0a61092bf99170dd23bbe22ffbc3c85c1b99d"
+    },
+    {
+      "bytes": 6684,
+      "path": "docs/renderer/evidence/native-table-progress-v1/owner-at-observation.json",
+      "sha256": "834ff34d056ec611d86b5f2f31dfd6b2505e6bd86e7925cb80c64c7a308c4476"
+    },
+    {
+      "bytes": 22330,
+      "path": "docs/renderer/evidence/native-table-progress-v1/umbrella-hosted.json",
+      "sha256": "d73e8b189aecb979befd2dce6fd0a79e4cdddb2726f7bfa93e68828bc45dcd50"
+    },
+    {
+      "bytes": 8994,
+      "path": "docs/renderer/evidence/native-table-progress-v1/umbrella-37319597694.json",
+      "sha256": "fb2dd282f16c613ba1fa965519512c664d8de3bbc1754d190ea61ffc6779beb1"
+    },
+    {
+      "bytes": 1405535,
+      "path": "docs/renderer/evidence/native-table-progress-v1/umbrella-37319597694.log",
+      "sha256": "ca7da5177d6e12184b10c10a3a3f86b0baa76c694680222622d162e38b835a3b"
+    },
+    {
+      "bytes": 3932,
+      "path": "docs/renderer/evidence/native-table-progress-v1/umbrella-37319597700.json",
+      "sha256": "c231f1233e92435a8589df49a83cb2430ec5257ec572e9372c0ac85fc96085a8"
+    },
+    {
+      "bytes": 56260,
+      "path": "docs/renderer/evidence/native-table-progress-v1/umbrella-37319597700.log",
+      "sha256": "d0c52d4cba06dd2a9299139034686b71938fd034aeba79efff23bb1103cdec20"
+    },
+    {
+      "bytes": 6235,
+      "path": "docs/renderer/evidence/native-table-progress-v1/umbrella-37319597750.json",
+      "sha256": "d7685f4a546c34f5ed5d4a8bb71949f870cef1997b6e63cd64b2102d663e6003"
+    },
+    {
+      "bytes": 340969,
+      "path": "docs/renderer/evidence/native-table-progress-v1/umbrella-37319597750.log",
+      "sha256": "1d4bd0e77b8d92353fa6061e7af87e31499da24da960ef5acfc3430da831dcdc"
+    },
+    {
+      "bytes": 3418,
+      "path": "docs/renderer/evidence/native-table-progress-v1/inline-small-matrix-audit.json",
+      "sha256": "2498b1c7d5dc946538ded28252a0871d7b18871da7cc683983a229576a0af3cb"
+    },
+    {
+      "bytes": 1567,
+      "path": "docs/renderer/evidence/native-table-progress-v1/evidence-relocation-v1539.json",
+      "sha256": "4f863947332cbe9d270582989689af87a6472c7c3bbf3a75ee0777bd1c29d3d9"
+    },
+    {
+      "bytes": 1583,
+      "path": "docs/renderer/evidence/native-table-progress-v1/evidence-relocation-v1544.json",
+      "sha256": "e8e6057b7ad2c1e66c840a7a3928026630237e3b95b1f47db70208f5a8fb6c41"
+    }
+  ],
+  "baseline_commit": "4318f606d9ed9c204ea9ee3edacbfee9b0fd5479",
+  "branch": "agent/native-table-progress-v1543",
+  "chromium_geometry": {
+    "all_repeated_queries_identical": true,
+    "fractional_continuation_body_progress_css_px": 1,
+    "independent_runs": 2,
+    "initial_table_fragment_counts": [
+      41,
+      51,
+      61,
+      41
+    ],
+    "observations": 96,
+    "ordered_body_heights": [
+      100,
+      50,
+      100
+    ],
+    "outer_heights": [
+      40,
+      30,
+      20,
+      40.5
+    ],
+    "screenshots_generated": 0
+  },
+  "isolated_inline_full_and_expanded_pending": true,
+  "isolated_inline_scoped_matrices": {
+    "focused": {
+      "actual_exit": 0,
+      "all_nine_invariants_unchanged": 640,
+      "comparisons": 640,
+      "errors": 0,
+      "exact": 640,
+      "profiles": 40
+    },
+    "primitive": {
+      "actual_exit": 0,
+      "all_nine_invariants_unchanged": 960,
+      "comparisons": 960,
+      "errors": 0,
+      "exact": 960,
+      "profiles": 40
+    }
+  },
+  "javascript_executed_by_openui": false,
+  "native_qualification": {
+    "all_four_pixel_matrices_pending": true,
+    "baseline_and_fixed_tests_pending": true,
+    "consumer_pending": true,
+    "required_consecutive_chromium_captures": 240,
+    "required_independent_chromium_processes": 120,
+    "required_native_images": 60,
+    "workspace_pending": true
+  },
+  "needed_native_operations_not_waived_by_pixel_exclusion": true,
+  "new_release_states_admitted": 0,
+  "observed_at_utc": "2026-10-05T14:38:46.791845+00:00",
+  "old_openui_pixels_are_provenance_only": true,
+  "pixel_tolerance": 0,
+  "preserver_sha256": "81f1d9d5d5ae65864139f77686542d5a46cdf81fc83bd81f92f2ab7e9cc85b04",
+  "promotion_allowed": false,
+  "public_native_rust_api_required": true,
+  "public_rust_example": "bindings/rust/openui/examples/native_table_progress.rs",
+  "read_only_checks_passed": 11,
+  "release_qualification": false,
+  "root_cause_owner": "openui-layout repeated table body progress and native fragment geometry",
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "4b3cb72c03c58416a736a207b97cdcc8a225cb5a",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "d8eaca6088506b473ed388a005e3f688efebbec9893768f9ca4149f64110fdb7",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "umbrella_hosted": {
+    "all_three_workflows_complete_success": true,
+    "release_qualification": false,
+    "skipped_jobs": 5,
+    "skips_are_not_passes": true,
+    "source": "b7e28e56800ec9a50726fbb1b47e79babee7131e",
+    "successful_jobs": 6
+  },
+  "whole_owner_at_observation": {
+    "all_commands_terminal": false,
+    "name": "native-table-progress-pipeline-v1548",
+    "state": "awaiting-all-27-prior-whole-pipelines",
+    "waits_for_all_27_prior_whole_owners": true
+  }
+}

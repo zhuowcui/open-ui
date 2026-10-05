@@ -63,9 +63,29 @@ geometry observations across four profiles. Its
 passes 8,538 tests, zero failures and thirteen ignored, plus twelve C and six
 C++ consumers over the same Engine. All sixty Rust callback images and bounds
 match Chromium; two native runs and 240 Chromium captures are stable. Owned
-geometry, hide/restore, detach/reattach and teardown assertions pass. All four
-complete matrices are now running. Their gates remain pending; accepted
-renderer totals stay unchanged and this candidate remains unapplied.
+geometry, hide/restore, detach/reattach and teardown assertions pass. The
+[terminal scoped audit](../renderer/generated/native-table-progress-v1.json)
+verifies 640/640 focused and 960/960 primitive comparisons exact, with all
+1,600 comparison invariants unchanged. Complete original and expanded matrices
+are still running. Their gates remain pending; accepted renderer totals stay
+unchanged and this candidate remains unapplied.
+
+The [native repeated-table correction](../renderer/native-table-progress.md)
+is prepared at clean private `4b3cb72c`, over test-only baseline `4318f606`.
+Two independent Chromium runs agree on 96 ordered geometry observations,
+including a one-pixel continuation when the remaining space is half a pixel.
+The shared implementation removes the declared-column cap and advances body
+source progress. Its consuming Rust example uses typed setters, owned
+rectangles, Rust callbacks and teardown checks. Eleven read-only checks pass;
+native tests, application execution and all four pixel matrices remain pending
+in exclusive owner `1548`, after every stage of owner `1529` is terminal.
+The candidate is unapplied and admits no release state.
+
+Hosted CI for umbrella documentation checkpoint `b7e28e56` has completed:
+all three workflows succeed, with six successful jobs and five skipped jobs.
+Skipped jobs are not passes or release qualification. The
+[same evidence index](../renderer/generated/native-table-progress-v1.json)
+preserves every job conclusion and all three workflow logs.
 
 That earlier review also preserves native constructor candidate `893ea292`, its
 test-only baseline, source patch and immutable verification probes. Public
