@@ -22,6 +22,33 @@ remain open.
 
 ## Current implementation checkpoint
 
+The [shared native style correction](../renderer/native-text-style-inheritance.md)
+at private `41b616c3` combines Rust/C text replacement with authored font,
+color and line-height inheritance. The new public Rust callback test fails on
+the baseline and passes at five scales after the fix. All nine named style
+guards, 58 conformance scenarios and thirteen source checks pass. The clean
+build passes 8,551 workspace tests, zero failures, 13 ignored, and all thirteen
+build stages including ABI and C/C++ smoke consumers.
+
+Its [complete app matrix](../renderer/generated/native-text-inheritance-v2.json)
+finishes with exit 1: 0/600 images and 34,560/38,400 geometry states match
+Chromium. All 400 actual C/C++ images match Rust, excluding 200 Rust self-rows.
+Repeat runs agree and Chromium inputs stay unchanged. The remaining geometry
+differences are 3,840 text widths, each 1/64 CSS pixel short at Ahem sizes 12
+and 16. Default font rasterization still differs from Chromium. Own-source
+hosted hardening passes all seven jobs, zero skips. Whole owner `1678` passes
+640/640 focused and 960/960 primitive comparisons and continues both full matrices.
+The implementation is private and unqualified; accepted totals remain
+21,334/22,924 original and 22,137/23,728 expanded exact.
+
+Umbrella `95426acf` passes the Rust, Python, format and applicable hardening
+jobs, but its historical archive audit is cancelled without executing steps
+in both attempts. Across its three workflows, five jobs pass, five skip and
+one is cancelled, as recorded in the
+[terminal hosted evidence](../renderer/generated/native-text-inheritance-v3.json).
+The missing audit is not a pass. This is separate from the
+required full Chromium pixel gate, which still fails.
+
 The [native text replacement review](../renderer/native-text-content.md) finds
 why all 800 C/C++ font images are blank at `e0dc491e`: the C setter stores
 container data, while layout reads authored Text children. Repeated probes
@@ -44,9 +71,12 @@ all 58 native conformance scenarios. Its clean build passes 8,538 workspace
 tests, zero failures, 13 ignored, and ABI consumers, then stops at the C smoke
 with exit 127: the harness omitted the library's `libopenui.so.0` filename.
 Fresh owner `1656` keeps source `90310e15`, checks its paths and restore branch,
-and installs and verifies the required SONAME filename. It repeats the guards
-and clean build; 600 consuming Rust/C/C++ images, 38,400 geometry states and
-all four matrices remain required.
+and installs and verifies the required SONAME filename. It passes the guards
+and twelve-stage build, then is interrupted after 306 app images: none match
+Chromium, and none of 19,584 geometry states agrees. All 204 actual C/C++
+images match Rust. A separate process-absence witness preserves the original
+incomplete receipts. The fresh shared-style matrix above supersedes that
+interrupted queue without relabelling it as a completed run.
 Both sources and all failed
 or unlaunched preparations are preserved in the
 [new index](../renderer/generated/native-text-content-v1.json). The correction
@@ -62,9 +92,10 @@ The [authored glyph precision investigation](../renderer/native-author-glyph-pre
 models ten preserved Ahem images and 640 correct geometry states. Premature
 1/64 rounding predicts the second-glyph failures at sizes 10, 20 and 24; twelve
 edge checks agree. Private `3b2e0d1f` retains shaped advances before Skia phase
-selection and passes eleven source checks. Its runtime guard owner `1658`
-waits for all 36 preceding whole owners, including complete text owner `1656`.
-Its guard and pixel checks have not executed. It inherits the rejected
+selection and passes eleven source checks. Guard owner `1658` is interrupted
+before execution. A fresh root and owner `1667` reproduce the named baseline
+failure, pass the fixed guard and all 342 text tests. Application pixels and
+renderer matrices have not run. It inherits the rejected
 raster parent's 83 exact losses;
 it is unapplied and cannot qualify that parent or the other Rust font failures.
 

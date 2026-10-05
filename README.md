@@ -29,6 +29,16 @@ produce the same visual state. See the
 
 ## Verified status
 
+The [shared native font-inheritance correction](docs/renderer/native-text-style-inheritance.md)
+combines Rust/C text replacement with authored style propagation. Its new
+public Rust callback regression fails before the fix and passes at all five
+scales after it. Nine named style guards, thirteen source checks and 8,551
+workspace tests pass; all thirteen clean build stages and C/C++ smokes pass.
+All 400 actual C/C++ images match Rust. Chromium matches 34,560/38,400 geometry
+states, but 0/600 images; some text widths remain 1/64 pixel short. All seven
+own-source hosted hardening jobs pass. Focused 640/640 and primitive 960/960
+suites pass; the broader Chromium matrices are running. The source is unapplied.
+
 The [native text replacement review](docs/renderer/native-text-content.md)
 finds a C API bug: its setter stores text on a container, while layout reads
 Text children. All 800 C/C++ font images are blank. A shared Rust/C Engine
@@ -39,15 +49,19 @@ jobs. The old C setter fails the named regression; the shared correction passes
 it, the 10,000-update storage guard and all 58 native conformance scenarios.
 The clean build passes 8,538 workspace tests and ABI consumers, then the C
 smoke stops because the harness omitted the library's required filename.
-A fresh retry installs and verifies `libopenui.so.0`; application images and
-pixel matrices remain required. The correction remains unapplied.
+A fresh retry installs and verifies `libopenui.so.0` and passes the complete
+build, then is interrupted after 306 app images. Its geometry still fails
+because text children do not inherit authored styles. The shared font
+correction above completes a fresh app matrix. Both corrections remain
+unapplied; the strict Chromium gates remain open.
 
 The [authored glyph precision investigation](docs/renderer/native-author-glyph-precision.md)
 finds a source-supported explanation for three Ahem images: rounding shaped
 advances before Skia selects the LCD phase moves the second glyph. A private
-correction preserves those advances. Eleven source checks pass; its named
-runtime guard is queued behind the complete text retry. Pixel verification has
-not run. No new exact result is claimed.
+correction preserves those advances. Eleven source checks pass. A fresh run
+reproduces the named baseline failure, passes the fixed guard and all 342 text
+tests. Its original queued owner is interrupted before execution and preserved.
+Application pixels and full matrices have not run. No new exact result is claimed.
 
 The [table source-retention follow-up](docs/renderer/native-table-progress.md#canonical-source-retention-follow-up)
 keeps an immutable full table subtree for ancestor continuations. A geometry-only

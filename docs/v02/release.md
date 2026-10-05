@@ -4,6 +4,26 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
+The [shared native font-inheritance correction](../renderer/native-text-style-inheritance.md)
+at private `41b616c3` passes its new baseline/fixed public Rust callback guard,
+all nine style guards, 58 conformance scenarios, thirteen source checks and
+8,551 workspace tests. All thirteen build stages and C/C++ smoke consumers
+pass. Its [complete app matrix](../renderer/generated/native-text-inheritance-v2.json)
+fails strictly: 0/600 images and 34,560/38,400 geometry states match Chromium.
+All 400 actual C/C++ images match Rust, excluding 200 Rust self-comparisons.
+All repeats and Chromium inputs stay unchanged. The remaining geometry gap is
+3,840 text widths, each 1/64 CSS pixel short at Ahem sizes 12 and 16. Default
+native font rasterization remains open. Seven own-source hosted hardening jobs
+pass, zero skip. Owner `1678` passes 640/640 focused and 960/960 primitive
+comparisons and continues both full matrices. The source is unapplied and unqualified.
+
+Umbrella `95426acf` completes three hosted workflows with five passing jobs,
+five skips and one cancelled historical archive audit. That job executes no
+steps in either attempt, as recorded in the
+[terminal hosted evidence](../renderer/generated/native-text-inheritance-v3.json).
+Its missing result is not a pass; the independent
+full Chromium pixel gate also remains failed.
+
 The [native text replacement review](../renderer/native-text-content.md)
 assigns all 800 blank C/C++ font images to the C setter's container-data path.
 Across Rust/C/C++, 73/1,200 images and 25,600/76,800 geometry states are exact;
@@ -19,8 +39,12 @@ conformance scenarios. The clean build passes 8,538 workspace tests, zero
 failures, 13 ignored, and ABI consumers, then the C smoke exits 127 because
 the harness omitted `libopenui.so.0`. Fresh owner `1656` installs and verifies
 that ABI SONAME filename, preflights its paths and repeats guards/builds on
-unchanged source. Rust/C/C++ consumer images and all four matrices remain
-required, as recorded in the [loader follow-up](../renderer/generated/native-review-v5.json).
+unchanged source. It passes all twelve build stages, then is interrupted after
+306 app images with no exact Chromium image or geometry result. All 204 actual
+C/C++ images match Rust. Its original incomplete receipts and process-absence
+witness are preserved in the
+[style follow-up](../renderer/generated/native-text-inheritance-v1.json).
+The complete new app matrix above still fails Chromium qualification.
 This operation uses native Rust methods
 and callbacks, with no JavaScript.
 It is unapplied and unqualified. The
@@ -37,9 +61,10 @@ fixed. The raster source is rejected for application; accepted totals remain
 The [authored glyph precision source](../renderer/native-author-glyph-precision.md)
 preserves shaped advances before Skia selects the LCD phase. Ten existing-image
 models and twelve edge checks support the cause of three Ahem images. Eleven
-read-only checks pass; its named runtime guard is queued behind all 36 prior
-whole owners, including complete text owner `1656`. Its guard and pixel gates
-have not executed.
+read-only checks pass. The old queued owner is interrupted before execution;
+fresh owner `1667` reproduces the named baseline failure, passes the fixed
+guard and all 342 text tests. Native app pixels and renderer matrices have
+not executed.
 It inherits the rejected raster source and cannot be applied or qualified by
 those diagnostics. No new release state is admitted.
 

@@ -45,8 +45,13 @@ all 36 preceding whole owners, including text retry `1656`, before named
 baseline/fixed guards and the full text suite. Its source path and restore
 branch are checked before queueing. The
 [prepared guard evidence](generated/native-review-v5.json) preserves the new
-probes. The guard, native application comparisons and renderer matrices have
-not run; this queue covers the guard only.
+probes. That queued owner is interrupted before execution; a process-absence
+witness preserves its incomplete receipt. Fresh owner `1667` on a new root
+reproduces the named baseline failure with exit 101, passes the fixed guard,
+and passes all 342 text tests. The
+[actual guard evidence](generated/native-text-inheritance-v1.json) preserves
+every exit and both sources. Native application comparisons and renderer
+matrices have not run; this completed queue covers the guard only.
 
 This source inherits raster trial `e0dc491e`, which loses 83 original exact
 comparisons and is rejected for application. A passing precision guard would

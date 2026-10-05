@@ -94,6 +94,21 @@ and all four renderer matrices remain required. Native pixel comparisons use
 the preserved pinned Chromium Fontations references and the app's immutable
 default Engine options.
 
+That owner is interrupted after its successful twelve-stage build and 306
+recorded app images. Its processes are absent; the incomplete receipt and
+images remain unchanged. All 204 actual C/C++ images match Rust, but none of
+the 306 images or 19,584 geometry states matches Chromium. The
+[native style follow-up](native-text-style-inheritance.md) fixes shared font
+inheritance at private `41b616c3`, passes its named baseline/fixed public Rust
+guard and a clean thirteen-stage build. Its
+[complete app matrix](generated/native-text-inheritance-v2.json) matches
+34,560/38,400 Chromium geometry states but 0/600 images. All 400 actual C/C++
+images match Rust; 200 Rust self-comparisons are excluded. The 3,840 remaining
+geometry differences are text widths 1/64 CSS pixel short at Ahem sizes 12
+and 16. All repeats and pinned Chromium inputs agree. Renderer matrices
+continue on that clean source; matching C and Rust alone does not qualify
+the framework.
+
 Two unlaunched preparations are also preserved: one would copy linked C/C++
 outputs onto themselves; another incorrectly compared diff headers after the
 test setup changed. Fresh roots and probes correct those harness issues before

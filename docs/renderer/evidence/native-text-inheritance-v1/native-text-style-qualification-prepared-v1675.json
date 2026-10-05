@@ -1,0 +1,47 @@
+{
+  "baseline": "25322be849f1f0523a6e66291a567d0758931160",
+  "branch": "agent/native-text-style-qualification-v1675",
+  "complete_named_style_inventory": [
+    "tests::native_inheritance_animated_font_resolves_relative_to_parent",
+    "tests::native_inheritance_computes_calculated_font_sizes_against_parent",
+    "tests::native_inheritance_computes_renderer_line_height_percentages",
+    "tests::native_inheritance_distinguishes_percentage_and_unitless_line_heights",
+    "tests::native_inheritance_recomputes_relative_lengths_and_preserves_declaration_order",
+    "tests::native_inheritance_refreshes_authored_pseudo_styles_after_origin_mutation",
+    "tests::native_inheritance_transition_retains_a_previously_unauthored_target",
+    "tests::native_inherited_styles_follow_parent_mutations_and_tree_changes",
+    "tests::native_resolved_computed_defaults_preserve_snapshots_and_native_inheritance"
+  ],
+  "old_preparation_unlaunched": true,
+  "old_probes_preserved": true,
+  "old_probes_sha256": {
+    "/tmp/openui-native-text-inheritance-build-v1669.py": "6418f756d96f4e59ba6520dc5a64147defa27709345ba7dd5846f73285644b7a",
+    "/tmp/openui-native-text-inheritance-consumer-v1669.py": "134f3f2ebd6090dafb3c8663d32d08dc9e67744ceb9ff5096fc665b6a23616de",
+    "/tmp/openui-native-text-inheritance-guards-v1669.py": "9a0f5cb625f56aabb45c85691c3190c11f6a127acba2549f5d2c3d5f327439b6",
+    "/tmp/openui-native-text-inheritance-matrices-v1669.py": "62fb6e1e73b4d9f7b3242a783b3bd5ff717caec670d17703820847890cdd0f6b",
+    "/tmp/openui-native-text-inheritance-pipeline-v1670.py": "edb5f2ca4c0435e1776a7bbaa35e61ff0579ced723564ba4f45a8f84a367fe77"
+  },
+  "prior_whole_owners": 38,
+  "probe_sha256": "fcd5347fbf811b915c50ac7626bc63440ba72c4263e6c27c51c5b95dba189167",
+  "release_qualification": false,
+  "required_build_stages": 13,
+  "required_geometry_states": 38400,
+  "required_matrices": 4,
+  "required_native_images": 600,
+  "root": "/dev/shm/openui-native-text-style-complete-41b616c3",
+  "schema_version": 1,
+  "scripts": {
+    "/tmp/openui-native-text-style-qualification-build-v1675.py": "5c935ee166a3e955c4d7ae13c1db957d29095cc7bef4c88922e87af29b8b7e70",
+    "/tmp/openui-native-text-style-qualification-consumer-v1675.py": "96552ce3ef9b9c9ada8c6b00d5211bd7f4294d07304d1d4fdc9f457ad40e5460",
+    "/tmp/openui-native-text-style-qualification-guards-v1675.py": "96610103dfdd0416e71d632b0c95fde6b7a13e433feb42d3cfefac7899022b3e",
+    "/tmp/openui-native-text-style-qualification-matrices-v1675.py": "8ba22c587c67a4e8d63acda7c3620a1a82a5ed3bf4a40f717f4f73e335fba7bb",
+    "/tmp/openui-native-text-style-qualification-pipeline-v1676.py": "5cd7ac90b5cfef46fa37a47e91cb979ff5659f5bb7ef0e00905f2f0d58b49084"
+  },
+  "source": {
+    "clean": true,
+    "commit": "41b616c3be5224b074e9d06ba6aa963731a1b265",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "2f5e480b3a582fbc34561d02b44cabaeb658d11f8a247381c8f5e56cae253c59",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

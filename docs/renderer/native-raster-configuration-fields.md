@@ -61,8 +61,9 @@ renderer total or release admission changes.
 
 The [authored glyph precision investigation](native-author-glyph-precision.md)
 prepares a separate shared correction for premature rounding within text runs.
-It has not executed its native guard or pixel matrices and inherits this
-trial's regressions. It is also unapplied and unqualified.
+Its fresh run reproduces the baseline failure, passes the fixed guard and all
+342 text tests. Native application pixels and renderer matrices have not run.
+It inherits this trial's regressions and remains unapplied and unqualified.
 
 The [v38 evidence](generated/native-scroll-insets-v38.json) preserves
 `0e1f12ff`, which replaces two invalid test-only `fields_mut` calls with the
