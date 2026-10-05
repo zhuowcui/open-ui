@@ -1339,7 +1339,7 @@ pub extern "C" fn oui_element_set_text(
     ffi(|| {
         let text = utf8(text, "text")?;
         with_element_mut(element_handle as usize, |engine, node| {
-            engine.set_text(node, text)
+            engine.set_text_content(node, text)
         })
     })
 }
