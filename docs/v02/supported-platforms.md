@@ -30,6 +30,8 @@ no JavaScript requirement for interacting with elements. Every needed
 operation must be implemented in the shared Rust engine and exposed through
 the public Rust API, including its state changes, geometry and events. A
 missing method is required framework work.
+Browser-style element APIs are native methods callable by the consuming app;
+they do not depend on a JavaScript layer.
 There is no JavaScript glue, script binding, `eval`, or embedded browser
 runtime, in this or future versions.
 The consuming app handles events with Rust callbacks. Scripts used by offline

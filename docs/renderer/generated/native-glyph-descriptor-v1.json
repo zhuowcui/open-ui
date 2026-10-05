@@ -1,0 +1,143 @@
+{
+  "artifact_bytes": 645085,
+  "artifact_count": 15,
+  "artifacts": [
+    {
+      "bytes": 216437,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/coverage-audit-v1735.json",
+      "sha256": "50e68421f2b5658521639de41f73f3a303035e68ddc4bb0b305bacd210493fc9",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-glyph-policy-audit-v1735.json"
+    },
+    {
+      "bytes": 6754,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/coverage-audit-v1735.py",
+      "sha256": "20db0309c691092871173b65ff25cb1255bc1c08c1b7a0f0b541825ed29dde5c",
+      "source_path": "/tmp/openui-native-default-glyph-policy-audit-v1735.py"
+    },
+    {
+      "bytes": 232887,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/coverage-audit-v1736.json",
+      "sha256": "161411b99c4b67f7ce35e004b41982165ad9ca439ea8664d1ce317b005b414db",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-glyph-policy-audit-v1736.json"
+    },
+    {
+      "bytes": 7345,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/coverage-audit-v1736.py",
+      "sha256": "1e8d9d25d068f76a2a59567e7190fd9fe84900989827b45bc3aa62924d12128e",
+      "source_path": "/tmp/openui-native-default-glyph-policy-audit-v1736.py"
+    },
+    {
+      "bytes": 6384,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/native-12-1.0.png",
+      "sha256": "f8f41ae305475597bd37ac1b45cd6d5e35e90f7240d99beecf06f53f90e5457e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-consumer-v1677/fontations/DejaVu-Sans-12/1.0/rust-1/before.png"
+    },
+    {
+      "bytes": 5498,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/chromium-12-1.0.png",
+      "sha256": "6775afba95fac52806cb71951aa0e2cbb9465413aa19896b27106ce0f89af0d2",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-consumer-v1677/fontations/DejaVu-Sans-12/1.0/before-chromium-1.png"
+    },
+    {
+      "bytes": 62248,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/native-24-3.0.png",
+      "sha256": "a308a2323937f2540b249db9efe6479c9f96ab9edb8c6524c40f46f2f659ccd4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-consumer-v1677/fontations/DejaVu-Sans-24/3.0/rust-1/before.png"
+    },
+    {
+      "bytes": 48183,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/chromium-24-3.0.png",
+      "sha256": "312da888d0c5fcdda156d9d86328e7faa6dd8864a5d5a5accf45a32bc5707009",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-consumer-v1677/fontations/DejaVu-Sans-24/3.0/before-chromium-1.png"
+    },
+    {
+      "bytes": 2809,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/skia-lcd-size-source-excerpt.txt",
+      "sha256": "bd67918380ae6394e6ecf7dd806858374455dbba2d2a1d8cf68f4bb807a33c5c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-skia-lcd-size-excerpt-v1741.txt"
+    },
+    {
+      "bytes": 2132,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/candidate-source.json",
+      "sha256": "871909658bda0be5c7af6ae284d4514da313829312f2646395c7c6a32d0e5de4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-source-v1740.json"
+    },
+    {
+      "bytes": 4327,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/candidate-freezer.py",
+      "sha256": "c0fd8957cb61f05b1ea36d88ca963276e505f6f00a8fc6ca8fce1f846afe46aa",
+      "source_path": "/tmp/openui-native-glyph-descriptor-source-v1740.py"
+    },
+    {
+      "bytes": 31290,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/candidate.patch",
+      "sha256": "b675dd6454e257dbef719a6f4d9cb72842895011034164583f7e4e5979e412f5",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-source-v1740.patch"
+    },
+    {
+      "bytes": 403,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/draft-placement-preflight-failed.json",
+      "sha256": "597429e3e110afb422e7651e9e78bf8583d54e789afa175dcb5992b98b17091d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-preflight-failed-v1738.json"
+    },
+    {
+      "bytes": 10533,
+      "decompressed_bytes": 45639,
+      "decompressed_sha256": "e7478d340d7516cd71998184f1f02050cacd8553196aa5ea73a5a398018ff7e9",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/draft-placement-failed.rs.gz",
+      "sha256": "8107079f7261caa0e31aea0f81e01f095d35dd7b2aabf0f2205e961a1874c062",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-test-placement-failed-v1738.rs"
+    },
+    {
+      "bytes": 7855,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v1/preserver.py",
+      "sha256": "cf046dc7c97648137f07b98c7a384691e60fb3812d776e8fcec55f0de9c3fe1c",
+      "source_path": "/tmp/openui-native-current-evidence-preserve-v1741.py"
+    }
+  ],
+  "audited_source": {
+    "clean": true,
+    "commit": "41b616c3be5224b074e9d06ba6aa963731a1b265",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "2f5e480b3a582fbc34561d02b44cabaeb658d11f8a247381c8f5e56cae253c59",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "baseline_source": {
+    "clean": true,
+    "commit": "54bcdeab5b021fc7899ca3e25868ab39182aee62",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "6ea58f16c0c43b653f6d871c77cbf2927c0bbd58d8ddb361e645330d49c27c62",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "candidate_applied_to_umbrella": false,
+  "candidate_build_and_pixels_unexecuted": true,
+  "candidate_source": {
+    "clean": true,
+    "commit": "2f53d5de2e6fce9b4c9dc2fbc94fcfc763544b23",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "49553e79b1239a0a81b13d31313e38e9ac164091f6b3a11aed1b89fb03e0d376",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "chromium_channel_coverage_images": 184,
+  "chromium_grayscale_images_with_ink": 16,
+  "existing_images_audited": 200,
+  "formal_wpt_residual_ownership_unchanged": true,
+  "glyph_policy_and_full_pixel_gaps_still_open": true,
+  "javascript_executed_by_openui": false,
+  "native_channel_coverage_images": 0,
+  "new_release_states_admitted": 0,
+  "no_new_captures_or_renders": true,
+  "pixel_tolerance": 0,
+  "previous_mutable_draft_failure_preserved": true,
+  "public_native_rust_apis_required": true,
+  "raster_defaults_unchanged": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "skia_source_path": "/home/nero/.cargo/git/checkouts/rust-skia-b4d79b6a888cdb4c/a31b86b/skia-bindings/skia/src/core/SkScalerContext.cpp",
+  "skia_source_sha256": "6dbe1656b2442c7c43b63dbbe0edaf504a0cbe8a965d4c1154369229db3d736a",
+  "source_excerpt_lines": [
+    1051,
+    1125
+  ]
+}

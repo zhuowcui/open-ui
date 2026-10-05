@@ -1,0 +1,12 @@
+{
+  "baseline_worktree_not_created": true,
+  "cargo_commands_run": 0,
+  "failure": "ValueError: substring not found",
+  "guard_added_outside_cfg_test_module": true,
+  "observed_exit_code": 1,
+  "release_qualification": false,
+  "renderer_commands_run": 0,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source_draft_sha256": "e7478d340d7516cd71998184f1f02050cacd8553196aa5ea73a5a398018ff7e9"
+}

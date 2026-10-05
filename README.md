@@ -33,8 +33,18 @@ The [native text-width follow-up](docs/renderer/native-intrinsic-snap.md)
 finds that shared sizing discards small shaped fractions which Chromium keeps.
 A narrow correction reproduces the old failure and passes its consuming Rust
 callback guard at all five scales. Thirteen source checks and the neighboring
-native guards pass. Workspace, native app pixels and the complete renderer
-matrices still need verification; this width correction remains unapplied.
+native guards pass. Its clean build passes 8,552 workspace tests and all
+thirteen build stages. Chromium geometry is now 38,400/38,400 exact, while
+images remain 0/600 exact. All 400 actual C/C++ images match Rust. Focused
+640/640 and primitive 960/960 image suites pass. The original full census is
+running; the expanded census follows. The correction remains unapplied and
+unqualified.
+
+The [native glyph audit](docs/renderer/native-glyph-descriptor.md) finds that
+Chromium uses channel-specific coverage in 184/200 existing images, while
+Open UI uses grayscale coverage in all 200. A general physical strike
+correction removes the old 10px phase and origin overrides. Fourteen read-only
+checks pass; its build, native guards and pixels remain unexecuted.
 
 The [shared native font-inheritance correction](docs/renderer/native-text-style-inheritance.md)
 combines Rust/C text replacement with authored style propagation. Its new

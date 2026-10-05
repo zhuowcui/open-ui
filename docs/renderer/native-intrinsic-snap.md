@@ -44,8 +44,14 @@ the consuming Rust callback test at all five scales. C text parity, the
 10,000-update storage guard, the earlier five-scale text-style callback,
 58 native conformance scenarios and all nine inherited-style guards also pass.
 
-Workspace, 600 Rust/C/C++ images, 38,400 geometry states and all four renderer
-matrices have not executed on this width correction. Own-source hosted run
+The [completed native stages](generated/native-intrinsic-snap-v5.json) pass
+all thirteen clean build stages and 8,552 workspace tests, zero failed and
+13 ignored. Chromium geometry is now 38,400/38,400 exact: all 3,840 measured
+width differences close. Images remain 0/600 exact and the native app gate
+exits 1. All 400 actual C/C++ images match Rust; 200 Rust self-rows are excluded.
+The focused 640/640 and primitive 960/960 image suites pass. The original full
+census is running; the expanded census follows. No full census improvement is
+claimed. Own-source hosted run
 `37373688613` initially passes five jobs and cancels two before their steps
 execute. Its [completed retry](generated/native-intrinsic-snap-v4.json) passes
 all seven jobs with zero skips. Both attempts and all available logs remain
@@ -55,9 +61,10 @@ Whole guard owner `1703` and text/style integration owner `1710` are terminal.
 The earlier full owner `1697` and glyph owner `1690` are unlaunched. The
 [fresh full preparation](generated/native-intrinsic-snap-v3.json) includes
 all 42 prior owners and reuses the unchanged, source-identical actual guard
-logs. New owner `1717` is prepared but has not executed its clean build,
-native app or four matrices. The exclusive lock covers every stage and
-intervening gap. The glyph queue still needs fresh preparation after that owner.
+logs. New owner `1717` has finished its guards, clean build, native app,
+focused and primitive matrices. It is running the complete original and
+expanded censuses. The exclusive lock covers every stage and intervening gap.
+The glyph queue still needs fresh preparation after that owner.
 
 The first preparation has a Python metadata syntax error before execution;
 it creates no source root and runs no Cargo or raster command. That failed
