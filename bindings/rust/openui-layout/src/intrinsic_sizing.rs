@@ -346,7 +346,11 @@ fn intrinsic_close_rounding_excess(data: &InlineItemsData, close_item_index: usi
 /// IFC needs line-break state across DOM boundaries. This compact scanner is
 /// deliberately fed by `InlineItemsBuilder`, which has already performed CSS
 /// white-space processing and emitted explicit open/close decoration items.
-fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> MinMaxSizes {
+fn compute_inline_sequence_intrinsic_sizes(
+    doc: &Document,
+    node_id: NodeId,
+    child_contributions: Option<&std::collections::HashMap<NodeId, IntrinsicSizes>>,
+) -> MinMaxSizes {
     let container_style = &doc.node(node_id).style;
     let mut data = InlineItemsBuilder::collect_for_intrinsic_sizes(doc, node_id);
     let base_direction = if container_style.unicode_bidi == openui_style::UnicodeBidi::Plaintext {
@@ -521,7 +525,14 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                 // produces a 200px minimum. Share the block/flex contribution
                 // calculation so enclosing intrinsic sizes retain the same
                 // constrained box that normal layout will place.
-                let intrinsic = compute_child_intrinsic_contribution(doc, item.node_id);
+                // Reuse direct-child contributions already resolved by the
+                // enclosing walk, including parent-dependent replaced sizes.
+                // Nested atomics inside inline wrappers still use the shared
+                // contribution calculation at their own boundary.
+                let intrinsic = child_contributions
+                    .and_then(|contributions| contributions.get(&item.node_id))
+                    .copied()
+                    .unwrap_or_else(|| compute_child_intrinsic_contribution(doc, item.node_id));
                 min_segment = min_segment + intrinsic.min_content_inline_size;
                 max_line = max_line + pending_collapsible_space + intrinsic.max_content_inline_size;
                 line_has_content = true;
@@ -882,6 +893,7 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         .iter()
         .map(|(_, child_id, _)| *child_id)
         .collect();
+    let mut child_contributions = std::collections::HashMap::new();
     for (ordered_index, child_id) in ordered_child_ids.iter().copied().enumerate() {
         let child_style = &doc.node(child_id).style;
 
@@ -979,6 +991,9 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         }
         let child_is_inline =
             is_inline_level(child_style) || doc.node(child_id).tag == ElementTag::Text;
+        if child_is_inline && doc.node(child_id).tag != ElementTag::Text {
+            child_contributions.insert(child_id, child_sizes);
+        }
 
         if multicol_algo.is_some() {
             if has_spanner_descendant_through_transparent_wrappers(doc, child_id) {
@@ -1096,7 +1111,8 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
             .iter()
             .any(|child| doc.node(*child).style.float != openui_style::Float::None);
         if !has_float_children {
-            let inline_sizes = compute_inline_sequence_intrinsic_sizes(doc, node_id);
+            let inline_sizes =
+                compute_inline_sequence_intrinsic_sizes(doc, node_id, Some(&child_contributions));
             min_inline = inline_sizes.min;
             max_inline = inline_sizes.max;
         }
@@ -4269,7 +4285,7 @@ mod tests {
         }
 
         assert_eq!(
-            compute_inline_sequence_intrinsic_sizes(&doc, container),
+            compute_inline_sequence_intrinsic_sizes(&doc, container, None),
             MinMaxSizes::new(LayoutUnit::from_i32(25), LayoutUnit::from_i32(125))
         );
     }
