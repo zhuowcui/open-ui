@@ -417,10 +417,10 @@ def style_inventory() -> dict[str, object]:
             }
         )
     public_count = sum(row["classification"] == "public-typed" for row in rows)
-    # Native viewport controls now consume the existing typed thumb-color
-    # field (schema property 234), in addition to the previous 202 fields.
-    if public_count != 203:
-        raise ValueError(f"expected 203 consumed author fields, found {public_count}")
+    # Image foreground opacity checks now consume the existing shape-outside
+    # field, in addition to the previous 203 fields. Keep the inventory exact.
+    if public_count != 204:
+        raise ValueError(f"expected 204 consumed author fields, found {public_count}")
     return {
         "schema_version": 1,
         "source": str(COMPUTED.relative_to(ROOT)),

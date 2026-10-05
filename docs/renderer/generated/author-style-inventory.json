@@ -4,9 +4,9 @@
     "bindings/rust/openui-paint/src"
   ],
   "counts": {
-    "consumed": 217,
+    "consumed": 218,
     "internal": 14,
-    "public_typed": 203,
+    "public_typed": 204,
     "unclassified": 0
   },
   "fields": [
@@ -2570,6 +2570,18 @@
       "internal_rationale": null,
       "property_id": 215,
       "rust_type": "ScrollbarWidth"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "shape-outside",
+      "field": "shape_outside",
+      "internal_rationale": null,
+      "property_id": 237,
+      "rust_type": "ShapeOutside"
     },
     {
       "canonical_schema_entry": true,
