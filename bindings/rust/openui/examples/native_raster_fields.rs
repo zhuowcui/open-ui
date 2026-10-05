@@ -1,7 +1,7 @@
 //! Native raster fields applied through public Rust options and callbacks.
 
 use openui::prelude::*;
-use openui_geometry::{TextEdging, TextHinting, TextRasterConfiguration};
+use openui::{TextEdging, TextHinting, TextRasterConfiguration};
 use std::{cell::Cell, path::PathBuf, rc::Rc};
 
 fn bounds_json(element: &Element) -> Result<String, Box<dyn std::error::Error>> {
