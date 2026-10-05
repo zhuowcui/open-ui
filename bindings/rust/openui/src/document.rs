@@ -1270,6 +1270,28 @@ mod tests {
     }
 
     #[test]
+    fn rust_event_dispatch_clears_phase_after_callbacks_return() {
+        let document = Document::new(100, 100).unwrap();
+        let button = mounted(&document, "button");
+        let observed = Rc::new(RefCell::new(Vec::new()));
+        let events = observed.clone();
+        document
+            .body()
+            .on("click", move |event| {
+                assert_eq!(event.phase(), Some(EventPhase::Bubble));
+                events.borrow_mut().push(event.clone());
+            })
+            .unwrap();
+        button.click().unwrap();
+        assert_eq!(observed.borrow().len(), 1);
+        assert_eq!(
+            observed.borrow()[0].phase(),
+            None,
+            "event phase must clear after dispatch"
+        );
+    }
+
+    #[test]
     fn programmatic_focus_uses_native_event_path_after_engine_borrow() {
         let document = Document::new(200, 100).unwrap();
         let first = mounted(&document, "button");
