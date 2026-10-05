@@ -2206,6 +2206,111 @@ mod tests {
     };
 
     #[test]
+    fn native_inline_replaced_boxes_preserve_size_through_retained_mutations() {
+        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+            for tag in [ElementTag::Image, ElementTag::Canvas, ElementTag::Svg] {
+                let mut engine =
+                    Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, scale).unwrap())
+                        .unwrap();
+                let parent = engine.create_native_element(ElementTag::Div).unwrap();
+                for (property, value) in [
+                    (
+                        StyleProperty::Position,
+                        openui_style::Position::Absolute.into(),
+                    ),
+                    (StyleProperty::Left, LengthValue::px(20.0).into()),
+                    (StyleProperty::Top, LengthValue::px(20.0).into()),
+                    (StyleProperty::Width, LengthValue::px(150.0).into()),
+                    (StyleProperty::Height, LengthValue::px(150.0).into()),
+                ] {
+                    engine.set_property(parent, property, value).unwrap();
+                }
+                engine.append_child(engine.root(), parent).unwrap();
+                let element = engine.create_native_element(tag).unwrap();
+                for (property, value) in [
+                    (StyleProperty::Display, Display::Inline.into()),
+                    (StyleProperty::Width, LengthValue::px(150.0).into()),
+                    (StyleProperty::Height, LengthValue::px(150.0).into()),
+                ] {
+                    engine.set_property(element, property, value).unwrap();
+                }
+                if tag == ElementTag::Image {
+                    let resource = engine.register_image_resource(
+                        "memory:native-inline-green",
+                        "image/png",
+                        "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
+                        include_bytes!("../../openui/tests/assets/green-200.png").to_vec(),
+                    );
+                    engine
+                        .set_image_resource(element, resource, Some((200.0, 200.0)))
+                        .unwrap();
+                }
+                engine.append_child(parent, element).unwrap();
+                let owned = engine.bounds(element).unwrap().unwrap();
+                assert_eq!(
+                    owned,
+                    engine.bounds(parent).unwrap().unwrap(),
+                    "native inline replaced content must keep its authored box: {tag:?} at {scale}"
+                );
+                engine
+                    .set_property(element, StyleProperty::Width, LengthValue::px(100.0).into())
+                    .unwrap();
+                let changed = engine.bounds(element).unwrap().unwrap();
+                assert_eq!(
+                    changed,
+                    SceneRect {
+                        width: 100.0,
+                        ..owned
+                    }
+                );
+                assert_eq!(owned.width, 150.0, "returned geometry is an owned snapshot");
+                engine
+                    .set_property(element, StyleProperty::Display, Display::None.into())
+                    .unwrap();
+                assert!(engine.client_rects(element).unwrap().is_empty());
+                engine
+                    .set_property(element, StyleProperty::Display, Display::Inline.into())
+                    .unwrap();
+                assert_eq!(engine.bounds(element).unwrap(), Some(changed));
+                engine.detach(element).unwrap();
+                assert!(engine.client_rects(element).unwrap().is_empty());
+                engine.append_child(parent, element).unwrap();
+                assert_eq!(engine.bounds(element).unwrap(), Some(changed));
+            }
+        }
+    }
+
+    #[test]
+    fn ordinary_inline_container_still_measures_its_atomic_child() {
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.25).unwrap()).unwrap();
+        let span = engine.create_native_element(ElementTag::Span).unwrap();
+        engine
+            .set_property(span, StyleProperty::Width, LengthValue::px(999.0).into())
+            .unwrap();
+        engine
+            .set_property(span, StyleProperty::Height, LengthValue::px(999.0).into())
+            .unwrap();
+        engine.append_child(engine.root(), span).unwrap();
+        let child = engine.create_native_element(ElementTag::Div).unwrap();
+        engine
+            .set_property(child, StyleProperty::Display, Display::InlineBlock.into())
+            .unwrap();
+        engine
+            .set_property(child, StyleProperty::Width, LengthValue::px(60.0).into())
+            .unwrap();
+        engine
+            .set_property(child, StyleProperty::Height, LengthValue::px(40.0).into())
+            .unwrap();
+        engine.append_child(span, child).unwrap();
+        let bounds = engine.bounds(span).unwrap().unwrap();
+        assert_eq!(bounds.width, 60.0);
+        assert!(bounds.height < 999.0);
+        let child_bounds = engine.bounds(child).unwrap().unwrap();
+        assert_eq!((child_bounds.width, child_bounds.height), (60.0, 40.0));
+    }
+
+    #[test]
     fn stale_and_cross_document_handles_are_rejected() {
         let mut a =
             Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
