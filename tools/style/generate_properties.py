@@ -218,6 +218,44 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
         ("item-alignment", "ItemAlignment"): ("ItemAlignment", "*value", "item_alignment_literal(input).map(StyleValue::ItemAlignment)"),
         ("content-alignment", "ContentAlignment"): ("ContentAlignment", "*value", "content_alignment_literal(input).map(StyleValue::ContentAlignment)"),
     }
+    # These native value constructors are property-bound, owned renderer
+    # values. Keep every variant of each supported enum available through the
+    # same path that C uses, rather than interpreting an untyped enum number.
+    enum_keywords = {
+        "BorderStyle": {
+            "none": "None", "hidden": "Hidden", "dotted": "Dotted",
+            "dashed": "Dashed", "solid": "Solid", "double": "Double",
+            "groove": "Groove", "ridge": "Ridge", "inset": "Inset",
+            "outset": "Outset",
+        },
+        "BoxDecorationBreak": {"slice": "Slice", "clone": "Clone"},
+        "BreakValue": {
+            "auto": "Auto", "avoid": "Avoid", "avoid-page": "AvoidPage",
+            "avoid-column": "AvoidColumn", "page": "Page", "column": "Column",
+            "left": "Left", "right": "Right", "always": "Always",
+        },
+        "BreakInside": {
+            "auto": "Auto", "avoid": "Avoid", "avoid-page": "AvoidPage",
+            "avoid-column": "AvoidColumn",
+        },
+        "ColumnFill": {
+            "balance": "Balance", "balance-all": "BalanceAll", "auto": "Auto",
+        },
+        "ColumnSpan": {"none": "None", "all": "All"},
+        "ColumnWrap": {"auto": "Auto", "wrap": "Wrap", "nowrap": "NoWrap"},
+    }
+    enum_source = (ROOT / "bindings/rust/openui-style/src/enums.rs").read_text()
+    for enum_type, keywords in enum_keywords.items():
+        declaration = re.search(
+            rf"pub enum {re.escape(enum_type)} \{{(.*?)\n\}}", enum_source, re.S
+        )
+        if declaration is None:
+            raise SystemExit(f"missing native enum declaration: {enum_type}")
+        declared_variants = set(re.findall(
+            r"^\s*(\w+)\s*(?:=\s*\d+)?\s*,?\s*$", declaration[1], re.M
+        ))
+        if declared_variants != set(keywords.values()):
+            raise SystemExit(f"native keyword constructors do not cover {enum_type}")
     primitive_apply_cases = []
     primitive_parse_cases = []
     for row in renderer_rows:
@@ -225,6 +263,19 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
             continue
         shape = primitive_shapes.get((row["value_kind"], fields[field_names(row)[0]]))
         if shape is None:
+            enum_type = fields[field_names(row)[0]]
+            if enum_type in enum_keywords:
+                name = row["rust_name"]
+                cases = "\n".join(
+                    f'            "{keyword}" => Some({enum_type}::{variant}),'
+                    for keyword, variant in enum_keywords[enum_type].items()
+                )
+                primitive_parse_cases.append(
+                    f"        StyleProperty::{name} => (match input.trim() {{\n"
+                    f"{cases}\n            _ => None,\n"
+                    f"        }}).map(|value| StyleValue::Renderer(RendererStyleValue::{name}(value))),"
+                )
+                continue
             if row["value_kind"] in {key[0] for key in primitive_shapes}:
                 raise SystemExit(f"missing author-value bridge for {row['css_name']}: {row['rust_type']}")
             continue
