@@ -2552,6 +2552,75 @@ mod tests {
     }
 
     #[test]
+    fn native_translucent_rounded_border_uses_chromium_stroke_coverage() {
+        use openui_geometry::Length;
+        use openui_style::{BorderStyle, Position, StyleColor};
+
+        // One empty retained element is sufficient: neither backgrounds nor
+        // resources contribute to this ring. These physical samples come from
+        // immutable Chromium 147 captures of the same contour, whose first box
+        // has outer bounds (20, 28, 514, 288) and radius 60. The native consumer
+        // separately compares the entire minimized box and neighboring shapes.
+        for (scale, x, y, expected) in [
+            (1.0, 70, 28, [244, 249, 255, 255]),
+            (1.25, 89, 35, [239, 246, 255, 255]),
+            (1.5, 108, 42, [245, 250, 255, 255]),
+            (2.0, 146, 56, [236, 245, 255, 255]),
+        ] {
+            let mut engine =
+                Engine::new(ViewportMetrics::from_logical_size(620.0, 350.0, scale).unwrap())
+                    .unwrap();
+            let root = engine.root();
+            engine
+                .set_renderer_style(root, RendererStyleValue::BackgroundColor(Color::WHITE))
+                .unwrap();
+            let element = engine.create_element(ElementTag::Div).unwrap();
+            engine.append_child(root, element).unwrap();
+            let color = Color::from_rgba8(60, 150, 255, 102);
+            for value in [
+                RendererStyleValue::Position(Position::Absolute),
+                RendererStyleValue::Left(Length::px(20.0)),
+                RendererStyleValue::Top(Length::px(28.0)),
+                RendererStyleValue::Width(Length::px(482.0)),
+                RendererStyleValue::Height(Length::px(256.0)),
+                RendererStyleValue::BorderTopWidth(16),
+                RendererStyleValue::BorderRightWidth(16),
+                RendererStyleValue::BorderBottomWidth(16),
+                RendererStyleValue::BorderLeftWidth(16),
+                RendererStyleValue::BorderTopStyle(BorderStyle::Solid),
+                RendererStyleValue::BorderRightStyle(BorderStyle::Solid),
+                RendererStyleValue::BorderBottomStyle(BorderStyle::Solid),
+                RendererStyleValue::BorderLeftStyle(BorderStyle::Solid),
+                RendererStyleValue::BorderTopColor(StyleColor::Resolved(color)),
+                RendererStyleValue::BorderRightColor(StyleColor::Resolved(color)),
+                RendererStyleValue::BorderBottomColor(StyleColor::Resolved(color)),
+                RendererStyleValue::BorderLeftColor(StyleColor::Resolved(color)),
+                RendererStyleValue::BorderTopLeftRadius((60.0, 60.0)),
+                RendererStyleValue::BorderTopRightRadius((60.0, 60.0)),
+                RendererStyleValue::BorderBottomRightRadius((60.0, 60.0)),
+                RendererStyleValue::BorderBottomLeftRadius((60.0, 60.0)),
+            ] {
+                engine.set_renderer_style(element, value).unwrap();
+            }
+            let scene = engine.scene().unwrap();
+            let mut compositor = SoftwareCompositor::default();
+            let frame = compositor.render(&scene).unwrap();
+            let index = y * frame.stride + x * 4;
+            assert_eq!(
+                &frame.pixels[index..index + 4],
+                &expected,
+                "translucent circular border must use Chromium stroke coverage; scale={scale}"
+            );
+            let style = engine.computed_style(element).unwrap();
+            assert_eq!(style.border_top_color.resolve(&style.color), color);
+            assert_eq!(style.background_color, Color::TRANSPARENT);
+            assert_eq!(compositor.render(&scene).unwrap(), frame);
+            assert_eq!(compositor.stats().rasterized, 1);
+            assert_eq!(compositor.stats().reused, 1);
+        }
+    }
+
+    #[test]
     fn pseudo_styles_and_language_use_validated_public_paths() {
         use openui_style::{FontWeight, LanguageTag, PseudoStyleTarget, TextDecorationLine};
 
