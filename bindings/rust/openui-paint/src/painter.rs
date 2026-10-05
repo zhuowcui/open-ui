@@ -16704,7 +16704,8 @@ fn has_negative_stacking_descendant(fragment: &Fragment, doc: &Document) -> bool
 /// below a border: retaining it makes independently antialiased border and
 /// child edges blend against that color instead of their shared backdrop.
 /// Keep this deliberately conservative. It recognizes only a single
-/// axis-aligned, unfragmented box whose own border-box background is opaque.
+/// axis-aligned, unfragmented box with an opaque border-box background or a
+/// decoded opaque image covering its complete border box.
 /// An anonymous line may wrap an atomic inline box without changing where
 /// that box paints; include that line's offset when testing coverage.
 fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Document) -> bool {
@@ -16758,8 +16759,7 @@ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Docum
             .paint_background_color_override
             .as_ref()
             .unwrap_or(&child_style.background_color);
-        if !background_color.is_opaque()
-            || child_style.opacity < 1.0
+        if child_style.opacity < 1.0
             || child_style.visibility != Visibility::Visible
             || child_style.position != Position::Static
             || child_style.transform != openui_style::Transform2D::IDENTITY
@@ -16777,11 +16777,49 @@ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Docum
         let child_top = wrapper_offset.top + child.offset.top;
         let child_right = child_left + child.size.width;
         let child_bottom = child_top + child.size.height;
-        child_left <= inner_left
+        let covers_inner_border_box = child_left <= inner_left
             && child_top <= inner_top
             && child_right >= inner_right
-            && child_bottom >= inner_bottom
+            && child_bottom >= inner_bottom;
+        covers_inner_border_box
+            && (background_color.is_opaque()
+                || (fragment.node_id != doc.root()
+                    && doc.node(fragment.node_id).style.box_shadow.is_empty()
+                    && opaque_image_covers_border_box(child, doc)))
     })
+}
+
+/// Blink's LayoutImage opacity proof includes image foreground, not only its
+/// background color. Restrict this proof to the default object position and
+/// fill/cover fits, with no border, padding, or layer that could expose the
+/// parent. Image alpha is checked on the actual decoded document resource.
+fn opaque_image_covers_border_box(fragment: &Fragment, doc: &Document) -> bool {
+    let node = doc.node(fragment.node_id);
+    let style = &node.style;
+    if fragment.border != BoxStrut::zero()
+        || fragment.padding != BoxStrut::zero()
+        || fragment.size.width <= LayoutUnit::zero()
+        || fragment.size.height <= LayoutUnit::zero()
+        || fragment.block_axis_clip_only
+        || fragment.inline_axis_clip_only
+        || !fragment.promoted_transform_ancestors.is_empty()
+        || style.establishes_transform_containing_block
+        || style.will_change_transform
+        || style.filter_grayscale > 0.0
+        || style.shape_outside.is_some()
+        || !matches!(style.object_fit, ObjectFit::Fill | ObjectFit::Cover)
+        || !matches!(style.object_position.x, BackgroundPosition::Percent(value) if value == 50.0)
+        || !matches!(style.object_position.y, BackgroundPosition::Percent(value) if value == 50.0)
+    {
+        return false;
+    }
+    let Some(replaced) = node.replaced else {
+        return false;
+    };
+    let ReplacedResourceKind::Image(id) = replaced.resource else {
+        return false;
+    };
+    crate::image_resource::decode_image_resource(doc, id).is_ok_and(|image| image.is_opaque())
 }
 
 /// A child may cover the local border box but still be moved or clipped in a
@@ -22030,6 +22068,122 @@ mod tests {
         assert!(!borderless_background_can_be_occluded(
             &parent_fragment,
             &doc
+        ));
+    }
+
+    #[test]
+    fn opaque_image_background_culling_preserves_uncovered_and_effected_boxes() {
+        let mut doc = Document::new();
+        let parent = doc.create_node(ElementTag::Div);
+        let image_node = doc.create_node(ElementTag::Image);
+        let resource = doc.register_image_resource(
+            "memory:opaque-image-guard",
+            "image/png",
+            "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
+            include_bytes!("../../openui/tests/assets/green-200.png").to_vec(),
+        );
+        let replaced = openui_dom::ReplacedContent {
+            resource: ReplacedResourceKind::Image(resource),
+            intrinsic_width: Some(200.0),
+            intrinsic_height: Some(200.0),
+            intrinsic_ratio: Some((200.0, 200.0)),
+        };
+        doc.node_mut(image_node).replaced = Some(replaced);
+        let size = PhysicalSize::new(LayoutUnit::from_i32(150), LayoutUnit::from_i32(150));
+        let mut fragment = Fragment::new_box(parent, size);
+        fragment.children.push(Fragment::new_box(image_node, size));
+        assert!(opaque_in_flow_child_covers_inner_border_box(
+            &fragment, &doc
+        ));
+
+        fragment.children[0].size.width = LayoutUnit::from_i32(100);
+        assert!(!opaque_in_flow_child_covers_inner_border_box(
+            &fragment, &doc
+        ));
+        fragment.children[0].size = size;
+        fragment.children[0].padding.left = LayoutUnit::from_i32(1);
+        assert!(!opaque_in_flow_child_covers_inner_border_box(
+            &fragment, &doc
+        ));
+        fragment.children[0].padding = BoxStrut::zero();
+        fragment.children[0].border.left = LayoutUnit::from_i32(1);
+        assert!(!opaque_in_flow_child_covers_inner_border_box(
+            &fragment, &doc
+        ));
+        fragment.children[0].border = BoxStrut::zero();
+
+        for fit in [ObjectFit::Contain, ObjectFit::None, ObjectFit::ScaleDown] {
+            doc.update_resolved_style(image_node, |style| style.object_fit = fit);
+            assert!(!opaque_in_flow_child_covers_inner_border_box(
+                &fragment, &doc
+            ));
+        }
+        doc.update_resolved_style(image_node, |style| style.object_fit = ObjectFit::Cover);
+        assert!(opaque_in_flow_child_covers_inner_border_box(
+            &fragment, &doc
+        ));
+        let original_style = doc.node(image_node).style.clone();
+        let changes: [fn(&mut ComputedStyle); 6] = [
+            |style: &mut ComputedStyle| style.opacity = 0.5,
+            |style: &mut ComputedStyle| style.filter_blur = 1.0,
+            |style: &mut ComputedStyle| style.filter_grayscale = 0.5,
+            |style: &mut ComputedStyle| style.will_change_transform = true,
+            |style: &mut ComputedStyle| style.establishes_transform_containing_block = true,
+            |style: &mut ComputedStyle| style.object_position.x = BackgroundPosition::start(),
+        ];
+        for change in changes {
+            doc.update_resolved_style(image_node, |style| {
+                *style = original_style.clone();
+                change(style);
+            });
+            assert!(!opaque_in_flow_child_covers_inner_border_box(
+                &fragment, &doc
+            ));
+        }
+        doc.update_resolved_style(image_node, |style| *style = original_style);
+        doc.update_resolved_style(parent, |style| {
+            style.box_shadow.push(BoxShadow {
+                offset_x: 1.0,
+                offset_y: 1.0,
+                blur_radius: 1.0,
+                spread_radius: 0.0,
+                color: Color::BLACK,
+                inset: false,
+            });
+        });
+        assert!(!opaque_in_flow_child_covers_inner_border_box(
+            &fragment, &doc
+        ));
+        doc.update_resolved_style(parent, |style| style.box_shadow.clear());
+        doc.node_mut(image_node).replaced = Some(openui_dom::ReplacedContent {
+            resource: ReplacedResourceKind::TransparentCanvas,
+            ..replaced
+        });
+        assert!(!opaque_in_flow_child_covers_inner_border_box(
+            &fragment, &doc
+        ));
+        doc.node_mut(image_node).replaced = Some(openui_dom::ReplacedContent {
+            resource: ReplacedResourceKind::Image(ImageResourceId::new(999)),
+            ..replaced
+        });
+        assert!(!opaque_in_flow_child_covers_inner_border_box(
+            &fragment, &doc
+        ));
+
+        let translucent = doc.register_image_resource(
+            "memory:translucent-image-guard",
+            "image/x-openui-rgba8",
+            "54a971547aa343f51a9e41492ecffecf7d6106939467fa4307370edf3fa12607",
+            vec![
+                79, 85, 73, 82, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 128, 0, 128,
+            ],
+        );
+        doc.node_mut(image_node).replaced = Some(openui_dom::ReplacedContent {
+            resource: ReplacedResourceKind::Image(translucent),
+            ..replaced
+        });
+        assert!(!opaque_in_flow_child_covers_inner_border_box(
+            &fragment, &doc
         ));
     }
 
