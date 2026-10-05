@@ -1,0 +1,214 @@
+{
+  "chromium": {
+    "binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "build_identity": "147.0.7727.50",
+    "capture_harness_sha256": "1aa6f07a50e71c82ae715502b86f974915128f057c6963a6dfd49319fba3f582",
+    "oracle_cache": "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle"
+  },
+  "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+  "complete_contract_scope": true,
+  "complete_summary_bytes": 72468635,
+  "complete_summary_sha256": "f97df7d44847097030e747e78e4d7439222c74ae2fafe8224497ddcf7e539b11",
+  "contract_sha256": "b51624ccb5b994601e3b96bca0be7442c926b5abdbc325f233524dcfe5a14e0e",
+  "evidence": {
+    "binary_unchanged": true,
+    "kind": "diagnostic-census",
+    "qualification_backend_match": true,
+    "qualified": false,
+    "source_unchanged": true,
+    "tolerance_pixels": 0
+  },
+  "font_byte_hashes": {
+    "bindings/rust/openui-text/fonts/Ahem.ttf": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+    "bindings/rust/openui-text/fonts/DejaVuSans-Bold.ttf": "5c1247acef7f2b8522a31742c76d6adcb5569bacc0be7ceaa4dc39dd252ce895",
+    "bindings/rust/openui-text/fonts/DejaVuSans.ttf": "ae7b7855e115a5966d8b1b3f80f254ccc117ec86f9965e202ee2940453837280",
+    "bindings/rust/openui-text/fonts/DejaVuSansMono-Bold.ttf": "3a3c502eeff669a231549e80df9f7c49de109bafe303170409e905d0b31a38fe",
+    "bindings/rust/openui-text/fonts/DejaVuSansMono.ttf": "c805f9436dbc268644c1d9584f01a601a653e028e08fd74b9b949f6cf8304d88",
+    "bindings/rust/openui-text/fonts/DejaVuSerif-Bold.ttf": "847b33e13925f19ff87e4d934d6b3cf7cac35ce16424f6f670e40c2f377cf2df",
+    "bindings/rust/openui-text/fonts/DejaVuSerif.ttf": "8f2c103bfa3fd5de71f1b92b18f21906b5a26871fb7e19a9a4c9af539c3cc7ab",
+    "bindings/rust/openui-text/fonts/DroidSansFallback-reduced.ttf": "27db42b79d0846f6fd01b3d6a8233df9a8a5ece80b042299dc4174c48213ffd3",
+    "bindings/rust/openui-text/fonts/NotoColorEmoji.ttf": "72a635cb3d2f3524c51620cdde406b217204e8a6a06c6a096ff8ed4b5fd6e27b",
+    "bindings/rust/openui-text/fonts/NotoSansDevanagari-Regular.ttf": "b1dffa1fccb30dc45287111834a9db15c652b05d4d67201abe73e67717017590",
+    "bindings/rust/openui-text/fonts/certification/fixture.otc": "d646722927f94b620e35e3ed3a99ad34e856b400dd2fb191a51d3d357a97d216",
+    "bindings/rust/openui-text/fonts/certification/fixture.otf": "235f7207a202026a0a73c38c64713d58eace082bdf605f5abd2a28166fab61aa",
+    "bindings/rust/openui-text/fonts/certification/fixture.ttc": "29456016c3d05578b3702eb38258f2872e82048c811ae7e5927406ec8048dc55",
+    "bindings/rust/openui-text/fonts/certification/fixture.ttf": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+    "bindings/rust/openui-text/fonts/certification/fixture.woff": "4e0e5135fa60f01e456e74ea50af23537d39cfc7822ab01dfa499a6efd8544e0",
+    "bindings/rust/openui-text/fonts/certification/fixture.woff2": "984e2d1e7062a65a5ac746f38520a9ce0e1058e33533bfddd243bb5cfba061d4"
+  },
+  "id_manifest": {
+    "count": 5932,
+    "path": "/dev/shm/openui-native-event-targets-43706e83/tools/qualification/manifests/expanded-v18.json",
+    "sha256": "906455ea4f348ad5ee7ad062073a297e8daef375261b1960fcbbcdcd6369c3cc"
+  },
+  "manifest_scope": {
+    "admitted_candidate_count": 201,
+    "expanded_count": 5932,
+    "original_count": 5731,
+    "reported_suite": "expanded"
+  },
+  "openui": {
+    "binary_sha256": "8f814517ea25a30d64815177e22fdd5d1630e79bb013f05db658f6410a54f869",
+    "build_identity": {
+      "schema_version": 1,
+      "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_ENABLE_LEGACY_SHADERCONTEXT\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+      "source": {
+        "clean": true,
+        "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "f9a60849daecfc54884266c3fdedca48d0de32d02066ae7c9b72881d1eef9a3e",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "raster_backend_identity": {
+      "backend": "cpu-skia",
+      "color_type": "N32-premultiplied",
+      "driver": null,
+      "gl_renderer": null,
+      "gl_version": null,
+      "sample_count": 0,
+      "surface_properties": "scene-raster-configuration-v1"
+    }
+  },
+  "profile_metadata": [
+    {
+      "device_scale": 1.0,
+      "different": 42,
+      "errors": 0,
+      "exact": 5890,
+      "logical_size_css_px": [
+        800,
+        600
+      ],
+      "ordered_id_sha256": "8ba015f16bfed220d6579494ba2dc32321a38d99de2ab4967d1bbf6f6c969536",
+      "physical_size_px": [
+        800,
+        600
+      ],
+      "profile": "legacy-800x600@1",
+      "result_sha256": "4af0ef306d75e5db6eb48e28b7bb1930fad9c04e26e815117edcbd17211b8cef",
+      "total": 5932
+    },
+    {
+      "device_scale": 2.0,
+      "different": 247,
+      "errors": 0,
+      "exact": 5685,
+      "logical_size_css_px": [
+        375,
+        667
+      ],
+      "ordered_id_sha256": "8ba015f16bfed220d6579494ba2dc32321a38d99de2ab4967d1bbf6f6c969536",
+      "physical_size_px": [
+        750,
+        1334
+      ],
+      "profile": "mobile-375x667@2",
+      "result_sha256": "f07738c00ad643581a4b50741f74c53c9b9322c3664f3ee5dc59b163d31779c9",
+      "total": 5932
+    },
+    {
+      "device_scale": 1.25,
+      "different": 761,
+      "errors": 0,
+      "exact": 5171,
+      "logical_size_css_px": [
+        1280,
+        720
+      ],
+      "ordered_id_sha256": "8ba015f16bfed220d6579494ba2dc32321a38d99de2ab4967d1bbf6f6c969536",
+      "physical_size_px": [
+        1600,
+        900
+      ],
+      "profile": "desktop-1280x720@1.25",
+      "result_sha256": "2746a7f1adf5bc9d109a4f5ce569955775b22d379835b449f84ae790cf479266",
+      "total": 5932
+    },
+    {
+      "device_scale": 1.5,
+      "different": 541,
+      "errors": 0,
+      "exact": 5391,
+      "logical_size_css_px": [
+        1920,
+        1080
+      ],
+      "ordered_id_sha256": "8ba015f16bfed220d6579494ba2dc32321a38d99de2ab4967d1bbf6f6c969536",
+      "physical_size_px": [
+        2880,
+        1620
+      ],
+      "profile": "desktop-1920x1080@1.5",
+      "result_sha256": "9308b6aab1ca1686a505eb5dc5973d14e663e4e361167e4c812c9f0357a3f43d",
+      "total": 5932
+    }
+  ],
+  "raster": {
+    "backend_identity_fields": [
+      "backend",
+      "gl_renderer",
+      "gl_version",
+      "driver",
+      "color_type",
+      "sample_count",
+      "surface_properties"
+    ],
+    "backend_selection": "explicit-immutable",
+    "candidate_backend": {
+      "name": "ganesh-gl",
+      "promotion_policy": "global primitive, focused, and full-census improvement only"
+    },
+    "destination_color_space": "sRGB",
+    "device_transform_before_raster": true,
+    "exact_tolerance_pixels": 0,
+    "logical_recording": true,
+    "physical_surface": true,
+    "pixel_format": "N32 premultiplied RGBA",
+    "portable_backend": "cpu-skia",
+    "qualification_backend": "cpu-skia",
+    "whole_frame_resampling": "forbidden"
+  },
+  "residual_ledger": {
+    "error": "unowned renderer residuals: wpt/css2_floats/crashtests_firefox-bug-1904409, wpt/css2_floats/crashtests_firefox-bug-1904428, wpt/css2_floats/crashtests_firefox-bug-1906768, wpt/css2_floats/crashtests_float-rewind-parallel-flow-2-crash, wpt/css2_floats/crashtests_float-rewind-parallel-flow-3-crash, wpt/css2_floats/float-nowrap-3, wpt/css2_floats/float-nowrap-3-ref, wpt/css2_floats/floats-line-wrap-shifted-001-ref, wpt/css2_floats/floats-wrap-bfc-003-left-overflow, wpt/css2_floats/floats-wrap-bfc-003-right-overflow (+873 more)",
+    "ownership_input_sha256": "ca8d04dce8056248f785e0be572827462abe44fbf7b75c459abd08de9b110f7d",
+    "qualifying": false,
+    "schema_version": 2
+  },
+  "resource_hashes": {
+    "docs/renderer/generated/media-first-frames-v1.json": "81c297a3201b04d6d28761f68312e4ad9f66856f87f87f0cf3337b411c6fb70a",
+    "tools/accountability/data/wpt_ported/sp20_resource_manifest.json": "7b6ef91b6dcfccef8751fdd25b47a0e3a9a682e8b982474fe34bdf72cf331328",
+    "tools/qualification/manifests/complete-5731.json": "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f",
+    "tools/qualification/manifests/expanded-v18.json": "906455ea4f348ad5ee7ad062073a297e8daef375261b1960fcbbcdcd6369c3cc",
+    "tools/qualification/manifests/focused-raster.json": "215b2eee97e6eacb7984ede2e8c8e11e5d049d1ffe948589083efc3258528c98",
+    "tools/qualification/manifests/primitive-raster.json": "03a376120ce4b67a5d9580c9ed38f337795f95a0bd2b800175862ea1b966d978",
+    "tools/qualification/residual-ownership-v2.json": "ca8d04dce8056248f785e0be572827462abe44fbf7b75c459abd08de9b110f7d"
+  },
+  "results": {
+    "different": 1591,
+    "errors": 0,
+    "exact": 22137,
+    "profile_result_sha256": "9022d4819c578703b70bde9f26c57d9a1514bcbe131918355324fb7ec89fa7de",
+    "total": 23728
+  },
+  "schema_version": 2,
+  "shard": {
+    "count": 1,
+    "index": 0
+  },
+  "source": {
+    "clean": true,
+    "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f9a60849daecfc54884266c3fdedca48d0de32d02066ae7c9b72881d1eef9a3e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f9a60849daecfc54884266c3fdedca48d0de32d02066ae7c9b72881d1eef9a3e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "suite": "expanded"
+}

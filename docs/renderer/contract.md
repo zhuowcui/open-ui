@@ -24,6 +24,18 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
+The [completed native event evidence](generated/native-event-targets-v1.json)
+at clean `1c8540e9` verifies public `Event::target()` and `current_target()`
+methods through Rust callbacks, mutation, owned bounds and document teardown.
+All ten native app images and bounds agree with Chromium at five scales.
+Five guards, 8,536 workspace tests and seven hosted hardening jobs pass.
+All four complete matrices finish: 640/640 focused, 960/960 primitive,
+21,334/22,924 original and 22,137/23,728 expanded exact, zero errors.
+Both full gates still exit 1. All 48,252 comparison invariants match the
+preceding renderer, including every pinned Chromium image and oracle identity.
+These event APIs are implemented on the umbrella branch; remaining native API
+coverage and release qualification stay open.
+
 The [clean private SVG evidence](generated/native-svg-viewport-v11.json)
 implements viewport creation over the shared Rust Engine and removes the
 historical decoration alpha through fixed viewport layout and shared border

@@ -53,7 +53,7 @@ operate directly on the native engine:
 | Read or change text, attributes, or typed style | `Element::text_content`, `set_text`, `set_attribute`, `set_property` and generated typed setters |
 | Read resolved style | `Element::computed_style`, which returns an owned snapshot |
 | Supply image bytes and display an image, background, or border image | `Document::register_image_resource`, `set_resource_provider`, `load_image_resource`; `Element::set_image_resource`, `set_background_layers`, `set_border_image` |
-| Handle input or activate an element | `Element::on`, `on_capture`, `click`; Rust callbacks in `view!` |
+| Handle input, inspect its target, or activate an element | `Element::on`, `on_capture`, `click`; `Event::target`, `current_target`, `phase`; Rust callbacks in `view!` |
 | Inject normalized keyboard or committed text input | `Document::dispatch_key_input`, `dispatch_key_event`, `dispatch_text_input` |
 | Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `scroll_metrics`, `scroll_into_view`, `smooth_scroll_into_view`, `client_rects`, `bounding_rect`; `Document::hit_test` |
 | Update form controls or details | `set_control_value`, `set_selection`, `set_checked`, `set_open` |
@@ -73,6 +73,17 @@ through the public Rust API, and verify it from a consuming native Rust
 application. Test coverage must exercise the retained state and resulting
 events or rendering. A missing public method remains an implementation gap
 until that native application path works.
+
+The [native event consumer](../../bindings/rust/openui/examples/native_event_targets.rs)
+uses a parent Rust callback to find and change the child that received a click.
+`Event::target` returns that child; `Event::current_target` returns the element
+whose listener is running. Both use generation-checked weak handles. Saved
+events do not keep the document alive, and listener identity and phase clear
+when callbacks return, including errors and panic unwinding. The
+[completed checks](../renderer/generated/native-event-targets-v1.json) verify
+the public app path, owned bounds, teardown and exact Chromium pixels at five
+scales. This completes those event methods; other needed native APIs and the
+full renderer gate remain open.
 
 The [prepared native style integration](../renderer/generated/native-scroll-insets-v36.json)
 combines authored-style inheritance, resolved-style snapshots and relative

@@ -377,6 +377,15 @@ This candidate is unapplied and unqualified; no new release state is admitted.
 Open UI runs no JavaScript in any version. Needed interaction uses public
 native Rust methods and Rust callbacks over the shared Engine.
 
+The [native event API checks](docs/renderer/generated/native-event-targets-v1.json)
+are complete at clean `1c8540e9`. Rust callbacks can call `Event::target()` and
+`current_target()` to inspect and change elements. Five guards, 8,536 workspace
+tests, native ABI consumers and seven hosted hardening jobs pass. The public
+Rust app matches Chromium in all ten images and bounds at five scales.
+Both complete renderer matrices preserve every comparison result: original
+21,334/22,924 and expanded 22,137/23,728 exact, zero errors, exits 1. The
+focused and primitive gates pass. Full pixel parity remains unfinished.
+
 The [intrinsic sizing follow-up](docs/renderer/generated/native-scroll-insets-v28.json) reviews the
 missing width behavior against 120 repeated Chromium advance observations and
 2,000 neighboring measurements at five scales. Chromium retains positive

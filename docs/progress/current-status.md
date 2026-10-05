@@ -18,6 +18,19 @@ comparison invariants match the preceding renderer, and original rows agree
 between the two suites. Both full pixel gates fail. The earlier unattributed
 workspace result remains unqualified.
 
+The [completed native event checkpoint](../renderer/generated/native-event-targets-v1.json)
+at clean `1c8540e9` is now on the umbrella branch. It adds public Rust
+`Event::target()` and `current_target()` methods over the retained document,
+with weak handle ownership and listener cleanup after return, error or panic.
+Five guards, 8,536 workspace tests, 11 C and five C++ consumers pass, with
+zero failed tests and 13 ignored. Its consuming Rust app passes all ten
+image and bounds comparisons at five scales, and seven own-source hosted
+hardening jobs pass with zero skips. Both complete renderer matrices retain
+the totals above, with zero errors and actual exits 1. All 48,252 comparison
+invariants across the four suites remain unchanged. The focused and primitive
+gates pass; full pixels, remaining native APIs and release qualification stay
+open. No new rendering case is admitted.
+
 The private [image background candidate](../renderer/native-image-background-culling.md)
 at `d913041d` extends shared background culling to decoded opaque images.
 The 24 stable fieldset differences split into eight background-culling cases
