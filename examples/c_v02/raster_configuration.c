@@ -219,8 +219,7 @@ static void write_bounds(FILE* output, OuiElement** nodes) {
   fputc('[', output);
   for (size_t phase = 0; phase < 64; ++phase) {
     OuiRect rect;
-    uint8_t present = 0;
-    assert(oui_element_get_bounds(nodes[phase], &rect, &present) == OUI_OK && present == 1);
+    assert(oui_element_get_bounds(nodes[phase], &rect) == OUI_OK);
     fprintf(output, "%s{\"x\":%.17g,\"y\":%.17g,\"width\":%.17g,\"height\":%.17g}",
             phase ? "," : "", (double)rect.x, (double)rect.y, (double)rect.width,
             (double)rect.height);
