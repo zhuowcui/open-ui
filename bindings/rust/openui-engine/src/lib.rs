@@ -2552,6 +2552,73 @@ mod tests {
     }
 
     #[test]
+    fn native_bevel_border_raises_low_contrast_colors_without_changing_author_style() {
+        use openui_compositor::SoftwareCompositor;
+        use openui_style::BorderStyle;
+
+        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+            for (border_style, sample_y) in [
+                (BorderStyle::Outset, 1.0),
+                (BorderStyle::Inset, 26.0),
+                (BorderStyle::Groove, 3.0),
+                (BorderStyle::Ridge, 1.0),
+            ] {
+                let mut engine =
+                    Engine::new(ViewportMetrics::from_logical_size(64.0, 48.0, scale).unwrap())
+                        .unwrap();
+                let root = engine.root();
+                engine
+                    .set_renderer_style(root, RendererStyleValue::BackgroundColor(Color::WHITE))
+                    .unwrap();
+                let element = engine.create_element(ElementTag::Div).unwrap();
+                engine.append_child(root, element).unwrap();
+                for value in [
+                    RendererStyleValue::Width(openui_geometry::Length::px(20.0)),
+                    RendererStyleValue::Height(openui_geometry::Length::px(20.0)),
+                    RendererStyleValue::BorderTopWidth(4),
+                    RendererStyleValue::BorderRightWidth(4),
+                    RendererStyleValue::BorderBottomWidth(4),
+                    RendererStyleValue::BorderLeftWidth(4),
+                    RendererStyleValue::BorderTopStyle(border_style),
+                    RendererStyleValue::BorderRightStyle(border_style),
+                    RendererStyleValue::BorderBottomStyle(border_style),
+                    RendererStyleValue::BorderLeftStyle(border_style),
+                    RendererStyleValue::BorderTopColor(openui_style::StyleColor::Resolved(
+                        Color::BLACK,
+                    )),
+                    RendererStyleValue::BorderRightColor(openui_style::StyleColor::Resolved(
+                        Color::BLACK,
+                    )),
+                    RendererStyleValue::BorderBottomColor(openui_style::StyleColor::Resolved(
+                        Color::BLACK,
+                    )),
+                    RendererStyleValue::BorderLeftColor(openui_style::StyleColor::Resolved(
+                        Color::BLACK,
+                    )),
+                ] {
+                    engine.set_renderer_style(element, value).unwrap();
+                }
+                let scene = engine.scene().unwrap();
+                let mut compositor = SoftwareCompositor::default();
+                let frame = compositor.render(&scene).unwrap();
+                let x = (14.0 * scale) as usize;
+                let y = (sample_y * scale) as usize;
+                let index = y * frame.stride + x * 4;
+                assert_eq!(
+                    &frame.pixels[index..index + 4],
+                    &[84, 84, 84, 255],
+                    "low-contrast bevel must expose Chromium's lighter shade; style={border_style:?} scale={scale}"
+                );
+                let style = engine.computed_style(element).unwrap();
+                assert_eq!(style.border_top_color.resolve(&style.color), Color::BLACK);
+                assert_eq!(compositor.render(&scene).unwrap(), frame);
+                assert_eq!(compositor.stats().rasterized, 1);
+                assert_eq!(compositor.stats().reused, 1);
+            }
+        }
+    }
+
+    #[test]
     fn pseudo_styles_and_language_use_validated_public_paths() {
         use openui_style::{FontWeight, LanguageTag, PseudoStyleTarget, TextDecorationLine};
 
