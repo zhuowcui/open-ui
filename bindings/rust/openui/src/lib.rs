@@ -139,10 +139,10 @@ pub use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityNode, AccessibilityNodeId,
     AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole, AccessibilityTreeUpdate,
     AnimationEvent, AnimationEventKind, AnimationId, AnimationState, ControlAdjustment,
-    EditCommand, EngineOptions, FocusOrigin, PointerEventKind, RasterConfiguration,
-    ScrollAlignment, ScrollAnimationId, ScrollIntoViewContainer, ScrollIntoViewOptions,
-    ScrollMetrics, TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
-    ViewportMetricsError,
+    EditCommand, EngineOptions, FocusOrigin, PointerEventKind, RasterBackend, RasterConfiguration,
+    RasterPixelGeometry, ScrollAlignment, ScrollAnimationId, ScrollIntoViewContainer,
+    ScrollIntoViewOptions, ScrollMetrics, TextDirection, TextEdging, TextHinting,
+    TextRasterConfiguration, TextUnit, ViewportAuthority, ViewportMetrics, ViewportMetricsError,
 };
 #[cfg(all(feature = "linux", target_os = "linux"))]
 pub use openui_platform::{KeyboardInput, PlatformEvent};

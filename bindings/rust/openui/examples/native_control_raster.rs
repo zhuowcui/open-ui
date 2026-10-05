@@ -1,7 +1,6 @@
 //! Native control raster options, retained mutation and owned geometry.
 
 use openui::prelude::*;
-use openui_geometry::TextHinting;
 use std::{cell::Cell, path::PathBuf, rc::Rc};
 
 fn bounds_json(element: &Element) -> Result<String, Box<dyn std::error::Error>> {

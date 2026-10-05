@@ -29,7 +29,8 @@ use openui_dom::{
     ReplacedContent, ReplacedResourceKind,
 };
 pub use openui_geometry::{
-    RasterConfiguration, ViewportAuthority, ViewportMetrics, ViewportMetricsError,
+    RasterBackend, RasterConfiguration, RasterPixelGeometry, TextEdging, TextHinting,
+    TextRasterConfiguration, ViewportAuthority, ViewportMetrics, ViewportMetricsError,
 };
 use openui_layout::Fragment;
 use openui_paint::record_fragment;
