@@ -1,0 +1,162 @@
+{
+  "all_commands_terminal": true,
+  "all_hosted_jobs_terminal": true,
+  "cancelled_or_skipped_jobs_are_not_passes": true,
+  "format_workflow_passed": true,
+  "job_conclusions": {
+    "success": 2
+  },
+  "job_logs": [
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "job": "gn-format",
+      "job_id": 111978830225,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-umbrella-format-retry-v1699/111978830225.log",
+      "sha256": "8996da40fb93a433c1baa5fe6e8d57c6426ddc2bb4586e517a6045e33939671f"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "job": "clang-format",
+      "job_id": 111978832103,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-umbrella-format-retry-v1699/111978832103.log",
+      "sha256": "41c8ff3782e909aaf47a1a9cd56e28d255dee44ae8f2ab857de63033ca1c3597"
+    }
+  ],
+  "metadata_sha256": "88823179ae9cfd7d0e018986eed103908efaa0538f11176ae022e858405929e6",
+  "previous_receipt_sha256": "734a16f80a8792133f773da33d03a7413802a7607fc300a89bc02754c7867c0b",
+  "probe_sha256": "b1be127fc68dc8a9d7ecd6f2d59fa8372c64a0300ae25344ae7fe411bdca7a44",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": "a6bd4629580887722aacca45cf4d1ce2933a4f3d",
+  "workflow": {
+    "attempt": 2,
+    "conclusion": "success",
+    "databaseId": 37371335936,
+    "headSha": "a6bd4629580887722aacca45cf4d1ce2933a4f3d",
+    "jobs": [
+      {
+        "completedAt": "2026-10-05T21:22:05Z",
+        "conclusion": "success",
+        "databaseId": 111978830225,
+        "name": "gn-format",
+        "startedAt": "2026-10-05T21:21:42Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-05T21:21:43Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-05T21:21:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T21:21:49Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v6",
+            "number": 2,
+            "startedAt": "2026-10-05T21:21:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T21:22:03Z",
+            "conclusion": "success",
+            "name": "Install GN",
+            "number": 3,
+            "startedAt": "2026-10-05T21:21:49Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T21:22:03Z",
+            "conclusion": "success",
+            "name": "Check tracked GN formatting",
+            "number": 4,
+            "startedAt": "2026-10-05T21:22:03Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T21:22:04Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v6",
+            "number": 8,
+            "startedAt": "2026-10-05T21:22:03Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T21:22:04Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 9,
+            "startedAt": "2026-10-05T21:22:04Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37371335936/job/111978830225"
+      },
+      {
+        "completedAt": "2026-10-05T20:42:28Z",
+        "conclusion": "success",
+        "databaseId": 111978832103,
+        "name": "clang-format",
+        "startedAt": "2026-10-05T20:42:06Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-05T20:42:07Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-05T20:42:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T20:42:14Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v6",
+            "number": 2,
+            "startedAt": "2026-10-05T20:42:08Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T20:42:23Z",
+            "conclusion": "success",
+            "name": "Install clang-format",
+            "number": 3,
+            "startedAt": "2026-10-05T20:42:14Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T20:42:26Z",
+            "conclusion": "success",
+            "name": "Check tracked C and C++ formatting",
+            "number": 4,
+            "startedAt": "2026-10-05T20:42:23Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T20:42:26Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v6",
+            "number": 8,
+            "startedAt": "2026-10-05T20:42:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T20:42:26Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 9,
+            "startedAt": "2026-10-05T20:42:26Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37371335936/job/111978832103"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/zhuowcui/open-ui/actions/runs/37371335936",
+    "workflowName": "Format Check"
+  }
+}

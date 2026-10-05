@@ -63,6 +63,9 @@ The earlier Fontations metric investigation supports a shared font-metric
 and layout-rounding discrepancy. Default native font rasterization also
 remains different from Chromium. These require general implementation fixes,
 not adjustments for a particular family, size or fixture.
+The [narrow intrinsic-width follow-up](native-intrinsic-snap.md) preserves
+shaped fractions through the layout grid ceiling. Its thirteen source checks
+pass; native and pixel checks remain unexecuted.
 
 Whole owner `1678` continues with focused, primitive, original and expanded
 renderer matrices. The focused and primitive suites pass 640/640 and 960/960.

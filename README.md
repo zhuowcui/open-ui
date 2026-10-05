@@ -29,6 +29,11 @@ produce the same visual state. See the
 
 ## Verified status
 
+The [native text-width follow-up](docs/renderer/native-intrinsic-snap.md)
+finds that shared sizing discards small shaped fractions which Chromium keeps.
+A narrow correction and consuming Rust callback guard are prepared. Thirteen
+source checks pass; native and pixel verification have not run. It is unapplied.
+
 The [shared native font-inheritance correction](docs/renderer/native-text-style-inheritance.md)
 combines Rust/C text replacement with authored style propagation. Its new
 public Rust callback regression fails before the fix and passes at all five

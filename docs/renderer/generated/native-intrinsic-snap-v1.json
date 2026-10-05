@@ -1,0 +1,307 @@
+{
+  "accepted_expanded_exact": 22137,
+  "accepted_original_exact": 21334,
+  "accepted_renderer_unchanged": true,
+  "artifact_bytes": 166855,
+  "artifact_count": 38,
+  "artifacts": [
+    {
+      "bytes": 6024,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source.json",
+      "sha256": "26ba1cae433ab7046d5ad0cc43baa02f8e755f58f1da3ba6c876aad8a02a81c4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-source-v1692.json"
+    },
+    {
+      "bytes": 8047,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source.py",
+      "sha256": "a1897a3805cecf652d6143ebfbb10f437c0874c18bc94557538751725fac0f1c",
+      "source_path": "/tmp/openui-native-intrinsic-snap-source-v1692.py"
+    },
+    {
+      "bytes": 2862,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/public-native-baseline.patch",
+      "sha256": "f85b11c9bcda18e5b7577927d51a707ae96de809f434c0cdcd2998c2b80f54fe"
+    },
+    {
+      "bytes": 4812,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/native-intrinsic-grid-ceiling.patch",
+      "sha256": "bc12bfd14ec374e2d15761dfd2ed00e32e402799f12da0c1cfc74ab472e7a9aa"
+    },
+    {
+      "bytes": 5824,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-checks.json",
+      "sha256": "46ba3ef4b2b11ccb81dfa834c3c4d58cf0a3a57a7c9747c2b28074c78655116f",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-checks-v1693/receipt.json"
+    },
+    {
+      "bytes": 3151,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-checks.py",
+      "sha256": "55a31dfda9b272ad735252f97b902689af79e9eba33947c2ff26331f42e6ec21",
+      "source_path": "/tmp/openui-native-intrinsic-snap-checks-v1693.py"
+    },
+    {
+      "bytes": 95,
+      "decompressed_bytes": 81,
+      "decompressed_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-renderer.log.gz",
+      "sha256": "d2b79cb72721d10fece4b15d0f646423937282376e09b24612cf252d1dfa8316",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-checks-v1693/renderer.log"
+    },
+    {
+      "bytes": 79,
+      "decompressed_bytes": 59,
+      "decompressed_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-multicol.log.gz",
+      "sha256": "fd7419d14ad0bcdcbbacbaf00c01710e85416d2018b9addb2b26f3cff95775e1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-checks-v1693/multicol.log"
+    },
+    {
+      "bytes": 102,
+      "decompressed_bytes": 86,
+      "decompressed_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-sp17.log.gz",
+      "sha256": "3f7d3c871f9e93684439793e60873829691e5dee51d51b30ab55fa940ef55df4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-checks-v1693/sp17.log"
+    },
+    {
+      "bytes": 123,
+      "decompressed_bytes": 121,
+      "decompressed_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-sp18.log.gz",
+      "sha256": "50c99e0d37a26a36c607fd5e7dbf96f4aedf46d045824ff09490252f4c3a35ee",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-checks-v1693/sp18.log"
+    },
+    {
+      "bytes": 143,
+      "decompressed_bytes": 142,
+      "decompressed_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-sp20.log.gz",
+      "sha256": "3705c08adcf75d9113bbf4ee522c73c0bbcdb1f0e9e50947c0a4eb54e214d64e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-checks-v1693/sp20.log"
+    },
+    {
+      "bytes": 80,
+      "decompressed_bytes": 63,
+      "decompressed_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-v02.log.gz",
+      "sha256": "ec1277c807103cfdee77b77954961b24a58ce62612d9dbf58594043db7efc478",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-checks-v1693/v02.log"
+    },
+    {
+      "bytes": 57,
+      "decompressed_bytes": 37,
+      "decompressed_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-style.log.gz",
+      "sha256": "1b70c8a7ba0f84375105255b165129e2f427ca1072a832c28efb9f840d539b10",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-checks-v1693/style.log"
+    },
+    {
+      "bytes": 52,
+      "decompressed_bytes": 32,
+      "decompressed_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-ffi.log.gz",
+      "sha256": "55406c87d9571bf98d31b05240f488bb4ab3c159f8a3c2f654148ee72b439592",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-checks-v1693/ffi.log"
+    },
+    {
+      "bytes": 65,
+      "decompressed_bytes": 45,
+      "decompressed_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-archive.log.gz",
+      "sha256": "d9ac32c4015a03a8f742aaef97d2271555824a1bc37f48615bc942ea11dc71d8",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-checks-v1693/archive.log"
+    },
+    {
+      "bytes": 1055,
+      "decompressed_bytes": 2867,
+      "decompressed_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-accountability.log.gz",
+      "sha256": "a7ddfb15636772a7ed177d92cd310c67cc38a082a9aae491e62d04518aa2f463",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-checks-v1693/accountability.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-rust-format.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-checks-v1693/rust-format.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-syntax-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-checks-v1693/syntax-c.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/source-syntax-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-checks-v1693/syntax-cpp.log"
+    },
+    {
+      "bytes": 6791,
+      "decompressed_bytes": 23719,
+      "decompressed_sha256": "e50c79ebfe50be5d66bec042bee4d904187bae5aadbe8ac51a72699676a4816e",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/chromium-support-shape_result.h.gz",
+      "sha256": "f8cda10192ebd0985ee8f33f6f583d2de342188b30873c4a7fbf9bb2ffe1cdf7",
+      "source_path": "/home/nero/chromium/src/third_party/blink/renderer/platform/fonts/shaping/shape_result.h"
+    },
+    {
+      "bytes": 56,
+      "decompressed_bytes": 38,
+      "decompressed_sha256": "19c61b438190d8bc21c82e7c6de61ba51d288db1341553e1aa69c06566107c42",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/chromium-support-VERSION.gz",
+      "sha256": "52ca2b671d7abfe39f4c6da012e0c18cf1637ce79f8f464f0fc3e434dc47236d",
+      "source_path": "/home/nero/chromium/src/chrome/VERSION"
+    },
+    {
+      "bytes": 384,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/unexecuted-preflight-failure.json",
+      "sha256": "f2b89bb3eb94b94382782bbe32d25dd956b0c491a76d16c5eaff4b0dd1497060",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-preflight-v1694.json"
+    },
+    {
+      "bytes": 7838,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/failed-prepare.py",
+      "sha256": "7be1bcc1477acf50929e814c7f5f318ba7371a0e3e9819ebc961a0483981c1cb",
+      "source_path": "/tmp/openui-native-intrinsic-snap-prepare-v1694.py"
+    },
+    {
+      "bytes": 2696,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/native-runtime-prepared.json",
+      "sha256": "ec153f5b8ba99d0148f8a72a40e72931be72400447b5942c876445b1447609dd",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-prepared-v1696.json"
+    },
+    {
+      "bytes": 7855,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/native-runtime-prepare.py",
+      "sha256": "9bcbd8a097d86f0f0fec555af57b52f03d5b9967d68e755bb0690e3598c62462",
+      "source_path": "/tmp/openui-native-intrinsic-snap-prepare-v1696.py"
+    },
+    {
+      "bytes": 9033,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/openui-native-intrinsic-snap-build-v1696.py",
+      "sha256": "c84540d44879402d368e12c4a14b67244521af25fdd1935f715b9587d4ee2867",
+      "source_path": "/tmp/openui-native-intrinsic-snap-build-v1696.py"
+    },
+    {
+      "bytes": 20168,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/openui-native-intrinsic-snap-consumer-v1696.py",
+      "sha256": "6717e9d0683840a2237e9eb659878fa2bcf1c0669661fb07734f3686b7adabac",
+      "source_path": "/tmp/openui-native-intrinsic-snap-consumer-v1696.py"
+    },
+    {
+      "bytes": 11172,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/openui-native-intrinsic-snap-guards-v1696.py",
+      "sha256": "3faab1473ec4e727ff91b222e71e51a81a723f4a165f10409f93d205fa94b698",
+      "source_path": "/tmp/openui-native-intrinsic-snap-guards-v1696.py"
+    },
+    {
+      "bytes": 2102,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/openui-native-intrinsic-snap-matrices-v1696.py",
+      "sha256": "69474f214189a9bee65c49e468cf185717c5236eabfda1de5cb406d8b683c2f9",
+      "source_path": "/tmp/openui-native-intrinsic-snap-matrices-v1696.py"
+    },
+    {
+      "bytes": 9012,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/openui-native-intrinsic-snap-pipeline-v1697.py",
+      "sha256": "7dc44623fa6a334c19c4f7e4bf6d53408cf655c9ea9b7ea46f8e164ef01cf90b",
+      "source_path": "/tmp/openui-native-intrinsic-snap-pipeline-v1697.py"
+    },
+    {
+      "bytes": 2631,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/glyph-queue-unlaunched.json",
+      "sha256": "8810d11078dfdc2e42f13ff7d95bed68d5acd7b6d3e3fb822371d2bd68f4f42e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-raster-prepared-v1689.json"
+    },
+    {
+      "bytes": 9134,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/glyph-prepare.py",
+      "sha256": "124265e950828036d2cb728795ee63dbae25c3c8ac2506cbca7061a7739b8e44",
+      "source_path": "/tmp/openui-native-glyph-raster-prepare-v1689.py"
+    },
+    {
+      "bytes": 7881,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/openui-native-glyph-raster-build-v1689.py",
+      "sha256": "29386dbac644bfb17199dfb8c90ba333d1d67c37b370f176c4b4d0670412411d",
+      "source_path": "/tmp/openui-native-glyph-raster-build-v1689.py"
+    },
+    {
+      "bytes": 19949,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/openui-native-glyph-raster-consumer-v1689.py",
+      "sha256": "49780cbeb0f95d09be5873265d0643f03d9b411875e1337add615342d4b565fd",
+      "source_path": "/tmp/openui-native-glyph-raster-consumer-v1689.py"
+    },
+    {
+      "bytes": 1044,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/openui-native-glyph-raster-guard-reuse-v1689.py",
+      "sha256": "636ac18cf667e13c9a24bc07870bdcfdf515c847f4e7d1e8143751d7dfddc1a5",
+      "source_path": "/tmp/openui-native-glyph-raster-guard-reuse-v1689.py"
+    },
+    {
+      "bytes": 2078,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/openui-native-glyph-raster-matrices-v1689.py",
+      "sha256": "30b7ce77c89c759dfcd5c7c1d1964f76ab115af2574973e2ca5300ab532d9ae1",
+      "source_path": "/tmp/openui-native-glyph-raster-matrices-v1689.py"
+    },
+    {
+      "bytes": 8864,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/openui-native-glyph-raster-pipeline-v1690.py",
+      "sha256": "95ac320c1d7879384cabf54c0eff4e3f171b0f228d92c475eab7bf3b53a18ffe",
+      "source_path": "/tmp/openui-native-glyph-raster-pipeline-v1690.py"
+    },
+    {
+      "bytes": 5536,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v1/preserver.py",
+      "sha256": "edfd3aac04a071c5ca84a20398490de7a983d44cbf6f13981b298bc1e4960292",
+      "source_path": "/tmp/openui-native-intrinsic-snap-preserve-v1698.py"
+    }
+  ],
+  "baseline": "e995e52f8650ff9286d6beb0618cdd4b75df789b",
+  "chromium_source_support_not_binary_provenance": true,
+  "glyph_owner_v1690_not_started": true,
+  "glyph_queue_requires_fresh_preparation_after_selected_owner": true,
+  "javascript_executed_by_openui": false,
+  "native_app_and_four_matrices_not_executed": true,
+  "native_baseline_and_fixed_guards_not_executed": true,
+  "new_native_rust_callback_guard_scales": 5,
+  "new_release_states_admitted": 0,
+  "old_113_exports_and_30_layouts_preserved": true,
+  "old_native_geometry_short_by_css_pixels": 0.015625,
+  "own_source_hosted_qualification_pending": true,
+  "own_source_hosted_run": 37373688613,
+  "parent": "41b616c3be5224b074e9d06ba6aa963731a1b265",
+  "pinned_chromium_geometry_queries": 10,
+  "pixel_tolerance": 0,
+  "production_functions_changed": 1,
+  "production_has_no_font_size_family_fixture_or_test_id_condition": true,
+  "public_native_rust_apis_required": true,
+  "reference_bytes_unchanged": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "selected_next_owner": "native-intrinsic-snap-pipeline-v1697",
+  "selected_owner_not_started": true,
+  "source": "727da10e580c9439f5db83d36bfc3e2340168207",
+  "source_read_only_checks_passed": 13,
+  "source_unapplied": true
+}

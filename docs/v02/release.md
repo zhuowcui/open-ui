@@ -4,6 +4,14 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
+The [narrow intrinsic-width candidate](../renderer/native-intrinsic-snap.md)
+at private `727da10e` changes one shared sizing helper to retain positive
+shaped fractions through grid ceiling. Its new public Rust callback guard
+uses the preserved Chromium natural widths at five scales. Thirteen source
+checks pass; native tests, apps and all four renderer matrices have not run.
+Own-source hosted hardening is pending, and the source remains unapplied and
+unqualified. It does not close the default font-raster or release gates.
+
 The [shared native font-inheritance correction](../renderer/native-text-style-inheritance.md)
 at private `41b616c3` passes its new baseline/fixed public Rust callback guard,
 all nine style guards, 58 conformance scenarios, thirteen source checks and

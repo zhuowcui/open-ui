@@ -1,0 +1,110 @@
+diff --git a/bindings/rust/openui-layout/src/intrinsic_sizing.rs b/bindings/rust/openui-layout/src/intrinsic_sizing.rs
+index 46fe3d8c..96e25b5f 100644
+--- a/bindings/rust/openui-layout/src/intrinsic_sizing.rs
++++ b/bindings/rust/openui-layout/src/intrinsic_sizing.rs
+@@ -280,21 +280,10 @@ fn active_clone_end_edges(stack: &[IntrinsicInlineBox]) -> LayoutUnit {
+ 
+ /// Convert a shaped advance to Blink's 1/64px intrinsic-size grid.
+ ///
+-/// Font backends can return an advance a few floating-point ulps above an
+-/// exact LayoutUnit boundary (for example, 48.000004px). Ceil-converting that
+-/// value creates a synthetic 1/64px intrinsic contribution. Normalize only
+-/// values already within 1/4096px of the fixed-point grid; other advances
+-/// retain the conservative ceil used to avoid unintended wrapping.
++/// ShapeResult::SnappedWidth ceil-converts the original shaped width. Even
++/// a small positive fraction affects native bounds and must be preserved.
+ fn intrinsic_text_width(width: f32) -> LayoutUnit {
+-    let nearest = LayoutUnit::from_f32_round(width);
+-    let backend_roundoff = (32.0 * f32::EPSILON * width.abs().max(1.0))
+-        .max(1.0 / 4096.0)
+-        .min(1.0 / 256.0);
+-    if (width - nearest.to_f32()).abs() <= backend_roundoff {
+-        nearest
+-    } else {
+-        LayoutUnit::from_f32_ceil(width)
+-    }
++    LayoutUnit::from_f32_ceil(width)
+ }
+ 
+ fn intrinsic_close_rounding_excess(data: &InlineItemsData, close_item_index: usize) -> LayoutUnit {
+@@ -4020,10 +4009,10 @@ mod tests {
+     }
+ 
+     #[test]
+-    fn intrinsic_text_width_normalizes_backend_roundoff_at_layout_unit_boundaries() {
++    fn intrinsic_text_width_preserves_fraction_before_layout_grid_ceiling() {
+         assert_eq!(
+             intrinsic_text_width(208.000_396_729),
+-            LayoutUnit::from_i32(208)
++            LayoutUnit::from_raw(208 * 64 + 1)
+         );
+         assert_eq!(
+             intrinsic_text_width(48.01),
+diff --git a/bindings/rust/openui/tests/native_intrinsic_snap.rs b/bindings/rust/openui/tests/native_intrinsic_snap.rs
+new file mode 100644
+index 00000000..b2c086cd
+--- /dev/null
++++ b/bindings/rust/openui/tests/native_intrinsic_snap.rs
+@@ -0,0 +1,62 @@
++use openui::prelude::*;
++use std::cell::Cell;
++use std::rc::Rc;
++
++#[test]
++fn native_intrinsic_text_width_retains_fraction_through_rust_callback() {
++    // These natural widths are measured in the preserved pinned Chromium
++    // font matrix. No width is authored, and no browser code runs in Open UI.
++    for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++        let document = Document::with_font_collection(
++            ViewportMetrics::from_logical_size(128.0, 96.0, scale).unwrap(),
++            FontCollection::deterministic_test(),
++        )
++        .unwrap();
++        let root = document.body();
++        let label = Element::create(&document, "div").unwrap();
++        label.set_position(Position::Absolute).unwrap();
++        label.set_left(Length::px(20.0)).unwrap();
++        label.set_top(Length::px(20.0)).unwrap();
++        label
++            .set_font_family(FontFamilyList::single("Ahem"))
++            .unwrap();
++        label.set_font_size(LengthValue::px(12.0)).unwrap();
++        label.set_line_height(LineHeight::Number(1.0)).unwrap();
++        label.set_color(Color::BLACK).unwrap();
++        label.set_text("X").unwrap();
++        root.append_child(&label).unwrap();
++        let before = label.bounding_rect().unwrap().unwrap();
++        assert_eq!(
++            (before.x, before.y, before.width, before.height),
++            (20.0, 20.0, 12.015625, 12.0),
++            "native intrinsic width must preserve Chromium's shaped fraction: scale={scale}"
++        );
++        let count = Rc::new(Cell::new(0));
++        let observed = Rc::clone(&count);
++        let target = label.downgrade();
++        root.on("click", move |_| {
++            let label = target.upgrade().unwrap();
++            label.set_font_size(LengthValue::px(16.0)).unwrap();
++            label.set_color(Color::BLUE).unwrap();
++            label.set_text("XX").unwrap();
++            observed.set(observed.get() + 1);
++        })
++        .unwrap();
++        root.click().unwrap();
++        assert_eq!(count.get(), 1);
++        assert_eq!(label.text_content().unwrap(), "XX");
++        let after = label.bounding_rect().unwrap().unwrap();
++        assert_eq!(
++            (after.x, after.y, after.width, after.height),
++            (20.0, 20.0, 32.015625, 16.0),
++            "callback text must retain its new intrinsic fraction: scale={scale}"
++        );
++        assert_eq!(before.width, 12.015625);
++        assert_eq!(before.height, 12.0);
++        let weak = label.downgrade();
++        drop(label);
++        drop(root);
++        drop(document);
++        assert!(weak.upgrade().is_none());
++    }
++}

@@ -22,6 +22,16 @@ remain open.
 
 ## Current implementation checkpoint
 
+The [narrow native text-width correction](../renderer/native-intrinsic-snap.md)
+at private `727da10e` preserves shaped fractions through intrinsic grid
+ceiling. It targets the measured 3,840 widths that are 1/64 CSS pixel short,
+without font, size, fixture or test-ID conditions. A single-element Rust
+callback guard checks measured 12px/16px natural widths at five scales.
+Thirteen source checks pass. Native guards, workspace, apps and matrices
+remain unexecuted; own-source hosted run `37373688613` is pending. Prepared
+whole owner `1697` is unlaunched and waits for complete owner `1678`.
+The source is unapplied, and no new exact result is claimed.
+
 The [shared native style correction](../renderer/native-text-style-inheritance.md)
 at private `41b616c3` combines Rust/C text replacement with authored font,
 color and line-height inheritance. The new public Rust callback test fails on
