@@ -10,19 +10,20 @@ use skia_safe::{surfaces, Color, ImageInfo, PixelGeometry, SurfaceProps, Surface
 
 fn render(role: usize, scale: f64, phase: i16) -> Vec<u8> {
     let mut style = ComputedStyle::default();
-    let fields = style.fields_mut();
-    fields.font_family = FontFamilyList::single("DejaVu Sans");
-    fields.font_size = 17.0;
-    fields.device_scale_factor = scale;
-    fields.native_control_text = role == 1;
-    fields.embedded_document_text = role == 2;
-    fields.raster_configuration = RasterConfiguration::chromium_linux_fontations_lcd();
-    let settings = match role {
-        0 => &mut fields.raster_configuration.author_text,
-        1 => &mut fields.raster_configuration.native_text,
-        _ => &mut fields.raster_configuration.embedded_text,
-    };
-    settings.lcd_phase_64ths = phase;
+    style.update_derived(|fields| {
+        fields.font_family = FontFamilyList::single("DejaVu Sans");
+        fields.font_size = 17.0;
+        fields.device_scale_factor = scale;
+        fields.native_control_text = role == 1;
+        fields.embedded_document_text = role == 2;
+        fields.raster_configuration = RasterConfiguration::chromium_linux_fontations_lcd();
+        let settings = match role {
+            0 => &mut fields.raster_configuration.author_text,
+            1 => &mut fields.raster_configuration.native_text,
+            _ => &mut fields.raster_configuration.embedded_text,
+        };
+        settings.lcd_phase_64ths = phase;
+    });
     let font = Font::new_in_collection(
         FontDescription::from_computed_style(&style),
         FontCollection::deterministic_test(),
@@ -85,22 +86,23 @@ fn render_control_strike(
     origin: (f32, f32),
 ) -> Vec<u8> {
     let mut style = ComputedStyle::default();
-    let fields = style.fields_mut();
-    fields.font_family = FontFamilyList::single(family);
-    fields.font_size = size;
-    fields.device_scale_factor = scale;
-    fields.native_control_text = role == 1;
-    fields.embedded_document_text = role == 2;
-    fields.raster_configuration = RasterConfiguration::default().with_backend(backend);
-    let fitted = TextRasterConfiguration {
-        edging: TextEdging::AntiAlias,
-        hinting: TextHinting::Full,
-        subpixel_positioning: false,
-        force_autohint: false,
-        lcd_phase_64ths: 0,
-    };
-    fields.raster_configuration.native_text = fitted;
-    fields.raster_configuration.embedded_text = fitted;
+    style.update_derived(|fields| {
+        fields.font_family = FontFamilyList::single(family);
+        fields.font_size = size;
+        fields.device_scale_factor = scale;
+        fields.native_control_text = role == 1;
+        fields.embedded_document_text = role == 2;
+        fields.raster_configuration = RasterConfiguration::default().with_backend(backend);
+        let fitted = TextRasterConfiguration {
+            edging: TextEdging::AntiAlias,
+            hinting: TextHinting::Full,
+            subpixel_positioning: false,
+            force_autohint: false,
+            lcd_phase_64ths: 0,
+        };
+        fields.raster_configuration.native_text = fitted;
+        fields.raster_configuration.embedded_text = fitted;
+    });
     let font = Font::new_in_collection(
         FontDescription::from_computed_style(&style),
         FontCollection::deterministic_test(),
