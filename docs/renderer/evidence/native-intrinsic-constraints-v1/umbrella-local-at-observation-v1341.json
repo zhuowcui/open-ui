@@ -1,0 +1,97 @@
+{
+  "all_commands_terminal": false,
+  "applied_umbrella_runtime_checkpoint": true,
+  "consumer_compile_correction_only": false,
+  "current_process": {
+    "pid": 3186814,
+    "program": "openui-cache-integration-matrices-v1340.py"
+  },
+  "immutable_probe_hashes": {
+    "/tmp/openui-cache-integration-build-v1340.py": "895ad0f81abd254a2f9ea91b27f00121999e4b52e05c4740f0d643abaffb8a2d",
+    "/tmp/openui-cache-integration-guards-v1340.py": "6dc693ad946f409e311ef600bb0ed3b766ea3e7c831c5b5a92452d620c374341",
+    "/tmp/openui-cache-integration-matrices-v1340.py": "553f6a6e0f6f60a4c3d67aeaa388761c2129a5c581854a579f7b92da7b34dfbf"
+  },
+  "inherits_intrinsic_or_lcd_trial_source": false,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "ordered_build_and_image_stages": true,
+  "original_pixel_gate_remains_required": true,
+  "prior_terminal_pipeline_sha256": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json": "95da859e07156b9162940ee12d3a3a437d56f1a44dd5f55ce080fc84cf19a1aa",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json": "078a26f62d5c704947367ff2bb1e06f8c3d0759e19093fcad405d27629f4203e",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json": "ceb26919fa7ddf8b74161f2905990a9284427b3bc40df2a561d6be83b8ec494d",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json": "be5b475d9d3aa72dc60c02ebb4ab253240d07d3186bf17b64ebdf1d6472ad367",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json": "ae3f849b0499cb54b75321a8e599587fc907c147a63e976d2f99b92fb0585571",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json": "5527ac622b3188a170828738d18de83a113e6635b14dd3766108661c398e1d06"
+  },
+  "prior_whole_pipelines": [
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json"
+  ],
+  "probe_sha256": "f36ab95f286bfaf075e9e2291659d5172311c0bdf66ccd7e793b7ee415456ca4",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "renderer_production_unchanged_from_prior_candidate": false,
+  "schema_version": 1,
+  "selection_hashes": {},
+  "source": {
+    "clean": true,
+    "commit": "289d5516dcbacd17f1a5b60046771bdfe28061a6",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "89e0849ae447e918edc932afb04de92a9832675b132b7656df30f603948d9aac",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "289d5516dcbacd17f1a5b60046771bdfe28061a6",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "89e0849ae447e918edc932afb04de92a9832675b132b7656df30f603948d9aac",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "running-full",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-cache-integration-guards-v1340.py"
+      ],
+      "log_sha256": "a80251d1d68c33f66eb3464a54e790c0e123406e61eeade8c62e1409587cfb0f",
+      "name": "guards",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-cache-integration-build-v1340.py"
+      ],
+      "log_sha256": "b243a75a943c92f68a553e46e47b1eab64f9175edf747ca52a5dd74752b56a11",
+      "name": "native-build",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-cache-integration-matrices-v1340.py",
+        "focused"
+      ],
+      "log_sha256": "7d00cfd9f198461714aa82dedd053f72b684f5eb359f2def7756541f4fd1942f",
+      "name": "focused",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-cache-integration-matrices-v1340.py",
+        "primitive"
+      ],
+      "log_sha256": "e28d8fea6eb12f5b5b8e9d91a1119b4d4cfea02c10ad09b810df695a222b13f1",
+      "name": "primitive",
+      "observed_exit_code": 0
+    }
+  ]
+}

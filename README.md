@@ -70,14 +70,17 @@ already failing comparisons worsen. Every residual still requires review.
 The separate [font engine trial](docs/renderer/native-font-engines.md) loses
 493 exact comparisons. A shared routing discrepancy selects a different
 authored text path from the explicit FreeType reference. The named physical
-outline guard now fails on its baseline and passes on the correction. The full
-build stops on two position types in the native Rust example. Its corrected
-consumer is prepared; complete compilation and pixel verification remain pending.
+outline guard now fails on its baseline and passes on the correction. After
+correcting two position types in the native Rust example, its next build stops
+on a missing geometry-member diagnostic before tests execute. That member is
+present in clean source; a complete workspace rebuild is needed to check
+artifact reuse. Compilation and pixel verification remain pending.
 The [native C raster configuration](docs/v02/native-c-raster-configuration.md)
 is also prepared on a private checkpoint. It copies the same immutable Rust
 options into the shared engine and adds C/C++ callback consumers. Ten read-only
 checks pass and ABI metadata preserves all 113 existing exports and 30 layouts.
-Compilation, consuming-application execution, Miri and exact pixels are pending;
+Its first boundary-test build also stops on geometry-member diagnostics;
+consuming-application execution, Miri and exact pixels remain pending.
 the umbrella branch still has 113 exports and admits no new release case.
 The private [raster-field correction](docs/renderer/native-raster-configuration-fields.md)
 now carries requested Fontations settings and applies LCD phase during paint.
@@ -88,15 +91,22 @@ The [recording cache repair](docs/renderer/generated/native-scroll-insets-v35.js
 is applied. Its clean qualification source passes the CPU/Ganesh cache guards,
 8,532 workspace tests and all seven hosted hardening jobs. Every original and
 expanded pixel comparison remains unchanged. The umbrella checkpoint's own
-build and matrices are queued. All seven own umbrella
+build is complete and its focused/primitive matrices are exact; its complete
+censuses are running. All seven own umbrella
 [manual hardening jobs](https://github.com/zhuowcui/open-ui/actions/runs/37244559627)
 pass at `287e176a`, with zero skips; the full Chromium pixel gate still fails.
 The [prepared native style/cache integration](docs/renderer/generated/native-scroll-insets-v36.json)
 at private `0ccc37da` passes ten read-only checks. Its own local compilation,
-native consumers and all pixel matrices are queued; its hosted hardening is
-running at the recorded observation. Prior style results are attributed to
+native consumers and all pixel matrices are queued; all seven own-source
+hosted hardening jobs pass, with zero skips. Prior style results are attributed to
 `5cc75147`, including the 60 failing native static-position states. This new
 integration remains unapplied and unqualified.
+The [intrinsic constraints and whitespace investigation](docs/renderer/native-intrinsic-constraints.md)
+records the completed fieldset trial's 64 original exact losses and two shared
+layout causes. Private `7d723caa` prepares corrections and a consuming Rust
+callback app. Ten read-only checks pass; its own native and pixel verification
+is queued with all 18 workspace packages cleaned at every source switch.
+It remains unapplied and admits no release state.
 Earlier renderer measurements below remain attributed to their named sources. The
 [private sampling candidate](docs/renderer/generated/native-viewport-full-v14.json)
 loses 23 exact Chromium comparisons and gains 14 in its complete census;

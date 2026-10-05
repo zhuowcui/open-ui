@@ -82,6 +82,16 @@ It then preserves the
 1,000 native sizing measurements, checks 880 selected original comparisons,
 both complete 40-profile matrices and both complete censuses.
 
+That retry now stops in workspace compilation with actual exit 101, before
+tests execute. The diagnostic says `chromium_linux_fontations_lcd` is absent,
+although the member is present in the clean source. The separate C retry
+likewise reports missing Fontations geometry members before its boundary
+tests execute. These failures are preserved in
+[v37 evidence](generated/native-scroll-insets-v37.json). Workspace artifact
+reuse is suspected; cleaning all 18 workspace packages at every source switch
+is required before repeating source-qualified verification. No consuming-app
+or pixel pass is established by either failed build.
+
 The [versioned C raster-configuration transport](../v02/native-c-raster-configuration.md)
 is prepared at clean private `3395cefa`, with the position correction at
 `ac08ec56`, a reviewable patch and owned

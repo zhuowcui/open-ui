@@ -27,12 +27,43 @@ preserves clean private `0ccc37da`, combining the previously measured native
 style inheritance and computed-snapshot repairs with the applied owned cache.
 Ten read-only checks pass. Its current-source local baseline/fixed guards,
 clean build, Rust/C consumers and four complete pixel matrices are queued;
-its own hosted hardening is still running at the recorded observation.
+all seven own-source hosted hardening jobs now pass, with zero skips.
 No local stage has executed. The prior `5cc75147` source passed 50 native
 relative-style images and eight C geometry checks, but all 60 native static
 position bounds and pixels still failed. Those source-specific results do not
 qualify the new integration. The candidate remains unapplied, admits no
 release state, and carries none of the later intrinsic/LCD trial source.
+
+The [v37 evidence](../renderer/generated/native-scroll-insets-v37.json)
+records the completed `abed078d` fieldset trial: 21,270/22,924 original and
+22,069/23,728 expanded exact, zero errors, actual exits 1. It restores six exact
+comparisons against its intrinsic parent but still loses 64 original and four
+addition comparisons against the accepted renderer; 199/201 additions are
+exact at all four profiles. Chromium images and oracle identities are fixed.
+The source remains unapplied and its residual ownership ledger is unqualified.
+
+Clean private `7d723caa` prepares two shared layout corrections: retain an
+atomic inline child's already computed preferred/min/max contribution, and
+collapse leading whitespace using a separate line-content state. Sixty native
+geometry commands and 1,000 independent Chromium font/whitespace observations
+support the investigation without generating images. Its public Rust app uses
+typed methods and a Rust click callback; ten read-only checks pass. Own native
+execution and exact pixels remain pending. The corrected queue cleans all 18
+workspace packages at every source switch and waits for every prior whole
+pipeline. See the [measured causes and verification scope](../renderer/native-intrinsic-constraints.md).
+No source or new release state is promoted.
+
+The font retry `ffb10c21` and C retry `ac08ec56` now stop on compiler diagnostics
+for geometry members present in their clean source, before native execution.
+Stale workspace artifacts are suspected; complete cleaning is required to
+resolve the discrepancy. Raster/default-strike guards also stop before valid
+baseline reproduction and include invalid test-only `fields_mut` calls. These
+failures are preserved in v37 and do not count as API or pixel verification.
+At umbrella `23b0c3b9`, all three ordinary workflows succeed: six jobs pass,
+five are skipped. Native/build/workflow inputs match the seven-job manual pass
+at `287e176a`. The applied cache checkpoint's clean build and both raster
+matrices pass; its original/expanded censuses are running. Accepted totals
+remain unchanged.
 
 The standalone native float-color C constructor and public Rust/C/C++
 consumers are now applied to the umbrella branch. All 112 preceding exports

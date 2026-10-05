@@ -1,0 +1,746 @@
+{
+  "accepted_addition_cases_quad_exact": 200,
+  "accepted_expanded_exact": 22137,
+  "accepted_expanded_required": 23728,
+  "accepted_original_different": 1590,
+  "accepted_original_errors": 0,
+  "accepted_original_exact": 21334,
+  "accepted_original_required": 22924,
+  "applied_to_umbrella": false,
+  "artifacts": {
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/fieldset-expanded-audit-v1372.json": {
+      "bytes": 372014,
+      "sha256": "832ce042e15f04d5536182b5502d3592514b66de798eba9dec9af74d09c29b18"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/fieldset-full-audit-v1372.json": {
+      "bytes": 360642,
+      "sha256": "f99b6226d3d2b6eca438a271a93b0ae65b903b24b090be0396873d7a1a13f398"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/fieldset-terminal-pipeline-v1310.json": {
+      "bytes": 5195,
+      "sha256": "be5b475d9d3aa72dc60c02ebb4ab253240d07d3186bf17b64ebdf1d6472ad367"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/font-query-v1360-input.html": {
+      "bytes": 44051,
+      "sha256": "b13650904bdc991e04e909f71bc4602a63f883d8f0090f98b02401611c3a0d45"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/font-query-v1360-installed-font-byte-audit.json": {
+      "bytes": 620,
+      "sha256": "bdf95820db5f57aa108b9cf18cedef62afd7b85610d5dd7cde664871a610e491"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/font-query-v1360-receipt.json": {
+      "bytes": 238864,
+      "sha256": "e8efd63c547ea2f0567b0132f2a77362df83f9512b14b1e76a7e908dac382aff"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/geometry-preflight-failure-v1362.json": {
+      "bytes": 431,
+      "sha256": "ba8a6f72997b3c27b0f13ecccd262fa9b6bb8c159ebc3d2c5f906e1ca1ed131f"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/hosted-hardening-at-observation-v1368.json": {
+      "bytes": 1194,
+      "sha256": "ca6f4c6193987a7c1bcdc5b5996e70eb327f37fda29c50d2a861a5053742ecc5"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/local-pipeline-at-observation-v1375.json": {
+      "bytes": 4068,
+      "sha256": "359bd729897c6372b4619dcd9adaac63abd5bb0c5c124dd1d95f215b6bc3de95"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-atomic-constraints-baseline.patch": {
+      "bytes": 4545,
+      "sha256": "d0908c19b14ecd66ed2a8283329501bdd05c3674ee1123ce2de77c3b7e9f3a63"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-c-raster-retry-build-v1312.json": {
+      "bytes": 1920,
+      "sha256": "0f620b3daf159ab42a3242368be32c8021681b112a7b1ff69e508c25b8003064"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-c-raster-retry-failed-raster-boundaries.log": {
+      "bytes": 13996,
+      "sha256": "ca844cc4851c2b3f4d01a5299b6b6b7895f096e168247acc5e1fe932f736d033"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-c-raster-retry-terminal-pipeline-v1312.json": {
+      "bytes": 3230,
+      "sha256": "078a26f62d5c704947367ff2bb1e06f8c3d0759e19093fcad405d27629f4203e"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-default-strike-failed-guards-v1333.json": {
+      "bytes": 2643,
+      "sha256": "4a12cbbf29b2fe7d0a134731b901f79dde01ad9e6ae29c988c7fa49f90f620ff"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-font-retry-build-v1311.json": {
+      "bytes": 1794,
+      "sha256": "87d429208b034e8a792b450d07fecee641ec460ee61ec554ba5ed402ce0bcb2d"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-font-retry-failed-workspace.log": {
+      "bytes": 25126,
+      "sha256": "ded849324c6cd57adbbe4e573aec81b6d81b2a3257600743ed7362218806d391"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-font-retry-terminal-pipeline-v1311.json": {
+      "bytes": 3203,
+      "sha256": "ae3f849b0499cb54b75321a8e599587fc907c147a63e976d2f99b92fb0585571"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-intrinsic-constraints.patch": {
+      "bytes": 39821,
+      "sha256": "4dfc6846fb8621df37038701261ac8f0313b1a24cda7524a0d4650893ed2d1c6"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-intrinsic-geometry-review-v1359.json": {
+      "bytes": 11998,
+      "sha256": "7c082f1526d3d9651f3d6de5c26299ae7fa8909bea1f92eb49efc32d191544ff"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-intrinsic-pipeline-retirement-v1373.json": {
+      "bytes": 702,
+      "sha256": "79205efa036a0ae819f4b2f91e40e42d3e8412904d22b41b9e67b8134a6b78f5"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-intrinsic-profile-geometry-v1363.json": {
+      "bytes": 57464,
+      "sha256": "d370e78485ce7f02b4c8798fdcdad94d800fde11b15a7b878f1f893d1e91a961"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-leading-whitespace-baseline.patch": {
+      "bytes": 6404,
+      "sha256": "07420603c55011535abea7a99ab3b877b631dfeea2ec76d7bee129231fe83a67"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-raster-fields-failed-guards-v1322.json": {
+      "bytes": 4082,
+      "sha256": "88bfe1641133402c1a46dbcbb94cded3fe9ced7da6ad9202537c766e6275caaa"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native-recording-cache-baseline.patch": {
+      "bytes": 2975,
+      "sha256": "4a598ddcca2c7038ab9124d1d2bdf7171e57f828136d9461b965394d66dce3f6"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/native_intrinsic_constraints.rs": {
+      "bytes": 6868,
+      "sha256": "20b29d0be588beb1aa01169b9120aecbbbc8ae92cd43e0cac5b31797196423dd"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/openui-native-fieldset-complete-audit-v1372.py": {
+      "bytes": 7899,
+      "sha256": "46f87e2d8a45570602eacbc405f35e7e6f85d1f86a39929bc168346a955eea5d"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/openui-native-intrinsic-constraints-build-v1374.py": {
+      "bytes": 4914,
+      "sha256": "f994cbdd3b0d8e9c677dd7e5aa4685717d2878c2e451e29b836401e045f477d7"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/openui-native-intrinsic-constraints-consumer-v1374.py": {
+      "bytes": 10299,
+      "sha256": "26e4ee8b86c4ecb93306e3188b01ba62ffb8214c5f4e4d9a7951fe334d406375"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/openui-native-intrinsic-constraints-guards-v1374.py": {
+      "bytes": 6227,
+      "sha256": "b911d96fe2fc8c9104a84e086a0230608e8a746f67dbc46310fc674e51ad8a1b"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/openui-native-intrinsic-constraints-matrices-v1374.py": {
+      "bytes": 2284,
+      "sha256": "e676805426ec777f63bb80e8e94f3af88f53758ad610c8583c8db831381d80f8"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/openui-native-intrinsic-constraints-pipeline-v1375.py": {
+      "bytes": 7188,
+      "sha256": "85634c03e0f33c0995aef80671735581a9902fd4e41833a62d30a2be86ba2714"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/openui-native-intrinsic-constraints-sizing-v1374.py": {
+      "bytes": 3824,
+      "sha256": "bad04394edf24c3476fd1bb4c33814c66be9678b060865d3b1b8aa191af82393"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/openui-native-intrinsic-font-query-v1360.py": {
+      "bytes": 5117,
+      "sha256": "e27eecf23525fcb8d78c06556ccce1797f0f6e1d02abe40d3137b64560bcc67c"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/openui-native-intrinsic-profile-geometry-v1363.py": {
+      "bytes": 3051,
+      "sha256": "b71260b3d66dffe6a92901f7f2145b19d9ea31fee9907e87878cc4fea498b39f"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/publication-preflight-failure-v1376.json": {
+      "bytes": 559,
+      "sha256": "b4f31032d65251286fb3908599396202a52ad9d4ce351f2a5012e7f4a3c37688"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/read-only-checks-v1365.json": {
+      "bytes": 3524,
+      "sha256": "33d58bfd60e825acb549e546aff5a86b1d7b0179334e70497d54df08533e76a3"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/retired-pipeline-v1369.json": {
+      "bytes": 3936,
+      "sha256": "2c97ade26b8524b82455d36e6ade491bd9948f17af46e88ccd1463f5a6d7d8bd"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/style-hardening-complete-v1351.json": {
+      "bytes": 18604,
+      "sha256": "3e9cd7c76e8336a3d89f909a553ad416f8bd8ae2b6c1c28cd0443f24ec5312a5"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/umbrella-ci-complete-v1356.json": {
+      "bytes": 22330,
+      "sha256": "41422c9a5b7b6781eb497959ba6520b038aca97cac7ea2e9d1607794d5dab217"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/umbrella-local-at-observation-v1341.json": {
+      "bytes": 5079,
+      "sha256": "08f82421b59d0b99f5621eecb50cce0148f85d5a8ff6795dff306958f3365a31"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1359-fieldset-candidate-wpt__css2_floats__floats-in-table-caption-001.log": {
+      "bytes": 10334,
+      "sha256": "80dd1fa592946bd29688597e2a784759aa5c426720694c2a651b6c1aa740e501"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1359-fieldset-candidate-wpt__css_overflow__line-clamp_line-clamp-auto-045.log": {
+      "bytes": 13428,
+      "sha256": "6064e8da7e87610d7ba453c23dab5b4455f1caf18fcbf57d07ad6dd2faaa466a"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1359-fieldset-candidate-wpt__css_sizing__clone-nowrap-intrinsic-size.log": {
+      "bytes": 85757,
+      "sha256": "593bed6f56cc88067f2b1aff827ce7a4071d56dee0f6872f723488fcb99ddd48"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1359-fieldset-candidate-wpt__css_sizing__float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001.log": {
+      "bytes": 5242,
+      "sha256": "c023b2091538baf56e6aaa2538ead45e112ae8da7284d0e6f1f9748ba9282707"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1359-fieldset-candidate-wpt__css_sizing__intrinsic-percent-replaced-029.tentative.log": {
+      "bytes": 3342,
+      "sha256": "64b09f0e28d2eadbe140fb247f43cdb623b96adab5186aa48d82bbe119260b5b"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1359-fieldset-candidate-wpt__css_sizing__intrinsic-size-min-content-box-sizing.log": {
+      "bytes": 7715,
+      "sha256": "61de2ff8b049dff2bd1cc9e97b89a6f523fa24b3b6110b497041964f856756fa"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1359-prior-style-wpt__css2_floats__floats-in-table-caption-001.log": {
+      "bytes": 10334,
+      "sha256": "bf75c6be963d5176e56bb4beb57ac651db853e6454a5cdb868d0fc2a3243b2fb"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1359-prior-style-wpt__css_overflow__line-clamp_line-clamp-auto-045.log": {
+      "bytes": 13425,
+      "sha256": "01d9c9fddb64ab2d0a18b6fb07fa6845d79cd17ec39e79b4a16e99f06bd4f342"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1359-prior-style-wpt__css_sizing__clone-nowrap-intrinsic-size.log": {
+      "bytes": 85757,
+      "sha256": "c4843e78b6bf6bde8820cb4150fd1c2d0538de400710159958e5a5f87bbcc6ea"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1359-prior-style-wpt__css_sizing__float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001.log": {
+      "bytes": 5237,
+      "sha256": "7e45d3171618e362012e7248346e967658fe5b3285e9e8b39a773540ef680079"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1359-prior-style-wpt__css_sizing__intrinsic-percent-replaced-029.tentative.log": {
+      "bytes": 3363,
+      "sha256": "7a5f7b0489bea23da4df7747327e7838c1525178c3d4b19b5b468ceb38b50b30"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1359-prior-style-wpt__css_sizing__intrinsic-size-min-content-box-sizing.log": {
+      "bytes": 7723,
+      "sha256": "5966adb58de5595c259baa333952b252e5c5b6f1a343a68673fdbc7b3bf4ae87"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-desktop-1280x720@1.25-wpt__css2_floats__floats-in-table-caption-001.log": {
+      "bytes": 9208,
+      "sha256": "6789205cd4fa0bf907ee642549a03b9b4d1b3a0c4da173e94cd2089e2e48bd26"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-desktop-1280x720@1.25-wpt__css_overflow__line-clamp_line-clamp-auto-045.log": {
+      "bytes": 13432,
+      "sha256": "ee5f3d7a6706affe765919c615990ca6f28a4d062549a665a725e7c1dfabd537"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-desktop-1280x720@1.25-wpt__css_sizing__clone-nowrap-intrinsic-size.log": {
+      "bytes": 85761,
+      "sha256": "d24eb65d57660c807472fc63a37b7127fd71e21b446bea1b37e3f550a58d306e"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-desktop-1280x720@1.25-wpt__css_sizing__float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001.log": {
+      "bytes": 5246,
+      "sha256": "3955c942669251e877744b43fdceec554268d256ca385b85cef390f878951245"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-desktop-1280x720@1.25-wpt__css_sizing__intrinsic-percent-replaced-029.tentative.log": {
+      "bytes": 3346,
+      "sha256": "4452cf66c7f2ed0c1cb99f690a3ab5f83bd5374a914560b09750fb219174bfa6"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-desktop-1280x720@1.25-wpt__css_sizing__intrinsic-size-min-content-box-sizing.log": {
+      "bytes": 7719,
+      "sha256": "a2e3296c00902533b77509e55ebc9591ba09f9d1e277a6508a89c1c855690e9f"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-desktop-1920x1080@1.5-wpt__css2_floats__floats-in-table-caption-001.log": {
+      "bytes": 9218,
+      "sha256": "5a725eaa6348cc0d8f5fd80a6b9e49ad2431dd5d2337a0099c41876a3d527152"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-desktop-1920x1080@1.5-wpt__css_overflow__line-clamp_line-clamp-auto-045.log": {
+      "bytes": 13441,
+      "sha256": "f209012bf347c3f6c053b1e01ad7f6132411b87939526c86a01a0325b33a97d9"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-desktop-1920x1080@1.5-wpt__css_sizing__clone-nowrap-intrinsic-size.log": {
+      "bytes": 85767,
+      "sha256": "ef5b8f414e66d6aa40f6165be1e22813be938dd499b9e0c198f7f6d2ebe484d7"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-desktop-1920x1080@1.5-wpt__css_sizing__float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001.log": {
+      "bytes": 5252,
+      "sha256": "7594685ca8309ace8d3ccf15020d4d26c993351f6a8fc0daf3e64885dd6d48d4"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-desktop-1920x1080@1.5-wpt__css_sizing__intrinsic-percent-replaced-029.tentative.log": {
+      "bytes": 3352,
+      "sha256": "7ec5828f47bd9fe476b486545df7ea0007a13906fc5e370603f5c79090babb50"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-desktop-1920x1080@1.5-wpt__css_sizing__intrinsic-size-min-content-box-sizing.log": {
+      "bytes": 7725,
+      "sha256": "fda780a369952d8892e0545e8fac1e0ab22cb510b4d0c0859d194aa5a13d6734"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-legacy-800x600@1-wpt__css2_floats__floats-in-table-caption-001.log": {
+      "bytes": 10334,
+      "sha256": "d8c608f0b73ebc9d0a0d1dd680b2777dae3a9af07e9fc5c6d722b29cbc7e4894"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-legacy-800x600@1-wpt__css_overflow__line-clamp_line-clamp-auto-045.log": {
+      "bytes": 13428,
+      "sha256": "40f89e52129fc8f780a287c4b2814880c4c6486d6a0a6320e60b0d1ddc716168"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-legacy-800x600@1-wpt__css_sizing__clone-nowrap-intrinsic-size.log": {
+      "bytes": 85757,
+      "sha256": "593bed6f56cc88067f2b1aff827ce7a4071d56dee0f6872f723488fcb99ddd48"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-legacy-800x600@1-wpt__css_sizing__float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001.log": {
+      "bytes": 5242,
+      "sha256": "c023b2091538baf56e6aaa2538ead45e112ae8da7284d0e6f1f9748ba9282707"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-legacy-800x600@1-wpt__css_sizing__intrinsic-percent-replaced-029.tentative.log": {
+      "bytes": 3342,
+      "sha256": "64b09f0e28d2eadbe140fb247f43cdb623b96adab5186aa48d82bbe119260b5b"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-legacy-800x600@1-wpt__css_sizing__intrinsic-size-min-content-box-sizing.log": {
+      "bytes": 7715,
+      "sha256": "0ec710e9c89e2d292779e0ceffcd2ffcb153d22182624ee800eaefc9a3d4c4b3"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-mobile-375x667@2-wpt__css2_floats__floats-in-table-caption-001.log": {
+      "bytes": 14872,
+      "sha256": "930525c3ce9105ae49f300d6d49c31ae4f269a192041d22429da7f78b04608d3"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-mobile-375x667@2-wpt__css_overflow__line-clamp_line-clamp-auto-045.log": {
+      "bytes": 13426,
+      "sha256": "bcb75243bbd32018775a926be99bd466cb160d8463bae5e5f230acbcfe965ffb"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-mobile-375x667@2-wpt__css_sizing__clone-nowrap-intrinsic-size.log": {
+      "bytes": 85757,
+      "sha256": "8b8d76576e892b7ed5a5e2c018d24408de7f8fe854f25de9c964563c4081d8a2"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-mobile-375x667@2-wpt__css_sizing__float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001.log": {
+      "bytes": 5242,
+      "sha256": "8a45966f94a314d3aef635f57bf44005aa3e0c2f3ddd72ebe94998760053b6c6"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-mobile-375x667@2-wpt__css_sizing__intrinsic-percent-replaced-029.tentative.log": {
+      "bytes": 3342,
+      "sha256": "49100f4cd72f9a8564c21259a6e2ad529f9964d9a47a8cf01b5f5257f347e5a7"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-fieldset-candidate-mobile-375x667@2-wpt__css_sizing__intrinsic-size-min-content-box-sizing.log": {
+      "bytes": 7715,
+      "sha256": "627d0a4ca9570499f4fe8934d0a1edd59cb191e815dbb8b5641364d9766466b9"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-desktop-1280x720@1.25-wpt__css2_floats__floats-in-table-caption-001.log": {
+      "bytes": 9208,
+      "sha256": "980cd915b24ef9a7cefd60d1cc252c401db9866aa40d5aa10b2b30eee76c692e"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-desktop-1280x720@1.25-wpt__css_overflow__line-clamp_line-clamp-auto-045.log": {
+      "bytes": 13429,
+      "sha256": "de220d605320c2334adf789109d1084f05f06d3a528c70b519c521eb0ed575b2"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-desktop-1280x720@1.25-wpt__css_sizing__clone-nowrap-intrinsic-size.log": {
+      "bytes": 85761,
+      "sha256": "a4acab7da8ce96bebe2ce272a6304277f0ef1fe2cf7040365fcf798d5e19f4ae"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-desktop-1280x720@1.25-wpt__css_sizing__float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001.log": {
+      "bytes": 5241,
+      "sha256": "06327127ce9623d581b11fd2473d7dfc4c5402f8b9059938be033ded8df0532f"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-desktop-1280x720@1.25-wpt__css_sizing__intrinsic-percent-replaced-029.tentative.log": {
+      "bytes": 3367,
+      "sha256": "8a72f4c47a726b6fb01fda78566db97eb9fd0f5b24a2fe320a7c616e69b661b9"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-desktop-1280x720@1.25-wpt__css_sizing__intrinsic-size-min-content-box-sizing.log": {
+      "bytes": 7727,
+      "sha256": "29cf1497134df566af8ca8bca288ed1369663746d29084f70cd5bd3e6f8c52fa"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-desktop-1920x1080@1.5-wpt__css2_floats__floats-in-table-caption-001.log": {
+      "bytes": 9218,
+      "sha256": "a3b1e315fc60f0943aa0728f261b8a3893ba85c2f32e1cebeb4b3305cd4bfd42"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-desktop-1920x1080@1.5-wpt__css_overflow__line-clamp_line-clamp-auto-045.log": {
+      "bytes": 13438,
+      "sha256": "899f31721e13215c07eefc674d1b87a007162a5854fdc07a978e8c37fbc3952a"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-desktop-1920x1080@1.5-wpt__css_sizing__clone-nowrap-intrinsic-size.log": {
+      "bytes": 85767,
+      "sha256": "bd43a2241f82961dc003f735f219fe755a940e7d93301fa7def1bfbf59d279c1"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-desktop-1920x1080@1.5-wpt__css_sizing__float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001.log": {
+      "bytes": 5247,
+      "sha256": "8b804c5b2db4fe35988a4f8304fd7d411dd301121d496ed1452414e503f3c9bb"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-desktop-1920x1080@1.5-wpt__css_sizing__intrinsic-percent-replaced-029.tentative.log": {
+      "bytes": 3373,
+      "sha256": "7961463ff3be32d1d41312c76ab741a1373058bc91ccc8b87e0ea8ff182517e8"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-desktop-1920x1080@1.5-wpt__css_sizing__intrinsic-size-min-content-box-sizing.log": {
+      "bytes": 7733,
+      "sha256": "977e13e658242ecb8fa9fedf4401c4cbcc116c8c9fecde7e1f781d2a0f59d75b"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-legacy-800x600@1-wpt__css2_floats__floats-in-table-caption-001.log": {
+      "bytes": 10334,
+      "sha256": "71270a912514c443ec813f5b80b01aa3904068748cf171b87e0226f3070ac30d"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-legacy-800x600@1-wpt__css_overflow__line-clamp_line-clamp-auto-045.log": {
+      "bytes": 13425,
+      "sha256": "c6f0ad3bb8d4176aa39e81a4a046d470ee5044d2ed5b6c8cc923553dca20dc12"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-legacy-800x600@1-wpt__css_sizing__clone-nowrap-intrinsic-size.log": {
+      "bytes": 85757,
+      "sha256": "c4843e78b6bf6bde8820cb4150fd1c2d0538de400710159958e5a5f87bbcc6ea"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-legacy-800x600@1-wpt__css_sizing__float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001.log": {
+      "bytes": 5237,
+      "sha256": "7e45d3171618e362012e7248346e967658fe5b3285e9e8b39a773540ef680079"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-legacy-800x600@1-wpt__css_sizing__intrinsic-percent-replaced-029.tentative.log": {
+      "bytes": 3363,
+      "sha256": "7a5f7b0489bea23da4df7747327e7838c1525178c3d4b19b5b468ceb38b50b30"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-legacy-800x600@1-wpt__css_sizing__intrinsic-size-min-content-box-sizing.log": {
+      "bytes": 7723,
+      "sha256": "1cdf061ee24579781fbbf12ff3e2595ec954dc26689933ef78779dbb61e249e0"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-mobile-375x667@2-wpt__css2_floats__floats-in-table-caption-001.log": {
+      "bytes": 14872,
+      "sha256": "044ba7fa7a6bd7bd18bb7ae2c867dbdcdc40140ff35070e06c168bce08989b01"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-mobile-375x667@2-wpt__css_overflow__line-clamp_line-clamp-auto-045.log": {
+      "bytes": 13423,
+      "sha256": "0782ba6d9a570877010e89ba0b916ed7e7f380b661aeee1ba391956bc1c2da4f"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-mobile-375x667@2-wpt__css_sizing__clone-nowrap-intrinsic-size.log": {
+      "bytes": 85757,
+      "sha256": "afbdfa8a45c3b5ee1923e79e587d4c753dd904d91cd9ae7804b8ba854e664be4"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-mobile-375x667@2-wpt__css_sizing__float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001.log": {
+      "bytes": 5237,
+      "sha256": "6b252a97b7d02dab29b0f9c55249f7a85c4a1c27de25e3e8626dabdc735f4053"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-mobile-375x667@2-wpt__css_sizing__intrinsic-percent-replaced-029.tentative.log": {
+      "bytes": 3363,
+      "sha256": "1f7fc310ffc4795f7e2f62aa25e2b27d0c29a6fcd1b6a10965abf364b1723a0f"
+    },
+    "docs/renderer/evidence/native-intrinsic-constraints-v1/v1363-prior-style-mobile-375x667@2-wpt__css_sizing__intrinsic-size-min-content-box-sizing.log": {
+      "bytes": 7723,
+      "sha256": "6832facaf14c0da0ac71618c1ceedfea7151ad83ff80bc7e78740e3e6772c808"
+    }
+  },
+  "base_source": "abed078ddb2c8c2442155d14571cbadcb3b94758",
+  "baseline_and_fixed_native_execution": "pending",
+  "chromium_queries": {
+    "all_repeats_and_logical_scale_observations_identical": true,
+    "caution": "Identical font bytes can produce different advances in installed and resource-loaded contexts. This does not authorize font-name-specific rounding or changes to immutable oracle bytes.",
+    "independent_processes": 2,
+    "installed_ahem": {
+      "canvas_advance": 80.0,
+      "logical_box_width": 80.0
+    },
+    "observations": 1000,
+    "owned_ahem": {
+      "canvas_advance": 80.00015258789062,
+      "logical_box_width": 80.015625
+    },
+    "same_installed_and_owned_font_bytes": true,
+    "scales": 5,
+    "screenshots_generated": 0
+  },
+  "consuming_native_app": "native_intrinsic_constraints.rs uses public typed methods, Rust click callbacks, immutable raster selection, owned bounds and checked teardown. Current-source execution remains pending.",
+  "contract": "Open UI executes no JavaScript in any version. Consuming apps use public native Rust methods and Rust callbacks over the shared Engine. Needed browser element behavior must be implemented and exposed through native Rust APIs and verified from a consuming app. Test fixtures and pixel exclusions never waive API work. Pinned Chromium alone is the zero-tolerance pixel target; old Open UI images are immutable provenance.",
+  "current_umbrella_hosted": {
+    "manual_run_id": 37244559627,
+    "manual_skipped_jobs": 0,
+    "manual_source": "287e176aa7554001c651d77c21ca7cb6a967833e",
+    "manual_successful_jobs": 7,
+    "native_build_workflow_inputs_identical_to_manual_source": true,
+    "ordinary_skipped_jobs": 5,
+    "ordinary_successful_jobs": 6,
+    "ordinary_workflows_complete_success": true,
+    "skipped_jobs_are_not_passes": true,
+    "source": "23b0c3b9b1b407eb278f5109c58fe2faec3caaa5"
+  },
+  "earlier_compile_failures": {
+    "native-c-raster-retry": {
+      "actual_exit": 101,
+      "compiler_failure_is_not_a_named_regression_reproduction": true,
+      "geometry_member_diagnostics": "Compiler reports missing Fontations backend/constructor which are present in the clean current source. Workspace artifact reuse is suspected; clean all 18 workspace packages before another source-qualified build.",
+      "source": {
+        "clean": true,
+        "commit": "ac08ec56e90a6465b22c05c3e76fe8dacefcdcd6",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "98cc1ae8a7de51a7d0195db38f2c0c3147e763fa688ecafcb843cd2248eb1f21",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "native-default-strike": {
+      "actual_exit": 1,
+      "named_baseline_reproduction_complete": false,
+      "required_work": "Correct test-only fields_mut calls to the existing derived-style mutation API; isolate workspace artifacts at every source switch. No production or pixel pass is established."
+    },
+    "native-font-retry": {
+      "actual_exit": 101,
+      "compiler_failure_is_not_a_named_regression_reproduction": true,
+      "geometry_member_diagnostics": "Compiler reports missing Fontations backend/constructor which are present in the clean current source. Workspace artifact reuse is suspected; clean all 18 workspace packages before another source-qualified build.",
+      "source": {
+        "clean": true,
+        "commit": "ffb10c211ef53ce2c6a507c475eff70af15807db",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "092cddb040a5894917e73b0c7661f635f5d4031e40395b7a76e89bca291c6bf7",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "native-raster-fields": {
+      "actual_exit": 1,
+      "named_baseline_reproduction_complete": false,
+      "required_work": "Correct test-only fields_mut calls to the existing derived-style mutation API; isolate workspace artifacts at every source switch. No production or pixel pass is established."
+    }
+  },
+  "existing_c_exports": 113,
+  "includes_qualified_owned_cache_implementation": true,
+  "inherits_unqualified_intrinsic_trial_source": true,
+  "javascript_executed_by_openui": false,
+  "named_guards": [
+    {
+      "baseline": "e0ab6c32167806ce81cc26720505f060e1570c10",
+      "test": "tests::native_atomic_constraints_contribute_to_enclosing_intrinsic_size"
+    },
+    {
+      "baseline": "3096820371973e6e17c8a94be188f1e8160e953b",
+      "test": "tests::native_intrinsic_collapsible_leading_spaces_preserve_width_and_indentation"
+    },
+    {
+      "baseline": "ef10f8efe388b5c63118a8fa1319856a34f2ee7a",
+      "test": "tests::compositor_distinguishes_owned_recordings_with_equal_document_generations"
+    }
+  ],
+  "native_geometry": {
+    "actual_census_profile_commands": 48,
+    "actual_exits_zero": 60,
+    "cargo_commands_run": 0,
+    "default_profile_commands": 12,
+    "establishes_pixel_passes": false,
+    "screenshots_generated": 0
+  },
+  "new_release_states_admitted": 0,
+  "observed_at_utc": "2026-10-05T01:27:42.470142+00:00",
+  "old_openui_pixels_are_provenance_only": true,
+  "original_pixel_gate": "FAIL",
+  "own_hosted_hardening": {
+    "all_commands_terminal": false,
+    "branch": "agent/native-intrinsic-constraints-v1361",
+    "commit": "7d723caa7541882da6f403152b1432f0d45c50a8",
+    "direct_cache_regression_qualification": false,
+    "last_observed_jobs": [
+      {
+        "conclusion": "success",
+        "name": "conformance-and-platform",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "native-sanitizers (address)",
+        "status": "completed"
+      },
+      {
+        "conclusion": "",
+        "name": "msrv",
+        "status": "in_progress"
+      },
+      {
+        "conclusion": "success",
+        "name": "native-sanitizers (leak)",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "c-undefined-sanitizer",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "miri-handles",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "fuzz-smoke",
+        "status": "completed"
+      }
+    ],
+    "probe_sha256": "3fc6a6eb5688487cdf63a2a86ddb2b0705dbaa19aa3fda68cf1ade5d6df94d1b",
+    "release_qualification": false,
+    "run_id": 37250061570,
+    "schema_version": 1,
+    "state": "running-own-source-manual-hardening"
+  },
+  "own_local_pipeline": {
+    "all_commands_terminal": false,
+    "consumer_compile_correction_only": false,
+    "current_source_runtime_qualification_pending": true,
+    "immutable_probe_hashes": {
+      "/tmp/openui-native-intrinsic-constraints-build-v1374.py": "f994cbdd3b0d8e9c677dd7e5aa4685717d2878c2e451e29b836401e045f477d7",
+      "/tmp/openui-native-intrinsic-constraints-consumer-v1374.py": "26e4ee8b86c4ecb93306e3188b01ba62ffb8214c5f4e4d9a7951fe334d406375",
+      "/tmp/openui-native-intrinsic-constraints-guards-v1374.py": "b911d96fe2fc8c9104a84e086a0230608e8a746f67dbc46310fc674e51ad8a1b",
+      "/tmp/openui-native-intrinsic-constraints-matrices-v1374.py": "e676805426ec777f63bb80e8e94f3af88f53758ad610c8583c8db831381d80f8",
+      "/tmp/openui-native-intrinsic-constraints-sizing-v1374.py": "bad04394edf24c3476fd1bb4c33814c66be9678b060865d3b1b8aa191af82393"
+    },
+    "includes_qualified_owned_cache_implementation": true,
+    "inherits_unqualified_intrinsic_trial_source": true,
+    "javascript_executed_by_openui": false,
+    "new_release_states_admitted": 0,
+    "old_openui_pixels_are_provenance_only": true,
+    "ordered_build_and_image_stages": true,
+    "original_pixel_gate_remains_required": true,
+    "preserves_all_previous_input_bytes": true,
+    "prior_whole_pipelines": [
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json",
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1369/receipt.json"
+    ],
+    "probe_sha256": "85634c03e0f33c0995aef80671735581a9902fd4e41833a62d30a2be86ba2714",
+    "promotion_allowed": false,
+    "release_qualification": false,
+    "renderer_production_unchanged_from_prior_candidate": false,
+    "schema_version": 1,
+    "selection_hashes": {
+      "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-selection-v1310.json": "197050888cd8e21e7a75994605fe33be7658932a004d4321133a6cd00d46c2e2"
+    },
+    "source": {
+      "clean": true,
+      "commit": "7d723caa7541882da6f403152b1432f0d45c50a8",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "77f7d76cfc00668dc9bc9e3db52d3ef22a236a9dd593af534eadaedfb39e4bef",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "7d723caa7541882da6f403152b1432f0d45c50a8",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "77f7d76cfc00668dc9bc9e3db52d3ef22a236a9dd593af534eadaedfb39e4bef",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_and_prior_input_bytes_unchanged": true,
+    "state": "awaiting-all-nine-prior-whole-pipelines-and-terminal-retired-predecessor",
+    "steps": [],
+    "strict_chromium_capture_pairs": true,
+    "supersedes_retired_waiting_pipeline": "native-intrinsic-constraints-pipeline-v1369",
+    "workspace_cleaned_at_every_source_switch": true
+  },
+  "own_verification_scope": {
+    "build_stages": 11,
+    "chromium_capture_policy": "Two consecutive captures in each of two independent processes. Preserve unequal captures. No retries, tolerance or reference replacement.",
+    "clean_workspace_packages_at_every_source_switch": 18,
+    "expanded_comparisons": 23728,
+    "focused_comparisons": 640,
+    "new_native_callback_images": 400,
+    "original_comparisons": 22924,
+    "primitive_comparisons": 960,
+    "prior_intrinsic_geometry_observations": 1000,
+    "scheduling": "Every preceding whole local pipeline must be terminal; builds and image sweeps remain separate.",
+    "selected_comparisons": 280
+  },
+  "prior_fieldset_trial": {
+    "expanded": {
+      "accepted_delta": {
+        "addition_comparisons": 804,
+        "addition_invariants_unchanged": 800,
+        "all_nine_invariants_unchanged": 23617,
+        "changed_comparisons": 111,
+        "different": 1659,
+        "exact": 22069,
+        "exact_gains": 0,
+        "exact_losses": 68,
+        "mismatch_count_worsens": 89,
+        "original_comparisons_agree": 22924,
+        "total": 23728
+      },
+      "actual_exit": 1,
+      "addition_cases_quad_exact": 199,
+      "full_audit_sha256": "a0c732ddc4a68acbcbfaa72e805cb4a4f12a5d364f490e59cf3b441dcc0e0517",
+      "generated_ownership_ledger_qualifying": false,
+      "prior_trial_delta": {
+        "addition_comparisons": 804,
+        "addition_invariants_unchanged": 804,
+        "all_nine_invariants_unchanged": 23720,
+        "changed_comparisons": 8,
+        "different": 1659,
+        "exact": 22069,
+        "exact_gains": 6,
+        "exact_losses": 0,
+        "mismatch_count_worsens": 0,
+        "original_comparisons_agree": 22924,
+        "total": 23728
+      },
+      "residual_ids": 897,
+      "results": {
+        "different": 1659,
+        "errors": 0,
+        "exact": 22069,
+        "profile_result_sha256": "05344d5d34b60c04fce4b7d52fb608d5609d0fcb190933d0c1991283a7f1cfe9",
+        "total": 23728
+      }
+    },
+    "full": {
+      "accepted_delta": {
+        "all_nine_invariants_unchanged": 22817,
+        "changed_comparisons": 107,
+        "different": 1654,
+        "exact": 21270,
+        "exact_gains": 0,
+        "exact_losses": 64,
+        "mismatch_count_worsens": 85,
+        "total": 22924
+      },
+      "actual_exit": 1,
+      "full_audit_sha256": "b6f5d7aa252e571e11a63bd1c9fb20e8a437dadba4b73ac42e8490e7b96f1815",
+      "generated_ownership_ledger_qualifying": false,
+      "prior_trial_delta": {
+        "all_nine_invariants_unchanged": 22916,
+        "changed_comparisons": 8,
+        "different": 1654,
+        "exact": 21270,
+        "exact_gains": 6,
+        "exact_losses": 0,
+        "mismatch_count_worsens": 0,
+        "total": 22924
+      },
+      "residual_ids": 895,
+      "results": {
+        "different": 1654,
+        "errors": 0,
+        "exact": 21270,
+        "profile_result_sha256": "a44e85cd7b92d26f9941b1d5b3a1a626e842e4487a81ae4aecb301a0d5af9bfb",
+        "total": 22924
+      }
+    }
+  },
+  "prior_style_own_hardening": {
+    "current_source_local_verification": "pending",
+    "run_id": 37245581100,
+    "skipped_jobs": 0,
+    "source": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+    "successful_jobs": 7
+  },
+  "promotion_allowed": false,
+  "read_only_checks_passed": 10,
+  "release_qualification": false,
+  "root_causes": [
+    {
+      "cause": "Flattened atomic inline sizing drops preferred/min/max constraints from the child contribution already resolved by shared layout.",
+      "correction": "Pass the existing child contribution map into the flattened inline intrinsic scan; resolve nested atomic items with the same shared contribution function.",
+      "measured": "All four census profiles: intrinsic wrapper is 42 px instead of Chromium 202 px, while the inner principal box remains 200 px.",
+      "owner": "openui-layout"
+    },
+    {
+      "cause": "Collapsible leading whitespace is committed as interior content in flattened intrinsic sizing; indentation and decorations need a separate line-content state.",
+      "correction": "Track line content separately from numeric width and collapse leading space before establishing a break or advance.",
+      "measured": "Aliased census profile: table-caption float becomes 130 px instead of Chromium/prior 114 px; line-clamp float becomes 112 px instead of 96 px.",
+      "owner": "openui-layout"
+    }
+  ],
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "7d723caa7541882da6f403152b1432f0d45c50a8",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "77f7d76cfc00668dc9bc9e3db52d3ef22a236a9dd593af534eadaedfb39e4bef",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "7d723caa7541882da6f403152b1432f0d45c50a8",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "77f7d76cfc00668dc9bc9e3db52d3ef22a236a9dd593af534eadaedfb39e4bef",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

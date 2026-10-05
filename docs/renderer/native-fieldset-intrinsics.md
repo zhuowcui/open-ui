@@ -55,6 +55,25 @@ This source inherits the other intrinsic regressions and remains unapplied.
 No new case is admitted or qualified. Needed element behavior remains a
 public native Rust API obligation even when a Chromium test uses a script.
 
+## Completed corrected consumer source
+
+`abed078d` corrects the native example's border argument without changing its
+coordinates or production renderer. Its named baseline/fixed guards and ten
+build stages pass. All 1,000 prior intrinsic geometry observations pass, and
+the focused/primitive matrices are exact. The native app stops on unequal
+consecutive Chromium captures after 62/128 images: 62 exact bounds and 50 exact
+pixels, before reaching any fieldset case. That incomplete run is not a pass;
+a separate queued investigation will preserve both unstable captures.
+
+Both complete censuses now finish with actual exit 1: 21,270/22,924 original
+and 22,069/23,728 expanded exact, zero errors. Six comparisons become exact
+against the intrinsic parent, but 64 original and four addition comparisons
+remain exact losses against the accepted renderer. Only 199/201 addition
+cases are exact at all four profiles. The
+[complete audits and subsequent intrinsic investigation](native-intrinsic-constraints.md)
+preserve these failures and identify two shared layout causes. This source
+remains unapplied and admits no release state.
+
 ## Separate LCD trial
 
 Private `52788b83` completes its build and native measurements. Explicit LCD

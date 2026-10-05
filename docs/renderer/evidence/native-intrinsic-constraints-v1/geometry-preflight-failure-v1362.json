@@ -1,0 +1,11 @@
+{
+  "all_commands_terminal": true,
+  "cargo_commands_run": 0,
+  "failure": "Preflight expected a top-level total field; the matrix stores per-profile totals. No runner command executed.",
+  "native_geometry_commands_executed": 0,
+  "observed_exit_code": 1,
+  "probe_sha256": "abd120ea1e2fc549b52d0885920c2d2917cacd2272cffe657af3484e83feffaa",
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0
+}
