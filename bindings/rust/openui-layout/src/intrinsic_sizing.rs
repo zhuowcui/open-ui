@@ -395,6 +395,9 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
 
     let mut max_line = first_line_indent;
     let mut max_content = LayoutUnit::zero();
+    // Indentation and decoration edges do not make line-start whitespace
+    // interior. Only text or an atomic object does.
+    let mut line_has_content = false;
     let mut pending_collapsible_space = LayoutUnit::zero();
     let mut pending_min_collapsible_space = LayoutUnit::zero();
 
@@ -477,6 +480,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                 last_content_was_text = false;
             }
             InlineItemType::Control => {
+                line_has_content = false;
                 soft_break_after_pending_edges = false;
                 last_content_was_text = false;
                 pending_min_collapsible_space = LayoutUnit::zero();
@@ -520,6 +524,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                 let intrinsic = compute_child_intrinsic_contribution(doc, item.node_id);
                 min_segment = min_segment + intrinsic.min_content_inline_size;
                 max_line = max_line + pending_collapsible_space + intrinsic.max_content_inline_size;
+                line_has_content = true;
                 pending_collapsible_space = LayoutUnit::zero();
                 // Atomic inline-level boxes establish a soft wrap
                 // opportunity at their boundary. Adjacent inline-blocks
@@ -570,6 +575,15 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                             || style.line_break == LineBreak::Anywhere)
                         && !is_space
                         && !is_forced;
+                    if collapses && is_space && !line_has_content {
+                        // Leading spaces contribute no width or soft break.
+                        // Snap advances after them so the first word retains
+                        // both its font's remainder and the first-line indent.
+                        run_start = byte_end;
+                        run_start_char = char_end;
+                        line_start_char = char_end;
+                        continue;
+                    }
                     if !is_space && !is_forced && !is_break_all_character {
                         continue;
                     }
@@ -610,6 +624,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                         min_segment = min_segment + width;
                         max_line = max_line + pending_collapsible_space + max_width;
                         pending_collapsible_space = LayoutUnit::zero();
+                        line_has_content = true;
                     }
 
                     if is_forced {
@@ -626,6 +641,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                             &mut pending_collapsible_space,
                         );
                         line_start_char = char_end;
+                        line_has_content = false;
                     } else if is_break_all_character {
                         let max_width =
                             intrinsic_text_width(shape.width_for_range(line_start_char, char_end))
@@ -652,6 +668,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                         min_segment = min_segment + width;
                         max_line = max_line + pending_collapsible_space + max_width;
                         pending_collapsible_space = LayoutUnit::zero();
+                        line_has_content = true;
                         soft_break_pending = true;
                         soft_break_after_pending_edges = false;
                         last_content_was_text = true;
@@ -667,6 +684,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                         } else {
                             max_line = max_line + pending_collapsible_space + max_width;
                             pending_collapsible_space = LayoutUnit::zero();
+                            line_has_content = true;
                         }
                         if wraps {
                             soft_break_pending = true;
@@ -727,6 +745,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                     min_segment = min_segment + width;
                     max_line = max_line + pending_collapsible_space + max_width;
                     pending_collapsible_space = LayoutUnit::zero();
+                    line_has_content = true;
                 }
             }
             InlineItemType::BlockInInline => {}
