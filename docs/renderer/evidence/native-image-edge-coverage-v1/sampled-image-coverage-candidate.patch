@@ -1,0 +1,340 @@
+diff --git a/bindings/rust/openui-paint/src/image_resource.rs b/bindings/rust/openui-paint/src/image_resource.rs
+index 00199260..04c1b83f 100644
+--- a/bindings/rust/openui-paint/src/image_resource.rs
++++ b/bindings/rust/openui-paint/src/image_resource.rs
+@@ -1333,9 +1333,48 @@ pub fn physical_quantized_image_patch(
+         coverage_bounds,
+         true,
+         false,
++        ImagePatchCoverage::InPixels,
+     )
+ }
+ 
++/// Resolve replaced-image sampling without folding geometric edge coverage
++/// into the sampled colors. The caller draws the visible destination with
++/// antialiasing so Skia applies coverage while blending with the backdrop.
++pub(crate) fn sampled_replaced_image_patch(
++    image: &Image,
++    source: Rect,
++    destination: Rect,
++    device_scale: f32,
++    replaced_mip_decoded: bool,
++    full_precision_sampling: bool,
++    coverage_bounds: Option<Rect>,
++) -> Result<(Image, Rect), String> {
++    let (patch, aligned_destination, _) = physical_quantized_image_patch_with_color_order(
++        image,
++        source,
++        destination,
++        device_scale,
++        false,
++        false,
++        false,
++        false,
++        false,
++        false,
++        None,
++        true,
++        replaced_mip_decoded,
++        full_precision_sampling,
++        false,
++        false,
++        false,
++        coverage_bounds,
++        true,
++        false,
++        ImagePatchCoverage::OnDraw,
++    )?;
++    Ok((patch, aligned_destination))
++}
++
+ /// Resolve the broken-image slot with Chromium's legacy
+ /// software image coordinate path. Its first sample is mapped through a f32
+ /// inverse matrix at each analytic coverage span, then subsequent X samples
+@@ -1378,6 +1417,7 @@ pub(crate) fn physical_quantized_broken_image_patch_with_clip(
+         clip,
+         true,
+         true,
++        ImagePatchCoverage::InPixels,
+     )
+ }
+ 
+@@ -1416,6 +1456,7 @@ pub fn physical_quantized_replaced_profile_corners(
+         coverage_bounds,
+         false,
+         false,
++        ImagePatchCoverage::InPixels,
+     )?;
+     Ok((patch, aligned_destination))
+ }
+@@ -1459,6 +1500,12 @@ impl LegacyFixedImageAxis {
+     }
+ }
+ 
++#[derive(Clone, Copy, PartialEq, Eq)]
++enum ImagePatchCoverage {
++    InPixels,
++    OnDraw,
++}
++
+ #[allow(clippy::too_many_arguments)]
+ fn physical_quantized_image_patch_with_color_order(
+     image: &Image,
+@@ -1481,6 +1528,7 @@ fn physical_quantized_image_patch_with_color_order(
+     coverage_bounds: Option<Rect>,
+     convert_before_coverage: bool,
+     legacy_float_matrix: bool,
++    coverage: ImagePatchCoverage,
+ ) -> Result<(Image, Rect, Option<(Rect, Rect)>), String> {
+     if !device_scale.is_finite()
+         || device_scale <= 0.0
+@@ -1628,7 +1676,13 @@ fn physical_quantized_image_patch_with_color_order(
+         - 1)
+     .min(source.bottom.ceil() as i32 - 1)
+     .min(image_height - 1);
+-    let target_info = ImageInfo::new_n32_premul((width, height), patch_color_space.clone());
++    let mut target_info = ImageInfo::new_n32_premul((width, height), patch_color_space.clone());
++    if coverage == ImagePatchCoverage::OnDraw && image.is_opaque() {
++        // Opaque source texels remain opaque after sampling. Preserve that
++        // fact for Skia's coverage blending instead of reporting a premul
++        // shader whose colors already contain the geometric mask.
++        target_info = target_info.with_alpha_type(AlphaType::Opaque);
++    }
+     let target_row_bytes = width as usize * 4;
+     let mut target_pixels = vec![0_u8; target_row_bytes * height as usize];
+     // Derive the mathematical sample phase in f64 before reducing it to
+@@ -1928,7 +1982,8 @@ fn physical_quantized_image_patch_with_color_order(
+                 // color channels with nearest premultiplication while alpha
+                 // closes a non-empty fractional span upward. Replaying these
+                 // pixels without another AA contour avoids double coverage.
+-                let value = if !legacy_float_matrix
++                let value = if coverage == ImagePatchCoverage::InPixels
++                    && !legacy_float_matrix
+                     && (replaced || coverage_bounds.is_some())
+                     && geometric_coverage < 255
+                 {
+@@ -1993,7 +2048,7 @@ fn physical_quantized_image_patch_with_color_order(
+         }
+     }
+ 
+-    if color_managed_replaced {
++    if color_managed_replaced && coverage == ImagePatchCoverage::InPixels {
+         // Chromium converts a color-managed replaced image before applying a
+         // one-axis edge mask, but converts the already-premultiplied sample at
+         // the intersection of two analytic edges. Keep those two color-space
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index d7aafb1a..3ac5d34b 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -5210,7 +5210,7 @@ fn paint_replaced_content(
+         {
+             // A native scrollport owns a hard physical scissor. Expand that
+             // scissor to every touched device cell and let the replaced
+-            // object's already-packed destination coverage resolve the
++            // object's destination coverage resolve the
+             // fractional content-box edge exactly once.
+             outward_snap_rect_to_physical(clip, style.device_scale_factor)
+         } else {
+@@ -5220,8 +5220,8 @@ fn paint_replaced_content(
+             && style.raster_configuration.backend != RasterBackend::GaneshGl
+             && !matches!(replaced.resource, ReplacedResourceKind::StaticSvg(_))
+         {
+-            // The physical raster patch can own this rectangular scissor and
+-            // fold it into the same coverage value as the destination edge.
++            // The image draw can own this rectangular scissor together with
++            // its destination contour.
+             // A separate Skia clip mask would quantize the edge a second time.
+             physical_replaced_coverage_bounds = Some(clip);
+         } else {
+@@ -5277,25 +5277,21 @@ fn paint_replaced_content(
+     if (device_scale - 1.0).abs() > 1.0e-5
+         && style.raster_configuration.backend != RasterBackend::GaneshGl
+     {
+-        if let Ok((patch, aligned_destination, _analytic_clip)) =
+-            crate::image_resource::physical_quantized_image_patch(
++        let mut visible_destination = destination;
++        if physical_replaced_coverage_bounds
++            .is_some_and(|clip| !visible_destination.intersect(clip))
++        {
++            canvas.restore();
++            return;
++        }
++        if let Ok((patch, aligned_destination)) =
++            crate::image_resource::sampled_replaced_image_patch(
+                 &draw_image,
+                 draw_source,
+                 destination,
+                 device_scale,
+-                false,
+-                false,
+-                false,
+-                false,
+-                false,
+-                false,
+-                None,
+-                true,
+                 mip_decoded,
+                 full_precision_replaced,
+-                false,
+-                false,
+-                false,
+                 physical_replaced_coverage_bounds,
+             )
+         {
+@@ -5306,40 +5302,13 @@ fn paint_replaced_content(
+                 ),
+                 (aligned_destination.left, aligned_destination.top),
+             );
+-            paint.set_anti_alias(false);
++            paint.set_anti_alias(true);
+             paint.set_shader(patch.to_shader(
+                 (TileMode::Clamp, TileMode::Clamp),
+                 SamplingOptions::from(FilterMode::Nearest),
+                 &local_matrix,
+             ));
+-            canvas.draw_rect(aligned_destination, &paint);
+-            if draw_image.color_space().is_some() {
+-                if let Ok((corner_patch, corner_destination)) =
+-                    crate::image_resource::physical_quantized_replaced_profile_corners(
+-                        &draw_image,
+-                        draw_source,
+-                        destination,
+-                        device_scale,
+-                        mip_decoded,
+-                        full_precision_replaced,
+-                        physical_replaced_coverage_bounds,
+-                    )
+-                {
+-                    let corner_matrix = Matrix::scale_translate(
+-                        (
+-                            corner_destination.width() / corner_patch.width() as f32,
+-                            corner_destination.height() / corner_patch.height() as f32,
+-                        ),
+-                        (corner_destination.left, corner_destination.top),
+-                    );
+-                    paint.set_shader(corner_patch.to_shader(
+-                        (TileMode::Clamp, TileMode::Clamp),
+-                        SamplingOptions::from(FilterMode::Nearest),
+-                        &corner_matrix,
+-                    ));
+-                    canvas.draw_rect(corner_destination, &paint);
+-                }
+-            }
++            canvas.draw_rect(visible_destination, &paint);
+             canvas.restore();
+             return;
+         }
+diff --git a/bindings/rust/openui/examples/native_image_background_culling.rs b/bindings/rust/openui/examples/native_image_background_culling.rs
+index 9a46c76a..65fb8c61 100644
+--- a/bindings/rust/openui/examples/native_image_background_culling.rs
++++ b/bindings/rust/openui/examples/native_image_background_culling.rs
+@@ -1,4 +1,4 @@
+-//! Opaque image coverage and neighboring styles through public Rust methods.
++//! Image coverage and neighboring styles through public Rust methods.
+ 
+ use openui::prelude::*;
+ use std::{cell::Cell, path::PathBuf, rc::Rc};
+@@ -28,7 +28,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     }
+     if !matches!(
+         variant.as_str(),
+-        "opaque" | "partial" | "opacity" | "padding" | "contain" | "offset" | "blur" | "shadow"
++        "opaque"
++            | "partial"
++            | "opacity"
++            | "padding"
++            | "contain"
++            | "offset"
++            | "blur"
++            | "shadow"
++            | "white"
++            | "white-opacity"
++            | "transparent"
++            | "clip"
+     ) {
+         return Err("unknown image coverage variant".into());
+     }
+@@ -41,12 +52,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     root.set_font_family(FontFamilyList::single("Ahem"))?;
+     root.set_font_size(LengthValue::px(16.0))?;
+     root.set_line_height(LineHeight::Number(1.0))?;
+-    let resource = document.register_image_resource(
+-        "native-opaque-image",
+-        "image/png",
+-        "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
+-        include_bytes!("../tests/assets/green-200.png").to_vec(),
+-    )?;
++    let (bytes, hash, intrinsic): (&[u8], &str, (f32, f32)) = match variant.as_str() {
++        "white" | "white-opacity" => (
++            include_bytes!("../tests/assets/1x1-white.png"),
++            "b31782b0ecaa71394f1bccf3cc4647ba70b7208464244546b48521a71e1f1dd0",
++            (1.0, 1.0),
++        ),
++        "transparent" => (
++            include_bytes!("../tests/assets/green-transparent-200x200.png"),
++            "77e8da29ee253660e7a650f43241d96e636b8e2cec5547cb99fd160e95419422",
++            (200.0, 200.0),
++        ),
++        _ => (
++            include_bytes!("../tests/assets/green-200.png"),
++            "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
++            (200.0, 200.0),
++        ),
++    };
++    let resource =
++        document.register_image_resource("native-image", "image/png", hash, bytes.to_vec())?;
+     let container = Element::create(&document, "div")?;
+     container.set_display(Display::Block)?;
+     container.set_position(Position::Absolute)?;
+@@ -78,9 +102,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+         150.0
+     }))?;
+     image.set_height(LengthValue::px(100.0))?;
+-    image.set_image_resource(resource, Some((200.0, 200.0)))?;
++    image.set_image_resource(resource, Some(intrinsic))?;
+     match variant.as_str() {
+-        "opacity" => image.set_opacity(0.5)?,
++        "opacity" | "white-opacity" => image.set_opacity(0.5)?,
+         "padding" => image.set_padding(Edges::all(LengthValue::px(1.0)))?,
+         "contain" => image.set_object_fit(ObjectFit::Contain)?,
+         "offset" => image.set_object_position(ObjectPosition {
+@@ -88,6 +112,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+             y: BackgroundPosition::center(),
+         })?,
+         "blur" => image.set_filter_blur(1.0)?,
++        "clip" => {
++            image.set_object_fit(ObjectFit::None)?;
++            image.set_overflow_x(Overflow::Hidden)?;
++            image.set_overflow_y(Overflow::Hidden)?;
++        }
+         _ => {}
+     }
+     container.append_child(&image)?;
+diff --git a/bindings/rust/openui/tests/assets/green-transparent-200x200.png b/bindings/rust/openui/tests/assets/green-transparent-200x200.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..deac37042f7871e7020155b78d446ba94f2a1c69
+GIT binary patch
+literal 2037
+zcmcIl&u<$=6yB5&+|o)xTo6*F(e?s@_5QN=mul+NPHT&9h*C?0TW4ox?Nz)x%kCz2
+z!X@FxjYAFyRr~=J^umDy2ZFf3g%ezm_ycl4fGTl79GJ0pw=Ql{U$8XZ**D*O?|X0F
+zy!~i%<Mx$HuU--a;YzpD-eS-1`KYY0|1Y*5e#Rab<Ia1jAiVf8A4|fg_g@i&=l=|P
+z+u62z$3Zl#LQFkU9fvVP3&Qmq;~1hHk^ztOgQy|?{`EH^2yjDux9%!#+#-XZbC8g`
+z2OB+fu!C$Y-gpaKA3Ka7BpC$ba2Tb|xFJq>9X97?Sp*YEw$l*TxI?h*Zh{s~2&h*L
+z38^&&n08e)lv-VV6KINR%1T{U3`tQP#d0(i<Uf&lOR(>3wQuFV*jqy!WLfOU@@O=w
+zj`S)``m$=<wybEfrb!GTrTb9^$5NDDD;U}&MM)560gV7>gdW|^8X{9V4Izw6+9=J_
+z#1bZtVJxdvg@;rCUH5!w7?$WXTi;_|a=lL_PJ8<?k+(=ncN0X`_ehjoE1Y3e?u~bo
+z;UrRwWHKZngQZNETDpn{G^6Q&o)Jg6Tt*W+t%SggCOt}r#X)TrETGi_uelHf5odj!
+zE6O*JHq1yv)D%sTl)9uCJymsTilgdp@Z(daP?yyKh8bK8OmX1vF9LO4ryHdij1cLz
+z8zK``4Fc@=(A0d-#8S=EJ*lP}y5uP)lq_iawn+?V)xC)>w!cl$E>9odKP_8K5#uN`
+z<aoAb+4VY>ENoy2`86b2$gWG4Wf9#|Au>$8V0$MC*v)~%SyrwJGe+Ihpso2e32S;y
+zs+l%nf(%76Eo>Q<p_-}>MSzjx(<FqfPJ$5ji5y3L5j<AYqC=Xv6tkQ&uaE8BR%<h%
+zelTPU>DKL=pu65ORNF8lt*Y{}XEIp0ogigryq{mByX5_RHVnX|Ivt4krD%wVR|COf
+zZVsN3=EVY<(vAj%k)Bf}Q&>v<Yy=as)@MiZ%qo=65}(4o^QA9VA^)TFJgsN|qds9B
+zRu*|MGVevxLy`Y`UX!(%zE!|kGvw2<3$vH9kCTW|C#*}SLg!ErmL7E5YrXL=zy18}
+zMFCu1UVHAZtDpZfJo&2f<MGGnhdbKgm#52Mb+uAiUcPW)>FBW81YnhqXPKtRCs1=H
+z;poIX`su+ZkFK5`H&0$zIuc43#l{)0XPTbSHbpIBD){oC`0Jc$F3#1;oT&-^cpID^
+v+b_)~X)e|#m@^48p7S{8OhrcGUspc(`||yjlUv{M4|8{Yqy6yay$}BdjF~|x
+
+literal 0
+HcmV?d00001
+

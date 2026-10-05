@@ -7,13 +7,16 @@ remain open.
 
 ## Current implementation checkpoint
 
-The [v41 evidence](../renderer/generated/native-scroll-insets-v41.json)
+The [v42 evidence](../renderer/generated/native-scroll-insets-v42.json)
 records a fresh clean build at `2e443f49`: all 18 workspace packages cleared,
 8,531 tests passed, zero failed, 13 ignored, and native ABI consumers passed.
 Its focused and primitive matrices are 640/640 and 960/960 exact, with all
 1,600 comparison invariants unchanged. This establishes source attribution
-for those components. The original census is running and expanded run is
-queued; the earlier unattributed workspace result remains unqualified.
+for those components. Its complete original and expanded runs finish at
+21,334/22,924 and 22,137/23,728 exact, zero errors, actual exits 1. All 46,652
+comparison invariants match the preceding renderer, and original rows agree
+between the two suites. Both full pixel gates fail. The earlier unattributed
+workspace result remains unqualified.
 
 The private [image background candidate](../renderer/native-image-background-culling.md)
 at `d913041d` extends shared background culling to decoded opaque images.
@@ -21,9 +24,24 @@ The 24 stable fieldset differences split into eight background-culling cases
 and sixteen image-color rounding cases. Pinned Chromium source supports the
 culling investigation; the complete rounding algorithm remains unresolved.
 The candidate includes an Engine regression and consuming Rust callback
-applications. Its ten read-only checks pass; compilation, native execution
+applications. Its ten read-only checks and all seven own-source manual
+hardening jobs pass, with zero skips; compilation, native execution
 and all four pixel matrices are queued after every earlier whole pipeline.
 It is unapplied and admits no release state. Open UI executes no JavaScript.
+
+A separate private candidate at `2eacae2c` keeps sampled image colors intact
+and lets Skia apply geometric coverage while blending with the backdrop.
+Five reviewed raster files match Chromium's pinned Skia revision byte-for-byte;
+this does not establish equivalence of the entire source or build. No pin
+upgrade is made. The Engine baseline requires the actual edge assertion to
+fail, and the fixed source must preserve white, opacity and backing guards.
+Its ten read-only checks pass. The native callback sweep retains the previous
+480 images and adds white, translucent white, transparent and clipped images,
+for 720 required images at five scales. The 128 fieldset images and all four
+renderer matrices are also queued after every preceding whole pipeline.
+This source is unapplied and unqualified, with no claimed pixel improvement.
+Applications call public Rust methods and Rust callbacks over the shared
+Engine. Every needed element operation remains required public API work.
 
 The [v40 evidence](../renderer/generated/native-scroll-insets-v40.json)
 records three terminal verification stops and their concrete corrections.

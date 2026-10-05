@@ -1,0 +1,60 @@
+{
+  "all_commands_terminal": true,
+  "build_receipt_sha256": "d471333ab9addbe52f1f147e010b09b534ba50d9c590bb8438334d760e0d3419",
+  "cargo_commands_run": 0,
+  "new_release_states_admitted": 0,
+  "owner_receipt_sha256": "30cf0eab5f797c166e96c43bd89e4567ec0eba9298826e7ce099ae3d06f66e9a",
+  "probe_sha256": "4dd6208f58a67043adb179e80868672995dc707bd10c6dec416df6dcde6e540f",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "2e443f49d49b81d65674f64bb099fed2922775b5",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5377ee4175f9eac313c9d4c08e1e8f3c9d2aff100fa73cb8d716188e9efb1584",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "2e443f49d49b81d65674f64bb099fed2922775b5",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5377ee4175f9eac313c9d4c08e1e8f3c9d2aff100fa73cb8d716188e9efb1584",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "suites": {
+    "expanded": {
+      "actual_exit": 1,
+      "all_nine_comparison_invariants_unchanged": 23728,
+      "different": 1591,
+      "errors": 0,
+      "exact": 22137,
+      "exit_receipt_sha256": "3e16950c8df9e4f836a16ee7b90bd123b48e6cf6d94ef8fc682bc113514f6a8b",
+      "original_comparisons_matching_separate_census": 22924,
+      "prior_summary_sha256": "2ae854d5dc065f3bff64a2e0cf6ed6368a65b6cc991547e95347681c6e9135a5",
+      "profile_result_sha256": "3b9a47ab5fad99b484c378626c089a7fcf2abba4aa995ff956f3820294544761",
+      "residual_ids": 883,
+      "residual_ledger_qualifying": false,
+      "source_attributed_complete_pixel_gate_pass": false,
+      "summary_sha256": "b29e4560fabc65d9f2206fdc131d0c3757cfa934a3fc11bf0e25f557bda8bc56",
+      "total": 23728
+    },
+    "full": {
+      "actual_exit": 1,
+      "all_nine_comparison_invariants_unchanged": 22924,
+      "different": 1590,
+      "errors": 0,
+      "exact": 21334,
+      "exit_receipt_sha256": "030ad222b72ba0d6acbd54318918f8b1d19ca4ac0c7071afc13c8697b3e9bc8e",
+      "original_comparisons_matching_separate_census": 0,
+      "prior_summary_sha256": "e9677b4742b31d0d90f85f4e25846d798201f285b4c03bb407f5f243c8014cca",
+      "profile_result_sha256": "63bc9b7cdf805458c5bae49130a3c9ac970443befdf3ee85d599e41d82fc06e8",
+      "residual_ids": 882,
+      "residual_ledger_qualifying": false,
+      "source_attributed_complete_pixel_gate_pass": false,
+      "summary_sha256": "86a6ef3e692d6aefa7ab459720329ab9455c9d1626011a1b2ef6fbb13f07ecf6",
+      "total": 22924
+    }
+  }
+}

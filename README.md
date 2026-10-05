@@ -33,8 +33,8 @@ The current v0.2 release candidate has:
 
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
   on replay and 182 changed; these old screenshots are not pixel targets;
-- a [complete clean umbrella census](docs/renderer/generated/native-nested-scroll-v9.json)
-  at `d174ea0b` with 21,334 of 22,924 comparisons exact, 1,590 different, and
+- a [complete clean umbrella census](docs/renderer/generated/native-scroll-insets-v42.json)
+  at `2e443f49` with 21,334 of 22,924 comparisons exact, 1,590 different, and
   zero render errors; all Chromium images and identities remain unchanged,
   and the full pixel gate still fails;
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
@@ -71,13 +71,19 @@ checkpoint, nine comparisons become exact and none lose exactness, while four
 already failing comparisons worsen. Every residual still requires review.
 A fresh clean build passes 8,531 workspace tests, with zero failures and 13
 ignored, plus the native ABI consumers. Its focused and primitive matrices
-pass; its full original census is running and expanded run is queued. The
+pass. Its [complete original and expanded runs](docs/renderer/generated/native-scroll-insets-v42.json)
+finish at 21,334/22,924 and 22,137/23,728 exact, zero errors, actual exits 1.
+All 46,652 comparison invariants match the preceding renderer. The
 older workspace count containing a test absent from its declared source
 remains unqualified. The private
 [opaque image background candidate](docs/renderer/native-image-background-culling.md)
 uses public Rust callbacks and shared paint logic. Ten read-only checks pass;
 its native execution and pixel verification are queued. No improvement to the
-full census is claimed for that candidate.
+full census is claimed for that candidate. A separate image-edge candidate
+at `2eacae2c` keeps sampled colors intact and lets Skia apply geometric coverage
+while blending. Its ten read-only checks pass; Engine assertions, 128 fieldset
+images, 720 public Rust callback images and all four matrices are queued.
+It is unapplied and unqualified.
 The separate [font engine trial](docs/renderer/native-font-engines.md) loses
 493 exact comparisons. A shared routing discrepancy selects a different
 authored text path from the explicit FreeType reference. The named physical
