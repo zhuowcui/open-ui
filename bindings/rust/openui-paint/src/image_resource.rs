@@ -1333,7 +1333,46 @@ pub fn physical_quantized_image_patch(
         coverage_bounds,
         true,
         false,
+        ImagePatchCoverage::InPixels,
     )
+}
+
+/// Resolve replaced-image sampling without folding geometric edge coverage
+/// into the sampled colors. The caller draws the visible destination with
+/// antialiasing so Skia applies coverage while blending with the backdrop.
+pub(crate) fn sampled_replaced_image_patch(
+    image: &Image,
+    source: Rect,
+    destination: Rect,
+    device_scale: f32,
+    replaced_mip_decoded: bool,
+    full_precision_sampling: bool,
+    coverage_bounds: Option<Rect>,
+) -> Result<(Image, Rect), String> {
+    let (patch, aligned_destination, _) = physical_quantized_image_patch_with_color_order(
+        image,
+        source,
+        destination,
+        device_scale,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        None,
+        true,
+        replaced_mip_decoded,
+        full_precision_sampling,
+        false,
+        false,
+        false,
+        coverage_bounds,
+        true,
+        false,
+        ImagePatchCoverage::OnDraw,
+    )?;
+    Ok((patch, aligned_destination))
 }
 
 /// Resolve the broken-image slot with Chromium's legacy
@@ -1378,6 +1417,7 @@ pub(crate) fn physical_quantized_broken_image_patch_with_clip(
         clip,
         true,
         true,
+        ImagePatchCoverage::InPixels,
     )
 }
 
@@ -1416,6 +1456,7 @@ pub fn physical_quantized_replaced_profile_corners(
         coverage_bounds,
         false,
         false,
+        ImagePatchCoverage::InPixels,
     )?;
     Ok((patch, aligned_destination))
 }
@@ -1459,6 +1500,12 @@ impl LegacyFixedImageAxis {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ImagePatchCoverage {
+    InPixels,
+    OnDraw,
+}
+
 #[allow(clippy::too_many_arguments)]
 fn physical_quantized_image_patch_with_color_order(
     image: &Image,
@@ -1481,6 +1528,7 @@ fn physical_quantized_image_patch_with_color_order(
     coverage_bounds: Option<Rect>,
     convert_before_coverage: bool,
     legacy_float_matrix: bool,
+    coverage: ImagePatchCoverage,
 ) -> Result<(Image, Rect, Option<(Rect, Rect)>), String> {
     if !device_scale.is_finite()
         || device_scale <= 0.0
@@ -1628,7 +1676,13 @@ fn physical_quantized_image_patch_with_color_order(
         - 1)
     .min(source.bottom.ceil() as i32 - 1)
     .min(image_height - 1);
-    let target_info = ImageInfo::new_n32_premul((width, height), patch_color_space.clone());
+    let mut target_info = ImageInfo::new_n32_premul((width, height), patch_color_space.clone());
+    if coverage == ImagePatchCoverage::OnDraw && image.is_opaque() {
+        // Opaque source texels remain opaque after sampling. Preserve that
+        // fact for Skia's coverage blending instead of reporting a premul
+        // shader whose colors already contain the geometric mask.
+        target_info = target_info.with_alpha_type(AlphaType::Opaque);
+    }
     let target_row_bytes = width as usize * 4;
     let mut target_pixels = vec![0_u8; target_row_bytes * height as usize];
     // Derive the mathematical sample phase in f64 before reducing it to
@@ -1928,7 +1982,8 @@ fn physical_quantized_image_patch_with_color_order(
                 // color channels with nearest premultiplication while alpha
                 // closes a non-empty fractional span upward. Replaying these
                 // pixels without another AA contour avoids double coverage.
-                let value = if !legacy_float_matrix
+                let value = if coverage == ImagePatchCoverage::InPixels
+                    && !legacy_float_matrix
                     && (replaced || coverage_bounds.is_some())
                     && geometric_coverage < 255
                 {
@@ -1993,7 +2048,7 @@ fn physical_quantized_image_patch_with_color_order(
         }
     }
 
-    if color_managed_replaced {
+    if color_managed_replaced && coverage == ImagePatchCoverage::InPixels {
         // Chromium converts a color-managed replaced image before applying a
         // one-axis edge mask, but converts the already-premultiplied sample at
         // the intersection of two analytic edges. Keep those two color-space

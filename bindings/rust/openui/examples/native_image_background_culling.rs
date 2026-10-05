@@ -1,4 +1,4 @@
-//! Opaque image coverage and neighboring styles through public Rust methods.
+//! Image coverage and neighboring styles through public Rust methods.
 
 use openui::prelude::*;
 use std::{cell::Cell, path::PathBuf, rc::Rc};
@@ -28,7 +28,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     if !matches!(
         variant.as_str(),
-        "opaque" | "partial" | "opacity" | "padding" | "contain" | "offset" | "blur" | "shadow"
+        "opaque"
+            | "partial"
+            | "opacity"
+            | "padding"
+            | "contain"
+            | "offset"
+            | "blur"
+            | "shadow"
+            | "white"
+            | "white-opacity"
+            | "transparent"
+            | "clip"
     ) {
         return Err("unknown image coverage variant".into());
     }
@@ -41,12 +52,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     root.set_font_family(FontFamilyList::single("Ahem"))?;
     root.set_font_size(LengthValue::px(16.0))?;
     root.set_line_height(LineHeight::Number(1.0))?;
-    let resource = document.register_image_resource(
-        "native-opaque-image",
-        "image/png",
-        "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
-        include_bytes!("../tests/assets/green-200.png").to_vec(),
-    )?;
+    let (bytes, hash, intrinsic): (&[u8], &str, (f32, f32)) = match variant.as_str() {
+        "white" | "white-opacity" => (
+            include_bytes!("../tests/assets/1x1-white.png"),
+            "b31782b0ecaa71394f1bccf3cc4647ba70b7208464244546b48521a71e1f1dd0",
+            (1.0, 1.0),
+        ),
+        "transparent" => (
+            include_bytes!("../tests/assets/green-transparent-200x200.png"),
+            "77e8da29ee253660e7a650f43241d96e636b8e2cec5547cb99fd160e95419422",
+            (200.0, 200.0),
+        ),
+        _ => (
+            include_bytes!("../tests/assets/green-200.png"),
+            "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
+            (200.0, 200.0),
+        ),
+    };
+    let resource =
+        document.register_image_resource("native-image", "image/png", hash, bytes.to_vec())?;
     let container = Element::create(&document, "div")?;
     container.set_display(Display::Block)?;
     container.set_position(Position::Absolute)?;
@@ -78,9 +102,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         150.0
     }))?;
     image.set_height(LengthValue::px(100.0))?;
-    image.set_image_resource(resource, Some((200.0, 200.0)))?;
+    image.set_image_resource(resource, Some(intrinsic))?;
     match variant.as_str() {
-        "opacity" => image.set_opacity(0.5)?,
+        "opacity" | "white-opacity" => image.set_opacity(0.5)?,
         "padding" => image.set_padding(Edges::all(LengthValue::px(1.0)))?,
         "contain" => image.set_object_fit(ObjectFit::Contain)?,
         "offset" => image.set_object_position(ObjectPosition {
@@ -88,6 +112,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             y: BackgroundPosition::center(),
         })?,
         "blur" => image.set_filter_blur(1.0)?,
+        "clip" => {
+            image.set_object_fit(ObjectFit::None)?;
+            image.set_overflow_x(Overflow::Hidden)?;
+            image.set_overflow_y(Overflow::Hidden)?;
+        }
         _ => {}
     }
     container.append_child(&image)?;

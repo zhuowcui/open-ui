@@ -5210,7 +5210,7 @@ fn paint_replaced_content(
         {
             // A native scrollport owns a hard physical scissor. Expand that
             // scissor to every touched device cell and let the replaced
-            // object's already-packed destination coverage resolve the
+            // object's destination coverage resolve the
             // fractional content-box edge exactly once.
             outward_snap_rect_to_physical(clip, style.device_scale_factor)
         } else {
@@ -5220,8 +5220,8 @@ fn paint_replaced_content(
             && style.raster_configuration.backend != RasterBackend::GaneshGl
             && !matches!(replaced.resource, ReplacedResourceKind::StaticSvg(_))
         {
-            // The physical raster patch can own this rectangular scissor and
-            // fold it into the same coverage value as the destination edge.
+            // The image draw can own this rectangular scissor together with
+            // its destination contour.
             // A separate Skia clip mask would quantize the edge a second time.
             physical_replaced_coverage_bounds = Some(clip);
         } else {
@@ -5277,25 +5277,21 @@ fn paint_replaced_content(
     if (device_scale - 1.0).abs() > 1.0e-5
         && style.raster_configuration.backend != RasterBackend::GaneshGl
     {
-        if let Ok((patch, aligned_destination, _analytic_clip)) =
-            crate::image_resource::physical_quantized_image_patch(
+        let mut visible_destination = destination;
+        if physical_replaced_coverage_bounds
+            .is_some_and(|clip| !visible_destination.intersect(clip))
+        {
+            canvas.restore();
+            return;
+        }
+        if let Ok((patch, aligned_destination)) =
+            crate::image_resource::sampled_replaced_image_patch(
                 &draw_image,
                 draw_source,
                 destination,
                 device_scale,
-                false,
-                false,
-                false,
-                false,
-                false,
-                false,
-                None,
-                true,
                 mip_decoded,
                 full_precision_replaced,
-                false,
-                false,
-                false,
                 physical_replaced_coverage_bounds,
             )
         {
@@ -5306,40 +5302,13 @@ fn paint_replaced_content(
                 ),
                 (aligned_destination.left, aligned_destination.top),
             );
-            paint.set_anti_alias(false);
+            paint.set_anti_alias(true);
             paint.set_shader(patch.to_shader(
                 (TileMode::Clamp, TileMode::Clamp),
                 SamplingOptions::from(FilterMode::Nearest),
                 &local_matrix,
             ));
-            canvas.draw_rect(aligned_destination, &paint);
-            if draw_image.color_space().is_some() {
-                if let Ok((corner_patch, corner_destination)) =
-                    crate::image_resource::physical_quantized_replaced_profile_corners(
-                        &draw_image,
-                        draw_source,
-                        destination,
-                        device_scale,
-                        mip_decoded,
-                        full_precision_replaced,
-                        physical_replaced_coverage_bounds,
-                    )
-                {
-                    let corner_matrix = Matrix::scale_translate(
-                        (
-                            corner_destination.width() / corner_patch.width() as f32,
-                            corner_destination.height() / corner_patch.height() as f32,
-                        ),
-                        (corner_destination.left, corner_destination.top),
-                    );
-                    paint.set_shader(corner_patch.to_shader(
-                        (TileMode::Clamp, TileMode::Clamp),
-                        SamplingOptions::from(FilterMode::Nearest),
-                        &corner_matrix,
-                    ));
-                    canvas.draw_rect(corner_destination, &paint);
-                }
-            }
+            canvas.draw_rect(visible_destination, &paint);
             canvas.restore();
             return;
         }
