@@ -1059,6 +1059,8 @@ impl Engine {
         Ok(())
     }
 
+    /// Update a node's own text data. Native element text replacement uses
+    /// `set_text_content` so its text participates in ordinary child layout.
     pub fn set_text(
         &mut self,
         handle: NodeHandle,
@@ -1072,6 +1074,30 @@ impl Engine {
         self.document.node_mut(node).text = Some(text);
         self.mark_dirty(InvalidationClass::Intrinsic);
         Ok(())
+    }
+
+    /// Replace native element children with one authored text node.
+    ///
+    /// Rust and C element setters use this operation. Replaced child handles
+    /// become stale, as with `remove_children`; this does not detach and retain
+    /// an old subtree. A text-node handle instead updates its existing data.
+    /// Empty element text retains an empty text child, preserving the native
+    /// Rust setter's existing behavior.
+    pub fn set_text_content(
+        &mut self,
+        handle: NodeHandle,
+        text: impl Into<String>,
+    ) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
+        if self.document.node(node).tag == ElementTag::Text {
+            return self.set_text(handle, text);
+        }
+        self.remove_children(handle)?;
+        // Container-local text data is not laid out as an authored text child.
+        // Remove any data previously supplied through the low-level operation.
+        self.document.node_mut(node).text = None;
+        let child = self.create_text(text)?;
+        self.append_child(handle, child)
     }
 
     /// Return the data of an authored text node.
@@ -2526,6 +2552,39 @@ mod tests {
             first.font_face_info(handle),
             Err(EngineError::Font(FontCollectionError::UnknownFace))
         ));
+    }
+
+    #[test]
+    fn native_text_content_replaces_children_and_reuses_owned_storage() {
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap()).unwrap();
+        let root = engine.root();
+        let parent = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(root, parent).unwrap();
+        let replaced = engine.create_text("old").unwrap();
+        engine.append_child(parent, replaced).unwrap();
+        let old_weak = replaced.downgrade();
+        engine.set_text_content(parent, "new").unwrap();
+        assert!(old_weak.upgrade(&engine).is_err());
+        assert_eq!(engine.text_content(parent).unwrap(), "new");
+        let text = engine.children(parent).unwrap()[0];
+        engine.set_text_content(text, "data").unwrap();
+        assert_eq!(engine.text_data(text).unwrap(), "data");
+        assert_eq!(engine.parent(text).unwrap(), Some(parent));
+        for iteration in 0..10_000 {
+            engine
+                .set_text_content(parent, iteration.to_string())
+                .unwrap();
+        }
+        let counts = engine.object_counts();
+        assert_eq!(counts.live_nodes, 3);
+        assert_eq!(counts.handle_slots, 3);
+        assert_eq!(counts.vacant_handle_slots, 0);
+        assert_eq!(counts.arena_nodes, 3);
+        assert_eq!(counts.reusable_arena_nodes, 0);
+        engine.set_text_content(parent, "").unwrap();
+        assert_eq!(engine.text_content(parent).unwrap(), "");
+        assert_eq!(engine.children(parent).unwrap().len(), 1);
     }
 
     #[test]
