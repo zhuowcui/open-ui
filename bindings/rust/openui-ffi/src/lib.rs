@@ -2941,6 +2941,10 @@ pub extern "C" fn oui_style_value_parse(
                 Some(value) => (5, OuiStylePayload { enum_value: value }),
                 None => (6, native_value()?),
             },
+            // Renderer longhands own one property; retain that identity in
+            // the carrier so a different compound property rejects it before
+            // touching the retained document.
+            (6, StyleValue::Renderer(_)) => (6, native_value()?),
             (6, _) => (
                 6,
                 OuiStylePayload {
