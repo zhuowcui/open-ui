@@ -1,0 +1,9 @@
+{
+  "branch": "agent/native-keywords-v1585",
+  "dispatched_at_utc": "2026-10-05T16:20:34.255365+00:00",
+  "native_pixel_qualification": false,
+  "observed_exit_code": 0,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": "06e1f89a4a2e7a53465bceb780675383d9748464"
+}

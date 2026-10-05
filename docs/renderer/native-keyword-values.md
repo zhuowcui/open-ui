@@ -1,0 +1,58 @@
+# Native fragmentation and border keyword values
+
+Open UI never runs JavaScript. Applications set element state through public
+Rust methods and Rust callbacks over the shared Engine. The C ABI forwards
+native calls to that same engine. Every needed operation requires a working
+public application API, including its state changes and events.
+
+## Measured API gap
+
+The corrected, nonrasterizing C diagnostic loads the verified existing library
+from clean `e0dc491e`, checks every ABI layout it uses, and follows the public
+headers. `oui_style_value_parse` rejects `ColumnFill` with the literal `auto`,
+returning -1. The diagnostic exits 1 before any table geometry query completes.
+Its preceding layout-preflight and header-adapter failures remain preserved.
+None of those runs qualifies table geometry or pixels.
+
+Rust applications already have the typed operation:
+`element.set_column_fill(ColumnFill::Auto)`. The missing C value construction
+is native framework work. Chromium test scripts do not waive that work.
+
+## Prepared correction
+
+Clean private `06e1f89a` rebases the earlier constructor candidate onto umbrella
+`92741843`, following test-only baseline `02748036`. The style generator maps
+every declared variant of seven shared enum types: border style, box decoration
+break, break value, break inside, column fill, column span and column wrap.
+Its generated native parser covers thirteen author-facing properties. The
+display parser also accepts `inline-table` and the eight internal table roles.
+The C boundary retains the compound value's property identity and ownership.
+
+Generated property code comes from the shared style schema. No fixture IDs,
+captured references, layout or paint implementations are changed. All 113
+existing exports and all 30 ABI layouts remain unchanged. The correction is
+unapplied; thirteen read-only generator, accountability, C/C++ syntax and Rust
+format checks pass.
+
+## Required verification
+
+Exclusive whole owner `1588` waits for every stage of all thirty preceding
+pipelines, including raster owner `1560` and fallback owner `1576`. It then
+requires the named baseline assertion to fail, all three fixed guards to pass,
+and a clean locked workspace plus public Rust, C and C++ consuming applications.
+
+The Rust application changes typed styles in a Rust click callback and verifies
+owned computed styles, bounds and teardown. Its ten before/after images at
+five scales require two identical native runs, twenty independent Chromium
+capture processes and forty stable captures, with zero pixel tolerance.
+A separate C table geometry diagnostic uses the newly built verified library;
+deterministic geometry alone does not establish equality with Chromium.
+Focused, primitive, original and expanded pixel matrices all remain required.
+Native execution and pixel results are pending.
+
+The [preserved evidence](generated/native-keywords-v1.json) includes source
+patches, immutable probes, failed C diagnostics and completed read-only checks.
+It also records umbrella `92741843` CI: three successful workflows, six passing
+jobs and five skips. The fallback candidate's seven own-source hardening jobs
+pass with zero skips. Neither hosted result qualifies pending native or pixel
+work. The accepted renderer totals and release admission remain unchanged.

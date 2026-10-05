@@ -35,13 +35,21 @@ case loses pixel equality at all four profiles. The
 [repeated-table candidate](docs/renderer/native-table-progress.md) fails its
 geometry guard: both baseline and proposed correction produce four fragments
 where Chromium produces 41. Neither change is applied. The raster retry passes
-its regression guards; its native build and pixel gates remain pending.
+its regression guards and all 17 clean build stages. Its native application
+passes 828 of 840 contracts; twelve still fail. Remaining consumers and pixel
+gates are pending.
 
 The [fresh image-fallback candidate](docs/renderer/native-inline-fallback.md)
 keeps fallback children in normal flow and adds native Rust/C image clearing.
 Thirteen read-only checks pass; two Chromium runs agree on all 120 ordered
 geometry queries. Its native and pixel verification waits for the full raster
 pipeline. The candidate is unapplied; no renderer gain is claimed.
+
+The [native keyword retry](docs/renderer/native-keyword-values.md) addresses a
+C API gap: the current value constructor rejects `column-fill: auto`, while
+the public Rust typed setter already exists. Its shared constructor correction
+passes thirteen read-only checks. Rust/C/C++ applications and all four pixel
+matrices are queued behind both complete preceding pipelines. It is unapplied.
 
 The current v0.2 release candidate has:
 

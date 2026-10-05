@@ -1,11 +1,37 @@
 # Open UI current status
 
+## Product contract
+
+Open UI is a native framework. Applications implement interaction through
+public Rust APIs and Rust callbacks over the shared Engine. Open UI never
+executes JavaScript or requires JavaScript glue. Every needed browser-style
+element operation must be fully implemented in native Rust and exposed to the
+consuming app, including its state changes and events. Missing public APIs
+remain implementation gaps, even when a test fixture can produce the same
+visual state or a Chromium test is classified as `needs_javascript`.
+
+Pinned Chromium is the pixel target. Old Open UI screenshots preserve history;
+they do not define correct pixels or a release gate. See the
+[renderer contract](../renderer/contract.md) and
+[native interaction API](../v02/supported-platforms.md#native-interaction-api).
+
 Open UI is in v0.2 release-candidate closure for the pure-Rust Linux/headless
 product. Waves W0 through W10 are locally committed. W11 source packaging and
 documentation are implemented, but final external and hardware qualifications
 remain open.
 
 ## Current implementation checkpoint
+
+The [native keyword retry](../renderer/native-keyword-values.md) at `06e1f89a`
+rebases shared native value construction onto umbrella `92741843`. A verified
+existing C library rejects `column-fill: auto` with status -1 before table
+geometry can be measured. Public Rust typed setters already expose that
+operation. The prepared correction covers seven enum types, thirteen
+properties and nine table display roles, preserving all 113 exports and 30
+layouts. Thirteen read-only checks pass. Whole owner `1588` waits for all 30
+predecessors, then requires named guards, a clean workspace, Rust/C/C++
+consumers and all four matrices. Its table geometry stage is diagnostic only.
+Native execution and pixels remain pending; the source is unapplied.
 
 The [fresh fallback candidate](../renderer/native-inline-fallback.md) at
 `7d09f7a1` preserves normal flow for retained image fallback children and adds
@@ -16,14 +42,21 @@ five scales and three subpixel origins. Whole owner `1576` waits for all 29
 predecessors, including the complete raster owner `1560`, before native guards,
 workspace, Rust/C/C++ consumers and all four pixel matrices. These stages remain
 pending; the candidate is unapplied and admits no release state.
+Its seven own-source hosted hardening jobs now pass, with zero skips, as
+preserved in the [new evidence index](../renderer/generated/native-keywords-v1.json).
+That result does not complete its local native or pixel qualification.
 
 The [same preserved index](../renderer/generated/native-inline-fallback-v1.json)
 records the raster retry's completed 17-stage clean build and native controls:
 60 cases, 120 images and 7,680 control states pass their native contracts. This
-is not Chromium pixel qualification. The raster application's remaining
-consumer, selection and full matrix stages are pending. Umbrella `59cac229`
-hosted CI is complete: three successful workflows, six passing jobs and five
-skips. Skips do not satisfy release gates.
+is not Chromium pixel qualification. The
+[next application result](../renderer/generated/native-keywords-v1.json)
+finishes with exit 1: 828 of 840 native contracts pass, twelve fail. All twelve
+failed cases retain deterministic images, geometry and callbacks; the remaining
+mask/phase checks fail. Chromium pixel qualification remains false. Consumer,
+selection and full matrix stages are pending. Umbrella `92741843` hosted CI is
+complete: three successful workflows, six passing jobs and five skips. Skips
+do not satisfy release gates.
 
 The [v42 evidence](../renderer/generated/native-scroll-insets-v42.json)
 records a fresh clean build at `2e443f49`: all 18 workspace packages cleared,
@@ -109,8 +142,10 @@ unapplied and unqualified.
 The fresh raster retry at `e0dc491e` passes its complete guard stage: three
 named baseline assertions fail, all fixed and neighboring guards pass, and
 text, paint, engine, software and Ganesh suites pass. Its source root and probes
-are separate from the preserved harness failure. The native build and remaining
-consumer and pixel stages are pending in exclusive whole owner `1560`.
+are separate from the preserved harness failure. All seventeen build stages
+and native controls now pass, while the application stage fails as recorded above.
+Remaining consumer and pixel stages are pending in exclusive whole owner
+`1560`.
 
 Hosted CI for umbrella documentation checkpoint `4144c85a` has completed:
 all three workflows succeed, with six successful jobs and five skipped jobs.

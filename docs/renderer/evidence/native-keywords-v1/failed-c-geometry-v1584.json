@@ -1,0 +1,50 @@
+{
+  "all_commands_terminal": true,
+  "build_receipt_sha256": "e2d866c3607345fe91d8f89a0bcbc2b995d50b942aef5cfdfab94e0d401b8031",
+  "cargo_commands_run": 0,
+  "failure": "('parse COLUMN_FILL auto', -1)",
+  "header_sha256": "f7e653ec3376ac0c449319b89ae21058f023f69067de2260996340d1fdd83fa1",
+  "javascript_executed_by_openui": false,
+  "library_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/libopenui_ffi.so",
+  "library_sha256": "67f68cafa28ca394954b0459bea095ad6c35f3307bc22723d4a937feda4e2f44",
+  "native_raster_commands_run": 0,
+  "observed_exit_code": 1,
+  "prior_adapter_failure": {
+    "actual_exit": 1,
+    "geometry_queries_completed": 0,
+    "probe": "/tmp/openui-native-table-c-geometry-v1583.py",
+    "probe_sha256": "1aa04cf09669ca93d6c748cd4263b6c9ab3a49990bd87140c2b5b27519397d4e",
+    "reason": "Style property constants live in the included generated header. The corrected adapter reads both source headers and follows their exact field declarations."
+  },
+  "prior_preflight": {
+    "actual_exit": 1,
+    "native_library_loaded": false,
+    "probe": "/tmp/openui-native-table-c-geometry-v1582.py",
+    "probe_sha256": "be8409437bc0b234637dcbadf3fa1652fa19a9098b9ced505b5f08bd4cf96db8",
+    "reason": "The pinned raster source has two additive raster configuration structs absent from accepted main; this diagnostic validates every ABI type it uses against the pinned source and checks the existing layouts remain unchanged."
+  },
+  "probe_sha256": "2009891a473651d56ebf10a27302aaef312af6bed241e6e497a754b438435872",
+  "promotion_allowed": false,
+  "properties_header_sha256": "9d54dcf721e6b57a31840133e5b5ce6c81607411d58007e2d31788b18b04260b",
+  "public_c_api": true,
+  "release_qualification": false,
+  "runs": [],
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "used_abi_types_verified": [
+    "OuiUtf8",
+    "OuiLength",
+    "OuiStylePayload",
+    "OuiStyleValue",
+    "OuiViewportMetrics",
+    "OuiDocumentConfig",
+    "OuiRect"
+  ]
+}

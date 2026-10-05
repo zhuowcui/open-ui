@@ -29,8 +29,13 @@ records all 17 clean build stages passing, including the locked workspace,
 native Rust examples, C/C++ consumers and renderer executable source identity.
 The native control stage also passes 60 cases, 120 images and 7,680 control
 states. These are native contracts, not Chromium pixel qualification. The
-application and remaining consumer, selection and matrix stages are pending;
-the whole owner remains exclusive until every stage is terminal.
+application stage now finishes with exit 1 in the
+[next evidence index](generated/native-keywords-v1.json): 828 of 840 native
+contracts pass and twelve fail. All twelve failed cases have deterministic
+images, unchanged logical geometry and successful native callbacks. Mask/phase
+contracts remain incorrect. This is still not Chromium pixel qualification.
+Remaining consumer, selection and matrix stages are pending; the whole owner
+remains exclusive until every stage is terminal.
 
 The [v38 evidence](generated/native-scroll-insets-v38.json) preserves
 `0e1f12ff`, which replaces two invalid test-only `fields_mut` calls with the
