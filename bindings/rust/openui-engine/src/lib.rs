@@ -2674,7 +2674,9 @@ mod tests {
                             .set_property(
                                 target,
                                 StyleProperty::Float,
-                                openui_style::Float::Left.into(),
+                                StyleValue::Renderer(RendererStyleValue::Float(
+                                    openui_style::Float::Left,
+                                )),
                             )
                             .unwrap(),
                         "min" => engine
