@@ -21787,9 +21787,46 @@ fn darken_color(color: &Color4f) -> Color4f {
     )
 }
 
-/// The raised half uses the authored color; the recessed half is darkened.
+/// CalculateInsetOutsetColor keeps the authored lighter edge only when it has
+/// enough contrast against Color::Dark(). Otherwise it uses Color::Light().
+/// Source: pinned Blink box_border_painter.cc and platform/graphics/color.cc.
 fn lighten_color(color: &Color4f) -> Color4f {
-    *color
+    // Blink's fast rejection thresholds are equivalent to the contrast test;
+    // they are independent of the element, border width and raster scale.
+    if color.r >= 150.0 / 255.0 || color.g >= 92.0 / 255.0 {
+        return *color;
+    }
+    let linear = |component: f32| {
+        if component <= 0.04045 {
+            component / 12.92
+        } else {
+            ((component + 0.055) / 1.055).powf(2.4)
+        }
+    };
+    let luminance = |value: &Color4f| {
+        0.2126 * linear(value.r) + 0.7152 * linear(value.g) + 0.0722 * linear(value.b)
+    };
+    let dark = darken_color(color);
+    let a = luminance(color) + 0.05;
+    let b = luminance(&dark) + 0.05;
+    if a.max(b) / a.min(b) >= 1.75 {
+        return *color;
+    }
+
+    let value = color.r.max(color.g).max(color.b);
+    if value == 0.0 {
+        return Color4f::new(84.0 / 255.0, 84.0 / 255.0, 84.0 / 255.0, color.a);
+    }
+    let multiplier = (value + 0.33).min(1.0) / value;
+    let scale_factor = f32::from_bits(256.0_f32.to_bits() - 1);
+    let quantize =
+        |component: f32| ((component * multiplier).clamp(0.0, 1.0) * scale_factor).floor() / 255.0;
+    Color4f::new(
+        quantize(color.r),
+        quantize(color.g),
+        quantize(color.b),
+        color.a,
+    )
 }
 
 /// Chromium's Linux theme preserves the traditional raised/recessed gray
