@@ -2502,6 +2502,106 @@ mod tests {
     }
 
     #[test]
+    fn opaque_image_foreground_obscures_only_a_fully_covered_native_background() {
+        for display in [Display::Block, Display::Inline] {
+            let mut engine = Engine::new_with_options(
+                ViewportMetrics::from_logical_size(320.0, 240.0, 1.25).unwrap(),
+                EngineOptions {
+                    raster_configuration: RasterConfiguration::deterministic_aliased(false),
+                },
+            )
+            .unwrap();
+            engine
+                .set_property(
+                    engine.root(),
+                    StyleProperty::BackgroundColor,
+                    Color::WHITE.into(),
+                )
+                .unwrap();
+            let parent = engine.create_native_element(ElementTag::Div).unwrap();
+            for (property, value) in [
+                (StyleProperty::Position, Position::Absolute.into()),
+                (StyleProperty::Left, LengthValue::px(20.0).into()),
+                (StyleProperty::Top, LengthValue::px(20.0).into()),
+                (StyleProperty::Width, LengthValue::px(150.0).into()),
+                (StyleProperty::Height, LengthValue::px(150.0).into()),
+                (StyleProperty::BackgroundColor, Color::RED.into()),
+            ] {
+                engine.set_property(parent, property, value).unwrap();
+            }
+            engine.append_child(engine.root(), parent).unwrap();
+            let image = engine.create_native_element(ElementTag::Image).unwrap();
+            let resource = engine.register_image_resource(
+                "memory:opaque-green-image",
+                "image/png",
+                "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
+                include_bytes!("../../openui/tests/assets/green-200.png").to_vec(),
+            );
+            engine
+                .set_image_resource(image, resource, Some((200.0, 200.0)))
+                .unwrap();
+            engine
+                .set_property(image, StyleProperty::Display, display.into())
+                .unwrap();
+            engine
+                .set_property(image, StyleProperty::Width, LengthValue::px(150.0).into())
+                .unwrap();
+            engine
+                .set_property(image, StyleProperty::Height, LengthValue::px(150.0).into())
+                .unwrap();
+            engine.append_child(parent, image).unwrap();
+            assert_eq!(
+                engine.bounds(parent).unwrap(),
+                engine.bounds(image).unwrap()
+            );
+            let frame = SoftwareCompositor::default()
+                .render(&engine.scene().unwrap())
+                .unwrap();
+            let edge = 50 * frame.stride + 212 * 4;
+            // Immutable Chromium captures show one green edge over white,
+            // without the otherwise obscured red background underneath.
+            assert_eq!(
+                &frame.pixels[edge..edge + 4],
+                &[126, 191, 126, 255],
+                "display={display:?}"
+            );
+
+            engine
+                .set_property(image, StyleProperty::Width, LengthValue::px(100.0).into())
+                .unwrap();
+            let frame = SoftwareCompositor::default()
+                .render(&engine.scene().unwrap())
+                .unwrap();
+            let uncovered = 50 * frame.stride + 200 * 4;
+            assert_eq!(
+                &frame.pixels[uncovered..uncovered + 4],
+                &[255, 0, 0, 255],
+                "partial image must retain background"
+            );
+
+            engine
+                .set_property(image, StyleProperty::Width, LengthValue::px(150.0).into())
+                .unwrap();
+            engine
+                .set_property(image, StyleProperty::Opacity, 0.5f32.into())
+                .unwrap();
+            let frame = SoftwareCompositor::default()
+                .render(&engine.scene().unwrap())
+                .unwrap();
+            let interior = 50 * frame.stride + 50 * 4;
+            assert_eq!(
+                frame.pixels[interior + 2],
+                0,
+                "translucent image must blend over red"
+            );
+            assert!(
+                frame.pixels[interior] > 0,
+                "translucent image must reveal red"
+            );
+        }
+    }
+
+    #[test]
     fn application_fonts_are_document_owned_invalidate_and_survive_in_scenes() {
         let viewport = ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap();
         let mut first = Engine::new(viewport).unwrap();
