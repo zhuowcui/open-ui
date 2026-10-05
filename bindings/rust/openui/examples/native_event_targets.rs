@@ -101,7 +101,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .iter()
         .all(|event| event.target().is_none() && event.current_target().is_none()));
     std::fs::write(output.join("events.json"),
-        format!("{{\"callbacks\":3,\"owned_bounds_unchanged\":true,\"phase_cleared\":true,\"targets_expired_after_teardown\":true,\"scale\":{scale}}}\n"))?;
+        format!("{{\"callbacks\":3,\"bounds\":{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}},\"owned_bounds_unchanged\":true,\"phase_cleared\":true,\"targets_expired_after_teardown\":true,\"scale\":{scale}}}\n", before.x, before.y, before.width, before.height))?;
     println!("native event targets: delegated mutation, phases, geometry and teardown passed");
     Ok(())
 }
