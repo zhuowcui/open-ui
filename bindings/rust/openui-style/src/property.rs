@@ -2629,6 +2629,121 @@ mod tests {
     }
 
     #[test]
+    fn native_fragment_keyword_values_cover_declared_enum_variants() {
+        fn check(property: StyleProperty, literal: &str, expected: RendererStyleValue) {
+            let value = parse_literal(property, literal).unwrap();
+            let mut style = ComputedStyle::initial();
+            apply_to_computed(&mut style, property, &value, (320.0, 240.0)).unwrap();
+            assert_eq!(
+                value_from_computed(&style, property),
+                StyleValue::Renderer(expected)
+            );
+            assert!(parse_literal(property, "invalid-keyword").is_err());
+            assert!(parse_literal(property, "auto; display: none").is_err());
+        }
+        use RendererStyleValue as R;
+        for (literal, variant) in [
+            ("none", BorderStyle::None),
+            ("hidden", BorderStyle::Hidden),
+            ("dotted", BorderStyle::Dotted),
+            ("dashed", BorderStyle::Dashed),
+            ("solid", BorderStyle::Solid),
+            ("double", BorderStyle::Double),
+            ("groove", BorderStyle::Groove),
+            ("ridge", BorderStyle::Ridge),
+            ("inset", BorderStyle::Inset),
+            ("outset", BorderStyle::Outset),
+        ] {
+            check(
+                StyleProperty::BorderTopStyle,
+                literal,
+                R::BorderTopStyle(variant),
+            );
+            check(
+                StyleProperty::BorderRightStyle,
+                literal,
+                R::BorderRightStyle(variant),
+            );
+            check(
+                StyleProperty::BorderBottomStyle,
+                literal,
+                R::BorderBottomStyle(variant),
+            );
+            check(
+                StyleProperty::BorderLeftStyle,
+                literal,
+                R::BorderLeftStyle(variant),
+            );
+            check(
+                StyleProperty::OutlineStyle,
+                literal,
+                R::OutlineStyle(variant),
+            );
+            check(
+                StyleProperty::ColumnRuleStyle,
+                literal,
+                R::ColumnRuleStyle(variant),
+            );
+        }
+        for (literal, variant) in [
+            ("auto", BreakValue::Auto),
+            ("avoid", BreakValue::Avoid),
+            ("avoid-page", BreakValue::AvoidPage),
+            ("avoid-column", BreakValue::AvoidColumn),
+            ("page", BreakValue::Page),
+            ("column", BreakValue::Column),
+            ("left", BreakValue::Left),
+            ("right", BreakValue::Right),
+            ("always", BreakValue::Always),
+        ] {
+            check(StyleProperty::BreakBefore, literal, R::BreakBefore(variant));
+            check(StyleProperty::BreakAfter, literal, R::BreakAfter(variant));
+        }
+        for (literal, variant) in [
+            ("auto", BreakInside::Auto),
+            ("avoid", BreakInside::Avoid),
+            ("avoid-page", BreakInside::AvoidPage),
+            ("avoid-column", BreakInside::AvoidColumn),
+        ] {
+            check(StyleProperty::BreakInside, literal, R::BreakInside(variant));
+        }
+        for (literal, variant) in [
+            ("auto", ColumnFill::Auto),
+            ("balance", ColumnFill::Balance),
+            ("balance-all", ColumnFill::BalanceAll),
+        ] {
+            check(StyleProperty::ColumnFill, literal, R::ColumnFill(variant));
+        }
+        for (literal, variant) in [
+            ("auto", ColumnWrap::Auto),
+            ("wrap", ColumnWrap::Wrap),
+            ("nowrap", ColumnWrap::NoWrap),
+        ] {
+            check(StyleProperty::ColumnWrap, literal, R::ColumnWrap(variant));
+        }
+        check(
+            StyleProperty::ColumnSpan,
+            "none",
+            R::ColumnSpan(ColumnSpan::None),
+        );
+        check(
+            StyleProperty::ColumnSpan,
+            "all",
+            R::ColumnSpan(ColumnSpan::All),
+        );
+        check(
+            StyleProperty::BoxDecorationBreak,
+            "slice",
+            R::BoxDecorationBreak(BoxDecorationBreak::Slice),
+        );
+        check(
+            StyleProperty::BoxDecorationBreak,
+            "clone",
+            R::BoxDecorationBreak(BoxDecorationBreak::Clone),
+        );
+    }
+
+    #[test]
     fn parses_checked_literals_and_applies_them() {
         let padding = parse_literal(StyleProperty::Padding, "8px 16px").unwrap();
         let mut style = ComputedStyle::initial();
