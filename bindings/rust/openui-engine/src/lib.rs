@@ -1449,6 +1449,17 @@ impl Engine {
         Ok(())
     }
 
+    /// Remove the installed image content while retaining authored styles and
+    /// fallback children. Applications supply resources and handle failures
+    /// natively; this operation performs no fetching or script execution.
+    pub fn clear_image_resource(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
+        if self.document.node_mut(node).replaced.take().is_some() {
+            self.mark_dirty(InvalidationClass::Intrinsic);
+        }
+        Ok(())
+    }
+
     pub fn computed_style(
         &self,
         handle: NodeHandle,
@@ -2308,6 +2319,74 @@ mod tests {
         assert!(bounds.height < 999.0);
         let child_bounds = engine.bounds(child).unwrap().unwrap();
         assert_eq!((child_bounds.width, child_bounds.height), (60.0, 40.0));
+    }
+
+    #[test]
+    fn native_inline_fallback_children_flow_across_image_resource_changes() {
+        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+            let viewport = ViewportMetrics::from_logical_size(320.0, 240.0, scale).unwrap();
+            let mut engine = Engine::new(viewport).unwrap();
+            let host = engine.create_native_element(ElementTag::Image).unwrap();
+            for (property, value) in [
+                (StyleProperty::Display, Display::Inline.into()),
+                (StyleProperty::Width, LengthValue::px(150.0).into()),
+                (StyleProperty::Height, LengthValue::px(150.0).into()),
+            ] {
+                engine.set_property(host, property, value).unwrap();
+            }
+            let fallback = engine.create_native_element(ElementTag::Div).unwrap();
+            for (property, value) in [
+                (StyleProperty::Display, Display::InlineBlock.into()),
+                (StyleProperty::Width, LengthValue::px(60.0).into()),
+                (StyleProperty::Height, LengthValue::px(40.0).into()),
+            ] {
+                engine.set_property(fallback, property, value).unwrap();
+            }
+            engine.append_child(host, fallback).unwrap();
+            engine.append_child(engine.root(), host).unwrap();
+            let before = engine.bounds(host).unwrap().unwrap();
+            assert_eq!(
+                before.width, 60.0,
+                "fallback children must use normal inline flow at {scale}"
+            );
+            let resource = engine.register_image_resource(
+                "memory:native-inline-green",
+                "image/png",
+                "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
+                include_bytes!("../../openui/tests/assets/green-200.png").to_vec(),
+            );
+            engine
+                .set_image_resource(host, resource, Some((200.0, 200.0)))
+                .unwrap();
+            let loaded = engine.bounds(host).unwrap().unwrap();
+            assert_eq!((loaded.width, loaded.height), (150.0, 150.0));
+            assert_eq!(before.width, 60.0, "returned geometry remains owned");
+            engine.clear_image_resource(host).unwrap();
+            assert_eq!(engine.bounds(host).unwrap(), Some(before));
+            assert_eq!(engine.parent(fallback).unwrap(), Some(host));
+            let clean = engine.dirty_generations();
+            engine.clear_image_resource(host).unwrap();
+            assert_eq!(
+                engine.dirty_generations(),
+                clean,
+                "repeated clear is a no-op"
+            );
+            engine
+                .set_image_resource(host, resource, Some((200.0, 200.0)))
+                .unwrap();
+            assert_eq!(engine.bounds(host).unwrap(), Some(loaded));
+            engine.clear_image_resource(host).unwrap();
+            assert_eq!(engine.bounds(host).unwrap(), Some(before));
+            engine.detach(host).unwrap();
+            assert!(engine.client_rects(host).unwrap().is_empty());
+            engine.append_child(engine.root(), host).unwrap();
+            assert_eq!(engine.bounds(host).unwrap(), Some(before));
+            let foreign = Engine::new(viewport).unwrap();
+            assert_eq!(
+                engine.clear_image_resource(foreign.root()),
+                Err(EngineError::WrongDocument)
+            );
+        }
     }
 
     #[test]

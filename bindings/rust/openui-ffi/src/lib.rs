@@ -3327,6 +3327,19 @@ pub extern "C" fn oui_element_set_image(
     })
 }
 
+// SAFETY CONTRACT: `element_handle` is a live element on its owning thread.
+// Authored styles, fallback children, and registered resource ownership remain
+// intact. A stale or foreign-thread handle returns an error; panics are contained.
+#[no_mangle]
+pub extern "C" fn oui_element_clear_image(element_handle: *mut OuiElement) -> OuiStatus {
+    ffi(|| {
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        borrow_engine_mut(&state)?.clear_image_resource(element.node)?;
+        Ok(())
+    })
+}
+
 // SAFETY CONTRACT: `resource` is a live resource handle owned by this thread.
 #[no_mangle]
 pub extern "C" fn oui_resource_destroy(resource: *mut OuiResource) -> OuiStatus {

@@ -980,6 +980,9 @@ OuiStatus oui_style_compound_destroy(OuiStyleCompound* compound);
 
 OuiStatus oui_document_register_image(OuiDocument* document, OuiUtf8 source, OuiUtf8 mime_type, OuiUtf8 sha256, const uint8_t* bytes, size_t byte_length, OuiResource** out_resource);
 OuiStatus oui_element_set_image(OuiElement* element, OuiResource* resource, float intrinsic_width, float intrinsic_height);
+/* Clear installed image content; retain styles, fallback children and resources.
+ * The element belongs to the calling thread. Repeated clearing is a no-op. */
+OuiStatus oui_element_clear_image(OuiElement* element);
 OuiStatus oui_resource_destroy(OuiResource* resource);
 
 const uint8_t* oui_buffer_data(const OuiBuffer* buffer);

@@ -56,6 +56,7 @@ oui_element_adjust_control
 oui_element_animate
 oui_element_append_child
 oui_element_blur
+oui_element_clear_image
 oui_element_copy_control_value
 oui_element_create
 oui_element_destroy

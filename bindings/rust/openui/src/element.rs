@@ -484,6 +484,14 @@ impl Element {
         })
     }
 
+    /// Remove installed image content and show retained fallback children.
+    /// Styles and children remain owned by this element. Calling this again
+    /// after the resource is cleared does not invalidate the document.
+    pub fn clear_image_resource(&self) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.clear_image_resource(self.handle))
+    }
+
     pub fn set_accessibility_role(&self, role: AccessibilityRole) -> Result<(), Error> {
         self.document
             .with_engine_mut(|engine| engine.set_accessibility_role(self.handle, role))
