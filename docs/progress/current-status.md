@@ -7,6 +7,24 @@ remain open.
 
 ## Current implementation checkpoint
 
+The [fresh fallback candidate](../renderer/native-inline-fallback.md) at
+`7d09f7a1` preserves normal flow for retained image fallback children and adds
+public native Rust image clearing over the shared Engine, plus one append-only
+C export. All 113 preceding symbols and all 30 layouts are preserved. Thirteen
+read-only checks pass. Two Chromium runs agree on all 120 ordered queries at
+five scales and three subpixel origins. Whole owner `1576` waits for all 29
+predecessors, including the complete raster owner `1560`, before native guards,
+workspace, Rust/C/C++ consumers and all four pixel matrices. These stages remain
+pending; the candidate is unapplied and admits no release state.
+
+The [same preserved index](../renderer/generated/native-inline-fallback-v1.json)
+records the raster retry's completed 17-stage clean build and native controls:
+60 cases, 120 images and 7,680 control states pass their native contracts. This
+is not Chromium pixel qualification. The raster application's remaining
+consumer, selection and full matrix stages are pending. Umbrella `59cac229`
+hosted CI is complete: three successful workflows, six passing jobs and five
+skips. Skips do not satisfy release gates.
+
 The [v42 evidence](../renderer/generated/native-scroll-insets-v42.json)
 records a fresh clean build at `2e443f49`: all 18 workspace packages cleared,
 8,531 tests passed, zero failed, 13 ignored, and native ABI consumers passed.

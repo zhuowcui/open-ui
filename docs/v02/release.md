@@ -4,6 +4,16 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
+The [fresh image-fallback candidate](../renderer/native-inline-fallback.md)
+at `7d09f7a1` adds shared fallback flow and public Rust/C image clearing.
+Thirteen read-only checks and 120 repeated Chromium geometry queries pass.
+Native guards, consumers and all four pixel matrices remain pending behind
+the complete raster owner; this source is unapplied. Its
+[preserved preparation](../renderer/generated/native-inline-fallback-v1.json)
+also records 17 passing raster build stages, passing native control contracts
+and completed umbrella CI at `59cac229` (six passes, five skips). None of these
+scoped results completes the Chromium or release gates.
+
 The [earlier terminal review](../renderer/generated/native-review-v2.json)
 supersedes the pending queue descriptions below for five candidates: raster
 `e0dc491e`, image `1413a862`, rounded border `9e0c8ec5`, bevel `cbcbc9fb` and

@@ -37,6 +37,12 @@ geometry guard: both baseline and proposed correction produce four fragments
 where Chromium produces 41. Neither change is applied. The raster retry passes
 its regression guards; its native build and pixel gates remain pending.
 
+The [fresh image-fallback candidate](docs/renderer/native-inline-fallback.md)
+keeps fallback children in normal flow and adds native Rust/C image clearing.
+Thirteen read-only checks pass; two Chromium runs agree on all 120 ordered
+geometry queries. Its native and pixel verification waits for the full raster
+pipeline. The candidate is unapplied; no renderer gain is claimed.
+
 The current v0.2 release candidate has:
 
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical

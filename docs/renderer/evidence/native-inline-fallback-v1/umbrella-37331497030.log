@@ -1,0 +1,511 @@
+gn-format	Set up job	﻿2026-10-05T15:16:38.9655953Z Current runner version: '2.337.0'
+gn-format	Set up job	2026-10-05T15:16:38.9685486Z ##[group]Runner Image Provisioner
+gn-format	Set up job	2026-10-05T15:16:38.9686534Z Hosted Compute Agent
+gn-format	Set up job	2026-10-05T15:16:38.9687156Z Version: 20260901.588
+gn-format	Set up job	2026-10-05T15:16:38.9688244Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b
+gn-format	Set up job	2026-10-05T15:16:38.9689035Z Build Date: 2026-09-01T19:56:44Z
+gn-format	Set up job	2026-10-05T15:16:38.9689744Z Worker ID: {c4bf78b5-ba2e-424b-ba90-2e2bd90bb88d}
+gn-format	Set up job	2026-10-05T15:16:38.9690626Z Azure Region: westcentralus
+gn-format	Set up job	2026-10-05T15:16:38.9691276Z ##[endgroup]
+gn-format	Set up job	2026-10-05T15:16:38.9692884Z ##[group]Operating System
+gn-format	Set up job	2026-10-05T15:16:38.9693555Z Ubuntu
+gn-format	Set up job	2026-10-05T15:16:38.9694088Z 24.04.5
+gn-format	Set up job	2026-10-05T15:16:38.9694730Z LTS
+gn-format	Set up job	2026-10-05T15:16:38.9695281Z ##[endgroup]
+gn-format	Set up job	2026-10-05T15:16:38.9695897Z ##[group]Runner Image
+gn-format	Set up job	2026-10-05T15:16:38.9696553Z Image: ubuntu-24.04
+gn-format	Set up job	2026-10-05T15:16:38.9697151Z Version: 20260927.320.1
+gn-format	Set up job	2026-10-05T15:16:38.9698533Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md
+gn-format	Set up job	2026-10-05T15:16:38.9700528Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260927.320
+gn-format	Set up job	2026-10-05T15:16:38.9701572Z ##[endgroup]
+gn-format	Set up job	2026-10-05T15:16:38.9702777Z ##[group]GITHUB_TOKEN Permissions
+gn-format	Set up job	2026-10-05T15:16:38.9704843Z Contents: read
+gn-format	Set up job	2026-10-05T15:16:38.9705481Z Metadata: read
+gn-format	Set up job	2026-10-05T15:16:38.9706214Z ##[endgroup]
+gn-format	Set up job	2026-10-05T15:16:38.9708682Z Secret source: Actions
+gn-format	Set up job	2026-10-05T15:16:38.9709837Z Cache mode: write
+gn-format	Set up job	2026-10-05T15:16:38.9710616Z Prepare workflow directory
+gn-format	Set up job	2026-10-05T15:16:39.0146051Z Prepare all required actions
+gn-format	Set up job	2026-10-05T15:16:39.0197834Z Getting action download info
+gn-format	Set up job	2026-10-05T15:16:39.3665263Z Download action repository 'actions/checkout@v6' (SHA:d23441a48e516b6c34aea4fa41551a30e30af803)
+gn-format	Set up job	2026-10-05T15:16:39.5433939Z Complete job name: gn-format
+gn-format	Run actions/checkout@v6	﻿2026-10-05T15:16:39.6254625Z ##[group]Run actions/checkout@v6
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6255633Z with:
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6256388Z   repository: zhuowcui/open-ui
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6261072Z   token: ***
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6261742Z   ssh-strict: true
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6262330Z   ssh-user: git
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6262889Z   persist-credentials: true
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6263612Z   clean: true
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6264197Z   sparse-checkout-cone-mode: true
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6264943Z   fetch-depth: 1
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6265506Z   fetch-tags: false
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6266065Z   show-progress: true
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6266746Z   lfs: false
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6267292Z   submodules: false
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6268134Z   set-safe-directory: true
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6268791Z   allow-unsafe-pr-checkout: false
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.6269702Z ##[endgroup]
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7371788Z Syncing repository: zhuowcui/open-ui
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7374204Z ##[group]Getting Git version info
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7375265Z Working directory is '/home/runner/work/open-ui/open-ui'
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7376646Z [command]/usr/bin/git version
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7415923Z git version 2.55.0
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7438622Z ##[endgroup]
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7455321Z Temporarily overriding HOME='/home/runner/work/_temp/1932d42c-ce7b-4f7a-95aa-7cd9eae122e5' before making global git config changes
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7457521Z Adding repository directory to the temporary git global config as a safe directory
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7461704Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/open-ui/open-ui
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7511102Z Deleting the contents of '/home/runner/work/open-ui/open-ui'
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7516699Z ##[group]Determining repository object format
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7519347Z ##[endgroup]
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7520863Z ##[group]Initializing the repository
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7525078Z [command]/usr/bin/git init /home/runner/work/open-ui/open-ui
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7601565Z hint: Using 'master' as the name for the initial branch. This default branch name
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7604017Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7605923Z hint: to use in all of your new repositories, which will suppress this warning,
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7607417Z hint: call:
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7608825Z hint:
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7609787Z hint: 	git config --global init.defaultBranch <name>
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7610699Z hint:
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7611698Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7612882Z hint: 'development'. The just-created branch can be renamed via this command:
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7613905Z hint:
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7614477Z hint: 	git branch -m <name>
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7615076Z hint:
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7615920Z hint: Disable this message with "git config set advice.defaultBranchName false"
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7617071Z Initialized empty Git repository in /home/runner/work/open-ui/open-ui/.git/
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7619544Z [command]/usr/bin/git remote add origin https://github.com/zhuowcui/open-ui
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7662434Z ##[endgroup]
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7663554Z ##[group]Disabling automatic garbage collection
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7666909Z [command]/usr/bin/git config --local gc.auto 0
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7702779Z ##[endgroup]
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7704645Z ##[group]Setting up auth
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7705626Z Removing SSH command configuration
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7710567Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.7747163Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.8060817Z Removing HTTP extra header
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.8067877Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.8102654Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.8337077Z Removing includeIf entries pointing to credentials config files
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.8343863Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.8381397Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.8630070Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-e864b6d9-5987-47dd-9230-0ef7360626d9.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.8679003Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/open-ui/open-ui/.git.path /home/runner/work/_temp/git-credentials-e864b6d9-5987-47dd-9230-0ef7360626d9.config
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.8712758Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/open-ui/open-ui/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-e864b6d9-5987-47dd-9230-0ef7360626d9.config
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.8746979Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-e864b6d9-5987-47dd-9230-0ef7360626d9.config
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.8862473Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-e864b6d9-5987-47dd-9230-0ef7360626d9.config
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.8866828Z ##[endgroup]
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.8868001Z ##[group]Fetching the repository
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:39.8869511Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +a324331d029600a3388cd5fc2366943fab7da59d:refs/remotes/pull/3/merge
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:43.8128715Z From https://github.com/zhuowcui/open-ui
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:43.8130574Z  * [new ref]         a324331d029600a3388cd5fc2366943fab7da59d -> pull/3/merge
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:43.8134752Z ##[endgroup]
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:43.8136162Z ##[group]Determining the checkout info
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:43.8137973Z ##[endgroup]
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:43.8142439Z [command]/usr/bin/git sparse-checkout disable
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:43.8199356Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:43.8234589Z ##[group]Checking out the ref
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:43.8238140Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/3/merge
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.8455822Z Updating files:  81% (9258/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.8531512Z Updating files:  82% (9292/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.8607119Z Updating files:  83% (9405/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.8681189Z Updating files:  84% (9519/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.8756589Z Updating files:  85% (9632/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.8827276Z Updating files:  86% (9745/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.8902699Z Updating files:  87% (9858/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.8976589Z Updating files:  88% (9972/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.9053966Z Updating files:  89% (10085/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.9125999Z Updating files:  90% (10198/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.9199156Z Updating files:  91% (10312/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.9270287Z Updating files:  92% (10425/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.9345686Z Updating files:  93% (10538/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.9419639Z Updating files:  94% (10652/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.9494333Z Updating files:  95% (10765/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.9568987Z Updating files:  96% (10878/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:44.9647171Z Updating files:  97% (10992/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0305298Z Updating files:  98% (11105/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0418532Z Updating files:  99% (11218/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0419207Z Updating files: 100% (11331/11331)
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0419598Z Updating files: 100% (11331/11331), done.
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0635631Z Note: switching to 'refs/remotes/pull/3/merge'.
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0636301Z 
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0636713Z You are in 'detached HEAD' state. You can look around, make experimental
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0638310Z changes and commit them, and you can discard any commits you make in this
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0639142Z state without impacting any branches by switching back to a branch.
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0639667Z 
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0640032Z If you want to create a new branch to retain commits you create, you may
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0640840Z do so (now or later) by using -c with the switch command. Example:
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0641294Z 
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0641594Z   git switch -c <new-branch-name>
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0641970Z 
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0642167Z Or undo this operation with:
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0642467Z 
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0642648Z   git switch -
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0642889Z 
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0643280Z Turn off this advice by setting config variable advice.detachedHead to false
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0643828Z 
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0644446Z HEAD is now at a324331 Merge 59cac2298d4c6a391b7032091a0455f639f2b70a into 1d7a4cc544b26f320266c298080c892efabad442
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0689151Z ##[endgroup]
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0736451Z [command]/usr/bin/git log -1 --format=%H
+gn-format	Run actions/checkout@v6	2026-10-05T15:16:45.0765532Z a324331d029600a3388cd5fc2366943fab7da59d
+gn-format	Install GN	﻿2026-10-05T15:16:45.1010915Z ##[group]Run sudo apt-get update
+gn-format	Install GN	2026-10-05T15:16:45.1011454Z [36;1msudo apt-get update[0m
+gn-format	Install GN	2026-10-05T15:16:45.1011931Z [36;1msudo apt-get install --yes --no-install-recommends generate-ninja[0m
+gn-format	Install GN	2026-10-05T15:16:45.1246108Z shell: /usr/bin/bash -e {0}
+gn-format	Install GN	2026-10-05T15:16:45.1246594Z ##[endgroup]
+gn-format	Install GN	2026-10-05T15:16:45.2082977Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+gn-format	Install GN	2026-10-05T15:16:45.2316466Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+gn-format	Install GN	2026-10-05T15:16:45.2410509Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+gn-format	Install GN	2026-10-05T15:16:45.2433697Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+gn-format	Install GN	2026-10-05T15:16:45.2496365Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+gn-format	Install GN	2026-10-05T15:16:45.2521492Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+gn-format	Install GN	2026-10-05T15:16:45.2999713Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [458 kB]
+gn-format	Install GN	2026-10-05T15:16:45.3199899Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.6 kB]
+gn-format	Install GN	2026-10-05T15:16:45.3250063Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [511 kB]
+gn-format	Install GN	2026-10-05T15:16:45.4437234Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1366 kB]
+gn-format	Install GN	2026-10-05T15:16:45.4589418Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [304 kB]
+gn-format	Install GN	2026-10-05T15:16:45.4598647Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [181 kB]
+gn-format	Install GN	2026-10-05T15:16:45.4628463Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1699 kB]
+gn-format	Install GN	2026-10-05T15:16:45.4729733Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [341 kB]
+gn-format	Install GN	2026-10-05T15:16:45.4778839Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [388 kB]
+gn-format	Install GN	2026-10-05T15:16:45.4808788Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1724 kB]
+gn-format	Install GN	2026-10-05T15:16:45.4903193Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [394 kB]
+gn-format	Install GN	2026-10-05T15:16:45.4944584Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+gn-format	Install GN	2026-10-05T15:16:45.5098394Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [5776 B]
+gn-format	Install GN	2026-10-05T15:16:45.5545313Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [12.6 kB]
+gn-format	Install GN	2026-10-05T15:16:45.6011942Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1069 kB]
+gn-format	Install GN	2026-10-05T15:16:45.6114819Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [221 kB]
+gn-format	Install GN	2026-10-05T15:16:45.6160417Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Components [46.4 kB]
+gn-format	Install GN	2026-10-05T15:16:45.6172179Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1216 kB]
+gn-format	Install GN	2026-10-05T15:16:45.6235692Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [244 kB]
+gn-format	Install GN	2026-10-05T15:16:45.6256559Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Components [76.4 kB]
+gn-format	Install GN	2026-10-05T15:16:45.6269591Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1566 kB]
+gn-format	Install GN	2026-10-05T15:16:45.6348724Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [361 kB]
+gn-format	Install GN	2026-10-05T15:16:50.8577973Z Fetched 12.6 MB in 2s (8299 kB/s)
+gn-format	Install GN	2026-10-05T15:16:51.7868659Z Reading package lists...
+gn-format	Install GN	2026-10-05T15:16:51.8199495Z Reading package lists...
+gn-format	Install GN	2026-10-05T15:16:52.0864964Z Building dependency tree...
+gn-format	Install GN	2026-10-05T15:16:52.0872610Z Reading state information...
+gn-format	Install GN	2026-10-05T15:16:52.3985249Z The following NEW packages will be installed:
+gn-format	Install GN	2026-10-05T15:16:52.4018961Z   generate-ninja
+gn-format	Install GN	2026-10-05T15:16:52.4535240Z 0 upgraded, 1 newly installed, 0 to remove and 25 not upgraded.
+gn-format	Install GN	2026-10-05T15:16:52.4536657Z Need to get 1340 kB of archives.
+gn-format	Install GN	2026-10-05T15:16:52.4537235Z After this operation, 3960 kB of additional disk space will be used.
+gn-format	Install GN	2026-10-05T15:16:52.4538648Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+gn-format	Install GN	2026-10-05T15:16:52.5225360Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 generate-ninja amd64 0.0~git20240221.03d10f1-1 [1340 kB]
+gn-format	Install GN	2026-10-05T15:16:53.3577283Z Fetched 1340 kB in 0s (12.9 MB/s)
+gn-format	Install GN	2026-10-05T15:16:53.5532815Z Selecting previously unselected package generate-ninja.
+gn-format	Install GN	2026-10-05T15:16:53.5748658Z (Reading database ... 
+gn-format	Install GN	2026-10-05T15:16:53.5749255Z (Reading database ... 5%
+gn-format	Install GN	2026-10-05T15:16:53.5749941Z (Reading database ... 10%
+gn-format	Install GN	2026-10-05T15:16:53.5750396Z (Reading database ... 15%
+gn-format	Install GN	2026-10-05T15:16:53.5750744Z (Reading database ... 20%
+gn-format	Install GN	2026-10-05T15:16:53.5751082Z (Reading database ... 25%
+gn-format	Install GN	2026-10-05T15:16:53.5751309Z (Reading database ... 30%
+gn-format	Install GN	2026-10-05T15:16:53.5751611Z (Reading database ... 35%
+gn-format	Install GN	2026-10-05T15:16:53.5751894Z (Reading database ... 40%
+gn-format	Install GN	2026-10-05T15:16:53.5752804Z (Reading database ... 45%
+gn-format	Install GN	2026-10-05T15:16:53.5753167Z (Reading database ... 50%
+gn-format	Install GN	2026-10-05T15:16:53.5790218Z (Reading database ... 55%
+gn-format	Install GN	2026-10-05T15:16:53.6834809Z (Reading database ... 60%
+gn-format	Install GN	2026-10-05T15:16:53.8901629Z (Reading database ... 65%
+gn-format	Install GN	2026-10-05T15:16:54.0953909Z (Reading database ... 70%
+gn-format	Install GN	2026-10-05T15:16:54.2433764Z (Reading database ... 75%
+gn-format	Install GN	2026-10-05T15:16:54.3974711Z (Reading database ... 80%
+gn-format	Install GN	2026-10-05T15:16:54.7864271Z (Reading database ... 85%
+gn-format	Install GN	2026-10-05T15:16:54.9536714Z (Reading database ... 90%
+gn-format	Install GN	2026-10-05T15:16:55.0992436Z (Reading database ... 95%
+gn-format	Install GN	2026-10-05T15:16:55.0992960Z (Reading database ... 100%
+gn-format	Install GN	2026-10-05T15:16:55.0993504Z (Reading database ... 202296 files and directories currently installed.)
+gn-format	Install GN	2026-10-05T15:16:55.1042670Z Preparing to unpack .../generate-ninja_0.0~git20240221.03d10f1-1_amd64.deb ...
+gn-format	Install GN	2026-10-05T15:16:55.1095825Z Unpacking generate-ninja (0.0~git20240221.03d10f1-1) ...
+gn-format	Install GN	2026-10-05T15:16:55.1663341Z Setting up generate-ninja (0.0~git20240221.03d10f1-1) ...
+gn-format	Install GN	2026-10-05T15:16:55.7699950Z 
+gn-format	Install GN	2026-10-05T15:16:55.7700731Z Running kernel seems to be up-to-date.
+gn-format	Install GN	2026-10-05T15:16:55.7701136Z 
+gn-format	Install GN	2026-10-05T15:16:55.7701307Z No services need to be restarted.
+gn-format	Install GN	2026-10-05T15:16:55.7701552Z 
+gn-format	Install GN	2026-10-05T15:16:55.7701657Z No containers need to be restarted.
+gn-format	Install GN	2026-10-05T15:16:55.7701843Z 
+gn-format	Install GN	2026-10-05T15:16:55.7701968Z No user sessions are running outdated binaries.
+gn-format	Install GN	2026-10-05T15:16:55.7702186Z 
+gn-format	Install GN	2026-10-05T15:16:55.7702380Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+gn-format	Check tracked GN formatting	﻿2026-10-05T15:16:57.2009744Z ##[group]Run git ls-files -z '*.gn' '*.gni' | xargs -0 --no-run-if-empty -n1 gn format --dry-run
+gn-format	Check tracked GN formatting	2026-10-05T15:16:57.2010434Z [36;1mgit ls-files -z '*.gn' '*.gni' | xargs -0 --no-run-if-empty -n1 gn format --dry-run[0m
+gn-format	Check tracked GN formatting	2026-10-05T15:16:57.2080564Z shell: /usr/bin/bash -e {0}
+gn-format	Check tracked GN formatting	2026-10-05T15:16:57.2080891Z ##[endgroup]
+gn-format	Post Run actions/checkout@v6	﻿2026-10-05T15:16:57.2645700Z Post job cleanup.
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.3541511Z [command]/usr/bin/git version
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.3583556Z git version 2.55.0
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.3624212Z Temporarily overriding HOME='/home/runner/work/_temp/ad0c06d7-b614-45b7-87c7-493b88590c89' before making global git config changes
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.3625469Z Adding repository directory to the temporary git global config as a safe directory
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.3630681Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/open-ui/open-ui
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.3665983Z Removing SSH command configuration
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.3672756Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.3710834Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.3977368Z Removing HTTP extra header
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.3983485Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4022260Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4286858Z Removing includeIf entries pointing to credentials config files
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4294872Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4326300Z includeif.gitdir:/home/runner/work/open-ui/open-ui/.git.path
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4327104Z includeif.gitdir:/home/runner/work/open-ui/open-ui/.git/worktrees/*.path
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4328000Z includeif.gitdir:/github/workspace/.git.path
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4328586Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4345584Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/open-ui/open-ui/.git.path
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4363234Z /home/runner/work/_temp/git-credentials-e864b6d9-5987-47dd-9230-0ef7360626d9.config
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4374924Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/open-ui/open-ui/.git.path /home/runner/work/_temp/git-credentials-e864b6d9-5987-47dd-9230-0ef7360626d9.config
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4414024Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/open-ui/open-ui/.git/worktrees/*.path
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4439115Z /home/runner/work/_temp/git-credentials-e864b6d9-5987-47dd-9230-0ef7360626d9.config
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4448695Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/open-ui/open-ui/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-e864b6d9-5987-47dd-9230-0ef7360626d9.config
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4484040Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4507815Z /github/runner_temp/git-credentials-e864b6d9-5987-47dd-9230-0ef7360626d9.config
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4516726Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-e864b6d9-5987-47dd-9230-0ef7360626d9.config
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4552305Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4575161Z /github/runner_temp/git-credentials-e864b6d9-5987-47dd-9230-0ef7360626d9.config
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4595410Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-e864b6d9-5987-47dd-9230-0ef7360626d9.config
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4632154Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+gn-format	Post Run actions/checkout@v6	2026-10-05T15:16:57.4894078Z Removing credentials config '/home/runner/work/_temp/git-credentials-e864b6d9-5987-47dd-9230-0ef7360626d9.config'
+gn-format	Complete job	﻿2026-10-05T15:16:57.5063483Z Cleaning up orphan processes
+clang-format	Set up job	﻿2026-10-05T15:16:38.8371324Z Current runner version: '2.337.0'
+clang-format	Set up job	2026-10-05T15:16:38.8397301Z ##[group]Runner Image Provisioner
+clang-format	Set up job	2026-10-05T15:16:38.8398058Z Hosted Compute Agent
+clang-format	Set up job	2026-10-05T15:16:38.8398554Z Version: 20260901.588
+clang-format	Set up job	2026-10-05T15:16:38.8399102Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b
+clang-format	Set up job	2026-10-05T15:16:38.8399752Z Build Date: 2026-09-01T19:56:44Z
+clang-format	Set up job	2026-10-05T15:16:38.8400352Z Worker ID: {a3d3cf60-dc56-494c-bedd-2cb3d07e4fe7}
+clang-format	Set up job	2026-10-05T15:16:38.8401011Z Azure Region: northcentralus
+clang-format	Set up job	2026-10-05T15:16:38.8401862Z ##[endgroup]
+clang-format	Set up job	2026-10-05T15:16:38.8403287Z ##[group]Operating System
+clang-format	Set up job	2026-10-05T15:16:38.8403836Z Ubuntu
+clang-format	Set up job	2026-10-05T15:16:38.8404257Z 24.04.5
+clang-format	Set up job	2026-10-05T15:16:38.8404676Z LTS
+clang-format	Set up job	2026-10-05T15:16:38.8405095Z ##[endgroup]
+clang-format	Set up job	2026-10-05T15:16:38.8405542Z ##[group]Runner Image
+clang-format	Set up job	2026-10-05T15:16:38.8406045Z Image: ubuntu-24.04
+clang-format	Set up job	2026-10-05T15:16:38.8406505Z Version: 20260927.320.1
+clang-format	Set up job	2026-10-05T15:16:38.8407476Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md
+clang-format	Set up job	2026-10-05T15:16:38.8408974Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260927.320
+clang-format	Set up job	2026-10-05T15:16:38.8409858Z ##[endgroup]
+clang-format	Set up job	2026-10-05T15:16:38.8410799Z ##[group]GITHUB_TOKEN Permissions
+clang-format	Set up job	2026-10-05T15:16:38.8413132Z Contents: read
+clang-format	Set up job	2026-10-05T15:16:38.8413668Z Metadata: read
+clang-format	Set up job	2026-10-05T15:16:38.8414132Z ##[endgroup]
+clang-format	Set up job	2026-10-05T15:16:38.8416055Z Secret source: Actions
+clang-format	Set up job	2026-10-05T15:16:38.8416857Z Cache mode: write
+clang-format	Set up job	2026-10-05T15:16:38.8417826Z Prepare workflow directory
+clang-format	Set up job	2026-10-05T15:16:38.8754149Z Prepare all required actions
+clang-format	Set up job	2026-10-05T15:16:38.8804887Z Getting action download info
+clang-format	Set up job	2026-10-05T15:16:39.1946346Z Download action repository 'actions/checkout@v6' (SHA:d23441a48e516b6c34aea4fa41551a30e30af803)
+clang-format	Set up job	2026-10-05T15:16:39.3976026Z Complete job name: clang-format
+clang-format	Run actions/checkout@v6	﻿2026-10-05T15:16:39.4828820Z ##[group]Run actions/checkout@v6
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4830054Z with:
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4830763Z   repository: zhuowcui/open-ui
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4835229Z   token: ***
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4835980Z   ssh-strict: true
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4836596Z   ssh-user: git
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4837254Z   persist-credentials: true
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4837970Z   clean: true
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4838610Z   sparse-checkout-cone-mode: true
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4839366Z   fetch-depth: 1
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4839966Z   fetch-tags: false
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4840648Z   show-progress: true
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4841325Z   lfs: false
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4842090Z   submodules: false
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4842810Z   set-safe-directory: true
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4843516Z   allow-unsafe-pr-checkout: false
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.4844544Z ##[endgroup]
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.5914031Z Syncing repository: zhuowcui/open-ui
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.5916091Z ##[group]Getting Git version info
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.5916941Z Working directory is '/home/runner/work/open-ui/open-ui'
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.5918848Z [command]/usr/bin/git version
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.5919462Z git version 2.55.0
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.5934088Z ##[endgroup]
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.5948237Z Temporarily overriding HOME='/home/runner/work/_temp/2e773a89-9493-485d-a701-002383c08622' before making global git config changes
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.5950322Z Adding repository directory to the temporary git global config as a safe directory
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.5952726Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/open-ui/open-ui
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6004100Z Deleting the contents of '/home/runner/work/open-ui/open-ui'
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6009371Z ##[group]Determining repository object format
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6012189Z ##[endgroup]
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6013129Z ##[group]Initializing the repository
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6016132Z [command]/usr/bin/git init /home/runner/work/open-ui/open-ui
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6114522Z hint: Using 'master' as the name for the initial branch. This default branch name
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6116223Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6117518Z hint: to use in all of your new repositories, which will suppress this warning,
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6119347Z hint: call:
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6119866Z hint:
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6120966Z hint: 	git config --global init.defaultBranch <name>
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6122505Z hint:
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6123919Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6125094Z hint: 'development'. The just-created branch can be renamed via this command:
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6125995Z hint:
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6126501Z hint: 	git branch -m <name>
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6127274Z hint:
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6128645Z hint: Disable this message with "git config set advice.defaultBranchName false"
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6129909Z Initialized empty Git repository in /home/runner/work/open-ui/open-ui/.git/
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6132036Z [command]/usr/bin/git remote add origin https://github.com/zhuowcui/open-ui
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6172458Z ##[endgroup]
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6173391Z ##[group]Disabling automatic garbage collection
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6176873Z [command]/usr/bin/git config --local gc.auto 0
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6206096Z ##[endgroup]
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6207363Z ##[group]Setting up auth
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6208165Z Removing SSH command configuration
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6213509Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6244338Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6600338Z Removing HTTP extra header
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6606068Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6637666Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6848315Z Removing includeIf entries pointing to credentials config files
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6853966Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.6883190Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.7099552Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-44acf145-3acf-4fe5-911a-e13c9673c8f0.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.7135667Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/open-ui/open-ui/.git.path /home/runner/work/_temp/git-credentials-44acf145-3acf-4fe5-911a-e13c9673c8f0.config
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.7173378Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/open-ui/open-ui/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-44acf145-3acf-4fe5-911a-e13c9673c8f0.config
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.7204358Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-44acf145-3acf-4fe5-911a-e13c9673c8f0.config
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.7236959Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-44acf145-3acf-4fe5-911a-e13c9673c8f0.config
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.7295817Z ##[endgroup]
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.7296711Z ##[group]Fetching the repository
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:39.7303847Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +a324331d029600a3388cd5fc2366943fab7da59d:refs/remotes/pull/3/merge
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:43.0503914Z From https://github.com/zhuowcui/open-ui
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:43.0506330Z  * [new ref]         a324331d029600a3388cd5fc2366943fab7da59d -> pull/3/merge
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:43.0512423Z ##[endgroup]
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:43.0514470Z ##[group]Determining the checkout info
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:43.0516573Z ##[endgroup]
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:43.0517954Z [command]/usr/bin/git sparse-checkout disable
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:43.0570020Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:43.0597497Z ##[group]Checking out the ref
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:43.0602921Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/3/merge
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.1656669Z Updating files:  74% (8399/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.1737310Z Updating files:  75% (8499/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.1817569Z Updating files:  76% (8612/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.1898591Z Updating files:  77% (8725/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.1978552Z Updating files:  78% (8839/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.2058202Z Updating files:  79% (8952/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.2135811Z Updating files:  80% (9065/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.2214979Z Updating files:  81% (9179/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.2292519Z Updating files:  82% (9292/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.2379863Z Updating files:  83% (9405/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.2458093Z Updating files:  84% (9519/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.2537055Z Updating files:  85% (9632/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.2612770Z Updating files:  86% (9745/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.2692759Z Updating files:  87% (9858/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.2771090Z Updating files:  88% (9972/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.2851120Z Updating files:  89% (10085/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.2928377Z Updating files:  90% (10198/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.3019354Z Updating files:  91% (10312/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.3140679Z Updating files:  92% (10425/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.3221746Z Updating files:  93% (10538/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.3300436Z Updating files:  94% (10652/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.3380749Z Updating files:  95% (10765/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.3461015Z Updating files:  96% (10878/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.3537988Z Updating files:  97% (10992/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4133687Z Updating files:  98% (11105/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4262523Z Updating files:  99% (11218/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4263271Z Updating files: 100% (11331/11331)
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4263874Z Updating files: 100% (11331/11331), done.
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4470667Z Note: switching to 'refs/remotes/pull/3/merge'.
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4471038Z 
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4471271Z You are in 'detached HEAD' state. You can look around, make experimental
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4472229Z changes and commit them, and you can discard any commits you make in this
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4472832Z state without impacting any branches by switching back to a branch.
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4473135Z 
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4473331Z If you want to create a new branch to retain commits you create, you may
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4473809Z do so (now or later) by using -c with the switch command. Example:
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4474091Z 
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4474212Z   git switch -c <new-branch-name>
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4474400Z 
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4474515Z Or undo this operation with:
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4474722Z 
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4474820Z   git switch -
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4474949Z 
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4475178Z Turn off this advice by setting config variable advice.detachedHead to false
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4475518Z 
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4475893Z HEAD is now at a324331 Merge 59cac2298d4c6a391b7032091a0455f639f2b70a into 1d7a4cc544b26f320266c298080c892efabad442
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4518050Z ##[endgroup]
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4562388Z [command]/usr/bin/git log -1 --format=%H
+clang-format	Run actions/checkout@v6	2026-10-05T15:16:44.4587166Z a324331d029600a3388cd5fc2366943fab7da59d
+clang-format	Install clang-format	﻿2026-10-05T15:16:44.4808583Z ##[group]Run sudo apt-get update
+clang-format	Install clang-format	2026-10-05T15:16:44.4808958Z [36;1msudo apt-get update[0m
+clang-format	Install clang-format	2026-10-05T15:16:44.4809383Z [36;1msudo apt-get install --yes --no-install-recommends clang-format-18[0m
+clang-format	Install clang-format	2026-10-05T15:16:44.5091263Z shell: /usr/bin/bash -e {0}
+clang-format	Install clang-format	2026-10-05T15:16:44.5091888Z ##[endgroup]
+clang-format	Install clang-format	2026-10-05T15:16:44.5922914Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+clang-format	Install clang-format	2026-10-05T15:16:44.6224903Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+clang-format	Install clang-format	2026-10-05T15:16:44.6226483Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+clang-format	Install clang-format	2026-10-05T15:16:44.6240240Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.6302587Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.6319010Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.7510691Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.6 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.7616373Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [458 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.7700597Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [511 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.7996845Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1366 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.8071976Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [304 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.8096322Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [181 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.8117775Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1699 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.8212734Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [341 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.8252254Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [388 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.8373498Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1724 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.8475215Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [394 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.8659523Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+clang-format	Install clang-format	2026-10-05T15:16:44.8676710Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [5776 B]
+clang-format	Install clang-format	2026-10-05T15:16:44.9159955Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [12.6 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.9175893Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1069 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.9238073Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [221 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.9259404Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Components [46.4 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.9275077Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1216 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.9335845Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [244 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.9358207Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Components [76.4 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.9375454Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1566 kB]
+clang-format	Install clang-format	2026-10-05T15:16:44.9450369Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [361 kB]
+clang-format	Install clang-format	2026-10-05T15:16:49.0884376Z Fetched 12.6 MB in 1s (9205 kB/s)
+clang-format	Install clang-format	2026-10-05T15:16:49.9136587Z Reading package lists...
+clang-format	Install clang-format	2026-10-05T15:16:49.9439943Z Reading package lists...
+clang-format	Install clang-format	2026-10-05T15:16:50.1032842Z Building dependency tree...
+clang-format	Install clang-format	2026-10-05T15:16:50.1040148Z Reading state information...
+clang-format	Install clang-format	2026-10-05T15:16:50.2615316Z clang-format-18 is already the newest version (1:18.1.3-1ubuntu1).
+clang-format	Install clang-format	2026-10-05T15:16:50.2616164Z 0 upgraded, 0 newly installed, 0 to remove and 25 not upgraded.
+clang-format	Check tracked C and C++ formatting	﻿2026-10-05T15:16:50.2672860Z ##[group]Run # Generated ABI/style headers are verified against their generators
+clang-format	Check tracked C and C++ formatting	2026-10-05T15:16:50.2673465Z [36;1m# Generated ABI/style headers are verified against their generators[0m
+clang-format	Check tracked C and C++ formatting	2026-10-05T15:16:50.2673965Z [36;1m# in python-accountability; formatting them here would make those[0m
+clang-format	Check tracked C and C++ formatting	2026-10-05T15:16:50.2674376Z [36;1m# byte-for-byte generator checks fail.[0m
+clang-format	Check tracked C and C++ formatting	2026-10-05T15:16:50.2674702Z [36;1mfind src include examples -type f \[0m
+clang-format	Check tracked C and C++ formatting	2026-10-05T15:16:50.2675047Z [36;1m  \( -name '*.cc' -o -name '*.h' -o -name '*.c' \) \[0m
+clang-format	Check tracked C and C++ formatting	2026-10-05T15:16:50.2675420Z [36;1m  ! -path 'include/openui.h' \[0m
+clang-format	Check tracked C and C++ formatting	2026-10-05T15:16:50.2675950Z [36;1m  ! -path 'include/openui_style_properties.h' \[0m
+clang-format	Check tracked C and C++ formatting	2026-10-05T15:16:50.2676284Z [36;1m  -print0 | sort -z | \[0m
+clang-format	Check tracked C and C++ formatting	2026-10-05T15:16:50.2676645Z [36;1m  xargs -0 --no-run-if-empty clang-format-18 --dry-run --Werror[0m
+clang-format	Check tracked C and C++ formatting	2026-10-05T15:16:50.2736648Z shell: /usr/bin/bash -e {0}
+clang-format	Check tracked C and C++ formatting	2026-10-05T15:16:50.2736916Z ##[endgroup]
+clang-format	Post Run actions/checkout@v6	﻿2026-10-05T15:16:52.6899347Z Post job cleanup.
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.7960131Z [command]/usr/bin/git version
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.8006757Z git version 2.55.0
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.8054131Z Temporarily overriding HOME='/home/runner/work/_temp/70e44351-40e8-4a81-8b48-06c4c279cf08' before making global git config changes
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.8055476Z Adding repository directory to the temporary git global config as a safe directory
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.8066565Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/open-ui/open-ui
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.8102476Z Removing SSH command configuration
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.8107048Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.8142521Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.8397139Z Removing HTTP extra header
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.8404270Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.8439477Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.8685226Z Removing includeIf entries pointing to credentials config files
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.8692979Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.9630828Z includeif.gitdir:/home/runner/work/open-ui/open-ui/.git.path
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.9631680Z includeif.gitdir:/home/runner/work/open-ui/open-ui/.git/worktrees/*.path
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.9632454Z includeif.gitdir:/github/workspace/.git.path
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.9633122Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.9634901Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/open-ui/open-ui/.git.path
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.9659043Z /home/runner/work/_temp/git-credentials-44acf145-3acf-4fe5-911a-e13c9673c8f0.config
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:52.9669781Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/open-ui/open-ui/.git.path /home/runner/work/_temp/git-credentials-44acf145-3acf-4fe5-911a-e13c9673c8f0.config
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:53.0097137Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/open-ui/open-ui/.git/worktrees/*.path
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:53.0120287Z /home/runner/work/_temp/git-credentials-44acf145-3acf-4fe5-911a-e13c9673c8f0.config
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:53.0130069Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/open-ui/open-ui/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-44acf145-3acf-4fe5-911a-e13c9673c8f0.config
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:53.0597329Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:53.0619662Z /github/runner_temp/git-credentials-44acf145-3acf-4fe5-911a-e13c9673c8f0.config
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:53.0627519Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-44acf145-3acf-4fe5-911a-e13c9673c8f0.config
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:53.0659964Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:53.0681537Z /github/runner_temp/git-credentials-44acf145-3acf-4fe5-911a-e13c9673c8f0.config
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:53.0698273Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-44acf145-3acf-4fe5-911a-e13c9673c8f0.config
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:53.0730628Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+clang-format	Post Run actions/checkout@v6	2026-10-05T15:16:53.0967730Z Removing credentials config '/home/runner/work/_temp/git-credentials-44acf145-3acf-4fe5-911a-e13c9673c8f0.config'
+clang-format	Complete job	﻿2026-10-05T15:16:53.1110436Z Cleaning up orphan processes

@@ -74,3 +74,9 @@ The reduced resource-backed app does not exercise this fallback behavior.
 The candidate is rejected for application to the umbrella branch. Its source,
 tests, captures and failed results remain preserved. Accepted renderer counts
 and release admission are unchanged; the full exact Chromium gate still fails.
+
+The [fresh fallback follow-up](native-inline-fallback.md) is prepared on the
+current umbrella source with native Rust/C resource-clearing APIs. Its
+Chromium geometry and read-only checks pass; native execution and full pixel
+qualification remain pending. The rejected source and its failed results are
+preserved unchanged.

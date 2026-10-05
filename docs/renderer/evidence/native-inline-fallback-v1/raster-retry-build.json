@@ -1,0 +1,368 @@
+{
+  "all_commands_terminal": true,
+  "build_identity": {
+    "schema_version": 1,
+    "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_ENABLE_LEGACY_SHADERCONTEXT\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+    "source": {
+      "clean": true,
+      "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "cargo_target_dir": "/mnt/e/openui-v02-cargo-c73754e2/target",
+  "expected_stages": 17,
+  "probe_sha256": "c825b33cb6c2187ea5d7a779339c6d81f7a9357c8999f5b575d0858f518003be",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "46379dfb63383a879008d9d490f101831d170f95cf89d38dee9f2dfe64b80062",
+      "name": "clean-workspace",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-ffi",
+        "--lib",
+        "--features",
+        "linux",
+        "raster_configuration::tests::"
+      ],
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "a8ba4f903c670223a86c1268834b5f981caec8e58bc117bc15c5802374e49cc0",
+      "name": "raster-boundaries",
+      "observed_exit_code": 0,
+      "passed": 5
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--workspace",
+        "--locked",
+        "--features",
+        "openui-ffi/linux"
+      ],
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 13,
+      "log_sha256": "aae2db11202a28642af0dd75565d32bedc73a32ebf7b2f4d24e3e5d748587e55",
+      "name": "workspace",
+      "observed_exit_code": 0,
+      "passed": 8554
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_font_raster",
+      "binary_sha256": "10e452212588217e62ff695734bb0f556c08efb6e4bd03ba0b069b119d0f19c2",
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "-p",
+        "openui",
+        "--example",
+        "native_font_raster"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "8fc14a35b8d9e5ce4efd5883406842b9bac6ad88ad8bd82717431a6c3db1efec",
+      "name": "font-build",
+      "observed_exit_code": 0
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_control_raster",
+      "binary_sha256": "bb687e6f54141463929586dde834c7bce5f0c3ae8d77f0767acfcc02287bfd00",
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "-p",
+        "openui",
+        "--example",
+        "native_control_raster"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "d18625afcab2ae3211c868bf5a871dd0650c1b075ae964b0d0f26d9bed0d4cf7",
+      "name": "control-build",
+      "observed_exit_code": 0
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_raster_fields",
+      "binary_sha256": "52cc3fd625972a1203f438a7096f9017437f11a6a9e636a4e313c0db7562c4a5",
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "-p",
+        "openui",
+        "--example",
+        "native_raster_fields"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "84ae2eb07cf632be554e460b55270d860f066d11c7ed2139b8943a709a4960f9",
+      "name": "fields-build",
+      "observed_exit_code": 0
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_intrinsic_sizes",
+      "binary_sha256": "e688645cdbf89ccda6ea0d036f56ee947af73b8cd050f4824257a379ea194c97",
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "-p",
+        "openui",
+        "--example",
+        "native_intrinsic_sizes"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "6e23459f13fed12cb9203dacaeeeaeee436d8b82a6c287bea8f57abefd436110",
+      "name": "intrinsic-build",
+      "observed_exit_code": 0
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/native_static_position",
+      "binary_sha256": "ee3c21c86f37c71aaf006b897d1fd482f9a630c504bf97f61999b35c5880d34b",
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "-p",
+        "openui",
+        "--example",
+        "native_static_position"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "a9d22888b9c90144b17878b066af371d70175be3af243bfadffe1bed68c0bbc7",
+      "name": "static-build",
+      "observed_exit_code": 0
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/libopenui_ffi.so",
+      "binary_sha256": "67f68cafa28ca394954b0459bea095ad6c35f3307bc22723d4a937feda4e2f44",
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "-p",
+        "openui-ffi",
+        "--features",
+        "linux"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "b36411085d892d74e4e2d3ebe975f1fc8e2c5b7bdfdea1ff03be661e3b866842",
+      "name": "ffi-build",
+      "observed_exit_code": 0
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/pixel_compare",
+      "binary_sha256": "ed9c7593b705a07303a548e4695b99168e36dcedc70823451cddab2634d4cf2f",
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "-p",
+        "pixel-compare",
+        "--bin",
+        "pixel_compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "dcc6e76d7dc2ec26902e708374dba94b593fefea12a0724e4e1d89c7bbadac17",
+      "name": "pixel-build",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/dev/shm/openui-native-raster-fields-retry-e0dc491e/tools/ffi/verify_abi.py",
+        "--library",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/libopenui_ffi.so"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "8ec6e32e476ba6343e7e0e66aa2710b4f3f47381db9de4ba8c7309beecae4eb1",
+      "name": "ffi-consumers",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-I/dev/shm/openui-native-raster-fields-retry-e0dc491e/include",
+        "/dev/shm/openui-native-raster-fields-retry-e0dc491e/examples/c_v02/raster_configuration.c",
+        "-c",
+        "-o",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/raster_configuration-c.o"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "compile-c",
+      "observed_exit_code": 0
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/raster_configuration-c",
+      "binary_sha256": "33c51903207479c3798b5702c24b665d63b208076fd022a39d9a322ba26a17b3",
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/x86_64-linux-gnu",
+        "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+        "-B/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+        "-fuse-ld=lld",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/raster_configuration-c.o",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/libopenui_ffi.so",
+        "-Wl,-rpath,/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559",
+        "-o",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/raster_configuration-c"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "link-c",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/raster_configuration-c"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "1a956f88b383a0a41422607e6904fcf0af67ac161f8b771f27e08e12f8bb31da",
+      "name": "run-c",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-I/dev/shm/openui-native-raster-fields-retry-e0dc491e/include",
+        "/dev/shm/openui-native-raster-fields-retry-e0dc491e/examples/c_v02/raster_configuration.cc",
+        "-c",
+        "-o",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/raster_configuration-cpp.o"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "compile-cpp",
+      "observed_exit_code": 0
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/raster_configuration-cpp",
+      "binary_sha256": "8e66b5c13ea17593dd829866d1c9c37a27772e60ef22ac5e94b450a5301d66d5",
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/x86_64-linux-gnu",
+        "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+        "-B/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+        "-fuse-ld=lld",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/raster_configuration-cpp.o",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/libopenui_ffi.so",
+        "-Wl,-rpath,/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559",
+        "-o",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/raster_configuration-cpp"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "link-cpp",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/raster_configuration-cpp"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "1a956f88b383a0a41422607e6904fcf0af67ac161f8b771f27e08e12f8bb31da",
+      "name": "run-cpp",
+      "observed_exit_code": 0
+    }
+  ],
+  "workspace_packages_cleaned": 18
+}
