@@ -3529,12 +3529,9 @@ fn compute_replaced_intrinsic_sizes_with_natural(
 
 /// True if this element tag represents a replaced element.
 ///
-/// In the current DOM model, only `Viewport` and `Text` are special;
-/// all others are generic containers. We treat none as replaced for now,
-/// but this function provides the extension point. The caller can mark
-/// elements as replaced through the style (e.g., explicit width+height
-/// on an img-like element).
-fn is_replaced_element(tag: ElementTag) -> bool {
+/// These tags use replaced sizing even before a resource is assigned. Other
+/// tags may carry explicit `ReplacedContent` on their retained DOM node.
+pub(crate) fn is_replaced_element(tag: ElementTag) -> bool {
     matches!(
         tag,
         ElementTag::Image
