@@ -41,14 +41,37 @@ invariants stay fixed. The native consuming-app capture gate is incomplete
 after an unstable reference pair; both captures remain preserved. Accepted
 renderer results and release admission stay unchanged.
 
-That review also preserves native constructor candidate `893ea292`, its
+The [latest native review](../renderer/generated/native-review-v2.json)
+records the terminal results of all five subsequent pipelines. Raster source
+`e0dc491e` stops after its harness tries to restore a nonexistent branch; no
+fixed tests or matrices run. Image source `1413a862` fails its fixed geometry
+assertion: an explicitly sized inline image reports a 0 × 19 box. Rounded
+source `9e0c8ec5` fails its fixed pixel assertion and worsens the checked sample;
+its stroke hypothesis remains unqualified. Bevel `cbcbc9fb` passes its named
+baseline/fixed guard, then its workspace child is terminated by the disk guard.
+The enum baseline clean is also terminated by that guard. Every whole owner
+is terminal. These candidates remain unapplied; none establishes a new
+renderer or release pass. Original receipts and logs remain preserved.
+
+The [isolated inline replaced correction](../renderer/native-inline-replaced.md)
+at `c92e2d08` fixes shared box collection without taking the rejected intrinsic
+or whitespace changes. Its named baseline assertion fails with actual exit
+101, and both fixed geometry and ordinary-inline neighbor tests pass. All
+13 read-only checks pass. Two pinned Chromium processes agree on all 48
+geometry observations across four profiles. A fresh exclusive pipeline now
+builds the native Rust/C/C++ consumers and requires 60 native images,
+240 repeated Chromium captures and all four matrices. Consuming-app and pixel
+qualification remain pending; accepted renderer totals stay unchanged.
+
+That earlier review also preserves native constructor candidate `893ea292`, its
 test-only baseline, source patch and immutable verification probes. Public
 Rust typed setters already expose the relevant operations. The shared C value
 constructor gains the missing column-fill, break, border-style and table-role
 values, with property identity and owned lifetime checks. It includes public
-Rust, C and C++ consuming applications. All 13 read-only checks pass; local
-builds, callback/geometry checks and the four exact pixel matrices wait for
-every command in all 25 preceding whole pipelines. No JavaScript is executed
+Rust, C and C++ consuming applications. All 13 read-only checks pass. Its local
+queue reaches the baseline clean, whose child exits -15 after the disk guard
+triggers; the owner exits 1. No named tests or matrices execute. A fresh complete
+run is required. No JavaScript is executed
 by Open UI. This candidate remains unapplied and unqualified.
 
 The private [image background candidate](../renderer/native-image-background-culling.md)

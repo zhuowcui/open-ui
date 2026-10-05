@@ -1,0 +1,223 @@
+   Compiling openui-geometry v0.2.0 (/dev/shm/openui-native-image-imports-2eacae2c/bindings/rust/openui-geometry)
+   Compiling openui-style v0.2.0 (/dev/shm/openui-native-image-imports-2eacae2c/bindings/rust/openui-style)
+   Compiling openui-text v0.2.0 (/dev/shm/openui-native-image-imports-2eacae2c/bindings/rust/openui-text)
+   Compiling openui-dom v0.2.0 (/dev/shm/openui-native-image-imports-2eacae2c/bindings/rust/openui-dom)
+   Compiling openui-layout v0.2.0 (/dev/shm/openui-native-image-imports-2eacae2c/bindings/rust/openui-layout)
+warning: unused import: `BfcOffset`
+  --> openui-layout/src/bfc_resolution.rs:17:23
+   |
+17 | use openui_geometry::{BfcOffset, BoxStrut, LayoutUnit, MarginStrut};
+   |                       ^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `balance_columns`
+     --> openui-layout/src/block.rs:19571:9
+      |
+19571 |         balance_columns, balance_columns_with_margins, compute_column_positions,
+      |         ^^^^^^^^^^^^^^^
+
+warning: unused import: `super::*`
+    --> openui-layout/src/intrinsic_sizing.rs:3974:9
+     |
+3974 |     use super::*;
+     |         ^^^^^^^^
+
+warning: unused import: `std::sync::Arc`
+  --> openui-layout/src/new_formatting_context.rs:17:5
+   |
+17 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+
+warning: unused import: `ClearType`
+  --> openui-layout/src/new_formatting_context.rs:24:25
+   |
+24 | use crate::exclusions::{ClearType, ExclusionSpace};
+   |                         ^^^^^^^^^
+
+warning: unused import: `crate::layout_result::LayoutResult`
+  --> openui-layout/src/new_formatting_context.rs:26:5
+   |
+26 | use crate::layout_result::LayoutResult;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: variable `reconstructed_block_in_inline` is assigned to, but never used
+    --> openui-layout/src/block.rs:2104:9
+     |
+2104 |     let mut reconstructed_block_in_inline = false;
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = note: consider using `_reconstructed_block_in_inline` instead
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+    --> openui-layout/src/block.rs:6781:9
+     |
+6781 |     let mut child_margin = resolve_margins_in_parent_axes(
+     |         ----^^^^^^^^^^^^
+     |         |
+     |         help: remove this `mut`
+     |
+     = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `source_caption_end` is never read
+    --> openui-layout/src/block.rs:9551:5
+     |
+9550 | struct CaptionedRepeatedTableFlow {
+     |        -------------------------- field in this struct
+9551 |     source_caption_end: LayoutUnit,
+     |     ^^^^^^^^^^^^^^^^^^
+     |
+     = note: `CaptionedRepeatedTableFlow` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `columns_needed_for_height` is never used
+   --> openui-layout/src/multicol/mod.rs:705:4
+    |
+705 | fn columns_needed_for_height(
+    |    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+   Compiling openui-paint v0.2.0 (/dev/shm/openui-native-image-imports-2eacae2c/bindings/rust/openui-paint)
+warning: use of deprecated module `skia_safe::gradient_shader`: Use the skia_safe::gradient module
+  --> openui-paint/src/painter.rs:39:20
+   |
+39 |     color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, ClipOp, Color4f,
+   |                    ^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear_with_interpolation`: Use the skia_safe::gradient module
+    --> openui-paint/src/painter.rs:1860:45
+     |
+1860 |     scrim_paint.set_shader(gradient_shader::linear_with_interpolation(
+     |                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14056:51
+      |
+14056 |                 paint.set_shader(gradient_shader::linear_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14069:51
+      |
+14069 |                 paint.set_shader(gradient_shader::linear(
+      |                                                   ^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14082:51
+      |
+14082 |                 paint.set_shader(gradient_shader::linear_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14178:55
+      |
+14178 |                     paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14192:55
+      |
+14192 |                     paint.set_shader(gradient_shader::two_point_conical(
+      |                                                       ^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14208:55
+      |
+14208 |                     paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14228:51
+      |
+14228 |                 paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14242:51
+      |
+14242 |                 paint.set_shader(gradient_shader::two_point_conical(
+      |                                                   ^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14258:51
+      |
+14258 |                 paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::sweep_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14318:51
+      |
+14318 |                 paint.set_shader(gradient_shader::sweep_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::sweep`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14332:51
+      |
+14332 |                 paint.set_shader(gradient_shader::sweep(
+      |                                                   ^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::sweep_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14346:51
+      |
+14346 |                 paint.set_shader(gradient_shader::sweep_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:17758:55
+      |
+17758 |                     paint.set_shader(gradient_shader::linear(
+      |                                                       ^^^^^^
+
+warning: `openui-layout` (lib) generated 10 warnings (run `cargo fix --lib -p openui-layout` to apply 7 suggestions)
+warning: variant `RestoreTo` is never constructed
+  --> openui-paint/src/paint_record.rs:16:5
+   |
+13 | enum Operation {
+   |      --------- variant in this enum
+...
+16 |     RestoreTo(usize),
+   |     ^^^^^^^^^
+   |
+   = note: `Operation` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: methods `restore_to_count` and `save_count` are never used
+   --> openui-paint/src/paint_record.rs:131:19
+    |
+119 | impl dyn PaintCanvas + '_ {
+    | ------------------------- methods in this implementation
+...
+131 |     pub(crate) fn restore_to_count(&self, count: usize) -> &Self {
+    |                   ^^^^^^^^^^^^^^^^
+...
+137 |     pub(crate) fn save_count(&self) -> usize {
+    |                   ^^^^^^^^^^
+
+   Compiling openui-compositor v0.2.0 (/dev/shm/openui-native-image-imports-2eacae2c/bindings/rust/openui-compositor)
+warning: `openui-paint` (lib) generated 17 warnings
+   Compiling openui-engine v0.2.0 (/dev/shm/openui-native-image-imports-2eacae2c/bindings/rust/openui-engine)
+    Finished `test` profile [unoptimized] target(s) in 16.54s
+     Running unittests src/lib.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui_engine-8ae43f7dcd9ac915)
+
+running 1 test
+test tests::native_image_edge_coverage_blends_after_sampling_without_white_halo ... FAILED
+
+failures:
+
+---- tests::native_image_edge_coverage_blends_after_sampling_without_white_halo stdout ----
+
+thread 'tests::native_image_edge_coverage_blends_after_sampling_without_white_halo' (3608462) panicked at openui-engine/src/lib.rs:2667:9:
+assertion `left == right` failed: image coverage must blend once over its red backdrop
+  left: [126, 65, 0, 255]
+ right: [126, 64, 0, 255]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    tests::native_image_edge_coverage_blends_after_sampling_without_white_halo
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 37 filtered out; finished in 0.09s
+
+error: test failed, to rerun pass `-p openui-engine --lib`

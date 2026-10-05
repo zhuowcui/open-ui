@@ -6,6 +6,15 @@ the sole pixel target, with zero tolerance.
 
 ## Current validation checkpoint
 
+The [latest terminal review](generated/native-review-v2.json) records the
+public-export source `e0dc491e`. Its harness executes five baseline clean/test
+commands, then fails while restoring a nonexistent branch. The root remains
+clean at the default-strike baseline. No fixed tests, consuming applications
+or pixel matrices execute. Actual process exits and original receipts are
+preserved; the failed harness is terminal and a fresh corrected run is required.
+This establishes no raster qualification. Earlier results below belong to
+their named sources.
+
 The [v38 evidence](generated/native-scroll-insets-v38.json) preserves
 `0e1f12ff`, which replaces two invalid test-only `fields_mut` calls with the
 existing `update_derived` closure. Test assertions and renderer production

@@ -1,0 +1,1742 @@
+{
+  "all_commands_terminal": true,
+  "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+  "cargo_commands_run": 0,
+  "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "fontconfig_sha256": "99fd54cf2f3875bba44a2272b3dfe5adc7c08263ca0511ec2473ec5e59c09195",
+  "image_sha256": "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
+  "independent_queries_identical": true,
+  "inputs": {
+    "canvas-after": {
+      "expected_width": 100,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-geometry-v1527/canvas-after.html",
+      "sha256": "ffdc6f9231a4199428787e2d02502b02adcbdcb0d939aea9d4b5c2d35234420f"
+    },
+    "canvas-before": {
+      "expected_width": 150,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-geometry-v1527/canvas-before.html",
+      "sha256": "bfeebe10e39b92253d7f8012456b8232427a2360a68778eed4b1b5241ce44132"
+    },
+    "img-after": {
+      "expected_width": 100,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-geometry-v1527/img-after.html",
+      "sha256": "b01cbd05b631a45d54bce196e7136bbb12859d8cae60efe553eddbee546eb9f8"
+    },
+    "img-before": {
+      "expected_width": 150,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-geometry-v1527/img-before.html",
+      "sha256": "abf3878c6f7dd23309f0db0785010f2fe57bd1ceb7c6e00d836ff7b4d85987f3"
+    },
+    "svg-after": {
+      "expected_width": 100,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-geometry-v1527/svg-after.html",
+      "sha256": "b1796cabdbf1f06dade57d255be88aad7e3c790241fa4074bc4c7ff5ee2406c1"
+    },
+    "svg-before": {
+      "expected_width": 150,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-geometry-v1527/svg-before.html",
+      "sha256": "e1bdc2d6dbd45f6de9dd3a32d4f9fa35d9cdd2d2723dbee6484677dd4c0a8819"
+    }
+  },
+  "inputs_unchanged": true,
+  "javascript_executed_by_openui": false,
+  "observations": 48,
+  "observed_exit_code": 0,
+  "probe_sha256": "bbf92ac66e6a43c5d2318eaaf181a8ed6a60041385e99df890d98493b35f1879",
+  "queries_only": true,
+  "release_qualification": false,
+  "runs": [
+    {
+      "repeat": 1,
+      "rows": [
+        {
+          "case": "img-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1,
+          "viewport": [
+            800,
+            600
+          ]
+        },
+        {
+          "case": "img-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1,
+          "viewport": [
+            800,
+            600
+          ]
+        },
+        {
+          "case": "canvas-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1,
+          "viewport": [
+            800,
+            600
+          ]
+        },
+        {
+          "case": "canvas-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1,
+          "viewport": [
+            800,
+            600
+          ]
+        },
+        {
+          "case": "svg-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1,
+          "viewport": [
+            800,
+            600
+          ]
+        },
+        {
+          "case": "svg-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1,
+          "viewport": [
+            800,
+            600
+          ]
+        },
+        {
+          "case": "img-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 667,
+              "width": 375
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 2,
+          "viewport": [
+            375,
+            667
+          ]
+        },
+        {
+          "case": "img-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 667,
+              "width": 375
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 2,
+          "viewport": [
+            375,
+            667
+          ]
+        },
+        {
+          "case": "canvas-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 667,
+              "width": 375
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 2,
+          "viewport": [
+            375,
+            667
+          ]
+        },
+        {
+          "case": "canvas-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 667,
+              "width": 375
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 2,
+          "viewport": [
+            375,
+            667
+          ]
+        },
+        {
+          "case": "svg-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 667,
+              "width": 375
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 2,
+          "viewport": [
+            375,
+            667
+          ]
+        },
+        {
+          "case": "svg-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 667,
+              "width": 375
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 2,
+          "viewport": [
+            375,
+            667
+          ]
+        },
+        {
+          "case": "img-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 720,
+              "width": 1280
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.25,
+          "viewport": [
+            1280,
+            720
+          ]
+        },
+        {
+          "case": "img-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 720,
+              "width": 1280
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.25,
+          "viewport": [
+            1280,
+            720
+          ]
+        },
+        {
+          "case": "canvas-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 720,
+              "width": 1280
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.25,
+          "viewport": [
+            1280,
+            720
+          ]
+        },
+        {
+          "case": "canvas-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 720,
+              "width": 1280
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.25,
+          "viewport": [
+            1280,
+            720
+          ]
+        },
+        {
+          "case": "svg-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 720,
+              "width": 1280
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.25,
+          "viewport": [
+            1280,
+            720
+          ]
+        },
+        {
+          "case": "svg-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 720,
+              "width": 1280
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.25,
+          "viewport": [
+            1280,
+            720
+          ]
+        },
+        {
+          "case": "img-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 1080,
+              "width": 1920
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.5,
+          "viewport": [
+            1920,
+            1080
+          ]
+        },
+        {
+          "case": "img-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 1080,
+              "width": 1920
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.5,
+          "viewport": [
+            1920,
+            1080
+          ]
+        },
+        {
+          "case": "canvas-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 1080,
+              "width": 1920
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.5,
+          "viewport": [
+            1920,
+            1080
+          ]
+        },
+        {
+          "case": "canvas-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 1080,
+              "width": 1920
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.5,
+          "viewport": [
+            1920,
+            1080
+          ]
+        },
+        {
+          "case": "svg-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 1080,
+              "width": 1920
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.5,
+          "viewport": [
+            1920,
+            1080
+          ]
+        },
+        {
+          "case": "svg-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 1080,
+              "width": 1920
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.5,
+          "viewport": [
+            1920,
+            1080
+          ]
+        }
+      ]
+    },
+    {
+      "repeat": 2,
+      "rows": [
+        {
+          "case": "img-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1,
+          "viewport": [
+            800,
+            600
+          ]
+        },
+        {
+          "case": "img-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1,
+          "viewport": [
+            800,
+            600
+          ]
+        },
+        {
+          "case": "canvas-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1,
+          "viewport": [
+            800,
+            600
+          ]
+        },
+        {
+          "case": "canvas-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1,
+          "viewport": [
+            800,
+            600
+          ]
+        },
+        {
+          "case": "svg-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1,
+          "viewport": [
+            800,
+            600
+          ]
+        },
+        {
+          "case": "svg-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1,
+              "height": 600,
+              "width": 800
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1,
+          "viewport": [
+            800,
+            600
+          ]
+        },
+        {
+          "case": "img-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 667,
+              "width": 375
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 2,
+          "viewport": [
+            375,
+            667
+          ]
+        },
+        {
+          "case": "img-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 667,
+              "width": 375
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 2,
+          "viewport": [
+            375,
+            667
+          ]
+        },
+        {
+          "case": "canvas-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 667,
+              "width": 375
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 2,
+          "viewport": [
+            375,
+            667
+          ]
+        },
+        {
+          "case": "canvas-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 667,
+              "width": 375
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 2,
+          "viewport": [
+            375,
+            667
+          ]
+        },
+        {
+          "case": "svg-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 667,
+              "width": 375
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 2,
+          "viewport": [
+            375,
+            667
+          ]
+        },
+        {
+          "case": "svg-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 2,
+              "height": 667,
+              "width": 375
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 2,
+          "viewport": [
+            375,
+            667
+          ]
+        },
+        {
+          "case": "img-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 720,
+              "width": 1280
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.25,
+          "viewport": [
+            1280,
+            720
+          ]
+        },
+        {
+          "case": "img-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 720,
+              "width": 1280
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.25,
+          "viewport": [
+            1280,
+            720
+          ]
+        },
+        {
+          "case": "canvas-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 720,
+              "width": 1280
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.25,
+          "viewport": [
+            1280,
+            720
+          ]
+        },
+        {
+          "case": "canvas-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 720,
+              "width": 1280
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.25,
+          "viewport": [
+            1280,
+            720
+          ]
+        },
+        {
+          "case": "svg-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 720,
+              "width": 1280
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.25,
+          "viewport": [
+            1280,
+            720
+          ]
+        },
+        {
+          "case": "svg-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.25,
+              "height": 720,
+              "width": 1280
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.25,
+          "viewport": [
+            1280,
+            720
+          ]
+        },
+        {
+          "case": "img-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 1080,
+              "width": 1920
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.5,
+          "viewport": [
+            1920,
+            1080
+          ]
+        },
+        {
+          "case": "img-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 1080,
+              "width": 1920
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.5,
+          "viewport": [
+            1920,
+            1080
+          ]
+        },
+        {
+          "case": "canvas-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 1080,
+              "width": 1920
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.5,
+          "viewport": [
+            1920,
+            1080
+          ]
+        },
+        {
+          "case": "canvas-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 1080,
+              "width": 1920
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.5,
+          "viewport": [
+            1920,
+            1080
+          ]
+        },
+        {
+          "case": "svg-before",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 150,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 1080,
+              "width": 1920
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.5,
+          "viewport": [
+            1920,
+            1080
+          ]
+        },
+        {
+          "case": "svg-after",
+          "query": {
+            "clientRects": [
+              {
+                "height": 150,
+                "width": 100,
+                "x": 20,
+                "y": 20
+              }
+            ],
+            "image": {
+              "height": 150,
+              "width": 100,
+              "x": 20,
+              "y": 20
+            },
+            "metrics": {
+              "dpr": 1.5,
+              "height": 1080,
+              "width": 1920
+            },
+            "parent": {
+              "height": 150,
+              "width": 150,
+              "x": 20,
+              "y": 20
+            }
+          },
+          "scale": 1.5,
+          "viewport": [
+            1920,
+            1080
+          ]
+        }
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "screenshots_generated": 0
+}

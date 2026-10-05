@@ -136,13 +136,25 @@ and gains none. All Chromium inputs stay fixed. The consuming-app capture gate
 is incomplete because a Chromium reference pair differs. This source remains
 unapplied; accepted renderer totals and release admission stay unchanged.
 
-The same review records native constructor candidate `893ea292`. Rust apps
+The [latest native review](docs/renderer/generated/native-review-v2.json)
+records five terminal stops: a raster harness branch-restoration error, an
+inline image geometry failure, a worsened rounded-border pixel assertion,
+and two disk-guard stops. All original evidence remains preserved. The
+[isolated inline replaced correction](docs/renderer/native-inline-replaced.md)
+at private `c92e2d08` reproduces the named baseline failure and passes two fixed
+guards and thirteen read-only checks. Both pinned Chromium query runs agree
+on all 48 box observations across four profiles. Native Rust/C/C++ application
+and full pixel verification are running; the correction remains unapplied.
+Accepted renderer counts and release admission remain unchanged.
+
+The earlier review records native constructor candidate `893ea292`. Rust apps
 already have typed setters for these operations; the shared C constructor was
 missing column-fill, fragmentation, border-style and table-role values. The
 candidate fills those paths with owned, property-bound values and includes
 consuming Rust, C and C++ examples. All 13 read-only checks pass, including
-generator consistency and C/C++ syntax. Clean builds, native callbacks and
-exact Chromium comparisons are queued after every prior whole pipeline.
+generator consistency and C/C++ syntax. Its baseline clean is stopped by the
+disk guard before named tests execute. Clean builds, native callbacks and exact
+Chromium comparisons require a fresh complete run.
 This is native API work; Open UI executes no JavaScript. The candidate remains
 unapplied and unqualified.
 The [v40 raster evidence](docs/renderer/generated/native-scroll-insets-v40.json)

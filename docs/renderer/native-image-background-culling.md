@@ -25,6 +25,15 @@ pixel gate.
 
 ## Candidate and verification
 
+The [latest terminal review](generated/native-review-v2.json) records source
+`1413a862` after the native Rust import correction. Its fixed Engine guard
+stops on inline image geometry: the explicit 150 × 150 image reports a 0 × 19
+box. The original assertion stays required. The
+[shared inline collection correction](native-inline-replaced.md) is isolated
+on another source and passes its two named guards; its native application and
+full pixel qualification remain pending. No image or culling gain is claimed
+from this stop. Earlier source measurements below retain their identities.
+
 Pinned Blink checks opaque image foreground in
 [LayoutImage](https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/core/layout/layout_image.cc)
 and uses it to skip an obscured background in

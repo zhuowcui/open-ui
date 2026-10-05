@@ -4,6 +4,18 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
+The [latest native review](../renderer/generated/native-review-v2.json)
+supersedes the pending queue descriptions below for five candidates: raster
+`e0dc491e`, image `1413a862`, rounded border `9e0c8ec5`, bevel `cbcbc9fb` and
+native values `893ea292` are terminal and unqualified. The first stops in its
+harness, image geometry and rounded pixels fail assertions, and the last two
+stop at the disk guard. The isolated native inline correction `c92e2d08` passes
+two fixed guards and thirteen read-only checks; native consuming applications
+and all four pixel matrices remain pending. No candidate is promoted or
+admitted. Chromium remains the sole pixel target. Application interaction
+uses public native Rust APIs and callbacks; every needed operation remains
+required even when its Chromium test uses JavaScript.
+
 | Area | Current evidence | State |
 |---|---|---|
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |

@@ -1,5 +1,18 @@
 # Rounded border and content-background coverage
 
+## Latest translucent-border candidate
+
+The [terminal review](generated/native-review-v2.json) records a failed fixed
+assertion at private `9e0c8ec5`. At scale 1 and physical pixel `(70, 28)`, the
+baseline gives `(245, 250, 255, 255)`, the candidate gives
+`(229, 241, 255, 255)`, and pinned Chromium gives `(244, 249, 255, 255)`.
+The assertion is preserved. The alpha-independent stroke hypothesis worsens
+this sample and remains unqualified. No application sweep or pixel matrix
+runs on this candidate. It remains unapplied. Its owned geometry and Chromium's
+translucent-border paint route require further review before another correction.
+
+## Earlier opaque-border evidence
+
 The CPU primitive test `wpt/css_backgrounds/background-clip-content-box-with-border-radius-002`
 is exact against Chromium at all 40 required profiles in the clean
 [v12 primitive evidence](generated/focused-primitive-raster-v12.json). The

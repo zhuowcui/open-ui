@@ -1,0 +1,91 @@
+{
+  "all_commands_terminal": true,
+  "cargo_target_dir": "/mnt/e/openui-v02-cargo-c73754e2/target",
+  "probe_sha256": "1fe4f69fb1e3c2a14adbd23d7d18452393b50c3ca031f2b688a0e283895c58ed",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "cbcbc9fb776aba1c40e01d84ed88d6afdbd272a7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c1444b99f6f0ef4d21782bd96cd2697cb79a7c0e480e8815388e2f1dfdadea25",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "cbcbc9fb776aba1c40e01d84ed88d6afdbd272a7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c1444b99f6f0ef4d21782bd96cd2697cb79a7c0e480e8815388e2f1dfdadea25",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "9ffa6dda2ea7b54fc250f5afd334d5cd09201df663ff3253a2afd6c840bb4921",
+      "name": "clean-workspace",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--workspace",
+        "--locked",
+        "--features",
+        "openui-ffi/linux"
+      ],
+      "disk_guard_triggered": true,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "95a1d9ba38467373978b7976d0d6aa57d0cf919cf7bb1234b8051e3b167a0a8c",
+      "name": "workspace",
+      "observed_exit_code": -15,
+      "passed": 2036
+    }
+  ],
+  "workspace_packages_cleaned": 18
+}
