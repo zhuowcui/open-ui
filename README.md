@@ -88,7 +88,15 @@ The [recording cache repair](docs/renderer/generated/native-scroll-insets-v35.js
 is applied. Its clean qualification source passes the CPU/Ganesh cache guards,
 8,532 workspace tests and all seven hosted hardening jobs. Every original and
 expanded pixel comparison remains unchanged. The umbrella checkpoint's own
-build and matrices are queued; the full Chromium pixel gate still fails.
+build and matrices are queued. All seven own umbrella
+[manual hardening jobs](https://github.com/zhuowcui/open-ui/actions/runs/37244559627)
+pass at `287e176a`, with zero skips; the full Chromium pixel gate still fails.
+The [prepared native style/cache integration](docs/renderer/generated/native-scroll-insets-v36.json)
+at private `0ccc37da` passes ten read-only checks. Its own local compilation,
+native consumers and all pixel matrices are queued; its hosted hardening is
+running at the recorded observation. Prior style results are attributed to
+`5cc75147`, including the 60 failing native static-position states. This new
+integration remains unapplied and unqualified.
 Earlier renderer measurements below remain attributed to their named sources. The
 [private sampling candidate](docs/renderer/generated/native-viewport-full-v14.json)
 loses 23 exact Chromium comparisons and gains 14 in its complete census;

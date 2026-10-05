@@ -21,7 +21,9 @@ experiment exists in the repository.
   product design, including future versions. Application behavior uses public
   native Rust methods and Rust event callbacks. Browser-like element behavior
   needed by an application must be implemented as a native Rust API, even when
-  Chromium tests express that behavior with a script. WebAssembly execution
+  Chromium tests express that behavior with a script. Excluding JavaScript
+  execution does not exclude the needed element behavior or its native API.
+  WebAssembly execution
   inside documents is also unsupported.
 - HTTP, URL fetching, cookies, browser navigation, storage, service workers,
   and developer tools.

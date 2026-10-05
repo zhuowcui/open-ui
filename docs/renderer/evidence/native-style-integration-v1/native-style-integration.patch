@@ -1,0 +1,2273 @@
+diff --git a/bindings/rust/openui-engine/src/animation.rs b/bindings/rust/openui-engine/src/animation.rs
+index 89eaca18..dd30fb73 100644
+--- a/bindings/rust/openui-engine/src/animation.rs
++++ b/bindings/rust/openui-engine/src/animation.rs
+@@ -198,13 +198,19 @@ impl Engine {
+         if !openui_style::value_matches_property(property, &to) {
+             return Err(EngineError::PropertyType { property });
+         }
++        options
++            .validate()
++            .map_err(|error| EngineError::Render(error.to_string()))?;
+         let from = value_from_computed(&self.document.node(node).style, property);
+-        self.slots[target.index as usize]
+-            .authored
+-            .insert(property as u16, to.clone());
+         let keyframes =
+             PropertyKeyframes::typed(property, Keyframes::from_values(from, to.clone()))
+                 .map_err(|error| EngineError::Render(error.to_string()))?;
++        self.slots[target.index as usize]
++            .authored
++            .insert(property as u16, to.clone());
++        let order = &mut self.slots[target.index as usize].authored_order;
++        order.retain(|id| *id != property as u16);
++        order.push(property as u16);
+         self.start_animation(
+             target,
+             keyframes,
+@@ -475,11 +481,24 @@ impl Engine {
+             });
+             let next_value = sampled.as_ref().unwrap_or(&snapshot.underlying);
+             if snapshot.last_applied.as_ref() != sampled.as_ref() {
+-                self.apply_animation_value(
++                // Inherited values recompute this node and its descendants.
++                // Publish this sample before rebuilding the computed style so
++                // the rebuild sees the new frame rather than the previous one.
++                self.animations
++                    .get_mut(&id)
++                    .expect("live animation")
++                    .last_applied = sampled.clone();
++                if let Err(error) = self.apply_animation_value(
+                     snapshot.target,
+                     snapshot.keyframes.property(),
+                     next_value,
+-                )?;
++                ) {
++                    self.animations
++                        .get_mut(&id)
++                        .expect("live animation")
++                        .last_applied = snapshot.last_applied;
++                    return Err(error);
++                }
+             }
+ 
+             let mut events = Vec::new();
+@@ -574,17 +593,34 @@ impl Engine {
+         value: &StyleValue,
+     ) -> Result<(), EngineError> {
+         let node = self.resolve(target)?;
++        let viewport = (
++            self.viewport.logical_width() as f32,
++            self.viewport.logical_height() as f32,
++        );
++        let font = if property == StyleProperty::FontSize {
++            let parent = self.document.node(node).parent;
++            if parent.is_none() {
++                openui_style::ComputedStyle::initial().font_size
++            } else {
++                self.document.node(parent).style.font_size
++            }
++        } else {
++            self.document.node(node).style.font_size
++        };
++        let root_font = if node == self.document.root() && property == StyleProperty::FontSize {
++            openui_style::ComputedStyle::initial().font_size
++        } else {
++            self.document.node(self.document.root()).style.font_size
++        };
++        let resolved = Self::resolve_native_lengths(property, value, font, root_font, viewport);
++        // Publish to resolved targets as well as authored targets. The shared
++        // refresh then updates relative lengths and native descendants.
+         self.document
+-            .apply_style_property(
+-                node,
+-                property,
+-                value,
+-                (
+-                    self.viewport.logical_width() as f32,
+-                    self.viewport.logical_height() as f32,
+-                ),
+-            )
++            .apply_style_property(node, property, &resolved, viewport)
+             .map_err(|_| EngineError::PropertyType { property })?;
++        if property.metadata().inherited {
++            self.refresh_inherited_styles(node)?;
++        }
+         self.dirty.hit_test = true;
+         self.mark_dirty(property.metadata().invalidation);
+         Ok(())
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 6c14aebb..b41b75c1 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -231,6 +231,9 @@ struct Slot {
+     generation: u32,
+     node: Option<NodeId>,
+     authored: BTreeMap<u16, StyleValue>,
++    authored_order: Vec<u16>,
++    authored_pseudo: [Option<Style>; 4],
++    resolved_style_snapshot: bool,
+ }
+ 
+ #[derive(Debug, Clone, Copy)]
+@@ -436,6 +439,9 @@ impl Engine {
+             generation: 1,
+             node: Some(root_node),
+             authored: BTreeMap::new(),
++            authored_order: Vec::new(),
++            authored_pseudo: Default::default(),
++            resolved_style_snapshot: false,
+         };
+         Ok(Self {
+             id: NEXT_DOCUMENT_ID.fetch_add(1, Ordering::Relaxed),
+@@ -622,23 +628,14 @@ impl Engine {
+     }
+ 
+     fn recompute_authored_styles(&mut self) -> Result<(), EngineError> {
+-        let viewport = (
+-            self.viewport.logical_width() as f32,
+-            self.viewport.logical_height() as f32,
+-        );
+-        let declarations = self
++        let roots: Vec<_> = self
+             .slots
+             .iter()
+-            .filter_map(|slot| slot.node.map(|node| (node, slot.authored.clone())))
+-            .collect::<Vec<_>>();
+-        for (node, authored) in declarations {
+-            for (raw_property, value) in authored {
+-                let property = StyleProperty::from_u16(raw_property)
+-                    .ok_or(EngineError::InvalidInput("authored property ID is invalid"))?;
+-                self.document
+-                    .apply_style_property(node, property, &value, viewport)
+-                    .map_err(|_| EngineError::PropertyType { property })?;
+-            }
++            .filter_map(|slot| slot.node)
++            .filter(|node| self.document.node(*node).parent.is_none())
++            .collect();
++        for root in roots {
++            self.refresh_inherited_styles(root)?;
+         }
+         Ok(())
+     }
+@@ -777,6 +774,9 @@ impl Engine {
+             let slot = &mut self.slots[index as usize];
+             slot.node = Some(node);
+             slot.authored.clear();
++            slot.authored_order.clear();
++            slot.authored_pseudo = Default::default();
++            slot.resolved_style_snapshot = false;
+             index
+         } else {
+             let index = self.slots.len() as u32;
+@@ -784,6 +784,9 @@ impl Engine {
+                 generation: 1,
+                 node: Some(node),
+                 authored: BTreeMap::new(),
++                authored_order: Vec::new(),
++                authored_pseudo: Default::default(),
++                resolved_style_snapshot: false,
+             });
+             index
+         };
+@@ -816,6 +819,7 @@ impl Engine {
+             ancestor = self.document.node(ancestor).parent;
+         }
+         self.document.append_child(parent, child);
++        self.refresh_inherited_styles(child)?;
+         self.mark_dirty(InvalidationClass::Subtree);
+         Ok(())
+     }
+@@ -837,6 +841,7 @@ impl Engine {
+         }
+         self.document.detach(child_node);
+         self.document.append_child(parent_node, child_node);
++        self.refresh_inherited_styles(child_node)?;
+         self.mark_dirty(InvalidationClass::Subtree);
+         Ok(())
+     }
+@@ -866,6 +871,7 @@ impl Engine {
+         }
+         self.document.detach(child_node);
+         self.document.insert_before(before_node, child_node);
++        self.refresh_inherited_styles(child_node)?;
+         self.mark_dirty(InvalidationClass::Subtree);
+         Ok(())
+     }
+@@ -926,6 +932,12 @@ impl Engine {
+             data.attributes.remove("data-oui-composition-end");
+             *self.document.node_mut(duplicate_node) = data;
+             self.slots[duplicate.index as usize].authored = authored;
++            self.slots[duplicate.index as usize].authored_order =
++                self.slots[original.index as usize].authored_order.clone();
++            self.slots[duplicate.index as usize].authored_pseudo =
++                self.slots[original.index as usize].authored_pseudo.clone();
++            self.slots[duplicate.index as usize].resolved_style_snapshot =
++                self.slots[original.index as usize].resolved_style_snapshot;
+             if let Some(mut control) = control {
+                 control.clear_composition();
+                 self.controls.insert(duplicate.index, control);
+@@ -950,7 +962,9 @@ impl Engine {
+                 semantics.remap_cloned_relations(&clones);
+             }
+         }
+-        Ok(root.expect("validated source produces a root clone"))
++        let root = root.expect("validated source produces a root clone");
++        self.refresh_inherited_styles(self.resolve(root)?)?;
++        Ok(root)
+     }
+ 
+     /// Find the first attached element with this ID in document order.
+@@ -996,6 +1010,7 @@ impl Engine {
+             .map(|index| self.handle_for_slot(*index))
+             .collect();
+         self.clear_subtree_presentation_state(&detached_handles);
++        self.refresh_inherited_styles(node)?;
+         self.mark_dirty(InvalidationClass::Subtree);
+         Ok(())
+     }
+@@ -1045,6 +1060,9 @@ impl Engine {
+                 let slot = &mut self.slots[index as usize];
+                 slot.node = None;
+                 slot.authored.clear();
++                slot.authored_order.clear();
++                slot.authored_pseudo = Default::default();
++                slot.resolved_style_snapshot = false;
+                 slot.generation = slot.generation.wrapping_add(1).max(1);
+                 self.free_slots.push(index);
+             }
+@@ -1178,27 +1196,53 @@ impl Engine {
+         value: StyleValue,
+     ) -> Result<(), EngineError> {
+         let node = self.resolve(handle)?;
+-        if self.slots[handle.index as usize]
+-            .authored
+-            .get(&(property as u16))
+-            == Some(&value)
++        let slot = &self.slots[handle.index as usize];
++        if slot.authored.get(&(property as u16)) == Some(&value)
++            && slot
++                .authored_order
++                .iter()
++                .rev()
++                .take_while(|id| **id != property as u16)
++                .all(|id| {
++                    !StyleProperty::from_u16(*id)
++                        .expect("authored property")
++                        .affects_same_fields_as(property)
++                })
+         {
+             return Ok(());
+         }
++        let viewport = (
++            self.viewport.logical_width() as f32,
++            self.viewport.logical_height() as f32,
++        );
++        let parent = self.document.node(node).parent;
++        let font = if property == StyleProperty::FontSize {
++            if parent.is_none() {
++                ComputedStyle::initial().font_size
++            } else {
++                self.document.node(parent).style.font_size
++            }
++        } else {
++            self.document.node(node).style.font_size
++        };
++        let root_font = if node == self.document.root() && property == StyleProperty::FontSize {
++            ComputedStyle::initial().font_size
++        } else {
++            self.document.node(self.document.root()).style.font_size
++        };
++        let resolved = Self::resolve_native_lengths(property, &value, font, root_font, viewport);
+         self.document
+-            .apply_style_property(
+-                node,
+-                property,
+-                &value,
+-                (
+-                    self.viewport.logical_width() as f32,
+-                    self.viewport.logical_height() as f32,
+-                ),
+-            )
++            .apply_style_property(node, property, &resolved, viewport)
+             .map_err(|_| EngineError::PropertyType { property })?;
+         self.slots[handle.index as usize]
+             .authored
+             .insert(property as u16, value.clone());
++        let order = &mut self.slots[handle.index as usize].authored_order;
++        order.retain(|id| *id != property as u16);
++        order.push(property as u16);
++        if property.metadata().inherited {
++            self.refresh_inherited_styles(node)?;
++        }
+         let mut has_animation = false;
+         for animation in self.animations.values_mut().filter(|animation| {
+             animation.target == handle && animation.keyframes.property() == property
+@@ -1215,17 +1259,58 @@ impl Engine {
+         Ok(())
+     }
+ 
+-    /// Apply a schema-generated computed longhand value. This is used by
+-    /// generated renderer fixtures whose values are already resolved; normal
+-    /// applications should prefer `set_property` or generated framework
+-    /// setters.
++    /// Apply a schema-generated computed longhand to a resolved snapshot.
++    /// Omitted fields retain their computed defaults; they must not inherit
++    /// again. This input freezes the current author declarations into computed
++    /// state. Native applications use `set_property` or framework setters to
++    /// retain declarations that respond to parent and viewport changes.
+     #[doc(hidden)]
+     pub fn set_renderer_style(
+         &mut self,
+         handle: NodeHandle,
+         value: RendererStyleValue,
+     ) -> Result<(), EngineError> {
+-        self.set_property(handle, value.property(), StyleValue::Renderer(value))
++        let node = self.resolve(handle)?;
++        let property = value.property();
++        let value = StyleValue::Renderer(value);
++        let slot = &self.slots[handle.index as usize];
++        if slot.resolved_style_snapshot
++            && slot.authored.is_empty()
++            && slot.authored_pseudo.iter().all(Option::is_none)
++            && !self
++                .animations
++                .values()
++                .any(|animation| animation.target == handle)
++            && openui_style::value_from_computed(&self.document.node(node).style, property) == value
++        {
++            return Ok(());
++        }
++        let viewport = (
++            self.viewport.logical_width() as f32,
++            self.viewport.logical_height() as f32,
++        );
++        self.document
++            .apply_style_property(node, property, &value, viewport)
++            .map_err(|_| EngineError::PropertyType { property })?;
++        let slot = &mut self.slots[handle.index as usize];
++        slot.authored.clear();
++        slot.authored_order.clear();
++        slot.resolved_style_snapshot = true;
++        self.refresh_inherited_styles(node)?;
++        let mut has_animation = false;
++        for animation in self.animations.values_mut().filter(|animation| {
++            animation.target == handle && animation.keyframes.property() == property
++        }) {
++            animation.underlying = value.clone();
++            animation.last_applied = None;
++            has_animation = true;
++        }
++        self.dirty.hit_test = true;
++        self.mark_dirty(property.metadata().invalidation);
++        if has_animation {
++            self.sample_animations()?;
++        }
++        Ok(())
+     }
+ 
+     /// Apply engine-owned derived style state. These values are explicitly
+@@ -1252,11 +1337,260 @@ impl Engine {
+     ) -> Result<(), EngineError> {
+         let node = self.resolve(handle)?;
+         self.document.install_resolved_style(node, style);
++        let slot = &mut self.slots[handle.index as usize];
++        slot.authored.clear();
++        slot.authored_order.clear();
++        slot.authored_pseudo = std::array::from_fn(|_| None);
++        slot.resolved_style_snapshot = true;
++        self.refresh_inherited_descendants(node)?;
+         self.dirty.hit_test = true;
+         self.mark_dirty(InvalidationClass::Subtree);
+         Ok(())
+     }
+ 
++    /// Resolve inheritance before owned queries, layout and paint. Anonymous
++    /// and pseudo snapshots are already resolved and retain their values.
++    fn refresh_inherited_styles(&mut self, root: NodeId) -> Result<(), EngineError> {
++        let initial = ComputedStyle::initial();
++        let viewport = (
++            self.viewport.logical_width() as f32,
++            self.viewport.logical_height() as f32,
++        );
++        let mut pending = vec![root];
++        while let Some(node) = pending.pop() {
++            if let Some(index) = self.node_slots.get(&node).copied() {
++                let slot = &self.slots[index as usize];
++                if !slot.resolved_style_snapshot
++                    || !slot.authored.is_empty()
++                    || self.animations.values().any(|animation| {
++                        animation.target.index == index && animation.last_applied.is_some()
++                    })
++                {
++                    let declarations: Vec<_> = slot
++                        .authored_order
++                        .iter()
++                        .map(|id| {
++                            (
++                                StyleProperty::from_u16(*id).expect("authored property"),
++                                slot.authored[id].clone(),
++                            )
++                        })
++                        .collect();
++                    let mut animated: Vec<_> = self
++                        .animations
++                        .iter()
++                        .filter_map(|(id, animation)| {
++                            (animation.target.index == index)
++                                .then(|| {
++                                    animation.last_applied.as_ref().map(|value| {
++                                        (*id, animation.keyframes.property(), value.clone())
++                                    })
++                                })
++                                .flatten()
++                        })
++                        .collect();
++                    animated.sort_by_key(|(id, _, _)| *id);
++                    let mut declarations = declarations;
++                    declarations.extend(
++                        animated
++                            .into_iter()
++                            .map(|(_, property, value)| (property, value)),
++                    );
++                    let parent_node = self.document.node(node).parent;
++                    let parent = if parent_node.is_none() {
++                        initial.clone()
++                    } else {
++                        self.document.node(parent_node).style.clone()
++                    };
++                    let root_font = if node == self.document.root() {
++                        initial.font_size
++                    } else {
++                        self.document.node(self.document.root()).style.font_size
++                    };
++                    let mut style = self.document.node(node).style.clone();
++                    if !slot.resolved_style_snapshot {
++                        style.inherit_properties_from(&parent);
++                    }
++                    let style = Self::resolve_native_declarations(
++                        style,
++                        &declarations,
++                        parent.font_size,
++                        root_font,
++                        viewport,
++                        node == self.document.root(),
++                    )?;
++                    self.document.install_resolved_style(node, style);
++                }
++                self.refresh_authored_pseudo_styles(node, index)?;
++            }
++            let children: Vec<_> = self.document.children(node).collect();
++            pending.extend(children.into_iter().rev());
++        }
++        Ok(())
++    }
++
++    /// Compute native declarations once for ordinary and pseudo styles.
++    fn resolve_native_declarations(
++        mut style: ComputedStyle,
++        declarations: &[(StyleProperty, StyleValue)],
++        parent_font: f32,
++        root_font: f32,
++        viewport: (f32, f32),
++        is_root: bool,
++    ) -> Result<ComputedStyle, EngineError> {
++        // Font size is computed against the parent, and all other
++        // em lengths use the final cascaded size of this element.
++        let mut font_style = style.clone();
++        for (property, value) in declarations {
++            if matches!(property, StyleProperty::Font | StyleProperty::FontSize) {
++                let value = Self::resolve_native_lengths(
++                    *property,
++                    value,
++                    parent_font,
++                    root_font,
++                    viewport,
++                );
++                apply_to_computed(&mut font_style, *property, &value, viewport).map_err(|_| {
++                    EngineError::PropertyType {
++                        property: *property,
++                    }
++                })?;
++            }
++        }
++        let font_size = font_style.font_size;
++        style.update_derived(|fields| fields.font_size = font_size);
++        let mut authored_line_height = false;
++        for (property, value) in declarations {
++            let value = Self::resolve_native_lengths(
++                *property,
++                value,
++                if *property == StyleProperty::FontSize {
++                    parent_font
++                } else {
++                    font_size
++                },
++                if is_root && *property != StyleProperty::FontSize {
++                    font_size
++                } else {
++                    root_font
++                },
++                viewport,
++            );
++            apply_to_computed(&mut style, *property, &value, viewport).map_err(|_| {
++                EngineError::PropertyType {
++                    property: *property,
++                }
++            })?;
++            style.update_derived(|fields| fields.font_size = font_size);
++            if matches!(property, StyleProperty::Font | StyleProperty::LineHeight) {
++                authored_line_height = true;
++            }
++        }
++        if authored_line_height {
++            style.update_derived(|fields| {
++                if let openui_style::LineHeight::Percentage(percent) = fields.line_height {
++                    fields.line_height =
++                        openui_style::LineHeight::Length(percent * font_size / 100.0);
++                }
++            });
++        }
++        Ok(style)
++    }
++
++    fn refresh_authored_pseudo_styles(
++        &mut self,
++        node: NodeId,
++        index: u32,
++    ) -> Result<(), EngineError> {
++        let authored = self.slots[index as usize].authored_pseudo.clone();
++        if authored.iter().all(Option::is_none) {
++            return Ok(());
++        }
++        let mut origin = self.document.node(node).style.clone();
++        let viewport = (
++            self.viewport.logical_width() as f32,
++            self.viewport.logical_height() as f32,
++        );
++        let root_font = self.document.node(self.document.root()).style.font_size;
++        for (target, declarations) in authored.iter().enumerate() {
++            if let Some(declarations) = declarations {
++                let mut pseudo = ComputedStyle::for_pseudo(&origin);
++                pseudo.inherit_properties_from(&origin);
++                let declarations: Vec<_> = declarations
++                    .declarations()
++                    .iter()
++                    .map(|declaration| (declaration.property, declaration.value.clone()))
++                    .collect();
++                let pseudo = Self::resolve_native_declarations(
++                    pseudo,
++                    &declarations,
++                    origin.font_size,
++                    root_font,
++                    viewport,
++                    false,
++                )?;
++                origin.update_derived(|fields| {
++                    let destination = match target {
++                        0 => &mut fields.first_line_style,
++                        1 => &mut fields.first_letter_style,
++                        2 => &mut fields.marker_style,
++                        3 => &mut fields.placeholder_style,
++                        _ => unreachable!("native pseudo target"),
++                    };
++                    *destination = Some(Box::new(pseudo));
++                });
++            }
++        }
++        self.document.install_resolved_style(node, origin);
++        Ok(())
++    }
++
++    fn refresh_inherited_descendants(&mut self, parent: NodeId) -> Result<(), EngineError> {
++        let children: Vec<_> = self.document.children(parent).collect();
++        for child in children {
++            self.refresh_inherited_styles(child)?;
++        }
++        Ok(())
++    }
++
++    fn resolve_native_lengths(
++        property: StyleProperty,
++        value: &StyleValue,
++        font: f32,
++        root_font: f32,
++        viewport: (f32, f32),
++    ) -> StyleValue {
++        use openui_style::{Edges, Gap, LengthValue};
++        let resolve = |value: LengthValue| {
++            let length = value.resolve(viewport, font, root_font);
++            LengthValue::Computed(
++                if property == StyleProperty::FontSize
++                    && (length.is_percent() || length.is_calculated())
++                {
++                    openui_geometry::Length::px(
++                        (font * length.value() / 100.0 + length.calc_offset()).max(0.0),
++                    )
++                } else {
++                    length
++                },
++            )
++        };
++        match value {
++            StyleValue::Length(value) => StyleValue::Length(resolve(*value)),
++            StyleValue::Edges(value) => StyleValue::Edges(Edges {
++                top: resolve(value.top),
++                right: resolve(value.right),
++                bottom: resolve(value.bottom),
++                left: resolve(value.left),
++            }),
++            StyleValue::Gap(value) => StyleValue::Gap(Gap {
++                row: resolve(value.row),
++                column: resolve(value.column),
++            }),
++            _ => value.clone(),
++        }
++    }
++
+     /// Mutate validated non-style state needed by static renderer fixtures.
+     #[doc(hidden)]
+     pub fn set_renderer_node_state(
+@@ -1382,22 +1716,25 @@ impl Engine {
+     ) -> Result<(), EngineError> {
+         let node = self.resolve(handle)?;
+         let origin = self.document.node(node).style.clone();
+-        let mut pseudo = openui_style::ComputedStyle::for_pseudo(&origin);
++        let mut pseudo = ComputedStyle::for_pseudo(&origin);
++        pseudo.inherit_properties_from(&origin);
+         let viewport = (
+             self.viewport.logical_width() as f32,
+             self.viewport.logical_height() as f32,
+         );
+-        for declaration in declarations.declarations() {
+-            apply_to_computed(
+-                &mut pseudo,
+-                declaration.property,
+-                &declaration.value,
+-                viewport,
+-            )
+-            .map_err(|_| EngineError::PropertyType {
+-                property: declaration.property,
+-            })?;
+-        }
++        let declarations_to_resolve: Vec<_> = declarations
++            .declarations()
++            .iter()
++            .map(|declaration| (declaration.property, declaration.value.clone()))
++            .collect();
++        let pseudo = Self::resolve_native_declarations(
++            pseudo,
++            &declarations_to_resolve,
++            origin.font_size,
++            self.document.node(self.document.root()).style.font_size,
++            viewport,
++            false,
++        )?;
+         let resolved = origin.derive(|style| {
+             let destination = match target {
+                 PseudoStyleTarget::FirstLine => &mut style.first_line_style,
+@@ -1407,6 +1744,8 @@ impl Engine {
+             };
+             *destination = Some(Box::new(pseudo));
+         });
++        self.slots[handle.index as usize].authored_pseudo[target as usize] =
++            Some(declarations.clone());
+         self.document.install_resolved_style(node, resolved);
+         self.dirty.hit_test = true;
+         self.mark_dirty(InvalidationClass::Subtree);
+@@ -1934,7 +2273,7 @@ impl Engine {
+         fn resolve_origin(length: &openui_geometry::Length, size: f32) -> f32 {
+             if length.is_fixed() {
+                 length.value()
+-            } else if length.is_percent() {
++            } else if length.length_type() == openui_geometry::LengthType::Percent {
+                 length.value() * size / 100.0
+             } else if length.is_calculated() {
+                 length.calc_offset() + length.value() * size / 100.0
+@@ -2007,7 +2346,7 @@ impl Engine {
+                     let resolve = |length: &openui_geometry::Length, size: f32| {
+                         if length.is_fixed() {
+                             length.value()
+-                        } else if length.is_percent() {
++                        } else if length.length_type() == openui_geometry::LengthType::Percent {
+                             length.value() * size / 100.0
+                         } else {
+                             0.0
+@@ -2205,6 +2544,590 @@ mod tests {
+         TransformOperation,
+     };
+ 
++    #[test]
++    fn native_resolved_computed_defaults_preserve_snapshots_and_native_inheritance() {
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let parent = engine.root();
++        engine
++            .set_property(
++                parent,
++                StyleProperty::TextIndent,
++                LengthValue::px(20.0).into(),
++            )
++            .unwrap();
++        engine
++            .set_property(parent, StyleProperty::Color, Color::RED.into())
++            .unwrap();
++        let computed = engine.create_native_element(ElementTag::Span).unwrap();
++        engine
++            .set_renderer_style(computed, RendererStyleValue::FontSize(16.0))
++            .unwrap();
++        engine.append_child(parent, computed).unwrap();
++        let initial = engine.computed_style(computed).unwrap().clone();
++        assert_eq!(initial.text_indent.value(), 0.0);
++        assert_eq!(initial.color, Color::BLACK);
++        let native = engine.create_native_element(ElementTag::Span).unwrap();
++        engine
++            .set_property(native, StyleProperty::Display, Display::Inline.into())
++            .unwrap();
++        engine.append_child(parent, native).unwrap();
++        assert_eq!(
++            engine.computed_style(native).unwrap().text_indent.value(),
++            20.0
++        );
++        assert_eq!(engine.computed_style(native).unwrap().color, Color::RED);
++        let descendant = engine.create_native_element(ElementTag::Span).unwrap();
++        engine.append_child(computed, descendant).unwrap();
++        engine
++            .set_renderer_style(computed, RendererStyleValue::Color(Color::GREEN))
++            .unwrap();
++        assert_eq!(
++            engine.computed_style(descendant).unwrap().color,
++            Color::GREEN
++        );
++        engine
++            .set_property(
++                parent,
++                StyleProperty::TextIndent,
++                LengthValue::px(28.0).into(),
++            )
++            .unwrap();
++        assert_eq!(
++            engine.computed_style(native).unwrap().text_indent.value(),
++            28.0
++        );
++        assert_eq!(
++            engine.computed_style(computed).unwrap().text_indent.value(),
++            0.0
++        );
++        let clone = engine.clone_subtree(computed).unwrap();
++        engine.append_child(parent, clone).unwrap();
++        assert_eq!(
++            engine.computed_style(clone).unwrap().text_indent.value(),
++            0.0
++        );
++        assert_eq!(engine.computed_style(clone).unwrap().color, Color::GREEN);
++        assert_eq!(initial.color, Color::BLACK);
++        assert_eq!(initial.text_indent.value(), 0.0);
++    }
++
++    #[test]
++    fn native_resolved_style_animation_refreshes_target_and_native_dependents() {
++        use openui_style::{AnimationOptions, FillMode, Keyframes, PropertyKeyframes};
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let target = engine.create_native_element(ElementTag::Div).unwrap();
++        let mut style = ComputedStyle::initial();
++        style.update_derived(|fields| fields.font_size = 20.0);
++        engine.install_derived_style(target, style).unwrap();
++        engine.append_child(engine.root(), target).unwrap();
++        engine
++            .set_property(target, StyleProperty::Width, LengthValue::Em(3.0).into())
++            .unwrap();
++        let child = engine.create_native_element(ElementTag::Div).unwrap();
++        engine.append_child(target, child).unwrap();
++        engine
++            .set_property(child, StyleProperty::Width, LengthValue::Em(2.0).into())
++            .unwrap();
++        let before = engine.computed_style(target).unwrap().clone();
++        let animation = engine
++            .animate(
++                target,
++                PropertyKeyframes::typed(
++                    StyleProperty::FontSize,
++                    Keyframes::from_values(LengthValue::Em(1.0), LengthValue::Em(2.0)),
++                )
++                .unwrap(),
++                AnimationOptions {
++                    duration_ms: 100.0,
++                    fill: FillMode::Both,
++                    ..AnimationOptions::default()
++                },
++                AnimationTimeline::Document,
++            )
++            .unwrap();
++        assert_eq!(engine.computed_style(target).unwrap().font_size, 16.0);
++        assert_eq!(engine.computed_style(target).unwrap().width.value(), 48.0);
++        assert_eq!(engine.computed_style(child).unwrap().width.value(), 32.0);
++        engine.set_animation_time(50.0).unwrap();
++        assert_eq!(engine.computed_style(target).unwrap().font_size, 24.0);
++        assert_eq!(engine.computed_style(target).unwrap().width.value(), 72.0);
++        assert_eq!(engine.computed_style(child).unwrap().width.value(), 48.0);
++        engine.cancel_animation(animation).unwrap();
++        assert_eq!(engine.computed_style(target).unwrap().font_size, 20.0);
++        assert_eq!(engine.computed_style(target).unwrap().width.value(), 60.0);
++        assert_eq!(engine.computed_style(child).unwrap().width.value(), 40.0);
++        assert_eq!(before.font_size, 20.0);
++        assert_eq!(before.width.value(), 60.0);
++    }
++
++    #[test]
++    fn native_resolved_style_replacement_drops_previous_native_declarations() {
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let target = engine.create_native_element(ElementTag::Div).unwrap();
++        engine
++            .set_property(target, StyleProperty::Color, Color::RED.into())
++            .unwrap();
++        let mut style = ComputedStyle::initial();
++        style.update_derived(|fields| fields.color = Color::BLUE);
++        engine.install_derived_style(target, style).unwrap();
++        assert_eq!(engine.computed_style(target).unwrap().color, Color::BLUE);
++        engine
++            .set_property(target, StyleProperty::Color, Color::RED.into())
++            .unwrap();
++        assert_eq!(engine.computed_style(target).unwrap().color, Color::RED);
++    }
++
++    #[test]
++    fn native_resolved_repeated_computed_value_preserves_unchanged_work() {
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let target = engine.create_native_element(ElementTag::Div).unwrap();
++        engine
++            .set_renderer_style(target, RendererStyleValue::Color(Color::GREEN))
++            .unwrap();
++        engine.append_child(engine.root(), target).unwrap();
++        engine.scene().unwrap();
++        let before = engine.dirty_generations();
++        engine
++            .set_renderer_style(target, RendererStyleValue::Color(Color::GREEN))
++            .unwrap();
++        assert_eq!(engine.dirty_generations(), before);
++        engine.scene().unwrap();
++        assert_eq!(engine.dirty_generations(), before);
++    }
++
++    #[test]
++    fn native_inheritance_computes_renderer_line_height_percentages() {
++        use openui_style::LineHeight;
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let root = engine.root();
++        engine
++            .set_property(root, StyleProperty::FontSize, LengthValue::px(24.0).into())
++            .unwrap();
++        engine
++            .set_property(
++                root,
++                StyleProperty::LineHeight,
++                LineHeight::Percentage(150.0).into(),
++            )
++            .unwrap();
++        let child = engine.create_native_element(ElementTag::Span).unwrap();
++        engine
++            .set_property(child, StyleProperty::FontSize, LengthValue::px(40.0).into())
++            .unwrap();
++        engine.append_child(root, child).unwrap();
++        assert_eq!(
++            engine.computed_style(root).unwrap().line_height,
++            LineHeight::Length(36.0)
++        );
++        assert_eq!(
++            engine.computed_style(child).unwrap().line_height,
++            LineHeight::Length(36.0)
++        );
++        engine
++            .set_property(root, StyleProperty::FontSize, LengthValue::px(20.0).into())
++            .unwrap();
++        assert_eq!(
++            engine.computed_style(child).unwrap().line_height,
++            LineHeight::Length(30.0)
++        );
++        engine
++            .set_property(
++                root,
++                StyleProperty::LineHeight,
++                StyleValue::Renderer(RendererStyleValue::LineHeight(LineHeight::Percentage(
++                    150.0,
++                ))),
++            )
++            .unwrap();
++        assert_eq!(
++            engine.computed_style(root).unwrap().line_height,
++            LineHeight::Length(30.0)
++        );
++        assert_eq!(
++            engine.computed_style(child).unwrap().line_height,
++            LineHeight::Length(30.0)
++        );
++    }
++
++    #[test]
++    fn native_inherited_styles_follow_parent_mutations_and_tree_changes() {
++        use openui_style::{Direction, LengthValue, Visibility};
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let parent = engine.create_native_element(ElementTag::Div).unwrap();
++        let child = engine.create_native_element(ElementTag::Div).unwrap();
++        let text = engine.create_text("native text").unwrap();
++        engine.append_child(child, text).unwrap();
++        engine.append_child(engine.root(), parent).unwrap();
++        for (property, value) in [
++            (StyleProperty::Color, Color::RED.into()),
++            (StyleProperty::FontSize, LengthValue::px(20.0).into()),
++            (StyleProperty::Direction, Direction::Rtl.into()),
++            (
++                StyleProperty::Visibility,
++                StyleValue::Renderer(RendererStyleValue::Visibility(Visibility::Hidden)),
++            ),
++        ] {
++            engine.set_property(parent, property, value).unwrap();
++        }
++        engine.append_child(parent, child).unwrap();
++        let initial = engine.computed_style(text).unwrap().clone();
++        assert_eq!(initial.color, Color::RED);
++        assert_eq!(initial.font_size, 20.0);
++        assert_eq!(initial.direction, Direction::Rtl);
++        assert_eq!(initial.visibility, Visibility::Hidden);
++        engine
++            .set_property(child, StyleProperty::Color, Color::BLACK.into())
++            .unwrap();
++        engine
++            .set_property(parent, StyleProperty::Color, Color::BLUE.into())
++            .unwrap();
++        engine
++            .set_property(
++                parent,
++                StyleProperty::FontSize,
++                LengthValue::px(24.0).into(),
++            )
++            .unwrap();
++        assert_eq!(engine.computed_style(text).unwrap().color, Color::BLACK);
++        assert_eq!(engine.computed_style(text).unwrap().font_size, 24.0);
++        engine.detach(child).unwrap();
++        assert_eq!(engine.computed_style(text).unwrap().font_size, 16.0);
++        assert_eq!(
++            engine.computed_style(text).unwrap().direction,
++            Direction::Ltr
++        );
++        assert_eq!(
++            engine.computed_style(text).unwrap().visibility,
++            Visibility::Visible
++        );
++        engine.append_child(parent, child).unwrap();
++        let duplicate = engine.clone_subtree(child).unwrap();
++        assert_eq!(engine.computed_style(duplicate).unwrap().font_size, 16.0);
++        assert_eq!(
++            engine.computed_style(duplicate).unwrap().color,
++            Color::BLACK
++        );
++        engine.append_child(parent, duplicate).unwrap();
++        assert_eq!(engine.computed_style(duplicate).unwrap().font_size, 24.0);
++        let resolved = engine.create_native_element(ElementTag::Div).unwrap();
++        engine
++            .install_derived_style(resolved, ComputedStyle::initial())
++            .unwrap();
++        engine.append_child(parent, resolved).unwrap();
++        assert_eq!(engine.computed_style(resolved).unwrap().color, Color::BLACK);
++        assert_eq!(engine.computed_style(resolved).unwrap().font_size, 16.0);
++        engine.remove(parent).unwrap();
++        assert_eq!(initial.color, Color::RED);
++        assert_eq!(initial.font_size, 20.0);
++    }
++
++    #[test]
++    fn native_inheritance_recomputes_relative_lengths_and_preserves_declaration_order() {
++        use openui_style::{
++            LengthValue, TextWrapMode, WhiteSpace, WhiteSpaceCollapse, WhiteSpaceShorthand,
++        };
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let parent = engine.create_native_element(ElementTag::Div).unwrap();
++        let child = engine.create_native_element(ElementTag::Div).unwrap();
++        engine.append_child(engine.root(), parent).unwrap();
++        engine
++            .set_property(
++                parent,
++                StyleProperty::FontSize,
++                LengthValue::px(20.0).into(),
++            )
++            .unwrap();
++        engine
++            .set_property(child, StyleProperty::FontSize, LengthValue::Em(2.0).into())
++            .unwrap();
++        engine
++            .set_property(child, StyleProperty::Width, LengthValue::Em(3.0).into())
++            .unwrap();
++        engine
++            .set_property(
++                child,
++                StyleProperty::WhiteSpace,
++                WhiteSpaceShorthand {
++                    collapse: WhiteSpaceCollapse::Preserve,
++                    wrap: TextWrapMode::Nowrap,
++                }
++                .into(),
++            )
++            .unwrap();
++        engine
++            .set_property(
++                child,
++                StyleProperty::TextWrapMode,
++                TextWrapMode::Wrap.into(),
++            )
++            .unwrap();
++        engine.append_child(parent, child).unwrap();
++        assert_eq!(engine.computed_style(child).unwrap().font_size, 40.0);
++        assert_eq!(engine.computed_style(child).unwrap().width.value(), 120.0);
++        assert_eq!(
++            engine.computed_style(child).unwrap().white_space,
++            WhiteSpace::PreWrap
++        );
++        engine
++            .set_property(
++                parent,
++                StyleProperty::FontSize,
++                LengthValue::px(24.0).into(),
++            )
++            .unwrap();
++        assert_eq!(engine.computed_style(child).unwrap().font_size, 48.0);
++        assert_eq!(engine.computed_style(child).unwrap().width.value(), 144.0);
++        assert_eq!(
++            engine.computed_style(child).unwrap().white_space,
++            WhiteSpace::PreWrap
++        );
++        engine
++            .set_property(
++                child,
++                StyleProperty::WhiteSpace,
++                WhiteSpaceShorthand {
++                    collapse: WhiteSpaceCollapse::Preserve,
++                    wrap: TextWrapMode::Nowrap,
++                }
++                .into(),
++            )
++            .unwrap();
++        engine
++            .set_property(parent, StyleProperty::Color, Color::BLUE.into())
++            .unwrap();
++        assert_eq!(
++            engine.computed_style(child).unwrap().white_space,
++            WhiteSpace::Pre
++        );
++    }
++
++    #[test]
++    fn native_inheritance_computes_calculated_font_sizes_against_parent() {
++        use openui_geometry::Length;
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let root = engine.root();
++        let child = engine.create_native_element(ElementTag::Div).unwrap();
++        engine.append_child(root, child).unwrap();
++        engine
++            .set_property(root, StyleProperty::FontSize, LengthValue::px(20.0).into())
++            .unwrap();
++        engine
++            .set_property(
++                child,
++                StyleProperty::FontSize,
++                LengthValue::Computed(Length::calc_percent_px(150.0, -2.0)).into(),
++            )
++            .unwrap();
++        engine
++            .set_property(child, StyleProperty::Width, LengthValue::Em(3.0).into())
++            .unwrap();
++        let before = engine.computed_style(child).unwrap().clone();
++        assert_eq!(before.font_size, 28.0);
++        assert_eq!(before.width.value(), 84.0);
++        engine
++            .set_property(root, StyleProperty::FontSize, LengthValue::px(24.0).into())
++            .unwrap();
++        assert_eq!(engine.computed_style(child).unwrap().font_size, 34.0);
++        assert_eq!(engine.computed_style(child).unwrap().width.value(), 102.0);
++        assert_eq!(before.font_size, 28.0);
++    }
++
++    #[test]
++    fn native_inheritance_distinguishes_percentage_and_unitless_line_heights() {
++        use openui_style::LineHeight;
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let root = engine.root();
++        let child = engine.create_native_element(ElementTag::Div).unwrap();
++        engine.append_child(root, child).unwrap();
++        engine
++            .set_property(root, StyleProperty::FontSize, LengthValue::px(24.0).into())
++            .unwrap();
++        engine
++            .set_property(child, StyleProperty::FontSize, LengthValue::px(40.0).into())
++            .unwrap();
++        engine
++            .set_property(
++                root,
++                StyleProperty::LineHeight,
++                LineHeight::Percentage(150.0).into(),
++            )
++            .unwrap();
++        let before = engine.computed_style(child).unwrap().clone();
++        assert_eq!(before.line_height, LineHeight::Length(36.0));
++        engine
++            .set_property(
++                root,
++                StyleProperty::LineHeight,
++                LineHeight::Number(1.5).into(),
++            )
++            .unwrap();
++        assert_eq!(
++            engine.computed_style(child).unwrap().line_height,
++            LineHeight::Number(1.5)
++        );
++        assert_eq!(before.line_height, LineHeight::Length(36.0));
++    }
++
++    #[test]
++    fn native_inheritance_refreshes_authored_pseudo_styles_after_origin_mutation() {
++        use openui_style::{FontWeight, PseudoStyleTarget};
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let root = engine.root();
++        let child = engine.create_native_element(ElementTag::Div).unwrap();
++        engine.append_child(root, child).unwrap();
++        engine
++            .set_property(root, StyleProperty::FontSize, LengthValue::px(20.0).into())
++            .unwrap();
++        engine
++            .set_property(root, StyleProperty::Color, Color::RED.into())
++            .unwrap();
++        engine
++            .set_pseudo_style(
++                child,
++                PseudoStyleTarget::FirstLine,
++                &Style::default()
++                    .font_size(LengthValue::Em(2.0))
++                    .font_weight(FontWeight::BOLD),
++            )
++            .unwrap();
++        let before = engine
++            .computed_style(child)
++            .unwrap()
++            .first_line_style
++            .as_ref()
++            .unwrap()
++            .as_ref()
++            .clone();
++        assert_eq!(before.font_size, 40.0);
++        assert_eq!(before.color, Color::RED);
++        engine
++            .set_property(root, StyleProperty::FontSize, LengthValue::px(24.0).into())
++            .unwrap();
++        engine
++            .set_property(root, StyleProperty::Color, Color::BLUE.into())
++            .unwrap();
++        let after = engine
++            .computed_style(child)
++            .unwrap()
++            .first_line_style
++            .as_ref()
++            .unwrap();
++        assert_eq!(after.font_size, 48.0);
++        assert_eq!(after.color, Color::BLUE);
++        assert_eq!(after.font_weight, FontWeight::BOLD);
++        let clone = engine.clone_subtree(child).unwrap();
++        engine.append_child(root, clone).unwrap();
++        let cloned = engine
++            .computed_style(clone)
++            .unwrap()
++            .first_line_style
++            .as_ref()
++            .unwrap();
++        assert_eq!(cloned.font_size, 48.0);
++        assert_eq!(cloned.color, Color::BLUE);
++        engine.detach(child).unwrap();
++        let detached = engine
++            .computed_style(child)
++            .unwrap()
++            .first_line_style
++            .as_ref()
++            .unwrap();
++        assert_eq!(detached.font_size, 32.0);
++        assert_eq!(detached.color, Color::BLACK);
++        assert_eq!(before.font_size, 40.0);
++        assert_eq!(before.color, Color::RED);
++    }
++
++    #[test]
++    fn native_inheritance_animated_font_resolves_relative_to_parent() {
++        use openui_style::{AnimationOptions, FillMode, Keyframes, PropertyKeyframes};
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let root = engine.root();
++        let child = engine.create_native_element(ElementTag::Div).unwrap();
++        engine.append_child(root, child).unwrap();
++        engine
++            .set_property(root, StyleProperty::FontSize, LengthValue::px(20.0).into())
++            .unwrap();
++        engine
++            .set_property(child, StyleProperty::Width, LengthValue::Em(3.0).into())
++            .unwrap();
++        let animation = engine
++            .animate(
++                root,
++                PropertyKeyframes::typed(
++                    StyleProperty::FontSize,
++                    Keyframes::from_values(LengthValue::Em(1.0), LengthValue::Em(2.0)),
++                )
++                .unwrap(),
++                AnimationOptions {
++                    duration_ms: 100.0,
++                    fill: FillMode::Both,
++                    ..AnimationOptions::default()
++                },
++                AnimationTimeline::Document,
++            )
++            .unwrap();
++        assert_eq!(engine.computed_style(root).unwrap().font_size, 16.0);
++        assert_eq!(engine.computed_style(child).unwrap().width.value(), 48.0);
++        engine.set_animation_time(50.0).unwrap();
++        assert_eq!(engine.computed_style(root).unwrap().font_size, 24.0);
++        assert_eq!(engine.computed_style(child).unwrap().width.value(), 72.0);
++        engine.cancel_animation(animation).unwrap();
++        assert_eq!(engine.computed_style(root).unwrap().font_size, 20.0);
++        assert_eq!(engine.computed_style(child).unwrap().width.value(), 60.0);
++    }
++
++    #[test]
++    fn native_inheritance_transition_retains_a_previously_unauthored_target() {
++        use openui_style::{AnimationOptions, FillMode};
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
++        let root = engine.root();
++        let child = engine.create_native_element(ElementTag::Div).unwrap();
++        engine.append_child(root, child).unwrap();
++        engine
++            .set_property(root, StyleProperty::FontSize, LengthValue::px(20.0).into())
++            .unwrap();
++        engine
++            .set_property(child, StyleProperty::Width, LengthValue::Em(3.0).into())
++            .unwrap();
++        let animation = engine
++            .transition(
++                child,
++                StyleProperty::FontSize,
++                LengthValue::px(40.0),
++                AnimationOptions {
++                    duration_ms: 100.0,
++                    fill: FillMode::Both,
++                    ..AnimationOptions::default()
++                },
++            )
++            .unwrap();
++        engine.cancel_animation(animation).unwrap();
++        assert_eq!(engine.computed_style(child).unwrap().font_size, 40.0);
++        engine
++            .set_property(root, StyleProperty::Color, Color::BLUE.into())
++            .unwrap();
++        assert_eq!(engine.computed_style(child).unwrap().font_size, 40.0);
++        assert_eq!(engine.computed_style(child).unwrap().width.value(), 120.0);
++        engine
++            .set_viewport(ViewportMetrics::from_logical_size(640.0, 240.0, 1.0).unwrap())
++            .unwrap();
++        assert_eq!(engine.computed_style(child).unwrap().font_size, 40.0);
++        assert_eq!(engine.computed_style(child).unwrap().width.value(), 120.0);
++    }
++
+     #[test]
+     fn stale_and_cross_document_handles_are_rejected() {
+         let mut a =
+diff --git a/bindings/rust/openui-style/src/generated_properties.rs b/bindings/rust/openui-style/src/generated_properties.rs
+index d9e78722..d9dc6739 100644
+--- a/bindings/rust/openui-style/src/generated_properties.rs
++++ b/bindings/rust/openui-style/src/generated_properties.rs
+@@ -1286,7 +1286,334 @@ impl RendererInternalStyleValue {
+     }
+ }
+ 
++impl ComputedStyle {
++    /// Copy modeled inherited computed fields from a parent snapshot.
++    /// Authored values are reapplied by the retained engine afterwards.
++    #[doc(hidden)]
++    pub fn inherit_properties_from(&mut self, parent: &Self) {
++        self.fields.color = parent.fields.color.clone();
++        self.fields.direction = parent.fields.direction.clone();
++        self.fields.empty_cells = parent.fields.empty_cells.clone();
++        self.fields.font_family = parent.fields.font_family.clone();
++        self.fields.font_feature_settings = parent.fields.font_feature_settings.clone();
++        self.fields.font_kerning = parent.fields.font_kerning.clone();
++        self.fields.font_language_override = parent.fields.font_language_override.clone();
++        self.fields.font_optical_sizing = parent.fields.font_optical_sizing.clone();
++        self.fields.font_palette = parent.fields.font_palette.clone();
++        self.fields.font_size = parent.fields.font_size.clone();
++        self.fields.font_size_adjust = parent.fields.font_size_adjust.clone();
++        self.fields.font_smoothing = parent.fields.font_smoothing.clone();
++        self.fields.font_stretch = parent.fields.font_stretch.clone();
++        self.fields.font_style = parent.fields.font_style.clone();
++        self.fields.font_synthesis_position = parent.fields.font_synthesis_position.clone();
++        self.fields.font_synthesis_small_caps = parent.fields.font_synthesis_small_caps.clone();
++        self.fields.font_synthesis_style = parent.fields.font_synthesis_style.clone();
++        self.fields.font_synthesis_weight = parent.fields.font_synthesis_weight.clone();
++        self.fields.font_variant_alternates = parent.fields.font_variant_alternates.clone();
++        self.fields.font_variant_caps = parent.fields.font_variant_caps.clone();
++        self.fields.font_variant_east_asian = parent.fields.font_variant_east_asian.clone();
++        self.fields.font_variant_emoji = parent.fields.font_variant_emoji.clone();
++        self.fields.font_variant_ligatures = parent.fields.font_variant_ligatures.clone();
++        self.fields.font_variant_numeric = parent.fields.font_variant_numeric.clone();
++        self.fields.font_variant_position = parent.fields.font_variant_position.clone();
++        self.fields.font_variation_settings = parent.fields.font_variation_settings.clone();
++        self.fields.font_weight = parent.fields.font_weight.clone();
++        self.fields.hanging_punctuation = parent.fields.hanging_punctuation.clone();
++        self.fields.hyphenate_character = parent.fields.hyphenate_character.clone();
++        self.fields.hyphenate_limit_chars = parent.fields.hyphenate_limit_chars.clone();
++        self.fields.hyphens = parent.fields.hyphens.clone();
++        self.fields.letter_spacing = parent.fields.letter_spacing.clone();
++        self.fields.line_break = parent.fields.line_break.clone();
++        self.fields.line_height = parent.fields.line_height.clone();
++        self.fields.list_style_position = parent.fields.list_style_position.clone();
++        self.fields.list_style_type = parent.fields.list_style_type.clone();
++        self.fields.locale = parent.fields.locale.clone();
++        self.fields.orphans = parent.fields.orphans.clone();
++        self.fields.overflow_wrap = parent.fields.overflow_wrap.clone();
++        self.fields.pointer_events = parent.fields.pointer_events.clone();
++        self.fields.quotes = parent.fields.quotes.clone();
++        self.fields.ruby_align = parent.fields.ruby_align.clone();
++        self.fields.ruby_overhang = parent.fields.ruby_overhang.clone();
++        self.fields.ruby_position = parent.fields.ruby_position.clone();
++        self.fields.tab_size = parent.fields.tab_size.clone();
++        self.fields.text_align = parent.fields.text_align.clone();
++        self.fields.text_align_last = parent.fields.text_align_last.clone();
++        self.fields.text_autospace = parent.fields.text_autospace.clone();
++        self.fields.text_decoration_skip_ink = parent.fields.text_decoration_skip_ink.clone();
++        self.fields.text_emphasis_color = parent.fields.text_emphasis_color.clone();
++        self.fields.text_emphasis_fill = parent.fields.text_emphasis_fill.clone();
++        self.fields.text_emphasis_mark = parent.fields.text_emphasis_mark.clone();
++        self.fields.text_emphasis_position = parent.fields.text_emphasis_position.clone();
++        self.fields.text_indent = parent.fields.text_indent.clone();
++        self.fields.text_justify = parent.fields.text_justify.clone();
++        self.fields.text_orientation = parent.fields.text_orientation.clone();
++        self.fields.text_rendering = parent.fields.text_rendering.clone();
++        self.fields.text_shadow = parent.fields.text_shadow.clone();
++        self.fields.text_size_adjust = parent.fields.text_size_adjust.clone();
++        self.fields.text_spacing_trim = parent.fields.text_spacing_trim.clone();
++        self.fields.text_transform = parent.fields.text_transform.clone();
++        self.fields.text_underline_position = parent.fields.text_underline_position.clone();
++        self.fields.text_wrap = parent.fields.text_wrap.clone();
++        self.fields.text_wrap_mode = parent.fields.text_wrap_mode.clone();
++        self.fields.text_wrap_style = parent.fields.text_wrap_style.clone();
++        self.fields.visibility = parent.fields.visibility.clone();
++        self.fields.white_space = parent.fields.white_space.clone();
++        self.fields.white_space_collapse = parent.fields.white_space_collapse.clone();
++        self.fields.widows = parent.fields.widows.clone();
++        self.fields.word_break = parent.fields.word_break.clone();
++        self.fields.word_spacing = parent.fields.word_spacing.clone();
++        self.fields.writing_mode = parent.fields.writing_mode.clone();
++    }
++}
++
+ impl StyleProperty {
++    #[doc(hidden)]
++    pub fn affects_same_fields_as(self, other: Self) -> bool {
++        self == other || self.mutation_fields().iter().any(|field| other.mutation_fields().contains(field))
++    }
++
++    fn mutation_fields(self) -> &'static [&'static str] {
++        match self {
++            Self::Display => &["display"],
++            Self::Position => &["position"],
++            Self::Overflow => &[],
++            Self::Width => &["width"],
++            Self::Height => &["height"],
++            Self::MinWidth => &["min_width"],
++            Self::MinHeight => &["min_height"],
++            Self::MaxWidth => &["max_width"],
++            Self::MaxHeight => &["max_height"],
++            Self::Margin => &[],
++            Self::MarginTop => &["margin_top"],
++            Self::MarginRight => &["margin_right"],
++            Self::MarginBottom => &["margin_bottom"],
++            Self::MarginLeft => &["margin_left"],
++            Self::Padding => &[],
++            Self::PaddingTop => &["padding_top"],
++            Self::PaddingRight => &["padding_right"],
++            Self::PaddingBottom => &["padding_bottom"],
++            Self::PaddingLeft => &["padding_left"],
++            Self::BackgroundColor => &["background_color"],
++            Self::Color => &["color"],
++            Self::Opacity => &["opacity"],
++            Self::ZIndex => &["z_index"],
++            Self::FlexDirection => &["flex_direction"],
++            Self::FlexWrap => &["flex_wrap"],
++            Self::FlexGrow => &["flex_grow"],
++            Self::FlexShrink => &["flex_shrink"],
++            Self::FlexBasis => &["flex_basis"],
++            Self::AlignItems => &["align_items"],
++            Self::JustifyContent => &["justify_content"],
++            Self::Gap => &[],
++            Self::RowGap => &["row_gap"],
++            Self::ColumnGap => &["column_gap"],
++            Self::FontFamily => &["font_family"],
++            Self::FontSize => &["font_size"],
++            Self::FontWeight => &["font_weight"],
++            Self::Border => &[],
++            Self::BorderTop => &[],
++            Self::BorderRight => &[],
++            Self::BorderBottom => &[],
++            Self::BorderLeft => &[],
++            Self::BorderRadius => &[],
++            Self::Cursor => &[],
++            Self::ListStyleType => &["list_style_type"],
++            Self::Transform => &["transform"],
++            Self::PointerEvents => &["pointer_events"],
++            Self::Direction => &["direction"],
++            Self::FontKerning => &["font_kerning"],
++            Self::FontOpticalSizing => &["font_optical_sizing"],
++            Self::FontPalette => &["font_palette"],
++            Self::FontSizeAdjust => &["font_size_adjust"],
++            Self::FontStretch => &["font_stretch"],
++            Self::FontStyle => &["font_style"],
++            Self::FontVariantLigatures => &["font_variant_ligatures"],
++            Self::FontVariantCaps => &["font_variant_caps"],
++            Self::FontVariantEastAsian => &["font_variant_east_asian"],
++            Self::FontVariantNumeric => &["font_variant_numeric"],
++            Self::FontVariantAlternates => &["font_variant_alternates"],
++            Self::FontVariantPosition => &["font_variant_position"],
++            Self::FontVariantEmoji => &["font_variant_emoji"],
++            Self::FontSynthesisWeight => &["font_synthesis_weight"],
++            Self::FontSynthesisStyle => &["font_synthesis_style"],
++            Self::FontSynthesisSmallCaps => &["font_synthesis_small_caps"],
++            Self::FontSynthesisPosition => &["font_synthesis_position"],
++            Self::FontFeatureSettings => &["font_feature_settings"],
++            Self::FontVariationSettings => &["font_variation_settings"],
++            Self::FontLanguageOverride => &["font_language_override"],
++            Self::LineHeight => &["line_height"],
++            Self::LetterSpacing => &["letter_spacing"],
++            Self::WordSpacing => &["word_spacing"],
++            Self::TextIndent => &["text_indent"],
++            Self::TextAlign => &["text_align"],
++            Self::TextAlignLast => &["text_align_last"],
++            Self::TextJustify => &["text_justify"],
++            Self::WordBreak => &["word_break"],
++            Self::OverflowWrap => &["overflow_wrap"],
++            Self::WordWrap => &["overflow_wrap"],
++            Self::LineBreak => &["line_break"],
++            Self::Hyphens => &["hyphens"],
++            Self::HyphenateLimitChars => &["hyphenate_limit_chars"],
++            Self::HyphenateCharacter => &["hyphenate_character"],
++            Self::WhiteSpaceCollapse => &["white_space_collapse", "white_space"],
++            Self::TextWrapMode => &["text_wrap_mode", "white_space", "text_wrap"],
++            Self::TextWrapStyle => &["text_wrap_style", "text_wrap"],
++            Self::TextAutospace => &["text_autospace"],
++            Self::TextSpacingTrim => &["text_spacing_trim"],
++            Self::TabSize => &["tab_size"],
++            Self::TextTransform => &["text_transform"],
++            Self::TextDecorationLine => &["text_decoration_line"],
++            Self::TextDecorationStyle => &["text_decoration_style"],
++            Self::TextDecorationColor => &["text_decoration_color"],
++            Self::TextDecorationThickness => &["text_decoration_thickness"],
++            Self::TextDecorationSkipInk => &["text_decoration_skip_ink"],
++            Self::TextUnderlineOffset => &["text_underline_offset"],
++            Self::TextUnderlinePosition => &["text_underline_position"],
++            Self::TextEmphasisStyle => &["text_emphasis_mark", "text_emphasis_fill"],
++            Self::TextEmphasisPosition => &["text_emphasis_position"],
++            Self::TextEmphasisColor => &["text_emphasis_color"],
++            Self::TextShadow => &["text_shadow"],
++            Self::TextOverflow => &["text_overflow"],
++            Self::TextSizeAdjust => &["text_size_adjust"],
++            Self::TextCombineUpright => &["text_combine_upright"],
++            Self::WritingMode => &["writing_mode"],
++            Self::TextOrientation => &["text_orientation"],
++            Self::UnicodeBidi => &["unicode_bidi"],
++            Self::VerticalAlign => &["vertical_align"],
++            Self::RubyAlign => &["ruby_align"],
++            Self::RubyPosition => &["ruby_position"],
++            Self::RubyOverhang => &["ruby_overhang"],
++            Self::HangingPunctuation => &["hanging_punctuation"],
++            Self::InitialLetter => &["initial_letter"],
++            Self::TextRendering => &["text_rendering"],
++            Self::WebkitFontSmoothing => &["font_smoothing"],
++            Self::LineClamp => &["line_clamp"],
++            Self::BlockEllipsis => &["block_ellipsis"],
++            Self::TextBoxEdge => &["text_box_edge"],
++            Self::TextBoxTrim => &["text_box_trim"],
++            Self::Font => &["font_style", "font_variant_caps", "font_weight", "font_stretch", "font_size", "line_height", "font_family", "font_variant_ligatures", "font_variant_numeric", "font_variant_east_asian", "font_variant_alternates", "font_variant_position", "font_variant_emoji", "font_optical_sizing", "font_size_adjust", "font_kerning", "font_feature_settings", "font_variation_settings", "font_language_override"],
++            Self::FontVariant => &["font_variant_ligatures", "font_variant_caps", "font_variant_alternates", "font_variant_numeric", "font_variant_east_asian", "font_variant_position", "font_variant_emoji"],
++            Self::FontSynthesis => &["font_synthesis_weight", "font_synthesis_style", "font_synthesis_small_caps", "font_synthesis_position"],
++            Self::WhiteSpace => &["white_space_collapse", "text_wrap_mode", "white_space", "text_wrap"],
++            Self::TextWrap => &["text_wrap_mode", "text_wrap_style", "text_wrap", "white_space"],
++            Self::TextDecoration => &["text_decoration_line", "text_decoration_style", "text_decoration_color", "text_decoration_thickness"],
++            Self::TextEmphasis => &["text_emphasis_mark", "text_emphasis_fill", "text_emphasis_color"],
++            Self::TextBox => &["text_box_trim", "text_box_edge"],
++            Self::AlignContent => &["align_content"],
++            Self::AlignSelf => &["align_self"],
++            Self::AspectRatio => &["aspect_ratio"],
++            Self::BackgroundAttachment => &["background_attachment"],
++            Self::BackgroundClip => &["background_clip"],
++            Self::BackgroundLayers => &["background_layers"],
++            Self::BackgroundLinearGradient => &["background_linear_gradient"],
++            Self::BorderBottomColor => &["border_bottom_color"],
++            Self::BorderBottomLeftRadius => &["border_bottom_left_radius"],
++            Self::BorderBottomRightRadius => &["border_bottom_right_radius"],
++            Self::BorderBottomStyle => &["border_bottom_style"],
++            Self::BorderBottomWidth => &["border_bottom_width"],
++            Self::BorderCollapse => &["border_collapse"],
++            Self::BorderImage => &["border_image"],
++            Self::BorderLeftColor => &["border_left_color"],
++            Self::BorderLeftStyle => &["border_left_style"],
++            Self::BorderLeftWidth => &["border_left_width"],
++            Self::BorderRadiusPercent => &["border_radius_percent"],
++            Self::BorderRightColor => &["border_right_color"],
++            Self::BorderRightStyle => &["border_right_style"],
++            Self::BorderRightWidth => &["border_right_width"],
++            Self::BorderSpacing => &["border_spacing"],
++            Self::BorderTopColor => &["border_top_color"],
++            Self::BorderTopLeftRadius => &["border_top_left_radius"],
++            Self::BorderTopRightRadius => &["border_top_right_radius"],
++            Self::BorderTopStyle => &["border_top_style"],
++            Self::BorderTopWidth => &["border_top_width"],
++            Self::Bottom => &["bottom"],
++            Self::BoxDecorationBreak => &["box_decoration_break"],
++            Self::BoxShadow => &["box_shadow"],
++            Self::BoxSizing => &["box_sizing"],
++            Self::BreakAfter => &["break_after"],
++            Self::BreakBefore => &["break_before"],
++            Self::BreakInside => &["break_inside"],
++            Self::CaptionSide => &["caption_side"],
++            Self::Clear => &["clear"],
++            Self::ClipPathInset => &["clip_path_inset"],
++            Self::ColumnCount => &["column_count"],
++            Self::ColumnFill => &["column_fill"],
++            Self::ColumnHeight => &["column_height"],
++            Self::ColumnRuleColor => &["column_rule_color"],
++            Self::ColumnRuleStyle => &["column_rule_style"],
++            Self::ColumnRuleWidth => &["column_rule_width"],
++            Self::ColumnSpan => &["column_span"],
++            Self::ColumnWidth => &["column_width"],
++            Self::ColumnWrap => &["column_wrap"],
++            Self::Contain => &["contain"],
++            Self::ContainIntrinsicHeight => &["contain_intrinsic_height"],
++            Self::ContainIntrinsicWidth => &["contain_intrinsic_width"],
++            Self::ContainerType => &["container_type"],
++            Self::Content => &["content"],
++            Self::FilterBlur => &["filter_blur"],
++            Self::FilterGrayscale => &["filter_grayscale"],
++            Self::Float => &["float"],
++            Self::GridAutoColumns => &["grid_auto_columns"],
++            Self::GridAutoFlow => &["grid_auto_flow"],
++            Self::GridAutoRows => &["grid_auto_rows"],
++            Self::GridColumn => &["grid_column"],
++            Self::GridRow => &["grid_row"],
++            Self::GridTemplateAreas => &["grid_template_areas"],
++            Self::GridTemplateColumns => &["grid_template_columns"],
++            Self::GridTemplateRows => &["grid_template_rows"],
++            Self::JustifyItems => &["justify_items"],
++            Self::JustifySelf => &["justify_self"],
++            Self::Left => &["left"],
++            Self::ListStylePosition => &["list_style_position"],
++            Self::Locale => &["locale"],
++            Self::MarginTrim => &["margin_trim"],
++            Self::MaskLayers => &["mask_layers"],
++            Self::ObjectFit => &["object_fit"],
++            Self::ObjectPosition => &["object_position"],
++            Self::Order => &["order"],
++            Self::Orphans => &["orphans"],
++            Self::OutlineColor => &["outline_color"],
++            Self::OutlineOffset => &["outline_offset"],
++            Self::OutlineStyle => &["outline_style"],
++            Self::OverflowClipBox => &["overflow_clip_box"],
++            Self::OverflowClipMargin => &["overflow_clip_margin"],
++            Self::OverflowX => &["overflow_x"],
++            Self::OverflowY => &["overflow_y"],
++            Self::PositionAnchor => &["position_anchor"],
++            Self::PositionArea => &["position_area"],
++            Self::Resize => &["resize"],
++            Self::Right => &["right"],
++            Self::ScrollMarkerGroup => &["scroll_marker_group"],
++            Self::ScrollSnapAlign => &["scroll_snap_align"],
++            Self::ScrollSnapAxis => &["scroll_snap_axis"],
++            Self::ScrollbarGutter => &["scrollbar_gutter"],
++            Self::ScrollbarTrackColor => &["scrollbar_track_color"],
++            Self::ScrollbarWidth => &["scrollbar_width"],
++            Self::TableLayout => &["table_layout"],
++            Self::Top => &["top"],
++            Self::TransformOrigin => &["transform_origin"],
++            Self::Visibility => &["visibility"],
++            Self::WebkitBoxOrient => &["webkit_box_orient"],
++            Self::Widows => &["widows"],
++            Self::TextEmphasisMark => &["text_emphasis_mark"],
++            Self::TextEmphasisFill => &["text_emphasis_fill"],
++            Self::AnchorName => &["anchor_name"],
++            Self::ContainerName => &["container_names"],
++            Self::ContentVisibility => &["content_visibility"],
++            Self::CounterIncrement => &["counter_increment"],
++            Self::CounterReset => &["counter_reset"],
++            Self::CounterSet => &["counter_set"],
++            Self::EmptyCells => &["empty_cells"],
++            Self::OutlineWidth => &["outline_width"],
++            Self::Quotes => &["quotes"],
++            Self::ScrollTargetGroup => &["scroll_target_group"],
++            Self::ScrollbarThumbColor => &["scrollbar_thumb_color"],
++            Self::ShapeImageThreshold => &["shape_image_threshold"],
++            Self::ShapeMargin => &["shape_margin"],
++            Self::ShapeOutside => &["shape_outside"],
++        }
++    }
++
+     pub fn from_u16(value: u16) -> Option<Self> {
+         PROPERTY_METADATA
+             .get(value.checked_sub(1)? as usize)
+diff --git a/bindings/rust/openui-style/src/property.rs b/bindings/rust/openui-style/src/property.rs
+index b32756bb..3e15a981 100644
+--- a/bindings/rust/openui-style/src/property.rs
++++ b/bindings/rust/openui-style/src/property.rs
+@@ -120,6 +120,12 @@ impl LengthValue {
+         Self::Computed(Length::percent(value))
+     }
+ 
++    /// A native length containing a percentage and a fixed pixel offset.
++    /// For example, `calc_percent_px(150.0, -2.0)` means 150% minus 2px.
++    pub const fn calc_percent_px(percent: f32, px_offset: f32) -> Self {
++        Self::Computed(Length::calc_percent_px(percent, px_offset))
++    }
++
+     pub const fn auto() -> Self {
+         Self::Computed(Length::auto())
+     }
+diff --git a/bindings/rust/openui/examples/native_inherited_styles.rs b/bindings/rust/openui/examples/native_inherited_styles.rs
+new file mode 100644
+index 00000000..9d613df4
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_inherited_styles.rs
+@@ -0,0 +1,85 @@
++//! A consuming app that relies on inherited styles through public Rust APIs.
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
++    if args.next().is_some() {
++        return Err("unexpected argument".into());
++    }
++    let document =
++        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(128.0, 128.0, scale)?)?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_overflow(Overflow::Hidden)?;
++    root.set_color(Color::RED)?;
++    root.set_font_size(LengthValue::px(20.0))?;
++    let child = Element::create(&document, "div")?;
++    child.set_width(LengthValue::Em(4.0))?;
++    child.set_height(LengthValue::px(32.0))?;
++    child.set_border_top_width(4)?;
++    child.set_border_top_style(BorderStyle::Solid)?;
++    root.append_child(&child)?;
++    let initial = child.computed_style()?;
++    assert_eq!(initial.color, Color::RED, "native child must inherit color");
++    assert_eq!(initial.font_size, 20.0);
++    assert_eq!(initial.width.value(), 80.0);
++    let before = document.render_to_png_buffer()?;
++
++    let count = Rc::new(Cell::new(0));
++    let callback_count = count.clone();
++    let callback_root = root.downgrade();
++    child.on("click", move |_| {
++        let root = callback_root.upgrade().expect("live native root");
++        root.set_color(Color::BLUE).expect("native color mutation");
++        root.set_font_size(LengthValue::px(24.0))
++            .expect("native font mutation");
++        callback_count.set(callback_count.get() + 1);
++    })?;
++    child.click()?;
++    assert_eq!(count.get(), 1);
++    let changed = child.computed_style()?;
++    assert_eq!(changed.color, Color::BLUE);
++    assert_eq!(changed.font_size, 24.0);
++    assert_eq!(changed.width.value(), 96.0);
++    let after = document.render_to_png_buffer()?;
++    assert_ne!(before, after);
++
++    child.detach()?;
++    let detached = child.computed_style()?;
++    assert_eq!(detached.color, Color::BLACK);
++    assert_eq!(detached.font_size, 16.0);
++    assert_eq!(detached.width.value(), 64.0);
++    let other = Element::create(&document, "div")?;
++    other.set_color(Color::GREEN)?;
++    other.set_font_size(LengthValue::px(12.0))?;
++    root.append_child(&other)?;
++    other.append_child(&child)?;
++    let reparented = child.computed_style()?;
++    assert_eq!(reparented.color, Color::GREEN);
++    assert_eq!(reparented.font_size, 12.0);
++    assert_eq!(reparented.width.value(), 48.0);
++    let clone = child.clone_subtree()?;
++    assert_eq!(clone.computed_style()?.color, Color::BLACK);
++    assert_eq!(clone.computed_style()?.font_size, 16.0);
++    root.append_child(&clone)?;
++    assert_eq!(clone.computed_style()?.color, Color::BLUE);
++    assert_eq!(clone.computed_style()?.width.value(), 96.0);
++    let weak = child.downgrade();
++    drop(clone);
++    drop(child);
++    drop(other);
++    drop(root);
++    drop(document);
++    assert!(weak.upgrade().is_none());
++    assert_eq!(initial.color, Color::RED);
++    assert_eq!(changed.color, Color::BLUE);
++    assert_eq!(reparented.color, Color::GREEN);
++    std::fs::create_dir_all(&output)?;
++    std::fs::write(output.join("before.png"), before)?;
++    std::fs::write(output.join("after.png"), after)?;
++    println!("native inherited styles: scale={scale} callback=1 owned-snapshots=4 passed");
++    Ok(())
++}
+diff --git a/bindings/rust/openui/examples/native_relative_styles.rs b/bindings/rust/openui/examples/native_relative_styles.rs
+new file mode 100644
+index 00000000..76fbc263
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_relative_styles.rs
+@@ -0,0 +1,283 @@
++//! Native font, animation and pseudo-style operations from a consuming Rust app.
++use openui::prelude::*;
++use std::{cell::Cell, path::Path, rc::Rc};
++
++fn check<T: std::fmt::Debug + PartialEq>(
++    failures: &mut Vec<String>,
++    name: &str,
++    actual: T,
++    expected: T,
++) {
++    if actual != expected {
++        failures.push(format!("{name}: got {actual:?}, expected {expected:?}"));
++    }
++}
++
++fn observe(
++    document: &Document,
++    child: &Element,
++    output: &Path,
++    name: &str,
++    font: f32,
++    width: f32,
++    failures: &mut Vec<String>,
++) -> Result<(), Box<dyn std::error::Error>> {
++    let bounds = child
++        .bounding_rect()?
++        .ok_or("missing native child bounds")?;
++    let style = child.computed_style()?;
++    println!("{name} font={} width={}", style.font_size, bounds.width);
++    check(failures, &format!("{name} font"), style.font_size, font);
++    check(failures, &format!("{name} width"), bounds.width, width);
++    std::fs::write(
++        output.join(format!("{name}.png")),
++        document.render_to_png_buffer()?,
++    )?;
++    Ok(())
++}
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = std::path::PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
++    if args.next().is_some() {
++        return Err("unexpected argument".into());
++    }
++    std::fs::create_dir_all(&output)?;
++    let document =
++        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(320.0, 240.0, scale)?)?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_overflow(Overflow::Hidden)?;
++    root.set_font_size(LengthValue::px(20.0))?;
++    root.set_color(Color::RED)?;
++    let child = Element::create(&document, "div")?;
++    child.set_width(LengthValue::Em(3.0))?;
++    child.set_height(LengthValue::px(16.0))?;
++    child.set_border_top_width(4)?;
++    child.set_border_top_style(BorderStyle::Solid)?;
++    root.append_child(&child)?;
++    let mut failures = Vec::new();
++    let options = AnimationOptions {
++        duration_ms: 100.0,
++        fill: FillMode::Both,
++        ..AnimationOptions::default()
++    };
++    observe(
++        &document,
++        &child,
++        &output,
++        "initial",
++        20.0,
++        60.0,
++        &mut failures,
++    )?;
++    let animation = root.animate(
++        StyleProperty::FontSize,
++        Keyframes::from_values(LengthValue::Em(1.0), LengthValue::Em(2.0)),
++        options.clone(),
++    )?;
++    observe(
++        &document,
++        &child,
++        &output,
++        "animation-start",
++        16.0,
++        48.0,
++        &mut failures,
++    )?;
++    document.advance_time(50.0)?;
++    observe(
++        &document,
++        &child,
++        &output,
++        "animation-half",
++        24.0,
++        72.0,
++        &mut failures,
++    )?;
++    document.cancel_animation(animation)?;
++    observe(
++        &document,
++        &child,
++        &output,
++        "animation-cancel",
++        20.0,
++        60.0,
++        &mut failures,
++    )?;
++    let animation = root.transition(
++        StyleProperty::FontSize,
++        LengthValue::px(32.0),
++        options.clone(),
++    )?;
++    document.cancel_animation(animation)?;
++    observe(
++        &document,
++        &child,
++        &output,
++        "transition-cancel",
++        32.0,
++        96.0,
++        &mut failures,
++    )?;
++    let calls = Rc::new(Cell::new(0));
++    let callback_calls = calls.clone();
++    let weak_root = root.downgrade();
++    child.on("click", move |_| {
++        weak_root
++            .upgrade()
++            .expect("live root")
++            .set_color(Color::BLUE)
++            .expect("native mutation");
++        callback_calls.set(callback_calls.get() + 1);
++    })?;
++    child.click()?;
++    check(&mut failures, "native click callback count", calls.get(), 1);
++    observe(
++        &document,
++        &child,
++        &output,
++        "transition-after-color",
++        32.0,
++        96.0,
++        &mut failures,
++    )?;
++    let animation = child.transition(StyleProperty::FontSize, LengthValue::px(40.0), options)?;
++    document.cancel_animation(animation)?;
++    observe(
++        &document,
++        &child,
++        &output,
++        "child-transition-cancel",
++        40.0,
++        120.0,
++        &mut failures,
++    )?;
++    root.set_color(Color::RED)?;
++    observe(
++        &document,
++        &child,
++        &output,
++        "child-transition-after-color",
++        40.0,
++        120.0,
++        &mut failures,
++    )?;
++    root.set_font_size(LengthValue::px(20.0))?;
++    child.set_font_size(LengthValue::calc_percent_px(150.0, -2.0))?;
++    observe(
++        &document,
++        &child,
++        &output,
++        "calc-before",
++        28.0,
++        84.0,
++        &mut failures,
++    )?;
++    let owned_calc = child.computed_style()?;
++    root.set_font_size(LengthValue::px(24.0))?;
++    observe(
++        &document,
++        &child,
++        &output,
++        "calc-after",
++        34.0,
++        102.0,
++        &mut failures,
++    )?;
++    child.set_font_size(LengthValue::px(40.0))?;
++    root.set_line_height(LineHeight::Percentage(150.0))?;
++    check(
++        &mut failures,
++        "inherited percentage line-height",
++        child.computed_style()?.line_height,
++        LineHeight::Length(36.0),
++    );
++    root.set_line_height(LineHeight::Number(1.5))?;
++    check(
++        &mut failures,
++        "inherited unitless line-height",
++        child.computed_style()?.line_height,
++        LineHeight::Number(1.5),
++    );
++    let pseudo = Element::create(&document, "div")?;
++    root.append_child(&pseudo)?;
++    root.set_font_size(LengthValue::px(20.0))?;
++    pseudo.set_pseudo_style(
++        PseudoStyleTarget::FirstLine,
++        &Style::default()
++            .font_size(LengthValue::calc_percent_px(150.0, 2.0))
++            .font_weight(FontWeight::BOLD),
++    )?;
++    let owned_pseudo = pseudo
++        .computed_style()?
++        .first_line_style
++        .clone()
++        .ok_or("missing native pseudo style")?;
++    check(
++        &mut failures,
++        "pseudo before font",
++        owned_pseudo.font_size,
++        32.0,
++    );
++    check(
++        &mut failures,
++        "pseudo before color",
++        owned_pseudo.color,
++        Color::RED,
++    );
++    root.set_font_size(LengthValue::px(24.0))?;
++    root.set_color(Color::BLUE)?;
++    let changed_pseudo = pseudo
++        .computed_style()?
++        .first_line_style
++        .clone()
++        .ok_or("missing changed native pseudo style")?;
++    check(
++        &mut failures,
++        "pseudo after font",
++        changed_pseudo.font_size,
++        38.0,
++    );
++    check(
++        &mut failures,
++        "pseudo after color",
++        changed_pseudo.color,
++        Color::BLUE,
++    );
++    check(
++        &mut failures,
++        "pseudo after weight",
++        changed_pseudo.font_weight,
++        FontWeight::BOLD,
++    );
++    let weak_child = child.downgrade();
++    drop(pseudo);
++    drop(child);
++    drop(root);
++    drop(document);
++    check(
++        &mut failures,
++        "document lifetime",
++        weak_child.upgrade().is_none(),
++        true,
++    );
++    check(
++        &mut failures,
++        "owned calc snapshot",
++        owned_calc.font_size,
++        28.0,
++    );
++    check(
++        &mut failures,
++        "owned pseudo snapshot",
++        owned_pseudo.font_size,
++        32.0,
++    );
++    if !failures.is_empty() {
++        return Err(failures.join("\n").into());
++    }
++    println!("native relative styles: scale={scale} callback=1 images=10 owned-snapshots=2 passed");
++    Ok(())
++}
+diff --git a/bindings/rust/openui/examples/native_static_position.rs b/bindings/rust/openui/examples/native_static_position.rs
+new file mode 100644
+index 00000000..52325072
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_static_position.rs
+@@ -0,0 +1,176 @@
++//! Native app guards for indented inline and block static positions.
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
++    let case = args.next().ok_or("case required")?;
++    if args.next().is_some()
++        || !matches!(
++            case.as_str(),
++            "inline-reset"
++                | "block-reset"
++                | "inline-inherit"
++                | "block-inherit"
++                | "inline-relative-reset"
++                | "block-relative-reset"
++        )
++    {
++        return Err("invalid native static-position arguments".into());
++    }
++    let is_block = case.starts_with("block");
++    let reset = case.ends_with("reset");
++    let relative = case.contains("relative");
++    let document = Document::with_font_collection(
++        ViewportMetrics::from_logical_size(320.0, 160.0, scale)?,
++        FontCollection::deterministic_test(),
++    )?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_overflow(Overflow::Hidden)?;
++    root.set_padding_top(LengthValue::px(20.0))?;
++    root.set_padding_left(LengthValue::px(20.0))?;
++    let container = Element::create(&document, "div")?;
++    container.set_position(Position::Relative)?;
++    container.set_width(LengthValue::px(240.0))?;
++    container.set_background_color(Color::GREEN)?;
++    container.set_color(Color::GREEN)?;
++    container.set_font_family(FontFamilyList::single("Ahem"))?;
++    container.set_font_size(LengthValue::px(16.0))?;
++    container.set_line_height(LineHeight::Number(1.0))?;
++    container.set_text_indent(LengthValue::px(20.0))?;
++    container.set_border_top_width(3)?;
++    container.set_border_right_width(3)?;
++    container.set_border_bottom_width(3)?;
++    container.set_border_left_width(3)?;
++    container.set_border_top_style(BorderStyle::Solid)?;
++    container.set_border_right_style(BorderStyle::Solid)?;
++    container.set_border_bottom_style(BorderStyle::Solid)?;
++    container.set_border_left_style(BorderStyle::Solid)?;
++    container.set_border_top_color(StyleColor::Resolved(Color::BLACK))?;
++    container.set_border_right_color(StyleColor::Resolved(Color::BLACK))?;
++    container.set_border_bottom_color(StyleColor::Resolved(Color::BLACK))?;
++    container.set_border_left_color(StyleColor::Resolved(Color::BLACK))?;
++    container.set_text("XXX")?;
++    root.append_child(&container)?;
++    let span = Element::create(&document, "span")?;
++    span.set_text("XX")?;
++    if reset {
++        span.set_text_indent(LengthValue::px(0.0))?;
++    }
++    if relative {
++        span.set_position(Position::Relative)?;
++    }
++    container.append_child(&span)?;
++    let absolute = Element::create(&document, "div")?;
++    absolute.set_display(if is_block {
++        Display::Block
++    } else {
++        Display::Inline
++    })?;
++    absolute.set_position(Position::Absolute)?;
++    if reset {
++        absolute.set_text_indent(LengthValue::px(0.0))?;
++    }
++    absolute.set_text("XXXXX")?;
++    span.append_child(&absolute)?;
++    let line_break = if is_block {
++        let node = Element::create(&document, "br")?;
++        if reset {
++            node.set_text_indent(LengthValue::px(0.0))?;
++        }
++        span.append_child(&node)?;
++        Some(node)
++    } else {
++        None
++    };
++    let red = Element::create(&document, "span")?;
++    red.set_color(Color::RED)?;
++    if reset {
++        red.set_text_indent(LengthValue::px(0.0))?;
++    }
++    red.set_text("XXXXX")?;
++    span.append_child(&red)?;
++    let before_style = absolute.computed_style()?;
++    assert_eq!(
++        before_style.text_indent.value(),
++        if reset { 0.0 } else { 20.0 }
++    );
++    let before_bounds = absolute
++        .bounding_rect()?
++        .ok_or("native absolute bounds required")?;
++    let before = document.render_to_png_buffer()?;
++    let calls = Rc::new(Cell::new(0));
++    let callback_calls = calls.clone();
++    let weak_container = container.downgrade();
++    absolute.on("click", move |_| {
++        weak_container
++            .upgrade()
++            .expect("live native container")
++            .set_text_indent(LengthValue::px(28.0))
++            .expect("native indentation mutation");
++        callback_calls.set(callback_calls.get() + 1);
++    })?;
++    absolute.click()?;
++    assert_eq!(calls.get(), 1);
++    let after_style = absolute.computed_style()?;
++    assert_eq!(
++        after_style.text_indent.value(),
++        if reset { 0.0 } else { 28.0 }
++    );
++    let after_bounds = absolute
++        .bounding_rect()?
++        .ok_or("native absolute bounds required")?;
++    let after = document.render_to_png_buffer()?;
++    // Exercise the public typed line-height setter as well as the generic
++    // property transport. Percentages compute on the parent before inheritance.
++    let percent_parent = Element::create(&document, "div")?;
++    percent_parent.set_display(Display::None)?;
++    percent_parent.set_font_size(LengthValue::px(24.0))?;
++    percent_parent.set_line_height(LineHeight::Percentage(150.0))?;
++    let percent_child = Element::create(&document, "span")?;
++    percent_child.set_font_size(LengthValue::px(40.0))?;
++    percent_parent.append_child(&percent_child)?;
++    root.append_child(&percent_parent)?;
++    let percent_style = percent_child.computed_style()?;
++    assert_eq!(percent_style.line_height, LineHeight::Length(36.0));
++    let weak_absolute = absolute.downgrade();
++    drop(percent_child);
++    drop(percent_parent);
++    drop(line_break);
++    drop(red);
++    drop(absolute);
++    drop(span);
++    drop(container);
++    drop(root);
++    drop(document);
++    assert!(weak_absolute.upgrade().is_none());
++    assert_eq!(
++        before_style.text_indent.value(),
++        if reset { 0.0 } else { 20.0 }
++    );
++    assert_eq!(percent_style.line_height, LineHeight::Length(36.0));
++    std::fs::create_dir_all(&output)?;
++    std::fs::write(output.join("before.png"), before)?;
++    std::fs::write(output.join("after.png"), after)?;
++    let rectangle = |rect: Rect| {
++        format!(
++            "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
++            rect.x, rect.y, rect.width, rect.height
++        )
++    };
++    std::fs::write(
++        output.join("geometry.json"),
++        format!(
++            "{{\"before\":{},\"after\":{}}}\n",
++            rectangle(before_bounds),
++            rectangle(after_bounds)
++        ),
++    )?;
++    println!(
++        "native static positions: case={case} scale={scale} callback=1 owned-snapshots=2 passed"
++    );
++    Ok(())
++}
+diff --git a/tools/style/generate_properties.py b/tools/style/generate_properties.py
+index 0d9c9b18..0b329154 100644
+--- a/tools/style/generate_properties.py
++++ b/tools/style/generate_properties.py
+@@ -170,6 +170,36 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
+         f"            StyleProperty::{row['rust_name']} => Some(Self::{row['rust_name']}(style.fields.{field_names(row)[0]}.clone())),"
+         for row in renderer_rows
+     )
++    # Copy computed values, without resolving inherited lengths again.
++    inherited_fields = sorted({field for row in schema if row["inherited"] == "true" for field in field_names(row)})
++    inherited_copy = "\n".join(f"        self.fields.{field} = parent.fields.{field}.clone();" for field in inherited_fields)
++    # Shorthands and normalization write more than their canonical inventory
++    # field. Use those write sets when deciding whether a repeated declaration
++    # is still effective after later declarations.
++    mutation_overrides = {
++        "Font": "font_style font_variant_caps font_weight font_stretch font_size line_height font_family font_variant_ligatures font_variant_numeric font_variant_east_asian font_variant_alternates font_variant_position font_variant_emoji font_optical_sizing font_size_adjust font_kerning font_feature_settings font_variation_settings font_language_override",
++        "FontVariant": "font_variant_ligatures font_variant_caps font_variant_alternates font_variant_numeric font_variant_east_asian font_variant_position font_variant_emoji",
++        "FontSynthesis": "font_synthesis_weight font_synthesis_style font_synthesis_small_caps font_synthesis_position",
++        "WordWrap": "overflow_wrap",
++        "TextEmphasisStyle": "text_emphasis_mark text_emphasis_fill",
++        "TextEmphasis": "text_emphasis_mark text_emphasis_fill text_emphasis_color",
++        "TextDecoration": "text_decoration_line text_decoration_style text_decoration_color text_decoration_thickness",
++        "TextBox": "text_box_trim text_box_edge",
++        "WhiteSpace": "white_space_collapse text_wrap_mode white_space text_wrap",
++        "TextWrap": "text_wrap_mode text_wrap_style text_wrap white_space",
++        "WhiteSpaceCollapse": "white_space_collapse white_space",
++        "TextWrapMode": "text_wrap_mode white_space text_wrap",
++        "TextWrapStyle": "text_wrap_style text_wrap",
++    }
++    assert set(mutation_overrides) <= {row["rust_name"] for row in schema}
++    mutation_cases = []
++    for row in schema:
++        names = mutation_overrides.get(row["rust_name"], " ".join(field_names(row))).split()
++        assert set(names) <= set(fields), row["rust_name"]
++        values = ", ".join(f'"{name}"' for name in names)
++        mutation_cases.append(f"            Self::{row['rust_name']} => &[{values}],")
++    mutation_match = "\n".join(mutation_cases)
++
+     # Author values keep relative lengths until the engine resolves them. This
+     # bridge also serves C's scalar transport; computed renderer values remain
+     # a separate, lossless path through the same fields.
+@@ -330,7 +360,27 @@ impl RendererInternalStyleValue {{
+     }}
+ }}
+ 
++impl ComputedStyle {{
++    /// Copy modeled inherited computed fields from a parent snapshot.
++    /// Authored values are reapplied by the retained engine afterwards.
++    #[doc(hidden)]
++    pub fn inherit_properties_from(&mut self, parent: &Self) {{
++{inherited_copy}
++    }}
++}}
++
+ impl StyleProperty {{
++    #[doc(hidden)]
++    pub fn affects_same_fields_as(self, other: Self) -> bool {{
++        self == other || self.mutation_fields().iter().any(|field| other.mutation_fields().contains(field))
++    }}
++
++    fn mutation_fields(self) -> &'static [&'static str] {{
++        match self {{
++{mutation_match}
++        }}
++    }}
++
+     pub fn from_u16(value: u16) -> Option<Self> {{
+         PROPERTY_METADATA
+             .get(value.checked_sub(1)? as usize)

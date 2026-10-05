@@ -23,6 +23,8 @@ claimed by source code alone.
 | Generated sources | style, ABI, migration, closure generators are read-only clean | pass |
 | No-work frame | zero layout, paint, and raster on unchanged snapshots | pass |
 | Compositor recording ownership | Repair applied at `289d5516`; [clean qualification](../renderer/generated/native-scroll-insets-v35.json) at native-input-identical `3ff5f8af` passes baseline/fixed cache guards, 8,532 workspace tests, eleven C/five C++ consumers and all seven hosted hardening jobs. Every original/expanded comparison invariant is unchanged; own umbrella build/matrices are queued | implemented; own umbrella verification pending |
+| Current umbrella hosted gates | At `287e176a`, all three ordinary workflows succeed: six jobs pass, five are skipped. [Own manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37244559627) passes all seven jobs with zero skips | pass for this source; local full pixel gate fails |
+| Native style/cache integration | [Prepared clean `0ccc37da`](../renderer/generated/native-scroll-insets-v36.json) passes ten read-only checks; current-source local guards/build/native consumers/matrices are queued. Prior `5cc75147` results include 60 failing native static-position bounds and images | unapplied; current-source runtime qualification pending |
 | Mutation ownership | 10,000-iteration soak, no owned-object leak | pass |
 | Local performance smoke | 0.108 ms p95, 308 UI-thread animation fps, 1.389% RSS growth | non-qualifying pass |
 | X11/Wayland software and Mesa GL | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576) passed native C/C++ windows and Rust smoke paths at `d174ea0b`; physical release-lab tests remain open | provisional pass |

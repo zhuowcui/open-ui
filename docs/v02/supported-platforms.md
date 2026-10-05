@@ -31,6 +31,10 @@ Rust engine and exposed as a public native Rust method for the consuming app
 to call. This includes the resulting state changes, geometry and events.
 There is no JavaScript glue, script binding, `eval`, or embedded browser
 runtime, in this or future versions.
+No element interaction requires adding JavaScript to the framework or the app.
+The framework implements the behavior in Rust; the consuming app calls its
+public native API and handles events with Rust callbacks. Scripts used by
+offline Chromium reference tools are separate from the application runtime.
 
 A missing public native method is unfinished API work. Verify each needed
 operation from a consuming Rust app before claiming it is complete. This
@@ -70,6 +74,14 @@ through the public Rust API, and verify it from a consuming native Rust
 application. Test coverage must exercise the retained state and resulting
 events or rendering. A missing public method remains an implementation gap
 until that native application path works.
+
+The [prepared native style integration](../renderer/generated/native-scroll-insets-v36.json)
+combines authored-style inheritance, resolved-style snapshots and relative
+values with the applied compositor cache repair. Its own local application
+verification is queued. Earlier `5cc75147` results include 50 exact native
+relative-style images and eight exact C geometry observations, alongside 60
+failing native static-position bounds and images. The new source is unapplied;
+those earlier measurements do not establish current-source API completion.
 
 The [native viewport application](../../bindings/rust/openui/examples/native_viewport_scroll.rs)
 builds its document through typed Rust methods, scrolls it from a Rust click

@@ -16,8 +16,23 @@ consumers pass, and both full pixel suites retain every comparison invariant.
 All seven own-source hosted hardening jobs pass, with zero skips. Native,
 build-tool and workflow inputs are identical at the applied umbrella checkpoint.
 Its own clean build and complete matrices are queued after every earlier
-pipeline; current umbrella hosted gates still need review. This repairs frame
+pipeline. At umbrella `287e176a`, all three ordinary workflows succeed
+(six jobs pass and five are skipped), and all seven jobs in the
+[manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/37244559627)
+pass with zero skips. Skipped jobs do not count as passes. This repairs frame
 ownership without changing the accepted pixel totals or qualifying v0.2.
+
+The [v36 evidence](../renderer/generated/native-scroll-insets-v36.json)
+preserves clean private `0ccc37da`, combining the previously measured native
+style inheritance and computed-snapshot repairs with the applied owned cache.
+Ten read-only checks pass. Its current-source local baseline/fixed guards,
+clean build, Rust/C consumers and four complete pixel matrices are queued;
+its own hosted hardening is still running at the recorded observation.
+No local stage has executed. The prior `5cc75147` source passed 50 native
+relative-style images and eight C geometry checks, but all 60 native static
+position bounds and pixels still failed. Those source-specific results do not
+qualify the new integration. The candidate remains unapplied, admits no
+release state, and carries none of the later intrinsic/LCD trial source.
 
 The standalone native float-color C constructor and public Rust/C/C++
 consumers are now applied to the umbrella branch. All 112 preceding exports

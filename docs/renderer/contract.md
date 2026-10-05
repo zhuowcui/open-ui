@@ -16,6 +16,14 @@ Rust. They never require JavaScript in Open UI. A needed operation is complete
 only when a consuming app can call its public Rust API and receive the expected
 state changes and events through the shared engine.
 
+There is no exception for interacting with elements. Creating or finding an
+element, changing its properties, measuring it, focusing it, scrolling it, and
+responding to input are native operations. The consuming Rust app calls those
+operations directly and supplies Rust callbacks. Missing behavior requires
+implementing the operation and its public Rust API, with application-level
+verification; adding JavaScript or a script binding is never the solution.
+Scripts may run only in the separate offline Chromium reference tooling.
+
 The [clean private SVG evidence](generated/native-svg-viewport-v11.json)
 implements viewport creation over the shared Rust Engine and removes the
 historical decoration alpha through fixed viewport layout and shared border
