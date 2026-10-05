@@ -463,8 +463,8 @@ impl Element {
     }
 
     pub fn set_text(&self, text: &str) -> Result<(), Error> {
-        self.remove_all_children()?;
-        self.append_text_node(text)
+        self.document
+            .with_engine_mut(|engine| engine.set_text_content(self.handle, text))
     }
 
     /// Return this element's authored text and descendant text in tree order.
