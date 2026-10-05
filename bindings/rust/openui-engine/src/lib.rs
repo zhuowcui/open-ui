@@ -2602,6 +2602,130 @@ mod tests {
     }
 
     #[test]
+    fn native_image_edge_coverage_blends_after_sampling_without_white_halo() {
+        let mut engine = Engine::new_with_options(
+            ViewportMetrics::from_logical_size(320.0, 240.0, 1.25).unwrap(),
+            EngineOptions {
+                raster_configuration: RasterConfiguration::deterministic_aliased(false),
+            },
+        )
+        .unwrap();
+        engine
+            .set_property(
+                engine.root(),
+                StyleProperty::BackgroundColor,
+                Color::WHITE.into(),
+            )
+            .unwrap();
+        let parent = engine.create_native_element(ElementTag::Div).unwrap();
+        for (property, value) in [
+            (StyleProperty::Position, Position::Absolute.into()),
+            (StyleProperty::Left, LengthValue::px(20.0).into()),
+            (StyleProperty::Top, LengthValue::px(20.0).into()),
+            (StyleProperty::Width, LengthValue::px(150.0).into()),
+            (StyleProperty::Height, LengthValue::px(150.0).into()),
+            (StyleProperty::BackgroundColor, Color::RED.into()),
+            (StyleProperty::PaddingTop, LengthValue::px(10.0).into()),
+            (StyleProperty::PaddingRight, LengthValue::px(10.0).into()),
+            (StyleProperty::PaddingBottom, LengthValue::px(10.0).into()),
+            (StyleProperty::PaddingLeft, LengthValue::px(10.0).into()),
+        ] {
+            engine.set_property(parent, property, value).unwrap();
+        }
+        engine.append_child(engine.root(), parent).unwrap();
+        let image = engine.create_native_element(ElementTag::Image).unwrap();
+        let green = engine.register_image_resource(
+            "memory:green-edge-guard",
+            "image/png",
+            "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
+            include_bytes!("../../openui/tests/assets/green-200.png").to_vec(),
+        );
+        engine
+            .set_image_resource(image, green, Some((200.0, 200.0)))
+            .unwrap();
+        engine
+            .set_property(image, StyleProperty::Display, Display::Block.into())
+            .unwrap();
+        engine
+            .set_property(image, StyleProperty::Width, LengthValue::px(150.0).into())
+            .unwrap();
+        engine
+            .set_property(image, StyleProperty::Height, LengthValue::px(150.0).into())
+            .unwrap();
+        engine.append_child(parent, image).unwrap();
+        let bounds = engine.bounds(image).unwrap().unwrap();
+        assert_eq!(
+            (bounds.x, bounds.y, bounds.width, bounds.height),
+            (30.0, 30.0, 150.0, 150.0)
+        );
+        let frame = SoftwareCompositor::default()
+            .render(&engine.scene().unwrap())
+            .unwrap();
+        let edge = 50 * frame.stride + 37 * 4;
+        // Stable Chromium captures retain red behind the image, but round
+        // geometric coverage after the source and destination are blended.
+        assert_eq!(
+            &frame.pixels[edge..edge + 4],
+            &[126, 64, 0, 255],
+            "image coverage must blend once over its red backdrop"
+        );
+        let outside = 50 * frame.stride + 36 * 4;
+        assert_eq!(&frame.pixels[outside..outside + 4], &[255, 0, 0, 255]);
+
+        for property in [
+            StyleProperty::PaddingTop,
+            StyleProperty::PaddingRight,
+            StyleProperty::PaddingBottom,
+            StyleProperty::PaddingLeft,
+        ] {
+            engine
+                .set_property(parent, property, LengthValue::px(0.0).into())
+                .unwrap();
+        }
+        let frame = SoftwareCompositor::default()
+            .render(&engine.scene().unwrap())
+            .unwrap();
+        let corner = 212 * frame.stride + 212 * 4;
+        assert_eq!(
+            &frame.pixels[corner..corner + 4],
+            &[190, 222, 190, 255],
+            "two-axis coverage must blend once over the outer white canvas"
+        );
+
+        let white = engine.register_image_resource(
+            "memory:white-edge-guard",
+            "image/png",
+            "b31782b0ecaa71394f1bccf3cc4647ba70b7208464244546b48521a71e1f1dd0",
+            include_bytes!("../../openui/tests/assets/1x1-white.png").to_vec(),
+        );
+        engine
+            .set_image_resource(image, white, Some((1.0, 1.0)))
+            .unwrap();
+        let frame = SoftwareCompositor::default()
+            .render(&engine.scene().unwrap())
+            .unwrap();
+        assert_eq!(
+            &frame.pixels[corner..corner + 4],
+            &[255, 255, 255, 255],
+            "coverage must not introduce a dark halo between two white surfaces"
+        );
+        engine
+            .set_property(image, StyleProperty::Opacity, 0.5f32.into())
+            .unwrap();
+        let frame = SoftwareCompositor::default()
+            .render(&engine.scene().unwrap())
+            .unwrap();
+        let interior = 50 * frame.stride + 50 * 4;
+        assert_eq!(frame.pixels[interior], 255);
+        assert!(
+            frame.pixels[interior + 1] > 0 && frame.pixels[interior + 1] < 255,
+            "translucent white image must retain the red parent backing"
+        );
+        assert_eq!(frame.pixels[interior + 1], frame.pixels[interior + 2]);
+        assert_eq!(frame.pixels[interior + 3], 255);
+    }
+
+    #[test]
     fn application_fonts_are_document_owned_invalidate_and_survive_in_scenes() {
         let viewport = ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap();
         let mut first = Engine::new(viewport).unwrap();
