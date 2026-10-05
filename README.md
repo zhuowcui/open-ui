@@ -29,11 +29,19 @@ produce the same visual state. See the
 
 ## Verified status
 
+The [native text replacement review](docs/renderer/native-text-content.md)
+finds a C API bug: its setter stores text on a container, while layout reads
+Text children. All 800 C/C++ font images are blank. A shared Rust/C Engine
+correction and consuming applications are prepared; thirteen source checks
+pass. Its first hosted tests expose an inconsistent viewport in the new guard.
+A fresh test setup corrects that input; native execution and pixels are queued.
+The correction remains unapplied.
+
 The [table source-retention follow-up](docs/renderer/native-table-progress.md#canonical-source-retention-follow-up)
 keeps an immutable full table subtree for ancestor continuations. A geometry-only
 diagnostic finds a 60-pixel cropped row over a 100-pixel source body. Eleven
-source checks pass on the private correction; native geometry, teardown and
-pixel verification are queued. It remains unapplied.
+source checks and seven own-source hosted jobs pass on the private correction;
+native geometry, teardown and pixel verification are queued. It remains unapplied.
 
 The [latest native review](docs/renderer/generated/native-review-v3.json)
 rejects the inline-image candidate: its native app passes, but one expanded
@@ -42,8 +50,11 @@ case loses pixel equality at all four profiles. The
 geometry guard: both baseline and proposed correction produce four fragments
 where Chromium produces 41. Neither change is applied. The raster retry passes
 its regression guards and all 17 clean build stages. Its native application
-passes 828 of 840 contracts; twelve still fail. Remaining consumers and pixel
-gates are pending.
+passes 828 of 840 contracts; twelve still fail. Its font consumer is 73/1,200
+images and 25,600/76,800 geometry states exact. The static consumer is exact
+only with explicit Fontations (60/60); default and FreeType each match 0/60.
+The selection is 648/880 exact, with zero errors. Focused 640/640 and primitive
+960/960 gates pass; full original and expanded verification remains pending.
 
 The [fresh image-fallback candidate](docs/renderer/native-inline-fallback.md)
 keeps fallback children in normal flow and adds native Rust/C image clearing.

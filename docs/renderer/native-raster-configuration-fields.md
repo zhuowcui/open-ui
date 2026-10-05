@@ -34,8 +34,23 @@ application stage now finishes with exit 1 in the
 contracts pass and twelve fail. All twelve failed cases have deterministic
 images, unchanged logical geometry and successful native callbacks. Mask/phase
 contracts remain incorrect. This is still not Chromium pixel qualification.
-Remaining consumer, selection and matrix stages are pending; the whole owner
-remains exclusive until every stage is terminal.
+The [next measured evidence](generated/native-text-content-v1.json) records the
+font consumer's exit 1: 73/1,200 images and 25,600/76,800 geometry states match
+Chromium. Rust supplies all correct geometry and all 73 exact images. All 800
+C/C++ images are blank white, with 51,200 incorrect zero-size text boxes. Their
+reviewed cause is the C setter storing container data instead of creating a
+Text child. The [shared native text correction](native-text-content.md) is
+prepared separately; it is unapplied. The other 327 different Rust images
+still need pixel root-cause review. Rust self-comparisons are not C/Rust passes.
+
+The static consumer completes with 60/60 exact images under explicit Fontations;
+default and FreeType each match 0/60. All 180 geometry states and repeated runs
+agree. Its stage exits 0 for the explicit Fontations scope; this does not
+qualify default native raster. The selection is 648/880 exact, 232 different,
+zero errors, actual exit 1. Focused 640/640 and primitive 960/960 comparisons
+are exact, actual exits 0. Full original and expanded stages remain pending;
+the whole owner remains exclusive until every stage is terminal. No accepted
+renderer total or release admission changes.
 
 The [v38 evidence](generated/native-scroll-insets-v38.json) preserves
 `0e1f12ff`, which replaces two invalid test-only `fields_mut` calls with the
@@ -161,8 +176,9 @@ the earlier pipelines.
 
 ## Open work
 
-The candidate still needs compilation and consuming-app verification. Existing
-family/size hinting and FreeType aliased-profile overrides require review.
+The retry compiles and completes the consuming-app stages above, with required
+native contract and pixel failures. Full renderer verification is pending.
+Existing family/size hinting and FreeType aliased-profile overrides require review.
 The default native physical-strike correction above still needs qualification.
 Variable, synthetic, color-font and transformed/vertical text behavior also
 need qualification. Copying configuration into the Engine does not prove those

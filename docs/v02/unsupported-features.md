@@ -17,8 +17,8 @@ experiment exists in the repository.
 - HTML loading, CSS text parsing, CSS selector parsing, stylesheet injection,
   and a web cascade exposed as application APIs. Native element lookup and
   traversal remain part of the public Rust interaction contract.
-- JavaScript execution or script bindings inside documents are outside the
-  product design, including future versions. Applications call public native
+- Open UI never executes JavaScript or provides script bindings. This holds
+  for every version. Applications call public native
   Rust methods and handle events with Rust callbacks. Every needed browser
   element operation must be implemented in Rust and exposed to the consuming
   app. A missing public method belongs under implementation gaps, even when

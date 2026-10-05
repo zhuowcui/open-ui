@@ -1,0 +1,488 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 6c14aebb..7e4c4712 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -1059,6 +1059,8 @@ impl Engine {
+         Ok(())
+     }
+ 
++    /// Update a node's own text data. Native element text replacement uses
++    /// `set_text_content` so its text participates in ordinary child layout.
+     pub fn set_text(
+         &mut self,
+         handle: NodeHandle,
+@@ -1074,6 +1076,30 @@ impl Engine {
+         Ok(())
+     }
+ 
++    /// Replace native element children with one authored text node.
++    ///
++    /// Rust and C element setters use this operation. Replaced child handles
++    /// become stale, as with `remove_children`; this does not detach and retain
++    /// an old subtree. A text-node handle instead updates its existing data.
++    /// Empty element text retains an empty text child, preserving the native
++    /// Rust setter's existing behavior.
++    pub fn set_text_content(
++        &mut self,
++        handle: NodeHandle,
++        text: impl Into<String>,
++    ) -> Result<(), EngineError> {
++        let node = self.resolve(handle)?;
++        if self.document.node(node).tag == ElementTag::Text {
++            return self.set_text(handle, text);
++        }
++        self.remove_children(handle)?;
++        // Container-local text data is not laid out as an authored text child.
++        // Remove any data previously supplied through the low-level operation.
++        self.document.node_mut(node).text = None;
++        let child = self.create_text(text)?;
++        self.append_child(handle, child)
++    }
++
+     /// Return the data of an authored text node.
+     pub fn text_data(&self, handle: NodeHandle) -> Result<&str, EngineError> {
+         let node = self.document.node(self.resolve(handle)?);
+@@ -2528,6 +2554,39 @@ mod tests {
+         ));
+     }
+ 
++    #[test]
++    fn native_text_content_replaces_children_and_reuses_owned_storage() {
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap()).unwrap();
++        let root = engine.root();
++        let parent = engine.create_native_element(ElementTag::Div).unwrap();
++        engine.append_child(root, parent).unwrap();
++        let replaced = engine.create_text("old").unwrap();
++        engine.append_child(parent, replaced).unwrap();
++        let old_weak = replaced.downgrade();
++        engine.set_text_content(parent, "new").unwrap();
++        assert!(old_weak.upgrade(&engine).is_err());
++        assert_eq!(engine.text_content(parent).unwrap(), "new");
++        let text = engine.children(parent).unwrap()[0];
++        engine.set_text_content(text, "data").unwrap();
++        assert_eq!(engine.text_data(text).unwrap(), "data");
++        assert_eq!(engine.parent(text).unwrap(), Some(parent));
++        for iteration in 0..10_000 {
++            engine
++                .set_text_content(parent, iteration.to_string())
++                .unwrap();
++        }
++        let counts = engine.object_counts();
++        assert_eq!(counts.live_nodes, 3);
++        assert_eq!(counts.handle_slots, 3);
++        assert_eq!(counts.vacant_handle_slots, 0);
++        assert_eq!(counts.arena_nodes, 3);
++        assert_eq!(counts.reusable_arena_nodes, 0);
++        engine.set_text_content(parent, "").unwrap();
++        assert_eq!(engine.text_content(parent).unwrap(), "");
++        assert_eq!(engine.children(parent).unwrap().len(), 1);
++    }
++
+     #[test]
+     fn long_running_mutations_reuse_owned_storage() {
+         let mut engine =
+diff --git a/bindings/rust/openui-ffi/src/lib.rs b/bindings/rust/openui-ffi/src/lib.rs
+index b5397ef9..e25e04b0 100644
+--- a/bindings/rust/openui-ffi/src/lib.rs
++++ b/bindings/rust/openui-ffi/src/lib.rs
+@@ -1339,7 +1339,7 @@ pub extern "C" fn oui_element_set_text(
+     ffi(|| {
+         let text = utf8(text, "text")?;
+         with_element_mut(element_handle as usize, |engine, node| {
+-            engine.set_text(node, text)
++            engine.set_text_content(node, text)
+         })
+     })
+ }
+diff --git a/bindings/rust/openui/examples/native_text_content.rs b/bindings/rust/openui/examples/native_text_content.rs
+new file mode 100644
+index 00000000..70eff3ae
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_text_content.rs
+@@ -0,0 +1,127 @@
++//! Shared native text replacement, Rust callbacks and owned geometry.
++
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn bounds_json(element: &Element) -> Result<String, Box<dyn std::error::Error>> {
++    let bounds = element.bounding_rect()?.ok_or("text box required")?;
++    Ok(format!(
++        "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
++        f64::from(bounds.x),
++        f64::from(bounds.y),
++        f64::from(bounds.width),
++        f64::from(bounds.height),
++    ))
++}
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
++    let family = args.next().unwrap_or_else(|| "Ahem".into());
++    let size: f32 = args.next().unwrap_or_else(|| "20".into()).parse()?;
++    let phases: Vec<u8> = (0..64).collect();
++    let width = 800.0;
++    let height = 600.0;
++    if args.next().is_some()
++        || !matches!(
++            family.as_str(),
++            "Ahem" | "DejaVu Sans" | "DejaVu Serif" | "DejaVu Sans Mono"
++        )
++        || !size.is_finite()
++        || size <= 0.0
++    {
++        return Err("invalid native text arguments".into());
++    }
++    let document = Document::with_font_collection(
++        ViewportMetrics::from_logical_size(width, height, scale)?,
++        FontCollection::deterministic_test(),
++    )?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    root.set_overflow(Overflow::Hidden)?;
++    let mut texts = Vec::new();
++    for (index, phase) in phases.iter().enumerate() {
++        let text = Element::create(&document, "div")?;
++        text.set_position(Position::Absolute)?;
++        text.set_left(Length::px(
++            20.0 + (index % 8) as f32 * 92.0 + f32::from(*phase) / 64.0,
++        ))?;
++        text.set_top(Length::px(20.0 + (index / 8) as f32 * 60.0))?;
++        text.set_font_family(FontFamilyList::single(family.clone()))?;
++        text.set_font_size(LengthValue::px(size))?;
++        text.set_line_height(LineHeight::Number(1.0))?;
++        text.set_color(Color::BLACK)?;
++        text.set_text("X")?;
++        root.append_child(&text)?;
++        texts.push(text);
++    }
++    std::fs::create_dir_all(&output)?;
++    let before = texts
++        .iter()
++        .map(bounds_json)
++        .collect::<Result<Vec<_>, _>>()?
++        .join(",");
++    let owned_before = texts
++        .iter()
++        .map(|text| -> Result<_, Box<dyn std::error::Error>> {
++            Ok(text.bounding_rect()?.ok_or("owned text bounds required")?)
++        })
++        .collect::<Result<Vec<_>, _>>()?;
++    std::fs::write(output.join("before.png"), document.render_to_png_buffer()?)?;
++
++    let calls = Rc::new(Cell::new(0));
++    let observed = Rc::clone(&calls);
++    let targets: Vec<_> = texts.iter().map(Element::downgrade).collect();
++    root.on("click", move |_| {
++        for target in &targets {
++            let text = target.upgrade().expect("mounted native text");
++            text.set_text("XX").unwrap();
++            text.set_color(Color::BLUE).unwrap();
++        }
++        observed.set(observed.get() + 1);
++    })?;
++    root.click()?;
++    if calls.get() != 1
++        || texts
++            .iter()
++            .any(|text| !matches!(text.text_content().as_deref(), Ok("XX")))
++    {
++        return Err("native text callback failed".into());
++    }
++    let after = texts
++        .iter()
++        .map(bounds_json)
++        .collect::<Result<Vec<_>, _>>()?
++        .join(",");
++    assert_eq!(
++        before,
++        owned_before
++            .iter()
++            .map(|bounds| format!(
++                "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
++                f64::from(bounds.x),
++                f64::from(bounds.y),
++                f64::from(bounds.width),
++                f64::from(bounds.height),
++            ))
++            .collect::<Vec<_>>()
++            .join(",")
++    );
++    std::fs::write(output.join("after.png"), document.render_to_png_buffer()?)?;
++    std::fs::write(
++        output.join("geometry.json"),
++        format!(
++            "{{\"before\":[{before}],\"after\":[{after}],\"callback_count\":{}}}\n",
++            calls.get()
++        ),
++    )?;
++    let weak: Vec<_> = texts.iter().map(Element::downgrade).collect();
++    drop(texts);
++    drop(root);
++    drop(document);
++    if weak.iter().any(|text| text.upgrade().is_some()) {
++        return Err("native text callback retained document".into());
++    }
++    Ok(())
++}
+diff --git a/bindings/rust/openui/src/element.rs b/bindings/rust/openui/src/element.rs
+index ceacf452..45330b18 100644
+--- a/bindings/rust/openui/src/element.rs
++++ b/bindings/rust/openui/src/element.rs
+@@ -463,8 +463,8 @@ impl Element {
+     }
+ 
+     pub fn set_text(&self, text: &str) -> Result<(), Error> {
+-        self.remove_all_children()?;
+-        self.append_text_node(text)
++        self.document
++            .with_engine_mut(|engine| engine.set_text_content(self.handle, text))
+     }
+ 
+     /// Return this element's authored text and descendant text in tree order.
+diff --git a/examples/c_v02/text_content.c b/examples/c_v02/text_content.c
+new file mode 100644
+index 00000000..5045b748
+--- /dev/null
++++ b/examples/c_v02/text_content.c
+@@ -0,0 +1,230 @@
++/* Native text replacement through the shared Rust engine and C callbacks. */
++#ifdef NDEBUG
++#undef NDEBUG
++#endif
++#include <assert.h>
++#include <math.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++#include "openui.h"
++
++static OuiUtf8 text(const char* value) {
++  OuiUtf8 result = {(const uint8_t*)value, strlen(value)};
++  return result;
++}
++
++static void length(OuiElement* element, OuiStyleProperty property, float pixels) {
++  OuiStyleValue value;
++  memset(&value, 0, sizeof(value));
++  value.tag = OUI_STYLE_VALUE_LENGTH;
++  value.data.length.value = pixels;
++  value.data.length.unit = OUI_LENGTH_PX;
++  assert(oui_element_set_property(element, property, &value) == OUI_OK);
++}
++
++static void color(OuiElement* element,
++                  OuiStyleProperty property,
++                  uint8_t red,
++                  uint8_t green,
++                  uint8_t blue) {
++  OuiStyleValue value;
++  memset(&value, 0, sizeof(value));
++  value.tag = OUI_STYLE_VALUE_COLOR;
++  value.data.color.red = red;
++  value.data.color.green = green;
++  value.data.color.blue = blue;
++  value.data.color.alpha = 255;
++  assert(oui_element_set_property(element, property, &value) == OUI_OK);
++}
++
++static void enumeration(OuiElement* element, OuiStyleProperty property, int32_t number) {
++  OuiStyleValue value;
++  memset(&value, 0, sizeof(value));
++  value.tag = OUI_STYLE_VALUE_ENUM;
++  value.data.enum_value = number;
++  assert(oui_element_set_property(element, property, &value) == OUI_OK);
++}
++
++typedef struct Mutation {
++  OuiElement** elements;
++  size_t count;
++  unsigned calls;
++  int glyphs;
++} Mutation;
++
++static void clicked(OuiEvent* event, void* user_data) {
++  Mutation* state = (Mutation*)user_data;
++  assert(event->event_type == OUI_EVENT_CLICK);
++  /* Query and mutation during a callback prove engine borrows were released. */
++  for (size_t index = 0; index < state->count; ++index) {
++    if (state->glyphs) {
++      assert(oui_element_set_text(state->elements[index], text("XX")) == OUI_OK);
++      color(state->elements[index], OUI_STYLE_PROPERTY_COLOR, 0, 0, 255);
++    } else {
++      color(state->elements[index], OUI_STYLE_PROPERTY_BACKGROUND_COLOR, 0, 0, 255);
++    }
++  }
++  ++state->calls;
++}
++
++static void click(OuiDocument* document, OuiElement* target) {
++  OuiEvent event;
++  memset(&event, 0, sizeof(event));
++  event.struct_size = sizeof(event);
++  event.abi_version = OUI_ABI_VERSION;
++  event.event_type = OUI_EVENT_CLICK;
++  assert(oui_document_dispatch_event(document, target, &event) == OUI_OK);
++}
++
++static OuiFontFace* register_font(OuiDocument* document, const char* family, const char* path) {
++  FILE* input = fopen(path, "rb");
++  assert(input != NULL && fseek(input, 0, SEEK_END) == 0);
++  const long count = ftell(input);
++  assert(count > 0 && fseek(input, 0, SEEK_SET) == 0);
++  uint8_t* bytes = (uint8_t*)malloc((size_t)count);
++  assert(bytes != NULL && fread(bytes, 1, (size_t)count, input) == (size_t)count);
++  assert(fclose(input) == 0);
++  OuiFontFaceDescriptor descriptor;
++  memset(&descriptor, 0, sizeof(descriptor));
++  descriptor.struct_size = sizeof(descriptor);
++  descriptor.abi_version = OUI_ABI_VERSION;
++  descriptor.family = text(family);
++  descriptor.weight_min = descriptor.weight_max = 400;
++  descriptor.stretch_min = descriptor.stretch_max = 100;
++  OuiFontFace* face = NULL;
++  assert(oui_document_register_font(document, bytes, (size_t)count, &descriptor, &face) == OUI_OK);
++  free(bytes);
++  return face;
++}
++
++static void save_png(OuiDocument* document, const char* folder, const char* state) {
++  char path[4096];
++  int count = snprintf(path, sizeof(path), "%s/%s.png", folder, state);
++  assert(count > 0 && (size_t)count < sizeof(path));
++  OuiBuffer* png = NULL;
++  assert(oui_document_render_png(document, &png) == OUI_OK);
++  FILE* output = fopen(path, "wb");
++  assert(output != NULL);
++  const size_t length = oui_buffer_length(png);
++  assert(fwrite(oui_buffer_data(png), 1, length, output) == length);
++  assert(fclose(output) == 0);
++  assert(oui_buffer_destroy(png) == OUI_OK);
++}
++
++static void write_bounds(FILE* output, OuiElement** nodes) {
++  fputc('[', output);
++  for (size_t phase = 0; phase < 64; ++phase) {
++    OuiRect rect;
++    assert(oui_element_get_bounds(nodes[phase], &rect) == OUI_OK);
++    fprintf(output, "%s{\"x\":%.17g,\"y\":%.17g,\"width\":%.17g,\"height\":%.17g}",
++            phase ? "," : "", (double)rect.x, (double)rect.y, (double)rect.width,
++            (double)rect.height);
++  }
++  fputc(']', output);
++}
++
++static void font_consumer(const char* folder,
++                          double scale,
++                          const char* family,
++                          float size,
++                          const char* font_path) {
++  assert(isfinite(scale) && scale > 0 && isfinite(size) && size > 0);
++  OuiDocumentConfig viewport = {
++      sizeof(viewport), OUI_ABI_VERSION, {800, 600, 0, 0, scale, OUI_VIEWPORT_LOGICAL, 0}};
++  OuiDocument* document = NULL;
++  assert(oui_document_create(&viewport, &document) == OUI_OK);
++  OuiFontFace* face = register_font(document, family, font_path);
++  OuiStyleCompound* font_family = NULL;
++  assert(oui_font_family_create(text(family), 0, &font_family) == OUI_OK);
++  OuiStyleValue font;
++  memset(&font, 0, sizeof(font));
++  font.tag = OUI_STYLE_VALUE_COMPOUND;
++  font.data.compound = font_family;
++  OuiElement* root = NULL;
++  assert(oui_document_root(document, &root) == OUI_OK);
++  color(root, OUI_STYLE_PROPERTY_BACKGROUND_COLOR, 255, 255, 255);
++  enumeration(root, OUI_STYLE_PROPERTY_OVERFLOW, OUI_OVERFLOW_HIDDEN);
++  OuiElement* nodes[64];
++  for (size_t phase = 0; phase < 64; ++phase) {
++    assert(oui_element_create(document, OUI_ELEMENT_DIV, &nodes[phase]) == OUI_OK);
++    enumeration(nodes[phase], OUI_STYLE_PROPERTY_POSITION, OUI_POSITION_ABSOLUTE);
++    length(nodes[phase], OUI_STYLE_PROPERTY_LEFT, 20 + (float)(phase % 8) * 92 + (float)phase / 64);
++    length(nodes[phase], OUI_STYLE_PROPERTY_TOP, 20 + (float)(phase / 8) * 60);
++    assert(oui_element_set_property(nodes[phase], OUI_STYLE_PROPERTY_FONT_FAMILY, &font) == OUI_OK);
++    length(nodes[phase], OUI_STYLE_PROPERTY_FONT_SIZE, size);
++    OuiStyleValue line_height;
++    assert(oui_style_value_parse(OUI_STYLE_PROPERTY_LINE_HEIGHT, text("1"), &line_height) ==
++           OUI_OK);
++    assert(oui_element_set_property(nodes[phase], OUI_STYLE_PROPERTY_LINE_HEIGHT, &line_height) ==
++           OUI_OK);
++    if (line_height.tag == OUI_STYLE_VALUE_COMPOUND)
++      assert(oui_style_compound_destroy((OuiStyleCompound*)line_height.data.compound) == OUI_OK);
++    color(nodes[phase], OUI_STYLE_PROPERTY_COLOR, 0, 0, 0);
++    assert(oui_element_set_text(nodes[phase], text("X")) == OUI_OK);
++    assert(oui_element_append_child(root, nodes[phase]) == OUI_OK);
++  }
++  assert(oui_style_compound_destroy(font_family) == OUI_OK);
++  char path[4096];
++  int count = snprintf(path, sizeof(path), "%s/geometry.json", folder);
++  assert(count > 0 && (size_t)count < sizeof(path));
++  FILE* output = fopen(path, "wb");
++  assert(output != NULL);
++  fputs("{\"before\":", output);
++  write_bounds(output, nodes);
++  save_png(document, folder, "before");
++  Mutation mutation = {nodes, 64, 0, 1};
++  OuiListener* listener = NULL;
++  assert(oui_element_add_event_listener(root, OUI_EVENT_CLICK, 0, clicked, &mutation, &listener) ==
++         OUI_OK);
++  click(document, root);
++  assert(mutation.calls == 1);
++  fputs(",\"after\":", output);
++  write_bounds(output, nodes);
++  fprintf(output, ",\"callback_count\":%u}\n", mutation.calls);
++  assert(fclose(output) == 0);
++  save_png(document, folder, "after");
++  assert(oui_listener_destroy(listener) == OUI_OK);
++  for (size_t phase = 0; phase < 64; ++phase)
++    assert(oui_element_destroy(nodes[phase]) == OUI_OK);
++  assert(oui_element_destroy(root) == OUI_OK);
++  assert(oui_font_face_destroy(face) == OUI_OK);
++  assert(oui_document_destroy(document) == OUI_OK);
++}
++
++int main(int argc, char** argv) {
++  if (argc == 1) {
++    OuiDocumentConfig config = {
++        sizeof(config), OUI_ABI_VERSION, {80, 60, 0, 0, 1, OUI_VIEWPORT_LOGICAL, 0}};
++    OuiDocument* document = NULL;
++    OuiElement *root = NULL, *label = NULL;
++    assert(oui_document_create(&config, &document) == OUI_OK);
++    assert(oui_document_root(document, &root) == OUI_OK);
++    assert(oui_element_create(document, OUI_ELEMENT_DIV, &label) == OUI_OK);
++    length(label, OUI_STYLE_PROPERTY_WIDTH, 40);
++    length(label, OUI_STYLE_PROPERTY_HEIGHT, 20);
++    assert(oui_element_set_text(label, text("X")) == OUI_OK);
++    assert(oui_element_append_child(root, label) == OUI_OK);
++    OuiElement* nodes[] = {label};
++    Mutation mutation = {nodes, 1, 0, 1};
++    OuiListener* listener = NULL;
++    assert(oui_element_add_event_listener(root, OUI_EVENT_CLICK, 0, clicked, &mutation, &listener) ==
++           OUI_OK);
++    click(document, root);
++    assert(mutation.calls == 1);
++    OuiRect bounds;
++    assert(oui_element_get_bounds(label, &bounds) == OUI_OK);
++    assert(bounds.width == 40 && bounds.height == 20);
++    assert(oui_listener_destroy(listener) == OUI_OK);
++    assert(oui_element_destroy(label) == OUI_OK);
++    assert(oui_element_destroy(root) == OUI_OK);
++    assert(oui_document_destroy(document) == OUI_OK);
++    puts("native text replacement: consuming C callback and owned bounds passed");
++    return 0;
++  }
++  if (argc != 6)
++    return 2;
++  font_consumer(argv[1], strtod(argv[2], NULL), argv[3], strtof(argv[4], NULL), argv[5]);
++  return 0;
++}
+diff --git a/examples/c_v02/text_content.cc b/examples/c_v02/text_content.cc
+new file mode 100644
+index 00000000..72c541e4
+--- /dev/null
++++ b/examples/c_v02/text_content.cc
+@@ -0,0 +1 @@
++#include "text_content.c"

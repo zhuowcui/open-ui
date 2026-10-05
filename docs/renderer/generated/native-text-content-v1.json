@@ -1,0 +1,931 @@
+{
+  "accepted_renderer_unchanged": true,
+  "applied_to_umbrella": false,
+  "artifact_bytes": 5781314,
+  "artifact_count": 114,
+  "artifacts": [
+    {
+      "bytes": 5517,
+      "path": "docs/renderer/evidence/native-text-content-v1/queue-prepared.json",
+      "sha256": "c708868239deb967f13c1b88bcee5d65f249ac58046936caf91cab726c7303c2",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-queue-prepared-v1635.json"
+    },
+    {
+      "bytes": 7537,
+      "path": "docs/renderer/evidence/native-text-content-v1/openui-native-text-content-viewport-build-v1635.py",
+      "sha256": "de1e559a49e1d76c3b8b059a565e21b926f6d609d7c4441147d9fac67a51ef58",
+      "source_path": "/tmp/openui-native-text-content-viewport-build-v1635.py"
+    },
+    {
+      "bytes": 20190,
+      "path": "docs/renderer/evidence/native-text-content-v1/openui-native-text-content-viewport-consumer-v1635.py",
+      "sha256": "3466a424d9a398639136bcbf9e440920382a85d826eac3aa34108c049d76638a",
+      "source_path": "/tmp/openui-native-text-content-viewport-consumer-v1635.py"
+    },
+    {
+      "bytes": 8650,
+      "path": "docs/renderer/evidence/native-text-content-v1/openui-native-text-content-viewport-guards-v1635.py",
+      "sha256": "7e2653f15abc3015d1b224309e0290163873b24021ba4cc5d57b31fd01b94bc7",
+      "source_path": "/tmp/openui-native-text-content-viewport-guards-v1635.py"
+    },
+    {
+      "bytes": 2138,
+      "path": "docs/renderer/evidence/native-text-content-v1/openui-native-text-content-viewport-matrices-v1635.py",
+      "sha256": "f23c7104a7a2070645332c619c27359bf1b286de0f2bcdff6ee11579d51d9bc6",
+      "source_path": "/tmp/openui-native-text-content-viewport-matrices-v1635.py"
+    },
+    {
+      "bytes": 8157,
+      "path": "docs/renderer/evidence/native-text-content-v1/openui-native-text-content-viewport-pipeline-v1636.py",
+      "sha256": "834a72c3c828b7fe340c3f7686aac1263aba75826405edafc67b540d3b8ded39",
+      "source_path": "/tmp/openui-native-text-content-viewport-pipeline-v1636.py"
+    },
+    {
+      "bytes": 5431,
+      "path": "docs/renderer/evidence/native-text-content-v1/read-only-checks.json",
+      "sha256": "6e734b846649c324b8b539152adb92787786c1ac5416a652738891abc12879ff",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-checks-v1626/receipt.json"
+    },
+    {
+      "bytes": 81,
+      "path": "docs/renderer/evidence/native-text-content-v1/check-renderer.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-checks-v1626/renderer.log"
+    },
+    {
+      "bytes": 59,
+      "path": "docs/renderer/evidence/native-text-content-v1/check-multicol.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-checks-v1626/multicol.log"
+    },
+    {
+      "bytes": 86,
+      "path": "docs/renderer/evidence/native-text-content-v1/check-sp17.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-checks-v1626/sp17.log"
+    },
+    {
+      "bytes": 121,
+      "path": "docs/renderer/evidence/native-text-content-v1/check-sp18.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-checks-v1626/sp18.log"
+    },
+    {
+      "bytes": 142,
+      "path": "docs/renderer/evidence/native-text-content-v1/check-sp20.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-checks-v1626/sp20.log"
+    },
+    {
+      "bytes": 63,
+      "path": "docs/renderer/evidence/native-text-content-v1/check-v02.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-checks-v1626/v02.log"
+    },
+    {
+      "bytes": 37,
+      "path": "docs/renderer/evidence/native-text-content-v1/check-style.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-checks-v1626/style.log"
+    },
+    {
+      "bytes": 32,
+      "path": "docs/renderer/evidence/native-text-content-v1/check-ffi.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-checks-v1626/ffi.log"
+    },
+    {
+      "bytes": 45,
+      "path": "docs/renderer/evidence/native-text-content-v1/check-archive.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-checks-v1626/archive.log"
+    },
+    {
+      "bytes": 2867,
+      "path": "docs/renderer/evidence/native-text-content-v1/check-accountability.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-checks-v1626/accountability.log"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-text-content-v1/check-rust-format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-checks-v1626/rust-format.log"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-text-content-v1/check-syntax-c.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-checks-v1626/syntax-c.log"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-text-content-v1/check-syntax-cpp.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-checks-v1626/syntax-cpp.log"
+    },
+    {
+      "bytes": 4721,
+      "path": "docs/renderer/evidence/native-text-content-v1/initial-unlaunched-queue.json",
+      "sha256": "b976684947b190ac3504641163d58a426513987452431586b903dc264e0970bf",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-queue-prepared-v1617.json"
+    },
+    {
+      "bytes": 7369,
+      "path": "docs/renderer/evidence/native-text-content-v1/initial-unlaunched-openui-native-text-content-build-v1617.py",
+      "sha256": "22498bb0d40c0e731d4a9f4dfce732af1032caf383afb130046a21d4cc3f541d",
+      "source_path": "/tmp/openui-native-text-content-build-v1617.py"
+    },
+    {
+      "bytes": 20148,
+      "path": "docs/renderer/evidence/native-text-content-v1/initial-unlaunched-openui-native-text-content-consumer-v1617.py",
+      "sha256": "648f968686e0d637ee580fc39b43fc93b6c164eaa4f0c965b356ed10b823b212",
+      "source_path": "/tmp/openui-native-text-content-consumer-v1617.py"
+    },
+    {
+      "bytes": 8537,
+      "path": "docs/renderer/evidence/native-text-content-v1/initial-unlaunched-openui-native-text-content-guards-v1617.py",
+      "sha256": "0cc997573a76065d2d4e4bd5cce0847e22a15771bfbfe2e0209e406348aac438",
+      "source_path": "/tmp/openui-native-text-content-guards-v1617.py"
+    },
+    {
+      "bytes": 2078,
+      "path": "docs/renderer/evidence/native-text-content-v1/initial-unlaunched-openui-native-text-content-matrices-v1617.py",
+      "sha256": "f0fe406181589e7c8d9b42b4d8ce46b83257911f78e1bf6803fde34f10036d53",
+      "source_path": "/tmp/openui-native-text-content-matrices-v1617.py"
+    },
+    {
+      "bytes": 7842,
+      "path": "docs/renderer/evidence/native-text-content-v1/initial-unlaunched-openui-native-text-content-pipeline-v1618.py",
+      "sha256": "73cee45271e4c9dc09cc1bfae617d77fdec6f73809d3dae7ce36cae6d916ddcf",
+      "source_path": "/tmp/openui-native-text-content-pipeline-v1618.py"
+    },
+    {
+      "bytes": 5167,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-queued-queue.json",
+      "sha256": "17b0037f2e966be3f43def19b8d491c3f949ba0488187bb44a52020771a90d8e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-queue-prepared-v1620.json"
+    },
+    {
+      "bytes": 7472,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-queued-openui-native-text-content-build-v1620.py",
+      "sha256": "74e8451dc5f88ec90d31c5d593133e62c73b9f4031e22eff7281044bbdb33abc",
+      "source_path": "/tmp/openui-native-text-content-build-v1620.py"
+    },
+    {
+      "bytes": 20154,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-queued-openui-native-text-content-consumer-v1620.py",
+      "sha256": "b2fd3c6bacbc5baff0b37df83246eb805238600a1503f6e9e22ef3407e2fdf6e",
+      "source_path": "/tmp/openui-native-text-content-consumer-v1620.py"
+    },
+    {
+      "bytes": 8549,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-queued-openui-native-text-content-guards-v1620.py",
+      "sha256": "737a76b5f3dc8bec1073950cec189ca485ed8d8dd1a008a8759ec30751e69e39",
+      "source_path": "/tmp/openui-native-text-content-guards-v1620.py"
+    },
+    {
+      "bytes": 2084,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-queued-openui-native-text-content-matrices-v1620.py",
+      "sha256": "4f73b5cf422acab1c3af169ac087f6726bb2f1d6c8428b0931c594603b651d55",
+      "source_path": "/tmp/openui-native-text-content-matrices-v1620.py"
+    },
+    {
+      "bytes": 7930,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-queued-openui-native-text-content-pipeline-v1621.py",
+      "sha256": "bf9651eb6b51d7b4210e1aba1050e173ed41f7175902868d1e875f327bda74da",
+      "source_path": "/tmp/openui-native-text-content-pipeline-v1621.py"
+    },
+    {
+      "bytes": 12273,
+      "path": "docs/renderer/evidence/native-text-content-v1/initial-prepare.py",
+      "sha256": "151c31abd079b31d56bb8e3f45841ddc082384662a762caaa705af1d2c27b901",
+      "source_path": "/tmp/openui-native-text-content-prepare-v1617.py"
+    },
+    {
+      "bytes": 2705,
+      "path": "docs/renderer/evidence/native-text-content-v1/openui-native-text-content-checks-v1616.py",
+      "sha256": "e0a30ec088c8968c97775fd64c5a6da68bb6c8596e5129cbef5cd39cfa75f262",
+      "source_path": "/tmp/openui-native-text-content-checks-v1616.py"
+    },
+    {
+      "bytes": 2744,
+      "path": "docs/renderer/evidence/native-text-content-v1/openui-native-text-content-viewport-checks-v1626.py",
+      "sha256": "90745ae3400662d0bdee3d12ef606ab67b0a408261a711edc7520e124d4d5ffa",
+      "source_path": "/tmp/openui-native-text-content-viewport-checks-v1626.py"
+    },
+    {
+      "bytes": 1538,
+      "path": "docs/renderer/evidence/native-text-content-v1/openui-native-text-content-dispatch-v1619.py",
+      "sha256": "9c19c5fe29df26c6252e670b4067aeeedf14450b18747d72c0f8043ff8b7b998",
+      "source_path": "/tmp/openui-native-text-content-dispatch-v1619.py"
+    },
+    {
+      "bytes": 2655,
+      "path": "docs/renderer/evidence/native-text-content-v1/openui-native-text-content-hosted-v1622.py",
+      "sha256": "03c9a116868412feda80a1c3a65b5954c2615509084647b54f8c6e17af9eaf80",
+      "source_path": "/tmp/openui-native-text-content-hosted-v1622.py"
+    },
+    {
+      "bytes": 1565,
+      "path": "docs/renderer/evidence/native-text-content-v1/openui-native-text-content-viewport-dispatch-v1637.py",
+      "sha256": "f6feaf2fcffee1877d851ef27e54a351176542161485fc0d3847321aa63b26e4",
+      "source_path": "/tmp/openui-native-text-content-viewport-dispatch-v1637.py"
+    },
+    {
+      "bytes": 2664,
+      "path": "docs/renderer/evidence/native-text-content-v1/openui-native-text-content-viewport-hosted-v1638.py",
+      "sha256": "017cb723d8669ba2f041166d090033a3ac75a3ba425fb9006568ccb07e55e9dc",
+      "source_path": "/tmp/openui-native-text-content-viewport-hosted-v1638.py"
+    },
+    {
+      "bytes": 8088,
+      "path": "docs/renderer/evidence/native-text-content-v1/openui-native-text-content-viewport-prepare-v1635.py",
+      "sha256": "6b070f39b9a6dbf626988e64265a5cabf0889b093f1b3a92267ba50110ae2526",
+      "source_path": "/tmp/openui-native-text-content-viewport-prepare-v1635.py"
+    },
+    {
+      "bytes": 5395,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-read-only-checks.json",
+      "sha256": "fc83ba4f4095aa8439f1011f6ffbc71a0eea27d0a4f3d88e07e9aae4e6c84837",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-checks-v1616/receipt.json"
+    },
+    {
+      "bytes": 81,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-check-renderer.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-checks-v1616/renderer.log"
+    },
+    {
+      "bytes": 59,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-check-multicol.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-checks-v1616/multicol.log"
+    },
+    {
+      "bytes": 86,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-check-sp17.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-checks-v1616/sp17.log"
+    },
+    {
+      "bytes": 121,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-check-sp18.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-checks-v1616/sp18.log"
+    },
+    {
+      "bytes": 142,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-check-sp20.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-checks-v1616/sp20.log"
+    },
+    {
+      "bytes": 63,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-check-v02.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-checks-v1616/v02.log"
+    },
+    {
+      "bytes": 37,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-check-style.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-checks-v1616/style.log"
+    },
+    {
+      "bytes": 32,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-check-ffi.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-checks-v1616/ffi.log"
+    },
+    {
+      "bytes": 45,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-check-archive.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-checks-v1616/archive.log"
+    },
+    {
+      "bytes": 2867,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-check-accountability.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-checks-v1616/accountability.log"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-check-rust-format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-checks-v1616/rust-format.log"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-check-syntax-c.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-checks-v1616/syntax-c.log"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-check-syntax-cpp.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-checks-v1616/syntax-cpp.log"
+    },
+    {
+      "bytes": 6185,
+      "path": "docs/renderer/evidence/native-text-content-v1/native-text-regression.patch",
+      "sha256": "b2c9dd0f3cb70521ab526475fb0ad4e4c63b0175dfa20560ac01458dae8efa22"
+    },
+    {
+      "bytes": 847,
+      "path": "docs/renderer/evidence/native-text-content-v1/viewport-test-setup.patch",
+      "sha256": "7fef5a7e46c572e9ced5903738ef2f42d3de049c73563555fe1f309585fe52cc"
+    },
+    {
+      "bytes": 19545,
+      "path": "docs/renderer/evidence/native-text-content-v1/shared-native-text-content.patch",
+      "sha256": "1af25daa7caf5dcbdd320c54e9dcd04428ea01dcf6db1aa057097ce11904c6c2"
+    },
+    {
+      "bytes": 4502,
+      "path": "docs/renderer/evidence/native-text-content-v1/native_text_content.rs",
+      "sha256": "ebfc80f9103e1c996d07f10f950d3ab11227d4a5088b92e53b1da075128359e7",
+      "source_path": "/dev/shm/openui-native-text-content-viewport-queue-90310e15/bindings/rust/openui/examples/native_text_content.rs"
+    },
+    {
+      "bytes": 9332,
+      "path": "docs/renderer/evidence/native-text-content-v1/text_content.c",
+      "sha256": "41559c281a89a9cf398499b1a6d553620daaff004ef32fa8814dd07138301586",
+      "source_path": "/dev/shm/openui-native-text-content-viewport-queue-90310e15/examples/c_v02/text_content.c"
+    },
+    {
+      "bytes": 26,
+      "path": "docs/renderer/evidence/native-text-content-v1/text_content.cc",
+      "sha256": "1f26022ec5c59339eb78563e167d3ec19e15d5e92d455299b7b075332d044ef6",
+      "source_path": "/dev/shm/openui-native-text-content-viewport-queue-90310e15/examples/c_v02/text_content.cc"
+    },
+    {
+      "bytes": 2108,
+      "path": "docs/renderer/evidence/native-text-content-v1/openui-ffi-layout.json",
+      "sha256": "b1d214225748db72f52e63de0376f4d5654af70ee81be85a66ee94d6d6ca851d",
+      "source_path": "/dev/shm/openui-native-text-content-viewport-queue-90310e15/docs/v02/generated/openui-ffi-layout.json"
+    },
+    {
+      "bytes": 6861,
+      "path": "docs/renderer/evidence/native-text-content-v1/unlaunched-preparation-openui-native-text-content-viewport-prepare-v1627.py",
+      "sha256": "e820947dc960f4330f66373ef05837bad9b67825f3eb80c9d354643b84eaeb08",
+      "source_path": "/tmp/openui-native-text-content-viewport-prepare-v1627.py"
+    },
+    {
+      "bytes": 8638,
+      "path": "docs/renderer/evidence/native-text-content-v1/unlaunched-preparation-openui-native-text-content-viewport-guards-v1627.py",
+      "sha256": "3663070d9c5599e705596d14a0e51e38b0872ae2d391468c7037c8bf0f450108",
+      "source_path": "/tmp/openui-native-text-content-viewport-guards-v1627.py"
+    },
+    {
+      "bytes": 7531,
+      "path": "docs/renderer/evidence/native-text-content-v1/unlaunched-preparation-openui-native-text-content-viewport-build-v1627.py",
+      "sha256": "8e23eeda78c47de7db9cc442ead98ab6be58a163257fe6bc9ee05f98ae043544",
+      "source_path": "/tmp/openui-native-text-content-viewport-build-v1627.py"
+    },
+    {
+      "bytes": 20184,
+      "path": "docs/renderer/evidence/native-text-content-v1/unlaunched-preparation-openui-native-text-content-viewport-consumer-v1627.py",
+      "sha256": "7a31a9eabef8e516c30399ebc432a7dc5e12828cc221dca24c331e7401a6dbf2",
+      "source_path": "/tmp/openui-native-text-content-viewport-consumer-v1627.py"
+    },
+    {
+      "bytes": 2132,
+      "path": "docs/renderer/evidence/native-text-content-v1/unlaunched-preparation-openui-native-text-content-viewport-matrices-v1627.py",
+      "sha256": "8e61e8e1a0935197d1e913ec0174d1c5abdb64ced95ebe692e97555abde41bed",
+      "source_path": "/tmp/openui-native-text-content-viewport-matrices-v1627.py"
+    },
+    {
+      "bytes": 8151,
+      "path": "docs/renderer/evidence/native-text-content-v1/unlaunched-preparation-owner-v1628.py",
+      "sha256": "afdfc03f1647efbda72813a5f33aa2294a6b406ee9f2e8f99ece7f767ec98c84",
+      "source_path": "/tmp/openui-native-text-content-viewport-pipeline-v1628.py"
+    },
+    {
+      "bytes": 502,
+      "path": "docs/renderer/evidence/native-text-content-v1/unlaunched-preparation-note.json",
+      "sha256": "405237ae65c4717975fa3a920d3a7fbe0cc2f04d2fa671896f6b591c5ec30872"
+    },
+    {
+      "bytes": 1711,
+      "path": "docs/renderer/evidence/native-text-content-v1/c-geometry-v1610.json",
+      "sha256": "0087fbcdc79c9619781ee756516c333c49c91618332c948099cedb1b7efd2b79",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-c-geometry-v1610/receipt.json"
+    },
+    {
+      "bytes": 10612,
+      "path": "docs/renderer/evidence/native-text-content-v1/c-geometry-v1610.py",
+      "sha256": "4c31476e78b1f444ea3981c48b3a73237e9a31bbf59ff8f5656ccbaeb5083fa4",
+      "source_path": "/tmp/openui-native-font-c-geometry-v1610.py"
+    },
+    {
+      "bytes": 17074,
+      "path": "docs/renderer/evidence/native-text-content-v1/c-geometry-v1611.json",
+      "sha256": "5e497aa8cfd59b86eb57db90d8f96787fa8e18d237e88d25b9edc42c870ab8f4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-c-geometry-v1611/receipt.json"
+    },
+    {
+      "bytes": 10808,
+      "path": "docs/renderer/evidence/native-text-content-v1/c-geometry-v1611.py",
+      "sha256": "c18dc0f487d1357dbf92941ba00facb1acf4e3aa1af170113cf7da0d1ecbec09",
+      "source_path": "/tmp/openui-native-font-c-geometry-v1611.py"
+    },
+    {
+      "bytes": 18914,
+      "path": "docs/renderer/evidence/native-text-content-v1/c-geometry-v1612.json",
+      "sha256": "faffed249886bb491bc31ba60d19b9a61c94911732a1199672dc7133d96e50f9",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-c-geometry-v1612/receipt.json"
+    },
+    {
+      "bytes": 11267,
+      "path": "docs/renderer/evidence/native-text-content-v1/c-geometry-v1612.py",
+      "sha256": "410d48f9d72d81ae659d602a4136d4c53c6380e2afef207db1b6f9c568e3059a",
+      "source_path": "/tmp/openui-native-font-c-geometry-v1612.py"
+    },
+    {
+      "bytes": 22725,
+      "decompressed_bytes": 486494,
+      "decompressed_sha256": "d999df009f8459729398903a786a41e0f2a38598d7109f1c6c542e6b0551ba59",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-content-v1/reviewed-c-consumer-audit.json.gz",
+      "sha256": "9dce2634f1fbaa4632569d88babed30dba3f0dc30eaeeccbdf24c51d8c16dcef",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-consumer-audit-v1615.json"
+    },
+    {
+      "bytes": 3790474,
+      "decompressed_bytes": 117161701,
+      "decompressed_sha256": "ecb34ab56ddccba385965a38001f2df1cc834d427961dd14a53b38e9bd4333fe",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-content-v1/original-consumer.json.gz",
+      "sha256": "3adf1403eeb79d466d9a7257c60d68c0ad09d4ae1a9785723c676db09d277c64",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-consumer-v1559/receipt.json"
+    },
+    {
+      "bytes": 20057,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-consumer.py",
+      "sha256": "e63e40424c1a4de418106d5500ae0e9c597c2880604a9993fdfc1c275ad39eed",
+      "source_path": "/tmp/openui-native-raster-fields-retry-consumer-v1559.py"
+    },
+    {
+      "bytes": 14456,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-clean-build.json",
+      "sha256": "e2d866c3607345fe91d8f89a0bcbc2b995d50b942aef5cfdfab94e0d401b8031",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/build.json"
+    },
+    {
+      "bytes": 32013,
+      "decompressed_bytes": 726958,
+      "decompressed_sha256": "14cde4b627fb20ecede3b6787299b9fb271fa229ff90b79b42c688bf1582124f",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-content-v1/static-consumer.json.gz",
+      "sha256": "b5302432901b09faccdc991c0ee96935321a8f6b80aad32064f2db41ce4be9ea",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-static-v1559/receipt.json"
+    },
+    {
+      "bytes": 5930,
+      "path": "docs/renderer/evidence/native-text-content-v1/static-consumer.py",
+      "sha256": "a4c8ad0e0af2c4b8bd6cbc5f5b0c16b4bd92d5614536f7f918806bd9d073459d",
+      "source_path": "/tmp/openui-native-raster-fields-retry-static-v1559.py"
+    },
+    {
+      "bytes": 278762,
+      "decompressed_bytes": 4893229,
+      "decompressed_sha256": "9b368ee3db6542059a33662f672a3cdeb26fff09df730775da8018a7c80bbe78",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-content-v1/selection-summary.json.gz",
+      "sha256": "c2ad1ff419c660c48ab84e12751e625f63cc9accfbc55f95a351c7868b147056",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-selection-v1559/full-summary.json"
+    },
+    {
+      "bytes": 1154,
+      "path": "docs/renderer/evidence/native-text-content-v1/selection-exit.json",
+      "sha256": "61e4ccf90c35456008640892278c258844a22a7087e31bf30e48ddd35d025a13",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-selection-exit-v1559.json"
+    },
+    {
+      "bytes": 160420,
+      "decompressed_bytes": 1646459,
+      "decompressed_sha256": "fc5d04c802af3cb18e3fc3b918b3efd86d9d0db5448aa61b4e298ae763515b38",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-content-v1/focused-summary.json.gz",
+      "sha256": "df93631066d4c9cd8e7d73b376dacd07916407e1a0bd05776dd5e192436376ff",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-focused-v1559/focused-summary.json"
+    },
+    {
+      "bytes": 1017,
+      "path": "docs/renderer/evidence/native-text-content-v1/focused-exit.json",
+      "sha256": "a812e2f9a79dc39251af4b6e0400bd6731d29535b2264ad53eea4b5d168ba584",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-focused-exit-v1559.json"
+    },
+    {
+      "bytes": 222591,
+      "decompressed_bytes": 2455665,
+      "decompressed_sha256": "5777874ad3b552e43ad8c26f5fc3a1e9ba992ebfa270138eeae95c39319bd79e",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-content-v1/primitive-summary.json.gz",
+      "sha256": "08fbd84c3a89cb7dbca63d8ce17ac6676f902fb2e2ded83316003b0054792ab1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-primitive-v1559/primitive-summary.json"
+    },
+    {
+      "bytes": 1023,
+      "path": "docs/renderer/evidence/native-text-content-v1/primitive-exit.json",
+      "sha256": "83823808d15d5a8aa4cada422153b990595ae4a8cf603e60d9028b42abc79984",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-primitive-exit-v1559.json"
+    },
+    {
+      "bytes": 2270,
+      "path": "docs/renderer/evidence/native-text-content-v1/raster-matrices.py",
+      "sha256": "77b2ffaf549a6875e86892622b7acf52f345a367ab72853d8293e400886ece32",
+      "source_path": "/tmp/openui-native-raster-fields-retry-matrices-v1559.py"
+    },
+    {
+      "bytes": 15614,
+      "path": "docs/renderer/evidence/native-text-content-v1/raster-owner-at-observation.json",
+      "sha256": "7b6eee676abd714e83fbeda723a334f270099dcd4aae5cd30609d71a39a9dbfc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-pipeline-v1560/receipt.json"
+    },
+    {
+      "bytes": 7482,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-owner-at-observation.json",
+      "sha256": "f2221f3a2b8120cba0ddb0075fe42a237718737a0f9c38f686caf33232da4b44",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-pipeline-v1621/receipt.json"
+    },
+    {
+      "bytes": 7654,
+      "path": "docs/renderer/evidence/native-text-content-v1/owner-at-observation.json",
+      "sha256": "d45a90231cef434d48320550ab2acebc46589a250f6217dbcc0a919b1828c18c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-pipeline-v1636/receipt.json"
+    },
+    {
+      "bytes": 288,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-hosted-dispatch.json",
+      "sha256": "b738aba1d3aff7d00a4a2179f06192ab60e0e3f2b749483e703f28dfe1158358",
+      "source_path": "/tmp/openui-native-text-content-dispatch-v1619.json"
+    },
+    {
+      "bytes": 297,
+      "path": "docs/renderer/evidence/native-text-content-v1/viewport-hosted-dispatch.json",
+      "sha256": "9412719886538516f7fd3faf71b3b077fc6dd24312e03219ecd386dbd948da2a",
+      "source_path": "/tmp/openui-native-text-content-viewport-dispatch-v1637.json"
+    },
+    {
+      "bytes": 1593,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-hosted-at-observation.json",
+      "sha256": "9e0585c854e17e76373a5b6c903fd84adca1134ef68ad55fc889849f456a8c7a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-hosted-v1622/receipt.json"
+    },
+    {
+      "bytes": 16071,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-hosted-detail.json",
+      "sha256": "5f2b3128cf26915b24433509de91b5f86d7bd86d3a049af8434341294b6922f0",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-hosted-v1622/37353041970.json"
+    },
+    {
+      "bytes": 228159,
+      "decompressed_bytes": 2082948,
+      "decompressed_sha256": "34edf042434c118b34485b1015b442e1d030e4a6abb33d7e64f3582b9f7187f7",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-content-v1/original-hosted.log.gz",
+      "sha256": "00a3d8da7cac96fafb41be6adb7ad4fb31fb8e39a58879cd4656c5dab041399e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-hosted-v1622/37353041970.log"
+    },
+    {
+      "bytes": 1304,
+      "path": "docs/renderer/evidence/native-text-content-v1/viewport-hosted-at-observation.json",
+      "sha256": "5b16099fc5927d767056840f045473b1e241fe480b2b8009be98b708fa043510",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-content-viewport-hosted-v1638/receipt.json"
+    },
+    {
+      "bytes": 81,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-job-111908423690-early-unavailable.log",
+      "sha256": "ce1b2914720b2e25f1480316207f8eec4aff756cfd4eac41ebd3f88d008c7ada",
+      "source_path": "/tmp/openui-text-content-failed-job-111908423690-v1623.log"
+    },
+    {
+      "bytes": 19124,
+      "decompressed_bytes": 112309,
+      "decompressed_sha256": "3f43abe84173d702855c83da3f5668c2c58e6000c2ad62806b62c17a61fe7e86",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-content-v1/original-job-111908423690.log.gz",
+      "sha256": "7fa28d9fa45d6fb50fc45c2e808d4fe086a49b279da8c8df1ab08a4ff7438af1",
+      "source_path": "/tmp/openui-text-content-failed-job-111908423690-v1624.log"
+    },
+    {
+      "bytes": 81,
+      "path": "docs/renderer/evidence/native-text-content-v1/original-job-111908423786-early-unavailable.log",
+      "sha256": "ce1b2914720b2e25f1480316207f8eec4aff756cfd4eac41ebd3f88d008c7ada",
+      "source_path": "/tmp/openui-text-content-failed-job-111908423786-v1623.log"
+    },
+    {
+      "bytes": 19084,
+      "decompressed_bytes": 112302,
+      "decompressed_sha256": "5af472f79b1782da70f0855687e92292e4b9a1ed505cc99c6fd412f7314b54fc",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-content-v1/original-job-111908423786.log.gz",
+      "sha256": "d8cde34923163acb092d9a94036074baa94838f8711cae32744b63329487944a",
+      "source_path": "/tmp/openui-text-content-failed-job-111908423786-v1624.log"
+    },
+    {
+      "bytes": 1574,
+      "path": "docs/renderer/evidence/native-text-content-v1/table-source-hosted.json",
+      "sha256": "828d3f6e61a519584d5c180a8c1a680959e2ea4eb35b0092dca6025be7c9bb41",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-source-hosted-v1603/receipt.json"
+    },
+    {
+      "bytes": 16071,
+      "path": "docs/renderer/evidence/native-text-content-v1/table-source-hosted-detail.json",
+      "sha256": "6ca8703868912035b23b726990e7e186316d96a018a1078fa491e3978be12703",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-source-hosted-v1603/37344385577.json"
+    },
+    {
+      "bytes": 232548,
+      "decompressed_bytes": 2127909,
+      "decompressed_sha256": "63e03f6d0247eef5f11fe19c12859c4ccb1b9f0d9793726c997fe03f20648b9d",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-content-v1/table-source-hosted.log.gz",
+      "sha256": "265e93bd0ff9d82619ec00b37cf9890c155ef62a1b4e2e2bbed0c1367182d3a9",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-source-hosted-v1603/37344385577.log"
+    },
+    {
+      "bytes": 22330,
+      "path": "docs/renderer/evidence/native-text-content-v1/preceding-umbrella-hosted.json",
+      "sha256": "629f2a36097223d369306b6b361c2aba4e96552e21e94637d2bd82636ad24b1b",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-source-umbrella-ci-v1607/receipt.json"
+    },
+    {
+      "bytes": 8994,
+      "path": "docs/renderer/evidence/native-text-content-v1/umbrella-37346875077.json",
+      "sha256": "7c1f8ea956037eb6c12ae1365e48c55f51a1f5705d5397c023e2944ad86c8eda",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-source-umbrella-ci-v1607/37346875077.json"
+    },
+    {
+      "bytes": 174210,
+      "decompressed_bytes": 1388617,
+      "decompressed_sha256": "3a3f875dbdff3b5d9faffb0102e527884ba5bef465880b2e2cda919b67ccb80f",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-content-v1/umbrella-37346875077.log.gz",
+      "sha256": "3923cfceabb2f6fa87b2a35a78ce5473fcb79edd1750b62c9b93f47741cfe804",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-source-umbrella-ci-v1607/37346875077.log"
+    },
+    {
+      "bytes": 3932,
+      "path": "docs/renderer/evidence/native-text-content-v1/umbrella-37346875105.json",
+      "sha256": "e30abf13b2102dbf90687ee7c1ef4873494927dba8d8810df4ce15794f1fc37a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-source-umbrella-ci-v1607/37346875105.json"
+    },
+    {
+      "bytes": 7927,
+      "decompressed_bytes": 58058,
+      "decompressed_sha256": "aa79773c75d695995dfb6fb1fb0caf3af1586a4da2151d86dff5d82e0b3d0937",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-content-v1/umbrella-37346875105.log.gz",
+      "sha256": "56c4c3235c13cea04a2a7ea1d14b69a743044c874f86fc1bc222d7b3e6348d64",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-source-umbrella-ci-v1607/37346875105.log"
+    },
+    {
+      "bytes": 6235,
+      "path": "docs/renderer/evidence/native-text-content-v1/umbrella-37346875062.json",
+      "sha256": "bef7be131542cbd5e72adebbd0df2f8d4db21c8d1fccd6f66b0f2256b6e210c0",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-source-umbrella-ci-v1607/37346875062.json"
+    },
+    {
+      "bytes": 39084,
+      "decompressed_bytes": 340288,
+      "decompressed_sha256": "e8f0dae623e6b61c060e437f2276449a1f2f045c55dad76bba79dc7dbb8a4367",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-content-v1/umbrella-37346875062.log.gz",
+      "sha256": "70b95d6a4142f028c748489bf13e141ec4f4cbd629aadeb184b2abdacb95d30f",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-table-source-umbrella-ci-v1607/37346875062.log"
+    },
+    {
+      "bytes": 2966,
+      "path": "docs/renderer/evidence/native-text-content-v1/preceding-umbrella-ci.py",
+      "sha256": "13a86b1c00c0e7a2f26c201d565618d120a46c12e8aa7278409184dd41cbda0d",
+      "source_path": "/tmp/openui-native-table-source-umbrella-ci-v1607.py"
+    },
+    {
+      "bytes": 1833,
+      "path": "docs/renderer/evidence/native-text-content-v1/retired-artifact-relocation.json",
+      "sha256": "e40cbec85756052c5efc639318b4b7d16730d013bbd680270282b058bfb92c7e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/retired-artifact-relocation-v1614.json"
+    },
+    {
+      "bytes": 3485,
+      "path": "docs/renderer/evidence/native-text-content-v1/retired-artifact-relocation.py",
+      "sha256": "aca353a88616ecba774b8a3b665242d7b33d02c52c79b9c25abad79dc59065e4",
+      "source_path": "/tmp/openui-retired-artifact-relocation-v1614.py"
+    },
+    {
+      "bytes": 17107,
+      "path": "docs/renderer/evidence/native-text-content-v1/openui-native-text-content-preserve-v1639.py",
+      "sha256": "777e2e9ca10b769da8446b5658c58c5c93b8b63a07fe220a55b5b3e5f5b0246f",
+      "source_path": "/tmp/openui-native-text-content-preserve-v1639.py"
+    }
+  ],
+  "baseline_commit": "9fe1665dcf27df7541ec2983f353f642d4136d0e",
+  "branch": "agent/native-text-content-viewport-queue-v1634",
+  "decompressed_artifact_bytes": 134147130,
+  "evidence_storage": {
+    "lossless_gzip": true,
+    "original_receipts_images_and_oracles_unmodified": true
+  },
+  "javascript_executed_by_openui": false,
+  "needed_native_operations_not_waived_by_pixel_exclusion": true,
+  "new_release_states_admitted": 0,
+  "observed_at_utc": "2026-10-05T18:28:44.106780+00:00",
+  "old_openui_pixels_are_provenance_only": true,
+  "original_text_owner_at_observation": {
+    "state": "awaiting-all-32-prior-whole-pipelines",
+    "terminal": false
+  },
+  "own_source_hosted_at_observation": [
+    {
+      "actual_exit": 1,
+      "all_seven_jobs_passed": false,
+      "job_conclusions": {
+        "failure": 3,
+        "success": 4
+      },
+      "run_id": 37353041970,
+      "source": "d5bd17d77a2262f10b97e445d380723dff093d51",
+      "state": "terminal-results-recorded",
+      "terminal": true
+    },
+    {
+      "actual_exit": null,
+      "all_seven_jobs_passed": false,
+      "job_conclusions": {
+        "": 7
+      },
+      "run_id": 37355859674,
+      "source": "90310e15b86bed558a79c8eb085d2a72092eab69",
+      "state": "awaiting-own-source-manual-hardening",
+      "terminal": false
+    }
+  ],
+  "pixel_tolerance": 0,
+  "preceding_umbrella_hosted": {
+    "skipped_jobs": 5,
+    "skips_are_not_passes": true,
+    "source": "f25cd72205a7fc6ce73496f0119749f4ddfeb59d",
+    "successful_jobs": 6,
+    "successful_workflows": 3
+  },
+  "prepared_native_operation": {
+    "c_exports": 113,
+    "c_layouts": 30,
+    "corrected_viewport_test_baseline": "9fe1665dcf27df7541ec2983f353f642d4136d0e",
+    "existing_raw_engine_set_text_behavior_preserved": true,
+    "local_native_and_pixel_execution_pending": true,
+    "observed_state": "awaiting-all-33-prior-whole-pipelines",
+    "old_source_hosted_test_setup_failure_preserved": true,
+    "prior_whole_owners": 33,
+    "production_code_identical_after_test_setup_correction": true,
+    "public_rust_element_and_c_setters_use_same_operation": true,
+    "read_only_checks_passed": 13,
+    "required_native_images": 600,
+    "required_native_phase_and_geometry_states": 38400,
+    "required_stages": 7,
+    "shared_engine_set_text_content": true,
+    "storage_update_guard_required": 10000,
+    "whole_owner": "native-text-content-viewport-pipeline-v1636"
+  },
+  "promotion_allowed": false,
+  "public_native_rust_api_required": true,
+  "raster_scope": {
+    "full_and_expanded_still_required": true,
+    "matrices": [
+      {
+        "actual_exit": 1,
+        "results": {
+          "different": 232,
+          "errors": 0,
+          "exact": 648,
+          "profile_result_sha256": "884d2d6fc8c464a9c08c0c5f7edd6c407736c17f9a4b907c8d4f60e76cb265ce",
+          "total": 880
+        },
+        "suite": "selection"
+      },
+      {
+        "actual_exit": 0,
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "f220edadaabd6a5dcee0bd31059de2feb7bfaca0414e7dd562d242ef777a39c5",
+          "total": 640
+        },
+        "suite": "focused"
+      },
+      {
+        "actual_exit": 0,
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "5774a3eeaabb8cd6527abe08fdcb23e44b61cd54a45e6c6290be1e4483438cca",
+          "total": 960
+        },
+        "suite": "primitive"
+      }
+    ],
+    "scope_results_are_not_full_renderer_qualification": true,
+    "source": {
+      "clean": true,
+      "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "static_policy_totals": {
+      "chromium-linux-fontations-lcd": {
+        "deterministic_repeats": 30,
+        "geometry_exact": 60,
+        "native_runs_passed": 60,
+        "pixel_exact": 60,
+        "total": 60
+      },
+      "chromium-linux-lcd": {
+        "deterministic_repeats": 30,
+        "geometry_exact": 60,
+        "native_runs_passed": 60,
+        "pixel_exact": 0,
+        "total": 60
+      },
+      "default": {
+        "deterministic_repeats": 30,
+        "geometry_exact": 60,
+        "native_runs_passed": 60,
+        "pixel_exact": 0,
+        "total": 60
+      }
+    },
+    "whole_owner_state": "running-full"
+  },
+  "release_qualification": false,
+  "reviewed_native_text_failure": {
+    "c_and_cpp_blank_white_images": 800,
+    "c_and_cpp_geometry_exact": 0,
+    "c_and_cpp_images": 800,
+    "c_and_cpp_images_reviewed": 800,
+    "c_and_cpp_pixel_exact": 0,
+    "geometry_exact": 25600,
+    "geometry_expected": 76800,
+    "images": 1200,
+    "minimized_geometry_proofs": [
+      {
+        "actual_exit": 1,
+        "repeatable": false,
+        "version": 1610
+      },
+      {
+        "actual_exit": 0,
+        "repeatable": true,
+        "version": 1611
+      },
+      {
+        "actual_exit": 0,
+        "repeatable": true,
+        "version": 1612
+      }
+    ],
+    "new_screenshots_generated_by_geometry_probes": 0,
+    "original_consumer_actual_exit": 1,
+    "owner": "openui-ffi native element text replacement",
+    "pixel_exact": 73,
+    "real_c_rust_equal_images": 0,
+    "remaining_rust_pixel_root_causes_unreviewed": 327,
+    "root_cause": "C setter stores container text data; layout consumes authored Text children",
+    "rust_geometry_exact": 25600,
+    "rust_images": 400,
+    "rust_pixel_exact": 73,
+    "rust_self_rows_are_not_cross_language_passes": true,
+    "source_library_only": true,
+    "text_child_geometry_css_px": {
+      "Ahem": [
+        40,
+        20
+      ],
+      "DejaVuSans": [
+        27.40625,
+        20
+      ]
+    }
+  },
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "90310e15b86bed558a79c8eb085d2a72092eab69",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "b041b21ae0794097c16a4faa287f99014bdb850273b87c06aed4e70796e8cd01",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "table_source_hosted": {
+    "actual_exit": 0,
+    "skipped_jobs": 0,
+    "source": "e389b26ab28f259544e43c3052c895501e4c8686",
+    "successful_jobs": 7
+  }
+}

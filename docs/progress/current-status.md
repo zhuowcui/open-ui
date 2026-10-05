@@ -22,6 +22,27 @@ remain open.
 
 ## Current implementation checkpoint
 
+The [native text replacement review](../renderer/native-text-content.md) finds
+why all 800 C/C++ font images are blank at `e0dc491e`: the C setter stores
+container data, while layout reads authored Text children. Repeated probes
+against the verified existing C library restore nonzero geometry by appending
+a real Text child. All 800 image root causes are reviewed; 327 different Rust
+images remain unreviewed. Across Rust/C/C++, geometry is 25,600/76,800 exact,
+with every correct result from Rust. Self-comparisons are not C/Rust passes.
+
+Private `90310e15` routes Rust and C element text setters through one native
+Engine operation, preserving all 113 exports and 30 layouts. Thirteen read-only
+checks pass. Source `d5bd17d7` finishes hosted hardening with four passing jobs
+and three failures, zero skips. Two sanitizer jobs and the Linux C application
+job fail on the new guard's inconsistent viewport setup. The fresh source
+corrects only that test input. Whole owner `1636`
+waits for all 33 predecessors before named baseline/fixed guards, workspace,
+600 consuming Rust/C/C++ images, 38,400 geometry states and all four matrices.
+These native and pixel stages have not started. Both sources and all failed
+or unlaunched preparations are preserved in the
+[new index](../renderer/generated/native-text-content-v1.json). The correction
+is unapplied and no release state is admitted.
+
 The [canonical table source follow-up](../renderer/native-table-progress.md#canonical-source-retention-follow-up)
 at `e389b26a` preserves the full table subtree before inner fragmentation crops
 its first row. Two geometry-only debug runs agree at all four profiles: the
@@ -35,7 +56,8 @@ It also requires shared source ownership and release after teardown. Eleven
 read-only checks pass. Whole owner `1601` waits for all 31 predecessors before
 native guards, workspace, public Rust application and all four matrices.
 The original expected count remains 41. Native geometry and pixels have not
-executed; the source is unapplied.
+executed; the source is unapplied. All seven own-source hosted hardening jobs
+now pass with zero skips, as recorded in the new text evidence index.
 
 The [native keyword retry](../renderer/native-keyword-values.md) at `06e1f89a`
 rebases shared native value construction onto umbrella `92741843`. A verified
@@ -73,10 +95,19 @@ is not Chromium pixel qualification. The
 [next application result](../renderer/generated/native-keywords-v1.json)
 finishes with exit 1: 828 of 840 native contracts pass, twelve fail. All twelve
 failed cases retain deterministic images, geometry and callbacks; the remaining
-mask/phase checks fail. Chromium pixel qualification remains false. Consumer,
-selection and full matrix stages are pending. Umbrella `92741843` hosted CI is
+mask/phase checks fail. Chromium pixel qualification remains false. The next
+font consumer finishes with exit 1: 73/1,200 images and 25,600/76,800 geometry
+states are exact. Its C/C++ failures are reviewed above. Static images match
+only with explicit Fontations (60/60), while default and FreeType each match
+0/60. The selection finishes at 648/880 exact, 232 different and zero errors,
+exit 1. Focused 640/640 and primitive 960/960 finish exact, exits 0. Full and
+expanded matrices remain pending under the same exclusive owner. All results
+retain their clean source identities and unchanged Chromium inputs.
+Umbrella `92741843` hosted CI is
 complete: three successful workflows, six passing jobs and five skips. Skips
-do not satisfy release gates.
+do not satisfy release gates. The latest preceding umbrella `f25cd722` also
+finishes three successful workflows, with six passing jobs and five skips;
+its completed evidence is preserved in the new text index.
 
 The [v42 evidence](../renderer/generated/native-scroll-insets-v42.json)
 records a fresh clean build at `2e443f49`: all 18 workspace packages cleared,

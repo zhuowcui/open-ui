@@ -4,6 +4,21 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
+The [native text replacement review](../renderer/native-text-content.md)
+assigns all 800 blank C/C++ font images to the C setter's container-data path.
+Across Rust/C/C++, 73/1,200 images and 25,600/76,800 geometry states are exact;
+all correct results come from Rust. The shared Engine correction at private
+`90310e15` passes thirteen source checks. Its first source's hosted run finishes
+with four passing jobs and three failures, exposing inconsistent viewport input
+in the new test; the fresh source corrects
+that input. Native guards, Rust/C/C++ consumers and all four matrices remain
+queued. This operation uses native Rust methods and callbacks, with no JavaScript.
+It is unapplied and unqualified. The
+[new evidence](../renderer/generated/native-text-content-v1.json) also records
+the raster trial's static Fontations 60/60, selection 648/880, focused 640/640
+and primitive 960/960 results. Default static raster remains 0/60; the trial's
+full original and expanded matrices are still required.
+
 The [fresh image-fallback candidate](../renderer/native-inline-fallback.md)
 at `7d09f7a1` adds shared fallback flow and public Rust/C image clearing.
 Thirteen read-only checks and 120 repeated Chromium geometry queries pass.
