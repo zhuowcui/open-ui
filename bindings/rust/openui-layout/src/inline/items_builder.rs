@@ -986,6 +986,17 @@ impl<'a> InlineItemsBuilder<'a> {
             return;
         }
 
+        // Replaced inline content contributes one atomic box, including its
+        // authored dimensions and resource's intrinsic size. Collecting its
+        // children as ordinary inline text drops that box entirely.
+        if node.style.display == Display::Inline
+            && (node.replaced.is_some() || crate::intrinsic_sizing::is_replaced_element(node.tag))
+        {
+            let style = node.style.clone();
+            self.append_atomic_inline(child_id, &style);
+            return;
+        }
+
         match node.tag {
             ElementTag::Text => {
                 if let Some(ref text) = node.text {
