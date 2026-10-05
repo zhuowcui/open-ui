@@ -2206,6 +2206,134 @@ mod tests {
     };
 
     #[test]
+    fn native_repeated_table_body_progress_survives_retained_mutations() {
+        use openui_geometry::Length;
+        use openui_style::{BreakInside, ColumnFill, Position};
+
+        fn child(engine: &mut Engine, parent: NodeHandle, display: Display) -> NodeHandle {
+            let node = engine.create_element(ElementTag::Div).unwrap();
+            engine
+                .set_renderer_style(node, RendererStyleValue::Display(display))
+                .unwrap();
+            engine.append_child(parent, node).unwrap();
+            node
+        }
+        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+            for outer_height in [40.0, 30.0, 20.0, 40.5] {
+                let mut engine =
+                    Engine::new(ViewportMetrics::from_logical_size(375.0, 667.0, scale).unwrap())
+                        .unwrap();
+                let root = engine.root();
+                let outer = child(&mut engine, root, Display::Block);
+                for value in [
+                    RendererStyleValue::Position(Position::Absolute),
+                    RendererStyleValue::Left(Length::px(120.0)),
+                    RendererStyleValue::Top(Length::px(120.0)),
+                    RendererStyleValue::Width(Length::px(135.0)),
+                    RendererStyleValue::Height(Length::px(outer_height)),
+                    RendererStyleValue::ColumnCount(Some(4)),
+                    RendererStyleValue::ColumnFill(ColumnFill::Auto),
+                    RendererStyleValue::ColumnGap(Some(Length::px(16.0))),
+                ] {
+                    engine.set_renderer_style(outer, value).unwrap();
+                }
+                let spacer = child(&mut engine, outer, Display::Block);
+                engine
+                    .set_renderer_style(spacer, RendererStyleValue::MarginBottom(Length::px(-60.0)))
+                    .unwrap();
+                let inner = child(&mut engine, outer, Display::Block);
+                engine
+                    .set_renderer_style(inner, RendererStyleValue::ColumnCount(Some(1)))
+                    .unwrap();
+                engine
+                    .set_renderer_style(inner, RendererStyleValue::ColumnFill(ColumnFill::Auto))
+                    .unwrap();
+                let table = child(&mut engine, inner, Display::Table);
+                for display in [Display::TableHeaderGroup, Display::TableFooterGroup] {
+                    let group = child(&mut engine, table, display);
+                    engine
+                        .set_renderer_style(
+                            group,
+                            RendererStyleValue::BreakInside(BreakInside::Avoid),
+                        )
+                        .unwrap();
+                    let content = child(&mut engine, group, Display::Block);
+                    engine
+                        .set_renderer_style(content, RendererStyleValue::Width(Length::px(20.0)))
+                        .unwrap();
+                    engine
+                        .set_renderer_style(content, RendererStyleValue::Height(Length::px(20.0)))
+                        .unwrap();
+                }
+                let row = child(&mut engine, table, Display::TableRow);
+                let cell = child(&mut engine, row, Display::TableCell);
+                let body = child(&mut engine, cell, Display::Block);
+                for body_height in [100.0, 50.0, 100.0] {
+                    engine
+                        .set_renderer_style(
+                            body,
+                            RendererStyleValue::Height(Length::px(body_height)),
+                        )
+                        .unwrap();
+                    // These owned queries are layout barriers after each ordered mutation.
+                    let table_rects = engine.client_rects(table).unwrap();
+                    let body_rects = engine.client_rects(body).unwrap();
+                    let first_body = body_height.min(outer_height + 20.0);
+                    let remaining = body_height - first_body;
+                    let expected_count = 1 + remaining.ceil() as usize;
+                    assert_eq!(table_rects.len(), expected_count,
+                        "Chromium table continuation count: scale={scale} outer={outer_height} body={body_height}");
+                    assert_eq!(body_rects.len(), expected_count);
+                    assert_eq!(
+                        body_rects.iter().map(|r| r.height).sum::<f32>(),
+                        body_height
+                    );
+                    for (index, (table_rect, body_rect)) in
+                        table_rects.iter().zip(&body_rects).enumerate()
+                    {
+                        let last = index + 1 == expected_count;
+                        let body_size = if index == 0 {
+                            first_body
+                        } else if last {
+                            remaining - (index - 1) as f32
+                        } else {
+                            1.0
+                        };
+                        let table_size = if index == 0 {
+                            first_body + 40.0
+                        } else if last {
+                            body_size + 40.0
+                        } else {
+                            outer_height.max(21.0)
+                        };
+                        let x = 120.0 + index as f32 * 37.75;
+                        assert_eq!(
+                            *table_rect,
+                            SceneRect {
+                                x,
+                                y: if index == 0 { 60.0 } else { 120.0 },
+                                width: 20.0,
+                                height: table_size,
+                            }
+                        );
+                        assert_eq!(
+                            *body_rect,
+                            SceneRect {
+                                x,
+                                y: if index == 0 { 80.0 } else { 140.0 },
+                                width: 20.0,
+                                height: body_size,
+                            }
+                        );
+                    }
+                }
+                engine.remove(outer).unwrap();
+                assert_eq!(engine.client_rects(table), Err(EngineError::StaleHandle));
+            }
+        }
+    }
+
+    #[test]
     fn stale_and_cross_document_handles_are_rejected() {
         let mut a =
             Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
