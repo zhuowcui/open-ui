@@ -50,6 +50,11 @@ deterministic geometry alone does not establish equality with Chromium.
 Focused, primitive, original and expanded pixel matrices all remain required.
 Native execution and pixel results are pending.
 
+The [subsequent preserved checkpoint](generated/native-table-source-v1.json)
+records all seven own-source hardening jobs passing at `06e1f89a`, with zero
+skips. It preserves each job conclusion and the captured log bytes. The local
+whole owner remains queued; no native application or pixel pass is claimed.
+
 The [preserved evidence](generated/native-keywords-v1.json) includes source
 patches, immutable probes, failed C diagnostics and completed read-only checks.
 It also records umbrella `92741843` CI: three successful workflows, six passing

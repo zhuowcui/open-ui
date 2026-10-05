@@ -29,6 +29,12 @@ produce the same visual state. See the
 
 ## Verified status
 
+The [table source-retention follow-up](docs/renderer/native-table-progress.md#canonical-source-retention-follow-up)
+keeps an immutable full table subtree for ancestor continuations. A geometry-only
+diagnostic finds a 60-pixel cropped row over a 100-pixel source body. Eleven
+source checks pass on the private correction; native geometry, teardown and
+pixel verification are queued. It remains unapplied.
+
 The [latest native review](docs/renderer/generated/native-review-v3.json)
 rejects the inline-image candidate: its native app passes, but one expanded
 case loses pixel equality at all four profiles. The
@@ -50,6 +56,8 @@ C API gap: the current value constructor rejects `column-fill: auto`, while
 the public Rust typed setter already exists. Its shared constructor correction
 passes thirteen read-only checks. Rust/C/C++ applications and all four pixel
 matrices are queued behind both complete preceding pipelines. It is unapplied.
+All seven of its own-source hosted hardening jobs now pass, with zero skips;
+native and pixel qualification remain pending.
 
 The current v0.2 release candidate has:
 

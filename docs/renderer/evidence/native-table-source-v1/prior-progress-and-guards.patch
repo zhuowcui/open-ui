@@ -1,0 +1,517 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 6c14aebb..8f1e21f7 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -2205,6 +2205,134 @@ mod tests {
+         TransformOperation,
+     };
+ 
++    #[test]
++    fn native_repeated_table_body_progress_survives_retained_mutations() {
++        use openui_geometry::Length;
++        use openui_style::{BreakInside, ColumnFill, Position};
++
++        fn child(engine: &mut Engine, parent: NodeHandle, display: Display) -> NodeHandle {
++            let node = engine.create_element(ElementTag::Div).unwrap();
++            engine
++                .set_renderer_style(node, RendererStyleValue::Display(display))
++                .unwrap();
++            engine.append_child(parent, node).unwrap();
++            node
++        }
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            for outer_height in [40.0, 30.0, 20.0, 40.5] {
++                let mut engine =
++                    Engine::new(ViewportMetrics::from_logical_size(375.0, 667.0, scale).unwrap())
++                        .unwrap();
++                let root = engine.root();
++                let outer = child(&mut engine, root, Display::Block);
++                for value in [
++                    RendererStyleValue::Position(Position::Absolute),
++                    RendererStyleValue::Left(Length::px(120.0)),
++                    RendererStyleValue::Top(Length::px(120.0)),
++                    RendererStyleValue::Width(Length::px(135.0)),
++                    RendererStyleValue::Height(Length::px(outer_height)),
++                    RendererStyleValue::ColumnCount(Some(4)),
++                    RendererStyleValue::ColumnFill(ColumnFill::Auto),
++                    RendererStyleValue::ColumnGap(Some(Length::px(16.0))),
++                ] {
++                    engine.set_renderer_style(outer, value).unwrap();
++                }
++                let spacer = child(&mut engine, outer, Display::Block);
++                engine
++                    .set_renderer_style(spacer, RendererStyleValue::MarginBottom(Length::px(-60.0)))
++                    .unwrap();
++                let inner = child(&mut engine, outer, Display::Block);
++                engine
++                    .set_renderer_style(inner, RendererStyleValue::ColumnCount(Some(1)))
++                    .unwrap();
++                engine
++                    .set_renderer_style(inner, RendererStyleValue::ColumnFill(ColumnFill::Auto))
++                    .unwrap();
++                let table = child(&mut engine, inner, Display::Table);
++                for display in [Display::TableHeaderGroup, Display::TableFooterGroup] {
++                    let group = child(&mut engine, table, display);
++                    engine
++                        .set_renderer_style(
++                            group,
++                            RendererStyleValue::BreakInside(BreakInside::Avoid),
++                        )
++                        .unwrap();
++                    let content = child(&mut engine, group, Display::Block);
++                    engine
++                        .set_renderer_style(content, RendererStyleValue::Width(Length::px(20.0)))
++                        .unwrap();
++                    engine
++                        .set_renderer_style(content, RendererStyleValue::Height(Length::px(20.0)))
++                        .unwrap();
++                }
++                let row = child(&mut engine, table, Display::TableRow);
++                let cell = child(&mut engine, row, Display::TableCell);
++                let body = child(&mut engine, cell, Display::Block);
++                for body_height in [100.0, 50.0, 100.0] {
++                    engine
++                        .set_renderer_style(
++                            body,
++                            RendererStyleValue::Height(Length::px(body_height)),
++                        )
++                        .unwrap();
++                    // These owned queries are layout barriers after each ordered mutation.
++                    let table_rects = engine.client_rects(table).unwrap();
++                    let body_rects = engine.client_rects(body).unwrap();
++                    let first_body = body_height.min(outer_height + 20.0);
++                    let remaining = body_height - first_body;
++                    let expected_count = 1 + remaining.ceil() as usize;
++                    assert_eq!(table_rects.len(), expected_count,
++                        "Chromium table continuation count: scale={scale} outer={outer_height} body={body_height}");
++                    assert_eq!(body_rects.len(), expected_count);
++                    assert_eq!(
++                        body_rects.iter().map(|r| r.height).sum::<f32>(),
++                        body_height
++                    );
++                    for (index, (table_rect, body_rect)) in
++                        table_rects.iter().zip(&body_rects).enumerate()
++                    {
++                        let last = index + 1 == expected_count;
++                        let body_size = if index == 0 {
++                            first_body
++                        } else if last {
++                            remaining - (index - 1) as f32
++                        } else {
++                            1.0
++                        };
++                        let table_size = if index == 0 {
++                            first_body + 40.0
++                        } else if last {
++                            body_size + 40.0
++                        } else {
++                            outer_height.max(21.0)
++                        };
++                        let x = 120.0 + index as f32 * 37.75;
++                        assert_eq!(
++                            *table_rect,
++                            SceneRect {
++                                x,
++                                y: if index == 0 { 60.0 } else { 120.0 },
++                                width: 20.0,
++                                height: table_size,
++                            }
++                        );
++                        assert_eq!(
++                            *body_rect,
++                            SceneRect {
++                                x,
++                                y: if index == 0 { 80.0 } else { 140.0 },
++                                width: 20.0,
++                                height: body_size,
++                            }
++                        );
++                    }
++                }
++                engine.remove(outer).unwrap();
++                assert_eq!(engine.client_rects(table), Err(EngineError::StaleHandle));
++            }
++        }
++    }
++
+     #[test]
+     fn stale_and_cross_document_handles_are_rejected() {
+         let mut a =
+diff --git a/bindings/rust/openui-layout/src/block.rs b/bindings/rust/openui-layout/src/block.rs
+index db1faa41..8cc8a765 100644
+--- a/bindings/rust/openui-layout/src/block.rs
++++ b/bindings/rust/openui-layout/src/block.rs
+@@ -10014,11 +10014,11 @@ fn repeated_table_body_consumed_at_flow_offset(
+             .min_of(first_body_capacity);
+     }
+ 
++    // Blink applies its minimum fragmentainer capacity after reserving the
++    // repeated groups. A continuation must consume at least one CSS pixel,
++    // including when its remaining geometric capacity is fractional.
+     let continuation_body_capacity =
+-        (continuation_capacity - sections.block_size()).clamp_negative_to_zero();
+-    if continuation_body_capacity <= LayoutUnit::zero() {
+-        return first_body_capacity;
+-    }
++        (continuation_capacity - sections.block_size()).max_of(LayoutUnit::from_i32(1));
+     let continuation_flow = flow_offset - first_fragmentainer_capacity;
+     let complete_continuations = continuation_flow.raw() / continuation_capacity.raw();
+     let partial_continuation = LayoutUnit::from_raw(
+@@ -10245,7 +10245,6 @@ fn nested_repeated_table_flow_block_size(
+     doc: &Document,
+     first_fragmentainer_capacity: LayoutUnit,
+     continuation_capacity: LayoutUnit,
+-    emergency_continuation_limit: u32,
+ ) -> Option<LayoutUnit> {
+     let geometry = fragment.multicol_fragmentation?;
+     if geometry.declared_column_count != 1
+@@ -10274,7 +10273,7 @@ fn nested_repeated_table_flow_block_size(
+         (first_capacity - sections.body_start - sections.footer).clamp_negative_to_zero();
+     let body_remaining = (sections.body_size - first_body_capacity).clamp_negative_to_zero();
+     if body_remaining <= LayoutUnit::zero() {
+-        return Some(table_start + first_capacity);
++        return Some(table_start + sections.body_start + sections.body_size + sections.footer);
+     }
+ 
+     let repeat_limit = first_capacity / LayoutUnit::from_i32(4);
+@@ -10283,21 +10282,19 @@ fn nested_repeated_table_flow_block_size(
+         && (sections.footer <= LayoutUnit::zero()
+             || sections.footer <= repeat_limit && sections.footer <= continuation_capacity);
+     let continuation_body_capacity = if sections_repeat {
+-        (continuation_capacity - sections.block_size()).clamp_negative_to_zero()
++        (continuation_capacity - sections.block_size()).max_of(LayoutUnit::from_i32(1))
+     } else {
+         continuation_capacity
+     };
+-    let continuation_count = if continuation_body_capacity > LayoutUnit::zero() {
+-        ((body_remaining.raw() + continuation_body_capacity.raw() - 1)
+-            / continuation_body_capacity.raw()) as u32
+-    } else {
+-        // Repeated groups can consume an entire short continuation. Engines
+-        // must still make bounded progress; use the enclosing multicol's
+-        // declared row plus one overflow opportunity as its emergency limit.
+-        emergency_continuation_limit
+-    }
+-    .min(emergency_continuation_limit);
+-    Some(table_start + first_capacity + continuation_capacity * continuation_count as i32)
++    // The source body supplies a finite bound. The declared column count
++    // controls one row's geometry, not how much content may be discarded.
++    let continuation_count =
++        (i64::from(body_remaining.raw()) + i64::from(continuation_body_capacity.raw()) - 1)
++            / i64::from(continuation_body_capacity.raw());
++    Some(LayoutUnit::from_raw_i64(
++        i64::from((table_start + first_capacity).raw())
++            + i64::from(continuation_capacity.raw()) * continuation_count,
++    ))
+ }
+ 
+ fn has_nested_multicol_ancestors(doc: &Document, node_id: NodeId) -> bool {
+@@ -10693,31 +10690,48 @@ fn prepare_nested_repeated_table_slice(
+             } else {
+                 LayoutUnit::zero()
+             };
+-            let table_fragment_size =
++            let nominal_table_fragment_size =
+                 (fragment_block_size - table_fragment_top).clamp_negative_to_zero();
+-
++            let body_capacity = if local_flow_consumed == LayoutUnit::zero() {
++                (nominal_table_fragment_size - sections.body_start - sections.footer)
++                    .clamp_negative_to_zero()
++            } else {
++                (nominal_table_fragment_size - sections.block_size()).clamp_negative_to_zero()
++            };
++            let body_remaining = (sections.body_size - body_consumed).clamp_negative_to_zero();
++            let painted_body_capacity = if local_flow_consumed > LayoutUnit::zero() {
++                body_capacity
++                    .max_of(LayoutUnit::from_i32(1))
++                    .min_of(body_remaining)
++            } else {
++                body_capacity.min_of(body_remaining)
++            };
++            let emergency_body_progress = painted_body_capacity > body_capacity;
++            let is_last = body_consumed + painted_body_capacity >= sections.body_size;
++            // The last table fragment contains its final body slice and the
++            // complete footer, even when those extend past a short column.
++            let table_fragment_size = if is_last {
++                if local_flow_consumed == LayoutUnit::zero() {
++                    sections.body_start + body_remaining + sections.footer
++                } else {
++                    sections.block_size() + body_remaining
++                }
++            } else {
++                nominal_table_fragment_size.max_of(sections.header + painted_body_capacity)
++            };
+             prepare_repeated_table_slice(
+                 table,
+                 doc,
+                 sections,
+                 LayoutUnit::zero(),
+                 body_consumed,
+-                table_fragment_size,
++                if is_last {
++                    table_fragment_size
++                } else {
++                    nominal_table_fragment_size
++                },
+             );
+             position_nested_repeated_table_headers(table, doc);
+-            let body_capacity = if local_flow_consumed == LayoutUnit::zero() {
+-                (table_fragment_size - sections.body_start - sections.footer)
+-                    .clamp_negative_to_zero()
+-            } else {
+-                (table_fragment_size - sections.block_size()).clamp_negative_to_zero()
+-            };
+-            let emergency_body_progress =
+-                body_capacity == LayoutUnit::zero() && body_consumed < sections.body_size;
+-            let painted_body_capacity = if emergency_body_progress {
+-                LayoutUnit::from_i32(1)
+-            } else {
+-                body_capacity
+-            };
+             clip_repeated_table_body_slice(
+                 table,
+                 doc,
+@@ -10726,6 +10740,21 @@ fn prepare_nested_repeated_table_slice(
+                 painted_body_capacity,
+                 LayoutUnit::zero(),
+             );
++            for body_part in &mut table.children {
++                if body_part.node_id.is_none()
++                    || matches!(
++                        doc.node(body_part.node_id).style.display,
++                        Display::TableHeaderGroup
++                            | Display::TableFooterGroup
++                            | Display::TableCaption
++                            | Display::TableColumn
++                            | Display::TableColumnGroup
++                    )
++                {
++                    continue;
++                }
++                materialize_normal_flow_slice(body_part, body_part.size.height, Some(doc));
++            }
+             if emergency_body_progress {
+                 table.has_overflow_clip = false;
+                 column.has_overflow_clip = false;
+@@ -10733,9 +10762,7 @@ fn prepare_nested_repeated_table_slice(
+             table.offset.top = table_fragment_top;
+             table.size.height = table_fragment_size;
+             table.is_first_for_node = local_flow_consumed == LayoutUnit::zero();
+-            table.is_last_for_node = body_consumed
+-                + (table_fragment_size - sections.block_size()).clamp_negative_to_zero()
+-                >= sections.body_size;
++            table.is_last_for_node = is_last;
+             table.decoration_slice = Some(crate::fragment::DecorationSlice {
+                 source_block_offset: local_flow_consumed,
+                 source_block_size: repeated_table_flow_block_size(
+@@ -14669,11 +14696,29 @@ fn slice_translated_fragment_descendants(
+ fn materialize_nontranslated_transform_slice(
+     fragment: &mut Fragment,
+     source_block_size: LayoutUnit,
++) {
++    materialize_normal_flow_slice(fragment, source_block_size, None);
++}
++
++/// Materialize the normal-flow boxes owned by a source interval. Repeated
++/// table bodies preserve monolithic descendants and positioned parallel
++/// flows; transform callers retain their existing geometric slicing policy.
++fn materialize_normal_flow_slice(
++    fragment: &mut Fragment,
++    source_block_size: LayoutUnit,
++    table_document: Option<&Document>,
+ ) {
+     fragment.children.retain_mut(|child| {
+         if child.positioned_fragmentation.is_some() {
+             return true;
+         }
++        if table_document.is_some_and(|doc| {
++            !child.node_id.is_none()
++                && (doc.node(child.node_id).style.is_out_of_flow()
++                    || node_is_monolithic_for_fragmentation(doc, child.node_id))
++        }) {
++            return true;
++        }
+         let start = child.offset.top;
+         let original_fragment_size = child.size.height;
+         let end = start + original_fragment_size;
+@@ -14694,7 +14739,7 @@ fn materialize_nontranslated_transform_slice(
+         }
+         child.offset.top = visible_start;
+         child.size.height = visible_end - visible_start;
+-        materialize_nontranslated_transform_slice(child, child.size.height);
++        materialize_normal_flow_slice(child, child.size.height, table_document);
+         if source_offset > LayoutUnit::zero() || child.size.height < original_source_size {
+             child.decoration_slice = Some(crate::fragment::DecorationSlice {
+                 source_block_offset: source_offset,
+@@ -25396,7 +25441,6 @@ fn layout_multicol(
+                             doc,
+                             (col_remaining - pos_margin).clamp_negative_to_zero(),
+                             column_height,
+-                            resolved.count,
+                         )
+                     })
+                     .flatten();
+diff --git a/bindings/rust/openui/examples/native_table_progress.rs b/bindings/rust/openui/examples/native_table_progress.rs
+new file mode 100644
+index 00000000..29443d82
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_table_progress.rs
+@@ -0,0 +1,158 @@
++//! Repeated table body mutations through native Rust APIs and callbacks.
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn child(
++    document: &Document,
++    parent: &Element,
++    display: Display,
++) -> Result<Element, openui::Error> {
++    let element = Element::create(document, "div")?;
++    element.set_display(display)?;
++    parent.append_child(&element)?;
++    Ok(element)
++}
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let output = std::env::args().nth(1).map(PathBuf::from);
++    for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++        for outer_height in [40.0, 30.0, 20.0, 40.5] {
++            let document = Document::with_viewport_metrics(ViewportMetrics::from_logical_size(
++                375.0, 667.0, scale,
++            )?)?;
++            let root = document.body();
++            root.set_background_color(Color::WHITE)?;
++            let outer = child(&document, &root, Display::Block)?;
++            outer.set_position(Position::Absolute)?;
++            outer.set_left(Length::px(120.0))?;
++            outer.set_top(Length::px(120.0))?;
++            outer.set_width(LengthValue::px(135.0))?;
++            outer.set_height(LengthValue::px(outer_height))?;
++            outer.set_column_count(Some(4))?;
++            outer.set_column_fill(ColumnFill::Auto)?;
++            outer.set_column_gap(LengthValue::px(16.0))?;
++            outer.set_background_color(Color::from_rgba8(255, 255, 0, 255))?;
++            let spacer = child(&document, &outer, Display::Block)?;
++            spacer.set_margin_bottom(LengthValue::px(-60.0))?;
++            let inner = child(&document, &outer, Display::Block)?;
++            inner.set_column_count(Some(1))?;
++            inner.set_column_fill(ColumnFill::Auto)?;
++            inner.set_background_color(Color::from_rgba8(0, 255, 0, 255))?;
++            let table = child(&document, &inner, Display::Table)?;
++            for (display, color) in [
++                (Display::TableHeaderGroup, Color::BLUE),
++                (
++                    Display::TableFooterGroup,
++                    Color::from_rgba8(255, 105, 180, 255),
++                ),
++            ] {
++                let group = child(&document, &table, display)?;
++                group.set_break_inside(BreakInside::Avoid)?;
++                let content = child(&document, &group, Display::Block)?;
++                content.set_width(LengthValue::px(20.0))?;
++                content.set_height(LengthValue::px(20.0))?;
++                content.set_background_color(color)?;
++            }
++            let row = child(&document, &table, Display::TableRow)?;
++            let cell = child(&document, &row, Display::TableCell)?;
++            let body = child(&document, &cell, Display::Block)?;
++            body.set_height(LengthValue::px(100.0))?;
++            body.set_background_color(Color::BLACK)?;
++            let calls = Rc::new(Cell::new(0));
++            let callback_calls = calls.clone();
++            let weak_body = body.downgrade();
++            let callback_body = weak_body.clone();
++            body.on("click", move |_| {
++                let body = callback_body
++                    .upgrade()
++                    .expect("native body remains attached");
++                let next = callback_calls.get() + 1;
++                body.set_height(LengthValue::px(if next == 1 { 50.0 } else { 100.0 }))
++                    .unwrap();
++                callback_calls.set(next);
++            })?;
++            for (state, body_height) in [("before", 100.0), ("after", 50.0), ("restored", 100.0)] {
++                if state != "before" {
++                    body.click()?;
++                }
++                let table_rects = table.client_rects()?;
++                let body_rects = body.client_rects()?;
++                let first_body = body_height.min(outer_height + 20.0);
++                let remaining = body_height - first_body;
++                let expected_count = 1 + remaining.ceil() as usize;
++                assert_eq!(
++                    table_rects.len(),
++                    expected_count,
++                    "native table continuation count"
++                );
++                assert_eq!(body_rects.len(), expected_count);
++                assert_eq!(
++                    body_rects.iter().map(|r| r.height).sum::<f32>(),
++                    body_height
++                );
++                for (index, (table_rect, body_rect)) in
++                    table_rects.iter().zip(&body_rects).enumerate()
++                {
++                    let last = index + 1 == expected_count;
++                    let body_size = if index == 0 {
++                        first_body
++                    } else if last {
++                        remaining - (index - 1) as f32
++                    } else {
++                        1.0
++                    };
++                    let table_size = if index == 0 {
++                        first_body + 40.0
++                    } else if last {
++                        body_size + 40.0
++                    } else {
++                        outer_height.max(21.0)
++                    };
++                    let x = 120.0 + index as f32 * 37.75;
++                    assert_eq!(
++                        (
++                            table_rect.x,
++                            table_rect.y,
++                            table_rect.width,
++                            table_rect.height
++                        ),
++                        (x, if index == 0 { 60.0 } else { 120.0 }, 20.0, table_size)
++                    );
++                    assert_eq!(
++                        (body_rect.x, body_rect.y, body_rect.width, body_rect.height),
++                        (x, if index == 0 { 80.0 } else { 140.0 }, 20.0, body_size)
++                    );
++                }
++                if let Some(output) = &output {
++                    let directory = output.join(format!("scale-{scale}/height-{outer_height}"));
++                    std::fs::create_dir_all(&directory)?;
++                    std::fs::write(
++                        directory.join(format!("{state}.png")),
++                        document.render_to_png_buffer()?,
++                    )?;
++                }
++                println!("scale={scale} height={outer_height} state={state} fragments={expected_count} native geometry passed");
++            }
++            assert_eq!(calls.get(), 2);
++            let before_detach = body.client_rects()?;
++            outer.detach()?;
++            assert!(body.client_rects()?.is_empty());
++            root.append_child(&outer)?;
++            assert_eq!(body.client_rects()?, before_detach);
++            drop(body);
++            drop(cell);
++            drop(row);
++            drop(table);
++            drop(inner);
++            drop(spacer);
++            drop(outer);
++            drop(root);
++            drop(document);
++            assert!(
++                weak_body.upgrade().is_none(),
++                "callbacks must not retain the document"
++            );
++        }
++    }
++    Ok(())
++}

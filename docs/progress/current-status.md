@@ -22,6 +22,21 @@ remain open.
 
 ## Current implementation checkpoint
 
+The [canonical table source follow-up](../renderer/native-table-progress.md#canonical-source-retention-follow-up)
+at `e389b26a` preserves the full table subtree before inner fragmentation crops
+its first row. Two geometry-only debug runs agree at all four profiles: the
+table's source height is 140 pixels, with 20-pixel header/footer groups and a
+100-pixel body; the first visible row is 60 pixels. The shared section query
+reads that cropped row height when an ancestor resumes the table. This nearby
+fixture at source `e0dc491e` has five table fragments; the separate failed
+native guard at `4b3cb72c` has four. These sources and results are not substituted.
+The correction restores the canonical subtree for each ancestor body window.
+It also requires shared source ownership and release after teardown. Eleven
+read-only checks pass. Whole owner `1601` waits for all 31 predecessors before
+native guards, workspace, public Rust application and all four matrices.
+The original expected count remains 41. Native geometry and pixels have not
+executed; the source is unapplied.
+
 The [native keyword retry](../renderer/native-keyword-values.md) at `06e1f89a`
 rebases shared native value construction onto umbrella `92741843`. A verified
 existing C library rejects `column-fill: auto` with status -1 before table
@@ -32,6 +47,11 @@ layouts. Thirteen read-only checks pass. Whole owner `1588` waits for all 30
 predecessors, then requires named guards, a clean workspace, Rust/C/C++
 consumers and all four matrices. Its table geometry stage is diagnostic only.
 Native execution and pixels remain pending; the source is unapplied.
+Its seven own-source hosted hardening jobs now pass, with zero skips, in the
+[new evidence index](../renderer/generated/native-table-source-v1.json).
+Umbrella `1d846e68` hosted CI also completes with three successful workflows,
+six passing jobs and five skips. Hosted success does not qualify pending native
+or pixel work.
 
 The [fresh fallback candidate](../renderer/native-inline-fallback.md) at
 `7d09f7a1` preserves normal flow for retained image fallback children and adds

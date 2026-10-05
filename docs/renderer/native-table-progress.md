@@ -66,3 +66,45 @@ queries, unchanged inputs, source patches, checks and verification probes.
 This candidate is unapplied. It establishes no new native execution pass,
 pixel pass or release admission. The accepted renderer's full pixel gates
 continue to fail.
+
+## Canonical source retention follow-up
+
+The [new evidence](generated/native-table-source-v1.json) uses a verified,
+already built `e0dc491e` executable's geometry-only debug mode. Two independent
+runs agree at all four profiles, with no raster commands or screenshots.
+The first table has a 140-pixel source height and 20-pixel header/footer groups.
+Its body descendant retains 100 pixels, while the visible direct row has been
+cropped to 60 pixels. `repeated_table_sections` reads the cropped direct row's
+height; the ancestor flow calculation then receives that partial extent.
+The four projections are independently recomputed from the unchanged logs.
+
+This diagnostic fixture produces five table fragments. The separate native
+Engine guard above produces four at its own source. The diagnostic identifies
+a source-data problem; it does not replace the failed guard's result or prove
+the proposed correction. The first attempt used the matrix wrapper's backend
+flag with the executable and stopped before layout. Its failed probe, receipt
+and log remain preserved alongside the corrected debug run.
+
+Clean private `e389b26a` rebases the failed progress trial onto umbrella
+`1d846e68`. Test baseline `cd6d80be` therefore includes the earlier, unsuccessful
+continuation change. The new correction retains one immutable unsliced table
+subtree, shared by its fragments. Ancestor extent calculation uses its full
+section geometry; each ancestor slice restores the canonical subtree before
+applying its body window. The retained source never points back to its slices.
+The Engine guard also requires all slices to share one source and checks that
+teardown releases it. Existing expected counts and rectangles are unchanged.
+
+Eleven read-only checks pass, including all generators and explicit formatting
+for the changed Rust files. All 113 C exports and all 30 C layouts stay
+unchanged. Whole owner `1601` waits for every stage of all 31 preceding owners.
+It then requires the named baseline failure, fixed geometry and neighboring
+fragmentation guards, a clean workspace, Rust/C/C++ consumers, sixty exact
+Rust callback images against 240 stable Chromium captures, and all four pixel
+matrices. Native geometry, ownership and pixels remain pending. The correction
+is unapplied and admits no release state.
+
+The same index preserves completed keyword-candidate hardening: seven passing
+jobs, zero skips. Umbrella `1d846e68` completes three workflows with six passing
+jobs and five skips. Captured hosted logs are stored with lossless gzip; each
+decompressed SHA-256 is checked against the unchanged original capture. Those
+hosted results do not qualify the new table source or its pending pixel work.
