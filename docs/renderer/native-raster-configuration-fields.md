@@ -40,7 +40,9 @@ Chromium. Rust supplies all correct geometry and all 73 exact images. All 800
 C/C++ images are blank white, with 51,200 incorrect zero-size text boxes. Their
 reviewed cause is the C setter storing container data instead of creating a
 Text child. The [shared native text correction](native-text-content.md) is
-prepared separately; it is unapplied. The other 327 different Rust images
+now integrated with authored style inheritance on the umbrella branch. Its
+complete native app matrix still matches 0/600 Chromium images; integration
+does not qualify this rejected raster trial. The other 327 different Rust images
 still need pixel root-cause review. Rust self-comparisons are not C/Rust passes.
 
 The static consumer completes with 60/60 exact images under explicit Fontations;

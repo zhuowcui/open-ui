@@ -27,13 +27,19 @@ at private `727da10e` preserves shaped fractions through intrinsic grid
 ceiling. It targets the measured 3,840 widths that are 1/64 CSS pixel short,
 without font, size, fixture or test-ID conditions. A single-element Rust
 callback guard checks measured 12px/16px natural widths at five scales.
-Thirteen source checks pass. Native guards, workspace, apps and matrices
-remain unexecuted; own-source hosted run `37373688613` is pending. Prepared
-whole owner `1697` is unlaunched and waits for complete owner `1678`.
+Thirteen source checks pass. Guard owner `1703` reproduces the baseline failure
+and passes the fixed callback at all five scales, C text parity, 10,000-update
+storage, 58 conformance scenarios and nine inherited-style guards. Workspace,
+apps and matrices remain unexecuted on this width source. Own-source hosted
+run `37373688613` initially passes five jobs and cancels two without steps;
+its failed-job retry is in progress in the preserved observation. Full owner
+`1697` remains unlaunched. The
+[fresh full queue](../renderer/generated/native-intrinsic-snap-v3.json)
+includes all 42 prior owners; its clean build, app and matrices are unexecuted.
 The source is unapplied, and no new exact result is claimed.
 
 The [shared native style correction](../renderer/native-text-style-inheritance.md)
-at private `41b616c3` combines Rust/C text replacement with authored font,
+at tested `41b616c3` combines Rust/C text replacement with authored font,
 color and line-height inheritance. The new public Rust callback test fails on
 the baseline and passes at five scales after the fix. All nine named style
 guards, 58 conformance scenarios and thirteen source checks pass. The clean
@@ -46,18 +52,27 @@ Chromium. All 400 actual C/C++ images match Rust, excluding 200 Rust self-rows.
 Repeat runs agree and Chromium inputs stay unchanged. The remaining geometry
 differences are 3,840 text widths, each 1/64 CSS pixel short at Ahem sizes 12
 and 16. Default font rasterization still differs from Chromium. Own-source
-hosted hardening passes all seven jobs, zero skips. Whole owner `1678` passes
-640/640 focused and 960/960 primitive comparisons and continues both full matrices.
-The implementation is private and unqualified; accepted totals remain
-21,334/22,924 original and 22,137/23,728 expanded exact.
+hosted hardening passes all seven jobs, zero skips. Whole owner `1678` finishes
+all four matrices: 640/640 focused, 960/960 primitive, 21,334/22,924 original
+and 22,137/23,728 expanded exact, with zero errors. Both full gates exit 1.
+The [complete audit](../renderer/generated/native-text-inheritance-v5.json)
+preserves all nine invariants in each of 48,252 comparison rows, with no exact
+gains or losses and no Chromium input changes.
 
-Umbrella `95426acf` passes the Rust, Python, format and applicable hardening
-jobs, but its historical archive audit is cancelled without executing steps
-in both attempts. Across its three workflows, five jobs pass, five skip and
-one is cancelled, as recorded in the
-[terminal hosted evidence](../renderer/generated/native-text-inheritance-v3.json).
-The missing audit is not a pass. This is separate from the
-required full Chromium pixel gate, which still fails.
+The implementation is now integrated into the umbrella branch at `6def29f8`,
+with Rust, generator, C example, ABI and workflow bytes identical to tested
+`41b616c3`. Its [fresh integration build](../renderer/generated/native-text-inheritance-v6.json)
+passes all thirteen stages and 8,551 workspace tests, zero failures and 13
+ignored, plus ABI and C/C++ consumers. Pixel measurements retain their actual
+source identity. Native font pixels and full renderer qualification remain open.
+
+Preceding umbrella `a6bd4629` passes all three hosted workflows after retrying
+a GN formatting job cancelled without steps: six jobs pass and five skip.
+Its [hosted evidence](../renderer/generated/native-text-inheritance-v4.json)
+preserves both attempts. The earlier `95426acf` archive cancellations remain
+historical failures. Skipped jobs do not satisfy release gates, and these
+results are not attributed to the new integration head. The required full
+Chromium pixel gate still fails.
 
 The [native text replacement review](../renderer/native-text-content.md) finds
 why all 800 C/C++ font images are blank at `e0dc491e`: the C setter stores
@@ -67,7 +82,7 @@ a real Text child. All 800 image root causes are reviewed; 327 different Rust
 images remain unreviewed. Across Rust/C/C++, geometry is 25,600/76,800 exact,
 with every correct result from Rust. Self-comparisons are not C/Rust passes.
 
-Private `90310e15` routes Rust and C element text setters through one native
+Source `90310e15` routes Rust and C element text setters through one native
 Engine operation, preserving all 113 exports and 30 layouts. Thirteen read-only
 checks pass. Source `d5bd17d7` finishes hosted hardening with four passing jobs
 and three failures, zero skips. Two sanitizer jobs and the Linux C application
@@ -90,7 +105,7 @@ interrupted queue without relabelling it as a completed run.
 Both sources and all failed
 or unlaunched preparations are preserved in the
 [new index](../renderer/generated/native-text-content-v1.json). The correction
-is unapplied and no release state is admitted. The
+is now integrated with authored style inheritance; no release state is admitted. The
 [new terminal review](../renderer/generated/native-review-v4.json) preserves
 the complete raster trial, all five subsequent harness/disk stops, completed
 hosted results and the corrected text retry. The

@@ -8,12 +8,16 @@ The [narrow intrinsic-width candidate](../renderer/native-intrinsic-snap.md)
 at private `727da10e` changes one shared sizing helper to retain positive
 shaped fractions through grid ceiling. Its new public Rust callback guard
 uses the preserved Chromium natural widths at five scales. Thirteen source
-checks pass; native tests, apps and all four renderer matrices have not run.
-Own-source hosted hardening is pending, and the source remains unapplied and
+checks pass. The named baseline fails and the fixed callback passes at all
+five scales; neighboring C text, storage, style and conformance guards pass.
+Workspace, apps and all four renderer matrices have not run on this width
+source. Own-source hosted hardening initially has five passing jobs and two
+cancelled without steps; its retry is in progress in the preserved observation.
+The source remains unapplied and
 unqualified. It does not close the default font-raster or release gates.
 
 The [shared native font-inheritance correction](../renderer/native-text-style-inheritance.md)
-at private `41b616c3` passes its new baseline/fixed public Rust callback guard,
+at tested `41b616c3` passes its new baseline/fixed public Rust callback guard,
 all nine style guards, 58 conformance scenarios, thirteen source checks and
 8,551 workspace tests. All thirteen build stages and C/C++ smoke consumers
 pass. Its [complete app matrix](../renderer/generated/native-text-inheritance-v2.json)
@@ -22,15 +26,26 @@ All 400 actual C/C++ images match Rust, excluding 200 Rust self-comparisons.
 All repeats and Chromium inputs stay unchanged. The remaining geometry gap is
 3,840 text widths, each 1/64 CSS pixel short at Ahem sizes 12 and 16. Default
 native font rasterization remains open. Seven own-source hosted hardening jobs
-pass, zero skip. Owner `1678` passes 640/640 focused and 960/960 primitive
-comparisons and continues both full matrices. The source is unapplied and unqualified.
+pass, zero skip. Owner `1678` finishes all four matrices: 640/640 focused,
+960/960 primitive, 21,334/22,924 original and 22,137/23,728 expanded exact,
+zero errors. Both full gates exit 1. The
+[complete audit](../renderer/generated/native-text-inheritance-v5.json) records
+48,252 rows with all nine invariants unchanged and no exact gains or losses.
 
-Umbrella `95426acf` completes three hosted workflows with five passing jobs,
-five skips and one cancelled historical archive audit. That job executes no
-steps in either attempt, as recorded in the
-[terminal hosted evidence](../renderer/generated/native-text-inheritance-v3.json).
-Its missing result is not a pass; the independent
-full Chromium pixel gate also remains failed.
+The shared text/style correction is now integrated at umbrella `6def29f8`.
+Its Rust, generator, C example, ABI and workflow bytes match tested `41b616c3`.
+The [clean integration build](../renderer/generated/native-text-inheritance-v6.json)
+passes thirteen stages and 8,551 workspace tests, zero failures and 13 ignored,
+plus ABI and C/C++ consumers. Integration closes those native API defects;
+the strict font-app and complete Chromium pixel gates still fail.
+
+Preceding umbrella `a6bd4629` passes all three hosted workflows after a
+formatting retry, with six jobs passing and five skipped. The
+[terminal hosted evidence](../renderer/generated/native-text-inheritance-v4.json)
+preserves the cancelled GN job and successful retry. Earlier archive
+cancellations at `95426acf` remain historical failures. Skips are not release
+passes, and this older-head result does not qualify the new integration head.
+The independent full Chromium pixel gate remains failed.
 
 The [native text replacement review](../renderer/native-text-content.md)
 assigns all 800 blank C/C++ font images to the C setter's container-data path.
@@ -55,7 +70,8 @@ witness are preserved in the
 The complete new app matrix above still fails Chromium qualification.
 This operation uses native Rust methods
 and callbacks, with no JavaScript.
-It is unapplied and unqualified. The
+It is now integrated with authored style inheritance, while full release
+qualification remains open. The
 [new evidence](../renderer/generated/native-text-content-v1.json) also records
 the raster trial's static Fontations 60/60, selection 648/880, focused 640/640
 and primitive 960/960 results. Default static raster remains 0/60; the trial's
@@ -128,12 +144,12 @@ six successful jobs and five skips. Skips do not satisfy required release gates.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | [Complete fresh clean umbrella census](../renderer/generated/native-scroll-insets-v42.json) at `2e443f49`: 21,334/22,924 exact, 1,590 different, zero errors; actual exit 1. All Chromium inputs stay fixed; 882 residual original IDs need closure | fail |
-| Focused and primitive raster | [v41](../renderer/generated/native-scroll-insets-v41.json): fresh complete workspace clean at `2e443f49`, 640/640 focused and 960/960 primitive exact; all 1,600 comparison invariants unchanged | source-attributed scoped pass |
+| Four-profile renderer matrix | [Complete clean text/style census](../renderer/generated/native-text-inheritance-v5.json) at `41b616c3`, whose code is integrated at `6def29f8`: 21,334/22,924 exact, 1,590 different, zero errors; actual exit 1. All Chromium inputs stay fixed; 882 residual original IDs need closure | fail |
+| Focused and primitive raster | [Complete text/style matrices](../renderer/generated/native-text-inheritance-v5.json) at clean `41b616c3`: 640/640 focused and 960/960 primitive exact; all 1,600 comparison rows retain their nine invariants | source-attributed scoped pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | [Complete fresh clean umbrella run](../renderer/generated/native-scroll-insets-v42.json) at `2e443f49` is 22,137/23,728 exact, 1,591 different, zero errors; actual exit 1. Original rows agree with the separate census; all 804 additions stay unchanged, with 200/201 exact at all four profiles. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | [Complete clean text/style run](../renderer/generated/native-text-inheritance-v5.json) at `41b616c3` is 22,137/23,728 exact, 1,591 different, zero errors; actual exit 1. Original rows agree with the separate census; all 804 additions stay unchanged, with 200/201 exact at all four profiles. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
-| Rust workspace and docs | [v41](../renderer/generated/native-scroll-insets-v41.json): fresh clean `2e443f49` passes 8,531 tests, zero failed, 13 ignored, 341 text tests, and native ABI consumers after clearing all 18 packages. Earlier count with a test absent from source remains unqualified. [v42](../renderer/generated/native-scroll-insets-v42.json) finishes both full matrices with all 46,652 comparison invariants unchanged and actual exits 1 | clean workspace/ABI source attribution passes; full pixel gates fail |
+| Rust workspace and docs | [Clean integration](../renderer/generated/native-text-inheritance-v6.json) at `6def29f8` clears all 18 packages and passes 8,551 tests, zero failed, 13 ignored, all thirteen build stages and ABI/C/C++ consumers. Earlier counts with a test absent from source remain unqualified. Complete pixel measurements retain their actual `41b616c3` source identity | clean workspace/ABI source attribution passes; full pixel gates fail |
 | Rust 1.85 MSRV | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576): locked headless and Linux checks passed at `d174ea0b` | pass |
 | Rust/C application contract | 58 scenarios; 113 current exports with all preceding symbols and layouts preserved. Own clean `580539c2` build and eleven C/five C++ headless consumers pass; public Rust float-color consumers pass at five scales | scoped verification pass; remaining API review and lab qualification open |
 | Native element interaction | Public Rust `Document`, `Element`, and `TextNode` APIs cover ID/class/native-kind lookup, class-token updates, retained detach/reattach, mutation, callbacks, activation, focus, scrolling, and controls; browser-style operations needed by applications must be exposed through native APIs | core implemented; remaining API coverage review open |
@@ -142,7 +158,7 @@ six successful jobs and five skips. Skips do not satisfy required release gates.
 | Generated sources | style, ABI, migration, closure generators are read-only clean | pass |
 | No-work frame | zero layout, paint, and raster on unchanged snapshots | pass |
 | Compositor recording ownership | Repair applied at `289d5516`; baseline/fixed cache guards, native ABI consumers and all seven earlier hosted hardening jobs pass. [v39](../renderer/generated/native-scroll-insets-v39.json) completes the applied original/expanded audits with all 46,652 comparison invariants unchanged. It also finds one earlier workspace test absent from the declared source: 8,532 reported earlier versus 8,531 on applied source. [v42](../renderer/generated/native-scroll-insets-v42.json) finishes the clean build, native ABI consumers and all four matrices at immutable `2e443f49`; original and expanded retain all 46,652 comparison invariants and fail with actual exits 1 | implemented; clean source attribution restored; full pixel gates fail |
-| Current umbrella hosted gates | At documentation checkpoint `98ed2a67`, all three ordinary workflows succeed: six jobs pass, five are skipped. Native/build/harness/ABI/workflow inputs match tested `1c8540e9`. Private text source `90310e15` independently passes all seven own-source hardening jobs, zero skips; it remains unapplied | scoped hosted pass; local full pixel gate fails |
+| Current umbrella hosted gates | Preceding `a6bd4629` passes all three workflows after its formatting retry: six jobs pass, five skip, with both attempts [preserved](../renderer/generated/native-text-inheritance-v4.json). Tested text/style `41b616c3` independently passes all seven own-source hardening jobs, zero skips, and is now integrated. New integration-head hosted results remain pending | older-head scoped hosted pass; current-head and release gates open |
 | Native style/cache integration | [v40](../renderer/generated/native-scroll-insets-v40.json) records the baseline failure, fixed pass and nine passing inheritance tests at `0ccc37da`; the harness stops because it expected eight. The corrected queue verifies the complete named inventory after clearing all 18 packages. Ten read-only checks and all seven own-source manual hardening jobs pass, zero skips; native consumers and matrices remain pending | unapplied; current-source application and pixel qualification pending |
 | Intrinsic constraints and whitespace | [v40](../renderer/generated/native-scroll-insets-v40.json) records the atomic baseline failure and a compile failure in the leading-space baseline. Fixed `a6d386e4` and baseline `ac1eb2a7` correct only the typed Float test setup. Ten read-only checks pass; the native callback app and exact pixel queue remain pending. Parent fieldset trial retains 64 original exact losses and four addition losses | unapplied; own native and pixel qualification pending |
 | Raster regression guards and native Rust/C/C++ consumer | [Complete trial](../renderer/generated/native-review-v4.json) at `e0dc491e` passes named guards and all 17 clean build stages, but full original/expanded lose 83/87 exact comparisons and gain none. Native application is 828/840, font images 73/1,200 and geometry 25,600/76,800 exact; default static raster is 0/60. All Chromium inputs remain unchanged | rejected for application; no new pixel or release pass |

@@ -31,8 +31,10 @@ produce the same visual state. See the
 
 The [native text-width follow-up](docs/renderer/native-intrinsic-snap.md)
 finds that shared sizing discards small shaped fractions which Chromium keeps.
-A narrow correction and consuming Rust callback guard are prepared. Thirteen
-source checks pass; native and pixel verification have not run. It is unapplied.
+A narrow correction reproduces the old failure and passes its consuming Rust
+callback guard at all five scales. Thirteen source checks and the neighboring
+native guards pass. Workspace, native app pixels and the complete renderer
+matrices still need verification; this width correction remains unapplied.
 
 The [shared native font-inheritance correction](docs/renderer/native-text-style-inheritance.md)
 combines Rust/C text replacement with authored style propagation. Its new
@@ -42,7 +44,11 @@ workspace tests pass; all thirteen clean build stages and C/C++ smokes pass.
 All 400 actual C/C++ images match Rust. Chromium matches 34,560/38,400 geometry
 states, but 0/600 images; some text widths remain 1/64 pixel short. All seven
 own-source hosted hardening jobs pass. Focused 640/640 and primitive 960/960
-suites pass; the broader Chromium matrices are running. The source is unapplied.
+suites pass. Both full matrices finish at 21,334/22,924 original and
+22,137/23,728 expanded exact, with zero errors. All 48,252 comparison rows
+preserve their nine recorded invariants. The text/style correction is now
+integrated into the umbrella branch; its clean integration build also passes
+all thirteen stages and 8,551 workspace tests. Full Chromium parity remains open.
 
 The [native text replacement review](docs/renderer/native-text-content.md)
 finds a C API bug: its setter stores text on a container, while layout reads
@@ -57,8 +63,8 @@ smoke stops because the harness omitted the library's required filename.
 A fresh retry installs and verifies `libopenui.so.0` and passes the complete
 build, then is interrupted after 306 app images. Its geometry still fails
 because text children do not inherit authored styles. The shared font
-correction above completes a fresh app matrix. Both corrections remain
-unapplied; the strict Chromium gates remain open.
+correction above completes a fresh app matrix. Shared text replacement and
+style inheritance are now integrated; the strict Chromium gates remain open.
 
 The [authored glyph precision investigation](docs/renderer/native-author-glyph-precision.md)
 finds a source-supported explanation for three Ahem images: rounding shaped

@@ -1,0 +1,271 @@
+{
+  "artifact_bytes": 267974,
+  "artifact_count": 30,
+  "artifacts": [
+    {
+      "bytes": 16460,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/guard-owner-terminal.json",
+      "sha256": "b20e0c9be6a6d1dd3777486a9886714fe7777a57747a286343f5722feb4ab3df",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-guard-pipeline-v1703/receipt.json"
+    },
+    {
+      "bytes": 15741,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/guards-terminal.json",
+      "sha256": "4c761b86cd60dcc8c08fc30aa7ce8314d7af958e03c8411636f6a9363e36baee",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-guards-v1702/receipt.json"
+    },
+    {
+      "bytes": 56,
+      "decompressed_bytes": 38,
+      "decompressed_sha256": "9b7b84d0097e558a84465f736378c3ec307536e4f48734cf78dfb219decbead1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/clean-baseline.log.gz",
+      "sha256": "7d0d18510fb061982399177a89ca68cbbbc999087dac98503024ff49c178412f",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-guards-v1702/clean-baseline.log"
+    },
+    {
+      "bytes": 2321,
+      "decompressed_bytes": 11752,
+      "decompressed_sha256": "405ceb9c7ceb8d719e62318c7baa5b45055a86256f6013a76ed15e07ed76396b",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/baseline-public-native-intrinsic-snap.log.gz",
+      "sha256": "6ef2cd928c2c2d67bda10cc49f2ea225bff429871a073f6a86c80991fa7d403d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-guards-v1702/baseline-public-native-intrinsic-snap.log"
+    },
+    {
+      "bytes": 56,
+      "decompressed_bytes": 38,
+      "decompressed_sha256": "ed310233bcdbaaa282bce2ba9d9b3ed9f93a0b5aec5811ef48cc3f125e1eb8fb",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/clean-fixed.log.gz",
+      "sha256": "c8012876c566efb010842e2b6ee838c153909be6f18ccdc1b06ed3a733fde830",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-guards-v1702/clean-fixed.log"
+    },
+    {
+      "bytes": 2155,
+      "decompressed_bytes": 11439,
+      "decompressed_sha256": "4315c6b9933289dd2520f4c61cd9581153c558c783cd4192916a3ee45f471cf5",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/fixed-native-text-style-qualification-guard.log.gz",
+      "sha256": "8dc395ca4fe56e33801c891401aed8fc2b4deafbe793011b9b705bb2f72e748f",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-guards-v1702/fixed-native-text-style-qualification-guard.log"
+    },
+    {
+      "bytes": 1952,
+      "decompressed_bytes": 9950,
+      "decompressed_sha256": "f009a9f0f99882a3846e15b312bed2ee1d3b88dc0a8376c0edf2b79029b6d7ac",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/fixed-text-content-storage.log.gz",
+      "sha256": "ec42fb6fd50ebe68bd24facd19d14d49ec4e55d968198e869a51d01c4483cd76",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-guards-v1702/fixed-text-content-storage.log"
+    },
+    {
+      "bytes": 1925,
+      "decompressed_bytes": 9604,
+      "decompressed_sha256": "748832472b8b376c3269438d5006bd80b42a6291d72424d552fa63f2fd44e80b",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/fixed-public-native-text-inheritance.log.gz",
+      "sha256": "a0ad72b1d4a709bda8fce23a652151fd2741fd2a7dfc04aee3adf9e129a4d214",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-guards-v1702/fixed-public-native-text-inheritance.log"
+    },
+    {
+      "bytes": 1889,
+      "decompressed_bytes": 9338,
+      "decompressed_sha256": "5bd0796171b7bdfbe89b36732a3f840b4a146932d22b81919a0cc64cfeb43854",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/fixed-public-native-intrinsic-snap.log.gz",
+      "sha256": "0acafa6748de27bfbae88fc81371bc85e9313cef87f85570d474c0af8ed740e4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-guards-v1702/fixed-public-native-intrinsic-snap.log"
+    },
+    {
+      "bytes": 3073,
+      "decompressed_bytes": 12543,
+      "decompressed_sha256": "0944bf61c6b7ae2ef3f21f654d46e6cb913e2bc4e233602adc7e908d5a326020",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/fixed-public-native-conformance.log.gz",
+      "sha256": "63cf3e33b4b951ad5e32d3e97f1c2345b3dec256c1de105e057936b3e8360f5c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-guards-v1702/fixed-public-native-conformance.log"
+    },
+    {
+      "bytes": 2035,
+      "decompressed_bytes": 9925,
+      "decompressed_sha256": "1389e3f93cefe5f12369f1f5df9f8706f3ddc18dc744fe7af85c8418f65bb4d4",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/fixed-native-inheritance-inventory.log.gz",
+      "sha256": "088cc19c24e464749305c77beb3cb18a599feb83756228307720a4a34650d04d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-guards-v1702/fixed-native-inheritance-inventory.log"
+    },
+    {
+      "bytes": 1325,
+      "decompressed_bytes": 10113,
+      "decompressed_sha256": "770143a31f2576c182beccc0cc6a5ddc96d2915b06b3493def4adad53a49b41e",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/owner-guards.log.gz",
+      "sha256": "c3858fddca0e479422125ddd06d501796436c1a5ca6152f6e31a2da0ac064b6d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-guard-pipeline-v1703/guards.log"
+    },
+    {
+      "bytes": 1665,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/guard-prepared.json",
+      "sha256": "6f59236350e12b557f86b1d75873edbe5f628790b748cf9eb2ba029323c68c8d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-guard-prepared-v1702.json"
+    },
+    {
+      "bytes": 7856,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/openui-native-intrinsic-snap-guard-pipeline-v1703.py",
+      "sha256": "c85218308b7e95d7e418ccdb4a23c265a3634706a1b21e2123991616d1b8242d",
+      "source_path": "/tmp/openui-native-intrinsic-snap-guard-pipeline-v1703.py"
+    },
+    {
+      "bytes": 11168,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/openui-native-intrinsic-snap-guards-v1702.py",
+      "sha256": "c15750e549309ad0d61b4b48815b085de56adacb2179fb1d96370d184477c88c",
+      "source_path": "/tmp/openui-native-intrinsic-snap-guards-v1702.py"
+    },
+    {
+      "bytes": 3299,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/guard-prepare.py",
+      "sha256": "27f01d146a41bfe6641aa018a226e2383b6f98655d357a7662dff4d5cba7d1ce",
+      "source_path": "/tmp/openui-native-intrinsic-snap-guard-prepare-v1702.py"
+    },
+    {
+      "bytes": 315,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/preflight-failed.json",
+      "sha256": "9fde9629da4cfc2a39e1f1bad39043f5949b2aca47d98c1734605f0567b73820",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-guard-preflight-v1700.json"
+    },
+    {
+      "bytes": 3282,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/preflight-failed.py",
+      "sha256": "3fd74a167270428a18d246b6d8474e3c96d60122d14ba3cbd2a84438f25577a6",
+      "source_path": "/tmp/openui-native-intrinsic-snap-guard-prepare-v1700.py"
+    },
+    {
+      "bytes": 27374,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/hosted-attempt1-terminal.json",
+      "sha256": "9a25b3822b941d06527e73398463e44f650f9ed0da59b55a3cc7989fbb620d3f",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-v1707/receipt.json"
+    },
+    {
+      "bytes": 13014,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/hosted-attempt1.json",
+      "sha256": "64b0e1de187cf5fb4e7c5f3fa2d5928c37cf953e592b3019bd5c4dd52e24d758",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-v1707/attempt1.json"
+    },
+    {
+      "bytes": 2151,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/hosted-observer.py",
+      "sha256": "729cee9b11bcc0c659c0cedfea8e890102a550265a76cbc337a6cc699851b282",
+      "source_path": "/tmp/openui-native-intrinsic-snap-hosted-v1707.py"
+    },
+    {
+      "bytes": 16302,
+      "decompressed_bytes": 135005,
+      "decompressed_sha256": "9c7217ceeb8110a0dd380c9faa9bf8281218dcd3ae1d8b340edf561c020a018d",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/111976832353.log.gz",
+      "sha256": "d21678ee01a1c7d8452b886f4c0c8462bf53e4f9f06f84b8783f880638e69c0c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-v1707/111976832353.log"
+    },
+    {
+      "bytes": 45463,
+      "decompressed_bytes": 389795,
+      "decompressed_sha256": "1a21c46904850e0687944592e3105010385f2c07177cc5d906a1fa2b18ad2e7c",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/111976832557.log.gz",
+      "sha256": "1665b9dfeb2f0c06bc21ee09d8c5ef5beddc27ef0924f52f76ea5f3921efe3a3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-v1707/111976832557.log"
+    },
+    {
+      "bytes": 48,
+      "decompressed_bytes": 28,
+      "decompressed_sha256": "3b3dc8efa33fd32be3986a5e5a60429f38dcf318fb7bee9128b03c1b3da34540",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/111976832575.log.gz",
+      "sha256": "a893f51ea6b126d552febe4960dabf93a3306cc52589558a54f3c923840f2cf9",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-v1707/111976832575.log"
+    },
+    {
+      "bytes": 23514,
+      "decompressed_bytes": 199786,
+      "decompressed_sha256": "06f6c6ffa3928cb2d338621dd635fe69bc5444793240bd4c129f827e03eb221b",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/111976832629.log.gz",
+      "sha256": "6af15f74cfcb5c1856c51bb7d948874e2c98afe6f90aba6761227ae8f2e3967a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-v1707/111976832629.log"
+    },
+    {
+      "bytes": 48,
+      "decompressed_bytes": 28,
+      "decompressed_sha256": "d20162b14fc9abba4ef8d6a27e8532a31c1ad11bb4321a8ff35768f3a41c7587",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/111976832670.log.gz",
+      "sha256": "cf310192869a1a672ab2195ea5350ef7e9e30ee17f7b6a22e983c032874cbc0d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-v1707/111976832670.log"
+    },
+    {
+      "bytes": 20589,
+      "decompressed_bytes": 189064,
+      "decompressed_sha256": "510f47f384df5d4b3be2db3f863ac58391815fe01495f9d9e0966fbd638accd7",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/111976832671.log.gz",
+      "sha256": "32d5f383f3886c6cc8fb1510190deea994e6a0abf0029b9b0dea5e74dd5d3fcb",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-v1707/111976832671.log"
+    },
+    {
+      "bytes": 17204,
+      "decompressed_bytes": 138011,
+      "decompressed_sha256": "b117d7764f5d17d6ed16b099d6cfe18a43c1a2e4023a280bb7f3c0b22e78827b",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/111976832706.log.gz",
+      "sha256": "776d282a326bdc8dc49b37035577f0912e84058d8853b6bc77674f191f2f63cb",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-v1707/111976832706.log"
+    },
+    {
+      "bytes": 15530,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/hosted-attempt2-at-observation.json",
+      "sha256": "9d65f9aeb88570fd38496173ba6d7a97ac9f5c38d62452612bfb42d2e95bdb3e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-hosted-retry-observed-v1713.json"
+    },
+    {
+      "bytes": 10164,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v2/preserver.py",
+      "sha256": "2efcaeb88e9352abc3c0070a48432d2832c086c02a9993f59c2f150b85f842d5",
+      "source_path": "/tmp/openui-native-completed-evidence-preserve-v1715.py"
+    }
+  ],
+  "baseline_actual_exit": 101,
+  "candidate_applied_to_umbrella": false,
+  "fixed_guard_actual_exit": 0,
+  "full_renderer_matrices_unexecuted": true,
+  "hosted_attempt1_cancelled": 2,
+  "hosted_attempt1_success": 5,
+  "hosted_attempt2_pending_at_observation": true,
+  "javascript_executed_by_openui": false,
+  "named_inherited_style_guards": 9,
+  "native_conformance_scenarios": 58,
+  "native_guard_stages": 9,
+  "new_release_states_admitted": 0,
+  "pixel_tolerance": 0,
+  "prior_full_and_glyph_preparations_unlaunched_and_require_fresh_owner_preparation": true,
+  "public_native_rust_apis_required": true,
+  "public_rust_callback_five_scales_passed": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "727da10e580c9439f5db83d36bfc3e2340168207",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "7a65e6a0ddd0eb28f3b8a542418b1aab409f4c4d88a6b00efaf2aece46a22ccd",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "727da10e580c9439f5db83d36bfc3e2340168207",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "7a65e6a0ddd0eb28f3b8a542418b1aab409f4c4d88a6b00efaf2aece46a22ccd",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "text_storage_updates": 10000,
+  "workspace_and_native_app_matrix_unexecuted": true
+}

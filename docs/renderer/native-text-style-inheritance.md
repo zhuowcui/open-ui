@@ -26,7 +26,7 @@ rewritten as a pass.
 
 ## Shared native correction
 
-Private `41b616c3` combines native text replacement with the existing authored
+Tested source `41b616c3` combines native text replacement with the existing authored
 style resolution work from `0ccc37da`. It refreshes inheritable properties on
 attachment, parent mutation, detachment, reparenting, cloning and animation.
 Ordered declarations and owned computed-style snapshots are preserved.
@@ -34,7 +34,8 @@ Generated property metadata is regenerated from its source generator.
 
 The correction changes no C header, export or struct layout: all 113 exports
 and 30 layouts remain. It changes no text-raster, paint or compositor body.
-It is not applied to the umbrella branch.
+The correction is integrated into the umbrella branch at `6def29f8`. All Rust,
+style-generator, C example, ABI and workflow bytes match the tested source.
 
 ## Verified scope and remaining gates
 
@@ -65,14 +66,27 @@ remains different from Chromium. These require general implementation fixes,
 not adjustments for a particular family, size or fixture.
 The [narrow intrinsic-width follow-up](native-intrinsic-snap.md) preserves
 shaped fractions through the layout grid ceiling. Its thirteen source checks
-pass; native and pixel checks remain unexecuted.
+pass. The old source fails the new Rust callback guard; the correction passes
+at all five scales, along with neighboring native guards. Its workspace,
+complete native app and pixel matrices remain unexecuted.
 
-Whole owner `1678` continues with focused, primitive, original and expanded
-renderer matrices. The focused and primitive suites pass 640/640 and 960/960.
+Whole owner `1678` finishes all seven stages. The focused and primitive suites
+pass 640/640 and 960/960. The original census is 21,334/22,924 exact and the
+expanded census is 22,137/23,728 exact; both exit 1, with zero render errors.
+The [complete matrix audit](generated/native-text-inheritance-v5.json) verifies
+all 48,252 rows: nine recorded invariants per row and every Chromium input
+remain unchanged, with zero exact gains or losses. No residual ownership is
+inferred from unchanged results.
 The [own-source hosted evidence](generated/native-text-inheritance-v3.json)
 records hardening run `37366409715` passing all seven jobs, with zero skips. The
-remaining gates do not qualify the source, the renderer or any new release
-state; the strict native app gate has already failed.
+remaining gates do not qualify the renderer or any new release state; the
+strict native app gate has already failed.
+
+The [clean integration build](generated/native-text-inheritance-v6.json) at
+`6def29f8` passes all thirteen stages, 8,551 workspace tests, zero failures and
+13 ignored, plus ABI and C/C++ consumers. The complete pixel results retain
+their actual `41b616c3` source identity; they are not relabelled as a new census.
+Integration fixes the native API behavior without claiming release qualification.
 
 Two unlaunched preparations and one build-harness failure are also preserved.
 Preflight catches an incomplete test-name filter before execution; a later

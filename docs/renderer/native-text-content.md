@@ -31,9 +31,9 @@ images still need separate pixel root-cause review. Comparing Rust images with
 themselves is not a C/Rust parity pass. The original receipt, images and
 Chromium references remain unchanged.
 
-## Prepared shared operation
+## Shared native operation
 
-Private `90310e15` adds `Engine::set_text_content`. Both public Rust
+Source `90310e15` adds `Engine::set_text_content`. Both public Rust
 `Element::set_text` and C `oui_element_set_text` call that operation:
 
 - A container replaces its children with one authored Text child.
@@ -44,13 +44,14 @@ Private `90310e15` adds `Engine::set_text_content`. Both public Rust
 
 The low-level `Engine::set_text` keeps its existing behavior. The correction
 changes no C export or struct layout: all 113 exports and 30 layouts remain.
-It is not applied to the umbrella branch.
+It is now integrated into the umbrella branch with authored text-style
+inheritance at `6def29f8`.
 
 The new Rust, C and C++ consumers change `X` to `XX` from native click callbacks,
 check owned geometry and destroy their documents. A separate Engine guard
 requires stable node and handle storage after 10,000 text replacements.
 
-## Verification still required
+## Verification and remaining pixel gaps
 
 All thirteen source, generated-contract, formatting and C/C++ syntax checks
 pass. These checks do not establish runtime or pixel correctness.
@@ -99,15 +100,23 @@ recorded app images. Its processes are absent; the incomplete receipt and
 images remain unchanged. All 204 actual C/C++ images match Rust, but none of
 the 306 images or 19,584 geometry states matches Chromium. The
 [native style follow-up](native-text-style-inheritance.md) fixes shared font
-inheritance at private `41b616c3`, passes its named baseline/fixed public Rust
+inheritance at tested `41b616c3`, passes its named baseline/fixed public Rust
 guard and a clean thirteen-stage build. Its
 [complete app matrix](generated/native-text-inheritance-v2.json) matches
 34,560/38,400 Chromium geometry states but 0/600 images. All 400 actual C/C++
 images match Rust; 200 Rust self-comparisons are excluded. The 3,840 remaining
 geometry differences are text widths 1/64 CSS pixel short at Ahem sizes 12
-and 16. All repeats and pinned Chromium inputs agree. Renderer matrices
-continue on that clean source; matching C and Rust alone does not qualify
-the framework.
+and 16. All repeats and pinned Chromium inputs agree. All four renderer
+matrices finish on that clean source: 21,334/22,924 original,
+22,137/23,728 expanded, 640/640 focused and 960/960 primitive exact, with
+zero errors. All 48,252 comparison rows retain their nine recorded invariants.
+Matching C and Rust alone does not qualify the framework.
+
+The [integration evidence](generated/native-text-inheritance-v6.json) records
+the shared operation and style correction on umbrella `6def29f8`, with code
+identical to tested `41b616c3`. Its fresh clean build passes all thirteen
+stages and 8,551 workspace tests, zero failures and 13 ignored. Native app
+font pixels and the full Chromium release gates still fail.
 
 Two unlaunched preparations are also preserved: one would copy linked C/C++
 outputs onto themselves; another incorrectly compared diff headers after the

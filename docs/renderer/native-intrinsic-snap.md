@@ -37,18 +37,36 @@ the corrected source contain identical guard bytes. The existing helper test
 now expects the original positive fraction to survive rounding.
 
 The [preserved source and probes](generated/native-intrinsic-snap-v1.json)
-record thirteen passing read-only checks. Native baseline/fixed guards,
-workspace, 600 Rust/C/C++ images, 38,400 geometry states and all four renderer
-matrices have not executed. Own-source hosted run `37373688613` is pending.
-Whole owner `1697` is prepared but unlaunched; it waits for complete owner
-`1678` and holds the build/raster lock throughout its stages and intervening
-gaps. The unlaunched glyph queue must be prepared again after this owner.
+record thirteen passing read-only checks. The
+[completed native guard evidence](generated/native-intrinsic-snap-v2.json)
+reproduces the named baseline failure with exit 101; the fixed source passes
+the consuming Rust callback test at all five scales. C text parity, the
+10,000-update storage guard, the earlier five-scale text-style callback,
+58 native conformance scenarios and all nine inherited-style guards also pass.
+
+Workspace, 600 Rust/C/C++ images, 38,400 geometry states and all four renderer
+matrices have not executed on this width correction. Own-source hosted run
+`37373688613` initially passes five jobs and cancels two before their steps
+execute. Its failed-job retry is in progress in the preserved observation;
+cancelled or pending jobs are not passes.
+
+Whole guard owner `1703` and text/style integration owner `1710` are terminal.
+The earlier full owner `1697` and glyph owner `1690` are unlaunched. The
+[fresh full preparation](generated/native-intrinsic-snap-v3.json) includes
+all 42 prior owners and reuses the unchanged, source-identical actual guard
+logs. New owner `1717` is prepared but has not executed its clean build,
+native app or four matrices. The exclusive lock covers every stage and
+intervening gap. The glyph queue still needs fresh preparation after that owner.
 
 The first preparation has a Python metadata syntax error before execution;
 it creates no source root and runs no Cargo or raster command. That failed
-script remains preserved alongside the fresh, checked preparation.
+script remains preserved alongside the fresh, checked preparation. A separate
+guard preparation also has a metadata syntax error before execution; its
+failed script is preserved and a fresh preparation supplies the actual guard run.
 
-This source is unapplied and unqualified. It does not establish a fix for the
-600 differing native images or assign formal WPT residual ownership. Accepted
+The parent text/style API correction is now integrated into the umbrella
+branch. This narrow width source remains unapplied and unqualified. It does
+not establish a fix for the 600 differing native images or assign formal WPT
+residual ownership. Accepted
 totals remain 21,334/22,924 original and 22,137/23,728 expanded exact, with both
 full pixel gates open. No release state is admitted.
