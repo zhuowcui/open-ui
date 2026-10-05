@@ -5604,6 +5604,251 @@ mod tests {
     }
 
     #[test]
+    fn native_fragment_keywords_reach_engine_and_keep_owned_property_identity() {
+        use openui_style::{
+            BoxDecorationBreak, BreakInside, BreakValue, ColumnFill, ColumnSpan, ColumnWrap,
+            RendererStyleValue as R,
+        };
+        let document_handle = create_document(64, 48);
+        let element_handle = create_element(document_handle, 0, ptr::null_mut());
+        for (property, literal, expected) in [
+            (
+                StyleProperty::ColumnFill,
+                "auto",
+                R::ColumnFill(ColumnFill::Auto),
+            ),
+            (
+                StyleProperty::BreakInside,
+                "avoid",
+                R::BreakInside(BreakInside::Avoid),
+            ),
+            (
+                StyleProperty::BreakBefore,
+                "column",
+                R::BreakBefore(BreakValue::Column),
+            ),
+            (
+                StyleProperty::BreakAfter,
+                "avoid-page",
+                R::BreakAfter(BreakValue::AvoidPage),
+            ),
+            (
+                StyleProperty::ColumnSpan,
+                "all",
+                R::ColumnSpan(ColumnSpan::All),
+            ),
+            (
+                StyleProperty::ColumnWrap,
+                "nowrap",
+                R::ColumnWrap(ColumnWrap::NoWrap),
+            ),
+            (
+                StyleProperty::BoxDecorationBreak,
+                "clone",
+                R::BoxDecorationBreak(BoxDecorationBreak::Clone),
+            ),
+            (
+                StyleProperty::BorderTopStyle,
+                "outset",
+                R::BorderTopStyle(BorderStyle::Outset),
+            ),
+            (
+                StyleProperty::BorderRightStyle,
+                "inset",
+                R::BorderRightStyle(BorderStyle::Inset),
+            ),
+            (
+                StyleProperty::BorderBottomStyle,
+                "ridge",
+                R::BorderBottomStyle(BorderStyle::Ridge),
+            ),
+            (
+                StyleProperty::BorderLeftStyle,
+                "groove",
+                R::BorderLeftStyle(BorderStyle::Groove),
+            ),
+            (
+                StyleProperty::ColumnRuleStyle,
+                "double",
+                R::ColumnRuleStyle(BorderStyle::Double),
+            ),
+            (
+                StyleProperty::OutlineStyle,
+                "dashed",
+                R::OutlineStyle(BorderStyle::Dashed),
+            ),
+        ] {
+            let mut parsed = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+            assert_eq!(
+                oui_style_value_parse(property as i32, text(literal), parsed.as_mut_ptr()),
+                OuiStatus::Ok,
+                "native keyword constructor must accept {property:?} {literal}"
+            );
+            // SAFETY: a successful constructor initialized the tagged record.
+            let parsed = unsafe { parsed.assume_init() };
+            assert_eq!((parsed.tag, parsed.reserved), (6, 0));
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &parsed),
+                OuiStatus::Ok
+            );
+            let reference = element(element_handle as usize).unwrap();
+            let state = element_document(&reference).unwrap();
+            let snapshot = borrow_engine(&state)
+                .unwrap()
+                .computed_style(reference.node)
+                .unwrap()
+                .clone();
+            assert_eq!(
+                openui_style::value_from_computed(&snapshot, property),
+                StyleValue::Renderer(expected.clone())
+            );
+            let other = if property == StyleProperty::ColumnFill {
+                StyleProperty::BreakInside
+            } else {
+                StyleProperty::ColumnFill
+            };
+            assert_eq!(
+                oui_element_set_property(element_handle, other as i32, &parsed),
+                OuiStatus::WrongValueType
+            );
+            let mut invalid = parsed;
+            invalid.reserved = 1;
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &invalid),
+                OuiStatus::WrongValueType
+            );
+            let compound = unsafe { parsed.data.compound } as usize;
+            if property == StyleProperty::ColumnFill {
+                std::thread::spawn(move || {
+                    let own_document = create_document(16, 16);
+                    let own_element = create_element(own_document, 0, ptr::null_mut());
+                    let foreign = OuiStyleValue {
+                        tag: 6,
+                        reserved: 0,
+                        data: OuiStylePayload {
+                            compound: compound as *const OuiStyleCompound,
+                        },
+                    };
+                    assert_eq!(
+                        oui_element_set_property(own_element, property as i32, &foreign),
+                        OuiStatus::WrongThread
+                    );
+                    assert_eq!(
+                        oui_style_compound_destroy(compound as *mut OuiStyleCompound),
+                        OuiStatus::WrongThread
+                    );
+                    assert_eq!(oui_element_destroy(own_element), OuiStatus::Ok);
+                    assert_eq!(oui_document_destroy(own_document), OuiStatus::Ok);
+                })
+                .join()
+                .unwrap();
+            }
+            assert_eq!(
+                oui_style_compound_destroy(compound as *mut OuiStyleCompound),
+                OuiStatus::Ok
+            );
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &parsed),
+                OuiStatus::InvalidHandle
+            );
+            assert_eq!(
+                openui_style::value_from_computed(
+                    &borrow_engine(&state)
+                        .unwrap()
+                        .computed_style(reference.node)
+                        .unwrap(),
+                    property
+                ),
+                StyleValue::Renderer(expected)
+            );
+            assert_eq!(
+                format!("{snapshot:?}"),
+                format!(
+                    "{:?}",
+                    borrow_engine(&state)
+                        .unwrap()
+                        .computed_style(reference.node)
+                        .unwrap()
+                )
+            );
+            let mut output = OuiStyleValue {
+                tag: 77,
+                reserved: 42,
+                data: OuiStylePayload { integer: 123 },
+            };
+            assert_eq!(
+                oui_style_value_parse(property as i32, text("invalid-keyword"), &mut output),
+                OuiStatus::InvalidArgument
+            );
+            assert_eq!(
+                (output.tag, output.reserved, unsafe { output.data.integer }),
+                (77, 42, 123)
+            );
+        }
+        assert_eq!(oui_element_destroy(element_handle), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn native_table_display_literals_keep_existing_scalar_encoding() {
+        let document_handle = create_document(64, 48);
+        let element_handle = create_element(document_handle, 0, ptr::null_mut());
+        for (literal, expected) in [
+            ("inline-table", openui_style::Display::InlineTable),
+            ("table-row-group", openui_style::Display::TableRowGroup),
+            (
+                "table-header-group",
+                openui_style::Display::TableHeaderGroup,
+            ),
+            (
+                "table-footer-group",
+                openui_style::Display::TableFooterGroup,
+            ),
+            ("table-row", openui_style::Display::TableRow),
+            ("table-cell", openui_style::Display::TableCell),
+            (
+                "table-column-group",
+                openui_style::Display::TableColumnGroup,
+            ),
+            ("table-column", openui_style::Display::TableColumn),
+            ("table-caption", openui_style::Display::TableCaption),
+        ] {
+            let mut parsed = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+            assert_eq!(
+                oui_style_value_parse(
+                    StyleProperty::Display as i32,
+                    text(literal),
+                    parsed.as_mut_ptr()
+                ),
+                OuiStatus::Ok
+            );
+            let parsed = unsafe { parsed.assume_init() };
+            assert_eq!(
+                (parsed.tag, parsed.reserved, unsafe {
+                    parsed.data.enum_value
+                }),
+                (5, 0, expected as i32)
+            );
+            assert_eq!(
+                oui_element_set_property(element_handle, StyleProperty::Display as i32, &parsed),
+                OuiStatus::Ok
+            );
+            let reference = element(element_handle as usize).unwrap();
+            let state = element_document(&reference).unwrap();
+            assert_eq!(
+                borrow_engine(&state)
+                    .unwrap()
+                    .computed_style(reference.node)
+                    .unwrap()
+                    .display,
+                expected
+            );
+        }
+        assert_eq!(oui_element_destroy(element_handle), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
+    }
+
+    #[test]
     fn invalid_native_literals_preserve_output_and_existing_scalar_encodings() {
         for (property, literal) in [
             (StyleProperty::FilterBlur, "NaN"),
