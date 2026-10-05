@@ -1090,10 +1090,17 @@ impl Document {
     fn invoke(
         &self,
         node: NodeHandle,
-        _target: NodeHandle,
+        target: NodeHandle,
         event: &Event,
         capture: Option<bool>,
     ) -> Result<(), Error> {
+        // The engine route is resolved before invoking application callbacks.
+        // Weak handles add event delegation without retaining the document;
+        // the scope also clears listener state on error or panic unwinding.
+        let _scope = event.listener_scope(
+            Element::from_handle(self.clone(), target).downgrade(),
+            Element::from_handle(self.clone(), node).downgrade(),
+        );
         #[cfg(feature = "ffi-integration")]
         {
             let handler = self
@@ -1103,7 +1110,7 @@ impl Document {
                 .map_err(|_| Error::ReentrantMutation)?
                 .clone();
             if let Some(handler) = handler {
-                handler(node, _target, event, capture)?;
+                handler(node, target, event, capture)?;
             }
         }
         let callbacks: Vec<_> = self
@@ -1289,6 +1296,200 @@ mod tests {
             None,
             "event phase must clear after dispatch"
         );
+    }
+
+    #[test]
+    fn rust_event_targets_follow_delegated_listener_scope_and_generations() {
+        let document = Document::new(160, 160).unwrap();
+        let root = document.body();
+        let parent = mounted(&document, "div");
+        let button = mounted(&document, "button");
+        parent.append_child(&button).unwrap();
+        for (element, name) in [(&root, "root"), (&parent, "parent"), (&button, "button")] {
+            element.set_attribute("data-name", name).unwrap();
+        }
+        let saved = Rc::new(RefCell::new(Vec::<Event>::new()));
+        let calls = Rc::new(RefCell::new(Vec::new()));
+        for (receiver, capture, name, phase) in [
+            (&root, true, "root", EventPhase::Capture),
+            (&parent, true, "parent", EventPhase::Capture),
+            (&button, false, "button", EventPhase::Target),
+            (&parent, false, "parent", EventPhase::Bubble),
+            (&root, false, "root", EventPhase::Bubble),
+        ] {
+            let events = saved.clone();
+            let observed = calls.clone();
+            let callback = move |event: &Event| {
+                let target = event.target().expect("live event target");
+                let current = event.current_target().expect("live listener receiver");
+                assert_eq!(
+                    target.get_attribute("data-name").unwrap().as_deref(),
+                    Some("button")
+                );
+                assert_eq!(
+                    current.get_attribute("data-name").unwrap().as_deref(),
+                    Some(name)
+                );
+                assert_eq!(event.phase(), Some(phase));
+                // Mutating the target proves callback access has no engine borrow.
+                target.set_attribute("data-observed", name).unwrap();
+                if let Some(previous) = events.borrow().first() {
+                    assert_eq!(previous.phase(), Some(phase));
+                    assert_eq!(
+                        previous
+                            .current_target()
+                            .unwrap()
+                            .get_attribute("data-name")
+                            .unwrap()
+                            .as_deref(),
+                        Some(name)
+                    );
+                }
+                events.borrow_mut().push(event.clone());
+                observed.borrow_mut().push((name, phase));
+            };
+            if capture {
+                receiver.on_capture("click", callback).unwrap();
+            } else {
+                receiver.on("click", callback).unwrap();
+            }
+        }
+        button.click().unwrap();
+        assert_eq!(
+            calls.borrow().as_slice(),
+            [
+                ("root", EventPhase::Capture),
+                ("parent", EventPhase::Capture),
+                ("button", EventPhase::Target),
+                ("parent", EventPhase::Bubble),
+                ("root", EventPhase::Bubble),
+            ]
+        );
+        for event in saved.borrow().iter() {
+            assert_eq!(event.phase(), None);
+            assert!(event.current_target().is_none());
+            assert_eq!(
+                event
+                    .target()
+                    .unwrap()
+                    .get_attribute("data-observed")
+                    .unwrap()
+                    .as_deref(),
+                Some("root")
+            );
+        }
+        button.remove().unwrap();
+        let replacement = mounted(&document, "button");
+        replacement
+            .set_attribute("data-name", "replacement")
+            .unwrap();
+        assert!(saved.borrow().iter().all(|event| event.target().is_none()));
+        let weak = replacement.downgrade();
+        drop(replacement);
+        drop(button);
+        drop(parent);
+        drop(root);
+        drop(document);
+        assert!(
+            weak.upgrade().is_none(),
+            "saved events must not retain the document"
+        );
+    }
+
+    #[test]
+    fn rust_event_targets_clear_listener_state_on_callback_panic() {
+        let document = Document::new(100, 100).unwrap();
+        let button = mounted(&document, "button");
+        let saved = Rc::new(RefCell::new(None));
+        let observed = saved.clone();
+        button
+            .on("click", move |event| {
+                assert!(event.target().is_some());
+                assert!(event.current_target().is_some());
+                *observed.borrow_mut() = Some(event.clone());
+                panic!("application callback panic for dispatch cleanup guard");
+            })
+            .unwrap();
+        let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| button.click()));
+        assert!(outcome.is_err());
+        let event = saved.borrow().clone().unwrap();
+        assert_eq!(event.phase(), None);
+        assert!(event.current_target().is_none());
+        assert!(event.target().is_some());
+        button.set_attribute("data-after-panic", "live").unwrap();
+    }
+
+    #[test]
+    fn rust_event_targets_follow_pointer_capture_and_boundary_dispatch() {
+        let document = Document::new(100, 120).unwrap();
+        let first = mounted(&document, "div");
+        let second = mounted(&document, "div");
+        first.set_attribute("data-name", "first").unwrap();
+        second.set_attribute("data-name", "second").unwrap();
+        let records = Rc::new(RefCell::new(Vec::new()));
+        let saved = Rc::new(RefCell::new(Vec::new()));
+        for (receiver, name) in [(&first, "first"), (&second, "second")] {
+            for event_type in ["mouseenter", "mouseleave", "mousemove"] {
+                let observed = records.clone();
+                let events = saved.clone();
+                receiver
+                    .on(event_type, move |event| {
+                        let target = event.target().unwrap();
+                        let current = event.current_target().unwrap();
+                        assert_eq!(
+                            target.get_attribute("data-name").unwrap().as_deref(),
+                            Some(name)
+                        );
+                        assert_eq!(
+                            current.get_attribute("data-name").unwrap().as_deref(),
+                            Some(name)
+                        );
+                        assert_eq!(event.phase(), Some(EventPhase::Target));
+                        observed
+                            .borrow_mut()
+                            .push((event.event_type.clone(), name, event.mouse_y));
+                        events.borrow_mut().push(event.clone());
+                    })
+                    .unwrap();
+            }
+        }
+        let a = first.bounding_rect().unwrap().unwrap();
+        let b = second.bounding_rect().unwrap().unwrap();
+        let at = |kind, rect: crate::Rect| {
+            document
+                .dispatch_mouse_event(
+                    kind,
+                    rect.x + rect.width / 2.0,
+                    rect.y + rect.height / 2.0,
+                    MouseButton::Left,
+                    Modifiers::NONE,
+                )
+                .unwrap()
+        };
+        at(MouseEventType::Move, a);
+        at(MouseEventType::Down, a);
+        first.set_pointer_capture(0).unwrap();
+        at(MouseEventType::Move, b);
+        assert!(records
+            .borrow()
+            .iter()
+            .any(|(kind, name, y)| kind == "mousemove"
+                && *name == "first"
+                && *y == b.y + b.height / 2.0));
+        first.release_pointer_capture(0).unwrap();
+        at(MouseEventType::Move, b);
+        assert!(records
+            .borrow()
+            .iter()
+            .any(|(kind, name, _)| kind == "mouseleave" && *name == "first"));
+        assert!(records
+            .borrow()
+            .iter()
+            .any(|(kind, name, _)| kind == "mouseenter" && *name == "second"));
+        assert!(saved
+            .borrow()
+            .iter()
+            .all(|event| event.current_target().is_none() && event.phase().is_none()));
     }
 
     #[test]

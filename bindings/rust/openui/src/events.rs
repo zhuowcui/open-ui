@@ -1,6 +1,7 @@
 //! Normalized framework input events.
 
-use std::cell::Cell;
+use crate::element::{Element, WeakElement};
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -16,6 +17,19 @@ struct EventState {
     propagation_stopped: Cell<bool>,
     immediate_propagation_stopped: Cell<bool>,
     phase: Cell<Option<EventPhase>>,
+    target: RefCell<Option<WeakElement>>,
+    current_target: RefCell<Option<WeakElement>>,
+}
+
+pub(crate) struct ListenerScope<'a> {
+    event: &'a Event,
+}
+
+impl Drop for ListenerScope<'_> {
+    fn drop(&mut self) {
+        *self.event.state.current_target.borrow_mut() = None;
+        self.event.state.phase.set(None);
+    }
 }
 
 /// Event value shared by capture, target, and bubble listeners.
@@ -93,8 +107,37 @@ impl Event {
         self.state.phase.set(Some(phase));
     }
 
+    pub(crate) fn listener_scope(
+        &self,
+        target: WeakElement,
+        current_target: WeakElement,
+    ) -> ListenerScope<'_> {
+        *self.state.target.borrow_mut() = Some(target);
+        *self.state.current_target.borrow_mut() = Some(current_target);
+        ListenerScope { event: self }
+    }
+
+    /// The current dispatch phase, or `None` after callbacks have returned.
     pub fn phase(&self) -> Option<EventPhase> {
         self.state.phase.get()
+    }
+
+    /// The element that received the event, including a pointer-capture target.
+    ///
+    /// The event retains a weak, generation-checked handle. A saved event can
+    /// still resolve its target while that element and document are live, but
+    /// does not keep either alive. Returns `None` after they are destroyed.
+    pub fn target(&self) -> Option<Element> {
+        self.state.target.borrow().as_ref()?.upgrade()
+    }
+
+    /// The element whose listener is currently running.
+    ///
+    /// This follows the shared capture/target/bubble route and is cleared
+    /// when callbacks return, including early returns and panic unwinding.
+    /// Saved clones observe the same current listener while dispatch runs.
+    pub fn current_target(&self) -> Option<Element> {
+        self.state.current_target.borrow().as_ref()?.upgrade()
     }
 
     pub fn prevent_default(&self) {

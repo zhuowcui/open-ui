@@ -30,7 +30,7 @@ impl std::fmt::Debug for Element {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct WeakElement {
     document: Weak<DocumentInner>,
     handle: WeakNode,
