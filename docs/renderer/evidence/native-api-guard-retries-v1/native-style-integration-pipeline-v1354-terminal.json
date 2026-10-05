@@ -1,0 +1,72 @@
+{
+  "all_commands_terminal": true,
+  "combines_qualified_native_style_and_owned_cache_sources": true,
+  "consumer_compile_correction_only": false,
+  "immutable_probe_hashes": {
+    "/tmp/openui-native-style-integration-build-v1353.py": "f620e655b2d9c8d1e45cfef79610302c8fb2f162657904c4f52363751bdaf797",
+    "/tmp/openui-native-style-integration-consumers-v1353.py": "b79ddfe18933807aeecaf4af116e55b34ff903bd9e61c4e207ba4c7441bae81e",
+    "/tmp/openui-native-style-integration-guards-v1353.py": "49b17891a996eaaf2175c5bbd792f3cd3a8eb3b3070fdeef85e84c0cd94cc314",
+    "/tmp/openui-native-style-integration-matrices-v1353.py": "be45f278111c13ec34c7167e687ff7476141cca51c438bb0884de1c31b33c0ee",
+    "/tmp/openui-native-style-integration-relative-c-v1353.py": "7c9c26b1fdf08455efef65a0721a73963ca585ece919b741bc49e0b50dd8c04a"
+  },
+  "inherits_intrinsic_or_lcd_trial_source": false,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "ordered_build_and_image_stages": true,
+  "original_pixel_gate_remains_required": true,
+  "preserves_all_previous_input_bytes": true,
+  "prior_terminal_pipeline_sha256": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json": "926466a0bbcc7621a0754043d40a45d52995bc3fd868a257578b451482c488ee",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json": "95da859e07156b9162940ee12d3a3a437d56f1a44dd5f55ce080fc84cf19a1aa",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json": "078a26f62d5c704947367ff2bb1e06f8c3d0759e19093fcad405d27629f4203e",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json": "ceb26919fa7ddf8b74161f2905990a9284427b3bc40df2a561d6be83b8ec494d",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json": "115dfb1326c95cdbcd8ddfb23f80fc7990235bc059071de4be29eee4aba58a57",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json": "be5b475d9d3aa72dc60c02ebb4ab253240d07d3186bf17b64ebdf1d6472ad367",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json": "ae3f849b0499cb54b75321a8e599587fc907c147a63e976d2f99b92fb0585571",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json": "5527ac622b3188a170828738d18de83a113e6635b14dd3766108661c398e1d06"
+  },
+  "prior_whole_pipelines": [
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json"
+  ],
+  "probe_sha256": "2d23eb687eab14fb931556eb933942acde4e7293c8dfd1c151d5e10dd4f91b94",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "renderer_production_unchanged_from_prior_candidate": false,
+  "schema_version": 1,
+  "selection_hashes": {},
+  "source": {
+    "clean": true,
+    "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "43b31449b73a7c7f794d160a82b926e47095ae09a192280536e4dc374b4e6347",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "43b31449b73a7c7f794d160a82b926e47095ae09a192280536e4dc374b4e6347",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "stopped-on-build-guard-or-harness-failure-guards",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-style-integration-guards-v1353.py"
+      ],
+      "log_sha256": "acbdceee9cb1c900be5ead6eb5d03a59c20e0d8abc6040f18d04a4b308234efd",
+      "name": "guards",
+      "observed_exit_code": 1
+    }
+  ],
+  "strict_chromium_capture_pairs": true
+}

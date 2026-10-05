@@ -19,10 +19,12 @@ Open UI never executes JavaScript, in this or future versions. Applications
 handle interaction through public native Rust APIs, signals, and Rust event
 callbacks. The consuming app calls `openui::Document` and `openui::Element`
 methods to create, find, change, measure, focus, and scroll elements and operate
-controls. Every needed browser element operation must be implemented in Rust
-and exposed through this public application API, including its state changes
-and events. A missing method is unfinished framework work, even when an
-internal test fixture can already produce the same visual state. See the
+controls. When an app needs an operation that a browser exposes through
+JavaScript, Open UI must provide the equivalent as a public native Rust method.
+The implementation must include its state changes and events. Interacting
+with elements never requires JavaScript in Open UI. A missing method is
+unfinished framework work, even when an internal test fixture can already
+produce the same visual state. See the
 [native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
 
 ## Verified status
@@ -98,24 +100,30 @@ and rerunning all matrices. All seven own umbrella
 [manual hardening jobs](https://github.com/zhuowcui/open-ui/actions/runs/37244559627)
 pass at `287e176a`, with zero skips; the full Chromium pixel gate still fails.
 The [prepared native style/cache integration](docs/renderer/generated/native-scroll-insets-v36.json)
-at private `0ccc37da` passes ten read-only checks. Its own local compilation,
-native consumers and all pixel matrices are queued; all seven own-source
+at private `0ccc37da` passes ten read-only checks. Its named regression check
+and all nine inheritance tests pass, but the local harness incorrectly
+expected eight. The [corrected queue](docs/renderer/generated/native-scroll-insets-v40.json)
+checks the full named inventory after clearing all workspace packages;
+native consumers and all pixel matrices remain pending. All seven own-source
 hosted hardening jobs pass, with zero skips. Prior style results are attributed to
 `5cc75147`, including the 60 failing native static-position states. This new
 integration remains unapplied and unqualified.
 The [intrinsic constraints and whitespace investigation](docs/renderer/native-intrinsic-constraints.md)
 records the completed fieldset trial's 64 original exact losses and two shared
-layout causes. Private `7d723caa` prepares corrections and a consuming Rust
-callback app. Ten read-only checks pass; its own native and pixel verification
-is queued with all 18 workspace packages cleaned at every source switch.
+layout causes. Private `a6d386e4` corrects the test's typed Float value without
+changing the prepared layout fixes or assertions. Ten read-only checks pass;
+its own native and pixel verification is queued with all 18 workspace packages
+cleaned at every source switch.
 It remains unapplied and admits no release state.
-The [raster validation checkpoint](docs/renderer/generated/native-scroll-insets-v38.json)
-corrects test setup through the existing style API and fixes the C/C++ example's
-bounds query. Strict C/C++ compiler checks and ten repository checks pass on
-private `3d4eea11`; native execution and exact pixel comparisons are queued.
-Its parent hosted run passes six jobs, including the new strict Miri prefix
-test, and fails C consumer compilation. All seven corrected-source hosted
-checks now pass, with zero skips, in [v39](docs/renderer/generated/native-scroll-insets-v39.json).
+The [v40 raster evidence](docs/renderer/generated/native-scroll-insets-v40.json)
+records all native guards and five C boundary tests passing at `3d4eea11`.
+Its workspace stops on an example's unavailable transitive-crate import,
+before pixel verification. Private `fb284c54` exposes all five raster-setting
+types through the public Rust API and makes the example use those exports.
+Renderer bodies and the C ABI stay unchanged. Ten read-only checks pass;
+the clean native and pixel queue remains pending. All seven parent-source
+hosted checks pass, with zero skips, in [v39](docs/renderer/generated/native-scroll-insets-v39.json);
+the revised source needs its own hosted checks.
 The same evidence preserves 4,500 repeatable Chromium geometry
 observations without generating images; native verification remains required.
 Earlier renderer measurements below remain attributed to their named sources. The

@@ -7,6 +7,24 @@ remain open.
 
 ## Current implementation checkpoint
 
+The [v40 evidence](../renderer/generated/native-scroll-insets-v40.json)
+records three terminal verification stops and their concrete corrections.
+All native raster guards and five C boundary tests pass at `3d4eea11`, but
+the workspace cannot compile an example importing a transitive crate.
+Private `fb284c54` exposes the five raster-setting types through public Rust
+exports; renderer bodies and the C ABI are unchanged. Its ten read-only checks
+pass. Native application, pixel and own-source hosted qualification remain
+pending. The new local queue waits for the complete umbrella, style and
+intrinsic pipelines before starting any build or image sweep.
+
+The completed fieldset diagnostic measures all 128 native bounds exactly and
+104/128 images exactly. All 512 Chromium captures agree within their repeat
+pairs; the earlier capture contradiction remains preserved and unresolved.
+The 24 pixel failures occur at 1.25 scale. Bounds, connected regions, channel
+deltas and minimized inputs are recorded; their reviewed causes and ownership
+remain open. This diagnostic admits no release state and does not establish
+compiled-artifact source qualification.
+
 The [v39 audit](../renderer/generated/native-scroll-insets-v39.json) completes
 the applied cache checkpoint's original and expanded comparison checks:
 21,334/22,924 and 22,137/23,728 exact, zero errors, actual exits 1. All 46,652
@@ -62,10 +80,13 @@ ownership without changing the accepted pixel totals or qualifying v0.2.
 The [v36 evidence](../renderer/generated/native-scroll-insets-v36.json)
 preserves clean private `0ccc37da`, combining the previously measured native
 style inheritance and computed-snapshot repairs with the applied owned cache.
-Ten read-only checks pass. Its current-source local baseline/fixed guards,
-clean build, Rust/C consumers and four complete pixel matrices are queued;
+Ten read-only checks pass. Its named baseline fails and fixed check passes.
+All nine inheritance tests pass, but the harness expected eight and stops.
+The corrected queue verifies every selected name, clears all 18 workspace
+packages at each source switch, then runs the clean build, Rust/C consumers
+and four complete pixel matrices;
 all seven own-source hosted hardening jobs now pass, with zero skips.
-No local stage has executed. The prior `5cc75147` source passed 50 native
+The prior `5cc75147` source passed 50 native
 relative-style images and eight C geometry checks, but all 60 native static
 position bounds and pixels still failed. Those source-specific results do not
 qualify the new integration. The candidate remains unapplied, admits no
@@ -85,9 +106,13 @@ collapse leading whitespace using a separate line-content state. Sixty native
 geometry commands and 1,000 independent Chromium font/whitespace observations
 support the investigation without generating images. Its public Rust app uses
 typed methods and a Rust click callback; ten read-only checks pass. Own native
-execution and exact pixels remain pending. The corrected queue cleans all 18
-workspace packages at every source switch and waits for every prior whole
-pipeline. See the [measured causes and verification scope](../renderer/native-intrinsic-constraints.md).
+execution and exact pixels remain pending. Its atomic baseline reproduces the
+named failure; the leading-space baseline cannot compile an invalid Float
+conversion. Private `a6d386e4` and baseline `ac1eb2a7` correct only that test
+setup, preserving all assertions and production code. The fixed source passes
+ten read-only checks. Its queue cleans all 18 workspace packages at every
+source switch and waits for every prior whole pipeline. See the
+[measured causes and verification scope](../renderer/native-intrinsic-constraints.md).
 No source or new release state is promoted.
 
 The font retry `ffb10c21` and C retry `ac08ec56` now stop on compiler diagnostics

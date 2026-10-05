@@ -1,0 +1,59 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 68ec6141..01320047 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -29,7 +29,8 @@ use openui_dom::{
+     ReplacedContent, ReplacedResourceKind,
+ };
+ pub use openui_geometry::{
+-    RasterConfiguration, ViewportAuthority, ViewportMetrics, ViewportMetricsError,
++    RasterBackend, RasterConfiguration, RasterPixelGeometry, TextEdging, TextHinting,
++    TextRasterConfiguration, ViewportAuthority, ViewportMetrics, ViewportMetricsError,
+ };
+ use openui_layout::Fragment;
+ use openui_paint::record_fragment;
+diff --git a/bindings/rust/openui/examples/native_control_raster.rs b/bindings/rust/openui/examples/native_control_raster.rs
+index 656d20fd..2134970b 100644
+--- a/bindings/rust/openui/examples/native_control_raster.rs
++++ b/bindings/rust/openui/examples/native_control_raster.rs
+@@ -1,7 +1,6 @@
+ //! Native control raster options, retained mutation and owned geometry.
+ 
+ use openui::prelude::*;
+-use openui_geometry::TextHinting;
+ use std::{cell::Cell, path::PathBuf, rc::Rc};
+ 
+ fn bounds_json(element: &Element) -> Result<String, Box<dyn std::error::Error>> {
+diff --git a/bindings/rust/openui/src/lib.rs b/bindings/rust/openui/src/lib.rs
+index 112a5a85..e6d0b46d 100644
+--- a/bindings/rust/openui/src/lib.rs
++++ b/bindings/rust/openui/src/lib.rs
+@@ -139,10 +139,10 @@ pub use openui_engine::{
+     AccessibilityAction, AccessibilityLive, AccessibilityNode, AccessibilityNodeId,
+     AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole, AccessibilityTreeUpdate,
+     AnimationEvent, AnimationEventKind, AnimationId, AnimationState, ControlAdjustment,
+-    EditCommand, EngineOptions, FocusOrigin, PointerEventKind, RasterConfiguration,
+-    ScrollAlignment, ScrollAnimationId, ScrollIntoViewContainer, ScrollIntoViewOptions,
+-    ScrollMetrics, TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
+-    ViewportMetricsError,
++    EditCommand, EngineOptions, FocusOrigin, PointerEventKind, RasterBackend, RasterConfiguration,
++    RasterPixelGeometry, ScrollAlignment, ScrollAnimationId, ScrollIntoViewContainer,
++    ScrollIntoViewOptions, ScrollMetrics, TextDirection, TextEdging, TextHinting,
++    TextRasterConfiguration, TextUnit, ViewportAuthority, ViewportMetrics, ViewportMetricsError,
+ };
+ #[cfg(all(feature = "linux", target_os = "linux"))]
+ pub use openui_platform::{KeyboardInput, PlatformEvent};
+diff --git a/bindings/rust/openui/src/prelude.rs b/bindings/rust/openui/src/prelude.rs
+index 40a530f9..8fe61129 100644
+--- a/bindings/rust/openui/src/prelude.rs
++++ b/bindings/rust/openui/src/prelude.rs
+@@ -20,7 +20,8 @@ pub use crate::view_node::{mount_view, IntoView, ViewNode};
+ pub use crate::ElementTag;
+ pub use crate::{
+     AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
+-    EngineOptions, RasterConfiguration, ScrollMetrics, ViewportAuthority, ViewportMetrics,
++    EngineOptions, RasterBackend, RasterConfiguration, RasterPixelGeometry, ScrollMetrics,
++    TextEdging, TextHinting, TextRasterConfiguration, ViewportAuthority, ViewportMetrics,
+ };
+ pub use openui_macros::{component, view};
+ pub use openui_text::{

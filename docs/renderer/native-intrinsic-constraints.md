@@ -75,10 +75,17 @@ uses public typed methods to create the document, selects its raster policy
 before creation, and changes minimum/maximum width or text/indentation from a
 Rust click callback. It checks owned bounds and handle teardown. The
 [source patch](evidence/native-intrinsic-constraints-v1/native-intrinsic-constraints.patch)
-includes named Engine guards and the qualified owned-recording cache code.
+includes named Engine guards and the applied owned-recording cache code.
+Compiled workspace source attribution still requires the full clean rebuild.
 
-Ten read-only checks pass at clean `7d723caa`. Its own baseline failures,
-fixed guards, consuming-app execution and exact pixels remain pending. The
+The atomic baseline reproduces its named assertion failure. The leading-space
+baseline instead fails to compile: `Float` has no implicit conversion to
+`StyleValue`. The [v40 correction](generated/native-scroll-insets-v40.json)
+uses the existing `RendererStyleValue::Float` variant at fixed `a6d386e4` and
+test-only baseline `ac1eb2a7`, preserving all assertions and production code.
+Ten read-only checks pass on the corrected fixed source. Its remaining named
+baseline failures, fixed guards, consuming-app execution and exact pixels
+remain pending. The
 source inherits an unqualified intrinsic trial, so earlier focused/primitive
 passes do not qualify this new source.
 

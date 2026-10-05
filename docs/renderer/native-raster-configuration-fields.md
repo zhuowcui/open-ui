@@ -11,7 +11,9 @@ The [v38 evidence](generated/native-scroll-insets-v38.json) preserves
 existing `update_derived` closure. Test assertions and renderer production
 code are unchanged from `5ef50aac`. The corresponding corrected test-only
 baselines are `b7284ac9` for phase/settings and `5390b683` for the default
-physical strike. Their required named failures and fixed passes remain pending.
+physical strike. Their three named baseline failures and fixed passes now
+reproduce at `3d4eea11`, alongside the full text, paint, engine and software/Ganesh
+guard suites, in [v40](generated/native-scroll-insets-v40.json).
 
 The parent hosted run finishes with six passing jobs and one failure. Strict
 Miri passes the C version-prefix test. C UBSan stops while compiling an invalid
@@ -28,6 +30,15 @@ source switch, requires all three named baseline failures, then runs a clean
 17-stage build, native control/phase/geometry and Rust/C/C++ font consumers,
 the 880-comparison selection and all four complete matrices. Builds and image
 sweeps remain separate; all ten earlier whole pipelines must be terminal.
+Five native C configuration boundary tests also pass. The workspace then
+stops before tests or pixel comparisons: `native_control_raster` imports
+`openui_geometry`, which is not a direct application dependency.
+Private `fb284c54` exposes `RasterBackend`, `RasterPixelGeometry`, `TextEdging`,
+`TextHinting` and `TextRasterConfiguration` through the shared Engine, public
+`openui` API and prelude. The example now imports only the public API. No
+renderer body, dependency, C export or C layout changes. Ten read-only checks
+pass on this revision. Its clean native and pixel queue waits for every earlier
+whole pipeline, and its own-source hosted checks remain pending.
 Compilation and pixel failures remain required failures. This source is
 unapplied and inherits the unqualified raster production changes below.
 

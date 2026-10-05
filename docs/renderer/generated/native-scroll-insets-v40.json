@@ -1,0 +1,2844 @@
+{
+  "accepted_expanded": {
+    "actual_exit": 1,
+    "different": 1591,
+    "errors": 0,
+    "exact": 22137,
+    "total": 23728
+  },
+  "accepted_original": {
+    "actual_exit": 1,
+    "different": 1590,
+    "errors": 0,
+    "exact": 21334,
+    "total": 22924
+  },
+  "applied_to_umbrella": false,
+  "artifacts": {
+    "docs/renderer/evidence/native-api-guard-retries-v1/build-v1397-clean-workspace.log": {
+      "bytes": 39,
+      "sha256": "46379dfb63383a879008d9d490f101831d170f95cf89d38dee9f2dfe64b80062"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/build-v1397-raster-boundaries.log": {
+      "bytes": 12105,
+      "sha256": "25d4b976c8d5997c0715a366b12274ada30a0d70cc762b81e42d04da754a3e04"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/build-v1397-workspace.log": {
+      "bytes": 13524,
+      "sha256": "36dd5c3eecc34d976556693de0cec02456701425f2b3b647f2d360a16f8e4c5d"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/div-padding-0-border-box-after.html": {
+      "bytes": 1060,
+      "sha256": "64abf124215c0734e557d765d0cd3aec0866a1ec747302c1ae60215c8324aac5"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/div-padding-0-border-box-before.html": {
+      "bytes": 1060,
+      "sha256": "3ed758d7a18c91885f11dcac23499e0605c785b221073cf273acb89f3ec7024b"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/div-padding-0-content-box-after.html": {
+      "bytes": 1061,
+      "sha256": "1102ee8efdd820065f1750b91adc220caec894908f75a6d84e492eee3fb21405"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/div-padding-0-content-box-before.html": {
+      "bytes": 1061,
+      "sha256": "70e787e627badea70582934d12b778a47621281e833652c992cbadc8a6e9787f"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/div-padding-10-border-box-after.html": {
+      "bytes": 1061,
+      "sha256": "06fa08b8f83ce3cf2e4c9589ea310189d1ec805350bafe11047fb82d59fbf5fa"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/div-padding-10-border-box-before.html": {
+      "bytes": 1061,
+      "sha256": "8378860f41cef62a4b90ed06499afffe665bf5d14fb015bcff48848d3fc7e53c"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/div-padding-10-content-box-after.html": {
+      "bytes": 1062,
+      "sha256": "7f1a7fa4a8c28a4bb1b3b3b5ccd651b6bc9c56ff178a2b67019e602d50b911cd"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/div-padding-10-content-box-before.html": {
+      "bytes": 1062,
+      "sha256": "0c78e8ded99550c75bb4fd50b9fedca4a0c5779675033119865649a65f9724e5"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/fieldset-forensics-v1345.json": {
+      "bytes": 609340,
+      "sha256": "d5a9cdea72752c11b3e6222043ccdf47a0a4bff76f5d4d240709cbfdd2e24991"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/fieldset-padding-0-border-box-after.html": {
+      "bytes": 1070,
+      "sha256": "dc08b7a36a45550bd82bd863cec753267f08a334532b740d4d50a4c3807dc031"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/fieldset-padding-0-border-box-before.html": {
+      "bytes": 1070,
+      "sha256": "7e644f3b4d8498d6ff979501e8848e10adc90d1017d7fa67372da26d9b873eb9"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/fieldset-padding-0-content-box-after.html": {
+      "bytes": 1071,
+      "sha256": "7b0d51a696e9300845e566f40eacd4d7eeabcb8b13d3247404a06a808fe54755"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/fieldset-padding-0-content-box-before.html": {
+      "bytes": 1071,
+      "sha256": "b0cca1468733e0df04ff480765e23edd9fc99d9a655827bb3e826557a5ae927b"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/fieldset-padding-10-border-box-after.html": {
+      "bytes": 1071,
+      "sha256": "e99610b2907413e05a16f4f3556aada15d190749e41ef1ed672bb2be3b6f46c9"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/fieldset-padding-10-border-box-before.html": {
+      "bytes": 1071,
+      "sha256": "12175b32254648c260adc8767177752ab53acb4fde64b263e604cb8cc7858d21"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/fieldset-padding-10-content-box-after.html": {
+      "bytes": 1072,
+      "sha256": "09053d160dd9e594bb879259825942e92ede12fc44cea25ea7fa85dce88bf612"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/fieldset-padding-10-content-box-before.html": {
+      "bytes": 1072,
+      "sha256": "e2a4b6abd7db31737a7f2e2d45e4f9a06a65d99004071a20b58f6931e18ac561"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/intrinsic-guards-v1374.json": {
+      "bytes": 7392,
+      "sha256": "6a3013ecb3aa70c0b215b7f59ed0ca166957f87ec7eea378df0675eafa1aca68"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/intrinsic-test-api.patch": {
+      "bytes": 750,
+      "sha256": "53fdc0355532866ea6733028374cb4d99d200bfab280322406a03950aa130737"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/leading-test-baseline-api.patch": {
+      "bytes": 750,
+      "sha256": "a4e1397c488992126810a731ece358aacfa4c9acb0cfa7d071f6c59ddb2e6de0"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/native-fieldset-capture-forensics-pipeline-v1346-terminal.json": {
+      "bytes": 4298,
+      "sha256": "115dfb1326c95cdbcd8ddfb23f80fc7990235bc059071de4be29eee4aba58a57"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/native-guard-retries-prepared-v1418.json": {
+      "bytes": 3927,
+      "sha256": "05c23245b4cc0d4c414f49e0c80fba75012abc0d413cf37c392b0ce3ba9d4440"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/native-intrinsic-constraints-pipeline-v1375-terminal.json": {
+      "bytes": 6341,
+      "sha256": "11304c8d3704024e05eef9b80f005c7fff8cd7e55f94e563120eabac78405e31"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/native-intrinsic-constraints-retry-pipeline-v1420-at-observation.json": {
+      "bytes": 4854,
+      "sha256": "0ed30c8f3152b7224a13a09daf56751da95bd78b5cd76fa06acf212180ce0da0"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/native-intrinsic-test-api-prepared-v1416.json": {
+      "bytes": 754,
+      "sha256": "d212dd5bf9f4d53ebd89753cc509c681b282396351cc8989d5e5f91f416a0595"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/native-raster-api-pipeline-v1425-at-observation.json": {
+      "bytes": 5263,
+      "sha256": "4d220c7edd1cde237b75fc6686ec0db28e59a49eb0aa2ac16be72e17d7679782"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/native-raster-api-prepared-v1424.json": {
+      "bytes": 1850,
+      "sha256": "83a18e35043deb8a6bdaca7ec99f8d8f90c46a972efb1722443abeb0d4011875"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/native-raster-api-source-v1422.json": {
+      "bytes": 493,
+      "sha256": "b75ab97733f85db4e2d8fc13f77afe8363e5ef4eb850f476e2d016f8f2590288"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/native-raster-consumer-pipeline-v1398-terminal.json": {
+      "bytes": 6975,
+      "sha256": "8a64d4285cd2ce57f85fdd0cc00265ee34cc3cee4cd08d33d5bd9aff82f4a261"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/native-raster-public-types.patch": {
+      "bytes": 3253,
+      "sha256": "fe253a9727fcac70b509fa284a0fdb523dbdb823513d03f55bed3a1a01992fe7"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/native-style-integration-pipeline-v1354-terminal.json": {
+      "bytes": 5218,
+      "sha256": "bd6bacf2368642fdb3ca09c28ca261cefd1c1dd72c7dc451a4cfab6ff6b03305"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/native-style-integration-retry-pipeline-v1419-at-observation.json": {
+      "bytes": 4402,
+      "sha256": "3351389b0c3a678c1e548a6ae3341782e26719c806cb24394d0fdd48f1170de7"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-fieldset-capture-forensics-v1345.py": {
+      "bytes": 12730,
+      "sha256": "acf8c6295dfb8315c460a767c3508989779a822efeb6aaff28d4091a0f7a9486"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-intrinsic-constraints-build-v1418.py": {
+      "bytes": 5090,
+      "sha256": "387fbad63746d487bc97a9cdb9dffa84fe97d8c83cae94ba8394764053d3ef85"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-intrinsic-constraints-consumer-v1418.py": {
+      "bytes": 10296,
+      "sha256": "a89e210f2680f607deefc79ce64316b3fefd2e337406d8d2d2af40dd395e5d1c"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-intrinsic-constraints-guards-v1418.py": {
+      "bytes": 6221,
+      "sha256": "7ed61e68b44fa814bb6e05003e2d70dca48a7c672e4ab09438e2541e4b7085c2"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-intrinsic-constraints-matrices-v1418.py": {
+      "bytes": 2531,
+      "sha256": "843a52f72039a0cf9f50536a51a0ef7cd252dbdfab391051aee4643fb2ed84c3"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-intrinsic-constraints-retry-pipeline-v1420.py": {
+      "bytes": 7792,
+      "sha256": "e3ff899f55d13b20d648026a4df4b4cdd07af5ea27d37caed34c0b6c3b2df0df"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-intrinsic-constraints-sizing-v1418.py": {
+      "bytes": 3909,
+      "sha256": "e5e800895dac61f34065a0142e0ea28e8ae190305fe5c2dbd67d6289fe49bf0c"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-raster-api-pipeline-v1425.py": {
+      "bytes": 8233,
+      "sha256": "0693b67ff9f1e27e160de38b162c10182ede27eb513fc714cda06cf8f821310c"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-raster-consumer-application-v1424.py": {
+      "bytes": 9840,
+      "sha256": "6f7fa715ec9db1ff07c08ca32a3a76b8e0cf33fc77e74093e285767679a5a8e8"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-raster-consumer-build-v1424.py": {
+      "bytes": 7845,
+      "sha256": "7ea28157d12becef40bc182b6a41e5119353e6afc876c66c8896ed657d1c40fc"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-raster-consumer-consumer-v1424.py": {
+      "bytes": 20040,
+      "sha256": "10cf6180cab378fef4646335b71659047f28affd020212814fb029b9287d26d1"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-raster-consumer-controls-v1424.py": {
+      "bytes": 5702,
+      "sha256": "05c8e7a62d2707438f56322f88dd4fabce0d07dea447a53a9a27e41a8a1e337a"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-raster-consumer-guards-v1424.py": {
+      "bytes": 6895,
+      "sha256": "3aeb516d0af5417078c36e696f43f9214ff9e4860634d172203550595bbb2288"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-raster-consumer-matrices-v1424.py": {
+      "bytes": 2245,
+      "sha256": "61d9cdd475006992dc5bef7a9f2600d2c127785b00de29a87d83bb60789c4c55"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-raster-consumer-sizing-v1424.py": {
+      "bytes": 3801,
+      "sha256": "2613ff922f5ac171c387b73f30dc9a1d72fcebef0059faad32a9ab3410ecbe06"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-raster-consumer-static-v1424.py": {
+      "bytes": 5913,
+      "sha256": "2b2de8f4581b3ad6d73c8994c6327af3a0ceb84310341af65c1cb621ab329176"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-style-integration-build-v1418.py": {
+      "bytes": 4887,
+      "sha256": "bd837a859140154ff367cca08571c67c3a763a58fabe03d0aff4ab7d3ed61a84"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-style-integration-consumers-v1418.py": {
+      "bytes": 10642,
+      "sha256": "1753b06029c991c6601d008928b575c8239dda62fe61aa37e592ec8ee4b372e5"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-style-integration-guards-v1418.py": {
+      "bytes": 8911,
+      "sha256": "6822c0308bcbb0148224c30a207d2b1e18fc60e877e19775c77dbebfbdc2c67f"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-style-integration-matrices-v1418.py": {
+      "bytes": 2256,
+      "sha256": "308c3713cca06c038b0e5fa8bcf11c6409be3d66db1db8374e814e5b8e8216cb"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-style-integration-relative-c-v1418.py": {
+      "bytes": 4315,
+      "sha256": "231d7fba9575eace214001eed0d9bf12aac478a96fc959a6e3b7125b33f8d813"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/openui-native-style-integration-retry-pipeline-v1419.py": {
+      "bytes": 7502,
+      "sha256": "8a394ba32530eb19ee82f6db03a760f73009976f561104b91cac8cd92b63d848"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/raster-build-v1397.json": {
+      "bytes": 3052,
+      "sha256": "1167366b982239c81106f691b6ddc3516427508270f147bce34f2a2963a9b462"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/raster-guards-v1397.json": {
+      "bytes": 25227,
+      "sha256": "c68492bde94ee6892f692781af519183e0b8932453a494a1b9ea3d1b63af9d11"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/read-only-checks-v1417.json": {
+      "bytes": 3524,
+      "sha256": "37a1108e10b7747f37c24e6a965b8b24c1db41ddb7d2d894e0beb2a101f24232"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/read-only-checks-v1423.json": {
+      "bytes": 3524,
+      "sha256": "6dea8a15db6d21bc0f65698313fb24496eb05765181d9f8d98636eadc04155fc"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/style-guards-v1353.json": {
+      "bytes": 5243,
+      "sha256": "113d0eb6c90c3153672bfcbbf0b7ec37a85f19fc4dacb87e5a4189ad260cc420"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/umbrella-ci-complete-v1414.json": {
+      "bytes": 22330,
+      "sha256": "efbe1b4b7f2bb0171b7d577002c8db0ce76f73e006f40e122ef3c785124b084d"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/umbrella-clean-workspace-pipeline-v1411-at-observation.json": {
+      "bytes": 6351,
+      "sha256": "e92800b69816ad66b2e7939d987e0709b79bf860ca5294c1cfdac4383e748e06"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1353-baseline-native-inheritance-guard.log": {
+      "bytes": 10612,
+      "sha256": "08c0de9932dff6536940c449951c7a0d4d34fb7b91661d2660eaab9f66944c26"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1353-fixed-native-inheritance-guard.log": {
+      "bytes": 10010,
+      "sha256": "6d29e2677b72e4fba543981e4e63ae3925f9d04997048a88b8a928a1c607a02b"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1353-native-inheritance-guards.log": {
+      "bytes": 9925,
+      "sha256": "bcfb57dbf19501fd854f15216a6070d676069c17ec12c1fca971635440f5c80d"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1374-baseline-atomic.log": {
+      "bytes": 10718,
+      "sha256": "e50d8a3627cf21ae9f143c33b70effd67748d2e2494fd9fc4fbe334c9cbeca8f"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1374-baseline-leading.log": {
+      "bytes": 11108,
+      "sha256": "89c4b4b360583d07e5b2ef2f07b609a8e249e92f45bb8f2ab20be2a93eefa930"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1374-clean-baseline-atomic.log": {
+      "bytes": 38,
+      "sha256": "e32c12c735041940b05f8b1aac4dc35ed0ddba5e2bbc3ff31d6cb6ed33849748"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1374-clean-baseline-leading.log": {
+      "bytes": 38,
+      "sha256": "fecad3eb7a131dc49ab4a6c3c7687c68763b33df93826446239fc24902e2cea7"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-baseline-fontations_preserves_requested_mask_and_position_settings.log": {
+      "bytes": 1123,
+      "sha256": "6c2622625b3699e5e515ddb83859ed568bd5d0eac8b98ce46afef0cc84bc037f"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-baseline-lcd_phase_moves_ink_by_physical_pixels_for_each_text_role.log": {
+      "bytes": 11120,
+      "sha256": "471290918150756fb2b0d49e2cfa4921c4874babc537d9a26b8092cdf6c001ff"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-baseline-native_outlines_fit_at_physical_size_with_default_and_explicit_backends.log": {
+      "bytes": 10516,
+      "sha256": "5df539d11742ffb883dab19a8ef9edc38af8f51747fa589740e22688bd171dfe"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-clean-baseline-default-strike.log": {
+      "bytes": 38,
+      "sha256": "a79a2d979e2e50d79450d60e3634e1f2da73d69a20a78e3ac38968bbf550c1e4"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-clean-baseline-phase-and-settings.log": {
+      "bytes": 37,
+      "sha256": "57bfa23dd21d60b5a0d0ab82bf7f16d05b46569213821564ba05dd05ba9cbbf8"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-clean-fixed.log": {
+      "bytes": 38,
+      "sha256": "987b838705a1713620c051bca3bcb8b1de7a230b34536de5c560c658f3e3accf"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-engine-library.log": {
+      "bytes": 13189,
+      "sha256": "95a0914a455f534c4aa1c3cc273450866603eb742ded5ad25d9452a603d078b0"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-fixed-compositor_distinguishes_owned_recordings_with_equal_document_generations.log": {
+      "bytes": 9458,
+      "sha256": "62b54de488b3f29f7e59bd0a188a2ff79d6488c50b25470d844816db08b0842d"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-fixed-fontations_lcd_hints_at_physical_size_before_replay.log": {
+      "bytes": 385,
+      "sha256": "fa7875177693719df73b6ff1d8e0b7655599e5e243da2f55b6eac124a368bba0"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-fixed-fontations_preserves_requested_mask_and_position_settings.log": {
+      "bytes": 499,
+      "sha256": "5c8d0e7a77989e2a04dc100afa7804a56943473d3863302c5ab89776c5007c6b"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-fixed-lcd_phase_moves_ink_by_physical_pixels_for_each_text_role.log": {
+      "bytes": 9904,
+      "sha256": "a515cf91087c6932e31766a9bb89c9e0e6b0289fdb732c34bec4a3aa5bf997e7"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-fixed-native_outlines_fit_at_physical_size_with_default_and_explicit_backends.log": {
+      "bytes": 9370,
+      "sha256": "5032bbaff799c5512f02c957aedcc914350abcd266626fb9bce47cc26f8200e8"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-ganesh-compositor.log": {
+      "bytes": 10200,
+      "sha256": "ea0051d1f033526ac63116e2b4ea0ea8abeba5abca1cbd1fe092e692ec799dff"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-paint-raster-configuration.log": {
+      "bytes": 9441,
+      "sha256": "6e217caa14815c4a87f28e39a405536bd01210a75d1e1d522c079037956445ee"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-software-compositor.log": {
+      "bytes": 9677,
+      "sha256": "d1ff347ea6cd5faba1769f44e57b12f0a3474ab670f632b8c567a6aaf5155b16"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1397-text-library.log": {
+      "bytes": 20675,
+      "sha256": "c85433afa4bd18602f492afa06892ceb1e981774488f1bb566545007b5ac3828"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1417-accountability.log": {
+      "bytes": 2867,
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1417-archive.log": {
+      "bytes": 45,
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1417-ffi.log": {
+      "bytes": 32,
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1417-multicol.log": {
+      "bytes": 59,
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1417-renderer.log": {
+      "bytes": 81,
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1417-sp17.log": {
+      "bytes": 86,
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1417-sp18.log": {
+      "bytes": 121,
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1417-sp20.log": {
+      "bytes": 142,
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1417-style.log": {
+      "bytes": 37,
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1417-v02.log": {
+      "bytes": 63,
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1423-accountability.log": {
+      "bytes": 2867,
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1423-archive.log": {
+      "bytes": 45,
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1423-ffi.log": {
+      "bytes": 32,
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1423-multicol.log": {
+      "bytes": 59,
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1423-renderer.log": {
+      "bytes": 81,
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1423-sp17.log": {
+      "bytes": 86,
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1423-sp18.log": {
+      "bytes": 121,
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1423-sp20.log": {
+      "bytes": 142,
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1423-style.log": {
+      "bytes": 37,
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    "docs/renderer/evidence/native-api-guard-retries-v1/v1423-v02.log": {
+      "bytes": 63,
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    }
+  },
+  "compiled_workspace_source_attribution": "full clean umbrella revalidation pending",
+  "contract": "Open UI never executes JavaScript. Consuming apps use public native Rust methods and Rust callbacks. Needed browser element behavior must be implemented and exposed natively; fixtures and pixel exclusions never waive public API work. Pinned Chromium is the sole pixel target, with zero tolerance; old Open UI images are provenance.",
+  "fieldset_forensics": {
+    "captures_per_reference_process": 2,
+    "compiled_binary_release_source_attribution": "unverified until full clean reproduction",
+    "earlier_capture_contradictions_not_closed": true,
+    "exact_geometry_does_not_qualify_pixels": true,
+    "independent_reference_processes_per_image": 2,
+    "residuals": [
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 375,
+              "maximum_absolute_delta": 63,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -63,
+              "signed_delta_sum": -23610
+            },
+            "green": {
+              "changed_pixels": 375,
+              "maximum_absolute_delta": 63,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -63,
+              "signed_delta_sum": -23610
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 188,
+                "width": 188,
+                "x": 25,
+                "y": 25
+              },
+              "mismatched_pixels": 375
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 188,
+            "width": 188,
+            "x": 25,
+            "y": 25
+          },
+          "mismatched_pixels": 375
+        },
+        "case": "div-padding-0-content-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "chromium_png_sha256": "0f7602fcef8b040643645b6cb5377831b6deb3b4d53d4ca1eb0ec4ec397fe62f",
+        "native_bounds": {
+          "container": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "native_png_sha256": "e96745360b7e93da55d0dea9c648c41057a7b21cab25a0dff0879f01c0684042",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          800,
+          600
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 375,
+              "maximum_absolute_delta": 63,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -63,
+              "signed_delta_sum": -23610
+            },
+            "green": {
+              "changed_pixels": 375,
+              "maximum_absolute_delta": 63,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -63,
+              "signed_delta_sum": -23610
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 188,
+                "width": 188,
+                "x": 25,
+                "y": 25
+              },
+              "mismatched_pixels": 375
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 188,
+            "width": 188,
+            "x": 25,
+            "y": 25
+          },
+          "mismatched_pixels": 375
+        },
+        "case": "div-padding-0-content-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "chromium_png_sha256": "ac89c8719b6ec6bbf4c16e5d14358e17ed75f350b8c2ca98f455eb2502992267",
+        "native_bounds": {
+          "container": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "native_png_sha256": "dd0c74826f173c1da469a6c4876ea167120fc5af86291c5c38542c738b3ec3a5",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          1280,
+          720
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 375,
+              "maximum_absolute_delta": 63,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -63,
+              "signed_delta_sum": -23610
+            },
+            "green": {
+              "changed_pixels": 375,
+              "maximum_absolute_delta": 63,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -63,
+              "signed_delta_sum": -23610
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 188,
+                "width": 188,
+                "x": 25,
+                "y": 25
+              },
+              "mismatched_pixels": 375
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 188,
+            "width": 188,
+            "x": 25,
+            "y": 25
+          },
+          "mismatched_pixels": 375
+        },
+        "case": "div-padding-0-border-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "chromium_png_sha256": "0f7602fcef8b040643645b6cb5377831b6deb3b4d53d4ca1eb0ec4ec397fe62f",
+        "native_bounds": {
+          "container": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "native_png_sha256": "e96745360b7e93da55d0dea9c648c41057a7b21cab25a0dff0879f01c0684042",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          800,
+          600
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 375,
+              "maximum_absolute_delta": 63,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -63,
+              "signed_delta_sum": -23610
+            },
+            "green": {
+              "changed_pixels": 375,
+              "maximum_absolute_delta": 63,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -63,
+              "signed_delta_sum": -23610
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 188,
+                "width": 188,
+                "x": 25,
+                "y": 25
+              },
+              "mismatched_pixels": 375
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 188,
+            "width": 188,
+            "x": 25,
+            "y": 25
+          },
+          "mismatched_pixels": 375
+        },
+        "case": "div-padding-0-border-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "chromium_png_sha256": "ac89c8719b6ec6bbf4c16e5d14358e17ed75f350b8c2ca98f455eb2502992267",
+        "native_bounds": {
+          "container": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "native_png_sha256": "dd0c74826f173c1da469a6c4876ea167120fc5af86291c5c38542c738b3ec3a5",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          1280,
+          720
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 496,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 496
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 126,
+                "width": 126,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 496
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 126,
+            "width": 126,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 496
+        },
+        "case": "div-padding-10-content-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 120,
+            "width": 120,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 100,
+            "width": 100,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "9f4e6c896766f45a3edb60b302139d5815d298223a8fc3810ce83510aadd32bc",
+        "native_bounds": {
+          "container": {
+            "height": 120,
+            "width": 120,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 100,
+            "width": 100,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "673e5c4159ab4fadf41da754da30029f20184025d8839f9e369c82b72907bf86",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "before",
+        "viewport": [
+          800,
+          600
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 374,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 374
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 188,
+                "width": 188,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 374
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 188,
+            "width": 188,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 374
+        },
+        "case": "div-padding-10-content-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 170,
+            "width": 170,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "93c0ec85bc39c951aac7999d9b835aa8e087c7f589e9ca43bc96071e78516f9e",
+        "native_bounds": {
+          "container": {
+            "height": 170,
+            "width": 170,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "521edad121daad28c07368b6c9871e9165c222b1782e48717003035528ee4219",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          800,
+          600
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 496,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 496
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 126,
+                "width": 126,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 496
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 126,
+            "width": 126,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 496
+        },
+        "case": "div-padding-10-content-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 120,
+            "width": 120,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 100,
+            "width": 100,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "293fc43172a994d7a39f462d6f2ab1d8d03e4146fab20a6d7aac6484753a7da6",
+        "native_bounds": {
+          "container": {
+            "height": 120,
+            "width": 120,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 100,
+            "width": 100,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "28d312cb08ae0a694d42e0561a292ba2c055ff5fc3195d6ca62c014275afaae5",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "before",
+        "viewport": [
+          1280,
+          720
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 374,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 374
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 188,
+                "width": 188,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 374
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 188,
+            "width": 188,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 374
+        },
+        "case": "div-padding-10-content-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 170,
+            "width": 170,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "b5657fcecb4bc27baf9df193cc0cbb41cfa7a1ba9a215b7c861f9507a1a06fd6",
+        "native_bounds": {
+          "container": {
+            "height": 170,
+            "width": 170,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "c5e1008e7f70281b291ecfb919e0e1b755eaab9514fba5ec69fe1427ea7e6058",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          1280,
+          720
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 396,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 396
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 101,
+                "width": 101,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 396
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 101,
+            "width": 101,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 396
+        },
+        "case": "div-padding-10-border-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 80,
+            "width": 80,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "b5b9aa85a1dc3f969825497837d45944d74575a83ea0d43fd9f8dbaf006f7443",
+        "native_bounds": {
+          "container": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 80,
+            "width": 80,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "f14dbcfd89bec2a7bf8c6cdb72ea0290d2a00aa174d177297af8d140a908589d",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "before",
+        "viewport": [
+          800,
+          600
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 324,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 324
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 163,
+                "width": 163,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 324
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 163,
+            "width": 163,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 324
+        },
+        "case": "div-padding-10-border-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 130,
+            "width": 130,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "fa5238c1f6683d8347b09ff1e40e6a51de7f5ead9647aeeb3a9db222dbdd420c",
+        "native_bounds": {
+          "container": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 130,
+            "width": 130,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "d4345c02e16078c383df321bba3389d6675579a175d63e33b668921e6f6c2426",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          800,
+          600
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 396,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 396
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 101,
+                "width": 101,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 396
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 101,
+            "width": 101,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 396
+        },
+        "case": "div-padding-10-border-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 80,
+            "width": 80,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "4217511be7d6c2ed45c2775340f7753cacca05d5669e5abc1d7081659f5ca288",
+        "native_bounds": {
+          "container": {
+            "height": 100,
+            "width": 100,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 80,
+            "width": 80,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "a0c0bf042aecc19372808a31e35dfd0d48ef03384655e9919dbdc7ca22b89fec",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "before",
+        "viewport": [
+          1280,
+          720
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 324,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 324
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 163,
+                "width": 163,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 324
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 163,
+            "width": 163,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 324
+        },
+        "case": "div-padding-10-border-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 130,
+            "width": 130,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "b1ece1996c7ebeec09f0fe859bbb03c82f4af2273003c95cdfe76037ffb10e8d",
+        "native_bounds": {
+          "container": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 130,
+            "width": 130,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "a696bab071a7aed49fce7d515c09188823f43f897bcb5974c0a53c0cd141a22d",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          1280,
+          720
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 375,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": -1,
+              "signed_delta_sum": 373
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 188,
+                "width": 188,
+                "x": 25,
+                "y": 25
+              },
+              "mismatched_pixels": 375
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 188,
+            "width": 188,
+            "x": 25,
+            "y": 25
+          },
+          "mismatched_pixels": 375
+        },
+        "case": "fieldset-padding-0-content-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 150,
+            "width": 200,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "chromium_png_sha256": "16707afd42e763d25cd1a7b0f019f984356d1d28e79c59e921a32c6c83490f49",
+        "native_bounds": {
+          "container": {
+            "height": 150,
+            "width": 200,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "native_png_sha256": "b242587da56566fae6f1958e6a68e70c2f43742a77ccfc8d82970cb557dabd46",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          800,
+          600
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 375,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": -1,
+              "signed_delta_sum": 373
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 188,
+                "width": 188,
+                "x": 25,
+                "y": 25
+              },
+              "mismatched_pixels": 375
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 188,
+            "width": 188,
+            "x": 25,
+            "y": 25
+          },
+          "mismatched_pixels": 375
+        },
+        "case": "fieldset-padding-0-content-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 150,
+            "width": 200,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "chromium_png_sha256": "14de2d3f6a3788167ebb83cb646a3f33787206e812429c3858b29928a9c5683b",
+        "native_bounds": {
+          "container": {
+            "height": 150,
+            "width": 200,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "native_png_sha256": "dedbed6d133e5a2701f323668dd4bd7c01d1844ef149cd51786fd5384784bd9b",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          1280,
+          720
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 375,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": -1,
+              "signed_delta_sum": 373
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 188,
+                "width": 188,
+                "x": 25,
+                "y": 25
+              },
+              "mismatched_pixels": 375
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 188,
+            "width": 188,
+            "x": 25,
+            "y": 25
+          },
+          "mismatched_pixels": 375
+        },
+        "case": "fieldset-padding-0-border-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 150,
+            "width": 200,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "chromium_png_sha256": "16707afd42e763d25cd1a7b0f019f984356d1d28e79c59e921a32c6c83490f49",
+        "native_bounds": {
+          "container": {
+            "height": 150,
+            "width": 200,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "native_png_sha256": "b242587da56566fae6f1958e6a68e70c2f43742a77ccfc8d82970cb557dabd46",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          800,
+          600
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 375,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": -1,
+              "signed_delta_sum": 373
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 188,
+                "width": 188,
+                "x": 25,
+                "y": 25
+              },
+              "mismatched_pixels": 375
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 188,
+            "width": 188,
+            "x": 25,
+            "y": 25
+          },
+          "mismatched_pixels": 375
+        },
+        "case": "fieldset-padding-0-border-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 150,
+            "width": 200,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "chromium_png_sha256": "14de2d3f6a3788167ebb83cb646a3f33787206e812429c3858b29928a9c5683b",
+        "native_bounds": {
+          "container": {
+            "height": 150,
+            "width": 200,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 20,
+            "y": 20
+          }
+        },
+        "native_png_sha256": "dedbed6d133e5a2701f323668dd4bd7c01d1844ef149cd51786fd5384784bd9b",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          1280,
+          720
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 496,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 496
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 126,
+                "width": 126,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 496
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 126,
+            "width": 126,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 496
+        },
+        "case": "fieldset-padding-10-content-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 120,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 100,
+            "width": 100,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "623dd8021d0e35d1433bc10728bffb25555b69a8c480a14d4349487fd2fa2867",
+        "native_bounds": {
+          "container": {
+            "height": 120,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 100,
+            "width": 100,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "c5d53891cf4b26ce8f06fd57c5598dc66e365e8192fdff70b0e8bee83d61b43a",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "before",
+        "viewport": [
+          800,
+          600
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 374,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 374
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 188,
+                "width": 188,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 374
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 188,
+            "width": 188,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 374
+        },
+        "case": "fieldset-padding-10-content-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 170,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "7e521ea661381ced30d2975b2ed13bd68fe3e7a7731a42ace3eaed7b62d3ff97",
+        "native_bounds": {
+          "container": {
+            "height": 170,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "7f6d841a6ba24564a4d1f0a1e50bbe89e8b8743a4982bb71f10755bd8ba7e9f5",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          800,
+          600
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 496,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 496
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 126,
+                "width": 126,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 496
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 126,
+            "width": 126,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 496
+        },
+        "case": "fieldset-padding-10-content-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 120,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 100,
+            "width": 100,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "392fed55361963e6a301277bbf2112cb8a2db5cfb6d6b24c14961b2235e9ca07",
+        "native_bounds": {
+          "container": {
+            "height": 120,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 100,
+            "width": 100,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "e79b6a97e1d9b3bcf8a1dadb7e933fb3c3b56915e53368dd99d694bcce1ee661",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "before",
+        "viewport": [
+          1280,
+          720
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 374,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 374
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 188,
+                "width": 188,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 374
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 188,
+            "width": 188,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 374
+        },
+        "case": "fieldset-padding-10-content-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 170,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "877e384c9aae56f2f433be2c5e72adb9e4d55fd76f4e36525b4e030cac4367e4",
+        "native_bounds": {
+          "container": {
+            "height": 170,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 150,
+            "width": 150,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "42a8028fc02068d1eada4fb0b646c0b0c6227a26a2b4e0994bdbf378ab0d2913",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          1280,
+          720
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 396,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 396
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 101,
+                "width": 101,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 396
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 101,
+            "width": 101,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 396
+        },
+        "case": "fieldset-padding-10-border-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 100,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 80,
+            "width": 80,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "9743d25a367d42226b3cf80dec3adb6e3ba85225f435fe06527529935ed213ca",
+        "native_bounds": {
+          "container": {
+            "height": 100,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 80,
+            "width": 80,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "a8d08d14453e4929c4cb9fa0a70be001102c94145f4c10ed8dedcf14432d002f",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "before",
+        "viewport": [
+          800,
+          600
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 324,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 324
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 163,
+                "width": 163,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 324
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 163,
+            "width": 163,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 324
+        },
+        "case": "fieldset-padding-10-border-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 150,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 130,
+            "width": 130,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "7a031dd30bbf55adbaba5d3bc296a7efd0564a23f6e0cef488cb2be149bba780",
+        "native_bounds": {
+          "container": {
+            "height": 150,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 130,
+            "width": 130,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "1c74146c29d8f640e507dccc9b17b3fe86d5e7cb84bab2cc2e9aed772badd60b",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          800,
+          600
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 396,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 396
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 101,
+                "width": 101,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 396
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 101,
+            "width": 101,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 396
+        },
+        "case": "fieldset-padding-10-border-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 100,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 80,
+            "width": 80,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "406bb195b99ee46179ba00db5f90a686783497b7f52a6e9c4afdd4e01cd2922f",
+        "native_bounds": {
+          "container": {
+            "height": 100,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 80,
+            "width": 80,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "c1bad2683c5897fef2b6775b9dbab354226cf9a6699f4dc2fda7b52756aee99d",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "before",
+        "viewport": [
+          1280,
+          720
+        ]
+      },
+      {
+        "analysis": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "green": {
+              "changed_pixels": 324,
+              "maximum_absolute_delta": 1,
+              "maximum_signed_delta": 1,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 324
+            },
+            "red": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 1,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 163,
+                "width": 163,
+                "x": 37,
+                "y": 37
+              },
+              "mismatched_pixels": 324
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 163,
+            "width": 163,
+            "x": 37,
+            "y": 37
+          },
+          "mismatched_pixels": 324
+        },
+        "case": "fieldset-padding-10-border-box",
+        "chromium_bounds": {
+          "container": {
+            "height": 150,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 130,
+            "width": 130,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "chromium_png_sha256": "9bfd9d297bd86430e2239327588c2d873ef07c94cb95030a16ee8c9f9b76f2c1",
+        "native_bounds": {
+          "container": {
+            "height": 150,
+            "width": 220,
+            "x": 20,
+            "y": 20
+          },
+          "image": {
+            "height": 130,
+            "width": 130,
+            "x": 30,
+            "y": 30
+          }
+        },
+        "native_png_sha256": "5c64cb8ca77a7498e00895782ce50704bb62c5eceb49c3f06d23a926b4a756a3",
+        "qualification": "fails; reviewed ownership is required",
+        "root_cause_review": "open",
+        "scale": 1.25,
+        "state": "after",
+        "viewport": [
+          1280,
+          720
+        ]
+      }
+    ],
+    "source": {
+      "clean": true,
+      "commit": "abed078ddb2c8c2442155d14571cbadcb3b94758",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "06533d8e6fbd039e36dd039f7e9d956b51a5b69d3ac457c06c977c8ae917771a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "totals": {
+      "cases": 64,
+      "deterministic_native_repeats": 64,
+      "geometry_exact": 128,
+      "images": 128,
+      "native_runs_passed": 128,
+      "pixel_exact": 104
+    },
+    "unstable_reference_captures_in_this_run": 0
+  },
+  "intrinsic_guard": {
+    "corrected_fixed_source": "a6d386e48d864a5769ebdadd8bc8dea46e4eff21",
+    "corrected_leading_baseline": "ac1eb2a7a0426040dc5ebbd5f3ffa13194db96dc",
+    "leading_baseline_compile_failure": "Float does not implement From into StyleValue",
+    "named_atomic_baseline_failure_reproduced": true,
+    "native_app_and_pixel_verification": "queued",
+    "production_and_assertions_unchanged": true
+  },
+  "new_release_states_admitted": 0,
+  "observed_at_utc": "2026-10-05T03:29:40.981473+00:00",
+  "pipeline_observations": {
+    "native-intrinsic-constraints-retry-pipeline-v1420": {
+      "all_commands_terminal": false,
+      "completed_stages": 0,
+      "source": {
+        "clean": true,
+        "commit": "a6d386e48d864a5769ebdadd8bc8dea46e4eff21",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "c13d4a17ea4f566d051eb86e105e7afd2fb33f9052fc0cde1832fd347dfae2a7",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "state": "awaiting-all-prior-whole-pipelines-including-clean-umbrella-revalidation"
+    },
+    "native-raster-api-pipeline-v1425": {
+      "all_commands_terminal": false,
+      "completed_stages": 0,
+      "source": {
+        "clean": true,
+        "commit": "fb284c54f9375aa57dcd53d825a87c191df2b9cb",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "9b4fd6942c8f8c2ac659c65808b93443c0f30a5f82dfe2a431bab1346321f231",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "state": "awaiting-all-prior-whole-pipelines-including-style-and-intrinsic-retries"
+    },
+    "native-style-integration-retry-pipeline-v1419": {
+      "all_commands_terminal": false,
+      "completed_stages": 0,
+      "source": {
+        "clean": true,
+        "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "43b31449b73a7c7f794d160a82b926e47095ae09a192280536e4dc374b4e6347",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "state": "awaiting-all-prior-whole-pipelines-including-clean-umbrella-revalidation"
+    },
+    "umbrella-clean-workspace-pipeline-v1411": {
+      "all_commands_terminal": false,
+      "completed_stages": 1,
+      "source": {
+        "clean": true,
+        "commit": "2e443f49d49b81d65674f64bb099fed2922775b5",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "5377ee4175f9eac313c9d4c08e1e8f3c9d2aff100fa73cb8d716188e9efb1584",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "state": "running-native-build"
+    }
+  },
+  "prior_umbrella_ci": {
+    "skipped_jobs": 5,
+    "skips_are_not_passes": true,
+    "source": "a3f8863f25d9a305ad1a3892ecbd018bf31facb4",
+    "successful_jobs": 6
+  },
+  "promotion_allowed": false,
+  "proposed_raster_c_exports": 117,
+  "raster_guard": {
+    "additive_public_types": [
+      "RasterBackend",
+      "RasterPixelGeometry",
+      "TextEdging",
+      "TextHinting",
+      "TextRasterConfiguration"
+    ],
+    "all_native_guard_stages_passed": true,
+    "corrected_source": "fb284c54f9375aa57dcd53d825a87c191df2b9cb",
+    "corrected_source_hosted_hardening": "pending",
+    "ffi_boundary_tests_passed": 5,
+    "named_baseline_failures": 3,
+    "native_app_and_pixel_verification": "queued",
+    "renderer_bodies_and_c_abi_unchanged": true,
+    "source": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3",
+    "workspace_compile_exit": 101,
+    "workspace_compile_failure": "native_control_raster imports a transitive crate that is not an application dependency"
+  },
+  "release_qualification": false,
+  "schema_version": 1,
+  "source_records": {
+    "intrinsic": {
+      "clean": true,
+      "commit": "a6d386e48d864a5769ebdadd8bc8dea46e4eff21",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "c13d4a17ea4f566d051eb86e105e7afd2fb33f9052fc0cde1832fd347dfae2a7",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "raster": {
+      "clean": true,
+      "commit": "fb284c54f9375aa57dcd53d825a87c191df2b9cb",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "9b4fd6942c8f8c2ac659c65808b93443c0f30a5f82dfe2a431bab1346321f231",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "style_guard": {
+    "corrected_selection_names": {
+      "fixed-native-inheritance-guard": [
+        "tests::native_inherited_styles_follow_parent_mutations_and_tree_changes"
+      ],
+      "native-inheritance-guards": [
+        "tests::native_inheritance_animated_font_resolves_relative_to_parent",
+        "tests::native_inheritance_computes_calculated_font_sizes_against_parent",
+        "tests::native_inheritance_computes_renderer_line_height_percentages",
+        "tests::native_inheritance_distinguishes_percentage_and_unitless_line_heights",
+        "tests::native_inheritance_recomputes_relative_lengths_and_preserves_declaration_order",
+        "tests::native_inheritance_refreshes_authored_pseudo_styles_after_origin_mutation",
+        "tests::native_inheritance_transition_retains_a_previously_unauthored_target",
+        "tests::native_inherited_styles_follow_parent_mutations_and_tree_changes",
+        "tests::native_resolved_computed_defaults_preserve_snapshots_and_native_inheritance"
+      ],
+      "owned-recording-guard": [
+        "tests::compositor_distinguishes_owned_recordings_with_equal_document_generations"
+      ],
+      "resolved-snapshot-guards": [
+        "tests::native_resolved_computed_defaults_preserve_snapshots_and_native_inheritance",
+        "tests::native_resolved_repeated_computed_value_preserves_unchanged_work",
+        "tests::native_resolved_style_animation_refreshes_target_and_native_dependents",
+        "tests::native_resolved_style_replacement_drops_previous_native_declarations"
+      ]
+    },
+    "harness_failed": true,
+    "native_app_and_pixel_verification": "queued",
+    "native_inheritance_tests_passed": 9,
+    "native_source_unchanged": true,
+    "original_harness_expected": 8
+  },
+  "umbrella_c_exports": 113
+}

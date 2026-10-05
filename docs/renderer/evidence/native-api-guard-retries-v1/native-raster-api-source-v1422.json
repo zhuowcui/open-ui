@@ -1,0 +1,17 @@
+{
+  "additive_public_rust_exports": [
+    "RasterBackend",
+    "RasterPixelGeometry",
+    "TextEdging",
+    "TextHinting",
+    "TextRasterConfiguration"
+  ],
+  "branch": "agent/native-raster-api-v1422",
+  "c_abi_unchanged": true,
+  "parent": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3",
+  "release_qualification": false,
+  "renderer_bodies_unchanged": true,
+  "root": "/dev/shm/openui-native-raster-api-3d4eea11",
+  "schema_version": 1,
+  "source": "fb284c54f9375aa57dcd53d825a87c191df2b9cb"
+}

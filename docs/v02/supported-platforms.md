@@ -23,15 +23,13 @@ calls public Rust methods on retained `Document` and `Element` handles and
 handles interaction with Rust callbacks. C applications use the versioned C
 ABI over the same engine.
 
-Browser element APIs provide operations such as finding an element, changing
-its state, focusing it, scrolling it, and handling events. Browsers let apps
-call these operations through JavaScript; the operations themselves do not
-require JavaScript. Each needed operation must be implemented in the shared
-Rust engine and exposed as a public native Rust method for the consuming app
-to call. This includes the resulting state changes, geometry and events.
-The Rust API provides the operation itself, without calling a browser or
-executing a script. If that API is missing, implementing it is required
-framework work.
+Browser element APIs describe operations such as finding an element, changing
+its state, focusing it, scrolling it, and handling events. In Open UI, the
+consuming app calls native Rust methods to perform these operations. There is
+no JavaScript requirement for interacting with elements. Every needed
+operation must be implemented in the shared Rust engine and exposed through
+the public Rust API, including its state changes, geometry and events. A
+missing method is required framework work.
 There is no JavaScript glue, script binding, `eval`, or embedded browser
 runtime, in this or future versions.
 The consuming app handles events with Rust callbacks. Scripts used by offline
@@ -79,7 +77,11 @@ until that native application path works.
 The [prepared native style integration](../renderer/generated/native-scroll-insets-v36.json)
 combines authored-style inheritance, resolved-style snapshots and relative
 values with the applied compositor cache repair. Its own local application
-verification is queued. Earlier `5cc75147` results include 50 exact native
+verification remains pending. Its named regression and nine inheritance tests
+pass, but the harness incorrectly expects eight tests. The
+[corrected queue](../renderer/generated/native-scroll-insets-v40.json)
+checks the complete named inventory after clearing all 18 workspace packages.
+Earlier `5cc75147` results include 50 exact native
 relative-style images and eight exact C geometry observations, alongside 60
 failing native static-position bounds and images. The new source is unapplied;
 those earlier measurements do not establish current-source API completion.

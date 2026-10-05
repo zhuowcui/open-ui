@@ -63,7 +63,17 @@ build stages pass. All 1,000 prior intrinsic geometry observations pass, and
 the focused/primitive matrices are exact. The native app stops on unequal
 consecutive Chromium captures after 62/128 images: 62 exact bounds and 50 exact
 pixels, before reaching any fieldset case. That incomplete run is not a pass;
-a separate queued investigation will preserve both unstable captures.
+a separate investigation preserves both unstable captures.
+
+The [complete diagnostic](generated/native-scroll-insets-v40.json) now covers
+all 64 cases and 128 images, including the fieldsets. All 128 native bounds
+match, 104/128 images are exact, and all 64 native repeats are deterministic.
+Each reference state is captured twice in each of two independent Chromium
+processes; no unequal pair occurs in this run. The 24 pixel failures occur at
+1.25 scale, with bounds, connected regions and channel deltas preserved.
+Their causes and ownership still require review. The earlier unequal pair
+and complete census regressions remain open. This diagnostic does not close
+compiled-source attribution or qualify the renderer.
 
 Both complete censuses now finish with actual exit 1: 21,270/22,924 original
 and 22,069/23,728 expanded exact, zero errors. Six comparisons become exact

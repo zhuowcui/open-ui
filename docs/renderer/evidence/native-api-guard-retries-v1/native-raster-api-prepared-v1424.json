@@ -1,0 +1,49 @@
+{
+  "all18_workspace_packages_cleaned_per_source_switch": true,
+  "expected_stages": 12,
+  "new_release_states_admitted": 0,
+  "probes": [
+    {
+      "path": "/tmp/openui-native-raster-consumer-guards-v1424.py",
+      "sha256": "3aeb516d0af5417078c36e696f43f9214ff9e4860634d172203550595bbb2288"
+    },
+    {
+      "path": "/tmp/openui-native-raster-consumer-build-v1424.py",
+      "sha256": "7ea28157d12becef40bc182b6a41e5119353e6afc876c66c8896ed657d1c40fc"
+    },
+    {
+      "path": "/tmp/openui-native-raster-consumer-controls-v1424.py",
+      "sha256": "05c8e7a62d2707438f56322f88dd4fabce0d07dea447a53a9a27e41a8a1e337a"
+    },
+    {
+      "path": "/tmp/openui-native-raster-consumer-application-v1424.py",
+      "sha256": "6f7fa715ec9db1ff07c08ca32a3a76b8e0cf33fc77e74093e285767679a5a8e8"
+    },
+    {
+      "path": "/tmp/openui-native-raster-consumer-sizing-v1424.py",
+      "sha256": "2613ff922f5ac171c387b73f30dc9a1d72fcebef0059faad32a9ab3410ecbe06"
+    },
+    {
+      "path": "/tmp/openui-native-raster-consumer-consumer-v1424.py",
+      "sha256": "10cf6180cab378fef4646335b71659047f28affd020212814fb029b9287d26d1"
+    },
+    {
+      "path": "/tmp/openui-native-raster-consumer-static-v1424.py",
+      "sha256": "2b2de8f4581b3ad6d73c8994c6327af3a0ceb84310341af65c1cb621ab329176"
+    },
+    {
+      "path": "/tmp/openui-native-raster-consumer-matrices-v1424.py",
+      "sha256": "61d9cdd475006992dc5bef7a9f2600d2c127785b00de29a87d83bb60789c4c55"
+    },
+    {
+      "path": "/tmp/openui-native-raster-api-pipeline-v1425.py",
+      "sha256": "0693b67ff9f1e27e160de38b162c10182ede27eb513fc714cda06cf8f821310c"
+    }
+  ],
+  "promotion_allowed": false,
+  "reference_inputs_unchanged": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": "fb284c54f9375aa57dcd53d825a87c191df2b9cb",
+  "strict_capture_pairs_preserved": true
+}
