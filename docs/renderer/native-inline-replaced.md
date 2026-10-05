@@ -45,9 +45,17 @@ patch, test-only baseline, consuming applications and qualification probes:
   verifies document teardown. C/C++ consumers call the same Engine through
   the existing ABI and retain callback user data until listener destruction.
 
-The exclusive pipeline clears all eighteen workspace packages, builds the
-applications and ABI consumers, checks sixty native images against 240 repeated
-Chromium captures at five scales and three subpixel origins, and runs all four
-complete pixel matrices. These application and pixel results remain pending.
-The source remains unapplied. Accepted renderer counts and release admission
-are unchanged; the full exact Chromium gate still fails.
+The [completed native application evidence](generated/native-inline-replaced-v1.json)
+records a clean build after clearing all eighteen workspace packages: 8,538
+tests pass, zero fail and thirteen are ignored. All twelve C and six C++
+consumers pass, preserving 113 exports and the existing layouts. The Rust
+callback application has sixty of sixty images and bounds exact at five
+scales and three subpixel origins. Two native runs and 240 Chromium captures
+are stable. All callback, owned-bound, hide/restore, detach/reattach and
+teardown assertions pass. The 503 preserved artifacts include every measured
+native image and repeated Chromium capture.
+
+The same exclusive pipeline now runs all four complete pixel matrices.
+Those gates remain pending. The source remains unapplied. Accepted renderer
+counts and release admission are unchanged; the full exact Chromium gate
+still fails.

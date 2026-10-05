@@ -143,8 +143,11 @@ and two disk-guard stops. All original evidence remains preserved. The
 [isolated inline replaced correction](docs/renderer/native-inline-replaced.md)
 at private `c92e2d08` reproduces the named baseline failure and passes two fixed
 guards and thirteen read-only checks. Both pinned Chromium query runs agree
-on all 48 box observations across four profiles. Native Rust/C/C++ application
-and full pixel verification are running; the correction remains unapplied.
+on all 48 box observations across four profiles. Its
+[clean native verification](docs/renderer/generated/native-inline-replaced-v1.json)
+passes 8,538 tests, twelve C and six C++ consumers, and all 60 consuming Rust
+images and bounds against 240 stable Chromium captures. All four complete
+pixel matrices are running; the correction remains unapplied.
 Accepted renderer counts and release admission remain unchanged.
 
 The earlier review records native constructor candidate `893ea292`. Rust apps

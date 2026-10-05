@@ -58,10 +58,14 @@ at `c92e2d08` fixes shared box collection without taking the rejected intrinsic
 or whitespace changes. Its named baseline assertion fails with actual exit
 101, and both fixed geometry and ordinary-inline neighbor tests pass. All
 13 read-only checks pass. Two pinned Chromium processes agree on all 48
-geometry observations across four profiles. A fresh exclusive pipeline now
-builds the native Rust/C/C++ consumers and requires 60 native images,
-240 repeated Chromium captures and all four matrices. Consuming-app and pixel
-qualification remain pending; accepted renderer totals stay unchanged.
+geometry observations across four profiles. Its
+[completed clean native build](../renderer/generated/native-inline-replaced-v1.json)
+passes 8,538 tests, zero failures and thirteen ignored, plus twelve C and six
+C++ consumers over the same Engine. All sixty Rust callback images and bounds
+match Chromium; two native runs and 240 Chromium captures are stable. Owned
+geometry, hide/restore, detach/reattach and teardown assertions pass. All four
+complete matrices are now running. Their gates remain pending; accepted
+renderer totals stay unchanged and this candidate remains unapplied.
 
 That earlier review also preserves native constructor candidate `893ea292`, its
 test-only baseline, source patch and immutable verification probes. Public

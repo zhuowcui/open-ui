@@ -10,8 +10,11 @@ supersedes the pending queue descriptions below for five candidates: raster
 native values `893ea292` are terminal and unqualified. The first stops in its
 harness, image geometry and rounded pixels fail assertions, and the last two
 stop at the disk guard. The isolated native inline correction `c92e2d08` passes
-two fixed guards and thirteen read-only checks; native consuming applications
-and all four pixel matrices remain pending. No candidate is promoted or
+two fixed guards and thirteen read-only checks. Its
+[clean native verification](../renderer/generated/native-inline-replaced-v1.json)
+passes 8,538 tests, twelve C and six C++ consumers, and all sixty Rust images
+and bounds against 240 stable Chromium captures. All four complete pixel
+matrices remain pending. No candidate is promoted or
 admitted. Chromium remains the sole pixel target. Application interaction
 uses public native Rust APIs and callbacks; every needed operation remains
 required even when its Chromium test uses JavaScript.
