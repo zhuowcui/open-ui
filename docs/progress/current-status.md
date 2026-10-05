@@ -7,6 +7,24 @@ remain open.
 
 ## Current implementation checkpoint
 
+The [v41 evidence](../renderer/generated/native-scroll-insets-v41.json)
+records a fresh clean build at `2e443f49`: all 18 workspace packages cleared,
+8,531 tests passed, zero failed, 13 ignored, and native ABI consumers passed.
+Its focused and primitive matrices are 640/640 and 960/960 exact, with all
+1,600 comparison invariants unchanged. This establishes source attribution
+for those components. The original census is running and expanded run is
+queued; the earlier unattributed workspace result remains unqualified.
+
+The private [image background candidate](../renderer/native-image-background-culling.md)
+at `d913041d` extends shared background culling to decoded opaque images.
+The 24 stable fieldset differences split into eight background-culling cases
+and sixteen image-color rounding cases. Pinned Chromium source supports the
+culling investigation; the complete rounding algorithm remains unresolved.
+The candidate includes an Engine regression and consuming Rust callback
+applications. Its ten read-only checks pass; compilation, native execution
+and all four pixel matrices are queued after every earlier whole pipeline.
+It is unapplied and admits no release state. Open UI executes no JavaScript.
+
 The [v40 evidence](../renderer/generated/native-scroll-insets-v40.json)
 records three terminal verification stops and their concrete corrections.
 All native raster guards and five C boundary tests pass at `3d4eea11`, but
@@ -21,8 +39,9 @@ The completed fieldset diagnostic measures all 128 native bounds exactly and
 104/128 images exactly. All 512 Chromium captures agree within their repeat
 pairs; the earlier capture contradiction remains preserved and unresolved.
 The 24 pixel failures occur at 1.25 scale. Bounds, connected regions, channel
-deltas and minimized inputs are recorded; their reviewed causes and ownership
-remain open. This diagnostic admits no release state and does not establish
+deltas and minimized inputs are recorded. The v41 review assigns paint
+ownership and separates the two causes; native confirmation remains pending.
+This diagnostic admits no release state and does not establish
 compiled-artifact source qualification.
 
 The [v39 audit](../renderer/generated/native-scroll-insets-v39.json) completes
@@ -40,7 +59,9 @@ that every linked library matches source. The earlier workspace result is
 unqualified pending revalidation. A separate immutable `2e443f49` queue waits
 for every command in all eleven prior whole pipelines, cleans all 18 workspace
 packages at each source switch, reproduces the cache guard, rebuilds native
-consumers and reruns all four exact matrices. No new pixel pass is claimed.
+consumers and reruns all four exact matrices. Its clean build and two small
+matrix passes are recorded above; complete original and expanded verification
+remains open.
 
 The [v38 raster validation evidence](../renderer/generated/native-scroll-insets-v38.json)
 preserves corrected regression-test setup at `0e1f12ff` and the native C/C++

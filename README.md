@@ -38,7 +38,9 @@ The current v0.2 release candidate has:
   zero render errors; all Chromium images and identities remain unchanged,
   and the full pixel gate still fails;
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
-  comparisons exact in the [clipping repair evidence](docs/renderer/generated/native-viewport-full-v2.json);
+  comparisons exact after clearing all 18 workspace packages and rebuilding
+  `2e443f49`; [v41](docs/renderer/generated/native-scroll-insets-v41.json)
+  audits all 1,600 unchanged comparison invariants;
 - 201 native final-state cases in the expanded contract, including one newly
   added case; 200 of 201 meet the four-profile gate in the earlier complete
   viewport run, and one remains a failure in the
@@ -67,6 +69,15 @@ captures under the same recorded identity; that evidence needs reconciliation.
 The latest clean umbrella census has 1,590 differences. Against the SVG
 checkpoint, nine comparisons become exact and none lose exactness, while four
 already failing comparisons worsen. Every residual still requires review.
+A fresh clean build passes 8,531 workspace tests, with zero failures and 13
+ignored, plus the native ABI consumers. Its focused and primitive matrices
+pass; its full original census is running and expanded run is queued. The
+older workspace count containing a test absent from its declared source
+remains unqualified. The private
+[opaque image background candidate](docs/renderer/native-image-background-culling.md)
+uses public Rust callbacks and shared paint logic. Ten read-only checks pass;
+its native execution and pixel verification are queued. No improvement to the
+full census is claimed for that candidate.
 The separate [font engine trial](docs/renderer/native-font-engines.md) loses
 493 exact comparisons. A shared routing discrepancy selects a different
 authored text path from the explicit FreeType reference. The named physical

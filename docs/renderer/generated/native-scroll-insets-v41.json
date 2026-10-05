@@ -1,0 +1,734 @@
+{
+  "accepted_expanded": {
+    "actual_exit": 1,
+    "different": 1591,
+    "errors": 0,
+    "exact": 22137,
+    "total": 23728
+  },
+  "accepted_original": {
+    "actual_exit": 1,
+    "different": 1590,
+    "errors": 0,
+    "exact": 21334,
+    "total": 22924
+  },
+  "artifact_bytes": 4860369,
+  "artifact_count": 60,
+  "artifacts": {
+    "docs/renderer/evidence/native-image-background-culling-v1/build-v1410-clean-workspace.log": {
+      "bytes": 38,
+      "sha256": "41cb8d7e4bae309d0c7858f67d5e65d4855a1088c25ddc9eae959bb43c86b4d4"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/build-v1410-ffi-build.log": {
+      "bytes": 9110,
+      "sha256": "a6b589463e95824926eb1542dd0f6825a8212b0b075162b08efdcb3f1dcae8c1"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/build-v1410-ffi-consumers.log": {
+      "bytes": 2875,
+      "sha256": "ddaa80f951dcac73fbd6e4b31520363fc6018e7190431acb89c643f9940fb2c1"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/build-v1410-float-build.log": {
+      "bytes": 9796,
+      "sha256": "411a5f4c7b4b36f53505cf4f57e764becfa644be877d125794df726b936a49c5"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/build-v1410-pixel-build.log": {
+      "bytes": 11808,
+      "sha256": "4f59362a07de2e36fc4419f78d760bc2f74326bfac093bf4836fcae1c9bfb2f7"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/build-v1410-workspace.log": {
+      "bytes": 486896,
+      "sha256": "2dcdc2671117437a68f454247a29a5bcc881c9207a514516b382b7745b1b342b"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/candidate-checks-v1434.json": {
+      "bytes": 3524,
+      "sha256": "8d6e2ab5387597fdec369b225f0d3a2aaad4ab5022e5fbb6667c58ba50ee8efa"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/candidate-checks-v1435.json": {
+      "bytes": 3524,
+      "sha256": "fc304488018b975897f5289ebce7fb1beb168d290cd4c4c3e08a2f3a7ef9eac2"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1434-accountability.log": {
+      "bytes": 2867,
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1434-archive.log": {
+      "bytes": 45,
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1434-ffi.log": {
+      "bytes": 32,
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1434-multicol.log": {
+      "bytes": 59,
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1434-renderer.log": {
+      "bytes": 846,
+      "sha256": "bf813e3be3d8601ce54cdd79ec2f80a161b0aac5c17faa0515d8f0041cf61dba"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1434-sp17.log": {
+      "bytes": 86,
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1434-sp18.log": {
+      "bytes": 121,
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1434-sp20.log": {
+      "bytes": 142,
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1434-style.log": {
+      "bytes": 37,
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1434-v02.log": {
+      "bytes": 63,
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1435-accountability.log": {
+      "bytes": 2867,
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1435-archive.log": {
+      "bytes": 45,
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1435-ffi.log": {
+      "bytes": 32,
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1435-multicol.log": {
+      "bytes": 59,
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1435-renderer.log": {
+      "bytes": 81,
+      "sha256": "90abb0d1a675d399075cda5e2065a160491174ed874d3530b7ba5c064d60f81d"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1435-sp17.log": {
+      "bytes": 86,
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1435-sp18.log": {
+      "bytes": 121,
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1435-sp20.log": {
+      "bytes": 142,
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1435-style.log": {
+      "bytes": 37,
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/checks-v1435-v02.log": {
+      "bytes": 63,
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/focused-summary.json": {
+      "bytes": 1646457,
+      "sha256": "a7a4e655cdcaab3adb653430ec7245a43de033c51be93474f2a9a886c7ac16fe"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/native-image-background-culling.patch": {
+      "bytes": 28655,
+      "sha256": "c063b232abcb02a2dccda45967b8766ad9690f91799b2e26119bb06db8a9ceec"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/native-image-background-residual-review-v1438.json": {
+      "bytes": 60609,
+      "sha256": "dd9b3cb8b316046512e4d82e961e39a4a93cc431b970d9963a9dcd2701689ece"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/native-image-occlusion-owner-preflight-v1437.json": {
+      "bytes": 294,
+      "sha256": "942f703696438bc04034b6a02c9f40f6144ba168c4ad782d0242fe3b630cf824"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/native-image-occlusion-pipeline-v1437-at-observation.json": {
+      "bytes": 4777,
+      "sha256": "e930f3c35af4e2b468411daa5df4f522c67f764cede4d76e9688d8e31117f9be"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/native-image-occlusion-prepared-v1436.json": {
+      "bytes": 1325,
+      "sha256": "cd5529f86138595dd83914118a17936d8f25b4d7b1dfd5575ca6e14b20207dfa"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/native-intrinsic-constraints-retry-pipeline-v1420-at-observation.json": {
+      "bytes": 4854,
+      "sha256": "0ed30c8f3152b7224a13a09daf56751da95bd78b5cd76fa06acf212180ce0da0"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/native-raster-api-pipeline-v1425-at-observation.json": {
+      "bytes": 5263,
+      "sha256": "4d220c7edd1cde237b75fc6686ec0db28e59a49eb0aa2ac16be72e17d7679782"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/native-style-integration-retry-pipeline-v1419-at-observation.json": {
+      "bytes": 4402,
+      "sha256": "3351389b0c3a678c1e548a6ae3341782e26719c806cb24394d0fdd48f1170de7"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/native_fieldset_intrinsics.rs": {
+      "bytes": 5251,
+      "sha256": "0b304ee44b4c9f4734bd3a85427a922f671bd2e50f7052b1a78f3cade2cd011f"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/native_image_background_culling.rs": {
+      "bytes": 5298,
+      "sha256": "43ba22f5cad371a589beb3948890bb244573e9bbe029345d37b9a885ab222ef9"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/openui-clean-small-matrices-audit-v1438.py": {
+      "bytes": 4693,
+      "sha256": "067ed07e72c4ce2075d89496f7122b3ebaa777af43cb0f4a83ce1be3c9277841"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/openui-native-image-occlusion-build-v1436.py": {
+      "bytes": 5318,
+      "sha256": "ee0cb06ea1b2d571d5516cae953ec192fdcbdabfb62032a482067bb06c96b281"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/openui-native-image-occlusion-checks-v1434.py": {
+      "bytes": 1441,
+      "sha256": "12a0e180da8a230c3dcf5df8cbdcd64d458840d554474bd511c8419db9590e81"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/openui-native-image-occlusion-checks-v1435.py": {
+      "bytes": 1441,
+      "sha256": "3d22157da487d20b909fde8d89a20a1c41840e1da1c938e913b728b6f009e54d"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/openui-native-image-occlusion-consumer-v1436.py": {
+      "bytes": 10177,
+      "sha256": "fbcd6b94b840d1a1b29df0fc7f8f31c49e1980b1bee1ff3d1ad8ef8b33a17568"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/openui-native-image-occlusion-fieldsets-v1436.py": {
+      "bytes": 13063,
+      "sha256": "e21c52b0dd715c5d6de36599eb65298718499f003f485865552d3be0fdc43643"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/openui-native-image-occlusion-guards-v1436.py": {
+      "bytes": 8257,
+      "sha256": "ccd906d01c544e1de1ec01a595656ceb06bc22c69953db68557857ddb23c4a6c"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/openui-native-image-occlusion-matrices-v1436.py": {
+      "bytes": 2093,
+      "sha256": "16cb7432d6582cd0cc5eb7e76e3b1e0373a76535ff01a080dd8aa60853f733f6"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/openui-native-image-occlusion-pipeline-v1437.py": {
+      "bytes": 7232,
+      "sha256": "4edd06965020aebdcbb042eef9d47ef67e733e6eee6da872b3d504a474f2adb9"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/openui-native-image-occlusion-source-v1431.py": {
+      "bytes": 1948,
+      "sha256": "d3066e97bc88265866b0eee8586817505745e0541f6f4d2398e5c387f7dca7cb"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/pinned-chromium-source-v1431.json": {
+      "bytes": 2715,
+      "sha256": "8d6758f7e117df73cf792b624408fb55d8122a9261f1f8a9bc3fc1b4417932fa"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/primitive-summary.json": {
+      "bytes": 2455663,
+      "sha256": "ee4b449fc89de738401138aa1128eaeadcce541ed435fbcca3bed2115d99853b"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/umbrella-3827199a-ordinary-ci-v1428.json": {
+      "bytes": 22330,
+      "sha256": "53ffa109f5d6b7f9003373883a538dcdfc196b080b8e48522e83e89bcc686913"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/umbrella-clean-build-v1410.json": {
+      "bytes": 5689,
+      "sha256": "d471333ab9addbe52f1f147e010b09b534ba50d9c590bb8438334d760e0d3419"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/umbrella-clean-small-matrices-audit-v1438.json": {
+      "bytes": 2572,
+      "sha256": "37741d3de33e8da7ef79ff5a462e72e69523062f85dcb9aede39fd4ce4b9160a"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/umbrella-clean-workspace-build-audit-v1429.json": {
+      "bytes": 1369,
+      "sha256": "c391d82eba87c459c009b5d9743b5611cce3bd04e3ae370c61f2d16fa6cc154a"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/umbrella-clean-workspace-clean-focused-v1410.log": {
+      "bytes": 1264,
+      "sha256": "7fc8378077b319bf67858fb1cef375da3c4067438a8df34782a01b350aff442a"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/umbrella-clean-workspace-clean-primitive-v1410.log": {
+      "bytes": 1268,
+      "sha256": "95e5fb74a4e1d64acdb1027bfd28b44b4e646eac46970226b497252e62cf74b0"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/umbrella-clean-workspace-focused-exit-v1410.json": {
+      "bytes": 1011,
+      "sha256": "efe618e53ad9bcbf7e4b675529696a28414ed380666a9563ec2f4fc3a055882f"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/umbrella-clean-workspace-pipeline-v1411-at-observation.json": {
+      "bytes": 7221,
+      "sha256": "c294b2d1998cf4c96ed8cf0d63d50ce15a78b731c30b56f831e10d71d27a2bd2"
+    },
+    "docs/renderer/evidence/native-image-background-culling-v1/umbrella-clean-workspace-primitive-exit-v1410.json": {
+      "bytes": 1017,
+      "sha256": "d7a1d3ca249650869418e5d84658b7b176958d6e1ca2eb55eae2bb230b35cff7"
+    }
+  },
+  "clean_build": {
+    "failed": 0,
+    "full_original_and_expanded_pixel_verification": "running or queued",
+    "ignored": 13,
+    "old_unattributed_workspace_record_not_requalified": true,
+    "passed": 8531,
+    "six_stages_passed": true,
+    "source": {
+      "clean": true,
+      "commit": "2e443f49d49b81d65674f64bb099fed2922775b5",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "5377ee4175f9eac313c9d4c08e1e8f3c9d2aff100fa73cb8d716188e9efb1584",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "text_library_tests": 341,
+    "workspace_and_abi_source_attribution": "scoped clean pass",
+    "workspace_packages_cleaned": 18
+  },
+  "clean_small_matrices": {
+    "focused": {
+      "actual_exit": 0,
+      "all_nine_comparison_invariants_unchanged": 640,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "exit_receipt_sha256": "efe618e53ad9bcbf7e4b675529696a28414ed380666a9563ec2f4fc3a055882f",
+      "original_pixel_gate_still_required": true,
+      "prior_summary_sha256": "ce443a0d3b36272bead7bc2fc1a56a631c378791d6ed95b7556adc88f0c89f41",
+      "profile_result_sha256": "cdbbbe40a0fcba2f49b7d8c720ab6d3ab523378919fb232a7c4f9861585d9a03",
+      "source_attributed_small_matrix_pass": true,
+      "summary_sha256": "a7a4e655cdcaab3adb653430ec7245a43de033c51be93474f2a9a886c7ac16fe",
+      "total": 640
+    },
+    "primitive": {
+      "actual_exit": 0,
+      "all_nine_comparison_invariants_unchanged": 960,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "exit_receipt_sha256": "d7a1d3ca249650869418e5d84658b7b176958d6e1ca2eb55eae2bb230b35cff7",
+      "original_pixel_gate_still_required": true,
+      "prior_summary_sha256": "06324c06a4ef3dcc7273181644802635993c188b0b225ed68a7dfef5f2ad744b",
+      "profile_result_sha256": "f3044cc4f8da4715d9b533b2205d7966b74152fb7e5430b3d1ff0599c6dd3bed",
+      "source_attributed_small_matrix_pass": true,
+      "summary_sha256": "ee4b449fc89de738401138aa1128eaeadcce541ed435fbcca3bed2115d99853b",
+      "total": 960
+    }
+  },
+  "contract": "No JavaScript in Open UI, now or in future. Needed interactions use public native Rust APIs and callbacks over the shared Engine. Pinned Chromium is the sole zero-tolerance pixel target; old Open UI images are immutable provenance.",
+  "image_culling_candidate": {
+    "applied_to_umbrella": false,
+    "baseline": "954c22a4e32edb71a356050b02fdf27c451863af",
+    "candidate_qualification": false,
+    "engine_backed_baseline_and_fixed_verification": "queued",
+    "existing_113_c_exports_and_30_layouts_unchanged": true,
+    "fixture_specific_pixel_changes": false,
+    "new_shape_outside_consumer_in_exact_inventory": true,
+    "public_native_apps_and_all_four_matrices": "queued",
+    "read_only_checks_passed": 10,
+    "remaining_color_rounding_algorithm_unresolved": true,
+    "residual_groups": {
+      "image coverage color rounding": 16,
+      "parent background behind opaque image": 8
+    },
+    "shared_paint_change": true,
+    "source": {
+      "clean": true,
+      "commit": "d913041dba9b36987ce83a1b3ed85dc6b4bf93e4",
+      "harness_sha256": "c1a215c4f976d653e9479b52e27bdef1a16f6fb36be07dbff6bfa29f4c835b24",
+      "source_tree_sha256": "c5427d761133b17bf837169a5f46380581d9507eeba03b55fe03f287c6842a02",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_review": "pinned Chromium checks opaque image foreground; prior Open UI culling only checks child background color"
+  },
+  "local_sequence": "1411, 1419, 1420, 1425, 1437; every preceding whole pipeline must be terminal",
+  "new_release_states_admitted": 0,
+  "observed_at_utc": "2026-10-05T04:40:52.973809+00:00",
+  "ordinary_ci": {
+    "skipped_jobs": 5,
+    "skips_are_not_passes": true,
+    "source": "3827199abc0e0a0d8ef6b5ba15e3606d73cda91b",
+    "successful_jobs": 6
+  },
+  "pipelines_at_observation": {
+    "native-image-occlusion-pipeline-v1437": {
+      "all_commands_terminal": false,
+      "baseline_commit": "954c22a4e32edb71a356050b02fdf27c451863af",
+      "color_coverage_rounding_root_cause_still_open": true,
+      "consumer_compile_correction_only": false,
+      "existing_113_exports_and_30_layouts_preserved": true,
+      "expected_stages": 8,
+      "immutable_probe_hashes": {
+        "/tmp/openui-native-image-occlusion-build-v1436.py": "ee0cb06ea1b2d571d5516cae953ec192fdcbdabfb62032a482067bb06c96b281",
+        "/tmp/openui-native-image-occlusion-consumer-v1436.py": "fbcd6b94b840d1a1b29df0fc7f8f31c49e1980b1bee1ff3d1ad8ef8b33a17568",
+        "/tmp/openui-native-image-occlusion-fieldsets-v1436.py": "e21c52b0dd715c5d6de36599eb65298718499f003f485865552d3be0fdc43643",
+        "/tmp/openui-native-image-occlusion-guards-v1436.py": "ccd906d01c544e1de1ec01a595656ceb06bc22c69953db68557857ddb23c4a6c",
+        "/tmp/openui-native-image-occlusion-matrices-v1436.py": "16cb7432d6582cd0cc5eb7e76e3b1e0373a76535ff01a080dd8aa60853f733f6"
+      },
+      "javascript_executed_by_openui": false,
+      "new_release_states_admitted": 0,
+      "old_openui_pixels_are_provenance_only": true,
+      "ordered_build_and_image_stages": true,
+      "original_fieldset_inputs_unchanged": true,
+      "original_pixel_gate_remains_required": true,
+      "owner_pid": 3318155,
+      "preserves_both_unstable_reference_captures": true,
+      "prior_whole_pipelines": [
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1375/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1369/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-consumer-pipeline-v1398/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/umbrella-clean-workspace-pipeline-v1411/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-retry-pipeline-v1419/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-retry-pipeline-v1420/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-api-pipeline-v1425/receipt.json"
+      ],
+      "probe_sha256": "4edd06965020aebdcbb042eef9d47ef67e733e6eee6da872b3d504a474f2adb9",
+      "promotion_allowed": false,
+      "public_rust_callbacks_and_owned_bounds": true,
+      "release_qualification": false,
+      "renderer_production_unchanged_from_prior_candidate": false,
+      "reviewed_root_cause_owner": "openui-paint foreground opacity and background culling",
+      "schema_version": 1,
+      "selection_hashes": {},
+      "source": {
+        "clean": true,
+        "commit": "d913041dba9b36987ce83a1b3ed85dc6b4bf93e4",
+        "harness_sha256": "c1a215c4f976d653e9479b52e27bdef1a16f6fb36be07dbff6bfa29f4c835b24",
+        "source_tree_sha256": "c5427d761133b17bf837169a5f46380581d9507eeba03b55fe03f287c6842a02",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "d913041dba9b36987ce83a1b3ed85dc6b4bf93e4",
+        "harness_sha256": "c1a215c4f976d653e9479b52e27bdef1a16f6fb36be07dbff6bfa29f4c835b24",
+        "source_tree_sha256": "c5427d761133b17bf837169a5f46380581d9507eeba03b55fe03f287c6842a02",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "state": "awaiting-all-prior-whole-pipelines-including-style-intrinsic-and-raster-api-retries",
+      "steps": [],
+      "strict_chromium_capture_pairs": true,
+      "workspace_cleaned_at_every_source_switch": true
+    },
+    "native-intrinsic-constraints-retry-pipeline-v1420": {
+      "all_commands_terminal": false,
+      "all_previous_reference_bytes_preserved": true,
+      "consumer_compile_correction_only": false,
+      "current_source_runtime_qualification_pending": true,
+      "guard_assertions_unchanged": true,
+      "immutable_probe_hashes": {
+        "/tmp/openui-native-intrinsic-constraints-build-v1418.py": "387fbad63746d487bc97a9cdb9dffa84fe97d8c83cae94ba8394764053d3ef85",
+        "/tmp/openui-native-intrinsic-constraints-consumer-v1418.py": "a89e210f2680f607deefc79ce64316b3fefd2e337406d8d2d2af40dd395e5d1c",
+        "/tmp/openui-native-intrinsic-constraints-guards-v1418.py": "7ed61e68b44fa814bb6e05003e2d70dca48a7c672e4ab09438e2541e4b7085c2",
+        "/tmp/openui-native-intrinsic-constraints-matrices-v1418.py": "843a52f72039a0cf9f50536a51a0ef7cd252dbdfab391051aee4643fb2ed84c3",
+        "/tmp/openui-native-intrinsic-constraints-sizing-v1418.py": "e5e800895dac61f34065a0142e0ea28e8ae190305fe5c2dbd67d6289fe49bf0c"
+      },
+      "includes_applied_owned_cache_implementation": true,
+      "inherits_unqualified_intrinsic_trial_source": true,
+      "intrinsic_trial_source_unqualified": true,
+      "javascript_executed_by_openui": false,
+      "new_release_states_admitted": 0,
+      "old_openui_pixels_are_provenance_only": true,
+      "ordered_build_and_image_stages": true,
+      "original_pixel_gate_remains_required": true,
+      "preserves_all_previous_input_bytes": true,
+      "prior_reference_bytes_unchanged": true,
+      "prior_whole_pipelines": [
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1369/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1375/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-consumer-pipeline-v1398/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/umbrella-clean-workspace-pipeline-v1411/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-retry-pipeline-v1419/receipt.json"
+      ],
+      "probe_sha256": "e3ff899f55d13b20d648026a4df4b4cdd07af5ea27d37caed34c0b6c3b2df0df",
+      "promotion_allowed": false,
+      "release_qualification": false,
+      "renderer_production_unchanged_from_prior_candidate": true,
+      "schema_version": 1,
+      "selection_hashes": {
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-selection-v1310.json": "197050888cd8e21e7a75994605fe33be7658932a004d4321133a6cd00d46c2e2"
+      },
+      "source": {
+        "clean": true,
+        "commit": "a6d386e48d864a5769ebdadd8bc8dea46e4eff21",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "c13d4a17ea4f566d051eb86e105e7afd2fb33f9052fc0cde1832fd347dfae2a7",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "a6d386e48d864a5769ebdadd8bc8dea46e4eff21",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "c13d4a17ea4f566d051eb86e105e7afd2fb33f9052fc0cde1832fd347dfae2a7",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "state": "awaiting-all-prior-whole-pipelines-including-clean-umbrella-revalidation",
+      "steps": [],
+      "strict_chromium_capture_pairs": true,
+      "supersedes_retired_waiting_pipeline": "native-intrinsic-constraints-pipeline-v1369",
+      "supersedes_terminal_failed_pipeline": "native-intrinsic-constraints-pipeline-v1375",
+      "test_setup_only_correction": true,
+      "workspace_cleaned_at_every_source_switch": true
+    },
+    "native-raster-api-pipeline-v1425": {
+      "additive_public_rust_raster_exports": true,
+      "all_commands_terminal": false,
+      "candidate_exports": 117,
+      "consumer_compile_correction_only": true,
+      "existing_113_umbrella_exports_preserved": true,
+      "expected_stages": 12,
+      "immutable_probe_hashes": {
+        "/tmp/openui-native-raster-consumer-application-v1424.py": "6f7fa715ec9db1ff07c08ca32a3a76b8e0cf33fc77e74093e285767679a5a8e8",
+        "/tmp/openui-native-raster-consumer-build-v1424.py": "7ea28157d12becef40bc182b6a41e5119353e6afc876c66c8896ed657d1c40fc",
+        "/tmp/openui-native-raster-consumer-consumer-v1424.py": "10cf6180cab378fef4646335b71659047f28affd020212814fb029b9287d26d1",
+        "/tmp/openui-native-raster-consumer-controls-v1424.py": "05c8e7a62d2707438f56322f88dd4fabce0d07dea447a53a9a27e41a8a1e337a",
+        "/tmp/openui-native-raster-consumer-guards-v1424.py": "3aeb516d0af5417078c36e696f43f9214ff9e4860634d172203550595bbb2288",
+        "/tmp/openui-native-raster-consumer-matrices-v1424.py": "61d9cdd475006992dc5bef7a9f2600d2c127785b00de29a87d83bb60789c4c55",
+        "/tmp/openui-native-raster-consumer-sizing-v1424.py": "2613ff922f5ac171c387b73f30dc9a1d72fcebef0059faad32a9ab3410ecbe06",
+        "/tmp/openui-native-raster-consumer-static-v1424.py": "2b2de8f4581b3ad6d73c8994c6327af3a0ceb84310341af65c1cb621ab329176"
+      },
+      "inherited_unqualified_raster_production": true,
+      "javascript_executed_by_openui": false,
+      "local_miri_delegated_to_own_source_hosted_workflow": false,
+      "native_control_consumer_uses_only_public_openui_imports": true,
+      "new_release_states_admitted": 0,
+      "old_openui_pixels_are_provenance_only": true,
+      "ordered_build_and_image_stages": true,
+      "original_pixel_gate_remains_required": true,
+      "own_source_hosted_hardening_pending": true,
+      "owner_pid": 3286348,
+      "parent_commit": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3",
+      "preserves_both_unstable_reference_captures": true,
+      "prior_whole_pipelines": [
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1375/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1369/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-consumer-pipeline-v1398/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/umbrella-clean-workspace-pipeline-v1411/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-retry-pipeline-v1419/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-retry-pipeline-v1420/receipt.json"
+      ],
+      "probe_sha256": "0693b67ff9f1e27e160de38b162c10182ede27eb513fc714cda06cf8f821310c",
+      "promotion_allowed": false,
+      "release_qualification": false,
+      "renderer_production_unchanged_from_prior_candidate": true,
+      "schema_version": 1,
+      "selection_hashes": {
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-selection-v1311.json": "ca51d8b03dbff3b5c47f3f0dabf93fc631b37772947350a50e56f9e1bdbb00e2"
+      },
+      "source": {
+        "clean": true,
+        "commit": "fb284c54f9375aa57dcd53d825a87c191df2b9cb",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "9b4fd6942c8f8c2ac659c65808b93443c0f30a5f82dfe2a431bab1346321f231",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "fb284c54f9375aa57dcd53d825a87c191df2b9cb",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "9b4fd6942c8f8c2ac659c65808b93443c0f30a5f82dfe2a431bab1346321f231",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "state": "awaiting-all-prior-whole-pipelines-including-style-and-intrinsic-retries",
+      "steps": [],
+      "strict_chromium_capture_pairs": true,
+      "workspace_cleaned_at_every_source_switch": true
+    },
+    "native-style-integration-retry-pipeline-v1419": {
+      "all_commands_terminal": false,
+      "all_previous_reference_bytes_preserved": true,
+      "combines_applied_native_style_and_owned_cache_sources": true,
+      "consumer_compile_correction_only": false,
+      "current_source_runtime_qualification_pending": true,
+      "guard_assertions_unchanged": true,
+      "immutable_probe_hashes": {
+        "/tmp/openui-native-style-integration-build-v1418.py": "bd837a859140154ff367cca08571c67c3a763a58fabe03d0aff4ab7d3ed61a84",
+        "/tmp/openui-native-style-integration-consumers-v1418.py": "1753b06029c991c6601d008928b575c8239dda62fe61aa37e592ec8ee4b372e5",
+        "/tmp/openui-native-style-integration-guards-v1418.py": "6822c0308bcbb0148224c30a207d2b1e18fc60e877e19775c77dbebfbdc2c67f",
+        "/tmp/openui-native-style-integration-matrices-v1418.py": "308c3713cca06c038b0e5fa8bcf11c6409be3d66db1db8374e814e5b8e8216cb",
+        "/tmp/openui-native-style-integration-relative-c-v1418.py": "231d7fba9575eace214001eed0d9bf12aac478a96fc959a6e3b7125b33f8d813"
+      },
+      "inherits_intrinsic_or_lcd_trial_source": false,
+      "javascript_executed_by_openui": false,
+      "native_style_source_unchanged": true,
+      "new_release_states_admitted": 0,
+      "old_openui_pixels_are_provenance_only": true,
+      "ordered_build_and_image_stages": true,
+      "original_pixel_gate_remains_required": true,
+      "preserves_all_previous_input_bytes": true,
+      "prior_whole_pipelines": [
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1369/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1375/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-consumer-pipeline-v1398/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/umbrella-clean-workspace-pipeline-v1411/receipt.json"
+      ],
+      "probe_sha256": "8a394ba32530eb19ee82f6db03a760f73009976f561104b91cac8cd92b63d848",
+      "promotion_allowed": false,
+      "release_qualification": false,
+      "renderer_production_unchanged_from_prior_candidate": false,
+      "schema_version": 1,
+      "selected_guard_count_corrected_from_source_inventory": true,
+      "selection_hashes": {},
+      "source": {
+        "clean": true,
+        "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "43b31449b73a7c7f794d160a82b926e47095ae09a192280536e4dc374b4e6347",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "43b31449b73a7c7f794d160a82b926e47095ae09a192280536e4dc374b4e6347",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "state": "awaiting-all-prior-whole-pipelines-including-clean-umbrella-revalidation",
+      "steps": [],
+      "strict_chromium_capture_pairs": true,
+      "supersedes_terminal_failed_pipeline": "native-style-integration-pipeline-v1354",
+      "workspace_cleaned_at_every_source_switch": true
+    },
+    "umbrella-clean-workspace-pipeline-v1411": {
+      "all_commands_terminal": false,
+      "consumer_compile_correction_only": false,
+      "current_process": {
+        "pid": 3294961,
+        "program": "openui-umbrella-clean-workspace-matrices-v1410.py"
+      },
+      "immutable_probe_hashes": {
+        "/tmp/openui-umbrella-clean-workspace-build-v1410.py": "b6ec53bfe71f13e716d33c3c3cebfe7006bd7872d382f952fe3745b09eb03cac",
+        "/tmp/openui-umbrella-clean-workspace-guards-v1410.py": "546d1b58a128b2602a75202d91d772dcaecf63b2b152ed6b6d4987a580bfc1d1",
+        "/tmp/openui-umbrella-clean-workspace-matrices-v1410.py": "fd851422c13287dc11eafff9157ec369d79beaddcfda5c5824c66805435d3cb5"
+      },
+      "javascript_executed_by_openui": false,
+      "new_release_states_admitted": 0,
+      "new_source_or_pixel_passes_claimed": false,
+      "old_openui_pixels_are_provenance_only": true,
+      "ordered_build_and_image_stages": true,
+      "original_attribution_audit": "workspace-source-attribution-audit-v1409.json",
+      "original_pixel_gate_remains_required": true,
+      "original_renderer_pixel_gate_remains_fail": true,
+      "owner_pid": 3250192,
+      "prior_terminal_pipeline_sha256": {
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json": "926466a0bbcc7621a0754043d40a45d52995bc3fd868a257578b451482c488ee",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json": "95da859e07156b9162940ee12d3a3a437d56f1a44dd5f55ce080fc84cf19a1aa",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json": "078a26f62d5c704947367ff2bb1e06f8c3d0759e19093fcad405d27629f4203e",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json": "ceb26919fa7ddf8b74161f2905990a9284427b3bc40df2a561d6be83b8ec494d",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json": "115dfb1326c95cdbcd8ddfb23f80fc7990235bc059071de4be29eee4aba58a57",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json": "be5b475d9d3aa72dc60c02ebb4ab253240d07d3186bf17b64ebdf1d6472ad367",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json": "ae3f849b0499cb54b75321a8e599587fc907c147a63e976d2f99b92fb0585571",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1375/receipt.json": "11304c8d3704024e05eef9b80f005c7fff8cd7e55f94e563120eabac78405e31",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-consumer-pipeline-v1398/receipt.json": "8a64d4285cd2ce57f85fdd0cc00265ee34cc3cee4cd08d33d5bd9aff82f4a261",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json": "5527ac622b3188a170828738d18de83a113e6635b14dd3766108661c398e1d06",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json": "bd6bacf2368642fdb3ca09c28ca261cefd1c1dd72c7dc451a4cfab6ff6b03305"
+      },
+      "prior_whole_pipelines": [
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1375/receipt.json",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-consumer-pipeline-v1398/receipt.json"
+      ],
+      "probe_sha256": "f49d28b14d7987dd956ff73682b4ac58eb196d23f50e75778420c16c3a76d241",
+      "production_runtime_unchanged_from_289d5516": true,
+      "promotion_allowed": false,
+      "reason": "Earlier source-attributed workspace log executes a private text test absent from that source; full clean compilation and pixel revalidation are required.",
+      "release_qualification": false,
+      "renderer_production_unchanged_from_prior_candidate": false,
+      "schema_version": 1,
+      "selection_hashes": {},
+      "source": {
+        "clean": true,
+        "commit": "2e443f49d49b81d65674f64bb099fed2922775b5",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "5377ee4175f9eac313c9d4c08e1e8f3c9d2aff100fa73cb8d716188e9efb1584",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "2e443f49d49b81d65674f64bb099fed2922775b5",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "5377ee4175f9eac313c9d4c08e1e8f3c9d2aff100fa73cb8d716188e9efb1584",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "state": "running-full",
+      "steps": [
+        {
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/openui-umbrella-clean-workspace-guards-v1410.py"
+          ],
+          "log_sha256": "daffca94f876bea36a19d7d8fa1e85ad6f75c2f7f99fcd6f20486b03f76c7a35",
+          "name": "guards",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/openui-umbrella-clean-workspace-build-v1410.py"
+          ],
+          "log_sha256": "f40f0a96576ad698edde1d75894f49bd42011f67ad75f9ff96a08e3db8bf969f",
+          "name": "native-build",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/openui-umbrella-clean-workspace-matrices-v1410.py",
+            "focused"
+          ],
+          "log_sha256": "1d453ac68acbe9b078e2f0abd22479e214d508764b508d56da0560f8caf14d88",
+          "name": "focused",
+          "observed_exit_code": 0
+        },
+        {
+          "command": [
+            "/usr/bin/python3",
+            "/tmp/openui-umbrella-clean-workspace-matrices-v1410.py",
+            "primitive"
+          ],
+          "log_sha256": "7a8d3e1796772407c837d8a423d151571850fb75483724b897554d8f082cf3b6",
+          "name": "primitive",
+          "observed_exit_code": 0
+        }
+      ],
+      "workspace_cleaned_at_every_source_switch": true,
+      "workspace_packages_cleaned": 18
+    }
+  },
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1
+}
