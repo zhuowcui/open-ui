@@ -10262,7 +10262,8 @@ fn nested_repeated_table_flow_block_size(
         .find(|child| {
             !child.node_id.is_none() && doc.node(child.node_id).style.display.is_table_wrapper()
         })?;
-    let sections = repeated_table_sections(table, doc);
+    let sections =
+        repeated_table_sections(table.repeated_table_source.as_deref().unwrap_or(table), doc);
     if sections.is_empty() {
         return None;
     }
@@ -10524,8 +10525,14 @@ fn prepare_nested_repeated_table_slice(
                 {
                     return None;
                 }
-                let sections = repeated_table_sections(table, doc);
-                (!sections.is_empty()).then(|| (table.offset.top, table.clone(), sections))
+                let mut canonical_table = table
+                    .repeated_table_source
+                    .as_deref()
+                    .unwrap_or(table)
+                    .clone();
+                canonical_table.repeated_table_source = table.repeated_table_source.clone();
+                let sections = repeated_table_sections(&canonical_table, doc);
+                (!sections.is_empty()).then(|| (table.offset.top, canonical_table, sections))
             })
         else {
             return false;
@@ -10630,7 +10637,10 @@ fn prepare_nested_repeated_table_slice(
             {
                 return None;
             }
-            let sections = repeated_table_sections(table, doc);
+            let sections = repeated_table_sections(
+                table.repeated_table_source.as_deref().unwrap_or(table),
+                doc,
+            );
             (!sections.is_empty()).then_some(sections)
         })
     {
@@ -10654,7 +10664,9 @@ fn prepare_nested_repeated_table_slice(
             {
                 continue;
             }
-            let sections = repeated_table_sections(table, doc);
+            let canonical_source = table.repeated_table_source.clone();
+            let canonical_table = canonical_source.as_deref().unwrap_or(table).clone();
+            let sections = repeated_table_sections(&canonical_table, doc);
             if sections.is_empty() {
                 continue;
             }
@@ -10719,6 +10731,11 @@ fn prepare_nested_repeated_table_slice(
             } else {
                 nominal_table_fragment_size.max_of(sections.header + painted_body_capacity)
             };
+            // Restore the immutable source before applying this ancestor's
+            // body window. The first inner slice may already have cropped
+            // descendants and moved the footer into its repeated position.
+            *table = canonical_table;
+            table.repeated_table_source = canonical_source;
             prepare_repeated_table_slice(
                 table,
                 doc,
@@ -27717,6 +27734,13 @@ fn layout_multicol(
                             };
                         let mut repeating_table_sections =
                             repeated_table_sections(&child_frag, doc);
+                        let repeated_table_source =
+                            (!repeating_table_sections.is_empty()).then(|| {
+                                child_frag
+                                    .repeated_table_source
+                                    .clone()
+                                    .unwrap_or_else(|| std::sync::Arc::new(child_frag.clone()))
+                            });
                         if !repeating_table_sections.is_empty()
                             && has_nested_multicol_ancestors(doc, child_node_id)
                         {
@@ -29329,6 +29353,9 @@ fn layout_multicol(
                             }
 
                             let mut part = child_frag.clone();
+                            if let Some(source) = &repeated_table_source {
+                                part.repeated_table_source = Some(std::sync::Arc::clone(source));
+                            }
                             part.size.height = visual_part_height;
                             if let Some(source_box) = child_frag.principal_box_rect {
                                 // Visible child flow may outlive the containing box.

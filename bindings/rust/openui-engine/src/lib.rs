@@ -2210,6 +2210,19 @@ mod tests {
         use openui_geometry::Length;
         use openui_style::{BreakInside, ColumnFill, Position};
 
+        fn collect_sources(fragment: &Fragment, sources: &mut Vec<std::sync::Weak<Fragment>>) {
+            if let Some(source) = &fragment.repeated_table_source {
+                assert!(source.repeated_table_source.is_none());
+                let weak = Arc::downgrade(source);
+                if !sources.iter().any(|existing| existing.ptr_eq(&weak)) {
+                    sources.push(weak);
+                }
+            }
+            for child in &fragment.children {
+                collect_sources(child, sources);
+            }
+        }
+
         fn child(engine: &mut Engine, parent: NodeHandle, display: Display) -> NodeHandle {
             let node = engine.create_element(ElementTag::Div).unwrap();
             engine
@@ -2327,8 +2340,17 @@ mod tests {
                         );
                     }
                 }
+                let mut sources = Vec::new();
+                collect_sources(engine.latest_fragment.as_ref().unwrap(), &mut sources);
+                assert_eq!(
+                    sources.len(),
+                    1,
+                    "all table slices share one immutable source"
+                );
                 engine.remove(outer).unwrap();
                 assert_eq!(engine.client_rects(table), Err(EngineError::StaleHandle));
+                drop(engine);
+                assert!(sources.iter().all(|source| source.upgrade().is_none()));
             }
         }
     }

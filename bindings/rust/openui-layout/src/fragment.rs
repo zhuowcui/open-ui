@@ -340,6 +340,12 @@ pub struct Fragment {
     /// Resolved column geometry when this fragment is a multicol container.
     pub multicol_fragmentation: Option<MulticolFragmentationData>,
 
+    /// Immutable unsliced table subtree shared by its continuations. An
+    /// ancestor fragmentainer must advance through the complete body, rather
+    /// than treating a cropped first row as the table's source extent.
+    /// The captured source predates its slices and never points back to them.
+    pub repeated_table_source: Option<Arc<Fragment>>,
+
     /// Writing direction of the fragmentation context that produced this
     /// physical fragment. `None` means the fragment is not a fragmentainer or
     /// an in-flow continuation. Paint uses this to map logical block slicing
@@ -543,6 +549,7 @@ impl Fragment {
             promoted_transform_ancestors: Vec::new(),
             promoted_transform_uses_fragment_decoration: false,
             multicol_fragmentation: None,
+            repeated_table_source: None,
             fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
             decoration_limit_preserves_inline_coverage: false,
@@ -612,6 +619,7 @@ impl Fragment {
             promoted_transform_ancestors: Vec::new(),
             promoted_transform_uses_fragment_decoration: false,
             multicol_fragmentation: None,
+            repeated_table_source: None,
             fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
             decoration_limit_preserves_inline_coverage: false,
