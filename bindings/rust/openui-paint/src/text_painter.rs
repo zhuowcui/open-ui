@@ -22,7 +22,9 @@ use skia_safe::{
     Canvas, Color4f, ColorSpace, Paint, PaintStyle, Point, Rect, TextBlob, TextBlobBuilder,
 };
 
-use openui_geometry::{PhysicalSnap, RasterBackend, RasterSnapping, TextEdging};
+use openui_geometry::{
+    PhysicalSnap, RasterBackend, RasterSnapping, TextEdging, TextRasterConfiguration,
+};
 use openui_layout::inline::text_combine::TextCombineLayout;
 use openui_style::{Color, ComputedStyle, FontFamily, GenericFontFamily};
 use openui_text::font::FontMetrics;
@@ -73,13 +75,7 @@ pub fn paint_text_with_raster_policy(
     style: &ComputedStyle,
     raster_policy: TextRasterPolicy,
 ) {
-    let text_raster = if style.native_control_text {
-        style.raster_configuration.native_text
-    } else if style.embedded_document_text {
-        style.raster_configuration.embedded_text
-    } else {
-        style.raster_configuration.author_text
-    };
+    let text_raster = text_raster_configuration(style);
     let aliased_ahem = text_raster.edging == TextEdging::Alias
         && !shape_result.runs.is_empty()
         && shape_result.runs.iter().all(|run| {
@@ -109,19 +105,16 @@ pub fn paint_text_with_raster_policy(
     let lcd_origin = (style.native_control_text
         || raster_policy == TextRasterPolicy::ChromiumAuthorLcd
         || text_raster.edging == TextEdging::SubpixelAntiAlias)
-        .then(|| {
-            origin.0
-                + if style.native_control_text {
-                    f32::from(style.raster_configuration.native_text.lcd_phase_64ths)
-                        / 64.0
-                        / style.device_scale_factor as f32
-                } else {
-                    0.0
-                }
-        });
-    if let Some(logical_blob) =
-        shape_result.to_text_blob_with_raster_policy(lcd_origin, raster_policy)
-    {
+        .then_some(origin.0);
+    // The caller's phase is a physical raster offset, applied once at draw
+    // time. It must not change shaped advances or pass through layout rounding.
+    let origin = lcd_raster_origin(origin, text_raster, style.device_scale_factor);
+    if let Some(logical_blob) = shape_result.to_text_blob_with_raster_policy_and_geometry_at_scale(
+        lcd_origin,
+        raster_policy,
+        1.0,
+        style.raster_configuration.pixel_geometry,
+    ) {
         // Cull against the glyphs' logical ink bounds before Skia applies its
         // LCD coverage filter.  Skia's filter taps extend one device pixel
         // beyond those bounds; if a run begins exactly at a hard overflow
@@ -152,14 +145,17 @@ pub fn paint_text_with_raster_policy(
         paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
 
         let physical_scale = style.device_scale_factor as f32;
-        if style.raster_configuration.backend == RasterBackend::ChromiumLinux
-            && (physical_scale - 1.0).abs() > f32::EPSILON
-        {
-            if let Some(physical_blob) = shape_result.to_text_blob_with_raster_policy_at_scale(
-                lcd_origin,
-                raster_policy,
-                physical_scale,
-            ) {
+        let physical_strike = style.raster_configuration.backend == RasterBackend::ChromiumLinux
+            || raster_policy != TextRasterPolicy::Skia;
+        if physical_strike && (physical_scale - 1.0).abs() > f32::EPSILON {
+            if let Some(physical_blob) = shape_result
+                .to_text_blob_with_raster_policy_and_geometry_at_scale(
+                    lcd_origin,
+                    raster_policy,
+                    physical_scale,
+                    style.raster_configuration.pixel_geometry,
+                )
+            {
                 canvas.save();
                 canvas.translate(origin);
                 canvas.scale((1.0 / physical_scale, 1.0 / physical_scale));
@@ -170,6 +166,30 @@ pub fn paint_text_with_raster_policy(
             canvas.draw_text_blob(&logical_blob, Point::new(origin.0, origin.1), &paint);
         }
     }
+}
+
+pub(crate) fn text_raster_configuration(style: &ComputedStyle) -> TextRasterConfiguration {
+    if style.native_control_text {
+        style.raster_configuration.native_text
+    } else if style.embedded_document_text {
+        style.raster_configuration.embedded_text
+    } else {
+        style.raster_configuration.author_text
+    }
+}
+
+pub(crate) fn lcd_raster_origin(
+    origin: (f32, f32),
+    settings: TextRasterConfiguration,
+    device_scale: f64,
+) -> (f32, f32) {
+    if settings.edging != TextEdging::SubpixelAntiAlias || settings.lcd_phase_64ths == 0 {
+        return origin;
+    }
+    (
+        origin.0 + f32::from(settings.lcd_phase_64ths) / 64.0 / device_scale as f32,
+        origin.1,
+    )
 }
 
 fn uses_chromium_author_lcd(style: &ComputedStyle) -> bool {
