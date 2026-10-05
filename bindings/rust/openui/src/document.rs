@@ -1419,6 +1419,50 @@ mod tests {
         button.set_attribute("data-after-panic", "live").unwrap();
     }
 
+    #[cfg(feature = "ffi-integration")]
+    #[test]
+    fn rust_event_targets_clear_listener_state_on_foreign_callback_error() {
+        let document = Document::new(100, 100).unwrap();
+        let root = document.body();
+        let button = mounted(&document, "button");
+        root.set_attribute("data-name", "root").unwrap();
+        button.set_attribute("data-name", "button").unwrap();
+        let saved = Rc::new(RefCell::new(None));
+        let observed = saved.clone();
+        document
+            .set_foreign_event_handler(Rc::new(move |_, _, event, _| {
+                assert_eq!(
+                    event
+                        .target()
+                        .unwrap()
+                        .get_attribute("data-name")
+                        .unwrap()
+                        .as_deref(),
+                    Some("button")
+                );
+                assert_eq!(
+                    event
+                        .current_target()
+                        .unwrap()
+                        .get_attribute("data-name")
+                        .unwrap()
+                        .as_deref(),
+                    Some("root")
+                );
+                *observed.borrow_mut() = Some(event.clone());
+                Err(Error::InvalidArgument(
+                    "native callback error for dispatch cleanup",
+                ))
+            }))
+            .unwrap();
+        assert!(button.click().is_err());
+        let event = saved.borrow().clone().unwrap();
+        assert_eq!(event.phase(), None);
+        assert!(event.current_target().is_none());
+        assert!(event.target().is_some());
+        button.set_attribute("data-after-error", "live").unwrap();
+    }
+
     #[test]
     fn rust_event_targets_follow_pointer_capture_and_boundary_dispatch() {
         let document = Document::new(100, 120).unwrap();
