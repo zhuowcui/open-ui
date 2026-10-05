@@ -75,10 +75,21 @@ The fresh owner `1650` checks all four probe paths, the import and the restore
 branch before starting. All 34 predecessors are terminal. Test-only baseline
 `9fe1665d` fails the named C text assertion with exit 101; corrected source
 `90310e15` passes it. The Engine storage guard passes 10,000 replacements, and
-all 58 public native conformance scenarios pass. The clean build is running.
+all 58 public native conformance scenarios pass. The clean build passes 8,538
+workspace tests, zero failures, 13 ignored, and ABI consumers. Its C compile
+and link pass, but the smoke exits 127: the loader needs `libopenui.so.0`, while
+the harness installs only `libopenui_ffi.so`. The C++ build, application images
+and matrices do not execute. This is a terminal harness failure.
 The [native guard evidence](generated/native-text-content-v2.json) preserves
 every actual exit and both baseline and fixed logs.
-ABI consumers, 600 Rust/C/C++ image comparisons with 38,400 geometry states,
+
+Fresh owner `1656` uses unchanged source `90310e15` on a new root. All 35 prior
+owners are terminal. The new build installs the ABI's required SONAME filename
+and verifies its bytes against the built library before linking or running C
+and C++ applications. All probe paths and the restore branch are preflighted.
+The [loader retry evidence](generated/native-review-v5.json) preserves the
+previous stop and the new probes. Named baseline/fixed guards and the clean
+build are repeated; 600 Rust/C/C++ image comparisons with 38,400 geometry states
 and all four renderer matrices remain required. Native pixel comparisons use
 the preserved pinned Chromium Fontations references and the app's immutable
 default Engine options.

@@ -37,14 +37,17 @@ pass. Its first hosted tests expose an inconsistent viewport in the new guard.
 A fresh test setup corrects that input and passes all seven hosted hardening
 jobs. The old C setter fails the named regression; the shared correction passes
 it, the 10,000-update storage guard and all 58 native conformance scenarios.
-The clean application build and pixel matrices are still running. The
-correction remains unapplied.
+The clean build passes 8,538 workspace tests and ABI consumers, then the C
+smoke stops because the harness omitted the library's required filename.
+A fresh retry installs and verifies `libopenui.so.0`; application images and
+pixel matrices remain required. The correction remains unapplied.
 
 The [authored glyph precision investigation](docs/renderer/native-author-glyph-precision.md)
 finds a source-supported explanation for three Ahem images: rounding shaped
 advances before Skia selects the LCD phase moves the second glyph. A private
-correction preserves those advances. Eleven source checks pass; its runtime
-guard and pixel verification have not run. No new exact result is claimed.
+correction preserves those advances. Eleven source checks pass; its named
+runtime guard is queued behind the complete text retry. Pixel verification has
+not run. No new exact result is claimed.
 
 The [table source-retention follow-up](docs/renderer/native-table-progress.md#canonical-source-retention-follow-up)
 keeps an immutable full table subtree for ancestor continuations. A geometry-only

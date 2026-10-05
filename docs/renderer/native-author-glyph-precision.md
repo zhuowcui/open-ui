@@ -40,8 +40,13 @@ production change contains no fixture, font-family or test-ID selection.
 Test-only baseline `347d901c` adds a guard using real shaping for four families,
 five sizes and five scales. It checks that adding the container origin retains
 the run's shaped precision for the same physical strike. Eleven read-only
-source and generated-contract checks pass. The named baseline failure, fixed
-guard, native application comparisons and all renderer matrices have not run.
+source and generated-contract checks pass. Fresh guard owner `1658` waits for
+all 36 preceding whole owners, including text retry `1656`, before named
+baseline/fixed guards and the full text suite. Its source path and restore
+branch are checked before queueing. The
+[prepared guard evidence](generated/native-review-v5.json) preserves the new
+probes. The guard, native application comparisons and renderer matrices have
+not run; this queue covers the guard only.
 
 This source inherits raster trial `e0dc491e`, which loses 83 original exact
 comparisons and is rejected for application. A passing precision guard would

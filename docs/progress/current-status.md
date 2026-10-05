@@ -40,22 +40,32 @@ successfully, with zero skips. Owner `1636` stops before Cargo because its
 probe duplicates the source path's `viewport` prefix. Fresh owner `1650`
 preflights all four paths and its restore branch. The named baseline fails
 with exit 101; fixed C parity and 10,000-update storage guards pass, along with
-all 58 native conformance scenarios. The clean build is running; 600 consuming
-Rust/C/C++ images, 38,400 geometry states and all four matrices remain required.
+all 58 native conformance scenarios. Its clean build passes 8,538 workspace
+tests, zero failures, 13 ignored, and ABI consumers, then stops at the C smoke
+with exit 127: the harness omitted the library's `libopenui.so.0` filename.
+Fresh owner `1656` keeps source `90310e15`, checks its paths and restore branch,
+and installs and verifies the required SONAME filename. It repeats the guards
+and clean build; 600 consuming Rust/C/C++ images, 38,400 geometry states and
+all four matrices remain required.
 Both sources and all failed
 or unlaunched preparations are preserved in the
 [new index](../renderer/generated/native-text-content-v1.json). The correction
 is unapplied and no release state is admitted. The
 [new terminal review](../renderer/generated/native-review-v4.json) preserves
 the complete raster trial, all five subsequent harness/disk stops, completed
-hosted results and the corrected text retry. Previous records remain unchanged.
+hosted results and the corrected text retry. The
+[loader follow-up](../renderer/generated/native-review-v5.json) preserves
+the additional terminal build failure, its passing workspace and both fresh
+text/glyph verification queues. Previous records remain unchanged.
 
 The [authored glyph precision investigation](../renderer/native-author-glyph-precision.md)
 models ten preserved Ahem images and 640 correct geometry states. Premature
 1/64 rounding predicts the second-glyph failures at sizes 10, 20 and 24; twelve
 edge checks agree. Private `3b2e0d1f` retains shaped advances before Skia phase
-selection and passes eleven source checks. Its runtime guard and pixel checks
-have not executed. It inherits the rejected raster parent's 83 exact losses;
+selection and passes eleven source checks. Its runtime guard owner `1658`
+waits for all 36 preceding whole owners, including complete text owner `1656`.
+Its guard and pixel checks have not executed. It inherits the rejected
+raster parent's 83 exact losses;
 it is unapplied and cannot qualify that parent or the other Rust font failures.
 
 The [canonical table source follow-up](../renderer/native-table-progress.md#canonical-source-retention-follow-up)

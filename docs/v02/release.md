@@ -15,8 +15,13 @@ own-source hosted hardening jobs with zero skips. Old owner `1636` stops on a
 duplicated source-path prefix before Cargo. Fresh owner `1650` verifies all
 paths and the restore branch, reproduces the named baseline failure, and passes
 the corrected C text guard, 10,000-update storage guard and all 58 native
-conformance scenarios. Its clean build is running; Rust/C/C++ consumer images
-and all four matrices remain required. This operation uses native Rust methods
+conformance scenarios. The clean build passes 8,538 workspace tests, zero
+failures, 13 ignored, and ABI consumers, then the C smoke exits 127 because
+the harness omitted `libopenui.so.0`. Fresh owner `1656` installs and verifies
+that ABI SONAME filename, preflights its paths and repeats guards/builds on
+unchanged source. Rust/C/C++ consumer images and all four matrices remain
+required, as recorded in the [loader follow-up](../renderer/generated/native-review-v5.json).
+This operation uses native Rust methods
 and callbacks, with no JavaScript.
 It is unapplied and unqualified. The
 [new evidence](../renderer/generated/native-text-content-v1.json) also records
@@ -32,7 +37,9 @@ fixed. The raster source is rejected for application; accepted totals remain
 The [authored glyph precision source](../renderer/native-author-glyph-precision.md)
 preserves shaped advances before Skia selects the LCD phase. Ten existing-image
 models and twelve edge checks support the cause of three Ahem images. Eleven
-read-only checks pass; its runtime guard and pixel gates have not executed.
+read-only checks pass; its named runtime guard is queued behind all 36 prior
+whole owners, including complete text owner `1656`. Its guard and pixel gates
+have not executed.
 It inherits the rejected raster source and cannot be applied or qualified by
 those diagnostics. No new release state is admitted.
 
