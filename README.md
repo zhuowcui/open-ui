@@ -86,11 +86,15 @@ It removes two 10px-only adjustments and adds native application checks. Ten
 read-only checks pass; compilation and exact Chromium verification are queued.
 Default native raster and remaining font-policy overrides still require work.
 The [recording cache repair](docs/renderer/generated/native-scroll-insets-v35.json)
-is applied. Its clean qualification source passes the CPU/Ganesh cache guards,
-8,532 workspace tests and all seven hosted hardening jobs. Every original and
-expanded pixel comparison remains unchanged. The umbrella checkpoint's own
-build is complete and its focused/primitive matrices are exact; its complete
-censuses are running. All seven own umbrella
+is applied. Its earlier run passes the CPU/Ganesh cache guards and all seven
+hosted hardening jobs and reports 8,532 workspace tests. The
+[source-attribution audit](docs/renderer/generated/native-scroll-insets-v39.json)
+finds one executed text test absent from that declared source; the earlier
+workspace result needs full clean revalidation. The applied source reports
+8,531 tests, and both complete pixel matrices retain all 46,652 comparison
+invariants. The four-profile pixel gates still fail. A separate clean queue
+cleans all 18 workspace packages at every source switch before rebuilding
+and rerunning all matrices. All seven own umbrella
 [manual hardening jobs](https://github.com/zhuowcui/open-ui/actions/runs/37244559627)
 pass at `287e176a`, with zero skips; the full Chromium pixel gate still fails.
 The [prepared native style/cache integration](docs/renderer/generated/native-scroll-insets-v36.json)
@@ -110,8 +114,9 @@ corrects test setup through the existing style API and fixes the C/C++ example's
 bounds query. Strict C/C++ compiler checks and ten repository checks pass on
 private `3d4eea11`; native execution and exact pixel comparisons are queued.
 Its parent hosted run passes six jobs, including the new strict Miri prefix
-test, and fails C consumer compilation. Corrected-source hosted checks are
-running. The same evidence preserves 4,500 repeatable Chromium geometry
+test, and fails C consumer compilation. All seven corrected-source hosted
+checks now pass, with zero skips, in [v39](docs/renderer/generated/native-scroll-insets-v39.json).
+The same evidence preserves 4,500 repeatable Chromium geometry
 observations without generating images; native verification remains required.
 Earlier renderer measurements below remain attributed to their named sources. The
 [private sampling candidate](docs/renderer/generated/native-viewport-full-v14.json)

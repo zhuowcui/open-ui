@@ -21,8 +21,9 @@ layout box. Both old C/C++ consumers reproduce the compilation failure, and
 both corrected consumers pass strict syntax checks. Public headers, exports,
 Rust production code and workflows are unchanged by this consumer correction.
 
-Both corrected sources pass ten read-only checks. The new source's own hosted
-checks are running. Its local queue cleans all 18 workspace packages at every
+Both corrected sources pass ten read-only checks. All seven new-source hosted
+checks pass, with zero skips, in [v39](generated/native-scroll-insets-v39.json).
+Its local queue cleans all 18 workspace packages at every
 source switch, requires all three named baseline failures, then runs a clean
 17-stage build, native control/phase/geometry and Rust/C/C++ font consumers,
 the 880-comparison selection and all four complete matrices. Builds and image

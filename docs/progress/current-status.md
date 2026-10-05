@@ -7,6 +7,23 @@ remain open.
 
 ## Current implementation checkpoint
 
+The [v39 audit](../renderer/generated/native-scroll-insets-v39.json) completes
+the applied cache checkpoint's original and expanded comparison checks:
+21,334/22,924 and 22,137/23,728 exact, zero errors, actual exits 1. All 46,652
+comparison invariants remain unchanged, all original rows agree, and 200/201
+additions remain exact at all four profiles. The entire local pipeline is
+terminal; its successors now own local sequencing.
+
+The same audit finds a compiled-artifact attribution problem. The earlier
+`3ff5f8af` workspace log reports 8,532 tests, including a private Fontations
+test absent from that source. The applied `289d5516` log reports 8,531 tests;
+all native/build inputs are identical. These recorded counts cannot establish
+that every linked library matches source. The earlier workspace result is
+unqualified pending revalidation. A separate immutable `2e443f49` queue waits
+for every command in all eleven prior whole pipelines, cleans all 18 workspace
+packages at each source switch, reproduces the cache guard, rebuilds native
+consumers and reruns all four exact matrices. No new pixel pass is claimed.
+
 The [v38 raster validation evidence](../renderer/generated/native-scroll-insets-v38.json)
 preserves corrected regression-test setup at `0e1f12ff` and the native C/C++
 bounds-query correction at private `3d4eea11`. Both old consumers fail strict
@@ -18,8 +35,8 @@ remains unqualified and unapplied.
 The completed parent-source hosted run passes six jobs and fails one: C UBSan
 stops compiling the example's invalid three-argument bounds call before
 sanitizer execution. The new version-prefix test passes under strict Miri.
-Corrected-source [own hosted checks](https://github.com/zhuowcui/open-ui/actions/runs/37255347853)
-are running. Its twelve local stages, including the clean 17-stage build,
+All seven corrected-source [own hosted checks](https://github.com/zhuowcui/open-ui/actions/runs/37255347853)
+pass, with zero skips. Its twelve local stages, including the clean 17-stage build,
 Rust/C/C++ consumers, selected pixels and four complete matrices, wait for
 every command in all ten preceding whole pipelines. No native execution or
 new pixel pass is claimed. Separately, 4,500 Chromium geometry observations
@@ -30,13 +47,13 @@ breaks and decorated inline boxes. Native measurements are the next step.
 The compositor cache repair is now applied in `289d5516`, with its regression
 guard in `639e9c80`. Equal scene numbers from different documents no longer
 reuse another recording's frame. The [v35 evidence](../renderer/generated/native-scroll-insets-v35.json)
-records qualification at clean `3ff5f8af`: the named baseline fails, all fixed
-CPU/Ganesh cache guards pass, 8,532 workspace tests and eleven C/five C++
+records the earlier run at clean `3ff5f8af`: the named baseline fails, all fixed
+CPU/Ganesh cache guards pass, 8,532 workspace tests are reported and eleven C/five C++
 consumers pass, and both full pixel suites retain every comparison invariant.
 All seven own-source hosted hardening jobs pass, with zero skips. Native,
 build-tool and workflow inputs are identical at the applied umbrella checkpoint.
-Its own clean build and complete matrices are queued after every earlier
-pipeline. At umbrella `287e176a`, all three ordinary workflows succeed
+Its later complete measurements and required full clean revalidation are
+recorded above. At umbrella `287e176a`, all three ordinary workflows succeed
 (six jobs pass and five are skipped), and all seven jobs in the
 [manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/37244559627)
 pass with zero skips. Skipped jobs do not count as passes. This repairs frame

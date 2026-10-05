@@ -15,7 +15,9 @@ consumers reproduce the compile error, and both corrected consumers pass
 strict syntax checks. Ten read-only checks pass on the corrected source;
 headers, ABI, Rust renderer and workflows remain identical to the parent.
 
-Corrected-source hosted checks are running. The local queue waits for all ten
+All seven corrected-source hosted checks pass with zero skips, including C
+UBSan and strict Miri; [v39](../renderer/generated/native-scroll-insets-v39.json)
+preserves the completed receipt. The local queue waits for all ten
 preceding entire pipelines. Its clean 17-stage build includes the boundary
 tests, Linux workspace, native examples, ABI consumers and linked C/C++ raster
 consumers. The subsequent Rust/C/C++ font matrix requires 1,200 exact images
