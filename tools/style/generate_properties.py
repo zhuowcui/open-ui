@@ -170,6 +170,36 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
         f"            StyleProperty::{row['rust_name']} => Some(Self::{row['rust_name']}(style.fields.{field_names(row)[0]}.clone())),"
         for row in renderer_rows
     )
+    # Copy computed values, without resolving inherited lengths again.
+    inherited_fields = sorted({field for row in schema if row["inherited"] == "true" for field in field_names(row)})
+    inherited_copy = "\n".join(f"        self.fields.{field} = parent.fields.{field}.clone();" for field in inherited_fields)
+    # Shorthands and normalization write more than their canonical inventory
+    # field. Use those write sets when deciding whether a repeated declaration
+    # is still effective after later declarations.
+    mutation_overrides = {
+        "Font": "font_style font_variant_caps font_weight font_stretch font_size line_height font_family font_variant_ligatures font_variant_numeric font_variant_east_asian font_variant_alternates font_variant_position font_variant_emoji font_optical_sizing font_size_adjust font_kerning font_feature_settings font_variation_settings font_language_override",
+        "FontVariant": "font_variant_ligatures font_variant_caps font_variant_alternates font_variant_numeric font_variant_east_asian font_variant_position font_variant_emoji",
+        "FontSynthesis": "font_synthesis_weight font_synthesis_style font_synthesis_small_caps font_synthesis_position",
+        "WordWrap": "overflow_wrap",
+        "TextEmphasisStyle": "text_emphasis_mark text_emphasis_fill",
+        "TextEmphasis": "text_emphasis_mark text_emphasis_fill text_emphasis_color",
+        "TextDecoration": "text_decoration_line text_decoration_style text_decoration_color text_decoration_thickness",
+        "TextBox": "text_box_trim text_box_edge",
+        "WhiteSpace": "white_space_collapse text_wrap_mode white_space text_wrap",
+        "TextWrap": "text_wrap_mode text_wrap_style text_wrap white_space",
+        "WhiteSpaceCollapse": "white_space_collapse white_space",
+        "TextWrapMode": "text_wrap_mode white_space text_wrap",
+        "TextWrapStyle": "text_wrap_style text_wrap",
+    }
+    assert set(mutation_overrides) <= {row["rust_name"] for row in schema}
+    mutation_cases = []
+    for row in schema:
+        names = mutation_overrides.get(row["rust_name"], " ".join(field_names(row))).split()
+        assert set(names) <= set(fields), row["rust_name"]
+        values = ", ".join(f'"{name}"' for name in names)
+        mutation_cases.append(f"            Self::{row['rust_name']} => &[{values}],")
+    mutation_match = "\n".join(mutation_cases)
+
     # Author values keep relative lengths until the engine resolves them. This
     # bridge also serves C's scalar transport; computed renderer values remain
     # a separate, lossless path through the same fields.
@@ -330,7 +360,27 @@ impl RendererInternalStyleValue {{
     }}
 }}
 
+impl ComputedStyle {{
+    /// Copy modeled inherited computed fields from a parent snapshot.
+    /// Authored values are reapplied by the retained engine afterwards.
+    #[doc(hidden)]
+    pub fn inherit_properties_from(&mut self, parent: &Self) {{
+{inherited_copy}
+    }}
+}}
+
 impl StyleProperty {{
+    #[doc(hidden)]
+    pub fn affects_same_fields_as(self, other: Self) -> bool {{
+        self == other || self.mutation_fields().iter().any(|field| other.mutation_fields().contains(field))
+    }}
+
+    fn mutation_fields(self) -> &'static [&'static str] {{
+        match self {{
+{mutation_match}
+        }}
+    }}
+
     pub fn from_u16(value: u16) -> Option<Self> {{
         PROPERTY_METADATA
             .get(value.checked_sub(1)? as usize)
