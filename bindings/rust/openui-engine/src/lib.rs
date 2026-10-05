@@ -2201,7 +2201,7 @@ mod tests {
     use super::*;
     use openui_compositor::SoftwareCompositor;
     use openui_style::{
-        Color, CornerRadii, Display, Edges, LengthValue, Overflow, TransformList,
+        Color, CornerRadii, Display, Edges, LengthValue, Overflow, Position, TransformList,
         TransformOperation,
     };
 
