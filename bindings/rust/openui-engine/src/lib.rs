@@ -2554,7 +2554,7 @@ mod tests {
     #[test]
     fn native_bevel_border_raises_low_contrast_colors_without_changing_author_style() {
         use openui_compositor::SoftwareCompositor;
-        use openui_style::BorderStyle;
+        use openui_style::{BorderStyle, Display};
 
         for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
             for (border_style, sample_y) in [
@@ -2573,6 +2573,8 @@ mod tests {
                 let element = engine.create_element(ElementTag::Div).unwrap();
                 engine.append_child(root, element).unwrap();
                 for value in [
+                    // The raw Engine constructor starts inline; this is a block border box.
+                    RendererStyleValue::Display(Display::Block),
                     RendererStyleValue::Width(openui_geometry::Length::px(20.0)),
                     RendererStyleValue::Height(openui_geometry::Length::px(20.0)),
                     RendererStyleValue::BorderTopWidth(4),
@@ -2598,6 +2600,15 @@ mod tests {
                 ] {
                     engine.set_renderer_style(element, value).unwrap();
                 }
+                let bounds = engine.bounds(element).unwrap().unwrap();
+                assert_eq!(
+                    (bounds.x, bounds.y, bounds.width, bounds.height),
+                    (0.0, 0.0, 28.0, 28.0),
+                    "the native bevel reproducer must have the reference border box"
+                );
+                assert_eq!(engine.client_rects(element).unwrap(), vec![bounds]);
+                assert!(14.0 >= bounds.x && 14.0 < bounds.x + bounds.width);
+                assert!(sample_y >= bounds.y && sample_y < bounds.y + bounds.height);
                 let scene = engine.scene().unwrap();
                 let mut compositor = SoftwareCompositor::default();
                 let frame = compositor.render(&scene).unwrap();
@@ -2610,6 +2621,7 @@ mod tests {
                     "low-contrast bevel must expose Chromium's lighter shade; style={border_style:?} scale={scale}"
                 );
                 let style = engine.computed_style(element).unwrap();
+                assert_eq!(style.display, Display::Block);
                 assert_eq!(style.border_top_color.resolve(&style.color), Color::BLACK);
                 assert_eq!(compositor.render(&scene).unwrap(), frame);
                 assert_eq!(compositor.stats().rasterized, 1);
