@@ -510,20 +510,16 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                 soft_break_after_pending_edges = false;
                 last_content_was_text = false;
 
-                let margin = resolve_margins(style, LayoutUnit::zero()).inline_sum();
-                let border = resolve_border(style).inline_sum();
-                let padding = resolve_padding(style, LayoutUnit::zero()).inline_sum();
-                let intrinsic = item
-                    .intrinsic_inline_size
-                    .map(|(min, max)| {
-                        (
-                            LayoutUnit::from_f32(min) + border + padding + margin,
-                            LayoutUnit::from_f32(max) + border + padding + margin,
-                        )
-                    })
-                    .unwrap_or((border + padding + margin, border + padding + margin));
-                min_segment = min_segment + intrinsic.0;
-                max_line = max_line + pending_collapsible_space + intrinsic.1;
+                // An atomic child's contribution includes its preferred size,
+                // min/max constraints, decorations and margins. The content
+                // endpoints stored on an inline item omit those constraints;
+                // using them here can reserve 40px for a box whose own layout
+                // produces a 200px minimum. Share the block/flex contribution
+                // calculation so enclosing intrinsic sizes retain the same
+                // constrained box that normal layout will place.
+                let intrinsic = compute_child_intrinsic_contribution(doc, item.node_id);
+                min_segment = min_segment + intrinsic.min_content_inline_size;
+                max_line = max_line + pending_collapsible_space + intrinsic.max_content_inline_size;
                 pending_collapsible_space = LayoutUnit::zero();
                 // Atomic inline-level boxes establish a soft wrap
                 // opportunity at their boundary. Adjacent inline-blocks
