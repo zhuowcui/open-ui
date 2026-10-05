@@ -1,0 +1,179 @@
+{
+  "all_commands_terminal": true,
+  "all_previous_reference_bytes_preserved": true,
+  "consumer_compile_correction_only": false,
+  "corrected_imports_or_test_setup_only": true,
+  "current_source_runtime_qualification_pending": true,
+  "guard_assertions_unchanged": true,
+  "immutable_probe_hashes": {
+    "/tmp/openui-native-intrinsic-cache-guard-build-v1468.py": "52275625fda48db933607553ff8b91e3bca2e2ca5bf3ae4170eca4e0a3c866f1",
+    "/tmp/openui-native-intrinsic-cache-guard-consumer-v1468.py": "5fc88c7853b0475fa75a19ee7611ecc05cccebd4f6145f06ba97d54c2aedf2a5",
+    "/tmp/openui-native-intrinsic-cache-guard-guards-v1468.py": "4834f593f2ce4e66da9a9fb9415162401da5b9cf97faaf5fe93b1b7817e5e922",
+    "/tmp/openui-native-intrinsic-cache-guard-matrices-v1468.py": "1eb2d843e01e2387fce8a5732acf4704a5f32dce55952474935daf1b0dc99402",
+    "/tmp/openui-native-intrinsic-cache-guard-sizing-v1468.py": "144e8d4282b68081543cf3687da6a7a5aab6fa67165021e9383fb6fd88a0e206"
+  },
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "ordered_build_and_image_stages": true,
+  "original_pixel_gate_remains_required": true,
+  "owner_pid": 3454832,
+  "preserves_all_previous_input_bytes": true,
+  "prior_terminal_pipeline_sha256": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json": "926466a0bbcc7621a0754043d40a45d52995bc3fd868a257578b451482c488ee",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json": "95da859e07156b9162940ee12d3a3a437d56f1a44dd5f55ce080fc84cf19a1aa",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-border-contrast-pipeline-v1462/receipt.json": "cbada8af0b6ebffd57bbbcd53a0b500a74aa60f9f5dd9155a222fa55cfc3856f",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json": "078a26f62d5c704947367ff2bb1e06f8c3d0759e19093fcad405d27629f4203e",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json": "ceb26919fa7ddf8b74161f2905990a9284427b3bc40df2a561d6be83b8ec494d",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-pipeline-v1457/receipt.json": "40dd438ec4e5e86cb36d09680c776c2852573278af5a7e0da0093f80da8baa8e",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json": "115dfb1326c95cdbcd8ddfb23f80fc7990235bc059071de4be29eee4aba58a57",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json": "be5b475d9d3aa72dc60c02ebb4ab253240d07d3186bf17b64ebdf1d6472ad367",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json": "ae3f849b0499cb54b75321a8e599587fc907c147a63e976d2f99b92fb0585571",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-image-coverage-pipeline-v1449/receipt.json": "8f89c7361476c355700a820313a86f3f5d730ae6c9b6a042f97f6925be38d011",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-image-occlusion-pipeline-v1437/receipt.json": "679620e867b9884c03ed805e1dfa4e5501c0bf3f44170330130c5568ba2f9e75",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1369/receipt.json": "2c97ade26b8524b82455d36e6ade491bd9948f17af46e88ccd1463f5a6d7d8bd",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1375/receipt.json": "11304c8d3704024e05eef9b80f005c7fff8cd7e55f94e563120eabac78405e31",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-retry-pipeline-v1420/receipt.json": "1c2c05abc4bde38ba037793d1a5237a12786c55dd1ffb20c19e33bce17ce7818",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-api-pipeline-v1425/receipt.json": "efb63cdcbadc319a9b7a4df7c5816abdd6dd1207e991006613b093eac2567abf",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-consumer-pipeline-v1398/receipt.json": "8a64d4285cd2ce57f85fdd0cc00265ee34cc3cee4cd08d33d5bd9aff82f4a261",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json": "5527ac622b3188a170828738d18de83a113e6635b14dd3766108661c398e1d06",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json": "bd6bacf2368642fdb3ca09c28ca261cefd1c1dd72c7dc451a4cfab6ff6b03305",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-retry-pipeline-v1419/receipt.json": "6002020345e6fb259e046082a00e9cc859f89e9e202466423f0df5f456278f04",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/umbrella-clean-workspace-pipeline-v1411/receipt.json": "30cf0eab5f797c166e96c43bd89e4567ec0eba9298826e7ce099ae3d06f66e9a"
+  },
+  "prior_whole_pipelines": [
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-default-strike-pipeline-v1338/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-pipeline-v1341/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-capture-forensics-pipeline-v1346/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-pipeline-v1354/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1375/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-pipeline-v1369/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-consumer-pipeline-v1398/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/umbrella-clean-workspace-pipeline-v1411/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-style-integration-retry-pipeline-v1419/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-constraints-retry-pipeline-v1420/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-api-pipeline-v1425/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-image-occlusion-pipeline-v1437/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-image-coverage-pipeline-v1449/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-pipeline-v1457/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-border-contrast-pipeline-v1462/receipt.json"
+  ],
+  "probe_sha256": "1d303eeb5d658213e5c9c02afaedd323f6c034f284844d1a3d1ae05234b1183e",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "renderer_production_unchanged_from_prior_candidate": true,
+  "schema_version": 1,
+  "selection_hashes": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-selection-v1310.json": "197050888cd8e21e7a75994605fe33be7658932a004d4321133a6cd00d46c2e2"
+  },
+  "source": {
+    "clean": true,
+    "commit": "a6d386e48d864a5769ebdadd8bc8dea46e4eff21",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c13d4a17ea4f566d051eb86e105e7afd2fb33f9052fc0cde1832fd347dfae2a7",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "a6d386e48d864a5769ebdadd8bc8dea46e4eff21",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c13d4a17ea4f566d051eb86e105e7afd2fb33f9052fc0cde1832fd347dfae2a7",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "complete-requires-results-review",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-intrinsic-cache-guard-guards-v1468.py"
+      ],
+      "log_sha256": "67420ecddbc707236ae075bfa57165133116ec8fa3be677f351db59ac6197d78",
+      "name": "guards",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-intrinsic-cache-guard-build-v1468.py"
+      ],
+      "log_sha256": "feb4f501f47fabaa9fae327920760b69bf7fb6dba60775b208453d8ba3760713",
+      "name": "native-build",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-intrinsic-cache-guard-sizing-v1468.py"
+      ],
+      "log_sha256": "bb8609c5d63f3b89b8131d7fbbafea2f5baa1037fa5253c5aa57b47baac87a98",
+      "name": "intrinsic-native",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-intrinsic-cache-guard-consumer-v1468.py"
+      ],
+      "log_sha256": "7ecb8af9ff778612e0f98f3b8577822a09f39c3c79f8d71d529cc81511b4cb20",
+      "name": "consuming-app",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-intrinsic-cache-guard-matrices-v1468.py",
+        "selection"
+      ],
+      "log_sha256": "fc1ad2d0fbf4ad53f9bb5cdec9a4746ca629aa28cc56f38c01b64f89a415a91d",
+      "name": "selection",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-intrinsic-cache-guard-matrices-v1468.py",
+        "focused"
+      ],
+      "log_sha256": "c8dbe515b0e4411b33adefa970ae665d150a2a31b946cfe0e3902231c8a22deb",
+      "name": "focused",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-intrinsic-cache-guard-matrices-v1468.py",
+        "primitive"
+      ],
+      "log_sha256": "e0ebe1ca8de7f6463aa60bc62c26dc6a2e9c2176caab69abedcaeaaf366377bf",
+      "name": "primitive",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-intrinsic-cache-guard-matrices-v1468.py",
+        "full"
+      ],
+      "log_sha256": "b0f6ed008a68d389a74078bc053b97fe3f566b169f89569589865a0fe8181863",
+      "name": "full",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-intrinsic-cache-guard-matrices-v1468.py",
+        "expanded"
+      ],
+      "log_sha256": "db61315864a7136e5f26cadb7324e0a172d2e7924618a0e3c9d83e98cf3e557e",
+      "name": "expanded",
+      "observed_exit_code": 1
+    }
+  ],
+  "strict_chromium_capture_pairs": true,
+  "workspace_cleaned_at_every_source_switch": true
+}

@@ -127,11 +127,24 @@ hosted hardening jobs pass, with zero skips. Prior style results are attributed 
 integration remains unapplied and unqualified.
 The [intrinsic constraints and whitespace investigation](docs/renderer/native-intrinsic-constraints.md)
 records the completed fieldset trial's 64 original exact losses and two shared
-layout causes. Private `a6d386e4` corrects the test's typed Float value without
-changing the prepared layout fixes or assertions. Ten read-only checks pass;
-its own native and pixel verification is queued with all 18 workspace packages
-cleaned at every source switch.
-It remains unapplied and admits no release state.
+layout causes. The [completed review](docs/renderer/generated/native-review-v1.json)
+of private `a6d386e4` records 8,550 passing workspace tests, zero failures and
+13 ignored. Focused and primitive pixels pass, but the original census is
+21,299/22,924 exact and expanded is 22,098/23,728 exact, zero errors, exits 1.
+It loses 35 previously exact original comparisons and four addition comparisons,
+and gains none. All Chromium inputs stay fixed. The consuming-app capture gate
+is incomplete because a Chromium reference pair differs. This source remains
+unapplied; accepted renderer totals and release admission stay unchanged.
+
+The same review records native constructor candidate `893ea292`. Rust apps
+already have typed setters for these operations; the shared C constructor was
+missing column-fill, fragmentation, border-style and table-role values. The
+candidate fills those paths with owned, property-bound values and includes
+consuming Rust, C and C++ examples. All 13 read-only checks pass, including
+generator consistency and C/C++ syntax. Clean builds, native callbacks and
+exact Chromium comparisons are queued after every prior whole pipeline.
+This is native API work; Open UI executes no JavaScript. The candidate remains
+unapplied and unqualified.
 The [v40 raster evidence](docs/renderer/generated/native-scroll-insets-v40.json)
 records all native guards and five C boundary tests passing at `3d4eea11`.
 Its workspace stops on an example's unavailable transitive-crate import,

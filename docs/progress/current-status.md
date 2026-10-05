@@ -31,6 +31,26 @@ invariants across the four suites remain unchanged. The focused and primitive
 gates pass; full pixels, remaining native APIs and release qualification stay
 open. No new rendering case is admitted.
 
+The [completed intrinsic candidate review](../renderer/generated/native-review-v1.json)
+rejects applying `a6d386e4`. Its 8,550 workspace tests pass, with zero failures
+and 13 ignored, and focused/primitive pixels remain exact. The original census
+is 21,299/22,924 exact and expanded is 22,098/23,728 exact, with zero errors
+and actual exits 1. It loses 35 previously exact original comparisons and four
+addition comparisons, with no newly exact result. All 48,252 Chromium oracle
+invariants stay fixed. The native consuming-app capture gate is incomplete
+after an unstable reference pair; both captures remain preserved. Accepted
+renderer results and release admission stay unchanged.
+
+That review also preserves native constructor candidate `893ea292`, its
+test-only baseline, source patch and immutable verification probes. Public
+Rust typed setters already expose the relevant operations. The shared C value
+constructor gains the missing column-fill, break, border-style and table-role
+values, with property identity and owned lifetime checks. It includes public
+Rust, C and C++ consuming applications. All 13 read-only checks pass; local
+builds, callback/geometry checks and the four exact pixel matrices wait for
+every command in all 25 preceding whole pipelines. No JavaScript is executed
+by Open UI. This candidate remains unapplied and unqualified.
+
 The private [image background candidate](../renderer/native-image-background-culling.md)
 at `d913041d` extends shared background culling to decoded opaque images.
 The 24 stable fieldset differences split into eight background-culling cases
@@ -162,8 +182,9 @@ execution and exact pixels remain pending. Its atomic baseline reproduces the
 named failure; the leading-space baseline cannot compile an invalid Float
 conversion. Private `a6d386e4` and baseline `ac1eb2a7` correct only that test
 setup, preserving all assertions and production code. The fixed source passes
-ten read-only checks. Its queue cleans all 18 workspace packages at every
-source switch and waits for every prior whole pipeline. See the
+ten read-only checks. Its queue cleaned all 18 workspace packages at every
+source switch and is now terminal. The completed review above records its
+remaining exact losses and incomplete capture gate. See the
 [measured causes and verification scope](../renderer/native-intrinsic-constraints.md).
 No source or new release state is promoted.
 
