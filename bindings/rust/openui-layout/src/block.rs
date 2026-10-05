@@ -10014,11 +10014,11 @@ fn repeated_table_body_consumed_at_flow_offset(
             .min_of(first_body_capacity);
     }
 
+    // Blink applies its minimum fragmentainer capacity after reserving the
+    // repeated groups. A continuation must consume at least one CSS pixel,
+    // including when its remaining geometric capacity is fractional.
     let continuation_body_capacity =
-        (continuation_capacity - sections.block_size()).clamp_negative_to_zero();
-    if continuation_body_capacity <= LayoutUnit::zero() {
-        return first_body_capacity;
-    }
+        (continuation_capacity - sections.block_size()).max_of(LayoutUnit::from_i32(1));
     let continuation_flow = flow_offset - first_fragmentainer_capacity;
     let complete_continuations = continuation_flow.raw() / continuation_capacity.raw();
     let partial_continuation = LayoutUnit::from_raw(
@@ -10245,7 +10245,6 @@ fn nested_repeated_table_flow_block_size(
     doc: &Document,
     first_fragmentainer_capacity: LayoutUnit,
     continuation_capacity: LayoutUnit,
-    emergency_continuation_limit: u32,
 ) -> Option<LayoutUnit> {
     let geometry = fragment.multicol_fragmentation?;
     if geometry.declared_column_count != 1
@@ -10274,7 +10273,7 @@ fn nested_repeated_table_flow_block_size(
         (first_capacity - sections.body_start - sections.footer).clamp_negative_to_zero();
     let body_remaining = (sections.body_size - first_body_capacity).clamp_negative_to_zero();
     if body_remaining <= LayoutUnit::zero() {
-        return Some(table_start + first_capacity);
+        return Some(table_start + sections.body_start + sections.body_size + sections.footer);
     }
 
     let repeat_limit = first_capacity / LayoutUnit::from_i32(4);
@@ -10283,21 +10282,19 @@ fn nested_repeated_table_flow_block_size(
         && (sections.footer <= LayoutUnit::zero()
             || sections.footer <= repeat_limit && sections.footer <= continuation_capacity);
     let continuation_body_capacity = if sections_repeat {
-        (continuation_capacity - sections.block_size()).clamp_negative_to_zero()
+        (continuation_capacity - sections.block_size()).max_of(LayoutUnit::from_i32(1))
     } else {
         continuation_capacity
     };
-    let continuation_count = if continuation_body_capacity > LayoutUnit::zero() {
-        ((body_remaining.raw() + continuation_body_capacity.raw() - 1)
-            / continuation_body_capacity.raw()) as u32
-    } else {
-        // Repeated groups can consume an entire short continuation. Engines
-        // must still make bounded progress; use the enclosing multicol's
-        // declared row plus one overflow opportunity as its emergency limit.
-        emergency_continuation_limit
-    }
-    .min(emergency_continuation_limit);
-    Some(table_start + first_capacity + continuation_capacity * continuation_count as i32)
+    // The source body supplies a finite bound. The declared column count
+    // controls one row's geometry, not how much content may be discarded.
+    let continuation_count =
+        (i64::from(body_remaining.raw()) + i64::from(continuation_body_capacity.raw()) - 1)
+            / i64::from(continuation_body_capacity.raw());
+    Some(LayoutUnit::from_raw_i64(
+        i64::from((table_start + first_capacity).raw())
+            + i64::from(continuation_capacity.raw()) * continuation_count,
+    ))
 }
 
 fn has_nested_multicol_ancestors(doc: &Document, node_id: NodeId) -> bool {
@@ -10693,31 +10690,48 @@ fn prepare_nested_repeated_table_slice(
             } else {
                 LayoutUnit::zero()
             };
-            let table_fragment_size =
+            let nominal_table_fragment_size =
                 (fragment_block_size - table_fragment_top).clamp_negative_to_zero();
-
+            let body_capacity = if local_flow_consumed == LayoutUnit::zero() {
+                (nominal_table_fragment_size - sections.body_start - sections.footer)
+                    .clamp_negative_to_zero()
+            } else {
+                (nominal_table_fragment_size - sections.block_size()).clamp_negative_to_zero()
+            };
+            let body_remaining = (sections.body_size - body_consumed).clamp_negative_to_zero();
+            let painted_body_capacity = if local_flow_consumed > LayoutUnit::zero() {
+                body_capacity
+                    .max_of(LayoutUnit::from_i32(1))
+                    .min_of(body_remaining)
+            } else {
+                body_capacity.min_of(body_remaining)
+            };
+            let emergency_body_progress = painted_body_capacity > body_capacity;
+            let is_last = body_consumed + painted_body_capacity >= sections.body_size;
+            // The last table fragment contains its final body slice and the
+            // complete footer, even when those extend past a short column.
+            let table_fragment_size = if is_last {
+                if local_flow_consumed == LayoutUnit::zero() {
+                    sections.body_start + body_remaining + sections.footer
+                } else {
+                    sections.block_size() + body_remaining
+                }
+            } else {
+                nominal_table_fragment_size.max_of(sections.header + painted_body_capacity)
+            };
             prepare_repeated_table_slice(
                 table,
                 doc,
                 sections,
                 LayoutUnit::zero(),
                 body_consumed,
-                table_fragment_size,
+                if is_last {
+                    table_fragment_size
+                } else {
+                    nominal_table_fragment_size
+                },
             );
             position_nested_repeated_table_headers(table, doc);
-            let body_capacity = if local_flow_consumed == LayoutUnit::zero() {
-                (table_fragment_size - sections.body_start - sections.footer)
-                    .clamp_negative_to_zero()
-            } else {
-                (table_fragment_size - sections.block_size()).clamp_negative_to_zero()
-            };
-            let emergency_body_progress =
-                body_capacity == LayoutUnit::zero() && body_consumed < sections.body_size;
-            let painted_body_capacity = if emergency_body_progress {
-                LayoutUnit::from_i32(1)
-            } else {
-                body_capacity
-            };
             clip_repeated_table_body_slice(
                 table,
                 doc,
@@ -10726,6 +10740,21 @@ fn prepare_nested_repeated_table_slice(
                 painted_body_capacity,
                 LayoutUnit::zero(),
             );
+            for body_part in &mut table.children {
+                if body_part.node_id.is_none()
+                    || matches!(
+                        doc.node(body_part.node_id).style.display,
+                        Display::TableHeaderGroup
+                            | Display::TableFooterGroup
+                            | Display::TableCaption
+                            | Display::TableColumn
+                            | Display::TableColumnGroup
+                    )
+                {
+                    continue;
+                }
+                materialize_normal_flow_slice(body_part, body_part.size.height, Some(doc));
+            }
             if emergency_body_progress {
                 table.has_overflow_clip = false;
                 column.has_overflow_clip = false;
@@ -10733,9 +10762,7 @@ fn prepare_nested_repeated_table_slice(
             table.offset.top = table_fragment_top;
             table.size.height = table_fragment_size;
             table.is_first_for_node = local_flow_consumed == LayoutUnit::zero();
-            table.is_last_for_node = body_consumed
-                + (table_fragment_size - sections.block_size()).clamp_negative_to_zero()
-                >= sections.body_size;
+            table.is_last_for_node = is_last;
             table.decoration_slice = Some(crate::fragment::DecorationSlice {
                 source_block_offset: local_flow_consumed,
                 source_block_size: repeated_table_flow_block_size(
@@ -14670,8 +14697,26 @@ fn materialize_nontranslated_transform_slice(
     fragment: &mut Fragment,
     source_block_size: LayoutUnit,
 ) {
+    materialize_normal_flow_slice(fragment, source_block_size, None);
+}
+
+/// Materialize the normal-flow boxes owned by a source interval. Repeated
+/// table bodies preserve monolithic descendants and positioned parallel
+/// flows; transform callers retain their existing geometric slicing policy.
+fn materialize_normal_flow_slice(
+    fragment: &mut Fragment,
+    source_block_size: LayoutUnit,
+    table_document: Option<&Document>,
+) {
     fragment.children.retain_mut(|child| {
         if child.positioned_fragmentation.is_some() {
+            return true;
+        }
+        if table_document.is_some_and(|doc| {
+            !child.node_id.is_none()
+                && (doc.node(child.node_id).style.is_out_of_flow()
+                    || node_is_monolithic_for_fragmentation(doc, child.node_id))
+        }) {
             return true;
         }
         let start = child.offset.top;
@@ -14694,7 +14739,7 @@ fn materialize_nontranslated_transform_slice(
         }
         child.offset.top = visible_start;
         child.size.height = visible_end - visible_start;
-        materialize_nontranslated_transform_slice(child, child.size.height);
+        materialize_normal_flow_slice(child, child.size.height, table_document);
         if source_offset > LayoutUnit::zero() || child.size.height < original_source_size {
             child.decoration_slice = Some(crate::fragment::DecorationSlice {
                 source_block_offset: source_offset,
@@ -25396,7 +25441,6 @@ fn layout_multicol(
                             doc,
                             (col_remaining - pos_margin).clamp_negative_to_zero(),
                             column_height,
-                            resolved.count,
                         )
                     })
                     .flatten();
