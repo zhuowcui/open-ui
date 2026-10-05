@@ -62,20 +62,32 @@ and leak sanitizer jobs each stop on `InvalidArgument`, with 31 tests passing
 and the new test failing. The Linux C application job reaches the same failure,
 with 32 tests passing. Their logs and source are preserved. The fresh source
 derives physical dimensions from its authoritative logical viewport. Its
-production correction is otherwise identical. Hosted results are recorded
-per source, including failures and pending jobs.
+production correction is otherwise identical. Its own-source hosted run
+[37355859674](https://github.com/zhuowcui/open-ui/actions/runs/37355859674)
+finishes with all seven hardening jobs passing, zero skips and actual exit 0.
+The [terminal evidence](generated/native-review-v4.json) preserves both runs.
 
-The fresh whole owner `1636` waits for all 33 predecessors. It requires a named
-failure on test-only baseline `9fe1665d`, fixed guards, a clean workspace and
+Whole owner `1636` stops before Cargo: its probe repeats the `viewport` prefix
+in the source path and cannot import the qualification module. The failed
+probe, log and clean source remain preserved. No native result comes from it.
+
+The fresh owner `1650` checks all four probe paths, the import and the restore
+branch before starting. All 34 predecessors are terminal. Test-only baseline
+`9fe1665d` fails the named C text assertion with exit 101; corrected source
+`90310e15` passes it. The Engine storage guard passes 10,000 replacements, and
+all 58 public native conformance scenarios pass. The clean build is running.
+The [native guard evidence](generated/native-text-content-v2.json) preserves
+every actual exit and both baseline and fixed logs.
 ABI consumers, 600 Rust/C/C++ image comparisons with 38,400 geometry states,
-and all four renderer matrices. Native pixel comparisons use the preserved
-pinned Chromium Fontations references and the app's immutable default Engine
-options. The local native and pixel stages have not started.
+and all four renderer matrices remain required. Native pixel comparisons use
+the preserved pinned Chromium Fontations references and the app's immutable
+default Engine options.
 
 Two unlaunched preparations are also preserved: one would copy linked C/C++
 outputs onto themselves; another incorrectly compared diff headers after the
 test setup changed. Fresh roots and probes correct those harness issues before
-verification starts. Neither preparation ran native or pixel stages.
+verification starts. Neither preparation ran native or pixel stages. All
+failed evidence remains available; it is not replaced by a later pass.
 
 The accepted renderer remains 21,334/22,924 exact. No new release case is
 admitted, and the full Chromium and release gates remain open.

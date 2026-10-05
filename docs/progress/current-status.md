@@ -35,13 +35,28 @@ Engine operation, preserving all 113 exports and 30 layouts. Thirteen read-only
 checks pass. Source `d5bd17d7` finishes hosted hardening with four passing jobs
 and three failures, zero skips. Two sanitizer jobs and the Linux C application
 job fail on the new guard's inconsistent viewport setup. The fresh source
-corrects only that test input. Whole owner `1636`
-waits for all 33 predecessors before named baseline/fixed guards, workspace,
-600 consuming Rust/C/C++ images, 38,400 geometry states and all four matrices.
-These native and pixel stages have not started. Both sources and all failed
+corrects only that test input and finishes all seven own-source hosted jobs
+successfully, with zero skips. Owner `1636` stops before Cargo because its
+probe duplicates the source path's `viewport` prefix. Fresh owner `1650`
+preflights all four paths and its restore branch. The named baseline fails
+with exit 101; fixed C parity and 10,000-update storage guards pass, along with
+all 58 native conformance scenarios. The clean build is running; 600 consuming
+Rust/C/C++ images, 38,400 geometry states and all four matrices remain required.
+Both sources and all failed
 or unlaunched preparations are preserved in the
 [new index](../renderer/generated/native-text-content-v1.json). The correction
-is unapplied and no release state is admitted.
+is unapplied and no release state is admitted. The
+[new terminal review](../renderer/generated/native-review-v4.json) preserves
+the complete raster trial, all five subsequent harness/disk stops, completed
+hosted results and the corrected text retry. Previous records remain unchanged.
+
+The [authored glyph precision investigation](../renderer/native-author-glyph-precision.md)
+models ten preserved Ahem images and 640 correct geometry states. Premature
+1/64 rounding predicts the second-glyph failures at sizes 10, 20 and 24; twelve
+edge checks agree. Private `3b2e0d1f` retains shaped advances before Skia phase
+selection and passes eleven source checks. Its runtime guard and pixel checks
+have not executed. It inherits the rejected raster parent's 83 exact losses;
+it is unapplied and cannot qualify that parent or the other Rust font failures.
 
 The [canonical table source follow-up](../renderer/native-table-progress.md#canonical-source-retention-follow-up)
 at `e389b26a` preserves the full table subtree before inner fragmentation crops
@@ -53,8 +68,9 @@ fixture at source `e0dc491e` has five table fragments; the separate failed
 native guard at `4b3cb72c` has four. These sources and results are not substituted.
 The correction restores the canonical subtree for each ancestor body window.
 It also requires shared source ownership and release after teardown. Eleven
-read-only checks pass. Whole owner `1601` waits for all 31 predecessors before
-native guards, workspace, public Rust application and all four matrices.
+read-only checks pass. Whole owner `1601` stops at the disk guard while
+cleaning the baseline, before native tests, workspace, the public Rust
+application or matrices execute.
 The original expected count remains 41. Native geometry and pixels have not
 executed; the source is unapplied. All seven own-source hosted hardening jobs
 now pass with zero skips, as recorded in the new text evidence index.
@@ -65,9 +81,10 @@ existing C library rejects `column-fill: auto` with status -1 before table
 geometry can be measured. Public Rust typed setters already expose that
 operation. The prepared correction covers seven enum types, thirteen
 properties and nine table display roles, preserving all 113 exports and 30
-layouts. Thirteen read-only checks pass. Whole owner `1588` waits for all 30
-predecessors, then requires named guards, a clean workspace, Rust/C/C++
-consumers and all four matrices. Its table geometry stage is diagnostic only.
+layouts. Thirteen read-only checks pass. Whole owner `1588` reproduces its
+named baseline failure, then three fixed commands stop at the disk guard.
+Rust/C/C++ consumers and all four matrices have not run. Its table geometry
+stage is diagnostic only.
 Native execution and pixels remain pending; the source is unapplied.
 Its seven own-source hosted hardening jobs now pass, with zero skips, in the
 [new evidence index](../renderer/generated/native-table-source-v1.json).
@@ -80,10 +97,10 @@ The [fresh fallback candidate](../renderer/native-inline-fallback.md) at
 public native Rust image clearing over the shared Engine, plus one append-only
 C export. All 113 preceding symbols and all 30 layouts are preserved. Thirteen
 read-only checks pass. Two Chromium runs agree on all 120 ordered queries at
-five scales and three subpixel origins. Whole owner `1576` waits for all 29
-predecessors, including the complete raster owner `1560`, before native guards,
-workspace, Rust/C/C++ consumers and all four pixel matrices. These stages remain
-pending; the candidate is unapplied and admits no release state.
+five scales and three subpixel origins. Whole owner `1576` stops while
+restoring a nonexistent branch, before baseline/fixed guards or pixels run.
+A fresh root and verified restore branch are required. The candidate is
+unapplied and admits no release state.
 Its seven own-source hosted hardening jobs now pass, with zero skips, as
 preserved in the [new evidence index](../renderer/generated/native-keywords-v1.json).
 That result does not complete its local native or pixel qualification.
@@ -100,14 +117,23 @@ font consumer finishes with exit 1: 73/1,200 images and 25,600/76,800 geometry
 states are exact. Its C/C++ failures are reviewed above. Static images match
 only with explicit Fontations (60/60), while default and FreeType each match
 0/60. The selection finishes at 648/880 exact, 232 different and zero errors,
-exit 1. Focused 640/640 and primitive 960/960 finish exact, exits 0. Full and
-expanded matrices remain pending under the same exclusive owner. All results
-retain their clean source identities and unchanged Chromium inputs.
+exit 1. Focused 640/640 and primitive 960/960 finish exact, exits 0. Full original
+finishes at 21,251/22,924 exact; expanded finishes at 22,050/23,728 exact, zero
+errors and actual exits 1. The trial loses 83 original and 87 expanded exact
+comparisons, with no exact gains. All Chromium inputs remain fixed across
+46,652 comparisons; focused and primitive retain all 1,600 invariants. The
+trial is rejected for application. All six previous owners are terminal.
+The original text queue `1621` also stops on baseline clean's disk guard before
+tests; its viewport test setup is superseded by `90310e15`. Moving four inactive
+executables preserves all bytes and hashes while freeing 1,358,966,504 bytes
+for the fresh text retry. All results retain their clean source identities.
 Umbrella `92741843` hosted CI is
 complete: three successful workflows, six passing jobs and five skips. Skips
 do not satisfy release gates. The latest preceding umbrella `f25cd722` also
 finishes three successful workflows, with six passing jobs and five skips;
-its completed evidence is preserved in the new text index.
+its completed evidence is preserved in the new text index. Umbrella `98ed2a67`
+also finishes three successful workflows, six passing jobs and five skips,
+preserved in the terminal review. No hosted success closes the full pixel gate.
 
 The [v42 evidence](../renderer/generated/native-scroll-insets-v42.json)
 records a fresh clean build at `2e443f49`: all 18 workspace packages cleared,

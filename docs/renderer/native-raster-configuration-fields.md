@@ -19,10 +19,10 @@ The [fresh retry](generated/native-review-v3.json) preserves those failed bytes
 and corrects the restore branch in new probes on a fresh source root. All
 three named baseline assertions fail as required, then all fixed assertions,
 neighboring guards and text, paint, engine, software and Ganesh test suites
-pass. Ten read-only checks also pass. Its exclusive whole pipeline continues
-with a clean native build, consuming apps and pixel matrices. Those remaining
-stages are pending; this scoped guard pass does not qualify or apply the raster
-changes.
+pass. Ten read-only checks also pass. Its whole pipeline has now finished its
+clean native build, consuming apps and pixel matrices. The complete results
+below reject this source for application; a scoped guard pass does not qualify
+the raster changes.
 
 The [next preserved checkpoint](generated/native-inline-fallback-v1.json)
 records all 17 clean build stages passing, including the locked workspace,
@@ -48,9 +48,21 @@ default and FreeType each match 0/60. All 180 geometry states and repeated runs
 agree. Its stage exits 0 for the explicit Fontations scope; this does not
 qualify default native raster. The selection is 648/880 exact, 232 different,
 zero errors, actual exit 1. Focused 640/640 and primitive 960/960 comparisons
-are exact, actual exits 0. Full original and expanded stages remain pending;
-the whole owner remains exclusive until every stage is terminal. No accepted
+are exact, actual exits 0. The [complete audit](generated/native-review-v4.json)
+finishes original at 21,251/22,924 exact, 1,673 different and zero errors;
+expanded is 22,050/23,728 exact, 1,678 different and zero errors. Both exit 1.
+Against the accepted renderer, 83 original and 87 expanded comparisons lose
+exactness; none gains exactness. Four lost comparisons belong to an addition,
+leaving 199/201 addition cases exact at all four profiles. All Chromium inputs
+remain unchanged across 46,652 original/expanded comparisons, and every
+original row agrees between suites. Focused and primitive retain all 1,600
+comparison invariants. The source is rejected for application. No accepted
 renderer total or release admission changes.
+
+The [authored glyph precision investigation](native-author-glyph-precision.md)
+prepares a separate shared correction for premature rounding within text runs.
+It has not executed its native guard or pixel matrices and inherits this
+trial's regressions. It is also unapplied and unqualified.
 
 The [v38 evidence](generated/native-scroll-insets-v38.json) preserves
 `0e1f12ff`, which replaces two invalid test-only `fields_mut` calls with the

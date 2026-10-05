@@ -1,0 +1,260 @@
+   Compiling openui-macros v0.2.0 (/dev/shm/openui-native-text-retry-90310e15/bindings/rust/openui-macros)
+warning: unused import: `BfcOffset`
+  --> openui-layout/src/bfc_resolution.rs:17:23
+   |
+17 | use openui_geometry::{BfcOffset, BoxStrut, LayoutUnit, MarginStrut};
+   |                       ^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `balance_columns`
+     --> openui-layout/src/block.rs:19571:9
+      |
+19571 |         balance_columns, balance_columns_with_margins, compute_column_positions,
+      |         ^^^^^^^^^^^^^^^
+
+warning: unused import: `super::*`
+    --> openui-layout/src/intrinsic_sizing.rs:3974:9
+     |
+3974 |     use super::*;
+     |         ^^^^^^^^
+
+warning: unused import: `std::sync::Arc`
+  --> openui-layout/src/new_formatting_context.rs:17:5
+   |
+17 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+
+warning: unused import: `ClearType`
+  --> openui-layout/src/new_formatting_context.rs:24:25
+   |
+24 | use crate::exclusions::{ClearType, ExclusionSpace};
+   |                         ^^^^^^^^^
+
+warning: unused import: `crate::layout_result::LayoutResult`
+  --> openui-layout/src/new_formatting_context.rs:26:5
+   |
+26 | use crate::layout_result::LayoutResult;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: variable `reconstructed_block_in_inline` is assigned to, but never used
+    --> openui-layout/src/block.rs:2104:9
+     |
+2104 |     let mut reconstructed_block_in_inline = false;
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = note: consider using `_reconstructed_block_in_inline` instead
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+    --> openui-layout/src/block.rs:6781:9
+     |
+6781 |     let mut child_margin = resolve_margins_in_parent_axes(
+     |         ----^^^^^^^^^^^^
+     |         |
+     |         help: remove this `mut`
+     |
+     = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `source_caption_end` is never read
+    --> openui-layout/src/block.rs:9551:5
+     |
+9550 | struct CaptionedRepeatedTableFlow {
+     |        -------------------------- field in this struct
+9551 |     source_caption_end: LayoutUnit,
+     |     ^^^^^^^^^^^^^^^^^^
+     |
+     = note: `CaptionedRepeatedTableFlow` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `columns_needed_for_height` is never used
+   --> openui-layout/src/multicol/mod.rs:705:4
+    |
+705 | fn columns_needed_for_height(
+    |    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `openui-layout` (lib) generated 10 warnings (run `cargo fix --lib -p openui-layout` to apply 7 suggestions)
+warning: use of deprecated module `skia_safe::gradient_shader`: Use the skia_safe::gradient module
+  --> openui-paint/src/painter.rs:39:20
+   |
+39 |     color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, ClipOp, Color4f,
+   |                    ^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear_with_interpolation`: Use the skia_safe::gradient module
+    --> openui-paint/src/painter.rs:1860:45
+     |
+1860 |     scrim_paint.set_shader(gradient_shader::linear_with_interpolation(
+     |                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14056:51
+      |
+14056 |                 paint.set_shader(gradient_shader::linear_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14069:51
+      |
+14069 |                 paint.set_shader(gradient_shader::linear(
+      |                                                   ^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14082:51
+      |
+14082 |                 paint.set_shader(gradient_shader::linear_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14178:55
+      |
+14178 |                     paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14192:55
+      |
+14192 |                     paint.set_shader(gradient_shader::two_point_conical(
+      |                                                       ^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14208:55
+      |
+14208 |                     paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14228:51
+      |
+14228 |                 paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14242:51
+      |
+14242 |                 paint.set_shader(gradient_shader::two_point_conical(
+      |                                                   ^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14258:51
+      |
+14258 |                 paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::sweep_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14318:51
+      |
+14318 |                 paint.set_shader(gradient_shader::sweep_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::sweep`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14332:51
+      |
+14332 |                 paint.set_shader(gradient_shader::sweep(
+      |                                                   ^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::sweep_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14346:51
+      |
+14346 |                 paint.set_shader(gradient_shader::sweep_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:17719:55
+      |
+17719 |                     paint.set_shader(gradient_shader::linear(
+      |                                                       ^^^^^^
+
+warning: variant `RestoreTo` is never constructed
+  --> openui-paint/src/paint_record.rs:16:5
+   |
+13 | enum Operation {
+   |      --------- variant in this enum
+...
+16 |     RestoreTo(usize),
+   |     ^^^^^^^^^
+   |
+   = note: `Operation` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: methods `restore_to_count` and `save_count` are never used
+   --> openui-paint/src/paint_record.rs:131:19
+    |
+119 | impl dyn PaintCanvas + '_ {
+    | ------------------------- methods in this implementation
+...
+131 |     pub(crate) fn restore_to_count(&self, count: usize) -> &Self {
+    |                   ^^^^^^^^^^^^^^^^
+...
+137 |     pub(crate) fn save_count(&self) -> usize {
+    |                   ^^^^^^^^^^
+
+warning: `openui-paint` (lib) generated 17 warnings
+   Compiling openui-engine v0.2.0 (/dev/shm/openui-native-text-retry-90310e15/bindings/rust/openui-engine)
+   Compiling openui v0.2.0 (/dev/shm/openui-native-text-retry-90310e15/bindings/rust/openui)
+    Finished `test` profile [unoptimized] target(s) in 6.93s
+     Running tests/v02_conformance.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/v02_conformance-b46128785d0574f8)
+
+running 58 tests
+test accessibility_relations_reject_cross_document_targets ... ok
+test cross_document_ownership_is_rejected ... ok
+test checkbox_keyboard_activation_toggles ... ok
+test animation_cancel_restores_underlying_value ... ok
+test accessibility_action_uses_control_pipeline ... ok
+test clipboard_copy_and_paste ... ok
+test ime_callbacks_cannot_redirect_an_edit_to_a_different_focused_control ... ok
+test ime_callback_restarting_the_same_control_keeps_the_new_edit ... ok
+test editing_undo_and_redo ... ok
+test ime_commit_can_be_canceled_by_a_native_beforeinput_callback ... ok
+test ime_commits_final_text_after_platform_clears_preview_as_one_undo_step ... ok
+test computed_style_is_an_owned_native_snapshot ... ok
+test ime_callbacks_may_remove_the_target_without_terminating_input_dispatch ... ok
+test ime_composition_commits_once ... ok
+test ime_ignores_noneditable_controls_and_cancels_when_disabled ... ok
+test keyframe_animation_dispatches_end ... ok
+test independent_documents_keep_focus_isolated ... ok
+test modal_focus_is_contained_and_restored ... ok
+test large_list_updates_remain_mutable ... ok
+test named_radio_group_is_exclusive ... ok
+test native_class_lookup_tracks_event_driven_updates_and_detachment ... ok
+test native_detach_preserves_subtree_handles_and_listeners_for_reattachment ... ok
+test native_id_lookup_follows_attached_document_order ... ok
+test native_kind_lookup_tracks_tree_order_and_detachment ... ok
+test pointer_capture_lifecycle_is_validated ... ok
+test accessibility_tree_has_stable_nodes ... ok
+test flex_dashboard_layout_has_geometry ... ok
+test hover_and_active_state_follow_pointer ... ok
+test button_pointer_activation_dispatches_click ... ok
+test native_layout_read_then_id_style_mutation_updates_the_same_document ... ok
+test native_geometry_is_independent_of_pointer_and_visibility ... ok
+test nested_scroll_container_consumes_wheel ... ok
+test native_geometry_preserves_empty_and_singular_boxes ... ok
+test reduced_motion_finishes_animation ... ok
+test removed_weak_handle_expires ... ok
+test responsive_viewport_reflows_geometry ... ok
+test repeated_headless_frames_are_byte_identical ... ok
+test scroll_snap_selects_nearest_point ... ok
+test scroll_timeline_samples_from_offset ... ok
+test smooth_scroll_uses_manual_clock ... ok
+test static_headless_scene ... ok
+test synchronous_resource_provider_is_deterministic ... ok
+test tab_focus_order_skips_disabled ... ok
+test textarea_accepts_multiline_text ... ok
+test typed_transition_retains_target ... ok
+test ime_cancel_restores_selection_pixels_and_existing_redo ... ok
+test native_geometry_updates_after_scroll_transform_and_detachment ... ok
+test view_timeline_uses_retained_geometry ... ok
+test unicode_grapheme_editing ... ok
+test table_application_fixture_lays_out ... ok
+test read_only_text_controls_keep_selection_and_reject_native_edits ... ok
+test viewport_native_scroll_clamps_extremes_and_resolves_pending_layout ... ok
+test viewport_smooth_scroll_clamps_its_target_and_tracks_content_shrink ... ok
+test native_text_nodes_attach_move_and_keep_element_traversal_typed ... ok
+test native_geometry_includes_all_column_fragments ... ok
+test batched_tree_transaction ... ok
+test emoji_and_bidi_text_render_without_loss ... ok
+test viewport_wheel_uses_the_same_limits_and_respects_cancelation ... ok
+
+test result: ok. 58 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+

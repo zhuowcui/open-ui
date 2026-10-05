@@ -34,14 +34,24 @@ finds a C API bug: its setter stores text on a container, while layout reads
 Text children. All 800 C/C++ font images are blank. A shared Rust/C Engine
 correction and consuming applications are prepared; thirteen source checks
 pass. Its first hosted tests expose an inconsistent viewport in the new guard.
-A fresh test setup corrects that input; native execution and pixels are queued.
-The correction remains unapplied.
+A fresh test setup corrects that input and passes all seven hosted hardening
+jobs. The old C setter fails the named regression; the shared correction passes
+it, the 10,000-update storage guard and all 58 native conformance scenarios.
+The clean application build and pixel matrices are still running. The
+correction remains unapplied.
+
+The [authored glyph precision investigation](docs/renderer/native-author-glyph-precision.md)
+finds a source-supported explanation for three Ahem images: rounding shaped
+advances before Skia selects the LCD phase moves the second glyph. A private
+correction preserves those advances. Eleven source checks pass; its runtime
+guard and pixel verification have not run. No new exact result is claimed.
 
 The [table source-retention follow-up](docs/renderer/native-table-progress.md#canonical-source-retention-follow-up)
 keeps an immutable full table subtree for ancestor continuations. A geometry-only
 diagnostic finds a 60-pixel cropped row over a 100-pixel source body. Eleven
 source checks and seven own-source hosted jobs pass on the private correction;
-native geometry, teardown and pixel verification are queued. It remains unapplied.
+the local retry stops at the disk guard before tests. Native geometry, teardown
+and pixel verification still require a fresh run. It remains unapplied.
 
 The [latest native review](docs/renderer/generated/native-review-v3.json)
 rejects the inline-image candidate: its native app passes, but one expanded
@@ -54,19 +64,24 @@ passes 828 of 840 contracts; twelve still fail. Its font consumer is 73/1,200
 images and 25,600/76,800 geometry states exact. The static consumer is exact
 only with explicit Fontations (60/60); default and FreeType each match 0/60.
 The selection is 648/880 exact, with zero errors. Focused 640/640 and primitive
-960/960 gates pass; full original and expanded verification remains pending.
+960/960 gates pass. The [complete trial audit](docs/renderer/generated/native-review-v4.json)
+finishes at 21,251/22,924 original and 22,050/23,728 expanded exact, zero errors.
+It loses 83 original and 87 expanded exact comparisons, gains none, and keeps
+every Chromium input unchanged. This raster change is rejected for application.
 
 The [fresh image-fallback candidate](docs/renderer/native-inline-fallback.md)
 keeps fallback children in normal flow and adds native Rust/C image clearing.
 Thirteen read-only checks pass; two Chromium runs agree on all 120 ordered
-geometry queries. Its native and pixel verification waits for the full raster
-pipeline. The candidate is unapplied; no renderer gain is claimed.
+geometry queries. Its local harness stops on a nonexistent restore branch
+before native guards or pixels execute. The candidate is unapplied; a fresh
+verified harness is required and no renderer gain is claimed.
 
 The [native keyword retry](docs/renderer/native-keyword-values.md) addresses a
 C API gap: the current value constructor rejects `column-fill: auto`, while
 the public Rust typed setter already exists. Its shared constructor correction
-passes thirteen read-only checks. Rust/C/C++ applications and all four pixel
-matrices are queued behind both complete preceding pipelines. It is unapplied.
+passes thirteen read-only checks. Its named baseline fails as expected, but
+three fixed commands stop at the disk guard. Rust/C/C++ applications and all
+four pixel matrices have not run. It is unapplied.
 All seven of its own-source hosted hardening jobs now pass, with zero skips;
 native and pixel qualification remain pending.
 

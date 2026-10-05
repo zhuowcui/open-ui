@@ -10,20 +10,37 @@ Across Rust/C/C++, 73/1,200 images and 25,600/76,800 geometry states are exact;
 all correct results come from Rust. The shared Engine correction at private
 `90310e15` passes thirteen source checks. Its first source's hosted run finishes
 with four passing jobs and three failures, exposing inconsistent viewport input
-in the new test; the fresh source corrects
-that input. Native guards, Rust/C/C++ consumers and all four matrices remain
-queued. This operation uses native Rust methods and callbacks, with no JavaScript.
+in the new test; fresh `90310e15` corrects that input and passes all seven
+own-source hosted hardening jobs with zero skips. Old owner `1636` stops on a
+duplicated source-path prefix before Cargo. Fresh owner `1650` verifies all
+paths and the restore branch, reproduces the named baseline failure, and passes
+the corrected C text guard, 10,000-update storage guard and all 58 native
+conformance scenarios. Its clean build is running; Rust/C/C++ consumer images
+and all four matrices remain required. This operation uses native Rust methods
+and callbacks, with no JavaScript.
 It is unapplied and unqualified. The
 [new evidence](../renderer/generated/native-text-content-v1.json) also records
 the raster trial's static Fontations 60/60, selection 648/880, focused 640/640
 and primitive 960/960 results. Default static raster remains 0/60; the trial's
-full original and expanded matrices are still required.
+full original and expanded matrices now finish in the
+[terminal review](../renderer/generated/native-review-v4.json): 21,251/22,924
+and 22,050/23,728 exact, zero errors and actual exits 1. They lose 83 original
+and 87 expanded exact comparisons, with no gains. All Chromium references stay
+fixed. The raster source is rejected for application; accepted totals remain
+21,334/22,924 and 22,137/23,728.
+
+The [authored glyph precision source](../renderer/native-author-glyph-precision.md)
+preserves shaped advances before Skia selects the LCD phase. Ten existing-image
+models and twelve edge checks support the cause of three Ahem images. Eleven
+read-only checks pass; its runtime guard and pixel gates have not executed.
+It inherits the rejected raster source and cannot be applied or qualified by
+those diagnostics. No new release state is admitted.
 
 The [fresh image-fallback candidate](../renderer/native-inline-fallback.md)
 at `7d09f7a1` adds shared fallback flow and public Rust/C image clearing.
 Thirteen read-only checks and 120 repeated Chromium geometry queries pass.
-Native guards, consumers and all four pixel matrices remain pending behind
-the complete raster owner; this source is unapplied. Its
+The local retry stops on a nonexistent restore branch before guards or pixels
+execute. A fresh verified harness is required; this source is unapplied. Its
 [preserved preparation](../renderer/generated/native-inline-fallback-v1.json)
 also records 17 passing raster build stages, passing native control contracts
 and completed umbrella CI at `59cac229` (six passes, five skips). None of these
@@ -59,7 +76,9 @@ workspace, application and all four matrices do not execute. Two further runs
 confirm the absolute-positioned app's Chromium geometry with 96 queries. Seven
 own-source hosted hardening jobs pass, zero skips; native geometry still fails.
 This candidate is unapplied and unqualified. The fresh raster retry passes
-its baseline/fixed guards; the native build and pixel gates remain pending.
+its baseline/fixed guards and native build, but its complete pixel matrices
+regress as recorded above. The subsequent keyword and canonical table-source
+queues stop at the disk guard; their native applications and pixels have not run.
 The [preserved terminal index](../renderer/generated/native-review-v3.json)
 also records completed umbrella CI at `4144c85a`: three successful workflows,
 six successful jobs and five skips. Skips do not satisfy required release gates.
@@ -83,10 +102,10 @@ six successful jobs and five skips. Skips do not satisfy required release gates.
 | Generated sources | style, ABI, migration, closure generators are read-only clean | pass |
 | No-work frame | zero layout, paint, and raster on unchanged snapshots | pass |
 | Compositor recording ownership | Repair applied at `289d5516`; baseline/fixed cache guards, native ABI consumers and all seven earlier hosted hardening jobs pass. [v39](../renderer/generated/native-scroll-insets-v39.json) completes the applied original/expanded audits with all 46,652 comparison invariants unchanged. It also finds one earlier workspace test absent from the declared source: 8,532 reported earlier versus 8,531 on applied source. [v42](../renderer/generated/native-scroll-insets-v42.json) finishes the clean build, native ABI consumers and all four matrices at immutable `2e443f49`; original and expanded retain all 46,652 comparison invariants and fail with actual exits 1 | implemented; clean source attribution restored; full pixel gates fail |
-| Current umbrella hosted gates | At the preceding documentation checkpoint `0ceb4c39`, all three ordinary workflows succeed: six jobs pass, five are skipped. Native/build/workflow inputs match `287e176a`, whose [manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37244559627) passes all seven jobs with zero skips | scoped hosted pass; local full pixel gate fails |
+| Current umbrella hosted gates | At documentation checkpoint `98ed2a67`, all three ordinary workflows succeed: six jobs pass, five are skipped. Native/build/harness/ABI/workflow inputs match tested `1c8540e9`. Private text source `90310e15` independently passes all seven own-source hardening jobs, zero skips; it remains unapplied | scoped hosted pass; local full pixel gate fails |
 | Native style/cache integration | [v40](../renderer/generated/native-scroll-insets-v40.json) records the baseline failure, fixed pass and nine passing inheritance tests at `0ccc37da`; the harness stops because it expected eight. The corrected queue verifies the complete named inventory after clearing all 18 packages. Ten read-only checks and all seven own-source manual hardening jobs pass, zero skips; native consumers and matrices remain pending | unapplied; current-source application and pixel qualification pending |
 | Intrinsic constraints and whitespace | [v40](../renderer/generated/native-scroll-insets-v40.json) records the atomic baseline failure and a compile failure in the leading-space baseline. Fixed `a6d386e4` and baseline `ac1eb2a7` correct only the typed Float test setup. Ten read-only checks pass; the native callback app and exact pixel queue remain pending. Parent fieldset trial retains 64 original exact losses and four addition losses | unapplied; own native and pixel qualification pending |
-| Raster regression guards and native Rust/C/C++ consumer | [v40](../renderer/generated/native-scroll-insets-v40.json) records all native guards and five C boundary tests passing at `3d4eea11`, followed by an example import compile failure before pixel verification. Private `fb284c54` exposes five raster-setting types through the public Rust API, preserving renderer bodies and the C ABI. Ten read-only checks pass. All seven parent-source hosted jobs pass; corrected-source native, pixel and hosted verification remains pending | unapplied; no new pixel or release pass |
+| Raster regression guards and native Rust/C/C++ consumer | [Complete trial](../renderer/generated/native-review-v4.json) at `e0dc491e` passes named guards and all 17 clean build stages, but full original/expanded lose 83/87 exact comparisons and gain none. Native application is 828/840, font images 73/1,200 and geometry 25,600/76,800 exact; default static raster is 0/60. All Chromium inputs remain unchanged | rejected for application; no new pixel or release pass |
 | Opaque image backgrounds | [v41](../renderer/generated/native-scroll-insets-v41.json) preserves a pinned Chromium source review and private `d913041d` shared paint candidate. Ten read-only checks and seven own-source manual hardening jobs pass, zero skips; Engine guards, public Rust callback apps and all four matrices are queued. The 24 stable fieldset differences split into eight background cases and sixteen color-rounding cases; rounding remains unresolved | unapplied and unqualified; no pixel improvement claimed |
 | Image-edge coverage | [v42](../renderer/generated/native-scroll-insets-v42.json): private `2eacae2c` keeps sampled colors intact, preserves opaque metadata, and applies coverage during Skia blending. Five reviewed Skia files match the existing pin. Ten read-only checks pass; baseline/fixed Engine assertions, 128 fieldset images, 720 public Rust callback images and all four matrices are queued | unapplied and unqualified; no pixel gain claimed |
 | Mutation ownership | 10,000-iteration soak, no owned-object leak | pass |

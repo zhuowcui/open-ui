@@ -1,0 +1,63 @@
+{
+  "active_sources_or_probes_changed": false,
+  "all_commands_terminal": true,
+  "artifacts": [
+    {
+      "active_executable_pids": [],
+      "all_declared_build_steps_passed": true,
+      "build_receipt_sha256": "f641198421bd4e0fb75ee204eead92b367d90ff61612524f1e5a950291644e90",
+      "build_steps": 3,
+      "bytes": 339756680,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-v257/pixel_compare",
+      "original_path_preserved_as_symlink": true,
+      "sha256": "484e1e8b73d0adeb71a72f9af8c04c7219a865242635d2028fae56bff55bfff4",
+      "source": "d94b55f83d32ad059bc93e5c1732ae74f0994d08",
+      "stored_path": "/mnt/e/openui-v02-qualification-d174ea0b/retired-artifact-relocation-v1646/svg-curved-solid-clean-v257-pixel_compare"
+    },
+    {
+      "active_executable_pids": [],
+      "all_declared_build_steps_passed": true,
+      "build_receipt_sha256": "2d81b45efa367a052e84d72f19bc6d084e04b70ee45dab2051c6989b2be63e74",
+      "build_steps": 5,
+      "bytes": 339756304,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/svg-curved-double-clean-v234/pixel_compare",
+      "original_path_preserved_as_symlink": true,
+      "sha256": "5918f1d0f234023fa09b47770d5ff662b84b5ab817512c7de7f18b0458a9c4ce",
+      "source": "169fc7fefd2a9baa9d8a7996922b8efdaeb63636",
+      "stored_path": "/mnt/e/openui-v02-qualification-d174ea0b/retired-artifact-relocation-v1646/svg-curved-double-clean-v234-pixel_compare"
+    },
+    {
+      "active_executable_pids": [],
+      "all_declared_build_steps_passed": true,
+      "build_receipt_sha256": "a2109913fc5a6df89f569dd61574946f1b2a675e85fec397e40cab281064d465",
+      "build_steps": 5,
+      "bytes": 339753080,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/svg-region-clean-v223/pixel_compare",
+      "original_path_preserved_as_symlink": true,
+      "sha256": "09391a69e7430a4c6b428f98fdbe537421d1e404ab39712cfcb423f285999e32",
+      "source": "4daf187621f3b964abeb6ae7b281cb1cb727a954",
+      "stored_path": "/mnt/e/openui-v02-qualification-d174ea0b/retired-artifact-relocation-v1646/svg-region-clean-v223-pixel_compare"
+    },
+    {
+      "active_executable_pids": [],
+      "all_declared_build_steps_passed": true,
+      "build_receipt_sha256": "92af61499714d2fa98a4ff585de8b4373b77c1548c3a5c95a3a278bfd535f9c0",
+      "build_steps": 4,
+      "bytes": 339700440,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/scroll-coverage-clean-v196/pixel_compare",
+      "original_path_preserved_as_symlink": true,
+      "sha256": "5c3e207a70482950c5047851a44c2bdd78b68930b8233d35ef66dc2ff4e4c4c6",
+      "source": "9ba5a21b47677e7c666e9ea6962bf85603afd6db",
+      "stored_path": "/mnt/e/openui-v02-qualification-d174ea0b/retired-artifact-relocation-v1646/scroll-coverage-clean-v196-pixel_compare"
+    }
+  ],
+  "cargo_or_raster_commands_run": 0,
+  "old_executable_bytes_preserved": true,
+  "oracle_or_reference_images_changed": false,
+  "probe_sha256": "6fb99c9cc52ce66f21313592fcea7fa70dccf82adfa7175210f8147335bc45f3",
+  "release_qualification": false,
+  "root_free_bytes_after": 1854173184,
+  "root_free_bytes_before": 497696768,
+  "schema_version": 1,
+  "source_files_changed": false
+}
