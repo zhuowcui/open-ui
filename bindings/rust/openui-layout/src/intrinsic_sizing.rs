@@ -575,7 +575,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                             || style.line_break == LineBreak::Anywhere)
                         && !is_space
                         && !is_forced;
-                    if collapses && is_space && !line_has_content {
+                    if collapses && is_space && !line_has_content && byte_index == run_start {
                         // Leading spaces contribute no width or soft break.
                         // Snap advances after them so the first word retains
                         // both its font's remainder and the first-line indent.
