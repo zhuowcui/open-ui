@@ -22,29 +22,19 @@ remain open.
 
 ## Current implementation checkpoint
 
-The [native intrinsic sizing follow-up](../renderer/native-fontations-app.md) at clean private
-`8f756039` passes **8,575 workspace tests**, zero failed and 13 ignored,
-all 21 read-only checks, and Rust/C/C++ ABI consumers with 113 exports
-and 30 layouts. Its consuming Rust app repeats 2,880 callbacks per run
-and matches **7,360/7,380 element bounds**.
-Twenty vertical text measurements remain different; these geometry
-results do not prove pixel parity. The new fractional line-height guard
-also passes against 270 repeated Chromium observations.
-Original pixels are **21,334/22,924 exact** and expanded
-pixels **22,137/23,728 exact**, zero errors, actual exits 1.
-The original sweep gains 0 exact comparisons and loses 0; the expanded
-sweep gains 0 and loses 0. All 48,252 Chromium records stay fixed.
-6 original comparisons have more wrong pixels than the accepted renderer.
-Focused pixels are 640/640 exact and primitive pixels
-960/960 exact. The repeated native font app passes 200/200 images and
-12,800/12,800 bounds under its selected configuration.
-The source remains private and unqualified; the accepted original
-total stays **21,334/22,924**. Umbrella `376e0ded` has six executed
-PR jobs passing, five skipped, and all nine native/comparison guards
-passing. Hosted results belong to that umbrella source. The
-[v7 evidence](../renderer/generated/native-fontations-factory-v7.json) preserves complete measurements and failed
-attempts. Open UI never executes JavaScript; needed interaction uses
-public native Rust APIs and callbacks. v0.2 remains unfinished.
+The [native Rust font-unit trial](../renderer/native-font-relative-lengths.md) at clean
+private `4046d366` matches **2,400/2,400 horizontal element bounds** through
+1,200 repeated Rust callbacks. Its 8,562 workspace tests, seventeen source
+checks and Rust/C/C++ ABI consumers pass. The complete original and expanded
+pixel sweeps each lose two previously exact comparisons, so the source remains
+**private and unapplied**. Focused 640/640 and primitive 960/960 remain exact;
+all Chromium inputs stay fixed. A separate vertical app matches 1,280/1,440
+bounds; upright vertical `ch` has 160 differences with a reviewed native metric
+cause. These geometry apps capture no native pixels. Automatic typed font-unit
+declarations, the glyph-placement regressions, remaining native APIs and
+release gates stay open. The accepted original count remains
+**21,334/22,924 exact**. See the [isolated sizing evidence](../renderer/native-intrinsic-isolated.md)
+for the other rejected trials. Open UI never executes JavaScript.
 
 The [shared text measurement trial](../renderer/native-fontations-app.md)
 at clean private `2fcdc66d` matches 200/200 Chromium images and all 12,800

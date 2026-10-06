@@ -74,6 +74,13 @@ application. Test coverage must exercise the retained state and resulting
 events or rendering. A missing public method remains an implementation gap
 until that native application path works.
 
+The [native font-relative helper](../renderer/native-font-relative-lengths.md)
+resolves `ch`, `ex` and `lh` from an owned computed style and the application's
+font collection. Apps currently assign the resolved pixel value and recompute
+it after font changes. Automatic typed declarations, upright vertical `ch`,
+complete nested contexts and C parity remain native API gaps. The tested
+private correction also has two full-corpus pixel regressions and is unapplied.
+
 The [native Rust raster options](native-rust-raster-options.md) expose the
 Engine's immutable selection directly to consuming apps. Rust callback,
 configuration, bounds and teardown checks pass, with ten exact Chromium

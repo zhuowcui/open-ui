@@ -24,6 +24,16 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
+The [native font-relative helper evidence](native-font-relative-lengths.md)
+verifies 2,400/2,400 horizontal bounds on clean private `4046d366`, through
+repeated public Rust mutations and callbacks. Its complete pixel sweeps each
+lose two exact comparisons; the candidate remains unapplied. A separate
+vertical query app has 160 differences among 1,440 bounds, with reviewed
+orientation-aware metric work still needed. These apps capture no native
+pixels. Automatic typed font-unit declarations, shared glyph-placement fixes
+and C parity remain required native API work. The accepted original renderer
+stays 21,334/22,924 exact; no release state or reference bytes change.
+
 The [public native Rust raster options](../v02/native-rust-raster-options.md)
 are integrated at `2d338d6c`. Its clean combined build passes 8,558 tests and
 all fifteen stages, with fifteen read-only checks and real Rust/C/C++
