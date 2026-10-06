@@ -4,6 +4,20 @@ Open UI never executes JavaScript. Applications use public native Rust methods
 and Rust callbacks. Pinned Chromium supplies the expected pixels and element
 bounds. Historical Open UI output remains immutable provenance.
 
+## Exact text diagnostics
+
+The legacy text comparison helper now reads surface pixels in PNG RGBA order
+with straight alpha, rejects any changed RGBA channel, and writes generated
+images to ignored `out/pixel_text/openui_renders/`. It preserves the tracked
+historical renders and Chromium references. Guards cover a one-bit change in
+each channel, an alpha-only diff image, channel order, and translucent colors.
+
+These guards execute successfully on private source `02401648`. Its full
+workspace reports 8,572 passed, zero failed and 13 ignored; Rust/C/C++ ABI
+verification passes. The complete renderer run is still in progress. The ten
+legacy scenarios do not count as Chromium passes when reference files are
+absent. The complete Chromium matrices remain the release pixel gates.
+
 ## Shared measurement follow-up
 
 Clean private source `2fcdc66d` now matches **200/200 Chromium images and

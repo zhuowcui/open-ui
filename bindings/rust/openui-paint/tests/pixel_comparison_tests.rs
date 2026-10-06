@@ -6,9 +6,9 @@
 //! For each scenario (basic_text, line_breaking, …) the test:
 //! 1. Programmatically builds a DOM tree that mirrors the HTML test page.
 //! 2. Runs layout + paint via `render_to_surface()`.
-//! 3. Saves the output PNG to `tests/pixel_text/openui_renders/`.
+//! 3. Saves generated PNGs to the ignored `out/pixel_text/openui_renders/`.
 //! 4. If a Chromium reference PNG exists in `tests/pixel_text/chromium_refs/`,
-//!    performs a pixel-by-pixel comparison with tolerance ±2 per channel.
+//!    requires an exact comparison of every RGBA channel.
 //! 5. Generates a diff image highlighting mismatches.
 //!
 //! ## Running
@@ -40,7 +40,7 @@ use openui_style::*;
 struct PixelDiff {
     /// Total pixels in each image.
     total_pixels: usize,
-    /// Number of pixels that differ beyond tolerance.
+    /// Number of pixels with any differing RGBA channel.
     mismatched_pixels: usize,
     /// Maximum per-channel difference found (0–255).
     max_channel_diff: u8,
@@ -62,18 +62,25 @@ impl PixelDiff {
 /// Extract raw RGBA pixel bytes from a Skia surface.
 fn surface_to_rgba(surface: &mut Surface) -> (u32, u32, Vec<u8>) {
     let image = surface.image_snapshot();
-    let info = image.image_info();
-    let w = info.width() as u32;
-    let h = info.height() as u32;
+    let w = image.width() as u32;
+    let h = image.height() as u32;
+    // PNG comparisons require RGBA with straight alpha, regardless of the
+    // platform's native N32 channel order or surface premultiplication.
+    let info = skia_safe::ImageInfo::new(
+        (w as i32, h as i32),
+        skia_safe::ColorType::RGBA8888,
+        skia_safe::AlphaType::Unpremul,
+        None,
+    );
     let row_bytes = (w * 4) as usize;
     let mut pixels = vec![0u8; (h as usize) * row_bytes];
-    image.read_pixels(
+    assert!(image.read_pixels(
         &info,
         &mut pixels,
         row_bytes,
         (0, 0),
         skia_safe::image::CachingHint::Allow,
-    );
+    ));
     (w, h, pixels)
 }
 
@@ -108,8 +115,8 @@ fn load_png_rgba(path: &Path) -> Result<(u32, u32, Vec<u8>), String> {
     Ok((w, h, rgba))
 }
 
-/// Compare two RGBA images pixel-by-pixel with per-channel tolerance.
-fn pixel_diff(a: &(u32, u32, Vec<u8>), b: &(u32, u32, Vec<u8>), tolerance: u8) -> PixelDiff {
+/// Compare every RGBA channel exactly, including alpha.
+fn pixel_diff(a: &(u32, u32, Vec<u8>), b: &(u32, u32, Vec<u8>)) -> PixelDiff {
     if a.0 != b.0 || a.1 != b.1 {
         return PixelDiff {
             total_pixels: (a.0 as usize) * (a.1 as usize),
@@ -133,7 +140,7 @@ fn pixel_diff(a: &(u32, u32, Vec<u8>), b: &(u32, u32, Vec<u8>), tolerance: u8) -
                 max_diff = d;
             }
             sum_diff += d as u64;
-            if d > tolerance {
+            if d != 0 {
                 pixel_mismatch = true;
             }
         }
@@ -161,7 +168,6 @@ fn pixel_diff(a: &(u32, u32, Vec<u8>), b: &(u32, u32, Vec<u8>), tolerance: u8) -
 fn save_diff_image(
     a: &(u32, u32, Vec<u8>),
     b: &(u32, u32, Vec<u8>),
-    tolerance: u8,
     diff_path: &Path,
 ) -> Result<(), String> {
     let w = a.0.min(b.0);
@@ -175,9 +181,9 @@ fn save_diff_image(
             let idx_d = ((y * w + x) * 4) as usize;
 
             let mut mismatch = false;
-            for c in 0..3 {
+            for c in 0..4 {
                 let d = (a.2[idx_a + c] as i16 - b.2[idx_b + c] as i16).unsigned_abs() as u8;
-                if d > tolerance {
+                if d != 0 {
                     mismatch = true;
                     break;
                 }
@@ -233,6 +239,45 @@ fn has_visible_content(surface: &mut Surface) -> bool {
     false
 }
 
+#[test]
+fn surface_comparison_preserves_rgba_order_and_straight_alpha() {
+    let mut surface = skia_safe::surfaces::raster_n32_premul((1, 1)).unwrap();
+    surface
+        .canvas()
+        .clear(skia_safe::Color::from_argb(255, 13, 77, 199));
+    assert_eq!(
+        surface_to_rgba(&mut surface),
+        (1, 1, vec![13, 77, 199, 255])
+    );
+    surface
+        .canvas()
+        .clear(skia_safe::Color::from_argb(128, 255, 0, 0));
+    assert_eq!(surface_to_rgba(&mut surface), (1, 1, vec![255, 0, 0, 128]));
+}
+
+#[test]
+fn reference_comparison_rejects_single_bit_rgba_changes() {
+    let reference = (1, 1, vec![20, 40, 60, 80]);
+    let same = pixel_diff(&reference, &reference);
+    assert_eq!(same.mismatched_pixels, 0);
+    assert_eq!(same.max_channel_diff, 0);
+    for channel in 0..4 {
+        let mut changed = reference.clone();
+        changed.2[channel] += 1;
+        let diff = pixel_diff(&changed, &reference);
+        assert_eq!(diff.mismatched_pixels, 1, "RGBA channel {channel}");
+        assert_eq!(diff.max_channel_diff, 1);
+        if channel == 3 {
+            let path =
+                std::env::temp_dir().join(format!("openui-alpha-diff-{}.png", std::process::id()));
+            save_diff_image(&changed, &reference, &path).unwrap();
+            let saved = load_png_rgba(&path).unwrap();
+            std::fs::remove_file(path).unwrap();
+            assert_eq!(saved, (1, 1, vec![255, 0, 0, 255]));
+        }
+    }
+}
+
 // ═══════════════════════════════════════════════════════════════════════
 // ── Path helpers ────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════
@@ -259,13 +304,13 @@ fn chromium_ref_path(name: &str) -> PathBuf {
 
 fn openui_render_path(name: &str) -> PathBuf {
     project_root()
-        .join("tests/pixel_text/openui_renders")
+        .join("out/pixel_text/openui_renders")
         .join(format!("{}_openui.png", name))
 }
 
 fn diff_path(name: &str) -> PathBuf {
     project_root()
-        .join("tests/pixel_text/openui_renders")
+        .join("out/pixel_text/openui_renders")
         .join(format!("{}_diff.png", name))
 }
 
@@ -275,7 +320,6 @@ fn diff_path(name: &str) -> PathBuf {
 
 const SURFACE_W: i32 = 500;
 const SURFACE_H: i32 = 1200;
-const TOLERANCE: u8 = 2;
 
 fn test_viewport() -> openui_geometry::ViewportMetrics {
     openui_geometry::ViewportMetrics::from_logical_size(
@@ -438,11 +482,11 @@ fn render_and_compare(doc: &Document, test_name: &str) -> (Surface, Option<Pixel
     let diff = if ref_path.exists() {
         let our_pixels = surface_to_rgba(&mut surface);
         let ref_pixels = load_png_rgba(&ref_path).expect("failed to load Chromium reference");
-        let diff = pixel_diff(&our_pixels, &ref_pixels, TOLERANCE);
+        let diff = pixel_diff(&our_pixels, &ref_pixels);
 
         // Save diff image
         let dp = diff_path(test_name);
-        if let Err(e) = save_diff_image(&our_pixels, &ref_pixels, TOLERANCE, &dp) {
+        if let Err(e) = save_diff_image(&our_pixels, &ref_pixels, &dp) {
             eprintln!("Warning: failed to save diff image: {}", e);
         }
 
@@ -586,10 +630,9 @@ fn pixel_basic_text() {
     if let Some(d) = diff {
         assert!(!d.size_mismatch, "basic_text: image dimensions differ");
         assert!(
-            d.max_channel_diff <= TOLERANCE,
-            "basic_text: max channel diff {} exceeds tolerance {}",
-            d.max_channel_diff,
-            TOLERANCE
+            d.max_channel_diff == 0,
+            "basic_text: max channel diff {} exceeds required 0",
+            d.max_channel_diff
         );
     }
 }
@@ -661,10 +704,9 @@ fn pixel_line_breaking() {
     if let Some(d) = diff {
         assert!(!d.size_mismatch, "line_breaking: image dimensions differ");
         assert!(
-            d.max_channel_diff <= TOLERANCE,
-            "line_breaking: max channel diff {} exceeds tolerance {}",
-            d.max_channel_diff,
-            TOLERANCE
+            d.max_channel_diff == 0,
+            "line_breaking: max channel diff {} exceeds required 0",
+            d.max_channel_diff
         );
     }
 }
@@ -726,10 +768,9 @@ fn pixel_text_alignment() {
     if let Some(d) = diff {
         assert!(!d.size_mismatch, "text_alignment: image dimensions differ");
         assert!(
-            d.max_channel_diff <= TOLERANCE,
-            "text_alignment: max channel diff {} exceeds tolerance {}",
-            d.max_channel_diff,
-            TOLERANCE
+            d.max_channel_diff == 0,
+            "text_alignment: max channel diff {} exceeds required 0",
+            d.max_channel_diff
         );
     }
 }
@@ -791,10 +832,9 @@ fn pixel_vertical_align() {
     if let Some(d) = diff {
         assert!(!d.size_mismatch, "vertical_align: image dimensions differ");
         assert!(
-            d.max_channel_diff <= TOLERANCE,
-            "vertical_align: max channel diff {} exceeds tolerance {}",
-            d.max_channel_diff,
-            TOLERANCE
+            d.max_channel_diff == 0,
+            "vertical_align: max channel diff {} exceeds required 0",
+            d.max_channel_diff
         );
     }
 }
@@ -946,10 +986,9 @@ fn pixel_text_decoration() {
     if let Some(d) = diff {
         assert!(!d.size_mismatch, "text_decoration: image dimensions differ");
         assert!(
-            d.max_channel_diff <= TOLERANCE,
-            "text_decoration: max channel diff {} exceeds tolerance {}",
-            d.max_channel_diff,
-            TOLERANCE
+            d.max_channel_diff == 0,
+            "text_decoration: max channel diff {} exceeds required 0",
+            d.max_channel_diff
         );
     }
 }
@@ -1011,10 +1050,9 @@ fn pixel_letter_word_spacing() {
             "letter_word_spacing: image dimensions differ"
         );
         assert!(
-            d.max_channel_diff <= TOLERANCE,
-            "letter_word_spacing: max channel diff {} exceeds tolerance {}",
-            d.max_channel_diff,
-            TOLERANCE
+            d.max_channel_diff == 0,
+            "letter_word_spacing: max channel diff {} exceeds required 0",
+            d.max_channel_diff
         );
     }
 }
@@ -1108,10 +1146,9 @@ fn pixel_text_transform() {
     if let Some(d) = diff {
         assert!(!d.size_mismatch, "text_transform: image dimensions differ");
         assert!(
-            d.max_channel_diff <= TOLERANCE,
-            "text_transform: max channel diff {} exceeds tolerance {}",
-            d.max_channel_diff,
-            TOLERANCE
+            d.max_channel_diff == 0,
+            "text_transform: max channel diff {} exceeds required 0",
+            d.max_channel_diff
         );
     }
 }
@@ -1190,10 +1227,9 @@ fn pixel_bidi_mixed() {
     if let Some(d) = diff {
         assert!(!d.size_mismatch, "bidi_mixed: image dimensions differ");
         assert!(
-            d.max_channel_diff <= TOLERANCE,
-            "bidi_mixed: max channel diff {} exceeds tolerance {}",
-            d.max_channel_diff,
-            TOLERANCE
+            d.max_channel_diff == 0,
+            "bidi_mixed: max channel diff {} exceeds required 0",
+            d.max_channel_diff
         );
     }
 }
@@ -1251,10 +1287,9 @@ fn pixel_line_height() {
     if let Some(d) = diff {
         assert!(!d.size_mismatch, "line_height: image dimensions differ");
         assert!(
-            d.max_channel_diff <= TOLERANCE,
-            "line_height: max channel diff {} exceeds tolerance {}",
-            d.max_channel_diff,
-            TOLERANCE
+            d.max_channel_diff == 0,
+            "line_height: max channel diff {} exceeds required 0",
+            d.max_channel_diff
         );
     }
 }
@@ -1322,10 +1357,9 @@ fn pixel_white_space() {
     if let Some(d) = diff {
         assert!(!d.size_mismatch, "white_space: image dimensions differ");
         assert!(
-            d.max_channel_diff <= TOLERANCE,
-            "white_space: max channel diff {} exceeds tolerance {}",
-            d.max_channel_diff,
-            TOLERANCE
+            d.max_channel_diff == 0,
+            "white_space: max channel diff {} exceeds required 0",
+            d.max_channel_diff
         );
     }
 }
