@@ -116,14 +116,15 @@ geometry queries. Its local harness stops on a nonexistent restore branch
 before native guards or pixels execute. The candidate is unapplied; a fresh
 verified harness is required and no renderer gain is claimed.
 
-The [native keyword retry](docs/renderer/native-keyword-values.md) addresses a
-C API gap: the current value constructor rejects `column-fill: auto`, while
-the public Rust typed setter already exists. Its shared constructor correction
-passes thirteen read-only checks. Its named baseline fails as expected, but
-three fixed commands stop at the disk guard. Rust/C/C++ applications and all
-four pixel matrices have not run. It is unapplied.
-All seven of its own-source hosted hardening jobs now pass, with zero skips;
-native and pixel qualification remain pending.
+The [native keyword correction](docs/renderer/native-keyword-values.md) at
+private `7d6ffabf` closes the missing `column-fill: auto` value constructor.
+Sixteen read-only checks, three fixed native guards and all seven own-source
+hosted hardening jobs pass. Its clean build passes all thirteen stages and
+8,554 workspace tests, zero failed and 13 ignored. Rust, C and C++ callback
+apps pass at five scales; the ABI checker runs thirteen C examples and seven
+C++ examples. The original space failure and a later capture-script path
+failure are preserved. Native Chromium captures and all four pixel matrices
+remain required. The correction is unapplied and admits no release state.
 
 The current v0.2 release candidate has:
 

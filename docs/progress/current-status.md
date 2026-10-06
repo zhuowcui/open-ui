@@ -26,9 +26,15 @@ The [native keyword constructor follow-up](../renderer/native-keyword-values.md)
 at private `7d6ffabf` retains the current shared Rust/C APIs and renderer.
 Sixteen read-only checks and all seven own-source hosted hardening jobs pass,
 with zero skips. The hosted platform job executes both named FFI keyword
-guards successfully. Its local baseline/fixed guards, clean build, native
-consumers and pixel matrices remain unexecuted. The older source's three
-fixed guards stopped at the disk guard; those are preserved failures.
+guards successfully. Its local baseline fails with exit 101 and all three
+fixed guards pass. The [complete clean build](../renderer/generated/native-keywords-v5.json)
+passes thirteen stages and 8,554 workspace tests, zero failed and 13 ignored.
+Rust, C and C++ callback apps pass at five scales. The ABI checker runs thirteen
+C examples and seven C++ examples, retaining 113 exports and 30 layouts.
+The original storage stop and a later capture-script source-path error are
+preserved. Native Chromium captures and all four pixel matrices remain
+required. The older source's three fixed guards stopped at the disk guard;
+those are preserved failures.
 The new constructor source is unapplied and admits no release state.
 
 The [native glyph audit](../renderer/native-glyph-descriptor.md) finds a
@@ -134,6 +140,10 @@ The [documentation checkpoint at `2d78b2db`](../renderer/generated/native-text-i
 also passes fourteen read-only checks and all three hosted workflows, with six
 jobs passed, five skipped and zero failed. It keeps the native runtime and
 pixel measurements unchanged.
+The [subsequent documentation checkpoint at `e8249368`](../renderer/generated/native-text-inheritance-v10.json)
+also passes fourteen read-only checks and all three hosted workflows: six
+jobs passed, five skipped, zero failed. Every executed job log is preserved.
+These checks do not replace required renderer or release gates.
 
 The [native text replacement review](../renderer/native-text-content.md) finds
 why all 800 C/C++ font images are blank at `e0dc491e`: the C setter stores

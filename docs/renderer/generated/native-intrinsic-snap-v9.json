@@ -1,0 +1,83 @@
+{
+  "all_source_fetches_terminal": true,
+  "artifact_bytes": 128910,
+  "artifact_count": 10,
+  "artifacts": [
+    {
+      "bytes": 1299,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v9/source-receipt.json",
+      "sha256": "cede49f6b07f5c20e2c44e7f812c67eaa64255316452126f9f36e7a2a005adac",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-width-pinned-source-v1782/receipt.json"
+    },
+    {
+      "bytes": 23719,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v9/shape_result.h",
+      "sha256": "e50c79ebfe50be5d66bec042bee4d904187bae5aadbe8ac51a72699676a4816e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-width-pinned-source-v1782/shape_result.h"
+    },
+    {
+      "bytes": 27418,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v9/harfbuzz_face.cc",
+      "sha256": "3fda0277ebddca6cc3f20bf40b0b1e875fe6b469182d0689a2bcd3710fc3eca0",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-width-pinned-source-v1782/harfbuzz_face.cc"
+    },
+    {
+      "bytes": 1726,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v9/source-fetcher.py",
+      "sha256": "ff2c723c11dd9d08d3827d8d6b3cd0073da0e61ba2bce928833e808ee6355a7d",
+      "source_path": "/tmp/openui-native-width-pinned-source-v1782.py"
+    },
+    {
+      "bytes": 1311,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v9/metrics-receipt.json",
+      "sha256": "7b2fe66b42e9135ce59a0cdb7ad695cbb7e67105997738e772f6aa3b6d664a4b",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-width-pinned-metrics-v1783/receipt.json"
+    },
+    {
+      "bytes": 1869,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v9/skia_text_metrics.h",
+      "sha256": "9f4b9d441c2caf79be0b1457e4188ef72d3778c9a7e0f8bcaf241901f4237d99",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-width-pinned-metrics-v1783/skia_text_metrics.h"
+    },
+    {
+      "bytes": 6526,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v9/skia_text_metrics.cc",
+      "sha256": "376a90b1af745815356bffb02cd3cd16e28c24ecc3daad274715d8578a93ee19",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-width-pinned-metrics-v1783/skia_text_metrics.cc"
+    },
+    {
+      "bytes": 1733,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v9/metrics-fetcher.py",
+      "sha256": "7b471c3e85e24f0dc88461dbfad4be2b98c622697a060c93c1c477cd4fd21b1a",
+      "source_path": "/tmp/openui-native-width-pinned-metrics-v1783.py"
+    },
+    {
+      "bytes": 60400,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v9/pinned-SkShaper_harfbuzz.cpp",
+      "sha256": "17b22163bf71731997098cab880a0a41cd6fdae8beee48e1f229ddb50b132e3e",
+      "source_path": "/home/nero/.cargo/git/checkouts/rust-skia-b4d79b6a888cdb4c/a31b86b/skia-bindings/skia/modules/skshaper/src/SkShaper_harfbuzz.cpp"
+    },
+    {
+      "bytes": 2909,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v9/preserver.py",
+      "sha256": "c7e85c8a5172d42f0921204f794b056d6d3f976bcba6cba347e0c199e122d4f7",
+      "source_path": "/tmp/openui-native-width-source-preserve-v1784.py"
+    }
+  ],
+  "cargo_commands_run": 0,
+  "chromium_binary_and_source_tag": "147.0.7727.50",
+  "chromium_glyph_advance_conversion_clamps_16_16_to_integer": true,
+  "chromium_snapped_shape_width_uses_float_ceiling": true,
+  "does_not_prove_runtime_residual_root_causes": true,
+  "formal_residual_ownership_unchanged": true,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "pinned_skshaper_glyph_advance_conversion_rounds_16_16_to_integer": true,
+  "pixel_tolerance": 0,
+  "raster_commands_run": 0,
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "shared_intrinsic_fallback_uses_unshaped_skfont_measurement": true,
+  "source_facts_only": true
+}

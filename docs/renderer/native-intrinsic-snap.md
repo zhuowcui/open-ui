@@ -17,10 +17,18 @@ width is 12px. For `XX` at 16px, the widths are 32.015625px and 32px. These
 measurements agree at all five scales. No width is explicitly authored.
 
 The shared `intrinsic_text_width` helper discards small positive fractions
-before converting the shaped advance to the 1/64px layout grid. Chromium's
-`ShapeResult::SnappedWidth` instead ceil-converts the original advance. The
-supporting source is Chromium `147.0.7727.24`; the measured reference binary
-is `147.0.7727.50`. Source analysis does not replace runtime verification.
+before converting an advance to the 1/64px layout grid. Chromium's
+`ShapeResult::SnappedWidth` instead ceil-converts the original shaped advance.
+The [preserved source](generated/native-intrinsic-snap-v9.json) is Chromium
+`147.0.7727.50`, matching the measured reference binary. Source analysis does
+not replace runtime verification.
+
+This helper receives both shaped advances and the fallback's simpler
+`SkFont::measure_str` widths. That fallback bypasses HarfBuzz. The pinned
+Chromium and SkShaper sources also use different float-to-integer conversions
+for HarfBuzz glyph advances: Chromium clamps the 16.16 value to an integer;
+SkShaper rounds it. These source differences identify measurement paths to
+test. They do not establish the runtime cause of the 21 exact pixel losses.
 
 ## Narrow native correction
 
@@ -57,7 +65,7 @@ and remains unapplied. Own-source hosted run
 `37373688613` initially passes five jobs and cancels two before their steps
 execute. Its [completed retry](generated/native-intrinsic-snap-v4.json) passes
 all seven jobs with zero skips. Both attempts and all available logs remain
-preserved. Hosted hardening does not replace the unexecuted full pixel checks.
+preserved. Hosted hardening does not waive the measured pixel losses.
 
 The [native width-only audit](generated/native-intrinsic-snap-v6.json) confirms
 that all 600 native image hashes, all Chromium image hashes and all image
@@ -92,3 +100,12 @@ across 20 test IDs; 21 previously exact comparisons become different, while
 six already-different rows change. Their reduced root causes still need
 review; no formal WPT ownership is assigned. Correct native geometry does
 not waive these pixel losses. No release state is admitted.
+
+The [complete image audit](generated/native-intrinsic-snap-v8.json) verifies
+57 existing PNG files against their recorded PNG and decoded RGBA hashes.
+Every changed comparison has mismatch bounds, connected regions and channel
+deltas against Chromium and against the prior native render. All 20 affected
+tests have complete four-profile summaries: one change occurs at scale 1,
+nine at 1.25 and seventeen at 1.5; scale 2 is unchanged. These are image
+observations. Reduced Engine-backed reproductions and reviewed causes are
+still required before changing the shared text measurement or allocation path.

@@ -1,0 +1,25 @@
+{
+  "actual_c_and_cpp_native_apps_passed": true,
+  "actual_native_application_stage_exit": 1,
+  "actual_native_raster_commands_run": 0,
+  "all_commands_terminal": true,
+  "bad_source_root": "/dev/shm/openui-native-keywords-current-retry-current-0733955a",
+  "build_complete_at_declared_source": true,
+  "chromium_capture_commands_run": 0,
+  "failed_before_source_identity_import": true,
+  "failure_log_sha256": "6e471492c535388d76a7a890caa77540d8917d1e4ff04d4bd9a3997a241dddcc",
+  "new_release_states_admitted": 0,
+  "previous_owner_sha256": "3d24233f9c05f8d156e837402918d71d8944e3e64a727f243ee6b8f76b987771",
+  "reason": "A namespace replacement rewrote the already substituted source root in the capture probes.",
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "workspace_passed": 8554
+}

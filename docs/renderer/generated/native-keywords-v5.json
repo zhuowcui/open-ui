@@ -1,0 +1,282 @@
+{
+  "actual_c_examples_run": 13,
+  "actual_cpp_examples_run": 7,
+  "actual_owner_stage_exits": [
+    0,
+    0,
+    1
+  ],
+  "all_13_clean_build_stages_passed": true,
+  "all_original_owner_stages_terminal": true,
+  "artifact_bytes": 183036,
+  "artifact_count": 31,
+  "artifacts": [
+    {
+      "bytes": 5879,
+      "path": "docs/renderer/evidence/native-keywords-v5/owner-terminal.json",
+      "sha256": "3d24233f9c05f8d156e837402918d71d8944e3e64a727f243ee6b8f76b987771",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-pipeline-v1780/receipt.json"
+    },
+    {
+      "bytes": 101,
+      "decompressed_bytes": 97,
+      "decompressed_sha256": "9c46baec4d42a23f99b33b408633a87bb23a4aa64b062f56f928de0d817805d3",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/owner-guards.log.gz",
+      "sha256": "15755ccc1b87929633950cab4c58d0ad2c4a27a1803610f7d5c3bb33dc7b34e3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-pipeline-v1780/guards.log"
+    },
+    {
+      "bytes": 207,
+      "decompressed_bytes": 1078,
+      "decompressed_sha256": "a47c50e4dd10c5b4fecf1f01b289b0a94815d5668410ae0efea6307a6d7a947d",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/owner-native-build.log.gz",
+      "sha256": "c888171027903239e4305ee3fdd3e74e7dd7586e295255368861795c34fc6577",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-pipeline-v1780/native-build.log"
+    },
+    {
+      "bytes": 197,
+      "decompressed_bytes": 258,
+      "decompressed_sha256": "6e471492c535388d76a7a890caa77540d8917d1e4ff04d4bd9a3997a241dddcc",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/owner-native-application.log.gz",
+      "sha256": "e2c42e3b6eb2ce49890acaf44d77c49dee28eaa30c300ed26bf30a25de3a8f94",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-pipeline-v1780/native-application.log"
+    },
+    {
+      "bytes": 11886,
+      "path": "docs/renderer/evidence/native-keywords-v5/complete-build.json",
+      "sha256": "abcddbbfad58d6a136a482375c8e044dde1ac765d6d5ef77a69f7aa442d8aee8",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/build.json"
+    },
+    {
+      "bytes": 56,
+      "decompressed_bytes": 38,
+      "decompressed_sha256": "9c0ee20bc39ea745187629e83bc119cf003fdb102cc478810bf1fd0956e82aee",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/build-clean-workspace.log.gz",
+      "sha256": "dc7fa6e6fd8652ba762bfc1cb95f282eea18c7eff918f7825c2d1698269d74fd",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/clean-workspace.log"
+    },
+    {
+      "bytes": 86797,
+      "decompressed_bytes": 489964,
+      "decompressed_sha256": "921c19f405b41a008c61b779648ad614f0c5a2629b7320fc7189e3fac2d9a0f6",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/build-workspace.log.gz",
+      "sha256": "b2d26c1ffa7247c2172571d55c3be1fccc27da6b04cb329c50e82fa2ef87d6f3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/workspace.log"
+    },
+    {
+      "bytes": 1895,
+      "decompressed_bytes": 10437,
+      "decompressed_sha256": "91600d0d3c0886d226fbc846d1c8c0bd1f16be7efe8277dfb9e792b287f6feab",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/build-keywords-build.log.gz",
+      "sha256": "0415813911fcbeb2e8bcc109efbd90c298f3db47c9fb29e02f43d2fb66ca3a1d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/keywords-build.log"
+    },
+    {
+      "bytes": 1795,
+      "decompressed_bytes": 9452,
+      "decompressed_sha256": "72e8a34955d4b1f7fd6a40133bfd96b4dc6583abc01d97e47838d6b3917beaa3",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/build-ffi-build.log.gz",
+      "sha256": "80135fb776fa8eaea5fe91f50edba2c3ae061cbc8258d92f1694cf816f8caf4d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/ffi-build.log"
+    },
+    {
+      "bytes": 1924,
+      "decompressed_bytes": 11811,
+      "decompressed_sha256": "3160e49a3191c4361defbeb0360a656e521dc23330c0e4c4c0e4c650a8159c3e",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/build-pixel-build.log.gz",
+      "sha256": "a284f386ab0698b25e3182e04ed6625b14294799d7af6612492a7f85afa3061c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/pixel-build.log"
+    },
+    {
+      "bytes": 113,
+      "decompressed_bytes": 390,
+      "decompressed_sha256": "3c2b1832984b8911e44c2cae6303350d10aa4cad9443a721cb88b3dcb70cef72",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/build-native-rust-geometry.log.gz",
+      "sha256": "4d8d4c92aca8999e6dd674a45dea9e055b1c60187a961441694b1dcf164b8c6c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/native-rust-geometry.log"
+    },
+    {
+      "bytes": 553,
+      "decompressed_bytes": 3775,
+      "decompressed_sha256": "c264daf858d185eaf307e79a882afa780b170b395932b1ebcf03d478c0ecec6a",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/build-ffi-consumers.log.gz",
+      "sha256": "55af8cfbaddccf5b598b14dcdbe5c8045890e17ba160cc9a7174481cd7f7fa65",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/ffi-consumers.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/build-compile-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/compile-c.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/build-link-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/link-c.log"
+    },
+    {
+      "bytes": 110,
+      "decompressed_bytes": 380,
+      "decompressed_sha256": "197d6355e52ea9fc08a6ec0999efd22cc1b753d3673c2f11429bef84c4981923",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/build-run-c.log.gz",
+      "sha256": "b4cd72d2e1bdd2ea6396f83149950018f9ab67c5c19921228b3a2ef0f4887475",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/run-c.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/build-compile-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/compile-cpp.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/build-link-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/link-cpp.log"
+    },
+    {
+      "bytes": 110,
+      "decompressed_bytes": 380,
+      "decompressed_sha256": "197d6355e52ea9fc08a6ec0999efd22cc1b753d3673c2f11429bef84c4981923",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v5/build-run-cpp.log.gz",
+      "sha256": "b4cd72d2e1bdd2ea6396f83149950018f9ab67c5c19921228b3a2ef0f4887475",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/run-cpp.log"
+    },
+    {
+      "bytes": 13060,
+      "path": "docs/renderer/evidence/native-keywords-v5/openui-native-image-coverage-fieldsets-v1448.py",
+      "sha256": "b1a480f5f49bada97d341d5cf5e7626f8f03496bc87b4ef83b40c298331d1710",
+      "source_path": "/tmp/openui-native-image-coverage-fieldsets-v1448.py"
+    },
+    {
+      "bytes": 6588,
+      "path": "docs/renderer/evidence/native-keywords-v5/openui-native-keywords-current-retry-build-v1779.py",
+      "sha256": "76a9773dfed17af6d4a78a48fde869c09ff1f15074efe4f4756bc36510d7266b",
+      "source_path": "/tmp/openui-native-keywords-current-retry-build-v1779.py"
+    },
+    {
+      "bytes": 7217,
+      "path": "docs/renderer/evidence/native-keywords-v5/openui-native-keywords-current-retry-consumer-v1779.py",
+      "sha256": "9d864dd755e9be158fdac058f73e3c7c61e138a6266e81f5967f4a1067044958",
+      "source_path": "/tmp/openui-native-keywords-current-retry-consumer-v1779.py"
+    },
+    {
+      "bytes": 2122,
+      "path": "docs/renderer/evidence/native-keywords-v5/openui-native-keywords-current-retry-guards-v1779.py",
+      "sha256": "3778673509c45741525cd8cd4d8c4780adf3bb80c1baff813e114c1ff68c5f3b",
+      "source_path": "/tmp/openui-native-keywords-current-retry-guards-v1779.py"
+    },
+    {
+      "bytes": 2185,
+      "path": "docs/renderer/evidence/native-keywords-v5/openui-native-keywords-current-retry-matrices-v1779.py",
+      "sha256": "9e80490e3f40514a160c410b55f24cffa6ed2b4b4403238de98382b5cd75c620",
+      "source_path": "/tmp/openui-native-keywords-current-retry-matrices-v1779.py"
+    },
+    {
+      "bytes": 9769,
+      "path": "docs/renderer/evidence/native-keywords-v5/openui-native-keywords-current-retry-table-geometry-v1779.py",
+      "sha256": "16972bd5501652c69d49d615ab71060c9a35808d4497adb1010302c7182d16d8",
+      "source_path": "/tmp/openui-native-keywords-current-retry-table-geometry-v1779.py"
+    },
+    {
+      "bytes": 8404,
+      "path": "docs/renderer/evidence/native-keywords-v5/owner.py",
+      "sha256": "b4ab5fd3d297f12927219f3b0ff4f04bfc4881fb8fbb1a80e21ddf1685fe8e91",
+      "source_path": "/tmp/openui-native-keywords-current-retry-pipeline-v1780.py"
+    },
+    {
+      "bytes": 1917,
+      "path": "docs/renderer/evidence/native-keywords-v5/source-identical-guard-reuse.json",
+      "sha256": "9b159e150db50696a8ad5fa6409c686ac4b8753a63e315ac7b820ec38d1b23ad",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-guards-v1779/receipt.json"
+    },
+    {
+      "bytes": 2861,
+      "path": "docs/renderer/evidence/native-keywords-v5/retry-preparation.json",
+      "sha256": "f02fac60f3f16f2240e8ba893bdaaabf1524f94b6c3be806e75e35266ed5d05e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-prepared-v1779.json"
+    },
+    {
+      "bytes": 1200,
+      "path": "docs/renderer/evidence/native-keywords-v5/capture-source-path-failure.json",
+      "sha256": "54531f0ae622985f834c8ce9c4148fd269638c8409b3739a9a825c84f37b88b7",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-path-failure-v1785.json"
+    },
+    {
+      "bytes": 2801,
+      "path": "docs/renderer/evidence/native-keywords-v5/fresh-capture-preparation.json",
+      "sha256": "82574a3787ffa668664497c41433b1a7c025d6e0f1b7fe0161371204de291e19",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-prepared-v1785.json"
+    },
+    {
+      "bytes": 9297,
+      "path": "docs/renderer/evidence/native-keywords-v5/fresh-capture-preparation.py",
+      "sha256": "53b511c82a7d998ad22f3403fb1486cdc43b7451451d05a4533d1c4bbb079a46",
+      "source_path": "/tmp/openui-native-keywords-capture-prepare-v1785.py"
+    },
+    {
+      "bytes": 3912,
+      "path": "docs/renderer/evidence/native-keywords-v5/preserver.py",
+      "sha256": "a65720bb6e20e34130da30451f23cee72e565063aebc4eeb585dafca8c7e00fb",
+      "source_path": "/tmp/openui-native-keywords-build-preserve-v1789.py"
+    }
+  ],
+  "baseline_actual_exit": 101,
+  "candidate_applied_to_umbrella": false,
+  "chromium_capture_probe_stopped_before_render_due_to_missing_source_path": true,
+  "completed_same_source_guard_proof_reused": true,
+  "existing_abi_layouts": 30,
+  "existing_exports_verified": 113,
+  "fresh_capture_root_assignments_ast_verified": true,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "original_owner_native_pixel_gate_not_executed": true,
+  "pixel_tolerance": 0,
+  "public_native_rust_apis_required": true,
+  "public_rust_c_cpp_keyword_callback_apps_passed_at_five_scales": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "three_fixed_named_guards_passed": true,
+  "workspace_failed": 0,
+  "workspace_ignored": 13,
+  "workspace_passed": 8554
+}

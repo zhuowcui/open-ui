@@ -70,14 +70,30 @@ and formatting of all 60 tracked C/C++ files. The keyword consumers are
 formatted with CI's clang-format 18.1.3; their earlier formatting failure is
 preserved. CMake also includes the existing native text consumers.
 
-The fresh source preserves all 113 exports and 30 ABI layouts. Its native
-guards, clean build, consuming applications and pixels have not executed.
+The fresh source preserves all 113 exports and 30 ABI layouts.
 Its [complete own-source hardening record](generated/native-keywords-v3.json)
 passes all seven jobs, zero skips. Both named FFI keyword guards execute
 successfully in the hosted platform job. All job logs remain preserved. These
 hosted checks do not replace the source-identified local guards, consuming
-applications and pixel matrices. The candidate remains unapplied and admits
-no release state.
+applications and pixel matrices.
+
+The [local guard and storage record](generated/native-keywords-v4.json)
+reproduces the named baseline failure with exit 101 and passes all three
+fixed guards. The first current-source build passes 8,554 workspace tests,
+zero failed and 13 ignored, then the ABI checker reaches the storage guard.
+Its temporary library copy and the older workspace Cargo cache are moved to
+the data drive with all file bytes and original cache paths preserved. The
+fresh build stores temporary compiler files on the data drive.
+
+That [complete clean build](generated/native-keywords-v5.json) passes all
+thirteen stages, 8,554 workspace tests, zero failed and 13 ignored. It runs
+the consuming Rust, C and C++ keyword apps at all five scales. The ABI checker
+also runs thirteen C examples and seven C++ examples. A source-path error in
+the image probe stops the following stage before rendering. That failed
+probe remains frozen; fresh probes verify each worker's source-root assignment
+against the actual repository before launch. Native Chromium capture and the
+focused, primitive, original and expanded pixel gates are still required.
+The candidate remains unapplied and admits no release state.
 
 The [preserved evidence](generated/native-keywords-v1.json) includes source
 patches, immutable probes, failed C diagnostics and completed read-only checks.
