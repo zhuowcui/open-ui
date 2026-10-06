@@ -29,15 +29,16 @@ produce the same visual state. See the
 
 ## Verified status
 
-The [real Fontations native app trial](docs/renderer/native-fontations-app.md)
-matches 200/200 Chromium images, gaining the remaining 38 over the outline
-trial with no losses. All 12,800 logical phase cells have exact pixels and
-all 200 native processes repeat their output. Clean current-branch candidate
-`9e4baa08` passes 344 text tests and 16 read-only checks. Element bounds still
-fail in 1,280 states, so the native gate exits 1. The source remains private
-and needs full renderer, workspace, C and configuration qualification.
-Umbrella checkpoint `412e804c` passes all three PR workflows: six jobs pass,
-five skip and none fail. These are separate from the candidate's results.
+The [shared text measurement trial](docs/renderer/native-fontations-app.md)
+at clean private `2fcdc66d` matches 200/200 Chromium images and all 12,800
+bounds; the native gate exits 0. All image bytes stay unchanged. It restores
+the earlier 21 rounding regressions: all 80 affected four-profile rows match
+the accepted renderer's nine comparison invariants. Focused 640/640 and
+primitive 960/960 pass, alongside 1,013 text/layout tests and 17 source checks.
+This source remains private; complete censuses, workspace, C and remaining
+font/API qualification are open. Umbrella `3a7f0f75` passes all three PR
+workflows: six jobs pass, five skip and none fail. Hosted branch results are
+separate from the private trial.
 
 The [private Linux font policy follow-up](docs/renderer/native-linux-font-policy.md)
 matches all 30 repeated Chromium font-metric observations. Its first consuming

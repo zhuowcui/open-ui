@@ -22,14 +22,17 @@ remain open.
 
 ## Current implementation checkpoint
 
-The [real Fontations native app trial](../renderer/native-fontations-app.md)
-at clean private `9e4baa08` now matches 200/200 Chromium images and all 12,800
-logical phase cells. It gains 38 exact images and loses none over the outline
-trial, with every reference unchanged. All 344 text tests and 16 source checks
-pass. Bounds remain 11,520/12,800 exact, so the native gate exits 1. The source
-is unapplied; its full renderer matrices, workspace, C and remaining font/API
-qualification stay open. Accepted original census totals remain
-21,334/22,924 exact, zero errors; no project-wide parity claim is made.
+The [shared text measurement trial](../renderer/native-fontations-app.md)
+at clean private `2fcdc66d` matches 200/200 Chromium images and all 12,800
+bounds, with actual native exit 0. It changes only the 1,280 previously short
+widths; all PNG bytes and references stay unchanged. All 21 earlier rounding
+regressions are restored, and all 80 affected four-profile rows retain the
+accepted renderer's nine comparison invariants. Focused 640/640 and primitive
+960/960 pass. All 1,013 text/layout tests and 17 source checks pass. This
+unapplied source still needs complete censuses, workspace, C and remaining
+font/API qualification. Accepted original totals remain 21,334/22,924 exact,
+zero errors; no project-wide parity claim is made. Umbrella `3a7f0f75` has six
+successful PR jobs, five skipped and none failed, independently of this trial.
 
 The [native keyword constructors](../renderer/native-keyword-values.md) and
 [public Rust raster options](../v02/native-rust-raster-options.md) are now

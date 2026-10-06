@@ -4,7 +4,50 @@ Open UI never executes JavaScript. Applications use public native Rust methods
 and Rust callbacks. Pinned Chromium supplies the expected pixels and element
 bounds. Historical Open UI output remains immutable provenance.
 
-## Completed result
+## Shared measurement follow-up
+
+Clean private source `2fcdc66d` now matches **200/200 Chromium images and
+12,800/12,800 element bounds**. The native gate exits **0**. All 200 PNGs stay
+byte-identical to the real factory trial. The only geometry changes are the
+1,280 previously short widths, each increased by exactly 1/64 CSS pixel.
+Every reference image and query remains unchanged; all 200 native processes
+repeat their results and pass callback, owned-snapshot and teardown checks.
+
+The correction changes shared text measurement. Intrinsic sizing now measures
+text through `TextShaper`, and ceil-converts the shaped width without removing
+small positive fractions. It adds no font, size, backend or test-ID condition.
+A reduced native Rust consumer records 2,100 raw advances, shaped advances and
+public element bounds across seven explicit policies. Its two runs are
+byte-identical. At 16px, thirteen Ahem characters have a raw width of
+208.000396729px. Aliased shaping produces 208px; measuring the raw value and
+then rounding upward creates the wrong extra layout unit. LCD shaping retains
+its fractional advance, which must survive the grid ceiling. This explains
+why removing the old normalization alone was insufficient.
+
+The actual renderer retains all nine comparison invariants in **80/80 rows**
+for the 20 previously affected tests at four profiles. All 21 earlier exact
+regressions are restored. The selected gate is still **68/80 exact, 12
+different, zero errors, exit 1**, matching the accepted renderer exactly.
+Those twelve existing failures remain open. Complete focused **640/640** and
+primitive **960/960** matrices pass with all 1,600 comparison invariants
+unchanged. All **1,013 text and layout tests** and **17 source checks** pass.
+
+The [versioned record](generated/native-fontations-factory-v3.json) preserves
+the reduced consumer, failed preparations, clean source, repeated native
+images, complete selected/focused/primitive results, paired audits and hosted
+logs for umbrella `3a7f0f75`. Its six PR jobs pass and five skip; no full manual
+hardening run is attributed to that head. The
+[source patch](evidence/native-fontations-factory-v3/reproduction-from-9f0d2211.patch.gz)
+applies to public checkpoint `9f0d2211`; an independent Git index reconstructs
+the entire private source tree exactly. Every archive member is hash-verified.
+
+This source remains private and unapplied. Original and expanded censuses,
+full workspace, MSRV, C/ABI, remaining font settings and release qualification
+have not run on it. It admits no release state or formal original residual
+owner. The last accepted census remains **21,334/22,924 exact**. The native
+result does not establish full project parity.
+
+## Completed result at `9e4baa08`
 
 Clean private source `9e4baa08` renders **200/200 native app images exactly like
 Chromium**. It gains the remaining 38 exact images over the earlier 162/200
@@ -53,7 +96,7 @@ Chromium metrics observations. Fixed hinting requests remain fixed at the five
 tested scales. This source retains the integrated variable-font correction;
 it does not inherit the old descriptor trial's 29 census losses.
 
-## Geometry still fails
+## Earlier geometry failure at `9e4baa08`
 
 Element bounds remain **11,520/12,800 exact**. All 12,800 native bounds are
 unchanged from the outline trial. The remaining 1,280 differences affect width

@@ -4,14 +4,19 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
-The [real Fontations native app trial](../renderer/native-fontations-app.md)
-at clean private `9e4baa08` matches 200/200 Chromium images, gaining the
-remaining 38 over the outline trial with no losses. All 344 text tests and
-16 source checks pass. Bounds still fail in 1,280 states, and the native gate
-exits 1. This unapplied source has no full renderer, workspace or C
-qualification. It admits no release state and does not change the accepted
-21,334/22,924 original census result or the release bar. Open UI executes no
-JavaScript; needed interaction remains public native Rust methods and callbacks.
+The [shared text measurement trial](../renderer/native-fontations-app.md)
+at clean private `2fcdc66d` matches 200/200 Chromium images and all 12,800
+bounds, with actual native exit 0. The 1,280 short widths close without changing
+image bytes or references. All 21 earlier rounding regressions are restored;
+all 80 affected rows match the accepted renderer's nine comparison invariants.
+Focused 640/640 and primitive 960/960 pass, alongside 1,013 text/layout tests
+and 17 source checks. The selected 68/80 pixel gate still exits 1 for its
+existing twelve failures. This unapplied source has no complete original or
+expanded census, full workspace or C qualification. It admits no release
+state and does not change the accepted 21,334/22,924 original result or the
+release bar. Open UI executes no JavaScript; needed interaction remains public
+native Rust methods and callbacks. Umbrella `3a7f0f75` passes six PR jobs, with
+five skipped and none failed; those hosted results do not qualify this trial.
 
 The [public native Rust raster options](native-rust-raster-options.md) and
 native keyword constructors are integrated at `2d338d6c`. The clean combined
