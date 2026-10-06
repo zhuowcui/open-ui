@@ -57,9 +57,39 @@ Focused 640/640 and primitive 960/960 Chromium comparisons are exact, with
 zero errors and actual exits 0. The
 [versioned evidence](generated/native-variable-font-instance-v1.json)
 preserves the clean sources, actual exits, images, bounds, channel differences,
-build logs and reviewable correction. The complete original and expanded
-censuses require their separate run before a regression conclusion. No final
-release gate or new admission is claimed.
+build logs and reviewable correction.
+
+## Complete Chromium comparison
+
+The [complete census evidence](generated/native-variable-font-instance-v2.json)
+records all four suites on the same clean `feb7e872` source:
+
+| Suite | Exact | Different | Errors | Actual exit |
+|---|---:|---:|---:|---:|
+| Focused | 640 / 640 | 0 | 0 | 0 |
+| Primitive | 960 / 960 | 0 | 0 | 0 |
+| Original | 21,334 / 22,924 | 1,590 | 0 | 1 |
+| Expanded | 22,137 / 23,728 | 1,591 | 0 | 1 |
+
+Every one of the 48,252 comparison rows preserves all nine recorded pixel,
+oracle and difference invariants against the accepted renderer. There are
+zero changed rows, zero exact gains and zero exact losses. All Chromium inputs
+remain unchanged. All original rows agree with expanded, and 200/201 additions
+remain exact at all four profiles. Existing residuals cover 882 original and
+883 expanded test IDs; their required ownership and qualification remain open.
+
+The correction is integrated into draft umbrella `e0e9382d`. That clean head
+passes all fifteen read-only checks and all four hosted workflows, with
+thirteen jobs passed, five skipped and none failed. Full hardening passes
+all seven jobs. The new variation guard and six earlier native guards actually
+run and pass in hosted parity. The consuming example bundles the same licensed
+font and its license within the crate, so its include does not depend on a
+neighboring workspace crate.
+
+The complete pixel gates still fail. These results verify the native correction
+in the measured configurations. Remaining native APIs, residual ownership and
+release-lab qualification stay open. No new release case is admitted, and
+skipped jobs are not passes.
 
 Earlier source checks, compile failures and the unsuitable glyph-comparison
 guard are preserved with their actual outcomes. None is counted as a

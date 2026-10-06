@@ -35,9 +35,14 @@ outlines. The old callback changes no pixels at five scales; the corrected
 callback matches the font's independent reference glyph at all five. Both
 sources pass fifteen read-only checks. The correction passes 342 text tests,
 8,559 workspace tests, all eight build stages and C/C++ ABI consumers.
-Focused 640/640 and primitive 960/960 Chromium checks pass. The complete
-censuses still require a separate regression run; the native callback's glyph
-comparison is not a Chromium pixel result. Open UI executes no JavaScript.
+Focused 640/640 and primitive 960/960 Chromium checks pass. Both complete
+censuses finish at 21,334/22,924 original and 22,137/23,728 expanded exact,
+with zero errors and actual exits 1. All 48,252 rows preserve their nine
+comparison invariants: no changed rows, gains, losses or changed Chromium
+inputs. Umbrella `e0e9382d` passes all hosted workflows and all seven full
+hardening jobs; its new native guard actually runs and passes. The native
+callback's glyph comparison is not a Chromium pixel result. Full parity
+remains unfinished. Open UI executes no JavaScript.
 
 The [native text-width follow-up](docs/renderer/native-intrinsic-snap.md)
 finds that shared sizing discards small shaped fractions which Chromium keeps.
