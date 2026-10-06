@@ -9,9 +9,9 @@ use openui_compositor::SoftwareCompositor;
 use openui_dom::{ElementTag, FormControlRole};
 use openui_engine::{
     AccessibilityAction, AccessibilityTreeUpdate, AnimationEvent, AnimationEventKind, AnimationId,
-    AnimationState, ControlAdjustment, EditCommand, Engine, EventPhase as EngineEventPhase,
-    FocusOrigin, NodeHandle, PointerEventKind, ScrollAnimationId, TextDirection, TextUnit,
-    ViewportMetrics,
+    AnimationState, ControlAdjustment, EditCommand, Engine, EngineOptions,
+    EventPhase as EngineEventPhase, FocusOrigin, NodeHandle, PointerEventKind, RasterConfiguration,
+    ScrollAnimationId, TextDirection, TextUnit, ViewportMetrics,
 };
 use openui_style::ImageResourceId;
 use openui_text::{
@@ -59,18 +59,34 @@ impl Document {
     }
 
     pub fn with_viewport_metrics(viewport: ViewportMetrics) -> Result<Self, Error> {
-        Self::with_font_collection(viewport, FontCollection::system())
+        Self::with_options(viewport, EngineOptions::default())
+    }
+
+    /// Create a native document with an explicit, immutable engine configuration.
+    /// Backend selection is retained by this document; it never probes the environment.
+    pub fn with_options(viewport: ViewportMetrics, options: EngineOptions) -> Result<Self, Error> {
+        Self::with_font_collection_and_options(viewport, FontCollection::system(), options)
     }
 
     pub fn with_font_collection(
         viewport: ViewportMetrics,
         font_collection: std::sync::Arc<FontCollection>,
     ) -> Result<Self, Error> {
+        Self::with_font_collection_and_options(viewport, font_collection, EngineOptions::default())
+    }
+
+    /// Create a native document with application-supplied fonts and immutable options.
+    pub fn with_font_collection_and_options(
+        viewport: ViewportMetrics,
+        font_collection: std::sync::Arc<FontCollection>,
+        options: EngineOptions,
+    ) -> Result<Self, Error> {
         Ok(Self {
             inner: Rc::new(DocumentInner {
-                engine: Rc::new(RefCell::new(Engine::new_with_font_collection(
+                engine: Rc::new(RefCell::new(Engine::new_with_font_collection_and_options(
                     viewport,
                     font_collection,
+                    options,
                 )?)),
                 listeners: RefCell::new(HashMap::new()),
                 resource_provider: RefCell::new(None),
@@ -83,6 +99,11 @@ impl Document {
                 foreign_event_handler: RefCell::new(None),
             }),
         })
+    }
+
+    /// Return an owned copy of the document's immutable raster configuration.
+    pub fn raster_configuration(&self) -> Result<RasterConfiguration, Error> {
+        self.with_engine(Engine::raster_configuration)
     }
 
     /// Integration boundary for another native language facade over this engine.

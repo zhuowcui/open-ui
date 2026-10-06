@@ -5,7 +5,7 @@ use crate::scope::{create_scope, dispose_scope};
 use crate::style::{Bitmap, Error};
 use crate::view_node::{mount_view, IntoView};
 use crate::{Document, ScopeId};
-use openui_engine::ViewportMetrics;
+use openui_engine::{EngineOptions, ViewportMetrics};
 use std::cell::Cell;
 #[cfg(all(feature = "linux", target_os = "linux"))]
 use std::cell::RefCell;
@@ -51,6 +51,7 @@ impl Default for WindowOptions {
 #[derive(Debug, Clone, Default)]
 pub struct AppBuilder {
     options: WindowOptions,
+    engine_options: EngineOptions,
 }
 
 /// Cloneable shutdown request for the application's owning UI thread.
@@ -79,6 +80,12 @@ impl AppBuilder {
         self
     }
 
+    /// Select immutable engine options independently of window presentation.
+    pub fn engine_options(mut self, options: EngineOptions) -> Self {
+        self.engine_options = options;
+        self
+    }
+
     pub fn build(self) -> Result<App, Error> {
         let viewport = ViewportMetrics::from_logical_size(
             self.options.size.width,
@@ -86,7 +93,7 @@ impl AppBuilder {
             1.0,
         )?;
         Ok(App {
-            document: Document::with_viewport_metrics(viewport)?,
+            document: Document::with_options(viewport, self.engine_options)?,
             options: self.options,
             root_scope: None,
             exit_requested: AppExitHandle::default(),
@@ -465,9 +472,14 @@ pub struct HeadlessApp {
 
 impl HeadlessApp {
     pub fn new(viewport: ViewportMetrics) -> Result<Self, Error> {
+        Self::with_options(viewport, EngineOptions::default())
+    }
+
+    /// Create a headless application with explicit, immutable engine options.
+    pub fn with_options(viewport: ViewportMetrics, options: EngineOptions) -> Result<Self, Error> {
         Ok(Self {
             app: App {
-                document: Document::with_viewport_metrics(viewport)?,
+                document: Document::with_options(viewport, options)?,
                 options: WindowOptions {
                     size: LogicalSize::new(viewport.logical_width(), viewport.logical_height()),
                     ..WindowOptions::default()
