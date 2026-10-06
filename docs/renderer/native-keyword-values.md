@@ -93,7 +93,31 @@ the image probe stops the following stage before rendering. That failed
 probe remains frozen; fresh probes verify each worker's source-root assignment
 against the actual repository before launch. Native Chromium capture and the
 focused, primitive, original and expanded pixel gates are still required.
-The candidate remains unapplied and admits no release state.
+The [complete follow-up](generated/native-keywords-v6.json) finishes all four
+matrices at the tested `7d6ffabf` source: 640/640 focused, 960/960 primitive,
+21,334/22,924 original and 22,137/23,728 expanded exact, zero errors.
+All 48,252 rows preserve their nine comparison invariants, including every
+Chromium input; no exact comparison is lost or gained. Both full gates
+still exit 1, and the same 200/201 additions meet all four profiles.
+
+The first native capture stops before the Chromium endpoint is available;
+the first C diagnostic rejects a fractional viewport. Both failures remain
+preserved. A fresh native capture uses a Linux filesystem for Chromium
+profiles and temporary sockets, and the C diagnostic uses the native positive
+half-away-from-zero viewport rounding. All ten native Rust images and bounds
+match Chromium exactly at five scales, across two native runs and forty
+stable captures from twenty independent Chromium processes. The C table
+diagnostic completes 120 deterministic observations across two runs; it does
+not establish equality with Chromium.
+
+The verified constructor code is now integrated into umbrella `2d338d6c`,
+with the public Rust raster options. Its [clean combined verification](generated/native-rust-options-v2.json)
+passes fifteen build stages, 8,558 workspace tests and fifteen read-only
+checks. Rust/C/C++ consumers run successfully, retaining 113 exports and 30
+layouts. Both native Rust apps pass ten exact images and bounds each at five
+scales. The earlier complete matrices retain their actual source;
+combined-source complete matrices, full pixel parity and reviewed residual
+ownership remain open. No release state is admitted.
 
 The [preserved evidence](generated/native-keywords-v1.json) includes source
 patches, immutable probes, failed C diagnostics and completed read-only checks.

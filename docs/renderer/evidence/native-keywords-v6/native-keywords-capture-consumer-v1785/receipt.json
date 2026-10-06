@@ -1,0 +1,76 @@
+{
+  "adapted_reference_function_sha256": "52d765d2b86049e18c80edebf303c8944300d969edc6216d7067c82d15c9db03",
+  "all_commands_terminal": true,
+  "build_receipt_sha256": "abcddbbfad58d6a136a482375c8e044dde1ac765d6d5ef77a69f7aa442d8aee8",
+  "capture_conditions_unchanged": true,
+  "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+  "cases": [
+    {
+      "images": [],
+      "scale": 1.0
+    }
+  ],
+  "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "failure": "Chromium exited before exposing its DevTools endpoint",
+  "fontconfig_sha256": "99fd54cf2f3875bba44a2272b3dfe5adc7c08263ca0511ec2473ec5e59c09195",
+  "inputs": {
+    "after": {
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/after.html",
+      "sha256": "1c3f1e3cf05f084cb067aaceebcbc6527d7ced78a97cb269030ad58baa0d5193"
+    },
+    "before": {
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/before.html",
+      "sha256": "0847b1401e497b93dcddd17db95013159892c5310c442b678db17dfe31c747ee"
+    }
+  },
+  "javascript_executed_by_openui": false,
+  "native_binary_sha256": "c6c814753e78351b220ac3d3972c916e63c6d9b147fa552dd2a137a44db8bc93",
+  "native_runs": [
+    {
+      "command": [
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/native_fragment_keywords",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-1"
+      ],
+      "log_sha256": "3c2b1832984b8911e44c2cae6303350d10aa4cad9443a721cb88b3dcb70cef72",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/native_fragment_keywords",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/native-2"
+      ],
+      "log_sha256": "3c2b1832984b8911e44c2cae6303350d10aa4cad9443a721cb88b3dcb70cef72",
+      "observed_exit_code": 0
+    }
+  ],
+  "new_release_states_admitted": 0,
+  "observed_exit_code": 1,
+  "original_reference_function_sha256": "f434cfbb9ad7746e87d7ccb0cc56e7019e2b658b29acfc72a3619d9d30f0594c",
+  "pixel_tolerance": 0,
+  "preserves_both_unstable_reference_captures": true,
+  "probe_sha256": "42465fd24eac5d39e3e7fd417688ecfaeddeb1ff5a00a78516b42b3fc546311a",
+  "promotion_allowed": false,
+  "public_native_rust_api": true,
+  "reference_adaptations": [
+    "Remove only the image natural-size assertion for a div case"
+  ],
+  "reference_source_sha256": "b1a480f5f49bada97d341d5cf5e7626f8f03496bc87b4ef83b40c298331d1710",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "strict_chromium_capture_pairs": true,
+  "unstable_reference_captures": []
+}

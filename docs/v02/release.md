@@ -4,18 +4,30 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
+The [public native Rust raster options](native-rust-raster-options.md) and
+native keyword constructors are integrated at `2d338d6c`. The clean combined
+checkpoint passes 8,558 workspace tests, all fifteen build stages, fifteen
+read-only checks, and Rust/C/C++ consumers. Twenty native app images and
+bounds match Chromium exactly at five scales. Failed startup and preflight
+attempts remain preserved. Complete combined-source matrices, all raster
+settings' behavior, and the remaining release gates stay open.
+
 The [narrow intrinsic-width candidate](../renderer/native-intrinsic-snap.md)
 at private `727da10e` changes one shared sizing helper to retain positive
 shaped fractions through grid ceiling. Its new public Rust callback guard
 uses the preserved Chromium natural widths at five scales. Thirteen source
 checks pass. The named baseline fails and the fixed callback passes at all
 five scales; neighboring C text, storage, style and conformance guards pass.
-Workspace, apps and all four renderer matrices have not run on this width
-source. Own-source hosted hardening initially has five passing jobs and two
-cancelled without steps; the [completed retry](../renderer/generated/native-intrinsic-snap-v4.json)
-passes all seven jobs, zero skips. Earlier cancellations remain preserved.
-The source remains unapplied and
-unqualified. It does not close the default font-raster or release gates.
+Its complete build passes thirteen stages and 8,552 workspace tests.
+Native geometry is 38,400/38,400 exact, but images remain 0/600 exact.
+Focused 640/640 and primitive 960/960 pass. Complete original and expanded
+censuses finish at 21,313/22,924 and 22,116/23,728 exact, zero errors.
+Each loses 21 previously exact comparisons and gains none. All Chromium
+inputs remain unchanged. The source is rejected and remains unapplied.
+Its [completed own-source hardening retry](../renderer/generated/native-intrinsic-snap-v4.json)
+passes seven jobs, zero skips; earlier cancellations remain preserved.
+Native geometry gains do not waive full pixel losses or qualify the default
+font raster and release gates.
 
 The [shared native font-inheritance correction](../renderer/native-text-style-inheritance.md)
 at tested `41b616c3` passes its new baseline/fixed public Rust callback guard,

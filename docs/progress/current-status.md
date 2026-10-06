@@ -22,20 +22,33 @@ remain open.
 
 ## Current implementation checkpoint
 
-The [native keyword constructor follow-up](../renderer/native-keyword-values.md)
-at private `7d6ffabf` retains the current shared Rust/C APIs and renderer.
-Sixteen read-only checks and all seven own-source hosted hardening jobs pass,
-with zero skips. The hosted platform job executes both named FFI keyword
-guards successfully. Its local baseline fails with exit 101 and all three
-fixed guards pass. The [complete clean build](../renderer/generated/native-keywords-v5.json)
-passes thirteen stages and 8,554 workspace tests, zero failed and 13 ignored.
-Rust, C and C++ callback apps pass at five scales. The ABI checker runs thirteen
-C examples and seven C++ examples, retaining 113 exports and 30 layouts.
-The original storage stop and a later capture-script source-path error are
-preserved. Native Chromium captures and all four pixel matrices remain
-required. The older source's three fixed guards stopped at the disk guard;
-those are preserved failures.
-The new constructor source is unapplied and admits no release state.
+The [native keyword constructors](../renderer/native-keyword-values.md) and
+[public Rust raster options](../v02/native-rust-raster-options.md) are now
+integrated at `2d338d6c`. `Document`, `AppBuilder`, and `HeadlessApp` accept
+explicit immutable Engine options; `Document` returns an owned configuration.
+Existing defaults are preserved, and explicit Ganesh selection does not fall
+back to CPU raster. Direct Ganesh release qualification remains open.
+
+The [clean combined evidence](../renderer/generated/native-rust-options-v2.json)
+passes all fifteen build stages, 8,558 workspace tests, zero failed and 13
+ignored, and fifteen read-only checks. Four public Rust option guards and both
+FFI keyword guards execute successfully. Rust/C/C++ callback apps run at five
+scales. The ABI checker runs thirteen C examples and seven C++ examples,
+retaining 113 exports and 30 layouts. The two native Rust consumers each pass
+ten exact Chromium images and bounds; four native runs and eighty stable
+captures from forty independent Chromium processes verify repeatability.
+The initial Chromium startup failures and a retry-owner preflight failure
+remain preserved. A shorter Linux temporary path permits the fresh captures;
+the startup error output does not prove a more specific cause.
+
+The [complete keyword-source matrices](../renderer/generated/native-keywords-v6.json)
+at `7d6ffabf` finish 640/640 focused, 960/960 primitive, 21,334/22,924 original
+and 22,137/23,728 expanded exact, zero errors. All 48,252 rows preserve their
+nine invariants, with no exact gains, losses, or Chromium input changes.
+Both complete pixel gates still fail. These measurements retain their actual
+source. Combined-source complete matrices, every raster field's rendering
+behavior, default native font pixels, and reviewed residual ownership remain
+open. No new release state is admitted.
 
 The [native glyph audit](../renderer/native-glyph-descriptor.md) finds a
 coverage mismatch in the existing clean native app images: Chromium uses

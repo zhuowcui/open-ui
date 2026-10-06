@@ -116,15 +116,18 @@ geometry queries. Its local harness stops on a nonexistent restore branch
 before native guards or pixels execute. The candidate is unapplied; a fresh
 verified harness is required and no renderer gain is claimed.
 
-The [native keyword correction](docs/renderer/native-keyword-values.md) at
-private `7d6ffabf` closes the missing `column-fill: auto` value constructor.
-Sixteen read-only checks, three fixed native guards and all seven own-source
-hosted hardening jobs pass. Its clean build passes all thirteen stages and
-8,554 workspace tests, zero failed and 13 ignored. Rust, C and C++ callback
-apps pass at five scales; the ABI checker runs thirteen C examples and seven
-C++ examples. The original space failure and a later capture-script path
-failure are preserved. Native Chromium captures and all four pixel matrices
-remain required. The correction is unapplied and admits no release state.
+The [native keyword constructors](docs/renderer/native-keyword-values.md) and
+[public Rust raster options](docs/v02/native-rust-raster-options.md) are
+integrated at `2d338d6c`. Apps can configure the shared Engine through
+`Document`, `AppBuilder`, and `HeadlessApp` and read its immutable selection.
+The clean combined build passes all fifteen stages, 8,558 workspace tests,
+fifteen read-only checks, and Rust/C/C++ consumers. All twenty native Rust
+images and bounds match Chromium at five scales, with repeat captures stable.
+Failed capture attempts remain preserved. The keyword source's complete
+matrices retain 640/640 focused, 960/960 primitive, 21,334/22,924 original and
+22,137/23,728 expanded exact, with no changed comparison invariants. Complete
+combined-source matrices and all raster settings' behavior remain unqualified;
+no release state is admitted.
 
 The current v0.2 release candidate has:
 

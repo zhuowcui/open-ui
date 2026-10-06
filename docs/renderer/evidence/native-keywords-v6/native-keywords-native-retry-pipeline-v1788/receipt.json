@@ -1,0 +1,107 @@
+{
+  "accepted_renderer_unchanged": true,
+  "actual_pixel_gain_claimed": false,
+  "all_commands_terminal": true,
+  "baseline_commit": "7cb31314f2f871e9d1bb6fc0dc63c594bb1cf20e",
+  "c_abi_unchanged": true,
+  "capture_path_correction_only": true,
+  "completed_same_source_build_reused": true,
+  "consumer_compile_correction_only": false,
+  "existing_113_exports_and_30_layouts_preserved": true,
+  "expected_stages": 3,
+  "fresh_retry_preserves_original_failure": true,
+  "immutable_probe_hashes": {
+    "/tmp/openui-native-image-coverage-fieldsets-v1448.py": "b1a480f5f49bada97d341d5cf5e7626f8f03496bc87b4ef83b40c298331d1710",
+    "/tmp/openui-native-keywords-native-retry-build-reuse-v1787.py": "e275044a32270ee7f8084a46426b0c161f17db571f075aefdd5c3c5c02ae2569",
+    "/tmp/openui-native-keywords-native-retry-consumer-v1787.py": "b79f4bd4bac8ae7bfb531fee48d2d011deef37500a5d292c4ff9678bb554cfd6",
+    "/tmp/openui-native-keywords-native-retry-table-geometry-v1787.py": "26927ac71181775ee3cf6519dc376b3e29ae8180da6f4366e117f20f8faa6f95"
+  },
+  "javascript_executed_by_openui": false,
+  "native_api_and_chromium_pixels_still_pending": true,
+  "native_event_api_preserved": true,
+  "native_table_geometry_is_diagnostic_only": true,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "old_queue_unlaunched": true,
+  "ordered_build_and_image_stages": true,
+  "original_owner_sha256": "189711442797ae28149d346c7caa1b75dc768e81066bdab258f1167b79a12ba7",
+  "original_pixel_gate_remains_required": true,
+  "owner_pid": 4120056,
+  "preserves_both_unstable_reference_captures": true,
+  "prior_terminal_pipeline_sha256": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-pipeline-v1786/receipt.json": "f61617da5960edadca19e3a07e846243350ca4281155e5260ad629401dafe910"
+  },
+  "prior_whole_pipelines": [
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-pipeline-v1786/receipt.json"
+  ],
+  "probe_sha256": "bfb4a8e64718f233165442262c498b139a2ddc32f493086d3fecdd3608deefe6",
+  "promotion_allowed": false,
+  "public_rust_c_cpp_callbacks_and_owned_bounds": true,
+  "release_qualification": false,
+  "renderer_production_unchanged_from_applied_renderer": false,
+  "root_cause_owner": "shared native style value construction",
+  "schema_version": 1,
+  "selection_hashes": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-cargo-cache-relocation-v1778.json": "ff12dc766993a5bdd06c29af8f714b733c6961efc9626bc06f342f17c3d5e781",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-abi-scratch-relocation-v1777.json": "6ceffa0d3f8d75d4487669776ea43de50e1dc3cdf1c0ddb1c017be0dc1f02b8f",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-consumer-v1785/receipt.json": "ae62d0fc130956554cbe432e405bd5a1fdb57f2c4e058134682c716802a1ae23",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-path-failure-v1785.json": "54531f0ae622985f834c8ce9c4148fd269638c8409b3739a9a825c84f37b88b7",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-table-geometry-v1785/receipt.json": "2a95a7c343c70519cd49fedbf88198b585d6781aee0b49602612b77216a8d4a4",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/receipt.json": "b30193dc479062b1b4951a6e880c433daf586ee51549ed9682973356d2424b76",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-clean-v1772/build.json": "4795069932c02a93a2a487c33fce4e11f67ff7a9c314c17eefac4b35f63afc45",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-guards-v1772/receipt.json": "aac2e9336f9e616ed701e65be88841f7ecce1cffc0760f0461682250ca9798cb",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-hosted-v1762/receipt.json": "2272da9b41553fd38e81e837664ebd646f91b62db9768edf838d9e286ec4559b",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-pipeline-v1773/receipt.json": "189711442797ae28149d346c7caa1b75dc768e81066bdab258f1167b79a12ba7",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/build.json": "abcddbbfad58d6a136a482375c8e044dde1ac765d6d5ef77a69f7aa442d8aee8",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-pipeline-v1780/receipt.json": "3d24233f9c05f8d156e837402918d71d8944e3e64a727f243ee6b8f76b987771"
+  },
+  "source": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "complete-requires-results-review",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-keywords-native-retry-build-reuse-v1787.py"
+      ],
+      "log_sha256": "580fff3ad73cbcde7c06ea988daafe0e2e8b78fe0f5f707df4fe88a08bb582cf",
+      "name": "build-and-guards",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-keywords-native-retry-consumer-v1787.py"
+      ],
+      "log_sha256": "f68bdcc6ef50d88492b2b12f025a60ac8f91d018a97dbb9a347ed9e305872d4f",
+      "name": "native-application",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-keywords-native-retry-table-geometry-v1787.py"
+      ],
+      "log_sha256": "4877b18eea356eb8fdf2d6e6937d681840fee81ec4e506febd0ed1eae513fbf1",
+      "name": "native-table-geometry-diagnostic",
+      "observed_exit_code": 0
+    }
+  ],
+  "strict_chromium_capture_pairs": true,
+  "strict_named_baseline_failure_required": true,
+  "temporary_files_on_data_volume": true,
+  "whole_pipeline_lock_covers_all_stages_and_gaps": true,
+  "workspace_cleaned_at_every_source_switch": true
+}

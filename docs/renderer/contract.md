@@ -24,6 +24,14 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
+The [public native Rust raster options](../v02/native-rust-raster-options.md)
+are integrated at `2d338d6c`. Its clean combined build passes 8,558 tests and
+all fifteen stages, with fifteen read-only checks and real Rust/C/C++
+consumers. Both Rust callback apps match twenty Chromium images and bounds
+exactly across five scales, with repeated captures stable. These public API
+checks do not qualify every raster option, default font pixels, or complete
+combined-source matrices. No new release state is admitted.
+
 The [completed native event evidence](generated/native-event-targets-v1.json)
 at clean `1c8540e9` verifies public `Event::target()` and `current_target()`
 methods through Rust callbacks, mutation, owned bounds and document teardown.
