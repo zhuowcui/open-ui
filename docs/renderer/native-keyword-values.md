@@ -48,12 +48,36 @@ capture processes and forty stable captures, with zero pixel tolerance.
 A separate C table geometry diagnostic uses the newly built verified library;
 deterministic geometry alone does not establish equality with Chromium.
 Focused, primitive, original and expanded pixel matrices all remain required.
-Native execution and pixel results are pending.
+That earlier owner is now terminal with exit 241. Its named baseline fails
+with exit 101 as expected. All three fixed guards stop at the disk guard with
+exit -15; none is a pass. Its native applications and pixels do not execute.
+The [terminal evidence](generated/native-keywords-v2.json) preserves those
+receipts and every guard log.
 
 The [subsequent preserved checkpoint](generated/native-table-source-v1.json)
 records all seven own-source hardening jobs passing at `06e1f89a`, with zero
-skips. It preserves each job conclusion and the captured log bytes. The local
-whole owner remains queued; no native application or pixel pass is claimed.
+skips. It preserves each job conclusion and the captured log bytes. Those
+hosted passes do not replace the stopped local fixed guards; no native
+application or pixel pass is claimed.
+
+## Fresh current-API source
+
+Clean private `7d6ffabf` carries the same constructor correction onto
+`0733955a`, retaining the current shared Rust/C text setter, style inheritance
+and renderer. Generated property code is regenerated from its generator.
+Sixteen read-only checks pass, including both keyword consumers' C/C++ syntax
+and formatting of all 60 tracked C/C++ files. The keyword consumers are
+formatted with CI's clang-format 18.1.3; their earlier formatting failure is
+preserved. CMake also includes the existing native text consumers.
+
+The fresh source preserves all 113 exports and 30 ABI layouts. Its native
+guards, clean build, consuming applications and pixels have not executed.
+Its [complete own-source hardening record](generated/native-keywords-v3.json)
+passes all seven jobs, zero skips. Both named FFI keyword guards execute
+successfully in the hosted platform job. All job logs remain preserved. These
+hosted checks do not replace the source-identified local guards, consuming
+applications and pixel matrices. The candidate remains unapplied and admits
+no release state.
 
 The [preserved evidence](generated/native-keywords-v1.json) includes source
 patches, immutable probes, failed C diagnostics and completed read-only checks.

@@ -1,0 +1,317 @@
+{
+  "all_113_exports_and_30_layouts_preserved": true,
+  "all_16_read_only_checks_passed": true,
+  "artifact_bytes": 108064,
+  "artifact_count": 36,
+  "artifacts": [
+    {
+      "bytes": 1769,
+      "path": "docs/renderer/evidence/native-keywords-v2/current-source.json",
+      "sha256": "3f9272bfcae70101ba7981d6f3e29ab99bace450b5a380c775fe5355e6e21597",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-source-v1750.json"
+    },
+    {
+      "bytes": 43911,
+      "path": "docs/renderer/evidence/native-keywords-v2/current-source.patch",
+      "sha256": "39a95d1c915d4c270adcfb0da1f0e6f3e8e53f84473b15fd49548ffc50d0c2b5",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-source-v1750.patch"
+    },
+    {
+      "bytes": 9799,
+      "path": "docs/renderer/evidence/native-keywords-v2/current-source-checks.json",
+      "sha256": "b30193dc479062b1b4951a6e880c433daf586ee51549ed9682973356d2424b76",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/receipt.json"
+    },
+    {
+      "bytes": 3347,
+      "path": "docs/renderer/evidence/native-keywords-v2/current-source-checks.py",
+      "sha256": "2f7c777456a6de97307566093a223077484da419a048d3a35a2a35b79a7629ab",
+      "source_path": "/tmp/openui-native-keywords-current-checks-v1749.py"
+    },
+    {
+      "bytes": 757,
+      "path": "docs/renderer/evidence/native-keywords-v2/format-correction.json",
+      "sha256": "8b4aa5359766639236f96e19ebb7d0633b7446d97bdb0f35671d14a6e4b2975b",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-format-correction-v1747.json"
+    },
+    {
+      "bytes": 1143,
+      "decompressed_bytes": 9234,
+      "decompressed_sha256": "d7a9c63fe05041fdb7b23745cb8ab47e9c354a02598d2c157732e466702ab4e4",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/format-failed.log.gz",
+      "sha256": "5ccd4ece472b5b461c15066dfc13ee54bcde3f83d57dbc6784424e9875cc8d77",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-format-failed-v1747.log"
+    },
+    {
+      "bytes": 95,
+      "decompressed_bytes": 81,
+      "decompressed_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/renderer.log.gz",
+      "sha256": "d2b79cb72721d10fece4b15d0f646423937282376e09b24612cf252d1dfa8316",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/renderer.log"
+    },
+    {
+      "bytes": 79,
+      "decompressed_bytes": 59,
+      "decompressed_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/multicol.log.gz",
+      "sha256": "fd7419d14ad0bcdcbbacbaf00c01710e85416d2018b9addb2b26f3cff95775e1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/multicol.log"
+    },
+    {
+      "bytes": 102,
+      "decompressed_bytes": 86,
+      "decompressed_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/sp17.log.gz",
+      "sha256": "3f7d3c871f9e93684439793e60873829691e5dee51d51b30ab55fa940ef55df4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/sp17.log"
+    },
+    {
+      "bytes": 123,
+      "decompressed_bytes": 121,
+      "decompressed_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/sp18.log.gz",
+      "sha256": "50c99e0d37a26a36c607fd5e7dbf96f4aedf46d045824ff09490252f4c3a35ee",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/sp18.log"
+    },
+    {
+      "bytes": 143,
+      "decompressed_bytes": 142,
+      "decompressed_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/sp20.log.gz",
+      "sha256": "3705c08adcf75d9113bbf4ee522c73c0bbcdb1f0e9e50947c0a4eb54e214d64e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/sp20.log"
+    },
+    {
+      "bytes": 80,
+      "decompressed_bytes": 63,
+      "decompressed_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/v02.log.gz",
+      "sha256": "ec1277c807103cfdee77b77954961b24a58ce62612d9dbf58594043db7efc478",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/v02.log"
+    },
+    {
+      "bytes": 57,
+      "decompressed_bytes": 37,
+      "decompressed_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/style.log.gz",
+      "sha256": "1b70c8a7ba0f84375105255b165129e2f427ca1072a832c28efb9f840d539b10",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/style.log"
+    },
+    {
+      "bytes": 52,
+      "decompressed_bytes": 32,
+      "decompressed_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/ffi.log.gz",
+      "sha256": "55406c87d9571bf98d31b05240f488bb4ab3c159f8a3c2f654148ee72b439592",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/ffi.log"
+    },
+    {
+      "bytes": 65,
+      "decompressed_bytes": 45,
+      "decompressed_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/archive.log.gz",
+      "sha256": "d9ac32c4015a03a8f742aaef97d2271555824a1bc37f48615bc942ea11dc71d8",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/archive.log"
+    },
+    {
+      "bytes": 1055,
+      "decompressed_bytes": 2867,
+      "decompressed_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/accountability.log.gz",
+      "sha256": "a7ddfb15636772a7ed177d92cd310c67cc38a082a9aae491e62d04518aa2f463",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/accountability.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/rust-format.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/rust-format.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/syntax-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/syntax-c.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/syntax-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/syntax-cpp.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/clang-format.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/clang-format.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/syntax-c-keywords.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/syntax-c-keywords.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/syntax-cpp-keywords.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-checks-v1749/syntax-cpp-keywords.log"
+    },
+    {
+      "bytes": 13234,
+      "path": "docs/renderer/evidence/native-keywords-v2/previous-whole-owner-terminal.json",
+      "sha256": "c74d8c10b6b7d52dbf37de2c5c0861aaa5fdb74642f25fd61610484296c00568",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-pipeline-v1588/receipt.json"
+    },
+    {
+      "bytes": 10334,
+      "path": "docs/renderer/evidence/native-keywords-v2/previous-guards-terminal.json",
+      "sha256": "fb9db581e79702097ee9f41c5edc9d5a4808ae65e454367a7e9e14bd6b042d35",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-guards-v1587/receipt.json"
+    },
+    {
+      "bytes": 8177,
+      "path": "docs/renderer/evidence/native-keywords-v2/previous-guards.py",
+      "sha256": "8f0addd948cbab8d6e78e32d2e4c20c5eae5866d4506982bb54f2010ff0126eb",
+      "source_path": "/tmp/openui-native-keywords-guards-v1587.py"
+    },
+    {
+      "bytes": 56,
+      "decompressed_bytes": 38,
+      "decompressed_sha256": "66bde2c167aad085a64565180769008883175754df9cb60abd8ba29e14b0d076",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/previous-clean-baseline.log.gz",
+      "sha256": "9492e893317b9d7fa32de6a4a92b09b84d50a7bb6fceeeca54eab826dfe5b01f",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-guards-v1587/clean-baseline.log"
+    },
+    {
+      "bytes": 2322,
+      "decompressed_bytes": 11519,
+      "decompressed_sha256": "5d5712c72aef09a588ebbf4494a992da939caf143929adcfe00805e28f4e8081",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/previous-baseline-native-keyword-guard.log.gz",
+      "sha256": "34fd93aaecaab7f8d7dc8cf1de3b6ca86f732dc0781b0888a215ca823ff5067a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-guards-v1587/baseline-native-keyword-guard.log"
+    },
+    {
+      "bytes": 56,
+      "decompressed_bytes": 38,
+      "decompressed_sha256": "c10818568b36fa0a0d2c6cf470dd4f2dd27340f4cebc184f9713182593c791d9",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/previous-clean-fixed.log.gz",
+      "sha256": "d7a85299279d12603710568d83f9ec54df7cebbf1e643019a25eb511351f8af3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-guards-v1587/clean-fixed.log"
+    },
+    {
+      "bytes": 763,
+      "decompressed_bytes": 2654,
+      "decompressed_sha256": "602f2c1e3aec323cd3325db0f0d72c44e2abf5ba4fd36a03b63a3510aed36e4b",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/previous-fixed-owned-native-value-guard.log.gz",
+      "sha256": "6d686795ea8dd09c156a103033281b6395a760ac350e1e73cad56f65a3b79037",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-guards-v1587/fixed-owned-native-value-guard.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/previous-fixed-table-display-guard.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-guards-v1587/fixed-table-display-guard.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v2/previous-fixed-enum-coverage-guard.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-guards-v1587/fixed-enum-coverage-guard.log"
+    },
+    {
+      "bytes": 950,
+      "path": "docs/renderer/evidence/native-keywords-v2/current-hosted-dispatch.json",
+      "sha256": "c04e811d7bda839100eb3ec96d34f5ca8e82ef9971f636510325d5fd8dae79c6",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-dispatch-v1753.json"
+    },
+    {
+      "bytes": 2005,
+      "path": "docs/renderer/evidence/native-keywords-v2/current-hosted-dispatch.py",
+      "sha256": "708ded8f53b0007551319b5bbbfc83f0396e4a675953dfa442985a9ae9e421fb",
+      "source_path": "/tmp/openui-native-keywords-current-dispatch-v1753.py"
+    },
+    {
+      "bytes": 223,
+      "path": "docs/renderer/evidence/native-keywords-v2/dispatch-push.log",
+      "sha256": "ecd22b60ed8c18c6e62191a2e26308f4c27f159e439d0ec625e8e7719da8f334",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-dispatch-v1753-push.log"
+    },
+    {
+      "bytes": 61,
+      "path": "docs/renderer/evidence/native-keywords-v2/dispatch-dispatch.log",
+      "sha256": "c286fe66ecc0e21d3da094f8fc3bdf60e5063e11cc5af1fac61aa393bb94fdec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-dispatch-v1753-dispatch.log"
+    },
+    {
+      "bytes": 7146,
+      "path": "docs/renderer/evidence/native-keywords-v2/preserver.py",
+      "sha256": "dad94cedade568042812fe72180df3995099b51ba7089ef6565d9c9e79777574",
+      "source_path": "/tmp/openui-native-followup-sources-preserve-v1757.py"
+    }
+  ],
+  "baseline_commit": "7cb31314f2f871e9d1bb6fc0dc63c594bb1cf20e",
+  "candidate_applied_to_umbrella": false,
+  "current_c_cpp_consumers_formatted": true,
+  "current_hosted_run": 37388643017,
+  "current_native_build_guards_and_pixels_unexecuted": true,
+  "generated_properties_regenerated": true,
+  "hosted_run_not_qualified_by_dispatch": true,
+  "javascript_executed_by_openui": false,
+  "native_text_consumers_added_to_cmake": true,
+  "new_release_states_admitted": 0,
+  "pixel_tolerance": 0,
+  "previous_fixed_guard_failures_not_counted_as_passes": true,
+  "previous_named_baseline_failure_reproduced": true,
+  "previous_three_fixed_guards_stopped_on_disk": true,
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

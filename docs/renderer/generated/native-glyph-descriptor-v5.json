@@ -1,0 +1,114 @@
+{
+  "actual_stage_exits": [
+    0,
+    101,
+    0,
+    0,
+    0
+  ],
+  "all_five_guard_stages_terminal": true,
+  "artifact_bytes": 22414,
+  "artifact_count": 8,
+  "artifacts": [
+    {
+      "bytes": 7173,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v5/guards-terminal.json",
+      "sha256": "dc11460af53cd8f1433c363ccdf3a3532577ea2b7afed008a2b76acaff6b3fe1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-guards-v1764/receipt.json"
+    },
+    {
+      "bytes": 6868,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v5/guards.py",
+      "sha256": "a05a60e3f2d5e6a38deede24dfe8098e9a3bdd7fea8049b3c047500997b55c4e",
+      "source_path": "/tmp/openui-native-glyph-descriptor-guards-v1764.py"
+    },
+    {
+      "bytes": 56,
+      "decompressed_bytes": 38,
+      "decompressed_sha256": "e23fc5893b7bc0c8678ceb5e54ed4caa12ed6ee920107f21e0fa20652d687cfd",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v5/clean-baseline.log.gz",
+      "sha256": "78ad2a15d1e20413cc990ed3021c64403c1c01d312a7b173b2a457e67561f0c4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-guards-v1764/clean-baseline.log"
+    },
+    {
+      "bytes": 717,
+      "decompressed_bytes": 2126,
+      "decompressed_sha256": "9d49f53e5a8441e6fa13961a5830bb85a635f4edafca5b89b90c00c6e2783278",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v5/baseline-physical-strike-guard.log.gz",
+      "sha256": "7bc14f35ba31803d2fd1a0e65b0f2bd5742e3c463d6851ef40285e304e84428d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-guards-v1764/baseline-physical-strike-guard.log"
+    },
+    {
+      "bytes": 55,
+      "decompressed_bytes": 37,
+      "decompressed_sha256": "2238c34d6eec659337b198a3fa74db371e8f3dccef395046636cc6292bb07857",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v5/clean-fixed.log.gz",
+      "sha256": "4e10a28422ba45930c96491027fe5da000660e12b1459270d9b70b0959595544",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-guards-v1764/clean-fixed.log"
+    },
+    {
+      "bytes": 384,
+      "decompressed_bytes": 781,
+      "decompressed_sha256": "0cb4b5f9be4486a301afc809c6afb94e6facff26c9532c358d20f8210bfb5455",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v5/fixed-physical-strike-guard.log.gz",
+      "sha256": "5df7fcee45b975045fe3b6f7811d2e06520f65528bfa31a9b06920fd46135894",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-guards-v1764/fixed-physical-strike-guard.log"
+    },
+    {
+      "bytes": 4040,
+      "decompressed_bytes": 20875,
+      "decompressed_sha256": "bed85cade2129dd1bcbe18a536a34f95c183b4d379d36631e1ebd76655752922",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v5/all-text-tests.log.gz",
+      "sha256": "b485b28a6030e487bcae62c56d57a3d135aee9ce312a1c248bcde32295469546",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-guards-v1764/all-text-tests.log"
+    },
+    {
+      "bytes": 3121,
+      "path": "docs/renderer/evidence/native-glyph-descriptor-v5/preserver.py",
+      "sha256": "bb7ba98fca4cb00a0922978c29303b9394fc05d54d6b4dc4f7ad1b5881ede4e8",
+      "source_path": "/tmp/openui-native-glyph-guards-preserve-v1766.py"
+    }
+  ],
+  "baseline_source": {
+    "clean": true,
+    "commit": "54bcdeab5b021fc7899ca3e25868ab39182aee62",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "6ea58f16c0c43b653f6d871c77cbf2927c0bbd58d8ddb361e645330d49c27c62",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "candidate_applied_to_umbrella": false,
+  "clean_full_workspace_native_consumers_and_pixel_matrices_still_required": true,
+  "fixed_named_guard_passed": true,
+  "javascript_executed_by_openui": false,
+  "named_baseline_regression_reproduced": true,
+  "native_images_generated": 0,
+  "new_release_states_admitted": 0,
+  "pixel_tolerance": 0,
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "fce42e086dee48f6e2d725b2b4f3bb8815e79e5c",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "d84c1b9071a91e636207ff0c18db73dce4fbe9282a42ea82cb747a22b8ecc2a2",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "fce42e086dee48f6e2d725b2b4f3bb8815e79e5c",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "d84c1b9071a91e636207ff0c18db73dce4fbe9282a42ea82cb747a22b8ecc2a2",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "text_tests_failed": 0,
+  "text_tests_ignored": 0,
+  "text_tests_passed": 343,
+  "whole_owner_lock_covered_all_stages_and_gaps": true,
+  "workspace_packages_cleaned_at_each_source": 18
+}

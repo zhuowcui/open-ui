@@ -22,15 +22,36 @@ remain open.
 
 ## Current implementation checkpoint
 
+The [native keyword constructor follow-up](../renderer/native-keyword-values.md)
+at private `7d6ffabf` retains the current shared Rust/C APIs and renderer.
+Sixteen read-only checks and all seven own-source hosted hardening jobs pass,
+with zero skips. The hosted platform job executes both named FFI keyword
+guards successfully. Its local baseline/fixed guards, clean build, native
+consumers and pixel matrices remain unexecuted. The older source's three
+fixed guards stopped at the disk guard; those are preserved failures.
+The new constructor source is unapplied and admits no release state.
+
 The [native glyph audit](../renderer/native-glyph-descriptor.md) finds a
 coverage mismatch in the existing clean native app images: Chromium uses
 channel-specific glyph edges in 184/200 images, while Open UI uses grayscale
 coverage in all 200. The other 16 Chromium images contain grayscale glyphs
 at large physical sizes. All captures and references are unchanged. A fresh
-general strike-descriptor candidate `2f53d5de` preserves physical font size
+general strike-descriptor candidate `fce42e08` preserves physical font size
 and configured coverage and removes the old 10px phase/origin overrides.
-Fourteen read-only checks pass; its native guards, build and pixels remain
-unexecuted, and it is unapplied. No formal WPT residual owner is assigned.
+Fourteen read-only checks pass. Its
+[fresh native guard](../renderer/generated/native-glyph-descriptor-v5.json)
+fails on baseline `54bcdeab` with exit 101 and passes on `fce42e08`; all 343
+text tests pass, zero failed and zero ignored. Both sources clean all 18
+workspace packages, and the owner covers all five stages and gaps. The full
+workspace, consuming apps and pixel matrices remain unexecuted, and the
+candidate is unapplied. The preceding `2f53d5de` test source refers to
+an absent configuration constructor; the fresh source uses the existing
+public constructor and preserves production code. No formal WPT residual
+owner is assigned.
+The preceding `2f53d5de` passes all seven hosted hardening jobs, zero skips;
+those jobs do not execute the text crate's unit tests. The absent constructor
+still prevents those tests from compiling. Its hosted result does not qualify
+the corrected `fce42e08` source or any glyph pixels.
 
 The [narrow native text-width correction](../renderer/native-intrinsic-snap.md)
 at private `727da10e` preserves shaped fractions through intrinsic grid
@@ -45,15 +66,25 @@ pass all thirteen build stages and 8,552 workspace tests, zero failed and 13
 ignored. All 38,400 Chromium geometry states match; images remain 0/600 exact
 and the strict native app gate exits 1. All 400 actual C/C++ images match Rust,
 excluding 200 Rust self-rows. Focused 640/640 and primitive 960/960 pass.
-The original full census is running; the expanded census follows. Own-source hosted
+The [width-only audit](../renderer/generated/native-intrinsic-snap-v6.json)
+preserves all 600 native and Chromium image hashes and every image difference
+analysis. Only the 3,840 measured widths change, each by exactly 1/64 CSS pixel.
+The [complete matrices](../renderer/generated/native-intrinsic-snap-v7.json)
+finish at 21,313/22,924 original and 22,116/23,728 expanded exact, zero errors,
+with actual exits 1. Each loses 21 exact comparisons and gains none. All
+48,252 Chromium input rows stay fixed; original rows agree with expanded.
+The 804 additions stay unchanged, with 200/201 exact at all four profiles.
+The trial changes 27 original rows across 20 IDs; their reduced root causes
+remain under review. This width source is rejected and remains unapplied.
+Own-source hosted
 run `37373688613` initially passes five jobs and cancels two without steps;
 its [completed retry](../renderer/generated/native-intrinsic-snap-v4.json)
 passes all seven jobs, zero skips. Full owner
 `1697` remains unlaunched. The
 [fresh full queue](../renderer/generated/native-intrinsic-snap-v3.json)
-includes all 42 prior owners. Owner `1717` holds the exclusive build and raster
-lock across every stage and gap. The source remains unapplied and unqualified;
-no full census improvement or new release state is claimed.
+includes all 42 prior owners. Owner `1717` finishes all seven stages and held
+the exclusive build and raster lock across every stage and gap. Native
+geometry gains do not waive its full pixel losses. No release state is admitted.
 
 The [shared native style correction](../renderer/native-text-style-inheritance.md)
 at tested `41b616c3` combines Rust/C text replacement with authored font,
@@ -99,6 +130,10 @@ finish with six jobs passed, five skipped and zero failed. Every available
 executed job log is preserved. Skips do not satisfy release gates. These
 measurements keep their source identity; later heads require their own hosted
 results. The full Chromium pixel gate still fails.
+The [documentation checkpoint at `2d78b2db`](../renderer/generated/native-text-inheritance-v9.json)
+also passes fourteen read-only checks and all three hosted workflows, with six
+jobs passed, five skipped and zero failed. It keeps the native runtime and
+pixel measurements unchanged.
 
 The [native text replacement review](../renderer/native-text-content.md) finds
 why all 800 C/C++ font images are blank at `e0dc491e`: the C setter stores

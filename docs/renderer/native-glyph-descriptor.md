@@ -30,7 +30,7 @@ for every image would also be incorrect. The native Fontations adapter
 currently fits paths at their physical size, then replaces the font's size
 with 1. That loses information required by Skia's mask decision.
 
-Private candidate `2f53d5de` keeps the original font size in the strike
+Private candidate `fce42e08` keeps the original font size in the strike
 descriptor and normalizes the fitted outlines and metrics before replay.
 It carries the configured edging, hinting and pixel geometry through outline
 creation, and applies the configured phase once at paint time. It also removes
@@ -40,16 +40,29 @@ remain unchanged.
 
 An identical guard on baseline `54bcdeab` and the candidate checks physical
 strike descriptors across four real font families, five sizes and five
-scales. Neither guard, the candidate build nor its pixel comparisons has
-executed. They must run after the complete width pipeline releases the shared
-build and raster owner. The candidate is unapplied and unqualified.
-Its [fourteen read-only source checks](generated/native-glyph-descriptor-v2.json)
+scales. The [completed native guard run](generated/native-glyph-descriptor-v5.json)
+fails on the baseline with exit 101 and passes on the candidate. All 343 text
+tests pass, zero failed and zero ignored. It cleans all 18 workspace packages
+before each source and holds the exclusive owner across all five stages and
+gaps. The full workspace, consuming apps and pixel matrices remain unexecuted.
+The candidate is unapplied and unqualified.
+Its [fourteen read-only source checks](generated/native-glyph-descriptor-v3.json)
 pass, including generated contracts, accountability, formatting and C/C++
 syntax. These checks do not compile or qualify the Rust glyph implementation.
 
 The first mutable draft placed this guard outside the test module; its
 preflight failed before any build or render. The failed bytes and receipt
 are preserved. The corrected source is separately committed and identified.
+
+A later source review finds that `2f53d5de` copied a test-only configuration
+constructor absent from the current public API. Its text tests cannot compile.
+Fresh `fce42e08` uses the existing `chromium_linux_lcd` constructor; production
+code is unchanged. Both sources and the finding remain preserved. Passing
+read-only checks or hardening jobs that do not compile these text tests does
+not qualify the guard.
+The [complete `2f53d5de` hardening record](generated/native-glyph-descriptor-v4.json)
+has seven jobs passed and zero skipped, with all job logs preserved. It does
+not execute the text crate's unit tests and does not qualify `fce42e08`.
 
 ## Remaining work
 

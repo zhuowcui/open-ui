@@ -1,0 +1,17 @@
+{
+  "after": {
+    "examples/c_v02/fragment_keywords.c": "eff7dd2deb61ea9aed427060eba6eb33de39d9bf63a6501cdacf57450c58c083",
+    "examples/c_v02/fragment_keywords.cc": "387b3aa85437a04053b4719767c85c2baf8e423c7f351b66a3802c447150f8ca"
+  },
+  "baseline_actual_exit": 1,
+  "before": {
+    "examples/c_v02/fragment_keywords.c": "512b0115b0338e8dc0793c6058750e1c755bf0515abbe8311f58a2dd701d23c3",
+    "examples/c_v02/fragment_keywords.cc": "387b3aa85437a04053b4719767c85c2baf8e423c7f351b66a3802c447150f8ca"
+  },
+  "failed_log_sha256": "d7a9c63fe05041fdb7b23745cb8ab47e9c354a02598d2c157732e466702ab4e4",
+  "fixed_actual_exit": 0,
+  "no_native_build_or_raster_commands": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "tool_version": "18.1.3"
+}
