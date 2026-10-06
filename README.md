@@ -29,12 +29,15 @@ produce the same visual state. See the
 
 ## Verified status
 
-The [real Fontations factory prototype](docs/renderer/native-fontations-factory.md)
-builds from the unchanged Skia pin and passes standalone Ahem and DejaVu Sans
-probes. It supplies a real Fontations typeface and native advances. Consuming
-app pixels, element bounds and full renderer qualification remain open.
-Documentation/evidence checkpoint `9f0d2211` passes all three PR workflows:
-six jobs pass, five skip and none fail. These are separate from the prototype.
+The [real Fontations native app trial](docs/renderer/native-fontations-app.md)
+matches 200/200 Chromium images, gaining the remaining 38 over the outline
+trial with no losses. All 12,800 logical phase cells have exact pixels and
+all 200 native processes repeat their output. Clean current-branch candidate
+`9e4baa08` passes 344 text tests and 16 read-only checks. Element bounds still
+fail in 1,280 states, so the native gate exits 1. The source remains private
+and needs full renderer, workspace, C and configuration qualification.
+Umbrella checkpoint `412e804c` passes all three PR workflows: six jobs pass,
+five skip and none fail. These are separate from the candidate's results.
 
 The [private Linux font policy follow-up](docs/renderer/native-linux-font-policy.md)
 matches all 30 repeated Chromium font-metric observations. Its first consuming

@@ -4,6 +4,12 @@ Open UI executes no JavaScript. Applications use native Rust methods and Rust
 callbacks. Pinned Chromium supplies the expected pixels and element bounds;
 historical Open UI images remain immutable provenance.
 
+The [completed native app follow-up](native-fontations-app.md) now uses the
+real factory from a clean current-branch source. It matches 200/200 Chromium
+images, with 38 gains and no losses over the outline trial. Element bounds
+still fail in 1,280 states. The standalone measurements below retain their
+original source and scope.
+
 ## The missing backend
 
 The [Linux font policy trial](native-linux-font-policy.md) matches 162/200

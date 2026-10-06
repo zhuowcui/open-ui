@@ -102,10 +102,11 @@ name, size, phase cell or output pixels.
 ## Remaining qualification
 
 The [real Fontations factory prototype](native-fontations-factory.md) now
-builds and passes standalone Ahem and DejaVu Sans probes using the unchanged
-Skia pin. It reports a real `fnta` typeface and native advances. This does not
-change the measured outline trial below; integration and native app pixels
-remain required.
+builds and passes standalone probes using the unchanged Skia pin. Its
+[current-branch native app trial](native-fontations-app.md) matches all 200
+Chromium images, gaining the remaining 38 with no losses. Bounds still fail
+in 1,280 states. These newer results do not relabel the outline trial below;
+full integration and qualification remain required.
 
 These sources inherit the previously rejected descriptor correction, which
 lost 29 exact full-census comparisons. They also predate the integrated variable
