@@ -101,6 +101,12 @@ name, size, phase cell or output pixels.
 
 ## Remaining qualification
 
+The [real Fontations factory prototype](native-fontations-factory.md) now
+builds and passes standalone Ahem and DejaVu Sans probes using the unchanged
+Skia pin. It reports a real `fnta` typeface and native advances. This does not
+change the measured outline trial below; integration and native app pixels
+remain required.
+
 These sources inherit the previously rejected descriptor correction, which
 lost 29 exact full-census comparisons. They also predate the integrated variable
 font instance correction. Neither change may silently replace the accepted

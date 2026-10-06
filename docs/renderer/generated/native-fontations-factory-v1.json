@@ -1,0 +1,245 @@
+{
+  "advance_observations": {
+    "Ahem": [
+      "size=10 advance=9.999984741 factory=fnta",
+      "size=12 advance=12.000091553 factory=fnta",
+      "size=16 advance=16.000030518 factory=fnta",
+      "size=20 advance=19.999984741 factory=fnta",
+      "size=24 advance=23.999923706 factory=fnta"
+    ],
+    "DejaVu-Sans": [
+      "size=10 advance=6.850585938 factory=fnta",
+      "size=12 advance=8.220703125 factory=fnta",
+      "size=16 advance=10.960937500 factory=fnta",
+      "size=20 advance=13.701171875 factory=fnta",
+      "size=24 advance=16.441406250 factory=fnta"
+    ]
+  },
+  "all_archived_members_hash_verified": true,
+  "all_commands_terminal": true,
+  "archived_members": 204,
+  "artifacts": [
+    {
+      "bytes": 311251,
+      "path": "docs/renderer/evidence/native-fontations-factory-v1/completed-evidence.tar.gz",
+      "sha256": "208de3431b3f391ea46527258ed6f4ef0527698fdbae9d7c07aecb2dd108c746"
+    },
+    {
+      "bytes": 35885,
+      "path": "docs/renderer/evidence/native-fontations-factory-v1/archive-members.json",
+      "sha256": "b5e26b7c741853a8a90f4d2b510cab1b7819b312896a89c880d5a5223c8899fb"
+    },
+    {
+      "bytes": 41621,
+      "path": "docs/renderer/evidence/native-fontations-factory-v1/standalone-source.tar.gz",
+      "sha256": "ae6b5bdaf92c843e59b09655276069356d59aa403f5f53d0516049504cddeece"
+    }
+  ],
+  "chromium_binary_dispatch_trace_not_measured": true,
+  "chromium_is_only_pixel_target": true,
+  "chromium_pixel_comparisons_run": 0,
+  "compiled_source_matches_four_reviewed_chromium_source_files": true,
+  "cxx_version": "1.0.168",
+  "engine_and_consuming_ui_application_not_measured": true,
+  "failed_attempts": [
+    {
+      "name": "native-fontations-factory-prototype-v1920",
+      "observed_exit_code": 1,
+      "receipt_sha256": "78880bf20a41758ccdeab17579f669433bcaed64574e34c6ab93671958046af5",
+      "steps": [
+        {
+          "actual_exit_code": 0,
+          "disk_guard_triggered": false,
+          "log_sha256": "22f0e34469f1ccbc24c5d5b7c2798247118d8af2bc41e9a6db36c8cf4045dd35",
+          "name": "resolve-lockfile"
+        },
+        {
+          "actual_exit_code": 0,
+          "disk_guard_triggered": false,
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "name": "format"
+        }
+      ]
+    },
+    {
+      "name": "native-fontations-factory-prototype-v1922",
+      "observed_exit_code": 1,
+      "receipt_sha256": "ac7086afae63d81ab2bc1cee53bfcafbd81565a95237301659368eefa4aeb81d",
+      "steps": [
+        {
+          "actual_exit_code": 0,
+          "disk_guard_triggered": false,
+          "log_sha256": "22f0e34469f1ccbc24c5d5b7c2798247118d8af2bc41e9a6db36c8cf4045dd35",
+          "name": "resolve-lockfile"
+        },
+        {
+          "actual_exit_code": 0,
+          "disk_guard_triggered": false,
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "name": "format"
+        },
+        {
+          "actual_exit_code": 101,
+          "disk_guard_triggered": false,
+          "log_sha256": "f1727fa4069d856eb38a5a9950e556b4aa34e2724cdf2189f3a7edf6f2c19302",
+          "name": "factory-build"
+        }
+      ]
+    },
+    {
+      "name": "native-fontations-factory-prototype-v1927",
+      "observed_exit_code": 1,
+      "receipt_sha256": "5472b73376262431e41e74773bd6c8b9fe53404c84f90096a42c56251dbbd7ba",
+      "steps": [
+        {
+          "actual_exit_code": 0,
+          "disk_guard_triggered": false,
+          "log_sha256": "22f0e34469f1ccbc24c5d5b7c2798247118d8af2bc41e9a6db36c8cf4045dd35",
+          "name": "resolve-lockfile"
+        },
+        {
+          "actual_exit_code": 0,
+          "disk_guard_triggered": false,
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "name": "format"
+        },
+        {
+          "actual_exit_code": 101,
+          "disk_guard_triggered": false,
+          "log_sha256": "8248a668791654edffd2cc69dc409e09281e84ae8c556c346a620cc44f712826",
+          "name": "factory-build"
+        }
+      ]
+    },
+    {
+      "name": "native-fontations-factory-prototype-v1930",
+      "observed_exit_code": 1,
+      "receipt_sha256": "d105667297d1f37f1fd3d285fce4148d998359773fdd4fc04ba9f8e1be0e3ffe",
+      "steps": [
+        {
+          "actual_exit_code": 0,
+          "disk_guard_triggered": false,
+          "log_sha256": "22f0e34469f1ccbc24c5d5b7c2798247118d8af2bc41e9a6db36c8cf4045dd35",
+          "name": "resolve-lockfile"
+        },
+        {
+          "actual_exit_code": 0,
+          "disk_guard_triggered": false,
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "name": "format"
+        },
+        {
+          "actual_exit_code": 101,
+          "disk_guard_triggered": false,
+          "log_sha256": "df6d7f7246733bc11a3854411c23520dc71206b33001faa1220025890def0b34",
+          "name": "factory-build"
+        }
+      ]
+    },
+    {
+      "name": "native-fontations-factory-prototype-v1932",
+      "observed_exit_code": 1,
+      "receipt_sha256": "00df8f3d8cff5487a1efdcc7a033a2b63f64c29d01b9aa9b00ca66b3ba3301ca",
+      "steps": [
+        {
+          "actual_exit_code": 0,
+          "disk_guard_triggered": false,
+          "log_sha256": "22f0e34469f1ccbc24c5d5b7c2798247118d8af2bc41e9a6db36c8cf4045dd35",
+          "name": "resolve-lockfile"
+        },
+        {
+          "actual_exit_code": 0,
+          "disk_guard_triggered": false,
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "name": "format"
+        },
+        {
+          "actual_exit_code": 101,
+          "disk_guard_triggered": false,
+          "log_sha256": "779ba58fee3eb82d52ff27fb6c4879dc7f584242f1b20ec9478c42ba9e6f8a7a",
+          "name": "factory-build"
+        }
+      ]
+    }
+  ],
+  "font_arguments_borrowed_through_native_wrapper": true,
+  "font_types_version": "0.9.0",
+  "formal_original_renderer_residual_ownership_assigned": 0,
+  "freetype_control_factory_is_distinct": true,
+  "full_hardening_not_run_on_9f0d2211": true,
+  "full_native_factory_returns_fnta": true,
+  "full_original_expanded_focused_primitive_matrices_not_run": true,
+  "global_typeface_registry_not_mutated": true,
+  "hosted_umbrella_observation": {
+    "all_seven_native_guards_executed_and_passed_in_hosted_parity": true,
+    "failed_jobs": 0,
+    "skipped_jobs": 5,
+    "source": "9f0d22112136bc8b5325d0b0619031bdd8b9adcf",
+    "successful_jobs": 6
+  },
+  "javascript_executed_by_openui": false,
+  "malformed_font_returns_none": true,
+  "native_factory_owns_copied_font_bytes": true,
+  "new_release_states_admitted": 0,
+  "original_renderer_totals_unchanged": true,
+  "partial_v1924_prepare_failure_preserved": true,
+  "pinned_chromium_binary_version": "147.0.7727.50",
+  "preserver_sha256": "998d8ccf66a3a412ceee32d5387fecc1885c179f56d43a13175d42dad40710b4",
+  "probes": [
+    {
+      "actual_exit_code": 0,
+      "log_sha256": "22f0e34469f1ccbc24c5d5b7c2798247118d8af2bc41e9a6db36c8cf4045dd35",
+      "name": "resolve-lockfile"
+    },
+    {
+      "actual_exit_code": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "format"
+    },
+    {
+      "actual_exit_code": 0,
+      "log_sha256": "8499f91331890eb33332258a82532fb8dade23328e23217bb14f5012f1e077cd",
+      "name": "factory-build"
+    },
+    {
+      "actual_exit_code": 0,
+      "log_sha256": "68f96ebd4c0948262822269074dc8b8a38caf7062df03113e9782925647c9a14",
+      "name": "probe-Ahem"
+    },
+    {
+      "actual_exit_code": 0,
+      "log_sha256": "c94ac78bcabe1bea21fb61556e921e2f9a62db5e94839163617499383a8b0960",
+      "name": "probe-DejaVu-Sans"
+    }
+  ],
+  "promotion_allowed": false,
+  "read_fonts_version": "0.34.0",
+  "release_qualification": false,
+  "retained_binary": {
+    "bytes": 15942040,
+    "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fontations-factory-prototype-v1934/factory_probe",
+    "sha256": "c883c9406caa2ae9a87067edc2ff2f91ce27be258d177a9702f5b551c3bcad60"
+  },
+  "reviewed_chromium_source_version": "147.0.7727.24",
+  "rust_code_does_not_transmute_opaque_layouts": true,
+  "schema_version": 1,
+  "skia_pin_unchanged": "a31b86ba3b767344d39af3b8c30043003d8fc991",
+  "skrifa_version": "0.36.0",
+  "source": {
+    "clean": true,
+    "commit": "947fc0d84f8c20d8dde16aebc9f8dc3f79100ee4",
+    "lockfile_sha256": "6e2fc697a1514982992f1b03b10a992efa7373efca61ac0b9d8ba5fd518ff798",
+    "tree": "c75aff2fc9d60a3e15e0f755a147a23a178fe9fc"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "947fc0d84f8c20d8dde16aebc9f8dc3f79100ee4",
+    "lockfile_sha256": "6e2fc697a1514982992f1b03b10a992efa7373efca61ac0b9d8ba5fd518ff798",
+    "tree": "c75aff2fc9d60a3e15e0f755a147a23a178fe9fc"
+  },
+  "standalone_typeface_factory_prototype": true,
+  "uses_documented_skia_safe_wrapper_traits": true,
+  "variation_ttc_and_palette_arguments_transported_by_factory": true,
+  "variation_ttc_palette_behavior_not_yet_probed": true,
+  "workspace_msrv_miri_and_c_abi_not_run": true
+}

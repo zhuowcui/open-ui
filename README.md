@@ -29,6 +29,13 @@ produce the same visual state. See the
 
 ## Verified status
 
+The [real Fontations factory prototype](docs/renderer/native-fontations-factory.md)
+builds from the unchanged Skia pin and passes standalone Ahem and DejaVu Sans
+probes. It supplies a real Fontations typeface and native advances. Consuming
+app pixels, element bounds and full renderer qualification remain open.
+Documentation/evidence checkpoint `9f0d2211` passes all three PR workflows:
+six jobs pass, five skip and none fail. These are separate from the prototype.
+
 The [private Linux font policy follow-up](docs/renderer/native-linux-font-policy.md)
 matches all 30 repeated Chromium font-metric observations. Its first consuming
 Rust app sweep improves from 62/200 to 162/200 exact images, with 100 gains and
