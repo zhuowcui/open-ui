@@ -45,8 +45,17 @@ The [native glyph audit](docs/renderer/native-glyph-descriptor.md) finds that
 Chromium uses channel-specific coverage in 184/200 existing images, while
 Open UI uses grayscale coverage in all 200. A general physical strike
 correction removes the old 10px phase and origin overrides. Fourteen read-only
-checks pass. Its corrected native guard fails on the baseline and passes after
-the fix; all 343 text tests pass. Its full build and pixels remain unexecuted.
+checks pass. Fresh integrated-source trial `c68d946c` passes fifteen source
+checks, the descriptor guard, all 343 text tests, 8,560 workspace tests and
+eight build stages. Its real Rust app remains 0/400 Chromium images exact;
+23,040/25,600 geometry states match. Default native images stay unchanged.
+Explicit LCD output changes 28 images, with none becoming exact and 21
+worsening. Focused 640/640 and primitive 960/960 pass. Both complete censuses
+finish at 21,305/22,924 original and 22,108/23,728 expanded exact, zero errors.
+Each loses 29 exact comparisons and gains none. All Chromium inputs remain
+unchanged. The correction is rejected and remains unapplied. The native references select
+Fontations, while the original real-font references select FreeType; the
+current native Rust configuration lacks an explicit Fontations choice.
 
 The [shared native font-inheritance correction](docs/renderer/native-text-style-inheritance.md)
 combines Rust/C text replacement with authored style propagation. Its new
@@ -128,6 +137,11 @@ matrices retain 640/640 focused, 960/960 primitive, 21,334/22,924 original and
 22,137/23,728 expanded exact, with no changed comparison invariants. Complete
 combined-source matrices and all raster settings' behavior remain unqualified;
 no release state is admitted.
+The [completed umbrella checks](docs/renderer/generated/native-rust-options-v3.json)
+at clean `16187f4f` pass fifteen read-only checks and all four hosted workflows:
+thirteen jobs pass, five are skipped and none fails, including all seven full
+hardening jobs. All six native Rust/FFI guards execute and pass in hosted parity.
+These checks do not qualify the complete Chromium pixel gates.
 
 The current v0.2 release candidate has:
 

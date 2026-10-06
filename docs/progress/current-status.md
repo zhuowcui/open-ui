@@ -41,6 +41,13 @@ The initial Chromium startup failures and a retry-owner preflight failure
 remain preserved. A shorter Linux temporary path permits the fresh captures;
 the startup error output does not prove a more specific cause.
 
+The [completed umbrella checks](../renderer/generated/native-rust-options-v3.json)
+at clean `16187f4f` pass all fifteen read-only checks and all four hosted
+workflows: thirteen jobs pass, five skip and none fails. All seven full
+hardening jobs pass. The hosted parity log confirms that all four Rust option
+guards and both FFI keyword guards execute and pass. Every executed job log
+is retained; skipped jobs do not count as release passes.
+
 The [complete keyword-source matrices](../renderer/generated/native-keywords-v6.json)
 at `7d6ffabf` finish 640/640 focused, 960/960 primitive, 21,334/22,924 original
 and 22,137/23,728 expanded exact, zero errors. All 48,252 rows preserve their
@@ -50,27 +57,40 @@ source. Combined-source complete matrices, every raster field's rendering
 behavior, default native font pixels, and reviewed residual ownership remain
 open. No new release state is admitted.
 
-The [native glyph audit](../renderer/native-glyph-descriptor.md) finds a
-coverage mismatch in the existing clean native app images: Chromium uses
-channel-specific glyph edges in 184/200 images, while Open UI uses grayscale
-coverage in all 200. The other 16 Chromium images contain grayscale glyphs
-at large physical sizes. All captures and references are unchanged. A fresh
-general strike-descriptor candidate `fce42e08` preserves physical font size
-and configured coverage and removes the old 10px phase/origin overrides.
-Fourteen read-only checks pass. Its
-[fresh native guard](../renderer/generated/native-glyph-descriptor-v5.json)
-fails on baseline `54bcdeab` with exit 101 and passes on `fce42e08`; all 343
-text tests pass, zero failed and zero ignored. Both sources clean all 18
-workspace packages, and the owner covers all five stages and gaps. The full
-workspace, consuming apps and pixel matrices remain unexecuted, and the
-candidate is unapplied. The preceding `2f53d5de` test source refers to
-an absent configuration constructor; the fresh source uses the existing
-public constructor and preserves production code. No formal WPT residual
-owner is assigned.
-The preceding `2f53d5de` passes all seven hosted hardening jobs, zero skips;
-those jobs do not execute the text crate's unit tests. The absent constructor
-still prevents those tests from compiling. Its hosted result does not qualify
-the corrected `fce42e08` source or any glyph pixels.
+The [native glyph trial](../renderer/native-glyph-descriptor.md) ports the
+physical strike correction onto clean integrated source `c68d946c`, with
+baseline `db03c8fa`. All fifteen source checks pass on each. The baseline
+descriptor guard fails with exit 101; the corrected guard and all 343 text
+tests pass. All eight candidate build stages pass, including 8,560 workspace
+tests, zero failures, 13 ignored, and ABI consumers with 113 exports and 30
+layouts preserved. The owner covers every stage and gap.
+
+Both complete Rust font matrices remain 0/400 images exact against Chromium,
+with 23,040/25,600 geometry states exact. All repeated runs agree. Default
+output remains unchanged in all 200 images. Explicit LCD output changes 28
+images at 10px, improving five and worsening 21, with none becoming exact.
+Focused 640/640 and primitive 960/960 pass. The
+[completed censuses](../renderer/generated/native-glyph-descriptor-v6.json)
+finish at 21,305/22,924 original and 22,108/23,728 expanded exact, zero errors.
+Each loses 29 exact comparisons and gains none. Both gates exit 1. There are
+63 changed rows across 39 original test IDs. Every Chromium input and all 804
+addition comparisons remain unchanged; 200/201 additions meet all four
+profiles. All eight owner stages are terminal. The correction is rejected
+and remains unapplied; accepted totals remain 21,334/22,924 and 22,137/23,728.
+No new formal WPT owner or release state is assigned.
+
+Native font references select Fontations, while general real-font references
+select FreeType. The current Rust configuration provides no explicit
+Fontations constructor. The source routing observation does not establish
+an incorrect FreeType choice for the latter references or explain every pixel
+difference. Both reference sets remain immutable. The native choice, default
+font pixels and shared font implementation still need qualification.
+The [private outline-choice draft](../renderer/generated/native-font-choice-v1.json)
+at `ef8880b0` passes fifteen read-only checks. It is uncompiled and unapplied,
+and inherits the rejected descriptor source. It does not qualify the native
+default or any glyph pixels.
+Earlier `fce42e08` guard-only and `2f53d5de` hosted-only results retain their
+actual identities; the latter's missing test constructor does not compile.
 
 The [narrow native text-width correction](../renderer/native-intrinsic-snap.md)
 at private `727da10e` preserves shaped fractions through intrinsic grid

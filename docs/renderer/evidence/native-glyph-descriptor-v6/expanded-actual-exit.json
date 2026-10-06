@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "/dev/shm/openui-native-glyph-candidate-16187f4f-v1825/tools/qualification/run_renderer_matrix.py",
+    "--suite",
+    "expanded",
+    "--results-dir",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-current-clean-expanded-v1828",
+    "--cache-dir",
+    "/mnt/e/openui-v02-qualification-d174ea0b/renderer-cache",
+    "--oracle-cache-dir",
+    "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+    "--pixel-compare",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-current-candidate-build-v1828/pixel_compare",
+    "--chrome",
+    "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+    "--raster-backend",
+    "cpu-skia",
+    "--jobs",
+    "8"
+  ],
+  "log_sha256": "4369e586d5d32bf7d31c8c0f560648cbf1ec326a87af387cbcd37d2e1bd52f12",
+  "observed_exit_code": 1,
+  "release_qualification": false,
+  "schema_version": 1,
+  "suite": "expanded"
+}

@@ -66,6 +66,15 @@ reference bytes or visual capture conditions change for that retry. The
 startup diagnostic's error output does not prove a more specific cause.
 Earlier source measurements retain their actual identities.
 
+The [completed umbrella checks](../renderer/generated/native-rust-options-v3.json)
+at clean `16187f4f` pass all fifteen read-only checks and all four hosted
+workflows: thirteen jobs pass, five are skipped, and none fails. All seven
+full hardening jobs pass. The hosted parity job executes all four public Rust
+option guards and both native FFI keyword guards successfully. Every executed
+job's log is retained. Skipped jobs do not count as release passes, and these
+checks do not qualify the complete pixel matrices or every configuration
+field's rendering effects.
+
 ## Remaining qualification
 
 Passing these native API checks does not qualify every raster setting or the
@@ -74,6 +83,13 @@ font pixels, all configuration fields' rendering effects, and complete
 combined-source matrices remain open. See the
 [field review](native-c-raster-configuration.md#consumer-corrections-and-remaining-field-behavior)
 and [renderer contract](../renderer/contract.md).
+
+The [private Fontations draft](../renderer/generated/native-font-choice-v1.json)
+at `ef8880b0` prepares an explicit native Rust outline choice and its paint
+data flow. Fifteen read-only checks pass, but it has not compiled or run a
+consuming app or pixel matrix. It is unapplied and inherits the rejected glyph
+candidate. The constructor is not available on the umbrella branch; it does
+not change the supported API or qualify default native text.
 
 Pinned Chromium defines expected pixels, with zero tolerance. Historical
 Open UI screenshots preserve provenance. No new release state is admitted by

@@ -1,0 +1,57 @@
+{
+  "all_commands_terminal": true,
+  "baseline_regression_reproduced": true,
+  "javascript_executed_by_openui": false,
+  "label": "baseline",
+  "observed_exit_code": 0,
+  "pixel_tolerance": 0,
+  "probe_sha256": "8e6c1c2a55867f7603e0dbfa485de2491819883511c8cfd6f39b496536d60e45",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "db03c8facca7502d42f327bae4833acac7379946",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "6673f4faf808676491ded792d9123a1ac694bd85bf4abfb14d6ce8d792354795",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "db03c8facca7502d42f327bae4833acac7379946",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "6673f4faf808676491ded792d9123a1ac694bd85bf4abfb14d6ce8d792354795",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "steps": [
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "f6f7ae407fbdb09190bcf34d9008e8b60fbfc89e1eb4c7249c47db371d2ee2b0",
+      "name": "clean-workspace",
+      "observed_exit_code": 0,
+      "passed": 0
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 1,
+      "ignored": 0,
+      "log_sha256": "3a054e56a73a39e3f413f9142b4e8969b299eb5097bca786b94375823515c17d",
+      "name": "physical-strike-guard",
+      "observed_exit_code": 101,
+      "passed": 0
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-current-baseline-build-v1828/native_glyph_coverage",
+      "binary_sha256": "b77a4a37b972b88f3290733447a10db82b1c929650af15fed4435a01135288af",
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "67c358fba3e71f7038b0dab9c6caf440d484700d213f5956b988f52cf3b9bed4",
+      "name": "glyph-build",
+      "observed_exit_code": 0,
+      "passed": 0
+    }
+  ],
+  "workspace_packages_cleaned": 18
+}

@@ -12,6 +12,31 @@ bounds match Chromium exactly at five scales. Failed startup and preflight
 attempts remain preserved. Complete combined-source matrices, all raster
 settings' behavior, and the remaining release gates stay open.
 
+Clean umbrella `16187f4f` has
+[complete source and hosted evidence](../renderer/generated/native-rust-options-v3.json):
+fifteen read-only checks pass; thirteen hosted jobs pass, five skip and none
+fails across all four workflows. All seven full hardening jobs pass. All six
+native Rust option and FFI keyword guards execute successfully in hosted
+parity. Skips do not count as release passes, and these results do not qualify
+the full Chromium pixel matrices.
+
+The [fresh glyph trial](../renderer/native-glyph-descriptor.md) at private
+`c68d946c` passes its descriptor guard, all 343 text tests, 8,560 workspace
+tests, fifteen source checks and all eight build stages. The same guard fails
+on baseline `db03c8fa`. Both complete Rust font matrices remain 0/400 images
+exact against unchanged Chromium, with 23,040/25,600 geometry states exact.
+All repeats agree. The 200 default images stay unchanged; explicit LCD changes
+28 images, improving five and worsening 21, with no exact gain. Focused
+640/640 and primitive 960/960 pass. The
+[complete censuses](../renderer/generated/native-glyph-descriptor-v6.json)
+finish at 21,305/22,924 original and 22,108/23,728 expanded exact, zero errors.
+Each loses 29 exact comparisons and gains none; both gates exit 1. All
+Chromium inputs and 804 addition comparisons stay unchanged. The eight-stage
+owner is terminal. This correction is rejected and remains unapplied.
+The native references use Fontations, while
+the general real-font references select FreeType. The missing explicit native
+Fontations choice, default font pixels and reviewed pixel causes remain open.
+
 The [narrow intrinsic-width candidate](../renderer/native-intrinsic-snap.md)
 at private `727da10e` changes one shared sizing helper to retain positive
 shaped fractions through grid ceiling. Its new public Rust callback guard

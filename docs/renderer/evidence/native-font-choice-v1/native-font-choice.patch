@@ -1,0 +1,400 @@
+diff --git a/bindings/rust/openui-geometry/src/raster.rs b/bindings/rust/openui-geometry/src/raster.rs
+index 3ad54425..8cd592e1 100644
+--- a/bindings/rust/openui-geometry/src/raster.rs
++++ b/bindings/rust/openui-geometry/src/raster.rs
+@@ -6,6 +6,15 @@ pub enum RasterBackend {
+     Skia,
+     ChromiumLinux,
+     GaneshGl,
++    /// CPU Skia replay of Chromium's Fontations glyph outlines.
++    ChromiumLinuxFontations,
++}
++
++impl RasterBackend {
++    /// CPU policies that choose glyph strikes in physical coordinates.
++    pub const fn is_chromium_cpu(self) -> bool {
++        matches!(self, Self::ChromiumLinux | Self::ChromiumLinuxFontations)
++    }
+ }
+ 
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+@@ -107,6 +116,16 @@ impl RasterConfiguration {
+         }
+     }
+ 
++    /// Fontations counterpart of the explicit FreeType Linux configuration.
++    ///
++    /// The typeface engine is selected before document construction and is
++    /// retained independently of font family, text content and viewport.
++    pub const fn chromium_linux_fontations_lcd() -> Self {
++        let mut configuration = Self::chromium_linux_lcd();
++        configuration.backend = RasterBackend::ChromiumLinuxFontations;
++        configuration
++    }
++
+     /// Chromium-aligned Linux text policy replayed through Ganesh OpenGL.
+     ///
+     /// Selecting this configuration never probes the environment. Callers
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index 86c93884..85b1962f 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -5377,7 +5377,7 @@ fn paint_composited_svg_edge_samples(
+     destination: Rect,
+     opacity_multiplier: f32,
+ ) {
+-    if style.raster_configuration.backend != RasterBackend::ChromiumLinux
++    if !style.raster_configuration.backend.is_chromium_cpu()
+         || opacity_multiplier < 1.0
+         || !style.background_color.is_opaque()
+     {
+@@ -20053,9 +20053,7 @@ fn paint_same_color_solid_border(
+     // maps it onto the physical raster grid. Keep edge coverage enabled so a
+     // one-sided border ending on a fractional device pixel receives the same
+     // partial physical row as other CSS box edges.
+-    paint.set_anti_alias(
+-        backend == RasterBackend::ChromiumLinux || (device_scale - 1.0).abs() > f64::EPSILON,
+-    );
++    paint.set_anti_alias(backend.is_chromium_cpu() || (device_scale - 1.0).abs() > f64::EPSILON);
+     set_paint_css_color(&mut paint, &color);
+ 
+     let fixed_inner_block_extent =
+diff --git a/bindings/rust/openui-paint/src/text_painter.rs b/bindings/rust/openui-paint/src/text_painter.rs
+index 6f77f5a9..c704afff 100644
+--- a/bindings/rust/openui-paint/src/text_painter.rs
++++ b/bindings/rust/openui-paint/src/text_painter.rs
+@@ -28,7 +28,9 @@ use openui_geometry::{
+ use openui_layout::inline::text_combine::TextCombineLayout;
+ use openui_style::{Color, ComputedStyle, FontFamily, GenericFontFamily};
+ use openui_text::font::FontMetrics;
+-use openui_text::shaping::{ShapeResult, TextRasterPolicy};
++use openui_text::shaping::{
++    fontations_compatible_font_with_geometry, ShapeResult, TextRasterPolicy,
++};
+ 
+ /// Paint shaped text glyphs onto a canvas.
+ ///
+@@ -145,7 +147,7 @@ pub fn paint_text_with_raster_policy(
+         paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
+ 
+         let physical_scale = style.device_scale_factor as f32;
+-        let physical_strike = style.raster_configuration.backend == RasterBackend::ChromiumLinux
++        let physical_strike = style.raster_configuration.backend.is_chromium_cpu()
+             || raster_policy != TextRasterPolicy::Skia;
+         if physical_strike && (physical_scale - 1.0).abs() > f32::EPSILON {
+             if let Some(physical_blob) = shape_result
+@@ -193,6 +195,9 @@ pub(crate) fn lcd_raster_origin(
+ }
+ 
+ fn uses_chromium_author_lcd(style: &ComputedStyle) -> bool {
++    if style.raster_configuration.backend == RasterBackend::ChromiumLinuxFontations {
++        return !style.native_control_text && !style.embedded_document_text;
++    }
+     if style.native_control_text
+         || style.embedded_document_text
+         || style.raster_configuration.author_text.edging != TextEdging::Alias
+@@ -240,7 +245,7 @@ pub fn paint_vertical_text(
+ 
+     let mut builder = TextBlobBuilder::new();
+     let physical_scale = style.device_scale_factor as f32;
+-    let physical_strike = style.raster_configuration.backend == RasterBackend::ChromiumLinux
++    let physical_strike = style.raster_configuration.backend.is_chromium_cpu()
+         && (physical_scale - 1.0).abs() > f32::EPSILON;
+     let (vertical_baseline_x, top_y) =
+         if style.raster_configuration.author_text.subpixel_positioning
+@@ -272,6 +277,18 @@ pub fn paint_vertical_text(
+         } else {
+             source_font
+         };
++        let fontations_font =
++            if style.raster_configuration.backend == RasterBackend::ChromiumLinuxFontations {
++                fontations_compatible_font_with_geometry(
++                    raster_font,
++                    &run.glyphs,
++                    TextRasterPolicy::ChromiumAuthorLcd,
++                    style.raster_configuration.pixel_geometry,
++                )
++            } else {
++                None
++            };
++        let raster_font = fontations_font.as_ref().unwrap_or(raster_font);
+         let (glyphs_out, positions_out) = builder.alloc_run_pos(raster_font, run.num_glyphs, None);
+         glyphs_out.copy_from_slice(&run.glyphs);
+ 
+@@ -370,7 +387,18 @@ pub fn paint_text_shadows(
+         return;
+     }
+ 
+-    let text_blob = match shape_result.to_text_blob() {
++    let fontations = style.raster_configuration.backend == RasterBackend::ChromiumLinuxFontations;
++    let physical_scale = if fontations {
++        style.device_scale_factor as f32
++    } else {
++        1.0
++    };
++    let text_blob = match shape_result.to_text_blob_with_raster_policy_and_geometry_at_scale(
++        None,
++        TextRasterPolicy::Skia,
++        physical_scale,
++        style.raster_configuration.pixel_geometry,
++    ) {
+         Some(blob) => blob,
+         None => return,
+     };
+@@ -391,7 +419,7 @@ pub fn paint_text_shadows(
+             // Blink records the CSS blur in local coordinates. Respect the
+             // canvas transform so device scale and authored transforms apply
+             // equally to the glyphs and their shadow kernel.
+-            let sigma = shadow.blur_radius / 2.0;
++            let sigma = shadow.blur_radius * physical_scale / 2.0;
+             if let Some(filter) =
+                 skia_safe::MaskFilter::blur(skia_safe::BlurStyle::Normal, sigma, true)
+             {
+@@ -401,7 +429,11 @@ pub fn paint_text_shadows(
+ 
+         let shadow_x = origin.0 + shadow.offset_x;
+         let shadow_y = origin.1 + shadow.offset_y;
+-        canvas.draw_text_blob(&text_blob, Point::new(shadow_x, shadow_y), &paint);
++        if fontations {
++            draw_physical_fontations_blob(canvas, &text_blob, (shadow_x, shadow_y), &paint, style);
++        } else {
++            canvas.draw_text_blob(&text_blob, Point::new(shadow_x, shadow_y), &paint);
++        }
+     }
+ }
+ 
+@@ -453,7 +485,17 @@ pub fn paint_text_combine(
+     style: &ComputedStyle,
+     layout: &TextCombineLayout,
+ ) {
+-    let text_blob = match shape_result.to_text_blob() {
++    let fontations = style.raster_configuration.backend == RasterBackend::ChromiumLinuxFontations;
++    let text_blob = match shape_result.to_text_blob_with_raster_policy_and_geometry_at_scale(
++        None,
++        TextRasterPolicy::Skia,
++        if fontations {
++            style.device_scale_factor as f32
++        } else {
++            1.0
++        },
++        style.raster_configuration.pixel_geometry,
++    ) {
+         Some(blob) => blob,
+         None => return,
+     };
+@@ -480,10 +522,38 @@ pub fn paint_text_combine(
+         // draw at (0, 0) — equivalent to translating first.
+         canvas.translate(Point::new(draw_x, draw_y));
+         canvas.scale((scale_x, 1.0));
+-        canvas.draw_text_blob(&text_blob, Point::new(0.0, 0.0), &paint);
++        if fontations {
++            draw_physical_fontations_blob(canvas, &text_blob, (0.0, 0.0), &paint, style);
++        } else {
++            canvas.draw_text_blob(&text_blob, Point::new(0.0, 0.0), &paint);
++        }
+     } else {
+-        canvas.draw_text_blob(&text_blob, Point::new(draw_x, draw_y), &paint);
++        if fontations {
++            draw_physical_fontations_blob(canvas, &text_blob, (draw_x, draw_y), &paint, style);
++        } else {
++            canvas.draw_text_blob(&text_blob, Point::new(draw_x, draw_y), &paint);
++        }
+     }
+ 
+     canvas.restore();
+ }
++
++fn draw_physical_fontations_blob(
++    canvas: &Canvas,
++    blob: &TextBlob,
++    origin: (f32, f32),
++    paint: &Paint,
++    style: &ComputedStyle,
++) {
++    let scale = style.device_scale_factor as f32;
++    let origin = lcd_raster_origin(
++        origin,
++        text_raster_configuration(style),
++        style.device_scale_factor,
++    );
++    canvas.save();
++    canvas.translate(origin);
++    canvas.scale((1.0 / scale, 1.0 / scale));
++    canvas.draw_text_blob(blob, Point::new(0.0, 0.0), paint);
++    canvas.restore();
++}
+diff --git a/bindings/rust/openui-text/src/font/platform.rs b/bindings/rust/openui-text/src/font/platform.rs
+index 8fa16a8a..1ff51afc 100644
+--- a/bindings/rust/openui-text/src/font/platform.rs
++++ b/bindings/rust/openui-text/src/font/platform.rs
+@@ -5,7 +5,8 @@
+ //! `FontMetrics` for the resolved size.
+ 
+ use openui_geometry::{
+-    physical_font_size, RasterConfiguration, TextEdging, TextHinting, TextRasterConfiguration,
++    physical_font_size, RasterBackend, RasterConfiguration, TextEdging, TextHinting,
++    TextRasterConfiguration,
+ };
+ use skia_safe::{
+     font_style::Slant as SkSlant, Font as SkFont, FontHinting, FontMetrics as SkFontMetrics,
+@@ -33,6 +34,7 @@ pub(crate) struct ResolvedFontConfiguration {
+ pub struct FontPlatformData {
+     typeface: Typeface,
+     sk_font: SkFont,
++    raster_configuration: RasterConfiguration,
+     size: f32,
+     metrics: FontMetrics,
+     vertical_metrics: Option<VerticalMetrics>,
+@@ -287,6 +289,7 @@ impl FontPlatformData {
+         // still receives Chromium's ordinary LCD/subpixel raster policy.
+         let escapes_aliased_profile = !native_control_text
+             && !embedded_document_text
++            && raster_configuration.backend != RasterBackend::ChromiumLinuxFontations
+             && raster_configuration.author_text.edging == TextEdging::Alias
+             && !deterministic_aliased_face;
+         let settings = if native_control_text {
+@@ -300,13 +303,22 @@ impl FontPlatformData {
+         };
+         let subpixel = settings.subpixel_positioning && !native_button_text_metrics;
+         sk_font.set_subpixel(subpixel);
+-        let hinting = resolve_hinting(
+-            settings.hinting,
+-            settings.edging,
+-            family_name.as_str(),
+-            physical_font_size(size, device_scale_factor),
+-            device_scale_factor,
+-        );
++        let hinting = if raster_configuration.backend == RasterBackend::ChromiumLinuxFontations {
++            match settings.hinting {
++                TextHinting::None => FontHinting::None,
++                TextHinting::Slight => FontHinting::Slight,
++                TextHinting::Normal => FontHinting::Normal,
++                TextHinting::Full => FontHinting::Full,
++            }
++        } else {
++            resolve_hinting(
++                settings.hinting,
++                settings.edging,
++                family_name.as_str(),
++                physical_font_size(size, device_scale_factor),
++                device_scale_factor,
++            )
++        };
+         sk_font.set_hinting(hinting);
+         sk_font.set_linear_metrics(subpixel);
+         sk_font.set_embedded_bitmaps(true);
+@@ -345,6 +357,7 @@ impl FontPlatformData {
+         Self {
+             typeface,
+             sk_font,
++            raster_configuration,
+             size,
+             metrics,
+             vertical_metrics,
+@@ -367,6 +380,11 @@ impl FontPlatformData {
+         &self.sk_font
+     }
+ 
++    /// Owned immutable raster selection used to resolve this font.
++    pub fn raster_configuration(&self) -> RasterConfiguration {
++        self.raster_configuration
++    }
++
+     /// The resolved font size in CSS pixels.
+     #[inline]
+     pub fn size(&self) -> f32 {
+diff --git a/bindings/rust/openui-text/src/shaping/mod.rs b/bindings/rust/openui-text/src/shaping/mod.rs
+index 107facd0..8b21eac9 100644
+--- a/bindings/rust/openui-text/src/shaping/mod.rs
++++ b/bindings/rust/openui-text/src/shaping/mod.rs
+@@ -14,6 +14,7 @@ mod shaper;
+ 
+ pub use segmenter::{RunSegment, RunSegmenter, Script};
+ pub use shape_result::{
+-    ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection, TextRasterPolicy,
++    fontations_compatible_font_with_geometry, ShapeResult, ShapeResultCharacterData,
++    ShapeResultRun, TextDirection, TextRasterPolicy,
+ };
+ pub use shaper::TextShaper;
+diff --git a/bindings/rust/openui-text/src/shaping/shape_result.rs b/bindings/rust/openui-text/src/shaping/shape_result.rs
+index 2b51e6e6..8fae0897 100644
+--- a/bindings/rust/openui-text/src/shaping/shape_result.rs
++++ b/bindings/rust/openui-text/src/shaping/shape_result.rs
+@@ -6,7 +6,7 @@
+ 
+ use std::sync::Arc;
+ 
+-use openui_geometry::RasterPixelGeometry;
++use openui_geometry::{RasterBackend, RasterPixelGeometry};
+ use skia_safe::{
+     font::Edging, utils::CustomTypefaceBuilder, FontHinting, Matrix, PathBuilder, Point, TextBlob,
+     TextBlobBuilder,
+@@ -24,7 +24,7 @@ use crate::font::FontPlatformData;
+ 
+ /// Selects the outline rasterizer used when a shaped run becomes a Skia
+ /// text blob. Chromium's Linux native controls use Fontations-hinted paths,
+-/// while authored text continues through Skia's ordinary FreeType backend.
++/// while authored text uses the immutable document typeface choice.
+ #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+ pub enum TextRasterPolicy {
+     #[default]
+@@ -79,7 +79,11 @@ fn fontations_compatible_font(
+     )
+ }
+ 
+-fn fontations_compatible_font_with_geometry(
++/// Fit scalable outlines using Fontations while retaining the configured
++/// physical strike size, edging, subpixel flags and LCD orientation.
++///
++/// Returns `None` when this adapter cannot obtain scalable font outlines.
++pub fn fontations_compatible_font_with_geometry(
+     source_font: &skia_safe::Font,
+     glyphs: &[u16],
+     raster_policy: TextRasterPolicy,
+@@ -477,7 +481,17 @@ impl ShapeResult {
+             device_origin_x,
+             raster_policy,
+             device_scale,
+-            RasterPixelGeometry::RgbHorizontal,
++            self.runs
++                .first()
++                .map_or(RasterPixelGeometry::RgbHorizontal, |run| {
++                    if run.font_data.raster_configuration().backend
++                        == RasterBackend::ChromiumLinuxFontations
++                    {
++                        run.font_data.raster_configuration().pixel_geometry
++                    } else {
++                        RasterPixelGeometry::RgbHorizontal
++                    }
++                }),
+         )
+     }
+ 
+@@ -508,6 +522,13 @@ impl ShapeResult {
+                 continue;
+             }
+             let source_font = run.font_data.sk_font();
++            let raster_policy = if run.font_data.raster_configuration().backend
++                == RasterBackend::ChromiumLinuxFontations
++            {
++                TextRasterPolicy::ChromiumAuthorLcd
++            } else {
++                raster_policy
++            };
+             // Chromium builds hinted outlines at the physical strike size.
+             // Scaling an outline already fitted at CSS size changes its ink
+             // bounds. This applies to aliased and LCD outlines alike. Keep
+diff --git a/bindings/rust/openui/examples/native_glyph_coverage.rs b/bindings/rust/openui/examples/native_glyph_coverage.rs
+index ee24ac4c..cd7590bf 100644
+--- a/bindings/rust/openui/examples/native_glyph_coverage.rs
++++ b/bindings/rust/openui/examples/native_glyph_coverage.rs
+@@ -26,7 +26,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     let raster = match args.next().as_deref() {
+         None | Some("default") => RasterConfiguration::default(),
+         Some("chromium-lcd") => RasterConfiguration::chromium_linux_lcd(),
+-        _ => return Err("raster must be default or chromium-lcd".into()),
++        Some("fontations") => RasterConfiguration::chromium_linux_fontations_lcd(),
++        _ => return Err("raster must be default, chromium-lcd or fontations".into()),
+     };
+     if args.next().is_some()
+         || !matches!(

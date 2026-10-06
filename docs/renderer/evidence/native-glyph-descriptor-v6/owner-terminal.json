@@ -1,0 +1,89 @@
+{
+  "all_commands_terminal": true,
+  "baseline_source": {
+    "clean": true,
+    "commit": "db03c8facca7502d42f327bae4833acac7379946",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "6673f4faf808676491ded792d9123a1ac694bd85bf4abfb14d6ce8d792354795",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "immutable_probe_hashes": {
+    "/tmp/openui-native-glyph-current-build-v1828.py": "8e6c1c2a55867f7603e0dbfa485de2491819883511c8cfd6f39b496536d60e45",
+    "/tmp/openui-native-glyph-current-consumer-v1828.py": "91455d5163670b34419d20f20fbdc04736aee3c7ba25a35a2ba76f5fe8a6a591",
+    "/tmp/openui-native-glyph-current-matrices-v1828.py": "b8b80c4f449831ee1d81f7c12be899f1a40a386005c105107c61b3229644a911"
+  },
+  "javascript_executed_by_openui": false,
+  "native_reference_bytes_must_stay_unchanged": true,
+  "new_release_states_admitted": 0,
+  "observed_exit_code": 1,
+  "owner_pid": 4175099,
+  "pixel_tolerance": 0,
+  "prior_terminal_pipeline_sha256": "438800fcdef3a1d39e9afafe7b1b17019cf32de8b8aef0e2d877b059072583b5",
+  "probe_sha256": "6e3292f47962dbda62b54f24868a5c00a5f72b03f900884b4c165bd056183c46",
+  "promotion_allowed": false,
+  "public_native_rust_apis_required": true,
+  "read_only_check_receipt_sha256": {
+    "baseline": "51e16ca169c37fa879ed493c477067967e17ef64e3160f1d29a67c499fdeed9c",
+    "candidate": "a1caf651d078fd31989d0b2baee29c4bc4e55fa1cfdff8da5fe467d0e0329d58"
+  },
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "c68d946c18ecd1bb6d2f3f84accecaa84cba3651",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "0d7ce4426f3ee68297ee0c0caa073714269d3f0446f762ed3a98e8f442b9d84f",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "c68d946c18ecd1bb6d2f3f84accecaa84cba3651",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "0d7ce4426f3ee68297ee0c0caa073714269d3f0446f762ed3a98e8f442b9d84f",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "complete-requires-exact-pixel-and-regression-review",
+  "steps": [
+    {
+      "log_sha256": "904c731907f20113f08d52ee48fd9fb263900bdec94c40f6b37f6ee59822d888",
+      "name": "baseline-build",
+      "observed_exit_code": 0
+    },
+    {
+      "log_sha256": "43d013236bf29b6fbafcf4559afe6bc85a8cd780ab2a1b2798108e955a5413ab",
+      "name": "baseline-native-fonts",
+      "observed_exit_code": 1
+    },
+    {
+      "log_sha256": "d029e9253aa2784768fc8cfb9ad6382f62e98940d174e572e131c3b0e2dbe4b6",
+      "name": "candidate-build",
+      "observed_exit_code": 0
+    },
+    {
+      "log_sha256": "e576aca9f63af976a2788b9399a00c0ea37a228080703af1d4139841275a4f7d",
+      "name": "candidate-native-fonts",
+      "observed_exit_code": 1
+    },
+    {
+      "log_sha256": "4d5d27f47141da4a2ba94d9b4ba599bc6cfbff10184dd8813515396191d0c06f",
+      "name": "focused",
+      "observed_exit_code": 0
+    },
+    {
+      "log_sha256": "c8ff259e92802eae86439802da4104746cf6157a4c4533dfb2b816a16bc48dd5",
+      "name": "primitive",
+      "observed_exit_code": 0
+    },
+    {
+      "log_sha256": "1ec3fad0c8e26da34fe27c245cd419624df4876d2019d8788067d7e6d61f083b",
+      "name": "full",
+      "observed_exit_code": 1
+    },
+    {
+      "log_sha256": "056df3dc72d3531bf378119ca3a4fac7495899d5ac1d919925c9b3be1839d7b8",
+      "name": "expanded",
+      "observed_exit_code": 1
+    }
+  ],
+  "whole_pipeline_lock_covers_all_stages_and_gaps": true
+}
