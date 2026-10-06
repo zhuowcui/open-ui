@@ -29,23 +29,29 @@ produce the same visual state. See the
 
 ## Verified status
 
-The [caption sizing follow-up](docs/renderer/native-fontations-app.md)
-at clean private `c83d24f3` passes 8,573 workspace tests, zero failed and 13
-ignored, all 20 read-only checks, and Rust/C/C++ ABI consumers. Focused 640/640,
-primitive 960/960, and the repeated native font app's 200 images and 12,800
-bounds remain exact. Original pixels are **21,334/22,924 exact** and expanded
-pixels **22,137/23,728 exact**, zero errors, actual exits 1. Against the accepted
-renderer, there are no exact gains or losses; six failing rows change.
-All 48,252 Chromium records stay fixed.
-The shared caption fix removes the prior six exact regressions. This source
-remains unapplied: six existing sizing differences still worsen. The accepted
-original total stays 21,334/22,924.
-Reduced native probes also expose an open vertical intrinsic-height API gap:
-260/540 minimum-size comparisons match Chromium on the earlier source.
-Umbrella `739a9f25` has six executed PR jobs passing, five skipped, and all nine
-native/comparison guards passing. Those hosted results belong to that umbrella
-head. The [new evidence](docs/renderer/generated/native-fontations-factory-v6.json)
-preserves complete measurements and failed attempts. v0.2 remains unfinished.
+The [native intrinsic sizing follow-up](docs/renderer/native-fontations-app.md) at clean private
+`8f756039` passes **8,575 workspace tests**, zero failed and 13 ignored,
+all 21 read-only checks, and Rust/C/C++ ABI consumers with 113 exports
+and 30 layouts. Its consuming Rust app repeats 2,880 callbacks per run
+and matches **7,360/7,380 element bounds**.
+Twenty vertical text measurements remain different; these geometry
+results do not prove pixel parity. The new fractional line-height guard
+also passes against 270 repeated Chromium observations.
+Original pixels are **21,334/22,924 exact** and expanded
+pixels **22,137/23,728 exact**, zero errors, actual exits 1.
+The original sweep gains 0 exact comparisons and loses 0; the expanded
+sweep gains 0 and loses 0. All 48,252 Chromium records stay fixed.
+6 original comparisons have more wrong pixels than the accepted renderer.
+Focused pixels are 640/640 exact and primitive pixels
+960/960 exact. The repeated native font app passes 200/200 images and
+12,800/12,800 bounds under its selected configuration.
+The source remains private and unqualified; the accepted original
+total stays **21,334/22,924**. Umbrella `376e0ded` has six executed
+PR jobs passing, five skipped, and all nine native/comparison guards
+passing. Hosted results belong to that umbrella source. The
+[v7 evidence](docs/renderer/generated/native-fontations-factory-v7.json) preserves complete measurements and failed
+attempts. Open UI never executes JavaScript; needed interaction uses
+public native Rust APIs and callbacks. v0.2 remains unfinished.
 
 The [shared text measurement trial](docs/renderer/native-fontations-app.md)
 at clean private `2fcdc66d` matches 200/200 Chromium images and all 12,800

@@ -4,7 +4,91 @@ Open UI never executes JavaScript. Applications use public native Rust methods
 and Rust callbacks. Pinned Chromium supplies the expected pixels and element
 bounds. Historical Open UI output remains immutable provenance.
 
-## Caption sizing follow-up
+## Native intrinsic sizing and fractional line height
+
+Clean private `8f756039` completes its entire verification run. All **8,575
+workspace tests pass**, zero failed and 13 ignored, and all **21 read-only
+checks pass**. Rust/C/C++ ABI consumers preserve 113 exports and 30 layouts.
+Both new public Rust callback guards execute and pass. All stages run under
+one exclusive owner; source identities stay clean and unchanged.
+
+The consuming Rust app constructs and changes elements through public methods,
+then calls Rust click callbacks, queries owned bounds, and checks teardown.
+Both runs perform **2,880 callbacks** and return byte-identical output across
+**3,690 cases and 7,380 geometry states**. With viewport overflow explicitly
+matched on both sides, **7,360/7,380 full rectangles** match pinned
+Chromium, compared with 1,640/7,380 on the caption-only source.
+There are **5,720 rectangle gains and 0 losses**.
+These are geometry measurements; native pixels were not captured by this app.
+
+The shared fix maps intrinsic contributions into physical positioned axes,
+applies both minimum and maximum bounds, and lets a minimum win a conflict.
+Fit-content uses the space left after insets and margins. A vertical box with
+automatic width takes its laid-out column extent when insets or an actual
+aspect ratio do not fix that width. Unicode soft breaks also apply to ordinary
+font families. No fixture, font-name, font-size, backend or test-ID condition
+is added by these changes.
+
+Twenty states remain different: `in the box` in DejaVu Sans at 18.72px, in both
+vertical directions, across five scales. The native natural inline size is
+93px versus Chromium's 92px; its minimum is 33px versus 32px. Shared intrinsic
+text advance and strike selection owns the investigation. Its precise cause
+is not yet reviewed; the failed states remain open.
+
+The fractional line-height fix follows the pinned Chromium conversion and
+fixed-point calculations. At 16px, unitless `1.2` uses **19.1875px**, while
+`120%` and a fixed `19.2px` use **19.203125px**. Authored percentages first
+become fixed lengths at computed font size, including Chromium's integral
+percentage conversion. The native guards cover both font families, three
+writing modes and five scales against **270 repeated Chromium observations**.
+They also check callback mutations, owned snapshots and weak-handle teardown.
+The older approximate line-height assertion is replaced with Chromium's exact
+value. Earlier failed guards and captures remain preserved.
+
+| Suite | Exact | Different | Errors | Actual exit |
+|---|---:|---:|---:|---:|
+| Original | 21,334/22,924 | 1,590 | 0 | 1 |
+| Expanded | 22,137/23,728 | 1,591 | 0 | 1 |
+| Focused | 640/640 | 0 | 0 | 0 |
+| Primitive | 960/960 | 0 | 0 | 0 |
+
+The original census changes **6 rows**, gains **0 exact comparisons**
+and loses **0**. The expanded census gains **0** and loses
+**0**. All **48,252 Chromium image and oracle records stay fixed**.
+The exact focused and primitive gates retain their own actual results above.
+**6 original comparisons have more wrong pixels** than the accepted
+renderer; improved native geometry does not waive these failures.
+Each of three sizing variants changes from 57 to 114 wrong pixels at 1.25×
+and from 384 to 406 at 1.5×, the same unresolved differences as the caption
+trial. These failures block applying the combined implementation.
+
+The repeated native font app stays **200/200 images and 12,800/12,800 phase
+cells and bounds exact**. Every native pair repeats; all images and geometry
+remain unchanged from `2fcdc66d`. This selected Fontations configuration does
+not qualify every font or raster setting. Full parity and reviewed ownership
+of every residual are still required.
+
+An earlier full sweep stopped at the disk-space guard after three profiles;
+its partial results are not qualifying. The retry uses a fresh checkout, app,
+probe and result directory. Moving the cache preserved all 66,093 files and
+their original paths byte for byte. The slow serial transfer was stopped
+before it changed the original cache, and its partial copy is preserved.
+
+The [v7 evidence](generated/native-fontations-factory-v7.json) preserves the
+complete census summaries, native apps and callbacks, fresh diagnostic
+Chromium observations, all failed measured attempts, source checks and image
+regions. Every archive member is hash-verified. An independent Git index
+reconstructs all four measured failed and final source trees exactly from
+public `9f0d2211` and their preserved patches. No oracle is rewritten and no
+release state is admitted.
+
+This source remains **private, unapplied and unqualified**. The accepted
+original result stays **21,334/22,924 exact**. Hosted umbrella `376e0ded`
+passes six executed jobs, with five skips, and all nine native/comparison
+guards execute and pass. Those results do not qualify private `8f756039`;
+skipped jobs are not release passes.
+
+## Earlier caption sizing follow-up (`c83d24f3`)
 
 Clean private `c83d24f3` completes the entire follow-up: **8,573 workspace
 tests pass**, zero failed and 13 ignored; all **20 read-only checks pass**.
