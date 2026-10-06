@@ -29,6 +29,20 @@ produce the same visual state. See the
 
 ## Verified status
 
+The [complete font trial](docs/renderer/native-fontations-app.md) at clean
+private `02401648` passes 8,572 workspace tests, zero failed and 13 ignored,
+Rust/C/C++ ABI consumers, focused 640/640 and primitive 960/960. Its repeated
+native app still matches 200/200 Chromium images and all 12,800 bounds.
+The full census exposes six exact regressions: 21,328/22,924 original and
+22,131/23,728 expanded exact, zero errors, actual exits 1. Fourteen rows change
+in each census; all Chromium references remain unchanged. The source stays
+unapplied. A formatter-only follow-up passes 19 checks and has no runtime or
+renderer qualification. The accepted original total remains 21,334/22,924.
+Umbrella `b8527c6e` promotes the exact RGBA diagnostic helper; its six executed
+PR jobs and both new guards pass, with five skipped jobs. No release claim is
+made. The complete reports and regression images are preserved in
+[versioned evidence](docs/renderer/generated/native-fontations-factory-v5.json).
+
 The [shared text measurement trial](docs/renderer/native-fontations-app.md)
 at clean private `2fcdc66d` matches 200/200 Chromium images and all 12,800
 bounds; the native gate exits 0. All image bytes stay unchanged. It restores

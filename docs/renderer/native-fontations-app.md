@@ -4,6 +4,65 @@ Open UI never executes JavaScript. Applications use public native Rust methods
 and Rust callbacks. Pinned Chromium supplies the expected pixels and element
 bounds. Historical Open UI output remains immutable provenance.
 
+## Complete qualification attempt
+
+Clean private source `02401648` completes the entire qualification run. All
+**8,572 workspace tests pass**, with zero failures and 13 ignored. The Linux
+Rust/C/C++ ABI consumers pass with 113 exports and 30 layouts. Both exact RGBA
+comparison guards execute and pass; generated diagnostics and every reference
+remain outside source mutations. All 18 read-only checks pass.
+
+The native Rust app still matches **200/200 Chromium images and
+12,800/12,800 phase cells and bounds**. Every repeated native process succeeds,
+all PNG and geometry results repeat, and every native row matches the prior
+`2fcdc66d` result. The full renderer gate nevertheless fails:
+
+| Suite | Exact | Different | Errors | Actual exit |
+|---|---:|---:|---:|---:|
+| Original | 21,328/22,924 | 1,596 | 0 | 1 |
+| Expanded | 22,131/23,728 | 1,597 | 0 | 1 |
+| Focused | 640/640 | 0 | 0 | 0 |
+| Primitive | 960/960 | 0 | 0 | 0 |
+
+Both complete censuses lose **six exact comparisons and gain none**. Fourteen
+rows change in each census, across five original test IDs. The six lost exact
+results come from `multicol-span-all-004` and its reference at three profiles.
+Their existing fourth-profile failures also worsen. Three existing
+`block-size-with-min-or-max-content-1` variants worsen at two desktop profiles.
+The earlier selected 20-test suite did not include these cases. All 48,252
+Chromium comparison/oracle records remain unchanged; the focused and primitive
+rows retain all nine comparison invariants. Shared intrinsic text measurement
+owns the new investigation. The precise cause and a reduced native probe still
+need review. No new residual is qualified or silently assigned a completed
+cause.
+
+The [versioned evidence](generated/native-fontations-factory-v5.json) preserves
+both full census summaries, native runs, complete focused/primitive results,
+all fourteen regression image sets and their channel/region metrics, failed
+workspace preparations, and hosted job logs. An independent Git index
+reconstructs the measured source and its formatted follow-up exactly from
+public `9f0d2211` and their compressed patches. Every archive member is
+hash-verified. Full-census individual image caches remain at their measured
+local paths; the archive retains their complete comparison records and the
+changed images.
+
+The first full attempt failed nine upstream font tests because their four
+fonts were missing. The exact pinned Skia inputs are now included with hashes;
+all original assertions pass. A subsequent attempt stopped after 221 passing
+tests when the disk guard fired. Both partial runs remain preserved. Older
+terminal binaries are relocated with their recorded hashes checked and their
+original paths retained. No reference or failed result is rewritten.
+
+A separate required formatter check finds indentation and line wrapping in two
+upstream Rust files. Fresh private follow-up `24155c19` fixes that formatting
+and records original/local hashes. All **19 read-only checks pass**; its runtime
+and renderer gates have not run. Neither source is applied to the umbrella,
+which promotes only the exact legacy comparison-helper correction. Umbrella
+`b8527c6e` has six executed PR jobs passing and five skipped; all seven existing
+native guards and both comparison guards execute and pass. Skips and the
+unqualified trial are not release passes. The accepted original result stays
+**21,334/22,924 exact**; v0.2 is unfinished.
+
 ## Exact text diagnostics
 
 The legacy text comparison helper now reads surface pixels in PNG RGBA order
@@ -14,7 +73,7 @@ each channel, an alpha-only diff image, channel order, and translucent colors.
 
 These guards execute successfully on private source `02401648`. Its full
 workspace reports 8,572 passed, zero failed and 13 ignored; Rust/C/C++ ABI
-verification passes. The complete renderer run is still in progress. The ten
+verification passes. The complete renderer result is recorded above. The ten
 legacy scenarios do not count as Chromium passes when reference files are
 absent. The complete Chromium matrices remain the release pixel gates.
 
