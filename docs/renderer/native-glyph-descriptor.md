@@ -174,6 +174,15 @@ glyph. The measured Ahem baselines show that adjustment at 12px and 16px.
 Open UI's current adapter does not implement that platform policy. These are
 shared rules to implement and verify, without font-name or size-specific fixes.
 
+The [native Linux policy follow-up](native-linux-font-policy.md) implements
+that shared rule in a separate private trial. Its independent metrics guard
+reproduces 12/30 old differences and matches all 30 after correction. The first
+native image sweep improves from 62/200 to 162/200 exact, with 100 gains and no
+exact losses. Its element bounds still differ in 1,280 states. A subsequent
+correction separates automatic platform policy from fixed caller hinting;
+345 text tests pass. These trials are unapplied and do not close the complete
+typeface factory or the original renderer gates.
+
 The preserved source checkout is Chromium 147.0.7727.24; the measured pinned
 binary is 147.0.7727.50. Source review explains a candidate rule but does not
 prove the binary's runtime factory selection or explain every remaining pixel.

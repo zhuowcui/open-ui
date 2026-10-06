@@ -29,6 +29,16 @@ produce the same visual state. See the
 
 ## Verified status
 
+The [private Linux font policy follow-up](docs/renderer/native-linux-font-policy.md)
+matches all 30 repeated Chromium font-metric observations. Its first consuming
+Rust app sweep improves from 62/200 to 162/200 exact images, with 100 gains and
+no exact losses; 38 images and 1,280 bounds still differ. A revised explicit
+automatic policy preserves fixed caller hinting and passes 345 text tests.
+Its complete repeated image sweep retains all 200 PNGs byte-identically.
+These sources are unapplied, inherit an older rejected descriptor correction,
+and still need complete typeface, C and renderer qualification. Umbrella
+`0c39998c` passes all hosted workflows and all seven full hardening jobs.
+
 The [native variable-font correction](docs/renderer/native-variable-font-instance.md)
 keeps the font instance selected by a consuming Rust callback when drawing
 outlines. The old callback changes no pixels at five scales; the corrected
