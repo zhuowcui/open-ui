@@ -18,24 +18,21 @@ network access.
 
 ## Native interaction API
 
-Open UI is a native framework and never runs JavaScript. The consuming app
-calls public Rust methods on retained `Document` and `Element` handles and
-handles interaction with Rust callbacks. C applications use the versioned C
-ABI over the same engine.
+Open UI is a native framework. Applications implement interactivity in Rust
+by calling public methods on retained `Document` and `Element` handles and
+registering Rust callbacks. C applications use the versioned C ABI over the
+same engine. Open UI never runs JavaScript, in this or future versions.
 
-Browser element APIs describe operations such as finding an element, changing
-its state, focusing it, scrolling it, and handling events. In Open UI, the
-consuming app calls native Rust methods to perform these operations. There is
-no JavaScript requirement for interacting with elements. Every needed
-operation must be implemented in the shared Rust engine and exposed through
-the public Rust API, including its state changes, geometry and events. A
-missing method is required framework work.
-Browser-style element APIs are native methods callable by the consuming app;
-they do not depend on a JavaScript layer.
-There is no JavaScript glue, script binding, `eval`, or embedded browser
-runtime, in this or future versions.
-The consuming app handles events with Rust callbacks. Scripts used by offline
-Chromium reference tools are separate from the application runtime.
+Finding an element, changing its state, measuring it, focusing it, scrolling
+it, and handling events are native framework operations. Browsers expose
+these operations through JavaScript APIs; Open UI must expose every needed
+operation as a fully implemented public Rust API that the consuming native
+app can call directly. The shared Rust engine must provide its state changes,
+geometry and events. A missing method is required framework work.
+
+These operations require no JavaScript code or runtime. Open UI provides no
+JavaScript glue, script bindings, or `eval`. Scripts used by offline Chromium
+reference tools run in the separate Chromium process.
 
 A missing public native method is unfinished API work. Verify each needed
 operation from a consuming Rust app before claiming it is complete. This
