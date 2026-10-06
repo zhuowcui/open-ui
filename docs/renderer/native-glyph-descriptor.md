@@ -136,10 +136,50 @@ no font-family, size, fixture or test-ID rule. Existing defaults and the
 explicit FreeType choice stay unchanged. All fifteen read-only checks pass.
 The draft changes outline rendering. Font matching, shaping and metrics
 still use the existing Skia typefaces and need separate exact qualification.
-The draft is uncompiled, unapplied and pixel-unqualified; it inherits the
-rejected descriptor candidate. Consuming apps, all raster settings, color and
-variable fonts, neighboring decoration and transform behavior, default native
-pixels, all four matrices and hosted jobs remain required.
+That first record preceded compilation. The
+[completed trial](generated/native-font-choice-v2.json) now records the clean
+`ef8880b0` build: all fifteen source checks, the descriptor guard, 343 text
+tests, 8,560 workspace tests and all eight build stages pass. Thirteen C and
+seven C++ ABI consumers run with 113 exports and 30 layouts.
+
+The real Rust app runs twice for each of four font families, five sizes and
+five scales under three explicit configurations. Its callback replaces text
+and color using native Rust methods. The Fontations outline option matches
+62/200 unchanged Chromium images: all 40 images at scale 1, and 22/160 at
+larger scales. Default and explicit FreeType each remain 0/200 exact. All
+400 images under those two older configurations are byte-identical to their
+previous trial, and every Chromium reference stays unchanged. All repeated
+native images and owned bounds agree. The pixel gate exits 1.
+
+This is an outline adapter, not a complete Fontations typeface factory.
+Matching, shaping and font metrics still use the existing FreeType typefaces.
+It also inherits the rejected descriptor candidate's 29 full-census losses;
+the new source has no new complete census, focused or primitive measurement.
+The option remains private, unapplied and unqualified. No release case is
+admitted, and its 62 native matches do not change the original census totals.
+
+## Measured Linux scale behavior
+
+The completed evidence includes 60 Chromium queries over 30 Ahem and DejaVu
+Sans size/scale cases, repeated in independent browser processes. A zero-size
+inline marker measures the text baseline without changing the original box
+or text-range bounds. These queries create no screenshots and rewrite no
+reference. The requested Fontations flag is recorded; a runtime factory trace
+is still absent.
+
+Chromium changes Linux font policy above scale 1. Its reviewed platform source
+enables subpixel positioning and disables hinting. Its font-metrics code can
+also borrow one pixel from the ascent when a rounded descent would clip the
+glyph. The measured Ahem baselines show that adjustment at 12px and 16px.
+Open UI's current adapter does not implement that platform policy. These are
+shared rules to implement and verify, without font-name or size-specific fixes.
+
+The preserved source checkout is Chromium 147.0.7727.24; the measured pinned
+binary is 147.0.7727.50. Source review explains a candidate rule but does not
+prove the binary's runtime factory selection or explain every remaining pixel.
+The same archive records the umbrella `69747409` hosted jobs: thirteen pass,
+five skip, and none fail. All six named native guards actually run and pass in
+hosted parity. Skipped jobs and the private outline trial are not release passes.
 
 ## Remaining work
 

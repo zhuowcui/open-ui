@@ -29,6 +29,16 @@ produce the same visual state. See the
 
 ## Verified status
 
+The [native variable-font correction](docs/renderer/native-variable-font-instance.md)
+keeps the font instance selected by a consuming Rust callback when drawing
+outlines. The old callback changes no pixels at five scales; the corrected
+callback matches the font's independent reference glyph at all five. Both
+sources pass fifteen read-only checks. The correction passes 342 text tests,
+8,559 workspace tests, all eight build stages and C/C++ ABI consumers.
+Focused 640/640 and primitive 960/960 Chromium checks pass. The complete
+censuses still require a separate regression run; the native callback's glyph
+comparison is not a Chromium pixel result. Open UI executes no JavaScript.
+
 The [native text-width follow-up](docs/renderer/native-intrinsic-snap.md)
 finds that shared sizing discards small shaped fractions which Chromium keeps.
 A narrow correction reproduces the old failure and passes its consuming Rust
@@ -56,6 +66,15 @@ Each loses 29 exact comparisons and gains none. All Chromium inputs remain
 unchanged. The correction is rejected and remains unapplied. The native references select
 Fontations, while the original real-font references select FreeType; the
 current native Rust configuration lacks an explicit Fontations choice.
+The private `ef8880b0` outline option now passes its clean build and 8,560
+workspace tests. Its real Rust callback app matches 62/200 unchanged Chromium
+images: 40/40 at scale 1 and 22/160 at larger scales. Default and FreeType
+remain 0/200, with all 400 prior native images unchanged. The
+[completed evidence](docs/renderer/generated/native-font-choice-v2.json)
+also records repeated Chromium baseline measurements and its Linux scale
+policy. The option still uses FreeType for matching, shaping and metrics,
+inherits the rejected descriptor change, and has no new complete census.
+It remains private and unqualified.
 
 The [shared native font-inheritance correction](docs/renderer/native-text-style-inheritance.md)
 combines Rust/C text replacement with authored style propagation. Its new

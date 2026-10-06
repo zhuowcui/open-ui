@@ -11,7 +11,7 @@ use skia_safe::{
     TextBlob, TextBlobBuilder,
 };
 use skrifa::{
-    instance::{LocationRef, Size},
+    instance::Size,
     outline::{
         DrawSettings, Engine, GlyphStyles, HintingInstance, HintingOptions, OutlinePen, SmoothMode,
         Target,
@@ -107,7 +107,19 @@ fn fontations_compatible_font(
     let font_ref = FontRef::from_index(&font_data, ttc_index as u32).ok()?;
     let outlines = font_ref.outline_glyphs();
     let size = source_font.size();
-    let location = LocationRef::default();
+    // The resolved typeface includes authored variation settings and derived
+    // weight, width, slant and optical size. Reading its original font bytes
+    // alone loses that instance and paints the default glyph outline.
+    let coordinates = source_font.typeface().variation_design_position()?;
+    let normalized_location = font_ref
+        .axes()
+        .location(coordinates.iter().map(|coordinate| {
+            (
+                skrifa::Tag::new(&(*coordinate.axis).to_be_bytes()),
+                coordinate.value,
+            )
+        }));
+    let location = skrifa::instance::LocationRef::from(&normalized_location);
     let hinting = match raster_policy {
         TextRasterPolicy::ChromiumNativeControl
         | TextRasterPolicy::ChromiumAuthorLcd
@@ -929,6 +941,80 @@ impl std::fmt::Debug for ShapeResultRun {
 mod tests {
     use super::{chromium_lcd_raster_x, chromium_lcd_strike_y_offset};
     use skia_safe::{font::Edging, FontHinting};
+
+    #[test]
+    fn fontations_keeps_the_resolved_variable_font_instance() {
+        use skia_safe::font_arguments::{variation_position::Coordinate, VariationPosition};
+        use skia_safe::{Font, FontArguments, FontMgr};
+
+        // This independent WPT font defines the varied A as the upper-half
+        // block and its default A as the lower-half block.
+        let bytes = include_bytes!("../../tests/data/variabletest_box.ttf");
+        let face = FontMgr::default().new_from_data(bytes, None).unwrap();
+        let a = face.unichar_to_glyph('A' as i32);
+        let upper = face.unichar_to_glyph('\u{2580}' as i32);
+        let lower = face.unichar_to_glyph('\u{2584}' as i32);
+        assert!(a != 0 && upper != 0 && lower != 0);
+        let coordinates = [Coordinate {
+            axis: u32::from_be_bytes(*b"UPWD").into(),
+            value: 350.0,
+        }];
+        let varied_face = face
+            .clone_with_arguments(&FontArguments::new().set_variation_design_position(
+                VariationPosition {
+                    coordinates: &coordinates,
+                },
+            ))
+            .unwrap();
+        for size in [20.0, 40.0, 64.0, 200.0] {
+            let reference = Font::from_typeface(&face, size);
+            let varied = Font::from_typeface(&varied_face, size);
+            for policy in [
+                super::TextRasterPolicy::ChromiumNativeControl,
+                super::TextRasterPolicy::ChromiumEmbeddedDocument,
+                super::TextRasterPolicy::ChromiumAuthorLcd,
+                super::TextRasterPolicy::ChromiumAliased,
+            ] {
+                let expected =
+                    super::fontations_compatible_font(&reference, &[a, upper, lower], policy)
+                        .unwrap();
+                let actual = super::fontations_compatible_font(&varied, &[a], policy).unwrap();
+                let render_ink = |font: &Font, glyph| {
+                    let dimension = size.ceil() as i32 + 8;
+                    let mut surface =
+                        skia_safe::surfaces::raster_n32_premul((dimension, dimension)).unwrap();
+                    let canvas = surface.canvas();
+                    canvas.clear(skia_safe::Color::WHITE);
+                    canvas.translate((4.0, size + 4.0));
+                    let mut paint = skia_safe::Paint::default();
+                    paint
+                        .set_color(skia_safe::Color::BLACK)
+                        .set_anti_alias(true);
+                    canvas.draw_path(&font.get_path(glyph).unwrap(), &paint);
+                    surface
+                        .image_snapshot()
+                        .encode(None, skia_safe::EncodedImageFormat::PNG, None)
+                        .unwrap()
+                        .as_bytes()
+                        .to_vec()
+                };
+                // Equal path bounds include degenerate contours and cannot prove
+                // that the variation was applied. Compare the same glyph
+                // before and after mutation; different characters can use
+                // different automatic hinting styles.
+                let upper_ink = render_ink(&expected, upper);
+                let lower_ink = render_ink(&expected, lower);
+                assert!(
+                    upper_ink != lower_ink,
+                    "independent reference glyphs must have different ink"
+                );
+                assert!(
+                    render_ink(&actual, a) != render_ink(&expected, a),
+                    "the resolved variable instance must reach outline painting: {size}, {policy:?}"
+                );
+            }
+        }
+    }
 
     #[test]
     fn chromium_lcd_phase_retains_only_the_24_to_25_sixty_fourths_cell() {
