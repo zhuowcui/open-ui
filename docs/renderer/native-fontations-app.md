@@ -4,7 +4,75 @@ Open UI never executes JavaScript. Applications use public native Rust methods
 and Rust callbacks. Pinned Chromium supplies the expected pixels and element
 bounds. Historical Open UI output remains immutable provenance.
 
-## Complete qualification attempt
+## Caption sizing follow-up
+
+Clean private `c83d24f3` completes the entire follow-up: **8,573 workspace
+tests pass**, zero failed and 13 ignored; all **20 read-only checks pass**.
+The native caption guard exercises public Rust element construction, mutation,
+click callbacks, owned bounds and teardown at five scales and three border
+spacings. The Linux Rust/C/C++ ABI consumers retain 113 exports and 30 layouts.
+The upstream Fontations tests and exact RGBA guards execute and pass.
+
+| Suite | Exact | Different | Errors | Actual exit |
+|---|---:|---:|---:|---:|
+| Original | 21,334/22,924 | 1,590 | 0 | 1 |
+| Expanded | 22,137/23,728 | 1,591 | 0 | 1 |
+| Focused | 640/640 | 0 | 0 | 0 |
+| Primitive | 960/960 | 0 | 0 | 0 |
+
+Each census gains **0 exact comparisons and loses 0**
+against the accepted renderer, with 6 changed rows. All **48,252 Chromium
+comparison/oracle records stay unchanged**. The repeated native font app stays
+**200/200 images and 12,800/12,800 phase cells and bounds exact**; its pixels
+and geometry remain unchanged from `2fcdc66d`. Every native process repeats its
+results and succeeds. These measured results do not qualify every font policy
+or close the complete Chromium and native API gates.
+
+The caption root cause is now reviewed. Caption minimum width and grid
+border-box width constrain the same table wrapper. The old code added empty
+grid spacing to the caption minimum. Unshaped text measured too narrowly and
+accidentally canceled that layout error. With correct shaped measurement,
+the table became 135px wide where Chromium uses 133px. The shared table fix
+takes the maximum of the two constraints and removes that double count. It
+uses no fixture, font-name, font-size, backend or test-ID condition. Both
+original caption cases are exact at three profiles, restoring the six
+regressions. Each retains the accepted one-pixel failure in the fourth profile.
+
+A separate native Rust probe records **2,160** raw advances, shaped advances
+and element bounds; its two outputs are byte-identical. On earlier source
+`02401648`, five-scale Chromium queries match **535/540 natural inline sizes
+and 260/540 minimum inline sizes**. Vertical `min-content` height still uses
+line thickness in cases where Chromium uses an unbroken word's advance:
+16px Ahem `min` is 16px natively versus 48px in Chromium. Shared intrinsic and
+positioned sizing owns this remaining API investigation; its precise fix is
+not yet reviewed. Six existing sizing pixel differences still worsen: each
+of three variants changes from 57 to 114 wrong pixels at 1.25× and from 384
+to 406 at 1.5×. They remain failures and block applying this trial.
+
+The fresh Chromium diagnostic adds only `--disable-dev-shm-usage` to its
+process launch. Its five reduced capture/query pairs and six original
+capture/query pairs repeat exactly. All six original captures retain the
+immutable Chromium RGBA bytes. This storage flag and these selected captures
+are recorded as diagnostic evidence, rather than global release harness
+qualification. JavaScript executes only inside the separate Chromium process.
+Open UI uses native Rust throughout.
+
+The [v6 evidence](generated/native-fontations-factory-v6.json) preserves all
+complete census records, focused/primitive and native results, changed image
+sets with bounds/regions/channel deltas, fresh Chromium geometry, failed
+native builds and browser captures, and the incorrect first absolute-table
+guard. Each archive member is hash-verified. An independent Git index
+reconstructs the entire measured tracked tree from public `9f0d2211` and the
+compressed patch. The earlier failed formatter check remains preserved;
+all seven copied upstream Rust files now pass on the measured source.
+
+The trial remains **unapplied and unqualified**. Accepted original pixels
+remain **21,334/22,924 exact**. Umbrella `739a9f25` completes its hosted checks:
+six executed jobs pass, five skip, and all nine existing native/comparison
+guards execute and pass. These hosted results do not qualify the private
+caption implementation; skipped jobs do not count as release passes.
+
+## Earlier complete attempt (`02401648`, before the caption fix)
 
 Clean private source `02401648` completes the entire qualification run. All
 **8,572 workspace tests pass**, with zero failures and 13 ignored. The Linux

@@ -22,19 +22,23 @@ remain open.
 
 ## Current implementation checkpoint
 
-The [complete font trial](../renderer/native-fontations-app.md) at clean
-private `02401648` passes 8,572 workspace tests, zero failed and 13 ignored,
-Rust/C/C++ ABI consumers, focused 640/640 and primitive 960/960. Its repeated
-native app still matches 200/200 Chromium images and all 12,800 bounds.
-The full census exposes six exact regressions: 21,328/22,924 original and
-22,131/23,728 expanded exact, zero errors, actual exits 1. Fourteen rows change
-in each census; all Chromium references remain unchanged. The source stays
-unapplied. A formatter-only follow-up passes 19 checks and has no runtime or
-renderer qualification. The accepted original total remains 21,334/22,924.
-Umbrella `b8527c6e` promotes the exact RGBA diagnostic helper; its six executed
-PR jobs and both new guards pass, with five skipped jobs. No release claim is
-made. The complete reports and regression images are preserved in
-[versioned evidence](../renderer/generated/native-fontations-factory-v5.json).
+The [caption sizing follow-up](../renderer/native-fontations-app.md)
+at clean private `c83d24f3` passes 8,573 workspace tests, zero failed and 13
+ignored, all 20 read-only checks, and Rust/C/C++ ABI consumers. Focused 640/640,
+primitive 960/960, and the repeated native font app's 200 images and 12,800
+bounds remain exact. Original pixels are **21,334/22,924 exact** and expanded
+pixels **22,137/23,728 exact**, zero errors, actual exits 1. Against the accepted
+renderer, there are no exact gains or losses; six failing rows change.
+All 48,252 Chromium records stay fixed.
+The shared caption fix removes the prior six exact regressions. This source
+remains unapplied: six existing sizing differences still worsen. The accepted
+original total stays 21,334/22,924.
+Reduced native probes also expose an open vertical intrinsic-height API gap:
+260/540 minimum-size comparisons match Chromium on the earlier source.
+Umbrella `739a9f25` has six executed PR jobs passing, five skipped, and all nine
+native/comparison guards passing. Those hosted results belong to that umbrella
+head. The [new evidence](../renderer/generated/native-fontations-factory-v6.json)
+preserves complete measurements and failed attempts. v0.2 remains unfinished.
 
 The [shared text measurement trial](../renderer/native-fontations-app.md)
 at clean private `2fcdc66d` matches 200/200 Chromium images and all 12,800
