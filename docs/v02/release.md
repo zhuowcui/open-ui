@@ -4,6 +4,15 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
+The [real Fontations native app trial](../renderer/native-fontations-app.md)
+at clean private `9e4baa08` matches 200/200 Chromium images, gaining the
+remaining 38 over the outline trial with no losses. All 344 text tests and
+16 source checks pass. Bounds still fail in 1,280 states, and the native gate
+exits 1. This unapplied source has no full renderer, workspace or C
+qualification. It admits no release state and does not change the accepted
+21,334/22,924 original census result or the release bar. Open UI executes no
+JavaScript; needed interaction remains public native Rust methods and callbacks.
+
 The [public native Rust raster options](native-rust-raster-options.md) and
 native keyword constructors are integrated at `2d338d6c`. The clean combined
 checkpoint passes 8,558 workspace tests, all fifteen build stages, fifteen
