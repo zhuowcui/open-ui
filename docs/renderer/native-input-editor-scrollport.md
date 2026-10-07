@@ -106,6 +106,61 @@ version. Pixel exclusion or native fixture lowering never completes or waives
 a needed public Rust API, its state changes, or its Rust callbacks. The older
 audit, manifests and qualification evidence are unchanged.
 
+## Fresh native application builds and editing commands
+
+The [second evidence version](generated/native-input-editor-scrollport-v2.json)
+binds the consuming application's linked libraries to its measured source.
+Each local Cargo artifact must be freshly compiled or match an artifact hash
+from the preceding verified build of that same checkout. The unchanged app
+checks two repeated runs, thirty images and rectangles, Rust callbacks, owned
+snapshots and teardown against the unchanged Chromium captures.
+
+| Clean source | Exact images | Exact rectangles | Comparison with the freshly built parent |
+|---|---:|---:|---|
+| Umbrella `dbaf8ef0` | 22/30 | 30/30 | All thirty native images reproduce the earlier parent bytes |
+| Direct physical monochrome paths `86bcc8bc` | 24/30 | 30/30 | Six gains, four exact losses; rejected |
+| Editor clip alone `01276d52` | 28/30 | 30/30 | Six gains, zero losses and no more-wrong states |
+
+The outline adapter introduces four large-text failures with 1,440, 1,440,
+361 and 5,184 wrong pixels. Text and paint own these failures. Their precise
+mask causes remain open; the trial is rejected and unapplied. The separate
+clip change retains two extra black glyph rows at scale 1.25 and also remains
+private. These runs add no complete renderer matrix or release pass.
+
+Two read-only Chromium observations reproduce the original input PNG bytes
+and measure the editor's text range at x=31, y=26, width=54, height=18. The
+first canvas query used an empty computed font shorthand and therefore
+measured the canvas default font; that query is invalid. The corrected query
+sets the complete 18px family list explicitly. Pinned Chromium's own DEPS and
+Fontations scaler sources are archived with their URLs and hashes; the scaler
+and monochrome-hinting files match the local source bytes reviewed here.
+
+Public Rust `Element::edit_text(EditCommand)` is implemented at `855a2a49`.
+It runs through the same engine and event path as keyboard editing. Move,
+delete, select-all, undo and redo commands are callable from consuming Rust
+apps. Changes to the value dispatch `input` after releasing engine borrows;
+listeners can read and mutate the retained document. Selection-only commands
+dispatch no `input`. Public calls report invalid, disabled and read-only
+editing errors; read-only selection remains available.
+
+All **80 Rust API library tests pass**, including three new guards for Unicode
+graphemes, callback mutations, owned snapshots, handle teardown, read-only and
+disabled controls, and agreement with keyboard state and event counts. The
+[consuming Rust example](../../bindings/rust/openui/examples/native_edit_commands.rs)
+passes twice with six callbacks per run, unchanged geometry, matching owned
+state and clean teardown. Its generated bitmap is not a Chromium pixel pass.
+The first checker's C-generator command names a nonexistent file and exits 2;
+the whole checker exits 1. That failure is preserved. The corrected C generator
+and accountability audit both exit 0.
+Rust formatting and the renderer-contract generator also exit 0.
+
+The hash-verified [supplemental archive](evidence/native-input-editor-scrollport-v2/completed-evidence.tar.gz)
+preserves actual exits, fresh artifact records, native captures, both canvas
+queries, source patches, apps, lockfiles and the pinned primary sources. C edit
+command parity, complete editor scrolling and selection pixels, remaining
+glyph masks, and full renderer qualification remain open. No JavaScript runs
+in Open UI.
+
 ## Failures and qualification limits
 
 The first full run stops at its disk-space guard and remains incomplete. It
