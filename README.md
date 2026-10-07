@@ -27,15 +27,20 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
-The latest [controls and focus checkpoint](docs/renderer/generated/native-controls-focus-v1.json)
-integrates native control geometry and shared Rust/C focus notifications.
-The private focus source matches all 338 Chromium callback observations twice
-in Rust, C and C++ apps; 8,589 workspace tests and all ABI consumers pass.
-Corrected controls preserve all current renderer comparisons. The fresh
-original census is 21,330/22,924 exact: ten Chromium captures changed while
-all native images stayed identical, and the reference audit fails. Both
-reference sets are preserved. Combined-source qualification, that capture
-investigation, remaining pixels and APIs, and release gates remain open.
+The [combined controls and focus checkpoint](docs/renderer/generated/native-controls-focus-v2.json)
+measures clean umbrella `3ee3f9d3`. Rust, C and C++ apps each match all 338
+Chromium focus observations twice. The Rust control app matches all 90 images
+and bounds at five scales, with repeated outputs identical. All 8,595 workspace
+tests, 47 headless C tests and existing ABI consumers pass. All seven hosted
+hardening jobs pass on that same source.
+
+Focused **640/640** and primitive **960/960** are exact. Complete original and
+expanded censuses finish at **21,330/22,924** and **22,133/23,728** exact, with
+zero errors; both full pixel gates fail. Every comparison remains unchanged
+from the preceding source measured with the current capture protocol. Six fresh Chromium captures
+for two cases disagree with cached references under the same recorded input
+identities. Both sets are preserved and the cause remains open. Remaining
+pixels, native APIs, compositor and release-lab gates are unfinished.
 
 The [native input editor follow-up](docs/renderer/native-input-editor-scrollport.md) corrects the private
 single-line editor clip. Its consuming Rust app improves from **22/30 to

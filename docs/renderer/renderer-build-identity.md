@@ -62,6 +62,31 @@ Original results are 21,330/22,924 exact and expanded results 22,133/23,728,
 zero errors; both pixel gates remain red. This correction admits no new
 renderer comparison or release result.
 
+## Reproduced reference identity conflict
+
+Clean umbrella `3ee3f9d3` reproduces the discrepancy with the unmodified
+production capture path. Three independent fresh captures each of
+`float-nowrap-3` at 375×667@2 and `float-nowrap-4-ref2` at 1280×720@1.25
+match their preceding Chromium reference and differ from their current cached
+reference. The exact recorded oracle identities are equal, including browser
+and harness hashes, every font/resource byte, fixtures, profile dimensions,
+backend and feature flags. The immutable cached PNGs and entries stay unchanged.
+The [source-owned evidence](generated/native-controls-focus-v2.json) includes
+all six observations and the original driver/capture failures.
+
+This establishes that the recorded inputs do not yet account for the observed
+capture difference. Font strike hypotheses and the separate startup-scale
+experiment do not establish its runtime cause. No reference is replaced,
+no tolerance is added and no result is admitted as a release pass. Pinned
+Chromium alone defines correct pixels.
+
+The same clean combined source completes focused 640/640 and primitive
+960/960 exact matrices, original 21,330/22,924 and expanded 22,133/23,728
+exact, zero errors. Both full gates exit 1. All nine comparison invariants
+across 48,252 rows remain unchanged from the preceding current-protocol
+baseline. Native and hosted checks pass for that measured source, while full
+renderer qualification and reference reconciliation remain open.
+
 ## Discovered attribution error
 
 The development runs under

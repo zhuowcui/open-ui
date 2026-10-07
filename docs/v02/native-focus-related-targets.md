@@ -1,9 +1,9 @@
 # Native focus notifications
 
-The implementation is integrated into the umbrella PR. The measured private
-source passes native execution and compatibility checks; combined-source
-native, renderer and hosted qualification remains pending. Open UI executes
-no JavaScript. Applications use public Rust methods and callbacks; C uses the
+The implementation is integrated into the umbrella PR. Clean combined source
+`3ee3f9d3` passes native execution, compatibility and hosted hardening checks.
+Both static raster matrices are exact; the complete original and expanded
+pixel gates still fail. Open UI executes no JavaScript. Applications use public Rust methods and callbacks; C uses the
 same retained Document and Engine.
 
 The implementation adds `Event::related_target`, `bubbles`, `cancelable`, and a public
@@ -32,14 +32,19 @@ The Rust, C and C++ consuming apps exercise all twelve scenarios in the
 immutable offline Chromium observation set, including callback redirects and
 immediate stopping. Rust adds weak-handle and cancellation guards. C/C++ source
 checks and ABI generation checks pass; the first C++ enum-conversion error is
-preserved. Clean private `32a7d82b` matches all 338 callback rows twice in each
-language, and passes twelve Rust focus guards plus the existing pointer
-boundary guard. All 8,589 workspace tests and 47 headless C tests pass, along
-with fifteen C and nine C++ consumers and all twenty verification stages. See
-the [source-owned evidence](../renderer/generated/native-controls-focus-v1.json).
+preserved. Clean combined `3ee3f9d3` matches all 338 callback rows twice in
+each language and passes twelve Rust focus guards, eight C guards and the
+existing pointer boundary guard. All 8,595 workspace tests and 47 headless C
+tests pass, with fifteen C and nine C++ consumers and all twenty verification
+stages. All seven hosted hardening jobs pass on that same source. See the
+[source-owned evidence](../renderer/generated/native-controls-focus-v2.json).
+The earlier private source and failed attempts retain their separate identities.
 
 These results qualify the measured scenarios and preserve every prior C layout
 and export. They do not establish all focus contexts or complete element APIs.
 Hidden/inert elements, additional controls, autofocus and nested focus scopes
-remain open. The actual combined umbrella needs its own native, static-renderer
-and hosted qualification. No new pixel or release pass is admitted.
+remain open. Focused 640/640 and primitive 960/960 are exact. Original
+21,330/22,924 and expanded 22,133/23,728 are exact, with zero errors and
+actual exits 1. Every static comparison remains unchanged from the preceding
+current-protocol baseline. Complete Chromium equality and reference capture
+reconciliation remain open. No new pixel or release pass is admitted.

@@ -22,37 +22,53 @@ remain open.
 
 ## Current implementation checkpoint
 
-The [controls and focus evidence](../renderer/generated/native-controls-focus-v1.json)
-records two integrated corrections, with combined-source qualification pending.
-Native controls derive input/textarea intrinsic sizes from fonts and sizing
-attributes, and honor computed resize. The shared importer derives menu-list
-height from actual primary font metrics. The original private candidate's
-stretch-input regression is preserved; its corrected source `2cea3f08`
-preserves all nine comparison invariants against umbrella `a72c2e37` across
-both complete censuses. Focused 640/640 and primitive 960/960 are exact.
+The [combined controls and focus evidence](../renderer/generated/native-controls-focus-v2.json)
+records actual verification of clean umbrella `3ee3f9d3`, with its source and
+executable identities retained. Native controls derive input/textarea sizes
+from fonts and sizing attributes, honor computed resize, and use the primary
+font's metrics for menu-list height. The public Rust control app matches all
+**90/90 images and bounds** across five scales. Both runs are identical, with
+45 callbacks and 45 correct hit targets per run.
 
-Both sources finish at **21,330/22,924 original** and **22,133/23,728 expanded**
-exact, with zero errors and actual exits 1. Across the preceding and current
-capture protocols, all 22,924 native images stay identical, but ten Chromium
-images change. The whole owner fails its final reference-byte audit. Both
-reference sets remain immutable; their font-capture discrepancy needs a
-reviewed cause. Earlier accepted counts remain source-bound historical
-measurements, not qualification for the new protocol.
+The [native focus API](../v02/native-focus-related-targets.md) provides focusin/out,
+weak related targets, and immutable event metadata over the shared Document.
+Rust, C and C++ apps each match **338 Chromium callback rows in twelve
+scenarios**, twice each. Twelve Rust focus guards, eight C focus guards and
+the pointer boundary guard pass. All **8,595 locked workspace tests**, 47
+headless C tests, fifteen C consumers, nine C++ consumers and twenty
+verification stages pass. All 114 prior exports and 31 layouts are preserved;
+the current ABI has 116 exports and 32 layouts.
 
-The [native focus API](../v02/native-focus-related-targets.md) adds focusin/out,
-related targets and immutable event metadata through public Rust methods and
-callbacks. C uses the same Document route and appends two exports plus one
-versioned metadata structure, preserving 114 exports and 31 layouts. Private
-`32a7d82b` matches all 338 Chromium callback observations in twelve scenarios,
-twice each through Rust, C and C++ apps. Its 8,589 workspace tests, 47 headless
-C tests, fifteen C and nine C++ consumers, and all twenty verification stages
-pass. These results retain their measured private source; the combined
-umbrella still requires its own native, pixel and hosted qualification.
+All four pixel matrices finish on that same clean source. Focused **640/640**
+and primitive **960/960** are exact. Original **21,330/22,924** and expanded
+**22,133/23,728** are exact, with zero errors and actual exits 1. All nine
+comparison invariants remain unchanged across 48,252 rows against the
+preceding current-protocol baseline. The original 1,594 and expanded 1,595
+differences remain failures; this is native API verification and renderer
+nonregression, not full pixel qualification.
 
-All seven hosted hardening jobs pass on `a72c2e37`, with zero failures or
-skips. Those results do not qualify the later combined source or physical
-release lab. Full Chromium equality, remaining native APIs, compositor,
-hardware and release gates remain open. Open UI executes no JavaScript.
+The earlier owner failures are preserved: the first pixel driver failed before
+any case because its result parent directory was missing; the parent then
+reported a missing result field. A separate corrected driver completed the
+four matrices using the source-proven owned binary. The earlier private
+controls owner's capture audit also remains a recorded failure.
+
+Six fresh captures of two real-font float cases use the exact same recorded
+Chromium binary, harness, fonts, fixtures, resources, profile and feature
+identities as the current cached reference, but all six differ from that
+reference and match the preceding reference. Both reference sets remain
+immutable. The capture identity conflict is reproduced; its runtime cause is
+still unreviewed. Pinned Chromium remains the pixel target, and old Open UI
+images remain historical evidence.
+
+All **seven hosted hardening jobs** pass on `3ee3f9d3`, with zero failures or
+skips. Ordinary PR CI passes Rust, Python, virtual platform, archive integrity
+and GN checks but fails formatting in the C focus example. The formatting
+correction separately reproduces byte-identical C/C++ observations and is now
+included in this documentation checkpoint; hosted verification of that later
+checkpoint is required. Measurements retain their actual `3ee3f9d3` identity.
+Physical hardware, full Chromium equality, remaining native APIs, compositor
+and release qualification remain open. Open UI executes no JavaScript.
 
 The [native input editor follow-up](../renderer/native-input-editor-scrollport.md) corrects the private
 single-line editor clip. Its consuming Rust app improves from **22/30 to
