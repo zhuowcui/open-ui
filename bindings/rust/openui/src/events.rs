@@ -31,7 +31,13 @@ impl EventState {
                 event_type,
                 "focus" | "blur" | "mouseenter" | "mouseleave" | "pointerenter" | "pointerleave"
             ),
-            cancelable: !matches!(event_type, "focus" | "blur" | "focusin" | "focusout"),
+            // Native input/change notifications report a completed mutation.
+            // Chromium creates them as noncancelable; beforeinput remains
+            // the application callback that may reject the pending edit.
+            cancelable: !matches!(
+                event_type,
+                "focus" | "blur" | "focusin" | "focusout" | "input" | "change"
+            ),
             ..Self::default()
         })
     }

@@ -1821,6 +1821,13 @@ pub extern "C" fn oui_listener_destroy(listener: *mut OuiListener) -> OuiStatus 
     })
 }
 
+fn event_can_be_canceled(event_type: u32) -> bool {
+    // Native input/change notify an already completed edit or activation.
+    // Keep the existing policy for other nonfocus event kinds until each
+    // has its own pinned Chromium and consuming-app qualification.
+    !matches!(event_type, 12 | 13 | 16 | 17 | 25 | 26)
+}
+
 fn invoke_event_listeners(
     state: &DocumentState,
     node: NodeHandle,
@@ -1846,7 +1853,7 @@ fn invoke_event_listeners(
         // No engine or listener-list borrow is held, so reentrant API calls are
         // explicitly permitted. The event pointer lives through the call.
         unsafe { (listener.callback)(event, listener.user_data) };
-        if matches!(event.event_type, 12 | 13 | 25 | 26) {
+        if !event_can_be_canceled(event.event_type) {
             event.flags &= !OUI_EVENT_FLAG_DEFAULT_PREVENTED;
         }
         if event.flags & OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED != 0 {
@@ -1910,6 +1917,9 @@ fn dispatch_event_to(
     event: &mut OuiEvent,
     apply_default: bool,
 ) -> Result<(), ApiError> {
+    if !event_can_be_canceled(event.event_type) {
+        event.flags &= !OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+    }
     if matches!(event.event_type, 25 | 26) {
         // Explicit notifications have no focus default action. Share the Rust
         // route so native listeners and versioned metadata see the same event.
@@ -4903,6 +4913,73 @@ mod tests {
 
         assert_eq!(oui_element_destroy(input), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(checkbox), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn completed_input_notifications_discard_c_cancellation_in_each_callback() {
+        #[derive(Default)]
+        struct Seen {
+            attempts: usize,
+            later_flags: Vec<u32>,
+        }
+        unsafe extern "C" fn cancel(event: *mut OuiEvent, data: *mut c_void) {
+            // SAFETY: the synchronous test dispatch provides a writable event
+            // and the registered Seen value stays live until listener teardown.
+            let (seen, event) = unsafe { (&mut *(data as *mut Seen), &mut *event) };
+            seen.attempts += 1;
+            event.flags |= OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+        }
+        unsafe extern "C" fn observe(event: *mut OuiEvent, data: *mut c_void) {
+            // SAFETY: these pointers obey the same test callback lifetime.
+            let (seen, event) = unsafe { (&mut *(data as *mut Seen), &*event) };
+            seen.later_flags.push(event.flags);
+        }
+        let document = create_document(160, 100);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let input = create_element(document, 23, root);
+        let mut seen = Seen::default();
+        let data = (&mut seen as *mut Seen).cast::<c_void>();
+        let mut listeners = Vec::new();
+        for callback in [cancel as OuiEventCallback, observe as OuiEventCallback] {
+            let mut listener = ptr::null_mut();
+            assert_eq!(
+                oui_element_add_event_listener(input, 16, 0, Some(callback), data, &mut listener),
+                OuiStatus::Ok
+            );
+            listeners.push(listener);
+        }
+        assert_eq!(oui_element_focus(input), OuiStatus::Ok);
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, text("A")),
+            OuiStatus::Ok
+        );
+        let mut bytes = [0; 16];
+        let mut length = 0;
+        assert_eq!(
+            oui_element_copy_control_value(input, bytes.as_mut_ptr(), bytes.len(), &mut length),
+            OuiStatus::Ok
+        );
+        assert_eq!(&bytes[..length], b"A");
+        assert_eq!(seen.attempts, 1);
+        assert_eq!(seen.later_flags, [0]);
+        // Explicit facade notifications use the same cancellation policy,
+        // including an incoming descriptor that tries to mark input canceled.
+        let mut event = synthesized_event(16, empty_utf8());
+        event.flags = OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+        assert_eq!(
+            oui_document_dispatch_event(document, input, &mut event),
+            OuiStatus::Ok
+        );
+        assert_eq!(event.flags, 0);
+        assert_eq!(seen.attempts, 2);
+        assert_eq!(seen.later_flags, [0, 0]);
+        for listener in listeners {
+            assert_eq!(oui_listener_destroy(listener), OuiStatus::Ok);
+        }
+        assert_eq!(oui_element_destroy(input), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
     }
