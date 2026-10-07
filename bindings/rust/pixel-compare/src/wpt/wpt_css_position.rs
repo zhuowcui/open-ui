@@ -122187,12 +122187,22 @@ fn css_position_position_absolute_semi_replaced_stretch_other(
     );
     doc.set_style(n2, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n2, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
+    let mut n2_menu_description =
+        openui_text::FontDescription::from_computed_style(doc.computed_style(n2));
+    n2_menu_description.size = 13.333333;
+    let n2_menu_font = openui_text::Font::new_in_collection(
+        n2_menu_description,
+        std::sync::Arc::clone(doc.font_collection()),
+    );
+    let n2_menu_height = n2_menu_font.font_metrics().map_or(13.333333, |metrics| {
+        metrics.int_ascent() + metrics.int_descent()
+    });
     doc.set_node_state(
         n2,
         RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
             resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
             intrinsic_width: Some(20.0),
-            intrinsic_height: Some(15.0),
+            intrinsic_height: Some(n2_menu_height + 2.0),
             intrinsic_ratio: None,
         })),
     );
@@ -122883,6 +122893,7 @@ fn css_position_position_absolute_semi_replaced_stretch_other(
     );
     doc.set_node_state(n19, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n19, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n19, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n19, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n19, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n19, RendererStyleValue::BorderTopWidth(1));
@@ -123412,12 +123423,22 @@ fn css_position_position_absolute_semi_replaced_stretch_other_ref(
     );
     doc.set_style(n2, RendererStyleValue::BorderLeftWidth(1));
     doc.set_style(n2, RendererStyleValue::BorderLeftStyle(BorderStyle::Inset));
+    let mut n2_menu_description =
+        openui_text::FontDescription::from_computed_style(doc.computed_style(n2));
+    n2_menu_description.size = 13.333333;
+    let n2_menu_font = openui_text::Font::new_in_collection(
+        n2_menu_description,
+        std::sync::Arc::clone(doc.font_collection()),
+    );
+    let n2_menu_height = n2_menu_font.font_metrics().map_or(13.333333, |metrics| {
+        metrics.int_ascent() + metrics.int_descent()
+    });
     doc.set_node_state(
         n2,
         RendererNodeState::Replaced(Some(openui_dom::ReplacedContent {
             resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
             intrinsic_width: Some(20.0),
-            intrinsic_height: Some(15.0),
+            intrinsic_height: Some(n2_menu_height + 2.0),
             intrinsic_ratio: None,
         })),
     );
@@ -124124,6 +124145,7 @@ fn css_position_position_absolute_semi_replaced_stretch_other_ref(
     );
     doc.set_node_state(n19, RendererNodeState::FormControlDisabled(false));
     doc.set_style(n19, RendererStyleValue::BoxSizing(BoxSizing::BorderBox));
+    doc.set_style(n19, RendererStyleValue::Resize(Resize::Both));
     doc.set_style(n19, RendererStyleValue::OverflowX(Overflow::Auto));
     doc.set_style(n19, RendererStyleValue::OverflowY(Overflow::Auto));
     doc.set_style(n19, RendererStyleValue::BorderTopWidth(1));

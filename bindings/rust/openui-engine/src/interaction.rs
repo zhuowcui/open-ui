@@ -113,6 +113,7 @@ pub struct ControlState {
     pub max: f64,
     pub step: f64,
     pub password: bool,
+    pub(crate) native_intrinsic_sizing: bool,
     composition_original: Option<(String, usize, usize)>,
     history: Vec<String>,
     future: Vec<String>,
@@ -147,6 +148,10 @@ impl ControlState {
             max: 100.0,
             step: 1.0,
             password: false,
+            native_intrinsic_sizing: matches!(
+                role,
+                FormControlRole::TextInput | FormControlRole::TextArea
+            ),
             composition_original: None,
             history: Vec::new(),
             future: Vec::new(),

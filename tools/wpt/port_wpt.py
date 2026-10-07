@@ -10831,6 +10831,10 @@ def generate_rust_fn(
                 f"BoxSizing::{'ContentBox' if control_all_reset else 'BorderBox'};"
             )
             if node.tag == 'textarea':
+                # The UA enables resizing unless an all reset removes that
+                # declaration. Later authored resize declarations override it.
+                if not control_all_reset:
+                    lines.append(f"{ws}doc.node_mut({var}).style.resize = Resize::Both;")
                 lines.append(f"{ws}doc.node_mut({var}).style.overflow_x = Overflow::Auto;")
                 lines.append(f"{ws}doc.node_mut({var}).style.overflow_y = Overflow::Auto;")
             input_type = node.attrs.get('type', 'text').lower() if node.tag == 'input' else ''
@@ -11499,7 +11503,42 @@ def generate_rust_fn(
                     15.0 if authored_font_token is None else
                     float(max(3.0, round(select_font_size)))
                 )
-                intrinsic_height = float(visible_rows * select_row_height)
+                if (
+                    RETAIN_TEXT
+                    and not is_real_font_profile()
+                    and visible_rows == 1
+                    and not multiple
+                    and not control_all_reset
+                    and node.styles.get('appearance', '').strip() != 'none'
+                ):
+                    # Blink's native menu list uses the primary font's
+                    # integer ascent + descent, plus one CSS pixel of inner
+                    # theme padding at each block edge. Resolve those metrics
+                    # in the Engine's font collection rather than rounding
+                    # the font size or approximating the face's ascent.
+                    # The control's UA size is 13.3333px unless authored;
+                    # it does not inherit the parent's default 16px size.
+                    # See LayoutBox::MenuListIntrinsicBlockSize and
+                    # LayoutThemeDefault::PopupInternalPaddingTop/Bottom.
+                    menu_font_size = (
+                        13.333333 if authored_font_token is None
+                        else select_font_size
+                    )
+                    lines.append(
+                        f"{ws}let mut {var}_menu_description = openui_text::FontDescription::from_computed_style(&doc.node({var}).style);"
+                    )
+                    lines.append(
+                        f"{ws}{var}_menu_description.size = {menu_font_size};"
+                    )
+                    lines.append(
+                        f"{ws}let {var}_menu_font = openui_text::Font::new_in_collection({var}_menu_description, std::sync::Arc::clone(doc.font_collection()));"
+                    )
+                    lines.append(
+                        f"{ws}let {var}_menu_height = {var}_menu_font.font_metrics().map_or({menu_font_size}, |metrics| metrics.int_ascent() + metrics.int_descent());"
+                    )
+                    intrinsic_height = f"{var}_menu_height + 2.0"
+                else:
+                    intrinsic_height = float(visible_rows * select_row_height)
             lines.append(
                 f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
                 "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "

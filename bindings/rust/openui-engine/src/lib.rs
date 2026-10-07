@@ -2,6 +2,7 @@
 
 mod accessibility;
 mod animation;
+mod control_geometry;
 mod interaction;
 mod scroll_into_view;
 
@@ -1169,6 +1170,8 @@ impl Engine {
         self.mark_dirty(
             if name == "open" && self.document.node(node).tag == ElementTag::Details {
                 InvalidationClass::Subtree
+            } else if self.control_attribute_changes_geometry(node, &name) {
+                InvalidationClass::Intrinsic
             } else {
                 InvalidationClass::Accessibility
             },
@@ -1207,6 +1210,9 @@ impl Engine {
                     && self.document.node(node).tag == ElementTag::Details
                 {
                     InvalidationClass::Subtree
+                } else if self.control_attribute_changes_geometry(node, &name.to_ascii_lowercase())
+                {
+                    InvalidationClass::Intrinsic
                 } else {
                     InvalidationClass::Accessibility
                 },
@@ -1437,7 +1443,7 @@ impl Engine {
                     if !slot.resolved_style_snapshot {
                         style.inherit_properties_from(&parent);
                     }
-                    let style = Self::resolve_native_declarations(
+                    let mut style = Self::resolve_native_declarations(
                         style,
                         &declarations,
                         parent.font_size,
@@ -1445,6 +1451,7 @@ impl Engine {
                         viewport,
                         node == self.document.root(),
                     )?;
+                    self.adjust_native_control_style(index, node, &mut style);
                     self.document.install_resolved_style(node, style);
                 }
                 self.refresh_authored_pseudo_styles(node, index)?;
@@ -1640,6 +1647,9 @@ impl Engine {
                         return Err(EngineError::UnknownResource);
                     }
                 }
+                if let Some(control) = self.controls.get_mut(&handle.index) {
+                    control.native_intrinsic_sizing = false;
+                }
                 self.document.node_mut(node).replaced = value;
             }
             RendererNodeState::TableColumnSpan(value) => {
@@ -1804,6 +1814,9 @@ impl Engine {
             .unwrap_or((None, None));
         let intrinsic_ratio = intrinsic_size
             .and_then(|(width, height)| (width > 0.0 && height > 0.0).then_some((width, height)));
+        if let Some(control) = self.controls.get_mut(&handle.index) {
+            control.native_intrinsic_sizing = false;
+        }
         self.document.node_mut(node).replaced = Some(ReplacedContent {
             resource: ReplacedResourceKind::Image(resource),
             intrinsic_width,
@@ -2077,6 +2090,7 @@ impl Engine {
         let width = self.viewport.logical_width();
         let height = self.viewport.logical_height();
         if self.dirty.layout || self.latest_fragment.is_none() {
+            self.refresh_native_control_geometry();
             let root_style = &self.document.node(self.document.root()).style;
             let direction = root_style
                 .direction
@@ -3197,6 +3211,43 @@ mod tests {
         let second = engine.scene().unwrap();
         assert_eq!(first.generation(), second.generation());
         assert_eq!(stats, engine.stats());
+    }
+
+    #[test]
+    fn native_control_attribute_no_op_does_no_work_and_explicit_metadata_survives() {
+        let mut engine = Engine::new_with_font_collection(
+            ViewportMetrics::from_logical_size(640.0, 360.0, 1.0).unwrap(),
+            FontCollection::deterministic_test(),
+        )
+        .unwrap();
+        let input = engine.create_native_element(ElementTag::Input).unwrap();
+        engine.append_child(engine.root(), input).unwrap();
+        engine.set_attribute(input, "size", "7").unwrap();
+        engine.scene().unwrap();
+        let stats = engine.stats();
+        engine.set_attribute(input, "size", "7").unwrap();
+        engine.scene().unwrap();
+        assert_eq!(stats, engine.stats());
+
+        engine
+            .set_renderer_node_state(
+                input,
+                RendererNodeState::Replaced(Some(ReplacedContent {
+                    resource: ReplacedResourceKind::TransparentCanvas,
+                    intrinsic_width: Some(80.0),
+                    intrinsic_height: Some(30.0),
+                    intrinsic_ratio: None,
+                })),
+            )
+            .unwrap();
+        engine.set_attribute(input, "size", "3").unwrap();
+        let bounds = engine.bounds(input).unwrap().unwrap();
+        assert_eq!((bounds.width, bounds.height), (80.0, 30.0));
+        let clone = engine.clone_subtree(input).unwrap();
+        engine.append_child(engine.root(), clone).unwrap();
+        engine.set_attribute(clone, "size", "9").unwrap();
+        let bounds = engine.bounds(clone).unwrap().unwrap();
+        assert_eq!((bounds.width, bounds.height), (80.0, 30.0));
     }
 
     #[test]

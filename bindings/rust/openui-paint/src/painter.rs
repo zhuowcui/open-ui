@@ -2271,9 +2271,10 @@ fn paint_textarea_resize_grip(
     abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
-    // The native theme suppresses the affordance when its motif cannot fit
-    // inside the textarea's border box.
-    if fragment.size.height < LayoutUnit::from_i32(15) {
+    // Resize is an authored/computed property. A text-area role alone does
+    // not enable its affordance. The motif must also fit inside the box.
+    if style.resize == openui_style::Resize::None || fragment.size.height < LayoutUnit::from_i32(15)
+    {
         return;
     }
     let right = (abs_offset.left + fragment.size.width).round().to_f32();
