@@ -75,6 +75,11 @@ application. Test coverage must exercise the retained state and resulting
 events or rendering. A missing public method remains an implementation gap
 until that native application path works.
 
+The [native focus follow-up](native-focus-behavior.md) implements negative
+`tabindex` focus, modal callback/restoration behavior and capture/target focus
+notifications. Rust and C use the shared Document transition; remaining focus
+contexts and default control geometry are still unqualified.
+
 The [native focus callback correction](native-focus-events.md) routes Rust,
 C, keyboard and accessibility focus/blur through the retained Document. It
 verifies callback order, composition cancellation and callback mutation from

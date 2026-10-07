@@ -80,7 +80,13 @@ cargo test --locked -p openui --test native_focus
 cargo test --locked -p openui-ffi --lib focus_tests
 ```
 
-## Remaining work
+## Later implementation
+
+The [native focus follow-up](native-focus-behavior.md) implements negative
+`tabindex` focus, modal callback delivery and non-bubbling propagation on
+`442d7a64`. The v1 evidence above keeps its original source and scope.
+
+## Work open at the v1 checkpoint
 
 This evidence closes the demonstrated callback and composition gap. It does
 not qualify all focus semantics or all element APIs. Focusing elements with a
