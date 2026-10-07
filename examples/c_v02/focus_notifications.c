@@ -18,7 +18,8 @@
   {}
 #else
 #define FOCUS_STATIC_ASSERT _Static_assert
-#define FOCUS_ZERO_INIT {0}
+#define FOCUS_ZERO_INIT \
+  { 0 }
 #endif
 
 typedef struct Fixture Fixture;
