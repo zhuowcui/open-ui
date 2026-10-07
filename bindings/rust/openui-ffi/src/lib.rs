@@ -8,6 +8,8 @@
 
 mod accessibility_snapshot;
 mod editing_command;
+#[cfg(test)]
+mod focus_tests;
 mod generated;
 mod native_app;
 #[cfg(test)]
@@ -1692,15 +1694,31 @@ pub extern "C" fn oui_element_get_scroll_offset(
 }
 
 // SAFETY CONTRACT: `element` is a live element handle owned by this thread.
+// Listener user_data stays live through synchronous callbacks. Callbacks run
+// after engine and facade borrows have been released and may mutate the document.
 #[no_mangle]
 pub extern "C" fn oui_element_focus(element_handle: *mut OuiElement) -> OuiStatus {
-    ffi(|| with_element_mut(element_handle as usize, Engine::focus))
+    ffi(|| {
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        state
+            .native
+            .focus_element_for_native_facade(element.node)
+            .map_err(native_app::native_error)
+    })
 }
 
 // SAFETY CONTRACT: `element` is a live element handle owned by this thread.
 #[no_mangle]
 pub extern "C" fn oui_element_blur(element_handle: *mut OuiElement) -> OuiStatus {
-    ffi(|| with_element_mut(element_handle as usize, Engine::blur))
+    ffi(|| {
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        state
+            .native
+            .blur_element_for_native_facade(element.node)
+            .map_err(native_app::native_error)
+    })
 }
 
 // SAFETY CONTRACT: `element` is a live element handle owned by this thread.
@@ -2571,10 +2589,23 @@ pub extern "C" fn oui_element_perform_accessibility_action(
         };
         let element = element(element_handle as usize)?;
         let state = element_document(&element)?;
+        match action {
+            AccessibilityAction::Focus => {
+                return state
+                    .native
+                    .focus_accessibility_element_for_native_facade(element.node)
+                    .map_err(native_app::native_error);
+            }
+            AccessibilityAction::Blur => {
+                return state
+                    .native
+                    .blur_element_for_native_facade(element.node)
+                    .map_err(native_app::native_error);
+            }
+            _ => {}
+        }
         let ordinary_event_type = match &action {
             AccessibilityAction::Click => Some(4),
-            AccessibilityAction::Focus => Some(12),
-            AccessibilityAction::Blur => Some(13),
             _ => None,
         };
         if let Some(event_type) = ordinary_event_type {

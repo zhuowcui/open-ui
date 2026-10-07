@@ -401,13 +401,18 @@ impl Engine {
         })
     }
 
+    /// Validate whether native focus can be requested without changing state.
+    pub fn can_focus(&self, handle: NodeHandle) -> Result<bool, EngineError> {
+        self.resolve(handle)?;
+        Ok(self.is_focusable(handle))
+    }
+
     pub fn focus_with_origin(
         &mut self,
         handle: NodeHandle,
         origin: FocusOrigin,
     ) -> Result<Option<NodeHandle>, EngineError> {
-        self.resolve(handle)?;
-        if !self.is_focusable(handle) {
+        if !self.can_focus(handle)? {
             return Err(EngineError::NotFocusable);
         }
         let previous = self.focused;
@@ -436,6 +441,16 @@ impl Engine {
     }
 
     pub fn advance_focus(&mut self, direction: i32) -> Result<Option<NodeHandle>, EngineError> {
+        let next = self.next_focus_target(direction)?;
+        if let Some(next) = next {
+            self.focus_with_origin(next, FocusOrigin::Keyboard)?;
+        }
+        Ok(next)
+    }
+
+    /// Choose a sequential focus target without mutating focus. Native frontends
+    /// release their engine borrow before delivering the intervening blur event.
+    pub fn next_focus_target(&self, direction: i32) -> Result<Option<NodeHandle>, EngineError> {
         if direction != -1 && direction != 1 {
             return Err(EngineError::InvalidInput("focus direction must be -1 or 1"));
         }
@@ -454,7 +469,6 @@ impl Engine {
             _ => unreachable!(),
         };
         let next = candidates[index];
-        self.focus_with_origin(next, FocusOrigin::Keyboard)?;
         Ok(Some(next))
     }
 

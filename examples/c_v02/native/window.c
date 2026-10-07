@@ -9,7 +9,11 @@ typedef struct NativeContext {
   OuiElement* card;
   OuiElement* textarea;
   OuiListener* input_listener;
+  OuiListener* focus_listener;
+  OuiListener* blur_listener;
   uint32_t input_events;
+  uint32_t focus_events;
+  uint32_t blur_events;
   uint32_t backend;
   uint64_t frames;
   uint64_t first_hash;
@@ -51,6 +55,19 @@ static void input_event(OuiEvent* event, void* user_data) {
   check(context, oui_element_set_attribute(context->card, text("data-input"), text("seen")));
 }
 
+static void focus_event(OuiEvent* event, void* user_data) {
+  NativeContext* context = (NativeContext*)user_data;
+  if (event->target != context->textarea || event->current_target != context->textarea)
+    context->failed = 1;
+  if (event->event_type == OUI_EVENT_FOCUS)
+    ++context->focus_events;
+  else if (event->event_type == OUI_EVENT_BLUR)
+    ++context->blur_events;
+  else
+    context->failed = 1;
+  check(context, oui_element_set_attribute(context->card, text("data-focus"), text("seen")));
+}
+
 static void platform_event(OuiApp* app, const OuiPlatformEvent* event, void* user_data) {
   NativeContext* context = (NativeContext*)user_data;
   if (event->struct_size < sizeof(*event) || event->abi_version != OUI_ABI_VERSION) {
@@ -84,6 +101,12 @@ static void platform_event(OuiApp* app, const OuiPlatformEvent* event, void* use
       if (event->frame_number == 1) {
         context->first_hash = hash;
         check(context, oui_element_focus(context->textarea));
+        check(context, oui_element_focus(context->textarea));
+        check(context, oui_element_blur(context->textarea));
+        check(context, oui_element_blur(context->textarea));
+        check(context, oui_element_focus(context->textarea));
+        if (context->focus_events != 2 || context->blur_events != 1)
+          context->failed = 1;
         OuiEvent key = {.struct_size = sizeof(key),
                         .abi_version = OUI_ABI_VERSION,
                         .event_type = OUI_EVENT_KEY_DOWN,
@@ -157,6 +180,10 @@ int main(int argc, char** argv) {
   check(&context, oui_element_set_selection(context.textarea, 3, 3));
   check(&context, oui_element_add_event_listener(context.textarea, OUI_EVENT_INPUT, 0, input_event,
                                                  &context, &context.input_listener));
+  check(&context, oui_element_add_event_listener(context.textarea, OUI_EVENT_FOCUS, 0, focus_event,
+                                                 &context, &context.focus_listener));
+  check(&context, oui_element_add_event_listener(context.textarea, OUI_EVENT_BLUR, 0, focus_event,
+                                                 &context, &context.blur_listener));
   OuiAppRunConfig run = {sizeof(run), OUI_ABI_VERSION, 0, 0, platform_event, &context};
   check(&context, oui_app_run(app, &run));
   if (oui_app_run(app, &run) != OUI_ERROR_INVALID_STATE)
@@ -164,11 +191,15 @@ int main(int argc, char** argv) {
   check(&context, oui_app_destroy(app));
   check(&context, oui_document_update(context.document));
   check(&context, oui_listener_destroy(context.input_listener));
+  check(&context, oui_listener_destroy(context.focus_listener));
+  check(&context, oui_listener_destroy(context.blur_listener));
   check(&context, oui_element_destroy(context.textarea));
   check(&context, oui_element_destroy(context.card));
   check(&context, oui_element_destroy(root));
   check(&context, oui_document_destroy(context.document));
-  printf("native C: backend=%u frames=%llu resized=%d input=%u\n", context.backend,
-         (unsigned long long)context.frames, context.resized, context.input_events);
-  return context.failed || context.frames < 2 || !context.resized || context.input_events != 5;
+  printf("native C: backend=%u frames=%llu resized=%d input=%u focus=%u blur=%u\n", context.backend,
+         (unsigned long long)context.frames, context.resized, context.input_events,
+         context.focus_events, context.blur_events);
+  return context.failed || context.frames < 2 || !context.resized || context.input_events != 5 ||
+         context.focus_events != 2 || context.blur_events != 1;
 }

@@ -153,6 +153,29 @@ impl Document {
         self.edit_control(target, command)
     }
 
+    /// Share native focus state, composition cancellation and event delivery
+    /// with another language facade. No engine borrow may be held by the caller.
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn focus_element_for_native_facade(&self, target: NodeHandle) -> Result<(), Error> {
+        self.focus_element(target)
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn blur_element_for_native_facade(&self, target: NodeHandle) -> Result<(), Error> {
+        self.blur_element(target)
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn focus_accessibility_element_for_native_facade(
+        &self,
+        target: NodeHandle,
+    ) -> Result<(), Error> {
+        self.change_focus(Some(target), FocusOrigin::Accessibility)
+    }
+
     pub fn body(&self) -> Element {
         let handle = self.inner.engine.borrow().root();
         Element::from_handle(self.clone(), handle)
@@ -310,6 +333,13 @@ impl Document {
         target: NodeHandle,
         action: AccessibilityAction,
     ) -> Result<(), Error> {
+        match action {
+            AccessibilityAction::Focus => {
+                return self.change_focus(Some(target), FocusOrigin::Accessibility);
+            }
+            AccessibilityAction::Blur => return self.blur_element(target),
+            _ => {}
+        }
         if action == AccessibilityAction::Click {
             let event = Event::keyboard("click", 0, None, Modifiers::NONE);
             self.dispatch_to(target, &event)?;
@@ -830,9 +860,11 @@ impl Document {
         if direction != -1 && direction != 1 {
             return Err(Error::InvalidArgument("focus direction must be -1 or 1"));
         }
-        let previous = self.with_engine(|engine| engine.focused())?;
-        let next = self.with_engine_mut(|engine| engine.advance_focus(direction))?;
-        self.dispatch_focus_change(previous, next)
+        let next = self.with_engine(|engine| engine.next_focus_target(direction))??;
+        if let Some(next) = next {
+            self.change_focus(Some(next), FocusOrigin::Keyboard)?;
+        }
+        Ok(())
     }
 
     pub fn dispatch_text_input(&self, text: &str) -> Result<(), Error> {
@@ -1168,24 +1200,69 @@ impl Document {
     }
 
     fn focus_from(&self, target: NodeHandle, origin: FocusOrigin) -> Result<(), Error> {
-        let outcome = self.with_engine_mut(|engine| engine.focus_with_origin(target, origin));
-        let Ok(previous) = outcome else {
-            return Ok(());
-        };
-        self.dispatch_focus_change(previous, Some(target))
+        match self.change_focus(Some(target), origin) {
+            // Pointer input on a nonfocusable or removed target has no default focus.
+            Err(Error::Engine(
+                openui_engine::EngineError::NotFocusable | openui_engine::EngineError::StaleHandle,
+            )) => Ok(()),
+            result => result,
+        }
     }
 
     pub(crate) fn focus_element(&self, target: NodeHandle) -> Result<(), Error> {
-        let previous =
-            self.with_engine_mut(|engine| engine.focus_with_origin(target, FocusOrigin::Script))?;
-        self.dispatch_focus_change(previous, Some(target))
+        self.change_focus(Some(target), FocusOrigin::Script)
     }
 
     pub(crate) fn blur_element(&self, target: NodeHandle) -> Result<(), Error> {
+        // A blur on another valid element is a no-op, including for composition.
+        self.with_engine(|engine| target.downgrade().upgrade(engine))??;
+        if self.with_engine(Engine::focused)? == Some(target) {
+            self.change_focus(None, FocusOrigin::Script)?;
+        }
+        Ok(())
+    }
+
+    fn change_focus(&self, next: Option<NodeHandle>, origin: FocusOrigin) -> Result<(), Error> {
+        if let Some(next) = next {
+            if !self.with_engine(|engine| engine.can_focus(next))?? {
+                return Err(openui_engine::EngineError::NotFocusable.into());
+            }
+        }
         let previous = self.with_engine(Engine::focused)?;
-        self.with_engine_mut(|engine| engine.blur(target))?;
-        if previous == Some(target) {
-            self.dispatch_focus_change(previous, None)?;
+        if previous == next {
+            return Ok(());
+        }
+        if self
+            .inner
+            .composition_target
+            .get()
+            .is_some_and(|target| Some(target) != next)
+        {
+            self.dispatch_composition_cancel()?;
+        }
+        let current = self.with_engine(Engine::focused)?;
+        if current.is_some() && current != previous {
+            // A composition callback chose another control. Keep that decision.
+            return Ok(());
+        }
+        if let Some(current) = current {
+            self.with_engine_mut(|engine| engine.blur(current))?;
+            self.dispatch_to(current, &Event::keyboard("blur", 0, None, Modifiers::NONE))?;
+        }
+        // Blur callbacks run while nothing is focused and may choose a target.
+        // If they focus and then blur it, the original request may continue.
+        if self.with_engine(Engine::focused)?.is_some() {
+            return Ok(());
+        }
+        if let Some(next) = next {
+            // The blur/composition callback may have removed or disabled it.
+            if !self.target_is_live(next)?
+                || !self.with_engine(|engine| engine.can_focus(next))??
+            {
+                return Ok(());
+            }
+            self.with_engine_mut(|engine| engine.focus_with_origin(next, origin))?;
+            self.dispatch_to(next, &Event::keyboard("focus", 0, None, Modifiers::NONE))?;
         }
         Ok(())
     }
