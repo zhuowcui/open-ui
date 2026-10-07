@@ -88,6 +88,7 @@ fn headless_c_build_preserves_app_api_and_reports_native_run_unavailable() {
 #[cfg(all(feature = "linux", target_os = "linux"))]
 mod linux {
     use super::*;
+    use openui_engine::FocusOrigin;
     use openui_platform::{KeyPhase, KeyboardInput, Modifiers, PlatformApplication, PlatformEvent};
 
     fn document_and_input(
