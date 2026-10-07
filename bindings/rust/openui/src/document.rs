@@ -35,6 +35,7 @@ pub(crate) struct DocumentInner {
     pub clipboard: RefCell<String>,
     composition_target: Cell<Option<NodeHandle>>,
     composition_generation: Cell<u64>,
+    modal_generation: Cell<u64>,
     animation_events: RefCell<Vec<AnimationEvent>>,
     transaction_depth: Cell<usize>,
     #[cfg(feature = "ffi-integration")]
@@ -93,6 +94,7 @@ impl Document {
                 clipboard: RefCell::new(String::new()),
                 composition_target: Cell::new(None),
                 composition_generation: Cell::new(0),
+                modal_generation: Cell::new(0),
                 animation_events: RefCell::new(Vec::new()),
                 transaction_depth: Cell::new(0),
                 #[cfg(feature = "ffi-integration")]
@@ -120,6 +122,7 @@ impl Document {
                 clipboard: RefCell::new(String::new()),
                 composition_target: Cell::new(None),
                 composition_generation: Cell::new(0),
+                modal_generation: Cell::new(0),
                 animation_events: RefCell::new(Vec::new()),
                 transaction_depth: Cell::new(0),
                 foreign_event_handler: RefCell::new(None),
@@ -174,6 +177,18 @@ impl Document {
         target: NodeHandle,
     ) -> Result<(), Error> {
         self.change_focus(Some(target), FocusOrigin::Accessibility)
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn set_modal_root_for_native_facade(&self, root: Option<NodeHandle>) -> Result<(), Error> {
+        self.set_modal_root_handle(root)
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn focus_pointer_element_for_native_facade(&self, target: NodeHandle) -> Result<(), Error> {
+        self.focus_from(target, FocusOrigin::Pointer)
     }
 
     pub fn body(&self) -> Element {
@@ -853,7 +868,18 @@ impl Document {
                 return Err(openui_engine::EngineError::WrongDocument.into());
             }
         }
-        self.with_engine_mut(|engine| engine.set_modal_root(root.map(|root| root.handle)))
+        self.set_modal_root_handle(root.map(|root| root.handle))
+    }
+
+    fn set_modal_root_handle(&self, root: Option<NodeHandle>) -> Result<(), Error> {
+        let previous = self.with_engine(Engine::modal_root)?;
+        let next = self.with_engine_mut(|engine| engine.prepare_modal_focus(root))?;
+        if previous != root {
+            self.inner
+                .modal_generation
+                .set(self.inner.modal_generation.get().wrapping_add(1));
+        }
+        self.change_focus(next, FocusOrigin::Keyboard)
     }
 
     pub fn advance_focus(&self, direction: i32) -> Result<(), Error> {
@@ -1139,6 +1165,11 @@ impl Document {
     fn dispatch_to(&self, target: NodeHandle, event: &Event) -> Result<(), Error> {
         let route = self.with_engine(|engine| engine.event_route(target))??;
         for step in route.steps {
+            if step.phase == EngineEventPhase::Bubble
+                && matches!(event.event_type.as_str(), "focus" | "blur")
+            {
+                continue;
+            }
             let (phase, capture) = match step.phase {
                 EngineEventPhase::Capture => (EventPhase::Capture, Some(true)),
                 EngineEventPhase::Target => (EventPhase::Target, None),
@@ -1223,6 +1254,7 @@ impl Document {
     }
 
     fn change_focus(&self, next: Option<NodeHandle>, origin: FocusOrigin) -> Result<(), Error> {
+        let modal_generation = self.inner.modal_generation.get();
         if let Some(next) = next {
             if !self.with_engine(|engine| engine.can_focus(next))?? {
                 return Err(openui_engine::EngineError::NotFocusable.into());
@@ -1240,6 +1272,9 @@ impl Document {
         {
             self.dispatch_composition_cancel()?;
         }
+        if self.inner.modal_generation.get() != modal_generation {
+            return Ok(());
+        }
         let current = self.with_engine(Engine::focused)?;
         if current.is_some() && current != previous {
             // A composition callback chose another control. Keep that decision.
@@ -1251,7 +1286,9 @@ impl Document {
         }
         // Blur callbacks run while nothing is focused and may choose a target.
         // If they focus and then blur it, the original request may continue.
-        if self.with_engine(Engine::focused)?.is_some() {
+        if self.inner.modal_generation.get() != modal_generation
+            || self.with_engine(Engine::focused)?.is_some()
+        {
             return Ok(());
         }
         if let Some(next) = next {

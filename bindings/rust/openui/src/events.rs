@@ -141,7 +141,9 @@ impl Event {
     }
 
     pub fn prevent_default(&self) {
-        self.state.default_prevented.set(true);
+        if !matches!(self.event_type.as_str(), "focus" | "blur") {
+            self.state.default_prevented.set(true);
+        }
     }
 
     pub fn default_prevented(&self) -> bool {

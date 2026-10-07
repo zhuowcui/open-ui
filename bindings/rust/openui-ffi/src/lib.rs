@@ -28,9 +28,9 @@ use openui_dom::ElementTag;
 use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
     AnimationEventKind, AnimationId, AnimationTimeline, ControlAdjustment, Engine,
-    EventPhase as EngineEventPhase, FocusOrigin, FontAxisRange, FontContainerFormat,
-    FontFaceDescriptor, FontFeatureDefault, FontMetricOverrides, FontStyleRange, FontUnicodeRange,
-    NodeHandle, PointerEventKind, ViewportAuthority, ViewportMetrics,
+    EventPhase as EngineEventPhase, FontAxisRange, FontContainerFormat, FontFaceDescriptor,
+    FontFeatureDefault, FontMetricOverrides, FontStyleRange, FontUnicodeRange, NodeHandle,
+    PointerEventKind, ViewportAuthority, ViewportMetrics,
 };
 use openui_style::{
     parse_literal, AnimationOptions, AnimationPhase, Border, BorderStyle, Color,
@@ -1844,6 +1844,9 @@ fn invoke_event_listeners(
         // No engine or listener-list borrow is held, so reentrant API calls are
         // explicitly permitted. The event pointer lives through the call.
         unsafe { (listener.callback)(event, listener.user_data) };
+        if matches!(event.event_type, 12 | 13) {
+            event.flags &= !OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+        }
     }
     Ok(())
 }
@@ -1897,6 +1900,21 @@ fn dispatch_event_to(
     event: &mut OuiEvent,
     apply_default: bool,
 ) -> Result<(), ApiError> {
+    if apply_default && matches!(event.event_type, 12 | 13) {
+        utf8(event.text, "event text")?;
+        event.flags &= !(OUI_EVENT_FLAG_DEFAULT_PREVENTED | OUI_EVENT_FLAG_PROPAGATION_STOPPED);
+        event.target = target_address as *mut OuiElement;
+        event.current_target = ptr::null_mut();
+        event.phase = 2;
+        return if event.event_type == 12 {
+            state
+                .native
+                .focus_accessibility_element_for_native_facade(target)
+        } else {
+            state.native.blur_element_for_native_facade(target)
+        }
+        .map_err(native_app::native_error);
+    }
     let route = borrow_engine(state)?.event_route(target)?;
     event.flags &= !(OUI_EVENT_FLAG_DEFAULT_PREVENTED | OUI_EVENT_FLAG_PROPAGATION_STOPPED);
     event.target = target_address as *mut OuiElement;
@@ -1912,6 +1930,9 @@ fn dispatch_event_to(
                 invoke_event_listeners(state, step.node, false, event)?;
             }
             EngineEventPhase::Bubble => {
+                if matches!(event.event_type, 12 | 13) {
+                    continue;
+                }
                 event.phase = 3;
                 invoke_event_listeners(state, step.node, false, event)?;
             }
@@ -1941,10 +1962,6 @@ fn dispatch_event_to(
             10 => borrow_engine_mut(state)?.update_composition(target, &text)?,
             11 if text.is_empty() => borrow_engine_mut(state)?.cancel_composition(target)?,
             11 => borrow_engine_mut(state)?.commit_composition(target, &text)?,
-            12 => {
-                borrow_engine_mut(state)?.focus_with_origin(target, FocusOrigin::Accessibility)?;
-            }
-            13 => borrow_engine_mut(state)?.blur(target)?,
             _ => {}
         }
     }
@@ -2097,7 +2114,10 @@ pub extern "C" fn oui_document_dispatch_pointer_event(
             return Ok(());
         }
         if kind == PointerEventKind::Down {
-            let _ = borrow_engine_mut(&state)?.focus_with_origin(target, FocusOrigin::Pointer);
+            state
+                .native
+                .focus_pointer_element_for_native_facade(target)
+                .map_err(native_app::native_error)?;
         }
         if let Some((changed, fraction)) = update.range_value {
             let did_change = borrow_engine_mut(&state)?.set_range_fraction(changed, fraction)?;
@@ -2164,7 +2184,11 @@ pub extern "C" fn oui_document_advance_focus(
         // SAFETY: the caller guarantees storage for one output pointer.
         unsafe { ptr::write(out_element, ptr::null_mut()) };
         let state = document(document_handle as usize)?;
-        if let Some(node) = borrow_engine_mut(&state)?.advance_focus(direction)? {
+        state
+            .native
+            .advance_focus(direction)
+            .map_err(native_app::native_error)?;
+        if let Some(node) = borrow_engine(&state)?.focused() {
             let address = element_address(&state, node)?;
             // SAFETY: output storage was validated above.
             unsafe { ptr::write(out_element, address as *mut OuiElement) };
@@ -2194,8 +2218,10 @@ pub extern "C" fn oui_document_set_modal_root(
             }
             Some(root.node)
         };
-        borrow_engine_mut(&state)?.set_modal_root(root)?;
-        Ok(())
+        state
+            .native
+            .set_modal_root_for_native_facade(root)
+            .map_err(native_app::native_error)
     })
 }
 

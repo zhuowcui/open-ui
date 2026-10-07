@@ -85,6 +85,21 @@ extern "C" void on_platform(OuiApp* app, const OuiPlatformEvent* event, void* us
       check(context, oui_element_focus(context.textarea));
       if (context.focus_events != 2 || context.blur_events != 1)
         context.failed = true;
+      const char tabindex[] = "tabindex";
+      const char negative[] = "-1";
+      check(context,
+            oui_element_set_attribute(
+                context.card, {reinterpret_cast<const uint8_t*>(tabindex), std::strlen(tabindex)},
+                {reinterpret_cast<const uint8_t*>(negative), std::strlen(negative)}));
+      check(context, oui_element_focus(context.card));
+      OuiElement* focused = nullptr;
+      check(context, oui_document_advance_focus(context.document, 1, &focused));
+      if (focused != context.textarea)
+        context.failed = true;
+      check(context, oui_document_set_modal_root(context.document, context.card));
+      check(context, oui_document_set_modal_root(context.document, nullptr));
+      if (context.focus_events != 4 || context.blur_events != 3)
+        context.failed = true;
       OuiEditCommandV1 edit{
           sizeof(edit), OUI_ABI_VERSION, OUI_EDIT_DELETE, OUI_TEXT_BACKWARD, OUI_TEXT_GRAPHEME, 0,
           {0, 0}};
@@ -153,5 +168,5 @@ int main(int argc, char** argv) {
               static_cast<unsigned long long>(context.frames), context.input_events,
               context.focus_events, context.blur_events);
   return context.failed || context.frames < 2 || context.input_events != 3 ||
-         context.focus_events != 2 || context.blur_events != 1;
+         context.focus_events != 4 || context.blur_events != 3;
 }

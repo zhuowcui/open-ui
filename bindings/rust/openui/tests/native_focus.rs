@@ -228,3 +228,161 @@ fn keyboard_and_accessibility_focus_use_the_same_callback_transition() {
         element.remove_event("blur").unwrap();
     }
 }
+
+#[test]
+fn programmatic_negative_tabindex_focus_and_sequential_anchor_match_chromium() {
+    for positive_order in [false, true] {
+        let document = Document::new(320, 200).unwrap();
+        let x = Element::create(&document, "input").unwrap();
+        let a = Element::create(&document, "div").unwrap();
+        let b = Element::create(&document, "input").unwrap();
+        let c = Element::create(&document, "button").unwrap();
+        for element in [&x, &a, &b, &c] {
+            document.body().append_child(element).unwrap();
+        }
+        for element in [&a, &b] {
+            element.set_attribute("tabindex", "-1").unwrap();
+            element.focus().unwrap();
+            assert!(element.has_focus().unwrap());
+        }
+        if positive_order {
+            x.set_attribute("tabindex", "2").unwrap();
+            c.set_attribute("tabindex", "1").unwrap();
+        }
+        document.advance_focus(1).unwrap();
+        assert!(c.has_focus().unwrap());
+        b.focus().unwrap();
+        document.advance_focus(-1).unwrap();
+        assert!(x.has_focus().unwrap());
+        document.advance_focus(1).unwrap();
+        assert!(c.has_focus().unwrap());
+    }
+}
+
+#[test]
+fn focus_and_blur_capture_then_target_without_bubbling_or_cancellation() {
+    let document = Document::new(320, 200).unwrap();
+    let parent = Element::create(&document, "div").unwrap();
+    let input = Element::create(&document, "input").unwrap();
+    document.body().append_child(&parent).unwrap();
+    parent.append_child(&input).unwrap();
+    let log = Rc::new(RefCell::new(Vec::new()));
+    for (element, label) in [(&parent, "parent"), (&input, "target")] {
+        for event in ["focus", "blur"] {
+            for capture in [true, false] {
+                let log = log.clone();
+                let callback = move |e: &openui::Event| {
+                    e.prevent_default();
+                    log.borrow_mut().push((
+                        label,
+                        event,
+                        capture,
+                        e.phase(),
+                        e.default_prevented(),
+                    ));
+                };
+                if capture {
+                    element.on_capture(event, callback).unwrap();
+                } else {
+                    element.on(event, callback).unwrap();
+                }
+            }
+        }
+    }
+    input.focus().unwrap();
+    input.blur().unwrap();
+    let mut expected = Vec::new();
+    for event in ["focus", "blur"] {
+        expected.extend([
+            (
+                "parent",
+                event,
+                true,
+                Some(openui::EventPhase::Capture),
+                false,
+            ),
+            (
+                "target",
+                event,
+                true,
+                Some(openui::EventPhase::Target),
+                false,
+            ),
+            (
+                "target",
+                event,
+                false,
+                Some(openui::EventPhase::Target),
+                false,
+            ),
+        ]);
+    }
+    assert_eq!(*log.borrow(), expected);
+    for element in [&parent, &input] {
+        element.remove_event("focus").unwrap();
+        element.remove_event("blur").unwrap();
+    }
+}
+
+#[test]
+fn modal_focus_delivers_callbacks_cancels_composition_and_restores_focus() {
+    let (document, [outside, inside, sibling], log) = fixture();
+    let modal = Element::create(&document, "div").unwrap();
+    document.body().append_child(&modal).unwrap();
+    inside.detach().unwrap();
+    modal.append_child(&inside).unwrap();
+    outside.set_control_value("kept").unwrap();
+    outside.focus().unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("preview").unwrap();
+    document.set_modal_root(Some(&modal)).unwrap();
+    assert!(inside.has_focus().unwrap());
+    assert_eq!(outside.control_value().unwrap().as_deref(), Some("kept"));
+    document.set_modal_root(None).unwrap();
+    assert!(outside.has_focus().unwrap());
+    document.set_modal_root(None).unwrap();
+    assert!(outside.has_focus().unwrap());
+    assert_eq!(
+        *log.borrow(),
+        rows(&[
+            ("a", "focus", "a"),
+            ("a", "blur", "body"),
+            ("b", "focus", "b"),
+            ("b", "blur", "body"),
+            ("a", "focus", "a"),
+        ])
+    );
+    for element in [outside, inside, sibling] {
+        element.remove_event("focus").unwrap();
+        element.remove_event("blur").unwrap();
+    }
+}
+
+#[test]
+fn modal_change_from_blur_callback_aborts_the_old_focus_request() {
+    let (document, [outside, inside, sibling], log) = fixture();
+    let modal = Element::create(&document, "div").unwrap();
+    document.body().append_child(&modal).unwrap();
+    inside.detach().unwrap();
+    modal.append_child(&inside).unwrap();
+    outside.focus().unwrap();
+    let retained = document.clone();
+    outside
+        .on("blur", move |_| retained.set_modal_root(None).unwrap())
+        .unwrap();
+    document.set_modal_root(Some(&modal)).unwrap();
+    assert!(outside.has_focus().unwrap());
+    assert_eq!(
+        *log.borrow(),
+        rows(&[
+            ("a", "focus", "a"),
+            ("a", "blur", "body"),
+            ("a", "focus", "a")
+        ])
+    );
+    assert!(sibling.focus().is_ok()); // The callback also removed modal containment.
+    for element in [outside, inside, sibling] {
+        element.remove_event("focus").unwrap();
+        element.remove_event("blur").unwrap();
+    }
+}

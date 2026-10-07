@@ -107,6 +107,16 @@ static void platform_event(OuiApp* app, const OuiPlatformEvent* event, void* use
         check(context, oui_element_focus(context->textarea));
         if (context->focus_events != 2 || context->blur_events != 1)
           context->failed = 1;
+        check(context, oui_element_set_attribute(context->card, text("tabindex"), text("-1")));
+        check(context, oui_element_focus(context->card));
+        OuiElement* focused = NULL;
+        check(context, oui_document_advance_focus(context->document, 1, &focused));
+        if (focused != context->textarea)
+          context->failed = 1;
+        check(context, oui_document_set_modal_root(context->document, context->card));
+        check(context, oui_document_set_modal_root(context->document, NULL));
+        if (context->focus_events != 4 || context->blur_events != 3)
+          context->failed = 1;
         OuiEvent key = {.struct_size = sizeof(key),
                         .abi_version = OUI_ABI_VERSION,
                         .event_type = OUI_EVENT_KEY_DOWN,
@@ -201,5 +211,5 @@ int main(int argc, char** argv) {
          (unsigned long long)context.frames, context.resized, context.input_events,
          context.focus_events, context.blur_events);
   return context.failed || context.frames < 2 || !context.resized || context.input_events != 5 ||
-         context.focus_events != 2 || context.blur_events != 1;
+         context.focus_events != 4 || context.blur_events != 3;
 }

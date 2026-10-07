@@ -461,6 +461,31 @@ impl Engine {
         let current = self
             .focused
             .and_then(|focused| candidates.iter().position(|node| *node == focused));
+        if current.is_none() {
+            if let Some(focused) = self.focused {
+                let eligible: std::collections::HashSet<_> = candidates.iter().copied().collect();
+                let mut document_order = Vec::new();
+                self.collect_focus_document_order(
+                    self.modal_root.unwrap_or_else(|| self.root()),
+                    &mut document_order,
+                )?;
+                if let Some(anchor) = document_order.iter().position(|node| *node == focused) {
+                    let next = if direction == 1 {
+                        document_order[anchor + 1..]
+                            .iter()
+                            .find(|node| eligible.contains(*node))
+                    } else {
+                        document_order[..anchor]
+                            .iter()
+                            .rev()
+                            .find(|node| eligible.contains(*node))
+                    };
+                    if let Some(next) = next {
+                        return Ok(Some(*next));
+                    }
+                }
+            }
+        }
         let index = match (current, direction) {
             (Some(index), 1) => (index + 1) % candidates.len(),
             (Some(index), -1) => (index + candidates.len() - 1) % candidates.len(),
@@ -473,10 +498,35 @@ impl Engine {
     }
 
     pub fn set_modal_root(&mut self, root: Option<NodeHandle>) -> Result<(), EngineError> {
+        let next = self.prepare_modal_focus(root)?;
+        if self.focused != next {
+            if let Some(previous) = self.focused {
+                self.blur(previous)?;
+            }
+            if let Some(next) = next {
+                self.focus_with_origin(next, FocusOrigin::Keyboard)?;
+            }
+        }
+        Ok(())
+    }
+
+    pub fn modal_root(&self) -> Option<NodeHandle> {
+        self.modal_root
+    }
+
+    /// Change modal containment and choose its focus target without moving
+    /// focus. Frontends deliver composition/blur callbacks before that move.
+    pub fn prepare_modal_focus(
+        &mut self,
+        root: Option<NodeHandle>,
+    ) -> Result<Option<NodeHandle>, EngineError> {
         if let Some(root) = root {
             self.resolve(root)?;
         }
-        match root {
+        if self.modal_root != root {
+            self.mark_dirty(openui_style::InvalidationClass::Accessibility);
+        }
+        let next = match root {
             Some(root) => {
                 if self.modal_root != Some(root) {
                     self.focus_before_modal = self.focused;
@@ -486,42 +536,22 @@ impl Engine {
                     .focused
                     .is_none_or(|focused| !self.is_inside_modal(focused))
                 {
-                    if let Some(previous) = self.focused.take() {
-                        if let Ok(node) = self.resolve(previous) {
-                            self.document
-                                .node_mut(node)
-                                .attributes
-                                .remove("data-oui-focused");
-                        }
-                    }
-                    if let Some(next) = self.focus_candidates()?.into_iter().next() {
-                        self.focus_with_origin(next, FocusOrigin::Keyboard)?;
-                    }
+                    self.focus_candidates()?.into_iter().next()
+                } else {
+                    self.focused
                 }
             }
             None => {
-                if let Some(previous) = self.focused.take() {
-                    if let Ok(node) = self.resolve(previous) {
-                        self.document
-                            .node_mut(node)
-                            .attributes
-                            .remove("data-oui-focused");
-                    }
+                if self.modal_root.is_none() {
+                    return Ok(self.focused);
                 }
                 self.modal_root = None;
-                if let Some(restore) = self
-                    .focus_before_modal
+                self.focus_before_modal
                     .take()
                     .filter(|node| self.is_focusable(*node))
-                {
-                    self.focus_with_origin(restore, FocusOrigin::Keyboard)?;
-                } else {
-                    self.focus_visible = false;
-                }
             }
-        }
-        self.mark_dirty(openui_style::InvalidationClass::Accessibility);
-        Ok(())
+        };
+        Ok(next)
     }
 
     pub fn control_state(&self, handle: NodeHandle) -> Result<Option<&ControlState>, EngineError> {
@@ -1141,9 +1171,6 @@ impl Engine {
             .ok()
             .flatten()
             .and_then(|value| value.parse::<i32>().ok());
-        if tabindex.is_some_and(|value| value < 0) {
-            return false;
-        }
         tabindex.is_some()
             || self.controls.contains_key(&handle.index)
             || self.element_tag(handle) == Ok(ElementTag::Summary)
@@ -1187,11 +1214,25 @@ impl Engine {
             let tabindex = self
                 .attribute(node, "tabindex")?
                 .and_then(|value| value.parse::<i32>().ok());
-            result.push((tabindex, *order, node));
+            if !tabindex.is_some_and(|value| value < 0) {
+                result.push((tabindex, *order, node));
+            }
         }
         *order += 1;
         for child in self.children(node)? {
             self.collect_focus_candidates(child, order, result)?;
+        }
+        Ok(())
+    }
+
+    fn collect_focus_document_order(
+        &self,
+        node: NodeHandle,
+        result: &mut Vec<NodeHandle>,
+    ) -> Result<(), EngineError> {
+        result.push(node);
+        for child in self.children(node)? {
+            self.collect_focus_document_order(child, result)?;
         }
         Ok(())
     }

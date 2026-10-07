@@ -249,3 +249,222 @@ fn c_focus_and_blur_validate_ownership_borrows_and_contain_callback_panics() {
     assert_eq!(oui_element_focus(a), OuiStatus::StaleHandle);
     assert_eq!(oui_element_blur(a), OuiStatus::StaleHandle);
 }
+
+#[test]
+fn c_sequential_and_modal_focus_share_callbacks_composition_and_final_output() {
+    let fixture = Fixture::new();
+    let state = document(fixture.document as usize).unwrap();
+    let context = Callback {
+        document: fixture.document,
+        nodes: fixture.nodes,
+        events: RefCell::new(Vec::new()),
+        redirect: Cell::new(false),
+        failed: Cell::new(false),
+    };
+    let listeners = listen(&fixture, &context);
+    let [a, b, c] = fixture.nodes;
+    assert_eq!(
+        oui_element_set_attribute(b, text("tabindex"), text("-1")),
+        OuiStatus::Ok
+    );
+    assert_eq!(oui_element_focus(b), OuiStatus::Ok);
+    let mut focused = ptr::null_mut();
+    assert_eq!(
+        oui_document_advance_focus(fixture.document, 1, &mut focused),
+        OuiStatus::Ok
+    );
+    assert_eq!(focused, c);
+    assert_eq!(oui_element_focus(b), OuiStatus::Ok);
+    assert_eq!(
+        oui_document_advance_focus(fixture.document, -1, &mut focused),
+        OuiStatus::Ok
+    );
+    assert_eq!(focused, a);
+    assert_eq!(
+        oui_document_advance_focus(fixture.document, 0, &mut focused),
+        OuiStatus::InvalidArgument
+    );
+    assert!(focused.is_null());
+    assert!(fixture.native("a").has_focus().unwrap());
+    assert_eq!(
+        *context.events.borrow(),
+        [
+            (1, 12, Some("b".into())),
+            (1, 13, None),
+            (2, 12, Some("c".into())),
+            (2, 13, None),
+            (1, 12, Some("b".into())),
+            (1, 13, None),
+            (0, 12, Some("a".into())),
+        ]
+    );
+    context.events.borrow_mut().clear();
+    let mut modal = ptr::null_mut();
+    assert_eq!(
+        oui_element_create(fixture.document, 0, &mut modal),
+        OuiStatus::Ok
+    );
+    assert_eq!(oui_element_append_child(fixture.root, modal), OuiStatus::Ok);
+    fixture.native("c").detach().unwrap();
+    assert_eq!(oui_element_append_child(modal, c), OuiStatus::Ok);
+    state.native.dispatch_composition_start().unwrap();
+    state.native.dispatch_composition_update("preview").unwrap();
+    assert_eq!(
+        oui_document_set_modal_root(fixture.document, modal),
+        OuiStatus::Ok
+    );
+    assert!(fixture.native("c").has_focus().unwrap());
+    assert_eq!(
+        fixture.native("a").control_value().unwrap().as_deref(),
+        Some("")
+    );
+    assert_eq!(
+        oui_document_set_modal_root(fixture.document, ptr::null_mut()),
+        OuiStatus::Ok
+    );
+    assert_eq!(
+        oui_document_set_modal_root(fixture.document, ptr::null_mut()),
+        OuiStatus::Ok
+    );
+    assert_eq!(
+        *context.events.borrow(),
+        [
+            (0, 11, Some("a".into())),
+            (0, 13, None),
+            (2, 12, Some("c".into())),
+            (2, 13, None),
+            (0, 12, Some("a".into())),
+        ]
+    );
+    assert!(!context.failed.get());
+    for listener in listeners {
+        assert_eq!(oui_listener_destroy(listener), OuiStatus::Ok);
+    }
+    assert_eq!(oui_element_destroy(modal), OuiStatus::Ok);
+}
+
+struct PhaseCallback {
+    root: *mut OuiElement,
+    input: *mut OuiElement,
+    rows: RefCell<Vec<(u32, bool, u32, u32)>>,
+    failed: Cell<bool>,
+}
+
+unsafe extern "C" fn observe_phase(event: *mut OuiEvent, user_data: *mut c_void) {
+    // SAFETY: the fixture retains both pointers through synchronous dispatch.
+    let event = unsafe { &mut *event };
+    let data = unsafe { &*user_data.cast::<PhaseCallback>() };
+    data.rows.borrow_mut().push((
+        event.event_type,
+        event.current_target == data.root,
+        event.phase,
+        event.flags & OUI_EVENT_FLAG_DEFAULT_PREVENTED,
+    ));
+    if event.target != data.input
+        || oui_element_set_attribute(data.input, text("data-phase"), text("seen")) != OuiStatus::Ok
+    {
+        data.failed.set(true);
+    }
+    event.flags |= OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+}
+
+#[test]
+fn c_focus_requests_capture_without_bubbling_and_ignore_cancellation() {
+    let fixture = Fixture::new();
+    let input = fixture.nodes[0];
+    let context = PhaseCallback {
+        root: fixture.root,
+        input,
+        rows: RefCell::new(Vec::new()),
+        failed: Cell::new(false),
+    };
+    let mut listeners = Vec::new();
+    for node in [fixture.root, input] {
+        for event in [12, 13] {
+            for capture in [0, 1] {
+                let mut listener = ptr::null_mut();
+                assert_eq!(
+                    oui_element_add_event_listener(
+                        node,
+                        event,
+                        capture,
+                        Some(observe_phase),
+                        (&context as *const PhaseCallback).cast_mut().cast(),
+                        &mut listener
+                    ),
+                    OuiStatus::Ok
+                );
+                listeners.push(listener);
+            }
+        }
+    }
+    for kind in [12, 13] {
+        let mut event = synthesized_event(kind, text(""));
+        assert_eq!(
+            oui_document_dispatch_event(fixture.document, input, &mut event),
+            OuiStatus::Ok
+        );
+        assert_eq!(event.current_target, ptr::null_mut());
+        assert_eq!(event.flags & OUI_EVENT_FLAG_DEFAULT_PREVENTED, 0);
+        assert_eq!(fixture.native("a").has_focus().unwrap(), kind == 12);
+    }
+    assert_eq!(
+        *context.rows.borrow(),
+        [
+            (12, true, 1, 0),
+            (12, false, 2, 0),
+            (12, false, 2, 0),
+            (13, true, 1, 0),
+            (13, false, 2, 0),
+            (13, false, 2, 0),
+        ]
+    );
+    assert!(!context.failed.get());
+    for listener in listeners {
+        assert_eq!(oui_listener_destroy(listener), OuiStatus::Ok);
+    }
+}
+
+#[test]
+fn c_pointer_focus_cancels_the_shared_composition_and_delivers_focus_callbacks() {
+    let fixture = Fixture::new();
+    let state = document(fixture.document as usize).unwrap();
+    let context = Callback {
+        document: fixture.document,
+        nodes: fixture.nodes,
+        events: RefCell::new(Vec::new()),
+        redirect: Cell::new(false),
+        failed: Cell::new(false),
+    };
+    let listeners = listen(&fixture, &context);
+    assert_eq!(oui_element_focus(fixture.nodes[0]), OuiStatus::Ok);
+    state.native.dispatch_composition_start().unwrap();
+    state.native.dispatch_composition_update("preview").unwrap();
+    let bounds = fixture.native("b").bounding_rect().unwrap().unwrap();
+    let mut event = synthesized_event(1, text(""));
+    event.x = bounds.x + bounds.width * 0.5;
+    event.y = bounds.y + bounds.height * 0.5;
+    event.pointer_id = 7;
+    assert_eq!(
+        oui_document_dispatch_pointer_event(fixture.document, &mut event),
+        OuiStatus::Ok
+    );
+    assert!(fixture.native("b").has_focus().unwrap());
+    assert_eq!(
+        fixture.native("a").control_value().unwrap().as_deref(),
+        Some("")
+    );
+    assert_eq!(
+        *context.events.borrow(),
+        [
+            (0, 12, Some("a".into())),
+            (0, 11, Some("a".into())),
+            (0, 13, None),
+            (1, 12, Some("b".into())),
+        ]
+    );
+    assert!(!context.failed.get());
+    for listener in listeners {
+        assert_eq!(oui_listener_destroy(listener), OuiStatus::Ok);
+    }
+}
