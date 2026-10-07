@@ -79,10 +79,14 @@ From a clean checkout with the pinned Chromium and a freshly built
 `pixel_compare` binary, the minimal report is reproducible with:
 
 ```sh
+python3 tools/qualification/build_renderer.py --offline \
+  --target-dir bindings/rust/target \
+  --results-dir out/frozen-conflict-build
 python3 tools/qualification/run_renderer_matrix.py --suite full \
   --test-id wpt/css_backgrounds/background-image-gradient-interpolation-repaint-ref \
   --profile legacy-800x600@1 \
-  --pixel-compare bindings/rust/target/debug/pixel_compare \
+  --pixel-compare out/frozen-conflict-build/pixel_compare \
+  --build-receipt out/frozen-conflict-build/receipt.json \
   --cache-dir out/frozen-conflict-cache \
   --oracle-cache-dir out/frozen-conflict-oracle \
   --results-dir out/frozen-conflict

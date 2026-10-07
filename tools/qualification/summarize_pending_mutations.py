@@ -13,7 +13,7 @@ import residuals
 
 ROOT = Path(__file__).resolve().parents[2]
 CONTRACT = ROOT / "docs/renderer/generated/qualification-contract-v2.json"
-AST_AUDIT = ROOT / "docs/renderer/generated/javascript-mutation-audit-v3.json"
+AST_AUDIT = ROOT / "docs/renderer/generated/javascript-mutation-audit-v4.json"
 ORIGINAL_MANIFEST = ROOT / "tools/qualification/manifests/complete-5731.json"
 
 

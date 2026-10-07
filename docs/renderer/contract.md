@@ -24,14 +24,16 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
-The [native glyph regression follow-up](native-glyph-regressions.md)
-reproduces the input and large-text failures through Rust callbacks. Its latest
-private trials match **20/30 images and 30/30 rectangles**, with eight exact
-gains and no exact losses, but two existing input differences worsen. All five
-new sources pass eighteen read-only checks each. All trials remain private,
-unapplied and rejected; their complete renderer and workspace gates are not
-run. The relevant large-text baselines match Chromium, narrowing those failures
-to paint origins, strike construction or raster coverage. Accepted results are unchanged.
+The [native input editor follow-up](native-input-editor-scrollport.md) corrects the private
+single-line editor clip. Its consuming Rust app improves from **22/30 to
+28/30 exact images**, with all thirty rectangles exact. Focused **640/640**
+and primitive **960/960** pass. Complete original and expanded runs finish at
+**21,337/22,924** and **22,140/23,728** exact,
+zero errors and actual exits 1. Against the accepted census, the original has
+three exact gains, no exact losses and no worsened comparisons. A fresh
+umbrella selection compares those changes with the patch's own parent.
+The renderer implementation remains private and unapplied; two native glyph rows and
+full qualification remain open. Accepted results are unchanged.
 
 The preceding [native glyph and API evidence](native-glyph-mask.md) fixes the reduced native glyph app:
 all **20/20 images and rectangles** match Chromium. Focused **640/640** and
@@ -501,6 +503,30 @@ lifetime rules are documented in [font collections](font-collections.md).
 Font selection and shaping precedence is documented in
 [font selection and shaping](font-selection-and-shaping.md), and the shared
 layout/paint flow is documented in [text layout and paint](text-layout-and-paint.md).
+
+## Build proof for current matrix runs
+
+Build from a clean checkout with `tools/qualification/build_renderer.py`.
+It cleans local Rust dependencies and checks Cargo's fresh artifact records;
+the embedded executable identity alone does not prove cached library sources.
+Use the qualification lab's pinned compiler and Skia configuration. For example:
+
+```sh
+python3 tools/qualification/build_renderer.py --offline \
+  --target-dir bindings/rust/target \
+  --results-dir out/renderer-build
+python3 tools/qualification/run_renderer_matrix.py --suite focused \
+  --pixel-compare out/renderer-build/pixel_compare \
+  --build-receipt out/renderer-build/receipt.json \
+  --results-dir out/renderer-focused
+```
+
+The build receipt must agree with the measured source and executable hash and
+remain unchanged through the matrix. Keep Main and the SDK clean and unchanged
+for the whole pipeline, including the gaps between commands. Existing historical
+commands and reports retain their original source and status; they do not waive
+this requirement for a new run. Explicit dirty diagnostics cannot qualify a
+release. No pixel tolerance or reference byte is changed.
 
 `tools/qualification/run_renderer_matrix.py` uses separate, contract-pinned
 manifests for the complete 5,731-case census and the focused raster corpus.

@@ -166,6 +166,7 @@ jobs:
             tools.wpt.test_sp18_closure \
             tools.wpt.test_sp19_closure \
             tools.wpt.test_sp20_closure \
+            tools.qualification.test_build_renderer \
             tools.qualification.test_renderer_matrix \
             tools.qualification.test_summarize_renderer_census
 

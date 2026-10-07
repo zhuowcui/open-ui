@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "docs/renderer/generated/qualification-contract-v2.json"
 STYLE_OUT = ROOT / "docs/renderer/generated/author-style-inventory.json"
 JS_OUT = ROOT / "docs/renderer/generated/javascript-disposition.json"
-JS_AST_OUT = ROOT / "docs/renderer/generated/javascript-mutation-audit-v3.json"
+JS_AST_OUT = ROOT / "docs/renderer/generated/javascript-mutation-audit-v4.json"
 MUTATION_IDS_OUT = ROOT / "tools/qualification/manifests/mutation-candidates-v1.json"
 LEGACY = ROOT / "docs/v02/generated/baseline.json"
 LEGACY_SHA256 = "787cd40ae63d06d5933efa89a4eba65a70d6327673b8056b83cae76ef3606001"
@@ -38,7 +38,7 @@ MAPPING = ROOT / "tools/accountability/data/wpt_mapping.csv"
 FULL_MANIFEST = ROOT / "tools/qualification/manifests/complete-5731.json"
 FOCUSED_MANIFEST = ROOT / "tools/qualification/manifests/focused-raster.json"
 PRIMITIVE_MANIFEST = ROOT / "tools/qualification/manifests/primitive-raster.json"
-EXPANDED_MANIFEST = ROOT / "tools/qualification/manifests/expanded-v18.json"
+EXPANDED_MANIFEST = ROOT / "tools/qualification/manifests/expanded-v35.json"
 RESIDUAL_OWNERSHIP = ROOT / "tools/qualification/residual-ownership-v2.json"
 MEDIA_FIRST_FRAMES = ROOT / "docs/renderer/generated/media-first-frames-v1.json"
 WPT_ROOT = Path(
@@ -724,7 +724,19 @@ def javascript_disposition() -> dict[str, object]:
         "policy": {
             "ast-lowered-pending-exact": "must be applied through Engine APIs and pixel-qualified before inclusion",
             "lowered-exact": "admitted only after exact results at all four qualification profiles",
-            "behavioral-nonvisual": "excluded from renderer coverage; no browser runtime is promised",
+            "behavioral-nonvisual": (
+                "outside pixel admission, not a native application API pass; "
+                "every application-needed operation requires a fully implemented "
+                "public Rust API over the shared engine"
+            ),
+            "javascript-runtime": (
+                "Open UI never executes JavaScript, in any version; scripts may "
+                "run only in separate offline Chromium reference tooling"
+            ),
+            "native-application-api": (
+                "fixture lowering or pixel exclusion does not complete or waive "
+                "needed public Rust operations, state changes and Rust callbacks"
+            ),
         },
         "entries": entries,
     }

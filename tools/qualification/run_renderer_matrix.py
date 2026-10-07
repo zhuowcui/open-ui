@@ -35,7 +35,7 @@ CONTRACT = ROOT / "docs/renderer/generated/qualification-contract-v2.json"
 FULL_IDS = ROOT / "tools/qualification/manifests/complete-5731.json"
 FOCUSED_IDS = ROOT / "tools/qualification/manifests/focused-raster.json"
 PRIMITIVE_IDS = ROOT / "tools/qualification/manifests/primitive-raster.json"
-EXPANDED_IDS = ROOT / "tools/qualification/manifests/expanded-v18.json"
+EXPANDED_IDS = ROOT / "tools/qualification/manifests/expanded-v35.json"
 RESIDUAL_OWNERSHIP = ROOT / "tools/qualification/residual-ownership-v2.json"
 TEMPLATES = ROOT / "tools/accountability/data/wpt_ported/all_wpt_templates.json"
 ACCOUNTABILITY = ROOT / "tools/accountability"
@@ -763,6 +763,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--residual-ownership", type=Path, default=RESIDUAL_OWNERSHIP)
     parser.add_argument("--pixel-compare", type=Path, default=Path(pixel_runner.PIXEL_COMPARE))
+    parser.add_argument("--build-receipt", type=Path, help="linked-library receipt from build_renderer.py")
     parser.add_argument("--chrome", type=Path)
     parser.add_argument("--raster-backend", choices=("cpu-skia", "ganesh-gl"), default="cpu-skia")
     parser.add_argument("--allow-dirty-diagnostics", action="store_true")
@@ -832,6 +833,16 @@ def main() -> None:
         renderer_build_identity = renderer_build_source_identity(args.pixel_compare, source_identity)
     except ValueError as error:
         raise SystemExit(str(error)) from error
+    if args.build_receipt is None:
+        raise SystemExit("renderer library build receipt required; build with tools/qualification/build_renderer.py")
+    from build_renderer import verify_build_receipt
+    try:
+        library_receipt_bytes = args.build_receipt.read_bytes()
+        verify_build_receipt(json.loads(library_receipt_bytes), args.pixel_compare, source_identity,
+                             allow_dirty_diagnostics=args.allow_dirty_diagnostics)
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        raise SystemExit(f"invalid renderer library build receipt: {error}") from error
+    library_receipt_sha256 = bytes_sha256(library_receipt_bytes)
     pixel_runner.PIXEL_COMPARE = str(args.pixel_compare.resolve())
     if args.chrome is None:
         chrome, chrome_dir = pixel_runner.find_chrome()
@@ -897,6 +908,8 @@ def main() -> None:
     source_after = repository_source_identity()
     source_unchanged = source_after == source_identity
     binary_unchanged = sha256(args.pixel_compare) == openui_binary_sha256
+    if sha256(args.build_receipt) != library_receipt_sha256:
+        raise SystemExit("renderer library build receipt changed during matrix run")
     complete = plan["complete_profile_set"] and plan["complete_id_set"]
     qualified = (
         bool(source_identity["clean"])
@@ -937,6 +950,8 @@ def main() -> None:
         "openui": {
             "binary_sha256": openui_binary_sha256,
             "build_identity": renderer_build_identity,
+            "library_build_receipt_sha256": library_receipt_sha256,
+            "library_provenance_verified": True,
             "raster_backend_identity": backend_identity,
         },
         "id_manifest": {

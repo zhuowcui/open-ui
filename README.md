@@ -27,14 +27,16 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
-The [native glyph regression follow-up](docs/renderer/native-glyph-regressions.md)
-reproduces the input and large-text failures through Rust callbacks. Its latest
-private trials match **20/30 images and 30/30 rectangles**, with eight exact
-gains and no exact losses, but two existing input differences worsen. All five
-new sources pass eighteen read-only checks each. All trials remain private,
-unapplied and rejected; their complete renderer and workspace gates are not
-run. The relevant large-text baselines match Chromium, narrowing those failures
-to paint origins, strike construction or raster coverage. Accepted results are unchanged.
+The [native input editor follow-up](docs/renderer/native-input-editor-scrollport.md) corrects the private
+single-line editor clip. Its consuming Rust app improves from **22/30 to
+28/30 exact images**, with all thirty rectangles exact. Focused **640/640**
+and primitive **960/960** pass. Complete original and expanded runs finish at
+**21,337/22,924** and **22,140/23,728** exact,
+zero errors and actual exits 1. Against the accepted census, the original has
+three exact gains, no exact losses and no worsened comparisons. A fresh
+umbrella selection compares those changes with the patch's own parent.
+The renderer implementation remains private and unapplied; two native glyph rows and
+full qualification remain open. Accepted results are unchanged.
 
 The preceding [native glyph and API trial](docs/renderer/native-glyph-mask.md) fixes the reduced native glyph app:
 all **20/20 images and rectangles** match Chromium. Focused **640/640** and

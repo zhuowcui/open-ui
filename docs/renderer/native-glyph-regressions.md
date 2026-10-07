@@ -6,7 +6,15 @@ style snapshots through public Rust APIs. Needed browser-style element behavior
 must be implemented in the shared Rust engine and exposed to the consuming app.
 Pinned Chromium provides the expected pixels in a separate process.
 
-## Completed result
+## Later editor-clip investigation
+
+The [native editor follow-up](native-input-editor-scrollport.md) separates the
+anonymous input clip from the rejected glyph changes. On the unchanged umbrella
+parent, it improves 22/30 native images to 28/30, with all thirty rectangles
+exact. Its own complete renderer checks and remaining failures are recorded
+there. The sources below remain historical, private and rejected.
+
+## Earlier completed result
 
 The [earlier complete glyph trial](native-glyph-mask.md) improved many original
 comparisons but introduced three exact losses. This follow-up reduces the input

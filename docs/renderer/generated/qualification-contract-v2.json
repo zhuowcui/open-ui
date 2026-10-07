@@ -684,7 +684,7 @@
     "docs/renderer/generated/media-first-frames-v1.json": "81c297a3201b04d6d28761f68312e4ad9f66856f87f87f0cf3337b411c6fb70a",
     "tools/accountability/data/wpt_ported/sp20_resource_manifest.json": "7b6ef91b6dcfccef8751fdd25b47a0e3a9a682e8b982474fe34bdf72cf331328",
     "tools/qualification/manifests/complete-5731.json": "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f",
-    "tools/qualification/manifests/expanded-v18.json": "906455ea4f348ad5ee7ad062073a297e8daef375261b1960fcbbcdcd6369c3cc",
+    "tools/qualification/manifests/expanded-v35.json": "367efecaf06da167025130e1d8b746268161f6c6a22d77f78e1a5a994e7d6e03",
     "tools/qualification/manifests/focused-raster.json": "215b2eee97e6eacb7984ede2e8c8e11e5d049d1ffe948589083efc3258528c98",
     "tools/qualification/manifests/primitive-raster.json": "03a376120ce4b67a5d9580c9ed38f337795f95a0bd2b800175862ea1b966d978",
     "tools/qualification/residual-ownership-v2.json": "ca8d04dce8056248f785e0be572827462abe44fbf7b75c459abd08de9b110f7d"
@@ -696,8 +696,8 @@
       "count": 5932,
       "evidence": "qualification-gate",
       "original_count": 5731,
-      "path": "tools/qualification/manifests/expanded-v18.json",
-      "sha256": "906455ea4f348ad5ee7ad062073a297e8daef375261b1960fcbbcdcd6369c3cc"
+      "path": "tools/qualification/manifests/expanded-v35.json",
+      "sha256": "367efecaf06da167025130e1d8b746268161f6c6a22d77f78e1a5a994e7d6e03"
     },
     "focused": {
       "count": 16,
