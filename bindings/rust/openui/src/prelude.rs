@@ -19,8 +19,9 @@ pub use crate::typed_style::*;
 pub use crate::view_node::{mount_view, IntoView, ViewNode};
 pub use crate::ElementTag;
 pub use crate::{
-    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
-    EngineOptions, RasterConfiguration, ScrollMetrics, ViewportAuthority, ViewportMetrics,
+    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole, EditCommand,
+    EngineOptions, RasterConfiguration, ScrollMetrics, TextDirection, TextUnit, ViewportAuthority,
+    ViewportMetrics,
 };
 pub use openui_macros::{component, view};
 pub use openui_text::{

@@ -658,6 +658,17 @@ impl Element {
             .with_engine_mut(|engine| engine.set_selection(self.handle, anchor, focus))
     }
 
+    /// Run a native editing command on an input or textarea.
+    ///
+    /// Uses the same engine and event path as keyboard editing. Value changes
+    /// emit `input` after the engine borrow is released, so Rust callbacks can
+    /// read or change the document. Selection commands emit no `input` event.
+    /// Read-only controls allow selection commands; disabled controls reject
+    /// every command. Invalid or removed elements return an error.
+    pub fn edit_text(&self, command: crate::EditCommand) -> Result<(), Error> {
+        self.document.edit_control(self.handle, command)
+    }
+
     pub fn is_checked(&self) -> Result<bool, Error> {
         self.control_flag(|state| state.checked)
     }
@@ -877,6 +888,148 @@ mod tests {
     use crate::events::{EventPhase, Modifiers, MouseButton, MouseEventType};
     use openui_style::{AnimationOptions, FillMode, Keyframes, Overflow, OverflowClipBox};
     use std::cell::{Cell, RefCell};
+
+    #[test]
+    fn native_edit_commands_dispatch_after_borrows_and_preserve_graphemes() {
+        use crate::{EditCommand, TextDirection, TextUnit};
+
+        let document = Document::new(200, 100).unwrap();
+        let input = Element::create(&document, "input").unwrap();
+        let button = Element::create(&document, "button").unwrap();
+        let label = Element::create(&document, "div").unwrap();
+        document.body().append_child(&input).unwrap();
+        document.body().append_child(&button).unwrap();
+        document.body().append_child(&label).unwrap();
+        input.set_control_value("á👩‍💻z").unwrap();
+        let owned_value = input.control_value().unwrap();
+        let observed = Rc::new(RefCell::new(Vec::new()));
+        let callbacks = observed.clone();
+        let weak_label = label.downgrade();
+        input
+            .on("input", move |event| {
+                let target = event.target().unwrap();
+                let value = target.control_value().unwrap().unwrap();
+                weak_label.upgrade().unwrap().set_text(&value).unwrap();
+                callbacks.borrow_mut().push(value);
+            })
+            .unwrap();
+        let weak_input = input.downgrade();
+        button
+            .on("click", move |_| {
+                weak_input
+                    .upgrade()
+                    .unwrap()
+                    .edit_text(EditCommand::Delete {
+                        direction: TextDirection::Backward,
+                        unit: TextUnit::Grapheme,
+                    })
+                    .unwrap();
+            })
+            .unwrap();
+        button.click().unwrap();
+        assert_eq!(input.control_value().unwrap().as_deref(), Some("á👩‍💻"));
+        input.edit_text(EditCommand::Undo).unwrap();
+        input.edit_text(EditCommand::Redo).unwrap();
+        assert_eq!(&*observed.borrow(), &["á👩‍💻", "á👩‍💻z", "á👩‍💻"]);
+        assert_eq!(label.text_content().unwrap(), "á👩‍💻");
+        assert_eq!(owned_value.as_deref(), Some("á👩‍💻z"));
+        input.edit_text(EditCommand::SelectAll).unwrap();
+        assert_eq!(input.selection().unwrap(), Some((0, "á👩‍💻".len())));
+        input.set_selection(0, 0).unwrap();
+        input
+            .edit_text(EditCommand::Move {
+                direction: TextDirection::Forward,
+                unit: TextUnit::Grapheme,
+                extend: true,
+            })
+            .unwrap();
+        assert_eq!(input.selection().unwrap(), Some((0, "á".len())));
+        assert_eq!(observed.borrow().len(), 3);
+        let weak = input.downgrade();
+        drop(input);
+        drop(button);
+        drop(label);
+        drop(document);
+        assert!(weak.upgrade().is_none());
+    }
+
+    #[test]
+    fn native_edit_commands_enforce_readonly_disabled_and_handle_lifetimes() {
+        use crate::{EditCommand, TextDirection, TextUnit};
+
+        let document = Document::new(100, 100).unwrap();
+        let input = Element::create(&document, "input").unwrap();
+        document.body().append_child(&input).unwrap();
+        input.set_control_value("é👍z").unwrap();
+        input.set_attribute("readonly", "").unwrap();
+        input.edit_text(EditCommand::SelectAll).unwrap();
+        assert_eq!(input.selection().unwrap(), Some((0, "é👍z".len())));
+        let delete = EditCommand::Delete {
+            direction: TextDirection::Backward,
+            unit: TextUnit::Grapheme,
+        };
+        assert!(matches!(
+            input.edit_text(delete),
+            Err(Error::Engine(openui_engine::EngineError::NotEditable))
+        ));
+        assert_eq!(input.control_value().unwrap().as_deref(), Some("é👍z"));
+        input.set_attribute("disabled", "").unwrap();
+        assert!(input.edit_text(EditCommand::SelectAll).is_err());
+        let ordinary = Element::create(&document, "div").unwrap();
+        assert!(ordinary.edit_text(delete).is_err());
+        input.remove().unwrap();
+        assert!(input.edit_text(delete).is_err());
+    }
+
+    #[test]
+    fn native_edit_commands_and_keyboard_defaults_share_control_state_and_events() {
+        use crate::{EditCommand, KeyEventType, TextDirection, TextUnit};
+
+        let document = Document::new(200, 100).unwrap();
+        for tag in ["input", "textarea"] {
+            let direct = Element::create(&document, tag).unwrap();
+            let keyboard = Element::create(&document, tag).unwrap();
+            for element in [&direct, &keyboard] {
+                document.body().append_child(element).unwrap();
+                element.set_control_value("á👩‍💻z").unwrap();
+            }
+            let direct_events = Rc::new(Cell::new(0));
+            let keyboard_events = Rc::new(Cell::new(0));
+            for (element, counter) in [(&direct, &direct_events), (&keyboard, &keyboard_events)] {
+                let counter = counter.clone();
+                element
+                    .on("input", move |_| counter.set(counter.get() + 1))
+                    .unwrap();
+            }
+            keyboard.focus().unwrap();
+            for (command, code, key, modifiers) in [
+                (
+                    EditCommand::Delete {
+                        direction: TextDirection::Backward,
+                        unit: TextUnit::Grapheme,
+                    },
+                    8,
+                    "Backspace",
+                    Modifiers::NONE,
+                ),
+                (EditCommand::Undo, 90, "z", Modifiers::CTRL),
+                (EditCommand::Redo, 89, "y", Modifiers::CTRL),
+                (EditCommand::SelectAll, 65, "a", Modifiers::CTRL),
+            ] {
+                direct.edit_text(command).unwrap();
+                document
+                    .dispatch_key_event(KeyEventType::Down, code, Some(key), modifiers)
+                    .unwrap();
+                assert_eq!(
+                    direct.control_value().unwrap(),
+                    keyboard.control_value().unwrap()
+                );
+                assert_eq!(direct.selection().unwrap(), keyboard.selection().unwrap());
+                assert_eq!(direct_events.get(), keyboard_events.get());
+            }
+            assert_eq!(direct_events.get(), 3);
+        }
+    }
 
     #[test]
     fn native_replaced_elements_use_chromium_host_clip_defaults() {

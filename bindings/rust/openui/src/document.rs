@@ -1206,17 +1206,24 @@ impl Document {
         let Some(target) = self.with_engine(|engine| engine.focused())? else {
             return Ok(());
         };
+        match self.edit_control(target, command) {
+            // Keyboard editing on a noneditable focused control has no effect.
+            Err(Error::Engine(openui_engine::EngineError::NotEditable)) => Ok(()),
+            result => result,
+        }
+    }
+
+    pub(crate) fn edit_control(
+        &self,
+        target: NodeHandle,
+        command: EditCommand,
+    ) -> Result<(), Error> {
         let changed = self.with_engine(|engine| {
             engine
                 .control_state(target)
                 .map(|state| state.map(|state| state.value.clone()))
         })??;
-        if self
-            .with_engine_mut(|engine| engine.edit_text(target, command))
-            .is_err()
-        {
-            return Ok(());
-        }
+        self.with_engine_mut(|engine| engine.edit_text(target, command))?;
         let after = self.with_engine(|engine| {
             engine
                 .control_state(target)

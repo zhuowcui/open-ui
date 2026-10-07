@@ -56,6 +56,7 @@ operate directly on the native engine:
 | Inject normalized keyboard or committed text input | `Document::dispatch_key_input`, `dispatch_key_event`, `dispatch_text_input` |
 | Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `scroll_metrics`, `scroll_into_view`, `smooth_scroll_into_view`, `client_rects`, `bounding_rect`; `Document::hit_test` |
 | Update form controls or details | `set_control_value`, `set_selection`, `set_checked`, `set_open` |
+| Move or extend a text selection, delete by grapheme or word, select all, undo, or redo | `Element::edit_text(EditCommand)`, using the same engine and `input` callback path as keyboard editing |
 | Inject or cancel native IME input | `Document::dispatch_composition_start`, `dispatch_composition_update`, `dispatch_composition_end`, `dispatch_composition_cancel` |
 | Select immutable rendering options for the native document or app | `Document::with_options`, `with_font_collection_and_options`, `raster_configuration`; `AppBuilder::engine_options`; `HeadlessApp::with_options` |
 
@@ -73,6 +74,14 @@ through the public Rust API, and verify it from a consuming native Rust
 application. Test coverage must exercise the retained state and resulting
 events or rendering. A missing public method remains an implementation gap
 until that native application path works.
+
+The [native editing consumer](../../bindings/rust/openui/examples/native_edit_commands.rs)
+invokes typed editing commands from a Rust button callback. Text changes dispatch
+`input` after engine borrows are released; listeners can inspect the edited
+control and change other elements. Selection-only commands dispatch no `input`.
+Read-only controls permit selection commands, while disabled controls reject all
+commands. Rust selection offsets are UTF-8 byte positions on grapheme boundaries.
+C command parity and complete editor scrolling and pixels remain open.
 
 The [native font-relative helper](../renderer/native-font-relative-lengths.md)
 resolves `ch`, `ex` and `lh` from an owned computed style and the app's font
