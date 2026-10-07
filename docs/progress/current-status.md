@@ -22,6 +22,13 @@ remain open.
 
 ## Current implementation checkpoint
 
+The [native input notification correction](../v02/native-input-notifications.md)
+is integrated at `c09eb639`: input/change cannot cancel completed edits, while
+beforeinput can reject a pending edit. Private Rust/C/C++ apps match five
+Chromium event observations twice; 8,597 workspace tests and all twenty checks
+pass. Fresh combined-source native, renderer and hosted checks remain pending.
+Open UI executes no JavaScript.
+
 The [combined controls and focus evidence](../renderer/generated/native-controls-focus-v2.json)
 records actual verification of clean umbrella `3ee3f9d3`, with its source and
 executable identities retained. Native controls derive input/textarea sizes

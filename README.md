@@ -27,6 +27,13 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
+The [native input notification correction](docs/v02/native-input-notifications.md)
+is integrated at `c09eb639`: input/change cannot cancel completed edits, while
+beforeinput can reject a pending edit. Private Rust/C/C++ apps match five
+Chromium event observations twice; 8,597 workspace tests and all twenty checks
+pass. Fresh combined-source native, renderer and hosted checks remain pending.
+Open UI executes no JavaScript.
+
 The [combined controls and focus checkpoint](docs/renderer/generated/native-controls-focus-v2.json)
 measures clean umbrella `3ee3f9d3`. Rust, C and C++ apps each match all 338
 Chromium focus observations twice. The Rust control app matches all 90 images
