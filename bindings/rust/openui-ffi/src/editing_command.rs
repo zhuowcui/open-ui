@@ -471,7 +471,7 @@ mod tests {
         );
         assert_eq!(
             oui_element_edit_text_v1(ptr::null_mut(), &command(OUI_EDIT_SELECT_ALL)),
-            OuiStatus::InvalidHandle
+            OuiStatus::InvalidArgument
         );
     }
 
