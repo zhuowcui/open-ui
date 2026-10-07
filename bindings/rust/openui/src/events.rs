@@ -13,12 +13,28 @@ pub enum EventPhase {
 
 #[derive(Debug, Default)]
 struct EventState {
+    bubbles: bool,
+    cancelable: bool,
     default_prevented: Cell<bool>,
     propagation_stopped: Cell<bool>,
     immediate_propagation_stopped: Cell<bool>,
     phase: Cell<Option<EventPhase>>,
     target: RefCell<Option<WeakElement>>,
     current_target: RefCell<Option<WeakElement>>,
+    related_target: RefCell<Option<WeakElement>>,
+}
+
+impl EventState {
+    fn for_type(event_type: &str) -> Rc<Self> {
+        Rc::new(Self {
+            bubbles: !matches!(
+                event_type,
+                "focus" | "blur" | "mouseenter" | "mouseleave" | "pointerenter" | "pointerleave"
+            ),
+            cancelable: !matches!(event_type, "focus" | "blur" | "focusin" | "focusout"),
+            ..Self::default()
+        })
+    }
 }
 
 pub(crate) struct ListenerScope<'a> {
@@ -58,8 +74,10 @@ impl Event {
         button: MouseButton,
         modifiers: Modifiers,
     ) -> Self {
+        let event_type = event_type.into();
+        let state = EventState::for_type(&event_type);
         Self {
-            event_type: event_type.into(),
+            event_type,
             mouse_x: x,
             mouse_y: y,
             delta_x: 0.0,
@@ -70,7 +88,7 @@ impl Event {
             modifiers: modifiers.bits() as i32,
             pointer_id,
             is_composing: false,
-            state: Rc::default(),
+            state,
         }
     }
 
@@ -80,8 +98,10 @@ impl Event {
         key_text: Option<&str>,
         modifiers: Modifiers,
     ) -> Self {
+        let event_type = event_type.into();
+        let state = EventState::for_type(&event_type);
         Self {
-            event_type: event_type.into(),
+            event_type,
             mouse_x: 0.0,
             mouse_y: 0.0,
             delta_x: 0.0,
@@ -92,7 +112,7 @@ impl Event {
             modifiers: modifiers.bits() as i32,
             pointer_id: 0,
             is_composing: false,
-            state: Rc::default(),
+            state,
         }
     }
 
@@ -100,6 +120,12 @@ impl Event {
         let mut event = Self::pointer("wheel", 0, x, y, MouseButton::Middle, modifiers);
         event.delta_x = dx;
         event.delta_y = dy;
+        event
+    }
+
+    pub(crate) fn focus(event_type: &str, related_target: Option<WeakElement>) -> Self {
+        let event = Self::keyboard(event_type, 0, None, Modifiers::NONE);
+        *event.state.related_target.borrow_mut() = related_target;
         event
     }
 
@@ -140,8 +166,39 @@ impl Event {
         self.state.current_target.borrow().as_ref()?.upgrade()
     }
 
+    /// The other element in a native focus transfer.
+    ///
+    /// For `blur` and `focusout`, this is the pending focus destination; for
+    /// `focus` and `focusin`, it is the previous focused element. Initial
+    /// focus, clearing focus, and a transfer redirected by a blur callback
+    /// can have no related element. Other event types return `None`.
+    ///
+    /// Like [`Self::target`], this uses a weak, generation-checked handle.
+    /// Saved events do not retain the element or document and return `None`
+    /// after either is destroyed.
+    pub fn related_target(&self) -> Option<Element> {
+        self.state.related_target.borrow().as_ref()?.upgrade()
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn related_node_for_native_facade(&self) -> Option<openui_engine::NodeHandle> {
+        self.related_target().map(|element| element.handle)
+    }
+
+    /// Whether this normalized event visits ancestor bubble listeners.
+    pub fn bubbles(&self) -> bool {
+        self.state.bubbles
+    }
+
+    /// Whether [`Self::prevent_default`] can cancel this event's default action.
+    /// Native focus, blur, focusin and focusout notifications are noncancelable.
+    pub fn cancelable(&self) -> bool {
+        self.state.cancelable
+    }
+
     pub fn prevent_default(&self) {
-        if !matches!(self.event_type.as_str(), "focus" | "blur") {
+        if self.cancelable() {
             self.state.default_prevented.set(true);
         }
     }
@@ -163,7 +220,7 @@ impl Event {
         self.state.propagation_stopped.get()
     }
 
-    pub(crate) fn immediate_propagation_stopped(&self) -> bool {
+    pub fn immediate_propagation_stopped(&self) -> bool {
         self.state.immediate_propagation_stopped.get()
     }
 

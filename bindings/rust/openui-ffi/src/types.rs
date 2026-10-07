@@ -341,6 +341,7 @@ pub struct OuiAnimationEvent {
 
 pub const OUI_EVENT_FLAG_DEFAULT_PREVENTED: u32 = 1 << 0;
 pub const OUI_EVENT_FLAG_PROPAGATION_STOPPED: u32 = 1 << 1;
+pub const OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED: u32 = 1 << 2;
 pub const OUI_EDIT_MOVE: u32 = 0;
 pub const OUI_EDIT_DELETE: u32 = 1;
 pub const OUI_EDIT_SELECT_ALL: u32 = 2;
@@ -468,6 +469,18 @@ pub struct OuiEvent {
     pub text: OuiUtf8,
     pub target: *mut OuiElement,
     pub current_target: *mut OuiElement,
+}
+
+/// Owned metadata copied from a currently executing native focus callback.
+/// The related element handle must be released with oui_element_destroy.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiFocusEventInfoV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub bubbles: u32,
+    pub cancelable: u32,
+    pub related_target: *mut OuiElement,
 }
 
 #[repr(C)]

@@ -50,6 +50,8 @@ pub(crate) fn dispatch_native_listener(
         "animationend" => 22,
         "animationcancel" => 23,
         "pointercancel" | "mousecancel" => 24,
+        "focusin" => 25,
+        "focusout" => 26,
         _ => return Ok(()),
     };
     let mut event = synthesized_event(
@@ -79,6 +81,10 @@ pub(crate) fn dispatch_native_listener(
     if native.propagation_stopped() {
         event.flags |= OUI_EVENT_FLAG_PROPAGATION_STOPPED;
     }
+    if native.immediate_propagation_stopped() {
+        event.flags |= OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED;
+    }
+    let _focus_scope = super::focus_events::FocusEventScope::new(state, native, &event);
     match capture {
         Some(capture) => invoke_event_listeners(state, node, capture, &mut event)?,
         None => {
@@ -89,7 +95,9 @@ pub(crate) fn dispatch_native_listener(
     if event.flags & OUI_EVENT_FLAG_DEFAULT_PREVENTED != 0 {
         native.prevent_default();
     }
-    if event.flags & OUI_EVENT_FLAG_PROPAGATION_STOPPED != 0 {
+    if event.flags & OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED != 0 {
+        native.stop_immediate_propagation();
+    } else if event.flags & OUI_EVENT_FLAG_PROPAGATION_STOPPED != 0 {
         native.stop_propagation();
     }
     Ok(())

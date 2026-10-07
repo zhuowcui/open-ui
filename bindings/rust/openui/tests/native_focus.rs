@@ -325,6 +325,124 @@ fn focus_and_blur_capture_then_target_without_bubbling_or_cancellation() {
 }
 
 #[test]
+fn saved_focus_events_keep_related_nodes_weak_and_generation_checked() {
+    let document = Document::new(320, 200).unwrap();
+    let a = Element::create(&document, "input").unwrap();
+    let b = Element::create(&document, "input").unwrap();
+    b.set_id("original").unwrap();
+    document.body().append_child(&a).unwrap();
+    document.body().append_child(&b).unwrap();
+    let saved = Rc::new(RefCell::new(Vec::new()));
+    for event_type in ["blur", "focusout"] {
+        let saved = saved.clone();
+        a.on(event_type, move |event| {
+            saved.borrow_mut().push(event.clone())
+        })
+        .unwrap();
+    }
+    a.focus().unwrap();
+    b.focus().unwrap();
+    assert_eq!(saved.borrow().len(), 2);
+    for event in saved.borrow().iter() {
+        assert_eq!(
+            event
+                .related_target()
+                .unwrap()
+                .get_attribute("id")
+                .unwrap()
+                .as_deref(),
+            Some("original")
+        );
+        assert!(!event.cancelable());
+        assert!(event.current_target().is_none());
+        assert!(event.phase().is_none());
+    }
+    b.detach().unwrap();
+    assert!(saved
+        .borrow()
+        .iter()
+        .all(|event| event.related_target().is_some()));
+    b.remove().unwrap();
+    let replacement = Element::create(&document, "input").unwrap();
+    replacement.set_id("replacement").unwrap();
+    document.body().append_child(&replacement).unwrap();
+    assert!(saved
+        .borrow()
+        .iter()
+        .all(|event| event.related_target().is_none()));
+    for event_type in ["blur", "focusout"] {
+        a.remove_event(event_type).unwrap();
+    }
+    drop(replacement);
+    drop(b);
+    drop(a);
+    drop(document);
+    assert!(saved.borrow().iter().all(|event| event.target().is_none()));
+}
+
+#[test]
+fn target_capture_stop_preserves_same_invocation_until_immediate_stop() {
+    for immediate in [false, true] {
+        let document = Document::new(320, 200).unwrap();
+        let input = Element::create(&document, "input").unwrap();
+        document.body().append_child(&input).unwrap();
+        let log = Rc::new(RefCell::new(Vec::new()));
+        let observed = log.clone();
+        input
+            .on("focus", move |_| observed.borrow_mut().push("noncapture"))
+            .unwrap();
+        let observed = log.clone();
+        input
+            .on_capture("focus", move |event| {
+                observed.borrow_mut().push("capture-stop");
+                if immediate {
+                    event.stop_immediate_propagation();
+                } else {
+                    event.stop_propagation();
+                }
+            })
+            .unwrap();
+        let observed = log.clone();
+        input
+            .on_capture("focus", move |_| {
+                observed.borrow_mut().push("later-capture")
+            })
+            .unwrap();
+        input.focus().unwrap();
+        assert_eq!(
+            log.borrow().as_slice(),
+            if immediate {
+                &["capture-stop"][..]
+            } else {
+                &["capture-stop", "later-capture"][..]
+            }
+        );
+        assert!(input.has_focus().unwrap());
+        input.remove_event("focus").unwrap();
+    }
+}
+
+#[test]
+fn relabeling_a_saved_event_does_not_make_native_focus_cancelable() {
+    let document = Document::new(320, 200).unwrap();
+    let input = Element::create(&document, "input").unwrap();
+    document.body().append_child(&input).unwrap();
+    input
+        .on("focus", |event| {
+            let mut saved = event.clone();
+            saved.event_type = "click".into();
+            saved.prevent_default();
+            assert!(!saved.cancelable());
+            assert!(!saved.bubbles());
+            assert!(!event.default_prevented());
+        })
+        .unwrap();
+    input.focus().unwrap();
+    assert!(input.has_focus().unwrap());
+    input.remove_event("focus").unwrap();
+}
+
+#[test]
 fn modal_focus_delivers_callbacks_cancels_composition_and_restores_focus() {
     let (document, [outside, inside, sibling], log) = fixture();
     let modal = Element::create(&document, "div").unwrap();

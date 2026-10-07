@@ -215,7 +215,8 @@ typedef enum OuiEventPhase {
 
 typedef enum OuiEventFlags {
   OUI_EVENT_DEFAULT_PREVENTED = 1u << 0,
-  OUI_EVENT_PROPAGATION_STOPPED = 1u << 1
+  OUI_EVENT_PROPAGATION_STOPPED = 1u << 1,
+  OUI_EVENT_IMMEDIATE_PROPAGATION_STOPPED = 1u << 2
 } OuiEventFlags;
 
 typedef enum OuiModifiers {
@@ -635,6 +636,18 @@ typedef struct OuiEvent {
   OuiElement* current_target;
 } OuiEvent;
 
+/* Snapshot of a currently executing native focus callback. related_target is
+ * an independently owned, generation-checked handle: destroy it with
+ * oui_element_destroy when non-NULL. It does not keep its document alive.
+ * Release an earlier related_target before reusing this output structure. */
+typedef struct OuiFocusEventInfoV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t bubbles;
+  uint32_t cancelable;
+  OuiElement* related_target;
+} OuiFocusEventInfoV1;
+
 typedef enum OuiEditCommandKind {
   OUI_EDIT_MOVE = 0,
   OUI_EDIT_DELETE = 1,
@@ -826,6 +839,8 @@ typedef struct OuiAppRunConfig {
  *   remain valid until its OuiListener is destroyed.
  * - Setting OUI_EVENT_DEFAULT_PREVENTED or OUI_EVENT_PROPAGATION_STOPPED in a
  *   callback updates dispatch state; callbacks must not retain OuiEvent*.
+ * - OUI_EVENT_IMMEDIATE_PROPAGATION_STOPPED also stops remaining listeners in
+ *   the current invocation, including Rust listeners on the shared route.
  * - Accessibility snapshots own their nodes and strings. A snapshot remains
  *   readable after its document is destroyed, on the snapshot's owning thread.
  *   Destroy each snapshot after use. Output strings are raw UTF-8 bytes without
@@ -866,6 +881,21 @@ OuiStatus oui_document_update(OuiDocument* document);
 OuiStatus oui_document_render_rgba(OuiDocument* document, OuiBitmap* out_bitmap);
 OuiStatus oui_document_render_png(OuiDocument* document, OuiBuffer** out_buffer);
 OuiStatus oui_document_dispatch_event(OuiDocument* document, OuiElement* target, OuiEvent* event);
+
+/* Call only on the owning thread during a native FOCUS, BLUR, FOCUS_IN or
+ * FOCUS_OUT listener, using that callback's exact borrowed event pointer.
+ * Initialize struct_size and abi_version; the output must cover that size.
+ * Nested callbacks preserve the outer callback's context. Outside an active
+ * callback scope, the query returns INVALID_STATE without dereferencing the
+ * event pointer. Callbacks must not retain the borrowed event pointer.
+ * The snapshot and its related handle may outlive the callback; node/document
+ * destruction makes the handle stale. All four focus events are noncancelable.
+ * FOCUS_IN/OUT bubble; FOCUS/BLUR visit capture and target listeners only. */
+OuiStatus oui_event_focus_info_v1(const OuiEvent* event, OuiFocusEventInfoV1* out_info);
+/* Copy the current focused element as an independently owned weak-document
+ * handle, or NULL when no element has focus. Destroy a non-NULL output with
+ * oui_element_destroy. The output is written only on success. */
+OuiStatus oui_document_focused_element_v1(OuiDocument* document, OuiElement** out_element);
 /*
  * Native normalized input uses the focused control and the shared Rust/Linux
  * default-action path. key->event_type is OUI_EVENT_KEY_DOWN or KEY_UP;

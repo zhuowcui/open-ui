@@ -36,6 +36,7 @@ oui_document_dispatch_pointer_event
 oui_document_dispatch_text_input_v1
 oui_document_element_by_id
 oui_document_end_update
+oui_document_focused_element_v1
 oui_document_get_viewport
 oui_document_hit_test
 oui_document_is_animating
@@ -97,6 +98,7 @@ oui_element_smooth_scroll_into_view_v1
 oui_element_transition
 oui_error_copy_message
 oui_error_get_last
+oui_event_focus_info_v1
 oui_font_face_copy_family
 oui_font_face_copy_feature_defaults
 oui_font_face_copy_unicode_ranges

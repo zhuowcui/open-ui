@@ -23,3 +23,5 @@ id,c_name,rust_name
 22,OUI_EVENT_ANIMATION_END,animationend
 23,OUI_EVENT_ANIMATION_CANCEL,animationcancel
 24,OUI_EVENT_POINTER_CANCEL,pointercancel
+25,OUI_EVENT_FOCUS_IN,focusin
+26,OUI_EVENT_FOCUS_OUT,focusout

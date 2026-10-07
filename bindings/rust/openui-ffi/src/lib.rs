@@ -8,6 +8,7 @@
 
 mod accessibility_snapshot;
 mod editing_command;
+mod focus_events;
 #[cfg(test)]
 mod focus_tests;
 mod generated;
@@ -19,6 +20,7 @@ mod types;
 mod value;
 
 pub use editing_command::oui_element_edit_text_v1;
+pub use focus_events::{oui_document_focused_element_v1, oui_event_focus_info_v1};
 pub use native_app::{oui_app_request_exit, oui_app_run};
 pub use types::*;
 
@@ -1844,8 +1846,12 @@ fn invoke_event_listeners(
         // No engine or listener-list borrow is held, so reentrant API calls are
         // explicitly permitted. The event pointer lives through the call.
         unsafe { (listener.callback)(event, listener.user_data) };
-        if matches!(event.event_type, 12 | 13) {
+        if matches!(event.event_type, 12 | 13 | 25 | 26) {
             event.flags &= !OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+        }
+        if event.flags & OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED != 0 {
+            event.flags |= OUI_EVENT_FLAG_PROPAGATION_STOPPED;
+            break;
         }
     }
     Ok(())
@@ -1856,7 +1862,11 @@ fn validate_event(event: &OuiEvent) -> Result<(), ApiError> {
     if !valid_event_type(event.event_type) {
         return Err(invalid("unknown event type"));
     }
-    if event.flags & !(OUI_EVENT_FLAG_DEFAULT_PREVENTED | OUI_EVENT_FLAG_PROPAGATION_STOPPED) != 0
+    if event.flags
+        & !(OUI_EVENT_FLAG_DEFAULT_PREVENTED
+            | OUI_EVENT_FLAG_PROPAGATION_STOPPED
+            | OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED)
+        != 0
         || event.modifiers & !0x1f != 0
     {
         return Err(invalid("event contains unknown flag bits"));
@@ -1900,9 +1910,31 @@ fn dispatch_event_to(
     event: &mut OuiEvent,
     apply_default: bool,
 ) -> Result<(), ApiError> {
+    if matches!(event.event_type, 25 | 26) {
+        // Explicit notifications have no focus default action. Share the Rust
+        // route so native listeners and versioned metadata see the same event.
+        // The ordinary focus/blur branch below still performs a real transfer.
+        let native = state
+            .native
+            .dispatch_focus_notification_for_native_facade(target, event.event_type == 25)
+            .map_err(native_app::native_error)?;
+        event.flags = 0;
+        if native.propagation_stopped() {
+            event.flags |= OUI_EVENT_FLAG_PROPAGATION_STOPPED;
+        }
+        if native.immediate_propagation_stopped() {
+            event.flags |= OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED;
+        }
+        event.target = target_address as *mut OuiElement;
+        event.current_target = ptr::null_mut();
+        event.phase = 2;
+        return Ok(());
+    }
     if apply_default && matches!(event.event_type, 12 | 13) {
         utf8(event.text, "event text")?;
-        event.flags &= !(OUI_EVENT_FLAG_DEFAULT_PREVENTED | OUI_EVENT_FLAG_PROPAGATION_STOPPED);
+        event.flags &= !(OUI_EVENT_FLAG_DEFAULT_PREVENTED
+            | OUI_EVENT_FLAG_PROPAGATION_STOPPED
+            | OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED);
         event.target = target_address as *mut OuiElement;
         event.current_target = ptr::null_mut();
         event.phase = 2;
@@ -1916,7 +1948,9 @@ fn dispatch_event_to(
         .map_err(native_app::native_error);
     }
     let route = borrow_engine(state)?.event_route(target)?;
-    event.flags &= !(OUI_EVENT_FLAG_DEFAULT_PREVENTED | OUI_EVENT_FLAG_PROPAGATION_STOPPED);
+    event.flags &= !(OUI_EVENT_FLAG_DEFAULT_PREVENTED
+        | OUI_EVENT_FLAG_PROPAGATION_STOPPED
+        | OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED);
     event.target = target_address as *mut OuiElement;
     for step in route.steps {
         match step.phase {
@@ -1927,7 +1961,9 @@ fn dispatch_event_to(
             EngineEventPhase::Target => {
                 event.phase = 2;
                 invoke_event_listeners(state, step.node, true, event)?;
-                invoke_event_listeners(state, step.node, false, event)?;
+                if event.flags & OUI_EVENT_FLAG_PROPAGATION_STOPPED == 0 {
+                    invoke_event_listeners(state, step.node, false, event)?;
+                }
             }
             EngineEventPhase::Bubble => {
                 if matches!(event.event_type, 12 | 13) {

@@ -1165,7 +1165,10 @@ impl Engine {
     }
 
     pub(crate) fn is_focusable(&self, handle: NodeHandle) -> bool {
-        if self.resolve(handle).is_err()
+        let Ok(node) = self.resolve(handle) else {
+            return false;
+        };
+        if !self.node_is_connected(node)
             || self.is_disabled(handle)
             || !self.is_inside_modal(handle)
         {

@@ -170,6 +170,21 @@ impl Document {
         self.blur_element(target)
     }
 
+    /// Route a facade's explicit focusin/focusout notification through the
+    /// shared listener pipeline. This does not change the focused element.
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn dispatch_focus_notification_for_native_facade(
+        &self,
+        target: NodeHandle,
+        entering: bool,
+    ) -> Result<Event, Error> {
+        self.with_engine(|engine| target.downgrade().upgrade(engine))??;
+        let event = Event::focus(if entering { "focusin" } else { "focusout" }, None);
+        self.dispatch_to(target, &event)?;
+        Ok(event)
+    }
+
     #[cfg(feature = "ffi-integration")]
     #[doc(hidden)]
     pub fn focus_accessibility_element_for_native_facade(
@@ -1165,14 +1180,27 @@ impl Document {
     fn dispatch_to(&self, target: NodeHandle, event: &Event) -> Result<(), Error> {
         let route = self.with_engine(|engine| engine.event_route(target))??;
         for step in route.steps {
-            if step.phase == EngineEventPhase::Bubble
-                && matches!(event.event_type.as_str(), "focus" | "blur")
-            {
+            if step.phase == EngineEventPhase::Bubble && !event.bubbles() {
+                continue;
+            }
+            if step.phase == EngineEventPhase::Target {
+                event.set_phase(EventPhase::Target);
+                self.invoke(step.node, target, event, Some(true))?;
+                if event.propagation_stopped() {
+                    return Ok(());
+                }
+                // Each invocation's scope clears the listener phase on exit.
+                // Restore it for the separate target noncapture invocation.
+                event.set_phase(EventPhase::Target);
+                self.invoke(step.node, target, event, Some(false))?;
+                if event.propagation_stopped() {
+                    return Ok(());
+                }
                 continue;
             }
             let (phase, capture) = match step.phase {
                 EngineEventPhase::Capture => (EventPhase::Capture, Some(true)),
-                EngineEventPhase::Target => (EventPhase::Target, None),
+                EngineEventPhase::Target => unreachable!("target listeners dispatched above"),
                 EngineEventPhase::Bubble => (EventPhase::Bubble, Some(false)),
             };
             event.set_phase(phase);
@@ -1209,6 +1237,9 @@ impl Document {
             if let Some(handler) = handler {
                 handler(node, target, event, capture)?;
             }
+        }
+        if event.immediate_propagation_stopped() {
+            return Ok(());
         }
         let callbacks: Vec<_> = self
             .inner
@@ -1282,7 +1313,18 @@ impl Document {
         }
         if let Some(current) = current {
             self.with_engine_mut(|engine| engine.blur(current))?;
-            self.dispatch_to(current, &Event::keyboard("blur", 0, None, Modifiers::NONE))?;
+            self.dispatch_focus_event(current, "blur", next)?;
+            // A blur callback can replace the pending destination. Chromium
+            // still sends focusout for the old element, with no related target
+            // when that callback has already established another focus.
+            let related = if self.with_engine(Engine::focused)?.is_some() {
+                None
+            } else {
+                next
+            };
+            if self.target_is_live(current)? {
+                self.dispatch_focus_event(current, "focusout", related)?;
+            }
         }
         // Blur callbacks run while nothing is focused and may choose a target.
         // If they focus and then blur it, the original request may continue.
@@ -1299,9 +1341,27 @@ impl Document {
                 return Ok(());
             }
             self.with_engine_mut(|engine| engine.focus_with_origin(next, origin))?;
-            self.dispatch_to(next, &Event::keyboard("focus", 0, None, Modifiers::NONE))?;
+            self.dispatch_focus_event(next, "focus", previous)?;
+            // The focus callback may redirect, disable or destroy this target.
+            // The pending focusin belongs only to the still-current focus.
+            if self.inner.modal_generation.get() == modal_generation
+                && self.with_engine(Engine::focused)? == Some(next)
+                && self.target_is_live(next)?
+            {
+                self.dispatch_focus_event(next, "focusin", previous)?;
+            }
         }
         Ok(())
+    }
+
+    fn dispatch_focus_event(
+        &self,
+        target: NodeHandle,
+        event_type: &str,
+        related: Option<NodeHandle>,
+    ) -> Result<(), Error> {
+        let related = related.map(|handle| Element::from_handle(self.clone(), handle).downgrade());
+        self.dispatch_to(target, &Event::focus(event_type, related))
     }
 
     fn dispatch_focus_change(
@@ -1321,10 +1381,18 @@ impl Document {
             self.dispatch_composition_cancel()?;
         }
         if let Some(previous) = previous {
-            self.dispatch_to(previous, &Event::keyboard("blur", 0, None, Modifiers::NONE))?;
+            self.dispatch_focus_event(previous, "blur", next)?;
+            if self.target_is_live(previous)? {
+                self.dispatch_focus_event(previous, "focusout", next)?;
+            }
         }
         if let Some(next) = next {
-            self.dispatch_to(next, &Event::keyboard("focus", 0, None, Modifiers::NONE))?;
+            if self.with_engine(Engine::focused)? == Some(next) && self.target_is_live(next)? {
+                self.dispatch_focus_event(next, "focus", previous)?;
+                if self.with_engine(Engine::focused)? == Some(next) && self.target_is_live(next)? {
+                    self.dispatch_focus_event(next, "focusin", previous)?;
+                }
+            }
         }
         Ok(())
     }
@@ -1635,6 +1703,7 @@ mod tests {
                     .on(event_type, move |event| {
                         let target = event.target().unwrap();
                         let current = event.current_target().unwrap();
+                        assert_eq!(event.bubbles(), event.event_type == "mousemove");
                         assert_eq!(
                             target.get_attribute("data-name").unwrap().as_deref(),
                             Some(name)
