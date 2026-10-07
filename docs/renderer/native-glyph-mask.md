@@ -46,7 +46,9 @@ are not run on this rejected revision. Earlier parent results do not qualify it.
 The regression review owns all seven unique worsened comparisons. Text and
 paint own the glyph work, with native controls or positioned text as the
 additional subsystem. The input has an extra black row. Large viewport-font
-sticky text loses a row at fractional scales. Two existing select-control
+sticky text adds a white row at fractional scales. Direct pixel inspection in
+the [native regression follow-up](native-glyph-regressions.md) corrects the
+earlier description that it loses a row. Two existing select-control
 differences also worsen. The evidence includes bounds, connected regions,
 channel deltas and changes from the prior native image. Precise causes and
 further reduced consuming Rust examples remain required. This review does not

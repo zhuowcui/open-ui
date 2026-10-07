@@ -24,7 +24,16 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
-The latest [native glyph and API evidence](native-glyph-mask.md) fixes the reduced native glyph app:
+The [native glyph regression follow-up](native-glyph-regressions.md)
+reproduces the input and large-text failures through Rust callbacks. Its latest
+private trials match **20/30 images and 30/30 rectangles**, with eight exact
+gains and no exact losses, but two existing input differences worsen. All five
+new sources pass eighteen read-only checks each. All trials remain private,
+unapplied and rejected; their complete renderer and workspace gates are not
+run. The relevant large-text baselines match Chromium, narrowing those failures
+to paint origins, strike construction or raster coverage. Accepted results are unchanged.
+
+The preceding [native glyph and API evidence](native-glyph-mask.md) fixes the reduced native glyph app:
 all **20/20 images and rectangles** match Chromium. Focused **640/640** and
 primitive **960/960** pass. Both complete censuses finish at **21,432/22,924**
 original and **22,234/23,728** expanded exact, zero errors. The original gains
