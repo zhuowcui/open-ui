@@ -75,13 +75,14 @@ events or rendering. A missing public method remains an implementation gap
 until that native application path works.
 
 The [native font-relative helper](../renderer/native-font-relative-lengths.md)
-resolves `ch`, `ex` and `lh` from an owned computed style and the application's
-font collection. Apps currently assign the resolved pixel value and recompute
-it after font changes. Automatic typed declarations, upright vertical `ch`,
-complete nested contexts and C parity remain native API gaps. The latest
-[caption and shaping correction](../renderer/native-caption-shaping.md) repairs
-the earlier caption pixel regressions, but six sizing glyph comparisons worsen.
-It remains private and unapplied; complete matrices were not run on it.
+resolves `ch`, `ex` and `lh` from an owned computed style and the app's font
+collection. Apps currently assign a pixel value and recompute after font changes.
+The [private upright correction](../renderer/native-glyph-mask.md) matches all
+1,440 measured rectangles, with 160 gains and no losses; it captures no native
+pixels and remains unapplied. Its parent glyph correction passes focused and
+primitive checks but regresses both complete censuses and is rejected.
+Automatic typed declarations, complete contexts and C parity remain native
+API work. None of these operations requires JavaScript.
 
 The [native Rust raster options](native-rust-raster-options.md) expose the
 Engine's immutable selection directly to consuming apps. Rust callback,

@@ -22,24 +22,22 @@ remain open.
 
 ## Current implementation checkpoint
 
-The latest [caption and shaping trial](../renderer/native-caption-shaping.md)
-at clean private `db177050` repairs the two caption pixel regressions from
-`4046d366`. Both native guards, **8,563 workspace tests**, eighteen source
-checks and actual Rust/C/C++ ABI consumers pass. The repeated Rust font-unit
-app still matches **2,400/2,400 horizontal bounds**. The twenty-row pixel check
-has twelve exact and eight different comparisons, zero errors, and six sizing
-comparisons worsen. The source remains **private and unapplied**; complete
-matrices were not run on it.
+The latest [native glyph and API trial](../renderer/native-glyph-mask.md) fixes the reduced native glyph app:
+all **20/20 images and rectangles** match Chromium. Focused **640/640** and
+primitive **960/960** pass. Both complete censuses finish at **21,432/22,924**
+original and **22,234/23,728** expanded exact, zero errors. The original gains
+101 exact comparisons but loses three; the expanded gains 102 but loses five.
+The correction is **private, unapplied and rejected**. Accepted original
+results remain **21,334/22,924 exact**.
 
-Fresh repeated Chromium captures match all four immutable oracle images.
-All **24/24 measured sizing rectangles** now agree with Chromium; the parent
-source matched none. Remaining extra black pixels belong to glyph placement
-and strikes. Restoring the old layout fraction would hide that raster gap.
-The accepted original count remains **21,334/22,924 exact**. Upright vertical
-`ch`, automatic typed font-unit declarations, remaining native APIs and release
-gates stay open. See the [font-unit evidence](../renderer/native-font-relative-lengths.md)
-and [earlier sizing trials](../renderer/native-intrinsic-isolated.md).
-Open UI never executes JavaScript.
+A separate private upright vertical `ch` correction matches **1,440/1,440
+rectangles** through the unchanged Rust app, fixing 160 geometry differences
+with no losses. It captures no native pixels. An empty outlined rectangle
+matches all twenty rectangles but only fifteen images; its corner delta runs
+opposite to the caption failure and does not reproduce that failure exactly.
+Automatic font-unit declarations, complete native APIs, compositor, hardware
+and release qualification remain open. All local trial owners are terminal;
+no production change or release state is admitted.
 
 The [shared text measurement trial](../renderer/native-fontations-app.md)
 at clean private `2fcdc66d` matches 200/200 Chromium images and all 12,800

@@ -15,38 +15,34 @@ headless clock ─────────────────────�
 The supported application path has no Blink/Chromium runtime, resource pack,
 HTML loader, CSS text parser, JavaScript engine, or network stack. Chromium 147
 is the pinned rendering reference used to prove renderer compatibility.
-Open UI never executes JavaScript, in this or future versions. Applications
-handle interaction through public native Rust APIs, signals, and Rust event
-callbacks. The consuming app calls `openui::Document` and `openui::Element`
-methods to create, find, change, measure, focus, and scroll elements and operate
-controls. When an app needs an operation that a browser exposes through
-JavaScript, Open UI must provide the equivalent as a public native Rust method.
-The implementation must include its state changes and events. Interacting
-with elements never requires JavaScript in Open UI. A missing method is
-unfinished framework work, even when an internal test fixture can already
-produce the same visual state. See the
+Open UI runs no JavaScript, in any version. Apps implement interaction in
+native Rust through public `Document` and `Element` methods, signals and Rust
+callbacks. Creating, finding, changing, measuring, focusing, scrolling and
+operating elements are native framework operations. Every needed browser-style
+operation must be implemented in the shared Rust engine and exposed to the
+consuming app, including its state changes and events. A missing method is
+unfinished framework work, even if a test fixture can already produce the
+right picture or the Chromium test uses a script. See the
 [native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
 
 ## Verified status
 
-The latest [caption and shaping trial](docs/renderer/native-caption-shaping.md)
-at clean private `db177050` repairs the two caption pixel regressions from
-`4046d366`. Both native guards, **8,563 workspace tests**, eighteen source
-checks and actual Rust/C/C++ ABI consumers pass. The repeated Rust font-unit
-app still matches **2,400/2,400 horizontal bounds**. The twenty-row pixel check
-has twelve exact and eight different comparisons, zero errors, and six sizing
-comparisons worsen. The source remains **private and unapplied**; complete
-matrices were not run on it.
+The latest [native glyph and API trial](docs/renderer/native-glyph-mask.md) fixes the reduced native glyph app:
+all **20/20 images and rectangles** match Chromium. Focused **640/640** and
+primitive **960/960** pass. Both complete censuses finish at **21,432/22,924**
+original and **22,234/23,728** expanded exact, zero errors. The original gains
+101 exact comparisons but loses three; the expanded gains 102 but loses five.
+The correction is **private, unapplied and rejected**. Accepted original
+results remain **21,334/22,924 exact**.
 
-Fresh repeated Chromium captures match all four immutable oracle images.
-All **24/24 measured sizing rectangles** now agree with Chromium; the parent
-source matched none. Remaining extra black pixels belong to glyph placement
-and strikes. Restoring the old layout fraction would hide that raster gap.
-The accepted original count remains **21,334/22,924 exact**. Upright vertical
-`ch`, automatic typed font-unit declarations, remaining native APIs and release
-gates stay open. See the [font-unit evidence](docs/renderer/native-font-relative-lengths.md)
-and [earlier sizing trials](docs/renderer/native-intrinsic-isolated.md).
-Open UI never executes JavaScript.
+A separate private upright vertical `ch` correction matches **1,440/1,440
+rectangles** through the unchanged Rust app, fixing 160 geometry differences
+with no losses. It captures no native pixels. An empty outlined rectangle
+matches all twenty rectangles but only fifteen images; its corner delta runs
+opposite to the caption failure and does not reproduce that failure exactly.
+Automatic font-unit declarations, complete native APIs, compositor, hardware
+and release qualification remain open. All local trial owners are terminal;
+no production change or release state is admitted.
 
 The [shared text measurement trial](docs/renderer/native-fontations-app.md)
 at clean private `2fcdc66d` matches 200/200 Chromium images and all 12,800

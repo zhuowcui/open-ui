@@ -4,6 +4,17 @@ Open UI never executes JavaScript. Native applications create, measure and
 change elements through public Rust APIs and Rust callbacks. Pinned Chromium
 defines expected pixels and geometry. Historical Open UI images are provenance.
 
+## Completed glyph follow-up
+
+The [subsequent native glyph trial](native-glyph-mask.md) reduces and repairs
+the sizing glyph failures without restoring the wrong layout fraction. Its
+native app matches twenty images and rectangles, and both focused and
+primitive suites pass. Full censuses still regress, so the source remains
+private and rejected. The separate empty-outline app exposes a one-step
+corner discrepancy with the opposite delta from the caption; it does not
+fully reproduce that caption failure. The measurements below retain the
+original `db177050` source and outcomes.
+
 ## Shared correction
 
 Clean private `db177050` builds on the measured font-unit correction `4046d366`.

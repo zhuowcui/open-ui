@@ -24,16 +24,22 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
-The latest [caption and shaping evidence](native-caption-shaping.md) at
-clean private `db177050` repairs two caption regressions and matches all
-24 measured sizing rectangles against fresh repeated Chromium queries. All
-four fresh Chromium images match the immutable oracle. The twenty-row pixel
-check still worsens six glyph comparisons, so the candidate remains unapplied
-and stops before complete matrices. Its public Rust callback app matches
-2,400/2,400 horizontal bounds; it captures no native pixels. Upright vertical
-`ch`, automatic typed font-unit declarations, shared glyph placement and C
-parity remain native API work. The accepted original renderer stays
-21,334/22,924 exact; no release state or reference bytes change.
+The latest [native glyph and API evidence](native-glyph-mask.md) fixes the reduced native glyph app:
+all **20/20 images and rectangles** match Chromium. Focused **640/640** and
+primitive **960/960** pass. Both complete censuses finish at **21,432/22,924**
+original and **22,234/23,728** expanded exact, zero errors. The original gains
+101 exact comparisons but loses three; the expanded gains 102 but loses five.
+The correction is **private, unapplied and rejected**. Accepted original
+results remain **21,334/22,924 exact**.
+
+A separate private upright vertical `ch` correction matches **1,440/1,440
+rectangles** through the unchanged Rust app, fixing 160 geometry differences
+with no losses. It captures no native pixels. An empty outlined rectangle
+matches all twenty rectangles but only fifteen images; its corner delta runs
+opposite to the caption failure and does not reproduce that failure exactly.
+Automatic font-unit declarations, complete native APIs, compositor, hardware
+and release qualification remain open. All local trial owners are terminal;
+no production change or release state is admitted.
 
 The [public native Rust raster options](../v02/native-rust-raster-options.md)
 are integrated at `2d338d6c`. Its clean combined build passes 8,558 tests and

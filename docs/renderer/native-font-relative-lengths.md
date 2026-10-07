@@ -28,6 +28,18 @@ does not yet expose `Ch`, `Ex` or `Lh` declarations that update themselves.
 Those declarations, complete nested length resolution and C parity remain
 native API work. JavaScript and script bindings are never the solution.
 
+## Completed private upright correction
+
+The [glyph/API follow-up](native-glyph-mask.md) verifies private `36b5db31`
+through the unchanged consuming Rust app. All **1,440/1,440 rectangles** match
+the preserved Chromium observations, fixing 160 differences with no losses.
+Both runs repeat identically and execute 720 callbacks each. The strict
+geometry gate exits 0 and eighteen source checks pass. No native pixels are
+captured. Missing-zero and metric-override cases are implemented but not runtime
+tested. The source remains private and unapplied; its glyph parent regresses
+the complete renderer gates. Automatic declarations, full context resolution,
+animation updates, pixel and C qualification remain required native work.
+
 ## Measured horizontal correction
 
 Clean private `4046d366` corrects shared font and native style computation:
