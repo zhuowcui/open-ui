@@ -157,6 +157,7 @@ jobs:
         run: |
           python3 -m unittest \
             tools.accountability.test_audit_frozen_oracle \
+            tools.accountability.test_chromium_capture \
             tools.wpt.test_sp13p_paint_closure \
             tools.wpt.test_sp13r_multicol_closure \
             tools.wpt.test_sp14_text_port \
