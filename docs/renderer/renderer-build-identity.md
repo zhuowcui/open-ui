@@ -30,6 +30,31 @@ and Git; consuming Rust applications do not depend on that tool. Application
 interaction uses public native Rust methods and callbacks. Open UI executes
 no JavaScript.
 
+## Chromium capture shutdown
+
+Clean umbrella `5779f376` fixes an observed capture-cleanup race. The old
+harness could write the expected PNG, then report a failure while removing
+Chromium's temporary profile: a browser child was still writing its `Default`
+directory. Moving parent shutdown earlier did not fully resolve it; that
+prototype's failure remains in the evidence.
+
+The harness now starts each browser in its own session, closes its CDP client,
+stops the browser and its process group, and waits for live Linux profile
+writers to exit before removing the profile. Viewport checks, stable screenshot
+checks and zero pixel tolerance remain intact. Browser capture flags, fixture
+bytes, fonts and reference images are unchanged.
+
+Five regression tests cover successful capture, CDP failure, invalid viewport,
+stalled shutdown and an orphaned profile writer. All 47 related Python tests
+pass. Six independent prototype captures and two clean production captures
+reproduce the preceding reference PNG bytes with no cleanup errors. The
+[source-owned report](generated/native-control-intrinsics-v1.json) preserves
+the failed attempts, source identities, completed logs and image hashes.
+
+Changing the harness creates a new capture identity. Existing oracle entries
+stay immutable; the new protocol still requires complete census qualification.
+This correction admits no new renderer comparison or release result.
+
 ## Discovered attribution error
 
 The development runs under

@@ -22,6 +22,26 @@ remain open.
 
 ## Current implementation checkpoint
 
+The [native control evidence](../renderer/generated/native-control-intrinsics-v1.json)
+records a private input/textarea correction at `4598b366`: the unchanged Rust
+consumer matches all 90 Chromium images and rectangles, checks 45 hit targets
+and executes 45 callbacks per repeated run. Its 8,589 workspace tests pass.
+Its original census regresses one exact comparison, so that candidate is
+rejected and remains unapplied. The shared importer incorrectly supplied a
+select height independently of its primary font metrics.
+
+Clean private `d3a34cb5` corrects that shared import rule. All 56 affected
+four-profile results now preserve the accepted renderer's native and Chromium
+image hashes; focused 640/640 and primitive 960/960 are exact with zero errors.
+These completed selections do not replace the missing original and expanded
+censuses. The native control implementation stays private and unapplied.
+
+Umbrella `5779f376` fixes the separate Chromium profile-cleanup race and adds
+five CI regression tests. All 47 related Python tests pass, and repeated clean
+captures preserve the reference PNG bytes. Its new capture identity needs full
+census qualification. Accepted original results remain 21,334/22,924 exact;
+remaining renderer differences, needed native APIs and release gates are open.
+
 The [native input editor follow-up](../renderer/native-input-editor-scrollport.md) corrects the private
 single-line editor clip. Its consuming Rust app improves from **22/30 to
 28/30 exact images**, with all thirty rectangles exact. Focused **640/640**
