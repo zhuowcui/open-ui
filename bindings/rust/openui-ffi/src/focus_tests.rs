@@ -428,6 +428,12 @@ fn c_focus_requests_capture_without_bubbling_and_ignore_cancellation() {
 #[test]
 fn c_pointer_focus_cancels_the_shared_composition_and_delivers_focus_callbacks() {
     let fixture = Fixture::new();
+    for id in ["a", "b", "c"] {
+        let input = fixture.native(id);
+        input.set_display(openui_style::Display::Block).unwrap();
+        input.set_width(LengthValue::px(100.0)).unwrap();
+        input.set_height(LengthValue::px(24.0)).unwrap();
+    }
     let state = document(fixture.document as usize).unwrap();
     let context = Callback {
         document: fixture.document,
@@ -441,6 +447,7 @@ fn c_pointer_focus_cancels_the_shared_composition_and_delivers_focus_callbacks()
     state.native.dispatch_composition_start().unwrap();
     state.native.dispatch_composition_update("preview").unwrap();
     let bounds = fixture.native("b").bounding_rect().unwrap().unwrap();
+    assert!(bounds.width > 0.0 && bounds.height > 0.0);
     let mut event = synthesized_event(1, text(""));
     event.x = bounds.x + bounds.width * 0.5;
     event.y = bounds.y + bounds.height * 0.5;
@@ -449,6 +456,7 @@ fn c_pointer_focus_cancels_the_shared_composition_and_delivers_focus_callbacks()
         oui_document_dispatch_pointer_event(fixture.document, &mut event),
         OuiStatus::Ok
     );
+    assert_eq!(event.target, fixture.nodes[1]);
     assert!(fixture.native("b").has_focus().unwrap());
     assert_eq!(
         fixture.native("a").control_value().unwrap().as_deref(),
