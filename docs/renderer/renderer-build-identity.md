@@ -51,9 +51,16 @@ reproduce the preceding reference PNG bytes with no cleanup errors. The
 [source-owned report](generated/native-control-intrinsics-v1.json) preserves
 the failed attempts, source identities, completed logs and image hashes.
 
-Changing the harness creates a new capture identity. Existing oracle entries
-stay immutable; the new protocol still requires complete census qualification.
-This correction admits no new renderer comparison or release result.
+Changing the harness creates a new capture identity. The complete fresh
+original census preserves every native image, but ten Chromium captures have
+different bytes from the preceding protocol. The full audit fails; the earlier
+small selections did not establish full-census reference stability. Both
+reference sets remain immutable. The [controls and focus evidence](generated/native-controls-focus-v1.json)
+records every changed row and the actual terminal failure. A possible font
+strike association is diagnostic evidence, not a reviewed runtime cause.
+Original results are 21,330/22,924 exact and expanded results 22,133/23,728,
+zero errors; both pixel gates remain red. This correction admits no new
+renderer comparison or release result.
 
 ## Discovered attribution error
 

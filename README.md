@@ -27,6 +27,16 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
+The latest [controls and focus checkpoint](docs/renderer/generated/native-controls-focus-v1.json)
+integrates native control geometry and shared Rust/C focus notifications.
+The private focus source matches all 338 Chromium callback observations twice
+in Rust, C and C++ apps; 8,589 workspace tests and all ABI consumers pass.
+Corrected controls preserve all current renderer comparisons. The fresh
+original census is 21,330/22,924 exact: ten Chromium captures changed while
+all native images stayed identical, and the reference audit fails. Both
+reference sets are preserved. Combined-source qualification, that capture
+investigation, remaining pixels and APIs, and release gates remain open.
+
 The [native input editor follow-up](docs/renderer/native-input-editor-scrollport.md) corrects the private
 single-line editor clip. Its consuming Rust app improves from **22/30 to
 28/30 exact images**, with all thirty rectangles exact. Focused **640/640**

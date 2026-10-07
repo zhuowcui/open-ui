@@ -22,25 +22,37 @@ remain open.
 
 ## Current implementation checkpoint
 
-The [native control evidence](../renderer/generated/native-control-intrinsics-v1.json)
-records a private input/textarea correction at `4598b366`: the unchanged Rust
-consumer matches all 90 Chromium images and rectangles, checks 45 hit targets
-and executes 45 callbacks per repeated run. Its 8,589 workspace tests pass.
-Its original census regresses one exact comparison, so that candidate is
-rejected and remains unapplied. The shared importer incorrectly supplied a
-select height independently of its primary font metrics.
+The [controls and focus evidence](../renderer/generated/native-controls-focus-v1.json)
+records two integrated corrections, with combined-source qualification pending.
+Native controls derive input/textarea intrinsic sizes from fonts and sizing
+attributes, and honor computed resize. The shared importer derives menu-list
+height from actual primary font metrics. The original private candidate's
+stretch-input regression is preserved; its corrected source `2cea3f08`
+preserves all nine comparison invariants against umbrella `a72c2e37` across
+both complete censuses. Focused 640/640 and primitive 960/960 are exact.
 
-Clean private `d3a34cb5` corrects that shared import rule. All 56 affected
-four-profile results now preserve the accepted renderer's native and Chromium
-image hashes; focused 640/640 and primitive 960/960 are exact with zero errors.
-These completed selections do not replace the missing original and expanded
-censuses. The native control implementation stays private and unapplied.
+Both sources finish at **21,330/22,924 original** and **22,133/23,728 expanded**
+exact, with zero errors and actual exits 1. Across the preceding and current
+capture protocols, all 22,924 native images stay identical, but ten Chromium
+images change. The whole owner fails its final reference-byte audit. Both
+reference sets remain immutable; their font-capture discrepancy needs a
+reviewed cause. Earlier accepted counts remain source-bound historical
+measurements, not qualification for the new protocol.
 
-Umbrella `5779f376` fixes the separate Chromium profile-cleanup race and adds
-five CI regression tests. All 47 related Python tests pass, and repeated clean
-captures preserve the reference PNG bytes. Its new capture identity needs full
-census qualification. Accepted original results remain 21,334/22,924 exact;
-remaining renderer differences, needed native APIs and release gates are open.
+The [native focus API](../v02/native-focus-related-targets.md) adds focusin/out,
+related targets and immutable event metadata through public Rust methods and
+callbacks. C uses the same Document route and appends two exports plus one
+versioned metadata structure, preserving 114 exports and 31 layouts. Private
+`32a7d82b` matches all 338 Chromium callback observations in twelve scenarios,
+twice each through Rust, C and C++ apps. Its 8,589 workspace tests, 47 headless
+C tests, fifteen C and nine C++ consumers, and all twenty verification stages
+pass. These results retain their measured private source; the combined
+umbrella still requires its own native, pixel and hosted qualification.
+
+All seven hosted hardening jobs pass on `a72c2e37`, with zero failures or
+skips. Those results do not qualify the later combined source or physical
+release lab. Full Chromium equality, remaining native APIs, compositor,
+hardware and release gates remain open. Open UI executes no JavaScript.
 
 The [native input editor follow-up](../renderer/native-input-editor-scrollport.md) corrects the private
 single-line editor clip. Its consuming Rust app improves from **22/30 to
