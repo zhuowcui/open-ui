@@ -22,19 +22,24 @@ remain open.
 
 ## Current implementation checkpoint
 
-The [native Rust font-unit trial](../renderer/native-font-relative-lengths.md) at clean
-private `4046d366` matches **2,400/2,400 horizontal element bounds** through
-1,200 repeated Rust callbacks. Its 8,562 workspace tests, seventeen source
-checks and Rust/C/C++ ABI consumers pass. The complete original and expanded
-pixel sweeps each lose two previously exact comparisons, so the source remains
-**private and unapplied**. Focused 640/640 and primitive 960/960 remain exact;
-all Chromium inputs stay fixed. A separate vertical app matches 1,280/1,440
-bounds; upright vertical `ch` has 160 differences with a reviewed native metric
-cause. These geometry apps capture no native pixels. Automatic typed font-unit
-declarations, the glyph-placement regressions, remaining native APIs and
-release gates stay open. The accepted original count remains
-**21,334/22,924 exact**. See the [isolated sizing evidence](../renderer/native-intrinsic-isolated.md)
-for the other rejected trials. Open UI never executes JavaScript.
+The latest [caption and shaping trial](../renderer/native-caption-shaping.md)
+at clean private `db177050` repairs the two caption pixel regressions from
+`4046d366`. Both native guards, **8,563 workspace tests**, eighteen source
+checks and actual Rust/C/C++ ABI consumers pass. The repeated Rust font-unit
+app still matches **2,400/2,400 horizontal bounds**. The twenty-row pixel check
+has twelve exact and eight different comparisons, zero errors, and six sizing
+comparisons worsen. The source remains **private and unapplied**; complete
+matrices were not run on it.
+
+Fresh repeated Chromium captures match all four immutable oracle images.
+All **24/24 measured sizing rectangles** now agree with Chromium; the parent
+source matched none. Remaining extra black pixels belong to glyph placement
+and strikes. Restoring the old layout fraction would hide that raster gap.
+The accepted original count remains **21,334/22,924 exact**. Upright vertical
+`ch`, automatic typed font-unit declarations, remaining native APIs and release
+gates stay open. See the [font-unit evidence](../renderer/native-font-relative-lengths.md)
+and [earlier sizing trials](../renderer/native-intrinsic-isolated.md).
+Open UI never executes JavaScript.
 
 The [shared text measurement trial](../renderer/native-fontations-app.md)
 at clean private `2fcdc66d` matches 200/200 Chromium images and all 12,800

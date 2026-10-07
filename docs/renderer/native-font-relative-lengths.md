@@ -82,11 +82,15 @@ six exact and six different. The whole owner exits 1. The source stays
 **private, unapplied and unqualified**. The accepted original result remains
 **21,334/22,924 exact**.
 
-Shared font cache precision, shaping and layout-to-paint glyph origins own
-these regressions. Their precise placement cause and a minimized native
-reproducer remain open. Exact geometry and focused/primitive passes do not
-waive the complete-corpus losses. The evidence preserves both accepted and
-candidate images and the reviewed scope; no test-specific condition is added.
+The subsequent [caption and shaping trial](native-caption-shaping.md) reviews
+and repairs the caption cause: intrinsic text used unshaped widths, and an
+empty grid added spacing to the caption minimum instead of contributing a
+separate wrapper floor. Clean `db177050` restores both legacy comparisons and
+passes its native caption callback guard. Six neighboring sizing glyph
+comparisons worsen, so it also remains unapplied. Corrected sizing geometry
+matches fresh repeated Chromium queries; glyph mask and origin work remains.
+No production condition is added for a test, font family or font size.
+Exact geometry and narrowed passes do not waive complete qualification.
 
 ## Upright vertical ch measurements
 

@@ -78,8 +78,10 @@ The [native font-relative helper](../renderer/native-font-relative-lengths.md)
 resolves `ch`, `ex` and `lh` from an owned computed style and the application's
 font collection. Apps currently assign the resolved pixel value and recompute
 it after font changes. Automatic typed declarations, upright vertical `ch`,
-complete nested contexts and C parity remain native API gaps. The tested
-private correction also has two full-corpus pixel regressions and is unapplied.
+complete nested contexts and C parity remain native API gaps. The latest
+[caption and shaping correction](../renderer/native-caption-shaping.md) repairs
+the earlier caption pixel regressions, but six sizing glyph comparisons worsen.
+It remains private and unapplied; complete matrices were not run on it.
 
 The [native Rust raster options](native-rust-raster-options.md) expose the
 Engine's immutable selection directly to consuming apps. Rust callback,

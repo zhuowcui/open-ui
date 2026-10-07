@@ -1,0 +1,3189 @@
+{
+  "all_commands_terminal": true,
+  "archive": {
+    "all_members_hash_verified": true,
+    "bytes": 25087588,
+    "members": [
+      {
+        "bytes": 1723561,
+        "name": "baseline/unchanged-horizontal-chromium-geometry-receipt.json",
+        "sha256": "1144c29ec213eb657f489a694a42bda1558ec782f10510ba12865ecf78cb3bde",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-relative-units-pipeline-v2189/receipt.json"
+      },
+      {
+        "bytes": 2540,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2245/legacy-800x600@1/1-geometry.json",
+        "sha256": "f58629016005e3380338a7c167f6df5bd985de72dc3ddb5082d0f9f9310e99a3",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2245/legacy-800x600@1/1-geometry.json"
+      },
+      {
+        "bytes": 5287,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2245/legacy-800x600@1/1.attempt.json",
+        "sha256": "891f9c0db184c766ca8e45e934e6f8dae889c9a3ad6243546c7e7d931c64829d",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2245/legacy-800x600@1/1.attempt.json"
+      },
+      {
+        "bytes": 3085,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2245/legacy-800x600@1/1.png",
+        "sha256": "206bccb53ca4e437f53d483f171813eb0a2c74ae4d5a0eedb2ecadd5cfe8a306",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2245/legacy-800x600@1/1.png"
+      },
+      {
+        "bytes": 401,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2245/legacy-800x600@1/1.stderr.log",
+        "sha256": "96ca90f7e273c1ffea36974d9e14593e7eae12696db0ce60fb2392b0619a5643",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2245/legacy-800x600@1/1.stderr.log"
+      },
+      {
+        "bytes": 2540,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2245/legacy-800x600@1/2-geometry.json",
+        "sha256": "f58629016005e3380338a7c167f6df5bd985de72dc3ddb5082d0f9f9310e99a3",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2245/legacy-800x600@1/2-geometry.json"
+      },
+      {
+        "bytes": 5497,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2245/legacy-800x600@1/2.attempt.json",
+        "sha256": "6042b63e144e826b69058ee52f66f28a25da6e5a6023ce07e6ca00adadc1a709",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2245/legacy-800x600@1/2.attempt.json"
+      },
+      {
+        "bytes": 3085,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2245/legacy-800x600@1/2.png",
+        "sha256": "206bccb53ca4e437f53d483f171813eb0a2c74ae4d5a0eedb2ecadd5cfe8a306",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2245/legacy-800x600@1/2.png"
+      },
+      {
+        "bytes": 401,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2245/legacy-800x600@1/2.stderr.log",
+        "sha256": "02a99328961dcc34a94e619c0511c850b53f5151df759a16e6e63fd260244ad9",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2245/legacy-800x600@1/2.stderr.log"
+      },
+      {
+        "bytes": 5422,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2245/mobile-375x667@2/1.attempt.json",
+        "sha256": "0ce431cb1c2e22f0d8cecfdd1e51ee50ed753c8ae4c1ed19e6c9806194c6a82d",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2245/mobile-375x667@2/1.attempt.json"
+      },
+      {
+        "bytes": 6253,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2245/mobile-375x667@2/1.png",
+        "sha256": "2d15a474917b2f25c8fabbc6c23e17ad3f18236109126b1157a81412498ea866",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2245/mobile-375x667@2/1.png"
+      },
+      {
+        "bytes": 401,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2245/mobile-375x667@2/1.stderr.log",
+        "sha256": "4d10133375c2b15efaaeb316b3c4f069670417853b11368ebaa8eb1ba1ada154",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2245/mobile-375x667@2/1.stderr.log"
+      },
+      {
+        "bytes": 6070,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2245/receipt.json",
+        "sha256": "e29b2ce9c15b41b7a4e724afe708c968747d35cca81d8bc953b0491715d70530",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2245/receipt.json"
+      },
+      {
+        "bytes": 448,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2246/receipt.json",
+        "sha256": "18477105e28863ac23688b1509d77fe02a0faf0030cd1e6a0b6ffcc7305a5f49",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2246/receipt.json"
+      },
+      {
+        "bytes": 4219,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2246/used-observe.py",
+        "sha256": "73d4b92603cb0a4bb575102e6494b62dcfb46c9f3fd137f78f42a91a7651b4bd",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2246/used-observe.py"
+      },
+      {
+        "bytes": 2540,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/1-geometry.json",
+        "sha256": "f58629016005e3380338a7c167f6df5bd985de72dc3ddb5082d0f9f9310e99a3",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/1-geometry.json"
+      },
+      {
+        "bytes": 5324,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/1.attempt.json",
+        "sha256": "9dac31673892b945f6e69e0412a33f50de71b7c9fc93b6a70c81dffbda217602",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/1.attempt.json"
+      },
+      {
+        "bytes": 6991,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/1.png",
+        "sha256": "f29dc145ac488af4c96891e19d70cdb9265d2821e12541bcfd8a9704d2d8be13",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/1.png"
+      },
+      {
+        "bytes": 552,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/1.stderr.log",
+        "sha256": "fddb4a370821f1363ae930dc20bae041c563a9df882561df8f5a48cf4da5cf69",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/1.stderr.log"
+      },
+      {
+        "bytes": 2540,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/2-geometry.json",
+        "sha256": "f58629016005e3380338a7c167f6df5bd985de72dc3ddb5082d0f9f9310e99a3",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/2-geometry.json"
+      },
+      {
+        "bytes": 5324,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/2.attempt.json",
+        "sha256": "ddb60e8e24bcf4ced7d0fcbc63b0968e1fc84d10d866f8b4bdb45ec094421fda",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/2.attempt.json"
+      },
+      {
+        "bytes": 6991,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/2.png",
+        "sha256": "f29dc145ac488af4c96891e19d70cdb9265d2821e12541bcfd8a9704d2d8be13",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/2.png"
+      },
+      {
+        "bytes": 552,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/2.stderr.log",
+        "sha256": "d9114ae2c6cc06df74015df746ce817d02cd8fa8f751bfe5b8d7a63bd3af801d",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1280x720@1.25/2.stderr.log"
+      },
+      {
+        "bytes": 2540,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/1-geometry.json",
+        "sha256": "f58629016005e3380338a7c167f6df5bd985de72dc3ddb5082d0f9f9310e99a3",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/1-geometry.json"
+      },
+      {
+        "bytes": 5324,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/1.attempt.json",
+        "sha256": "c7e2adea3afeeaf6f0bb7a3f641bdc7a017a341b7a4ea10c6b20d556088949c7",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/1.attempt.json"
+      },
+      {
+        "bytes": 17948,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/1.png",
+        "sha256": "4155d4ddf707cc70db589e08fbf9979fdabe48e6a18d73be13ad8f8ea4e70fdb",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/1.png"
+      },
+      {
+        "bytes": 703,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/1.stderr.log",
+        "sha256": "36e0ec12ce18ecbcd7e6dc39e0f0c747ab8025cc4a0ae434a50ad0361e560bd7",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/1.stderr.log"
+      },
+      {
+        "bytes": 2540,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/2-geometry.json",
+        "sha256": "f58629016005e3380338a7c167f6df5bd985de72dc3ddb5082d0f9f9310e99a3",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/2-geometry.json"
+      },
+      {
+        "bytes": 5324,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/2.attempt.json",
+        "sha256": "783e9388a58e0353b2131f58dc5c47973155d1612db5c082cc70056c4497b6e0",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/2.attempt.json"
+      },
+      {
+        "bytes": 17948,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/2.png",
+        "sha256": "4155d4ddf707cc70db589e08fbf9979fdabe48e6a18d73be13ad8f8ea4e70fdb",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/2.png"
+      },
+      {
+        "bytes": 552,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/2.stderr.log",
+        "sha256": "d05b8291d0606578b21282828b0711cec1d1f6aebe3bbf077de4ee5b8c73d088",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/desktop-1920x1080@1.5/2.stderr.log"
+      },
+      {
+        "bytes": 2540,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/legacy-800x600@1/1-geometry.json",
+        "sha256": "f58629016005e3380338a7c167f6df5bd985de72dc3ddb5082d0f9f9310e99a3",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/legacy-800x600@1/1-geometry.json"
+      },
+      {
+        "bytes": 5324,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/legacy-800x600@1/1.attempt.json",
+        "sha256": "c73bb5c35a4fd617aa442e33dbfb85229504fce2d1133504e39342fd5b0f1a32",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/legacy-800x600@1/1.attempt.json"
+      },
+      {
+        "bytes": 3085,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/legacy-800x600@1/1.png",
+        "sha256": "206bccb53ca4e437f53d483f171813eb0a2c74ae4d5a0eedb2ecadd5cfe8a306",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/legacy-800x600@1/1.png"
+      },
+      {
+        "bytes": 552,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/legacy-800x600@1/1.stderr.log",
+        "sha256": "547adba068cfd424d027ea1aeaae9a1553ddebfb33619e39386339d8e6b5f127",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/legacy-800x600@1/1.stderr.log"
+      },
+      {
+        "bytes": 2540,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/legacy-800x600@1/2-geometry.json",
+        "sha256": "f58629016005e3380338a7c167f6df5bd985de72dc3ddb5082d0f9f9310e99a3",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/legacy-800x600@1/2-geometry.json"
+      },
+      {
+        "bytes": 5324,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/legacy-800x600@1/2.attempt.json",
+        "sha256": "4b554050fbc40430e15de69638478d97327821fa970442eb0d2ab826d6eb5c55",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/legacy-800x600@1/2.attempt.json"
+      },
+      {
+        "bytes": 3085,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/legacy-800x600@1/2.png",
+        "sha256": "206bccb53ca4e437f53d483f171813eb0a2c74ae4d5a0eedb2ecadd5cfe8a306",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/legacy-800x600@1/2.png"
+      },
+      {
+        "bytes": 552,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/legacy-800x600@1/2.stderr.log",
+        "sha256": "dc76889a216fe5ad496aad2535db18a6cbda6aec725cb749772e8bafed7899ca",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/legacy-800x600@1/2.stderr.log"
+      },
+      {
+        "bytes": 2540,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/mobile-375x667@2/1-geometry.json",
+        "sha256": "f58629016005e3380338a7c167f6df5bd985de72dc3ddb5082d0f9f9310e99a3",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/mobile-375x667@2/1-geometry.json"
+      },
+      {
+        "bytes": 5114,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/mobile-375x667@2/1.attempt.json",
+        "sha256": "9769eafe44bff50436054a0d5d4b6c173c356f01ae35db4e7f267646788d39bc",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/mobile-375x667@2/1.attempt.json"
+      },
+      {
+        "bytes": 6253,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/mobile-375x667@2/1.png",
+        "sha256": "2d15a474917b2f25c8fabbc6c23e17ad3f18236109126b1157a81412498ea866",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/mobile-375x667@2/1.png"
+      },
+      {
+        "bytes": 552,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/mobile-375x667@2/1.stderr.log",
+        "sha256": "f3d4e22b385cc1d67ed3cf94f95ec26b31a2d95c060954083f3cd7f18e718a50",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/mobile-375x667@2/1.stderr.log"
+      },
+      {
+        "bytes": 2540,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/mobile-375x667@2/2-geometry.json",
+        "sha256": "f58629016005e3380338a7c167f6df5bd985de72dc3ddb5082d0f9f9310e99a3",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/mobile-375x667@2/2-geometry.json"
+      },
+      {
+        "bytes": 5534,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/mobile-375x667@2/2.attempt.json",
+        "sha256": "7fe07d037a17c69d94b11b9e780ad4dd8a6269d758fcee15ba005c599e8f0059",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/mobile-375x667@2/2.attempt.json"
+      },
+      {
+        "bytes": 6253,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/mobile-375x667@2/2.png",
+        "sha256": "2d15a474917b2f25c8fabbc6c23e17ad3f18236109126b1157a81412498ea866",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/mobile-375x667@2/2.png"
+      },
+      {
+        "bytes": 552,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/mobile-375x667@2/2.stderr.log",
+        "sha256": "5b64bcbf2a118f820a740ce3ddfc04908702ce27730d16443c81538334889db5",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/mobile-375x667@2/2.stderr.log"
+      },
+      {
+        "bytes": 17785,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/receipt.json",
+        "sha256": "f04f84cd1affcaef3595714f60d650dacb461e4c085807ef5bfd3e71c68b6eec",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/receipt.json"
+      },
+      {
+        "bytes": 4287,
+        "name": "chromium-geometry/native-sizing-chromium-geometry-v2247/used-observe.py",
+        "sha256": "32c2a164fd6f52093a68c647d26e9d9324dd5e1ec8d5fe69427a26497f1bc4a7",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-sizing-chromium-geometry-v2247/used-observe.py"
+      },
+      {
+        "bytes": 17439,
+        "name": "native-app/Cargo.lock",
+        "sha256": "5bb06c5da1811c4535e0eca1cd18df1390456ef9f8fee98600168f5e6d9d5359",
+        "source_path": "/home/nero/code/open-ui/out/private-native-apps/native-relative-caption-v2235/Cargo.lock"
+      },
+      {
+        "bytes": 1498,
+        "name": "native-app/Cargo.toml",
+        "sha256": "a73858aaca50417c794f62de766af31fb464d0359124223a13e210b17ce634f3",
+        "source_path": "/home/nero/code/open-ui/out/private-native-apps/native-relative-caption-v2235/Cargo.toml"
+      },
+      {
+        "bytes": 5449,
+        "name": "native-app/src/main.rs",
+        "sha256": "fdb132065854f76ae5f265c1bc3e2d94931e84a48c3308a72718ece32448e2b8",
+        "source_path": "/home/nero/code/open-ui/out/private-native-apps/native-relative-caption-v2235/src/main.rs"
+      },
+      {
+        "bytes": 3484,
+        "name": "primary-source/native-vertical-fallback-primary-v2240/font_orientation.h",
+        "sha256": "808b9ee8a72703f5a21bb46bedfab1074f243bd3c90dda3e0abe0f912b48c38c",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-fallback-primary-v2240/font_orientation.h"
+      },
+      {
+        "bytes": 27418,
+        "name": "primary-source/native-vertical-fallback-primary-v2240/harfbuzz_face.cc",
+        "sha256": "3fda0277ebddca6cc3f20bf40b0b1e875fe6b469182d0689a2bcd3710fc3eca0",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-fallback-primary-v2240/harfbuzz_face.cc"
+      },
+      {
+        "bytes": 1301,
+        "name": "primary-source/native-vertical-fallback-primary-v2240/receipt.json",
+        "sha256": "b45c07d9981588b66e13f7a72006e39de4bd2995e191be3eee824658c7517baf",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-fallback-primary-v2240/receipt.json"
+      },
+      {
+        "bytes": 205381,
+        "name": "primary-source/native-vertical-fallback-primary-v2240/runtime_enabled_features.json5",
+        "sha256": "396865b544044b88ef85255e5eab9526e84e9d2776110cca32f51a35ac493b68",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-fallback-primary-v2240/runtime_enabled_features.json5"
+      },
+      {
+        "bytes": 347,
+        "name": "primary-source/native-vertical-metric-primary-v2242/receipt.json",
+        "sha256": "864e182632f69344eb9fb1776f19ab1b69496a3f97b15aa0e90e5c0cfd1e5a3d",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-metric-primary-v2242/receipt.json"
+      },
+      {
+        "bytes": 4125,
+        "name": "primary-source/native-vertical-metric-primary-v2243/harfbuzz_font_data.h",
+        "sha256": "1668cdcbcf37e62ef1a589c041506ef0b1d8a18f535e707b1bdd7e7088b8ce6e",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-metric-primary-v2243/harfbuzz_font_data.h"
+      },
+      {
+        "bytes": 678,
+        "name": "primary-source/native-vertical-metric-primary-v2243/receipt.json",
+        "sha256": "07f1e1bf10aa35653cf91abe424782aa206c5d49ccea5460465a9214b8752ab0",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-metric-primary-v2243/receipt.json"
+      },
+      {
+        "bytes": 4769,
+        "name": "probes-and-receipts/openui-native-caption-metric-checks-v2239.py",
+        "sha256": "2d94773fe0759c199894beaefbfc9d0bffdb68f53bec15dbd2de594eb5a60749",
+        "source_path": "/tmp/openui-native-caption-metric-checks-v2239.py"
+      },
+      {
+        "bytes": 14928,
+        "name": "probes-and-receipts/openui-native-caption-metric-pipeline-v2237.py",
+        "sha256": "e65ef20a04aff262cde865351b2c918d9cf186452562abf6c12f2f46519beb85",
+        "source_path": "/tmp/openui-native-caption-metric-pipeline-v2237.py"
+      },
+      {
+        "bytes": 1984,
+        "name": "probes-and-receipts/openui-native-caption-metrics-prepare-v2234.json",
+        "sha256": "74e5bcb862e207e5e665a467f8395486d875c2bcb4a09ac738c247e9b94acb4d",
+        "source_path": "/tmp/openui-native-caption-metrics-prepare-v2234.json"
+      },
+      {
+        "bytes": 5578,
+        "name": "probes-and-receipts/openui-native-caption-metrics-prepare-v2234.py",
+        "sha256": "ae1154aaf39c6a397425920ec78171eef743574224c792b8302295b72e3812fe",
+        "source_path": "/tmp/openui-native-caption-metrics-prepare-v2234.py"
+      },
+      {
+        "bytes": 8252,
+        "name": "probes-and-receipts/openui-native-caption-metrics-v2234.patch",
+        "sha256": "1b9378d541f407fc663d48b320724a1adf73a51add8e62a784cc91def162a8ab",
+        "source_path": "/tmp/openui-native-caption-metrics-v2234.patch"
+      },
+      {
+        "bytes": 7605,
+        "name": "probes-and-receipts/openui-native-caption-shaping-archive-v2250.py",
+        "sha256": "ead9072392e068904c7cb175673333322fc6a82a4045b39ba875161b3f6b80eb",
+        "source_path": "/tmp/openui-native-caption-shaping-archive-v2250.py"
+      },
+      {
+        "bytes": 5876,
+        "name": "probes-and-receipts/openui-native-caption-sizing-review-v2248.py",
+        "sha256": "20b076bddcba5849e46c1ab9379fc83af6c213d9940a953cc5229d60beedd85a",
+        "source_path": "/tmp/openui-native-caption-sizing-review-v2248.py"
+      },
+      {
+        "bytes": 3238,
+        "name": "probes-and-receipts/openui-native-caption-source-repro-v2249.py",
+        "sha256": "93066d14a2874e968226c4138447a44a0442e83f87ab1a7fa55a18b63ee6d4b1",
+        "source_path": "/tmp/openui-native-caption-source-repro-v2249.py"
+      },
+      {
+        "bytes": 4404,
+        "name": "probes-and-receipts/openui-native-shaped-sizing-fragments-v2244.py",
+        "sha256": "df1e784ca7d6e0526ad8ce0f54b32aa3f2f7d6bf1a9aaf57d91dc40d36bae4c2",
+        "source_path": "/tmp/openui-native-shaped-sizing-fragments-v2244.py"
+      },
+      {
+        "bytes": 4568,
+        "name": "probes-and-receipts/openui-native-sizing-chromium-geometry-v2245.py",
+        "sha256": "6a0c886de873561ac50541fcc6a17a543e5a3e988cb3435b74d971b182cee2dc",
+        "source_path": "/tmp/openui-native-sizing-chromium-geometry-v2245.py"
+      },
+      {
+        "bytes": 6366,
+        "name": "probes-and-receipts/openui-native-sizing-chromium-geometry-v2246.py",
+        "sha256": "5ba174a44fdedf130837203997e8301f0f013b6b4656a8bdaf74981ed0f66f11",
+        "source_path": "/tmp/openui-native-sizing-chromium-geometry-v2246.py"
+      },
+      {
+        "bytes": 5007,
+        "name": "probes-and-receipts/openui-native-sizing-chromium-geometry-v2247.py",
+        "sha256": "7e265710346a51811fb9d76a9eefb7e5f65dffd736d981662f5045300b1f52c7",
+        "source_path": "/tmp/openui-native-sizing-chromium-geometry-v2247.py"
+      },
+      {
+        "bytes": 4287,
+        "name": "probes-and-receipts/openui-native-sizing-chromium-helper-v2247.py",
+        "sha256": "32c2a164fd6f52093a68c647d26e9d9324dd5e1ec8d5fe69427a26497f1bc4a7",
+        "source_path": "/tmp/openui-native-sizing-chromium-helper-v2247.py"
+      },
+      {
+        "bytes": 2753,
+        "name": "probes-and-receipts/openui-native-sizing-chromium-retry-prepare-v2246.py",
+        "sha256": "9d179c977f0d6f69d6d0a7a4589e01faabc874ac1596fcb9ba9ccb5865bf20e8",
+        "source_path": "/tmp/openui-native-sizing-chromium-retry-prepare-v2246.py"
+      },
+      {
+        "bytes": 1872,
+        "name": "probes-and-receipts/openui-native-vertical-fallback-primary-v2240.py",
+        "sha256": "6aae53d22799bb6943467848be8e9d1a0ef42bac80ac9010f5d26da46563469a",
+        "source_path": "/tmp/openui-native-vertical-fallback-primary-v2240.py"
+      },
+      {
+        "bytes": 1675,
+        "name": "probes-and-receipts/openui-native-vertical-metric-primary-v2242.py",
+        "sha256": "6beff829c89619ed142ad0b13b1b41b777be766e618adb0ff03384967e5dea33",
+        "source_path": "/tmp/openui-native-vertical-metric-primary-v2242.py"
+      },
+      {
+        "bytes": 1673,
+        "name": "probes-and-receipts/openui-native-vertical-metric-primary-v2243.py",
+        "sha256": "1e903c643865348e2444b60dc4c5b8e34a8d04fa6dcddca64cf084d49c2b2d8d",
+        "source_path": "/tmp/openui-native-vertical-metric-primary-v2243.py"
+      },
+      {
+        "bytes": 1634,
+        "name": "probes-and-receipts/openui-terminal-evidence-relocation-v2236.json",
+        "sha256": "6392a67ff91f489d6d8def3299a298a8c4a201b2109fe4116714fe8320ad42ec",
+        "source_path": "/tmp/openui-terminal-evidence-relocation-v2236.json"
+      },
+      {
+        "bytes": 2361,
+        "name": "probes-and-receipts/openui-terminal-evidence-relocation-v2236.py",
+        "sha256": "d8ba23277dd370628a913862c7519c4d76aff337cf2bdba912dc2ecbabf40d86",
+        "source_path": "/tmp/openui-terminal-evidence-relocation-v2236.py"
+      },
+      {
+        "bytes": 1737,
+        "name": "probes-and-receipts/openui-terminal-evidence-relocation-v2241.json",
+        "sha256": "0c381e09bdcdf10d81a6c2fa0d6a53e1fa9d1cefd2f3756e4132476a24fedc39",
+        "source_path": "/tmp/openui-terminal-evidence-relocation-v2241.json"
+      },
+      {
+        "bytes": 2800,
+        "name": "probes-and-receipts/openui-terminal-evidence-relocation-v2241.py",
+        "sha256": "cb0cd9c5b589d7b7bd35038cfc8456504733ae124fd13debb5ca812a5bd54ee5",
+        "source_path": "/tmp/openui-terminal-evidence-relocation-v2241.py"
+      },
+      {
+        "bytes": 2867,
+        "name": "records/native-caption-metric-checks-v2239/accountability.log",
+        "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/accountability.log"
+      },
+      {
+        "bytes": 45,
+        "name": "records/native-caption-metric-checks-v2239/archive.log",
+        "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/archive.log"
+      },
+      {
+        "bytes": 0,
+        "name": "records/native-caption-metric-checks-v2239/clang-format.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/clang-format.log"
+      },
+      {
+        "bytes": 32,
+        "name": "records/native-caption-metric-checks-v2239/ffi.log",
+        "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/ffi.log"
+      },
+      {
+        "bytes": 59,
+        "name": "records/native-caption-metric-checks-v2239/multicol.log",
+        "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/multicol.log"
+      },
+      {
+        "bytes": 0,
+        "name": "records/native-caption-metric-checks-v2239/native-caption-shaping-rust-format.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/native-caption-shaping-rust-format.log"
+      },
+      {
+        "bytes": 0,
+        "name": "records/native-caption-metric-checks-v2239/native-font-relative-rust-format.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/native-font-relative-rust-format.log"
+      },
+      {
+        "bytes": 0,
+        "name": "records/native-caption-metric-checks-v2239/native-options-rust-format.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/native-options-rust-format.log"
+      },
+      {
+        "bytes": 10821,
+        "name": "records/native-caption-metric-checks-v2239/receipt.json",
+        "sha256": "fdc5ceb68c0a431d4001ca58fc112008300c997ffaea05a8d094fd4e5d06445f",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/receipt.json"
+      },
+      {
+        "bytes": 81,
+        "name": "records/native-caption-metric-checks-v2239/renderer.log",
+        "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/renderer.log"
+      },
+      {
+        "bytes": 0,
+        "name": "records/native-caption-metric-checks-v2239/rust-format.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/rust-format.log"
+      },
+      {
+        "bytes": 86,
+        "name": "records/native-caption-metric-checks-v2239/sp17.log",
+        "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/sp17.log"
+      },
+      {
+        "bytes": 121,
+        "name": "records/native-caption-metric-checks-v2239/sp18.log",
+        "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/sp18.log"
+      },
+      {
+        "bytes": 142,
+        "name": "records/native-caption-metric-checks-v2239/sp20.log",
+        "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/sp20.log"
+      },
+      {
+        "bytes": 0,
+        "name": "records/native-caption-metric-checks-v2239/strict-rgba-test-format.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/strict-rgba-test-format.log"
+      },
+      {
+        "bytes": 37,
+        "name": "records/native-caption-metric-checks-v2239/style.log",
+        "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/style.log"
+      },
+      {
+        "bytes": 0,
+        "name": "records/native-caption-metric-checks-v2239/syntax-c.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/syntax-c.log"
+      },
+      {
+        "bytes": 0,
+        "name": "records/native-caption-metric-checks-v2239/syntax-cpp.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/syntax-cpp.log"
+      },
+      {
+        "bytes": 63,
+        "name": "records/native-caption-metric-checks-v2239/v02.log",
+        "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-checks-v2239/v02.log"
+      },
+      {
+        "bytes": 38,
+        "name": "records/native-caption-metric-pipeline-v2237/clean-workspace.log",
+        "sha256": "277d95c6b0f37dd8d4732445175c2c96941f7db788d0a68cb0aa9902c0531aa8",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/clean-workspace.log"
+      },
+      {
+        "bytes": 9402,
+        "name": "records/native-caption-metric-pipeline-v2237/ffi-build.log",
+        "sha256": "d181250ebee3d9c8b790257b1187b6d698ddb85f68cb3bbd9d98b383e4724c2a",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/ffi-build.log"
+      },
+      {
+        "bytes": 3775,
+        "name": "records/native-caption-metric-pipeline-v2237/ffi-consumers.log",
+        "sha256": "c264daf858d185eaf307e79a882afa780b170b395932b1ebcf03d478c0ecec6a",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/ffi-consumers.log"
+      },
+      {
+        "bytes": 86503,
+        "name": "records/native-caption-metric-pipeline-v2237/locked-metadata.log",
+        "sha256": "086e4ac40688402f0251200a8583ec9370cdf64e5987232ed52058dc6fce1d93",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/locked-metadata.log"
+      },
+      {
+        "bytes": 13119,
+        "name": "records/native-caption-metric-pipeline-v2237/native-app-build.log",
+        "sha256": "a6a9c1ed08d0ea6e8eeedce53d0a52b430f0e91f5faba3b40327025f03cdf06c",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/native-app-build.log"
+      },
+      {
+        "bytes": 408290,
+        "name": "records/native-caption-metric-pipeline-v2237/native-app-metadata.log",
+        "sha256": "c309d48e54a30b6e096d71864bffa993e9cac8418ebecaac33e070ff456da4cb",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/native-app-metadata.log"
+      },
+      {
+        "bytes": 9346,
+        "name": "records/native-caption-metric-pipeline-v2237/native-caption-guard.log",
+        "sha256": "0ee238c8b2d95abed17eb76a40ae1220b7409e91ff852b2346f9ccc18d76801d",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/native-caption-guard.log"
+      },
+      {
+        "bytes": 575380,
+        "name": "records/native-caption-metric-pipeline-v2237/native-first.log",
+        "sha256": "de4ec2775c00b9480ced217dc4a9e639d70805c687d9e6db8ce4b1ca3972f058",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/native-first.log"
+      },
+      {
+        "bytes": 10516,
+        "name": "records/native-caption-metric-pipeline-v2237/native-relative-guard.log",
+        "sha256": "12f48e039e9ae8d2e54320787a8dd8c8c1b911368a1c15ce13e1a48dd7f839b4",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/native-relative-guard.log"
+      },
+      {
+        "bytes": 575380,
+        "name": "records/native-caption-metric-pipeline-v2237/native-second.log",
+        "sha256": "de4ec2775c00b9480ced217dc4a9e639d70805c687d9e6db8ce4b1ca3972f058",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/native-second.log"
+      },
+      {
+        "bytes": 1430574,
+        "name": "records/native-caption-metric-pipeline-v2237/native-unit-audit.json",
+        "sha256": "9b2962384f4ec2b99df145342f71c4842cf41bc3a36544ea86b9615ee1bf2953",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/native-unit-audit.json"
+      },
+      {
+        "bytes": 11823,
+        "name": "records/native-caption-metric-pipeline-v2237/pixel-build.log",
+        "sha256": "d23915a59271421a34a647940c5529c47c4eaacb7d8311b32a6724a7ae838119",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/pixel-build.log"
+      },
+      {
+        "bytes": 11670,
+        "name": "records/native-caption-metric-pipeline-v2237/receipt.json",
+        "sha256": "9d71b341c63869904aac707487bf871962ac4922d448407ff307f0f9640e195c",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/receipt.json"
+      },
+      {
+        "bytes": 302,
+        "name": "records/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix.log",
+        "sha256": "d8fbc1f1284ca41b4b7b5aa14513acb76765accba4f5e2a85777fee4fdde884f",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix.log"
+      },
+      {
+        "bytes": 490850,
+        "name": "records/native-caption-metric-pipeline-v2237/workspace.log",
+        "sha256": "f6c557f5767c21fc837faf502e248e5a272fa410583ada4106b668ee4bb2f857",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/workspace.log"
+      },
+      {
+        "bytes": 16682,
+        "name": "records/native-caption-source-repro-v2249/production-only-from-public.patch",
+        "sha256": "3e1a6088971e2b809d42bda985c8519a62d83dd25edbc3b06706a8b654b66798",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-source-repro-v2249/production-only-from-public.patch"
+      },
+      {
+        "bytes": 3992,
+        "name": "records/native-caption-source-repro-v2249/receipt.json",
+        "sha256": "919e6df41fff033193a29dc8173f24b606e890e5365230a236d822703c3fb8d2",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-source-repro-v2249/receipt.json"
+      },
+      {
+        "bytes": 30586453,
+        "name": "records/native-caption-source-repro-v2249/source-from-public.patch",
+        "sha256": "48235626d8c1c9ca71904866a746b2fddf762c7e5d01ac63f2a809f1e30ac6f6",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-source-repro-v2249/source-from-public.patch"
+      },
+      {
+        "bytes": 15451,
+        "name": "records/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-desktop-1280x720@1.25-candidate.log",
+        "sha256": "149b0b6302ce6c9ad5993f1a46e26819a7e6ba5bff3e06328d9eb7af630e9963",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-desktop-1280x720@1.25-candidate.log"
+      },
+      {
+        "bytes": 15451,
+        "name": "records/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-desktop-1280x720@1.25-parent.log",
+        "sha256": "69ecf0c3098d86fb8b615d9b82251991cf813148b71b55c19dae2186dbce8a5f",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-desktop-1280x720@1.25-parent.log"
+      },
+      {
+        "bytes": 15458,
+        "name": "records/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-desktop-1920x1080@1.5-candidate.log",
+        "sha256": "d011bc8b8ae8d07e282612f460e60acbc377f6c37d08cb4b56ed3f2f9dbddfda",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-desktop-1920x1080@1.5-candidate.log"
+      },
+      {
+        "bytes": 15458,
+        "name": "records/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-desktop-1920x1080@1.5-parent.log",
+        "sha256": "a45af10a5f1baf6ddf3020ff3d74b2dfd8fe1520bc68511a4e8869d44d85907d",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-desktop-1920x1080@1.5-parent.log"
+      },
+      {
+        "bytes": 15447,
+        "name": "records/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-legacy-800x600@1-candidate.log",
+        "sha256": "a75f395d036c35bf7bcc364913c8e94bd458c2e4cbe9f4b0df79504697e9ef66",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-legacy-800x600@1-candidate.log"
+      },
+      {
+        "bytes": 15447,
+        "name": "records/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-legacy-800x600@1-parent.log",
+        "sha256": "2e9fae2fe36a382e104e355f5975486ed818b7bcc85e5cbba88676d9854eed34",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-legacy-800x600@1-parent.log"
+      },
+      {
+        "bytes": 15444,
+        "name": "records/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-mobile-375x667@2-candidate.log",
+        "sha256": "8b516e7f9986d2eda48032bd0d8043f835ce32cad66b7bf49429bd8d4e711b16",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-mobile-375x667@2-candidate.log"
+      },
+      {
+        "bytes": 15444,
+        "name": "records/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-mobile-375x667@2-parent.log",
+        "sha256": "7e630cc530ab7d66c69f41e3602e78809201654630de011eb4fc48c0f9021d73",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/block-size-with-min-or-max-content-1-ref-mobile-375x667@2-parent.log"
+      },
+      {
+        "bytes": 42851,
+        "name": "records/native-shaped-sizing-fragments-v2244/multicol-span-all-004-desktop-1280x720@1.25-candidate.log",
+        "sha256": "9935ffd61ba1ae50b9e79fdf2e67ba13e308b3757e92681e384ff92d305ce68d",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/multicol-span-all-004-desktop-1280x720@1.25-candidate.log"
+      },
+      {
+        "bytes": 42851,
+        "name": "records/native-shaped-sizing-fragments-v2244/multicol-span-all-004-desktop-1280x720@1.25-parent.log",
+        "sha256": "7589d6f99ed5f198eebcccac7a2ed5c4a08ddc2b1144947f9c73a5c5d26c1665",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/multicol-span-all-004-desktop-1280x720@1.25-parent.log"
+      },
+      {
+        "bytes": 42857,
+        "name": "records/native-shaped-sizing-fragments-v2244/multicol-span-all-004-desktop-1920x1080@1.5-candidate.log",
+        "sha256": "1daf47e0b52b8e2627139d1d9e4d3255196766fa9492aef3ccd1fea4f76ee2a2",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/multicol-span-all-004-desktop-1920x1080@1.5-candidate.log"
+      },
+      {
+        "bytes": 42857,
+        "name": "records/native-shaped-sizing-fragments-v2244/multicol-span-all-004-desktop-1920x1080@1.5-parent.log",
+        "sha256": "cfdeb23b37b9d316935818ebd92b9a0c63297657b7b39bc09762b281551af466",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/multicol-span-all-004-desktop-1920x1080@1.5-parent.log"
+      },
+      {
+        "bytes": 42848,
+        "name": "records/native-shaped-sizing-fragments-v2244/multicol-span-all-004-legacy-800x600@1-candidate.log",
+        "sha256": "7452246717c0b937904cec2b0d91915a18477313a3e7f1df2997c073f828befc",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/multicol-span-all-004-legacy-800x600@1-candidate.log"
+      },
+      {
+        "bytes": 42848,
+        "name": "records/native-shaped-sizing-fragments-v2244/multicol-span-all-004-legacy-800x600@1-parent.log",
+        "sha256": "4e34277b630a8002b103f8ce51b3187d5f958af5562663eeb7f0a46fff07c32d",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/multicol-span-all-004-legacy-800x600@1-parent.log"
+      },
+      {
+        "bytes": 43300,
+        "name": "records/native-shaped-sizing-fragments-v2244/multicol-span-all-004-mobile-375x667@2-candidate.log",
+        "sha256": "281a9b50ab5900c343f15573d7b1dba7b875b7719ce60968157fbc708dd7367e",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/multicol-span-all-004-mobile-375x667@2-candidate.log"
+      },
+      {
+        "bytes": 43300,
+        "name": "records/native-shaped-sizing-fragments-v2244/multicol-span-all-004-mobile-375x667@2-parent.log",
+        "sha256": "572a1f51033bf569f093ef0705fe0a32af3716a485d00ab5641e2ded329f5cb0",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/multicol-span-all-004-mobile-375x667@2-parent.log"
+      },
+      {
+        "bytes": 266334,
+        "name": "records/native-shaped-sizing-fragments-v2244/receipt.json",
+        "sha256": "e4223d752aa16f0fbeca9366f9da01a023cd4ed9ca5a6e620ea195b7633a7ea5",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-shaped-sizing-fragments-v2244/receipt.json"
+      },
+      {
+        "bytes": 35677,
+        "name": "review/native-caption-sizing-review-v2248.json",
+        "sha256": "dd87654e63793e354cc45ac07f709bb11e00671c057f651333b7e3cc2f09d387",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-sizing-review-v2248.json"
+      },
+      {
+        "bytes": 7599,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_multicol/multicol-span-all-004-ref/chromium.png",
+        "sha256": "bfc65378f0b0d86caced0295a2e62e34478e5d333868656f5f46b2fbdf95e161",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_multicol/multicol-span-all-004-ref/chromium.png"
+      },
+      {
+        "bytes": 9153,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_multicol/multicol-span-all-004-ref/openui.png",
+        "sha256": "e6ab33cfabf2c6bde9271e615f31a4ccff071175b433a501d28bdd73f2921aa2",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_multicol/multicol-span-all-004-ref/openui.png"
+      },
+      {
+        "bytes": 1741,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_multicol/multicol-span-all-004-ref/test.html",
+        "sha256": "d2d3a14901691eaf823f770bce48ea8b0673ad0a587bbca1004871d7596a5d50",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_multicol/multicol-span-all-004-ref/test.html"
+      },
+      {
+        "bytes": 7599,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_multicol/multicol-span-all-004/chromium.png",
+        "sha256": "bfc65378f0b0d86caced0295a2e62e34478e5d333868656f5f46b2fbdf95e161",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_multicol/multicol-span-all-004/chromium.png"
+      },
+      {
+        "bytes": 9153,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_multicol/multicol-span-all-004/openui.png",
+        "sha256": "e6ab33cfabf2c6bde9271e615f31a4ccff071175b433a501d28bdd73f2921aa2",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_multicol/multicol-span-all-004/openui.png"
+      },
+      {
+        "bytes": 1740,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_multicol/multicol-span-all-004/test.html",
+        "sha256": "312b77ae234859a7ba7db00baedd243eed3c81eea4e1ba79d8d1ac873a8f8c98",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_multicol/multicol-span-all-004/test.html"
+      },
+      {
+        "bytes": 6991,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/chromium.png",
+        "sha256": "f29dc145ac488af4c96891e19d70cdb9265d2821e12541bcfd8a9704d2d8be13",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/chromium.png"
+      },
+      {
+        "bytes": 8464,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/openui.png",
+        "sha256": "f4ca37c4e7531e55a2d691020df45d697d0ceb062a9badfe7227fc08c3fe2109",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/openui.png"
+      },
+      {
+        "bytes": 1605,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/test.html",
+        "sha256": "3a47978864185322336bcb00476433b74c2fa4a42665d6d8c59c6da260335523",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/test.html"
+      },
+      {
+        "bytes": 6991,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1a/chromium.png",
+        "sha256": "f29dc145ac488af4c96891e19d70cdb9265d2821e12541bcfd8a9704d2d8be13",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1a/chromium.png"
+      },
+      {
+        "bytes": 8464,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1a/openui.png",
+        "sha256": "f4ca37c4e7531e55a2d691020df45d697d0ceb062a9badfe7227fc08c3fe2109",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1a/openui.png"
+      },
+      {
+        "bytes": 3744,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1a/test.html",
+        "sha256": "9e65d5b718df410ca631126f3449e42fdc0d02bf4fdb803ad3ee1d4a3129734f",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1a/test.html"
+      },
+      {
+        "bytes": 6991,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1b/chromium.png",
+        "sha256": "f29dc145ac488af4c96891e19d70cdb9265d2821e12541bcfd8a9704d2d8be13",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1b/chromium.png"
+      },
+      {
+        "bytes": 8464,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1b/openui.png",
+        "sha256": "f4ca37c4e7531e55a2d691020df45d697d0ceb062a9badfe7227fc08c3fe2109",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1b/openui.png"
+      },
+      {
+        "bytes": 3748,
+        "name": "sizing-caption-neighbors/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1b/test.html",
+        "sha256": "555b489caa184b229ffbcfd67074e42331d5880d98a051f5933e3914c56552cb",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1280x720@1.25/wpt/css_sizing/block-size-with-min-or-max-content-1b/test.html"
+      },
+      {
+        "bytes": 18511,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_multicol/multicol-span-all-004-ref/chromium.png",
+        "sha256": "0e1df9569d3ff0abe8f894c994fcb62fb55cc2df68bb8f00b9e2189c5cff6b6b",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_multicol/multicol-span-all-004-ref/chromium.png"
+      },
+      {
+        "bytes": 23296,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_multicol/multicol-span-all-004-ref/openui.png",
+        "sha256": "df29c4534a44c25ec1e6224633d2675c9ab36432e6e014ee59be68932035162b",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_multicol/multicol-span-all-004-ref/openui.png"
+      },
+      {
+        "bytes": 1741,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_multicol/multicol-span-all-004-ref/test.html",
+        "sha256": "d2d3a14901691eaf823f770bce48ea8b0673ad0a587bbca1004871d7596a5d50",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_multicol/multicol-span-all-004-ref/test.html"
+      },
+      {
+        "bytes": 18511,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_multicol/multicol-span-all-004/chromium.png",
+        "sha256": "0e1df9569d3ff0abe8f894c994fcb62fb55cc2df68bb8f00b9e2189c5cff6b6b",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_multicol/multicol-span-all-004/chromium.png"
+      },
+      {
+        "bytes": 23296,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_multicol/multicol-span-all-004/openui.png",
+        "sha256": "df29c4534a44c25ec1e6224633d2675c9ab36432e6e014ee59be68932035162b",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_multicol/multicol-span-all-004/openui.png"
+      },
+      {
+        "bytes": 1740,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_multicol/multicol-span-all-004/test.html",
+        "sha256": "312b77ae234859a7ba7db00baedd243eed3c81eea4e1ba79d8d1ac873a8f8c98",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_multicol/multicol-span-all-004/test.html"
+      },
+      {
+        "bytes": 17948,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/chromium.png",
+        "sha256": "4155d4ddf707cc70db589e08fbf9979fdabe48e6a18d73be13ad8f8ea4e70fdb",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/chromium.png"
+      },
+      {
+        "bytes": 22780,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/openui.png",
+        "sha256": "60f91b12ea60a6cd478e172d94ba37b889e64e05d5cbaeed1d52304b10861296",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/openui.png"
+      },
+      {
+        "bytes": 1605,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/test.html",
+        "sha256": "3a47978864185322336bcb00476433b74c2fa4a42665d6d8c59c6da260335523",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/test.html"
+      },
+      {
+        "bytes": 17948,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1a/chromium.png",
+        "sha256": "4155d4ddf707cc70db589e08fbf9979fdabe48e6a18d73be13ad8f8ea4e70fdb",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1a/chromium.png"
+      },
+      {
+        "bytes": 22780,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1a/openui.png",
+        "sha256": "60f91b12ea60a6cd478e172d94ba37b889e64e05d5cbaeed1d52304b10861296",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1a/openui.png"
+      },
+      {
+        "bytes": 3744,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1a/test.html",
+        "sha256": "9e65d5b718df410ca631126f3449e42fdc0d02bf4fdb803ad3ee1d4a3129734f",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1a/test.html"
+      },
+      {
+        "bytes": 17948,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1b/chromium.png",
+        "sha256": "4155d4ddf707cc70db589e08fbf9979fdabe48e6a18d73be13ad8f8ea4e70fdb",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1b/chromium.png"
+      },
+      {
+        "bytes": 22780,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1b/openui.png",
+        "sha256": "60f91b12ea60a6cd478e172d94ba37b889e64e05d5cbaeed1d52304b10861296",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1b/openui.png"
+      },
+      {
+        "bytes": 3748,
+        "name": "sizing-caption-neighbors/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1b/test.html",
+        "sha256": "555b489caa184b229ffbcfd67074e42331d5880d98a051f5933e3914c56552cb",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/desktop-1920x1080@1.5/wpt/css_sizing/block-size-with-min-or-max-content-1b/test.html"
+      },
+      {
+        "bytes": 70967,
+        "name": "sizing-caption-neighbors/full-summary.json",
+        "sha256": "d08ef1235985cc1823351a744ae00430a223274abf85f1588fc13aeba3ac999e",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/full-summary.json"
+      },
+      {
+        "bytes": 3246,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_multicol/multicol-span-all-004-ref/chromium.png",
+        "sha256": "019e56d89171b5050290f1b557b869f4401a33628bbddb83fd9c926f760f1cbe",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_multicol/multicol-span-all-004-ref/chromium.png"
+      },
+      {
+        "bytes": 3773,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_multicol/multicol-span-all-004-ref/openui.png",
+        "sha256": "8ac70fba45c367016ff61b1d7360eb629497d3e7879a87cf44842286d29a27d8",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_multicol/multicol-span-all-004-ref/openui.png"
+      },
+      {
+        "bytes": 1741,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_multicol/multicol-span-all-004-ref/test.html",
+        "sha256": "d2d3a14901691eaf823f770bce48ea8b0673ad0a587bbca1004871d7596a5d50",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_multicol/multicol-span-all-004-ref/test.html"
+      },
+      {
+        "bytes": 3246,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_multicol/multicol-span-all-004/chromium.png",
+        "sha256": "019e56d89171b5050290f1b557b869f4401a33628bbddb83fd9c926f760f1cbe",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_multicol/multicol-span-all-004/chromium.png"
+      },
+      {
+        "bytes": 3773,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_multicol/multicol-span-all-004/openui.png",
+        "sha256": "8ac70fba45c367016ff61b1d7360eb629497d3e7879a87cf44842286d29a27d8",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_multicol/multicol-span-all-004/openui.png"
+      },
+      {
+        "bytes": 1740,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_multicol/multicol-span-all-004/test.html",
+        "sha256": "312b77ae234859a7ba7db00baedd243eed3c81eea4e1ba79d8d1ac873a8f8c98",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_multicol/multicol-span-all-004/test.html"
+      },
+      {
+        "bytes": 3085,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/chromium.png",
+        "sha256": "206bccb53ca4e437f53d483f171813eb0a2c74ae4d5a0eedb2ecadd5cfe8a306",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/chromium.png"
+      },
+      {
+        "bytes": 3603,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/openui.png",
+        "sha256": "44d4e5705f334874a8ff5306fbd42d40ab05904c083977b6bc2b311761774556",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/openui.png"
+      },
+      {
+        "bytes": 1605,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/test.html",
+        "sha256": "3a47978864185322336bcb00476433b74c2fa4a42665d6d8c59c6da260335523",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/test.html"
+      },
+      {
+        "bytes": 3085,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1a/chromium.png",
+        "sha256": "206bccb53ca4e437f53d483f171813eb0a2c74ae4d5a0eedb2ecadd5cfe8a306",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1a/chromium.png"
+      },
+      {
+        "bytes": 3603,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1a/openui.png",
+        "sha256": "44d4e5705f334874a8ff5306fbd42d40ab05904c083977b6bc2b311761774556",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1a/openui.png"
+      },
+      {
+        "bytes": 3744,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1a/test.html",
+        "sha256": "9e65d5b718df410ca631126f3449e42fdc0d02bf4fdb803ad3ee1d4a3129734f",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1a/test.html"
+      },
+      {
+        "bytes": 3085,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1b/chromium.png",
+        "sha256": "206bccb53ca4e437f53d483f171813eb0a2c74ae4d5a0eedb2ecadd5cfe8a306",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1b/chromium.png"
+      },
+      {
+        "bytes": 3603,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1b/openui.png",
+        "sha256": "44d4e5705f334874a8ff5306fbd42d40ab05904c083977b6bc2b311761774556",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1b/openui.png"
+      },
+      {
+        "bytes": 3748,
+        "name": "sizing-caption-neighbors/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1b/test.html",
+        "sha256": "555b489caa184b229ffbcfd67074e42331d5880d98a051f5933e3914c56552cb",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/legacy-800x600@1/wpt/css_sizing/block-size-with-min-or-max-content-1b/test.html"
+      },
+      {
+        "bytes": 6414,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_multicol/multicol-span-all-004-ref/chromium.png",
+        "sha256": "1716189c772417fadaa68a8f477bf350cd3ddc03808c2e15c55f66a540aa85f0",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_multicol/multicol-span-all-004-ref/chromium.png"
+      },
+      {
+        "bytes": 7548,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_multicol/multicol-span-all-004-ref/openui.png",
+        "sha256": "d96fad470dad8e32eeb4ea832e0fc29dfcc90ddfafdedf59e595ab73c68667bc",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_multicol/multicol-span-all-004-ref/openui.png"
+      },
+      {
+        "bytes": 1741,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_multicol/multicol-span-all-004-ref/test.html",
+        "sha256": "d2d3a14901691eaf823f770bce48ea8b0673ad0a587bbca1004871d7596a5d50",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_multicol/multicol-span-all-004-ref/test.html"
+      },
+      {
+        "bytes": 6414,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_multicol/multicol-span-all-004/chromium.png",
+        "sha256": "1716189c772417fadaa68a8f477bf350cd3ddc03808c2e15c55f66a540aa85f0",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_multicol/multicol-span-all-004/chromium.png"
+      },
+      {
+        "bytes": 7548,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_multicol/multicol-span-all-004/openui.png",
+        "sha256": "d96fad470dad8e32eeb4ea832e0fc29dfcc90ddfafdedf59e595ab73c68667bc",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_multicol/multicol-span-all-004/openui.png"
+      },
+      {
+        "bytes": 1740,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_multicol/multicol-span-all-004/test.html",
+        "sha256": "312b77ae234859a7ba7db00baedd243eed3c81eea4e1ba79d8d1ac873a8f8c98",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_multicol/multicol-span-all-004/test.html"
+      },
+      {
+        "bytes": 6253,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/chromium.png",
+        "sha256": "2d15a474917b2f25c8fabbc6c23e17ad3f18236109126b1157a81412498ea866",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/chromium.png"
+      },
+      {
+        "bytes": 7307,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/openui.png",
+        "sha256": "c66051a5b22aea41564605ff76860270440fefd794b7d88f763c4cc40b6bdd43",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/openui.png"
+      },
+      {
+        "bytes": 1605,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/test.html",
+        "sha256": "3a47978864185322336bcb00476433b74c2fa4a42665d6d8c59c6da260335523",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1-ref/test.html"
+      },
+      {
+        "bytes": 6253,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1a/chromium.png",
+        "sha256": "2d15a474917b2f25c8fabbc6c23e17ad3f18236109126b1157a81412498ea866",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1a/chromium.png"
+      },
+      {
+        "bytes": 7307,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1a/openui.png",
+        "sha256": "c66051a5b22aea41564605ff76860270440fefd794b7d88f763c4cc40b6bdd43",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1a/openui.png"
+      },
+      {
+        "bytes": 3744,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1a/test.html",
+        "sha256": "9e65d5b718df410ca631126f3449e42fdc0d02bf4fdb803ad3ee1d4a3129734f",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1a/test.html"
+      },
+      {
+        "bytes": 6253,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1b/chromium.png",
+        "sha256": "2d15a474917b2f25c8fabbc6c23e17ad3f18236109126b1157a81412498ea866",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1b/chromium.png"
+      },
+      {
+        "bytes": 7307,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1b/openui.png",
+        "sha256": "c66051a5b22aea41564605ff76860270440fefd794b7d88f763c4cc40b6bdd43",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1b/openui.png"
+      },
+      {
+        "bytes": 3748,
+        "name": "sizing-caption-neighbors/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1b/test.html",
+        "sha256": "555b489caa184b229ffbcfd67074e42331d5880d98a051f5933e3914c56552cb",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-caption-metric-pipeline-v2237/sizing-caption-neighbors-matrix/mobile-375x667@2/wpt/css_sizing/block-size-with-min-or-max-content-1b/test.html"
+      },
+      {
+        "bytes": 139589,
+        "name": "source/bindings/rust/openui-engine/src/lib.rs",
+        "sha256": "7c855c976a376c0674d0a8c534b0fe8210f176d0cc0a17466e408bd2766bf7a2",
+        "source_path": "/home/nero/code/open-ui/out/private-native-caption-metrics-v2234/bindings/rust/openui-engine/src/lib.rs"
+      },
+      {
+        "bytes": 191580,
+        "name": "source/bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "sha256": "7d934d57520ed385aa5966d11aecdf24a793a6cb91f4b09d5f8b6d4799a25902",
+        "source_path": "/home/nero/code/open-ui/out/private-native-caption-metrics-v2234/bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+      },
+      {
+        "bytes": 132839,
+        "name": "source/bindings/rust/openui-layout/src/table.rs",
+        "sha256": "7585acc8e32296a552a38f9941c107a380dff89c725d596f6a077ec161b88dc0",
+        "source_path": "/home/nero/code/open-ui/out/private-native-caption-metrics-v2234/bindings/rust/openui-layout/src/table.rs"
+      },
+      {
+        "bytes": 68581,
+        "name": "source/bindings/rust/openui-text/src/font/collection.rs",
+        "sha256": "aaeb89a2a500c845bd8fff4869699721419bfd8c98586875f70491d8373d38b4",
+        "source_path": "/home/nero/code/open-ui/out/private-native-caption-metrics-v2234/bindings/rust/openui-text/src/font/collection.rs"
+      },
+      {
+        "bytes": 27795,
+        "name": "source/bindings/rust/openui-text/src/font/platform.rs",
+        "sha256": "c61be2bebbdfb44e18bab2a514f8cbbf61140ed6350281a8d0f892aabad0494e",
+        "source_path": "/home/nero/code/open-ui/out/private-native-caption-metrics-v2234/bindings/rust/openui-text/src/font/platform.rs"
+      },
+      {
+        "bytes": 8130,
+        "name": "source/bindings/rust/openui-text/src/font/relative.rs",
+        "sha256": "0ba8e215de94394e918ff467c7a9c869ebddc60c769b0043d49bf8bbde0af98e",
+        "source_path": "/home/nero/code/open-ui/out/private-native-caption-metrics-v2234/bindings/rust/openui-text/src/font/relative.rs"
+      },
+      {
+        "bytes": 4005,
+        "name": "source/bindings/rust/openui/tests/native_font_relative_lengths.rs",
+        "sha256": "9849f94cfab47ddddfdfe7fa543d55fc5224a584a54adb6e992cc1e8675220a1",
+        "source_path": "/home/nero/code/open-ui/out/private-native-caption-metrics-v2234/bindings/rust/openui/tests/native_font_relative_lengths.rs"
+      },
+      {
+        "bytes": 3653,
+        "name": "source/bindings/rust/openui/tests/native_table_caption.rs",
+        "sha256": "488329f7bbc1c8068f483abee8d26e4f5d816fe8af3639deb13698f237aff0d8",
+        "source_path": "/home/nero/code/open-ui/out/private-native-caption-metrics-v2234/bindings/rust/openui/tests/native_table_caption.rs"
+      }
+    ],
+    "path": "docs/renderer/evidence/native-caption-shaping-v1/completed-evidence.tar.gz",
+    "sha256": "6b87a8ae9eb7dcea22ccc16bef46bd7a9b835d8800d29f35080b8f0a08770974"
+  },
+  "candidate_applied_to_umbrella": false,
+  "caption_regressions_from_parent_repaired": 2,
+  "complete_pixel_matrices_executed": false,
+  "entire_tracked_tree_reconstructs_exactly": true,
+  "failed_capture_and_preparation_attempts_preserved": true,
+  "formal_accepted_ownership_ledger_unchanged": true,
+  "fresh_chromium_images_match_immutable_oracle_all_four_profiles": true,
+  "layout_precision_must_not_be_added_back_to_hide_raster_differences": true,
+  "manual_helper_does_not_complete_reactive_native_unit_declarations": true,
+  "matrices": {
+    "sizing-caption-neighbors": {
+      "changed_comparisons": [
+        {
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+          "mismatched_pixels": 114,
+          "more_wrong_pixels": true,
+          "prior_mismatched_pixels": 57,
+          "prior_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "status": "different"
+        },
+        {
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+          "mismatched_pixels": 114,
+          "more_wrong_pixels": true,
+          "prior_mismatched_pixels": 57,
+          "prior_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "status": "different"
+        },
+        {
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+          "mismatched_pixels": 114,
+          "more_wrong_pixels": true,
+          "prior_mismatched_pixels": 57,
+          "prior_status": "different",
+          "profile": "desktop-1280x720@1.25",
+          "status": "different"
+        },
+        {
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+          "mismatched_pixels": 406,
+          "more_wrong_pixels": true,
+          "prior_mismatched_pixels": 384,
+          "prior_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "status": "different"
+        },
+        {
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+          "mismatched_pixels": 406,
+          "more_wrong_pixels": true,
+          "prior_mismatched_pixels": 384,
+          "prior_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "status": "different"
+        },
+        {
+          "changed_fields": [
+            "openui_png_sha256",
+            "openui_rgba_sha256",
+            "mismatched_pixels",
+            "diff_signature"
+          ],
+          "exact_gain": false,
+          "exact_loss": false,
+          "id": "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+          "mismatched_pixels": 406,
+          "more_wrong_pixels": true,
+          "prior_mismatched_pixels": 384,
+          "prior_status": "different",
+          "profile": "desktop-1920x1080@1.5",
+          "status": "different"
+        }
+      ],
+      "comparisons": 20,
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "observed_exit_code": 1,
+      "partial_selection_not_qualifying": true,
+      "results": {
+        "different": 8,
+        "errors": 0,
+        "exact": 12,
+        "profile_result_sha256": "baf36513ee59a182216ba61ff746b8e9de92bf400fa4807a41765ee5dc0db123",
+        "total": 20
+      },
+      "summary_sha256": "d08ef1235985cc1823351a744ae00430a223274abf85f1588fc13aeba3ac999e",
+      "worsened_comparisons": 6
+    }
+  },
+  "native_and_strict_rgba_guards_actually_executed_in_workspace": true,
+  "native_callbacks_per_run": 1200,
+  "native_geometry": {
+    "different": 0,
+    "exact": 2400,
+    "states": 2400
+  },
+  "native_guards_actually_executed_and_passed": true,
+  "native_outputs_repeat_byte_identically": true,
+  "native_pixels_captured": false,
+  "native_vertical_ch_fix_not_implemented": true,
+  "new_release_states_admitted": 0,
+  "no_javascript_executed_by_openui": true,
+  "pixel_no_regression_gate_passed": false,
+  "pixel_tolerance": 0,
+  "private_fontations_or_positioned_intrinsic_changes_included": false,
+  "probe_sha256": "ead9072392e068904c7cb175673333322fc6a82a4045b39ba875161b3f6b80eb",
+  "production_patch_sha256": "3e1a6088971e2b809d42bda985c8519a62d83dd25edbc3b06706a8b654b66798",
+  "promotion_allowed": false,
+  "public_source_at_trial": {
+    "clean": true,
+    "commit": "4129d8fc1fb84036c1b97930ffde59ada165e76b",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "467d60cee639ba2d0953a7f06fa0e9d1fb0aad1b012b26d08150a6d119fad1c2",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "read_only_checks": [
+    {
+      "command": [
+        "python3",
+        "tools/qualification/generate_renderer_contract.py",
+        "--check"
+      ],
+      "log_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "name": "renderer",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp13r_multicol_closure.py",
+        "--check"
+      ],
+      "log_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "name": "multicol",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp17_closure.py",
+        "--check"
+      ],
+      "log_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "name": "sp17",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp18_closure.py",
+        "--check"
+      ],
+      "log_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "name": "sp18",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp20_closure.py",
+        "--check"
+      ],
+      "log_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "name": "sp20",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/release/generate_v02_contract.py",
+        "--check"
+      ],
+      "log_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "name": "v02",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/style/generate_properties.py",
+        "--check"
+      ],
+      "log_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "name": "style",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/ffi/generate_ffi.py",
+        "--check"
+      ],
+      "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "name": "ffi",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/accountability/restore_frozen_openui_archive.py",
+        "--check"
+      ],
+      "log_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+      "name": "archive",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/accountability/audit.py",
+        "--repository-only"
+      ],
+      "log_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+      "name": "accountability",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "ulimit -s 262144; exec rustfmt --edition 2021 --config skip_children=true --check bindings/rust/openui-engine/src/lib.rs bindings/rust/openui/src/element.rs bindings/rust/openui-ffi/src/lib.rs bindings/rust/openui/examples/native_text_content.rs bindings/rust/openui-engine/src/animation.rs bindings/rust/openui-style/src/property.rs bindings/rust/openui/examples/native_inherited_styles.rs bindings/rust/openui/examples/native_relative_styles.rs bindings/rust/openui/examples/native_static_position.rs bindings/rust/openui/tests/native_text_style_inheritance.rs bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "rust-format",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-I/home/nero/code/open-ui/out/private-native-caption-metrics-v2234/include",
+        "-fsyntax-only",
+        "/home/nero/code/open-ui/out/private-native-caption-metrics-v2234/examples/c_v02/text_content.c"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "syntax-c",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-I/home/nero/code/open-ui/out/private-native-caption-metrics-v2234/include",
+        "-fsyntax-only",
+        "/home/nero/code/open-ui/out/private-native-caption-metrics-v2234/examples/c_v02/text_content.cc"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "syntax-cpp",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/mnt/e/openui-v02-format-tools-v1724/clang_format/data/bin/clang-format",
+        "--dry-run",
+        "--Werror",
+        "examples/c_v02/accessibility.c",
+        "examples/c_v02/common.h",
+        "examples/c_v02/counter.c",
+        "examples/c_v02/dashboard.c",
+        "examples/c_v02/float_colors.c",
+        "examples/c_v02/float_colors.cc",
+        "examples/c_v02/fragment_keywords.c",
+        "examples/c_v02/fragment_keywords.cc",
+        "examples/c_v02/geometry.c",
+        "examples/c_v02/header_smoke.cc",
+        "examples/c_v02/hello.c",
+        "examples/c_v02/native/window.c",
+        "examples/c_v02/native/window.cc",
+        "examples/c_v02/primitive_styles.c",
+        "examples/c_v02/primitive_styles.cc",
+        "examples/c_v02/scroll_into_view.c",
+        "examples/c_v02/scroll_metrics.c",
+        "examples/c_v02/scroll_metrics.cc",
+        "examples/c_v02/svg_viewport.c",
+        "examples/c_v02/svg_viewport.cc",
+        "examples/c_v02/text_content.c",
+        "examples/c_v02/text_content.cc",
+        "examples/c_v02/todo.c",
+        "examples/hello_world.cc",
+        "examples/skia_gallery.c",
+        "examples/skia_hello.c",
+        "examples/skia_poc/main.cc",
+        "include/openui/openui_skia.h",
+        "src/api/openui.h",
+        "src/api/openui_api_test.cc",
+        "src/api/openui_c_render_test.c",
+        "src/api/openui_c_test.c",
+        "src/api/openui_element_factory.cc",
+        "src/api/openui_element_factory.h",
+        "src/api/openui_events.cc",
+        "src/api/openui_events.h",
+        "src/api/openui_impl.cc",
+        "src/api/openui_impl.h",
+        "src/api/openui_init.cc",
+        "src/api/openui_init.h",
+        "src/api/openui_pixel_diff.cc",
+        "src/api/openui_pixel_diff.h",
+        "src/api/openui_render.cc",
+        "src/api/openui_render.h",
+        "src/api/openui_render_pages.cc",
+        "src/api/openui_render_test.cc",
+        "src/api/openui_resource_provider.cc",
+        "src/api/openui_resource_provider.h",
+        "src/platform/oui_window_x11.cc",
+        "src/rendering_pipeline/chromium/rendering_test.cc",
+        "src/rendering_pipeline/chromium/smoke_test.cc",
+        "src/skia/oui_sk_canvas.cc",
+        "src/skia/oui_sk_effects.cc",
+        "src/skia/oui_sk_font.cc",
+        "src/skia/oui_sk_image.cc",
+        "src/skia/oui_sk_paint.cc",
+        "src/skia/oui_sk_path.cc",
+        "src/skia/oui_sk_surface.cc",
+        "src/skia/oui_sk_types_internal.h",
+        "src/skia/oui_sk_util.cc"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "clang-format",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "ulimit -s 262144; rustfmt --edition 2021 --config skip_children=true --check bindings/rust/openui/src/document.rs bindings/rust/openui/src/app.rs bindings/rust/openui/src/prelude.rs bindings/rust/openui/tests/native_raster_options.rs bindings/rust/openui/examples/native_raster_options.rs bindings/rust/openui/examples/native_font_variation.rs bindings/rust/openui-text/src/shaping/shape_result.rs bindings/rust/openui-paint/src/text_painter.rs bindings/rust/openui-geometry/src/raster.rs bindings/rust/openui-paint/src/painter.rs bindings/rust/openui-text/src/font/platform.rs bindings/rust/openui-text/src/shaping/mod.rs"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "native-options-rust-format",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "ulimit -s 262144; rustfmt --edition 2021 --config skip_children=true --check bindings/rust/openui-paint/tests/pixel_comparison_tests.rs"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "strict-rgba-test-format",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "ulimit -s 262144; rustfmt --edition 2021 --config skip_children=true --check bindings/rust/openui-engine/src/lib.rs bindings/rust/openui-text/src/font/collection.rs bindings/rust/openui-text/src/font/platform.rs bindings/rust/openui-text/src/font/relative.rs bindings/rust/openui/tests/native_font_relative_lengths.rs"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "native-font-relative-rust-format",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "bash",
+        "-c",
+        "ulimit -s 262144; rustfmt --edition 2021 --config skip_children=true --check bindings/rust/openui-layout/src/intrinsic_sizing.rs bindings/rust/openui-layout/src/table.rs bindings/rust/openui/tests/native_table_caption.rs"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "native-caption-shaping-rust-format",
+      "observed_exit_code": 0
+    }
+  ],
+  "read_only_checks_passed": 18,
+  "release_qualification": false,
+  "repeated_sizing_geometry": {
+    "candidate_exact": 24,
+    "parent_exact": 0,
+    "states": 24
+  },
+  "review": {
+    "accepted_renderer_exact_gains": 0,
+    "accepted_renderer_exact_losses": 0,
+    "all_commands_terminal": true,
+    "candidate_applied_to_umbrella": false,
+    "caption_comparisons": [
+      {
+        "exact_gain": true,
+        "id": "wpt/css_multicol/multicol-span-all-004",
+        "mismatched_pixels": 0,
+        "prior_mismatched_pixels": 76,
+        "prior_status": "different",
+        "profile": "legacy-800x600@1",
+        "status": "exact"
+      },
+      {
+        "exact_gain": true,
+        "id": "wpt/css_multicol/multicol-span-all-004-ref",
+        "mismatched_pixels": 0,
+        "prior_mismatched_pixels": 76,
+        "prior_status": "different",
+        "profile": "legacy-800x600@1",
+        "status": "exact"
+      },
+      {
+        "exact_gain": false,
+        "id": "wpt/css_multicol/multicol-span-all-004",
+        "mismatched_pixels": 0,
+        "prior_mismatched_pixels": 0,
+        "prior_status": "exact",
+        "profile": "mobile-375x667@2",
+        "status": "exact"
+      },
+      {
+        "exact_gain": false,
+        "id": "wpt/css_multicol/multicol-span-all-004-ref",
+        "mismatched_pixels": 0,
+        "prior_mismatched_pixels": 0,
+        "prior_status": "exact",
+        "profile": "mobile-375x667@2",
+        "status": "exact"
+      },
+      {
+        "exact_gain": false,
+        "id": "wpt/css_multicol/multicol-span-all-004",
+        "mismatched_pixels": 0,
+        "prior_mismatched_pixels": 0,
+        "prior_status": "exact",
+        "profile": "desktop-1280x720@1.25",
+        "status": "exact"
+      },
+      {
+        "exact_gain": false,
+        "id": "wpt/css_multicol/multicol-span-all-004-ref",
+        "mismatched_pixels": 0,
+        "prior_mismatched_pixels": 0,
+        "prior_status": "exact",
+        "profile": "desktop-1280x720@1.25",
+        "status": "exact"
+      },
+      {
+        "exact_gain": false,
+        "id": "wpt/css_multicol/multicol-span-all-004",
+        "mismatched_pixels": 1,
+        "prior_mismatched_pixels": 1,
+        "prior_status": "different",
+        "profile": "desktop-1920x1080@1.5",
+        "status": "different"
+      },
+      {
+        "exact_gain": false,
+        "id": "wpt/css_multicol/multicol-span-all-004-ref",
+        "mismatched_pixels": 1,
+        "prior_mismatched_pixels": 1,
+        "prior_status": "different",
+        "profile": "desktop-1920x1080@1.5",
+        "status": "different"
+      }
+    ],
+    "caption_regressions_from_parent_repaired": 2,
+    "evidence_receipt_sha256": {
+      "native-caption-metric-pipeline-v2237": "9d71b341c63869904aac707487bf871962ac4922d448407ff307f0f9640e195c",
+      "native-shaped-sizing-fragments-v2244": "e4223d752aa16f0fbeca9366f9da01a023cd4ed9ca5a6e620ea195b7633a7ea5",
+      "native-sizing-chromium-geometry-v2245": "e29b2ce9c15b41b7a4e724afe708c968747d35cca81d8bc953b0491715d70530",
+      "native-sizing-chromium-geometry-v2246": "18477105e28863ac23688b1509d77fe02a0faf0030cd1e6a0b6ffcc7305a5f49",
+      "native-sizing-chromium-geometry-v2247": "f04f84cd1affcaef3595714f60d650dacb461e4c085807ef5bfd3e71c68b6eec",
+      "native-vertical-fallback-primary-v2240": "b45c07d9981588b66e13f7a72006e39de4bd2995e191be3eee824658c7517baf",
+      "native-vertical-metric-primary-v2242": "864e182632f69344eb9fb1776f19ab1b69496a3f97b15aa0e90e5c0cfd1e5a3d",
+      "native-vertical-metric-primary-v2243": "07f1e1bf10aa35653cf91abe424782aa206c5d49ccea5460465a9214b8752ab0"
+    },
+    "formal_accepted_ownership_ledger_unchanged": true,
+    "full_expanded_focused_primitive_not_run_on_this_source": true,
+    "geometry": {
+      "candidate_exact": 24,
+      "parent_exact": 0,
+      "rows": [
+        {
+          "candidate": {
+            "height": 52.0,
+            "width": 321.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 52,
+            "width": 321,
+            "x": 20,
+            "y": 20
+          },
+          "node": 2,
+          "parent": {
+            "height": 52.0,
+            "width": 321.03125,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "parent_exact": false,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": {
+            "height": 44.0,
+            "width": 152.0,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 44,
+            "width": 152,
+            "x": 21,
+            "y": 21
+          },
+          "node": 3,
+          "parent": {
+            "height": 44.0,
+            "width": 152.015625,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "parent_exact": false,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": {
+            "height": 44.0,
+            "width": 152.0,
+            "x": 188.0,
+            "y": 21.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 44,
+            "width": 152,
+            "x": 188,
+            "y": 21
+          },
+          "node": 8,
+          "parent": {
+            "height": 44.0,
+            "width": 152.015625,
+            "x": 188.015625,
+            "y": 21.0
+          },
+          "parent_exact": false,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": {
+            "height": 306.0,
+            "width": 52.0,
+            "x": 20.0,
+            "y": 72.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 306,
+            "width": 52,
+            "x": 20,
+            "y": 72
+          },
+          "node": 12,
+          "parent": {
+            "height": 306.03125,
+            "width": 52.0,
+            "x": 20.0,
+            "y": 72.0
+          },
+          "parent_exact": false,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": {
+            "height": 152.0,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 73.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 152,
+            "width": 44,
+            "x": 21,
+            "y": 73
+          },
+          "node": 13,
+          "parent": {
+            "height": 152.015625,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 73.0
+          },
+          "parent_exact": false,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": {
+            "height": 152.0,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 225.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 152,
+            "width": 44,
+            "x": 21,
+            "y": 225
+          },
+          "node": 17,
+          "parent": {
+            "height": 152.015625,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 225.015625
+          },
+          "parent_exact": false,
+          "profile": "legacy-800x600@1"
+        },
+        {
+          "candidate": {
+            "height": 52.0,
+            "width": 321.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 52,
+            "width": 321,
+            "x": 20,
+            "y": 20
+          },
+          "node": 2,
+          "parent": {
+            "height": 52.0,
+            "width": 321.03125,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "parent_exact": false,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": {
+            "height": 44.0,
+            "width": 152.0,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 44,
+            "width": 152,
+            "x": 21,
+            "y": 21
+          },
+          "node": 3,
+          "parent": {
+            "height": 44.0,
+            "width": 152.015625,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "parent_exact": false,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": {
+            "height": 44.0,
+            "width": 152.0,
+            "x": 188.0,
+            "y": 21.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 44,
+            "width": 152,
+            "x": 188,
+            "y": 21
+          },
+          "node": 8,
+          "parent": {
+            "height": 44.0,
+            "width": 152.015625,
+            "x": 188.015625,
+            "y": 21.0
+          },
+          "parent_exact": false,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": {
+            "height": 306.0,
+            "width": 52.0,
+            "x": 20.0,
+            "y": 72.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 306,
+            "width": 52,
+            "x": 20,
+            "y": 72
+          },
+          "node": 12,
+          "parent": {
+            "height": 306.03125,
+            "width": 52.0,
+            "x": 20.0,
+            "y": 72.0
+          },
+          "parent_exact": false,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": {
+            "height": 152.0,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 73.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 152,
+            "width": 44,
+            "x": 21,
+            "y": 73
+          },
+          "node": 13,
+          "parent": {
+            "height": 152.015625,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 73.0
+          },
+          "parent_exact": false,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": {
+            "height": 152.0,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 225.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 152,
+            "width": 44,
+            "x": 21,
+            "y": 225
+          },
+          "node": 17,
+          "parent": {
+            "height": 152.015625,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 225.015625
+          },
+          "parent_exact": false,
+          "profile": "mobile-375x667@2"
+        },
+        {
+          "candidate": {
+            "height": 52.0,
+            "width": 321.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 52,
+            "width": 321,
+            "x": 20,
+            "y": 20
+          },
+          "node": 2,
+          "parent": {
+            "height": 52.0,
+            "width": 321.03125,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "parent_exact": false,
+          "profile": "desktop-1280x720@1.25"
+        },
+        {
+          "candidate": {
+            "height": 44.0,
+            "width": 152.0,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 44,
+            "width": 152,
+            "x": 21,
+            "y": 21
+          },
+          "node": 3,
+          "parent": {
+            "height": 44.0,
+            "width": 152.015625,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "parent_exact": false,
+          "profile": "desktop-1280x720@1.25"
+        },
+        {
+          "candidate": {
+            "height": 44.0,
+            "width": 152.0,
+            "x": 188.0,
+            "y": 21.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 44,
+            "width": 152,
+            "x": 188,
+            "y": 21
+          },
+          "node": 8,
+          "parent": {
+            "height": 44.0,
+            "width": 152.015625,
+            "x": 188.015625,
+            "y": 21.0
+          },
+          "parent_exact": false,
+          "profile": "desktop-1280x720@1.25"
+        },
+        {
+          "candidate": {
+            "height": 306.0,
+            "width": 52.0,
+            "x": 20.0,
+            "y": 72.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 306,
+            "width": 52,
+            "x": 20,
+            "y": 72
+          },
+          "node": 12,
+          "parent": {
+            "height": 306.03125,
+            "width": 52.0,
+            "x": 20.0,
+            "y": 72.0
+          },
+          "parent_exact": false,
+          "profile": "desktop-1280x720@1.25"
+        },
+        {
+          "candidate": {
+            "height": 152.0,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 73.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 152,
+            "width": 44,
+            "x": 21,
+            "y": 73
+          },
+          "node": 13,
+          "parent": {
+            "height": 152.015625,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 73.0
+          },
+          "parent_exact": false,
+          "profile": "desktop-1280x720@1.25"
+        },
+        {
+          "candidate": {
+            "height": 152.0,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 225.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 152,
+            "width": 44,
+            "x": 21,
+            "y": 225
+          },
+          "node": 17,
+          "parent": {
+            "height": 152.015625,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 225.015625
+          },
+          "parent_exact": false,
+          "profile": "desktop-1280x720@1.25"
+        },
+        {
+          "candidate": {
+            "height": 52.0,
+            "width": 321.0,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 52,
+            "width": 321,
+            "x": 20,
+            "y": 20
+          },
+          "node": 2,
+          "parent": {
+            "height": 52.0,
+            "width": 321.03125,
+            "x": 20.0,
+            "y": 20.0
+          },
+          "parent_exact": false,
+          "profile": "desktop-1920x1080@1.5"
+        },
+        {
+          "candidate": {
+            "height": 44.0,
+            "width": 152.0,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 44,
+            "width": 152,
+            "x": 21,
+            "y": 21
+          },
+          "node": 3,
+          "parent": {
+            "height": 44.0,
+            "width": 152.015625,
+            "x": 21.0,
+            "y": 21.0
+          },
+          "parent_exact": false,
+          "profile": "desktop-1920x1080@1.5"
+        },
+        {
+          "candidate": {
+            "height": 44.0,
+            "width": 152.0,
+            "x": 188.0,
+            "y": 21.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 44,
+            "width": 152,
+            "x": 188,
+            "y": 21
+          },
+          "node": 8,
+          "parent": {
+            "height": 44.0,
+            "width": 152.015625,
+            "x": 188.015625,
+            "y": 21.0
+          },
+          "parent_exact": false,
+          "profile": "desktop-1920x1080@1.5"
+        },
+        {
+          "candidate": {
+            "height": 306.0,
+            "width": 52.0,
+            "x": 20.0,
+            "y": 72.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 306,
+            "width": 52,
+            "x": 20,
+            "y": 72
+          },
+          "node": 12,
+          "parent": {
+            "height": 306.03125,
+            "width": 52.0,
+            "x": 20.0,
+            "y": 72.0
+          },
+          "parent_exact": false,
+          "profile": "desktop-1920x1080@1.5"
+        },
+        {
+          "candidate": {
+            "height": 152.0,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 73.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 152,
+            "width": 44,
+            "x": 21,
+            "y": 73
+          },
+          "node": 13,
+          "parent": {
+            "height": 152.015625,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 73.0
+          },
+          "parent_exact": false,
+          "profile": "desktop-1920x1080@1.5"
+        },
+        {
+          "candidate": {
+            "height": 152.0,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 225.0
+          },
+          "candidate_exact": true,
+          "chromium": {
+            "height": 152,
+            "width": 44,
+            "x": 21,
+            "y": 225
+          },
+          "node": 17,
+          "parent": {
+            "height": 152.015625,
+            "width": 44.0,
+            "x": 21.0,
+            "y": 225.015625
+          },
+          "parent_exact": false,
+          "profile": "desktop-1920x1080@1.5"
+        }
+      ],
+      "states": 24
+    },
+    "javascript_executed_by_openui": false,
+    "layout_precision_must_not_be_added_back_to_hide_raster_differences": true,
+    "native_vertical_ch_fix_not_implemented": true,
+    "observed_exit_code": 0,
+    "pixel_tolerance": 0,
+    "primary_missing_glyph_ch_feature_is_stable_in_pinned_chromium": true,
+    "probe_sha256": "20b076bddcba5849e46c1ab9379fc83af6c213d9940a953cc5229d60beedd85a",
+    "promotion_allowed": false,
+    "release_qualification": false,
+    "residuals": [
+      {
+        "device_scale": 1.25,
+        "diff_signature": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 114,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -29070
+            },
+            "green": {
+              "changed_pixels": 76,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -19380
+            },
+            "red": {
+              "changed_pixels": 76,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -19380
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 6,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 130
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 205
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 280
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 320
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 395
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 470
+              },
+              "mismatched_pixels": 19
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 341,
+            "width": 19,
+            "x": 57,
+            "y": 130
+          },
+          "mismatched_pixels": 114
+        },
+        "id": "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+        "logical_size_css_px": [
+          1280,
+          720
+        ],
+        "mismatched_pixels": 114,
+        "owner": "text/paint",
+        "precise_glyph_mask_or_origin_cause_resolved": false,
+        "profile": "desktop-1280x720@1.25",
+        "reduced_native_glyph_reproducer_still_required": true,
+        "reviewed_scope": "Exact box geometry now agrees with repeated Chromium; extra black glyph cells remain at fractional scales.",
+        "root_cause": "glyph-strike-origin"
+      },
+      {
+        "device_scale": 1.25,
+        "diff_signature": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 114,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -29070
+            },
+            "green": {
+              "changed_pixels": 76,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -19380
+            },
+            "red": {
+              "changed_pixels": 76,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -19380
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 6,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 130
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 205
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 280
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 320
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 395
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 470
+              },
+              "mismatched_pixels": 19
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 341,
+            "width": 19,
+            "x": 57,
+            "y": 130
+          },
+          "mismatched_pixels": 114
+        },
+        "id": "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+        "logical_size_css_px": [
+          1280,
+          720
+        ],
+        "mismatched_pixels": 114,
+        "owner": "text/paint",
+        "precise_glyph_mask_or_origin_cause_resolved": false,
+        "profile": "desktop-1280x720@1.25",
+        "reduced_native_glyph_reproducer_still_required": true,
+        "reviewed_scope": "Exact box geometry now agrees with repeated Chromium; extra black glyph cells remain at fractional scales.",
+        "root_cause": "glyph-strike-origin"
+      },
+      {
+        "device_scale": 1.25,
+        "diff_signature": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 114,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -29070
+            },
+            "green": {
+              "changed_pixels": 76,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -19380
+            },
+            "red": {
+              "changed_pixels": 76,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -19380
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 6,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 130
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 205
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 280
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 320
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 395
+              },
+              "mismatched_pixels": 19
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 19,
+                "x": 57,
+                "y": 470
+              },
+              "mismatched_pixels": 19
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 341,
+            "width": 19,
+            "x": 57,
+            "y": 130
+          },
+          "mismatched_pixels": 114
+        },
+        "id": "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+        "logical_size_css_px": [
+          1280,
+          720
+        ],
+        "mismatched_pixels": 114,
+        "owner": "text/paint",
+        "precise_glyph_mask_or_origin_cause_resolved": false,
+        "profile": "desktop-1280x720@1.25",
+        "reduced_native_glyph_reproducer_still_required": true,
+        "reviewed_scope": "Exact box geometry now agrees with repeated Chromium; extra black glyph cells remain at fractional scales.",
+        "root_cause": "glyph-strike-origin"
+      },
+      {
+        "device_scale": 1.5,
+        "diff_signature": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 406,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 255,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -81090
+            },
+            "green": {
+              "changed_pixels": 384,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 255,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -86573
+            },
+            "red": {
+              "changed_pixels": 384,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 255,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -86573
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 7,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 23,
+                "width": 68,
+                "x": 191,
+                "y": 69
+              },
+              "mismatched_pixels": 89
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 68,
+                "x": 101,
+                "y": 91
+              },
+              "mismatched_pixels": 68
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 68,
+                "x": 351,
+                "y": 91
+              },
+              "mismatched_pixels": 68
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 68,
+                "x": 441,
+                "y": 91
+              },
+              "mismatched_pixels": 68
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 46,
+                "x": 33,
+                "y": 91
+              },
+              "mismatched_pixels": 46
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 45,
+                "x": 284,
+                "y": 91
+              },
+              "mismatched_pixels": 45
+            },
+            {
+              "bounds": {
+                "height": 22,
+                "width": 1,
+                "x": 351,
+                "y": 38
+              },
+              "mismatched_pixels": 22
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 54,
+            "width": 476,
+            "x": 33,
+            "y": 38
+          },
+          "mismatched_pixels": 406
+        },
+        "id": "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+        "logical_size_css_px": [
+          1920,
+          1080
+        ],
+        "mismatched_pixels": 406,
+        "owner": "text/paint",
+        "precise_glyph_mask_or_origin_cause_resolved": false,
+        "profile": "desktop-1920x1080@1.5",
+        "reduced_native_glyph_reproducer_still_required": true,
+        "reviewed_scope": "Exact box geometry now agrees with repeated Chromium; extra black glyph cells remain at fractional scales.",
+        "root_cause": "glyph-strike-origin"
+      },
+      {
+        "device_scale": 1.5,
+        "diff_signature": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 406,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 255,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -81090
+            },
+            "green": {
+              "changed_pixels": 384,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 255,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -86573
+            },
+            "red": {
+              "changed_pixels": 384,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 255,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -86573
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 7,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 23,
+                "width": 68,
+                "x": 191,
+                "y": 69
+              },
+              "mismatched_pixels": 89
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 68,
+                "x": 101,
+                "y": 91
+              },
+              "mismatched_pixels": 68
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 68,
+                "x": 351,
+                "y": 91
+              },
+              "mismatched_pixels": 68
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 68,
+                "x": 441,
+                "y": 91
+              },
+              "mismatched_pixels": 68
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 46,
+                "x": 33,
+                "y": 91
+              },
+              "mismatched_pixels": 46
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 45,
+                "x": 284,
+                "y": 91
+              },
+              "mismatched_pixels": 45
+            },
+            {
+              "bounds": {
+                "height": 22,
+                "width": 1,
+                "x": 351,
+                "y": 38
+              },
+              "mismatched_pixels": 22
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 54,
+            "width": 476,
+            "x": 33,
+            "y": 38
+          },
+          "mismatched_pixels": 406
+        },
+        "id": "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+        "logical_size_css_px": [
+          1920,
+          1080
+        ],
+        "mismatched_pixels": 406,
+        "owner": "text/paint",
+        "precise_glyph_mask_or_origin_cause_resolved": false,
+        "profile": "desktop-1920x1080@1.5",
+        "reduced_native_glyph_reproducer_still_required": true,
+        "reviewed_scope": "Exact box geometry now agrees with repeated Chromium; extra black glyph cells remain at fractional scales.",
+        "root_cause": "glyph-strike-origin"
+      },
+      {
+        "device_scale": 1.5,
+        "diff_signature": {
+          "channel_deltas": {
+            "alpha": {
+              "changed_pixels": 0,
+              "maximum_absolute_delta": 0,
+              "maximum_signed_delta": 0,
+              "minimum_signed_delta": 0,
+              "signed_delta_sum": 0
+            },
+            "blue": {
+              "changed_pixels": 406,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 255,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -81090
+            },
+            "green": {
+              "changed_pixels": 384,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 255,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -86573
+            },
+            "red": {
+              "changed_pixels": 384,
+              "maximum_absolute_delta": 255,
+              "maximum_signed_delta": 255,
+              "minimum_signed_delta": -255,
+              "signed_delta_sum": -86573
+            }
+          },
+          "comparable": true,
+          "connected_region_count": 7,
+          "connected_regions": [
+            {
+              "bounds": {
+                "height": 23,
+                "width": 68,
+                "x": 191,
+                "y": 69
+              },
+              "mismatched_pixels": 89
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 68,
+                "x": 101,
+                "y": 91
+              },
+              "mismatched_pixels": 68
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 68,
+                "x": 351,
+                "y": 91
+              },
+              "mismatched_pixels": 68
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 68,
+                "x": 441,
+                "y": 91
+              },
+              "mismatched_pixels": 68
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 46,
+                "x": 33,
+                "y": 91
+              },
+              "mismatched_pixels": 46
+            },
+            {
+              "bounds": {
+                "height": 1,
+                "width": 45,
+                "x": 284,
+                "y": 91
+              },
+              "mismatched_pixels": 45
+            },
+            {
+              "bounds": {
+                "height": 22,
+                "width": 1,
+                "x": 351,
+                "y": 38
+              },
+              "mismatched_pixels": 22
+            }
+          ],
+          "mismatch_bounds": {
+            "height": 54,
+            "width": 476,
+            "x": 33,
+            "y": 38
+          },
+          "mismatched_pixels": 406
+        },
+        "id": "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+        "logical_size_css_px": [
+          1920,
+          1080
+        ],
+        "mismatched_pixels": 406,
+        "owner": "text/paint",
+        "precise_glyph_mask_or_origin_cause_resolved": false,
+        "profile": "desktop-1920x1080@1.5",
+        "reduced_native_glyph_reproducer_still_required": true,
+        "reviewed_scope": "Exact box geometry now agrees with repeated Chromium; extra black glyph cells remain at fractional scales.",
+        "root_cause": "glyph-strike-origin"
+      }
+    ],
+    "runtime_missing_glyph_parity_not_qualified": true,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "db177050b5e615abcede59b877bed9b58da8a496",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "a906e00ab7bb30f7351260e3316079e81f16d46968a926a9d547f0e15e139bb9",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unchanged": true,
+    "whole_pipeline_observed_exit_code": 1,
+    "worsened_comparisons": 6
+  },
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "db177050b5e615abcede59b877bed9b58da8a496",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "a906e00ab7bb30f7351260e3316079e81f16d46968a926a9d547f0e15e139bb9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "db177050b5e615abcede59b877bed9b58da8a496",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "a906e00ab7bb30f7351260e3316079e81f16d46968a926a9d547f0e15e139bb9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_patch_sha256": "48235626d8c1c9ca71904866a746b2fddf762c7e5d01ac63f2a809f1e30ac6f6",
+  "source_unchanged": true,
+  "stages": [
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "086e4ac40688402f0251200a8583ec9370cdf64e5987232ed52058dc6fce1d93",
+      "name": "locked-metadata",
+      "observed_exit_code": 0,
+      "passed": 0
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "277d95c6b0f37dd8d4732445175c2c96941f7db788d0a68cb0aa9902c0531aa8",
+      "name": "clean-workspace",
+      "observed_exit_code": 0,
+      "passed": 0
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "12f48e039e9ae8d2e54320787a8dd8c8c1b911368a1c15ce13e1a48dd7f839b4",
+      "name": "native-relative-guard",
+      "observed_exit_code": 0,
+      "passed": 1
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "0ee238c8b2d95abed17eb76a40ae1220b7409e91ff852b2346f9ccc18d76801d",
+      "name": "native-caption-guard",
+      "observed_exit_code": 0,
+      "passed": 1
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "c309d48e54a30b6e096d71864bffa993e9cac8418ebecaac33e070ff456da4cb",
+      "name": "native-app-metadata",
+      "observed_exit_code": 0,
+      "passed": 0
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "a6a9c1ed08d0ea6e8eeedce53d0a52b430f0e91f5faba3b40327025f03cdf06c",
+      "name": "native-app-build",
+      "observed_exit_code": 0,
+      "passed": 0
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "de4ec2775c00b9480ced217dc4a9e639d70805c687d9e6db8ce4b1ca3972f058",
+      "name": "native-first",
+      "observed_exit_code": 0,
+      "passed": 0
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "de4ec2775c00b9480ced217dc4a9e639d70805c687d9e6db8ce4b1ca3972f058",
+      "name": "native-second",
+      "observed_exit_code": 0,
+      "passed": 0
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 13,
+      "log_sha256": "f6c557f5767c21fc837faf502e248e5a272fa410583ada4106b668ee4bb2f857",
+      "name": "workspace",
+      "observed_exit_code": 0,
+      "passed": 8563
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "d181250ebee3d9c8b790257b1187b6d698ddb85f68cb3bbd9d98b383e4724c2a",
+      "name": "ffi-build",
+      "observed_exit_code": 0,
+      "passed": 0
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "c264daf858d185eaf307e79a882afa780b170b395932b1ebcf03d478c0ecec6a",
+      "name": "ffi-consumers",
+      "observed_exit_code": 0,
+      "passed": 0
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "d23915a59271421a34a647940c5529c47c4eaacb7d8311b32a6724a7ae838119",
+      "name": "pixel-build",
+      "observed_exit_code": 0,
+      "passed": 0
+    },
+    {
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "d8fbc1f1284ca41b4b7b5aa14513acb76765accba4f5e2a85777fee4fdde884f",
+      "name": "sizing-caption-neighbors-matrix",
+      "observed_exit_code": 1,
+      "passed": 0
+    }
+  ],
+  "whole_owner_actual_exit": 1,
+  "worsened_sizing_comparisons": 6
+}
