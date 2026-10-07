@@ -75,6 +75,12 @@ application. Test coverage must exercise the retained state and resulting
 events or rendering. A missing public method remains an implementation gap
 until that native application path works.
 
+The [native focus callback correction](native-focus-events.md) routes Rust,
+C, keyboard and accessibility focus/blur through the retained Document. It
+verifies callback order, composition cancellation and callback mutation from
+native applications. Remaining focus semantics and complete API qualification
+are still open.
+
 The [native editing consumer](../../bindings/rust/openui/examples/native_edit_commands.rs)
 invokes typed editing commands from a Rust button callback. Text changes dispatch
 `input` after engine borrows are released; listeners can inspect the edited
