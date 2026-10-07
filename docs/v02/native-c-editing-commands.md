@@ -40,10 +40,44 @@ Unicode, history, selection, readonly/disabled errors and teardown. The
 ABI. Both native window consumers also call editing commands from the Linux
 presentation callback.
 
-## Qualification status
+## Verified implementation
 
-This implementation checkpoint awaits the clean-source Rust, C/C++, ABI and
-Linux window checks. Passing those checks will establish editing API behavior,
-not complete Chromium pixel matching, editor scrolling, IME behavior, all
-native APIs or release qualification. Pinned Chromium remains the sole
-expected-pixel target. No renderer code or reference image changes here.
+Clean implementation `7adb2130` passes all 18 local stages. The locked Linux
+workspace run passes **8,569 tests**, with zero failures and 13 ignored tests.
+All local Rust libraries are freshly compiled from that checkout; later cached
+artifacts must match the hashes from the preceding verified build of the same
+source. The copied C library is bound to those artifact records. The source
+remains clean and unchanged through the entire pipeline, including the gaps
+between commands.
+
+The headless C ABI run passes **39/39 tests**. Five new guards cover all text
+units and directions, selection extension, shared Rust/C history, callback
+mutation, malformed headers, readonly/disabled controls, stale handles,
+wrong-thread calls, outstanding borrows and panic containment. The initial
+workspace run exits 101 because a new guard expects the wrong null-handle
+status. That failure is preserved; the correction changes only that expectation.
+
+All **114 exports**, every previous symbol and every prior ABI layout are
+verified. **Fourteen C and eight C++ consumers** compile and run. The new editing
+consumers repeat byte-identical output twice in each language, with six input
+and two button callbacks per run. All 17 read-only checks also pass.
+
+The six active hosted jobs pass. Five optional MSRV, Miri, fuzz and sanitizer
+jobs are skipped, not qualified. All six C/C++ window consumers pass on X11
+software, X11 Mesa OpenGL presentation and pure Wayland software. C observes
+five input callbacks and C++ three per window run; selection-only calls add no
+input callback. The hosted checkout is synthetic PR merge `4c5dc29c`, whose
+Git tree is verified identical to `7adb2130`; the reports retain their actual
+checkout identities, matching header and consumer-source hashes.
+
+The [versioned evidence](generated/native-c-editing-commands-v1.json) and
+[hash-verified archive](evidence/native-c-editing-commands-v1/completed-evidence.tar.gz)
+preserve completed logs, Cargo records, consumers, ABI inputs, hosted window
+reports, failed checks and corrected checks. C editing-command parity is
+implemented and verified through the shared native Rust path.
+
+These checks establish editing API behavior. Complete Chromium pixel matching,
+editor scrolling, selection rendering, all native APIs and release
+qualification remain open. Accepted renderer results stay **21,334/22,924**
+original and **22,137/23,728** expanded exact. This work changes no renderer code,
+reference image or pixel tolerance and admits no new pixel comparison.

@@ -156,10 +156,12 @@ Rust formatting and the renderer-contract generator also exit 0.
 
 The hash-verified [supplemental archive](evidence/native-input-editor-scrollport-v2/completed-evidence.tar.gz)
 preserves actual exits, fresh artifact records, native captures, both canvas
-queries, source patches, apps, lockfiles and the pinned primary sources. C edit
-command parity, complete editor scrolling and selection pixels, remaining
-glyph masks, and full renderer qualification remain open. No JavaScript runs
-in Open UI.
+queries, source patches, apps, lockfiles and the pinned primary sources.
+That source did not expose C editing commands. The later
+[native C editing API](../v02/native-c-editing-commands.md) implements and
+verifies them at `7adb2130`. Complete editor scrolling and selection pixels,
+remaining glyph masks, and full renderer qualification remain open.
+No JavaScript runs in Open UI.
 
 ## Failures and qualification limits
 
