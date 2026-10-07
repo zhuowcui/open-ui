@@ -58,6 +58,10 @@
       "align": 8,
       "size": 48
     },
+    "OuiEditCommandV1": {
+      "align": 4,
+      "size": 32
+    },
     "OuiErrorInfo": {
       "align": 8,
       "size": 24

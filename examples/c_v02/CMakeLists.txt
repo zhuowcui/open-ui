@@ -3,7 +3,7 @@ project(OpenUIV02Examples LANGUAGES C CXX)
 
 find_package(OpenUI 0.2 CONFIG REQUIRED)
 
-foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics scroll_into_view primitive_styles svg_viewport float_colors fragment_keywords text_content)
+foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics scroll_into_view primitive_styles svg_viewport float_colors fragment_keywords text_content edit_commands)
   add_executable(openui_${example} ${example}.c)
   target_link_libraries(openui_${example} PRIVATE OpenUI::OpenUI)
 endforeach()
@@ -40,3 +40,7 @@ target_link_libraries(openui_native_c PRIVATE OpenUI::OpenUI)
 add_executable(openui_native_cpp native/window.cc)
 target_link_libraries(openui_native_cpp PRIVATE OpenUI::OpenUI)
 set_target_properties(openui_native_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
+
+add_executable(openui_edit_commands_cpp edit_commands.cc)
+target_link_libraries(openui_edit_commands_cpp PRIVATE OpenUI::OpenUI)
+set_target_properties(openui_edit_commands_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)

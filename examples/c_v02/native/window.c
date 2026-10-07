@@ -36,12 +36,19 @@ static void input_event(OuiEvent* event, void* user_data) {
   uint8_t value[6];
   size_t length = 0;
   ++context->input_events;
-  const char* expected = context->input_events == 1 ? "one\n" : "one\n!";
-  if (event->event_type != OUI_EVENT_INPUT ||
+  const char* values[] = {"one\n", "one\n!", "one\n", "one\n!", "one\n"};
+  if (context->input_events > 5) {
+    context->failed = 1;
+    return;
+  }
+  const char* expected = values[context->input_events - 1];
+  if (event->event_type != OUI_EVENT_INPUT || event->target != context->textarea ||
+      event->current_target != context->textarea ||
       !check(context,
              oui_element_copy_control_value(context->textarea, value, sizeof(value), &length)) ||
       length != strlen(expected) || memcmp(value, expected, length) != 0)
     context->failed = 1;
+  check(context, oui_element_set_attribute(context->card, text("data-input"), text("seen")));
 }
 
 static void platform_event(OuiApp* app, const OuiPlatformEvent* event, void* user_data) {
@@ -87,6 +94,18 @@ static void platform_event(OuiApp* app, const OuiPlatformEvent* event, void* use
         check(context, oui_document_dispatch_key_input_v1(context->document, &key, text("\r")));
         check(context, oui_document_dispatch_text_input_v1(context->document, text("!")));
         if (context->input_events != 2)
+          context->failed = 1;
+        OuiEditCommandV1 edit = {
+            sizeof(edit), OUI_ABI_VERSION, OUI_EDIT_DELETE, OUI_TEXT_BACKWARD, OUI_TEXT_GRAPHEME, 0,
+            {0, 0}};
+        check(context, oui_element_edit_text_v1(context->textarea, &edit));
+        edit.command = OUI_EDIT_UNDO;
+        check(context, oui_element_edit_text_v1(context->textarea, &edit));
+        edit.command = OUI_EDIT_REDO;
+        check(context, oui_element_edit_text_v1(context->textarea, &edit));
+        edit.command = OUI_EDIT_SELECT_ALL;
+        check(context, oui_element_edit_text_v1(context->textarea, &edit));
+        if (context->input_events != 5)
           context->failed = 1;
         OuiStyleValue color = {0};
         color.tag = OUI_STYLE_VALUE_COLOR;
@@ -151,5 +170,5 @@ int main(int argc, char** argv) {
   check(&context, oui_document_destroy(context.document));
   printf("native C: backend=%u frames=%llu resized=%d input=%u\n", context.backend,
          (unsigned long long)context.frames, context.resized, context.input_events);
-  return context.failed || context.frames < 2 || !context.resized || context.input_events != 2;
+  return context.failed || context.frames < 2 || !context.resized || context.input_events != 5;
 }

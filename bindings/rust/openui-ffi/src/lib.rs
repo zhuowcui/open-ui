@@ -7,6 +7,7 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
 mod accessibility_snapshot;
+mod editing_command;
 mod generated;
 mod native_app;
 #[cfg(test)]
@@ -15,6 +16,7 @@ mod registry;
 mod types;
 mod value;
 
+pub use editing_command::oui_element_edit_text_v1;
 pub use native_app::{oui_app_request_exit, oui_app_run};
 pub use types::*;
 

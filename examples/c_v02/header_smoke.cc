@@ -1,4 +1,8 @@
 #include "openui.h"
+static_assert(sizeof(OuiEditCommandV1) == 32, "editing command size");
+static_assert(alignof(OuiEditCommandV1) == 4, "editing command alignment");
+static_assert(offsetof(OuiEditCommandV1, command) == 8, "editing command header");
+static_assert(offsetof(OuiEditCommandV1, reserved) == 24, "editing command reserved fields");
 static_assert(sizeof(OuiStyleValue) == 16, "frozen OuiStyleValue size");
 static_assert(sizeof(OuiEvent) == 88, "frozen OuiEvent size");
 static_assert(sizeof(OuiScrollMetricsV1) == 40, "scroll metrics size");

@@ -81,7 +81,9 @@ invokes typed editing commands from a Rust button callback. Text changes dispatc
 control and change other elements. Selection-only commands dispatch no `input`.
 Read-only controls permit selection commands, while disabled controls reject all
 commands. Rust selection offsets are UTF-8 byte positions on grapheme boundaries.
-C command parity and complete editor scrolling and pixels remain open.
+The versioned [C editing command](native-c-editing-commands.md) calls the same
+retained Rust document and event path. Complete editor scrolling and pixels
+remain open.
 
 The [native font-relative helper](../renderer/native-font-relative-lengths.md)
 resolves `ch`, `ex` and `lh` from an owned computed style and the app's font

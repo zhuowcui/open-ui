@@ -12,6 +12,9 @@ static_assert(sizeof(OuiPlatformEvent) == 152, "versioned platform event");
 struct Context {
   OuiDocument* document = nullptr;
   OuiElement* card = nullptr;
+  OuiElement* textarea = nullptr;
+  OuiListener* input_listener = nullptr;
+  unsigned input_events = 0;
   unsigned backend = OUI_BACKEND_SOFTWARE;
   uint64_t frames = 0;
   bool failed = false;
@@ -25,6 +28,28 @@ static bool check(Context& context, OuiStatus status) {
   return false;
 }
 
+extern "C" void on_input(OuiEvent* event, void* user_data) {
+  auto& context = *static_cast<Context*>(user_data);
+  const char* values[] = {"á👩‍💻", "á👩‍💻z", "á👩‍💻"};
+  ++context.input_events;
+  if (context.input_events > 3) {
+    context.failed = true;
+    return;
+  }
+  const char* expected = values[context.input_events - 1];
+  uint8_t bytes[64];
+  size_t length = 0;
+  if (event->event_type != OUI_EVENT_INPUT || event->target != context.textarea ||
+      event->current_target != context.textarea ||
+      !check(context,
+             oui_element_copy_control_value(context.textarea, bytes, sizeof(bytes), &length)) ||
+      length != std::strlen(expected) || std::memcmp(bytes, expected, length) != 0)
+    context.failed = true;
+  const char label[] = "C++ input callback";
+  check(context, oui_element_set_text(
+                     context.card, {reinterpret_cast<const uint8_t*>(label), std::strlen(label)}));
+}
+
 extern "C" void on_platform(OuiApp* app, const OuiPlatformEvent* event, void* user_data) {
   auto& context = *static_cast<Context*>(user_data);
   if (event->event_type == OUI_PLATFORM_BACKEND_CHANGED && event->backend != context.backend)
@@ -32,7 +57,18 @@ extern "C" void on_platform(OuiApp* app, const OuiPlatformEvent* event, void* us
   if (event->event_type == OUI_PLATFORM_PRESENTED) {
     context.frames = event->frame_number;
     if (context.frames == 1) {
-      check(context, oui_element_set_text(context.card, {(const uint8_t*)"C++ update", 10}));
+      OuiEditCommandV1 edit{
+          sizeof(edit), OUI_ABI_VERSION, OUI_EDIT_DELETE, OUI_TEXT_BACKWARD, OUI_TEXT_GRAPHEME, 0,
+          {0, 0}};
+      check(context, oui_element_edit_text_v1(context.textarea, &edit));
+      edit.command = OUI_EDIT_UNDO;
+      check(context, oui_element_edit_text_v1(context.textarea, &edit));
+      edit.command = OUI_EDIT_REDO;
+      check(context, oui_element_edit_text_v1(context.textarea, &edit));
+      edit.command = OUI_EDIT_SELECT_ALL;
+      check(context, oui_element_edit_text_v1(context.textarea, &edit));
+      if (context.input_events != 3)
+        context.failed = true;
     } else {
       check(context, oui_app_request_exit(app));
     }
@@ -61,13 +97,25 @@ int main(int argc, char** argv) {
       !check(context, oui_element_create(context.document, OUI_ELEMENT_DIV, &context.card)) ||
       !check(context, oui_element_append_child(root, context.card)))
     return 1;
+  const char value[] = "á👩‍💻z";
+  check(context, oui_element_create(context.document, OUI_ELEMENT_TEXTAREA, &context.textarea));
+  check(context, oui_element_append_child(root, context.textarea));
+  check(context,
+        oui_element_set_control_value(
+            context.textarea, {reinterpret_cast<const uint8_t*>(value), std::strlen(value)}));
+  check(context,
+        oui_element_set_selection(context.textarea, std::strlen(value), std::strlen(value)));
+  check(context, oui_element_add_event_listener(context.textarea, OUI_EVENT_INPUT, 0, on_input,
+                                                &context, &context.input_listener));
   OuiAppRunConfig run{sizeof(run), OUI_ABI_VERSION, 0, 0, on_platform, &context};
   check(context, oui_app_run(app, &run));
+  check(context, oui_listener_destroy(context.input_listener));
+  check(context, oui_element_destroy(context.textarea));
   check(context, oui_element_destroy(context.card));
   check(context, oui_element_destroy(root));
   check(context, oui_document_destroy(context.document));
   check(context, oui_app_destroy(app));
-  std::printf("native C++: backend=%u frames=%llu\n", context.backend,
-              static_cast<unsigned long long>(context.frames));
-  return context.failed || context.frames < 2;
+  std::printf("native C++: backend=%u frames=%llu input=%u\n", context.backend,
+              static_cast<unsigned long long>(context.frames), context.input_events);
+  return context.failed || context.frames < 2 || context.input_events != 3;
 }

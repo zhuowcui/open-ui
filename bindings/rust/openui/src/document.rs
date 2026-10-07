@@ -140,6 +140,19 @@ impl Document {
         Ok(())
     }
 
+    /// Apply a native facade's validated editing command through the same
+    /// state and event path as `Element::edit_text` and keyboard defaults.
+    /// Callers must release every engine and facade borrow before calling.
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn edit_control_for_native_facade(
+        &self,
+        target: NodeHandle,
+        command: EditCommand,
+    ) -> Result<(), Error> {
+        self.edit_control(target, command)
+    }
+
     pub fn body(&self) -> Element {
         let handle = self.inner.engine.borrow().root();
         Element::from_handle(self.clone(), handle)

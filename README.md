@@ -236,7 +236,7 @@ The current v0.2 release candidate has:
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;
-- 84 frozen retained-engine/headless C exports, with 113 current exports and
+- 84 frozen retained-engine/headless C exports, with 114 current exports and
   checked layouts and an ABI checksum; the [native scroll and inset consumers](docs/v02/native-scroll-metrics.md)
   and [native style consumers](bindings/rust/openui-ffi/README.md#native-style-operations)
   pass through public Rust, C and C++ APIs; the clean umbrella checkpoint

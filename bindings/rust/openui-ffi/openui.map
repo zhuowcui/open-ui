@@ -62,6 +62,7 @@ OPENUI_0.2 {
     oui_element_create;
     oui_element_destroy;
     oui_element_detach;
+    oui_element_edit_text_v1;
     oui_element_focus;
     oui_element_get_accessibility_id;
     oui_element_get_bounds;

@@ -341,6 +341,30 @@ pub struct OuiAnimationEvent {
 
 pub const OUI_EVENT_FLAG_DEFAULT_PREVENTED: u32 = 1 << 0;
 pub const OUI_EVENT_FLAG_PROPAGATION_STOPPED: u32 = 1 << 1;
+pub const OUI_EDIT_MOVE: u32 = 0;
+pub const OUI_EDIT_DELETE: u32 = 1;
+pub const OUI_EDIT_SELECT_ALL: u32 = 2;
+pub const OUI_EDIT_UNDO: u32 = 3;
+pub const OUI_EDIT_REDO: u32 = 4;
+pub const OUI_TEXT_BACKWARD: u32 = 0;
+pub const OUI_TEXT_FORWARD: u32 = 1;
+pub const OUI_TEXT_GRAPHEME: u32 = 0;
+pub const OUI_TEXT_WORD: u32 = 1;
+pub const OUI_TEXT_LINE: u32 = 2;
+pub const OUI_TEXT_DOCUMENT: u32 = 3;
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiEditCommandV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub command: u32,
+    pub direction: u32,
+    pub unit: u32,
+    pub extend_selection: u32,
+    pub reserved: [u32; 2],
+}
+
 pub const OUI_CONTROL_DISABLED: u32 = 1 << 0;
 pub const OUI_CONTROL_CHECKED: u32 = 1 << 1;
 pub const OUI_CONTROL_SELECTED: u32 = 1 << 2;

@@ -658,6 +658,37 @@ typedef struct OuiEvent {
   OuiElement* current_target;
 } OuiEvent;
 
+typedef enum OuiEditCommandKind {
+  OUI_EDIT_MOVE = 0,
+  OUI_EDIT_DELETE = 1,
+  OUI_EDIT_SELECT_ALL = 2,
+  OUI_EDIT_UNDO = 3,
+  OUI_EDIT_REDO = 4
+} OuiEditCommandKind;
+
+typedef enum OuiTextDirection {
+  OUI_TEXT_BACKWARD = 0,
+  OUI_TEXT_FORWARD = 1
+} OuiTextDirection;
+
+typedef enum OuiTextUnit {
+  OUI_TEXT_GRAPHEME = 0,
+  OUI_TEXT_WORD = 1,
+  OUI_TEXT_LINE = 2,
+  OUI_TEXT_DOCUMENT = 3
+} OuiTextUnit;
+
+/* Offsets and selection remain UTF-8 bytes on grapheme boundaries. */
+typedef struct OuiEditCommandV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t command; /* OuiEditCommandKind */
+  uint32_t direction; /* OuiTextDirection; zero unless MOVE or DELETE */
+  uint32_t unit; /* OuiTextUnit; zero unless MOVE or DELETE */
+  uint32_t extend_selection; /* 0 or 1 for MOVE; zero otherwise */
+  uint32_t reserved[2]; /* Must be zero */
+} OuiEditCommandV1;
+
 typedef struct OuiAccessibilityUpdate {
   uint32_t struct_size;
   uint32_t abi_version;
@@ -956,6 +987,16 @@ OuiStatus oui_element_set_control_value(OuiElement* element, OuiUtf8 value);
 OuiStatus oui_element_copy_control_value(OuiElement* element, uint8_t* destination, size_t capacity, size_t* out_length);
 OuiStatus oui_element_set_selection(OuiElement* element, size_t anchor, size_t focus);
 OuiStatus oui_element_get_selection(OuiElement* element, size_t* out_anchor, size_t* out_focus);
+/* Apply an editing command through the same retained Rust document and input
+ * event path as native keyboard editing. Requires the owning thread, a live
+ * input/textarea handle, and command storage readable for struct_size bytes.
+ * The command is copied during the call, never retained. Invalid values and
+ * nonzero reserved/unused fields are errors without mutation or callbacks.
+ * Value changes synchronously emit INPUT after engine borrows are released;
+ * selection-only commands emit no INPUT. Readonly controls permit selection,
+ * disabled controls reject every command. There is no synthetic keyboard event.
+ * Callback user_data follows add_event_listener lifetime rules. */
+OuiStatus oui_element_edit_text_v1(OuiElement* element, const OuiEditCommandV1* command);
 OuiStatus oui_element_get_control_flags(OuiElement* element, uint32_t* out_flags);
 OuiStatus oui_element_set_checked(OuiElement* element, uint8_t checked);
 OuiStatus oui_element_set_indeterminate(OuiElement* element, uint8_t indeterminate);
