@@ -78,7 +78,7 @@ impl Drop for Fixture {
 struct Callback {
     document: *mut OuiDocument,
     nodes: [*mut OuiElement; 3],
-    events: RefCell<Vec<(usize, i32, Option<String>)>>,
+    events: RefCell<Vec<(usize, u32, Option<String>)>>,
     redirect: Cell<bool>,
     failed: Cell<bool>,
 }
