@@ -28,9 +28,16 @@ Successful workspace results and the owned library from the interrupted run
 retain their original receipt; the final continuation completes the remaining
 checks with temporary files in memory-backed storage and unchanged guards.
 
-The implementation is integrated at `c09eb639`. These measurements retain their
-actual private source identities. Fresh combined-source native, pixel and
-hosted verification is pending. The preceding umbrella's six ordinary CI jobs
-pass at `20849fe7`; its seven manual hardening jobs pass at measured `3ee3f9d3`.
-Neither result qualifies this later implementation. Remaining element APIs,
-full Chromium equality and release qualification stay open.
+The implementation is integrated at `c09eb639`. The preceding measurements
+retain their actual private source identities. [Fresh combined verification](../renderer/generated/native-input-combined-v1.json)
+now measures clean `8e8318bf`: Rust/C/C++ each match all five input observations
+twice, and all 338 focus observations in twelve scenarios twice. Both input
+guards and the focus/pointer guards pass. All 8,597 workspace tests, 48 headless
+C tests, 16 C and 10 C++ consumers and twenty verification stages pass, with
+116 exports and 32 layouts unchanged. Six ordinary CI and all seven manually
+enabled hardening jobs pass on that source; optional skips remain separate.
+
+Focused 640/640 and primitive 960/960 are exact. Original 21,330/22,924 and
+expanded 22,133/23,728 remain exact, zero errors; both full pixel gates fail.
+All nine comparison fields are unchanged across 48,252 rows. Remaining element
+APIs, complete Chromium equality and release qualification stay open.

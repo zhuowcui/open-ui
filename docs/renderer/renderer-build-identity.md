@@ -111,3 +111,34 @@ All 22,924 Chromium images and oracle identities remain unchanged. These
 development measurements remain nonqualifying. The published clean
 `9b158cda` census remains the latest accepted renderer measurement. Chromium
 reference bytes and historical Open UI archives remain unchanged.
+
+## Repeated production text variants
+
+Clean `8e8318bf` repeats the same two production cases eight times each. Both
+produce two decoded pixel variants under unchanged recorded browser, harness,
+fixture, font/resource and profile inputs. The immutable current and preceding
+references remain preserved; fresh runs can reproduce either. A separate
+250 ms wait after the device-metrics override still produces both variants and
+is not applied to the capture harness.
+
+The [source-owned combined evidence](generated/native-input-combined-v1.json)
+records all sixteen production captures, the separate diagnostic outcomes and
+the font-input audit. The cache identity does not individually record sixty
+participating font configurations or inherited font-related environment inputs.
+This is an input-accounting gap, not proof those settings changed or caused the
+variants. The runtime cause remains open. These observations never change
+Open UI's target: pinned Chromium alone defines expected pixels.
+
+## Chromium process and startup diagnostics
+
+The [process diagnostic evidence](generated/chromium-startup-variants-v1.json)
+records eight processes and 64 screenshots. Every process produces identical
+pixels across its eight screenshot reads, while the mobile case produces two
+variants across fresh processes. The desktop case has one variant in this
+sample; neither result proves global production determinism.
+
+Sixteen diagnostic launches with an extra startup device-scale argument each
+produce a stable third variant, matching neither immutable production reference.
+These changed-command diagnostics retain separate identities and never replace
+reference images. They do not prove the runtime cause. Pinned Chromium remains
+the only pixel target; no reference or capture-harness change is applied.

@@ -27,12 +27,38 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
-The [native input notification correction](docs/v02/native-input-notifications.md)
-is integrated at `c09eb639`: input/change cannot cancel completed edits, while
-beforeinput can reject a pending edit. Private Rust/C/C++ apps match five
-Chromium event observations twice; 8,597 workspace tests and all twenty checks
-pass. Fresh combined-source native, renderer and hosted checks remain pending.
-Open UI executes no JavaScript.
+The [native text commit trial](docs/v02/native-text-commit.md) remains private and unapplied.
+Both Rust runs match all six Chromium scenarios and 29 full callback rows;
+C/C++ each match the common fields twice. All fifteen targeted Rust guards pass,
+and every final source identity is unchanged. The earlier rejected artifact
+proof is preserved. Broader native reentry, workspace/ABI and own-source raster
+checks remain pending before integration. A separate seven-scenario, 42-row
+Chromium reference identifies editing intent and nullable data metadata still
+missing from the public native API; source inspection is not a native behavior
+pass. [Evidence](docs/renderer/generated/native-text-commit-v1.json). Open UI executes no JavaScript.
+
+The [combined native input verification](docs/renderer/generated/native-input-combined-v1.json) measures clean umbrella
+`8e8318bf`. Rust, C and C++ apps each match all 338 focus observations in twelve
+scenarios and five input observations, twice each. All **8,597 locked workspace
+tests**, 48 headless C tests, 16 C and 10 C++ consumers, and twenty verification
+stages pass. The existing 116 exports and 32 layouts remain unchanged. All six
+ordinary CI jobs and seven manually enabled hardening jobs pass on that source;
+the five optional skips in ordinary CI remain recorded separately.
+
+Focused **640/640** and primitive **960/960** are exact. Original
+**21,330/22,924** and expanded **22,133/23,728** are exact with zero errors;
+both full pixel gates fail. All nine comparison fields remain unchanged across
+48,252 rows against the preceding current-protocol source. No pixel gain or
+complete native API qualification is claimed.
+
+Eight fresh production captures each of two text cases produce two Chromium
+variants under the same recorded inputs. The font-input audit also finds
+configuration and inherited environment inputs missing from the cache identity;
+it does not prove those inputs caused the variants. The cause remains open and
+all references stay immutable. The 1,594 original differences cover 886 test
+IDs, with none covered by the reviewed ownership ledger. Remaining pixels,
+native APIs, compositor and release-lab gates are unfinished. Open UI executes
+no JavaScript.
 
 The [combined controls and focus checkpoint](docs/renderer/generated/native-controls-focus-v2.json)
 measures clean umbrella `3ee3f9d3`. Rust, C and C++ apps each match all 338

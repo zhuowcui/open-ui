@@ -1,0 +1,58 @@
+{
+  "all_commands_terminal": true,
+  "diagnostic_startup_argument": "--force-device-scale-factor=<recorded profile DPR>",
+  "javascript_executed_by_openui": false,
+  "measured_source": {
+    "clean": true,
+    "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "pixel_qualification": false,
+  "production_identity_changed": false,
+  "reference_images_rewritten": false,
+  "release_qualification": false,
+  "review_evidence": [
+    {
+      "decoded_sha256": "2f30268eb9512f70483c1ec7ed52fad838b911f9f3ab5571ed114ff9b4fec43e",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/chromium-startup-scale-diagnostic-v2688/receipt.json",
+      "path": "docs/renderer/evidence/chromium-startup-variants-v1/startup-scale-receipt.json.gz",
+      "sha256": "fca3d7d837c3aea94811ae99892358d3bde002a309c8d6d4c45617339b8712ad"
+    },
+    {
+      "decoded_sha256": "c3550c5fda9d9dec073029816147fd9013e27c459c694a9df022a943c33e7354",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/chromium-same-process-repeat-v2690/receipt.json",
+      "path": "docs/renderer/evidence/chromium-startup-variants-v1/same-process-receipt.json.gz",
+      "sha256": "2ecb40df06954e0b8dd87d1735c204f4d8ababa8d1bff5015b650136f950e5c9"
+    },
+    {
+      "decoded_sha256": "f6d05e80c0918196a773b73addf28f6e201bdf1b47d36ac54a66924ce30ccd75",
+      "original_path": "/tmp/openui-chromium-startup-scale-analysis-v2689.json",
+      "path": "docs/renderer/evidence/chromium-startup-variants-v1/changed-input-analysis.json.gz",
+      "sha256": "32945840b0deb4f15055668c3135a83efc33e85df8187e3e629cc78068bf31c8"
+    },
+    {
+      "decoded_sha256": "856a4c0e22e12e894a9aa8100608bd3a99ddce5e5f7f1cf2d62cf4d7e4089e3c",
+      "original_path": "/tmp/openui-chromium-startup-variant-evidence-v2691.json",
+      "path": "docs/renderer/evidence/chromium-startup-variants-v1/prepared-review-index.json.gz",
+      "sha256": "39fad3c0a5cfbbe3e7e1c608cd2dde1381701b2c41dd5c6513114fa380ed1cda"
+    }
+  ],
+  "runtime_cause_proved": false,
+  "same_process_diagnostic": {
+    "desktop_case_variants_in_this_sample": 1,
+    "global_production_determinism_proved": false,
+    "mobile_case_variants_across_processes": 2,
+    "processes": 8,
+    "screenshots": 64,
+    "within_each_process_stable": true
+  },
+  "schema_version": 1,
+  "startup_scale_diagnostic": {
+    "captures": 16,
+    "changed_command_inputs": true,
+    "matches_existing_production_references": false,
+    "stable_third_variant_each_case": true
+  }
+}
