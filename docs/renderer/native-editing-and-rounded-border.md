@@ -1,30 +1,46 @@
 # Native editing and rounded border follow-up
 
-Open UI never executes JavaScript. Applications use public native Rust APIs and Rust callbacks over the retained Engine; C delegates to the same native behavior. Browser tests describe required behavior for those APIs. A test disposition does not waive a missing native operation.
+Open UI never executes JavaScript. Apps implement interaction through public native Rust methods and Rust callbacks over the retained Engine. C uses the same native behavior. Every needed browser-style element operation must have a working public Rust API, including its state changes and events. A test disposition does not waive missing native behavior.
 
-## Completed border measurement
+## Completed native border check
 
-The private candidate `da33875c` removes radius-specific single-pixel alpha corrections and applies local-background clipping only when retained overflow creates a scroll container. The consuming Rust app changes element width from a Rust click callback. All 35 geometry states and callback/teardown assertions pass across five scales.
+Private candidate `6cc132dc` matches all **35/35 unchanged Chromium images** across five scales. A second native process for every case produces identical PNG and geometry bytes. The consuming Rust app changes element width through a Rust click callback; all callback, geometry and teardown assertions pass.
 
-| Measurement | Exact images | Different images | Errors |
+| Native test set | Exact images | Different images | Errors |
 |---|---:|---:|---:|
 | Recovered unchanged baseline | 4/35 | 31 | 0 |
-| Private shared candidate | 14/35 | 21 | 0 |
+| Earlier private clipping correction | 14/35 | 21 | 0 |
+| Layer correction | 33/35 | 2 | 0 |
+| Layer and fractional clip correction | 35/35 | 0 | 0 |
 
-Both background-attachment and visible-overflow neighbors become exact at all five scales: ten gains, no exact loss and no worsened comparison in this matrix. Hidden local-background coverage remains different. The candidate has 38 successful commands, 16 fresh linked framework artifacts, and unchanged final source identities. It remains private and unintegrated. Full focused, primitive, original, expanded and workspace/ABI qualification are still required.
+The shared painter now:
 
-The previous owner disappeared after 18 completed commands and eight border images. Its receipt remains incomplete and its whole exit is unknown. The separate recovery verifies those logs/images, renders the other 27 cases and checks unchanged Main/private source hashes. It does not rewrite the interrupted receipt or claim that run finished.
+- Applies local-background clipping only when overflow creates a scroll container.
+- Groups a rounded background and translucent border independently of the background fill's clip.
+- Applies the scrollport's hard clip before filling a local background color.
+- Keeps fractional layout edges until the physical clip transform.
+- Removes radius-specific single-pixel alpha corrections.
 
-## Native editing evidence
+All 73 commands and 16 freshly linked framework artifacts are verified, with unchanged final public/private source identities. There are 21 gains against the earlier 14/35 private trial and 31 against the unchanged 4/35 test set, with no exact loss or worsened comparison. The [source patch](evidence/native-rounded-border-v2/openui-native-rounded-border-final-source-v3093.patch.gz), consuming Rust app, immutable reference HTML/images, native images and command receipts are available in the [evidence index](generated/native-rounded-border-v2.json).
 
-A private input metadata implementation matches eleven Chromium scenarios and 69 callback rows in Rust, C and C++, twice each. Its first whole run failed a C guard's expected status. A later guard-only correction passes C and C++ twice; the original failed run and subsequent interrupted run are preserved separately. The framework binaries remain attributed to their actual build source.
+This implementation remains private and unintegrated. Complete focused, primitive, original, expanded and workspace/ABI checks are still required before integration. These 35 images do not qualify the complete renderer.
 
-Composition still differs in all four measured common-field scenarios. Additional repeated Chromium traces define required native behavior for composition callback mutation, cross-target focus, direct editing commands, readonly/disabled/detached controls and reactivation. They are reference evidence, not native API passes.
+## Preserved unsuccessful runs
 
-Range replacement needs a public Rust method, selection direction metadata and deferred native event delivery. Eight Unicode cases with representable scalar boundaries and twelve selection-task scenarios repeat byte-identically. Chromium coalesces selectionchange while retaining one select callback per changed selection; callbacks read the final retained state. Existing UTF-8/grapheme selection positions cannot represent every UTF-16 position in the browser reference. Those differences remain explicit; no fixed expected value or script execution substitutes for native behavior.
+Changing the border drawing operation alone produced no exact gains and worsened twenty comparisons. That trial is rejected and reverted. An intermediate build failed after removing inner-border geometry still needed by inset effects; the geometry is restored. Both failures retain their actual command results and source audits.
+
+The earlier native owner disappeared after 18 completed commands and eight border images. Its receipt remains incomplete and its whole exit is unknown. A separate recovery verifies those logs/images, renders the other 27 cases and checks unchanged source hashes. A later full-renderer attempt was deliberately interrupted before producing a matrix; its actual exit is 130. These runs are preserved separately and never counted as completed qualification.
+
+## Native editing work remains
+
+A private input metadata implementation matches eleven Chromium scenarios and 69 callback rows in Rust, C and C++, twice each. Its first whole run failed a C guard's expected status; a later guard correction passes C and C++ twice. Binaries remain attributed to their actual build source. [Earlier evidence](generated/native-editing-followup-v1.json).
+
+Composition still differs in all four measured common-field scenarios. Repeated Chromium traces define required native behavior for callback mutation, cross-target focus, direct editing commands, readonly/disabled/detached controls and reactivation. Those are reference observations, not native API passes.
+
+Range replacement needs a public Rust method, selection direction metadata and deferred native event delivery. Eight Unicode cases with representable scalar boundaries and twelve selection-task scenarios repeat byte-identically. A further 24 cross-control/reentry cases repeat with 98 callback rows. Selectionchange and select use distinct delivery phases; target-local coalescing lasts until notification delivery, callbacks observe current retained state, and detached live targets retain pending notifications. The earlier single-queue draft is insufficient. Shared native scheduling, public methods, Linux event-loop integration and C parity remain implementation work.
+
+Existing UTF-8/grapheme positions cannot represent every UTF-16 position in the browser reference. Those differences remain explicit. Neither fixed expected values nor script execution substitutes for native behavior.
 
 ## Qualification remains open
 
-Main renderer totals are unchanged by this private trial. All native APIs, full Chromium pixel equality, compositor, hardware and release qualification remain unfinished. Chromium references are immutable, comparison tolerance is zero, and old Open UI images are historical evidence.
-
-The [evidence index](generated/native-editing-followup-v1.json) records source identities, actual command results, failed/interrupted receipts, reference traces and the completed border candidate.
+Current public-branch renderer totals are unchanged by this private correction. Full Chromium pixel equality, complete native APIs, compositor, hardware and release checks remain unfinished. Chromium references are immutable, comparison tolerance is zero, and old Open UI images preserve history.

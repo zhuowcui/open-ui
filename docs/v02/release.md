@@ -5,12 +5,12 @@ distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
 The [native editing and rounded border trial](../renderer/native-editing-and-rounded-border.md)
-completes a private five-scale matrix at **14/35 exact**, ten gains and no exact
-loss or worsened comparison. Its fresh linked build and final source checks
-pass. It remains unintegrated, with 21 pixel differences and full renderer,
-native API, hardware and release gates open. An interrupted earlier run keeps
-its incomplete receipt and unknown whole exit; the completed recovery is
-recorded separately. No final v0.2 qualification is claimed.
+completes private `6cc132dc` at **35/35 exact** across five scales. A second
+native run preserves all image and geometry bytes. Its 73 commands, fresh
+linked framework artifacts and final source checks pass. The implementation
+remains private, with full renderer, workspace/ABI, native API, hardware and
+release checks open. Failed and rejected trials remain recorded separately.
+No final v0.2 qualification is claimed.
 
 The [native intrinsic sizing follow-up](../renderer/native-fontations-app.md) at clean private
 `8f756039` passes **8,575 workspace tests**, zero failed and 13 ignored,

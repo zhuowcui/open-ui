@@ -23,13 +23,13 @@ remain open.
 ## Current implementation checkpoint
 
 The [native editing and rounded border follow-up](../renderer/native-editing-and-rounded-border.md)
-records private `da33875c`: **14/35 exact**, ten gains, zero exact losses and
-zero worsened comparisons in the complete five-scale border matrix. All 35
-native geometry/callback states pass; 38 commands and 16 fresh linked framework
-artifacts are verified with unchanged final source identities. It remains
-private and unintegrated, with 21 pixel differences and full renderer/API gates
-open. The earlier interrupted owner is preserved with unknown whole exit; its
-separate completed recovery is not a rewritten result. Main totals are unchanged.
+records private `6cc132dc`: **35/35 exact** across five scales, repeated with
+identical native PNG and geometry bytes. All 73 commands and 16 freshly linked
+framework artifacts pass; final public/private source hashes are unchanged.
+This improves the earlier unchanged native test set from 4/35 to 35/35.
+Failed and rejected trials remain recorded. The implementation is private;
+full renderer, workspace/ABI and native API checks remain open. Current
+public-branch renderer totals are unchanged.
 
 The [native text commit trial](../v02/native-text-commit.md) remains private and unapplied.
 Both Rust runs match all six Chromium scenarios and 29 full callback rows;

@@ -25,12 +25,12 @@ verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
 The [native editing and rounded border follow-up](native-editing-and-rounded-border.md)
-measures private `da33875c`: **14/35 exact**, up from 4/35, across five scales.
-Ten attachment/overflow comparisons become exact, with no exact loss or
-worsened comparison in this matrix. Radius-specific pixel corrections are
-removed; shared local-background clipping is corrected. All geometry/callback
-states and fresh build/source checks pass. The candidate remains private,
-21 images still differ, and full focused/primitive/census/API gates are pending.
+measures private `6cc132dc`: **35/35 exact** across five scales. A second
+native process for every case produces identical PNG and geometry bytes.
+Shared clipping and background/border grouping replace radius-specific pixel
+corrections. All 73 commands, fresh linked artifacts and final source checks
+pass. This is a private native test result; complete focused, primitive,
+original, expanded, workspace/ABI and native API checks remain required.
 
 The [native input editor follow-up](native-input-editor-scrollport.md) corrects the private
 single-line editor clip. Its consuming Rust app improves from **22/30 to
