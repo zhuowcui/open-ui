@@ -27,6 +27,15 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
+The [native editing and rounded border follow-up](docs/renderer/native-editing-and-rounded-border.md)
+records a completed private renderer candidate: **14/35 exact**, up from 4/35,
+with ten gains and no exact loss or worsened comparison in the five-scale
+border matrix. It removes radius-specific pixel corrections and fixes shared
+local-background clipping. **21 differences and broader qualification remain
+open**; Main renderer totals are unchanged. Native input metadata matches 69
+callback rows through Rust/C/C++ in a private checkpoint, while composition,
+range replacement and deferred selection APIs still need completion.
+
 The [native text commit trial](docs/v02/native-text-commit.md) remains private and unapplied.
 Both Rust runs match all six Chromium scenarios and 29 full callback rows;
 C/C++ each match the common fields twice. All fifteen targeted Rust guards pass,

@@ -24,6 +24,14 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
+The [native editing and rounded border follow-up](native-editing-and-rounded-border.md)
+measures private `da33875c`: **14/35 exact**, up from 4/35, across five scales.
+Ten attachment/overflow comparisons become exact, with no exact loss or
+worsened comparison in this matrix. Radius-specific pixel corrections are
+removed; shared local-background clipping is corrected. All geometry/callback
+states and fresh build/source checks pass. The candidate remains private,
+21 images still differ, and full focused/primitive/census/API gates are pending.
+
 The [native input editor follow-up](native-input-editor-scrollport.md) corrects the private
 single-line editor clip. Its consuming Rust app improves from **22/30 to
 28/30 exact images**, with all thirty rectangles exact. Focused **640/640**

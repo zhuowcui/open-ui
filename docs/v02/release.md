@@ -4,6 +4,14 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
+The [native editing and rounded border trial](../renderer/native-editing-and-rounded-border.md)
+completes a private five-scale matrix at **14/35 exact**, ten gains and no exact
+loss or worsened comparison. Its fresh linked build and final source checks
+pass. It remains unintegrated, with 21 pixel differences and full renderer,
+native API, hardware and release gates open. An interrupted earlier run keeps
+its incomplete receipt and unknown whole exit; the completed recovery is
+recorded separately. No final v0.2 qualification is claimed.
+
 The [native intrinsic sizing follow-up](../renderer/native-fontations-app.md) at clean private
 `8f756039` passes **8,575 workspace tests**, zero failed and 13 ignored,
 all 21 read-only checks, and Rust/C/C++ ABI consumers with 113 exports
