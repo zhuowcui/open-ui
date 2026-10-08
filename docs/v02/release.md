@@ -5,12 +5,15 @@ distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
 The [native editing and rounded border trial](../renderer/native-editing-and-rounded-border.md)
-completes private `6cc132dc` at **35/35 exact** across five scales. A second
-native run preserves all image and geometry bytes. Its 73 commands, fresh
-linked framework artifacts and final source checks pass. The implementation
-remains private, with full renderer, workspace/ABI, native API, hardware and
-release checks open. Failed and rejected trials remain recorded separately.
-No final v0.2 qualification is claimed.
+is now integrated in the PR branch after clean private `6cc132dc` completes
+35/35 native images twice and all four matrices. Focused 640/640 and primitive
+960/960 are exact. Original **21,338/22,924 exact** and expanded
+**22,141/23,728 exact** retain zero errors and all immutable Chromium records.
+Both complete censuses gain eight exact comparisons with no losses or worsened
+rows; actual exits remain 1 for their 1,586 and 1,587 differences. The combined
+PR source still needs fresh workspace/ABI and renderer checks. Native APIs,
+compositor, hardware and release gates remain open. No final v0.2 qualification
+is claimed. Open UI never executes JavaScript.
 
 The [native intrinsic sizing follow-up](../renderer/native-fontations-app.md) at clean private
 `8f756039` passes **8,575 workspace tests**, zero failed and 13 ignored,

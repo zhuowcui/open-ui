@@ -28,12 +28,14 @@ right picture or the Chromium test uses a script. See the
 ## Verified status
 
 The [native editing and rounded border follow-up](docs/renderer/native-editing-and-rounded-border.md)
-now records a completed private renderer candidate: **35/35 exact**, up from
-4/35 in the unchanged native test set. All five scales pass twice, with
-identical native image and geometry bytes. Shared clipping and background/border
-grouping replace radius-specific pixel corrections. The implementation remains
-private; full renderer and native API checks are pending. Current public-branch
-renderer totals are unchanged.
+now brings the shared painter correction into the PR branch. Clean private
+`6cc132dc` passes 35/35 native images twice, focused 640/640 and primitive
+960/960. Original Chromium comparisons are **21,338/22,924 exact**; expanded
+comparisons are **22,141/23,728 exact**, with zero errors. Each complete census
+gains eight exact comparisons, loses none and worsens none. All Chromium
+references remain unchanged. These measurements belong to the private source;
+the combined PR source still requires fresh qualification. Native API,
+compositor, hardware and release work remain unfinished.
 
 The [native text commit trial](docs/v02/native-text-commit.md) remains private and unapplied.
 Both Rust runs match all six Chromium scenarios and 29 full callback rows;

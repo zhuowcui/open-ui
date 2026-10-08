@@ -11258,113 +11258,6 @@ fn draw_renderable_outer_aa_fringe(
     canvas.draw_path(&fringe_path.detach(), &fringe_paint);
 }
 
-/// Match Chromium's GPU coverage quantization at the few samples where its
-/// integer-aligned circular border contour differs from Skia's CPU analytic
-/// rrect rasterizer by more than the pixel-comparison channel threshold.
-///
-/// The offsets are contour-local raster calibration points, not box- or
-/// document-specific coordinates. They apply only to translucent circular
-/// borders, where a small coverage difference remains visible after alpha
-/// compositing; opaque contours quantize to the same final pixels already.
-fn draw_translucent_rounded_border_gpu_fringe(
-    canvas: &Canvas,
-    border_rect: Rect,
-    outer_radii: &[Point; 4],
-    color: &Color,
-) {
-    if color.a >= 0.99 || color.a <= 0.0 {
-        return;
-    }
-    let circular = outer_radii
-        .iter()
-        .all(|radius| (radius.x - radius.y).abs() < 0.01);
-    if !circular {
-        return;
-    }
-
-    let draw_sample = |x: f32, y: f32, alpha: f32| {
-        let mut paint = Paint::default();
-        paint.set_style(PaintStyle::Fill);
-        paint.set_anti_alias(false);
-        paint.set_color4f(
-            Color4f::new(color.r, color.g, color.b, alpha),
-            None::<&ColorSpace>,
-        );
-        canvas.draw_rect(Rect::from_xywh(x, y, 1.0, 1.0), &paint);
-    };
-
-    let top_left = Point::new(
-        border_rect.left + outer_radii[0].x,
-        border_rect.top + outer_radii[0].y,
-    );
-    let top_right = Point::new(
-        border_rect.right - outer_radii[1].x,
-        border_rect.top + outer_radii[1].y,
-    );
-    let bottom_right = Point::new(
-        border_rect.right - outer_radii[2].x,
-        border_rect.bottom - outer_radii[2].y,
-    );
-    let bottom_left = Point::new(
-        border_rect.left + outer_radii[3].x,
-        border_rect.bottom - outer_radii[3].y,
-    );
-
-    if (outer_radii[0].x - 60.0).abs() < 0.01 {
-        draw_sample(top_left.x - 19.0, top_left.y - 58.0, 0.064);
-    }
-    if (outer_radii[1].x - 60.0).abs() < 0.01 {
-        draw_sample(top_right.x + 18.0, top_right.y - 58.0, 0.070);
-        draw_sample(top_right.x + 23.0, top_right.y - 56.0, 0.028);
-    }
-    if (outer_radii[3].x - 60.0).abs() < 0.01 {
-        draw_sample(bottom_left.x - 23.0, bottom_left.y + 55.0, 0.035);
-    }
-    if (outer_radii[2].x - 60.0).abs() < 0.01 {
-        draw_sample(bottom_right.x + 22.0, bottom_right.y + 55.0, 0.035);
-    }
-    if (outer_radii[3].x - 40.0).abs() < 0.01 {
-        draw_sample(bottom_left.x - 37.0, bottom_left.y + 15.0, 0.073);
-        draw_sample(bottom_left.x - 28.0, bottom_left.y + 28.0, 0.088);
-    }
-    if (outer_radii[2].x - 40.0).abs() < 0.01 {
-        draw_sample(bottom_right.x + 32.0, bottom_right.y + 23.0, 0.021);
-        draw_sample(bottom_right.x + 31.0, bottom_right.y + 24.0, 0.032);
-        draw_sample(bottom_right.x + 27.0, bottom_right.y + 28.0, 0.088);
-        draw_sample(bottom_right.x + 28.0, bottom_right.y + 28.0, 0.021);
-    }
-}
-
-fn erase_translucent_rounded_border_gpu_overdraw(
-    canvas: &Canvas,
-    border_rect: Rect,
-    outer_radii: &[Point; 4],
-    color: &Color,
-) {
-    if color.a >= 0.99
-        || color.a <= 0.0
-        || !outer_radii
-            .iter()
-            .all(|radius| (radius.x - radius.y).abs() < 0.01)
-        || (outer_radii[1].x - 40.0).abs() >= 0.01
-    {
-        return;
-    }
-    let top_right = Point::new(
-        border_rect.right - outer_radii[1].x,
-        border_rect.top + outer_radii[1].y,
-    );
-    let mut erase = Paint::default();
-    erase.set_style(PaintStyle::Fill);
-    erase.set_anti_alias(false);
-    erase.set_blend_mode(BlendMode::DstOut);
-    erase.set_color4f(Color4f::new(0.0, 0.0, 0.0, 0.05), None::<&ColorSpace>);
-    canvas.draw_rect(
-        Rect::from_xywh(top_right.x + 35.0, top_right.y - 18.0, 1.0, 1.0),
-        &erase,
-    );
-}
-
 fn descendant_overflow_bounds(fragment: &Fragment) -> Option<(f32, f32, f32, f32)> {
     let mut bounds: Option<(f32, f32, f32, f32)> = None;
     for child in &fragment.children {
@@ -14417,7 +14310,10 @@ fn paint_background_layers(
         }
         let mut clip =
             clip_override.unwrap_or_else(|| background_box_rect(layer.clip, border_rect, fragment));
-        if clip_override.is_none() && layer.attachment == BackgroundAttachment::Local {
+        if clip_override.is_none()
+            && style.is_scroll_container()
+            && layer.attachment == BackgroundAttachment::Local
+        {
             // A local image scrolls with the element's contents and is exposed
             // through the scrollport. Its effective painting area cannot
             // extend beneath the border (notably through double-border gaps),
@@ -17070,7 +16966,9 @@ fn paint_box_decoration_background(
             visible_color = Some(color);
         }
     }
-    let effective_background_clip = if style.background_attachment == BackgroundAttachment::Local {
+    let effective_background_clip = if style.is_scroll_container()
+        && style.background_attachment == BackgroundAttachment::Local
+    {
         BackgroundClip::PaddingBox
     } else {
         style.background_clip
@@ -17166,11 +17064,6 @@ fn paint_box_decoration_background(
             (fragment_radii[3].y - paint_bb).max(0.0),
         ),
     ];
-    let nonrenderable_inner_border_contour =
-        matches!(
-            effective_background_clip,
-            BackgroundClip::PaddingBox | BackgroundClip::ContentBox
-        ) && radii_exceed_rect(&border_inner_rect, &border_inner_radii);
     let has_visible_background = !style.background_color.is_transparent()
         || !style.background_layers.is_empty()
         || style.background_linear_gradient.is_some();
@@ -17191,15 +17084,8 @@ fn paint_box_decoration_background(
         // regardless of the authored background-clip. It does not need a
         // separate outer clip layer for that border.
         && !border_obscures_background_edge
-        // Renderable padding/content-box contours do not reach the outer
-        // border contour, so their border can use one native double-rrect.
-        // An inner contour whose adjacent radii cannot fit its rect needs the
-        // shared outer clip: this is the coverage model Blink uses for the
-        // extreme single-corner cases where the background meets the border.
-        && (matches!(
-            effective_background_clip,
-            BackgroundClip::BorderBox | BackgroundClip::BorderArea
-        ) || nonrenderable_inner_border_contour)
+        // The fill's background-clip chooses its contour; bleed avoidance
+        // groups the background and translucent border independently of it.
         && (has_nonzero_uniform_border || same_solid_visible_border);
     if use_layer {
         canvas.save();
@@ -17249,6 +17135,41 @@ fn paint_box_decoration_background(
                     )
             }));
     if !style.background_color.is_transparent() && !background_color_is_occluded {
+        // A local background is exposed through the scrollport's hard clip
+        // before its rounded fill is rasterized (AdjustRectForScrolledContent).
+        // Retain that clip separately from the antialiased fill contour.
+        let _local_background_clip = if style.is_scroll_container()
+            && style.background_attachment == BackgroundAttachment::Local
+        {
+            let guard = skia_safe::AutoCanvasRestore::guard(canvas, true);
+            let insets = fragment
+                .element_scrollbars
+                .map_or(openui_geometry::BoxStrut::zero(), |scrollbars| {
+                    scrollbars.insets
+                });
+            let clip_left = (abs_offset.left + fragment.border.left + insets.left).to_f32();
+            let clip_top = (abs_offset.top + fragment.border.top + insets.top).to_f32();
+            let clip_right =
+                (abs_offset.left + fragment.size.width - fragment.border.right - insets.right)
+                    .to_f32();
+            let clip_bottom =
+                (abs_offset.top + fragment.size.height - fragment.border.bottom - insets.bottom)
+                    .to_f32();
+            let (clip_x, clip_y, clip_width, clip_height) = (
+                clip_left,
+                clip_top,
+                (clip_right - clip_left).max(0.0),
+                (clip_bottom - clip_top).max(0.0),
+            );
+            canvas.clip_rect(
+                Rect::from_xywh(clip_x, clip_y, clip_width, clip_height),
+                ClipOp::Intersect,
+                false,
+            );
+            Some(guard)
+        } else {
+            None
+        };
         let mut paint = Paint::default();
         paint.set_style(PaintStyle::Fill);
         // A pixel-snapped 2×2 saturated rounded box covers its four device
@@ -17834,12 +17755,6 @@ fn paint_box_decoration_background(
                 &erase,
             );
         }
-        erase_translucent_rounded_border_gpu_overdraw(
-            canvas,
-            border_rect,
-            &outer_radii,
-            &border_color,
-        );
         canvas.restore(); // pops saveLayer
         if radii_exceed_rect(&inner_rect, &inner_radii) {
             let mut paint = Paint::default();
@@ -17873,12 +17788,6 @@ fn paint_box_decoration_background(
             );
         }
         canvas.restore(); // pops save()
-        draw_translucent_rounded_border_gpu_fringe(
-            canvas,
-            border_rect,
-            &outer_radii,
-            &border_color,
-        );
     }
     if decoration_clip_saved {
         canvas.restore();
@@ -19599,20 +19508,8 @@ fn paint_borders(
                     canvas.draw_drrect(outer_rrect, inner_rrect, &fill_paint);
                 }
                 if resolved.a < 1.0 {
-                    erase_translucent_rounded_border_gpu_overdraw(
-                        canvas,
-                        outer_rect,
-                        &outer_radii,
-                        &resolved,
-                    );
                     canvas.restore();
                 }
-                draw_translucent_rounded_border_gpu_fringe(
-                    canvas,
-                    outer_rect,
-                    &outer_radii,
-                    &resolved,
-                );
             }
         } else {
             canvas.draw_rect(stroke_rect, &paint);

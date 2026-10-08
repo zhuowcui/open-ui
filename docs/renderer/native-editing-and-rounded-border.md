@@ -43,4 +43,29 @@ Existing UTF-8/grapheme positions cannot represent every UTF-16 position in the 
 
 ## Qualification remains open
 
-Current public-branch renderer totals are unchanged by this private correction. Full Chromium pixel equality, complete native APIs, compositor, hardware and release checks remain unfinished. Chromium references are immutable, comparison tolerance is zero, and old Open UI images preserve history.
+The reviewed painter correction and native consuming app are now integrated
+into the PR branch. The combined source still requires fresh workspace/ABI
+and renderer qualification. Private `6cc132dc` completes all four matrices:
+
+| Suite | Exact | Different | Errors | Actual exit |
+|---|---:|---:|---:|---:|
+| Focused | 640/640 | 0 | 0 | 0 |
+| Primitive | 960/960 | 0 | 0 | 0 |
+| Original | 21,338/22,924 | 1,586 | 0 | 1 |
+| Expanded | 22,141/23,728 | 1,587 | 0 | 1 |
+
+Both complete censuses gain eight exact comparisons with zero losses and zero
+worsened rows against public `8e8318bf`. All 48,252 Chromium reference records
+are unchanged. The completed audit verifies source bytes, eleven logs and 26
+fresh compiled artifact hashes. The concurrent source reader preserves every
+source byte and original hash order; the unchanged build script independently
+embeds its identity using the official serial reader. The interrupted earlier
+build remains recorded as actual exit 130, with no completed matrices.
+[Full evidence](generated/native-rounded-layer-v3.json).
+
+Twenty-four further pinned Chromium value/range scenarios produce 26 callback
+rows, identically twice. Identical value assignment preserves selection and
+direction. Changed value assignment emits selectionchange without select;
+range replacement also emits select when selection or direction changes.
+These are reference observations for required native APIs, not native passes.
+ Full Chromium pixel equality, complete native APIs, compositor, hardware and release checks remain unfinished. Chromium references are immutable, comparison tolerance is zero, and old Open UI images preserve history.

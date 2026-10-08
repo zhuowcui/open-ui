@@ -23,13 +23,15 @@ remain open.
 ## Current implementation checkpoint
 
 The [native editing and rounded border follow-up](../renderer/native-editing-and-rounded-border.md)
-records private `6cc132dc`: **35/35 exact** across five scales, repeated with
-identical native PNG and geometry bytes. All 73 commands and 16 freshly linked
-framework artifacts pass; final public/private source hashes are unchanged.
-This improves the earlier unchanged native test set from 4/35 to 35/35.
-Failed and rejected trials remain recorded. The implementation is private;
-full renderer, workspace/ABI and native API checks remain open. Current
-public-branch renderer totals are unchanged.
+integrates the reviewed shared painter correction into the PR branch. Its
+clean private checkpoint `6cc132dc` completes all four renderer matrices:
+focused 640/640, primitive 960/960, original **21,338/22,924 exact** and expanded
+**22,141/23,728 exact**, zero errors. Both complete censuses gain eight exact
+comparisons with no losses or worsened rows. All 48,252 Chromium reference
+records remain unchanged. Full and expanded commands actually exit 1 because
+1,586 and 1,587 comparisons still differ. Native images remain 35/35 exact
+at five scales, twice. The combined PR source requires fresh workspace/ABI and
+renderer verification; no final v0.2 qualification is claimed.
 
 The [native text commit trial](../v02/native-text-commit.md) remains private and unapplied.
 Both Rust runs match all six Chromium scenarios and 29 full callback rows;
