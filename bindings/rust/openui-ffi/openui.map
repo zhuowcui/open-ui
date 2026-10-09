@@ -59,6 +59,7 @@ OPENUI_0.2 {
     oui_element_adjust_control;
     oui_element_animate;
     oui_element_append_child;
+    oui_element_associated_form_v1;
     oui_element_blur;
     oui_element_clone_subtree_v1;
     oui_element_copy_control_value;
@@ -81,6 +82,7 @@ OPENUI_0.2 {
     oui_element_is_effectively_disabled_v1;
     oui_element_is_own_disabled_v1;
     oui_element_is_same_node_v1;
+    oui_element_parent_v1;
     oui_element_perform_accessibility_action;
     oui_element_release_pointer_capture;
     oui_element_remove;

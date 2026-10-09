@@ -1172,6 +1172,19 @@ typedef struct OuiEventPropertiesV1 {
 OuiStatus oui_event_properties_v1(const OuiEvent* event,
                                   OuiEventPropertiesV1* out_properties);
 
+/* Query the current associated form without layout or events. Non-associated
+ * native kinds or controls without an owner return NULL. Detached controls use
+ * the nearest form ancestor; connected explicit form attributes resolve the
+ * first nonempty ID match, which must be a form. The result is an independently
+ * owned element alias in the same document, released with oui_element_destroy.
+ * The document must remain alive. Owning-thread live input and writable output
+ * are required; output remains unchanged on error. Safe in native callbacks. */
+OuiStatus oui_element_associated_form_v1(OuiElement* element, OuiElement** out_form);
+/* Query the retained parent, including for detached subtrees. A node without
+ * a parent returns NULL. Ownership, thread, callback and output rules match
+ * oui_element_associated_form_v1. No layout, event dispatch or scripts run. */
+OuiStatus oui_element_parent_v1(OuiElement* element, OuiElement** out_parent);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif

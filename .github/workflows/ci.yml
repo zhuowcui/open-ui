@@ -117,7 +117,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install renderer evidence test dependency
-        run: python3 -m pip install Pillow==12.2.0
+        run: python3 -m pip install Pillow==12.2.0 clang-format==18.1.8
 
       - uses: actions/setup-node@v4
         with:
@@ -182,6 +182,7 @@ jobs:
           python3 tools/release/generate_v02_contract.py --check
           python3 tools/style/generate_properties.py --check
           python3 tools/ffi/generate_ffi.py --check
+          python3 tools/ffi/generate_form_owner_cases.py --check
           python3 tools/release/build_v02_linux.py --verify-source
           python3 -m unittest tools.release.test_v02_packaging
           python3 tools/conformance/verify_v02.py

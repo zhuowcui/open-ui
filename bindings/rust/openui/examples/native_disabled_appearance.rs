@@ -1,4 +1,4 @@
-//! Uncompiled native app draft for disabled control appearance.
+//! Native consuming app for disabled control appearance.
 //! Parameters select geometry and native state, never test IDs or expected pixels.
 use openui::prelude::*;
 use serde_json::json;

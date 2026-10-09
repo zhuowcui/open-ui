@@ -1,4 +1,4 @@
-//! Consuming Rust app draft; not yet compiled or qualified.
+//! Native Rust consuming app; qualification records identify each clean source.
 //! Records native calls, state and callback observations. No expected state,
 //! pixels or browser scripts are embedded in this app.
 use openui::prelude::*;

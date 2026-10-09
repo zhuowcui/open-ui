@@ -46,7 +46,7 @@ impl Drop for FocusEventScope {
     }
 }
 
-fn owned_element_handle(
+pub(crate) fn owned_element_handle(
     document: &Rc<DocumentState>,
     node: NodeHandle,
 ) -> Result<*mut OuiElement, ApiError> {

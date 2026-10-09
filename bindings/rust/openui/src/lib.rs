@@ -155,4 +155,6 @@ pub use openui_platform::{KeyboardInput, PlatformEvent};
 pub use openui_macros::{component, view};
 
 #[cfg(test)]
+mod form_association_tests;
+#[cfg(test)]
 mod tests;

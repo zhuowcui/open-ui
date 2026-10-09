@@ -222,3 +222,47 @@ impl Engine {
         self.radio_tree_change(node, false)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ViewportMetrics;
+    #[test]
+    fn association_queries_reject_foreign_stale_handles_and_empty_ids() {
+        let viewport = ViewportMetrics::from_logical_size(320., 200., 1.).unwrap();
+        let mut engine = Engine::new(viewport).unwrap();
+        let other = Engine::new(viewport).unwrap();
+        let input = engine.create_element(ElementTag::Input).unwrap();
+        assert_eq!(
+            other.associated_form(input),
+            Err(EngineError::WrongDocument)
+        );
+        let form = engine.create_element(ElementTag::Form).unwrap();
+        engine.set_attribute(form, "id", "").unwrap();
+        engine.append_child(engine.root(), form).unwrap();
+        engine.set_attribute(input, "form", "").unwrap();
+        engine.append_child(engine.root(), input).unwrap();
+        assert_eq!(engine.element_by_id(""), None);
+        assert_eq!(engine.associated_form(input).unwrap(), None);
+        engine.remove(input).unwrap();
+        assert_eq!(engine.associated_form(input), Err(EngineError::StaleHandle));
+    }
+    #[test]
+    fn removing_and_reusing_native_slots_drops_radio_registration() {
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320., 200., 1.).unwrap()).unwrap();
+        let input = engine.create_element(ElementTag::Input).unwrap();
+        engine.set_attribute(input, "type", "radio").unwrap();
+        engine.set_attribute(input, "name", "g").unwrap();
+        engine.append_child(engine.root(), input).unwrap();
+        engine.set_checked(input, true).unwrap();
+        assert_eq!(engine.radio_associations.len(), 1);
+        engine.remove(input).unwrap();
+        assert!(engine.radio_associations.is_empty());
+        let replacement = engine.create_element(ElementTag::Input).unwrap();
+        assert_eq!(replacement.index, input.index);
+        assert_ne!(replacement.generation, input.generation);
+        assert!(!engine.controls[&replacement.index].checked);
+        assert!(engine.radio_associations.is_empty());
+    }
+}

@@ -8,6 +8,9 @@
 
 mod accessibility_snapshot;
 mod editing_command;
+#[cfg(test)]
+mod element_relation_tests;
+mod element_relations;
 mod event_properties;
 mod focus_events;
 #[cfg(test)]
@@ -22,6 +25,7 @@ mod types;
 mod value;
 
 pub use editing_command::oui_element_edit_text_v1;
+pub use element_relations::{oui_element_associated_form_v1, oui_element_parent_v1};
 pub use event_properties::oui_event_properties_v1;
 pub use focus_events::{oui_document_focused_element_v1, oui_event_focus_info_v1};
 pub use input_events::oui_event_input_info_v1;
