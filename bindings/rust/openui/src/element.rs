@@ -99,7 +99,7 @@ impl Element {
             return Err(openui_engine::EngineError::WrongDocument.into());
         }
         self.document
-            .with_engine_mut(|engine| engine.append_or_move_child(self.handle, child.handle))
+            .append_element_child(self.handle, child.handle)
     }
 
     /// Copy this element and its authored descendants into a detached tree.
@@ -119,9 +119,8 @@ impl Element {
         {
             return Err(openui_engine::EngineError::WrongDocument.into());
         }
-        self.document.with_engine_mut(|engine| {
-            engine.insert_before(self.handle, child.handle, before.handle)
-        })
+        self.document
+            .insert_element_before(self.handle, child.handle, before.handle)
     }
 
     pub fn remove_child(&self, child: &Element) -> Result<(), Error> {
@@ -145,8 +144,7 @@ impl Element {
     /// Rust event listeners. Attach it again with [`Self::append_child`] or
     /// [`Self::insert_before`]. Use [`Self::remove`] to destroy it instead.
     pub fn detach(&self) -> Result<(), Error> {
-        self.document
-            .with_engine_mut(|engine| engine.detach(self.handle))
+        self.document.detach_node(self.handle)
     }
 
     /// Return the first authored element child, skipping text nodes.
@@ -202,7 +200,7 @@ impl Element {
             return Err(openui_engine::EngineError::WrongDocument.into());
         }
         self.document
-            .with_engine_mut(|engine| engine.append_or_move_child(self.handle, child.handle))
+            .append_element_child(self.handle, child.handle)
     }
 
     /// Insert or move a text node immediately before an element child.
@@ -216,9 +214,8 @@ impl Element {
         {
             return Err(openui_engine::EngineError::WrongDocument.into());
         }
-        self.document.with_engine_mut(|engine| {
-            engine.insert_before(self.handle, child.handle, before.handle)
-        })
+        self.document
+            .insert_element_before(self.handle, child.handle, before.handle)
     }
 
     pub fn create_text_child(&self, text: &str) -> Result<crate::TextNode, Error> {
@@ -398,8 +395,24 @@ impl Element {
     }
 
     pub fn remove_attribute(&self, name: &str) -> Result<bool, Error> {
-        self.document
-            .with_engine_mut(|engine| engine.remove_attribute(self.handle, name))
+        self.document.remove_element_attribute(self.handle, name)
+    }
+
+    /// Reflected own disabled state, without inheritance from an ancestor group.
+    /// Use [`Self::is_effectively_disabled`] to determine interaction eligibility.
+    pub fn is_own_disabled(&self) -> Result<bool, Error> {
+        Ok(self
+            .document
+            .with_engine(|engine| engine.is_own_disabled(self.handle))??)
+    }
+
+    /// Whether this control is disabled by its own state or an ancestor group.
+    /// This includes the first-legend exception and direct option-group rules.
+    /// The query does not run layout or change reflected attributes.
+    pub fn is_effectively_disabled(&self) -> Result<bool, Error> {
+        Ok(self
+            .document
+            .with_engine(|engine| engine.is_effectively_disabled(self.handle))??)
     }
 
     /// Whether this node is attached to its retained document, without layout.

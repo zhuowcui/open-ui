@@ -371,14 +371,123 @@ impl Document {
         })?;
         // Engine mutation has ended before the shared focus/change callbacks.
         // Reentrant callbacks may reenable or focus another live control.
-        if name.eq_ignore_ascii_case("disabled")
-            && self.with_engine(|engine| {
-                engine.focused() == Some(target) && !engine.can_focus(target).unwrap_or(false)
-            })?
-        {
-            self.blur_element(target)?;
+        if name.eq_ignore_ascii_case("disabled") {
+            self.settle_focus_eligibility()?;
         }
         Ok(())
+    }
+
+    pub(crate) fn remove_element_attribute(
+        &self,
+        target: NodeHandle,
+        name: &str,
+    ) -> Result<bool, Error> {
+        let removed = self.with_engine_mut(|engine| engine.remove_attribute(target, name))?;
+        if removed && name.eq_ignore_ascii_case("disabled") {
+            self.settle_focus_eligibility()?;
+        }
+        Ok(removed)
+    }
+
+    fn settle_focus_eligibility(&self) -> Result<(), Error> {
+        let invalid = self.with_engine(|engine| {
+            engine
+                .focused()
+                .filter(|focused| !engine.can_focus(*focused).unwrap_or(false))
+        })?;
+        if let Some(focused) = invalid {
+            self.blur_element(focused)?;
+        }
+        Ok(())
+    }
+
+    fn blur_subtree_before_move(&self, subtree: NodeHandle) -> Result<(), Error> {
+        let focused = self.with_engine(|engine| {
+            let Some(focused) = engine.focused() else {
+                return Ok(None);
+            };
+            let mut current = Some(focused);
+            while let Some(node) = current {
+                if node == subtree {
+                    return Ok(Some(focused));
+                }
+                current = engine.parent(node)?;
+            }
+            Ok::<_, openui_engine::EngineError>(None)
+        })??;
+        if let Some(focused) = focused {
+            // Chromium sends these callbacks before removing the old parent.
+            // change_focus handles commit ordering, composition and reentry.
+            self.blur_element(focused)?;
+        }
+        Ok(())
+    }
+
+    pub(crate) fn append_element_child(
+        &self,
+        parent: NodeHandle,
+        child: NodeHandle,
+    ) -> Result<(), Error> {
+        self.with_engine(|engine| engine.validate_append_or_move_child(parent, child))??;
+        self.blur_subtree_before_move(child)?;
+        self.with_engine_mut(|engine| engine.append_or_move_child(parent, child))?;
+        self.settle_focus_eligibility()
+    }
+
+    pub(crate) fn insert_element_before(
+        &self,
+        parent: NodeHandle,
+        child: NodeHandle,
+        before: NodeHandle,
+    ) -> Result<(), Error> {
+        self.with_engine(|engine| engine.validate_insert_before(parent, child, before))??;
+        self.blur_subtree_before_move(child)?;
+        self.with_engine_mut(|engine| engine.insert_before(parent, child, before))?;
+        self.settle_focus_eligibility()
+    }
+
+    pub(crate) fn detach_node(&self, target: NodeHandle) -> Result<(), Error> {
+        self.with_engine(|engine| engine.validate_detach(target))??;
+        self.blur_subtree_before_move(target)?;
+        self.with_engine_mut(|engine| engine.detach(target))?;
+        self.settle_focus_eligibility()
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn append_child_for_native_facade(
+        &self,
+        parent: NodeHandle,
+        child: NodeHandle,
+    ) -> Result<(), Error> {
+        self.append_element_child(parent, child)
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn insert_before_for_native_facade(
+        &self,
+        parent: NodeHandle,
+        child: NodeHandle,
+        before: NodeHandle,
+    ) -> Result<(), Error> {
+        self.insert_element_before(parent, child, before)
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn detach_for_native_facade(&self, target: NodeHandle) -> Result<(), Error> {
+        self.detach_node(target)
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn remove_attribute_for_native_facade(
+        &self,
+        target: NodeHandle,
+        name: &str,
+    ) -> Result<bool, Error> {
+        self.remove_element_attribute(target, name)
     }
 
     #[cfg(feature = "ffi-integration")]
@@ -556,6 +665,16 @@ impl Document {
         })
     }
 
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn perform_accessibility_action_for_native_facade(
+        &self,
+        target: NodeHandle,
+        action: AccessibilityAction,
+    ) -> Result<(), Error> {
+        self.perform_accessibility_action(target, action)
+    }
+
     pub(crate) fn perform_accessibility_action(
         &self,
         target: NodeHandle,
@@ -569,6 +688,9 @@ impl Document {
             _ => {}
         }
         if action == AccessibilityAction::Click {
+            if self.with_engine(|engine| engine.is_effectively_disabled(target))?? {
+                return Ok(());
+            }
             let event = Event::keyboard("click", 0, None, Modifiers::NONE);
             self.dispatch_to(target, &event)?;
             if event.default_prevented() {

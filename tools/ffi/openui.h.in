@@ -1030,6 +1030,15 @@ OuiStatus oui_element_get_selection_direction_v1(OuiElement* element, uint32_t* 
  * on failure. Connectivity reads no layout and cannot settle focus. Identity
  * compares the retained node, including independently owned aliases. Valid
  * nodes in different documents compare false; stale handles return an error. */
+/* Reflected own disabled state, without inheritance from groups. Supports
+ * fieldsets and optgroups as well as individual controls; other elements
+ * return 0. Output stays unchanged on error. Owning thread only, no layout. */
+OuiStatus oui_element_is_own_disabled_v1(OuiElement* element, uint32_t* out_disabled);
+/* Query shared native own/inherited disabled state without layout. Includes
+ * fieldset first-legend and direct optgroup/option rules. Reflected attributes
+ * and OUI_CONTROL_DISABLED retain their own-state meaning. Output is 0 or 1;
+ * it stays unchanged on error. Call only on the document's owning thread. */
+OuiStatus oui_element_is_effectively_disabled_v1(OuiElement* element, uint32_t* out_disabled);
 OuiStatus oui_element_is_connected_v1(OuiElement* element, uint32_t* out_connected);
 OuiStatus oui_element_is_same_node_v1(OuiElement* first, OuiElement* second, uint32_t* out_same);
 /* Replace range without INPUT/CHANGE. Queues selection notifications when value

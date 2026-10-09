@@ -826,21 +826,57 @@ impl Engine {
         Ok(())
     }
 
+    /// Validate a move without changing the tree or focus.
+    pub fn validate_append_or_move_child(
+        &self,
+        parent: NodeHandle,
+        child: NodeHandle,
+    ) -> Result<(), EngineError> {
+        let mut ancestor = self.resolve(parent)?;
+        let child = self.resolve(child)?;
+        while !ancestor.is_none() {
+            if ancestor == child {
+                return Err(EngineError::Cycle);
+            }
+            ancestor = self.document.node(ancestor).parent;
+        }
+        Ok(())
+    }
+
+    /// Validate an insertion before callbacks can change its operands.
+    pub fn validate_insert_before(
+        &self,
+        parent: NodeHandle,
+        child: NodeHandle,
+        before: NodeHandle,
+    ) -> Result<(), EngineError> {
+        self.validate_append_or_move_child(parent, child)?;
+        let parent = self.resolve(parent)?;
+        let before = self.resolve(before)?;
+        if self.document.node(before).parent != parent {
+            return Err(EngineError::InvalidSibling);
+        }
+        Ok(())
+    }
+
+    /// Validate a detach without clearing focus or presentation state.
+    pub fn validate_detach(&self, handle: NodeHandle) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
+        if node == self.document.root() {
+            return Err(EngineError::RootRemoval);
+        }
+        Ok(())
+    }
+
     /// Append a node, moving it from its existing parent when necessary.
     pub fn append_or_move_child(
         &mut self,
         parent: NodeHandle,
         child: NodeHandle,
     ) -> Result<(), EngineError> {
+        self.validate_append_or_move_child(parent, child)?;
         let parent_node = self.resolve(parent)?;
         let child_node = self.resolve(child)?;
-        let mut ancestor = parent_node;
-        while !ancestor.is_none() {
-            if ancestor == child_node {
-                return Err(EngineError::Cycle);
-            }
-            ancestor = self.document.node(ancestor).parent;
-        }
         self.document.detach(child_node);
         self.document.append_child(parent_node, child_node);
         self.refresh_inherited_styles(child_node)?;
@@ -855,21 +891,12 @@ impl Engine {
         child: NodeHandle,
         before: NodeHandle,
     ) -> Result<(), EngineError> {
+        self.validate_insert_before(parent, child, before)?;
         let parent_node = self.resolve(parent)?;
         let child_node = self.resolve(child)?;
         let before_node = self.resolve(before)?;
         if child_node == before_node {
             return Ok(());
-        }
-        if self.document.node(before_node).parent != parent_node {
-            return Err(EngineError::InvalidSibling);
-        }
-        let mut ancestor = parent_node;
-        while !ancestor.is_none() {
-            if ancestor == child_node {
-                return Err(EngineError::Cycle);
-            }
-            ancestor = self.document.node(ancestor).parent;
         }
         self.document.detach(child_node);
         self.document.insert_before(before_node, child_node);
@@ -1023,7 +1050,16 @@ impl Engine {
             .focused
             .is_some_and(|focused| handles.contains(&focused))
         {
+            if let Some(focused) = self.focused {
+                if let Ok(node) = self.resolve(focused) {
+                    self.document
+                        .node_mut(node)
+                        .attributes
+                        .remove("data-oui-focused");
+                }
+            }
             self.focused = None;
+            self.focus_visible = false;
         }
         self.pointer_capture
             .retain(|_, captured| !handles.contains(captured));
@@ -1171,6 +1207,8 @@ impl Engine {
         self.mark_dirty(
             if name == "open" && self.document.node(node).tag == ElementTag::Details {
                 InvalidationClass::Subtree
+            } else if name == "disabled" {
+                InvalidationClass::Paint
             } else if self.control_attribute_changes_geometry(node, &name) {
                 InvalidationClass::Intrinsic
             } else {
@@ -1211,6 +1249,8 @@ impl Engine {
                     && self.document.node(node).tag == ElementTag::Details
                 {
                     InvalidationClass::Subtree
+                } else if name.eq_ignore_ascii_case("disabled") {
+                    InvalidationClass::Paint
                 } else if self.control_attribute_changes_geometry(node, &name.to_ascii_lowercase())
                 {
                     InvalidationClass::Intrinsic

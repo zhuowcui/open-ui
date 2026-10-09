@@ -1297,7 +1297,10 @@ pub extern "C" fn oui_element_append_child(
         let parent = element(parent as usize)?;
         let child = element(child as usize)?;
         let state = same_document(&parent, &child)?;
-        borrow_engine_mut(&state)?.append_child(parent.node, child.node)?;
+        state
+            .native
+            .append_child_for_native_facade(parent.node, child.node)
+            .map_err(native_app::native_error)?;
         Ok(())
     })
 }
@@ -1320,7 +1323,10 @@ pub extern "C" fn oui_element_insert_before(
                 "elements belong to different documents",
             ));
         }
-        borrow_engine_mut(&state)?.insert_before(parent.node, child.node, before.node)?;
+        state
+            .native
+            .insert_before_for_native_facade(parent.node, child.node, before.node)
+            .map_err(native_app::native_error)?;
         Ok(())
     })
 }
@@ -1335,7 +1341,14 @@ pub extern "C" fn oui_element_remove(element_handle: *mut OuiElement) -> OuiStat
 // The retained node and handle remain valid for later reattachment.
 #[no_mangle]
 pub extern "C" fn oui_element_detach(element_handle: *mut OuiElement) -> OuiStatus {
-    ffi(|| with_element_mut(element_handle as usize, Engine::detach))
+    ffi(|| {
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        state
+            .native
+            .detach_for_native_facade(element.node)
+            .map_err(native_app::native_error)
+    })
 }
 
 // SAFETY CONTRACT: `element` is a live element handle owned by this thread.
@@ -1422,9 +1435,13 @@ pub extern "C" fn oui_element_remove_attribute(
         if name.is_empty() {
             return Err(invalid("attribute name is empty"));
         }
-        with_element_mut(element_handle as usize, |engine, node| {
-            engine.remove_attribute(node, &name).map(|_| ())
-        })
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        state
+            .native
+            .remove_attribute_for_native_facade(element.node, &name)
+            .map(|_| ())
+            .map_err(native_app::native_error)
     })
 }
 
@@ -2546,6 +2563,48 @@ pub extern "C" fn oui_element_replace_control_range_v1(
     })
 }
 
+// SAFETY CONTRACT: owning-thread live element; output is writable.
+#[no_mangle]
+pub extern "C" fn oui_element_is_own_disabled_v1(
+    element_handle: *mut OuiElement,
+    out_disabled: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_disabled.is_null() {
+            return Err(invalid("own disabled output is null"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let disabled = borrow_engine(&state)?.is_own_disabled(element.node)?;
+        // SAFETY: caller-owned writable output; all errors leave it unchanged.
+        unsafe {
+            ptr::write(out_disabled, u32::from(disabled));
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: owning-thread live element; output is writable.
+#[no_mangle]
+pub extern "C" fn oui_element_is_effectively_disabled_v1(
+    element_handle: *mut OuiElement,
+    out_disabled: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_disabled.is_null() {
+            return Err(invalid("effective disabled output is null"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let disabled = borrow_engine(&state)?.is_effectively_disabled(element.node)?;
+        // SAFETY: caller-owned writable output; all errors leave it unchanged.
+        unsafe {
+            ptr::write(out_disabled, u32::from(disabled));
+        }
+        Ok(())
+    })
+}
+
 // SAFETY CONTRACT: element is live on the owning thread, output is writable.
 #[no_mangle]
 pub extern "C" fn oui_element_is_connected_v1(
@@ -2885,50 +2944,10 @@ pub extern "C" fn oui_element_perform_accessibility_action(
         };
         let element = element(element_handle as usize)?;
         let state = element_document(&element)?;
-        match action {
-            AccessibilityAction::Focus => {
-                return state
-                    .native
-                    .focus_accessibility_element_for_native_facade(element.node)
-                    .map_err(native_app::native_error);
-            }
-            AccessibilityAction::Blur => {
-                return state
-                    .native
-                    .blur_element_for_native_facade(element.node)
-                    .map_err(native_app::native_error);
-            }
-            _ => {}
-        }
-        let ordinary_event_type = match &action {
-            AccessibilityAction::Click => Some(4),
-            _ => None,
-        };
-        if let Some(event_type) = ordinary_event_type {
-            let mut event = synthesized_event(event_type, value);
-            dispatch_event_to(
-                &state,
-                element.node,
-                element_handle as usize,
-                &mut event,
-                true,
-            )?;
-            return Ok(());
-        }
-
-        let changed = borrow_engine_mut(&state)?
-            .perform_accessibility_action(element.node, action)?
-            .changed;
-        for changed in changed {
-            let Ok(address) = element_address(&state, changed) else {
-                continue;
-            };
-            for event_type in [16, 17] {
-                let mut event = synthesized_event(event_type, value);
-                dispatch_event_to(&state, changed, address, &mut event, false)?;
-            }
-        }
-        Ok(())
+        state
+            .native
+            .perform_accessibility_action_for_native_facade(element.node, action)
+            .map_err(native_app::native_error)
     })
 }
 
@@ -6616,5 +6635,103 @@ mod tests {
         assert_eq!(out, 55);
         assert_eq!(oui_element_destroy(child), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+    }
+    #[test]
+    fn c_disabled_queries_preserve_outputs_on_invalid_stale_thread_and_borrow_errors() {
+        type Query = extern "C" fn(*mut OuiElement, *mut u32) -> OuiStatus;
+        let queries: [Query; 2] = [
+            oui_element_is_own_disabled_v1,
+            oui_element_is_effectively_disabled_v1,
+        ];
+        let doc = create_document(64, 64);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(doc, &mut root), OuiStatus::Ok);
+        let fieldset = create_element(doc, 27, root);
+        let input = create_element(doc, 23, fieldset);
+        assert_eq!(
+            oui_element_set_attribute(fieldset, text("disabled"), empty_utf8()),
+            OuiStatus::Ok
+        );
+        let mut output = 55;
+        assert_eq!(
+            oui_element_is_own_disabled_v1(input, &mut output),
+            OuiStatus::Ok
+        );
+        assert_eq!(output, 0);
+        assert_eq!(
+            oui_element_is_effectively_disabled_v1(input, &mut output),
+            OuiStatus::Ok
+        );
+        assert_eq!(output, 1);
+        let mut flags = 99;
+        assert_eq!(
+            oui_element_get_control_flags(input, &mut flags),
+            OuiStatus::Ok
+        );
+        assert_eq!(flags & 1, 0);
+        for query in queries {
+            output = 55;
+            assert_eq!(query(input, ptr::null_mut()), OuiStatus::InvalidArgument);
+            assert_eq!(output, 55);
+            assert_eq!(
+                query(ptr::null_mut(), &mut output),
+                OuiStatus::InvalidArgument
+            );
+            assert_eq!(output, 55);
+            assert_eq!(
+                query(1usize as *mut OuiElement, &mut output),
+                OuiStatus::InvalidHandle
+            );
+            assert_eq!(output, 55);
+        }
+        let state = document(doc as usize).unwrap();
+        let held = borrow_engine_mut(&state).unwrap();
+        for query in queries {
+            output = 55;
+            assert_eq!(query(input, &mut output), OuiStatus::Reentrant);
+            assert_eq!(output, 55);
+        }
+        drop(held);
+        drop(state);
+        let address = input as usize;
+        std::thread::spawn(move || {
+            for query in queries {
+                let mut output = 55;
+                assert_eq!(
+                    query(address as *mut OuiElement, &mut output),
+                    OuiStatus::WrongThread
+                );
+                assert_eq!(output, 55);
+            }
+        })
+        .join()
+        .unwrap();
+        assert_eq!(oui_element_detach(fieldset), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_is_effectively_disabled_v1(input, &mut output),
+            OuiStatus::Ok
+        );
+        assert_eq!(output, 1);
+        assert_eq!(oui_element_append_child(root, input), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_is_effectively_disabled_v1(input, &mut output),
+            OuiStatus::Ok
+        );
+        assert_eq!(output, 0);
+        assert_eq!(oui_element_remove(input), OuiStatus::Ok);
+        for query in queries {
+            output = 55;
+            assert_eq!(query(input, &mut output), OuiStatus::StaleHandle);
+            assert_eq!(output, 55);
+        }
+        assert_eq!(oui_document_destroy(doc), OuiStatus::Ok);
+        for query in queries {
+            output = 55;
+            assert_eq!(query(root, &mut output), OuiStatus::InvalidHandle);
+            assert_eq!(output, 55);
+        }
+        for handle in [input, fieldset, root] {
+            assert_eq!(oui_element_destroy(handle), OuiStatus::Ok);
+        }
     }
 }

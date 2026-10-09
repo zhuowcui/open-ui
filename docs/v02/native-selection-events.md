@@ -87,10 +87,12 @@ integer event arrays. Typed `OuiEventType` arrays fix the compile failure;
 the failed run remains preserved. A first workspace run stopped at the build
 disk reserve before producing test results. Those actual failures are recorded.
 
-Disabling a fieldset fails ten of sixteen native focus checks, repeated
-unchanged, against Chromium. That probe observes focus identity only. Complete
-inherited disabled state, first-legend behavior, native event rows, structural
-mutation and appearance remain to be implemented and verified. Composition,
+The earlier fieldset probe failed ten of sixteen focus checks on `fcabea38`.
+The integrated [native disabled groups](native-disabled-groups.md) address
+inherited eligibility, first-legend rules, native focus events and structural
+mutation. Private `f6777047` matches 88 scenarios in each of Rust, C and C++;
+fresh public combined verification is pending. Default appearance and complete
+checkable state/callback behavior remain open. Composition,
 UTF-16 positions splitting a surrogate pair, other required native APIs,
 full-corpus pixels and release qualification remain open. Existing C composition
 dispatch needs the shared Rust lifecycle. A script in a Chromium reference test

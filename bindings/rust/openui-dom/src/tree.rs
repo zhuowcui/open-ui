@@ -377,6 +377,73 @@ impl Document {
         doc
     }
 
+    /// Own reflected disabled state, without inheritance from a group.
+    pub fn own_form_control_disabled(&self, id: NodeId) -> bool {
+        let node = self.node(id);
+        node.form_control_disabled
+            || (matches!(
+                node.tag,
+                ElementTag::Button
+                    | ElementTag::Input
+                    | ElementTag::TextArea
+                    | ElementTag::Select
+                    | ElementTag::Fieldset
+                    | ElementTag::OptGroup
+                    | ElementTag::Option
+            ) && node.attributes.contains_key("disabled"))
+    }
+
+    /// Resolve disabled state from the retained control input and authored tree.
+    /// First-legend exceptions use DOM child order, regardless of display style.
+    /// Reflected attributes and the control's own disabled flag remain unchanged.
+    pub fn effective_form_control_disabled(&self, id: NodeId) -> bool {
+        let node = self.node(id);
+        if self.own_form_control_disabled(id) {
+            return true;
+        }
+        if !matches!(
+            node.tag,
+            ElementTag::Button
+                | ElementTag::Input
+                | ElementTag::TextArea
+                | ElementTag::Select
+                | ElementTag::Fieldset
+                | ElementTag::OptGroup
+                | ElementTag::Option
+        ) {
+            return false;
+        }
+        if node.tag == ElementTag::Option {
+            return !node.parent.is_none()
+                && self.node(node.parent).tag == ElementTag::OptGroup
+                && self.own_form_control_disabled(node.parent);
+        }
+        if node.tag == ElementTag::OptGroup {
+            return false;
+        }
+        let mut branch = id;
+        let mut parent = node.parent;
+        while !parent.is_none() {
+            let ancestor = self.node(parent);
+            if ancestor.tag == ElementTag::Fieldset && self.own_form_control_disabled(parent) {
+                let branch_node = self.node(branch);
+                if branch_node.tag != ElementTag::Legend || branch_node.pseudo_kind.is_some() {
+                    return true;
+                }
+                let first_legend = self.children(parent).find(|child| {
+                    let data = self.node(*child);
+                    data.tag == ElementTag::Legend && data.pseudo_kind.is_none()
+                });
+                if first_legend != Some(branch) {
+                    return true;
+                }
+            }
+            branch = parent;
+            parent = ancestor.parent;
+        }
+        false
+    }
+
     pub fn raster_configuration(&self) -> RasterConfiguration {
         self.raster_configuration
     }

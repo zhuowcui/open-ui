@@ -438,7 +438,8 @@ impl Engine {
             let is_range = self
                 .controls
                 .get(&range.index)
-                .is_some_and(|control| control.role == FormControlRole::Range && !control.disabled);
+                .is_some_and(|control| control.role == FormControlRole::Range)
+                && !self.is_disabled(range);
             let bounds = is_range.then(|| self.bounds(range)).transpose()?.flatten();
             bounds
                 .filter(|bounds| bounds.width > 0.0)
@@ -748,7 +749,7 @@ impl Engine {
     pub fn can_edit_text(&self, handle: NodeHandle) -> Result<bool, EngineError> {
         let node = self.resolve(handle)?;
         Ok(self.controls.get(&handle.index).is_some_and(|control| {
-            !control.disabled
+            !self.is_disabled(handle)
                 && is_editable_role(control.role)
                 && self.document.attribute(node, "readonly").is_none()
         }))
@@ -786,12 +787,15 @@ impl Engine {
         {
             return Err(EngineError::NotEditable);
         }
+        if self.is_disabled(handle) {
+            return Err(EngineError::NotEditable);
+        }
         let (value, changed) = {
             let control = self
                 .controls
                 .get_mut(&handle.index)
                 .ok_or(EngineError::NotEditable)?;
-            if control.disabled || !is_editable_role(control.role) {
+            if !is_editable_role(control.role) {
                 return Err(EngineError::NotEditable);
             }
             control.finish_composition();
@@ -1019,7 +1023,7 @@ impl Engine {
             .get(&handle.index)
             .cloned()
             .ok_or(EngineError::NotAControl)?;
-        if state.disabled {
+        if self.is_disabled(handle) {
             return Ok(ActivationResult { changed: vec![] });
         }
         match state.role {
@@ -1059,9 +1063,11 @@ impl Engine {
                         slot.node.map(|_| self.handle_for_slot(index as u32))
                     })
                     .filter(|node| {
-                        self.controls.get(&node.index).is_some_and(|control| {
-                            control.role == FormControlRole::Radio && !control.disabled
-                        }) && self.attribute(*node, "name").ok().flatten() == Some(name.as_str())
+                        self.controls
+                            .get(&node.index)
+                            .is_some_and(|control| control.role == FormControlRole::Radio)
+                            && !self.is_disabled(*node)
+                            && self.attribute(*node, "name").ok().flatten() == Some(name.as_str())
                     })
                     .collect();
                 let Some(index) = radios.iter().position(|node| *node == handle) else {
@@ -1140,7 +1146,7 @@ impl Engine {
             .get(&handle.index)
             .cloned()
             .ok_or(EngineError::NotAControl)?;
-        if state.role != FormControlRole::Range || state.disabled {
+        if state.role != FormControlRole::Range || self.is_disabled(handle) {
             return Ok(false);
         }
         let low = state.min.min(state.max);
@@ -1306,10 +1312,21 @@ impl Engine {
         Ok(result)
     }
 
+    /// Query the control's own disabled state, without group inheritance.
+    pub fn is_own_disabled(&self, handle: NodeHandle) -> Result<bool, EngineError> {
+        let node = self.resolve(handle)?;
+        Ok(self.document.own_form_control_disabled(node))
+    }
+
+    /// Query own or inherited disabled state without layout or mutation.
+    /// Invalid and foreign handles fail before the retained tree is accessed.
+    pub fn is_effectively_disabled(&self, handle: NodeHandle) -> Result<bool, EngineError> {
+        let node = self.resolve(handle)?;
+        Ok(self.document.effective_form_control_disabled(node))
+    }
+
     fn is_disabled(&self, handle: NodeHandle) -> bool {
-        self.controls
-            .get(&handle.index)
-            .is_some_and(|control| control.disabled)
+        self.is_effectively_disabled(handle).unwrap_or(false)
     }
 
     pub(crate) fn is_focusable(&self, handle: NodeHandle) -> bool {
@@ -1321,6 +1338,17 @@ impl Engine {
             || !self.is_inside_modal(handle)
         {
             return false;
+        }
+        // A hidden ancestor suppresses the native focus target even when its
+        // descendants have retained control state. This reads style only and
+        // does not force layout before synchronous focus callbacks.
+        let mut ancestor = node;
+        while !ancestor.is_none() {
+            let data = self.document.node(ancestor);
+            if data.style.display == openui_style::Display::None {
+                return false;
+            }
+            ancestor = data.parent;
         }
         let tabindex = self
             .attribute(handle, "tabindex")

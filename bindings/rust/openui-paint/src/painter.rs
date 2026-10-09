@@ -2104,9 +2104,9 @@ fn paint_passive_media_icon(
     canvas.restore();
 }
 
-/// Paint deterministic passive platform controls. Interactive state is out of
-/// scope, but the initial Linux Chromium geometry is stable and belongs to the
-/// public form-control role rather than to any individual test.
+/// Paint native controls from retained shared state. Linux Chromium geometry
+/// and colors belong to the public control role; effective disabled state uses
+/// the same authored-tree query as interaction and accessibility.
 fn paint_form_control(
     canvas: &Canvas,
     fragment: &Fragment,
@@ -2139,7 +2139,7 @@ fn paint_form_control(
                 doc,
                 abs_offset,
                 opacity_multiplier,
-                doc.node(fragment.node_id).form_control_disabled,
+                doc.effective_form_control_disabled(fragment.node_id),
             );
             paint_native_input_button_corners(canvas, fragment, abs_offset, opacity_multiplier);
             paint_color_input_control(
@@ -2198,7 +2198,7 @@ fn paint_form_control(
                     doc,
                     abs_offset,
                     opacity_multiplier,
-                    doc.node(fragment.node_id).form_control_disabled,
+                    doc.effective_form_control_disabled(fragment.node_id),
                 );
                 if doc.node(fragment.node_id).tag == ElementTag::Input {
                     paint_native_input_button_corners(
@@ -2713,7 +2713,7 @@ fn paint_checkable_control(
     if !(checked || indeterminate) {
         return;
     }
-    let mark_color = if node.form_control_disabled {
+    let mark_color = if doc.effective_form_control_disabled(fragment.node_id) {
         Color::from_rgba8(128, 128, 128, 255)
     } else {
         Color::from_rgba8(0, 117, 255, 255)
@@ -3751,7 +3751,7 @@ fn paint_scroll_button_control(
         );
     };
 
-    let disabled = doc.node(fragment.node_id).form_control_disabled;
+    let disabled = doc.effective_form_control_disabled(fragment.node_id);
     let face = if disabled { 238 } else { 239 };
     for &(dx, dy) in &[(2.0, 1.0), (1.0, 2.0), (2.0, 2.0)] {
         for (sx, sy) in [
@@ -11988,7 +11988,7 @@ fn paint_text_fragment(
             let ancestor_node = doc.node(ancestor);
             if ancestor_node.form_control == Some(openui_dom::FormControlRole::Button)
                 && ancestor_node.form_control_native_appearance
-                && !ancestor_node.form_control_disabled
+                && !doc.effective_form_control_disabled(ancestor)
             {
                 found = true;
                 break;
@@ -16316,7 +16316,9 @@ fn paint_fragment_box_decoration(
                 adjusted.border_right_width = painted_border;
                 adjusted.border_bottom_width = painted_border;
                 adjusted.border_left_width = painted_border;
-                if (native_button_theme || native_color_theme) && node.form_control_disabled {
+                if (native_button_theme || native_color_theme)
+                    && doc.effective_form_control_disabled(fragment.node_id)
+                {
                     adjusted.background_color = Color::from_rgba8(238, 238, 238, 255);
                     let border =
                         openui_style::StyleColor::Resolved(Color::from_rgba8(208, 208, 208, 255));
@@ -16372,7 +16374,7 @@ fn paint_fragment_box_decoration(
             opacity_multiplier,
             style.device_scale_factor,
             style.has_outline(),
-            node.form_control_disabled,
+            doc.effective_form_control_disabled(fragment.node_id),
         );
         return;
     }

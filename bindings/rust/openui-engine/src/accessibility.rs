@@ -242,6 +242,32 @@ impl Engine {
         action: AccessibilityAction,
     ) -> Result<ActivationResult, EngineError> {
         self.resolve(handle)?;
+        let disabled = self.is_effectively_disabled(handle)?;
+        if disabled
+            && matches!(
+                action,
+                AccessibilityAction::SetValue(_)
+                    | AccessibilityAction::ReplaceSelectedText(_)
+                    | AccessibilityAction::SetTextSelection { .. }
+            )
+        {
+            return Err(EngineError::NotEditable);
+        }
+        if disabled
+            && matches!(
+                action,
+                AccessibilityAction::Click
+                    | AccessibilityAction::Increment
+                    | AccessibilityAction::Decrement
+                    | AccessibilityAction::Expand
+                    | AccessibilityAction::Collapse
+                    | AccessibilityAction::SetValue(_)
+                    | AccessibilityAction::ReplaceSelectedText(_)
+                    | AccessibilityAction::SetTextSelection { .. }
+            )
+        {
+            return Ok(ActivationResult { changed: vec![] });
+        }
         match action {
             AccessibilityAction::Click => self.activate(handle),
             AccessibilityAction::Focus => {
@@ -569,12 +595,20 @@ impl Engine {
         if let Some(bounds) = self.accessibility_bounds(dom_id) {
             node.set_bounds(bounds);
         }
+        if self.is_effectively_disabled(handle)? {
+            node.set_disabled();
+        }
         if self.is_focusable(handle) {
             node.add_action(Action::Focus);
             node.add_action(Action::Blur);
         }
         if let Some(control) = control {
-            populate_control_accessibility(&mut node, control, self.can_edit_text(handle)?);
+            populate_control_accessibility(
+                &mut node,
+                control,
+                self.can_edit_text(handle)?,
+                self.is_effectively_disabled(handle)?,
+            );
         } else if matches!(data.tag, ElementTag::Summary) {
             node.add_action(Action::Click);
         } else if data.tag == ElementTag::Details {
@@ -641,19 +675,30 @@ impl Engine {
     }
 }
 
-fn populate_control_accessibility(node: &mut Node, control: &crate::ControlState, editable: bool) {
-    if control.disabled {
+fn populate_control_accessibility(
+    node: &mut Node,
+    control: &crate::ControlState,
+    editable: bool,
+    disabled: bool,
+) {
+    if disabled {
         node.set_disabled();
     }
     match control.role {
-        FormControlRole::Button => node.add_action(Action::Click),
+        FormControlRole::Button => {
+            if !disabled {
+                node.add_action(Action::Click);
+            }
+        }
         FormControlRole::Checkbox | FormControlRole::Radio => {
             node.set_toggled(if control.indeterminate {
                 Toggled::Mixed
             } else {
                 control.checked.into()
             });
-            node.add_action(Action::Click);
+            if !disabled {
+                node.add_action(Action::Click);
+            }
         }
         FormControlRole::TextInput | FormControlRole::TextArea => {
             node.set_value(&control.value);
@@ -664,18 +709,24 @@ fn populate_control_accessibility(node: &mut Node, control: &crate::ControlState
                 node.add_action(Action::SetValue);
                 node.add_action(Action::ReplaceSelectedText);
             }
-            node.add_action(Action::SetTextSelection);
+            if !disabled {
+                node.add_action(Action::SetTextSelection);
+            }
         }
         FormControlRole::Select => {
             node.set_value(&control.value);
             node.set_expanded(control.open);
-            node.add_action(Action::Click);
-            node.add_action(Action::Increment);
-            node.add_action(Action::Decrement);
+            if !disabled {
+                node.add_action(Action::Click);
+                node.add_action(Action::Increment);
+                node.add_action(Action::Decrement);
+            }
         }
         FormControlRole::Option => {
             node.set_selected(control.selected);
-            node.add_action(Action::Click);
+            if !disabled {
+                node.add_action(Action::Click);
+            }
         }
         FormControlRole::Range => {
             let value = control.value.parse::<f64>().unwrap_or(control.min);
@@ -683,9 +734,11 @@ fn populate_control_accessibility(node: &mut Node, control: &crate::ControlState
             node.set_min_numeric_value(control.min);
             node.set_max_numeric_value(control.max);
             node.set_numeric_value_step(control.step);
-            node.add_action(Action::Increment);
-            node.add_action(Action::Decrement);
-            node.add_action(Action::SetValue);
+            if !disabled {
+                node.add_action(Action::Increment);
+                node.add_action(Action::Decrement);
+                node.add_action(Action::SetValue);
+            }
         }
         _ => {}
     }

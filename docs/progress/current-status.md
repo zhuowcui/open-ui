@@ -63,10 +63,12 @@ Focused **640/640** and primitive **960/960** are exact. Original
 with zero errors. All Chromium reference fields stay fixed, with no exact
 losses or worsened rows against `5b05e1b5`. Both full pixel gates still exit 1.
 Composition, complete native APIs, reviewed pixel ownership, compositor and
-release qualification remain open. A native group-control probe repeats 16
-focus checks: six match and ten differ when a fieldset is disabled. Effective
-state and event delivery remain unqualified. That requires shared native Rust
-work. Open UI runs no JavaScript.
+release qualification remain open. The earlier fieldset focus failure is
+addressed by the integrated native disabled groups. Private `f6777047`
+matches 88 Rust scenarios and 88 scenarios in each of C and C++; the combined
+public checkpoint still requires fresh verification. Default control appearance
+and complete checkbox/radio behavior remain unqualified. Open UI runs no
+JavaScript. See the [native disabled groups](../v02/native-disabled-groups.md).
 [Completed public API evidence](../renderer/generated/native-selection-public-v1.json).
 
 The [native text commit trial](../v02/native-text-commit.md) remains private and unapplied.

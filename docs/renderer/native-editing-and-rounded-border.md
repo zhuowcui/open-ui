@@ -118,7 +118,8 @@ The pending public verification and C property-query requirements above are
 superseded for this measured selection/query/metadata scope by the
 [completed public evidence](generated/native-selection-public-v1.json).
 Older private scopes remain historical measurements. Composition and complete
-native API parity stay open. A fieldset probe has ten focus differences in
-sixteen repeated checks; effective state, events, structural mutation and
-appearance remain unqualified. These need shared native Rust implementation.
-Open UI never runs JavaScript.
+native API parity stay open. The earlier fieldset focus gap is addressed by
+the integrated [native disabled groups](../v02/native-disabled-groups.md),
+with 88 exact scenarios in each of Rust, C and C++ at private `f6777047`.
+Fresh public combined verification is pending. Default native appearance and
+complete checkbox/radio behavior remain unqualified. Open UI runs no JavaScript.
