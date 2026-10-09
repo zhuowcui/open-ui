@@ -1,0 +1,775 @@
+{
+  "all_native_apis_qualified": false,
+  "archived_openui_images_are_history_only": true,
+  "c_consumers": 25,
+  "c_cpp_app_source": {
+    "clean": true,
+    "commit": "cef6a7ebfed66759db77cbdb424432481658722f",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "2f6d4d18fffcda905ad99ae2a86955f1bb0da410cced96959dd851656c50aef9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "c_exact_behavior_rows": 220,
+  "c_exports": 128,
+  "c_layouts": 34,
+  "code_patch": {
+    "base_commit": "6ba3ef5841d043bdb895f7f90068c8624cbe7519",
+    "decoded_sha256": "91de71424d73e60081c48af46c84514d22bd3ed9c8c98bb57197043454d8b12b",
+    "measured_c_cpp_app_commit": "cef6a7ebfed66759db77cbdb424432481658722f",
+    "only_trailing_c_whitespace_changed_after_measurement": true,
+    "path": "docs/renderer/evidence/native-checkable-private-v1/native-checkable-private-v1.patch.gz",
+    "private_commit": "cc33649108719eed60b64110ba0a91f69cdcb53b",
+    "sha256": "f58dd3d2505dd9faa59f5645706d8d3b9f3004d68765ac1abfa98759527c96a6"
+  },
+  "cpp_consumers": 19,
+  "cpp_exact_behavior_rows": 220,
+  "evidence": [
+    {
+      "decoded_sha256": "a09ae264d6a8312b95feb47be820e7aaa63bb8f1757bdcef004f8494e45925d2",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3312/clean-local-packages.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3312-clean-local-packages.log.gz",
+      "sha256": "728e1bf75ed7955a6159294596cd5eab98d8cd74645c147d39e08c155ce4bf62"
+    },
+    {
+      "decoded_sha256": "f91cffa8dccef09a9ad6366182e3f5746c444cb214ad54d897fea29464903cae",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3312/control-tests.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3312-control-tests.log.gz",
+      "sha256": "6152e7617e928faa73b3f2a6a52ed05c1af0bffef1a556b719feeadfd5210f2a"
+    },
+    {
+      "decoded_sha256": "e2fa95da5aaedb6a0d9b66fcaa7d5ba5d0ec03c17ce1062f969bc18e8e76a006",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3312/locked-metadata.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3312-locked-metadata.log.gz",
+      "sha256": "5d51d84a5e81c334ec9765ad2f07d467981cf6ac88476799d562aca59c6ab546"
+    },
+    {
+      "decoded_sha256": "a2add94eb5b2baca47347988cbec74e18fb5a3def601dbe87ebb947536089333",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3312/receipt.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3312-receipt.json.gz",
+      "sha256": "23b9270bd30460a9430be3354fb7a9b58496a8f32c9f6d809d81946f4bae3ddb"
+    },
+    {
+      "decoded_sha256": "0883fe5dc2bf4616cf6ffca6de976866c45c57decf23d2092f68713626b31bda",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/all-c-cpp-consumers.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-all-c-cpp-consumers.log.gz",
+      "sha256": "d34ba62b70e9a51ae0718eec79e072827dd8cda413b6f82b4e6ef46860b4a7b3"
+    },
+    {
+      "decoded_sha256": "361f6bb6061d275dc82bc9b44137da154fdda9d58d0f22959b983d5d62fdf0ed",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/clean-local-packages.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-clean-local-packages.log.gz",
+      "sha256": "7a9e5532264df39704b43fba9aa489d57b97910e4eb203c4645ed02107f2729b"
+    },
+    {
+      "decoded_sha256": "5a5bc87d6245faae6c5f7bba5f2e4e113a748e533f7e2e7fbf1d0f34ed2b8a14",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/control-tests.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-control-tests.log.gz",
+      "sha256": "c8be63e0b547fd92cb0e95d4c5671213369293a4a643897b7176faba8da8849c"
+    },
+    {
+      "decoded_sha256": "09886f467b36fb7b81f8158ed81c604672d8f6d38b8db5dba343412fd0d9e4c2",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/ffi-library-build.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-ffi-library-build.log.gz",
+      "sha256": "b9652a3ddfa6cfad50c69bcdd5463c5d6d6a45348dc9798e9faa256170e1a4df"
+    },
+    {
+      "decoded_sha256": "e2fa95da5aaedb6a0d9b66fcaa7d5ba5d0ec03c17ce1062f969bc18e8e76a006",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/locked-metadata.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-locked-metadata.log.gz",
+      "sha256": "5d51d84a5e81c334ec9765ad2f07d467981cf6ac88476799d562aca59c6ab546"
+    },
+    {
+      "decoded_sha256": "bdd0eaf11840c35537f6822c6d4c1a2fe1c80b5fa307ac8a79c6069ec43362b3",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native-app-build.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native-app-build.log.gz",
+      "sha256": "5bfdb4595e221a52a2657512b3089cd4c09c50e4607eb7c85611e6d50f02f680"
+    },
+    {
+      "decoded_sha256": "0ae188c4b63a326885e50ef02db07337d9ba81c507bf5d37c6330f4dd8093ed5",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native-focus-integration-guards.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native-focus-integration-guards.log.gz",
+      "sha256": "3a52774dfb1e92396a5f3a029e1c6b5b074ea90219d02fd227b42c2a97c4a569"
+    },
+    {
+      "decoded_sha256": "3ef4f3fa9b8fdb5f257ca78a51b7da32c5889e0a54607773db7b0953bfe6e8ac",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_checkable-dispatch-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_checkable-dispatch-1.json.gz",
+      "sha256": "a28bb9b7dc3d43f9da94945c7f0b77b47d81bad098deb6a590436911f9abe2d3"
+    },
+    {
+      "decoded_sha256": "3ef4f3fa9b8fdb5f257ca78a51b7da32c5889e0a54607773db7b0953bfe6e8ac",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_checkable-dispatch-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_checkable-dispatch-1.log.gz",
+      "sha256": "a28bb9b7dc3d43f9da94945c7f0b77b47d81bad098deb6a590436911f9abe2d3"
+    },
+    {
+      "decoded_sha256": "3ef4f3fa9b8fdb5f257ca78a51b7da32c5889e0a54607773db7b0953bfe6e8ac",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_checkable-dispatch-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_checkable-dispatch-2.json.gz",
+      "sha256": "a28bb9b7dc3d43f9da94945c7f0b77b47d81bad098deb6a590436911f9abe2d3"
+    },
+    {
+      "decoded_sha256": "3ef4f3fa9b8fdb5f257ca78a51b7da32c5889e0a54607773db7b0953bfe6e8ac",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_checkable-dispatch-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_checkable-dispatch-2.log.gz",
+      "sha256": "a28bb9b7dc3d43f9da94945c7f0b77b47d81bad098deb6a590436911f9abe2d3"
+    },
+    {
+      "decoded_sha256": "388b2fc160f262d1bedc122e60ee2284a57c935489ff1fa0351a6d8dc47204b5",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_checkable-reference-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_checkable-reference-1.json.gz",
+      "sha256": "c8671cb9c214efac3b8469f312fea5c4dd1c07b843287371886260b7226a24a1"
+    },
+    {
+      "decoded_sha256": "388b2fc160f262d1bedc122e60ee2284a57c935489ff1fa0351a6d8dc47204b5",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_checkable-reference-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_checkable-reference-1.log.gz",
+      "sha256": "c8671cb9c214efac3b8469f312fea5c4dd1c07b843287371886260b7226a24a1"
+    },
+    {
+      "decoded_sha256": "388b2fc160f262d1bedc122e60ee2284a57c935489ff1fa0351a6d8dc47204b5",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_checkable-reference-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_checkable-reference-2.json.gz",
+      "sha256": "c8671cb9c214efac3b8469f312fea5c4dd1c07b843287371886260b7226a24a1"
+    },
+    {
+      "decoded_sha256": "388b2fc160f262d1bedc122e60ee2284a57c935489ff1fa0351a6d8dc47204b5",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_checkable-reference-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_checkable-reference-2.log.gz",
+      "sha256": "c8671cb9c214efac3b8469f312fea5c4dd1c07b843287371886260b7226a24a1"
+    },
+    {
+      "decoded_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_disabled_focus-regression-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_disabled_focus-regression-1.json.gz",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3"
+    },
+    {
+      "decoded_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_disabled_focus-regression-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_disabled_focus-regression-1.log.gz",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3"
+    },
+    {
+      "decoded_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_disabled_focus-regression-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_disabled_focus-regression-2.json.gz",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3"
+    },
+    {
+      "decoded_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_disabled_focus-regression-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_disabled_focus-regression-2.log.gz",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3"
+    },
+    {
+      "decoded_sha256": "5e8930e3d833336820919c055d4f40041b888cd0dce6d9f22b4e3cddf1336a97",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_fieldset-focus-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_fieldset-focus-1.json.gz",
+      "sha256": "651bc8b33cfee4ed8e244cf03db5eb04f35e63105690ddaafead94dd31719f8b"
+    },
+    {
+      "decoded_sha256": "5e8930e3d833336820919c055d4f40041b888cd0dce6d9f22b4e3cddf1336a97",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_fieldset-focus-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_fieldset-focus-1.log.gz",
+      "sha256": "651bc8b33cfee4ed8e244cf03db5eb04f35e63105690ddaafead94dd31719f8b"
+    },
+    {
+      "decoded_sha256": "5e8930e3d833336820919c055d4f40041b888cd0dce6d9f22b4e3cddf1336a97",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_fieldset-focus-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_fieldset-focus-2.json.gz",
+      "sha256": "651bc8b33cfee4ed8e244cf03db5eb04f35e63105690ddaafead94dd31719f8b"
+    },
+    {
+      "decoded_sha256": "5e8930e3d833336820919c055d4f40041b888cd0dce6d9f22b4e3cddf1336a97",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_fieldset-focus-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_fieldset-focus-2.log.gz",
+      "sha256": "651bc8b33cfee4ed8e244cf03db5eb04f35e63105690ddaafead94dd31719f8b"
+    },
+    {
+      "decoded_sha256": "64c77292ea6926dea429605bd4ed72cb4cc7bbe7b9c98f62b583e9d35b26210a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_fieldset-neighbors-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_fieldset-neighbors-1.json.gz",
+      "sha256": "1a08df2121e756c7c98de6adf7798c2b2ff395add6075e9de987b6c3aaff21b8"
+    },
+    {
+      "decoded_sha256": "64c77292ea6926dea429605bd4ed72cb4cc7bbe7b9c98f62b583e9d35b26210a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_fieldset-neighbors-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_fieldset-neighbors-1.log.gz",
+      "sha256": "1a08df2121e756c7c98de6adf7798c2b2ff395add6075e9de987b6c3aaff21b8"
+    },
+    {
+      "decoded_sha256": "64c77292ea6926dea429605bd4ed72cb4cc7bbe7b9c98f62b583e9d35b26210a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_fieldset-neighbors-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_fieldset-neighbors-2.json.gz",
+      "sha256": "1a08df2121e756c7c98de6adf7798c2b2ff395add6075e9de987b6c3aaff21b8"
+    },
+    {
+      "decoded_sha256": "64c77292ea6926dea429605bd4ed72cb4cc7bbe7b9c98f62b583e9d35b26210a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_fieldset-neighbors-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_fieldset-neighbors-2.log.gz",
+      "sha256": "1a08df2121e756c7c98de6adf7798c2b2ff395add6075e9de987b6c3aaff21b8"
+    },
+    {
+      "decoded_sha256": "d075decaff9c3393fc00a256f81d8c2035b48c8269ae9c4d49aff9ade6714cea",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_fieldset-state-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_fieldset-state-1.json.gz",
+      "sha256": "0d2dc938c85a4fa2fe9fd79ba6aa9a6ea47c340b214d879361909a2cc4761911"
+    },
+    {
+      "decoded_sha256": "d075decaff9c3393fc00a256f81d8c2035b48c8269ae9c4d49aff9ade6714cea",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_fieldset-state-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_fieldset-state-1.log.gz",
+      "sha256": "0d2dc938c85a4fa2fe9fd79ba6aa9a6ea47c340b214d879361909a2cc4761911"
+    },
+    {
+      "decoded_sha256": "d075decaff9c3393fc00a256f81d8c2035b48c8269ae9c4d49aff9ade6714cea",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_fieldset-state-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_fieldset-state-2.json.gz",
+      "sha256": "0d2dc938c85a4fa2fe9fd79ba6aa9a6ea47c340b214d879361909a2cc4761911"
+    },
+    {
+      "decoded_sha256": "d075decaff9c3393fc00a256f81d8c2035b48c8269ae9c4d49aff9ade6714cea",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_fieldset-state-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_fieldset-state-2.log.gz",
+      "sha256": "0d2dc938c85a4fa2fe9fd79ba6aa9a6ea47c340b214d879361909a2cc4761911"
+    },
+    {
+      "decoded_sha256": "71c1dd2ff2cc4ced3a5423830f2a6dd07342f36b6a97b58653894477dac27043",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_input_metadata-regression-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_input_metadata-regression-1.json.gz",
+      "sha256": "4320f4c3496ee350d973ed07ec93e172facad742209eaf4cb6ad72b4f42057ab"
+    },
+    {
+      "decoded_sha256": "71c1dd2ff2cc4ced3a5423830f2a6dd07342f36b6a97b58653894477dac27043",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_input_metadata-regression-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_input_metadata-regression-1.log.gz",
+      "sha256": "4320f4c3496ee350d973ed07ec93e172facad742209eaf4cb6ad72b4f42057ab"
+    },
+    {
+      "decoded_sha256": "71c1dd2ff2cc4ced3a5423830f2a6dd07342f36b6a97b58653894477dac27043",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_input_metadata-regression-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_input_metadata-regression-2.json.gz",
+      "sha256": "4320f4c3496ee350d973ed07ec93e172facad742209eaf4cb6ad72b4f42057ab"
+    },
+    {
+      "decoded_sha256": "71c1dd2ff2cc4ced3a5423830f2a6dd07342f36b6a97b58653894477dac27043",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_input_metadata-regression-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_input_metadata-regression-2.log.gz",
+      "sha256": "4320f4c3496ee350d973ed07ec93e172facad742209eaf4cb6ad72b4f42057ab"
+    },
+    {
+      "decoded_sha256": "db653e9a8a700bd81cc40e70e8375f8d04558875877ee50c7dd9b87b1c753640",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_range_modes-regression-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_range_modes-regression-1.json.gz",
+      "sha256": "daee7d6bf7f3e167ed2b7dbd4ca3599a54e650c172aa767e3a31f9520b077bd5"
+    },
+    {
+      "decoded_sha256": "db653e9a8a700bd81cc40e70e8375f8d04558875877ee50c7dd9b87b1c753640",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_range_modes-regression-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_range_modes-regression-1.log.gz",
+      "sha256": "daee7d6bf7f3e167ed2b7dbd4ca3599a54e650c172aa767e3a31f9520b077bd5"
+    },
+    {
+      "decoded_sha256": "db653e9a8a700bd81cc40e70e8375f8d04558875877ee50c7dd9b87b1c753640",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_range_modes-regression-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_range_modes-regression-2.json.gz",
+      "sha256": "daee7d6bf7f3e167ed2b7dbd4ca3599a54e650c172aa767e3a31f9520b077bd5"
+    },
+    {
+      "decoded_sha256": "db653e9a8a700bd81cc40e70e8375f8d04558875877ee50c7dd9b87b1c753640",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_range_modes-regression-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_range_modes-regression-2.log.gz",
+      "sha256": "daee7d6bf7f3e167ed2b7dbd4ca3599a54e650c172aa767e3a31f9520b077bd5"
+    },
+    {
+      "decoded_sha256": "18bb54137a280720ea60a8420ee7765a693d08eaaa8ccb28f03a1b771f235eb7",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_range_scalar-regression-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_range_scalar-regression-1.json.gz",
+      "sha256": "94e5a041768fd52e36a63ce500e24e38f8c82a7f716b5123c94f6d35e74c4ddb"
+    },
+    {
+      "decoded_sha256": "18bb54137a280720ea60a8420ee7765a693d08eaaa8ccb28f03a1b771f235eb7",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_range_scalar-regression-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_range_scalar-regression-1.log.gz",
+      "sha256": "94e5a041768fd52e36a63ce500e24e38f8c82a7f716b5123c94f6d35e74c4ddb"
+    },
+    {
+      "decoded_sha256": "18bb54137a280720ea60a8420ee7765a693d08eaaa8ccb28f03a1b771f235eb7",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_range_scalar-regression-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_range_scalar-regression-2.json.gz",
+      "sha256": "94e5a041768fd52e36a63ce500e24e38f8c82a7f716b5123c94f6d35e74c4ddb"
+    },
+    {
+      "decoded_sha256": "18bb54137a280720ea60a8420ee7765a693d08eaaa8ccb28f03a1b771f235eb7",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_range_scalar-regression-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_range_scalar-regression-2.log.gz",
+      "sha256": "94e5a041768fd52e36a63ce500e24e38f8c82a7f716b5123c94f6d35e74c4ddb"
+    },
+    {
+      "decoded_sha256": "a4a9005ddfacac54cb2fd5c1d42869db51d0bbe6dbe4af0969ff24fba81815be",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_selection_phases-regression-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_selection_phases-regression-1.json.gz",
+      "sha256": "f5a190077c061219be185a7dc0641ad5d64e50a7c8c0c6a6baf91de8c3ecdeb5"
+    },
+    {
+      "decoded_sha256": "a4a9005ddfacac54cb2fd5c1d42869db51d0bbe6dbe4af0969ff24fba81815be",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_selection_phases-regression-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_selection_phases-regression-1.log.gz",
+      "sha256": "f5a190077c061219be185a7dc0641ad5d64e50a7c8c0c6a6baf91de8c3ecdeb5"
+    },
+    {
+      "decoded_sha256": "a4a9005ddfacac54cb2fd5c1d42869db51d0bbe6dbe4af0969ff24fba81815be",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_selection_phases-regression-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_selection_phases-regression-2.json.gz",
+      "sha256": "f5a190077c061219be185a7dc0641ad5d64e50a7c8c0c6a6baf91de8c3ecdeb5"
+    },
+    {
+      "decoded_sha256": "a4a9005ddfacac54cb2fd5c1d42869db51d0bbe6dbe4af0969ff24fba81815be",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_selection_phases-regression-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_selection_phases-regression-2.log.gz",
+      "sha256": "f5a190077c061219be185a7dc0641ad5d64e50a7c8c0c6a6baf91de8c3ecdeb5"
+    },
+    {
+      "decoded_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_selection_values-regression-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_selection_values-regression-1.json.gz",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf"
+    },
+    {
+      "decoded_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_selection_values-regression-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_selection_values-regression-1.log.gz",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf"
+    },
+    {
+      "decoded_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_selection_values-regression-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_selection_values-regression-2.json.gz",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf"
+    },
+    {
+      "decoded_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/native_selection_values-regression-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-native_selection_values-regression-2.log.gz",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf"
+    },
+    {
+      "decoded_sha256": "3411f34d8fc9d01a56a3ba68e115518d98bbc55b021b4d3541654ac6cfd57546",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-v3331/receipt.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-v3331-receipt.json.gz",
+      "sha256": "72b45033060420cb00a737510f1d8bd887bc558c3cc91bc2e74b9e003e61c770"
+    },
+    {
+      "decoded_sha256": "25f0f853b1055cc9069113baa558f4f76c62ce69c59b6e51afeb773420be905f",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3339/all-c-cpp-consumers.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3339-all-c-cpp-consumers.log.gz",
+      "sha256": "7032fa08701bb5ad2c8f4e8fc62dcdd0a2e09244e62820bde63fbb741a30ad6a"
+    },
+    {
+      "decoded_sha256": "e1a42665a2d02d74110f8181361664ec1a21321fad11d9a6b1772043ea517b57",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3339/receipt.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3339-receipt.json.gz",
+      "sha256": "13d8292b752520adf4e5e9c59723c595f0c5c59ab6056ae89c21f55ec176055f"
+    },
+    {
+      "decoded_sha256": "7f42a6b715e1adbd3ed55cdc137909dbbb3a1436a9a78028f335f5d72ec95c28",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/all-c-cpp-consumers.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-all-c-cpp-consumers.log.gz",
+      "sha256": "fa2a2fe7d76ec78d75fa3cc89c4c9ba217da1a346c74486cdb5ef7d852b3c7e7"
+    },
+    {
+      "decoded_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-c-accessibility-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-c-accessibility-1.json.gz",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4"
+    },
+    {
+      "decoded_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-c-accessibility-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-c-accessibility-1.log.gz",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4"
+    },
+    {
+      "decoded_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-c-accessibility-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-c-accessibility-2.json.gz",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4"
+    },
+    {
+      "decoded_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-c-accessibility-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-c-accessibility-2.log.gz",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4"
+    },
+    {
+      "decoded_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-c-dispatch-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-c-dispatch-1.json.gz",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39"
+    },
+    {
+      "decoded_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-c-dispatch-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-c-dispatch-1.log.gz",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39"
+    },
+    {
+      "decoded_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-c-dispatch-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-c-dispatch-2.json.gz",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39"
+    },
+    {
+      "decoded_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-c-dispatch-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-c-dispatch-2.log.gz",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39"
+    },
+    {
+      "decoded_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-cpp-accessibility-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-cpp-accessibility-1.json.gz",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4"
+    },
+    {
+      "decoded_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-cpp-accessibility-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-cpp-accessibility-1.log.gz",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4"
+    },
+    {
+      "decoded_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-cpp-accessibility-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-cpp-accessibility-2.json.gz",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4"
+    },
+    {
+      "decoded_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-cpp-accessibility-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-cpp-accessibility-2.log.gz",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4"
+    },
+    {
+      "decoded_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-cpp-dispatch-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-cpp-dispatch-1.json.gz",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39"
+    },
+    {
+      "decoded_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-cpp-dispatch-1.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-cpp-dispatch-1.log.gz",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39"
+    },
+    {
+      "decoded_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-cpp-dispatch-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-cpp-dispatch-2.json.gz",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39"
+    },
+    {
+      "decoded_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/checkable-cpp-dispatch-2.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-checkable-cpp-dispatch-2.log.gz",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/compile-c.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-compile-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/compile-cpp.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-compile-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/link-c.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-link-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/link-cpp.log",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-link-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "41b417f19f80ec081533dc259ea0f7d1831dc23bb96b1be254d8b83b4f7764b7",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/private-native-checkable-c-consumers-v3343/receipt.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/private-native-checkable-c-consumers-v3343-receipt.json.gz",
+      "sha256": "e256954e023d6266f51e455fb27942b329455c422692caf784679a0e87f04954"
+    },
+    {
+      "decoded_sha256": "63a8fe16c3f9052ee7c3ff45613ba63644eb33df7c27c335191c17610355b451",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-radio-programmatic-reference-v3242/observations-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/native-radio-programmatic-reference-v3242-observations-1.json.gz",
+      "sha256": "251160b00983b3230729d6ba6a3548d32e604734b70e5761bc21c9074128decc"
+    },
+    {
+      "decoded_sha256": "63a8fe16c3f9052ee7c3ff45613ba63644eb33df7c27c335191c17610355b451",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-radio-programmatic-reference-v3242/observations-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/native-radio-programmatic-reference-v3242-observations-2.json.gz",
+      "sha256": "251160b00983b3230729d6ba6a3548d32e604734b70e5761bc21c9074128decc"
+    },
+    {
+      "decoded_sha256": "47c93d01bd090d01f4c87458d9e1133ff982df4bd13eef5b2420d16b61b8d53b",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-radio-programmatic-reference-v3242/receipt.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/native-radio-programmatic-reference-v3242-receipt.json.gz",
+      "sha256": "47e3419fdd45104361c2d60785e3fd5e7cddd11956e9dbecd2b1cda353f74717"
+    },
+    {
+      "decoded_sha256": "6df6a8de1dddeb9a401caa916fb912094abc99d9b962032aa9fd91cbd646473c",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-default-reference-v3249/observations-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/native-checkable-default-reference-v3249-observations-1.json.gz",
+      "sha256": "ac4920f197665317e43ce12a3c61f22e24b13bd0e8089d973829776324ec2428"
+    },
+    {
+      "decoded_sha256": "6df6a8de1dddeb9a401caa916fb912094abc99d9b962032aa9fd91cbd646473c",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-default-reference-v3249/observations-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/native-checkable-default-reference-v3249-observations-2.json.gz",
+      "sha256": "ac4920f197665317e43ce12a3c61f22e24b13bd0e8089d973829776324ec2428"
+    },
+    {
+      "decoded_sha256": "3cc1918a5682353fd0fff3659eb6ad3cd3cd07c69bf30bd2753919897a167896",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-default-reference-v3249/receipt.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/native-checkable-default-reference-v3249-receipt.json.gz",
+      "sha256": "bac9cc8c90a3d9c10fbdf771ae4cbb828d4a02bbbb852cb7e1c871294993dea7"
+    },
+    {
+      "decoded_sha256": "121e123c2791fc215fd76170e4c9b98ec85c6dd989a9e671d79a0ce4b4b12105",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-activation-reference-v3257/observations-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/native-checkable-activation-reference-v3257-observations-1.json.gz",
+      "sha256": "9fb4c7e2fbd807fb5137934ee923b3b39e91f0b8332c00d626e290c6d00e0e9b"
+    },
+    {
+      "decoded_sha256": "121e123c2791fc215fd76170e4c9b98ec85c6dd989a9e671d79a0ce4b4b12105",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-activation-reference-v3257/observations-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/native-checkable-activation-reference-v3257-observations-2.json.gz",
+      "sha256": "9fb4c7e2fbd807fb5137934ee923b3b39e91f0b8332c00d626e290c6d00e0e9b"
+    },
+    {
+      "decoded_sha256": "50e1600a04fc6cf229f786b9b9718ecbdef4ba578f19b15707326f00242ff119",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-activation-reference-v3257/receipt.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/native-checkable-activation-reference-v3257-receipt.json.gz",
+      "sha256": "f41f1b4fe418f5983d174e586000cb63550593f00938c3f4e91d71ea79bc5055"
+    },
+    {
+      "decoded_sha256": "27bfcac413a2461dbc00512ca557ad4aced81b0b9026d3379af8b5303ba6b0cd",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-dispatch-reference-v3315/observations-1.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/native-checkable-dispatch-reference-v3315-observations-1.json.gz",
+      "sha256": "ba19e2e4a31e567784f3a73bf870f001e0ce8ef98170c4ce2e313964ae635675"
+    },
+    {
+      "decoded_sha256": "27bfcac413a2461dbc00512ca557ad4aced81b0b9026d3379af8b5303ba6b0cd",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-dispatch-reference-v3315/observations-2.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/native-checkable-dispatch-reference-v3315-observations-2.json.gz",
+      "sha256": "ba19e2e4a31e567784f3a73bf870f001e0ce8ef98170c4ce2e313964ae635675"
+    },
+    {
+      "decoded_sha256": "321c46ac0a7e74264df6acff88340212a8391530b7846ae2c63a0945f3b5088c",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-checkable-dispatch-reference-v3315/receipt.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/native-checkable-dispatch-reference-v3315-receipt.json.gz",
+      "sha256": "1b127801e5f74e39e2e5bfd4d349cc711d25f236831b85e51b72469155494ce6"
+    },
+    {
+      "decoded_sha256": "b18dc42f60acb8a2da9d5815c6c93e784e8216a022474022fb5c7b2a3978196a",
+      "original_path": "/tmp/openui-native-checkable-private-checkpoint-v3328.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-native-checkable-private-checkpoint-v3328.json.gz",
+      "sha256": "48f8ecbfaa7e8b8c5d50fb1c6530fc9f0c780f2a05d02c1de7966905283fb75e"
+    },
+    {
+      "decoded_sha256": "b0e39c1cea3d1e2458c38d1bd143d21c8e453e9c075068d2f2b698ba10944b38",
+      "original_path": "/tmp/openui-native-checkable-private-format-v3325.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-native-checkable-private-format-v3325.json.gz",
+      "sha256": "1f4991395cca0bbf44fc8967fc934e1bfd469939028d0d6acb1b334d9c5bfd2e"
+    },
+    {
+      "decoded_sha256": "8c4518e81d320ff2e84b962025bdb1bbd3de852cf0b2c713fdbd12dac1a495fd",
+      "original_path": "/tmp/openui-native-checkable-null-guard-correction-v3330.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-native-checkable-null-guard-correction-v3330.json.gz",
+      "sha256": "01e176a050356636ca96c173e5cd02340c2f2719445c262384ffa35bd6fb0e6a"
+    },
+    {
+      "decoded_sha256": "2a59bfeebe386174d9aceb8ecb7af45b23edb71813345f34694caba9f94e8fd6",
+      "original_path": "/tmp/openui-private-native-checkable-owner-v3312.py",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-private-native-checkable-owner-v3312.py.gz",
+      "sha256": "35b7cdba8e2997ba74817884281ea139e20af09004f9ef796eff8898d4c3b05a"
+    },
+    {
+      "decoded_sha256": "375e2cef7db7ba450b533547ba2f83bb4e12a075ad29b812437b859f2e534cb9",
+      "original_path": "/tmp/openui-private-native-checkable-failed-audit-v3314.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-private-native-checkable-failed-audit-v3314.json.gz",
+      "sha256": "8c78c4327f1e5510b4e365cf75186cadff22383dd89460dbe7ccf21ee0b6c18e"
+    },
+    {
+      "decoded_sha256": "13271bf703c0f1636b13994442b73c0db1acb230088722c797af7e7ad5c4d1c7",
+      "original_path": "/tmp/openui-private-native-checkable-owner-v3331.py",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-private-native-checkable-owner-v3331.py.gz",
+      "sha256": "3aa31a5bad29a28365927d8e48ad818fcbdaaa7fe01ef0a90879b29de320cd79"
+    },
+    {
+      "decoded_sha256": "c49995fcef0bb0164797fd05e578cac7a1d2c1c377ef8fd8a7fc4e4a94dfbf8c",
+      "original_path": "/tmp/openui-private-native-checkable-failed-audit-v3333.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-private-native-checkable-failed-audit-v3333.json.gz",
+      "sha256": "ef6fd57af78934a70e7bea58fd2efb37d7344f0b0274a819899ace65f93a0c85"
+    },
+    {
+      "decoded_sha256": "4bd25d3aee6855851ba785d85a0ffd06c943b178fccec82824c8981c41fab396",
+      "original_path": "/tmp/openui-native-checkable-source-review-v3288.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-native-checkable-source-review-v3288.json.gz",
+      "sha256": "58a21fc5a0c494d165657a4bd67d220aa8457dd6c1661dccb89d14d5f60a0239"
+    },
+    {
+      "decoded_sha256": "f60d717c633284b2812d79a18d9c837911bcb56d19057d59eec2cfc5fad78a22",
+      "original_path": "/tmp/openui-native-checkable-dispatch-reference-completed-audit-v3316.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-native-checkable-dispatch-reference-completed-audit-v3316.json.gz",
+      "sha256": "0cee41c362ec405a68aad6bb2d0ca7ef7f0ccc1f7c8d4ef15552b603f85e294a"
+    },
+    {
+      "decoded_sha256": "b58b729751f42174ada2334c598a3139963bbc26ae88cecabb554dba19d8fc5a",
+      "original_path": "/tmp/openui-native-checkable-c-public-flag-correction-v3337.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-native-checkable-c-public-flag-correction-v3337.json.gz",
+      "sha256": "b001ef129a2a26b1e65a7ef57c24f94c61c4689302bebeb74da77b39cade9a05"
+    },
+    {
+      "decoded_sha256": "9667b36a6f13fd5cdcc72274daca9aafd20d6f3d9e167cd73fc7383aad204898",
+      "original_path": "/tmp/openui-private-native-checkable-c-consumers-v3339.py",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-private-native-checkable-c-consumers-v3339.py.gz",
+      "sha256": "70764e02fa49d602af61ad1ec5bea3cc831e123327830e8064babbb9d1003d15"
+    },
+    {
+      "decoded_sha256": "1338cffcfd6fb069aa95db78ce8a2977b1ef457efaae02c95a33a5daadbe0f98",
+      "original_path": "/tmp/openui-private-native-checkable-c-consumers-completed-audit-v3340.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-private-native-checkable-c-consumers-completed-audit-v3340.json.gz",
+      "sha256": "e14ee726caa403b7a1e63fcc59ab6616c2923e34795fbce107747a478e36345a"
+    },
+    {
+      "decoded_sha256": "98eadebf897884e14a328c19113bf5bf4eeadf786d784a930eabb0f142a0122f",
+      "original_path": "/tmp/openui-native-checkable-cpp-action-correction-v3342.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-native-checkable-cpp-action-correction-v3342.json.gz",
+      "sha256": "0f006b1b416204c0ef287381e61bdaf8b7c4081ce7c34c544bc862f8f3220172"
+    },
+    {
+      "decoded_sha256": "89fbe490e3530b2784c5fd49005adf47921a18e5948f2061bc660f5d73e6b343",
+      "original_path": "/tmp/openui-private-native-checkable-c-consumers-v3343.py",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-private-native-checkable-c-consumers-v3343.py.gz",
+      "sha256": "ba91a27972166cda5e2d4407d5e5b6f27cc801028b3893e40fee2384ac949ef5"
+    },
+    {
+      "decoded_sha256": "d52b26a03d6679e7b5ab2592c38579b5e279796e6ee222460fcaabe1b3a49e9a",
+      "original_path": "/tmp/openui-private-native-checkable-c-consumers-completed-audit-v3344.py",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-private-native-checkable-c-consumers-completed-audit-v3344.py.gz",
+      "sha256": "8fbb5c2dca5099cba9b40d3692a592403ace3130615bbb1552e09fedf45193d8"
+    },
+    {
+      "decoded_sha256": "107caa2af064bc4a53b89c3d2c1ead5be821d0c3115270dc18b4035483496414",
+      "original_path": "/tmp/openui-private-native-checkable-c-consumers-completed-audit-v3344.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-private-native-checkable-c-consumers-completed-audit-v3344.json.gz",
+      "sha256": "be6a60b5f11f98fa0a5982f880e0f0425f3d3d9a505df887c31f2af7fa7c50db"
+    },
+    {
+      "decoded_sha256": "5a5e44fed0808b3697e281b9e32d680fdc2b7a12e09a7aee92c28912b3cd150b",
+      "original_path": "/tmp/openui-private-native-checkable-rust-observations-v3336.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-private-native-checkable-rust-observations-v3336.json.gz",
+      "sha256": "f3eee2d16e18741c5b73eaae10b486a713c0ece9be05ca1e1d7eeeba1ec12f40"
+    },
+    {
+      "decoded_sha256": "5173a239e2ea7666bbb9b5a9c4c0944b57e6445af3e5b76f621c96a7c406219c",
+      "original_path": "/tmp/openui-private-native-checkable-c-observations-v3345.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-private-native-checkable-c-observations-v3345.json.gz",
+      "sha256": "1e57ff45da8485688f6e2f3c684feecf738c7090640bfa2385253a7c4da4f33d"
+    },
+    {
+      "decoded_sha256": "974bf8780d757d9f992e787ccd38d3932589406278cee7196edf7d87c5b80092",
+      "original_path": "/tmp/openui-private-native-checkable-partial-diagnostics-v3336.py",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-private-native-checkable-partial-diagnostics-v3336.py.gz",
+      "sha256": "78f7bfbb219713509b628b714ad7ae74434e4217461f36e5f6fa2b3551f66f6b"
+    },
+    {
+      "decoded_sha256": "83a8cdb35b210b1f271f0d2bdcdac5412059e744a7847fe34448a45d127d16cb",
+      "original_path": "/tmp/openui-private-native-checkable-c-partial-diagnostics-v3345.py",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-private-native-checkable-c-partial-diagnostics-v3345.py.gz",
+      "sha256": "33cf10e1ac7fa571e9e06912d189ec63aeb085ff6b73b3d0d86c4cb847c89fc2"
+    },
+    {
+      "decoded_sha256": "9ea0b4f91b89c1bef4e78b0901637cb0851f97fb0ff0820b670beee93b4dc003",
+      "original_path": "/tmp/openui-native-checkable-private-evidence-v3346.py",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-native-checkable-private-evidence-v3346.py.gz",
+      "sha256": "8ec3172cfae5b8c9e7b14492884bc48cb2950ef448cb8b0cde37b845ced43c7c"
+    },
+    {
+      "decoded_sha256": "1856551b2921b5f4514a95f9efb265bddaf8f2cadcae25cba6557c132db44128",
+      "original_path": "/tmp/openui-native-checkable-private-evidence-v3346.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-native-checkable-private-evidence-v3346.json.gz",
+      "sha256": "8fa826eb75a047e7cce3c4872558ba4c8e8e39b3cd37b496038498acf5aaf288"
+    },
+    {
+      "decoded_sha256": "f458e345b77534f93bc5e6821d5f4b5ed074bae150b275ef95e9847c083cccd2",
+      "original_path": "/tmp/openui-native-checkable-private-patch-packing-v3347.json",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/openui-native-checkable-private-patch-packing-v3347.json.gz",
+      "sha256": "c976681956fb9dfde898f7983ff2ad5080b09990c1ea40f869c644740fc4aeb9"
+    },
+    {
+      "decoded_sha256": "8bcee937bb8a2371efbecfa45b435b2aae24328e0ea80d14c276b6f9e0baa1de",
+      "original_path": "git diff 6ba3ef58..cef6a7eb",
+      "path": "docs/renderer/evidence/native-checkable-private-v1/native-checkable-original-measured.patch.gz",
+      "role": "measured C-app source before one-line whitespace cleanup; preserves initial raw-patch packing check failure",
+      "sha256": "63d6af27d8f008e39c249f9af903aaf7526d5e3f029b441a7596743e2a56340f"
+    }
+  ],
+  "failed_attempts_preserved": [
+    "3312: wrong new NULL-source guard expectation; registry returns InvalidArgument",
+    "3331: new C app used internal Rust event flag name",
+    "3339: C++ rejects integer accessibility action; use public enum"
+  ],
+  "implementation_integrated": false,
+  "integration_guards": 27,
+  "javascript_executed_by_openui": false,
+  "main_evidence_source": {
+    "clean": true,
+    "commit": "8b445d70516687c4cfefade84cf254e07c860071",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "9641d094f0a8a46920110248204ed55fe8bca8ab1aa12c7803bd878a71f1f4ab",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native_appearance_qualified": false,
+  "old_109_rust_app_rows_repeated_identically": true,
+  "packaging_check_failure": {
+    "actual_exit_code": 3,
+    "command": "git diff --no-index --check /dev/null native-checkable-private-v1.patch",
+    "fixed_without_weakening_gate": true,
+    "reason": "Literal unified-diff context blank lines and one trailing C-source space; source space removed, exact patch bytes stored in gzip."
+  },
+  "pixel_target": "pinned Chromium",
+  "reference_cases_by_operation": 220,
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "runtime_inputs_unchanged_between_private_checkpoints": true,
+  "runtime_source": {
+    "clean": true,
+    "commit": "a17f8a33bbf1ce6b2c4b20bf02d39adfca48b73c",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "401dc5eefda2388935d988009da883285e3d688d7fd670bde669fca70cd4a858",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "rust_exact_behavior_rows": 220,
+  "schema_version": 1,
+  "source_and_artifact_audits_completed": true,
+  "total_exact_behavior_rows": 660,
+  "unit_guards": 198,
+  "unqualified": [
+    "default control appearance",
+    "fresh complete native owner on final private commit",
+    "fresh focused/primitive/full/expanded rendering",
+    "form-owner resets through ID and associated-tree changes",
+    "radio arrow-key and complete keyboard behavior",
+    "composition and other needed native APIs",
+    "physical hardware, compositor and release"
+  ],
+  "whole_native_qualification_completed": false
+}

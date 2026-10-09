@@ -66,15 +66,29 @@ binary and output paths while preserving reference bytes and comparison logic.
 Default disabled-control appearance has not been qualified through native app
 images at five scales. Native appearance is already enabled by default.
 
-110 separate Chromium checkbox/radio reference cases repeat identically for
-assignment, authored defaults, group ownership, clones, callback state,
-cancellation and indeterminate state. New native comparisons have not run.
-The current Rust radio assignment path rejects disabled assignment through
-activation, conflates live state with authored attributes, and groups controls
-without form/tree ownership. Click callbacks precede checkable mutation.
-Explicit C dispatch also needs the shared activation lifecycle. These remain
-required native implementation work. Fixture lowering does not complete a
-public app API.
+The public implementation still needs the checkbox/radio follow-up. A private
+implementation now matches **220/220 behavior cases in each of Rust, C and
+C++**, with identical repeated output. These measure programmatic assignment,
+authored defaults, form/tree grouping, clones, callback state, cancellation,
+indeterminate state and the distinction between ordinary activation and raw
+click events. Apps call actual native APIs. Open UI executes no JavaScript.
+
+The private runtime is clean `a17f8a33`; the corrected C/C++ app source is clean
+`cef6a7eb`. Their only difference is the consuming C example; framework and
+header bytes are unchanged. All 198 unit guards, 27 integration guards, 25 C
+and 19 C++ consumers pass. The private ABI has 128 exports and the same 34
+layouts; the public ABI remains 127 exports. Failed attempts and completed
+source/artifact audits are preserved. This is scoped behavior evidence, with
+no complete native-owner or renderer qualification on the final private source.
+
+The private code adds Rust `Element::dispatch_click_event` and C
+`oui_element_clone_subtree_v1`, and routes checkable activation through the
+shared Rust Document. It separates live state from authored attributes and
+runs preactivation before callbacks, restoring state when canceled. These
+changes are unapplied. Default appearance, additional form-owner resets,
+radio keyboard behavior and complete API coverage remain open. Fixture
+lowering does not complete a public app API.
+[Private observations, code patch and provenance](../renderer/generated/native-checkable-private-v1.json).
 
 Composition, complete native APIs, remaining pixels, compositor behavior,
 physical hardware and release qualification remain open.
