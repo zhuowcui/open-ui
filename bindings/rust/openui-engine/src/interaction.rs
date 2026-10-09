@@ -135,6 +135,7 @@ pub struct ControlState {
     pub role: FormControlRole,
     pub disabled: bool,
     pub checked: bool,
+    checked_dirty: bool,
     pub selected: bool,
     pub open: bool,
     pub indeterminate: bool,
@@ -173,6 +174,7 @@ impl ControlState {
             role,
             disabled: false,
             checked: false,
+            checked_dirty: false,
             selected: false,
             open: false,
             indeterminate: false,
@@ -360,6 +362,17 @@ impl ControlState {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ActivationResult {
     pub changed: Vec<NodeHandle>,
+}
+
+/// Owned state saved before a native checkable click. No document borrow
+/// survives into application callbacks.
+#[derive(Debug)]
+pub struct CheckableActivation {
+    target: NodeHandle,
+    role: FormControlRole,
+    checked: bool,
+    indeterminate: bool,
+    checked_radio: Option<NodeHandle>,
 }
 
 impl Engine {
@@ -907,6 +920,99 @@ impl Engine {
         Ok(())
     }
 
+    #[doc(hidden)]
+    pub fn begin_checkable_activation(
+        &mut self,
+        target: NodeHandle,
+    ) -> Result<Option<CheckableActivation>, EngineError> {
+        self.resolve(target)?;
+        let Some(control) = self.controls.get(&target.index) else {
+            return Ok(None);
+        };
+        if !matches!(
+            control.role,
+            FormControlRole::Checkbox | FormControlRole::Radio
+        ) {
+            return Ok(None);
+        }
+        let role = control.role;
+        let checked = control.checked;
+        let indeterminate = control.indeterminate;
+        let checked_radio = if role == FormControlRole::Radio {
+            self.radio_group_members(target)?
+                .into_iter()
+                .find(|peer| self.controls[&peer.index].checked)
+        } else {
+            None
+        };
+        self.change_checked_state(
+            target,
+            if role == FormControlRole::Checkbox {
+                !checked
+            } else {
+                true
+            },
+            true,
+        )?;
+        if role == FormControlRole::Checkbox {
+            self.set_indeterminate(target, false)?;
+        }
+        Ok(Some(CheckableActivation {
+            target,
+            role,
+            checked,
+            indeterminate,
+            checked_radio,
+        }))
+    }
+
+    #[doc(hidden)]
+    pub fn finish_checkable_activation(
+        &mut self,
+        state: CheckableActivation,
+        canceled: bool,
+    ) -> Result<bool, EngineError> {
+        match self.resolve(state.target) {
+            Err(EngineError::StaleHandle) => return Ok(false),
+            Err(error) => return Err(error),
+            Ok(_) => {}
+        }
+        if canceled {
+            if state.role == FormControlRole::Checkbox {
+                self.set_indeterminate(state.target, state.indeterminate)?;
+                self.change_checked_state(state.target, state.checked, true)?;
+            } else if let Some(previous) = state.checked_radio {
+                // Restoration follows the previous radio's current group.
+                // A detached target can therefore remain checked independently.
+                if self.resolve(previous).is_ok()
+                    && self
+                        .controls
+                        .get(&previous.index)
+                        .is_some_and(|c| c.role == FormControlRole::Radio)
+                    && self.form_owner(previous)? == self.form_owner(state.target)?
+                    && self.attribute(previous, "name")?.unwrap_or_default()
+                        == self.attribute(state.target, "name")?.unwrap_or_default()
+                {
+                    self.change_checked_state(previous, true, true)?;
+                }
+            } else {
+                self.change_checked_state(state.target, false, true)?;
+            }
+            return Ok(false);
+        }
+        if !self.is_connected(state.target)? {
+            return Ok(false);
+        }
+        let Some(control) = self.controls.get(&state.target.index) else {
+            return Ok(false);
+        };
+        Ok(match state.role {
+            FormControlRole::Checkbox => true,
+            FormControlRole::Radio => control.checked != state.checked && control.checked,
+            _ => false,
+        })
+    }
+
     pub fn activate(&mut self, handle: NodeHandle) -> Result<ActivationResult, EngineError> {
         let node = self.resolve(handle)?;
         if self.is_disabled(handle) {
@@ -936,41 +1042,11 @@ impl Engine {
             FormControlRole::Checkbox => {
                 let checked = !self.controls[&handle.index].checked;
                 self.set_checked_internal(handle, checked);
+                self.set_indeterminate(handle, false)?;
                 changed.push(handle);
             }
             FormControlRole::Radio => {
-                let name = self
-                    .attribute(handle, "name")?
-                    .unwrap_or_default()
-                    .to_owned();
-                let handles: Vec<_> = self
-                    .slots
-                    .iter()
-                    .enumerate()
-                    .filter_map(|(index, slot)| {
-                        slot.node.map(|_| self.handle_for_slot(index as u32))
-                    })
-                    .filter(|other| {
-                        self.controls
-                            .get(&other.index)
-                            .is_some_and(|state| state.role == FormControlRole::Radio)
-                            && (name.is_empty() && *other == handle
-                                || !name.is_empty()
-                                    && self
-                                        .attribute(*other, "name")
-                                        .ok()
-                                        .flatten()
-                                        .unwrap_or_default()
-                                        == name)
-                    })
-                    .collect();
-                for other in handles {
-                    let checked = other == handle;
-                    if self.controls[&other.index].checked != checked {
-                        self.set_checked_internal(other, checked);
-                        changed.push(other);
-                    }
-                }
+                changed.extend(self.change_checked_state(handle, true, true)?);
             }
             FormControlRole::Select => {
                 let open = {
@@ -1056,19 +1132,9 @@ impl Engine {
                     return Ok(ActivationResult { changed: vec![] });
                 }
                 let radios: Vec<_> = self
-                    .slots
-                    .iter()
-                    .enumerate()
-                    .filter_map(|(index, slot)| {
-                        slot.node.map(|_| self.handle_for_slot(index as u32))
-                    })
-                    .filter(|node| {
-                        self.controls
-                            .get(&node.index)
-                            .is_some_and(|control| control.role == FormControlRole::Radio)
-                            && !self.is_disabled(*node)
-                            && self.attribute(*node, "name").ok().flatten() == Some(name.as_str())
-                    })
+                    .radio_group_members(handle)?
+                    .into_iter()
+                    .filter(|node| !self.is_disabled(*node))
                     .collect();
                 let Some(index) = radios.iter().position(|node| *node == handle) else {
                     return Ok(ActivationResult { changed: vec![] });
@@ -1165,22 +1231,14 @@ impl Engine {
         Ok(true)
     }
 
+    /// Assign live input state independently of activation eligibility.
+    /// Authored attributes remain defaults and no input/change events fire.
     pub fn set_checked(&mut self, handle: NodeHandle, checked: bool) -> Result<(), EngineError> {
-        self.resolve(handle)?;
-        let role = self
-            .controls
-            .get(&handle.index)
-            .map(|control| control.role)
-            .ok_or(EngineError::NotAControl)?;
-        if !matches!(role, FormControlRole::Checkbox | FormControlRole::Radio) {
+        let node = self.resolve(handle)?;
+        if self.document.node(node).tag != ElementTag::Input {
             return Err(EngineError::NotAControl);
         }
-        if role == FormControlRole::Radio && checked {
-            self.activate(handle)?;
-        } else {
-            self.set_checked_internal(handle, checked);
-            self.mark_dirty(openui_style::InvalidationClass::Paint);
-        }
+        self.change_checked_state(handle, checked, true)?;
         Ok(())
     }
 
@@ -1189,15 +1247,19 @@ impl Engine {
         handle: NodeHandle,
         indeterminate: bool,
     ) -> Result<(), EngineError> {
-        self.resolve(handle)?;
+        let node = self.resolve(handle)?;
+        if self.document.node(node).tag != ElementTag::Input {
+            return Err(EngineError::NotAControl);
+        }
         let control = self
             .controls
             .get_mut(&handle.index)
-            .filter(|control| control.role == FormControlRole::Checkbox)
             .ok_or(EngineError::NotAControl)?;
-        control.indeterminate = indeterminate;
-        self.sync_bool_attribute(handle, "indeterminate", indeterminate);
-        self.mark_dirty(openui_style::InvalidationClass::Paint);
+        if control.indeterminate != indeterminate {
+            control.indeterminate = indeterminate;
+            self.document.node_mut(node).form_control_indeterminate = Some(indeterminate);
+            self.mark_dirty(openui_style::InvalidationClass::Paint);
+        }
         Ok(())
     }
 
@@ -1231,10 +1293,10 @@ impl Engine {
         };
         match name {
             "disabled" => control.disabled = true,
-            "checked" => control.checked = true,
+            "checked" => {}
             "selected" => control.selected = true,
             "open" => control.open = true,
-            "indeterminate" => control.indeterminate = true,
+
             "value" => {
                 control.clear_composition();
                 control.value = value.to_owned();
@@ -1276,6 +1338,16 @@ impl Engine {
         if let Some(node) = self.slots[handle.index as usize].node {
             self.document.node_mut(node).form_control_disabled = control.disabled;
         }
+        let clean_checked = name == "checked" && !control.checked_dirty;
+        self.sync_live_checkable_paint_state(handle);
+        if clean_checked {
+            self.change_checked_state(handle, true, false)
+                .expect("validated control handle");
+        }
+        if matches!(name, "type" | "name" | "form") {
+            self.reconcile_radio(handle)
+                .expect("validated control handle");
+        }
     }
 
     pub(crate) fn remove_control_attribute(&mut self, handle: NodeHandle, name: &str) {
@@ -1285,10 +1357,10 @@ impl Engine {
         };
         match name {
             "disabled" => control.disabled = false,
-            "checked" => control.checked = false,
+            "checked" => {}
             "selected" => control.selected = false,
             "open" => control.open = false,
-            "indeterminate" => control.indeterminate = false,
+
             "placeholder" => control.placeholder.clear(),
             "type" if is_input => {
                 control.role = FormControlRole::TextInput;
@@ -1299,6 +1371,16 @@ impl Engine {
         if let Some(node) = self.slots[handle.index as usize].node {
             self.document.node_mut(node).form_control = Some(control.role);
             self.document.node_mut(node).form_control_disabled = control.disabled;
+        }
+        let clean_checked = name == "checked" && !control.checked_dirty;
+        self.sync_live_checkable_paint_state(handle);
+        if clean_checked {
+            self.change_checked_state(handle, false, false)
+                .expect("validated control handle");
+        }
+        if matches!(name, "type" | "name" | "form") {
+            self.reconcile_radio(handle)
+                .expect("validated control handle");
         }
     }
 
@@ -1421,11 +1503,157 @@ impl Engine {
         Ok(())
     }
 
-    fn set_checked_internal(&mut self, handle: NodeHandle, checked: bool) {
-        if let Some(control) = self.controls.get_mut(&handle.index) {
-            control.checked = checked;
+    fn sync_live_checkable_paint_state(&mut self, handle: NodeHandle) {
+        if let (Some(control), Some(node)) = (
+            self.controls.get(&handle.index),
+            self.slots[handle.index as usize].node,
+        ) {
+            let data = self.document.node_mut(node);
+            data.form_control_checked = Some(control.checked);
+            data.form_control_indeterminate = Some(control.indeterminate);
         }
-        self.sync_bool_attribute(handle, "checked", checked);
+    }
+
+    fn set_checked_internal(&mut self, handle: NodeHandle, checked: bool) {
+        let control = self
+            .controls
+            .get_mut(&handle.index)
+            .expect("validated input control");
+        control.checked = checked;
+        control.checked_dirty = true;
+        self.sync_live_checkable_paint_state(handle);
+    }
+
+    fn change_checked_state(
+        &mut self,
+        handle: NodeHandle,
+        checked: bool,
+        dirty: bool,
+    ) -> Result<Vec<NodeHandle>, EngineError> {
+        self.resolve(handle)?;
+        let control = self
+            .controls
+            .get_mut(&handle.index)
+            .ok_or(EngineError::NotAControl)?;
+        if dirty {
+            control.checked_dirty = true;
+        }
+        if control.checked == checked {
+            return Ok(Vec::new());
+        }
+        let radio = control.role == FormControlRole::Radio;
+        let mut changed = Vec::new();
+        if radio && checked {
+            for peer in self.radio_group_members(handle)? {
+                if peer != handle && self.controls[&peer.index].checked {
+                    self.set_checked_internal(peer, false);
+                    changed.push(peer);
+                }
+            }
+        }
+        let control = self
+            .controls
+            .get_mut(&handle.index)
+            .expect("validated control");
+        control.checked = checked;
+        self.sync_live_checkable_paint_state(handle);
+        changed.push(handle);
+        self.mark_dirty(openui_style::InvalidationClass::Paint);
+        Ok(changed)
+    }
+
+    fn form_owner(&self, handle: NodeHandle) -> Result<Option<NodeHandle>, EngineError> {
+        self.resolve(handle)?;
+        if let Some(id) = self.attribute(handle, "form")? {
+            if self.is_connected(handle)? {
+                return Ok(self
+                    .element_by_id(id)
+                    .filter(|candidate| self.element_tag(*candidate) == Ok(ElementTag::Form)));
+            }
+        }
+        let mut current = self.parent(handle)?;
+        while let Some(parent) = current {
+            if self.element_tag(parent)? == ElementTag::Form {
+                return Ok(Some(parent));
+            }
+            current = self.parent(parent)?;
+        }
+        Ok(None)
+    }
+
+    fn tree_root(&self, handle: NodeHandle) -> Result<NodeHandle, EngineError> {
+        self.resolve(handle)?;
+        let mut root = handle;
+        while let Some(parent) = self.parent(root)? {
+            root = parent;
+        }
+        Ok(root)
+    }
+
+    fn radio_group_members(&self, handle: NodeHandle) -> Result<Vec<NodeHandle>, EngineError> {
+        self.resolve(handle)?;
+        let name = self.attribute(handle, "name")?.unwrap_or_default();
+        if name.is_empty() {
+            return Ok(vec![handle]);
+        }
+        let owner = self.form_owner(handle)?;
+        let mut members = Vec::new();
+        let mut stack = vec![self.tree_root(handle)?];
+        while let Some(node) = stack.pop() {
+            if self
+                .controls
+                .get(&node.index)
+                .is_some_and(|control| control.role == FormControlRole::Radio)
+                && self.attribute(node, "name")? == Some(name)
+                && self.form_owner(node)? == owner
+            {
+                members.push(node);
+            }
+            stack.extend(self.children(node)?.into_iter().rev());
+        }
+        Ok(members)
+    }
+
+    fn reconcile_radio(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
+        self.resolve(handle)?;
+        if !self
+            .controls
+            .get(&handle.index)
+            .is_some_and(|c| c.role == FormControlRole::Radio && c.checked)
+        {
+            return Ok(());
+        }
+        let mut changed = false;
+        for peer in self.radio_group_members(handle)? {
+            if peer != handle && self.controls[&peer.index].checked {
+                self.set_checked_internal(peer, false);
+                changed = true;
+            }
+        }
+        if changed {
+            self.mark_dirty(openui_style::InvalidationClass::Paint);
+        }
+        Ok(())
+    }
+
+    pub(crate) fn reconcile_radio_subtree(
+        &mut self,
+        node: openui_dom::NodeId,
+    ) -> Result<(), EngineError> {
+        let mut stack = vec![node];
+        while let Some(node) = stack.pop() {
+            if let Some(index) = self.node_slots.get(&node) {
+                self.reconcile_radio(self.handle_for_slot(*index))?;
+            }
+            stack.extend(
+                self.document
+                    .children(node)
+                    .collect::<Vec<_>>()
+                    .into_iter()
+                    .rev(),
+            );
+        }
+        Ok(())
     }
 
     fn collect_options(

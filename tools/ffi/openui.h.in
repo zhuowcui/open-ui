@@ -953,6 +953,11 @@ OuiStatus oui_font_face_destroy(OuiFontFace* face);
 OuiStatus oui_element_create(OuiDocument* document, OuiElementTag tag, OuiElement** out_element);
 OuiStatus oui_text_create(OuiDocument* document, OuiUtf8 text, OuiElement** out_text);
 OuiStatus oui_element_destroy(OuiElement* element);
+/* Clone authored descendants and live input/default state into a detached tree.
+ * The result is an owned, owning-thread handle in the same document. Listeners,
+ * focus, scroll position and presentation tracks are not copied. Destroy the
+ * handle with oui_element_destroy. out_clone is unchanged on error. */
+OuiStatus oui_element_clone_subtree_v1(OuiElement* element, OuiElement** out_clone);
 OuiStatus oui_element_append_child(OuiElement* parent, OuiElement* child);
 OuiStatus oui_element_insert_before(OuiElement* parent, OuiElement* child, OuiElement* before);
 OuiStatus oui_element_remove(OuiElement* element);

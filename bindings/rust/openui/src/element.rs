@@ -821,6 +821,24 @@ impl Element {
         self.perform_accessibility_action(AccessibilityAction::Click)
     }
 
+    /// Dispatch an owned, bubbling, cancelable left click event.
+    ///
+    /// Raw dispatch remains available on disabled controls. Checkable state
+    /// changes before listeners; cancellation restores it. Returns false when
+    /// a listener prevented the default action. Use Self::click for an
+    /// ordinary simulated click that obeys disabled eligibility.
+    pub fn dispatch_click_event(&self) -> Result<bool, Error> {
+        let event = Event::pointer(
+            "click",
+            0,
+            0.0,
+            0.0,
+            crate::MouseButton::Left,
+            crate::Modifiers::NONE,
+        );
+        self.document.dispatch_click_event(self.handle, &event)
+    }
+
     pub fn set_pointer_capture(&self, pointer_id: u64) -> Result<(), Error> {
         self.document
             .with_engine_mut(|engine| engine.set_pointer_capture(pointer_id, self.handle))

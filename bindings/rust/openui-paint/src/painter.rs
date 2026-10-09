@@ -2565,191 +2565,133 @@ fn paint_checkable_control(
     opacity_multiplier: f32,
 ) {
     let node = doc.node(fragment.node_id);
-    let checked = doc.attribute(fragment.node_id, "checked").is_some();
-    let indeterminate = doc.attribute(fragment.node_id, "indeterminate").is_some();
+    let radio = node.form_control == Some(FormControlRole::Radio);
+    let checked = node
+        .form_control_checked
+        .unwrap_or_else(|| doc.attribute(fragment.node_id, "checked").is_some());
+    // The input's indeterminate property changes checkbox decoration only.
+    // Chromium does not pass that property to its radio painter.
+    let indeterminate = !radio
+        && node
+            .form_control_indeterminate
+            .unwrap_or_else(|| doc.attribute(fragment.node_id, "indeterminate").is_some());
     let left = abs_offset.left.round().to_f32();
     let top = abs_offset.top.round().to_f32();
     let right = (abs_offset.left + fragment.size.width).round().to_f32();
     let bottom = (abs_offset.top + fragment.size.height).round().to_f32();
     let width = (right - left).max(0.0);
     let height = (bottom - top).max(0.0);
-    if width <= 0.0 || height <= 0.0 {
+    let side = width.min(height);
+    if side <= 0.0 {
         return;
     }
-    let rect = Rect::from_xywh(left, top, width, height);
-    let mut fill = Paint::default();
-    fill.set_style(PaintStyle::Fill);
-    fill.set_anti_alias(true);
-    set_paint_css_color(&mut fill, &Color::WHITE);
-    let mut stroke = Paint::default();
-    stroke.set_style(PaintStyle::Stroke);
-    stroke.set_stroke_width(1.0);
-    stroke.set_anti_alias(true);
-    set_paint_css_color(
-        &mut stroke,
-        &Color::from_rgba8(118, 118, 118, (255.0 * opacity_multiplier).round() as u8),
+    let item_rect = Rect::from_ltrb(left, top, right, bottom);
+    let rect = Rect::from_xywh(
+        left + (width - side) / 2.0,
+        top + (height - side) / 2.0,
+        side,
+        side,
     );
-    if node.form_control == Some(FormControlRole::Radio) {
-        // NativeTheme records each radio into the control's own border-box
-        // display item.  Keep the analytic oval coverage from spilling into
-        // an adjacent control when their border boxes meet on a fractional
-        // device-pixel boundary; without this hard item clip both ovals
-        // contribute coverage to the same physical row.
-        canvas.save();
-        canvas.clip_rect(rect, ClipOp::Intersect, false);
-        let side = width.min(height);
-        let radio_rect = Rect::from_xywh(
-            left + (width - side) / 2.0,
-            top + (height - side) / 2.0,
-            side,
-            side,
-        );
-        let radius = side / 2.0;
-        // NativeThemeBase::PaintCheckboxRadioCommon deliberately gives the
-        // opaque background a 0.2px inset, then records the one-pixel border
-        // on a separate 0.5px-inset contour. Using one shared oval changes
-        // the multiplied fringe coverage over authored backgrounds.
-        let background_rect = Rect::from_ltrb(
-            radio_rect.left + 0.2,
-            radio_rect.top + 0.2,
-            radio_rect.right - 0.2,
-            radio_rect.bottom - 0.2,
-        );
-        canvas.draw_rrect(RRect::new_rect_xy(background_rect, radius, radius), &fill);
-        let border_rect = Rect::from_ltrb(
-            radio_rect.left + 0.5,
-            radio_rect.top + 0.5,
-            radio_rect.right - 0.5,
-            radio_rect.bottom - 0.5,
-        );
-        canvas.draw_rrect(RRect::new_rect_xy(border_rect, radius, radius), &stroke);
-        canvas.restore();
-    } else if (node.style.device_scale_factor - 1.0).abs() > f64::EPSILON {
-        // NativeTheme records the scalable checkbox shell as an analytic
-        // rounded rectangle. The legacy DPR-1 contour below is its exact
-        // one-pixel coverage table, but scaling those table cells would turn
-        // a physical AA fringe into CSS-sized blocks.
-        canvas.save();
-        canvas.clip_rect(rect, ClipOp::Intersect, false);
-        let inset = Rect::from_xywh(left + 0.5, top + 0.5, width - 1.0, height - 1.0);
-        let shell = RRect::new_rect_xy(inset, 2.0, 2.0);
-        let mut backing = fill.clone();
-        backing.set_anti_alias(false);
-        let snapping = RasterSnapping::new(node.style.device_scale_factor);
-        let backing_rect = Rect::from_ltrb(
-            snapping.logical_coordinate(left, PhysicalSnap::Floor),
-            snapping.logical_coordinate(top, PhysicalSnap::Floor),
-            snapping.logical_coordinate(right, PhysicalSnap::Ceil),
-            snapping.logical_coordinate(bottom, PhysicalSnap::Ceil),
-        );
-        canvas.draw_rect(backing_rect, &backing);
-        canvas.draw_rrect(shell, &fill);
-        canvas.draw_rrect(shell, &stroke);
-        canvas.restore();
-    } else {
-        canvas.draw_rect(rect, &fill);
-        if width < 7.0 || height < 7.0 {
-            canvas.draw_rect(rect, &stroke);
-            return;
-        }
-        let mut edge = Paint::default();
-        edge.set_style(PaintStyle::Fill);
-        edge.set_anti_alias(false);
-        let mut draw_gray = |gray: u8, cells: &[(f32, f32, f32, f32)]| {
-            set_paint_css_color(
-                &mut edge,
-                &Color::from_rgba8(gray, gray, gray, (255.0 * opacity_multiplier).round() as u8),
-            );
-            for &(x, y, w, h) in cells {
-                canvas.draw_rect(Rect::from_xywh(x, y, w, h), &edge);
-            }
-        };
-        draw_gray(
-            118,
-            &[
-                (left + 3.0, top, width - 6.0, 1.0),
-                (left + 3.0, bottom - 1.0, width - 6.0, 1.0),
-                (left, top + 3.0, 1.0, height - 6.0),
-                (right - 1.0, top + 3.0, 1.0, height - 6.0),
-            ],
-        );
-        draw_gray(
-            163,
-            &[
-                (left + 1.0, top, 1.0, 1.0),
-                (left, top + 1.0, 1.0, 1.0),
-                (right - 2.0, top, 1.0, 1.0),
-                (right - 1.0, top + 1.0, 1.0, 1.0),
-                (left, bottom - 2.0, 1.0, 1.0),
-                (left + 1.0, bottom - 1.0, 1.0, 1.0),
-                (right - 1.0, bottom - 2.0, 1.0, 1.0),
-                (right - 2.0, bottom - 1.0, 1.0, 1.0),
-            ],
-        );
-        draw_gray(
-            153,
-            &[
-                (left + 2.0, top, 1.0, 1.0),
-                (left, top + 2.0, 1.0, 1.0),
-                (right - 3.0, top, 1.0, 1.0),
-                (right - 1.0, top + 2.0, 1.0, 1.0),
-                (left, bottom - 3.0, 1.0, 1.0),
-                (left + 2.0, bottom - 1.0, 1.0, 1.0),
-                (right - 1.0, bottom - 3.0, 1.0, 1.0),
-                (right - 3.0, bottom - 1.0, 1.0, 1.0),
-            ],
-        );
-        draw_gray(
-            178,
-            &[
-                (left + 1.0, top + 1.0, 1.0, 1.0),
-                (right - 2.0, top + 1.0, 1.0, 1.0),
-                (left + 1.0, bottom - 2.0, 1.0, 1.0),
-                (right - 2.0, bottom - 2.0, 1.0, 1.0),
-            ],
-        );
-    }
-
-    if !(checked || indeterminate) {
-        return;
-    }
-    let mark_color = if doc.effective_form_control_disabled(fragment.node_id) {
-        Color::from_rgba8(128, 128, 128, 255)
+    let radius = if radio { side / 2.0 } else { 2.0 };
+    let disabled = doc.effective_form_control_disabled(fragment.node_id);
+    // Default light-scheme colors from Chromium's native color provider.
+    // Disabled colors retain their alpha so authored backdrops participate.
+    let accent = if disabled {
+        Color::from_rgba8(118, 118, 118, 77)
     } else {
         Color::from_rgba8(0, 117, 255, 255)
     };
-    let mut mark = Paint::default();
-    mark.set_anti_alias(true);
-    mark.set_style(PaintStyle::Fill);
-    set_paint_css_color_with_alpha(&mut mark, &mark_color, opacity_multiplier);
-    if node.form_control == Some(FormControlRole::Radio) {
-        let dot = Rect::from_xywh(
-            left + width * 0.3,
-            top + height * 0.3,
-            width * 0.4,
-            height * 0.4,
-        );
-        canvas.draw_oval(dot, &mark);
+    let border = if checked {
+        accent
+    } else if disabled {
+        Color::from_rgba8(118, 118, 118, 77)
+    } else {
+        Color::from_rgba8(118, 118, 118, 255)
+    };
+    let background = Color::from_rgba8(255, 255, 255, if disabled { 153 } else { 255 });
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    // Keep each native control inside its own border-box display item.
+    canvas.save();
+    canvas.clip_rect(item_rect, ClipOp::Intersect, false);
+    if side <= 2.0 {
+        set_paint_css_color_with_alpha(&mut paint, &border, opacity_multiplier);
+        canvas.draw_rect(rect, &paint);
+        canvas.restore();
         return;
     }
-    canvas.draw_rect(
-        Rect::from_xywh(left + 1.0, top + 1.0, width - 2.0, height - 2.0),
-        &mark,
+    paint.set_anti_alias(true);
+    let background_rect = Rect::from_ltrb(
+        rect.left + 0.2,
+        rect.top + 0.2,
+        rect.right - 0.2,
+        rect.bottom - 0.2,
     );
-    mark.set_style(PaintStyle::Stroke);
-    mark.set_stroke_width((width.min(height) * 0.13).max(1.0));
-    mark.set_stroke_cap(skia_safe::PaintCap::Round);
-    set_paint_css_color_with_alpha(&mut mark, &Color::WHITE, opacity_multiplier);
-    let mut path = PathBuilder::new();
-    if indeterminate {
-        path.move_to(Point::new(left + width * 0.25, top + height * 0.5));
-        path.line_to(Point::new(left + width * 0.75, top + height * 0.5));
-    } else {
-        path.move_to(Point::new(left + width * 0.22, top + height * 0.52));
-        path.line_to(Point::new(left + width * 0.43, top + height * 0.72));
-        path.line_to(Point::new(left + width * 0.79, top + height * 0.28));
+    let background_shape = RRect::new_rect_xy(background_rect, radius, radius);
+    if disabled {
+        set_paint_css_color_with_alpha(
+            &mut paint,
+            &Color::from_rgba8(169, 169, 169, 51),
+            opacity_multiplier,
+        );
+        canvas.draw_rrect(background_shape, &paint);
     }
-    canvas.draw_path(&path.detach(), &mark);
+    set_paint_css_color_with_alpha(&mut paint, &background, opacity_multiplier);
+    canvas.draw_rrect(background_shape, &paint);
+    // Checked and mixed checkboxes draw their full accent shell instead of a
+    // border. Radios always draw a border, using the accent when checked.
+    if radio || !(checked || indeterminate) {
+        paint.set_style(PaintStyle::Stroke);
+        paint.set_stroke_width(1.0);
+        set_paint_css_color_with_alpha(&mut paint, &border, opacity_multiplier);
+        let border_rect = Rect::from_ltrb(
+            rect.left + 0.5,
+            rect.top + 0.5,
+            rect.right - 0.5,
+            rect.bottom - 0.5,
+        );
+        canvas.draw_rrect(RRect::new_rect_xy(border_rect, radius, radius), &paint);
+        paint.set_style(PaintStyle::Fill);
+    }
+    if radio {
+        if checked {
+            set_paint_css_color_with_alpha(&mut paint, &accent, opacity_multiplier);
+            let inset = side * 0.2;
+            let dot = Rect::from_ltrb(
+                rect.left + inset,
+                rect.top + inset,
+                rect.right - inset,
+                rect.bottom - inset,
+            );
+            canvas.draw_rrect(RRect::new_rect_xy(dot, radius, radius), &paint);
+        }
+    } else if checked || indeterminate {
+        set_paint_css_color_with_alpha(&mut paint, &accent, opacity_multiplier);
+        canvas.draw_rrect(RRect::new_rect_xy(rect, radius, radius), &paint);
+        set_paint_css_color_with_alpha(&mut paint, &background, opacity_multiplier);
+        if indeterminate {
+            let x_inset = 2.5 * side / 13.0;
+            let y_inset = 5.5 * side / 13.0;
+            let dash = Rect::from_ltrb(
+                rect.left + x_inset,
+                rect.top + y_inset,
+                rect.right - x_inset,
+                rect.bottom - y_inset,
+            );
+            canvas.draw_rrect(RRect::new_rect_xy(dash, radius, radius), &paint);
+        } else {
+            let mut path = PathBuilder::new();
+            path.move_to(Point::new(rect.left + side * 0.2, rect.top + side / 2.0));
+            path.r_line_to(Point::new(side * 0.2, side * 0.2));
+            path.line_to(Point::new(rect.right - side * 0.2, rect.top + side * 0.2));
+            paint.set_style(PaintStyle::Stroke);
+            paint.set_stroke_width(side * 0.16);
+            paint.set_stroke_cap(skia_safe::PaintCap::Butt);
+            paint.set_stroke_join(skia_safe::PaintJoin::Miter);
+            canvas.draw_path(&path.detach(), &paint);
+        }
+    }
+    canvas.restore();
 }
 
 /// Paint the deterministic initial value of a single-line text field.

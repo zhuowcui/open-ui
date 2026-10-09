@@ -244,6 +244,10 @@ pub struct NodeData {
     /// Whether the HTML control is disabled. Native appearance and text
     /// colors consume this state without a script/event runtime.
     pub form_control_disabled: bool,
+    /// Live input state; None initializes direct static documents from their
+    /// authored attributes. Native property writes do not change attributes.
+    pub form_control_checked: Option<bool>,
+    pub form_control_indeterminate: Option<bool>,
 
     /// Whether this node is an SVG `foreignObject` graphics element. Its CSS
     /// box participates in block layout, while SVG viewport clipping remains
@@ -308,6 +312,8 @@ impl NodeData {
             form_control: None,
             form_control_native_appearance: true,
             form_control_disabled: false,
+            form_control_checked: None,
+            form_control_indeterminate: None,
             is_svg_foreign_object: false,
             scroll_marker_inactive_background: None,
             container_query_rules: Vec::new(),

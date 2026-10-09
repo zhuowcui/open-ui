@@ -21,8 +21,9 @@ state. Native apps can query it and use the normal attribute/tree methods.
 
 C adds `oui_element_is_own_disabled_v1` and
 `oui_element_is_effectively_disabled_v1`. Outputs remain unchanged on error;
-ownership, lifetime, thread and borrow guards apply. The ABI has 127 exports
-and 34 layouts, preserving all previous 125 exports and every layout. C
+ownership, lifetime, thread and borrow guards apply. The checkable follow-up
+brings the ABI to 128 exports and 34 layouts, preserving all previous 127
+exports and every layout. C
 accessibility actions use the shared Rust Document.
 
 ## Measured scope
@@ -61,13 +62,11 @@ stopped because an old wrapper required an old owner name; it executed no app
 or pixel comparison. The corrected wrapper binds the exact parent, source,
 binary and output paths while preserving reference bytes and comparison logic.
 
-## Remaining work
+## Integrated checkable follow-up
 
-Default disabled-control appearance has not been qualified through native app
-images at five scales. Native appearance is already enabled by default.
-
-The public implementation still needs the checkbox/radio follow-up. A private
-implementation now matches **220/220 behavior cases in each of Rust, C and
+The shared checkbox/radio implementation is now integrated into the umbrella
+branch. Fresh public-source qualification is pending. Its private implementation
+matches **220/220 behavior cases in each of Rust, C and
 C++**, with identical repeated output. These measure programmatic assignment,
 authored defaults, form/tree grouping, clones, callback state, cancellation,
 indeterminate state and the distinction between ordinary activation and raw
@@ -77,18 +76,41 @@ The private runtime is clean `a17f8a33`; the corrected C/C++ app source is clean
 `cef6a7eb`. Their only difference is the consuming C example; framework and
 header bytes are unchanged. All 198 unit guards, 27 integration guards, 25 C
 and 19 C++ consumers pass. The private ABI has 128 exports and the same 34
-layouts; the public ABI remains 127 exports. Failed attempts and completed
+layouts; those additions are now present on the umbrella branch. Failed attempts and completed
 source/artifact audits are preserved. This is scoped behavior evidence, with
 no complete native-owner or renderer qualification on the final private source.
 
-The private code adds Rust `Element::dispatch_click_event` and C
+The code adds Rust `Element::dispatch_click_event` and C
 `oui_element_clone_subtree_v1`, and routes checkable activation through the
 shared Rust Document. It separates live state from authored attributes and
 runs preactivation before callbacks, restoring state when canceled. These
-changes are unapplied. Default appearance, additional form-owner resets,
+changes use native Rust operations and Rust callbacks. Additional form-owner resets,
 radio keyboard behavior and complete API coverage remain open. Fixture
 lowering does not complete a public app API.
 [Private observations, code patch and provenance](../renderer/generated/native-checkable-private-v1.json).
+
+The default appearance correction on clean private `365ed4a7` matches
+**160/160 native app cases**, including all **640 PNG comparisons**, across
+five scales and eight subpixel phases. A real Rust click callback changes
+fieldset disabled state. Checked and disabled controls now use shared native
+theme paths instead of the old sampled checkbox contour. This qualifies only
+the measured light appearance on a white background; hover, pressed, focus,
+keyboard, mixed state and other sizes remain unqualified.
+
+Its complete renderer trial remains **21,338/22,924 original** and
+**22,141/23,728 expanded** exact, with zero errors. Focused **640/640** and
+primitive **960/960** remain exact. All nine comparison fields stay unchanged
+across all 48,252 rows. Every build artifact and source identity was audited
+before integration. Both full pixel gates still fail.
+[Appearance evidence and completed renderer audit](../renderer/generated/native-checkable-theme-private-v1.json).
+
+## Remaining work
+
+Fresh qualification of the public checkpoint, complete control behavior and
+appearance, and the required hosted Chromium equality job remain open. The
+hosted historical-image job checks archive integrity; its success does not
+qualify current rendering against Chromium. Pinned inputs for hosted pixel
+qualification still need to be supplied and verified.
 
 Composition, complete native APIs, remaining pixels, compositor behavior,
 physical hardware and release qualification remain open.

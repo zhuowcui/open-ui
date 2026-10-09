@@ -1243,6 +1243,24 @@ pub extern "C" fn oui_element_create(
     })
 }
 
+// SAFETY CONTRACT: source is a live owning-thread handle and out_clone points
+// to writable storage for one owned element handle. No callback borrows survive.
+#[no_mangle]
+pub extern "C" fn oui_element_clone_subtree_v1(
+    source: *mut OuiElement,
+    out_clone: *mut *mut OuiElement,
+) -> OuiStatus {
+    ffi(|| {
+        if out_clone.is_null() {
+            return Err(invalid("out_clone is null"));
+        }
+        let source = element(source as usize)?;
+        let state = element_document(&source)?;
+        let node = borrow_engine_mut(&state)?.clone_subtree(source.node)?;
+        write_element_handle(out_clone, &state, node)
+    })
+}
+
 // SAFETY CONTRACT: `document` is live, `text` is readable, and `out_text` is writable.
 #[no_mangle]
 pub extern "C" fn oui_text_create(
@@ -1979,6 +1997,35 @@ fn dispatch_event_to(
     if !event_can_be_canceled(event.event_type) {
         event.flags &= !OUI_EVENT_FLAG_DEFAULT_PREVENTED;
     }
+    if apply_default && event.event_type == 4 {
+        let mut native = openui::Event::click_for_native_facade(event.timestamp_ns);
+        native.mouse_x = event.x;
+        native.mouse_y = event.y;
+        native.delta_x = event.delta_x;
+        native.delta_y = event.delta_y;
+        native.key_code = event.key_code;
+        native.key_text = utf8(event.text, "event text")?;
+        native.modifiers = event.modifiers as i32;
+        native.pointer_id = u64::from(event.pointer_id);
+        state
+            .native
+            .dispatch_click_for_native_facade(target, &native)
+            .map_err(native_app::native_error)?;
+        event.flags = 0;
+        if native.default_prevented() {
+            event.flags |= OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+        }
+        if native.propagation_stopped() {
+            event.flags |= OUI_EVENT_FLAG_PROPAGATION_STOPPED;
+        }
+        if native.immediate_propagation_stopped() {
+            event.flags |= OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED;
+        }
+        event.target = target_address as *mut OuiElement;
+        event.current_target = ptr::null_mut();
+        event.phase = 2;
+        return Ok(());
+    }
     if matches!(event.event_type, 25 | 26 | 27 | 28) {
         // Explicit notifications have no focus default action. Share the Rust
         // route so native listeners and versioned metadata see the same event.
@@ -2056,19 +2103,6 @@ fn dispatch_event_to(
     if apply_default && event.flags & OUI_EVENT_FLAG_DEFAULT_PREVENTED == 0 {
         let text = utf8(event.text, "event text")?;
         match event.event_type {
-            4 => {
-                let changed = borrow_engine_mut(state)?.activate(target)?.changed;
-                for changed in changed {
-                    let Ok(address) = element_address(state, changed) else {
-                        continue;
-                    };
-                    for event_type in [16, 17] {
-                        let mut derived = *event;
-                        derived.event_type = event_type;
-                        dispatch_event_to(state, changed, address, &mut derived, false)?;
-                    }
-                }
-            }
             8 => borrow_engine_mut(state)?.insert_text(target, &text)?,
             10 => borrow_engine_mut(state)?.update_composition(target, &text)?,
             11 if text.is_empty() => borrow_engine_mut(state)?.cancel_composition(target)?,
@@ -2688,7 +2722,7 @@ pub extern "C" fn oui_element_get_control_flags(
     })
 }
 
-// SAFETY CONTRACT: `element` is a live checkbox/radio and checked is 0 or 1.
+// SAFETY CONTRACT: element is a live input and checked is 0 or 1.
 #[no_mangle]
 pub extern "C" fn oui_element_set_checked(
     element_handle: *mut OuiElement,
@@ -3721,6 +3755,71 @@ pub extern "C" fn oui_buffer_destroy(buffer: *mut OuiBuffer) -> OuiStatus {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn c_clone_subtree_rejects_bad_owners_and_preserves_live_dirty_state() {
+        let document = create_document(100, 100);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let original = create_element(document, 23, root);
+        assert_eq!(
+            oui_element_set_attribute(original, text("type"), text("radio")),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_element_set_checked(original, 1), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_clone_subtree_v1(original, ptr::null_mut()),
+            OuiStatus::InvalidArgument
+        );
+        let mut clone = ptr::null_mut();
+        assert_eq!(
+            oui_element_clone_subtree_v1(original, &mut clone),
+            OuiStatus::Ok
+        );
+        let mut connected = 99;
+        assert_eq!(
+            oui_element_is_connected_v1(clone, &mut connected),
+            OuiStatus::Ok
+        );
+        assert_eq!(connected, 0);
+        assert_eq!(
+            oui_element_set_attribute(clone, text("checked"), text("")),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            oui_element_remove_attribute(clone, text("checked")),
+            OuiStatus::Ok
+        );
+        let mut flags = 0;
+        assert_eq!(
+            oui_element_get_control_flags(clone, &mut flags),
+            OuiStatus::Ok
+        );
+        assert_ne!(flags & OUI_CONTROL_CHECKED, 0);
+        let mut preserved = clone;
+        assert_eq!(
+            oui_element_clone_subtree_v1(ptr::null_mut(), &mut preserved),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(preserved, clone);
+        let address = original as usize;
+        let wrong_thread = std::thread::spawn(move || {
+            let mut output = ptr::null_mut();
+            oui_element_clone_subtree_v1(address as *mut OuiElement, &mut output)
+        })
+        .join()
+        .unwrap();
+        assert_eq!(wrong_thread, OuiStatus::WrongThread);
+        assert_eq!(oui_element_destroy(original), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_clone_subtree_v1(original, &mut preserved),
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(preserved, clone);
+        assert_eq!(oui_element_destroy(clone), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
     use openui_style::StyleProperty;
     use std::mem::{align_of, size_of};
 

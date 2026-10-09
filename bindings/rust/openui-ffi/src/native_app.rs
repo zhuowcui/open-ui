@@ -69,6 +69,7 @@ pub(crate) fn dispatch_native_listener(
         Some(openui::EventPhase::Bubble) => 3,
         None => 0,
     };
+    event.timestamp_ns = native.timestamp_ns();
     event.modifiers = native.modifiers as u32;
     event.x = native.mouse_x;
     event.y = native.mouse_y;

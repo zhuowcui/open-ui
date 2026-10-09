@@ -60,6 +60,7 @@ OPENUI_0.2 {
     oui_element_animate;
     oui_element_append_child;
     oui_element_blur;
+    oui_element_clone_subtree_v1;
     oui_element_copy_control_value;
     oui_element_create;
     oui_element_destroy;

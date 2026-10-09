@@ -19,7 +19,7 @@ use openui_text::{
     FontPaletteValuesDescriptor, HyphenationDictionaryHandle,
 };
 use std::cell::{Cell, RefCell};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 
 #[path = "selection_tasks.rs"]
@@ -40,10 +40,24 @@ pub(crate) struct DocumentInner {
     composition_generation: Cell<u64>,
     modal_generation: Cell<u64>,
     animation_events: RefCell<Vec<AnimationEvent>>,
+    active_clicks: RefCell<HashSet<NodeHandle>>,
     selection_tasks: selection_tasks::SelectionTasks,
     transaction_depth: Cell<usize>,
     #[cfg(feature = "ffi-integration")]
     foreign_event_handler: RefCell<Option<Rc<ForeignEventHandler>>>,
+}
+
+struct ClickScope {
+    document: Rc<DocumentInner>,
+    target: NodeHandle,
+}
+impl Drop for ClickScope {
+    fn drop(&mut self) {
+        self.document
+            .active_clicks
+            .borrow_mut()
+            .remove(&self.target);
+    }
 }
 
 /// Cloneable owner reference for one retained native document.
@@ -100,6 +114,7 @@ impl Document {
                 composition_generation: Cell::new(0),
                 modal_generation: Cell::new(0),
                 animation_events: RefCell::new(Vec::new()),
+                active_clicks: RefCell::new(HashSet::new()),
                 selection_tasks: selection_tasks::SelectionTasks::default(),
                 transaction_depth: Cell::new(0),
                 #[cfg(feature = "ffi-integration")]
@@ -129,6 +144,7 @@ impl Document {
                 composition_generation: Cell::new(0),
                 modal_generation: Cell::new(0),
                 animation_events: RefCell::new(Vec::new()),
+                active_clicks: RefCell::new(HashSet::new()),
                 selection_tasks: selection_tasks::SelectionTasks::default(),
                 transaction_depth: Cell::new(0),
                 foreign_event_handler: RefCell::new(None),
@@ -688,14 +704,8 @@ impl Document {
             _ => {}
         }
         if action == AccessibilityAction::Click {
-            if self.with_engine(|engine| engine.is_effectively_disabled(target))?? {
-                return Ok(());
-            }
-            let event = Event::keyboard("click", 0, None, Modifiers::NONE);
-            self.dispatch_to(target, &event)?;
-            if event.default_prevented() {
-                return Ok(());
-            }
+            return self
+                .dispatch_click(target, &Event::keyboard("click", 0, None, Modifiers::NONE));
         }
         let previous_focus = self.with_engine(Engine::focused)?;
         let changes = self.with_engine_mut(|engine| {
@@ -955,14 +965,7 @@ impl Document {
             .or_else(|| (!pointer_names && event_type == PointerEventKind::Up).then_some(target));
         if let Some(activation) = activation {
             let click = Event::pointer("click", pointer_id, x, y, button, modifiers);
-            self.dispatch_to(activation, &click)?;
-            if !click.default_prevented() {
-                let changed = self.with_engine_mut(|engine| engine.activate(activation))?;
-                for changed in changed.changed {
-                    self.dispatch_to(changed, &Event::keyboard("input", 0, None, modifiers))?;
-                    self.dispatch_to(changed, &Event::keyboard("change", 0, None, modifiers))?;
-                }
-            }
+            self.dispatch_click(activation, &click)?;
         }
         Ok(())
     }
@@ -1175,14 +1178,7 @@ impl Document {
                 return Ok(true);
             }
             let click = Event::keyboard("click", key_code, key_text, modifiers);
-            self.dispatch_to(target, &click)?;
-            if !click.default_prevented() {
-                let changed = self.with_engine_mut(|engine| engine.activate(target))?;
-                for changed in changed.changed {
-                    self.dispatch_to(changed, &Event::keyboard("input", 0, None, modifiers))?;
-                    self.dispatch_to(changed, &Event::keyboard("change", 0, None, modifiers))?;
-                }
-            }
+            self.dispatch_click(target, &click)?;
         }
         Ok(true)
     }
@@ -1547,6 +1543,118 @@ impl Document {
             collect(engine, root, &mut result);
             result
         })
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn dispatch_click_for_native_facade(
+        &self,
+        target: NodeHandle,
+        event: &Event,
+    ) -> Result<(), Error> {
+        if event.event_type != "click" {
+            return Err(Error::InvalidArgument(
+                "native click requires a click event",
+            ));
+        }
+        self.dispatch_click_event(target, event).map(|_| ())
+    }
+
+    pub(crate) fn dispatch_click_event(
+        &self,
+        target: NodeHandle,
+        event: &Event,
+    ) -> Result<bool, Error> {
+        self.dispatch_click_with_policy(target, event, false)?;
+        Ok(!event.default_prevented())
+    }
+
+    fn control_target_is_live(&self, target: NodeHandle) -> Result<bool, Error> {
+        match self.with_engine(|engine| engine.element_tag(target))? {
+            Ok(_) => Ok(true),
+            Err(openui_engine::EngineError::StaleHandle) => Ok(false),
+            Err(error) => Err(error.into()),
+        }
+    }
+
+    fn notify_control_activation(
+        &self,
+        target: NodeHandle,
+        modifiers: Modifiers,
+    ) -> Result<(), Error> {
+        if !self.control_target_is_live(target)? {
+            return Ok(());
+        }
+        self.dispatch_to(target, &Event::keyboard("input", 0, None, modifiers))?;
+        if self.control_target_is_live(target)? {
+            self.dispatch_to(target, &Event::keyboard("change", 0, None, modifiers))?;
+        }
+        Ok(())
+    }
+
+    fn dispatch_click(&self, target: NodeHandle, event: &Event) -> Result<(), Error> {
+        self.dispatch_click_with_policy(target, event, true)
+    }
+
+    fn dispatch_click_with_policy(
+        &self,
+        target: NodeHandle,
+        event: &Event,
+        simulated: bool,
+    ) -> Result<(), Error> {
+        // A normal click observes user activation eligibility and suppresses
+        // reentrant simulated clicks. Explicit raw events remain dispatchable
+        // on disabled controls and may nest distinct owned events.
+        if simulated && self.with_engine(|engine| engine.is_effectively_disabled(target))?? {
+            return Ok(());
+        }
+        let _scope = if simulated {
+            if !self
+                .inner
+                .active_clicks
+                .try_borrow_mut()
+                .map_err(|_| Error::ReentrantMutation)?
+                .insert(target)
+            {
+                return Ok(());
+            }
+            Some(ClickScope {
+                document: self.inner.clone(),
+                target,
+            })
+        } else {
+            None
+        };
+        let state = self.with_engine_mut(|engine| engine.begin_checkable_activation(target))?;
+        let dispatched = self.dispatch_to(target, event);
+        let canceled = event.default_prevented() || dispatched.is_err();
+        let notify = if let Some(state) = state {
+            self.with_engine_mut(|engine| engine.finish_checkable_activation(state, canceled))?
+        } else {
+            false
+        };
+        dispatched?;
+        let modifiers = Modifiers(event.modifiers as u32);
+        if notify {
+            self.notify_control_activation(target, modifiers)?;
+        } else if !canceled
+            && self.control_target_is_live(target)?
+            && !self.with_engine(|engine| {
+                engine
+                    .control_state(target)
+                    .ok()
+                    .flatten()
+                    .is_some_and(|c| {
+                        matches!(c.role, FormControlRole::Checkbox | FormControlRole::Radio)
+                    })
+            })?
+        {
+            let changed = self.with_engine_mut(|engine| engine.activate(target))?;
+            for changed in changed.changed {
+                self.notify_control_activation(changed, modifiers)?;
+            }
+        }
+        Ok(())
     }
 
     fn dispatch_to(&self, target: NodeHandle, event: &Event) -> Result<(), Error> {

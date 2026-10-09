@@ -74,6 +74,7 @@ struct EventState {
     bubbles: bool,
     cancelable: bool,
     input_info: Option<InputEventInfo>,
+    timestamp_ns: u64,
     default_prevented: Cell<bool>,
     propagation_stopped: Cell<bool>,
     immediate_propagation_stopped: Cell<bool>,
@@ -186,6 +187,21 @@ impl Event {
             is_composing: false,
             state,
         }
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn click_for_native_facade(timestamp_ns: u64) -> Self {
+        let mut event = Self::pointer("click", 0, 0.0, 0.0, MouseButton::Left, Modifiers::NONE);
+        Rc::get_mut(&mut event.state)
+            .expect("new event state")
+            .timestamp_ns = timestamp_ns;
+        event
+    }
+
+    /// Timestamp supplied by the native event source, or zero when unavailable.
+    pub fn timestamp_ns(&self) -> u64 {
+        self.state.timestamp_ns
     }
 
     pub(crate) fn input(

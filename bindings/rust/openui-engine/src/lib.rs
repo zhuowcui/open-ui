@@ -20,9 +20,9 @@ pub use animation::{
 };
 
 pub use interaction::{
-    ActivationResult, ControlAdjustment, ControlState, EditCommand, EventPhase, EventRoute,
-    FocusOrigin, PointerEventKind, PointerUpdate, RangeSelectionMode, RouteStep,
-    SelectionDirection, TextDirection, TextUnit,
+    ActivationResult, CheckableActivation, ControlAdjustment, ControlState, EditCommand,
+    EventPhase, EventRoute, FocusOrigin, PointerEventKind, PointerUpdate, RangeSelectionMode,
+    RouteStep, SelectionDirection, TextDirection, TextUnit,
 };
 
 use openui_compositor::{SceneGeneration, SceneRect, SceneSnapshot};
@@ -822,6 +822,7 @@ impl Engine {
         }
         self.document.append_child(parent, child);
         self.refresh_inherited_styles(child)?;
+        self.reconcile_radio_subtree(child)?;
         self.mark_dirty(InvalidationClass::Subtree);
         Ok(())
     }
@@ -880,6 +881,7 @@ impl Engine {
         self.document.detach(child_node);
         self.document.append_child(parent_node, child_node);
         self.refresh_inherited_styles(child_node)?;
+        self.reconcile_radio_subtree(child_node)?;
         self.mark_dirty(InvalidationClass::Subtree);
         Ok(())
     }
@@ -901,6 +903,7 @@ impl Engine {
         self.document.detach(child_node);
         self.document.insert_before(before_node, child_node);
         self.refresh_inherited_styles(child_node)?;
+        self.reconcile_radio_subtree(child_node)?;
         self.mark_dirty(InvalidationClass::Subtree);
         Ok(())
     }
@@ -1040,6 +1043,7 @@ impl Engine {
             .collect();
         self.clear_subtree_presentation_state(&detached_handles);
         self.refresh_inherited_styles(node)?;
+        self.reconcile_radio_subtree(node)?;
         self.mark_dirty(InvalidationClass::Subtree);
         Ok(())
     }
