@@ -102,3 +102,23 @@ not execute scripts in Open UI or waive missing public Rust APIs. Full Chromium
 pixel equality, complete native APIs, compositor, hardware and release checks
 remain unfinished. Comparison tolerance is zero, Chromium references are
 immutable, and old Open UI images preserve history.
+
+## Completed public native selection and queries
+
+The native APIs are verified on clean public `fcabea38`: all 109 Rust scenarios
+and 109 scenarios in each of C and C++ match Chromium, with repeated runs
+unchanged. C observes actual event properties, attributes, focus and node
+identity. All 8,607 workspace tests, 50 headless C tests, 22 C and 16 C++
+consumers and twenty local stages pass. The 125 exports and 34 layouts preserve
+previous callers. Six ordinary CI and seven explicit hardening jobs pass.
+The renderer reports retain exact focused and primitive suites and failing
+full pixel gates, with fixed references and no regression.
+
+The pending public verification and C property-query requirements above are
+superseded for this measured selection/query/metadata scope by the
+[completed public evidence](generated/native-selection-public-v1.json).
+Older private scopes remain historical measurements. Composition and complete
+native API parity stay open. A fieldset probe has ten focus differences in
+sixteen repeated checks; effective state, events, structural mutation and
+appearance remain unqualified. These need shared native Rust implementation.
+Open UI never runs JavaScript.

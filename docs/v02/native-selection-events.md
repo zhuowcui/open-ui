@@ -68,21 +68,30 @@ outputs preserve trailing storage and remain unchanged on error.
 
 ## Verification status
 
-The public implementation at `6565488e` compiles and passes 196 targeted Rust
-unit tests and thirteen integration guards. All six native Rust apps repeat
-unchanged. Its C++ consumer check fails because two new test applications use
-integer event arrays where the header requires `OuiEventType`; those arrays
-are corrected in the next checkpoint. Combined verification remains pending.
-The previous private implementation
-matches 98 Rust scenarios and 136 C/C++ common-field scenarios, with repeated
-runs unchanged. That private result does not qualify the new event property
-and attribute queries or the expanded C Unicode and focus checks.
+Clean public checkpoint `fcabea38` matches **109 Rust scenarios** and **109
+scenarios in each of C and C++** against immutable Chromium observations.
+All 24 repeated native processes produce unchanged bytes. C apps query actual
+event properties, focus, attributes and node identity. Range projections and
+UTF-16-to-UTF-8 scalar normalization are explicit.
 
-Fresh combined verification must compare 109 Rust scenarios and 109 scenarios
-in each of C and C++ against immutable Chromium observations, exercise ownership
-and callback guards, preserve existing exports and layouts, and complete the
-workspace and renderer gates. Composition lifecycle behavior, other required
-native APIs, exact full-corpus pixels and final release qualification remain
-open. Existing explicit C composition dispatch also needs verification and
-implementation through the shared Rust lifecycle. A script in a Chromium test
+All 8,607 workspace tests, 50 headless C tests, 22 C and 16 C++ consumers,
+and twenty local stages pass. The 125 exports and 34 layouts preserve every
+previous export and layout. Six ordinary CI jobs and seven explicit hardening
+jobs pass, with five optional ordinary skips recorded separately. Hosted
+virtual windows pass. Focused 640/640 and primitive 960/960 are exact; the
+original and expanded full pixel gates still fail with zero render errors.
+[Completed evidence](../renderer/generated/native-selection-public-v1.json).
+
+The first public run at `6565488e` failed because two C++ applications used
+integer event arrays. Typed `OuiEventType` arrays fix the compile failure;
+the failed run remains preserved. A first workspace run stopped at the build
+disk reserve before producing test results. Those actual failures are recorded.
+
+Disabling a fieldset fails ten of sixteen native focus checks, repeated
+unchanged, against Chromium. That probe observes focus identity only. Complete
+inherited disabled state, first-legend behavior, native event rows, structural
+mutation and appearance remain to be implemented and verified. Composition,
+UTF-16 positions splitting a surrogate pair, other required native APIs,
+full-corpus pixels and release qualification remain open. Existing C composition
+dispatch needs the shared Rust lifecycle. A script in a Chromium reference test
 never waives a needed native operation.

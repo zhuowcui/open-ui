@@ -37,14 +37,30 @@ hardening jobs. The [completed public evidence](generated/native-rounded-layer-v
 preserves source, executable and command identities. Full Chromium equality,
 needed native APIs, compositor, hardware and release checks remain unfinished.
 
-The [native selection and element-query APIs](../v02/native-selection-events.md) are now implemented on
-the PR branch. They provide range replacement, selection direction, deferred
-native selection events, node identity/connectivity, owned C attribute reads
-and native event metadata through the shared Rust document. The current ABI
-has 125 exports and 34 layouts, preserving every previous export and layout.
-Fresh combined consumer, workspace, hosted and renderer verification is
-pending. The preceding completed pixel results measure `5b05e1b5`; they do not
-qualify this new API checkpoint. Composition and complete API parity stay open.
+The [native selection and element-query APIs](../v02/native-selection-events.md) are implemented and verified on
+clean public checkpoint `fcabea38`. All **109 Rust scenarios** and **109
+scenarios in each of C and C++** match immutable Chromium observations; repeated
+runs stay identical. C queries actual event properties, attributes, focus and
+node identity. Scalar position normalization and declared range comparison
+fields are explicit. The ABI has **125 exports and 34 layouts**, preserving all
+previous 116 exports and 32 layouts.
+
+All **8,607 workspace tests**, 50 headless C tests, 22 C and 16 C++ consumers,
+and twenty local stages pass on that unchanged source. Six ordinary CI jobs
+and seven explicit hardening jobs pass; five optional skips remain separately
+recorded. Hosted virtual X11 software/OpenGL and pure Wayland software windows
+pass. Physical release-lab qualification remains open.
+
+Focused **640/640** and primitive **960/960** are exact. Original
+**21,338/22,924** and expanded **22,141/23,728** are exact,
+with zero errors. All Chromium reference fields stay fixed, with no exact
+losses or worsened rows against `5b05e1b5`. Both full pixel gates still exit 1.
+Composition, complete native APIs, reviewed pixel ownership, compositor and
+release qualification remain open. A native group-control probe repeats 16
+focus checks: six match and ten differ when a fieldset is disabled. Effective
+state and event delivery remain unqualified. That requires shared native Rust
+work. Open UI runs no JavaScript.
+[Completed public API evidence](generated/native-selection-public-v1.json).
 
 The [native input editor follow-up](native-input-editor-scrollport.md) corrects the private
 single-line editor clip. Its consuming Rust app improves from **22/30 to

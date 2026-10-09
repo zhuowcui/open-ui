@@ -6,7 +6,7 @@ Document and editing path. Pinned Chromium supplies reference behavior and
 expected pixels; old Open UI images preserve history.
 
 The [source-owned evidence](../renderer/generated/native-text-commit-v1.json)
-records the unchanged native baseline: five of six scenarios differ from
+records the historical native baseline: five of six scenarios differ from
 Chromium, producing 23 callback rows instead of 29. User text edits do not emit
 the required change notification on blur or Enter, and keyboard deletion lacks
 beforeinput. A programmatic value change alone correctly emits no change.
@@ -31,19 +31,21 @@ source proof. No consumers ran in that attempt. A new measurement cleans and
 freshly builds all local packages; it retains the rejected receipt and does
 not weaken the proof requirement.
 
-## Remaining native editing metadata
+## Public editing metadata now verified
 
-A separate Chromium reference completes two byte-identical runs of seven
-editing scenarios and 42 callback rows. It reports insertion, backward and
-forward deletion, line breaks, undo and redo as distinct input intents, with
-nullable data. Source inspection finds no corresponding typed intent and
-nullable data snapshot in the public Rust Event API or the legacy C event
-layout. The native metadata behavior has not been measured. The first oracle
-probe fails due to its evaluation expression; its receipt remains preserved,
-and the corrected probe has a separate identity.
+The separate seven-scenario Chromium reference remains immutable. Its two
+identical runs report 42 callback rows for insertion, deletion, line breaks,
+undo and redo, with distinct input intents and nullable data. The original
+source inspection described an API gap at that earlier checkpoint.
 
-The correction above remains private and unapplied. Broader reentry checks,
-complete workspace/ABI and own-source renderer checks remain required before
-integration. Needed public Rust APIs and additive, versioned C metadata remain
-implementation work. Complete Chromium equality, compositor and release
-qualification are still open.
+Public `fcabea38` now exposes `Event::input_info` and the versioned C
+`oui_event_input_info_v1`. The completed public scope matches 109 scenarios in
+Rust and 109 in each of C and C++, including actual editing metadata, event
+properties, focus, attributes and identity. Workspace, ABI, focused and
+primitive checks pass on that clean source; the full pixel gates still fail.
+[Completed public evidence](../renderer/generated/native-selection-public-v1.json).
+
+The private text-commit trial above remains historical evidence and does not
+qualify its six scenarios on a later source. Its rejected build and initial
+oracle-expression failure stay preserved. Composition, complete native APIs,
+Chromium pixel equality, compositor and release qualification remain open.
