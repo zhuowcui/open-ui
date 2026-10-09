@@ -41,6 +41,7 @@ fn snapshot(registry: &Registry) -> Value {
                 "checked":node.is_checked().unwrap(),
                 "checkedAttribute":node.get_attribute("checked").unwrap().is_some(),
                 "formAttribute":node.get_attribute("form").unwrap(),
+            "formOwner":name_of(registry,node.associated_form().unwrap()),
                 "connected":node.is_connected().unwrap(),
                 "parent":name_of(registry,node.parent().unwrap())
             }),

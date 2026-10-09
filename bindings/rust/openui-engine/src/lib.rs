@@ -3,6 +3,7 @@
 mod accessibility;
 mod animation;
 mod control_geometry;
+mod forms;
 mod interaction;
 mod scroll_into_view;
 
@@ -386,6 +387,7 @@ pub struct Engine {
     hover_paths: HashMap<u64, Vec<NodeHandle>>,
     active_pointers: HashMap<u64, NodeHandle>,
     controls: HashMap<u32, ControlState>,
+    radio_associations: HashMap<u32, forms::RadioAssociation>,
     semantics: HashMap<u32, accessibility::SemanticProperties>,
     accessibility_nodes: HashMap<AccessibilityNodeId, AccessibilityNode>,
     accessibility_initialized: bool,
@@ -471,6 +473,7 @@ impl Engine {
             hover_paths: HashMap::new(),
             active_pointers: HashMap::new(),
             controls: HashMap::new(),
+            radio_associations: HashMap::new(),
             semantics: HashMap::new(),
             accessibility_nodes: HashMap::new(),
             accessibility_initialized: false,
@@ -879,6 +882,7 @@ impl Engine {
         let parent_node = self.resolve(parent)?;
         let child_node = self.resolve(child)?;
         self.document.detach(child_node);
+        self.remove_radio_subtree(child_node)?;
         self.document.append_child(parent_node, child_node);
         self.refresh_inherited_styles(child_node)?;
         self.reconcile_radio_subtree(child_node)?;
@@ -897,11 +901,20 @@ impl Engine {
         let parent_node = self.resolve(parent)?;
         let child_node = self.resolve(child)?;
         let before_node = self.resolve(before)?;
-        if child_node == before_node {
-            return Ok(());
-        }
+        // Inserting a node before itself still removes and reinserts it.
+        // Its former next sibling determines the insertion position.
+        let insertion_point = if child_node == before_node {
+            self.document.node(child_node).next_sibling
+        } else {
+            before_node
+        };
         self.document.detach(child_node);
-        self.document.insert_before(before_node, child_node);
+        self.remove_radio_subtree(child_node)?;
+        if insertion_point.is_none() {
+            self.document.append_child(parent_node, child_node);
+        } else {
+            self.document.insert_before(insertion_point, child_node);
+        }
         self.refresh_inherited_styles(child_node)?;
         self.reconcile_radio_subtree(child_node)?;
         self.mark_dirty(InvalidationClass::Subtree);
@@ -996,11 +1009,15 @@ impl Engine {
         }
         let root = root.expect("validated source produces a root clone");
         self.refresh_inherited_styles(self.resolve(root)?)?;
+        self.reconcile_radio_subtree(self.resolve(root)?)?;
         Ok(root)
     }
 
     /// Find the first attached element with this ID in document order.
     pub fn element_by_id(&self, id: &str) -> Option<NodeHandle> {
+        if id.is_empty() {
+            return None;
+        }
         let mut stack = vec![self.document.root()];
         while let Some(node) = stack.pop() {
             let data = self.document.node(node);
@@ -1043,7 +1060,7 @@ impl Engine {
             .collect();
         self.clear_subtree_presentation_state(&detached_handles);
         self.refresh_inherited_styles(node)?;
-        self.reconcile_radio_subtree(node)?;
+        self.remove_radio_subtree(node)?;
         self.mark_dirty(InvalidationClass::Subtree);
         Ok(())
     }
@@ -1095,9 +1112,11 @@ impl Engine {
             .map(|index| self.handle_for_slot(*index))
             .collect();
         self.clear_subtree_presentation_state(&removed_handles);
+        self.remove_radio_subtree(node)?;
         for node in &descendants {
             if let Some(index) = self.node_slots.remove(node) {
                 self.controls.remove(&index);
+                self.radio_associations.remove(&index);
                 self.semantics.remove(&index);
                 let slot = &mut self.slots[index as usize];
                 slot.node = None;
@@ -1198,8 +1217,14 @@ impl Engine {
         if self.document.node(node).attributes.get(&name) == Some(&value) {
             return Ok(());
         }
+        let previous_id = (name == "id")
+            .then(|| self.document.attribute(node, "id").map(str::to_owned))
+            .flatten();
         self.document
             .set_attribute(node, name.clone(), value.clone());
+        if name == "id" {
+            self.radio_id_targets_changed(&[previous_id.as_deref().unwrap_or_default(), &value])?;
+        }
         if name == "lang" {
             self.set_property(
                 handle,
@@ -1233,13 +1258,16 @@ impl Engine {
         name: &str,
     ) -> Result<bool, EngineError> {
         let node = self.resolve(handle)?;
-        let removed = self
+        let previous = self
             .document
             .node_mut(node)
             .attributes
-            .remove(&name.to_ascii_lowercase())
-            .is_some();
+            .remove(&name.to_ascii_lowercase());
+        let removed = previous.is_some();
         if removed {
+            if name.eq_ignore_ascii_case("id") {
+                self.radio_id_targets_changed(&[previous.as_deref().unwrap_or_default()])?;
+            }
             if name.eq_ignore_ascii_case("lang") {
                 self.set_property(
                     handle,

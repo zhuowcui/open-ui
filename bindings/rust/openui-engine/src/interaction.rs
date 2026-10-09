@@ -1345,7 +1345,7 @@ impl Engine {
                 .expect("validated control handle");
         }
         if matches!(name, "type" | "name" | "form") {
-            self.reconcile_radio(handle)
+            self.reset_radio_association(handle)
                 .expect("validated control handle");
         }
     }
@@ -1379,7 +1379,7 @@ impl Engine {
                 .expect("validated control handle");
         }
         if matches!(name, "type" | "name" | "form") {
-            self.reconcile_radio(handle)
+            self.reset_radio_association(handle)
                 .expect("validated control handle");
         }
     }
@@ -1514,7 +1514,7 @@ impl Engine {
         }
     }
 
-    fn set_checked_internal(&mut self, handle: NodeHandle, checked: bool) {
+    pub(crate) fn set_checked_internal(&mut self, handle: NodeHandle, checked: bool) {
         let control = self
             .controls
             .get_mut(&handle.index)
@@ -1544,7 +1544,7 @@ impl Engine {
         let radio = control.role == FormControlRole::Radio;
         let mut changed = Vec::new();
         if radio && checked {
-            for peer in self.radio_group_members(handle)? {
+            for peer in self.radio_peers_to_uncheck(handle)? {
                 if peer != handle && self.controls[&peer.index].checked {
                     self.set_checked_internal(peer, false);
                     changed.push(peer);
@@ -1562,25 +1562,6 @@ impl Engine {
         Ok(changed)
     }
 
-    fn form_owner(&self, handle: NodeHandle) -> Result<Option<NodeHandle>, EngineError> {
-        self.resolve(handle)?;
-        if let Some(id) = self.attribute(handle, "form")? {
-            if self.is_connected(handle)? {
-                return Ok(self
-                    .element_by_id(id)
-                    .filter(|candidate| self.element_tag(*candidate) == Ok(ElementTag::Form)));
-            }
-        }
-        let mut current = self.parent(handle)?;
-        while let Some(parent) = current {
-            if self.element_tag(parent)? == ElementTag::Form {
-                return Ok(Some(parent));
-            }
-            current = self.parent(parent)?;
-        }
-        Ok(None)
-    }
-
     fn tree_root(&self, handle: NodeHandle) -> Result<NodeHandle, EngineError> {
         self.resolve(handle)?;
         let mut root = handle;
@@ -1590,7 +1571,10 @@ impl Engine {
         Ok(root)
     }
 
-    fn radio_group_members(&self, handle: NodeHandle) -> Result<Vec<NodeHandle>, EngineError> {
+    pub(crate) fn radio_group_members(
+        &self,
+        handle: NodeHandle,
+    ) -> Result<Vec<NodeHandle>, EngineError> {
         self.resolve(handle)?;
         let name = self.attribute(handle, "name")?.unwrap_or_default();
         if name.is_empty() {
@@ -1612,48 +1596,6 @@ impl Engine {
             stack.extend(self.children(node)?.into_iter().rev());
         }
         Ok(members)
-    }
-
-    fn reconcile_radio(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
-        self.resolve(handle)?;
-        if !self
-            .controls
-            .get(&handle.index)
-            .is_some_and(|c| c.role == FormControlRole::Radio && c.checked)
-        {
-            return Ok(());
-        }
-        let mut changed = false;
-        for peer in self.radio_group_members(handle)? {
-            if peer != handle && self.controls[&peer.index].checked {
-                self.set_checked_internal(peer, false);
-                changed = true;
-            }
-        }
-        if changed {
-            self.mark_dirty(openui_style::InvalidationClass::Paint);
-        }
-        Ok(())
-    }
-
-    pub(crate) fn reconcile_radio_subtree(
-        &mut self,
-        node: openui_dom::NodeId,
-    ) -> Result<(), EngineError> {
-        let mut stack = vec![node];
-        while let Some(node) = stack.pop() {
-            if let Some(index) = self.node_slots.get(&node) {
-                self.reconcile_radio(self.handle_for_slot(*index))?;
-            }
-            stack.extend(
-                self.document
-                    .children(node)
-                    .collect::<Vec<_>>()
-                    .into_iter()
-                    .rev(),
-            );
-        }
-        Ok(())
     }
 
     fn collect_options(

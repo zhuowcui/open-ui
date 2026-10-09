@@ -179,6 +179,17 @@ impl Element {
         Ok(next.map(|handle| Self::from_handle(self.document.clone(), handle)))
     }
 
+    /// Query this native control's current associated form. The returned owned
+    /// element shares this document and remains usable across detach/reattach.
+    /// A non-associated native kind or a control without an owner returns None.
+    /// This query does not run layout, enqueue events, or execute scripts.
+    pub fn associated_form(&self) -> Result<Option<Element>, Error> {
+        let form = self
+            .document
+            .with_engine(|engine| engine.associated_form(self.handle))??;
+        Ok(form.map(|handle| Self::from_handle(self.document.clone(), handle)))
+    }
+
     pub fn parent(&self) -> Result<Option<Element>, Error> {
         let parent = self
             .document
