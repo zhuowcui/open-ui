@@ -2270,335 +2270,630 @@ pub(crate) fn block_layout_contents(
     let mut last_baseline_result: Option<LayoutUnit> = None;
 
     if has_inline && !has_block {
-        // ── Pure inline formatting context ───────────────────────────
-        // Handle float and OOF children first (leading floats), then lay out
-        // inline content with float-aware per-line available width.
-        let mut exclusion_space_inline = initial_exclusion_space(space);
-        let inherited_exclusion_space_inline = exclusion_space_inline.clone();
-        let (mut items_data, float_placeholders) =
-            if let Some(children) = virtual_marker_children.as_deref() {
+        // Keep inline layout working values in a separate call frame.
+        // Nested ordinary blocks do not use these values and should
+        // not reserve their debug-build stack space on every descent.
+        let mut layout_inline_children = || {
+            // ── Pure inline formatting context ───────────────────────────
+            // Handle float and OOF children first (leading floats), then lay out
+            // inline content with float-aware per-line available width.
+            let mut exclusion_space_inline = initial_exclusion_space(space);
+            let inherited_exclusion_space_inline = exclusion_space_inline.clone();
+            let (mut items_data, float_placeholders) = if let Some(children) =
+                virtual_marker_children.as_deref()
+            {
                 crate::inline::items_builder::InlineItemsBuilder::collect_for_children_with_floats(
                     doc, node_id, children,
                 )
             } else {
                 crate::inline::items_builder::InlineItemsBuilder::collect_with_floats(doc, node_id)
             };
-        let float_source_positions = crate::inline::algorithm::inline_float_source_positions(
-            doc,
-            node_id,
-            &items_data,
-            &float_placeholders,
-            child_available_inline,
-            space,
-        );
-        // The flattened inline source positions do not include the block-axis
-        // space consumed by block-in-inline interruptions. Measure those
-        // interruptions up front so a later descendant float keeps its source
-        // order position after the intervening block, rather than being placed
-        // at the start of the containing block.
-        let block_in_inline_source_advances = if items_data.block_in_inline.is_empty()
-            || float_placeholders.is_empty()
-        {
-            Vec::new()
-        } else {
-            let mut interruptions = items_data.block_in_inline.clone();
-            interruptions.sort_by_key(|interruption| interruption.item_index);
-            let first_interruption_collapses = content_edge == LayoutUnit::zero()
-                && !space.is_new_formatting_context
-                && interruptions.first().is_some_and(|first| {
-                    !items_data.items[..first.item_index].iter().any(|item| {
-                        matches!(
+            let float_source_positions = crate::inline::algorithm::inline_float_source_positions(
+                doc,
+                node_id,
+                &items_data,
+                &float_placeholders,
+                child_available_inline,
+                space,
+            );
+            // The flattened inline source positions do not include the block-axis
+            // space consumed by block-in-inline interruptions. Measure those
+            // interruptions up front so a later descendant float keeps its source
+            // order position after the intervening block, rather than being placed
+            // at the start of the containing block.
+            let block_in_inline_source_advances = if items_data.block_in_inline.is_empty()
+                || float_placeholders.is_empty()
+            {
+                Vec::new()
+            } else {
+                let mut interruptions = items_data.block_in_inline.clone();
+                interruptions.sort_by_key(|interruption| interruption.item_index);
+                let first_interruption_collapses = content_edge == LayoutUnit::zero()
+                    && !space.is_new_formatting_context
+                    && interruptions.first().is_some_and(|first| {
+                        !items_data.items[..first.item_index].iter().any(|item| {
+                            matches!(
+                                item.item_type,
+                                crate::inline::items::InlineItemType::Text
+                                    | crate::inline::items::InlineItemType::AtomicInline
+                            )
+                        })
+                    });
+                interruptions
+                    .iter()
+                    .enumerate()
+                    .map(|(index, interruption)| {
+                        let child_style = &doc.node(interruption.node_id).style;
+                        let mut child_space = crate::logical_geometry::block_child_constraint_space(
+                            space,
+                            child_style,
+                            child_available_inline,
+                            space.available_block_size,
+                            child_available_inline,
+                            child_percentage_block_size,
+                            false,
+                        );
+                        // This is a geometry-only prepass used to locate a later
+                        // descendant float. It must not consume the shared clamp
+                        // budget before the real block-in-inline pass formats the
+                        // retained content.
+                        child_space.line_clamp_context = None;
+                        let child_fragment = block_layout(doc, interruption.node_id, &child_space);
+                        let margin_top = resolve_margin_or_padding(
+                            &child_style.margin_top,
+                            child_available_inline,
+                        );
+                        let margin_bottom = resolve_margin_or_padding(
+                            &child_style.margin_bottom,
+                            child_available_inline,
+                        );
+                        let local_margin_top = if index == 0 && first_interruption_collapses {
+                            LayoutUnit::zero()
+                        } else {
+                            margin_top
+                        };
+                        (
+                            interruption.item_index,
+                            local_margin_top + child_fragment.size.height + margin_bottom,
+                        )
+                    })
+                    .collect()
+            };
+            let retained_float_line_budget = match style.line_clamp {
+                openui_style::LineClamp::Lines(lines) => Some(lines as usize),
+                _ => None,
+            };
+            let retained_float_block_budget = crate::inline::algorithm::line_clamp_auto_block_size(
+                style,
+                space.available_block_size,
+            );
+            let mut previous_float_item_index = 0usize;
+            let mut cleared_float_shelf = None;
+            let mut discarded_auto_float_line_extent = LayoutUnit::zero();
+
+            for placeholder in &float_placeholders {
+                let child_id = placeholder.node_id;
+                let child_style = &doc.node(child_id).style;
+                if child_style.display == Display::None {
+                    continue;
+                }
+                if child_style.position.is_absolutely_positioned() {
+                    // Inline layout records the same child at its measured
+                    // insertion boundary. Do not synthesize a duplicate here.
+                    continue;
+                }
+                if child_style.float != Float::None {
+                    let mut crossed_clearance = None;
+                    let mut crossed_clearing_breaks = 0usize;
+                    // `clear` applies to a forced break's line box. Floats are
+                    // hoisted out of the IFC for placement, so carry any clearing
+                    // controls crossed in source order into their BFC origin.
+                    // Keep the resulting floor for consecutive floats after the
+                    // same break so they form one new shelf.
+                    for item in &items_data.items[previous_float_item_index..placeholder.item_index]
+                    {
+                        if item.item_type == crate::inline::items::InlineItemType::Control {
+                            let clear = doc.node(item.node_id).style.clear;
+                            if clear != Clear::None {
+                                crossed_clearance = Some(
+                                    exclusion_space_inline
+                                        .clearance_offset(clear_type_from_style(clear)),
+                                );
+                                crossed_clearing_breaks += 1;
+                            } else {
+                                cleared_float_shelf = None;
+                            }
+                        } else if matches!(
                             item.item_type,
                             crate::inline::items::InlineItemType::Text
                                 | crate::inline::items::InlineItemType::AtomicInline
-                        )
-                    })
-                });
-            interruptions
-                .iter()
-                .enumerate()
-                .map(|(index, interruption)| {
-                    let child_style = &doc.node(interruption.node_id).style;
-                    let mut child_space = crate::logical_geometry::block_child_constraint_space(
-                        space,
-                        child_style,
-                        child_available_inline,
-                        space.available_block_size,
-                        child_available_inline,
-                        child_percentage_block_size,
-                        false,
-                    );
-                    // This is a geometry-only prepass used to locate a later
-                    // descendant float. It must not consume the shared clamp
-                    // budget before the real block-in-inline pass formats the
-                    // retained content.
-                    child_space.line_clamp_context = None;
-                    let child_fragment = block_layout(doc, interruption.node_id, &child_space);
-                    let margin_top =
-                        resolve_margin_or_padding(&child_style.margin_top, child_available_inline);
-                    let margin_bottom = resolve_margin_or_padding(
-                        &child_style.margin_bottom,
-                        child_available_inline,
-                    );
-                    let local_margin_top = if index == 0 && first_interruption_collapses {
-                        LayoutUnit::zero()
-                    } else {
-                        margin_top
-                    };
-                    (
-                        interruption.item_index,
-                        local_margin_top + child_fragment.size.height + margin_bottom,
-                    )
-                })
-                .collect()
-        };
-        let retained_float_line_budget = match style.line_clamp {
-            openui_style::LineClamp::Lines(lines) => Some(lines as usize),
-            _ => None,
-        };
-        let retained_float_block_budget =
-            crate::inline::algorithm::line_clamp_auto_block_size(style, space.available_block_size);
-        let mut previous_float_item_index = 0usize;
-        let mut cleared_float_shelf = None;
-        let mut discarded_auto_float_line_extent = LayoutUnit::zero();
-
-        for placeholder in &float_placeholders {
-            let child_id = placeholder.node_id;
-            let child_style = &doc.node(child_id).style;
-            if child_style.display == Display::None {
-                continue;
-            }
-            if child_style.position.is_absolutely_positioned() {
-                // Inline layout records the same child at its measured
-                // insertion boundary. Do not synthesize a duplicate here.
-                continue;
-            }
-            if child_style.float != Float::None {
-                let mut crossed_clearance = None;
-                let mut crossed_clearing_breaks = 0usize;
-                // `clear` applies to a forced break's line box. Floats are
-                // hoisted out of the IFC for placement, so carry any clearing
-                // controls crossed in source order into their BFC origin.
-                // Keep the resulting floor for consecutive floats after the
-                // same break so they form one new shelf.
-                for item in &items_data.items[previous_float_item_index..placeholder.item_index] {
-                    if item.item_type == crate::inline::items::InlineItemType::Control {
-                        let clear = doc.node(item.node_id).style.clear;
-                        if clear != Clear::None {
-                            crossed_clearance = Some(
-                                exclusion_space_inline
-                                    .clearance_offset(clear_type_from_style(clear)),
-                            );
-                            crossed_clearing_breaks += 1;
-                        } else {
+                                | crate::inline::items::InlineItemType::BlockInInline
+                        ) {
                             cleared_float_shelf = None;
                         }
-                    } else if matches!(
-                        item.item_type,
-                        crate::inline::items::InlineItemType::Text
-                            | crate::inline::items::InlineItemType::AtomicInline
-                            | crate::inline::items::InlineItemType::BlockInInline
-                    ) {
-                        cleared_float_shelf = None;
                     }
-                }
-                previous_float_item_index = placeholder.item_index;
-                let source = float_source_positions.get(&child_id).copied().unwrap_or(
-                    crate::inline::algorithm::InlineFloatSourcePosition {
-                        block_offset: LayoutUnit::zero(),
-                        preceding_inline_size: LayoutUnit::zero(),
-                        line_height: LayoutUnit::zero(),
-                    },
-                );
-                let source_line_number = if source.line_height > LayoutUnit::zero() {
-                    (source.block_offset.raw().max(0) / source.line_height.raw().max(1)) as usize
-                        + 1
-                } else {
-                    1
-                };
-                if retained_float_line_budget.is_some_and(|budget| source_line_number > budget) {
-                    continue;
-                }
-                if let Some(clearance) = crossed_clearance {
-                    // A clearing BR establishes at least one line strut. Tall
-                    // float shelves usually supply the larger advance; short
-                    // shelves still move by the inherited line height.
-                    let line_floor = cleared_float_shelf.unwrap_or_default()
-                        + source.line_height * crossed_clearing_breaks as i32;
-                    cleared_float_shelf = Some(clearance.max_of(line_floor));
-                }
-                let margin = resolve_margins_in_parent_axes(
-                    child_style,
-                    child_available_inline,
-                    space.writing_direction,
-                );
-                let inline_length =
-                    inline_size_in_parent_axes(child_style, space.writing_direction);
-                let estimated_border_box = if inline_length.is_auto() {
-                    crate::out_of_flow::compute_shrink_to_fit_width(
+                    previous_float_item_index = placeholder.item_index;
+                    let source = float_source_positions.get(&child_id).copied().unwrap_or(
+                        crate::inline::algorithm::InlineFloatSourcePosition {
+                            block_offset: LayoutUnit::zero(),
+                            preceding_inline_size: LayoutUnit::zero(),
+                            line_height: LayoutUnit::zero(),
+                        },
+                    );
+                    let source_line_number = if source.line_height > LayoutUnit::zero() {
+                        (source.block_offset.raw().max(0) / source.line_height.raw().max(1))
+                            as usize
+                            + 1
+                    } else {
+                        1
+                    };
+                    if retained_float_line_budget.is_some_and(|budget| source_line_number > budget)
+                    {
+                        continue;
+                    }
+                    if let Some(clearance) = crossed_clearance {
+                        // A clearing BR establishes at least one line strut. Tall
+                        // float shelves usually supply the larger advance; short
+                        // shelves still move by the inherited line height.
+                        let line_floor = cleared_float_shelf.unwrap_or_default()
+                            + source.line_height * crossed_clearing_breaks as i32;
+                        cleared_float_shelf = Some(clearance.max_of(line_floor));
+                    }
+                    let margin = resolve_margins_in_parent_axes(
+                        child_style,
+                        child_available_inline,
+                        space.writing_direction,
+                    );
+                    let inline_length =
+                        inline_size_in_parent_axes(child_style, space.writing_direction);
+                    let estimated_border_box = if inline_length.is_auto() {
+                        crate::out_of_flow::compute_shrink_to_fit_width(
+                            doc,
+                            child_id,
+                            child_available_inline,
+                        )
+                    } else {
+                        let specified = resolve_length(
+                            inline_length,
+                            child_available_inline,
+                            LayoutUnit::zero(),
+                            LayoutUnit::zero(),
+                        );
+                        if child_style.box_sizing == BoxSizing::BorderBox {
+                            specified
+                        } else {
+                            let child_border = resolve_border(child_style);
+                            let child_padding =
+                                resolve_padding(child_style, child_available_inline);
+                            let border_padding_inline = if space.writing_direction.is_horizontal() {
+                                child_border.left
+                                    + child_border.right
+                                    + child_padding.left
+                                    + child_padding.right
+                            } else {
+                                child_border.top
+                                    + child_border.bottom
+                                    + child_padding.top
+                                    + child_padding.bottom
+                            };
+                            specified + border_padding_inline
+                        }
+                    };
+                    let estimated_margin_box = (margin.left + estimated_border_box + margin.right)
+                        .clamp_negative_to_zero();
+                    let computed_source_block = if source.preceding_inline_size > LayoutUnit::zero()
+                        && source.preceding_inline_size + estimated_margin_box
+                            > child_available_inline
+                    {
+                        source.block_offset + source.line_height
+                    } else {
+                        source.block_offset
+                    } + block_in_inline_source_advances
+                        .iter()
+                        .filter(|(item_index, _)| *item_index < placeholder.item_index)
+                        .fold(LayoutUnit::zero(), |sum, (_, advance)| sum + *advance);
+                    // An auto-clamped float whose outer width pushes its following
+                    // text beyond the physical clamp edge has no retained line to
+                    // participate in. Discard it with that continuation. A float
+                    // one line earlier remains in-flow and is still painted.
+                    if retained_float_block_budget
+                        .is_some_and(|budget| computed_source_block + source.line_height >= budget)
+                    {
+                        if let Some(context) = &space.line_clamp_context {
+                            context.consume_atomic_layout(0, source.line_height);
+                        } else {
+                            discarded_auto_float_line_extent =
+                                discarded_auto_float_line_extent.max_of(source.line_height);
+                        }
+                        continue;
+                    }
+                    let source_block = cleared_float_shelf.unwrap_or(computed_source_block);
+                    let float_block_offset = block_offset + source_block;
+                    handle_float(
                         doc,
                         child_id,
+                        space,
                         child_available_inline,
-                    )
-                } else {
-                    let specified = resolve_length(
-                        inline_length,
-                        child_available_inline,
-                        LayoutUnit::zero(),
-                        LayoutUnit::zero(),
+                        child_percentage_block_size,
+                        &border,
+                        &padding,
+                        content_edge,
+                        &float_block_offset,
+                        &mut exclusion_space_inline,
+                        &mut child_fragments,
+                        &mut oof_candidates,
+                        &mut bubbled_oof_candidates,
+                        establishes_cb_for_abspos,
+                        captures_fixed_pos_descendants,
+                        &mut max_float_bottom,
                     );
-                    if child_style.box_sizing == BoxSizing::BorderBox {
-                        specified
-                    } else {
-                        let child_border = resolve_border(child_style);
-                        let child_padding = resolve_padding(child_style, child_available_inline);
-                        let border_padding_inline = if space.writing_direction.is_horizontal() {
-                            child_border.left
-                                + child_border.right
-                                + child_padding.left
-                                + child_padding.right
-                        } else {
-                            child_border.top
-                                + child_border.bottom
-                                + child_padding.top
-                                + child_padding.bottom
-                        };
-                        specified + border_padding_inline
-                    }
-                };
-                let estimated_margin_box =
-                    (margin.left + estimated_border_box + margin.right).clamp_negative_to_zero();
-                let computed_source_block = if source.preceding_inline_size > LayoutUnit::zero()
-                    && source.preceding_inline_size + estimated_margin_box > child_available_inline
-                {
-                    source.block_offset + source.line_height
-                } else {
-                    source.block_offset
-                } + block_in_inline_source_advances
-                    .iter()
-                    .filter(|(item_index, _)| *item_index < placeholder.item_index)
-                    .fold(LayoutUnit::zero(), |sum, (_, advance)| sum + *advance);
-                // An auto-clamped float whose outer width pushes its following
-                // text beyond the physical clamp edge has no retained line to
-                // participate in. Discard it with that continuation. A float
-                // one line earlier remains in-flow and is still painted.
-                if retained_float_block_budget
-                    .is_some_and(|budget| computed_source_block + source.line_height >= budget)
-                {
-                    if let Some(context) = &space.line_clamp_context {
-                        context.consume_atomic_layout(0, source.line_height);
-                    } else {
-                        discarded_auto_float_line_extent =
-                            discarded_auto_float_line_extent.max_of(source.line_height);
-                    }
-                    continue;
                 }
-                let source_block = cleared_float_shelf.unwrap_or(computed_source_block);
-                let float_block_offset = block_offset + source_block;
-                handle_float(
-                    doc,
-                    child_id,
-                    space,
+            }
+
+            // Pre-collect inline items to detect block-in-inline (CSS 2.2 §9.2.1.1).
+
+            if !items_data.block_in_inline.is_empty() {
+                reconstructed_block_in_inline = true;
+                // ── Block-in-inline: split IFC around block-level elements ──
+                // CSS 2.2 §9.2.1.1: When block elements appear inside inline
+                // content (e.g. <span>text<div>block</div>text</span>), we split
+                // the inline items into segments separated by block elements and
+                // lay out each segment as an anonymous inline wrapper, with the
+                // block elements laid out between them.
+                let base_direction = if style.direction == Direction::Rtl {
+                    openui_text::TextDirection::Rtl
+                } else {
+                    openui_text::TextDirection::Ltr
+                };
+                items_data.apply_bidi(base_direction);
+                items_data.shape_text();
+
+                // Keep the interrupted IFC as the authority for positioned-inline
+                // containing blocks. The anonymous block reconstruction below
+                // supplies in-flow fragments; this probe supplies OOF candidates
+                // whose containing-block geometry crosses that interruption.
+                let probe_space = ConstraintSpace::for_block_child_with_writing_direction(
+                    child_available_inline,
+                    space.available_block_size,
                     child_available_inline,
                     child_percentage_block_size,
-                    &border,
-                    &padding,
-                    content_edge,
-                    &float_block_offset,
-                    &mut exclusion_space_inline,
-                    &mut child_fragments,
-                    &mut oof_candidates,
-                    &mut bubbled_oof_candidates,
-                    establishes_cb_for_abspos,
-                    captures_fixed_pos_descendants,
-                    &mut max_float_bottom,
+                    false,
+                    space.writing_direction,
                 );
-            }
-        }
+                let mut probe_space = probe_space;
+                probe_space.first_line_context = space.first_line_context.clone();
+                let mut inline_probe =
+                    crate::inline::algorithm::inline_layout(doc, node_id, &probe_space);
+                let inline_oof_candidates = std::mem::take(&mut inline_probe.oof_candidates);
 
-        // Pre-collect inline items to detect block-in-inline (CSS 2.2 §9.2.1.1).
+                let mut current_block_offset = content_edge;
 
-        if !items_data.block_in_inline.is_empty() {
-            reconstructed_block_in_inline = true;
-            // ── Block-in-inline: split IFC around block-level elements ──
-            // CSS 2.2 §9.2.1.1: When block elements appear inside inline
-            // content (e.g. <span>text<div>block</div>text</span>), we split
-            // the inline items into segments separated by block elements and
-            // lay out each segment as an anonymous inline wrapper, with the
-            // block elements laid out between them.
-            let base_direction = if style.direction == Direction::Rtl {
-                openui_text::TextDirection::Rtl
-            } else {
-                openui_text::TextDirection::Ltr
-            };
-            items_data.apply_bidi(base_direction);
-            items_data.shape_text();
-
-            // Keep the interrupted IFC as the authority for positioned-inline
-            // containing blocks. The anonymous block reconstruction below
-            // supplies in-flow fragments; this probe supplies OOF candidates
-            // whose containing-block geometry crosses that interruption.
-            let probe_space = ConstraintSpace::for_block_child_with_writing_direction(
-                child_available_inline,
-                space.available_block_size,
-                child_available_inline,
-                child_percentage_block_size,
-                false,
-                space.writing_direction,
-            );
-            let mut probe_space = probe_space;
-            probe_space.first_line_context = space.first_line_context.clone();
-            let mut inline_probe =
-                crate::inline::algorithm::inline_layout(doc, node_id, &probe_space);
-            let inline_oof_candidates = std::mem::take(&mut inline_probe.oof_candidates);
-
-            let mut current_block_offset = content_edge;
-
-            let block_in_inline_sorted = {
-                let mut v = items_data.block_in_inline.clone();
-                v.sort_by_key(|b| b.item_index);
-                v
-            };
-
-            let mut segment_start_item = 0usize;
-            let mut is_first_segment = true;
-            let mut interrupted_block_advances = Vec::new();
-            let mut interrupted_margin_strut = MarginStrut::new();
-            let mut interrupted_has_content = false;
-            let mut pending_interrupted_self_collapsing: Vec<usize> = Vec::new();
-            let mut formatted_zero_atomic_after_clamp = false;
-            let legacy_inline_box_block_after_clamp = style.legacy_webkit_box
-                && style.legacy_webkit_line_clamp
-                && style.display == Display::InlineBlock;
-            for bi_info in &block_in_inline_sorted {
-                let block_child_is_zero_atomic = {
-                    let block_style = &doc.node(bi_info.node_id).style;
-                    block_style.height.is_fixed() && block_style.height.value() == 0.0
+                let block_in_inline_sorted = {
+                    let mut v = items_data.block_in_inline.clone();
+                    v.sort_by_key(|b| b.item_index);
+                    v
                 };
+
+                let mut segment_start_item = 0usize;
+                let mut is_first_segment = true;
+                let mut interrupted_block_advances = Vec::new();
+                let mut interrupted_margin_strut = MarginStrut::new();
+                let mut interrupted_has_content = false;
+                let mut pending_interrupted_self_collapsing: Vec<usize> = Vec::new();
+                let mut formatted_zero_atomic_after_clamp = false;
+                let legacy_inline_box_block_after_clamp = style.legacy_webkit_box
+                    && style.legacy_webkit_line_clamp
+                    && style.display == Display::InlineBlock;
+                for bi_info in &block_in_inline_sorted {
+                    let block_child_is_zero_atomic = {
+                        let block_style = &doc.node(bi_info.node_id).style;
+                        block_style.height.is_fixed() && block_style.height.value() == 0.0
+                    };
+                    if space
+                        .line_clamp_context
+                        .as_ref()
+                        .is_some_and(|context| context.is_exhausted())
+                        && !block_child_is_zero_atomic
+                        && !legacy_inline_box_block_after_clamp
+                    {
+                        segment_start_item = items_data.items.len();
+                        break;
+                    }
+                    let segment_end_item = bi_info.item_index;
+
+                    // Lay out inline items [segment_start..segment_end) as an
+                    // anonymous inline segment (if non-empty text content exists).
+                    if segment_end_item > segment_start_item {
+                        let has_content = items_data.items[segment_start_item..segment_end_item]
+                            .iter()
+                            .any(|item| {
+                                use crate::inline::items::InlineItemType;
+                                matches!(
+                                    item.item_type,
+                                    InlineItemType::Text | InlineItemType::AtomicInline
+                                )
+                            });
+                        if has_content {
+                            current_block_offset += interrupted_margin_strut.sum();
+                            interrupted_margin_strut = MarginStrut::new();
+                            for &index in &pending_interrupted_self_collapsing {
+                                child_fragments[index].offset.top = current_block_offset;
+                            }
+                            pending_interrupted_self_collapsing.clear();
+                            interrupted_has_content = true;
+                            let mut seg_space =
+                                ConstraintSpace::for_block_child_with_writing_direction(
+                                    child_available_inline,
+                                    space.available_block_size,
+                                    child_available_inline,
+                                    child_percentage_block_size,
+                                    false,
+                                    space.writing_direction,
+                                );
+                            seg_space.line_clamp_context = space.line_clamp_context.clone();
+                            seg_space.first_line_context = space.first_line_context.clone();
+                            if exclusion_space_inline.has_floats() {
+                                seg_space.exclusion_space =
+                                    Some(std::sync::Arc::new(exclusion_space_inline.clone()));
+                            }
+                            let seg_frag = crate::inline::algorithm::inline_layout_from_items(
+                                doc,
+                                node_id,
+                                &seg_space,
+                                &items_data,
+                                segment_start_item,
+                                segment_end_item,
+                            );
+
+                            if is_first_segment {
+                                if let Some(fb) = seg_frag.first_baseline {
+                                    first_baseline_result = Some(current_block_offset + fb);
+                                }
+                            }
+                            if let Some(lb) = seg_frag.last_baseline {
+                                last_baseline_result = Some(current_block_offset + lb);
+                            }
+
+                            let segment_block_offset = current_block_offset;
+                            for line_frag in seg_frag.children {
+                                let line_height = line_frag.size.height;
+                                let orig_top = line_frag.offset.top;
+                                let mut positioned_line = line_frag;
+                                positioned_line.offset = PhysicalOffset::new(
+                                    border.left + padding.left + positioned_line.offset.left,
+                                    segment_block_offset + orig_top,
+                                );
+                                current_block_offset =
+                                    (segment_block_offset + orig_top + line_height)
+                                        .max_of(current_block_offset);
+                                child_fragments.push(positioned_line);
+                            }
+                        }
+                    }
+                    if space
+                        .line_clamp_context
+                        .as_ref()
+                        .is_some_and(|context| context.is_exhausted())
+                        && !block_child_is_zero_atomic
+                        && !legacy_inline_box_block_after_clamp
+                    {
+                        segment_start_item = items_data.items.len();
+                        break;
+                    }
+                    is_first_segment = false;
+
+                    // Lay out the block-level element.
+                    let block_child_id = bi_info.node_id;
+                    let block_child_style = &doc.node(block_child_id).style;
+                    let mut block_child_space =
+                        crate::logical_geometry::block_child_constraint_space(
+                            space,
+                            block_child_style,
+                            child_available_inline,
+                            space.available_block_size,
+                            child_available_inline,
+                            child_percentage_block_size,
+                            false,
+                        );
+                    if block_child_is_zero_atomic
+                        && space.line_clamp_context.as_ref().is_some_and(|context| {
+                            context.is_exhausted() && context.remaining_block_size().is_some()
+                        })
+                    {
+                        // A zero-height block contributes no used size to an
+                        // auto clamp, but its in-flow overflow is still formatted
+                        // and may become the last visible continuation.
+                        block_child_space.line_clamp_context = None;
+                        formatted_zero_atomic_after_clamp = true;
+                    }
+                    if legacy_inline_box_block_after_clamp
+                        && space
+                            .line_clamp_context
+                            .as_ref()
+                            .is_some_and(|context| context.is_exhausted())
+                    {
+                        // Legacy -webkit-inline-box clamps its anonymous inline
+                        // line, but a block-in-inline descendant is reconstructed
+                        // outside that anonymous line and remains formatted.
+                        block_child_space.line_clamp_context = None;
+                    }
+                    let mut block_child_frag =
+                        block_layout(doc, block_child_id, &block_child_space);
+                    normalize_multicol_child_outer_box(
+                        doc,
+                        &mut block_child_frag,
+                        space.writing_direction,
+                    );
+
+                    let bm_top = resolve_margin_or_padding(
+                        &block_child_style.margin_top,
+                        child_available_inline,
+                    );
+                    let bm_bottom = resolve_margin_or_padding(
+                        &block_child_style.margin_bottom,
+                        child_available_inline,
+                    );
+
+                    let top_margin_collapses_through_parent = !interrupted_has_content
+                        && content_edge == LayoutUnit::zero()
+                        && !space.is_new_formatting_context
+                        && !items_data.items[..bi_info.item_index].iter().any(|item| {
+                            matches!(
+                                item.item_type,
+                                crate::inline::items::InlineItemType::Text
+                                    | crate::inline::items::InlineItemType::AtomicInline
+                            )
+                        });
+                    let local_bm_top = if top_margin_collapses_through_parent {
+                        let mut collapsed = saved_start_strut.unwrap_or_default();
+                        collapsed.append_normal(bm_top);
+                        saved_start_strut = Some(collapsed);
+                        LayoutUnit::zero()
+                    } else {
+                        bm_top
+                    };
+                    interrupted_margin_strut.append_normal(local_bm_top);
+                    if !block_child_frag.start_margin_strut.is_empty() {
+                        let propagated = block_child_frag.start_margin_strut;
+                        if top_margin_collapses_through_parent {
+                            let mut collapsed = saved_start_strut.unwrap_or_default();
+                            collapsed.append_normal(propagated.positive_margin);
+                            if propagated.negative_margin < LayoutUnit::zero() {
+                                collapsed.append_normal(propagated.negative_margin);
+                            }
+                            saved_start_strut = Some(collapsed);
+                        } else {
+                            interrupted_margin_strut.append_normal(propagated.positive_margin);
+                            if propagated.negative_margin < LayoutUnit::zero() {
+                                interrupted_margin_strut.append_normal(propagated.negative_margin);
+                            }
+                        }
+                    }
+                    let child_border_padding = resolve_border(block_child_style).block_sum()
+                        + resolve_padding(block_child_style, child_available_inline).block_sum();
+                    let child_is_self_collapsing = block_child_frag.size.height
+                        == LayoutUnit::zero()
+                        && child_border_padding == LayoutUnit::zero()
+                        && !establishes_new_fc(block_child_style);
+                    let advance_before = current_block_offset;
+                    if !child_is_self_collapsing {
+                        current_block_offset += interrupted_margin_strut.sum();
+                        interrupted_margin_strut = MarginStrut::new();
+                        for &index in &pending_interrupted_self_collapsing {
+                            child_fragments[index].offset.top = current_block_offset;
+                        }
+                        pending_interrupted_self_collapsing.clear();
+                    }
+                    let mut positioned_block = block_child_frag;
+                    let inline_relative_offset = inline_ancestor_relative_offset(
+                        doc,
+                        block_child_id,
+                        node_id,
+                        child_available_inline,
+                        child_percentage_block_size,
+                    );
+                    let logical_inline_relative_offset =
+                        physical_vector_to_logical(inline_relative_offset, space.writing_direction);
+                    positioned_block.offset = PhysicalOffset::new(
+                        border.left + padding.left + logical_inline_relative_offset.left,
+                        current_block_offset + logical_inline_relative_offset.top,
+                    );
+                    positioned_block.fragmentation_visual_offset = inline_relative_offset;
+                    apply_relative_offset_in_algorithm_axes(
+                        &mut positioned_block,
+                        block_child_style,
+                        child_available_inline,
+                        child_percentage_block_size,
+                        space.writing_direction,
+                    );
+                    if child_is_self_collapsing {
+                        let mut trailing = MarginStrut::new();
+                        trailing.append_normal(bm_bottom);
+                        if !positioned_block.end_margin_strut.is_empty() {
+                            let propagated = positioned_block.end_margin_strut;
+                            trailing.append_normal(propagated.positive_margin);
+                            if propagated.negative_margin < LayoutUnit::zero() {
+                                trailing.append_normal(propagated.negative_margin);
+                            }
+                        }
+                        if top_margin_collapses_through_parent {
+                            let mut collapsed = saved_start_strut.unwrap_or_default();
+                            collapsed.append_normal(trailing.positive_margin);
+                            if trailing.negative_margin < LayoutUnit::zero() {
+                                collapsed.append_normal(trailing.negative_margin);
+                            }
+                            saved_start_strut = Some(collapsed);
+                        } else {
+                            interrupted_margin_strut.append_normal(trailing.positive_margin);
+                            if trailing.negative_margin < LayoutUnit::zero() {
+                                interrupted_margin_strut.append_normal(trailing.negative_margin);
+                            }
+                        }
+                        pending_interrupted_self_collapsing.push(child_fragments.len());
+                    } else {
+                        current_block_offset += positioned_block.size.height;
+                        interrupted_margin_strut.append_normal(bm_bottom);
+                        if !positioned_block.end_margin_strut.is_empty() {
+                            let propagated = positioned_block.end_margin_strut;
+                            interrupted_margin_strut.append_normal(propagated.positive_margin);
+                            if propagated.negative_margin < LayoutUnit::zero() {
+                                interrupted_margin_strut.append_normal(propagated.negative_margin);
+                            }
+                        }
+                        interrupted_has_content = true;
+                    }
+                    interrupted_block_advances
+                        .push((bi_info.item_index, current_block_offset - advance_before));
+                    child_fragments.push(positioned_block);
+
+                    segment_start_item = segment_end_item + 1;
+                }
+
+                // Lay out remaining inline items after the last block-in-inline.
                 if space
                     .line_clamp_context
                     .as_ref()
                     .is_some_and(|context| context.is_exhausted())
-                    && !block_child_is_zero_atomic
-                    && !legacy_inline_box_block_after_clamp
                 {
-                    segment_start_item = items_data.items.len();
-                    break;
-                }
-                let segment_end_item = bi_info.item_index;
-
-                // Lay out inline items [segment_start..segment_end) as an
-                // anonymous inline segment (if non-empty text content exists).
-                if segment_end_item > segment_start_item {
-                    let has_content = items_data.items[segment_start_item..segment_end_item]
-                        .iter()
-                        .any(|item| {
+                    let remaining_visible =
+                        items_data.items[segment_start_item..].iter().any(|item| {
                             use crate::inline::items::InlineItemType;
-                            matches!(
-                                item.item_type,
-                                InlineItemType::Text | InlineItemType::AtomicInline
-                            )
+                            match item.item_type {
+                                InlineItemType::Text => items_data.text[item.text_range.clone()]
+                                    .chars()
+                                    .any(|character| !character.is_whitespace()),
+                                InlineItemType::AtomicInline | InlineItemType::BlockInInline => {
+                                    true
+                                }
+                                InlineItemType::OpenTag
+                                | InlineItemType::CloseTag
+                                | InlineItemType::Control => false,
+                            }
                         });
+                    if formatted_zero_atomic_after_clamp && remaining_visible {
+                        if let Some(context) = &space.line_clamp_context {
+                            let (_, block_ellipsis) = context.snapshot();
+                            crate::inline::algorithm::append_clamp_marker_to_last_line(
+                                doc,
+                                &mut child_fragments,
+                                style,
+                                &block_ellipsis,
+                            );
+                        }
+                    }
+                    // Markers are produced by the inline formatting context that
+                    // discards its own continuation. Do not synthesize one across
+                    // an intervening block boundary for a later segment.
+                    segment_start_item = items_data.items.len();
+                }
+                if segment_start_item < items_data.items.len() {
+                    let has_content = items_data.items[segment_start_item..].iter().any(|item| {
+                        use crate::inline::items::InlineItemType;
+                        matches!(
+                            item.item_type,
+                            InlineItemType::Text | InlineItemType::AtomicInline
+                        )
+                    });
                     if has_content {
                         current_block_offset += interrupted_margin_strut.sum();
                         interrupted_margin_strut = MarginStrut::new();
@@ -2627,16 +2922,16 @@ pub(crate) fn block_layout_contents(
                             &seg_space,
                             &items_data,
                             segment_start_item,
-                            segment_end_item,
+                            items_data.items.len(),
                         );
 
-                        if is_first_segment {
+                        if let Some(lb) = seg_frag.last_baseline {
+                            last_baseline_result = Some(current_block_offset + lb);
+                        }
+                        if first_baseline_result.is_none() {
                             if let Some(fb) = seg_frag.first_baseline {
                                 first_baseline_result = Some(current_block_offset + fb);
                             }
-                        }
-                        if let Some(lb) = seg_frag.last_baseline {
-                            last_baseline_result = Some(current_block_offset + lb);
                         }
 
                         let segment_block_offset = current_block_offset;
@@ -2654,398 +2949,228 @@ pub(crate) fn block_layout_contents(
                         }
                     }
                 }
-                if space
-                    .line_clamp_context
-                    .as_ref()
-                    .is_some_and(|context| context.is_exhausted())
-                    && !block_child_is_zero_atomic
-                    && !legacy_inline_box_block_after_clamp
-                {
-                    segment_start_item = items_data.items.len();
-                    break;
-                }
-                is_first_segment = false;
 
-                // Lay out the block-level element.
-                let block_child_id = bi_info.node_id;
-                let block_child_style = &doc.node(block_child_id).style;
-                let mut block_child_space = crate::logical_geometry::block_child_constraint_space(
-                    space,
-                    block_child_style,
+                for &index in &pending_interrupted_self_collapsing {
+                    child_fragments[index].offset.top =
+                        current_block_offset + interrupted_margin_strut.sum();
+                }
+                margin_strut = interrupted_margin_strut;
+
+                for mut candidate in inline_oof_candidates {
+                    let block_in_inline_static_advance = items_data
+                        .oof_children
+                        .iter()
+                        .find(|placeholder| placeholder.node_id == candidate.node_id)
+                        .map(|placeholder| {
+                            interrupted_block_advances
+                                .iter()
+                                .filter(|(item_index, _)| *item_index < placeholder.item_index)
+                                .fold(LayoutUnit::zero(), |sum, (_, advance)| sum + *advance)
+                        })
+                        .unwrap_or(LayoutUnit::zero());
+                    let inline_origin =
+                        PhysicalOffset::new(border.left + padding.left, content_edge);
+                    candidate.static_position.left =
+                        candidate.static_position.left + inline_origin.left;
+                    candidate.static_position.top =
+                        candidate.static_position.top + inline_origin.top;
+                    if !candidate.has_inline_containing_block
+                        && candidate
+                            .inline_containing_block_node
+                            .is_some_and(|target| {
+                                doc.node(target)
+                                    .style
+                                    .establishes_transform_containing_block
+                            })
+                    {
+                        let target = candidate.inline_containing_block_node.unwrap();
+                        candidate.has_inline_containing_block = true;
+                        candidate.containing_block_node = target;
+                        candidate.containing_block_direction = doc.node(target).style.direction;
+                    }
+                    if candidate.has_inline_containing_block {
+                        let interrupted_inline_offset = inline_ancestor_relative_offset(
+                            doc,
+                            candidate.node_id,
+                            node_id,
+                            child_available_inline,
+                            child_percentage_block_size,
+                        );
+                        candidate.containing_block_offset =
+                            if interrupted_inline_offset != PhysicalOffset::zero() {
+                                PhysicalOffset::new(
+                                    inline_origin.left + interrupted_inline_offset.left,
+                                    inline_origin.top + interrupted_inline_offset.top,
+                                )
+                            } else {
+                                PhysicalOffset::new(
+                                    candidate.containing_block_offset.left + inline_origin.left,
+                                    candidate.containing_block_offset.top + inline_origin.top,
+                                )
+                            };
+                        let candidate_top_is_auto = candidate.style.top.is_auto();
+                        for mut fragment in crate::out_of_flow::layout_out_of_flow_children(
+                            doc,
+                            &[candidate.clone()],
+                        ) {
+                            if !candidate_top_is_auto
+                                || block_in_inline_static_advance == LayoutUnit::zero()
+                            {
+                                fragment.offset.left =
+                                    fragment.offset.left + interrupted_inline_offset.left;
+                            }
+                            if candidate_top_is_auto {
+                                fragment.offset.top =
+                                    fragment.offset.top + interrupted_inline_offset.top;
+                            }
+                            fragment.fragmentation_visual_offset = interrupted_inline_offset;
+                            if let Some(positioned) = &mut fragment.positioned_fragmentation {
+                                positioned.block_in_inline_static_advance =
+                                    block_in_inline_static_advance;
+                            }
+                            for mut nested in std::mem::take(&mut fragment.oof_candidates) {
+                                nested.static_position.left =
+                                    nested.static_position.left + fragment.offset.left;
+                                nested.static_position.top =
+                                    nested.static_position.top + fragment.offset.top;
+                                let inherited_transform_inline_cb =
+                                    candidate.inline_containing_block_node.filter(|target| {
+                                        doc.node(*target)
+                                            .style
+                                            .establishes_transform_containing_block
+                                    });
+                                if nested.style.position == Position::Fixed
+                                    && inherited_transform_inline_cb.is_some()
+                                {
+                                    nested.containing_block_offset =
+                                        candidate.containing_block_offset;
+                                    nested.containing_block_size = candidate.containing_block_size;
+                                    nested.containing_block_border =
+                                        candidate.containing_block_border;
+                                    nested.containing_block_direction =
+                                        candidate.containing_block_direction;
+                                    nested.containing_block_node =
+                                        inherited_transform_inline_cb.unwrap();
+                                    nested.has_inline_containing_block = true;
+                                    nested.inline_containing_block_node =
+                                        inherited_transform_inline_cb;
+                                }
+                                let captures = if nested.style.position == Position::Fixed {
+                                    captures_fixed_pos_descendants
+                                        || inherited_transform_inline_cb.is_some()
+                                } else {
+                                    establishes_cb_for_abspos
+                                };
+                                if captures {
+                                    oof_candidates.push(nested);
+                                } else {
+                                    bubbled_oof_candidates.push(nested);
+                                }
+                            }
+                            child_fragments.push(fragment);
+                        }
+                    } else {
+                        let captures = if candidate.style.position == Position::Fixed {
+                            captures_fixed_pos_descendants
+                        } else {
+                            establishes_cb_for_abspos
+                        };
+                        if captures {
+                            oof_candidates.push(candidate);
+                        } else {
+                            bubbled_oof_candidates.push(candidate);
+                        }
+                    }
+                }
+
+                intrinsic_block_size = current_block_offset;
+                block_offset = intrinsic_block_size;
+            } else {
+                // No block-in-inline: standard inline layout path.
+                // Build constraint space with exclusion data for per-line float avoidance.
+                let mut inline_space = ConstraintSpace::for_block_child_with_writing_direction(
                     child_available_inline,
                     space.available_block_size,
                     child_available_inline,
                     child_percentage_block_size,
                     false,
-                );
-                if block_child_is_zero_atomic
-                    && space.line_clamp_context.as_ref().is_some_and(|context| {
-                        context.is_exhausted() && context.remaining_block_size().is_some()
-                    })
-                {
-                    // A zero-height block contributes no used size to an
-                    // auto clamp, but its in-flow overflow is still formatted
-                    // and may become the last visible continuation.
-                    block_child_space.line_clamp_context = None;
-                    formatted_zero_atomic_after_clamp = true;
-                }
-                if legacy_inline_box_block_after_clamp
-                    && space
-                        .line_clamp_context
-                        .as_ref()
-                        .is_some_and(|context| context.is_exhausted())
-                {
-                    // Legacy -webkit-inline-box clamps its anonymous inline
-                    // line, but a block-in-inline descendant is reconstructed
-                    // outside that anonymous line and remains formatted.
-                    block_child_space.line_clamp_context = None;
-                }
-                let mut block_child_frag = block_layout(doc, block_child_id, &block_child_space);
-                normalize_multicol_child_outer_box(
-                    doc,
-                    &mut block_child_frag,
                     space.writing_direction,
                 );
-
-                let bm_top = resolve_margin_or_padding(
-                    &block_child_style.margin_top,
-                    child_available_inline,
-                );
-                let bm_bottom = resolve_margin_or_padding(
-                    &block_child_style.margin_bottom,
-                    child_available_inline,
-                );
-
-                let top_margin_collapses_through_parent = !interrupted_has_content
-                    && content_edge == LayoutUnit::zero()
-                    && !space.is_new_formatting_context
-                    && !items_data.items[..bi_info.item_index].iter().any(|item| {
-                        matches!(
-                            item.item_type,
-                            crate::inline::items::InlineItemType::Text
-                                | crate::inline::items::InlineItemType::AtomicInline
-                        )
-                    });
-                let local_bm_top = if top_margin_collapses_through_parent {
-                    let mut collapsed = saved_start_strut.unwrap_or_default();
-                    collapsed.append_normal(bm_top);
-                    saved_start_strut = Some(collapsed);
-                    LayoutUnit::zero()
-                } else {
-                    bm_top
-                };
-                interrupted_margin_strut.append_normal(local_bm_top);
-                if !block_child_frag.start_margin_strut.is_empty() {
-                    let propagated = block_child_frag.start_margin_strut;
-                    if top_margin_collapses_through_parent {
-                        let mut collapsed = saved_start_strut.unwrap_or_default();
-                        collapsed.append_normal(propagated.positive_margin);
-                        if propagated.negative_margin < LayoutUnit::zero() {
-                            collapsed.append_normal(propagated.negative_margin);
-                        }
-                        saved_start_strut = Some(collapsed);
-                    } else {
-                        interrupted_margin_strut.append_normal(propagated.positive_margin);
-                        if propagated.negative_margin < LayoutUnit::zero() {
-                            interrupted_margin_strut.append_normal(propagated.negative_margin);
-                        }
+                inline_space.line_clamp_context = space.line_clamp_context.clone();
+                if inline_space.line_clamp_context.is_none()
+                    && discarded_auto_float_line_extent > LayoutUnit::zero()
+                {
+                    if let Some(block_budget) = retained_float_block_budget {
+                        inline_space.line_clamp_context =
+                            Some(crate::constraint_space::LineClampContext::new_auto(
+                                usize::MAX,
+                                (block_budget - discarded_auto_float_line_extent)
+                                    .clamp_negative_to_zero(),
+                                style.block_ellipsis.clone(),
+                            ));
                     }
                 }
-                let child_border_padding = resolve_border(block_child_style).block_sum()
-                    + resolve_padding(block_child_style, child_available_inline).block_sum();
-                let child_is_self_collapsing = block_child_frag.size.height == LayoutUnit::zero()
-                    && child_border_padding == LayoutUnit::zero()
-                    && !establishes_new_fc(block_child_style);
-                let advance_before = current_block_offset;
-                if !child_is_self_collapsing {
-                    current_block_offset += interrupted_margin_strut.sum();
-                    interrupted_margin_strut = MarginStrut::new();
-                    for &index in &pending_interrupted_self_collapsing {
-                        child_fragments[index].offset.top = current_block_offset;
-                    }
-                    pending_interrupted_self_collapsing.clear();
+                inline_space.first_line_context = space.first_line_context.clone();
+                if exclusion_space_inline.has_floats() {
+                    inline_space.exclusion_space =
+                        Some(std::sync::Arc::new(exclusion_space_inline.clone()));
                 }
-                let mut positioned_block = block_child_frag;
-                let inline_relative_offset = inline_ancestor_relative_offset(
-                    doc,
-                    block_child_id,
-                    node_id,
-                    child_available_inline,
-                    child_percentage_block_size,
-                );
-                let logical_inline_relative_offset =
-                    physical_vector_to_logical(inline_relative_offset, space.writing_direction);
-                positioned_block.offset = PhysicalOffset::new(
-                    border.left + padding.left + logical_inline_relative_offset.left,
-                    current_block_offset + logical_inline_relative_offset.top,
-                );
-                positioned_block.fragmentation_visual_offset = inline_relative_offset;
-                apply_relative_offset_in_algorithm_axes(
-                    &mut positioned_block,
-                    block_child_style,
-                    child_available_inline,
-                    child_percentage_block_size,
-                    space.writing_direction,
-                );
-                if child_is_self_collapsing {
-                    let mut trailing = MarginStrut::new();
-                    trailing.append_normal(bm_bottom);
-                    if !positioned_block.end_margin_strut.is_empty() {
-                        let propagated = positioned_block.end_margin_strut;
-                        trailing.append_normal(propagated.positive_margin);
-                        if propagated.negative_margin < LayoutUnit::zero() {
-                            trailing.append_normal(propagated.negative_margin);
-                        }
-                    }
-                    if top_margin_collapses_through_parent {
-                        let mut collapsed = saved_start_strut.unwrap_or_default();
-                        collapsed.append_normal(trailing.positive_margin);
-                        if trailing.negative_margin < LayoutUnit::zero() {
-                            collapsed.append_normal(trailing.negative_margin);
-                        }
-                        saved_start_strut = Some(collapsed);
-                    } else {
-                        interrupted_margin_strut.append_normal(trailing.positive_margin);
-                        if trailing.negative_margin < LayoutUnit::zero() {
-                            interrupted_margin_strut.append_normal(trailing.negative_margin);
-                        }
-                    }
-                    pending_interrupted_self_collapsing.push(child_fragments.len());
-                } else {
-                    current_block_offset += positioned_block.size.height;
-                    interrupted_margin_strut.append_normal(bm_bottom);
-                    if !positioned_block.end_margin_strut.is_empty() {
-                        let propagated = positioned_block.end_margin_strut;
-                        interrupted_margin_strut.append_normal(propagated.positive_margin);
-                        if propagated.negative_margin < LayoutUnit::zero() {
-                            interrupted_margin_strut.append_normal(propagated.negative_margin);
-                        }
-                    }
-                    interrupted_has_content = true;
-                }
-                interrupted_block_advances
-                    .push((bi_info.item_index, current_block_offset - advance_before));
-                child_fragments.push(positioned_block);
-
-                segment_start_item = segment_end_item + 1;
-            }
-
-            // Lay out remaining inline items after the last block-in-inline.
-            if space
-                .line_clamp_context
-                .as_ref()
-                .is_some_and(|context| context.is_exhausted())
-            {
-                let remaining_visible = items_data.items[segment_start_item..].iter().any(|item| {
-                    use crate::inline::items::InlineItemType;
-                    match item.item_type {
-                        InlineItemType::Text => items_data.text[item.text_range.clone()]
-                            .chars()
-                            .any(|character| !character.is_whitespace()),
-                        InlineItemType::AtomicInline | InlineItemType::BlockInInline => true,
-                        InlineItemType::OpenTag
-                        | InlineItemType::CloseTag
-                        | InlineItemType::Control => false,
-                    }
-                });
-                if formatted_zero_atomic_after_clamp && remaining_visible {
-                    if let Some(context) = &space.line_clamp_context {
-                        let (_, block_ellipsis) = context.snapshot();
-                        crate::inline::algorithm::append_clamp_marker_to_last_line(
-                            doc,
-                            &mut child_fragments,
-                            style,
-                            &block_ellipsis,
-                        );
-                    }
-                }
-                // Markers are produced by the inline formatting context that
-                // discards its own continuation. Do not synthesize one across
-                // an intervening block boundary for a later segment.
-                segment_start_item = items_data.items.len();
-            }
-            if segment_start_item < items_data.items.len() {
-                let has_content = items_data.items[segment_start_item..].iter().any(|item| {
-                    use crate::inline::items::InlineItemType;
-                    matches!(
-                        item.item_type,
-                        InlineItemType::Text | InlineItemType::AtomicInline
+                let mut inline_fragment = if let Some(children) = virtual_marker_children.as_deref()
+                {
+                    crate::inline::algorithm::inline_layout_for_children(
+                        doc,
+                        node_id,
+                        children,
+                        &inline_space,
                     )
-                });
-                if has_content {
-                    current_block_offset += interrupted_margin_strut.sum();
-                    interrupted_margin_strut = MarginStrut::new();
-                    for &index in &pending_interrupted_self_collapsing {
-                        child_fragments[index].offset.top = current_block_offset;
-                    }
-                    pending_interrupted_self_collapsing.clear();
-                    interrupted_has_content = true;
-                    let mut seg_space = ConstraintSpace::for_block_child_with_writing_direction(
-                        child_available_inline,
-                        space.available_block_size,
-                        child_available_inline,
-                        child_percentage_block_size,
-                        false,
-                        space.writing_direction,
-                    );
-                    seg_space.line_clamp_context = space.line_clamp_context.clone();
-                    seg_space.first_line_context = space.first_line_context.clone();
-                    if exclusion_space_inline.has_floats() {
-                        seg_space.exclusion_space =
-                            Some(std::sync::Arc::new(exclusion_space_inline.clone()));
-                    }
-                    let seg_frag = crate::inline::algorithm::inline_layout_from_items(
-                        doc,
-                        node_id,
-                        &seg_space,
-                        &items_data,
-                        segment_start_item,
-                        items_data.items.len(),
-                    );
-
-                    if let Some(lb) = seg_frag.last_baseline {
-                        last_baseline_result = Some(current_block_offset + lb);
-                    }
-                    if first_baseline_result.is_none() {
-                        if let Some(fb) = seg_frag.first_baseline {
-                            first_baseline_result = Some(current_block_offset + fb);
-                        }
-                    }
-
-                    let segment_block_offset = current_block_offset;
-                    for line_frag in seg_frag.children {
-                        let line_height = line_frag.size.height;
-                        let orig_top = line_frag.offset.top;
-                        let mut positioned_line = line_frag;
-                        positioned_line.offset = PhysicalOffset::new(
-                            border.left + padding.left + positioned_line.offset.left,
-                            segment_block_offset + orig_top,
-                        );
-                        current_block_offset = (segment_block_offset + orig_top + line_height)
-                            .max_of(current_block_offset);
-                        child_fragments.push(positioned_line);
-                    }
-                }
-            }
-
-            for &index in &pending_interrupted_self_collapsing {
-                child_fragments[index].offset.top =
-                    current_block_offset + interrupted_margin_strut.sum();
-            }
-            margin_strut = interrupted_margin_strut;
-
-            for mut candidate in inline_oof_candidates {
-                let block_in_inline_static_advance = items_data
-                    .oof_children
-                    .iter()
-                    .find(|placeholder| placeholder.node_id == candidate.node_id)
-                    .map(|placeholder| {
-                        interrupted_block_advances
-                            .iter()
-                            .filter(|(item_index, _)| *item_index < placeholder.item_index)
-                            .fold(LayoutUnit::zero(), |sum, (_, advance)| sum + *advance)
-                    })
-                    .unwrap_or(LayoutUnit::zero());
-                let inline_origin = PhysicalOffset::new(border.left + padding.left, content_edge);
-                candidate.static_position.left =
-                    candidate.static_position.left + inline_origin.left;
-                candidate.static_position.top = candidate.static_position.top + inline_origin.top;
-                if !candidate.has_inline_containing_block
-                    && candidate
-                        .inline_containing_block_node
-                        .is_some_and(|target| {
-                            doc.node(target)
-                                .style
-                                .establishes_transform_containing_block
-                        })
-                {
-                    let target = candidate.inline_containing_block_node.unwrap();
-                    candidate.has_inline_containing_block = true;
-                    candidate.containing_block_node = target;
-                    candidate.containing_block_direction = doc.node(target).style.direction;
-                }
-                if candidate.has_inline_containing_block {
-                    let interrupted_inline_offset = inline_ancestor_relative_offset(
-                        doc,
-                        candidate.node_id,
-                        node_id,
-                        child_available_inline,
-                        child_percentage_block_size,
-                    );
-                    candidate.containing_block_offset =
-                        if interrupted_inline_offset != PhysicalOffset::zero() {
-                            PhysicalOffset::new(
-                                inline_origin.left + interrupted_inline_offset.left,
-                                inline_origin.top + interrupted_inline_offset.top,
-                            )
-                        } else {
-                            PhysicalOffset::new(
-                                candidate.containing_block_offset.left + inline_origin.left,
-                                candidate.containing_block_offset.top + inline_origin.top,
-                            )
-                        };
-                    let candidate_top_is_auto = candidate.style.top.is_auto();
-                    for mut fragment in
-                        crate::out_of_flow::layout_out_of_flow_children(doc, &[candidate.clone()])
-                    {
-                        if !candidate_top_is_auto
-                            || block_in_inline_static_advance == LayoutUnit::zero()
-                        {
-                            fragment.offset.left =
-                                fragment.offset.left + interrupted_inline_offset.left;
-                        }
-                        if candidate_top_is_auto {
-                            fragment.offset.top =
-                                fragment.offset.top + interrupted_inline_offset.top;
-                        }
-                        fragment.fragmentation_visual_offset = interrupted_inline_offset;
-                        if let Some(positioned) = &mut fragment.positioned_fragmentation {
-                            positioned.block_in_inline_static_advance =
-                                block_in_inline_static_advance;
-                        }
-                        for mut nested in std::mem::take(&mut fragment.oof_candidates) {
-                            nested.static_position.left =
-                                nested.static_position.left + fragment.offset.left;
-                            nested.static_position.top =
-                                nested.static_position.top + fragment.offset.top;
-                            let inherited_transform_inline_cb =
-                                candidate.inline_containing_block_node.filter(|target| {
-                                    doc.node(*target)
-                                        .style
-                                        .establishes_transform_containing_block
-                                });
-                            if nested.style.position == Position::Fixed
-                                && inherited_transform_inline_cb.is_some()
-                            {
-                                nested.containing_block_offset = candidate.containing_block_offset;
-                                nested.containing_block_size = candidate.containing_block_size;
-                                nested.containing_block_border = candidate.containing_block_border;
-                                nested.containing_block_direction =
-                                    candidate.containing_block_direction;
-                                nested.containing_block_node =
-                                    inherited_transform_inline_cb.unwrap();
-                                nested.has_inline_containing_block = true;
-                                nested.inline_containing_block_node = inherited_transform_inline_cb;
-                            }
-                            let captures = if nested.style.position == Position::Fixed {
-                                captures_fixed_pos_descendants
-                                    || inherited_transform_inline_cb.is_some()
-                            } else {
-                                establishes_cb_for_abspos
-                            };
-                            if captures {
-                                oof_candidates.push(nested);
-                            } else {
-                                bubbled_oof_candidates.push(nested);
-                            }
-                        }
-                        child_fragments.push(fragment);
-                    }
                 } else {
+                    crate::inline::algorithm::inline_layout(doc, node_id, &inline_space)
+                };
+                let inline_block_size = inline_fragment.size.height;
+                let inline_oof_candidates = std::mem::take(&mut inline_fragment.oof_candidates);
+
+                // Capture baselines from inline layout, adjusted to border-box coordinates.
+                if let Some(fb) = inline_fragment.first_baseline {
+                    first_baseline_result = Some(content_edge + fb);
+                }
+                if let Some(lb) = inline_fragment.last_baseline {
+                    last_baseline_result = Some(content_edge + lb);
+                }
+
+                for line_frag in inline_fragment.children {
+                    let line_height = line_frag.size.height;
+                    let mut positioned_line = line_frag;
+                    positioned_line.offset = PhysicalOffset::new(
+                        border.left + padding.left + positioned_line.offset.left,
+                        content_edge + positioned_line.offset.top,
+                    );
+                    intrinsic_block_size =
+                        intrinsic_block_size.max_of(positioned_line.offset.top + line_height);
+                    child_fragments.push(positioned_line);
+                }
+                if style.line_clamp != openui_style::LineClamp::None
+                    || space.line_clamp_context.is_some()
+                {
+                    intrinsic_block_size =
+                        intrinsic_block_size.max_of(content_edge + inline_block_size);
+                }
+                for mut candidate in inline_oof_candidates {
+                    let inline_origin =
+                        PhysicalOffset::new(border.left + padding.left, content_edge);
+                    candidate.static_position.left =
+                        candidate.static_position.left + inline_origin.left;
+                    candidate.static_position.top =
+                        candidate.static_position.top + inline_origin.top;
+                    if candidate.has_inline_containing_block {
+                        candidate.containing_block_offset.left =
+                            candidate.containing_block_offset.left + inline_origin.left;
+                        candidate.containing_block_offset.top =
+                            candidate.containing_block_offset.top + inline_origin.top;
+                    }
                     let captures = if candidate.style.position == Position::Fixed {
                         captures_fixed_pos_descendants
                     } else {
-                        establishes_cb_for_abspos
+                        establishes_cb_for_abspos || candidate.has_inline_containing_block
                     };
                     if captures {
                         oof_candidates.push(candidate);
@@ -3053,506 +3178,300 @@ pub(crate) fn block_layout_contents(
                         bubbled_oof_candidates.push(candidate);
                     }
                 }
+                block_offset = intrinsic_block_size;
             }
-
-            intrinsic_block_size = current_block_offset;
-            block_offset = intrinsic_block_size;
-        } else {
-            // No block-in-inline: standard inline layout path.
-            // Build constraint space with exclusion data for per-line float avoidance.
-            let mut inline_space = ConstraintSpace::for_block_child_with_writing_direction(
-                child_available_inline,
-                space.available_block_size,
-                child_available_inline,
-                child_percentage_block_size,
-                false,
-                space.writing_direction,
-            );
-            inline_space.line_clamp_context = space.line_clamp_context.clone();
-            if inline_space.line_clamp_context.is_none()
-                && discarded_auto_float_line_extent > LayoutUnit::zero()
-            {
-                if let Some(block_budget) = retained_float_block_budget {
-                    inline_space.line_clamp_context =
-                        Some(crate::constraint_space::LineClampContext::new_auto(
-                            usize::MAX,
-                            (block_budget - discarded_auto_float_line_extent)
-                                .clamp_negative_to_zero(),
-                            style.block_ellipsis.clone(),
-                        ));
-                }
-            }
-            inline_space.first_line_context = space.first_line_context.clone();
+            // Floats collected from an inline formatting context still belong to
+            // the surrounding block formatting context. An ordinary block must
+            // pass their exclusions upward; a BFC root must include their lower
+            // margin edge in its automatic block size.
             if exclusion_space_inline.has_floats() {
-                inline_space.exclusion_space =
-                    Some(std::sync::Arc::new(exclusion_space_inline.clone()));
-            }
-            let mut inline_fragment = if let Some(children) = virtual_marker_children.as_deref() {
-                crate::inline::algorithm::inline_layout_for_children(
-                    doc,
-                    node_id,
-                    children,
-                    &inline_space,
-                )
-            } else {
-                crate::inline::algorithm::inline_layout(doc, node_id, &inline_space)
-            };
-            let inline_block_size = inline_fragment.size.height;
-            let inline_oof_candidates = std::mem::take(&mut inline_fragment.oof_candidates);
-
-            // Capture baselines from inline layout, adjusted to border-box coordinates.
-            if let Some(fb) = inline_fragment.first_baseline {
-                first_baseline_result = Some(content_edge + fb);
-            }
-            if let Some(lb) = inline_fragment.last_baseline {
-                last_baseline_result = Some(content_edge + lb);
-            }
-
-            for line_frag in inline_fragment.children {
-                let line_height = line_frag.size.height;
-                let mut positioned_line = line_frag;
-                positioned_line.offset = PhysicalOffset::new(
-                    border.left + padding.left + positioned_line.offset.left,
-                    content_edge + positioned_line.offset.top,
-                );
-                intrinsic_block_size =
-                    intrinsic_block_size.max_of(positioned_line.offset.top + line_height);
-                child_fragments.push(positioned_line);
-            }
-            if style.line_clamp != openui_style::LineClamp::None
-                || space.line_clamp_context.is_some()
-            {
-                intrinsic_block_size =
-                    intrinsic_block_size.max_of(content_edge + inline_block_size);
-            }
-            for mut candidate in inline_oof_candidates {
-                let inline_origin = PhysicalOffset::new(border.left + padding.left, content_edge);
-                candidate.static_position.left =
-                    candidate.static_position.left + inline_origin.left;
-                candidate.static_position.top = candidate.static_position.top + inline_origin.top;
-                if candidate.has_inline_containing_block {
-                    candidate.containing_block_offset.left =
-                        candidate.containing_block_offset.left + inline_origin.left;
-                    candidate.containing_block_offset.top =
-                        candidate.containing_block_offset.top + inline_origin.top;
-                }
-                let captures = if candidate.style.position == Position::Fixed {
-                    captures_fixed_pos_descendants
-                } else {
-                    establishes_cb_for_abspos || candidate.has_inline_containing_block
-                };
-                if captures {
-                    oof_candidates.push(candidate);
-                } else {
-                    bubbled_oof_candidates.push(candidate);
-                }
-            }
-            block_offset = intrinsic_block_size;
-        }
-        // Floats collected from an inline formatting context still belong to
-        // the surrounding block formatting context. An ordinary block must
-        // pass their exclusions upward; a BFC root must include their lower
-        // margin edge in its automatic block size.
-        if exclusion_space_inline.has_floats() {
-            if space.is_new_formatting_context {
-                max_float_bottom = exclusion_space_inline
-                    .all_exclusions()
-                    .iter()
-                    .map(|exclusion| exclusion.rect.end_offset.block_offset)
-                    .fold(max_float_bottom, LayoutUnit::max_of);
-            } else {
-                float_exclusions_result = exclusion_space_inline
-                    .added_exclusions_since(&inherited_exclusion_space_inline);
-            }
-        }
-    } else if has_inline && has_block {
-        // ── Mixed content: create anonymous block boxes (CSS 2.2 §9.2.1.1) ─
-        // Collect contiguous runs of inline children into anonymous wrappers,
-        // interleaved with real block-level children.
-        let mut flattened_children = Vec::new();
-        append_display_contents_children(doc, node_id, &mut flattened_children);
-        place_rendered_fieldset_legend_first(doc, node_id, &mut flattened_children);
-        let mut children_ids: Vec<NodeId> = Vec::new();
-        for child_id in flattened_children {
-            let child = doc.node(child_id);
-            let nested: Vec<NodeId> = doc.children(child_id).collect();
-            let transparent_inline_wrapper = child.style.display == Display::Inline
-                && child.style.position == Position::Static
-                && child.style.float == Float::None
-                && child.style.background_color.is_transparent()
-                && child.style.background_layers.is_empty()
-                && child.style.background_linear_gradient.is_none()
-                && child.style.effective_border_top() == 0
-                && child.style.effective_border_right() == 0
-                && child.style.effective_border_bottom() == 0
-                && child.style.effective_border_left() == 0
-                && resolve_margin_or_padding(&child.style.padding_top, child_available_inline)
-                    == LayoutUnit::zero()
-                && resolve_margin_or_padding(&child.style.padding_right, child_available_inline)
-                    == LayoutUnit::zero()
-                && resolve_margin_or_padding(&child.style.padding_bottom, child_available_inline)
-                    == LayoutUnit::zero()
-                && resolve_margin_or_padding(&child.style.padding_left, child_available_inline)
-                    == LayoutUnit::zero()
-                && resolve_margin_or_padding(&child.style.margin_top, child_available_inline)
-                    == LayoutUnit::zero()
-                && resolve_margin_or_padding(&child.style.margin_right, child_available_inline)
-                    == LayoutUnit::zero()
-                && resolve_margin_or_padding(&child.style.margin_bottom, child_available_inline)
-                    == LayoutUnit::zero()
-                && resolve_margin_or_padding(&child.style.margin_left, child_available_inline)
-                    == LayoutUnit::zero();
-            let all_in_flow_block_children = !nested.is_empty()
-                && nested.iter().all(|nested_id| {
-                    let nested_style = &doc.node(*nested_id).style;
-                    nested_style.display == Display::None
-                        || (!nested_style.is_out_of_flow()
-                            && nested_style.float == Float::None
-                            && nested_style.display.is_block_level())
-                });
-            if transparent_inline_wrapper && inline_subtree_has_in_flow_block(doc, child_id) {
-                // Mixed-flow reconstruction must split a transparent inline
-                // around nested in-flow blocks even when the parent already
-                // has direct block children. Otherwise the inline formatter
-                // skips the nested block item and joins the before/after text
-                // into one anonymous line.
-                let mut portions = Vec::new();
-                collect_block_in_inline_portions(doc, child_id, &mut portions);
-                for portion in portions {
-                    match portion {
-                        BlockInInlinePortion::InlineRun { children, .. } => {
-                            children_ids.extend(children)
-                        }
-                        BlockInInlinePortion::Block(block_id) => children_ids.push(block_id),
-                    }
-                }
-                continue;
-            }
-            if transparent_inline_wrapper && all_in_flow_block_children {
-                // CSS block-in-inline reconstruction splits an otherwise
-                // empty transparent inline around its in-flow block boxes.
-                // With no inline fragments or decorations to preserve, the
-                // reconstructed block sequence is equivalent to flattening
-                // this one wrapper into the mixed-flow child list.
-                children_ids.extend(nested);
-            } else {
-                children_ids.push(child_id);
-            }
-        }
-        let mut i = 0;
-        let mut exclusion_space_mixed = initial_exclusion_space(space);
-        let mut boundary_clamp_marker_placed = false;
-        let mut physical_clamp_marker_suppressed = false;
-        let legacy_inline_box_block_after_clamp = style.legacy_webkit_box
-            && style.legacy_webkit_line_clamp
-            && style.display == Display::InlineBlock;
-
-        while i < children_ids.len() {
-            let child_id = children_ids[i];
-            let child_style = &doc.node(child_id).style;
-            // A float that occurs before the forced break ending the retained
-            // clamp line participates in that line even though block-in-inline
-            // reconstruction exposes it as the next mixed-flow child. Keep it
-            // at the retained line boundary; a float after an authored break is
-            // already part of the discarded continuation.
-            let boundary_float_within_integer_budget = match style.line_clamp {
-                openui_style::LineClamp::Lines(lines) => {
-                    1 + children_ids[..i]
+                if space.is_new_formatting_context {
+                    max_float_bottom = exclusion_space_inline
+                        .all_exclusions()
                         .iter()
-                        .map(|prior_id| subtree_preserved_break_count(doc, *prior_id))
-                        .sum::<usize>()
-                        <= lines as usize
+                        .map(|exclusion| exclusion.rect.end_offset.block_offset)
+                        .fold(max_float_bottom, LayoutUnit::max_of);
+                } else {
+                    float_exclusions_result = exclusion_space_inline
+                        .added_exclusions_since(&inherited_exclusion_space_inline);
                 }
-                _ => true,
-            };
-            let child_is_boundary_clamp_float = child_style.float != Float::None
-                && space
-                    .line_clamp_context
-                    .as_ref()
-                    .is_some_and(|context| context.is_exhausted())
-                && i > 0
-                && boundary_float_within_integer_budget
-                && !subtree_ends_in_forced_line_break(doc, children_ids[i - 1]).unwrap_or(false);
-            let child_is_zero_clamp_overflow = child_style.height.is_fixed()
-                && child_style.height.value() == 0.0
-                && space
-                    .line_clamp_context
-                    .as_ref()
-                    .is_some_and(|context| context.remaining_block_size().is_some());
-            let child_is_boundary_oof_wrapper = space
-                .line_clamp_context
-                .as_ref()
-                .is_some_and(|context| context.marker_required_when_exhausted())
-                && margin_strut.is_empty()
-                && child_style.height.is_auto()
-                && resolve_border(child_style).block_sum() == LayoutUnit::zero()
-                && resolve_padding(child_style, child_available_inline).block_sum()
-                    == LayoutUnit::zero()
-                && subtree_contains_only_out_of_flow_content(doc, child_id);
-            if let Some(context) = space
-                .line_clamp_context
-                .as_ref()
-                .filter(|context| context.is_exhausted())
-            {
-                if child_is_boundary_oof_wrapper {
-                    // An OOF-only wrapper immediately following an exact
-                    // physical fit still supplies the positioned descendant's
-                    // static-position/containing-block chain. It also owns the
-                    // clamp boundary, so a later discarded in-flow sibling
-                    // must not retroactively add a marker to the prior line.
-                    physical_clamp_marker_suppressed = true;
-                }
-                let child_has_visible_content = node_has_visible_in_flow_content(doc, child_id);
-                if !boundary_clamp_marker_placed
-                    && !physical_clamp_marker_suppressed
-                    && !child_is_zero_clamp_overflow
-                    && child_has_visible_content
-                    && (context.marker_required_when_exhausted()
-                        || context.remaining_block_size().is_none())
-                {
-                    let (_, block_ellipsis) = context.snapshot();
-                    crate::inline::algorithm::append_clamp_marker_to_last_line(
-                        doc,
-                        &mut child_fragments,
-                        style,
-                        &block_ellipsis,
-                    );
-                    if child_is_boundary_clamp_float {
-                        boundary_clamp_marker_placed = true;
+            }
+        };
+        layout_inline_children();
+    } else if has_inline && has_block {
+        // Mixed formatting has its own working values for the same
+        // reason. All shared flow state remains captured by reference.
+        let mut layout_mixed_children = || {
+            // ── Mixed content: create anonymous block boxes (CSS 2.2 §9.2.1.1) ─
+            // Collect contiguous runs of inline children into anonymous wrappers,
+            // interleaved with real block-level children.
+            let mut flattened_children = Vec::new();
+            append_display_contents_children(doc, node_id, &mut flattened_children);
+            place_rendered_fieldset_legend_first(doc, node_id, &mut flattened_children);
+            let mut children_ids: Vec<NodeId> = Vec::new();
+            for child_id in flattened_children {
+                let child = doc.node(child_id);
+                let nested: Vec<NodeId> = doc.children(child_id).collect();
+                let transparent_inline_wrapper = child.style.display == Display::Inline
+                    && child.style.position == Position::Static
+                    && child.style.float == Float::None
+                    && child.style.background_color.is_transparent()
+                    && child.style.background_layers.is_empty()
+                    && child.style.background_linear_gradient.is_none()
+                    && child.style.effective_border_top() == 0
+                    && child.style.effective_border_right() == 0
+                    && child.style.effective_border_bottom() == 0
+                    && child.style.effective_border_left() == 0
+                    && resolve_margin_or_padding(&child.style.padding_top, child_available_inline)
+                        == LayoutUnit::zero()
+                    && resolve_margin_or_padding(
+                        &child.style.padding_right,
+                        child_available_inline,
+                    ) == LayoutUnit::zero()
+                    && resolve_margin_or_padding(
+                        &child.style.padding_bottom,
+                        child_available_inline,
+                    ) == LayoutUnit::zero()
+                    && resolve_margin_or_padding(&child.style.padding_left, child_available_inline)
+                        == LayoutUnit::zero()
+                    && resolve_margin_or_padding(&child.style.margin_top, child_available_inline)
+                        == LayoutUnit::zero()
+                    && resolve_margin_or_padding(&child.style.margin_right, child_available_inline)
+                        == LayoutUnit::zero()
+                    && resolve_margin_or_padding(
+                        &child.style.margin_bottom,
+                        child_available_inline,
+                    ) == LayoutUnit::zero()
+                    && resolve_margin_or_padding(&child.style.margin_left, child_available_inline)
+                        == LayoutUnit::zero();
+                let all_in_flow_block_children = !nested.is_empty()
+                    && nested.iter().all(|nested_id| {
+                        let nested_style = &doc.node(*nested_id).style;
+                        nested_style.display == Display::None
+                            || (!nested_style.is_out_of_flow()
+                                && nested_style.float == Float::None
+                                && nested_style.display.is_block_level())
+                    });
+                if transparent_inline_wrapper && inline_subtree_has_in_flow_block(doc, child_id) {
+                    // Mixed-flow reconstruction must split a transparent inline
+                    // around nested in-flow blocks even when the parent already
+                    // has direct block children. Otherwise the inline formatter
+                    // skips the nested block item and joins the before/after text
+                    // into one anonymous line.
+                    let mut portions = Vec::new();
+                    collect_block_in_inline_portions(doc, child_id, &mut portions);
+                    for portion in portions {
+                        match portion {
+                            BlockInInlinePortion::InlineRun { children, .. } => {
+                                children_ids.extend(children)
+                            }
+                            BlockInInlinePortion::Block(block_id) => children_ids.push(block_id),
+                        }
                     }
+                    continue;
                 }
-                if context.remaining_block_size().is_some()
-                    && !child_has_visible_content
-                    && !subtree_contains_only_out_of_flow_content(doc, child_id)
+                if transparent_inline_wrapper && all_in_flow_block_children {
+                    // CSS block-in-inline reconstruction splits an otherwise
+                    // empty transparent inline around its in-flow block boxes.
+                    // With no inline fragments or decorations to preserve, the
+                    // reconstructed block sequence is equivalent to flattening
+                    // this one wrapper into the mixed-flow child list.
+                    children_ids.extend(nested);
+                } else {
+                    children_ids.push(child_id);
+                }
+            }
+            let mut i = 0;
+            let mut exclusion_space_mixed = initial_exclusion_space(space);
+            let mut boundary_clamp_marker_placed = false;
+            let mut physical_clamp_marker_suppressed = false;
+            let legacy_inline_box_block_after_clamp = style.legacy_webkit_box
+                && style.legacy_webkit_line_clamp
+                && style.display == Display::InlineBlock;
+
+            while i < children_ids.len() {
+                let child_id = children_ids[i];
+                let child_style = &doc.node(child_id).style;
+                // A float that occurs before the forced break ending the retained
+                // clamp line participates in that line even though block-in-inline
+                // reconstruction exposes it as the next mixed-flow child. Keep it
+                // at the retained line boundary; a float after an authored break is
+                // already part of the discarded continuation.
+                let boundary_float_within_integer_budget = match style.line_clamp {
+                    openui_style::LineClamp::Lines(lines) => {
+                        1 + children_ids[..i]
+                            .iter()
+                            .map(|prior_id| subtree_preserved_break_count(doc, *prior_id))
+                            .sum::<usize>()
+                            <= lines as usize
+                    }
+                    _ => true,
+                };
+                let child_is_boundary_clamp_float = child_style.float != Float::None
+                    && space
+                        .line_clamp_context
+                        .as_ref()
+                        .is_some_and(|context| context.is_exhausted())
+                    && i > 0
+                    && boundary_float_within_integer_budget
+                    && !subtree_ends_in_forced_line_break(doc, children_ids[i - 1])
+                        .unwrap_or(false);
+                let child_is_zero_clamp_overflow = child_style.height.is_fixed()
+                    && child_style.height.value() == 0.0
+                    && space
+                        .line_clamp_context
+                        .as_ref()
+                        .is_some_and(|context| context.remaining_block_size().is_some());
+                let child_is_boundary_oof_wrapper = space
+                    .line_clamp_context
+                    .as_ref()
+                    .is_some_and(|context| context.marker_required_when_exhausted())
+                    && margin_strut.is_empty()
                     && child_style.height.is_auto()
                     && resolve_border(child_style).block_sum() == LayoutUnit::zero()
                     && resolve_padding(child_style, child_available_inline).block_sum()
                         == LayoutUnit::zero()
+                    && subtree_contains_only_out_of_flow_content(doc, child_id);
+                if let Some(context) = space
+                    .line_clamp_context
+                    .as_ref()
+                    .filter(|context| context.is_exhausted())
                 {
-                    let child_margin = resolve_margins_in_parent_axes(
-                        child_style,
-                        child_available_inline,
-                        space.writing_direction,
-                    );
-                    let mut collapsed = margin_strut;
-                    collapsed.append_normal(child_margin.top);
-                    collapsed.append_normal(child_margin.bottom);
-                    if collapsed.sum() <= margin_strut.sum() {
+                    if child_is_boundary_oof_wrapper {
+                        // An OOF-only wrapper immediately following an exact
+                        // physical fit still supplies the positioned descendant's
+                        // static-position/containing-block chain. It also owns the
+                        // clamp boundary, so a later discarded in-flow sibling
+                        // must not retroactively add a marker to the prior line.
                         physical_clamp_marker_suppressed = true;
-                        context.suppress_marker();
+                    }
+                    let child_has_visible_content = node_has_visible_in_flow_content(doc, child_id);
+                    if !boundary_clamp_marker_placed
+                        && !physical_clamp_marker_suppressed
+                        && !child_is_zero_clamp_overflow
+                        && child_has_visible_content
+                        && (context.marker_required_when_exhausted()
+                            || context.remaining_block_size().is_none())
+                    {
+                        let (_, block_ellipsis) = context.snapshot();
+                        crate::inline::algorithm::append_clamp_marker_to_last_line(
+                            doc,
+                            &mut child_fragments,
+                            style,
+                            &block_ellipsis,
+                        );
+                        if child_is_boundary_clamp_float {
+                            boundary_clamp_marker_placed = true;
+                        }
+                    }
+                    if context.remaining_block_size().is_some()
+                        && !child_has_visible_content
+                        && !subtree_contains_only_out_of_flow_content(doc, child_id)
+                        && child_style.height.is_auto()
+                        && resolve_border(child_style).block_sum() == LayoutUnit::zero()
+                        && resolve_padding(child_style, child_available_inline).block_sum()
+                            == LayoutUnit::zero()
+                    {
+                        let child_margin = resolve_margins_in_parent_axes(
+                            child_style,
+                            child_available_inline,
+                            space.writing_direction,
+                        );
+                        let mut collapsed = margin_strut;
+                        collapsed.append_normal(child_margin.top);
+                        collapsed.append_normal(child_margin.bottom);
+                        if collapsed.sum() <= margin_strut.sum() {
+                            physical_clamp_marker_suppressed = true;
+                            context.suppress_marker();
+                        }
+                    }
+                    if !child_style.position.is_absolutely_positioned()
+                        && !child_is_zero_clamp_overflow
+                        && !child_is_boundary_clamp_float
+                        && !child_is_boundary_oof_wrapper
+                        && !legacy_inline_box_block_after_clamp
+                    {
+                        i += 1;
+                        continue;
                     }
                 }
-                if !child_style.position.is_absolutely_positioned()
-                    && !child_is_zero_clamp_overflow
-                    && !child_is_boundary_clamp_float
-                    && !child_is_boundary_oof_wrapper
-                    && !legacy_inline_box_block_after_clamp
-                {
+
+                // Skip display:none children.
+                if child_style.display == Display::None {
                     i += 1;
                     continue;
                 }
-            }
 
-            // Skip display:none children.
-            if child_style.display == Display::None {
-                i += 1;
-                continue;
-            }
-
-            // Collect absolutely positioned children with correct static position.
-            // CSS 2.1 §10.6.4: Include pending margin_strut in block-axis
-            // static position for the hypothetical normal-flow position.
-            if child_style.position.is_absolutely_positioned() {
-                let mut candidate = OutOfFlowCandidate {
-                    node_id: child_id,
-                    style: child_style.clone(),
-                    static_position: PhysicalOffset::new(
-                        aligned_out_of_flow_static_inline_offset(
-                            style,
-                            child_style,
-                            border.left + padding.left,
-                            child_available_inline,
+                // Collect absolutely positioned children with correct static position.
+                // CSS 2.1 §10.6.4: Include pending margin_strut in block-axis
+                // static position for the hypothetical normal-flow position.
+                if child_style.position.is_absolutely_positioned() {
+                    let mut candidate = OutOfFlowCandidate {
+                        node_id: child_id,
+                        style: child_style.clone(),
+                        static_position: PhysicalOffset::new(
+                            aligned_out_of_flow_static_inline_offset(
+                                style,
+                                child_style,
+                                border.left + padding.left,
+                                child_available_inline,
+                            ),
+                            block_offset + margin_strut.sum(),
                         ),
-                        block_offset + margin_strut.sum(),
-                    ),
-                    static_position_horizontal_edge: crate::out_of_flow::StaticPositionEdge::Start,
-                    static_position_vertical_edge: crate::out_of_flow::StaticPositionEdge::Start,
-                    containing_block_offset: PhysicalOffset::zero(),
-                    containing_block_node: NodeId::NONE,
-                    containing_block_size,
-                    containing_block_border: border.clone(),
-                    containing_block_direction: style.direction,
-                    static_position_direction: style.direction,
-                    has_inline_containing_block: false,
-                    inline_containing_block_node: None,
-                };
-                let captures = if child_style.position == Position::Fixed {
-                    captures_fixed_pos_descendants
-                } else {
-                    establishes_cb_for_abspos
-                };
-                if captures {
-                    candidate.containing_block_node = node_id;
-                    oof_candidates.push(candidate);
-                } else {
-                    bubbled_oof_candidates.push(candidate);
-                }
-                i += 1;
-                continue;
-            }
-
-            // Handle floated children.
-            if child_style.float != Float::None {
-                // CSS 2.1: the current normal-flow position includes a
-                // preceding in-flow sibling's collapsed trailing margin.
-                if !margin_strut.is_empty() {
-                    block_offset += margin_strut.sum();
-                    margin_strut = MarginStrut::new();
-                }
-                if !start_margin_resolved {
-                    start_margin_resolved = true;
-                    float_resolved_bfc = true;
-                }
-                let boundary_line_index = child_is_boundary_clamp_float
-                    .then(|| {
-                        child_fragments
-                            .iter()
-                            .rposition(|fragment| fragment.node_id.is_none())
-                    })
-                    .flatten();
-                let float_block_offset = boundary_line_index
-                    .map(|index| child_fragments[index].offset.top)
-                    .unwrap_or(block_offset);
-                let float_fragment_index = child_fragments.len();
-                handle_float(
-                    doc,
-                    child_id,
-                    space,
-                    child_available_inline,
-                    child_percentage_block_size,
-                    &border,
-                    &padding,
-                    content_edge,
-                    &float_block_offset,
-                    &mut exclusion_space_mixed,
-                    &mut child_fragments,
-                    &mut oof_candidates,
-                    &mut bubbled_oof_candidates,
-                    establishes_cb_for_abspos,
-                    captures_fixed_pos_descendants,
-                    &mut max_float_bottom,
-                );
-                if let Some(line_index) = boundary_line_index {
-                    let float_fragment = &child_fragments[float_fragment_index];
-                    let float_margin = float_fragment.margin;
-                    let float_left = float_fragment.offset.left;
-                    let float_width = float_fragment.size.width;
-                    let line = &mut child_fragments[line_index];
-                    if child_style.float == Float::Left {
-                        let new_line_left = float_left + float_width + float_margin.right;
-                        let shift = (new_line_left - line.offset.left).clamp_negative_to_zero();
-                        line.offset.left = line.offset.left + shift;
-                        line.size.width = (line.size.width - shift).clamp_negative_to_zero();
+                        static_position_horizontal_edge:
+                            crate::out_of_flow::StaticPositionEdge::Start,
+                        static_position_vertical_edge:
+                            crate::out_of_flow::StaticPositionEdge::Start,
+                        containing_block_offset: PhysicalOffset::zero(),
+                        containing_block_node: NodeId::NONE,
+                        containing_block_size,
+                        containing_block_border: border.clone(),
+                        containing_block_direction: style.direction,
+                        static_position_direction: style.direction,
+                        has_inline_containing_block: false,
+                        inline_containing_block_node: None,
+                    };
+                    let captures = if child_style.position == Position::Fixed {
+                        captures_fixed_pos_descendants
                     } else {
-                        let new_line_right = float_left - float_margin.left;
-                        line.size.width =
-                            (new_line_right - line.offset.left).clamp_negative_to_zero();
-                    }
-                }
-                i += 1;
-                continue;
-            }
-
-            if is_inline_level_child(doc, child_id) {
-                // Gather contiguous run of inline children.
-                // display:none, abs-pos children, and floats are transparent
-                // to anonymous-box generation. Keep a trailing/interleaved
-                // float in this run so its source placeholder is measured
-                // against the preceding inline content; the owning BFC still
-                // places the float before laying out the excluded line.
-                // Inline layout records an abs-pos child at its measured
-                // insertion boundary, so do not also synthesize a block-start
-                // candidate here.
-                let run_start = i;
-                while i < children_ids.len() {
-                    let cid = children_ids[i];
-                    let cs = &doc.node(cid).style;
-                    if cs.display == Display::None {
-                        i += 1;
-                        continue;
-                    }
-                    if cs.position.is_absolutely_positioned() {
-                        i += 1;
-                        continue;
-                    }
-                    if cs.float != Float::None {
-                        i += 1;
-                        continue;
-                    }
-                    if !is_inline_level_child(doc, cid) {
-                        break;
+                        establishes_cb_for_abspos
+                    };
+                    if captures {
+                        candidate.containing_block_node = node_id;
+                        oof_candidates.push(candidate);
+                    } else {
+                        bubbled_oof_candidates.push(candidate);
                     }
                     i += 1;
+                    continue;
                 }
-                let inline_run = &children_ids[run_start..i];
 
-                // Floats in an inline run still belong to this block
-                // formatting context even when the run's only text is
-                // collapsible whitespace. Place them before deciding whether
-                // an anonymous line box is needed, so a whitespace-only run
-                // cannot silently discard later floated siblings.
-                let (inline_run_items, inline_run_floats) =
-                    crate::inline::items_builder::InlineItemsBuilder::collect_for_children_with_floats(
-                        doc,
-                        node_id,
-                        inline_run,
-                    );
-                let inline_run_float_positions =
-                    crate::inline::algorithm::inline_float_source_positions(
-                        doc,
-                        node_id,
-                        &inline_run_items,
-                        &inline_run_floats,
-                        child_available_inline,
-                        space,
-                    );
-                // The source-position probe measures line advancement without
-                // an exclusion space. A clearing break before a float instead
-                // advances to the relevant float margin-box edge. Resolve
-                // each break when source order reaches it, and retain that
-                // floor for subsequent floats so siblings after one break
-                // share the same clearance rather than clearing each other.
-                let mut preceding_item_index = 0;
-                let mut clearing_float_floor = LayoutUnit::zero();
-                for placeholder in &inline_run_floats {
-                    for item in inline_run_items
-                        .items
-                        .iter()
-                        .skip(preceding_item_index)
-                        .take(placeholder.item_index.saturating_sub(preceding_item_index))
-                    {
-                        if item.item_type == crate::inline::items::InlineItemType::Control
-                            && doc.node(item.node_id).tag == ElementTag::Break
-                        {
-                            let clear = doc.node(item.node_id).style.clear;
-                            if clear != Clear::None {
-                                clearing_float_floor = clearing_float_floor.max_of(
-                                    exclusion_space_mixed
-                                        .clearance_offset(clear_type_from_style(clear)),
-                                );
-                            }
-                        }
+                // Handle floated children.
+                if child_style.float != Float::None {
+                    // CSS 2.1: the current normal-flow position includes a
+                    // preceding in-flow sibling's collapsed trailing margin.
+                    if !margin_strut.is_empty() {
+                        block_offset += margin_strut.sum();
+                        margin_strut = MarginStrut::new();
                     }
-                    preceding_item_index = placeholder.item_index;
-                    let source_block = inline_run_float_positions
-                        .get(&placeholder.node_id)
-                        .map(|source| source.block_offset)
-                        .unwrap_or_default();
-                    let float_block_offset =
-                        (block_offset + source_block).max_of(content_edge + clearing_float_floor);
+                    if !start_margin_resolved {
+                        start_margin_resolved = true;
+                        float_resolved_bfc = true;
+                    }
+                    let boundary_line_index = child_is_boundary_clamp_float
+                        .then(|| {
+                            child_fragments
+                                .iter()
+                                .rposition(|fragment| fragment.node_id.is_none())
+                        })
+                        .flatten();
+                    let float_block_offset = boundary_line_index
+                        .map(|index| child_fragments[index].offset.top)
+                        .unwrap_or(block_offset);
+                    let float_fragment_index = child_fragments.len();
                     handle_float(
                         doc,
-                        placeholder.node_id,
+                        child_id,
                         space,
                         child_available_inline,
                         child_percentage_block_size,
@@ -3568,20 +3487,221 @@ pub(crate) fn block_layout_contents(
                         captures_fixed_pos_descendants,
                         &mut max_float_bottom,
                     );
+                    if let Some(line_index) = boundary_line_index {
+                        let float_fragment = &child_fragments[float_fragment_index];
+                        let float_margin = float_fragment.margin;
+                        let float_left = float_fragment.offset.left;
+                        let float_width = float_fragment.size.width;
+                        let line = &mut child_fragments[line_index];
+                        if child_style.float == Float::Left {
+                            let new_line_left = float_left + float_width + float_margin.right;
+                            let shift = (new_line_left - line.offset.left).clamp_negative_to_zero();
+                            line.offset.left = line.offset.left + shift;
+                            line.size.width = (line.size.width - shift).clamp_negative_to_zero();
+                        } else {
+                            let new_line_right = float_left - float_margin.left;
+                            line.size.width =
+                                (new_line_right - line.offset.left).clamp_negative_to_zero();
+                        }
+                    }
+                    i += 1;
+                    continue;
                 }
 
-                // An empty transparent inline contributes no line box between
-                // adjacent block boxes.  Its open/close inline items are only
-                // structural; formatting them as an anonymous line inserts a
-                // spurious line-height into mixed block/inline flow.
-                if !inline_run
-                    .iter()
-                    .any(|child| inline_node_generates_line_box(doc, *child))
-                {
-                    // Whitespace and out-of-flow inline descendants can form
-                    // a run with no line box. The run contributes no block
-                    // size, but inline layout still owns the insertion data
-                    // needed to materialize those positioned descendants.
+                if is_inline_level_child(doc, child_id) {
+                    // Gather contiguous run of inline children.
+                    // display:none, abs-pos children, and floats are transparent
+                    // to anonymous-box generation. Keep a trailing/interleaved
+                    // float in this run so its source placeholder is measured
+                    // against the preceding inline content; the owning BFC still
+                    // places the float before laying out the excluded line.
+                    // Inline layout records an abs-pos child at its measured
+                    // insertion boundary, so do not also synthesize a block-start
+                    // candidate here.
+                    let run_start = i;
+                    while i < children_ids.len() {
+                        let cid = children_ids[i];
+                        let cs = &doc.node(cid).style;
+                        if cs.display == Display::None {
+                            i += 1;
+                            continue;
+                        }
+                        if cs.position.is_absolutely_positioned() {
+                            i += 1;
+                            continue;
+                        }
+                        if cs.float != Float::None {
+                            i += 1;
+                            continue;
+                        }
+                        if !is_inline_level_child(doc, cid) {
+                            break;
+                        }
+                        i += 1;
+                    }
+                    let inline_run = &children_ids[run_start..i];
+
+                    // Floats in an inline run still belong to this block
+                    // formatting context even when the run's only text is
+                    // collapsible whitespace. Place them before deciding whether
+                    // an anonymous line box is needed, so a whitespace-only run
+                    // cannot silently discard later floated siblings.
+                    let (inline_run_items, inline_run_floats) =
+                        crate::inline::items_builder::InlineItemsBuilder::collect_for_children_with_floats(
+                            doc,
+                            node_id,
+                            inline_run,
+                        );
+                    let inline_run_float_positions =
+                        crate::inline::algorithm::inline_float_source_positions(
+                            doc,
+                            node_id,
+                            &inline_run_items,
+                            &inline_run_floats,
+                            child_available_inline,
+                            space,
+                        );
+                    // The source-position probe measures line advancement without
+                    // an exclusion space. A clearing break before a float instead
+                    // advances to the relevant float margin-box edge. Resolve
+                    // each break when source order reaches it, and retain that
+                    // floor for subsequent floats so siblings after one break
+                    // share the same clearance rather than clearing each other.
+                    let mut preceding_item_index = 0;
+                    let mut clearing_float_floor = LayoutUnit::zero();
+                    for placeholder in &inline_run_floats {
+                        for item in inline_run_items
+                            .items
+                            .iter()
+                            .skip(preceding_item_index)
+                            .take(placeholder.item_index.saturating_sub(preceding_item_index))
+                        {
+                            if item.item_type == crate::inline::items::InlineItemType::Control
+                                && doc.node(item.node_id).tag == ElementTag::Break
+                            {
+                                let clear = doc.node(item.node_id).style.clear;
+                                if clear != Clear::None {
+                                    clearing_float_floor = clearing_float_floor.max_of(
+                                        exclusion_space_mixed
+                                            .clearance_offset(clear_type_from_style(clear)),
+                                    );
+                                }
+                            }
+                        }
+                        preceding_item_index = placeholder.item_index;
+                        let source_block = inline_run_float_positions
+                            .get(&placeholder.node_id)
+                            .map(|source| source.block_offset)
+                            .unwrap_or_default();
+                        let float_block_offset = (block_offset + source_block)
+                            .max_of(content_edge + clearing_float_floor);
+                        handle_float(
+                            doc,
+                            placeholder.node_id,
+                            space,
+                            child_available_inline,
+                            child_percentage_block_size,
+                            &border,
+                            &padding,
+                            content_edge,
+                            &float_block_offset,
+                            &mut exclusion_space_mixed,
+                            &mut child_fragments,
+                            &mut oof_candidates,
+                            &mut bubbled_oof_candidates,
+                            establishes_cb_for_abspos,
+                            captures_fixed_pos_descendants,
+                            &mut max_float_bottom,
+                        );
+                    }
+
+                    // An empty transparent inline contributes no line box between
+                    // adjacent block boxes.  Its open/close inline items are only
+                    // structural; formatting them as an anonymous line inserts a
+                    // spurious line-height into mixed block/inline flow.
+                    if !inline_run
+                        .iter()
+                        .any(|child| inline_node_generates_line_box(doc, *child))
+                    {
+                        // Whitespace and out-of-flow inline descendants can form
+                        // a run with no line box. The run contributes no block
+                        // size, but inline layout still owns the insertion data
+                        // needed to materialize those positioned descendants.
+                        let mut inline_space =
+                            ConstraintSpace::for_block_child_with_writing_direction(
+                                child_available_inline,
+                                space.available_block_size,
+                                child_available_inline,
+                                child_percentage_block_size,
+                                false,
+                                space.writing_direction,
+                            );
+                        inline_space.line_clamp_context = space.line_clamp_context.clone();
+                        if exclusion_space_mixed.has_floats() {
+                            inline_space.exclusion_space =
+                                Some(std::sync::Arc::new(exclusion_space_mixed.clone()));
+                            inline_space.bfc_offset =
+                                BfcOffset::new(LayoutUnit::zero(), block_offset - content_edge);
+                        }
+                        let mut empty_inline_fragment =
+                            crate::inline::algorithm::inline_layout_for_children(
+                                doc,
+                                node_id,
+                                inline_run,
+                                &inline_space,
+                            );
+                        for mut candidate in
+                            std::mem::take(&mut empty_inline_fragment.oof_candidates)
+                        {
+                            let inline_origin =
+                                PhysicalOffset::new(border.left + padding.left, block_offset);
+                            candidate.static_position.left =
+                                candidate.static_position.left + inline_origin.left;
+                            candidate.static_position.top =
+                                candidate.static_position.top + inline_origin.top;
+                            if candidate.has_inline_containing_block {
+                                candidate.containing_block_offset.left =
+                                    candidate.containing_block_offset.left + inline_origin.left;
+                                candidate.containing_block_offset.top =
+                                    candidate.containing_block_offset.top + inline_origin.top;
+                            }
+                            let captures = if candidate.style.position == Position::Fixed {
+                                captures_fixed_pos_descendants
+                            } else {
+                                establishes_cb_for_abspos || candidate.has_inline_containing_block
+                            };
+                            if captures {
+                                oof_candidates.push(candidate);
+                            } else {
+                                bubbled_oof_candidates.push(candidate);
+                            }
+                        }
+                        continue;
+                    }
+
+                    // Anonymous inline wrapper is non-self-collapsing (has content),
+                    // so it breaks the margin collapsing chain per CSS 2.1 §8.3.1.
+                    // Resolve any pending margin strut before positioning.
+                    if !start_margin_resolved {
+                        if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
+                            block_offset += margin_strut.sum();
+                            margin_strut = MarginStrut::new();
+                            start_margin_resolved = true;
+                        } else {
+                            // No FC/border/padding: propagate accumulated strut as
+                            // the parent's start margin, then reset for this inline run.
+                            saved_start_strut = Some(margin_strut);
+                            margin_strut = MarginStrut::new();
+                            start_margin_resolved = true;
+                        }
+                    } else if !margin_strut.is_empty() {
+                        block_offset += margin_strut.sum();
+                        margin_strut = MarginStrut::new();
+                    }
+
+                    // Lay out this anonymous inline wrapper.
+                    // Pass the exclusion space so inline layout can do per-line
+                    // float avoidance (CSS 2.1 §9.5.1).
                     let mut inline_space = ConstraintSpace::for_block_child_with_writing_direction(
                         child_available_inline,
                         space.available_block_size,
@@ -3592,21 +3712,61 @@ pub(crate) fn block_layout_contents(
                     );
                     inline_space.line_clamp_context = space.line_clamp_context.clone();
                     if exclusion_space_mixed.has_floats() {
+                        // The exclusion space uses content-edge-relative coordinates.
+                        // Inline layout's block_offset starts at 0, but the anonymous
+                        // wrapper begins at `block_offset - content_edge` within the
+                        // content area. Set the bfc_offset so inline layout queries
+                        // at the correct position in the exclusion space.
                         inline_space.exclusion_space =
                             Some(std::sync::Arc::new(exclusion_space_mixed.clone()));
                         inline_space.bfc_offset =
                             BfcOffset::new(LayoutUnit::zero(), block_offset - content_edge);
                     }
-                    let mut empty_inline_fragment =
-                        crate::inline::algorithm::inline_layout_for_children(
-                            doc,
-                            node_id,
-                            inline_run,
-                            &inline_space,
+                    let mut anon_fragment = crate::inline::algorithm::inline_layout_for_children(
+                        doc,
+                        node_id,
+                        inline_run,
+                        &inline_space,
+                    );
+                    let anon_had_lines = !anon_fragment.children.is_empty();
+                    let anon_oof_candidates = std::mem::take(&mut anon_fragment.oof_candidates);
+                    let anon_block_origin = block_offset;
+
+                    // A clearing <br> creates a zero-height line box, but inline
+                    // layout still gives its anonymous wrapper the clearance-only
+                    // block extent needed to reach the relevant float bottom. Do
+                    // not infer the wrapper height only from visible line boxes:
+                    // doing so loses the row break between float groups. Taking
+                    // the maximum retains that extent exactly once without
+                    // synthesizing a line-box strut for the clearing break.
+                    intrinsic_block_size =
+                        intrinsic_block_size.max_of(anon_block_origin + anon_fragment.size.height);
+
+                    // Capture baselines from anonymous inline wrapper.
+                    if let Some(fb) = anon_fragment.first_baseline {
+                        if first_baseline_result.is_none() {
+                            first_baseline_result = Some(block_offset + fb);
+                        }
+                        last_baseline_result = Some(block_offset + fb);
+                    }
+                    if let Some(lb) = anon_fragment.last_baseline {
+                        last_baseline_result = Some(block_offset + lb);
+                    }
+
+                    for line_frag in anon_fragment.children {
+                        let line_height = line_frag.size.height;
+                        let mut positioned_line = line_frag;
+                        positioned_line.offset = PhysicalOffset::new(
+                            border.left + padding.left + positioned_line.offset.left,
+                            block_offset + positioned_line.offset.top,
                         );
-                    for mut candidate in std::mem::take(&mut empty_inline_fragment.oof_candidates) {
+                        intrinsic_block_size =
+                            intrinsic_block_size.max_of(positioned_line.offset.top + line_height);
+                        child_fragments.push(positioned_line);
+                    }
+                    for mut candidate in anon_oof_candidates {
                         let inline_origin =
-                            PhysicalOffset::new(border.left + padding.left, block_offset);
+                            PhysicalOffset::new(border.left + padding.left, anon_block_origin);
                         candidate.static_position.left =
                             candidate.static_position.left + inline_origin.left;
                         candidate.static_position.top =
@@ -3616,6 +3776,21 @@ pub(crate) fn block_layout_contents(
                                 candidate.containing_block_offset.left + inline_origin.left;
                             candidate.containing_block_offset.top =
                                 candidate.containing_block_offset.top + inline_origin.top;
+                            if style.height.is_fixed() {
+                                let definite_content_height = resolve_length(
+                                    &style.height,
+                                    space.percentage_resolution_block_size,
+                                    LayoutUnit::zero(),
+                                    LayoutUnit::zero(),
+                                );
+                                let containing_block_top_in_content =
+                                    candidate.containing_block_offset.top - content_edge;
+                                candidate.containing_block_size.height =
+                                    candidate.containing_block_size.height.min_of(
+                                        (definite_content_height - containing_block_top_in_content)
+                                            .clamp_negative_to_zero(),
+                                    );
+                            }
                         }
                         let captures = if candidate.style.position == Position::Fixed {
                             captures_fixed_pos_descendants
@@ -3628,495 +3803,373 @@ pub(crate) fn block_layout_contents(
                             bubbled_oof_candidates.push(candidate);
                         }
                     }
-                    continue;
-                }
-
-                // Anonymous inline wrapper is non-self-collapsing (has content),
-                // so it breaks the margin collapsing chain per CSS 2.1 §8.3.1.
-                // Resolve any pending margin strut before positioning.
-                if !start_margin_resolved {
-                    if space.is_new_formatting_context || content_edge > LayoutUnit::zero() {
-                        block_offset += margin_strut.sum();
-                        margin_strut = MarginStrut::new();
-                        start_margin_resolved = true;
-                    } else {
-                        // No FC/border/padding: propagate accumulated strut as
-                        // the parent's start margin, then reset for this inline run.
-                        saved_start_strut = Some(margin_strut);
-                        margin_strut = MarginStrut::new();
-                        start_margin_resolved = true;
+                    block_offset = intrinsic_block_size;
+                    if !anon_had_lines
+                        && space
+                            .line_clamp_context
+                            .as_ref()
+                            .is_some_and(|context| context.is_exhausted())
+                    {
+                        let retained_flow_end = child_fragments
+                            .iter()
+                            .filter(|fragment| fragment.node_id.is_none())
+                            .map(|fragment| fragment.offset.top + fragment.size.height)
+                            .max()
+                            .unwrap_or(content_edge);
+                        // A float whose source position follows the last retained
+                        // line is discarded with the continuation when it leaves
+                        // no room for any subsequent in-flow line. Floats already
+                        // participating beside a retained line start before that
+                        // line's block-end and remain visible.
+                        child_fragments.retain(|fragment| {
+                            fragment.node_id.is_none()
+                                || doc.node(fragment.node_id).style.float == Float::None
+                                || fragment.offset.top < retained_flow_end
+                        });
+                        max_float_bottom = child_fragments
+                            .iter()
+                            .filter(|fragment| {
+                                !fragment.node_id.is_none()
+                                    && doc.node(fragment.node_id).style.float != Float::None
+                            })
+                            .map(|fragment| {
+                                (fragment.offset.top
+                                    + fragment.size.height
+                                    + fragment.margin.bottom
+                                    - content_edge)
+                                    .clamp_negative_to_zero()
+                            })
+                            .fold(LayoutUnit::zero(), LayoutUnit::max_of);
+                        intrinsic_block_size = child_fragments
+                            .iter()
+                            .map(|fragment| {
+                                let float_margin_end = (!fragment.node_id.is_none()
+                                    && doc.node(fragment.node_id).style.float != Float::None)
+                                    .then(|| {
+                                        resolve_margin_or_padding(
+                                            &doc.node(fragment.node_id).style.margin_bottom,
+                                            child_available_inline,
+                                        )
+                                    })
+                                    .unwrap_or(LayoutUnit::zero());
+                                fragment.offset.top + fragment.size.height + float_margin_end
+                            })
+                            .fold(content_edge, LayoutUnit::max_of);
+                        block_offset = intrinsic_block_size;
+                        if let Some(context) = &space.line_clamp_context {
+                            let (_, block_ellipsis) = context.snapshot();
+                            crate::inline::algorithm::append_clamp_marker_to_last_line(
+                                doc,
+                                &mut child_fragments,
+                                style,
+                                &block_ellipsis,
+                            );
+                        }
+                        break;
                     }
-                } else if !margin_strut.is_empty() {
-                    block_offset += margin_strut.sum();
-                    margin_strut = MarginStrut::new();
-                }
+                } else {
+                    // Block-level child.
 
-                // Lay out this anonymous inline wrapper.
-                // Pass the exclusion space so inline layout can do per-line
-                // float avoidance (CSS 2.1 §9.5.1).
-                let mut inline_space = ConstraintSpace::for_block_child_with_writing_direction(
-                    child_available_inline,
-                    space.available_block_size,
-                    child_available_inline,
-                    child_percentage_block_size,
-                    false,
-                    space.writing_direction,
-                );
-                inline_space.line_clamp_context = space.line_clamp_context.clone();
-                if exclusion_space_mixed.has_floats() {
-                    // The exclusion space uses content-edge-relative coordinates.
-                    // Inline layout's block_offset starts at 0, but the anonymous
-                    // wrapper begins at `block_offset - content_edge` within the
-                    // content area. Set the bfc_offset so inline layout queries
-                    // at the correct position in the exclusion space.
-                    inline_space.exclusion_space =
-                        Some(std::sync::Arc::new(exclusion_space_mixed.clone()));
-                    inline_space.bfc_offset =
-                        BfcOffset::new(LayoutUnit::zero(), block_offset - content_edge);
-                }
-                let mut anon_fragment = crate::inline::algorithm::inline_layout_for_children(
-                    doc,
-                    node_id,
-                    inline_run,
-                    &inline_space,
-                );
-                let anon_had_lines = !anon_fragment.children.is_empty();
-                let anon_oof_candidates = std::mem::take(&mut anon_fragment.oof_candidates);
-                let anon_block_origin = block_offset;
-
-                // A clearing <br> creates a zero-height line box, but inline
-                // layout still gives its anonymous wrapper the clearance-only
-                // block extent needed to reach the relevant float bottom. Do
-                // not infer the wrapper height only from visible line boxes:
-                // doing so loses the row break between float groups. Taking
-                // the maximum retains that extent exactly once without
-                // synthesizing a line-box strut for the clearing break.
-                intrinsic_block_size =
-                    intrinsic_block_size.max_of(anon_block_origin + anon_fragment.size.height);
-
-                // Capture baselines from anonymous inline wrapper.
-                if let Some(fb) = anon_fragment.first_baseline {
-                    if first_baseline_result.is_none() {
-                        first_baseline_result = Some(block_offset + fb);
+                    // Handle clear property — CSS 2.1 §8.3.1 / §9.5.2.
+                    // Compute hypothetical position (with margin collapsing) first,
+                    // then determine clearance as additional distance needed.
+                    // Clearance also inhibits margin collapsing.
+                    if child_style.clear != Clear::None {
+                        let child_margin = resolve_margins_in_parent_axes(
+                            child_style,
+                            child_available_inline,
+                            space.writing_direction,
+                        );
+                        let child_top_margin = child_margin.top;
+                        let mut hyp_strut = margin_strut;
+                        hyp_strut.append_normal(child_top_margin);
+                        let hypothetical = block_offset + hyp_strut.sum();
+                        let clearance_target = exclusion_space_mixed
+                            .clearance_offset(clear_type_from_style(child_style.clear))
+                            + content_edge;
+                        if clearance_target > hypothetical {
+                            // Clearance positions the border edge at clearance_target.
+                            // layout_block_child will re-append child_top_margin and
+                            // resolve it, so compensate by subtracting it here.
+                            block_offset = clearance_target - child_top_margin;
+                            margin_strut = MarginStrut::new();
+                            start_margin_resolved = true;
+                            intrinsic_block_size = intrinsic_block_size.max_of(clearance_target);
+                        } else {
+                            // `clear` inhibits parent/first-child margin
+                            // collapsing even when no positive clearance is
+                            // required at the hypothetical margin edge.
+                            start_margin_resolved = true;
+                        }
                     }
-                    last_baseline_result = Some(block_offset + fb);
-                }
-                if let Some(lb) = anon_fragment.last_baseline {
-                    last_baseline_result = Some(block_offset + lb);
-                }
 
-                for line_frag in anon_fragment.children {
-                    let line_height = line_frag.size.height;
-                    let mut positioned_line = line_frag;
-                    positioned_line.offset = PhysicalOffset::new(
-                        border.left + padding.left + positioned_line.offset.left,
-                        block_offset + positioned_line.offset.top,
-                    );
-                    intrinsic_block_size =
-                        intrinsic_block_size.max_of(positioned_line.offset.top + line_height);
-                    child_fragments.push(positioned_line);
-                }
-                for mut candidate in anon_oof_candidates {
-                    let inline_origin =
-                        PhysicalOffset::new(border.left + padding.left, anon_block_origin);
-                    candidate.static_position.left =
-                        candidate.static_position.left + inline_origin.left;
-                    candidate.static_position.top =
-                        candidate.static_position.top + inline_origin.top;
-                    if candidate.has_inline_containing_block {
-                        candidate.containing_block_offset.left =
-                            candidate.containing_block_offset.left + inline_origin.left;
-                        candidate.containing_block_offset.top =
-                            candidate.containing_block_offset.top + inline_origin.top;
-                        if style.height.is_fixed() {
-                            let definite_content_height = resolve_length(
-                                &style.height,
-                                space.percentage_resolution_block_size,
+                    // Adjust available inline size for float exclusions.
+                    // CSS 2.1 §9.5: Only new-FC children must NOT overlap float margin boxes.
+                    // Regular (non-FC) block children overlap floats — only their line
+                    // boxes avoid floats (handled in inline layout).
+                    let child_is_new_fc_caller =
+                        establishes_new_fc(child_style) || doc.node(child_id).replaced.is_some();
+                    let (float_inline_offset, adjusted_available) = if exclusion_space_mixed
+                        .has_floats()
+                        && child_is_new_fc_caller
+                    {
+                        let child_margin = resolve_margins_in_parent_axes(
+                            child_style,
+                            child_available_inline,
+                            space.writing_direction,
+                        );
+                        let child_top_margin = child_margin.top;
+                        let min_inline_size = if uses_margin_reduced_inherited_exclusions(space) {
+                            LayoutUnit::zero()
+                        } else {
+                            new_fc_min_inline_size(doc, child_id, child_available_inline)
+                        };
+
+                        // The mixed inline/block path needs the same two-estimate
+                        // margin separation as the pure block path below. Test the
+                        // adjoining position before applying the child's margin:
+                        // when the BFC cannot fit beside a propagated descendant
+                        // float, its margin starts a new group and must not drag
+                        // preceding self-collapsing wrappers (and their floats) to
+                        // the child's eventual block position.
+                        let separated_start = if (!start_margin_resolved
+                            || !pending_self_collapsing.is_empty())
+                            && !space.is_new_formatting_context
+                            && content_edge == LayoutUnit::zero()
+                        {
+                            let adjoining = exclusion_space_mixed.find_layout_opportunity(
+                                &BfcOffset::new(LayoutUnit::zero(), LayoutUnit::zero()),
+                                child_available_inline,
+                                min_inline_size,
+                            );
+                            (adjoining.rect.block_start_offset() > LayoutUnit::zero())
+                                .then_some(adjoining.rect.block_start_offset())
+                        } else {
+                            None
+                        };
+
+                        let content_block_offset = if let Some(separated_start) = separated_start {
+                            if saved_start_strut.is_none() {
+                                saved_start_strut = Some(margin_strut);
+                            }
+                            margin_strut = MarginStrut::new();
+                            start_margin_resolved = true;
+                            for &idx in &pending_self_collapsing {
+                                child_fragments[idx].offset.top = block_offset;
+                            }
+                            pending_self_collapsing.clear();
+                            // layout_block_child adds the top margin, so retain the
+                            // border edge at the selected opportunity by backing it
+                            // out here.
+                            block_offset = content_edge + separated_start - child_top_margin;
+                            separated_start
+                        } else {
+                            let mut temp_strut = margin_strut;
+                            temp_strut.append_normal(child_top_margin);
+                            let resolved_offset = block_offset + temp_strut.sum();
+                            resolved_offset - content_edge
+                        };
+
+                        // Use height-aware opportunity search for explicit-height BFCs.
+                        let child_block_length =
+                            block_size_in_parent_axes(child_style, space.writing_direction);
+                        let child_block_size = if !child_block_length.is_auto()
+                            && !child_block_length.is_stretch()
+                            && !child_block_length.is_content_or_intrinsic()
+                            && !child_block_length.is_percent()
+                        {
+                            let raw = resolve_length(
+                                child_block_length,
+                                LayoutUnit::zero(),
                                 LayoutUnit::zero(),
                                 LayoutUnit::zero(),
                             );
-                            let containing_block_top_in_content =
-                                candidate.containing_block_offset.top - content_edge;
-                            candidate.containing_block_size.height =
-                                candidate.containing_block_size.height.min_of(
-                                    (definite_content_height - containing_block_top_in_content)
-                                        .clamp_negative_to_zero(),
-                                );
-                        }
-                    }
-                    let captures = if candidate.style.position == Position::Fixed {
-                        captures_fixed_pos_descendants
-                    } else {
-                        establishes_cb_for_abspos || candidate.has_inline_containing_block
-                    };
-                    if captures {
-                        oof_candidates.push(candidate);
-                    } else {
-                        bubbled_oof_candidates.push(candidate);
-                    }
-                }
-                block_offset = intrinsic_block_size;
-                if !anon_had_lines
-                    && space
-                        .line_clamp_context
-                        .as_ref()
-                        .is_some_and(|context| context.is_exhausted())
-                {
-                    let retained_flow_end = child_fragments
-                        .iter()
-                        .filter(|fragment| fragment.node_id.is_none())
-                        .map(|fragment| fragment.offset.top + fragment.size.height)
-                        .max()
-                        .unwrap_or(content_edge);
-                    // A float whose source position follows the last retained
-                    // line is discarded with the continuation when it leaves
-                    // no room for any subsequent in-flow line. Floats already
-                    // participating beside a retained line start before that
-                    // line's block-end and remain visible.
-                    child_fragments.retain(|fragment| {
-                        fragment.node_id.is_none()
-                            || doc.node(fragment.node_id).style.float == Float::None
-                            || fragment.offset.top < retained_flow_end
-                    });
-                    max_float_bottom = child_fragments
-                        .iter()
-                        .filter(|fragment| {
-                            !fragment.node_id.is_none()
-                                && doc.node(fragment.node_id).style.float != Float::None
-                        })
-                        .map(|fragment| {
-                            (fragment.offset.top + fragment.size.height + fragment.margin.bottom
-                                - content_edge)
-                                .clamp_negative_to_zero()
-                        })
-                        .fold(LayoutUnit::zero(), LayoutUnit::max_of);
-                    intrinsic_block_size = child_fragments
-                        .iter()
-                        .map(|fragment| {
-                            let float_margin_end = (!fragment.node_id.is_none()
-                                && doc.node(fragment.node_id).style.float != Float::None)
-                                .then(|| {
-                                    resolve_margin_or_padding(
-                                        &doc.node(fragment.node_id).style.margin_bottom,
-                                        child_available_inline,
-                                    )
-                                })
-                                .unwrap_or(LayoutUnit::zero());
-                            fragment.offset.top + fragment.size.height + float_margin_end
-                        })
-                        .fold(content_edge, LayoutUnit::max_of);
-                    block_offset = intrinsic_block_size;
-                    if let Some(context) = &space.line_clamp_context {
-                        let (_, block_ellipsis) = context.snapshot();
-                        crate::inline::algorithm::append_clamp_marker_to_last_line(
-                            doc,
-                            &mut child_fragments,
-                            style,
-                            &block_ellipsis,
-                        );
-                    }
-                    break;
-                }
-            } else {
-                // Block-level child.
-
-                // Handle clear property — CSS 2.1 §8.3.1 / §9.5.2.
-                // Compute hypothetical position (with margin collapsing) first,
-                // then determine clearance as additional distance needed.
-                // Clearance also inhibits margin collapsing.
-                if child_style.clear != Clear::None {
-                    let child_margin = resolve_margins_in_parent_axes(
-                        child_style,
-                        child_available_inline,
-                        space.writing_direction,
-                    );
-                    let child_top_margin = child_margin.top;
-                    let mut hyp_strut = margin_strut;
-                    hyp_strut.append_normal(child_top_margin);
-                    let hypothetical = block_offset + hyp_strut.sum();
-                    let clearance_target = exclusion_space_mixed
-                        .clearance_offset(clear_type_from_style(child_style.clear))
-                        + content_edge;
-                    if clearance_target > hypothetical {
-                        // Clearance positions the border edge at clearance_target.
-                        // layout_block_child will re-append child_top_margin and
-                        // resolve it, so compensate by subtracting it here.
-                        block_offset = clearance_target - child_top_margin;
-                        margin_strut = MarginStrut::new();
-                        start_margin_resolved = true;
-                        intrinsic_block_size = intrinsic_block_size.max_of(clearance_target);
-                    } else {
-                        // `clear` inhibits parent/first-child margin
-                        // collapsing even when no positive clearance is
-                        // required at the hypothetical margin edge.
-                        start_margin_resolved = true;
-                    }
-                }
-
-                // Adjust available inline size for float exclusions.
-                // CSS 2.1 §9.5: Only new-FC children must NOT overlap float margin boxes.
-                // Regular (non-FC) block children overlap floats — only their line
-                // boxes avoid floats (handled in inline layout).
-                let child_is_new_fc_caller =
-                    establishes_new_fc(child_style) || doc.node(child_id).replaced.is_some();
-                let (float_inline_offset, adjusted_available) = if exclusion_space_mixed
-                    .has_floats()
-                    && child_is_new_fc_caller
-                {
-                    let child_margin = resolve_margins_in_parent_axes(
-                        child_style,
-                        child_available_inline,
-                        space.writing_direction,
-                    );
-                    let child_top_margin = child_margin.top;
-                    let min_inline_size = if uses_margin_reduced_inherited_exclusions(space) {
-                        LayoutUnit::zero()
-                    } else {
-                        new_fc_min_inline_size(doc, child_id, child_available_inline)
-                    };
-
-                    // The mixed inline/block path needs the same two-estimate
-                    // margin separation as the pure block path below. Test the
-                    // adjoining position before applying the child's margin:
-                    // when the BFC cannot fit beside a propagated descendant
-                    // float, its margin starts a new group and must not drag
-                    // preceding self-collapsing wrappers (and their floats) to
-                    // the child's eventual block position.
-                    let separated_start = if (!start_margin_resolved
-                        || !pending_self_collapsing.is_empty())
-                        && !space.is_new_formatting_context
-                        && content_edge == LayoutUnit::zero()
-                    {
-                        let adjoining = exclusion_space_mixed.find_layout_opportunity(
-                            &BfcOffset::new(LayoutUnit::zero(), LayoutUnit::zero()),
-                            child_available_inline,
-                            min_inline_size,
-                        );
-                        (adjoining.rect.block_start_offset() > LayoutUnit::zero())
-                            .then_some(adjoining.rect.block_start_offset())
-                    } else {
-                        None
-                    };
-
-                    let content_block_offset = if let Some(separated_start) = separated_start {
-                        if saved_start_strut.is_none() {
-                            saved_start_strut = Some(margin_strut);
-                        }
-                        margin_strut = MarginStrut::new();
-                        start_margin_resolved = true;
-                        for &idx in &pending_self_collapsing {
-                            child_fragments[idx].offset.top = block_offset;
-                        }
-                        pending_self_collapsing.clear();
-                        // layout_block_child adds the top margin, so retain the
-                        // border edge at the selected opportunity by backing it
-                        // out here.
-                        block_offset = content_edge + separated_start - child_top_margin;
-                        separated_start
-                    } else {
-                        let mut temp_strut = margin_strut;
-                        temp_strut.append_normal(child_top_margin);
-                        let resolved_offset = block_offset + temp_strut.sum();
-                        resolved_offset - content_edge
-                    };
-
-                    // Use height-aware opportunity search for explicit-height BFCs.
-                    let child_block_length =
-                        block_size_in_parent_axes(child_style, space.writing_direction);
-                    let child_block_size = if !child_block_length.is_auto()
-                        && !child_block_length.is_stretch()
-                        && !child_block_length.is_content_or_intrinsic()
-                        && !child_block_length.is_percent()
-                    {
-                        let raw = resolve_length(
-                            child_block_length,
-                            LayoutUnit::zero(),
-                            LayoutUnit::zero(),
-                            LayoutUnit::zero(),
-                        );
-                        let bp_block =
-                            resolve_margin_or_padding(
+                            let bp_block = resolve_margin_or_padding(
                                 &child_style.padding_top,
                                 child_available_inline,
                             ) + resolve_margin_or_padding(
                                 &child_style.padding_bottom,
                                 child_available_inline,
-                            ) + LayoutUnit::from_raw(child_style.border_top_width as i32 * 64)
-                                + LayoutUnit::from_raw(child_style.border_bottom_width as i32 * 64);
-                        let total = if child_style.box_sizing == BoxSizing::ContentBox {
-                            raw + bp_block
+                            ) + LayoutUnit::from_raw(
+                                child_style.border_top_width as i32 * 64,
+                            ) + LayoutUnit::from_raw(
+                                child_style.border_bottom_width as i32 * 64,
+                            );
+                            let total = if child_style.box_sizing == BoxSizing::ContentBox {
+                                raw + bp_block
+                            } else {
+                                raw
+                            };
+                            let child_mb = resolve_margin_or_padding(
+                                &child_style.margin_bottom,
+                                child_available_inline,
+                            );
+                            total + child_mb
                         } else {
-                            raw
+                            LayoutUnit::zero()
                         };
-                        let child_mb = resolve_margin_or_padding(
-                            &child_style.margin_bottom,
-                            child_available_inline,
-                        );
-                        total + child_mb
+
+                        let opp = if child_block_size > LayoutUnit::zero() {
+                            exclusion_space_mixed.find_opportunity_for_bfc(
+                                &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
+                                child_available_inline,
+                                min_inline_size,
+                                child_block_size,
+                            )
+                        } else {
+                            exclusion_space_mixed.find_layout_opportunity(
+                                &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
+                                child_available_inline,
+                                min_inline_size,
+                            )
+                        };
+
+                        let pushed_bfc = opp.rect.block_start_offset();
+                        if pushed_bfc > content_block_offset {
+                            let push_amount = pushed_bfc - content_block_offset;
+                            block_offset = block_offset + push_amount;
+                            margin_strut = MarginStrut::new();
+                            start_margin_resolved = true;
+                        }
+
+                        new_fc_placement_for_opportunity(&opp, child_margin, child_available_inline)
                     } else {
-                        LayoutUnit::zero()
+                        (LayoutUnit::zero(), child_available_inline)
                     };
 
-                    let opp = if child_block_size > LayoutUnit::zero() {
-                        exclusion_space_mixed.find_opportunity_for_bfc(
-                            &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
-                            child_available_inline,
-                            min_inline_size,
-                            child_block_size,
-                        )
+                    let oof_count_before = oof_candidates.len();
+                    let bubbled_count_before = bubbled_oof_candidates.len();
+
+                    let unclamped_legacy_space = if legacy_inline_box_block_after_clamp
+                        && space
+                            .line_clamp_context
+                            .as_ref()
+                            .is_some_and(|context| context.is_exhausted())
+                    {
+                        let mut unclamped = (*space).clone();
+                        unclamped.line_clamp_context = None;
+                        Some(unclamped)
                     } else {
-                        exclusion_space_mixed.find_layout_opportunity(
-                            &BfcOffset::new(LayoutUnit::zero(), content_block_offset),
-                            child_available_inline,
-                            min_inline_size,
-                        )
+                        None
                     };
+                    let child_parent_space = unclamped_legacy_space.as_ref().unwrap_or(space);
+                    layout_block_child(
+                        doc,
+                        child_id,
+                        child_parent_space,
+                        adjusted_available,
+                        child_percentage_block_size,
+                        children_available_block_size,
+                        &border,
+                        &padding,
+                        content_edge,
+                        &mut block_offset,
+                        &mut margin_strut,
+                        &mut intrinsic_block_size,
+                        &mut child_fragments,
+                        &mut oof_candidates,
+                        &mut bubbled_oof_candidates,
+                        establishes_cb_for_abspos,
+                        captures_fixed_pos_descendants,
+                        &mut start_margin_resolved,
+                        &mut saved_start_strut,
+                        style.direction,
+                        style.margin_trim,
+                        &mut pending_self_collapsing,
+                        false,
+                        Some(&exclusion_space_mixed),
+                    );
 
-                    let pushed_bfc = opp.rect.block_start_offset();
-                    if pushed_bfc > content_block_offset {
-                        let push_amount = pushed_bfc - content_block_offset;
-                        block_offset = block_offset + push_amount;
-                        margin_strut = MarginStrut::new();
-                        start_margin_resolved = true;
+                    if child_is_zero_clamp_overflow
+                        && space
+                            .line_clamp_context
+                            .as_ref()
+                            .is_some_and(|context| context.is_exhausted())
+                        && children_ids[i + 1..].iter().any(|later_id| {
+                            let later = doc.node(*later_id);
+                            later.style.display != Display::None
+                                && !later.style.is_out_of_flow()
+                                && (later.tag != ElementTag::Text
+                                    || later.text.as_deref().is_some_and(|text| {
+                                        text.chars().any(|c| !c.is_whitespace())
+                                    }))
+                        })
+                    {
+                        if let Some(context) = &space.line_clamp_context {
+                            let (_, block_ellipsis) = context.snapshot();
+                            crate::inline::algorithm::append_clamp_marker_to_last_line(
+                                doc,
+                                &mut child_fragments,
+                                style,
+                                &block_ellipsis,
+                            );
+                        }
+                    }
+                    if child_is_zero_clamp_overflow {
+                        physical_clamp_marker_suppressed = true;
+                        if let Some(context) = &space.line_clamp_context {
+                            context.suppress_marker();
+                        }
                     }
 
-                    new_fc_placement_for_opportunity(&opp, child_margin, child_available_inline)
-                } else {
-                    (LayoutUnit::zero(), child_available_inline)
-                };
-
-                let oof_count_before = oof_candidates.len();
-                let bubbled_count_before = bubbled_oof_candidates.len();
-
-                let unclamped_legacy_space = if legacy_inline_box_block_after_clamp
-                    && space
-                        .line_clamp_context
-                        .as_ref()
-                        .is_some_and(|context| context.is_exhausted())
-                {
-                    let mut unclamped = (*space).clone();
-                    unclamped.line_clamp_context = None;
-                    Some(unclamped)
-                } else {
-                    None
-                };
-                let child_parent_space = unclamped_legacy_space.as_ref().unwrap_or(space);
-                layout_block_child(
-                    doc,
-                    child_id,
-                    child_parent_space,
-                    adjusted_available,
-                    child_percentage_block_size,
-                    children_available_block_size,
-                    &border,
-                    &padding,
-                    content_edge,
-                    &mut block_offset,
-                    &mut margin_strut,
-                    &mut intrinsic_block_size,
-                    &mut child_fragments,
-                    &mut oof_candidates,
-                    &mut bubbled_oof_candidates,
-                    establishes_cb_for_abspos,
-                    captures_fixed_pos_descendants,
-                    &mut start_margin_resolved,
-                    &mut saved_start_strut,
-                    style.direction,
-                    style.margin_trim,
-                    &mut pending_self_collapsing,
-                    false,
-                    Some(&exclusion_space_mixed),
-                );
-
-                if child_is_zero_clamp_overflow
-                    && space
-                        .line_clamp_context
-                        .as_ref()
-                        .is_some_and(|context| context.is_exhausted())
-                    && children_ids[i + 1..].iter().any(|later_id| {
-                        let later = doc.node(*later_id);
-                        later.style.display != Display::None
-                            && !later.style.is_out_of_flow()
-                            && (later.tag != ElementTag::Text
-                                || later
-                                    .text
-                                    .as_deref()
-                                    .is_some_and(|text| text.chars().any(|c| !c.is_whitespace())))
-                    })
-                {
-                    if let Some(context) = &space.line_clamp_context {
-                        let (_, block_ellipsis) = context.snapshot();
-                        crate::inline::algorithm::append_clamp_marker_to_last_line(
-                            doc,
-                            &mut child_fragments,
-                            style,
-                            &block_ellipsis,
-                        );
+                    // Offset inline position for left floats.
+                    // Also shift OOF static positions that were computed
+                    // using the pre-shift child offset.
+                    if float_inline_offset > LayoutUnit::zero() {
+                        if let Some(last) = child_fragments.last_mut() {
+                            last.offset.left = last.offset.left + float_inline_offset;
+                        }
+                        for c in &mut oof_candidates[oof_count_before..] {
+                            c.static_position.left = c.static_position.left + float_inline_offset;
+                        }
+                        for c in &mut bubbled_oof_candidates[bubbled_count_before..] {
+                            c.static_position.left = c.static_position.left + float_inline_offset;
+                        }
                     }
-                }
-                if child_is_zero_clamp_overflow {
-                    physical_clamp_marker_suppressed = true;
-                    if let Some(context) = &space.line_clamp_context {
-                        context.suppress_marker();
-                    }
-                }
 
-                // Offset inline position for left floats.
-                // Also shift OOF static positions that were computed
-                // using the pre-shift child offset.
-                if float_inline_offset > LayoutUnit::zero() {
-                    if let Some(last) = child_fragments.last_mut() {
-                        last.offset.left = last.offset.left + float_inline_offset;
-                    }
-                    for c in &mut oof_candidates[oof_count_before..] {
-                        c.static_position.left = c.static_position.left + float_inline_offset;
-                    }
-                    for c in &mut bubbled_oof_candidates[bubbled_count_before..] {
-                        c.static_position.left = c.static_position.left + float_inline_offset;
-                    }
-                }
-
-                // Floats inside an ordinary block child participate in this
-                // mixed block container's BFC just as they do in the pure
-                // block path. Preserve their protruding exclusion geometry so
-                // a following flow-root is placed beside the float until its
-                // margin box has actually ended.
-                if !child_is_new_fc_caller {
-                    if let Some(child_frag) = child_fragments.last() {
-                        if !child_frag.float_exclusions.is_empty() {
-                            let block_adjustment = (child_frag.offset.top - content_edge)
-                                + child_frag.border.top
-                                + child_frag.padding.top;
-                            let inline_adjustment =
-                                (child_frag.offset.left - border.left - padding.left)
-                                    + child_frag.border.left
-                                    + child_frag.padding.left;
-                            for exclusion in &child_frag.float_exclusions {
-                                exclusion_space_mixed.add(ExclusionArea {
-                                    rect: BfcRect::new(
-                                        BfcOffset::new(
-                                            exclusion.rect.start_offset.line_offset
-                                                + inline_adjustment,
-                                            exclusion.rect.start_offset.block_offset
-                                                + block_adjustment,
+                    // Floats inside an ordinary block child participate in this
+                    // mixed block container's BFC just as they do in the pure
+                    // block path. Preserve their protruding exclusion geometry so
+                    // a following flow-root is placed beside the float until its
+                    // margin box has actually ended.
+                    if !child_is_new_fc_caller {
+                        if let Some(child_frag) = child_fragments.last() {
+                            if !child_frag.float_exclusions.is_empty() {
+                                let block_adjustment = (child_frag.offset.top - content_edge)
+                                    + child_frag.border.top
+                                    + child_frag.padding.top;
+                                let inline_adjustment =
+                                    (child_frag.offset.left - border.left - padding.left)
+                                        + child_frag.border.left
+                                        + child_frag.padding.left;
+                                for exclusion in &child_frag.float_exclusions {
+                                    exclusion_space_mixed.add(ExclusionArea {
+                                        rect: BfcRect::new(
+                                            BfcOffset::new(
+                                                exclusion.rect.start_offset.line_offset
+                                                    + inline_adjustment,
+                                                exclusion.rect.start_offset.block_offset
+                                                    + block_adjustment,
+                                            ),
+                                            BfcOffset::new(
+                                                exclusion.rect.end_offset.line_offset
+                                                    + inline_adjustment,
+                                                exclusion.rect.end_offset.block_offset
+                                                    + block_adjustment,
+                                            ),
                                         ),
-                                        BfcOffset::new(
-                                            exclusion.rect.end_offset.line_offset
-                                                + inline_adjustment,
-                                            exclusion.rect.end_offset.block_offset
-                                                + block_adjustment,
-                                        ),
-                                    ),
-                                    exclusion_type: exclusion.exclusion_type,
-                                });
+                                        exclusion_type: exclusion.exclusion_type,
+                                    });
+                                }
                             }
                         }
                     }
-                }
 
-                i += 1;
+                    i += 1;
+                }
             }
-        }
+        };
+        layout_mixed_children();
     } else {
         // ── Pure block formatting context ────────────────────────────
         let mut exclusion_space = initial_exclusion_space(space);
