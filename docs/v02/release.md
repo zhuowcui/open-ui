@@ -4,16 +4,23 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
-The [native editing and rounded border trial](../renderer/native-editing-and-rounded-border.md)
-is now integrated in the PR branch after clean private `6cc132dc` completes
-35/35 native images twice and all four matrices. Focused 640/640 and primitive
-960/960 are exact. Original **21,338/22,924 exact** and expanded
-**22,141/23,728 exact** retain zero errors and all immutable Chromium records.
+The [native editing and rounded border follow-up](../renderer/native-editing-and-rounded-border.md)
+is integrated and verified on clean PR checkpoint `5b05e1b5`. Its native Rust
+app passes 35/35 images twice; focused **640/640** and primitive **960/960**
+are exact. Complete original **21,338/22,924 exact** and expanded
+**22,141/23,728 exact** runs retain zero errors and immutable Chromium records.
 Both complete censuses gain eight exact comparisons with no losses or worsened
-rows; actual exits remain 1 for their 1,586 and 1,587 differences. The combined
-PR source still needs fresh workspace/ABI and renderer checks. Native APIs,
-compositor, hardware and release gates remain open. No final v0.2 qualification
-is claimed. Open UI never executes JavaScript.
+rows. Their actual exits remain 1 for 1,586 and 1,587 differences.
+
+All 8,597 workspace tests, 48 headless C tests, twenty verification stages,
+16 C and 10 C++ consumers pass on the same source, preserving 116 exports and
+32 layouts. Six ordinary CI jobs and seven explicit hardening jobs pass; five
+optional skips remain separately recorded. Hosted X11 software/OpenGL and pure
+Wayland software checks pass on virtual displays. Physical GPU, accessibility,
+performance, packaging and protected release lab gates remain open.
+[Completed evidence](../renderer/generated/native-rounded-layer-v4.json).
+No final v0.2 qualification is claimed. Open UI never executes JavaScript;
+needed interaction uses public native Rust methods and Rust callbacks.
 
 The [native intrinsic sizing follow-up](../renderer/native-fontations-app.md) at clean private
 `8f756039` passes **8,575 workspace tests**, zero failed and 13 ignored,

@@ -23,15 +23,26 @@ remain open.
 ## Current implementation checkpoint
 
 The [native editing and rounded border follow-up](../renderer/native-editing-and-rounded-border.md)
-integrates the reviewed shared painter correction into the PR branch. Its
-clean private checkpoint `6cc132dc` completes all four renderer matrices:
-focused 640/640, primitive 960/960, original **21,338/22,924 exact** and expanded
-**22,141/23,728 exact**, zero errors. Both complete censuses gain eight exact
-comparisons with no losses or worsened rows. All 48,252 Chromium reference
-records remain unchanged. Full and expanded commands actually exit 1 because
-1,586 and 1,587 comparisons still differ. Native images remain 35/35 exact
-at five scales, twice. The combined PR source requires fresh workspace/ABI and
-renderer verification; no final v0.2 qualification is claimed.
+is implemented and measured on clean PR checkpoint `5b05e1b5`. Its fresh
+consuming Rust app matches 35/35 immutable Chromium images twice, including
+actual click callbacks, geometry and teardown. All four renderer matrices
+complete: focused **640/640**, primitive **960/960**, original
+**21,338/22,924 exact** and expanded **22,141/23,728 exact**, zero errors.
+Both complete censuses gain eight exact comparisons with no losses or worsened
+rows. All pinned Chromium reference fields remain unchanged. The original
+1,586 differences cover 884 test IDs; their reviewed ownership remains open.
+Both complete pixel commands actually exit 1.
+
+All **8,597 workspace tests**, 48 headless C tests, 16 C and 10 C++ consumers,
+and twenty verification stages pass on the same clean source. The 116 exports
+and 32 layouts are preserved. Six ordinary CI jobs and seven explicit
+hardening jobs pass; five optional skips remain separately recorded. Hosted
+X11 software/OpenGL and pure Wayland software C/C++ window checks pass on
+virtual displays. These do not qualify physical hardware or release lab work.
+The expanded manifest retains all 201 admitted cases; 35 further native
+final-state candidates await exact qualification. Complete pixels, needed
+native APIs, compositor, hardware and release gates remain open.
+[Completed public evidence](../renderer/generated/native-rounded-layer-v4.json).
 
 The [native text commit trial](../v02/native-text-commit.md) remains private and unapplied.
 Both Rust runs match all six Chromium scenarios and 29 full callback rows;

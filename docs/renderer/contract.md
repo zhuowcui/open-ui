@@ -25,14 +25,17 @@ verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
 The [native editing and rounded border follow-up](native-editing-and-rounded-border.md)
-integrates a shared painter correction after clean private `6cc132dc` completes
-all four matrices. Focused 640/640 and primitive 960/960 are exact. Original
-results are **21,338/22,924 exact**, expanded **22,141/23,728 exact**, zero errors;
-each complete census gains eight exact comparisons with no losses or worsened
-rows. All Chromium records stay fixed. Both full gates still exit 1. The native
-app passes 35/35 images at five scales twice. These results measure the private
-checkpoint; combined PR workspace/ABI, renderer and native API qualification
-remain required. Open UI never executes JavaScript.
+is integrated and verified on clean PR checkpoint `5b05e1b5`. Focused
+**640/640** and primitive **960/960** are exact. Original
+**21,338/22,924 exact** and expanded **22,141/23,728 exact** retain zero errors.
+Both complete censuses gain eight exact comparisons with no losses or worsened
+rows, and every pinned Chromium reference field remains unchanged. Their actual
+exits remain 1 for 1,586 and 1,587 differences. The native Rust app passes
+35/35 images twice at five scales, with real callbacks and geometry checks.
+The same source passes workspace/ABI, six ordinary CI jobs and seven explicit
+hardening jobs. The [completed public evidence](generated/native-rounded-layer-v4.json)
+preserves source, executable and command identities. Full Chromium equality,
+needed native APIs, compositor, hardware and release checks remain unfinished.
 
 The [native input editor follow-up](native-input-editor-scrollport.md) corrects the private
 single-line editor clip. Its consuming Rust app improves from **22/30 to

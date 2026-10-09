@@ -23,7 +23,7 @@ The shared painter now:
 
 All 73 commands and 16 freshly linked framework artifacts are verified, with unchanged final public/private source identities. There are 21 gains against the earlier 14/35 private trial and 31 against the unchanged 4/35 test set, with no exact loss or worsened comparison. The [source patch](evidence/native-rounded-border-v2/openui-native-rounded-border-final-source-v3093.patch.gz), consuming Rust app, immutable reference HTML/images, native images and command receipts are available in the [evidence index](generated/native-rounded-border-v2.json).
 
-This implementation remains private and unintegrated. Complete focused, primitive, original, expanded and workspace/ABI checks are still required before integration. These 35 images do not qualify the complete renderer.
+These are the earlier private measurements. The shared implementation and consuming Rust app are now integrated and verified on public checkpoint `5b05e1b5`, as recorded below. The 35 images alone do not qualify the complete renderer.
 
 ## Preserved unsuccessful runs
 
@@ -33,19 +33,18 @@ The earlier native owner disappeared after 18 completed commands and eight borde
 
 ## Native editing work remains
 
-A private input metadata implementation matches eleven Chromium scenarios and 69 callback rows in Rust, C and C++, twice each. Its first whole run failed a C guard's expected status; a later guard correction passes C and C++ twice. Binaries remain attributed to their actual build source. [Earlier evidence](generated/native-editing-followup-v1.json).
+A private input metadata implementation matches eleven Chromium scenarios and 69 callback rows in Rust, C and C++, twice each. Its C change/blur/focusout event properties were recorded as constants; actual property queries remain required before those fields establish C API parity. Its first whole run failed a C guard's expected status; a later guard correction passes C and C++ twice. Binaries remain attributed to their actual build source. [Earlier evidence](generated/native-editing-followup-v1.json).
 
 Composition still differs in all four measured common-field scenarios. Repeated Chromium traces define required native behavior for callback mutation, cross-target focus, direct editing commands, readonly/disabled/detached controls and reactivation. Those are reference observations, not native API passes.
 
-Range replacement needs a public Rust method, selection direction metadata and deferred native event delivery. Eight Unicode cases with representable scalar boundaries and twelve selection-task scenarios repeat byte-identically. A further 24 cross-control/reentry cases repeat with 98 callback rows. Selectionchange and select use distinct delivery phases; target-local coalescing lasts until notification delivery, callbacks observe current retained state, and detached live targets retain pending notifications. The earlier single-queue draft is insufficient. Shared native scheduling, public methods, Linux event-loop integration and C parity remain implementation work.
+Range replacement, selection direction and deferred event delivery are implemented in the measured private checkpoint; integration and fresh combined public verification remain required. Eight Unicode cases with representable scalar boundaries and twelve selection-task scenarios repeat byte-identically. A further 24 cross-control/reentry cases repeat with 98 callback rows. Selectionchange and select use distinct delivery phases; target-local coalescing lasts until notification delivery, callbacks observe current retained state, and detached live targets retain pending notifications. The earlier single-queue draft is insufficient. The measured private implementation provides shared native scheduling, public methods and Linux event-loop integration. New C event property and attribute queries, Unicode cases and focus neighbors remain uncompiled and require fresh public verification.
 
 Existing UTF-8/grapheme positions cannot represent every UTF-16 position in the browser reference. Those differences remain explicit. Neither fixed expected values nor script execution substitutes for native behavior.
 
-## Qualification remains open
+## Completed public verification; release gates remain open
 
-The reviewed painter correction and native consuming app are now integrated
-into the PR branch. The combined source still requires fresh workspace/ABI
-and renderer qualification. Private `6cc132dc` completes all four matrices:
+The reviewed painter correction and native Rust app are integrated and
+verified on clean PR checkpoint `5b05e1b5`. All four matrices finish:
 
 | Suite | Exact | Different | Errors | Actual exit |
 |---|---:|---:|---:|---:|
@@ -55,17 +54,48 @@ and renderer qualification. Private `6cc132dc` completes all four matrices:
 | Expanded | 22,141/23,728 | 1,587 | 0 | 1 |
 
 Both complete censuses gain eight exact comparisons with zero losses and zero
-worsened rows against public `8e8318bf`. All 48,252 Chromium reference records
-are unchanged. The completed audit verifies source bytes, eleven logs and 26
-fresh compiled artifact hashes. The concurrent source reader preserves every
-source byte and original hash order; the unchanged build script independently
-embeds its identity using the official serial reader. The interrupted earlier
-build remains recorded as actual exit 130, with no completed matrices.
-[Full evidence](generated/native-rounded-layer-v3.json).
+worsened rows against public `8e8318bf`. All Chromium reference fields remain
+unchanged across the 48,252 rows in the four matrices. The completed audit
+verifies every source byte, thirteen logs and 53 compiled artifact paths,
+including fourteen freshly built framework packages. The unchanged build
+script independently embeds its source identity using the official serial
+reader. Native captures remain 35/35 exact twice, with all seventy actual
+commands, click callbacks, geometry and teardown checks passing.
 
-Twenty-four further pinned Chromium value/range scenarios produce 26 callback
-rows, identically twice. Identical value assignment preserves selection and
-direction. Changed value assignment emits selectionchange without select;
-range replacement also emits select when selection or direction changes.
-These are reference observations for required native APIs, not native passes.
- Full Chromium pixel equality, complete native APIs, compositor, hardware and release checks remain unfinished. Chromium references are immutable, comparison tolerance is zero, and old Open UI images preserve history.
+The same source passes **8,597 workspace tests**, 48 headless C tests, sixteen
+C and ten C++ consumers and twenty verification stages, preserving all 116
+exports and 32 layouts. Six ordinary CI jobs and seven explicit hardening
+jobs pass. Five optional skips in ordinary CI remain recorded. Hosted virtual
+X11 software/OpenGL and pure Wayland software window checks pass; physical
+hardware and release lab qualification remain open. The earlier serde_json
+example compilation failure and earlier artifact audit failures remain
+preserved with their actual status.
+[Completed public evidence](generated/native-rounded-layer-v4.json).
+[Earlier private evidence](generated/native-rounded-layer-v3.json).
+
+## Private native selection verification
+
+Clean private `5449f22d` implements range replacement, selection direction,
+coalesced selectionchange, separate select batches, reentrant task delivery,
+node identity/connectivity and focused-disable behavior. A fresh build passes
+all 25 commands and 209 unit/integration tests. Its whole result remains a
+failure because its original C comparator omitted Chromium focus fields.
+The corrected comparator reruns the immutable original binaries twice:
+**98/98 Rust scenarios** and **136/136 C/C++ common-field scenarios** match,
+including actual focus on both sides. Source and executable bytes stay unchanged.
+The earlier failed compilation and guard assertions retain actual failure
+results. [Evidence](generated/native-selection-followup-v1.json).
+
+That private selection matrix does not observe C event properties or include
+the eight Unicode and twenty-two disabled-focus neighbor cases in C. The new
+C event property and owned attribute queries and those extended consumers are
+prepared but uncompiled. The combined public API port requires fresh Rust,
+C, C++, workspace/ABI, hosted and renderer verification. Composition and
+complete native API qualification remain open.
+
+The current expanded contract contains 201 admitted native final-state cases;
+35 additional AST-lowered cases await exact qualification. This inventory does
+not execute scripts in Open UI or waive missing public Rust APIs. Full Chromium
+pixel equality, complete native APIs, compositor, hardware and release checks
+remain unfinished. Comparison tolerance is zero, Chromium references are
+immutable, and old Open UI images preserve history.
