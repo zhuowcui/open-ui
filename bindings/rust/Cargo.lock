@@ -1774,6 +1774,7 @@ dependencies = [
  "openui-platform",
  "openui-style",
  "openui-text",
+ "serde_json",
 ]
 
 [[package]]
