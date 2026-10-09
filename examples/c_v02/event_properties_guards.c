@@ -118,8 +118,8 @@ int main(void) {
   OK(oui_element_append_child(root, context.a));
   OK(oui_element_append_child(root, context.b));
   unsigned count = 0;
-  const uint32_t kinds[] = {OUI_EVENT_FOCUS, OUI_EVENT_FOCUS_IN, OUI_EVENT_BLUR,
-                            OUI_EVENT_FOCUS_OUT};
+  const OuiEventType kinds[] = {OUI_EVENT_FOCUS, OUI_EVENT_FOCUS_IN, OUI_EVENT_BLUR,
+                                OUI_EVENT_FOCUS_OUT};
   for (unsigned i = 0; i < 4; ++i)
     OK(oui_element_add_event_listener(context.a, kinds[i], 0, callback, &context,
                                       &listeners[count++]));

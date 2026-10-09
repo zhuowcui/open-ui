@@ -68,8 +68,12 @@ outputs preserve trailing storage and remain unchanged on error.
 
 ## Verification status
 
-This document is prepared with the API port. The combined public implementation
-has not been compiled or qualified yet. The previous private implementation
+The public implementation at `6565488e` compiles and passes 196 targeted Rust
+unit tests and thirteen integration guards. All six native Rust apps repeat
+unchanged. Its C++ consumer check fails because two new test applications use
+integer event arrays where the header requires `OuiEventType`; those arrays
+are corrected in the next checkpoint. Combined verification remains pending.
+The previous private implementation
 matches 98 Rust scenarios and 136 C/C++ common-field scenarios, with repeated
 runs unchanged. That private result does not qualify the new event property
 and attribute queries or the expanded C Unicode and focus checks.

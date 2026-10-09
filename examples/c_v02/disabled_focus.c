@@ -225,8 +225,8 @@ int main(void) {
       CHECK(oui_element_append_child(state.root, state.b));
       OuiListener* listeners[11];
       size_t count = 0;
-      const uint32_t kinds[] = {OUI_EVENT_CHANGE, OUI_EVENT_BLUR, OUI_EVENT_FOCUS_OUT,
-                                OUI_EVENT_FOCUS, OUI_EVENT_FOCUS_IN};
+      const OuiEventType kinds[] = {OUI_EVENT_CHANGE, OUI_EVENT_BLUR, OUI_EVENT_FOCUS_OUT,
+                                    OUI_EVENT_FOCUS, OUI_EVENT_FOCUS_IN};
       for (int element = 0; element < 2; ++element)
         for (size_t i = 0; i < 5; ++i)
           CHECK(oui_element_add_event_listener(element ? state.b : state.a, kinds[i], 0, record,
