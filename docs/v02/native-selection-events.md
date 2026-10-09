@@ -90,8 +90,9 @@ disk reserve before producing test results. Those actual failures are recorded.
 The earlier fieldset probe failed ten of sixteen focus checks on `fcabea38`.
 The integrated [native disabled groups](native-disabled-groups.md) address
 inherited eligibility, first-legend rules, native focus events and structural
-mutation. Private `f6777047` matches 88 scenarios in each of Rust, C and C++;
-fresh public combined verification is pending. Default appearance and complete
+mutation. Fresh clean public `6ba3ef58` matches 88 scenarios in each of Rust,
+C and C++, preserving all previous 109 cases in each language. Its twenty local
+checks and seven explicit hosted hardening jobs pass. Default appearance and complete
 checkable state/callback behavior remain open. Composition,
 UTF-16 positions splitting a surrogate pair, other required native APIs,
 full-corpus pixels and release qualification remain open. Existing C composition

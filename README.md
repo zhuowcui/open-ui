@@ -64,9 +64,13 @@ with zero errors. All Chromium reference fields stay fixed, with no exact
 losses or worsened rows against `5b05e1b5`. Both full pixel gates still exit 1.
 Composition, complete native APIs, reviewed pixel ownership, compositor and
 release qualification remain open. The earlier fieldset focus failure is
-addressed by the integrated native disabled groups. Private `f6777047`
-matches 88 Rust scenarios and 88 scenarios in each of C and C++; the combined
-public checkpoint still requires fresh verification. Default control appearance
+addressed by native disabled groups, freshly verified on clean public
+`6ba3ef58`. All 88 Rust scenarios and 88 scenarios in each of C and C++ match
+pinned Chromium, with all previous 109 cases in each language unchanged.
+All 8,618 workspace tests, 51 headless C tests, 24 C and 18 C++ consumers and
+twenty local checks pass. All seven explicit hosted hardening jobs and the
+three source-verified virtual window reports pass. The ABI has 127 exports and
+34 layouts, preserving previous exports and layouts. Default control appearance
 and complete checkbox/radio behavior remain unqualified. Open UI runs no
 JavaScript. See the [native disabled groups](docs/v02/native-disabled-groups.md).
 [Completed public API evidence](docs/renderer/generated/native-selection-public-v1.json).

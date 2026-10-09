@@ -120,6 +120,8 @@ superseded for this measured selection/query/metadata scope by the
 Older private scopes remain historical measurements. Composition and complete
 native API parity stay open. The earlier fieldset focus gap is addressed by
 the integrated [native disabled groups](../v02/native-disabled-groups.md),
-with 88 exact scenarios in each of Rust, C and C++ at private `f6777047`.
-Fresh public combined verification is pending. Default native appearance and
+with 88 exact scenarios in each of Rust, C and C++ reproduced at clean
+public `6ba3ef58`. Its fresh native border app preserves all 35 Chromium images
+twice; focused and primitive matrices remain exact. Both complete pixel gates
+still fail. Default native appearance and
 complete checkbox/radio behavior remain unqualified. Open UI runs no JavaScript.
