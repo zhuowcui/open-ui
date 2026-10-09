@@ -4,6 +4,64 @@ use crate::element::{Element, WeakElement};
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
+/// The native editing operation reported by beforeinput and input callbacks.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum InputType {
+    InsertText,
+    InsertLineBreak,
+    DeleteContentBackward,
+    DeleteContentForward,
+    HistoryUndo,
+    HistoryRedo,
+    DeleteWordBackward,
+    DeleteWordForward,
+    DeleteByCut,
+    InsertFromPaste,
+}
+
+impl InputType {
+    /// Name used by the pinned Chromium reference for the equivalent operation.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::InsertText => "insertText",
+            Self::InsertLineBreak => "insertLineBreak",
+            Self::DeleteContentBackward => "deleteContentBackward",
+            Self::DeleteContentForward => "deleteContentForward",
+            Self::HistoryUndo => "historyUndo",
+            Self::HistoryRedo => "historyRedo",
+            Self::DeleteWordBackward => "deleteWordBackward",
+            Self::DeleteWordForward => "deleteWordForward",
+            Self::DeleteByCut => "deleteByCut",
+            Self::InsertFromPaste => "insertFromPaste",
+        }
+    }
+}
+
+/// Immutable, owned metadata for a native editing callback.
+/// Clones retain the original intent and nullable data after dispatch returns.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct InputEventInfo {
+    input_type: InputType,
+    data: Option<String>,
+    is_composing: bool,
+}
+
+impl InputEventInfo {
+    pub fn input_type(&self) -> InputType {
+        self.input_type
+    }
+
+    /// Inserted text, or None for deletion, history and line-break operations.
+    pub fn data(&self) -> Option<&str> {
+        self.data.as_deref()
+    }
+
+    pub fn is_composing(&self) -> bool {
+        self.is_composing
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum EventPhase {
     Capture,
@@ -15,6 +73,7 @@ pub enum EventPhase {
 struct EventState {
     bubbles: bool,
     cancelable: bool,
+    input_info: Option<InputEventInfo>,
     default_prevented: Cell<bool>,
     propagation_stopped: Cell<bool>,
     immediate_propagation_stopped: Cell<bool>,
@@ -36,7 +95,14 @@ impl EventState {
             // the application callback that may reject the pending edit.
             cancelable: !matches!(
                 event_type,
-                "focus" | "blur" | "focusin" | "focusout" | "input" | "change"
+                "focus"
+                    | "blur"
+                    | "focusin"
+                    | "focusout"
+                    | "input"
+                    | "change"
+                    | "select"
+                    | "selectionchange"
             ),
             ..Self::default()
         })
@@ -120,6 +186,34 @@ impl Event {
             is_composing: false,
             state,
         }
+    }
+
+    pub(crate) fn input(
+        event_type: &str,
+        key_code: i32,
+        key_text: Option<&str>,
+        modifiers: Modifiers,
+        input_type: InputType,
+        data: Option<&str>,
+        is_composing: bool,
+    ) -> Self {
+        let mut event = Self::keyboard(event_type, key_code, key_text, modifiers);
+        event.is_composing = is_composing;
+        Rc::get_mut(&mut event.state)
+            .expect("new event state is uniquely owned")
+            .input_info = Some(InputEventInfo {
+            input_type,
+            data: data.map(str::to_owned),
+            is_composing,
+        });
+        event
+    }
+
+    /// Immutable native editing intent and nullable data.
+    /// Returns None for events without a typed editing operation. The owned
+    /// metadata remains unchanged in saved clones after dispatch or teardown.
+    pub fn input_info(&self) -> Option<&InputEventInfo> {
+        self.state.input_info.as_ref()
     }
 
     pub(crate) fn wheel(x: f32, y: f32, dx: f32, dy: f32, modifiers: Modifiers) -> Self {

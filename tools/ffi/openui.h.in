@@ -878,6 +878,11 @@ OuiStatus oui_document_get_viewport(OuiDocument* document, OuiViewportMetrics* o
 OuiStatus oui_document_begin_update(OuiDocument* document);
 OuiStatus oui_document_end_update(OuiDocument* document);
 OuiStatus oui_document_update(OuiDocument* document);
+/* Process one bounded selection-notification turn on the owning thread.
+ * Callbacks run after engine/platform borrows end. Reentry does not recursively
+ * deliver tasks. out_pending receives 0 or 1 only on success. Native Linux apps
+ * pump automatically; headless apps may call again while pending is 1. */
+OuiStatus oui_document_dispatch_pending_events_v1(OuiDocument* document, uint32_t* out_pending);
 OuiStatus oui_document_render_rgba(OuiDocument* document, OuiBitmap* out_bitmap);
 OuiStatus oui_document_render_png(OuiDocument* document, OuiBuffer** out_buffer);
 OuiStatus oui_document_dispatch_event(OuiDocument* document, OuiElement* target, OuiEvent* event);
@@ -957,6 +962,13 @@ OuiStatus oui_element_remove_all_children(OuiElement* element);
 OuiStatus oui_element_set_text(OuiElement* element, OuiUtf8 text);
 OuiStatus oui_element_set_attribute(OuiElement* element, OuiUtf8 name, OuiUtf8 value);
 OuiStatus oui_element_remove_attribute(OuiElement* element, OuiUtf8 name);
+/* Read an authored native attribute. A present value returns an independently
+ * owned UTF-8 buffer, including empty values; absence returns NULL. The caller
+ * destroys a returned buffer with oui_buffer_destroy. It survives subsequent
+ * element mutation and document destruction. out_value is unchanged on error.
+ * Attribute lookup uses the same retained Engine operation as Rust. */
+OuiStatus oui_element_get_attribute_v1(OuiElement* element, OuiUtf8 name,
+                                      OuiBuffer** out_value);
 OuiStatus oui_element_set_property(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* value);
 OuiStatus oui_element_animate(OuiElement* element, OuiStyleProperty property, const OuiKeyframe* keyframes, size_t keyframe_count, const OuiAnimationOptions* options, const OuiAnimationTimeline* timeline, uint64_t* out_animation_id);
 OuiStatus oui_element_transition(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* target, const OuiAnimationOptions* options, uint64_t* out_animation_id);
@@ -994,6 +1006,36 @@ OuiStatus oui_element_set_control_value(OuiElement* element, OuiUtf8 value);
 OuiStatus oui_element_copy_control_value(OuiElement* element, uint8_t* destination, size_t capacity, size_t* out_length);
 OuiStatus oui_element_set_selection(OuiElement* element, size_t anchor, size_t focus);
 OuiStatus oui_element_get_selection(OuiElement* element, size_t* out_anchor, size_t* out_focus);
+typedef enum OuiSelectionDirectionV1 {
+  OUI_SELECTION_DIRECTION_NONE = 0,
+  OUI_SELECTION_DIRECTION_FORWARD = 1,
+  OUI_SELECTION_DIRECTION_BACKWARD = 2
+} OuiSelectionDirectionV1;
+typedef enum OuiRangeSelectionModeV1 {
+  OUI_RANGE_SELECTION_PRESERVE = 0,
+  OUI_RANGE_SELECTION_SELECT = 1,
+  OUI_RANGE_SELECTION_START = 2,
+  OUI_RANGE_SELECTION_END = 3
+} OuiRangeSelectionModeV1;
+/* Text input/textarea only, owning thread. UTF-8 byte offsets; Unicode scalar
+ * boundaries within a grapheme are valid, code-point splits are invalid.
+ * End clamps to value length; start beyond end collapses at end. NONE normalizes
+ * to FORWARD on Linux/headless. Changed selection queues noncancelable SELECT
+ * and SELECTION_CHANGE; value setters queue only SELECTION_CHANGE. Callbacks
+ * arrive at a later native task turn. Existing grapheme-based API is unchanged. */
+OuiStatus oui_element_set_selection_range_v1(OuiElement* element, size_t start, size_t end, uint32_t direction);
+/* Output is written only on success. */
+OuiStatus oui_element_get_selection_direction_v1(OuiElement* element, uint32_t* out_direction);
+/* Native node queries, owning thread. Outputs are 0 or 1 and remain unchanged
+ * on failure. Connectivity reads no layout and cannot settle focus. Identity
+ * compares the retained node, including independently owned aliases. Valid
+ * nodes in different documents compare false; stale handles return an error. */
+OuiStatus oui_element_is_connected_v1(OuiElement* element, uint32_t* out_connected);
+OuiStatus oui_element_is_same_node_v1(OuiElement* first, OuiElement* second, uint32_t* out_same);
+/* Replace range without INPUT/CHANGE. Queues selection notifications when value
+ * or selection changes. Reversed authored ranges, code-point splits and invalid
+ * modes fail before mutation. Readonly and disabled permit programmatic edits. */
+OuiStatus oui_element_replace_control_range_v1(OuiElement* element, OuiUtf8 replacement, size_t start, size_t end, uint32_t mode);
 /* Apply an editing command through the same retained Rust document and input
  * event path as native keyboard editing. Requires the owning thread, a live
  * input/textarea handle, and command storage readable for struct_size bytes.
@@ -1056,6 +1098,65 @@ OuiStatus oui_resource_destroy(OuiResource* resource);
 const uint8_t* oui_buffer_data(const OuiBuffer* buffer);
 size_t oui_buffer_length(const OuiBuffer* buffer);
 OuiStatus oui_buffer_destroy(OuiBuffer* buffer);
+
+/* Native input metadata for the current callback.
+ * OuiEvent and the existing exported symbols and layouts retain their ABI. */
+typedef enum OuiInputTypeV1 {
+  OUI_INPUT_INSERT_TEXT = 1,
+  OUI_INPUT_INSERT_LINE_BREAK = 2,
+  OUI_INPUT_DELETE_CONTENT_BACKWARD = 3,
+  OUI_INPUT_DELETE_CONTENT_FORWARD = 4,
+  OUI_INPUT_HISTORY_UNDO = 5,
+  OUI_INPUT_HISTORY_REDO = 6,
+  OUI_INPUT_DELETE_WORD_BACKWARD = 7,
+  OUI_INPUT_DELETE_WORD_FORWARD = 8,
+  OUI_INPUT_DELETE_BY_CUT = 9,
+  OUI_INPUT_INSERT_FROM_PASTE = 10
+} OuiInputTypeV1;
+
+/* An owned snapshot of a native editing callback.
+ * input_type is a OuiInputTypeV1. has_data distinguishes null data from an
+ * empty string. When has_data is set, data is an owned OuiBuffer handle;
+ * release it using oui_buffer_destroy. Initialize data to NULL. Destroy an earlier data handle before
+ * reusing this output structure. Do not retain borrowed OuiEvent pointers.
+ * The snapshot remains usable after callback return or document destruction. */
+typedef struct OuiInputEventInfoV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t input_type;
+  uint32_t has_data;
+  uint32_t is_composing;
+  uint32_t bubbles;
+  uint32_t cancelable;
+  OuiBuffer* data;
+} OuiInputEventInfoV1;
+
+/* event must be the pointer supplied to a currently executing native input or
+ * beforeinput callback on its owning thread. The implementation validates it
+ * against active callback scopes without dereferencing stale event memory.
+ * Output remains unchanged on error. Nested callback scopes preserve outer
+ * event identity and immutable metadata. Existing legacy explicit events
+ * without a typed native editing operation return OUI_ERROR_INVALID_STATE.
+ * This API reports metadata from shared Rust operations; it executes no JS. */
+OuiStatus oui_event_input_info_v1(const OuiEvent* event,
+                                OuiInputEventInfoV1* out_info);
+
+/* Immutable properties for an event delivered through the shared native Rust
+ * pipeline. The event pointer is borrowed for its active owning-thread callback.
+ * Nested callbacks may query an outer active event. Pointers are matched against
+ * active scopes without reading expired event memory. Legacy explicit events
+ * without a shared native route return OUI_ERROR_INVALID_STATE.
+ * Initialize struct_size and abi_version. Output remains unchanged on error;
+ * bytes beyond the current struct are preserved. Cancellation and propagation
+ * state continue to be available in OuiEvent.flags. No ownership is transferred. */
+typedef struct OuiEventPropertiesV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t bubbles;
+  uint32_t cancelable;
+} OuiEventPropertiesV1;
+OuiStatus oui_event_properties_v1(const OuiEvent* event,
+                                  OuiEventPropertiesV1* out_properties);
 
 #ifdef __cplusplus
 }  /* extern "C" */

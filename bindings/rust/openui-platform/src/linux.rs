@@ -1032,9 +1032,29 @@ impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
         if self.application.exit_requested() {
             event_loop.exit();
-        } else if self.application.is_animating() || self.application.needs_redraw() {
+            return;
+        }
+        // The preceding platform/default-action borrows have ended. Rust and
+        // C applications use this same adapter and retained Document queue.
+        let pending = match self.application.dispatch_pending_events() {
+            Ok(pending) => pending,
+            Err(error) => {
+                self.fail(event_loop, PlatformError::Application(error));
+                return;
+            }
+        };
+        if self.application.exit_requested() {
+            event_loop.exit();
+            return;
+        }
+        if self.application.is_animating() || self.application.needs_redraw() {
             self.request_redraw();
         }
+        event_loop.set_control_flow(if pending {
+            ControlFlow::Poll
+        } else {
+            ControlFlow::Wait
+        });
     }
 }
 

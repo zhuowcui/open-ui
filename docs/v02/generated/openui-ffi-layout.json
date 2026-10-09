@@ -70,6 +70,10 @@
       "align": 8,
       "size": 88
     },
+    "OuiEventPropertiesV1": {
+      "align": 4,
+      "size": 16
+    },
     "OuiFocusEventInfoV1": {
       "align": 8,
       "size": 24
@@ -89,6 +93,10 @@
     "OuiFontUnicodeRange": {
       "align": 4,
       "size": 8
+    },
+    "OuiInputEventInfoV1": {
+      "align": 8,
+      "size": 40
     },
     "OuiKeyframe": {
       "align": 8,

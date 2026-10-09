@@ -37,6 +37,15 @@ hardening jobs. The [completed public evidence](generated/native-rounded-layer-v
 preserves source, executable and command identities. Full Chromium equality,
 needed native APIs, compositor, hardware and release checks remain unfinished.
 
+The [native selection and element-query APIs](../v02/native-selection-events.md) are now implemented on
+the PR branch. They provide range replacement, selection direction, deferred
+native selection events, node identity/connectivity, owned C attribute reads
+and native event metadata through the shared Rust document. The current ABI
+has 125 exports and 34 layouts, preserving every previous export and layout.
+Fresh combined consumer, workspace, hosted and renderer verification is
+pending. The preceding completed pixel results measure `5b05e1b5`; they do not
+qualify this new API checkpoint. Composition and complete API parity stay open.
+
 The [native input editor follow-up](native-input-editor-scrollport.md) corrects the private
 single-line editor clip. Its consuming Rust app improves from **22/30 to
 28/30 exact images**, with all thirty rectangles exact. Focused **640/640**

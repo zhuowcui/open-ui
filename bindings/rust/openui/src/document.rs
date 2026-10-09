@@ -2,7 +2,7 @@
 
 use crate::element::{class_tokens, validate_class_token, Element};
 use crate::events::{
-    Event, EventPhase, KeyEventType, Listener, Modifiers, MouseButton, MouseEventType,
+    Event, EventPhase, InputType, KeyEventType, Listener, Modifiers, MouseButton, MouseEventType,
 };
 use crate::style::{Bitmap, Error};
 use openui_compositor::SoftwareCompositor;
@@ -22,6 +22,9 @@ use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::rc::Rc;
 
+#[path = "selection_tasks.rs"]
+mod selection_tasks;
+
 type ListenerKey = (NodeHandle, String);
 type ResourceProvider = dyn Fn(&str) -> Option<Vec<u8>>;
 #[cfg(feature = "ffi-integration")]
@@ -37,6 +40,7 @@ pub(crate) struct DocumentInner {
     composition_generation: Cell<u64>,
     modal_generation: Cell<u64>,
     animation_events: RefCell<Vec<AnimationEvent>>,
+    selection_tasks: selection_tasks::SelectionTasks,
     transaction_depth: Cell<usize>,
     #[cfg(feature = "ffi-integration")]
     foreign_event_handler: RefCell<Option<Rc<ForeignEventHandler>>>,
@@ -96,6 +100,7 @@ impl Document {
                 composition_generation: Cell::new(0),
                 modal_generation: Cell::new(0),
                 animation_events: RefCell::new(Vec::new()),
+                selection_tasks: selection_tasks::SelectionTasks::default(),
                 transaction_depth: Cell::new(0),
                 #[cfg(feature = "ffi-integration")]
                 foreign_event_handler: RefCell::new(None),
@@ -124,6 +129,7 @@ impl Document {
                 composition_generation: Cell::new(0),
                 modal_generation: Cell::new(0),
                 animation_events: RefCell::new(Vec::new()),
+                selection_tasks: selection_tasks::SelectionTasks::default(),
                 transaction_depth: Cell::new(0),
                 foreign_event_handler: RefCell::new(None),
             }),
@@ -204,6 +210,198 @@ impl Document {
     #[doc(hidden)]
     pub fn focus_pointer_element_for_native_facade(&self, target: NodeHandle) -> Result<(), Error> {
         self.focus_from(target, FocusOrigin::Pointer)
+    }
+
+    /// Deliver one bounded native selection task turn on the document's owning thread.
+    /// Callbacks run after all engine/listener/task borrows are released. Callback
+    /// mutations may leave tasks for a later turn; recursive pumping does no work.
+    pub fn dispatch_pending_events(&self) -> Result<(), Error> {
+        self.inner.selection_tasks.dispatch(self)
+    }
+    pub fn has_pending_events(&self) -> Result<bool, Error> {
+        self.inner.selection_tasks.is_pending()
+    }
+    fn control_selection_snapshot(
+        engine: &Engine,
+        target: NodeHandle,
+    ) -> Result<Option<(String, usize, usize, crate::SelectionDirection)>, openui_engine::EngineError>
+    {
+        Ok(engine
+            .control_state(target)?
+            .filter(|state| {
+                matches!(
+                    state.role,
+                    FormControlRole::TextInput | FormControlRole::TextArea
+                )
+            })
+            .map(|state| {
+                let (start, end) = state.selection();
+                (state.value.clone(), start, end, state.selection_direction())
+            }))
+    }
+    fn mutate_control<T>(
+        &self,
+        target: NodeHandle,
+        request_select: bool,
+        mutation: impl FnOnce(&mut Engine) -> Result<T, openui_engine::EngineError>,
+    ) -> Result<T, Error> {
+        let (before, result, after) = self.with_engine_mut(|engine| {
+            let before = Self::control_selection_snapshot(engine, target)?;
+            let result = mutation(engine)?;
+            let after = Self::control_selection_snapshot(engine, target)?;
+            Ok((before, result, after))
+        })?;
+        if let (Some(before), Some(after)) = (before, after) {
+            self.inner.selection_tasks.schedule(
+                target,
+                before.0 != after.0,
+                (before.1, before.2, before.3) != (after.1, after.2, after.3),
+                request_select,
+            )?;
+        }
+        Ok(result)
+    }
+    pub(crate) fn set_control_value(&self, target: NodeHandle, value: &str) -> Result<(), Error> {
+        self.mutate_control(target, false, |engine| {
+            engine.set_control_value(target, value)
+        })
+    }
+    pub(crate) fn set_selection(
+        &self,
+        target: NodeHandle,
+        anchor: usize,
+        focus: usize,
+    ) -> Result<(), Error> {
+        self.mutate_control(target, true, |engine| {
+            engine.set_selection(target, anchor, focus)
+        })
+    }
+    pub(crate) fn set_selection_range(
+        &self,
+        target: NodeHandle,
+        start: usize,
+        end: usize,
+        direction: crate::SelectionDirection,
+    ) -> Result<(), Error> {
+        self.mutate_control(target, true, |engine| {
+            engine.set_selection_range(target, start, end, direction)
+        })
+    }
+    pub(crate) fn replace_control_range(
+        &self,
+        target: NodeHandle,
+        replacement: &str,
+        start: usize,
+        end: usize,
+        mode: crate::RangeSelectionMode,
+    ) -> Result<(), Error> {
+        self.mutate_control(target, true, |engine| {
+            engine.replace_control_range(target, replacement, start, end, mode)
+        })
+    }
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn set_control_value_for_native_facade(
+        &self,
+        target: NodeHandle,
+        value: &str,
+    ) -> Result<(), Error> {
+        self.set_control_value(target, value)
+    }
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn set_selection_for_native_facade(
+        &self,
+        target: NodeHandle,
+        anchor: usize,
+        focus: usize,
+    ) -> Result<(), Error> {
+        self.set_selection(target, anchor, focus)
+    }
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn set_selection_range_for_native_facade(
+        &self,
+        target: NodeHandle,
+        start: usize,
+        end: usize,
+        direction: crate::SelectionDirection,
+    ) -> Result<(), Error> {
+        self.set_selection_range(target, start, end, direction)
+    }
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn replace_control_range_for_native_facade(
+        &self,
+        target: NodeHandle,
+        replacement: &str,
+        start: usize,
+        end: usize,
+        mode: crate::RangeSelectionMode,
+    ) -> Result<(), Error> {
+        self.replace_control_range(target, replacement, start, end, mode)
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn dispatch_selection_notification_for_native_facade(
+        &self,
+        target: NodeHandle,
+        select: bool,
+    ) -> Result<Event, Error> {
+        self.with_engine(|engine| target.downgrade().upgrade(engine))??;
+        let event = Event::keyboard(
+            if select { "select" } else { "selectionchange" },
+            0,
+            None,
+            Modifiers::NONE,
+        );
+        self.dispatch_to(target, &event)?;
+        Ok(event)
+    }
+
+    pub(crate) fn set_element_attribute(
+        &self,
+        target: NodeHandle,
+        name: &str,
+        value: &str,
+    ) -> Result<(), Error> {
+        self.with_engine_mut(|engine| {
+            engine.set_attribute(target, name.to_owned(), value.to_owned())
+        })?;
+        // Engine mutation has ended before the shared focus/change callbacks.
+        // Reentrant callbacks may reenable or focus another live control.
+        if name.eq_ignore_ascii_case("disabled")
+            && self.with_engine(|engine| {
+                engine.focused() == Some(target) && !engine.can_focus(target).unwrap_or(false)
+            })?
+        {
+            self.blur_element(target)?;
+        }
+        Ok(())
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn set_attribute_for_native_facade(
+        &self,
+        target: NodeHandle,
+        name: &str,
+        value: &str,
+    ) -> Result<(), Error> {
+        self.set_element_attribute(target, name, value)
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn is_same_node_for_native_facade(
+        &self,
+        first: NodeHandle,
+        other: &Document,
+        second: NodeHandle,
+    ) -> Result<bool, Error> {
+        Element::from_handle(self.clone(), first)
+            .is_same_node(&Element::from_handle(other.clone(), second))
     }
 
     pub fn body(&self) -> Element {
@@ -510,6 +708,7 @@ impl Document {
     }
 
     pub fn begin_frame(&self, time_ms: f64) -> Result<(), Error> {
+        self.dispatch_pending_events()?;
         self.advance_time(time_ms)?;
         self.update_all()
     }
@@ -821,13 +1020,35 @@ impl Document {
                 role,
                 Some(FormControlRole::TextInput | FormControlRole::TextArea)
             ) {
+                if role == Some(FormControlRole::TextInput)
+                    && (key_code == 13 || key == "Enter")
+                    && self.with_engine(Engine::focused)? == Some(target)
+                    && self.is_editable_target(target)?
+                {
+                    let before = Event::input(
+                        "beforeinput",
+                        key_code,
+                        key_text,
+                        modifiers,
+                        InputType::InsertLineBreak,
+                        None,
+                        false,
+                    );
+                    self.dispatch_to(target, &before)?;
+                    if !before.default_prevented()
+                        && self.with_engine(Engine::focused)? == Some(target)
+                        && self.is_editable_target(target)?
+                    {
+                        self.commit_text_edit(target)?;
+                    }
+                }
                 // Text controls edit through the same cancelable input path
                 // as native committed text; these keys do not activate them.
                 if role == Some(FormControlRole::TextArea)
                     && (key_code == 13 || key == "Enter")
                     && self.with_engine(Engine::focused)? == Some(target)
                 {
-                    self.dispatch_text_input("\n")?;
+                    self.dispatch_text_input_with_type("\n", InputType::InsertLineBreak, None)?;
                 }
                 return Ok(true);
             }
@@ -909,22 +1130,47 @@ impl Document {
     }
 
     pub fn dispatch_text_input(&self, text: &str) -> Result<(), Error> {
+        self.dispatch_text_input_with_type(text, InputType::InsertText, Some(text))
+    }
+
+    fn dispatch_text_input_with_type(
+        &self,
+        text: &str,
+        input_type: InputType,
+        data: Option<&str>,
+    ) -> Result<(), Error> {
         let Some(target) = self.with_engine(|engine| engine.focused())? else {
             return Ok(());
         };
         if !self.is_editable_target(target)? {
             return Ok(());
         }
-        let before = Event::keyboard("beforeinput", 0, Some(text), Modifiers::NONE);
+        let before = Event::input(
+            "beforeinput",
+            0,
+            Some(text),
+            Modifiers::NONE,
+            input_type,
+            data,
+            false,
+        );
         self.dispatch_to(target, &before)?;
         if !before.default_prevented()
             && self.with_engine(Engine::focused)? == Some(target)
             && self.is_editable_target(target)?
         {
-            self.with_engine_mut(|engine| engine.insert_text(target, text))?;
+            self.mutate_control(target, false, |engine| engine.insert_text(target, text))?;
             self.dispatch_to(
                 target,
-                &Event::keyboard("input", 0, Some(text), Modifiers::NONE),
+                &Event::input(
+                    "input",
+                    0,
+                    Some(text),
+                    Modifiers::NONE,
+                    input_type,
+                    data,
+                    false,
+                ),
             )?;
         }
         Ok(())
@@ -964,7 +1210,9 @@ impl Document {
             && self.inner.composition_generation.get() == generation
             && self.active_composition_target()? == Some(target)
         {
-            self.with_engine_mut(|engine| engine.update_composition(target, text))?;
+            self.mutate_control(target, false, |engine| {
+                engine.update_composition(target, text)
+            })?;
         }
         Ok(())
     }
@@ -990,7 +1238,9 @@ impl Document {
         if self.active_composition_target()? != Some(target) {
             return Ok(());
         }
-        self.with_engine_mut(|engine| engine.commit_composition(target, text))?;
+        self.mutate_control(target, false, |engine| {
+            engine.commit_composition(target, text)
+        })?;
         self.inner.composition_target.set(None);
         self.dispatch_to(target, &Event::composition("compositionend", text))?;
         if self.target_is_live(target)? {
@@ -1011,7 +1261,7 @@ impl Document {
         if !self.target_is_live(target)? {
             return Ok(());
         }
-        self.with_engine_mut(|engine| engine.cancel_composition(target))?;
+        self.mutate_control(target, false, |engine| engine.cancel_composition(target))?;
         self.dispatch_to(target, &Event::composition("compositionend", ""))
     }
 
@@ -1313,7 +1563,10 @@ impl Document {
         }
         if let Some(current) = current {
             self.with_engine_mut(|engine| engine.blur(current))?;
-            self.dispatch_focus_event(current, "blur", next)?;
+            self.commit_text_edit(current)?;
+            if self.target_is_live(current)? {
+                self.dispatch_focus_event(current, "blur", next)?;
+            }
             // A blur callback can replace the pending destination. Chromium
             // still sends focusout for the old element, with no related target
             // when that callback has already established another focus.
@@ -1350,6 +1603,13 @@ impl Document {
             {
                 self.dispatch_focus_event(next, "focusin", previous)?;
             }
+        }
+        Ok(())
+    }
+
+    fn commit_text_edit(&self, target: NodeHandle) -> Result<(), Error> {
+        if self.with_engine_mut(|engine| engine.commit_text_edit(target))? {
+            self.dispatch_to(target, &Event::keyboard("change", 0, None, Modifiers::NONE))?;
         }
         Ok(())
     }
@@ -1398,10 +1658,46 @@ impl Document {
     }
 
     fn edit_focused(&self, command: EditCommand) -> Result<(), Error> {
+        self.edit_focused_with_type(command, Self::edit_input_type(command))
+    }
+
+    fn edit_focused_with_type(
+        &self,
+        command: EditCommand,
+        input_type: Option<InputType>,
+    ) -> Result<(), Error> {
         let Some(target) = self.with_engine(|engine| engine.focused())? else {
             return Ok(());
         };
-        match self.edit_control(target, command) {
+        if matches!(
+            command,
+            EditCommand::Delete { .. } | EditCommand::Undo | EditCommand::Redo
+        ) {
+            if !self.is_editable_target(target)? {
+                return Ok(());
+            }
+            let before = if let Some(input_type) = input_type {
+                Event::input(
+                    "beforeinput",
+                    0,
+                    None,
+                    Modifiers::NONE,
+                    input_type,
+                    None,
+                    false,
+                )
+            } else {
+                Event::keyboard("beforeinput", 0, None, Modifiers::NONE)
+            };
+            self.dispatch_to(target, &before)?;
+            if before.default_prevented()
+                || self.with_engine(Engine::focused)? != Some(target)
+                || !self.is_editable_target(target)?
+            {
+                return Ok(());
+            }
+        }
+        match self.edit_control_with_type(target, command, input_type) {
             // Keyboard editing on a noneditable focused control has no effect.
             Err(Error::Engine(openui_engine::EngineError::NotEditable)) => Ok(()),
             result => result,
@@ -1413,21 +1709,59 @@ impl Document {
         target: NodeHandle,
         command: EditCommand,
     ) -> Result<(), Error> {
+        self.edit_control_with_type(target, command, Self::edit_input_type(command))
+    }
+
+    fn edit_control_with_type(
+        &self,
+        target: NodeHandle,
+        command: EditCommand,
+        input_type: Option<InputType>,
+    ) -> Result<(), Error> {
         let changed = self.with_engine(|engine| {
             engine
                 .control_state(target)
                 .map(|state| state.map(|state| state.value.clone()))
         })??;
-        self.with_engine_mut(|engine| engine.edit_text(target, command))?;
+        self.mutate_control(target, true, |engine| engine.edit_text(target, command))?;
         let after = self.with_engine(|engine| {
             engine
                 .control_state(target)
                 .map(|state| state.map(|state| state.value.clone()))
         })??;
         if changed != after {
-            self.dispatch_to(target, &Event::keyboard("input", 0, None, Modifiers::NONE))?;
+            let event = if let Some(input_type) = input_type {
+                Event::input("input", 0, None, Modifiers::NONE, input_type, None, false)
+            } else {
+                Event::keyboard("input", 0, None, Modifiers::NONE)
+            };
+            self.dispatch_to(target, &event)?;
         }
         Ok(())
+    }
+
+    fn edit_input_type(command: EditCommand) -> Option<InputType> {
+        match command {
+            EditCommand::Delete {
+                direction: TextDirection::Backward,
+                unit: TextUnit::Grapheme,
+            } => Some(InputType::DeleteContentBackward),
+            EditCommand::Delete {
+                direction: TextDirection::Forward,
+                unit: TextUnit::Grapheme,
+            } => Some(InputType::DeleteContentForward),
+            EditCommand::Delete {
+                direction: TextDirection::Backward,
+                unit: TextUnit::Word,
+            } => Some(InputType::DeleteWordBackward),
+            EditCommand::Delete {
+                direction: TextDirection::Forward,
+                unit: TextUnit::Word,
+            } => Some(InputType::DeleteWordForward),
+            EditCommand::Undo => Some(InputType::HistoryUndo),
+            EditCommand::Redo => Some(InputType::HistoryRedo),
+            _ => None,
+        }
     }
 
     fn copy_selection(&self, cut: bool) -> Result<(), Error> {
@@ -1447,17 +1781,20 @@ impl Document {
         };
         self.set_clipboard_text(selection)?;
         if cut {
-            self.edit_focused(EditCommand::Delete {
-                direction: TextDirection::Backward,
-                unit: TextUnit::Grapheme,
-            })?;
+            self.edit_focused_with_type(
+                EditCommand::Delete {
+                    direction: TextDirection::Backward,
+                    unit: TextUnit::Grapheme,
+                },
+                Some(InputType::DeleteByCut),
+            )?;
         }
         Ok(())
     }
 
     fn paste_clipboard(&self) -> Result<(), Error> {
         let text = self.clipboard_text()?;
-        self.dispatch_text_input(&text)
+        self.dispatch_text_input_with_type(&text, InputType::InsertFromPaste, Some(&text))
     }
 
     fn adjust_focused(&self, adjustment: ControlAdjustment) -> Result<(), Error> {
@@ -2045,5 +2382,153 @@ mod tests {
             .perform_accessibility_action(AccessibilityAction::Collapse)
             .unwrap();
         assert!(content.bounding_rect().unwrap().is_none());
+    }
+}
+
+#[cfg(test)]
+mod selection_task_guards {
+    use super::*;
+    use crate::SelectionDirection;
+    use std::panic::{catch_unwind, AssertUnwindSafe};
+
+    fn control(document: &Document) -> Element {
+        let element = Element::create(document, "textarea").unwrap();
+        document.body().append_child(&element).unwrap();
+        element.set_control_value("abcdef").unwrap();
+        element
+            .set_selection_range(1, 4, SelectionDirection::Forward)
+            .unwrap();
+        while document.has_pending_events().unwrap() {
+            document.dispatch_pending_events().unwrap();
+        }
+        element
+    }
+
+    #[test]
+    fn rejected_borrow_preserves_selection_notifications() {
+        let document = Document::new(320, 200).unwrap();
+        let element = control(&document);
+        let rows = Rc::new(RefCell::new(Vec::new()));
+        for kind in ["selectionchange", "select"] {
+            let rows = rows.clone();
+            element
+                .on(kind, move |event| {
+                    rows.borrow_mut().push(event.event_type.clone())
+                })
+                .unwrap();
+        }
+        element
+            .set_selection_range(2, 5, SelectionDirection::Backward)
+            .unwrap();
+        let borrow = document.inner.engine.borrow_mut();
+        assert!(matches!(
+            document.dispatch_pending_events(),
+            Err(Error::ReentrantMutation)
+        ));
+        drop(borrow);
+        assert!(document.has_pending_events().unwrap());
+        document.dispatch_pending_events().unwrap();
+        assert_eq!(*rows.borrow(), ["selectionchange", "select"]);
+        assert!(!document.has_pending_events().unwrap());
+    }
+
+    #[test]
+    fn destroyed_selection_target_does_not_notify_reused_node() {
+        let document = Document::new(320, 200).unwrap();
+        let element = control(&document);
+        element
+            .set_selection_range(2, 5, SelectionDirection::Backward)
+            .unwrap();
+        element.remove().unwrap();
+        let replacement = Element::create(&document, "textarea").unwrap();
+        document.body().append_child(&replacement).unwrap();
+        let count = Rc::new(Cell::new(0));
+        for kind in ["selectionchange", "select"] {
+            let count = count.clone();
+            replacement
+                .on(kind, move |_| count.set(count.get() + 1))
+                .unwrap();
+        }
+        document.dispatch_pending_events().unwrap();
+        assert_eq!(count.get(), 0);
+        assert!(!document.has_pending_events().unwrap());
+    }
+
+    #[test]
+    fn panicking_select_callback_keeps_remaining_frame_notifications() {
+        let document = Document::new(320, 200).unwrap();
+        let a = control(&document);
+        let b = control(&document);
+        let rows = Rc::new(RefCell::new(Vec::new()));
+        let first = Rc::new(Cell::new(true));
+        let weak = a.downgrade();
+        let panic_once = first.clone();
+        a.on("select", move |_| {
+            if panic_once.replace(false) {
+                weak.upgrade()
+                    .unwrap()
+                    .set_selection_range(0, 3, SelectionDirection::Forward)
+                    .unwrap();
+                panic!("application callback panic");
+            }
+        })
+        .unwrap();
+        for (element, kind, label) in [
+            (&b, "select", "select-b"),
+            (&a, "selectionchange", "change-a"),
+            (&a, "select", "select-a"),
+        ] {
+            let rows = rows.clone();
+            element
+                .on(kind, move |_| rows.borrow_mut().push(label))
+                .unwrap();
+        }
+        a.set_selection_range(2, 5, SelectionDirection::Forward)
+            .unwrap();
+        b.set_selection_range(2, 5, SelectionDirection::Forward)
+            .unwrap();
+        assert!(catch_unwind(AssertUnwindSafe(|| document
+            .dispatch_pending_events()
+            .unwrap()))
+        .is_err());
+        rows.borrow_mut().clear();
+        document.dispatch_pending_events().unwrap();
+        assert_eq!(*rows.borrow(), ["select-b"]);
+        assert!(document.has_pending_events().unwrap());
+        document.dispatch_pending_events().unwrap();
+        assert_eq!(*rows.borrow(), ["select-b", "change-a", "select-a"]);
+        assert!(!document.has_pending_events().unwrap());
+    }
+
+    #[test]
+    fn perpetual_selection_callback_gets_one_bounded_task_turn() {
+        let document = Document::new(320, 200).unwrap();
+        let element = control(&document);
+        let weak = element.downgrade();
+        let calls = Rc::new(Cell::new(0));
+        let count = calls.clone();
+        element
+            .on("selectionchange", move |_| {
+                let element = weak.upgrade().unwrap();
+                count.set(count.get() + 1);
+                let direction = if element.selection_direction().unwrap()
+                    == Some(SelectionDirection::Backward)
+                {
+                    SelectionDirection::Forward
+                } else {
+                    SelectionDirection::Backward
+                };
+                element.set_selection_range(1, 4, direction).unwrap();
+            })
+            .unwrap();
+        element
+            .set_selection_range(1, 4, SelectionDirection::Backward)
+            .unwrap();
+        document.dispatch_pending_events().unwrap();
+        assert_eq!(calls.get(), 1);
+        assert!(document.has_pending_events().unwrap());
+        document.dispatch_pending_events().unwrap();
+        assert_eq!(calls.get(), 2);
+        assert!(document.has_pending_events().unwrap());
     }
 }

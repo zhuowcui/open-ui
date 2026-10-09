@@ -105,7 +105,10 @@ pub use signal::{create_memo, create_signal, Memo, Signal};
 
 pub use document::Document;
 pub use element::{Element, WeakElement};
-pub use events::{Event, EventPhase, KeyEventType, Modifiers, MouseButton, MouseEventType};
+pub use events::{
+    Event, EventPhase, InputEventInfo, InputType, KeyEventType, Modifiers, MouseButton,
+    MouseEventType,
+};
 pub use openui_dom::ElementTag;
 pub use style::{Bitmap, Error, Rect};
 pub use text_node::{TextNode, WeakTextNode};
@@ -139,10 +142,10 @@ pub use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityNode, AccessibilityNodeId,
     AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole, AccessibilityTreeUpdate,
     AnimationEvent, AnimationEventKind, AnimationId, AnimationState, ControlAdjustment,
-    EditCommand, EngineOptions, FocusOrigin, PointerEventKind, RasterConfiguration,
-    ScrollAlignment, ScrollAnimationId, ScrollIntoViewContainer, ScrollIntoViewOptions,
-    ScrollMetrics, TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
-    ViewportMetricsError,
+    EditCommand, EngineOptions, FocusOrigin, PointerEventKind, RangeSelectionMode,
+    RasterConfiguration, ScrollAlignment, ScrollAnimationId, ScrollIntoViewContainer,
+    ScrollIntoViewOptions, ScrollMetrics, SelectionDirection, TextDirection, TextUnit,
+    ViewportAuthority, ViewportMetrics, ViewportMetricsError,
 };
 #[cfg(all(feature = "linux", target_os = "linux"))]
 pub use openui_platform::{KeyboardInput, PlatformEvent};

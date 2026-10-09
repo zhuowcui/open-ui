@@ -535,3 +535,26 @@ pub struct OuiAppRunConfig {
     pub callback: Option<OuiPlatformEventCallback>,
     pub user_data: *mut c_void,
 }
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiInputEventInfoV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub input_type: u32,
+    pub has_data: u32,
+    pub is_composing: u32,
+    pub bubbles: u32,
+    pub cancelable: u32,
+    pub data: *mut OuiBuffer,
+}
+
+/// Immutable event properties for an active native callback.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiEventPropertiesV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub bubbles: u32,
+    pub cancelable: u32,
+}

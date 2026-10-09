@@ -22,6 +22,15 @@ performance, packaging and protected release lab gates remain open.
 No final v0.2 qualification is claimed. Open UI never executes JavaScript;
 needed interaction uses public native Rust methods and Rust callbacks.
 
+The [native selection and element-query APIs](native-selection-events.md) are now implemented on
+the PR branch. They provide range replacement, selection direction, deferred
+native selection events, node identity/connectivity, owned C attribute reads
+and native event metadata through the shared Rust document. The current ABI
+has 125 exports and 34 layouts, preserving every previous export and layout.
+Fresh combined consumer, workspace, hosted and renderer verification is
+pending. The preceding completed pixel results measure `5b05e1b5`; they do not
+qualify this new API checkpoint. Composition and complete API parity stay open.
+
 The [native intrinsic sizing follow-up](../renderer/native-fontations-app.md) at clean private
 `8f756039` passes **8,575 workspace tests**, zero failed and 13 ignored,
 all 21 read-only checks, and Rust/C/C++ ABI consumers with 113 exports

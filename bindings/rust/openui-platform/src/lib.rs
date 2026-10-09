@@ -168,6 +168,12 @@ pub trait PlatformApplication: 'static {
         })
     }
 
+    /// Run one bounded owning-thread native task turn. Return true when
+    /// another turn is pending. The default preserves existing applications.
+    fn dispatch_pending_events(&mut self) -> Result<bool, String> {
+        Ok(false)
+    }
+
     fn clipboard_text(&self) -> Result<String, String> {
         Ok(String::new())
     }

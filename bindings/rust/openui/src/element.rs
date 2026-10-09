@@ -393,14 +393,33 @@ impl Element {
     }
 
     pub fn set_attribute(&self, name: &str, value: &str) -> Result<(), Error> {
-        self.document.with_engine_mut(|engine| {
-            engine.set_attribute(self.handle, name.to_owned(), value.to_owned())
-        })
+        self.document
+            .set_element_attribute(self.handle, name, value)
     }
 
     pub fn remove_attribute(&self, name: &str) -> Result<bool, Error> {
         self.document
             .with_engine_mut(|engine| engine.remove_attribute(self.handle, name))
+    }
+
+    /// Whether this node is attached to its retained document, without layout.
+    pub fn is_connected(&self) -> Result<bool, Error> {
+        Ok(self
+            .document
+            .with_engine(|engine| engine.is_connected(self.handle))??)
+    }
+
+    /// Compare live native node identity, including independently owned aliases.
+    pub fn is_same_node(&self, other: &Element) -> Result<bool, Error> {
+        self.document
+            .with_engine(|engine| self.handle.downgrade().upgrade(engine))??;
+        other
+            .document
+            .with_engine(|engine| other.handle.downgrade().upgrade(engine))??;
+        Ok(
+            Rc::ptr_eq(&self.document.inner.engine, &other.document.inner.engine)
+                && self.handle == other.handle,
+        )
     }
 
     pub fn get_attribute(&self, name: &str) -> Result<Option<String>, Error> {
@@ -639,8 +658,7 @@ impl Element {
     }
 
     pub fn set_control_value(&self, value: &str) -> Result<(), Error> {
-        self.document
-            .with_engine_mut(|engine| engine.set_control_value(self.handle, value))
+        self.document.set_control_value(self.handle, value)
     }
 
     pub fn selection(&self) -> Result<Option<(usize, usize)>, Error> {
@@ -654,8 +672,48 @@ impl Element {
     }
 
     pub fn set_selection(&self, anchor: usize, focus: usize) -> Result<(), Error> {
+        self.document.set_selection(self.handle, anchor, focus)
+    }
+
+    /// Retained native selection direction, or None for a non-text control.
+    pub fn selection_direction(&self) -> Result<Option<crate::SelectionDirection>, Error> {
         self.document
-            .with_engine_mut(|engine| engine.set_selection(self.handle, anchor, focus))
+            .with_engine(|engine| {
+                engine.control_state(self.handle).map(|state| {
+                    state
+                        .filter(|state| {
+                            matches!(
+                                state.role,
+                                openui_dom::FormControlRole::TextInput
+                                    | openui_dom::FormControlRole::TextArea
+                            )
+                        })
+                        .map(openui_engine::ControlState::selection_direction)
+                })
+            })?
+            .map_err(Into::into)
+    }
+    /// Set a native range in UTF-8 byte units, retaining explicit direction.
+    pub fn set_selection_range(
+        &self,
+        start: usize,
+        end: usize,
+        direction: crate::SelectionDirection,
+    ) -> Result<(), Error> {
+        self.document
+            .set_selection_range(self.handle, start, end, direction)
+    }
+    /// Programmatically replace a UTF-8 range without input/change notifications.
+    /// Selection notifications are delivered by the native task barrier/event loop.
+    pub fn replace_control_range(
+        &self,
+        replacement: &str,
+        start: usize,
+        end: usize,
+        mode: crate::RangeSelectionMode,
+    ) -> Result<(), Error> {
+        self.document
+            .replace_control_range(self.handle, replacement, start, end, mode)
     }
 
     /// Run a native editing command on an input or textarea.
@@ -1285,5 +1343,101 @@ mod tests {
             button.get_attribute("data-clicked").unwrap().as_deref(),
             Some("true")
         );
+    }
+}
+
+#[cfg(test)]
+mod native_node_query_guards {
+    use super::*;
+    use std::cell::RefCell;
+
+    #[test]
+    fn connectivity_checks_the_whole_ancestor_chain_without_layout_or_focus_work() {
+        let document = Document::new(160, 100).unwrap();
+        let root = document.body();
+        let parent = Element::create(&document, "div").unwrap();
+        let child = Element::create(&document, "input").unwrap();
+        parent.append_child(&child).unwrap();
+        assert!(root.is_connected().unwrap());
+        assert!(!parent.is_connected().unwrap());
+        assert!(!child.is_connected().unwrap());
+        root.append_child(&parent).unwrap();
+        child.focus().unwrap();
+        document
+            .with_engine_mut(|engine| {
+                engine.scene()?;
+                // Leave a pending Engine-only mutation. Pure node queries must
+                // neither run layout nor settle focus on behalf of the app.
+                engine.set_attribute(child.handle, "disabled", "")
+            })
+            .unwrap();
+        let before = document
+            .with_engine(|engine| (engine.stats(), engine.focused()))
+            .unwrap();
+        assert!(parent.is_connected().unwrap());
+        assert!(child.is_connected().unwrap());
+        assert!(child.is_same_node(&child.clone()).unwrap());
+        assert_eq!(
+            before,
+            document
+                .with_engine(|engine| (engine.stats(), engine.focused()))
+                .unwrap()
+        );
+        parent.detach().unwrap();
+        assert!(!parent.is_connected().unwrap());
+        assert!(!child.is_connected().unwrap());
+        root.append_child(&parent).unwrap();
+        assert!(child.is_connected().unwrap());
+    }
+
+    #[test]
+    fn native_node_identity_distinguishes_aliases_siblings_documents_and_stale_nodes() {
+        let document = Document::new(64, 64).unwrap();
+        let a = Element::create(&document, "div").unwrap();
+        let b = Element::create(&document, "div").unwrap();
+        let other = Document::new(64, 64).unwrap();
+        assert!(a.is_same_node(&a.clone()).unwrap());
+        assert!(!a.is_same_node(&b).unwrap());
+        assert!(!document.body().is_same_node(&other.body()).unwrap());
+        a.remove().unwrap();
+        let replacement = Element::create(&document, "div").unwrap();
+        for result in [
+            a.is_connected(),
+            a.is_same_node(&replacement),
+            replacement.is_same_node(&a),
+        ] {
+            assert!(matches!(
+                result,
+                Err(Error::Engine(openui_engine::EngineError::StaleHandle))
+            ));
+        }
+    }
+
+    #[test]
+    fn native_node_queries_reject_conflicting_engine_borrows() {
+        let document = Document::new(64, 64).unwrap();
+        let root = document.body();
+        let held = document.inner.engine.borrow_mut();
+        assert!(matches!(root.is_connected(), Err(Error::ReentrantMutation)));
+        assert!(matches!(
+            root.is_same_node(&root),
+            Err(Error::ReentrantMutation)
+        ));
+        drop(held);
+        assert!(root.is_connected().unwrap());
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[test]
+    fn native_node_identity_survives_independent_facade_wrappers_of_one_engine() {
+        let engine = Rc::new(RefCell::new(
+            openui_engine::Engine::new(
+                crate::ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap(),
+            )
+            .unwrap(),
+        ));
+        let first = Document::from_shared_engine(engine.clone());
+        let second = Document::from_shared_engine(engine);
+        assert!(first.body().is_same_node(&second.body()).unwrap());
     }
 }

@@ -62,6 +62,40 @@ pub enum TextDirection {
     Forward,
 }
 
+/// Direction of a retained text-control selection.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum SelectionDirection {
+    None,
+    Forward,
+    Backward,
+}
+impl SelectionDirection {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::None => "none",
+            Self::Forward => "forward",
+            Self::Backward => "backward",
+        }
+    }
+    fn normalized(self) -> Self {
+        // The declared Linux/headless contract uses directional selections.
+        match self {
+            Self::None => Self::Forward,
+            other => other,
+        }
+    }
+}
+/// Selection after replacing a native text-control range.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum RangeSelectionMode {
+    Preserve,
+    Select,
+    Start,
+    End,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TextUnit {
     Grapheme,
@@ -108,15 +142,18 @@ pub struct ControlState {
     pub placeholder: String,
     pub selection_anchor: usize,
     pub selection_focus: usize,
+    selection_direction: SelectionDirection,
     pub composition: Option<(usize, usize)>,
     pub min: f64,
     pub max: f64,
     pub step: f64,
     pub password: bool,
     pub(crate) native_intrinsic_sizing: bool,
-    composition_original: Option<(String, usize, usize)>,
+    composition_original: Option<(String, usize, usize, SelectionDirection)>,
     history: Vec<String>,
     future: Vec<String>,
+    last_committed_value: String,
+    pending_user_edit: bool,
 }
 
 impl ControlState {
@@ -143,6 +180,7 @@ impl ControlState {
             placeholder: String::new(),
             selection_anchor: 0,
             selection_focus: 0,
+            selection_direction: SelectionDirection::Forward,
             composition: None,
             min: 0.0,
             max: 100.0,
@@ -155,11 +193,17 @@ impl ControlState {
             composition_original: None,
             history: Vec::new(),
             future: Vec::new(),
+            last_committed_value: String::new(),
+            pending_user_edit: false,
         })
     }
 
     pub fn selection(&self) -> (usize, usize) {
         ordered(self.selection_anchor, self.selection_focus)
+    }
+
+    pub fn selection_direction(&self) -> SelectionDirection {
+        self.selection_direction
     }
 
     pub fn display_value(&self) -> String {
@@ -173,6 +217,18 @@ impl ControlState {
     fn clamp_selection(&mut self) {
         self.selection_anchor = previous_boundary(&self.value, self.selection_anchor);
         self.selection_focus = previous_boundary(&self.value, self.selection_focus);
+    }
+
+    fn note_user_edit(&mut self, before: &str) {
+        if before != self.value {
+            self.pending_user_edit = true;
+        }
+    }
+
+    fn note_programmatic_value(&mut self) {
+        if !self.pending_user_edit {
+            self.last_committed_value = self.value.clone();
+        }
     }
 
     fn checkpoint(&mut self) {
@@ -190,6 +246,7 @@ impl ControlState {
         let caret = start + replacement.len();
         self.selection_anchor = caret;
         self.selection_focus = caret;
+        self.selection_direction = SelectionDirection::Forward;
         self.composition = None;
     }
 
@@ -199,6 +256,7 @@ impl ControlState {
                 self.value.clone(),
                 self.selection_anchor,
                 self.selection_focus,
+                self.selection_direction,
             ));
         }
         let (start, end) = self.composition.unwrap_or_else(|| self.selection());
@@ -206,11 +264,12 @@ impl ControlState {
         let caret = start + replacement.len();
         self.selection_anchor = caret;
         self.selection_focus = caret;
+        self.selection_direction = SelectionDirection::Forward;
         self.composition = Some((start, caret));
     }
 
     pub(crate) fn finish_composition(&mut self) {
-        if let Some((original, _, _)) = self.composition_original.take() {
+        if let Some((original, _, _, _)) = self.composition_original.take() {
             if original != self.value {
                 if self.history.last() != Some(&original) {
                     self.history.push(original);
@@ -222,10 +281,11 @@ impl ControlState {
     }
 
     fn cancel_composition(&mut self) {
-        if let Some((value, anchor, focus)) = self.composition_original.take() {
+        if let Some((value, anchor, focus, direction)) = self.composition_original.take() {
             self.value = value;
             self.selection_anchor = anchor;
             self.selection_focus = focus;
+            self.selection_direction = direction;
         }
         self.composition = None;
     }
@@ -250,6 +310,11 @@ impl ControlState {
             self.selection_anchor = caret;
         }
         self.selection_focus = caret;
+        self.selection_direction = if self.selection_anchor > caret {
+            SelectionDirection::Backward
+        } else {
+            SelectionDirection::Forward
+        };
     }
 
     fn delete(&mut self, direction: TextDirection, unit: TextUnit) {
@@ -275,6 +340,7 @@ impl ControlState {
             .push(std::mem::replace(&mut self.value, previous));
         self.selection_anchor = self.value.len();
         self.selection_focus = self.value.len();
+        self.selection_direction = SelectionDirection::Forward;
         self.composition = None;
     }
 
@@ -286,6 +352,7 @@ impl ControlState {
         self.history.push(std::mem::replace(&mut self.value, next));
         self.selection_anchor = self.value.len();
         self.selection_focus = self.value.len();
+        self.selection_direction = SelectionDirection::Forward;
         self.composition = None;
     }
 }
@@ -575,9 +642,15 @@ impl Engine {
             .controls
             .get_mut(&handle.index)
             .ok_or(EngineError::NotAControl)?;
+        if control.value == value {
+            control.note_programmatic_value();
+            return Ok(());
+        }
         control.value = value.clone();
+        control.note_programmatic_value();
         control.selection_anchor = value.len();
         control.selection_focus = value.len();
+        control.selection_direction = SelectionDirection::Forward;
         control.clear_composition();
         control.history.clear();
         control.future.clear();
@@ -585,6 +658,22 @@ impl Engine {
         self.sync_selection_attributes(handle);
         self.mark_dirty(openui_style::InvalidationClass::Intrinsic);
         Ok(())
+    }
+
+    /// Commit user text edits before the frontend delivers a native `change`
+    /// notification. Reset first so callbacks cannot commit the same edit twice.
+    pub fn commit_text_edit(&mut self, handle: NodeHandle) -> Result<bool, EngineError> {
+        self.resolve(handle)?;
+        let Some(control) = self.controls.get_mut(&handle.index) else {
+            return Ok(false);
+        };
+        if !is_editable_role(control.role) {
+            return Ok(false);
+        }
+        let changed = control.pending_user_edit && control.value != control.last_committed_value;
+        control.last_committed_value = control.value.clone();
+        control.pending_user_edit = false;
+        Ok(changed)
     }
 
     pub fn set_selection(
@@ -607,7 +696,48 @@ impl Engine {
         control.finish_composition();
         control.selection_anchor = anchor;
         control.selection_focus = focus;
+        control.selection_direction = if anchor > focus {
+            SelectionDirection::Backward
+        } else {
+            SelectionDirection::Forward
+        };
         control.clamp_selection();
+        self.sync_selection_attributes(handle);
+        self.mark_dirty(openui_style::InvalidationClass::Paint);
+        Ok(())
+    }
+
+    /// Set a selection with UTF-8 byte offsets and explicit direction.
+    /// The end is clamped to the value; a start beyond it collapses at the end.
+    /// Code-point splits are errors; grapheme-internal scalar boundaries remain valid.
+    pub fn set_selection_range(
+        &mut self,
+        handle: NodeHandle,
+        start: usize,
+        end: usize,
+        direction: SelectionDirection,
+    ) -> Result<(), EngineError> {
+        self.resolve(handle)?;
+        let control = self
+            .controls
+            .get_mut(&handle.index)
+            .ok_or(EngineError::NotEditable)?;
+        if !is_editable_role(control.role) {
+            return Err(EngineError::NotEditable);
+        }
+        let end = end.min(control.value.len());
+        let start = start.min(end);
+        if !control.value.is_char_boundary(start) || !control.value.is_char_boundary(end) {
+            return Err(EngineError::InvalidSelection);
+        }
+        control.finish_composition();
+        control.selection_direction = direction.normalized();
+        (control.selection_anchor, control.selection_focus) =
+            if control.selection_direction == SelectionDirection::Backward {
+                (end, start)
+            } else {
+                (start, end)
+            };
         self.sync_selection_attributes(handle);
         self.mark_dirty(openui_style::InvalidationClass::Paint);
         Ok(())
@@ -633,7 +763,9 @@ impl Engine {
                 .controls
                 .get_mut(&handle.index)
                 .ok_or(EngineError::NotEditable)?;
+            let before = control.value.clone();
             control.replace_selection(text);
+            control.note_user_edit(&before);
             control.value.clone()
         };
         let node = self.resolve(handle)?;
@@ -674,10 +806,12 @@ impl Engine {
                 EditCommand::SelectAll => {
                     control.selection_anchor = 0;
                     control.selection_focus = control.value.len();
+                    control.selection_direction = SelectionDirection::Forward;
                 }
                 EditCommand::Undo => control.undo(),
                 EditCommand::Redo => control.redo(),
             }
+            control.note_user_edit(&before);
             (control.value.clone(), before != control.value)
         };
         if changed {
@@ -732,8 +866,20 @@ impl Engine {
         handle: NodeHandle,
         text: &str,
     ) -> Result<(), EngineError> {
+        let before = self
+            .control_state(handle)?
+            .ok_or(EngineError::NotEditable)?
+            .composition_original
+            .as_ref()
+            .map(|(value, _, _, _)| value.clone())
+            .unwrap_or_else(|| self.controls[&handle.index].value.clone());
         self.update_composition(handle, text)?;
-        self.finish_composition(handle)
+        self.finish_composition(handle)?;
+        self.controls
+            .get_mut(&handle.index)
+            .ok_or(EngineError::NotEditable)?
+            .note_user_edit(&before);
+        Ok(())
     }
 
     /// Restore the value and selection from before the first preedit update.
@@ -1086,8 +1232,10 @@ impl Engine {
             "value" => {
                 control.clear_composition();
                 control.value = value.to_owned();
+                control.note_programmatic_value();
                 control.selection_anchor = value.len();
                 control.selection_focus = value.len();
+                control.selection_direction = SelectionDirection::Forward;
             }
             "placeholder" => control.placeholder = value.to_owned(),
             "min" => control.min = finite_number(value).unwrap_or(control.min),
@@ -1536,5 +1684,99 @@ mod tests {
                 FormControlRole::Button
             );
         }
+    }
+}
+
+fn scalar_boundary(value: &str, offset: usize) -> usize {
+    let mut offset = offset.min(value.len());
+    while !value.is_char_boundary(offset) {
+        offset -= 1;
+    }
+    offset
+}
+
+impl Engine {
+    /// Replace an input/textarea range without input/change events.
+    /// Document supplies deferred selection notifications after releasing borrows.
+    /// Offsets are UTF-8 bytes. Reversed ranges and code-point splits are errors.
+    pub fn replace_control_range(
+        &mut self,
+        handle: NodeHandle,
+        replacement: &str,
+        start: usize,
+        end: usize,
+        mode: RangeSelectionMode,
+    ) -> Result<(), EngineError> {
+        self.resolve(handle)?;
+        if start > end {
+            return Err(EngineError::InvalidSelection);
+        }
+        let (value, anchor, focus) = {
+            let control = self
+                .controls
+                .get(&handle.index)
+                .ok_or(EngineError::NotEditable)?;
+            if !is_editable_role(control.role) {
+                return Err(EngineError::NotEditable);
+            }
+            let start = start.min(control.value.len());
+            let end = end.min(control.value.len());
+            if !control.value.is_char_boundary(start) || !control.value.is_char_boundary(end) {
+                return Err(EngineError::InvalidSelection);
+            }
+            let (old_start, old_end) = control.selection();
+            let inserted_end = start
+                .checked_add(replacement.len())
+                .ok_or(EngineError::InvalidSelection)?;
+            // The checked final length bounds every adjusted selection.
+            control
+                .value
+                .len()
+                .checked_sub(end - start)
+                .and_then(|length| length.checked_add(replacement.len()))
+                .ok_or(EngineError::InvalidSelection)?;
+            let shifted = |offset: usize| offset - (end - start) + replacement.len();
+            let (new_start, new_end) = match mode {
+                RangeSelectionMode::Select => (start, inserted_end),
+                RangeSelectionMode::Start => (start, start),
+                RangeSelectionMode::End => (inserted_end, inserted_end),
+                RangeSelectionMode::Preserve => (
+                    if old_start > end {
+                        shifted(old_start)
+                    } else if old_start > start {
+                        start
+                    } else {
+                        old_start
+                    },
+                    if old_end > end {
+                        shifted(old_end)
+                    } else if old_end > start {
+                        inserted_end
+                    } else {
+                        old_end
+                    },
+                ),
+            };
+            let mut value = control.value.clone();
+            value.replace_range(start..end, replacement);
+            // Match programmatic value sanitization for the retained control.
+            // Selection calculations above use authored replacement bytes;
+            // clamp after sanitization, preserving the existing native units.
+            let value: String = if control.role == FormControlRole::TextArea {
+                value.replace("\r\n", "\n").replace('\r', "\n")
+            } else {
+                value
+                    .chars()
+                    .filter(|character| !matches!(character, '\r' | '\n'))
+                    .collect()
+            };
+            // setRangeText resets selection direction; native anchor/focus follows
+            // ordered positions. Verify this choice against Unicode references.
+            let new_start = scalar_boundary(&value, new_start.min(value.len()));
+            let new_end = scalar_boundary(&value, new_end.min(value.len()));
+            (value, new_start, new_end)
+        };
+        self.set_control_value(handle, value)?;
+        self.set_selection_range(handle, anchor, focus, SelectionDirection::None)
     }
 }

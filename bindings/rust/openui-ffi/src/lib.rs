@@ -8,10 +8,12 @@
 
 mod accessibility_snapshot;
 mod editing_command;
+mod event_properties;
 mod focus_events;
 #[cfg(test)]
 mod focus_tests;
 mod generated;
+mod input_events;
 mod native_app;
 #[cfg(test)]
 mod native_app_tests;
@@ -20,7 +22,9 @@ mod types;
 mod value;
 
 pub use editing_command::oui_element_edit_text_v1;
+pub use event_properties::oui_event_properties_v1;
 pub use focus_events::{oui_document_focused_element_v1, oui_event_focus_info_v1};
+pub use input_events::oui_event_input_info_v1;
 pub use native_app::{oui_app_request_exit, oui_app_run};
 pub use types::*;
 
@@ -919,6 +923,10 @@ pub extern "C" fn oui_document_update(document_handle: *mut OuiDocument) -> OuiS
                 "cannot update during a transaction",
             ));
         }
+        state
+            .native
+            .dispatch_pending_events()
+            .map_err(native_app::native_error)?;
         borrow_engine_mut(&state)?.update()?;
         Ok(())
     })
@@ -1363,9 +1371,43 @@ pub extern "C" fn oui_element_set_attribute(
             return Err(invalid("attribute name is empty"));
         }
         let value = utf8(value, "attribute value")?;
-        with_element_mut(element_handle as usize, |engine, node| {
-            engine.set_attribute(node, name, value)
-        })
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        state
+            .native
+            .set_attribute_for_native_facade(element.node, &name, &value)
+            .map_err(native_app::native_error)
+    })
+}
+
+// SAFETY CONTRACT: name is readable UTF-8 and out_value is writable pointer
+// storage. A present attribute returns one owned buffer, including an empty
+// attribute. The caller destroys that buffer; absent attributes return null.
+#[no_mangle]
+pub extern "C" fn oui_element_get_attribute_v1(
+    element_handle: *mut OuiElement,
+    name: OuiUtf8,
+    out_value: *mut *mut OuiBuffer,
+) -> OuiStatus {
+    ffi(|| {
+        if out_value.is_null() {
+            return Err(invalid("attribute output is null"));
+        }
+        let name = utf8(name, "attribute name")?;
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let value = borrow_engine(&state)?
+            .attribute(element.node, &name)?
+            .map(|text| text.as_bytes().to_vec());
+        let buffer = if let Some(value) = value {
+            register(LocalHandle::Buffer(Rc::new(value)))? as *mut OuiBuffer
+        } else {
+            ptr::null_mut()
+        };
+        // SAFETY: validated output storage. All fallible work precedes the
+        // ownership transfer, and errors do not modify out_value.
+        unsafe { ptr::write(out_value, buffer) };
+        Ok(())
     })
 }
 
@@ -1825,7 +1867,7 @@ fn event_can_be_canceled(event_type: u32) -> bool {
     // Native input/change notify an already completed edit or activation.
     // Keep the existing policy for other nonfocus event kinds until each
     // has its own pinned Chromium and consuming-app qualification.
-    !matches!(event_type, 12 | 13 | 16 | 17 | 25 | 26)
+    !matches!(event_type, 12 | 13 | 16 | 17 | 25 | 26 | 27 | 28)
 }
 
 fn invoke_event_listeners(
@@ -1920,14 +1962,20 @@ fn dispatch_event_to(
     if !event_can_be_canceled(event.event_type) {
         event.flags &= !OUI_EVENT_FLAG_DEFAULT_PREVENTED;
     }
-    if matches!(event.event_type, 25 | 26) {
+    if matches!(event.event_type, 25 | 26 | 27 | 28) {
         // Explicit notifications have no focus default action. Share the Rust
         // route so native listeners and versioned metadata see the same event.
         // The ordinary focus/blur branch below still performs a real transfer.
-        let native = state
-            .native
-            .dispatch_focus_notification_for_native_facade(target, event.event_type == 25)
-            .map_err(native_app::native_error)?;
+        let native = if matches!(event.event_type, 25 | 26) {
+            state
+                .native
+                .dispatch_focus_notification_for_native_facade(target, event.event_type == 25)
+        } else {
+            state
+                .native
+                .dispatch_selection_notification_for_native_facade(target, event.event_type == 27)
+        }
+        .map_err(native_app::native_error)?;
         event.flags = 0;
         if native.propagation_stopped() {
             event.flags |= OUI_EVENT_FLAG_PROPAGATION_STOPPED;
@@ -2281,8 +2329,10 @@ pub extern "C" fn oui_element_set_control_value(
         let value = utf8(value, "control value")?;
         let element = element(element_handle as usize)?;
         let state = element_document(&element)?;
-        borrow_engine_mut(&state)?.set_control_value(element.node, value)?;
-        Ok(())
+        state
+            .native
+            .set_control_value_for_native_facade(element.node, &value)
+            .map_err(native_app::native_error)
     })
 }
 
@@ -2339,8 +2389,10 @@ pub extern "C" fn oui_element_set_selection(
     ffi(|| {
         let element = element(element_handle as usize)?;
         let state = element_document(&element)?;
-        borrow_engine_mut(&state)?.set_selection(element.node, anchor, focus)?;
-        Ok(())
+        state
+            .native
+            .set_selection_for_native_facade(element.node, anchor, focus)
+            .map_err(native_app::native_error)
     })
 }
 
@@ -2365,6 +2417,178 @@ pub extern "C" fn oui_element_get_selection(
         unsafe {
             ptr::write(out_anchor, selection.0);
             ptr::write(out_focus, selection.1);
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: document is an owning-thread handle, out_pending is writable.
+// One bounded turn releases engine/listener borrows before callbacks; a callback
+// may queue a later turn. User data follows the existing listener lifetime rules.
+#[no_mangle]
+pub extern "C" fn oui_document_dispatch_pending_events_v1(
+    document_handle: *mut OuiDocument,
+    out_pending: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_pending.is_null() {
+            return Err(invalid("pending output is null"));
+        }
+        let state = document(document_handle as usize)?;
+        state
+            .native
+            .dispatch_pending_events()
+            .map_err(native_app::native_error)?;
+        let pending = state
+            .native
+            .has_pending_events()
+            .map_err(native_app::native_error)?;
+        // SAFETY: the caller supplies writable storage for one uint32_t.
+        unsafe {
+            ptr::write(out_pending, u32::from(pending));
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: element is an owning-thread live text-control handle.
+#[no_mangle]
+pub extern "C" fn oui_element_set_selection_range_v1(
+    element_handle: *mut OuiElement,
+    start: usize,
+    end: usize,
+    direction: u32,
+) -> OuiStatus {
+    ffi(|| {
+        let direction = match direction {
+            0 => openui::SelectionDirection::None,
+            1 => openui::SelectionDirection::Forward,
+            2 => openui::SelectionDirection::Backward,
+            _ => return Err(invalid("invalid selection direction")),
+        };
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        state
+            .native
+            .set_selection_range_for_native_facade(element.node, start, end, direction)
+            .map_err(native_app::native_error)
+    })
+}
+
+// SAFETY CONTRACT: element is live; out_direction is writable for one uint32_t.
+#[no_mangle]
+pub extern "C" fn oui_element_get_selection_direction_v1(
+    element_handle: *mut OuiElement,
+    out_direction: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_direction.is_null() {
+            return Err(invalid("direction output is null"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let direction = {
+            let engine = borrow_engine(&state)?;
+            let control = engine
+                .control_state(element.node)?
+                .filter(|c| {
+                    matches!(
+                        c.role,
+                        openui_dom::FormControlRole::TextInput
+                            | openui_dom::FormControlRole::TextArea
+                    )
+                })
+                .ok_or_else(|| {
+                    ApiError::new(
+                        OuiStatus::InvalidState,
+                        "element is not an editable control",
+                    )
+                })?;
+            match control.selection_direction() {
+                openui::SelectionDirection::None => 0,
+                openui::SelectionDirection::Forward => 1,
+                openui::SelectionDirection::Backward => 2,
+                _ => return Err(invalid("unknown native selection direction")),
+            }
+        };
+        // SAFETY: output was validated above and is written only on success.
+        unsafe {
+            ptr::write(out_direction, direction);
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: element is live, replacement is readable for its UTF-8 length.
+#[no_mangle]
+pub extern "C" fn oui_element_replace_control_range_v1(
+    element_handle: *mut OuiElement,
+    replacement: OuiUtf8,
+    start: usize,
+    end: usize,
+    mode: u32,
+) -> OuiStatus {
+    ffi(|| {
+        let mode = match mode {
+            0 => openui::RangeSelectionMode::Preserve,
+            1 => openui::RangeSelectionMode::Select,
+            2 => openui::RangeSelectionMode::Start,
+            3 => openui::RangeSelectionMode::End,
+            _ => return Err(invalid("invalid range selection mode")),
+        };
+        let replacement = utf8(replacement, "range replacement")?;
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        state
+            .native
+            .replace_control_range_for_native_facade(element.node, &replacement, start, end, mode)
+            .map_err(native_app::native_error)
+    })
+}
+
+// SAFETY CONTRACT: element is live on the owning thread, output is writable.
+#[no_mangle]
+pub extern "C" fn oui_element_is_connected_v1(
+    element_handle: *mut OuiElement,
+    out_connected: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_connected.is_null() {
+            return Err(invalid("connected output is null"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let connected = borrow_engine(&state)?.is_connected(element.node)?;
+        // SAFETY: writable output was validated before querying or mutation.
+        unsafe {
+            ptr::write(out_connected, u32::from(connected));
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: both handles are owning-thread live nodes, output writable.
+#[no_mangle]
+pub extern "C" fn oui_element_is_same_node_v1(
+    first: *mut OuiElement,
+    second: *mut OuiElement,
+    out_same: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_same.is_null() {
+            return Err(invalid("node equality output is null"));
+        }
+        let first = element(first as usize)?;
+        let second = element(second as usize)?;
+        let a = element_document(&first)?;
+        let b = element_document(&second)?;
+        let same = a
+            .native
+            .is_same_node_for_native_facade(first.node, &b.native, second.node)
+            .map_err(native_app::native_error)?;
+        // SAFETY: writable output was validated; errors leave it unchanged.
+        unsafe {
+            ptr::write(out_same, u32::from(same));
         }
         Ok(())
     })
@@ -3718,6 +3942,20 @@ mod tests {
             (48, 8)
         );
         assert_eq!((size_of::<OuiEvent>(), align_of::<OuiEvent>()), (88, 8));
+        assert_eq!(
+            (
+                size_of::<OuiEventPropertiesV1>(),
+                align_of::<OuiEventPropertiesV1>()
+            ),
+            (16, 4)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiInputEventInfoV1>(),
+                align_of::<OuiInputEventInfoV1>()
+            ),
+            (40, 8)
+        );
         assert_eq!(
             (
                 size_of::<OuiAccessibilityUpdate>(),
@@ -6237,5 +6475,146 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn c_native_node_queries_keep_owned_aliases_and_follow_detached_ancestors() {
+        let doc = create_document(64, 64);
+        let mut first = ptr::null_mut();
+        let mut alias = ptr::null_mut();
+        assert_eq!(oui_document_root(doc, &mut first), OuiStatus::Ok);
+        assert_eq!(oui_document_root(doc, &mut alias), OuiStatus::Ok);
+        assert_ne!(first, alias);
+        let parent = create_element(doc, 0, first);
+        let child = create_element(doc, 0, parent);
+        let mut out = 55;
+        assert_eq!(
+            oui_element_is_same_node_v1(first, alias, &mut out),
+            OuiStatus::Ok
+        );
+        assert_eq!(out, 1);
+        assert_eq!(oui_element_destroy(first), OuiStatus::Ok);
+        assert_eq!(oui_element_is_connected_v1(alias, &mut out), OuiStatus::Ok);
+        assert_eq!(out, 1);
+        assert_eq!(
+            oui_element_is_same_node_v1(alias, child, &mut out),
+            OuiStatus::Ok
+        );
+        assert_eq!(out, 0);
+        let other = create_document(64, 64);
+        let mut other_root = ptr::null_mut();
+        assert_eq!(oui_document_root(other, &mut other_root), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_is_same_node_v1(alias, other_root, &mut out),
+            OuiStatus::Ok
+        );
+        assert_eq!(out, 0);
+        assert_eq!(oui_element_is_connected_v1(child, &mut out), OuiStatus::Ok);
+        assert_eq!(out, 1);
+        assert_eq!(oui_element_detach(parent), OuiStatus::Ok);
+        assert_eq!(oui_element_is_connected_v1(child, &mut out), OuiStatus::Ok);
+        assert_eq!(out, 0);
+        assert_eq!(oui_element_append_child(alias, parent), OuiStatus::Ok);
+        assert_eq!(oui_element_is_connected_v1(child, &mut out), OuiStatus::Ok);
+        assert_eq!(out, 1);
+        for handle in [child, parent, alias, other_root] {
+            assert_eq!(oui_element_destroy(handle), OuiStatus::Ok);
+        }
+        for handle in [doc, other] {
+            assert_eq!(oui_document_destroy(handle), OuiStatus::Ok);
+        }
+    }
+
+    #[test]
+    fn c_native_node_queries_reject_invalid_stale_reentrant_and_wrong_thread_handles() {
+        let doc = create_document(64, 64);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(doc, &mut root), OuiStatus::Ok);
+        let child = create_element(doc, 0, root);
+        let mut out = 55;
+        assert_eq!(
+            oui_element_is_connected_v1(root, ptr::null_mut()),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(
+            oui_element_is_same_node_v1(root, root, ptr::null_mut()),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(
+            oui_element_is_connected_v1(ptr::null_mut(), &mut out),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(out, 55);
+        assert_eq!(
+            oui_element_is_same_node_v1(root, ptr::null_mut(), &mut out),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(out, 55);
+        let unknown = ptr::without_provenance_mut::<OuiElement>(usize::MAX);
+        assert_eq!(
+            oui_element_is_connected_v1(unknown, &mut out),
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(out, 55);
+        assert_eq!(
+            oui_element_is_same_node_v1(root, unknown, &mut out),
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(out, 55);
+        let state = document(doc as usize).unwrap();
+        let held = borrow_engine_mut(&state).unwrap();
+        assert_eq!(
+            oui_element_is_connected_v1(root, &mut out),
+            OuiStatus::Reentrant
+        );
+        assert_eq!(out, 55);
+        assert_eq!(
+            oui_element_is_same_node_v1(root, root, &mut out),
+            OuiStatus::Reentrant
+        );
+        assert_eq!(out, 55);
+        drop(held);
+        drop(state);
+        let address = root as usize;
+        std::thread::spawn(move || {
+            let mut out = 55;
+            let root = address as *mut OuiElement;
+            assert_eq!(
+                oui_element_is_connected_v1(root, &mut out),
+                OuiStatus::WrongThread
+            );
+            assert_eq!(out, 55);
+            assert_eq!(
+                oui_element_is_same_node_v1(root, root, &mut out),
+                OuiStatus::WrongThread
+            );
+            assert_eq!(out, 55);
+        })
+        .join()
+        .unwrap();
+        assert_eq!(oui_element_remove(child), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_is_connected_v1(child, &mut out),
+            OuiStatus::StaleHandle
+        );
+        assert_eq!(out, 55);
+        assert_eq!(
+            oui_element_is_same_node_v1(root, child, &mut out),
+            OuiStatus::StaleHandle
+        );
+        assert_eq!(out, 55);
+        assert_eq!(
+            oui_element_is_same_node_v1(child, root, &mut out),
+            OuiStatus::StaleHandle
+        );
+        assert_eq!(out, 55);
+        assert_eq!(oui_document_destroy(doc), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_is_connected_v1(root, &mut out),
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(out, 55);
+        assert_eq!(oui_element_destroy(child), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
     }
 }

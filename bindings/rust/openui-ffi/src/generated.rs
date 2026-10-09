@@ -488,5 +488,5 @@ pub(crate) fn expected_value_tag(property: StyleProperty) -> u32 {
 }
 
 pub(crate) fn valid_event_type(value: u32) -> bool {
-    matches!(value, 1..=26)
+    matches!(value, 1..=28)
 }

@@ -51,8 +51,8 @@ def compilers() -> tuple[str | None, str | None, list[str], list[str], list[str]
     cc = system_cc if use_system else configured.get("CC", system_cc)
     cxx = system_cxx if use_system else configured.get("CXX", system_cxx or cc)
     configured_flags = [] if use_system else shlex.split(configured.get("CXXFLAGS", ""))
-    c_flags = configured_flags + shlex.split(os.environ.get("CFLAGS", ""))
-    cxx_flags = configured_flags + shlex.split(os.environ.get("CXXFLAGS", ""))
+    c_flags = ["-pthread", *configured_flags, *shlex.split(os.environ.get("CFLAGS", ""))]
+    cxx_flags = ["-pthread", *configured_flags, *shlex.split(os.environ.get("CXXFLAGS", ""))]
     link_flags: list[str] = shlex.split(os.environ.get("LDFLAGS", ""))
     sysroot = None if use_system else configured.get("PKG_CONFIG_SYSROOT_DIR")
     if sysroot:

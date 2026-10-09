@@ -44,6 +44,15 @@ Hosted X11 and Wayland window checks pass on virtual displays. Physical lab,
 complete native API, compositor and release qualification remain open.
 [Completed public evidence](docs/renderer/generated/native-rounded-layer-v4.json).
 
+The [native selection and element-query APIs](docs/v02/native-selection-events.md) are now implemented on
+the PR branch. They provide range replacement, selection direction, deferred
+native selection events, node identity/connectivity, owned C attribute reads
+and native event metadata through the shared Rust document. The current ABI
+has 125 exports and 34 layouts, preserving every previous export and layout.
+Fresh combined consumer, workspace, hosted and renderer verification is
+pending. The preceding completed pixel results measure `5b05e1b5`; they do not
+qualify this new API checkpoint. Composition and complete API parity stay open.
+
 The [native text commit trial](docs/v02/native-text-commit.md) remains private and unapplied.
 Both Rust runs match all six Chromium scenarios and 29 full callback rows;
 C/C++ each match the common fields twice. All fifteen targeted Rust guards pass,

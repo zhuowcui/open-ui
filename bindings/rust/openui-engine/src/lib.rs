@@ -21,7 +21,8 @@ pub use animation::{
 
 pub use interaction::{
     ActivationResult, ControlAdjustment, ControlState, EditCommand, EventPhase, EventRoute,
-    FocusOrigin, PointerEventKind, PointerUpdate, RouteStep, TextDirection, TextUnit,
+    FocusOrigin, PointerEventKind, PointerUpdate, RangeSelectionMode, RouteStep,
+    SelectionDirection, TextDirection, TextUnit,
 };
 
 use openui_compositor::{SceneGeneration, SceneRect, SceneSnapshot};
@@ -2214,6 +2215,11 @@ impl Engine {
         }
         self.update()?;
         Ok(self.node_bounds(node))
+    }
+
+    /// Test connectivity without layout work or focus side effects.
+    pub fn is_connected(&self, handle: NodeHandle) -> Result<bool, EngineError> {
+        Ok(self.node_is_connected(self.resolve(handle)?))
     }
 
     fn node_is_connected(&self, mut node: NodeId) -> bool {

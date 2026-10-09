@@ -52,6 +52,8 @@ pub(crate) fn dispatch_native_listener(
         "pointercancel" | "mousecancel" => 24,
         "focusin" => 25,
         "focusout" => 26,
+        "select" => 27,
+        "selectionchange" => 28,
         _ => return Ok(()),
     };
     let mut event = synthesized_event(
@@ -84,7 +86,9 @@ pub(crate) fn dispatch_native_listener(
     if native.immediate_propagation_stopped() {
         event.flags |= OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED;
     }
+    let _event_scope = super::event_properties::EventPropertiesScope::new(state, native, &event);
     let _focus_scope = super::focus_events::FocusEventScope::new(state, native, &event);
+    let _input_scope = super::input_events::InputEventScope::new(state, native, &event);
     match capture {
         Some(capture) => invoke_event_listeners(state, node, capture, &mut event)?,
         None => {

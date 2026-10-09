@@ -25,3 +25,5 @@ id,c_name,rust_name
 24,OUI_EVENT_POINTER_CANCEL,pointercancel
 25,OUI_EVENT_FOCUS_IN,focusin
 26,OUI_EVENT_FOCUS_OUT,focusout
+27,OUI_EVENT_SELECT,select
+28,OUI_EVENT_SELECTION_CHANGE,selectionchange

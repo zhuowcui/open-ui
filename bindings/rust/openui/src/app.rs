@@ -355,6 +355,15 @@ impl openui_platform::PlatformApplication for App {
         self.exit_requested()
     }
 
+    fn dispatch_pending_events(&mut self) -> Result<bool, String> {
+        self.document
+            .dispatch_pending_events()
+            .map_err(|error| error.to_string())?;
+        self.document
+            .has_pending_events()
+            .map_err(|error| error.to_string())
+    }
+
     fn clipboard_text(&self) -> Result<String, String> {
         self.document
             .clipboard_text()

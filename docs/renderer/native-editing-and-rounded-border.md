@@ -37,7 +37,7 @@ A private input metadata implementation matches eleven Chromium scenarios and 69
 
 Composition still differs in all four measured common-field scenarios. Repeated Chromium traces define required native behavior for callback mutation, cross-target focus, direct editing commands, readonly/disabled/detached controls and reactivation. Those are reference observations, not native API passes.
 
-Range replacement, selection direction and deferred event delivery are implemented in the measured private checkpoint; integration and fresh combined public verification remain required. Eight Unicode cases with representable scalar boundaries and twelve selection-task scenarios repeat byte-identically. A further 24 cross-control/reentry cases repeat with 98 callback rows. Selectionchange and select use distinct delivery phases; target-local coalescing lasts until notification delivery, callbacks observe current retained state, and detached live targets retain pending notifications. The earlier single-queue draft is insufficient. The measured private implementation provides shared native scheduling, public methods and Linux event-loop integration. New C event property and attribute queries, Unicode cases and focus neighbors remain uncompiled and require fresh public verification.
+Range replacement, selection direction and deferred event delivery are implemented in the measured private checkpoint; fresh combined public verification remains required. Eight Unicode cases with representable scalar boundaries and twelve selection-task scenarios repeat byte-identically. A further 24 cross-control/reentry cases repeat with 98 callback rows. Selectionchange and select use distinct delivery phases; target-local coalescing lasts until notification delivery, callbacks observe current retained state, and detached live targets retain pending notifications. The earlier single-queue draft is insufficient. The measured private implementation provides shared native scheduling, public methods and Linux event-loop integration. New C event property and attribute queries, Unicode cases and focus neighbors are integrated but uncompiled and require fresh public verification.
 
 Existing UTF-8/grapheme positions cannot represent every UTF-16 position in the browser reference. Those differences remain explicit. Neither fixed expected values nor script execution substitutes for native behavior.
 
@@ -89,7 +89,7 @@ results. [Evidence](generated/native-selection-followup-v1.json).
 That private selection matrix does not observe C event properties or include
 the eight Unicode and twenty-two disabled-focus neighbor cases in C. The new
 C event property and owned attribute queries and those extended consumers are
-prepared but uncompiled. The combined public API port requires fresh Rust,
+integrated but uncompiled. The combined public API port requires fresh Rust,
 C, C++, workspace/ABI, hosted and renderer verification. Composition and
 complete native API qualification remain open.
 
