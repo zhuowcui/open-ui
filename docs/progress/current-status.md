@@ -22,6 +22,29 @@ remain open.
 
 ## Current implementation checkpoint
 
+The checkbox/radio implementation is integrated and measured on clean public
+`54cf4b3c`. Rust, C and C++ apps each match 308/308 control observations against
+pinned Chromium, including 220 checkable and 88 fieldset cases. Previous
+selection regressions remain unchanged. Default light controls on white match
+160/160 appearance cases and all 640 PNG comparisons at five scales and eight
+subpixel phases. This verifies the measured scope through native APIs.
+
+All 8,623 workspace tests and 52 headless C tests pass on that source, with
+13 ignored workspace tests recorded. Five successful stages, including the
+workspace run, are inherited from its audited disk-interrupted attempt; its
+failed result is preserved. All 100 recorded stages pass. The ABI has 128
+exports and 34 layouts; 25 C and 19 C++ consumers pass. Seven hosted hardening
+jobs and three source-verified virtual window reports pass. Source and artifact
+audits were saved before later documentation and C formatting updates.
+[Public control evidence](../renderer/generated/native-checkable-public-v1.json).
+
+A fresh full public renderer census, complete native APIs and control behavior,
+the required hosted Chromium equality job, retained compositor, physical lab
+and release qualification remain open. The full renderer results below still
+fail; the control checks do not qualify the whole renderer.
+
+### Earlier renderer evidence
+
 The [native editing and rounded border follow-up](../renderer/native-editing-and-rounded-border.md)
 is implemented and measured on clean PR checkpoint `5b05e1b5`. Its fresh
 consuming Rust app matches 35/35 immutable Chromium images twice, including

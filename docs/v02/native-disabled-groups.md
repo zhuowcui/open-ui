@@ -64,13 +64,27 @@ binary and output paths while preserving reference bytes and comparison logic.
 
 ## Integrated checkable follow-up
 
-The shared checkbox/radio implementation is now integrated into the umbrella
-branch. Fresh public-source qualification is pending. Its private implementation
-matches **220/220 behavior cases in each of Rust, C and
-C++**, with identical repeated output. These measure programmatic assignment,
+The shared checkbox/radio implementation is integrated into the umbrella
+branch. On clean public `54cf4b3c`, apps match **220/220 checkable behavior
+cases in each of Rust, C and C++**, with identical repeated output. The 88
+fieldset cases per language and all previous selection regressions also stay
+exact. These measure programmatic assignment,
 authored defaults, form/tree grouping, clones, callback state, cancellation,
 indeterminate state and the distinction between ordinary activation and raw
 click events. Apps call actual native APIs. Open UI executes no JavaScript.
+
+The public Rust appearance app matches **160/160 cases and all 640 PNG
+comparisons** at five scales and eight subpixel phases. Its scope is the default
+light appearance on white for checked/unchecked and disabled/enabled controls.
+Source and artifact audits were saved before subsequent documentation and C
+formatting updates. All 8,623 workspace tests and 52 headless C tests pass on
+that source, with 13 ignored workspace tests recorded. Five successful stages,
+including the workspace run, are explicitly inherited from the audited
+disk-interrupted owner; that owner's failed result remains preserved. All
+100 recorded stages pass, including 25 C and 19 C++ consumers. The ABI has
+128 exports and 34 layouts. Seven hosted hardening jobs and three virtual
+window reports pass. Physical lab qualification remains open.
+[Public control behavior, appearance and provenance](../renderer/generated/native-checkable-public-v1.json).
 
 The private runtime is clean `a17f8a33`; the corrected C/C++ app source is clean
 `cef6a7eb`. Their only difference is the consuming C example; framework and
@@ -106,7 +120,7 @@ before integration. Both full pixel gates still fail.
 
 ## Remaining work
 
-Fresh qualification of the public checkpoint, complete control behavior and
+A complete fresh public renderer census, complete control behavior and
 appearance, and the required hosted Chromium equality job remain open. The
 hosted historical-image job checks archive integrity; its success does not
 qualify current rendering against Chromium. Pinned inputs for hosted pixel

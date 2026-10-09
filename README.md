@@ -27,6 +27,16 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
+On clean public checkpoint `54cf4b3c`, Rust, C and C++ apps each match all
+308 measured control-behavior cases against pinned Chromium, including 220
+checkbox/radio cases. The native Rust appearance app also matches 160/160
+default-control cases, with all 640 PNG comparisons exact. All 8,623 workspace
+tests and 52 headless C tests pass on that source; the workspace run is reused
+from its audited successful stage before a disk-space interruption. Seven
+hosted hardening jobs pass. These results qualify the measured controls.
+Complete native APIs, the full renderer, compositor and hardware qualification
+remain open. [Public control evidence](docs/renderer/generated/native-checkable-public-v1.json).
+
 The [native editing and rounded border follow-up](docs/renderer/native-editing-and-rounded-border.md)
 is verified on clean PR checkpoint `5b05e1b5`. The consuming Rust app matches
 35/35 unchanged Chromium images twice. Focused **640/640** and primitive
@@ -71,19 +81,19 @@ All 8,618 workspace tests, 51 headless C tests, 24 C and 18 C++ consumers and
 twenty local checks pass. All seven explicit hosted hardening jobs and the
 three source-verified virtual window reports pass. The ABI has 127 exports and
 34 layouts, preserving previous exports and layouts. Default control appearance
-and complete checkbox/radio behavior remain unqualified. Open UI runs no
+was unqualified at that checkpoint; the follow-up below verifies its measured
+scope. Complete checkbox/radio behavior remains open. Open UI runs no
 JavaScript. See the [native disabled groups](docs/v02/native-disabled-groups.md).
 [Completed public API evidence](docs/renderer/generated/native-selection-public-v1.json).
 
-The shared checkbox/radio follow-up is now integrated into this branch, with
-fresh public qualification pending. Native Rust, C and C++ apps each match
-220 private behavior cases. The default native appearance fix matches 160/160
-private app cases at five scales, with all 640 PNG comparisons exact. Both
-raster matrices and all original/expanded comparison fields stay unchanged;
-the full pixel gates still fail. Form-owner resets, keyboard behavior and
-complete native APIs remain open. The hosted historical-image audit verifies
-archive integrity, and does not qualify Chromium equality.
-[Scoped appearance and renderer evidence](docs/renderer/generated/native-checkable-theme-private-v1.json).
+The shared checkbox/radio follow-up is integrated and its measured behavior
+and default appearance are verified on clean public `54cf4b3c`. The earlier
+private renderer trial preserves every original and expanded comparison field;
+the full pixel gates still fail. A complete fresh public renderer census,
+form-owner resets, keyboard behavior and complete native APIs remain open.
+The hosted historical-image audit verifies archive integrity, and does not
+qualify Chromium equality.
+[Earlier private renderer evidence](docs/renderer/generated/native-checkable-theme-private-v1.json).
 
 The [native text commit trial](docs/v02/native-text-commit.md) remains private and unapplied.
 Both Rust runs match all six Chromium scenarios and 29 full callback rows;

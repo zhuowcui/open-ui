@@ -64,7 +64,12 @@ All 8,618 workspace tests, 51 headless C tests, 24 C and 18 C++ consumers and
 twenty local checks pass. All seven explicit hosted hardening jobs and the
 three source-verified virtual window reports pass. The ABI has 127 exports and
 34 layouts, preserving previous exports and layouts. Default control appearance
-and complete checkbox/radio behavior remain unqualified. Open UI runs no
+was unqualified at that checkpoint. The follow-up on clean public `54cf4b3c`
+now matches 220/220 checkable behavior cases per language and 160/160 default
+appearance cases, including all 640 PNG comparisons. Its measured appearance
+scope is light controls on white at five scales and eight subpixel phases.
+Complete control behavior and a fresh full public renderer census remain open.
+[Public control evidence](generated/native-checkable-public-v1.json). Open UI runs no
 JavaScript. See the [native disabled groups](../v02/native-disabled-groups.md).
 [Completed public API evidence](generated/native-selection-public-v1.json).
 
