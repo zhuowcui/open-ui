@@ -313,6 +313,14 @@ font-family shaping and every remaining needed
 native API remain implementation work.
 [Completed failed census and clean checks](../renderer/generated/native-monochrome-strikes-v2.json).
 
+The corrected ordinary-author raster policy keeps all ten native images and
+70 bounds exact in dirty-source diagnostics. In all 160 affected original
+comparisons it restores the 16 lost exact results, retains all seven gains and
+repairs all 34 worsened differences. Focused 640/640, primitive 960/960 and 510
+shared text/paint tests pass. The 39 existing affected mismatches still fail;
+fresh clean complete qualification remains required.
+[Correction diagnostics](../renderer/generated/native-monochrome-strikes-v3.json).
+
 ## No JavaScript runtime
 
 Open UI does not run application or test JavaScript, in this or future

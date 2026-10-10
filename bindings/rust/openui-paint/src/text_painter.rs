@@ -64,7 +64,7 @@ pub fn paint_text(
     {
         // Fit hinted monochrome strikes with Fontations. The resolved font's
         // hinting setting preserves the original outline for unhinted strikes.
-        TextRasterPolicy::ChromiumAliased
+        TextRasterPolicy::ChromiumAuthorAliased
     } else {
         TextRasterPolicy::Skia
     };

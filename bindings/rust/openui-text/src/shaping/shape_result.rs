@@ -32,7 +32,10 @@ pub enum TextRasterPolicy {
     ChromiumNativeControl,
     ChromiumEmbeddedDocument,
     ChromiumAuthorLcd,
+    /// Physical monochrome strike used by rotated text and ruby.
     ChromiumAliased,
+    /// Ordinary author text, respecting the resolved font hinting setting.
+    ChromiumAuthorAliased,
 }
 
 /// Match Chromium's retained 10px LCD mask in the one fixed-point phase cell
@@ -143,16 +146,18 @@ fn fontations_compatible_font(
         }
         // An explicitly unhinted resolved strike must keep its original
         // outline. Monochrome coverage alone does not enable outline fitting.
-        TextRasterPolicy::ChromiumAliased if source_font.hinting() == FontHinting::None => {
+        TextRasterPolicy::ChromiumAuthorAliased if source_font.hinting() == FontHinting::None => {
             return None;
         }
-        TextRasterPolicy::ChromiumAliased => HintingInstance::new(
-            &outlines,
-            Size::new(size),
-            location,
-            skrifa::outline::HintingMode::Strong,
-        )
-        .ok()?,
+        TextRasterPolicy::ChromiumAliased | TextRasterPolicy::ChromiumAuthorAliased => {
+            HintingInstance::new(
+                &outlines,
+                Size::new(size),
+                location,
+                skrifa::outline::HintingMode::Strong,
+            )
+            .ok()?
+        }
         TextRasterPolicy::Skia => return None,
     };
 
@@ -176,9 +181,10 @@ fn fontations_compatible_font(
         TextRasterPolicy::ChromiumNativeControl | TextRasterPolicy::ChromiumAuthorLcd
     );
     let embedded_document = raster_policy == TextRasterPolicy::ChromiumEmbeddedDocument;
-    // Chromium disables subpixel positioning for monochrome strikes. Retain
-    // it for the antialiased policies, whose masks depend on the glyph phase.
-    font.set_subpixel(raster_policy != TextRasterPolicy::ChromiumAliased);
+    // Ordinary author monochrome strikes use integer glyph positions.
+    // Rotated/ruby strikes retain their fractional local positions before
+    // the paint transform maps them into the device axes.
+    font.set_subpixel(raster_policy != TextRasterPolicy::ChromiumAuthorAliased);
     font.set_linear_metrics(native_control);
     font.set_edging(if native_control {
         Edging::SubpixelAntiAlias
@@ -516,8 +522,10 @@ impl ShapeResult {
             // Hint at the physical size once and keep that custom outline at
             // its unit font size; glyph positions are converted below.
             let mut physical_source_font;
-            let compatible_source_font = if raster_policy == TextRasterPolicy::ChromiumAliased
-                && (device_scale - 1.0).abs() > f32::EPSILON
+            let compatible_source_font = if matches!(
+                raster_policy,
+                TextRasterPolicy::ChromiumAliased | TextRasterPolicy::ChromiumAuthorAliased
+            ) && (device_scale - 1.0).abs() > f32::EPSILON
             {
                 physical_source_font = source_font.clone();
                 physical_source_font.set_size(source_font.size() * device_scale);
@@ -533,7 +541,10 @@ impl ShapeResult {
             let sk_font = compatible_font.as_ref().unwrap_or(source_font);
             let mut physical_font;
             let compatible_outline_is_physical = compatible_font.is_some()
-                && raster_policy == TextRasterPolicy::ChromiumAliased
+                && matches!(
+                    raster_policy,
+                    TextRasterPolicy::ChromiumAliased | TextRasterPolicy::ChromiumAuthorAliased
+                )
                 && (device_scale - 1.0).abs() > f32::EPSILON;
             let raster_font =
                 if (device_scale - 1.0).abs() > f32::EPSILON && !compatible_outline_is_physical {

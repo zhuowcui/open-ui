@@ -27,6 +27,42 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
+### Ordinary text raster policy correction
+
+The shared raster path now selects a separate policy for ordinary author
+monochrome text. It respects the resolved font hinting setting and integer
+glyph positions. Rotated and ruby text retain their physical strike and
+fractional local positions. This fixes the coupling that caused the rejected
+full-census regression below, without a test ID, font name, scale or output
+exception.
+
+Fresh dirty-source diagnostics match **10/10 native images and 70/70 bounds**
+against unchanged, independently repeated Chromium captures. Process repeats,
+unchanged-frame repeats, the Rust click callback and teardown pass at the four
+required profiles and a 3× neighbor.
+
+All 40 affected original test IDs run at all four profiles: **121/160 exact,
+39 different, zero errors**. Every one of the **16 lost exact comparisons is
+restored**, all **7 exact gains are retained**, and all **34 worsened
+comparisons are repaired**. Compared with the earlier accepted source, this
+partial scope has 7 gains, no exact losses and no worsened differences. The
+39 existing mismatches remain failures.
+
+Focused **640/640** and primitive **960/960** are exact, with every native
+image and Chromium reference unchanged. All **1,760 diagnostic rows** and
+fresh compiled artifacts are audited. All **510 shared text and paint tests**
+pass with zero failures or ignored tests. The initial wrapper failure on a
+wrong report filename is preserved; the continuation uses the same verified
+binary and frozen source.
+
+These are candidate diagnostics. Fresh clean complete original/expanded
+censuses, workspace, ABI and hosted checks on the committed correction remain
+pending. Full renderer equality, general font-family shaping, reviewed
+residual ownership, remaining native APIs, compositor, physical lab and
+release qualification remain open. Open UI never runs JavaScript; consuming
+apps use public Rust methods and Rust callbacks.
+[Corrected policy evidence](docs/renderer/generated/native-monochrome-strikes-v3.json).
+
 ### Monochrome text regression (rejected)
 
 Fresh CPU verification at clean `40ff6178` is exact on focused **640/640**

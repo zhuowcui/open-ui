@@ -64,6 +64,11 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   comparisons and worsen 34 differences. The font candidate is rejected
   pending repair of its effect on rotated and ruby text.
   [Failed full census and clean checks](../renderer/generated/native-monochrome-strikes-v2.json).
+  The subsequent shared policy correction restores all 16 lost exact
+  comparisons and retains the seven gains in 160 dirty-source diagnostics.
+  All ten native images, focused/primitive suites and 510 shared tests pass;
+  fresh clean complete qualification remains pending.
+  [Correction diagnostics](../renderer/generated/native-monochrome-strikes-v3.json).
   Homogeneous shaping remains restricted to the deterministic fallback-family
   profile; complete support for other native family lists is required work.
   Old Open UI screenshots do not constrain that work. See the
