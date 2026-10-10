@@ -22,29 +22,39 @@ remain open.
 
 ## Current implementation checkpoint
 
-Fresh complete CPU verification at clean `883ea716` is exact on focused
-**640/640** and primitive **960/960** comparisons. Original **21,342/22,924**
-and expanded **22,145/23,728** are exact, with zero render errors. Both full
-pixel gates still exit 1 for 1,582 and 1,583 differences. All 48,252 comparison
-rows retain the preceding native pixels and every Chromium reference field,
-with no gains, losses or worsened differences.
+Fresh complete CPU verification at clean `87339e4d` is exact on focused
+**640/640** and primitive **960/960** comparisons. Original **21,343/22,924**
+and expanded **22,146/23,728** are exact, with zero render errors. Both full
+pixel gates still exit 1 for 1,581 and 1,582 differences. Each full census gains
+one exact comparison, with no losses or worsened differences. All **48,252
+rows** are audited and every Chromium reference field is unchanged.
 
-The new public `Element::set_line_height_length(LengthValue)` and
-`Style::line_height_length` retain relative declarations through the shared
-Engine. A native Rust callback changes only the parent font. All **10/10
-images and 60/60 bounds** match independently repeated pinned Chromium captures
-at the four required profiles and a 3× scale neighbor. The six measured units
-are `ch`, `ex`, `lh`, `em`, `rem` and percentage; these rectangle cases do not
-qualify all text line boxes, glyphs or font contexts.
+The shared line breaker keeps logical words together across font/script/bidi
+shaping boundaries and strips collapsed spaces at those boundaries. The mobile
+`ttwf-reftest-borderRadius` comparison improves from 45,704 wrong pixels to zero.
+Its 1.25× and 1.5× differences remain 1,876 and 2,255 pixels. The
+[native Rust consumer](../../bindings/rust/openui/examples/native_shaping_wrap.rs) changes widths through a
+Rust click callback. All **70/70 bounds** match preserved, independently repeated
+pinned Chromium captures at the four required profiles and a 3× neighbor.
+**0/10 whole images** are exact: 2–13 glyph raster cells still differ per image.
+Those differences remain failures. Complete text qualification remains open.
 
-All **8,640 locked all-targets tests** and **8,642 workspace and documentation
+All **8,642 locked all-targets tests** and **8,644 workspace and documentation
 tests** pass with every feature enabled; 13 existing workspace tests remain
 ignored. All 30 C and 24 C++ consumers pass, preserving 131 exports and 34
-layouts. Seven explicit hosted hardening jobs pass at the same code checkpoint.
-Mixed-unit animation, broader native APIs, residual ownership, compositor,
-physical lab and release qualification remain open. Open UI executes no
-JavaScript; consuming apps use native Rust methods and Rust callbacks.
-[Completed native API and renderer evidence](../renderer/generated/native-line-height-v1.json).
+layouts. Hosted qualification for this new checkpoint is pending. The seven
+previous explicit hardening successes at `883ea716` remain earlier evidence.
+Broader native APIs and font-family shaping, mixed-unit animation, residual
+ownership, compositor, physical lab and release qualification remain open.
+Open UI executes no JavaScript; consuming apps use native Rust methods and
+Rust callbacks. [Completed wrapping evidence](../renderer/generated/native-shaping-wrap-v1.json).
+
+Earlier clean `883ea716` implements public
+`Element::set_line_height_length(LengthValue)` and `Style::line_height_length`.
+Its ancestor-font callback matches **10/10 images and 60/60 bounds** for `ch`,
+`ex`, `lh`, `em`, `rem` and percentage in the measured rectangle cases.
+Complete text line-box and glyph qualification remains open.
+[Preserved line-height evidence](../renderer/generated/native-line-height-v1.json).
 
 ### Earlier native app verification
 

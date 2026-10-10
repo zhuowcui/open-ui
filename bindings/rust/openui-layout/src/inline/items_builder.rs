@@ -478,10 +478,10 @@ impl InlineItemsData {
 
     /// Split text items into runs that are homogeneous for shaping and paint.
     ///
-    /// Bidi levels are resolved first. This pass then adds script, deterministic
-    /// fallback-family, grapheme-cluster, and vertical-orientation boundaries.
-    /// No `UnresolvedMixed` item may leave this pass, so paint never needs to
-    /// rediscover Unicode orientation from CSS or text contents.
+    /// Bidi levels are resolved first. The deterministic fallback profile
+    /// then adds script, fallback family, grapheme cluster and vertical
+    /// orientation boundaries. Other family lists still retain mixed items;
+    /// complete shaping and orientation support remains implementation work.
     pub fn split_shaping_runs(&mut self) {
         let old_item_count = self.items.len();
         let mut boundary_map = vec![0usize; old_item_count + 1];
@@ -498,10 +498,10 @@ impl InlineItemsData {
             if !style.font_family.families.iter().any(|family| {
                 matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
             }) {
-                // The homogeneous fragment contract is enabled by the pinned
-                // deterministic fallback profile. Legacy ported builders keep
-                // their established single-run shaping until regenerated into
-                // that profile, preserving their frozen comparison evidence.
+                // Homogeneous fragments are currently enabled for the
+                // deterministic fallback chain. Other family lists still
+                // retain mixed shaping items. Full script, fallback and
+                // orientation support remains a gap against pinned Chromium.
                 new_items.push(item);
                 continue;
             }

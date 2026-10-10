@@ -58,6 +58,12 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   and 60/60 bounds exact in the measured rectangle cases. Mixed-unit animation,
   complete adjusted-font/root/orientation contexts and text line-box/glyph
   qualification remain native API work;
+- logical wrapping across shaping runs now matches all 70 measured native
+  bounds, but its ten complete text images still differ by 2–13 glyph cells.
+  Homogeneous shaping remains restricted to the deterministic fallback-family
+  profile; complete support for other native family lists is required work.
+  Old Open UI screenshots do not constrain that work. See the
+  [wrapping evidence](../renderer/generated/native-shaping-wrap-v1.json);
 - native scroll-into-view is implemented through shared Rust/C/accessibility
   operations, but scroll-margin/padding support, full option coverage and four
   reduced endpoint pixel differences remain open; own umbrella geometry is

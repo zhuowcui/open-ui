@@ -295,6 +295,13 @@ current branch pass callback, owned-bounds, and document teardown checks. Its
 [pixel investigation](../renderer/native-png-sampling.md) records the remaining
 renderer failures; these states are not admitted release passes.
 
+The [native shaping consumer](../../bindings/rust/openui/examples/native_shaping_wrap.rs)
+changes text widths through a Rust click callback over the retained document.
+Clean `87339e4d` matches all 70 measured bounds at four required profiles and
+3× scale. The ten complete images still differ by 2–13 glyph cells each and
+remain failed exact comparisons. Homogeneous shaping for every native family
+list remains implementation work. [Evidence](../renderer/generated/native-shaping-wrap-v1.json).
+
 ## No JavaScript runtime
 
 Open UI does not run application or test JavaScript, in this or future
