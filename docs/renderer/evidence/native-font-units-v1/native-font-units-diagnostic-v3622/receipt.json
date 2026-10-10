@@ -1,0 +1,59 @@
+{
+  "actual_child_exit_code": 0,
+  "all_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "child_pid": 270514,
+  "command": [
+    "cargo",
+    "--config",
+    "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+    "test",
+    "--locked",
+    "--offline",
+    "-p",
+    "openui-engine",
+    "--lib",
+    "native_font_unit"
+  ],
+  "dirty_diagnostic": true,
+  "driver_sha256": "ba277ee259b9134a76730f1e5578f1c0243267e48dd98ee97cfffbf289a83537",
+  "engine_guard_exit_code": 0,
+  "engine_log_sha256": "27421d4624cd175bd1bf5a478d28d6bbb500fea91dff88e67d9ab007dc27ca2a",
+  "full_renderer_contract_qualified": false,
+  "javascript_executed_by_openui": false,
+  "observed_exit_code": 0,
+  "owner_pid": 270447,
+  "public_child_pid": 270764,
+  "public_command": [
+    "cargo",
+    "--config",
+    "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+    "test",
+    "--locked",
+    "--offline",
+    "-p",
+    "openui",
+    "--test",
+    "native_font_units"
+  ],
+  "public_guard_exit_code": 0,
+  "public_log_sha256": "d09f33499ad2a87ebb29f1ae93eacf32f8506b584ddf2ec0b72d9a67b2b31375",
+  "release_qualified": false,
+  "schema_version": 1,
+  "source": {
+    "clean": false,
+    "commit": "f688913e642338a793dc3331117e6d4bd84508d3",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "3e865515cf78501fea2fd147943d030c9b67eaecc9b23555e3edb537670d6d52",
+    "status_sha256": "2606180e3c735a84857f046fca82d46ae8643895b67ee75826d128b7caf8376a"
+  },
+  "source_after": {
+    "clean": false,
+    "commit": "f688913e642338a793dc3331117e6d4bd84508d3",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "3e865515cf78501fea2fd147943d030c9b67eaecc9b23555e3edb537670d6d52",
+    "status_sha256": "2606180e3c735a84857f046fca82d46ae8643895b67ee75826d128b7caf8376a"
+  },
+  "source_unchanged": true,
+  "tests_log_sha256": "27421d4624cd175bd1bf5a478d28d6bbb500fea91dff88e67d9ab007dc27ca2a"
+}

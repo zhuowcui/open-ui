@@ -22,6 +22,24 @@ remain open.
 
 ## Current implementation checkpoint
 
+Clean code checkpoint `45d21648` implements retained native `ch`, `ex` and `lh`
+declarations. They use the selected font and final style context, refresh after
+native font changes and shared font registration, and support nested edge/gap,
+radius and transform lengths. Same-unit animations and inherited/pseudo styles
+have guards. A real Rust app changes only the ancestor font in its callback;
+all 8 images and 32 bounds match repeated pinned Chromium captures at all four
+required profiles. No application-side pixel-length recomputation is needed.
+
+All 8,625 locked workspace all-targets tests pass with zero failures or ignores.
+All 30 C and 24 C++ consumers pass; 131 exports and 34 layouts are preserved.
+The initial three failed metric checks, corrected dirty diagnostics, fresh
+16-record/29-path native build, clean checks, captures and terminal proofs are
+preserved in [179 hashed artifacts](../renderer/generated/native-font-units-v1.json).
+These results qualify the measured native app subset. Complete renderer gates,
+mixed-unit animations, font-relative line-height declarations and broader
+font/root/orientation contexts remain open.
+[Native font-unit API](../renderer/native-font-relative-lengths.md).
+
 The shared fieldset paint correction and public Rust reproducer are integrated.
 Clean private source `0a5f5587` is 21,342/22,924 original and 22,145/23,728
 expanded exact, zero errors, four exact gains and no losses or worsened rows.

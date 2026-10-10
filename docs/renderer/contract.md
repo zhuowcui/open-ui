@@ -24,6 +24,14 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
+Retained native font-unit declarations are implemented at clean `45d21648`.
+The consuming Rust app's ancestor-font callback matches 8/8 images and 32/32
+bounds against repeated pinned Chromium captures at all four required profiles.
+Workspace and C/C++ consumers pass, preserving the existing ABI. These native
+app results do not qualify the complete renderer matrices or every font context;
+fresh complete qualification remains required.
+[API scope and preserved evidence](native-font-relative-lengths.md).
+
 The shared fieldset paint correction is integrated after clean private
 verification at `0a5f5587`: 21,342/22,924 original and 22,145/23,728 expanded
 exact, four gains and no regressions. Focused and primitive matrices are exact;

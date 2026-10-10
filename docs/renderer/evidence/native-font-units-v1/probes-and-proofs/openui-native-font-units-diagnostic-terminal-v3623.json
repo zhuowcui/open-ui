@@ -1,0 +1,29 @@
+{
+  "actual_owner_exit_code": 0,
+  "actual_unified_session": 5787,
+  "all_local_commands_terminal": true,
+  "binaries_sha256": {
+    "native_font_units-f88614f27622a0b3": "bb6cc6f6ce7325c78faa727710595e8f2606547d38781b2c9a4cc573d052d310",
+    "openui_engine-8ae43f7dcd9ac915": "d78928f10668555000375169f2cd1939669fbb7ab1de1120928a5cb56eb07e13"
+  },
+  "dirty_diagnostic": true,
+  "engine_guards_passed": 4,
+  "full_renderer_contract_qualified": false,
+  "logs_sha256": {
+    "public-tests.log": "d09f33499ad2a87ebb29f1ae93eacf32f8506b584ddf2ec0b72d9a67b2b31375",
+    "tests.log": "27421d4624cd175bd1bf5a478d28d6bbb500fea91dff88e67d9ab007dc27ca2a"
+  },
+  "public_bounds": 40,
+  "public_callbacks": 20,
+  "public_cases": 20,
+  "public_guard_passed": 1,
+  "receipt_sha256": "6ac2a3690c5b35e9c1c6c065b1853c7b282e7d3250fcb50740e0a31c06498a06",
+  "release_qualified": false,
+  "source": {
+    "clean": false,
+    "commit": "f688913e642338a793dc3331117e6d4bd84508d3",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "3e865515cf78501fea2fd147943d030c9b67eaecc9b23555e3edb537670d6d52",
+    "status_sha256": "2606180e3c735a84857f046fca82d46ae8643895b67ee75826d128b7caf8376a"
+  }
+}

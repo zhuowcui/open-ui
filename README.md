@@ -27,6 +27,15 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
+Retained native `LengthValue::Ch`, `Ex` and `Lh` declarations are implemented at
+clean checkpoint `45d21648`. A consuming Rust app changes its font through a
+Rust callback; all **8/8 images and 32/32 bounds** match repeated pinned Chromium
+captures at the four required profiles. All **8,625 workspace all-targets
+tests**, 30 C and 24 C++ consumers pass; the ABI preserves 131 exports and 34
+layouts. Complete renderer qualification on this change remains pending, as do
+mixed-unit animation and broader font contexts. Open UI executes no JavaScript.
+[API and preserved evidence](docs/renderer/native-font-relative-lengths.md).
+
 A shared fieldset paint correction is integrated. Clean private verification
 is **21,342/22,924 original** and **22,145/23,728 expanded** exact, with four
 exact gains, no regressions and unchanged Chromium references. Focused and

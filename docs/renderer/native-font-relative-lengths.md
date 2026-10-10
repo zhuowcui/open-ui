@@ -1,4 +1,4 @@
-# Native Rust font-relative length queries
+# Native Rust font-relative lengths
 
 Open UI never executes JavaScript. Applications use public native Rust methods
 and Rust callbacks to create, change and operate elements. Needed element
@@ -7,10 +7,25 @@ test from pixel admission does not waive the corresponding native behavior.
 
 ## Current application API
 
-A consuming application can use `Element::computed_style()` and the public
-`openui_text::FontRelativeLengthResolver::from_style_in_collection` helper.
-Pass the same font collection supplied to the document, then assign the owned
-resolved pixel value through an ordinary native setter:
+A consuming application retains font-relative declarations directly:
+
+```rust
+element.set_width(LengthValue::Ch(2.5))?;
+element.set_padding(Edges::all(LengthValue::Ex(1.0)))?;
+element.set_height(LengthValue::Lh(2.0))?;
+```
+
+The shared Engine resolves them against the selected font and final font and
+line-height properties, including declarations made later. Ancestor font
+changes, native font registration and shared font collection changes refresh
+the declarations. The application can change a font through a Rust callback
+without resetting the width. Nested edges, gaps, radii and transform translations
+retain their units. C uses the same Engine with appended `OUI_LENGTH_CH`,
+`OUI_LENGTH_EX` and `OUI_LENGTH_LH` tags; existing exports and layouts stay intact.
+
+`Element::computed_style()` and the public
+`openui_text::FontRelativeLengthResolver::from_style_in_collection` helper remain
+available for an owned metric query. A captured pixel value stays captured:
 
 ```rust
 let style = element.computed_style()?;
@@ -22,11 +37,48 @@ let width = units.resolve(2.5, openui_text::FontRelativeUnit::Ch);
 element.set_width(openui::LengthValue::px(width))?;
 ```
 
-This API returns a value captured at that style boundary. The application
-currently recomputes it after changing relevant font properties. `LengthValue`
-does not yet expose `Ch`, `Ex` or `Lh` declarations that update themselves.
-Those declarations, complete nested length resolution and C parity remain
-native API work. JavaScript and script bindings are never the solution.
+Use retained declarations when the dimension should respond to later changes.
+Open UI executes no JavaScript and provides no script bindings.
+
+## Current measured checkpoint
+
+Clean canonical `45d21648` passes all **8,625 workspace all-targets tests**,
+zero failures or ignores. Four new Engine guards cover declaration ordering,
+nested units, parent and pseudo contexts, same-unit animation changes and
+unchanged-frame work. The public Rust callback guard checks **40/40 bounds**
+from the preserved independent Chromium observations at five scales. A second
+public guard verifies shared font registration and removal through owned styles
+and bounds. All **30 C and 24 C++ consumers** pass, including native callbacks,
+retained unit tags and invalid finite-value checks. The ABI has the same
+**131 exports and 34 layouts**.
+
+The fresh native build verifies **16 compiler records and 29 artifact paths**.
+At all four required profiles, two independent native app processes and two
+independent Chromium processes repeat identically. The app's callback changes
+only the ancestor font; all **8/8 images and 32/32 bounds** are exact before and
+after the change, with zero pixel tolerance. Expected pixels come only from
+pinned Chromium. The four preceding diagnostic app profiles include two
+different viewport dimensions and are not counted as this required matrix.
+
+The first dirty diagnostic passes one guard and fails three on small advance
+differences. Its actual exit is 101 and its logs are preserved. The corrected
+dirty diagnostic passes four Engine guards and the public callback test; its
+actual exit is 0. Complete clean verification follows at the checkpoint above.
+Metric queries use the effective font size, zero-glyph advance/orientation and
+computed line-height rules without replacing the global font factory or shaped
+glyph advance pipeline. The earlier regressing private font patches below
+remain unapplied.
+
+Complete focused, primitive, original and expanded renderer qualification on
+this change remains required. Mixed-unit animation, retained font-relative
+line-height declarations, and complete root, font-size-adjust, orientation,
+missing-glyph and metric-override contexts remain open. These app results do
+not qualify every needed native API or the release.
+[179 preserved artifacts and terminal proofs](generated/native-font-units-v1.json).
+
+## Earlier private investigations
+
+The following results retain their original source identities and scope.
 
 ## Completed private upright correction
 
@@ -91,8 +143,8 @@ retain their previous results in the other three profiles. All Chromium image
 and oracle identities remain fixed, and all other comparison invariants remain
 unchanged. The twelve known sizing neighbors also retain their prior results:
 six exact and six different. The whole owner exits 1. The source stays
-**private, unapplied and unqualified**. The accepted original result remains
-**21,334/22,924 exact**.
+**private, unapplied and unqualified**. At that investigation's public checkpoint,
+the accepted original result was **21,334/22,924 exact**.
 
 The subsequent [caption and shaping trial](native-caption-shaping.md) reviews
 and repairs the caption cause: intrinsic text used unshaped widths, and an
