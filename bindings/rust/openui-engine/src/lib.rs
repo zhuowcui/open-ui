@@ -371,6 +371,7 @@ pub struct Engine {
     id: u64,
     viewport: ViewportMetrics,
     raster_configuration: RasterConfiguration,
+    font_collection_generation: u64,
     document: NativeDocument,
     slots: Vec<Slot>,
     free_slots: Vec<u32>,
@@ -439,6 +440,7 @@ impl Engine {
             viewport.device_scale_factor(),
         );
         let root_node = document.root();
+        let font_collection_generation = document.font_collection().generation();
         let root_slot = Slot {
             generation: 1,
             node: Some(root_node),
@@ -451,6 +453,7 @@ impl Engine {
             id: NEXT_DOCUMENT_ID.fetch_add(1, Ordering::Relaxed),
             viewport,
             raster_configuration: options.raster_configuration,
+            font_collection_generation,
             document,
             slots: vec![root_slot],
             free_slots: Vec::new(),
@@ -540,13 +543,25 @@ impl Engine {
             .document
             .font_collection()
             .register(bytes, descriptor)?;
-        self.mark_dirty(InvalidationClass::Intrinsic);
+        self.synchronize_font_collection()?;
         Ok(handle)
     }
 
     pub fn unregister_font_face(&mut self, handle: FontFaceHandle) -> Result<(), EngineError> {
         self.document.font_collection().unregister(handle)?;
-        self.mark_dirty(InvalidationClass::Intrinsic);
+        self.synchronize_font_collection()?;
+        Ok(())
+    }
+
+    /// Refresh retained declarations when a shared application font collection
+    /// changes. Unchanged generations perform no style, layout or paint work.
+    pub fn synchronize_font_collection(&mut self) -> Result<(), EngineError> {
+        let generation = self.font_collection().generation();
+        if generation != self.font_collection_generation {
+            self.recompute_authored_styles()?;
+            self.font_collection_generation = generation;
+            self.mark_dirty(InvalidationClass::Intrinsic);
+        }
         Ok(())
     }
 
@@ -608,8 +623,10 @@ impl Engine {
         self.viewport = viewport;
         self.document
             .set_raster_context(self.raster_configuration, viewport.device_scale_factor());
-        if logical_changed {
+        if logical_changed || scale_changed {
             self.recompute_authored_styles()?;
+        }
+        if logical_changed {
             self.mark_dirty(InvalidationClass::Intrinsic);
         }
         if scale_changed {
@@ -1335,7 +1352,20 @@ impl Engine {
         } else {
             self.document.node(self.document.root()).style.font_size
         };
-        let resolved = Self::resolve_native_lengths(property, &value, font, root_font, viewport);
+        let metrics = value.depends_on_font_metrics().then(|| {
+            let style = if property == StyleProperty::FontSize {
+                if parent.is_none() {
+                    ComputedStyle::initial()
+                } else {
+                    self.document.node(parent).style.clone()
+                }
+            } else {
+                self.document.node(node).style.clone()
+            };
+            self.native_font_length_metrics(&style)
+        });
+        let resolved =
+            Self::resolve_native_lengths(property, &value, font, root_font, viewport, metrics);
         self.document
             .apply_style_property(node, property, &resolved, viewport)
             .map_err(|_| EngineError::PropertyType { property })?;
@@ -1345,7 +1375,7 @@ impl Engine {
         let order = &mut self.slots[handle.index as usize].authored_order;
         order.retain(|id| *id != property as u16);
         order.push(property as u16);
-        if property.metadata().inherited {
+        if property.metadata().inherited || value.depends_on_font_metrics() {
             self.refresh_inherited_styles(node)?;
         }
         let mut has_animation = false;
@@ -1516,10 +1546,10 @@ impl Engine {
                     if !slot.resolved_style_snapshot {
                         style.inherit_properties_from(&parent);
                     }
-                    let mut style = Self::resolve_native_declarations(
+                    let mut style = self.resolve_native_declarations(
                         style,
                         &declarations,
-                        parent.font_size,
+                        &parent,
                         root_font,
                         viewport,
                         node == self.document.root(),
@@ -1537,13 +1567,21 @@ impl Engine {
 
     /// Compute native declarations once for ordinary and pseudo styles.
     fn resolve_native_declarations(
+        &self,
         mut style: ComputedStyle,
         declarations: &[(StyleProperty, StyleValue)],
-        parent_font: f32,
+        parent: &ComputedStyle,
         root_font: f32,
         viewport: (f32, f32),
         is_root: bool,
     ) -> Result<ComputedStyle, EngineError> {
+        let parent_font = parent.font_size;
+        let parent_metrics = declarations
+            .iter()
+            .any(|(property, value)| {
+                *property == StyleProperty::FontSize && value.depends_on_font_metrics()
+            })
+            .then(|| self.native_font_length_metrics(parent));
         // Font size is computed against the parent, and all other
         // em lengths use the final cascaded size of this element.
         let mut font_style = style.clone();
@@ -1555,6 +1593,7 @@ impl Engine {
                     parent_font,
                     root_font,
                     viewport,
+                    parent_metrics,
                 );
                 apply_to_computed(&mut font_style, *property, &value, viewport).map_err(|_| {
                     EngineError::PropertyType {
@@ -1565,6 +1604,57 @@ impl Engine {
         }
         let font_size = font_style.font_size;
         style.update_derived(|fields| fields.font_size = font_size);
+        // Metric-dependent lengths see every final font/line-height property,
+        // even when width or padding was declared before the font family.
+        // Ordinary declarations retain their existing font-free path.
+        let metrics = if declarations
+            .iter()
+            .any(|(_, value)| value.depends_on_font_metrics())
+        {
+            let mut metric_style = style.clone();
+            let mut authored_line_height = false;
+            for (property, value) in declarations {
+                if value.depends_on_font_metrics() {
+                    continue;
+                }
+                let value = Self::resolve_native_lengths(
+                    *property,
+                    value,
+                    if *property == StyleProperty::FontSize {
+                        parent_font
+                    } else {
+                        font_size
+                    },
+                    if is_root && *property != StyleProperty::FontSize {
+                        font_size
+                    } else {
+                        root_font
+                    },
+                    viewport,
+                    None,
+                );
+                apply_to_computed(&mut metric_style, *property, &value, viewport).map_err(
+                    |_| EngineError::PropertyType {
+                        property: *property,
+                    },
+                )?;
+                metric_style.update_derived(|fields| fields.font_size = font_size);
+                authored_line_height |=
+                    matches!(property, StyleProperty::Font | StyleProperty::LineHeight);
+            }
+            if authored_line_height {
+                metric_style.update_derived(|fields| {
+                    if let openui_style::LineHeight::Percentage(percent) = fields.line_height {
+                        fields.line_height = openui_style::LineHeight::Length(
+                            font_size * (percent as i32) as f32 / 100.0,
+                        );
+                    }
+                });
+            }
+            Some(self.native_font_length_metrics(&metric_style))
+        } else {
+            None
+        };
         let mut authored_line_height = false;
         for (property, value) in declarations {
             let value = Self::resolve_native_lengths(
@@ -1581,6 +1671,11 @@ impl Engine {
                     root_font
                 },
                 viewport,
+                if *property == StyleProperty::FontSize {
+                    parent_metrics
+                } else {
+                    metrics
+                },
             );
             apply_to_computed(&mut style, *property, &value, viewport).map_err(|_| {
                 EngineError::PropertyType {
@@ -1595,8 +1690,9 @@ impl Engine {
         if authored_line_height {
             style.update_derived(|fields| {
                 if let openui_style::LineHeight::Percentage(percent) = fields.line_height {
-                    fields.line_height =
-                        openui_style::LineHeight::Length(percent * font_size / 100.0);
+                    fields.line_height = openui_style::LineHeight::Length(
+                        font_size * (percent as i32) as f32 / 100.0,
+                    );
                 }
             });
         }
@@ -1627,10 +1723,10 @@ impl Engine {
                     .iter()
                     .map(|declaration| (declaration.property, declaration.value.clone()))
                     .collect();
-                let pseudo = Self::resolve_native_declarations(
+                let pseudo = self.resolve_native_declarations(
                     pseudo,
                     &declarations,
-                    origin.font_size,
+                    &origin,
                     root_font,
                     viewport,
                     false,
@@ -1665,10 +1761,15 @@ impl Engine {
         font: f32,
         root_font: f32,
         viewport: (f32, f32),
+        metrics: Option<openui_style::FontRelativeLengthMetrics>,
     ) -> StyleValue {
         use openui_style::{Edges, Gap, LengthValue};
         let resolve = |value: LengthValue| {
-            let length = value.resolve(viewport, font, root_font);
+            let length = if let Some(metrics) = metrics {
+                value.resolve_with_font_metrics(viewport, font, root_font, metrics)
+            } else {
+                value.resolve(viewport, font, root_font)
+            };
             LengthValue::Computed(
                 if property == StyleProperty::FontSize
                     && (length.is_percent() || length.is_calculated())
@@ -1693,7 +1794,58 @@ impl Engine {
                 row: resolve(value.row),
                 column: resolve(value.column),
             }),
+            StyleValue::CornerRadii(value) => {
+                StyleValue::CornerRadii(openui_style::CornerRadii(Edges {
+                    top: resolve(value.0.top),
+                    right: resolve(value.0.right),
+                    bottom: resolve(value.0.bottom),
+                    left: resolve(value.0.left),
+                }))
+            }
+            StyleValue::Transform(value) => StyleValue::Transform(openui_style::TransformList(
+                value
+                    .0
+                    .iter()
+                    .map(|operation| match operation {
+                        openui_style::TransformOperation::Translate(x, y) => {
+                            openui_style::TransformOperation::Translate(resolve(*x), resolve(*y))
+                        }
+                        openui_style::TransformOperation::Translate3d(x, y, z) => {
+                            openui_style::TransformOperation::Translate3d(
+                                resolve(*x),
+                                resolve(*y),
+                                resolve(*z),
+                            )
+                        }
+                        openui_style::TransformOperation::Perspective(value) => {
+                            openui_style::TransformOperation::Perspective(resolve(*value))
+                        }
+                        other => other.clone(),
+                    })
+                    .collect(),
+            )),
             _ => value.clone(),
+        }
+    }
+
+    fn native_font_length_metrics(
+        &self,
+        style: &ComputedStyle,
+    ) -> openui_style::FontRelativeLengthMetrics {
+        use openui_text::{FontRelativeLengthResolver, FontRelativeUnit};
+        let mut style = style.clone();
+        style.update_derived(|fields| {
+            fields.raster_configuration = self.raster_configuration;
+            fields.device_scale_factor = self.viewport.device_scale_factor();
+        });
+        let units = FontRelativeLengthResolver::from_style_in_collection(
+            &style,
+            self.font_collection().clone(),
+        );
+        openui_style::FontRelativeLengthMetrics {
+            ch: units.resolve(1.0, FontRelativeUnit::Ch),
+            ex: units.resolve(1.0, FontRelativeUnit::Ex),
+            lh: units.resolve(1.0, FontRelativeUnit::Lh),
         }
     }
 
@@ -1836,10 +1988,10 @@ impl Engine {
             .iter()
             .map(|declaration| (declaration.property, declaration.value.clone()))
             .collect();
-        let pseudo = Self::resolve_native_declarations(
+        let pseudo = self.resolve_native_declarations(
             pseudo,
             &declarations_to_resolve,
-            origin.font_size,
+            &origin,
             self.document.node(self.document.root()).style.font_size,
             viewport,
             false,
@@ -2147,6 +2299,7 @@ impl Engine {
     }
 
     pub fn update(&mut self) -> Result<&SceneSnapshot, EngineError> {
+        self.synchronize_font_collection()?;
         if self.dirty.hit_test && !self.dirty.layout {
             if let Some(fragment) = self.latest_fragment.clone() {
                 self.rebuild_hit_test(&fragment);
@@ -2661,6 +2814,221 @@ mod tests {
         Color, CornerRadii, Display, Edges, LengthValue, Overflow, TransformList,
         TransformOperation,
     };
+
+    fn font_unit_engine() -> Engine {
+        let mut engine = Engine::new_with_font_collection_and_options(
+            ViewportMetrics::from_logical_size(640.0, 480.0, 1.0).unwrap(),
+            FontCollection::deterministic_test(),
+            EngineOptions {
+                raster_configuration: RasterConfiguration::deterministic_aliased(false),
+            },
+        )
+        .unwrap();
+        engine
+            .set_property(
+                engine.root(),
+                StyleProperty::FontFamily,
+                openui_style::FontFamilyList {
+                    families: vec![openui_style::FontFamily::Named("Ahem".into())],
+                }
+                .into(),
+            )
+            .unwrap();
+        engine
+            .set_property(
+                engine.root(),
+                StyleProperty::FontSize,
+                LengthValue::px(20.0).into(),
+            )
+            .unwrap();
+        engine
+    }
+
+    #[test]
+    fn native_font_units_retain_nested_lengths_and_final_font_context() {
+        use openui_style::{FontFamily, FontFamilyList, Gap, LineHeight};
+        let mut engine = font_unit_engine();
+        let node = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(engine.root(), node).unwrap();
+        engine
+            .set_property(node, StyleProperty::Width, LengthValue::Ch(2.0).into())
+            .unwrap();
+        engine
+            .set_property(node, StyleProperty::Height, LengthValue::Lh(2.0).into())
+            .unwrap();
+        engine
+            .set_property(
+                node,
+                StyleProperty::Padding,
+                Edges::all(LengthValue::Ex(1.0)).into(),
+            )
+            .unwrap();
+        engine
+            .set_property(
+                node,
+                StyleProperty::Gap,
+                Gap {
+                    row: LengthValue::Lh(1.0),
+                    column: LengthValue::Ch(1.0),
+                }
+                .into(),
+            )
+            .unwrap();
+        engine
+            .set_property(
+                node,
+                StyleProperty::BorderRadius,
+                CornerRadii(Edges::all(LengthValue::Ch(0.5))).into(),
+            )
+            .unwrap();
+        engine
+            .set_property(
+                node,
+                StyleProperty::Transform,
+                TransformList(vec![TransformOperation::Translate(
+                    LengthValue::Ch(1.0),
+                    LengthValue::Ex(1.0),
+                )])
+                .into(),
+            )
+            .unwrap();
+        engine
+            .set_property(
+                node,
+                StyleProperty::FontFamily,
+                FontFamilyList {
+                    families: vec![FontFamily::Named("Ahem".into())],
+                }
+                .into(),
+            )
+            .unwrap();
+        engine
+            .set_property(
+                node,
+                StyleProperty::LineHeight,
+                LineHeight::Number(1.5).into(),
+            )
+            .unwrap();
+        engine
+            .set_property(node, StyleProperty::FontSize, LengthValue::px(30.0).into())
+            .unwrap();
+        let style = engine.computed_style(node).unwrap();
+        assert_eq!(style.width.value(), 60.0);
+        assert_eq!(style.height.value(), 90.0);
+        assert_eq!(style.padding_top.value(), 24.0);
+        assert_eq!(style.row_gap.unwrap().value(), 45.0);
+        assert_eq!(style.column_gap.unwrap().value(), 30.0);
+        assert_eq!(style.border_top_left_radius, (15.0, 15.0));
+        assert_eq!(style.transform.e, 30.0);
+        assert_eq!(style.transform.f, 24.0);
+    }
+
+    #[test]
+    fn native_font_units_font_size_and_pseudos_use_parent_metrics() {
+        let mut engine = font_unit_engine();
+        let node = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(engine.root(), node).unwrap();
+        engine
+            .set_property(node, StyleProperty::FontSize, LengthValue::Ex(2.0).into())
+            .unwrap();
+        engine
+            .set_property(node, StyleProperty::Width, LengthValue::Ch(2.0).into())
+            .unwrap();
+        engine
+            .set_pseudo_style(
+                node,
+                PseudoStyleTarget::FirstLine,
+                &Style::default()
+                    .font_size(LengthValue::Ch(2.0))
+                    .width(LengthValue::Ch(3.0)),
+            )
+            .unwrap();
+        assert_eq!(engine.computed_style(node).unwrap().font_size, 32.0);
+        assert_eq!(engine.computed_style(node).unwrap().width.value(), 64.0);
+        assert_eq!(
+            engine
+                .computed_style(node)
+                .unwrap()
+                .first_line_style
+                .as_ref()
+                .unwrap()
+                .font_size,
+            64.0
+        );
+        engine
+            .set_property(
+                engine.root(),
+                StyleProperty::FontSize,
+                LengthValue::px(30.0).into(),
+            )
+            .unwrap();
+        let style = engine.computed_style(node).unwrap();
+        assert_eq!(style.font_size, 48.0);
+        assert_eq!(style.width.value(), 96.0);
+        assert_eq!(style.first_line_style.as_ref().unwrap().font_size, 96.0);
+        assert_eq!(
+            style.first_line_style.as_ref().unwrap().width.value(),
+            288.0
+        );
+    }
+
+    #[test]
+    fn native_font_unit_animation_reacts_to_ancestor_font_changes() {
+        use openui_style::{AnimationOptions, FillMode, Keyframes, PropertyKeyframes};
+        let mut engine = font_unit_engine();
+        let node = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(engine.root(), node).unwrap();
+        engine
+            .set_property(node, StyleProperty::Width, LengthValue::Ch(1.0).into())
+            .unwrap();
+        let animation = engine
+            .animate(
+                node,
+                PropertyKeyframes::typed(
+                    StyleProperty::Width,
+                    Keyframes::from_values(LengthValue::Ch(2.0), LengthValue::Ch(4.0)),
+                )
+                .unwrap(),
+                AnimationOptions {
+                    duration_ms: 100.0,
+                    fill: FillMode::Both,
+                    ..AnimationOptions::default()
+                },
+                AnimationTimeline::Document,
+            )
+            .unwrap();
+        engine.set_animation_time(50.0).unwrap();
+        assert_eq!(engine.computed_style(node).unwrap().width.value(), 60.0);
+        engine
+            .set_property(
+                engine.root(),
+                StyleProperty::FontSize,
+                LengthValue::px(30.0).into(),
+            )
+            .unwrap();
+        assert_eq!(engine.computed_style(node).unwrap().width.value(), 90.0);
+        engine.cancel_animation(animation).unwrap();
+        assert_eq!(engine.computed_style(node).unwrap().width.value(), 30.0);
+    }
+
+    #[test]
+    fn native_font_unit_repeated_setter_preserves_unchanged_frame_work() {
+        let mut engine = font_unit_engine();
+        let node = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(engine.root(), node).unwrap();
+        engine
+            .set_property(node, StyleProperty::Height, LengthValue::Lh(2.0).into())
+            .unwrap();
+        engine.scene().unwrap();
+        let stats = engine.stats();
+        let generations = engine.dirty_generations();
+        engine
+            .set_property(node, StyleProperty::Height, LengthValue::Lh(2.0).into())
+            .unwrap();
+        engine.scene().unwrap();
+        assert_eq!(engine.stats(), stats);
+        assert_eq!(engine.dirty_generations(), generations);
+    }
 
     #[test]
     fn native_resolved_computed_defaults_preserve_snapshots_and_native_inheritance() {

@@ -379,6 +379,33 @@ impl FontPlatformData {
         &self.metrics
     }
 
+    /// Reference advance for native `ch` declarations. This query follows
+    /// Blink's ZeroInlineSize without changing shaped glyph advances.
+    pub(crate) fn zero_inline_size(&self, orientation: openui_style::FontOrientation) -> f32 {
+        let upright = orientation == openui_style::FontOrientation::VerticalUpright;
+        let glyph = self.sk_font.unichar_to_glyph('0' as i32);
+        if glyph == 0 {
+            return self.size * if upright { 1.0 } else { 0.5 };
+        }
+        if upright {
+            return self
+                .vertical_metrics
+                .as_ref()
+                .and_then(|metrics| {
+                    metrics
+                        .advances
+                        .get(glyph as usize)
+                        .map(|advance| *advance as f32 * self.size / metrics.units_per_em)
+                })
+                .unwrap_or_else(|| self.metrics.int_ascent() + self.metrics.int_descent());
+        }
+        if self.sk_font.is_subpixel() {
+            self.metrics.zero_width
+        } else {
+            self.metrics.zero_width.round()
+        }
+    }
+
     /// OpenType vertical advance for a glyph, falling back to one em for a
     /// face without `vhea`/`vmtx` data.
     pub fn vertical_advance(&self, glyph: GlyphId) -> f32 {

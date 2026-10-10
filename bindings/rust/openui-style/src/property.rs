@@ -109,6 +109,20 @@ pub enum LengthValue {
     ViewportHeight(f32),
     ViewportMin(f32),
     ViewportMax(f32),
+    /// Advance measure of the selected font's zero glyph.
+    Ch(f32),
+    /// X-height of the selected font.
+    Ex(f32),
+    /// Used line height of the element.
+    Lh(f32),
+}
+
+/// Owned reference lengths supplied by the selected font and computed style.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct FontRelativeLengthMetrics {
+    pub ch: f32,
+    pub ex: f32,
+    pub lh: f32,
 }
 
 impl LengthValue {
@@ -134,7 +148,28 @@ impl LengthValue {
         Self::Computed(Length::none())
     }
 
+    /// Resolve without a selected font. Metric units use missing-font fallback
+    /// values; retained Engine declarations resolve with the actual font instead.
     pub fn resolve(self, viewport: (f32, f32), font_size: f32, root_font_size: f32) -> Length {
+        self.resolve_with_font_metrics(
+            viewport,
+            font_size,
+            root_font_size,
+            FontRelativeLengthMetrics {
+                ch: font_size * 0.5,
+                ex: font_size * 0.5,
+                lh: font_size * 1.2,
+            },
+        )
+    }
+
+    pub fn resolve_with_font_metrics(
+        self,
+        viewport: (f32, f32),
+        font_size: f32,
+        root_font_size: f32,
+        metrics: FontRelativeLengthMetrics,
+    ) -> Length {
         match self {
             Self::Computed(value) => value,
             Self::Em(value) => Length::px(value * font_size),
@@ -143,7 +178,14 @@ impl LengthValue {
             Self::ViewportHeight(value) => Length::px(viewport.1 * value / 100.0),
             Self::ViewportMin(value) => Length::px(viewport.0.min(viewport.1) * value / 100.0),
             Self::ViewportMax(value) => Length::px(viewport.0.max(viewport.1) * value / 100.0),
+            Self::Ch(value) => Length::px(value * metrics.ch),
+            Self::Ex(value) => Length::px(value * metrics.ex),
+            Self::Lh(value) => Length::px(value * metrics.lh),
         }
+    }
+
+    pub fn depends_on_font_metrics(self) -> bool {
+        matches!(self, Self::Ch(_) | Self::Ex(_) | Self::Lh(_))
     }
 }
 
@@ -287,6 +329,35 @@ pub enum StyleValue {
     PointerEvents(PointerEvents),
     Typography(TypographyValue),
     Renderer(RendererStyleValue),
+}
+
+impl StyleValue {
+    pub fn depends_on_font_metrics(&self) -> bool {
+        let edges = |value: &Edges<LengthValue>| {
+            [value.top, value.right, value.bottom, value.left]
+                .into_iter()
+                .any(LengthValue::depends_on_font_metrics)
+        };
+        match self {
+            Self::Length(value) => value.depends_on_font_metrics(),
+            Self::Edges(value) => edges(value),
+            Self::Gap(value) => {
+                value.row.depends_on_font_metrics() || value.column.depends_on_font_metrics()
+            }
+            Self::CornerRadii(value) => edges(&value.0),
+            Self::Transform(value) => value.0.iter().any(|operation| match operation {
+                TransformOperation::Translate(x, y) => {
+                    x.depends_on_font_metrics() || y.depends_on_font_metrics()
+                }
+                TransformOperation::Translate3d(x, y, z) => [*x, *y, *z]
+                    .into_iter()
+                    .any(LengthValue::depends_on_font_metrics),
+                TransformOperation::Perspective(value) => value.depends_on_font_metrics(),
+                _ => false,
+            }),
+            _ => false,
+        }
+    }
 }
 
 macro_rules! impl_style_value {
@@ -470,6 +541,9 @@ fn length(input: &str) -> Option<LengthValue> {
                 ("vh", LengthValue::ViewportHeight),
                 ("vmin", LengthValue::ViewportMin),
                 ("vmax", LengthValue::ViewportMax),
+                ("ch", LengthValue::Ch),
+                ("ex", LengthValue::Ex),
+                ("lh", LengthValue::Lh),
             ] {
                 if let Some(number) = input
                     .strip_suffix(suffix)

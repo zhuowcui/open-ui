@@ -612,13 +612,27 @@ impl Engine {
         } else {
             self.document.node(self.document.root()).style.font_size
         };
-        let resolved = Self::resolve_native_lengths(property, value, font, root_font, viewport);
+        let metrics = value.depends_on_font_metrics().then(|| {
+            let style = if property == StyleProperty::FontSize {
+                let parent = self.document.node(node).parent;
+                if parent.is_none() {
+                    openui_style::ComputedStyle::initial()
+                } else {
+                    self.document.node(parent).style.clone()
+                }
+            } else {
+                self.document.node(node).style.clone()
+            };
+            self.native_font_length_metrics(&style)
+        });
+        let resolved =
+            Self::resolve_native_lengths(property, value, font, root_font, viewport, metrics);
         // Publish to resolved targets as well as authored targets. The shared
         // refresh then updates relative lengths and native descendants.
         self.document
             .apply_style_property(node, property, &resolved, viewport)
             .map_err(|_| EngineError::PropertyType { property })?;
-        if property.metadata().inherited {
+        if property.metadata().inherited || value.depends_on_font_metrics() {
             self.refresh_inherited_styles(node)?;
         }
         self.dirty.hit_test = true;

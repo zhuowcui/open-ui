@@ -23,6 +23,9 @@ pub(crate) fn length(value: OuiLength) -> Result<LengthValue, ApiError> {
         5 => Ok(LengthValue::ViewportHeight(value.value)),
         8 => Ok(LengthValue::ViewportMin(value.value)),
         9 => Ok(LengthValue::ViewportMax(value.value)),
+        10 => Ok(LengthValue::Ch(value.value)),
+        11 => Ok(LengthValue::Ex(value.value)),
+        12 => Ok(LengthValue::Lh(value.value)),
         6 if value.value == 0.0 => Ok(LengthValue::auto()),
         7 if value.value == 0.0 => Ok(LengthValue::none()),
         6 | 7 => Err(ApiError::new(

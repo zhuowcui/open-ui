@@ -250,9 +250,10 @@ impl Element {
     /// Return an owned snapshot of this element's resolved style.
     /// Subsequent mutations do not change the returned value.
     pub fn computed_style(&self) -> Result<ComputedStyle, Error> {
-        self.document
-            .with_engine(|engine| engine.computed_style(self.handle).cloned())?
-            .map_err(Into::into)
+        self.document.with_engine_mut(|engine| {
+            engine.synchronize_font_collection()?;
+            engine.computed_style(self.handle).cloned()
+        })
     }
 
     pub fn set_language(&self, language: &openui_style::LanguageTag) -> Result<(), Error> {
