@@ -1362,7 +1362,16 @@ impl Engine {
             } else {
                 self.document.node(node).style.clone()
             };
-            self.native_font_length_metrics(&style)
+            let mut metrics = self.native_font_length_metrics(&style);
+            if property == StyleProperty::LineHeight {
+                let parent_style = if parent.is_none() {
+                    ComputedStyle::initial()
+                } else {
+                    self.document.node(parent).style.clone()
+                };
+                metrics.lh = self.native_font_length_metrics(&parent_style).lh;
+            }
+            metrics
         });
         let resolved =
             Self::resolve_native_lengths(property, &value, font, root_font, viewport, metrics);
@@ -1579,7 +1588,10 @@ impl Engine {
         let parent_metrics = declarations
             .iter()
             .any(|(property, value)| {
-                *property == StyleProperty::FontSize && value.depends_on_font_metrics()
+                matches!(
+                    property,
+                    StyleProperty::FontSize | StyleProperty::LineHeight
+                ) && value.depends_on_font_metrics()
             })
             .then(|| self.native_font_length_metrics(parent));
         // Font size is computed against the parent, and all other
@@ -1651,6 +1663,36 @@ impl Engine {
                     }
                 });
             }
+            // A font shorthand can override a preceding line-height. Resolve
+            // only the winning metric-dependent line-height after all font
+            // longhands, then capture the lh basis for other declarations.
+            if let Some((StyleProperty::LineHeight, value)) =
+                declarations.iter().rev().find(|(property, _)| {
+                    matches!(property, StyleProperty::Font | StyleProperty::LineHeight)
+                })
+            {
+                if value.depends_on_font_metrics() {
+                    let mut line_metrics = self.native_font_length_metrics(&metric_style);
+                    line_metrics.lh = parent_metrics.expect("line-height parent metrics").lh;
+                    let resolved = Self::resolve_native_lengths(
+                        StyleProperty::LineHeight,
+                        value,
+                        font_size,
+                        if is_root { font_size } else { root_font },
+                        viewport,
+                        Some(line_metrics),
+                    );
+                    apply_to_computed(
+                        &mut metric_style,
+                        StyleProperty::LineHeight,
+                        &resolved,
+                        viewport,
+                    )
+                    .map_err(|_| EngineError::PropertyType {
+                        property: StyleProperty::LineHeight,
+                    })?;
+                }
+            }
             Some(self.native_font_length_metrics(&metric_style))
         } else {
             None
@@ -1673,6 +1715,13 @@ impl Engine {
                 viewport,
                 if *property == StyleProperty::FontSize {
                     parent_metrics
+                } else if *property == StyleProperty::LineHeight {
+                    metrics.map(|mut metrics| {
+                        if let Some(parent) = parent_metrics {
+                            metrics.lh = parent.lh;
+                        }
+                        metrics
+                    })
                 } else {
                     metrics
                 },
@@ -1783,6 +1832,11 @@ impl Engine {
             )
         };
         match value {
+            StyleValue::Length(value)
+                if property == StyleProperty::LineHeight && !value.is_valid_for_line_height() =>
+            {
+                StyleValue::Length(*value)
+            }
             StyleValue::Length(value) => StyleValue::Length(resolve(*value)),
             StyleValue::Edges(value) => StyleValue::Edges(Edges {
                 top: resolve(value.top),

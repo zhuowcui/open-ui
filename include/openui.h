@@ -1004,6 +1004,10 @@ OuiStatus oui_element_remove_attribute(OuiElement* element, OuiUtf8 name);
  * Attribute lookup uses the same retained Engine operation as Rust. */
 OuiStatus oui_element_get_attribute_v1(OuiElement* element, OuiUtf8 name,
                                       OuiBuffer** out_value);
+/* LINE_HEIGHT additionally accepts OUI_STYLE_VALUE_LENGTH, including retained
+ * em/rem/ch/ex/lh/viewport units and percentages. The shared Engine computes
+ * font metrics and refreshes after native mutations. lh in line-height uses
+ * the parent line height; auto, none, negative and non-finite values fail. */
 OuiStatus oui_element_set_property(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* value);
 OuiStatus oui_element_animate(OuiElement* element, OuiStyleProperty property, const OuiKeyframe* keyframes, size_t keyframe_count, const OuiAnimationOptions* options, const OuiAnimationTimeline* timeline, uint64_t* out_animation_id);
 OuiStatus oui_element_transition(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* target, const OuiAnimationOptions* options, uint64_t* out_animation_id);

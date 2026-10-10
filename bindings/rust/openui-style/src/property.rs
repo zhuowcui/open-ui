@@ -184,6 +184,31 @@ impl LengthValue {
         }
     }
 
+    /// Whether this authored length is allowed as a line-height declaration.
+    /// Calculated values are range-checked after their font basis is known.
+    pub fn is_valid_for_line_height(self) -> bool {
+        match self {
+            Self::Computed(length) => match length.length_type() {
+                LengthType::Fixed | LengthType::Percent => {
+                    length.value().is_finite() && length.value() >= 0.0
+                }
+                LengthType::Calculated => {
+                    length.value().is_finite() && length.calc_offset().is_finite()
+                }
+                _ => false,
+            },
+            Self::Em(value)
+            | Self::Rem(value)
+            | Self::ViewportWidth(value)
+            | Self::ViewportHeight(value)
+            | Self::ViewportMin(value)
+            | Self::ViewportMax(value)
+            | Self::Ch(value)
+            | Self::Ex(value)
+            | Self::Lh(value) => value.is_finite() && value >= 0.0,
+        }
+    }
+
     pub fn depends_on_font_metrics(self) -> bool {
         matches!(self, Self::Ch(_) | Self::Ex(_) | Self::Lh(_))
     }
@@ -487,6 +512,11 @@ pub struct Style {
 impl Style {
     pub fn declarations(&self) -> &[Declaration] {
         &self.declarations
+    }
+
+    /// Retain a length-valued line-height in native style and pseudo declarations.
+    pub fn line_height_length(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::LineHeight, value)
     }
 
     fn with(mut self, property: StyleProperty, value: impl Into<StyleValue>) -> Self {
@@ -1187,6 +1217,13 @@ fn parse_typography_literal(property: StyleProperty, input: &str) -> Option<Styl
                 }
                 LengthValue::Computed(value) if value.length_type() == LengthType::Fixed => {
                     LineHeight::Length(value.value())
+                }
+                value if !matches!(value, LengthValue::Computed(_)) => {
+                    let resolved = value.resolve((100.0, 100.0), 16.0, 16.0);
+                    if !resolved.value().is_finite() || resolved.value() < 0.0 {
+                        return None;
+                    }
+                    return Some(StyleValue::Length(value));
                 }
                 _ => return None,
             }
@@ -2278,6 +2315,31 @@ pub fn apply_to_computed(
         (P::RowGap, StyleValue::Length(v)) => style.fields.row_gap = Some(resolve(*v)),
         (P::ColumnGap, StyleValue::Length(v)) => style.fields.column_gap = Some(resolve(*v)),
         (P::FontFamily, StyleValue::FontFamily(v)) => style.fields.font_family = v.clone(),
+        (P::LineHeight, StyleValue::Length(v)) => {
+            if !v.is_valid_for_line_height() {
+                return Err(mismatch());
+            }
+            let length = resolve(*v);
+            let pixels = match length.length_type() {
+                LengthType::Fixed => length.value(),
+                LengthType::Percent => {
+                    style.fields.font_size * (length.value() as i32) as f32 / 100.0
+                }
+                LengthType::Calculated => {
+                    let font =
+                        openui_geometry::LayoutUnit::from_f32(style.fields.font_size).to_f32();
+                    openui_geometry::LayoutUnit::from_f32(
+                        font * length.value() / 100.0 + length.calc_offset(),
+                    )
+                    .to_f32()
+                }
+                _ => return Err(mismatch()),
+            };
+            if !length.value().is_finite() || !pixels.is_finite() || pixels < 0.0 {
+                return Err(mismatch());
+            }
+            style.fields.line_height = LineHeight::Length(pixels);
+        }
         (P::FontSize, StyleValue::Length(v)) => style.fields.font_size = resolve(*v).value(),
         (P::FontWeight, StyleValue::FontWeight(v)) => style.fields.font_weight = *v,
         (P::LetterSpacing, StyleValue::Number(v)) => style.fields.letter_spacing = *v,

@@ -623,7 +623,17 @@ impl Engine {
             } else {
                 self.document.node(node).style.clone()
             };
-            self.native_font_length_metrics(&style)
+            let mut metrics = self.native_font_length_metrics(&style);
+            if property == StyleProperty::LineHeight {
+                let parent = self.document.node(node).parent;
+                let parent_style = if parent.is_none() {
+                    openui_style::ComputedStyle::initial()
+                } else {
+                    self.document.node(parent).style.clone()
+                };
+                metrics.lh = self.native_font_length_metrics(&parent_style).lh;
+            }
+            metrics
         });
         let resolved =
             Self::resolve_native_lengths(property, value, font, root_font, viewport, metrics);

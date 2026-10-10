@@ -84,8 +84,12 @@ static void native_font_units(double scale) {
     OuiStyleValue width = length(coefficients[i], units[i]);
     assert(oui_element_set_property(nodes[i], OUI_STYLE_PROPERTY_WIDTH, &width) == OUI_OK);
     property(nodes[i], OUI_STYLE_PROPERTY_HEIGHT, "10px");
+    /* Typed length-valued line-height uses the same shared retained Engine. */
+    assert(oui_element_set_property(nodes[i], OUI_STYLE_PROPERTY_LINE_HEIGHT, &width) == OUI_OK);
+    OuiStyleValue dependent = length(2.5f, OUI_LENGTH_LH);
+    assert(oui_element_set_property(nodes[i], OUI_STYLE_PROPERTY_WIDTH, &dependent) == OUI_OK);
     assert(oui_element_get_bounds(nodes[i], &owned[i]) == OUI_OK);
-    assert(owned[i].width == before[i]);
+    assert(owned[i].width == before[i] * 2.5f);
     width.data.length.value = NAN;
     assert(oui_element_set_property(nodes[i], OUI_STYLE_PROPERTY_WIDTH, &width) ==
            OUI_ERROR_INVALID_ARGUMENT);
@@ -104,7 +108,7 @@ static void native_font_units(double scale) {
   for (size_t i = 0; i < 3; ++i) {
     OuiRect changed;
     assert(oui_element_get_bounds(nodes[i], &changed) == OUI_OK);
-    assert(changed.width == after[i] && owned[i].width == before[i]);
+    assert(changed.width == after[i] * 2.5f && owned[i].width == before[i] * 2.5f);
     assert(oui_element_destroy(nodes[i]) == OUI_OK);
   }
   assert(oui_listener_destroy(listener) == OUI_OK);

@@ -64,7 +64,10 @@ pub(crate) fn style_value(
             .detail(property as u32)),
         };
     }
-    if value.tag != expected {
+    // Append length-valued line-height support without changing the existing
+    // compound representation of normal and unitless line heights.
+    let line_height_length = property == StyleProperty::LineHeight && value.tag == 1;
+    if value.tag != expected && !line_height_length {
         return Err(ApiError::new(
             OuiStatus::WrongValueType,
             format!(

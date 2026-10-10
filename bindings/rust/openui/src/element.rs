@@ -247,6 +247,16 @@ impl Element {
             .with_engine_mut(|engine| engine.set_property(self.handle, property, value))
     }
 
+    /// Retain a length-valued line height, including `em`, `rem`, `ch`, `ex`,
+    /// `lh`, percentages and viewport units. The Engine resolves it after the
+    /// final font context is known and refreshes it after native mutations.
+    /// `lh` in line-height uses the parent's line height (the initial style
+    /// for the root), avoiding a circular dependency on this element.
+    /// Use `set_line_height` for `normal` or a unitless multiplier.
+    pub fn set_line_height_length(&self, value: openui_style::LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::LineHeight, value.into())
+    }
+
     /// Return an owned snapshot of this element's resolved style.
     /// Subsequent mutations do not change the returned value.
     pub fn computed_style(&self) -> Result<ComputedStyle, Error> {
