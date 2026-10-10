@@ -24,6 +24,21 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
+Fresh canonical qualification at clean umbrella checkpoint `72f5b41e` measures
+the integrated native keyboard and control work. Rust, C and C++ each match
+495 Chromium behavior cases; workspace, ABI and hosted hardening checks pass.
+The official clean builder verifies fresh local renderer libraries and their
+source identities. Focused **640/640** and primitive **960/960** comparisons
+are exact. Original **21,338/22,924** and expanded **22,141/23,728** are exact,
+with zero errors and actual exits 1 for the two full pixel gates. All 48,252
+matrix rows preserve the preceding pixels and Chromium reference fields;
+there are no losses or worsened differences. The 884 original residual test
+IDs still require reviewed root causes and ownership. Of 201 expanded
+candidates, 200 are exact at all four required profiles. Complete native APIs,
+the full renderer, compositor, lab and release remain open.
+[Completed public evidence](generated/native-keyboard-public-v2.json).
+The earlier checkpoints below retain their original evidence and scope.
+
 The [native form association follow-up](../v02/native-form-owner.md) is integrated
 at code checkpoint `a401a8ac`, measured in a clean private qualification clone
 and adopted unchanged after a complete source-byte comparison. Its Rust, C and

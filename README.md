@@ -27,18 +27,26 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
-The native keyboard control fixes are integrated at code checkpoint
-`a0841c9e`. Rust, C and C++ apps each match the same 99 measured Chromium
-scenarios, with repeated runs identical. Radio arrow navigation, Space release,
-modifiers, cancellation and callback changes use the shared native document.
-C adds `oui_element_is_active_v1`; the ABI has 131 exports and the same 34
-layouts, preserving all 130 preceding exports. Two Rust cancellation/panic
-recovery guards and C/C++ ownership and callback guards pass.
+Fresh qualification on clean umbrella checkpoint `72f5b41e` verifies native
+keyboard controls and neighboring behavior through the shared Rust document.
+Rust, C and C++ apps each match 495 measured Chromium behavior cases, including
+99 keyboard scenarios, with repeated runs identical. All 8,631 all-targets
+tests, 8,633 workspace tests and 54 headless C tests pass; 13 workspace tests
+remain ignored. The ABI has 131 exports and 34 unchanged layouts, with 29 C
+and 23 C++ consumers passing. Six ordinary CI jobs and seven explicit
+hardening jobs pass at the same commit; five optional skips are recorded.
 
-These checks measure state and events. Keyboard appearance, broader keyboard
-APIs, fresh workspace and hosted checks, neighboring regressions and renderer
-qualification remain open on this source. No new pixel result is claimed.
-[Native keyboard evidence](docs/renderer/generated/native-keyboard-controls-v1.json).
+The freshly built CPU renderer is exact on focused **640/640** and primitive
+**960/960** comparisons. Original **21,338/22,924** and expanded
+**22,141/23,728** comparisons are exact, with zero render errors. Both full
+pixel gates still fail: 1,586 original and 1,587 expanded comparisons differ.
+Every Chromium reference remains fixed; no prior exact comparison regresses
+or has more wrong pixels. Broader native APIs, keyboard appearance, reviewed
+ownership of 884 original residual test IDs, compositor, physical lab and
+release gates remain open. Chromium alone defines correct pixels.
+[Completed public evidence](docs/renderer/generated/native-keyboard-public-v2.json).
+The [earlier keyboard evidence](docs/renderer/generated/native-keyboard-controls-v1.json)
+is preserved unchanged. Earlier checkpoints follow.
 
 The [native form association APIs](docs/v02/native-form-owner.md) are integrated
 at clean code checkpoint `a401a8ac`. Rust, C and C++ apps each match all 396

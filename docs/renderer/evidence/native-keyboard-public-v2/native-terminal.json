@@ -1,0 +1,26 @@
+{
+  "actual_audit_session_exit_code": 0,
+  "actual_owner_session_exit_code": 0,
+  "all_local_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "audit_sha256": "039bd70215e95336f6617e72537abd07f5c7b648480b32f43e6ee107efd19681",
+  "hosted_explicit_hardening_jobs_passed": 7,
+  "hosted_hardening_snapshot_sha256": "f601832f34dd25f1f050671e394d2df6411daeef015c2df2451add4928d5e6b9",
+  "hosted_pr_snapshot_sha256": "346c3000e32fb03df9f46d499c1c0f1b683702c893e7f6d706aa902ae171e654",
+  "hosted_regular_jobs_passed": 6,
+  "native_behavior_comparisons": 1485,
+  "owner_absent": true,
+  "owner_pid": 126118,
+  "prior_audit_retired_after_next_source_or_target_mutation": true,
+  "receipt_sha256": "8d82ce60a5da83f2fbb07cd5cd88e0893ae713023b606f998be4fa6e645e598b",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "72f5b41e5c2d795d95ad0a198be2332f70c317d0",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "7c6711dea547053cbe16427e25fc8ad2b80385b034834c4702e99d1576d3ebb6",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

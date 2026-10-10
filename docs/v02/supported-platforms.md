@@ -42,11 +42,14 @@ test-only fixture does not complete the public application API.
 
 Native keyboard control defaults now run through public
 `Document::dispatch_key_input` and Rust callbacks; C uses the same retained
-document. Rust, C and C++ each match 99 measured Chromium scenarios at clean
-code checkpoint `a0841c9e`. C exposes the native active-state query through
-`oui_element_is_active_v1`. These state and event checks leave keyboard pixels,
-broader keyboard APIs and current-source full qualification open.
-[Evidence](../renderer/generated/native-keyboard-controls-v1.json).
+document. Fresh canonical qualification at clean checkpoint `72f5b41e` verifies
+495 measured Chromium behavior cases in each of Rust, C and C++, including
+99 keyboard scenarios and existing control, selection and form behavior.
+C exposes the native active-state query through `oui_element_is_active_v1`.
+Workspace, ABI and hosted checks pass on that source. Focused and primitive
+pixels are exact; both complete Chromium pixel gates still fail. Keyboard
+appearance, broader keyboard APIs and complete native API qualification
+remain open. [Evidence](../renderer/generated/native-keyboard-public-v2.json).
 
 Lookup, mutation, geometry, focus, scrolling, controls, and event dispatch
 operate directly on the native engine:
