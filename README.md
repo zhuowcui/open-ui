@@ -33,6 +33,10 @@ exact gains, no regressions and unchanged Chromium references. Focused and
 primitive gates pass; both full gates still fail. Fresh combined umbrella
 qualification is pending. See the
 [native Rust reproducer and evidence](docs/renderer/fragment-decoration-clip-investigation.md#native-fieldset-paint-follow-up).
+Fresh canonical Rust consumer verification at `dc8a540e` also passes all
+187 bounds and fragment-rectangle sets, repeated renders, callbacks, teardown
+and 168 paint tests. Four neighboring images still differ; complete canonical
+renderer/workspace qualification remains pending.
 The preceding canonical qualification is recorded below.
 
 Fresh qualification on clean umbrella checkpoint `72f5b41e` verifies native

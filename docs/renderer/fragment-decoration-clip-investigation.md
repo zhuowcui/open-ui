@@ -76,7 +76,7 @@ The original reduction reproduced 2,336 wrong pixels at 1.25 scale and 1,104
 at 1.5. The corrected source is exact at all five scales: 1, 1.25, 1.5, 2 and
 3. Removing the translucent fill left the same 1,284 background-edge errors
 in the intermediate border-only candidate, isolating the second error.
-All 143 owned bounds and 143 fragment-rectangle sets agree with Chromium;
+All 187 owned bounds and 187 fragment-rectangle sets agree with Chromium;
 callbacks, independent process repeats and handle teardown pass.
 Four neighboring opacity/phase cases still differ by 322, 386, 386 and 849
 pixels. Their edge causes remain open; the reduction is not universally exact.
@@ -113,3 +113,23 @@ diagnostic header. Fresh combined
 umbrella qualification is pending. Both full pixel gates remain failed with
 actual exit 1. Remaining native APIs, residual ownership, compositor, hardware
 and release qualification remain open.
+
+
+### Fresh public Rust consumer verification
+
+Clean umbrella code `dc8a540e` freshly compiles the app and all linked local
+libraries: 16 artifact records and 29 compiled paths are independently checked.
+All 11 cases run twice with identical outputs, matching the unchanged private
+candidate images and Chromium geometry. All 187 bounds and 187 fragment-rectangle
+sets agree; Rust callbacks and owned-handle teardown pass. Seven images are
+exact and four neighboring images remain different. All 168 paint tests pass.
+This verifies the consuming native Rust path, with no JavaScript execution.
+
+The [public evidence](generated/native-fragmented-fieldset-public-v1.json)
+preserves the first failed build, which omitted the pinned local toolchain
+configuration, and the failed count audit. The previous v1 summary's count
+of 143 was a bookkeeping error: there are 17 handles in each of 11 cases,
+so the correct total is 187. The raw snapshots, comparisons and prior evidence
+stay unchanged; the new index explicitly corrects that summary field.
+Complete canonical renderer/workspace verification and the wider native API,
+compositor, hardware and release gates remain open.

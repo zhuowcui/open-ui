@@ -31,6 +31,11 @@ four reduced neighboring edge cases, complete native APIs and release gates
 remain open. Fresh combined umbrella qualification is pending.
 [Investigation and preserved evidence](../renderer/fragment-decoration-clip-investigation.md#native-fieldset-paint-follow-up).
 
+Fresh canonical Rust consumer verification at `dc8a540e` also passes all
+187 bounds and fragment-rectangle sets, repeated renders, callbacks, teardown
+and 168 paint tests. Four neighboring images still differ; complete canonical
+renderer/workspace qualification remains pending.
+
 ### Preceding canonical qualification
 
 Fresh canonical qualification on clean umbrella code checkpoint `72f5b41e`

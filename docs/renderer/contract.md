@@ -32,6 +32,11 @@ combined umbrella qualification is pending. Four neighboring reduction cases
 and 882 original residual IDs remain open.
 [Native Rust investigation and evidence](fragment-decoration-clip-investigation.md#native-fieldset-paint-follow-up).
 
+Fresh canonical Rust consumer verification at `dc8a540e` also passes all
+187 bounds and fragment-rectangle sets, repeated renders, callbacks, teardown
+and 168 paint tests. Four neighboring images still differ; complete canonical
+renderer/workspace qualification remains pending.
+
 Fresh canonical qualification at clean umbrella checkpoint `72f5b41e` measures
 the integrated native keyboard and control work. Rust, C and C++ each match
 495 Chromium behavior cases; workspace, ABI and hosted hardening checks pass.

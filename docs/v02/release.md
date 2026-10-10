@@ -12,6 +12,11 @@ exit 1; fresh combined umbrella qualification and final release remain open.
 The consuming app uses native Rust APIs and callbacks, with no JavaScript.
 [Investigation and preserved evidence](../renderer/fragment-decoration-clip-investigation.md#native-fieldset-paint-follow-up).
 
+Fresh canonical Rust consumer verification at `dc8a540e` also passes all
+187 bounds and fragment-rectangle sets, repeated renders, callbacks, teardown
+and 168 paint tests. Four neighboring images still differ; complete canonical
+renderer/workspace qualification remains pending.
+
 Fresh qualification on clean umbrella checkpoint `72f5b41e` verifies native
 keyboard controls and neighboring behavior through the shared Rust document.
 Rust, C and C++ apps each match 495 measured Chromium behavior cases, including
