@@ -22,8 +22,9 @@ use skrifa::{
 use crate::font::FontPlatformData;
 
 /// Selects the outline rasterizer used when a shaped run becomes a Skia
-/// text blob. Chromium's Linux native controls use Fontations-hinted paths,
-/// while authored text continues through Skia's ordinary FreeType backend.
+/// text blob. Chromium's Linux controls and hinted author text use
+/// Fontations-compatible paths; unhinted author strikes retain their resolved
+/// Skia font.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum TextRasterPolicy {
     #[default]
@@ -140,6 +141,11 @@ fn fontations_compatible_font(
             )
             .ok()?
         }
+        // An explicitly unhinted resolved strike must keep its original
+        // outline. Monochrome coverage alone does not enable outline fitting.
+        TextRasterPolicy::ChromiumAliased if source_font.hinting() == FontHinting::None => {
+            return None;
+        }
         TextRasterPolicy::ChromiumAliased => HintingInstance::new(
             &outlines,
             Size::new(size),
@@ -170,7 +176,9 @@ fn fontations_compatible_font(
         TextRasterPolicy::ChromiumNativeControl | TextRasterPolicy::ChromiumAuthorLcd
     );
     let embedded_document = raster_policy == TextRasterPolicy::ChromiumEmbeddedDocument;
-    font.set_subpixel(true);
+    // Chromium disables subpixel positioning for monochrome strikes. Retain
+    // it for the antialiased policies, whose masks depend on the glyph phase.
+    font.set_subpixel(raster_policy != TextRasterPolicy::ChromiumAliased);
     font.set_linear_metrics(native_control);
     font.set_edging(if native_control {
         Edging::SubpixelAntiAlias

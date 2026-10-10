@@ -302,6 +302,13 @@ Clean `87339e4d` matches all 70 measured bounds at four required profiles and
 remain failed exact comparisons. Homogeneous shaping for every native family
 list remains implementation work. [Evidence](../renderer/generated/native-shaping-wrap-v1.json).
 
+The new monochrome font candidate matches all 10 images and 70 bounds in
+dirty-source diagnostics, including the 3× neighbor, with stable process and
+unchanged-frame repeats. Its focused and primitive diagnostics remain exact
+and all 510 text/paint tests pass. Clean complete qualification remains pending;
+this does not complete every native font or element API.
+[Candidate evidence](../renderer/generated/native-monochrome-strikes-v1.json).
+
 ## No JavaScript runtime
 
 Open UI does not run application or test JavaScript, in this or future

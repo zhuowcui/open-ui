@@ -58,8 +58,10 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   and 60/60 bounds exact in the measured rectangle cases. Mixed-unit animation,
   complete adjusted-font/root/orientation contexts and text line-box/glyph
   qualification remain native API work;
-- logical wrapping across shaping runs now matches all 70 measured native
-  bounds, but its ten complete text images still differ by 2–13 glyph cells.
+- logical wrapping across shaping runs matches all 70 measured native bounds.
+  The new font candidate also matches all ten images in dirty-source diagnostics;
+  fresh clean complete renderer/workspace/ABI/hosted qualification remains pending.
+  [Font candidate evidence](../renderer/generated/native-monochrome-strikes-v1.json).
   Homogeneous shaping remains restricted to the deterministic fallback-family
   profile; complete support for other native family lists is required work.
   Old Open UI screenshots do not constrain that work. See the

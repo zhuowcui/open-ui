@@ -59,6 +59,12 @@ pub fn paint_text(
         TextRasterPolicy::ChromiumEmbeddedDocument
     } else if author_lcd {
         TextRasterPolicy::ChromiumAuthorLcd
+    } else if style.raster_configuration.backend == RasterBackend::ChromiumLinux
+        && style.raster_configuration.author_text.edging == TextEdging::Alias
+    {
+        // Fit hinted monochrome strikes with Fontations. The resolved font's
+        // hinting setting preserves the original outline for unhinted strikes.
+        TextRasterPolicy::ChromiumAliased
     } else {
         TextRasterPolicy::Skia
     };

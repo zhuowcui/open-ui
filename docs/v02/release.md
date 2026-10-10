@@ -4,6 +4,26 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
+## Monochrome text candidate
+
+A new shared font raster policy matches **10/10 native consumer images** and
+**70/70 bounds** against unchanged, independently repeated pinned Chromium
+captures at the four required profiles and a 3× neighbor. Native process and
+unchanged-frame repeats, the Rust click callback and teardown checks pass.
+Hinted author monochrome strikes use Fontations-compatible outlines; resolved
+unhinted strikes retain their original font. Two earlier variants that worsened
+3× glyphs are preserved as rejected experiments.
+
+Dirty-source focused **640/640** and primitive **960/960** diagnostics are exact,
+with zero errors. All 1,600 rows and compiled artifacts are audited; every native
+image and Chromium reference remains unchanged from the earlier matrices.
+All **510 shared text and paint tests** pass, with zero failures or ignored tests.
+These are candidate diagnostics. Clean complete original/expanded censuses,
+workspace, ABI and hosted checks on the new source remain pending. No complete
+renderer, native API or release qualification is claimed. [Evidence](../renderer/generated/native-monochrome-strikes-v1.json).
+
+## Previous complete checkpoint
+
 Fresh complete CPU verification at clean `87339e4d` is exact on focused
 **640/640** and primitive **960/960** comparisons. Original **21,343/22,924**
 and expanded **22,146/23,728** are exact, with zero render errors. Both full
@@ -24,8 +44,9 @@ Those differences remain failures. Complete text qualification remains open.
 All **8,642 locked all-targets tests** and **8,644 workspace and documentation
 tests** pass with every feature enabled; 13 existing workspace tests remain
 ignored. All 30 C and 24 C++ consumers pass, preserving 131 exports and 34
-layouts. Hosted qualification for this new checkpoint is pending. The seven
-previous explicit hardening successes at `883ea716` remain earlier evidence.
+layouts. Ordinary CI and all seven explicitly dispatched hardening jobs pass
+on its documentation checkpoint `365f5696`. Those hosted results do not qualify
+the new font candidate.
 Broader native APIs and font-family shaping, mixed-unit animation, residual
 ownership, compositor, physical lab and release qualification remain open.
 Open UI executes no JavaScript; consuming apps use native Rust methods and
