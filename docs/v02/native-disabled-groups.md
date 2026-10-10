@@ -98,9 +98,11 @@ The code adds Rust `Element::dispatch_click_event` and C
 `oui_element_clone_subtree_v1`, and routes checkable activation through the
 shared Rust Document. It separates live state from authored attributes and
 runs preactivation before callbacks, restoring state when canceled. These
-changes use native Rust operations and Rust callbacks. Additional form-owner resets,
-radio keyboard behavior and complete API coverage remain open. Fixture
-lowering does not complete a public app API.
+changes use native Rust operations and Rust callbacks. The later
+[native form-owner follow-up](native-form-owner.md) verifies 88 additional
+association and radio-membership scenarios through public Rust, C and C++
+APIs. Unmeasured form operations, radio keyboard behavior and complete API
+coverage remain open. Fixture lowering does not complete a public app API.
 [Private observations, code patch and provenance](../renderer/generated/native-checkable-private-v1.json).
 
 The default appearance correction on clean private `365ed4a7` matches

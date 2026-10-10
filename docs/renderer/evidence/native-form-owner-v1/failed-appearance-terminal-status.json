@@ -1,0 +1,42 @@
+{
+  "all_source_bytes_unchanged": true,
+  "audit_actual_exit_code": 0,
+  "audit_process_absent": true,
+  "audit_session": 44643,
+  "audit_session_closed": true,
+  "audit_sha256": "1a06d25ce33c341560331637474b3550a5dbab90c5c17e91881a354565a48779",
+  "cases_rendered": 0,
+  "commands_executed": 0,
+  "failure": "existing disk availability assertion at driver line 87 before first case; no pixel result",
+  "later_output_free_bytes": 798988533760,
+  "later_root_free_bytes": 162119680,
+  "main_source": {
+    "clean": true,
+    "commit": "783e11f44b0e1cd0023018d24e667d27f0b91bb8",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "09626c257b1039fb97272f3c71a24ebf3e36fb40df431fa3f3998f02c7933e43",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "optional_du_actual_exit_code": 143,
+  "optional_overbroad_du_session": 78621,
+  "optional_size_scan_actual_exit_code": 0,
+  "optional_size_scan_session": 98998,
+  "original_output_guard_bytes": 10737418240,
+  "original_root_guard_bytes": 134217728,
+  "owner_absent": true,
+  "owner_pid": 28636,
+  "owner_session": 65368,
+  "owner_session_closed": true,
+  "pixel_qualification": false,
+  "receipt_sha256": "464f49224a04956c190e0e949a68f9c1ba11e19c747f2295f4d7c2d5440c1066",
+  "saved_utc": "2026-10-09T22:58:00.712176+00:00",
+  "source": {
+    "clean": true,
+    "commit": "a401a8ac8c33cc5e24ed9bb19934061716cd84dd",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "ebebbc58bd6f89eb5f03af1e3eae9cb961463a3f1be749c23315206c03c735f9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_or_reference_edits": false,
+  "whole_actual_exit_code": 1
+}

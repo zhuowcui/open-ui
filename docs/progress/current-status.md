@@ -22,6 +22,34 @@ remain open.
 
 ## Current implementation checkpoint
 
+Native form association is integrated at code checkpoint `a401a8ac`. The new
+Rust `Element::associated_form()` and owned C form/parent queries use the same
+retained engine. All 88 new scenarios match pinned Chromium in Rust, C and C++;
+the complete behavior cohort is 396/396 per language, 1,188/1,188 overall.
+Thirty process-repeat pairs agree. All 8,628 all-targets tests pass, including
+the original deep-nesting benchmark with unchanged stack limits. Workspace
+tests pass 8,630 with 13 ignored; 53 headless C tests pass. The ABI has 130
+exports and the same 34 layouts.
+
+Default control appearance is 160/160 exact, including 640 PNG comparisons.
+Focused 640/640 and primitive 960/960 are exact. Original 21,338/22,924 has
+1,586 differences across 884 tests; expanded 22,141/23,728 has 1,587 differences.
+Both have zero render errors and actual exits 1. All 48,252 rows keep their
+previous native pixels and immutable Chromium fields, with no losses or
+worsened differences. Of 201 additional cases, 200 are exact at all four
+profiles; the fieldset/legend case at 1.25 scale still differs.
+
+Measurements ran on the clean code commit in a private qualification clone.
+The umbrella branch adopted that exact commit; an independent source-byte
+comparison confirms equality. Receipts retain their original scope. New
+canonical-checkout qualification commands and current hosted checks remain
+open. Needed native APIs and keyboard behavior, the required hosted Chromium
+equality job, retained compositor, physical lab and release remain unfinished.
+[API contract](../v02/native-form-owner.md) and
+[completed evidence](../renderer/generated/native-form-owner-v1.json).
+
+### Earlier checkable-control checkpoint
+
 The checkbox/radio implementation is integrated and measured on clean public
 `54cf4b3c`. Rust, C and C++ apps each match 308/308 control observations against
 pinned Chromium, including 220 checkable and 88 fieldset cases. Previous

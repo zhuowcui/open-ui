@@ -1,0 +1,28 @@
+{
+  "all_native_apis_qualified": false,
+  "implementation_integrated": true,
+  "integration_actual_exit_code": 0,
+  "integration_owner_absent": true,
+  "integration_owner_pid": 85500,
+  "integration_receipt_sha256": "5e3f99763cde3a3f74d5b66b61bc1bc74580b9c67070a2ba742f3fa58c755ded",
+  "integration_tool_session": 83823,
+  "integration_tool_session_closed": true,
+  "new_public_qualification_commands_executed": false,
+  "private_source": {
+    "clean": true,
+    "commit": "a401a8ac8c33cc5e24ed9bb19934061716cd84dd",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "ebebbc58bd6f89eb5f03af1e3eae9cb961463a3f1be749c23315206c03c735f9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "source": {
+    "clean": true,
+    "commit": "a401a8ac8c33cc5e24ed9bb19934061716cd84dd",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "ebebbc58bd6f89eb5f03af1e3eae9cb961463a3f1be749c23315206c03c735f9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_byte_identity_verified": true
+}

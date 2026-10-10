@@ -1,0 +1,91 @@
+{
+  "actual_whole_owner_exit_code": 1,
+  "all_native_apis_qualified": false,
+  "audit_actual_exit_code": 0,
+  "audit_tool_session": 52144,
+  "audit_tool_session_closed": true,
+  "compiled_paths_verified": 26,
+  "complete": true,
+  "do_not_rerun_after_source_or_target_epoch_changes": true,
+  "fresh_packages_verified": 14,
+  "implementation_integrated": false,
+  "kind": "completed current-epoch proof saved before source or Cargo mutation",
+  "matrix_rows_verified": 48252,
+  "owner_process_reaped": true,
+  "owner_receipt_sha256": "009a090f8c41959077446af29f6a4a996891315ef0786746388e0b8753409ae5",
+  "private_candidate_nonregression": true,
+  "public_source": {
+    "clean": true,
+    "commit": "783e11f44b0e1cd0023018d24e667d27f0b91bb8",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "09626c257b1039fb97272f3c71a24ebf3e36fb40df431fa3f3998f02c7933e43",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "results": {
+    "expanded": {
+      "actual_exit_code": 1,
+      "chromium_reference_changed_rows": 0,
+      "complete": true,
+      "different": 1587,
+      "errors": 0,
+      "exact": 22141,
+      "gains": 0,
+      "losses": 0,
+      "total": 23728,
+      "worsened": 0
+    },
+    "focused": {
+      "actual_exit_code": 0,
+      "chromium_reference_changed_rows": 0,
+      "complete": true,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "gains": 0,
+      "losses": 0,
+      "total": 640,
+      "worsened": 0
+    },
+    "full": {
+      "actual_exit_code": 1,
+      "chromium_reference_changed_rows": 0,
+      "complete": true,
+      "different": 1586,
+      "errors": 0,
+      "exact": 21338,
+      "gains": 0,
+      "losses": 0,
+      "total": 22924,
+      "worsened": 0
+    },
+    "primitive": {
+      "actual_exit_code": 0,
+      "chromium_reference_changed_rows": 0,
+      "complete": true,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "gains": 0,
+      "losses": 0,
+      "total": 960,
+      "worsened": 0
+    }
+  },
+  "source": {
+    "clean": true,
+    "commit": "a401a8ac8c33cc5e24ed9bb19934061716cd84dd",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "ebebbc58bd6f89eb5f03af1e3eae9cb961463a3f1be749c23315206c03c735f9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "supervisor_owner_audit_processes_absent": [
+    41846,
+    41848,
+    84481
+  ],
+  "supervisor_receipt_sha256": "27520848b59ea9c48d24f8a172cf79a9be4224979da4e730db23912c6c1e78a5",
+  "terminal_audit_script_sha256": "db2bd51528d1ca7d8dd533e6dc34b32d5fb45d1d69915964cbf568830abf388b",
+  "terminal_audit_sha256": "ead37d7f908f76fc7bbf67f12ac071b755cfcf4eff01de81ad0f0b6ef68d4096"
+}

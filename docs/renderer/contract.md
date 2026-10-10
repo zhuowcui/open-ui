@@ -24,6 +24,18 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
+The [native form association follow-up](../v02/native-form-owner.md) is integrated
+at code checkpoint `a401a8ac`, measured in a clean private qualification clone
+and adopted unchanged after a complete source-byte comparison. Its Rust, C and
+C++ consumers each match 396 behavior cases, including 88 new form-owner
+scenarios. Focused 640/640 and primitive 960/960 are exact. Original
+21,338/22,924 and expanded 22,141/23,728 retain zero errors and actual exits 1.
+All 48,252 comparison rows preserve prior native pixels and every Chromium
+reference field, with no losses or worsened differences. Complete native APIs,
+fresh canonical-checkout and hosted qualification, the full renderer,
+compositor, lab and release remain open.
+[Evidence and original receipts](generated/native-form-owner-v1.json).
+
 The [native editing and rounded border follow-up](native-editing-and-rounded-border.md)
 is integrated and verified on clean PR checkpoint `5b05e1b5`. Focused
 **640/640** and primitive **960/960** are exact. Original

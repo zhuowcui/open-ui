@@ -56,6 +56,7 @@ operate directly on the native engine:
 | Inject normalized keyboard or committed text input | `Document::dispatch_key_input`, `dispatch_key_event`, `dispatch_text_input` |
 | Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `scroll_metrics`, `scroll_into_view`, `smooth_scroll_into_view`, `client_rects`, `bounding_rect`; `Document::hit_test` |
 | Update form controls or details | `set_control_value`, `set_selection`, `set_checked`, `set_open` |
+| Query the retained parent or current associated form | `Element::parent`, `associated_form`; [ownership and measured scope](native-form-owner.md) |
 | Query own and inherited disabled state | `Element::is_own_disabled`, `is_effectively_disabled`; first-legend and direct option-group rules use the retained tree |
 | Move or extend a text selection, delete by grapheme or word, select all, undo, or redo | `Element::edit_text(EditCommand)`, using the same engine and `input` callback path as keyboard editing |
 | Inject or cancel native IME input | `Document::dispatch_composition_start`, `dispatch_composition_update`, `dispatch_composition_end`, `dispatch_composition_cancel` |

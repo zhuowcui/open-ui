@@ -27,6 +27,25 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
+The [native form association APIs](docs/v02/native-form-owner.md) are integrated
+at clean code checkpoint `a401a8ac`. Rust, C and C++ apps each match all 396
+measured behavior cases against pinned Chromium, including 88 new form-owner
+scenarios. Rust exposes `Element::associated_form()`; C adds owned form and
+parent queries over the same engine. All 8,628 all-targets tests, 8,630 ordinary
+workspace tests and 53 headless C tests pass; 13 workspace tests remain ignored.
+The ABI has 130 exports and the same 34 layouts.
+
+The same clean commit matches 160/160 default-control appearance cases and all
+640 PNG comparisons. Focused 640/640 and primitive 960/960 are exact. Original
+21,338/22,924 and expanded 22,141/23,728 remain failing equality results, with
+zero errors and no pixel regressions. Qualification ran in a private clone;
+the umbrella checkout then adopted the exact commit and verified every source
+byte. New canonical-checkout qualification commands and current hosted checks
+remain open, together with complete APIs, compositor, lab and release gates.
+[Form-owner evidence](docs/renderer/generated/native-form-owner-v1.json).
+
+Earlier control qualification follows.
+
 On clean public checkpoint `54cf4b3c`, Rust, C and C++ apps each match all
 308 measured control-behavior cases against pinned Chromium, including 220
 checkbox/radio cases. The native Rust appearance app also matches 160/160
