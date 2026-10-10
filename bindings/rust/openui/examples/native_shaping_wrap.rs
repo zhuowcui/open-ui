@@ -1,5 +1,3 @@
-/home/nero/code/open-ui/bindings/rust/openui/examples/native_shaping_wrap.rs:
-
 //! Native app for line wrapping across font shaping boundaries.
 use openui::prelude::*;
 use std::{cell::Cell, path::PathBuf, rc::Rc};
