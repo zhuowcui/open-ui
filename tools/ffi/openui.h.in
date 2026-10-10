@@ -1044,6 +1044,10 @@ OuiStatus oui_element_is_own_disabled_v1(OuiElement* element, uint32_t* out_disa
  * and OUI_CONTROL_DISABLED retain their own-state meaning. Output is 0 or 1;
  * it stays unchanged on error. Call only on the document's owning thread. */
 OuiStatus oui_element_is_effectively_disabled_v1(OuiElement* element, uint32_t* out_disabled);
+/* Query the same retained native active state as Rust Element::is_active.
+ * Owning thread only, no layout or callbacks. Output is 0 or 1 and is written
+ * only on success. The element and its document must remain live. */
+OuiStatus oui_element_is_active_v1(OuiElement* element, uint32_t* out_active);
 OuiStatus oui_element_is_connected_v1(OuiElement* element, uint32_t* out_connected);
 OuiStatus oui_element_is_same_node_v1(OuiElement* first, OuiElement* second, uint32_t* out_same);
 /* Replace range without INPUT/CHANGE. Queues selection notifications when value

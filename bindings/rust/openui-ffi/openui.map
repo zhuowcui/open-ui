@@ -78,6 +78,7 @@ OPENUI_0.2 {
     oui_element_get_selection;
     oui_element_get_selection_direction_v1;
     oui_element_insert_before;
+    oui_element_is_active_v1;
     oui_element_is_connected_v1;
     oui_element_is_effectively_disabled_v1;
     oui_element_is_own_disabled_v1;

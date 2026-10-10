@@ -3,7 +3,7 @@ project(OpenUIV02Examples LANGUAGES C CXX)
 
 find_package(OpenUI 0.2 CONFIG REQUIRED)
 
-foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics scroll_into_view primitive_styles svg_viewport float_colors fragment_keywords text_content edit_commands focus_notifications form_owner form_owner_guards)
+foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics scroll_into_view primitive_styles svg_viewport float_colors fragment_keywords text_content edit_commands focus_notifications form_owner form_owner_guards control_keyboard control_keyboard_guards)
   add_executable(openui_${example} ${example}.c)
   target_link_libraries(openui_${example} PRIVATE OpenUI::OpenUI)
 endforeach()
@@ -49,7 +49,7 @@ add_executable(openui_focus_notifications_cpp focus_notifications.cc)
 target_link_libraries(openui_focus_notifications_cpp PRIVATE OpenUI::OpenUI)
 set_target_properties(openui_focus_notifications_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
 
-foreach(example IN ITEMS form_owner form_owner_guards)
+foreach(example IN ITEMS form_owner form_owner_guards control_keyboard control_keyboard_guards)
   add_executable(openui_${example}_cpp ${example}.cc)
   target_link_libraries(openui_${example}_cpp PRIVATE OpenUI::OpenUI)
   set_target_properties(openui_${example}_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)

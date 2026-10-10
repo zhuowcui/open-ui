@@ -183,6 +183,7 @@ jobs:
           python3 tools/style/generate_properties.py --check
           python3 tools/ffi/generate_ffi.py --check
           python3 tools/ffi/generate_form_owner_cases.py --check
+          python3 tools/ffi/generate_control_keyboard_cases.py --check
           python3 tools/release/build_v02_linux.py --verify-source
           python3 -m unittest tools.release.test_v02_packaging
           python3 tools/conformance/verify_v02.py

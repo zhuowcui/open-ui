@@ -2664,6 +2664,27 @@ pub extern "C" fn oui_element_is_connected_v1(
     })
 }
 
+// SAFETY CONTRACT: element is live on the owning thread, output is writable.
+#[no_mangle]
+pub extern "C" fn oui_element_is_active_v1(
+    element_handle: *mut OuiElement,
+    out_active: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_active.is_null() {
+            return Err(invalid("active output is null"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let active = borrow_engine(&state)?.is_active(element.node)?;
+        // SAFETY: caller guarantees writable storage; errors leave it unchanged.
+        unsafe {
+            ptr::write(out_active, u32::from(active));
+        }
+        Ok(())
+    })
+}
+
 // SAFETY CONTRACT: both handles are owning-thread live nodes, output writable.
 #[no_mangle]
 pub extern "C" fn oui_element_is_same_node_v1(
@@ -6739,6 +6760,27 @@ mod tests {
         assert_eq!(oui_element_destroy(child), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
     }
+    #[test]
+    fn c_active_query_rejects_reentrant_borrow_without_writing_output() {
+        let doc = create_document(64, 64);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(doc, &mut root), OuiStatus::Ok);
+        let state = document(doc as usize).unwrap();
+        let held = borrow_engine_mut(&state).unwrap();
+        let mut out = 73;
+        assert_eq!(
+            oui_element_is_active_v1(root, &mut out),
+            OuiStatus::Reentrant
+        );
+        assert_eq!(out, 73);
+        drop(held);
+        assert_eq!(oui_element_is_active_v1(root, &mut out), OuiStatus::Ok);
+        assert_eq!(out, 0);
+        drop(state);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(doc), OuiStatus::Ok);
+    }
+
     #[test]
     fn c_disabled_queries_preserve_outputs_on_invalid_stale_thread_and_borrow_errors() {
         type Query = extern "C" fn(*mut OuiElement, *mut u32) -> OuiStatus;
