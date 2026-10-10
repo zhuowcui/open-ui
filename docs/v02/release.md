@@ -4,25 +4,43 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
-## Monochrome text candidate
+## Monochrome text regression (rejected)
 
-A new shared font raster policy matches **10/10 native consumer images** and
-**70/70 bounds** against unchanged, independently repeated pinned Chromium
-captures at the four required profiles and a 3× neighbor. Native process and
-unchanged-frame repeats, the Rust click callback and teardown checks pass.
-Hinted author monochrome strikes use Fontations-compatible outlines; resolved
-unhinted strikes retain their original font. Two earlier variants that worsened
-3× glyphs are preserved as rejected experiments.
+Fresh CPU verification at clean `40ff6178` is exact on focused **640/640**
+and primitive **960/960** comparisons. Original **21,334/22,924**
+and expanded **22,137/23,728** are exact, with zero render errors.
+The full pixel gates still exit 1 for **1,590 / 1,591 differences**.
+All **48,252 rows** and fresh compiled artifacts are audited. There are
+7 exact gains but **16 exact losses and 34 worsened comparisons**
+in each full census. Chromium reference fields are unchanged. This candidate
+is rejected for complete renderer qualification; the smaller passing suites
+did not catch its effect on existing rotated and ruby text.
 
-Dirty-source focused **640/640** and primitive **960/960** diagnostics are exact,
-with zero errors. All 1,600 rows and compiled artifacts are audited; every native
-image and Chromium reference remains unchanged from the earlier matrices.
-All **510 shared text and paint tests** pass, with zero failures or ignored tests.
-These are candidate diagnostics. Clean complete original/expanded censuses,
-workspace, ABI and hosted checks on the new source remain pending. No complete
-renderer, native API or release qualification is claimed. [Evidence](../renderer/generated/native-monochrome-strikes-v1.json).
+The [native Rust consumer](../../bindings/rust/openui/examples/native_shaping_wrap.rs)
+changes widths through a Rust click callback. All **10/10 whole images** and
+**70/70 bounds** match unchanged, independently repeated pinned Chromium
+captures at the four required profiles and a 3× neighbor. Separate process
+and unchanged-frame repeats, the callback count and weak teardown pass.
+Hinted author monochrome strikes use Fontations-compatible outlines;
+explicitly unhinted resolved strikes retain their original font.
 
-## Previous complete checkpoint
+All **8,642 locked all-targets tests** and **8,644 workspace and documentation
+tests** pass with every feature enabled, with zero failures and 13 existing
+workspace ignores. All **30 C and 24 C++ consumers** pass, preserving **131
+exports and 34 layouts**. Format checks, ordinary CI and all seven explicitly
+dispatched hardening jobs pass on the same source:
+[hardening run 38082198110](https://github.com/zhuowcui/open-ui/actions/runs/38082198110).
+
+The earlier rejected font variants and dirty diagnostics remain preserved in
+[candidate evidence](../renderer/generated/native-monochrome-strikes-v1.json).
+Repairing this raster-policy regression, full Chromium equality, reviewed
+residual ownership, generic font-family
+shaping, remaining native APIs, compositor, physical lab and release
+qualification remain open. Open UI never executes JavaScript; native apps
+use public Rust APIs and Rust callbacks over the shared Engine.
+[Completed failed census and clean checks](../renderer/generated/native-monochrome-strikes-v2.json).
+
+## Previous wrapping checkpoint
 
 Fresh complete CPU verification at clean `87339e4d` is exact on focused
 **640/640** and primitive **960/960** comparisons. Original **21,343/22,924**
@@ -365,14 +383,14 @@ six successful jobs and five skips. Skips do not satisfy required release gates.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | [Complete clean text/style census](../renderer/generated/native-text-inheritance-v5.json) at `41b616c3`, whose code is integrated at `6def29f8`: 21,334/22,924 exact, 1,590 different, zero errors; actual exit 1. All Chromium inputs stay fixed; 882 residual original IDs need closure | fail |
-| Focused and primitive raster | [Complete text/style matrices](../renderer/generated/native-text-inheritance-v5.json) at clean `41b616c3`: 640/640 focused and 960/960 primitive exact; all 1,600 comparison rows retain their nine invariants | source-attributed scoped pass |
+| Four-profile renderer matrix | [Completed rejected font checkpoint](../renderer/generated/native-monochrome-strikes-v2.json) at clean `40ff6178`: 21,334/22,924 exact, 1,590 different, zero errors; actual exit 1. All Chromium inputs stay fixed; 888 residual original IDs need closure | fail |
+| Focused and primitive raster | [Completed rejected font checkpoint](../renderer/generated/native-monochrome-strikes-v2.json) at clean `40ff6178`: 640/640 focused and 960/960 primitive exact; all 1,600 native images and Chromium reference fields remain unchanged | source-attributed scoped pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | [Complete clean text/style run](../renderer/generated/native-text-inheritance-v5.json) at `41b616c3` is 22,137/23,728 exact, 1,591 different, zero errors; actual exit 1. Original rows agree with the separate census; all 804 additions stay unchanged, with 200/201 exact at all four profiles. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | [Completed rejected font checkpoint](../renderer/generated/native-monochrome-strikes-v2.json) at clean `40ff6178`: 22,137/23,728 exact, 1,591 different, zero errors; actual exit 1. 200/201 additions exact at all four profiles. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
-| Rust workspace and docs | [Clean integration](../renderer/generated/native-text-inheritance-v6.json) at `6def29f8` clears all 18 packages and passes 8,551 tests, zero failed, 13 ignored, all thirteen build stages and ABI/C/C++ consumers. Earlier counts with a test absent from source remain unqualified. Complete pixel measurements retain their actual `41b616c3` source identity | clean workspace/ABI source attribution passes; full pixel gates fail |
-| Rust 1.85 MSRV | [Own-source manual hardening](https://github.com/zhuowcui/open-ui/actions/runs/37131163576): locked headless and Linux checks passed at `d174ea0b` | pass |
-| Rust/C application contract | 58 scenarios; 113 current exports with all preceding symbols and layouts preserved. Own clean `580539c2` build and eleven C/five C++ headless consumers pass; public Rust float-color consumers pass at five scales | scoped verification pass; remaining API review and lab qualification open |
+| Rust workspace and docs | [Completed rejected font checkpoint](../renderer/generated/native-monochrome-strikes-v2.json) at clean `40ff6178`: 8,642 all-targets and 8,644 workspace/documentation tests pass, zero failed, 13 existing workspace ignores; 30 C and 24 C++ consumers pass, with 131 exports and 34 layouts | scoped verification pass; full pixel gates fail |
+| Rust 1.85 MSRV | [Same-source explicit hardening](https://github.com/zhuowcui/open-ui/actions/runs/38082198110): MSRV job passes at `40ff6178`; all seven jobs succeed, zero skips | pass |
+| Rust/C application contract | 58 conformance scenarios; 131 current exports and 34 layouts, with all preceding symbols and layouts preserved. Clean `40ff6178` build and 30 C/24 C++ consumers pass; same-source hosted conformance passes | scoped verification pass; remaining API review and physical lab qualification open |
 | Native element interaction | Public Rust `Document`, `Element`, and `TextNode` APIs cover ID/class/native-kind lookup, class-token updates, retained detach/reattach, mutation, callbacks, activation, focus, scrolling, and controls; browser-style operations needed by applications must be exposed through native APIs | core implemented; remaining API coverage review open |
 | C-owned X11/Wayland application loop | `oui_app_run` and `oui_app_request_exit` use Rust `App` and the same retained document; versioned platform callbacks and [clean native C/C++ window runs](native-c-lifecycle-evidence.md) cover X11 software/GL and Wayland software | implemented; release-lab qualification open |
 | C platform accessibility | owned full-tree snapshots, node metadata/relations/focus, and changed/removed IDs export from the shared engine; automated AT-SPI operation in a C window remains unqualified | open |

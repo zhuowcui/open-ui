@@ -22,25 +22,43 @@ remain open.
 
 ## Current implementation checkpoint
 
-### Monochrome text candidate
+### Monochrome text regression (rejected)
 
-A new shared font raster policy matches **10/10 native consumer images** and
-**70/70 bounds** against unchanged, independently repeated pinned Chromium
-captures at the four required profiles and a 3× neighbor. Native process and
-unchanged-frame repeats, the Rust click callback and teardown checks pass.
-Hinted author monochrome strikes use Fontations-compatible outlines; resolved
-unhinted strikes retain their original font. Two earlier variants that worsened
-3× glyphs are preserved as rejected experiments.
+Fresh CPU verification at clean `40ff6178` is exact on focused **640/640**
+and primitive **960/960** comparisons. Original **21,334/22,924**
+and expanded **22,137/23,728** are exact, with zero render errors.
+The full pixel gates still exit 1 for **1,590 / 1,591 differences**.
+All **48,252 rows** and fresh compiled artifacts are audited. There are
+7 exact gains but **16 exact losses and 34 worsened comparisons**
+in each full census. Chromium reference fields are unchanged. This candidate
+is rejected for complete renderer qualification; the smaller passing suites
+did not catch its effect on existing rotated and ruby text.
 
-Dirty-source focused **640/640** and primitive **960/960** diagnostics are exact,
-with zero errors. All 1,600 rows and compiled artifacts are audited; every native
-image and Chromium reference remains unchanged from the earlier matrices.
-All **510 shared text and paint tests** pass, with zero failures or ignored tests.
-These are candidate diagnostics. Clean complete original/expanded censuses,
-workspace, ABI and hosted checks on the new source remain pending. No complete
-renderer, native API or release qualification is claimed. [Evidence](../renderer/generated/native-monochrome-strikes-v1.json).
+The [native Rust consumer](../../bindings/rust/openui/examples/native_shaping_wrap.rs)
+changes widths through a Rust click callback. All **10/10 whole images** and
+**70/70 bounds** match unchanged, independently repeated pinned Chromium
+captures at the four required profiles and a 3× neighbor. Separate process
+and unchanged-frame repeats, the callback count and weak teardown pass.
+Hinted author monochrome strikes use Fontations-compatible outlines;
+explicitly unhinted resolved strikes retain their original font.
 
-### Previous complete checkpoint
+All **8,642 locked all-targets tests** and **8,644 workspace and documentation
+tests** pass with every feature enabled, with zero failures and 13 existing
+workspace ignores. All **30 C and 24 C++ consumers** pass, preserving **131
+exports and 34 layouts**. Format checks, ordinary CI and all seven explicitly
+dispatched hardening jobs pass on the same source:
+[hardening run 38082198110](https://github.com/zhuowcui/open-ui/actions/runs/38082198110).
+
+The earlier rejected font variants and dirty diagnostics remain preserved in
+[candidate evidence](../renderer/generated/native-monochrome-strikes-v1.json).
+Repairing this raster-policy regression, full Chromium equality, reviewed
+residual ownership, generic font-family
+shaping, remaining native APIs, compositor, physical lab and release
+qualification remain open. Open UI never executes JavaScript; native apps
+use public Rust APIs and Rust callbacks over the shared Engine.
+[Completed failed census and clean checks](../renderer/generated/native-monochrome-strikes-v2.json).
+
+### Previous wrapping checkpoint
 
 Fresh complete CPU verification at clean `87339e4d` is exact on focused
 **640/640** and primitive **960/960** comparisons. Original **21,343/22,924**
@@ -1325,19 +1343,19 @@ private runtime is promoted or admitted by this documentation checkpoint.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean umbrella census | `d174ea0b`: 21,334/22,924 exact, 1,590 different, 0 errors; original and expanded exits 1; 882 residual original IDs |
-| Last accepted complete clean census against cached Chromium captures | Native event checkpoint `1c8540e9`: 21,334/22,924 exact, 1,590 different, 0 errors; expanded 22,137/23,728 exact, 1,591 different, 0 errors. Both complete pixel gates remain failing |
+| Latest complete clean umbrella census | [Completed rejected font checkpoint](../renderer/generated/native-monochrome-strikes-v2.json) at `40ff6178`: 21,334/22,924 exact, 1,590 different, 0 errors; expanded 22,137/23,728 exact, 1,591 different; both actual exits 1; 888 residual original IDs |
+| Previous native event census | `1c8540e9`: 21,334/22,924 exact, 1,590 different, 0 errors; expanded 22,137/23,728 exact, 1,591 different, 0 errors. Historical measurement; both pixel gates failed |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
-| Focused / primitive 40-profile matrices | 640/640 / 960/960 exact on clean umbrella float-API source `580539c2`; all 1,600 comparison invariants retained from `d174ea0b` |
-| Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
-| Pending native final-state candidates | 0/35 exact at all four profiles after the latest clean recheck |
+| Focused / primitive 40-profile matrices | 640/640 / 960/960 exact at clean `40ff6178`; all 1,600 native images and Chromium reference fields unchanged from the previous matrices. [Completed rejected font checkpoint](../renderer/generated/native-monochrome-strikes-v2.json) |
+| Expanded native final-state additions | 200/201 additional cases exact at all four profiles in the clean `40ff6178` run |
+| Pending native final-state candidates | 35 AST-lowered cases remain outside this clean manifest; [earlier pending recheck](../renderer/generated/pending-mutation-candidates-v7.json) does not qualify them on `40ff6178` |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
 | Application conformance scenarios | 58 across 10 domains |
-| Frozen / current C exports | 84 / 113; own-source ABI and runtime consumers pass; existing symbols/layouts preserved |
-| C examples / C++ consumers | 12 / 6 sources, including native windows; eleven C and five C++ headless consumers run on own source; preceding hosted native windows pass, current-source hardening and release lab open |
-| Workspace tests | 8,528 pass; 0 failed; 13 ignored on clean float-API checkpoint `580539c2`, with the Linux C feature enabled |
+| Frozen / current C exports | 84 / 131; 34 current ABI layouts; clean `40ff6178` source preserves existing symbols and layouts. [Completed rejected font checkpoint](../renderer/generated/native-monochrome-strikes-v2.json) |
+| C / C++ consumers | 30 / 24 pass on clean `40ff6178`; hosted X11/Wayland conformance passes on the same source. Physical release lab remains open. [Completed rejected font checkpoint](../renderer/generated/native-monochrome-strikes-v2.json) |
+| Workspace tests | 8,642 all-targets and 8,644 workspace/documentation pass with all features at clean `40ff6178`; 0 failed, 13 existing workspace ignores. [Completed rejected font checkpoint](../renderer/generated/native-monochrome-strikes-v2.json) |
 | Python closure, qualification, accountability and packaging tests | 249 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |

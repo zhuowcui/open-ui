@@ -302,12 +302,16 @@ Clean `87339e4d` matches all 70 measured bounds at four required profiles and
 remain failed exact comparisons. Homogeneous shaping for every native family
 list remains implementation work. [Evidence](../renderer/generated/native-shaping-wrap-v1.json).
 
-The new monochrome font candidate matches all 10 images and 70 bounds in
-dirty-source diagnostics, including the 3× neighbor, with stable process and
-unchanged-frame repeats. Its focused and primitive diagnostics remain exact
-and all 510 text/paint tests pass. Clean complete qualification remains pending;
-this does not complete every native font or element API.
-[Candidate evidence](../renderer/generated/native-monochrome-strikes-v1.json).
+Clean `40ff6178` closes those measured glyph differences: all **10/10
+images and 70/70 bounds** match unchanged Chromium captures, including the 3×
+neighbor, with stable process and unchanged-frame repeats. Fresh complete
+focused and primitive suites are exact; workspace, C/C++ consumers and all
+seven hosted hardening jobs pass on the same source. The original and expanded
+pixel gates regress by 16 lost exact comparisons and 34 worsened differences;
+this font candidate is rejected for complete renderer qualification. Generic
+font-family shaping and every remaining needed
+native API remain implementation work.
+[Completed failed census and clean checks](../renderer/generated/native-monochrome-strikes-v2.json).
 
 ## No JavaScript runtime
 

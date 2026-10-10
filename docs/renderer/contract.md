@@ -24,25 +24,43 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
-## Monochrome text candidate
+## Monochrome text regression (rejected)
 
-A new shared font raster policy matches **10/10 native consumer images** and
-**70/70 bounds** against unchanged, independently repeated pinned Chromium
-captures at the four required profiles and a 3× neighbor. Native process and
-unchanged-frame repeats, the Rust click callback and teardown checks pass.
-Hinted author monochrome strikes use Fontations-compatible outlines; resolved
-unhinted strikes retain their original font. Two earlier variants that worsened
-3× glyphs are preserved as rejected experiments.
+Fresh CPU verification at clean `40ff6178` is exact on focused **640/640**
+and primitive **960/960** comparisons. Original **21,334/22,924**
+and expanded **22,137/23,728** are exact, with zero render errors.
+The full pixel gates still exit 1 for **1,590 / 1,591 differences**.
+All **48,252 rows** and fresh compiled artifacts are audited. There are
+7 exact gains but **16 exact losses and 34 worsened comparisons**
+in each full census. Chromium reference fields are unchanged. This candidate
+is rejected for complete renderer qualification; the smaller passing suites
+did not catch its effect on existing rotated and ruby text.
 
-Dirty-source focused **640/640** and primitive **960/960** diagnostics are exact,
-with zero errors. All 1,600 rows and compiled artifacts are audited; every native
-image and Chromium reference remains unchanged from the earlier matrices.
-All **510 shared text and paint tests** pass, with zero failures or ignored tests.
-These are candidate diagnostics. Clean complete original/expanded censuses,
-workspace, ABI and hosted checks on the new source remain pending. No complete
-renderer, native API or release qualification is claimed. [Evidence](generated/native-monochrome-strikes-v1.json).
+The [native Rust consumer](../../bindings/rust/openui/examples/native_shaping_wrap.rs)
+changes widths through a Rust click callback. All **10/10 whole images** and
+**70/70 bounds** match unchanged, independently repeated pinned Chromium
+captures at the four required profiles and a 3× neighbor. Separate process
+and unchanged-frame repeats, the callback count and weak teardown pass.
+Hinted author monochrome strikes use Fontations-compatible outlines;
+explicitly unhinted resolved strikes retain their original font.
 
-## Previous complete checkpoint
+All **8,642 locked all-targets tests** and **8,644 workspace and documentation
+tests** pass with every feature enabled, with zero failures and 13 existing
+workspace ignores. All **30 C and 24 C++ consumers** pass, preserving **131
+exports and 34 layouts**. Format checks, ordinary CI and all seven explicitly
+dispatched hardening jobs pass on the same source:
+[hardening run 38082198110](https://github.com/zhuowcui/open-ui/actions/runs/38082198110).
+
+The earlier rejected font variants and dirty diagnostics remain preserved in
+[candidate evidence](generated/native-monochrome-strikes-v1.json).
+Repairing this raster-policy regression, full Chromium equality, reviewed
+residual ownership, generic font-family
+shaping, remaining native APIs, compositor, physical lab and release
+qualification remain open. Open UI never executes JavaScript; native apps
+use public Rust APIs and Rust callbacks over the shared Engine.
+[Completed failed census and clean checks](generated/native-monochrome-strikes-v2.json).
+
+## Previous wrapping checkpoint
 
 Fresh complete CPU verification at clean `87339e4d` is exact on focused
 **640/640** and primitive **960/960** comparisons. Original **21,343/22,924**
