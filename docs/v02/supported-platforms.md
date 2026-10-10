@@ -116,8 +116,16 @@ again. C uses the same Engine through appended length-unit tags. A consuming
 Rust callback app matches 8/8 Chromium images and 32/32 bounds at the four
 required profiles. The owned metric-query helper remains available for apps
 that deliberately want a captured pixel value.
-Mixed-unit animation, retained font-relative line-height declarations and
-broader font contexts remain native API work. Earlier private upright/glyph
+Apps can now retain a relative line height with
+`Element::set_line_height_length(LengthValue)` or
+`Style::line_height_length`. The shared Engine uses the final selected font;
+`lh` within line-height uses the parent's line height. A native Rust callback
+app matches 10/10 images and 60/60 bounds against repeated Chromium captures at
+five scales. C passes the same retained lengths through the existing
+`OUI_STYLE_PROPERTY_LINE_HEIGHT` property with a length value; exports and
+layouts are unchanged. [Measured scope](../renderer/generated/native-line-height-v1.json).
+Mixed-unit animation, broader font contexts and full text line-box/glyph
+qualification remain native API work. Earlier private upright/glyph
 experiments retain their own evidence and promotion status. None of these
 operations requires JavaScript.
 

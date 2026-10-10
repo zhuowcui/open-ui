@@ -54,8 +54,10 @@ These are implementation gaps, not accepted final-v0.2 omissions:
 - complete coverage of needed element operations through public native Rust
   APIs still requires review and verification from consuming applications;
 - retained `ch`, `ex` and `lh` declarations work in the measured native app
-  cases, but mixed-unit animation, font-relative line-height declarations and
-  complete adjusted-font/root/orientation contexts remain native API work;
+  cases; relative line-height now has a public native API with 10/10 images
+  and 60/60 bounds exact in the measured rectangle cases. Mixed-unit animation,
+  complete adjusted-font/root/orientation contexts and text line-box/glyph
+  qualification remain native API work;
 - native scroll-into-view is implemented through shared Rust/C/accessibility
   operations, but scroll-margin/padding support, full option coverage and four
   reduced endpoint pixel differences remain open; own umbrella geometry is

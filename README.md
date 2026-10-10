@@ -27,19 +27,29 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
-Fresh complete CPU qualification at clean `e98a5a17` is exact on focused
+Fresh complete CPU verification at clean `883ea716` is exact on focused
 **640/640** and primitive **960/960** comparisons. Original **21,342/22,924**
 and expanded **22,145/23,728** are exact, with zero render errors. Both full
 pixel gates still exit 1 for 1,582 and 1,583 differences. All 48,252 comparison
 rows retain the preceding native pixels and every Chromium reference field,
 with no gains, losses or worsened differences.
 
-All **8,637 locked all-targets tests** and **8,639 workspace
-and documentation tests** pass with every feature enabled; 13 existing
-workspace tests remain ignored. Seven explicit hosted hardening jobs pass at
-the same checkpoint. Broader native APIs, residual ownership, compositor,
-physical lab and release qualification remain open.
-[Completed combined evidence](docs/renderer/generated/native-font-units-public-v2.json).
+The new public `Element::set_line_height_length(LengthValue)` and
+`Style::line_height_length` retain relative declarations through the shared
+Engine. A native Rust callback changes only the parent font. All **10/10
+images and 60/60 bounds** match independently repeated pinned Chromium captures
+at the four required profiles and a 3× scale neighbor. The six measured units
+are `ch`, `ex`, `lh`, `em`, `rem` and percentage; these rectangle cases do not
+qualify all text line boxes, glyphs or font contexts.
+
+All **8,640 locked all-targets tests** and **8,642 workspace and documentation
+tests** pass with every feature enabled; 13 existing workspace tests remain
+ignored. All 30 C and 24 C++ consumers pass, preserving 131 exports and 34
+layouts. Seven explicit hosted hardening jobs pass at the same code checkpoint.
+Mixed-unit animation, broader native APIs, residual ownership, compositor,
+physical lab and release qualification remain open. Open UI executes no
+JavaScript; consuming apps use native Rust methods and Rust callbacks.
+[Completed native API and renderer evidence](docs/renderer/generated/native-line-height-v1.json).
 
 Retained native `LengthValue::Ch`, `Ex` and `Lh` declarations are implemented at
 clean checkpoint `45d21648`. A consuming Rust app changes its font through a
@@ -47,7 +57,8 @@ Rust callback; all **8/8 images and 32/32 bounds** match repeated pinned Chromiu
 captures at the four required profiles. All **8,625 workspace all-targets
 tests**, 30 C and 24 C++ consumers pass; the ABI preserves 131 exports and 34
 layouts. Both complete pixel gates remain failed. Mixed-unit animation,
-retained font-relative line-height declarations and broader font contexts remain open. Open UI executes no JavaScript.
+broader font contexts and text line-box qualification remain open. The new
+relative line-height API is measured above. Open UI executes no JavaScript.
 [API and preserved evidence](docs/renderer/native-font-relative-lengths.md).
 
 A shared fieldset paint correction is integrated. Clean private verification
