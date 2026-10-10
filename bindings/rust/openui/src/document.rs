@@ -2873,3 +2873,75 @@ mod selection_task_guards {
         assert!(document.has_pending_events().unwrap());
     }
 }
+
+#[cfg(test)]
+mod keyboard_activation_guards {
+    use super::*;
+    use std::panic::{catch_unwind, AssertUnwindSafe};
+
+    fn button() -> (Document, Element, Rc<Cell<usize>>) {
+        let document = Document::new(100, 100).unwrap();
+        let button = Element::create(&document, "button").unwrap();
+        document.body().append_child(&button).unwrap();
+        button.focus().unwrap();
+        let clicks = Rc::new(Cell::new(0));
+        let observed = clicks.clone();
+        button
+            .on("click", move |_| observed.set(observed.get() + 1))
+            .unwrap();
+        (document, button, clicks)
+    }
+
+    fn space(document: &Document, phase: KeyEventType) {
+        document
+            .dispatch_key_input(
+                phase,
+                32,
+                Some(" "),
+                (phase == KeyEventType::Down).then_some(" "),
+                Modifiers::NONE,
+            )
+            .unwrap();
+    }
+
+    #[test]
+    fn canceled_release_cannot_activate_on_a_later_unpaired_keyup() {
+        let (document, button, clicks) = button();
+        let once = Cell::new(true);
+        button
+            .on("keyup", move |event| {
+                if once.replace(false) {
+                    event.prevent_default();
+                }
+            })
+            .unwrap();
+        space(&document, KeyEventType::Down);
+        space(&document, KeyEventType::Up);
+        space(&document, KeyEventType::Up);
+        assert_eq!(clicks.get(), 0);
+        space(&document, KeyEventType::Down);
+        space(&document, KeyEventType::Up);
+        assert_eq!(clicks.get(), 1);
+    }
+
+    #[test]
+    fn panicking_release_callback_cannot_leave_a_stale_activation() {
+        let (document, button, clicks) = button();
+        let once = Cell::new(true);
+        button
+            .on("keyup", move |_| {
+                if once.replace(false) {
+                    panic!("application keyup callback");
+                }
+            })
+            .unwrap();
+        space(&document, KeyEventType::Down);
+        assert!(catch_unwind(AssertUnwindSafe(|| space(&document, KeyEventType::Up))).is_err());
+        button.set_attribute("data-after-panic", "live").unwrap();
+        space(&document, KeyEventType::Up);
+        assert_eq!(clicks.get(), 0);
+        space(&document, KeyEventType::Down);
+        space(&document, KeyEventType::Up);
+        assert_eq!(clicks.get(), 1);
+    }
+}

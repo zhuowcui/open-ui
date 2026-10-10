@@ -2,6 +2,8 @@
 #ifndef OPENUI_CONTROL_KEYBOARD_CASES_H_
 #define OPENUI_CONTROL_KEYBOARD_CASES_H_
 #include <stddef.h>
+
+#include "openui.h"
 enum KeyboardOperationKind {
   KEY_ATTRIBUTE,
   KEY_CHECKED,

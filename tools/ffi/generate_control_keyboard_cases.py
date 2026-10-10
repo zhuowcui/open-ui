@@ -14,7 +14,7 @@ EVENTS={x:y for x,y in [('keydown','OUI_EVENT_KEY_DOWN'),('keyup','OUI_EVENT_KEY
 KINDS={'attribute':'KEY_ATTRIBUTE','checked':'KEY_CHECKED','focus':'KEY_FOCUS','detach':'KEY_DETACH','style':'KEY_STYLE','key':'KEY_DISPATCH'}
 def output():
  fixture=json.loads(INPUT.read_bytes())
- lines=['/* Generated native operations; no expected states or script interpreter. */','#ifndef OPENUI_CONTROL_KEYBOARD_CASES_H_','#define OPENUI_CONTROL_KEYBOARD_CASES_H_','#include <stddef.h>',
+ lines=['/* Generated native operations; no expected states or script interpreter. */','#ifndef OPENUI_CONTROL_KEYBOARD_CASES_H_','#define OPENUI_CONTROL_KEYBOARD_CASES_H_','#include <stddef.h>','#include "openui.h"',
  'enum KeyboardOperationKind { KEY_ATTRIBUTE, KEY_CHECKED, KEY_FOCUS, KEY_DETACH, KEY_STYLE, KEY_DISPATCH };',
  'typedef struct KeyboardOperation { int kind, target, checked, down, code, modifiers; const char *name, *value, *json; } KeyboardOperation;',
  'typedef struct KeyboardCase { const char *name, *control; const KeyboardOperation *pre, *steps, *handler_ops; size_t pre_count, step_count, handler_count; unsigned handler_event; int handler_target, prevent; } KeyboardCase;']
