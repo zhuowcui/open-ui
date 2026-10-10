@@ -22,6 +22,40 @@ remain open.
 
 ## Current implementation checkpoint
 
+Fresh canonical qualification on clean umbrella code checkpoint `72f5b41e`
+verifies 495 Chromium behavior cases in each of Rust, C and C++ (1,485 total),
+including 99 keyboard scenarios per language. Shared native keyboard defaults
+activate Space on release, navigate radio groups, and preserve cancellation,
+modifiers, callback changes and recovery. C adds `oui_element_is_active_v1`.
+Existing control, selection, focus and form regression groups remain unchanged.
+
+All 8,631 locked all-targets tests, 8,633 workspace tests and 54 headless C tests
+pass. The 13 ignored workspace tests remain recorded; stack limits are
+unchanged. The ABI has 131 exports and 34 unchanged layouts. All 29 C and
+23 C++ consumers pass. Six ordinary CI jobs and seven explicit hardening jobs
+pass at the same code checkpoint; five optional skips are recorded separately.
+Virtual X11/Wayland/Mesa checks do not qualify physical hardware.
+
+The official fresh CPU renderer build verifies local library and source
+identities. Focused 640/640 and primitive 960/960 comparisons are exact.
+Original 21,338/22,924 and expanded 22,141/23,728 are exact, with zero render
+errors. Both complete pixel gates exit 1 for 1,586 and 1,587 differences.
+All 48,252 matrix rows preserve the preceding pixels and every Chromium
+reference field, with no exact losses or worsened differences. There are 884
+original residual test IDs requiring reviewed root causes and ownership;
+200/201 expanded candidates are exact at all four profiles.
+
+All local owners and audits completed before documentation changes. The
+[append-only public evidence](../renderer/generated/native-keyboard-public-v2.json)
+archives 205 hashed artifacts and preserves earlier evidence unchanged.
+Broader keyboard/RTL behavior, keypress, composition, keyboard appearance,
+remaining native APIs, the required hosted full Chromium equality gate,
+retained compositor/3D, physical lab, performance, packaging and release remain
+unfinished. Chromium alone defines correct pixels. Open UI never executes
+JavaScript; applications call public Rust APIs and supply Rust callbacks.
+
+### Earlier form association checkpoint
+
 Native form association is integrated at code checkpoint `a401a8ac`. The new
 Rust `Element::associated_form()` and owned C form/parent queries use the same
 retained engine. All 88 new scenarios match pinned Chromium in Rust, C and C++;
