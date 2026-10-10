@@ -1,0 +1,58 @@
+{
+  "actual_exit_code": 1,
+  "all_local_commands_terminal": true,
+  "all_preserved_file_sha256": {
+    "receipt.json": "6bb6c1701f1313d0263a76dbaf247363cfc3e279727801ec96415d68e63ba287",
+    "scale-1.25/chromium-1-capture-1.png": "2c8a6665ac9e4d3e406d3a9062f6871c5f3d803fbd1bd0548eebdc23ee478072",
+    "scale-1.25/chromium-1-capture-2.png": "1cbeebf432727d7c319da3de9f3bac3c4cf50e4cf0c24cf00371f6bd31534727",
+    "scale-1.25/native-1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scale-1.25/native-1/geometry.json": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+    "scale-1.25/native-1/openui.png": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93",
+    "scale-1.25/native-2.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scale-1.25/native-2/geometry.json": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+    "scale-1.25/native-2/openui.png": "606af21fca4fe6b150c1b162486a49cdc303edf761d0ef348d7e3ffdfa24cb93",
+    "scale-1.25/test.html": "56f03b3048a4884570f21fd2691f51ea23e8d0589ba4e115074cde4a9422a4db",
+    "scale-1/chromium-1-capture-1.png": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc",
+    "scale-1/chromium-1-capture-2.png": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc",
+    "scale-1/chromium-1-geometry.json": "4c1097bac3d49b7ad278bc73ba8b8b71bf61b31b1a8ec2f46da431a1e4a112ef",
+    "scale-1/chromium-2-capture-1.png": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc",
+    "scale-1/chromium-2-capture-2.png": "07f19063f6b1b641c28c1f4ee2cec4b2dfa619ea85f12092b5150cec188565bc",
+    "scale-1/chromium-2-geometry.json": "4c1097bac3d49b7ad278bc73ba8b8b71bf61b31b1a8ec2f46da431a1e4a112ef",
+    "scale-1/native-1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scale-1/native-1/geometry.json": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+    "scale-1/native-1/openui.png": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b",
+    "scale-1/native-2.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scale-1/native-2/geometry.json": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+    "scale-1/native-2/openui.png": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b",
+    "scale-1/test.html": "56f03b3048a4884570f21fd2691f51ea23e8d0589ba4e115074cde4a9422a4db"
+  },
+  "diagnostic_only": true,
+  "main_source": {
+    "clean": true,
+    "commit": "6e301f588d4064bdffbe170bd6b521564b1f760c",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "500061a0a5c0c2c711b922b3778c519c5b0029bf81ca74e77c424fb978a24501",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "owner_absent": true,
+  "receipt_sha256": "6bb6c1701f1313d0263a76dbaf247363cfc3e279727801ec96415d68e63ba287",
+  "release_qualified": false,
+  "repeated_pngs_verified": 6,
+  "results": [
+    {
+      "fragment_rects_exact": true,
+      "geometry_exact": true,
+      "scale": 1.0,
+      "wrong_pixels": 0
+    }
+  ],
+  "retired_for_reexecution_after_source_or_target_mutation": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "6fe8a63f61d696a200a08a37765ab9182bb439ad",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "b8a576440d995681de056a66777902f58c53674062b153a7e6f03fd80366ae40",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

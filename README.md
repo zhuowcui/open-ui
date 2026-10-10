@@ -27,6 +27,14 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
+A shared fieldset paint correction is integrated. Clean private verification
+is **21,342/22,924 original** and **22,145/23,728 expanded** exact, with four
+exact gains, no regressions and unchanged Chromium references. Focused and
+primitive gates pass; both full gates still fail. Fresh combined umbrella
+qualification is pending. See the
+[native Rust reproducer and evidence](docs/renderer/fragment-decoration-clip-investigation.md#native-fieldset-paint-follow-up).
+The preceding canonical qualification is recorded below.
+
 Fresh qualification on clean umbrella checkpoint `72f5b41e` verifies native
 keyboard controls and neighboring behavior through the shared Rust document.
 Rust, C and C++ apps each match 495 measured Chromium behavior cases, including

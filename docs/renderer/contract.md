@@ -24,6 +24,14 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
+The shared fieldset paint correction is integrated after clean private
+verification at `0a5f5587`: 21,342/22,924 original and 22,145/23,728 expanded
+exact, four gains and no regressions. Focused and primitive matrices are exact;
+all Chromium fields are unchanged. Both full gates remain failed and fresh
+combined umbrella qualification is pending. Four neighboring reduction cases
+and 882 original residual IDs remain open.
+[Native Rust investigation and evidence](fragment-decoration-clip-investigation.md#native-fieldset-paint-follow-up).
+
 Fresh canonical qualification at clean umbrella checkpoint `72f5b41e` measures
 the integrated native keyboard and control work. Rust, C and C++ each match
 495 Chromium behavior cases; workspace, ABI and hosted hardening checks pass.

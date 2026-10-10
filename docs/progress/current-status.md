@@ -22,6 +22,17 @@ remain open.
 
 ## Current implementation checkpoint
 
+The shared fieldset paint correction and public Rust reproducer are integrated.
+Clean private source `0a5f5587` is 21,342/22,924 original and 22,145/23,728
+expanded exact, zero errors, four exact gains and no losses or worsened rows.
+Focused 640/640 and primitive 960/960 remain exact. Every Chromium reference
+field is unchanged. Both full gates still exit 1; 882 original residual IDs,
+four reduced neighboring edge cases, complete native APIs and release gates
+remain open. Fresh combined umbrella qualification is pending.
+[Investigation and preserved evidence](../renderer/fragment-decoration-clip-investigation.md#native-fieldset-paint-follow-up).
+
+### Preceding canonical qualification
+
 Fresh canonical qualification on clean umbrella code checkpoint `72f5b41e`
 verifies 495 Chromium behavior cases in each of Rust, C and C++ (1,485 total),
 including 99 keyboard scenarios per language. Shared native keyboard defaults

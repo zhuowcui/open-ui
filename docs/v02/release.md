@@ -4,6 +4,14 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
+A shared fieldset paint correction is integrated after clean private
+verification at `0a5f5587`: 21,342/22,924 original and 22,145/23,728 expanded
+exact, four gains, no losses or worsened differences, and unchanged Chromium
+references. Focused and primitive gates pass. Both complete pixel gates still
+exit 1; fresh combined umbrella qualification and final release remain open.
+The consuming app uses native Rust APIs and callbacks, with no JavaScript.
+[Investigation and preserved evidence](../renderer/fragment-decoration-clip-investigation.md#native-fieldset-paint-follow-up).
+
 Fresh qualification on clean umbrella checkpoint `72f5b41e` verifies native
 keyboard controls and neighboring behavior through the shared Rust document.
 Rust, C and C++ apps each match 495 measured Chromium behavior cases, including

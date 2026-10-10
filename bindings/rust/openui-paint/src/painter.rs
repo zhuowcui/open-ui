@@ -853,6 +853,15 @@ fn paint_fragment_contents(
                 &mut overflowing_max_decorations,
             );
             for (overflow, overflow_offset) in overflowing_max_decorations {
+                let pointer = overflow as *const Fragment as usize;
+                // A shared column decoration already owns this fragment's
+                // background and border. Replaying it compounds the same
+                // antialiased coverage at fractional device coordinates.
+                if PREPAINTED_BOX_DECORATIONS
+                    .with(|prepainted| prepainted.borrow().contains(&pointer))
+                {
+                    continue;
+                }
                 let Some(slice) = overflow.decoration_slice else {
                     continue;
                 };
@@ -17430,8 +17439,21 @@ fn paint_box_decoration_background(
                     // coverage at its outer edge, while the hard clip does
                     // not leak color into the neighboring physical cell.
                     canvas.save();
-                    canvas.clip_rect(bg_rect, ClipOp::Intersect, false);
-                    canvas.draw_rect(background_box, &paint);
+                    let mut color_clip = bg_rect;
+                    let color_fill = if fragment.decoration_slice.is_some() {
+                        // Sliced colors use this fragment's border box as
+                        // their fill. The continuous source box determines
+                        // content/padding insets, but must not replace the
+                        // local antialiased edge or open its hard clip.
+                        if !color_clip.intersect(border_box_rect) {
+                            color_clip = Rect::default();
+                        }
+                        border_box_rect
+                    } else {
+                        background_box
+                    };
+                    canvas.clip_rect(color_clip, ClipOp::Intersect, false);
+                    canvas.draw_rect(color_fill, &paint);
                     canvas.restore();
                 } else if uses_squared_replaced_background_coverage(
                     style,

@@ -1,0 +1,33 @@
+{
+  "example_header_updated": true,
+  "files": {
+    "bindings/rust/openui-paint/src/painter.rs": {
+      "after_sha256": "e40e9121ea5e04370384a3fdf5f47d7e0721fb2d196d209f2a8117b6e14a912f",
+      "before_sha256": "4207d73dda9a7f29b259108d325995008e234cabe0af9f8f8a81955e8e75da05"
+    },
+    "bindings/rust/openui/examples/native_fragmented_fieldset.rs": {
+      "after_sha256": "5d0c9193df8aacfd03ffc939b5fb54b686c63b7fe9541fdb387e26f6b5178c10",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "fresh_combined_source_qualification_pending": true,
+  "public_parent": {
+    "clean": true,
+    "commit": "6e301f588d4064bdffbe170bd6b521564b1f760c",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "500061a0a5c0c2c711b922b3778c519c5b0029bf81ca74e77c424fb978a24501",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "release_qualified": false,
+  "renderer_adopted_byte_identically": true,
+  "renderer_qualified": false,
+  "schema_version": 1,
+  "source_candidate": {
+    "clean": true,
+    "commit": "0a5f558733b94f7d0d7dfb06a01454913015e77d",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "56780c592cc78e553946dc7909c7007d3afb766789d2a3307552e1d7eb054540",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "terminal_proof_sha256": "8b06d2a96c32f6d0497ad7c99cefafde18ca8c5def373026e51a03cb97dd2817"
+}
