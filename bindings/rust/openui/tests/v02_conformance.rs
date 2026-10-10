@@ -898,10 +898,26 @@ fn checkbox_keyboard_activation_toggles() {
     let checkbox = child(&document, "input");
     checkbox.set_attribute("type", "checkbox").unwrap();
     checkbox.focus().unwrap();
+    let events = Rc::new(RefCell::new(Vec::new()));
+    for kind in ["keydown", "keyup", "click", "input", "change"] {
+        let events = events.clone();
+        checkbox
+            .on(kind, move |_| events.borrow_mut().push(kind))
+            .unwrap();
+    }
     document
         .dispatch_key_event(KeyEventType::Down, 32, Some(" "), Modifiers::NONE)
         .unwrap();
+    assert!(!checkbox.is_checked().unwrap());
+    assert_eq!(events.borrow().as_slice(), ["keydown"]);
+    document
+        .dispatch_key_event(KeyEventType::Up, 32, Some(" "), Modifiers::NONE)
+        .unwrap();
     assert!(checkbox.is_checked().unwrap());
+    assert_eq!(
+        events.borrow().as_slice(),
+        ["keydown", "keyup", "click", "input", "change"]
+    );
 }
 
 #[test]

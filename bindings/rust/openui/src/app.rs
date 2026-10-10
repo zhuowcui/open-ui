@@ -810,16 +810,20 @@ mod tests {
             repeat: false,
         })
         .unwrap();
-        assert!(app
-            .document()
-            .with_engine(|engine| {
-                engine
-                    .control_state(checkbox.handle)
-                    .unwrap()
-                    .unwrap()
-                    .checked
-            })
-            .unwrap());
+        assert!(
+            !checkbox.is_checked().unwrap(),
+            "Space down does not activate"
+        );
+        app.key_input(KeyboardInput {
+            phase: KeyPhase::Up,
+            key_code: 32,
+            key_text: Some(" ".into()),
+            text: None,
+            modifiers: openui_platform::Modifiers::default(),
+            repeat: false,
+        })
+        .unwrap();
+        assert!(checkbox.is_checked().unwrap());
         app.event(openui_platform::PlatformEvent::TextInput("ignored".into()))
             .unwrap();
         let button = crate::Element::create(app.document(), "button").unwrap();

@@ -113,6 +113,12 @@ fn parent_capture_pointer_and_keyboard_clicks_share_preactivation_and_cancellati
     document
         .dispatch_key_event(KeyEventType::Down, 32, Some(" "), Modifiers::NONE)
         .unwrap();
+    assert_eq!(&*seen.borrow(), &[(true, false)]);
+    assert!(!element.is_checked().unwrap());
+    assert!(element.is_indeterminate().unwrap());
+    document
+        .dispatch_key_event(KeyEventType::Up, 32, Some(" "), Modifiers::NONE)
+        .unwrap();
     assert_eq!(&*seen.borrow(), &[(true, false), (true, false)]);
     assert!(element.is_checked().unwrap());
     assert!(!element.is_indeterminate().unwrap());
