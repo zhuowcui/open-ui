@@ -52,9 +52,7 @@ fn apply(registry: &Registry, op: &Value) -> Result<(), Error> {
         "detach" => node.detach(),
         "style" => match (op["name"].as_str().unwrap(), op["value"].as_str().unwrap()) {
             ("display", "none") => node.set_property(StyleProperty::Display, Display::None.into()),
-            ("visibility", "hidden") => {
-                node.set_property(StyleProperty::Visibility, Visibility::Hidden.into())
-            }
+            ("visibility", "hidden") => node.set_visibility(Visibility::Hidden),
             _ => panic!("unsupported native diagnostic style"),
         },
         _ => panic!("unsupported native diagnostic operation"),
