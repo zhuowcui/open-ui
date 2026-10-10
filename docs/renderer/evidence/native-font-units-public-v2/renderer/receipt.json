@@ -1,0 +1,311 @@
+{
+  "actual_combined_umbrella_source_measured": true,
+  "all_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "cache_directory": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-cache-v3632",
+  "candidate_nonregression_verified": true,
+  "comparisons": {
+    "expanded": {
+      "audited_rows": 23728,
+      "changes": [],
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "previous_summary": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/expanded-matrix/expanded-summary.json",
+      "previous_summary_sha256": "ada51b7fbcf9e090e580a42760153a5c6fd99fa011ba87da19e67e7720f84cdf",
+      "worsened": 0
+    },
+    "focused": {
+      "audited_rows": 640,
+      "changes": [],
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "previous_summary": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/focused-matrix/focused-summary.json",
+      "previous_summary_sha256": "0118d82229e1b0729d92c934bee2ee8912173d7d4fa47da6d300b4d7ec0f9d38",
+      "worsened": 0
+    },
+    "full": {
+      "audited_rows": 22924,
+      "changes": [],
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "previous_summary": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/full-matrix/full-summary.json",
+      "previous_summary_sha256": "3abc2ee7e7599de3c05906ac8fb6a45bf6e315cb26186089cad1a86d88d61997",
+      "worsened": 0
+    },
+    "primitive": {
+      "audited_rows": 960,
+      "changes": [],
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "previous_summary": "/mnt/d/openui-v02-qualification-d174ea0b/private-fragmented-fieldset-renderer-v3597/primitive-matrix/primitive-summary.json",
+      "previous_summary_sha256": "7aceb8e8505d7dcac0ade17bdf1424eb3beaceff9bdaef8194270f19b074e0f6",
+      "worsened": 0
+    }
+  },
+  "driver_sha256": "f78b7ef9259a865d557144a510080df757eb6aa2c271b2623bc3ce4e8cff2563",
+  "guarded_build_receipt_sha256": "8762a0a82a3d51842e89071d11791c3cb178820e8540f9f322f20af29921998d",
+  "historical_openui_archive_is_a_pixel_target": false,
+  "implementation_integrated": true,
+  "javascript_executed_by_openui": false,
+  "matrices": {
+    "expanded": {
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1583,
+        "errors": 0,
+        "exact": 22145,
+        "profile_result_sha256": "f5ff74f1e703f63b1eee975540a6675cdfa0bbd3642715fc2711eee1ee68e65f",
+        "total": 23728
+      },
+      "summary_sha256": "4f5e72fb51806b3a0350e878c7ea5111585fecaab4f850477dd8e1bec7975b60"
+    },
+    "focused": {
+      "observed_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "a2b1d87e85e3d9adca7c7a54513a9307c8e971a0b6588e5c104c2b897f7cca62",
+        "total": 640
+      },
+      "summary_sha256": "f3f36830836a362337a9c38c63bd2a1cc0304ca567d6360ef4c3b017c0cdf5a1"
+    },
+    "full": {
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1582,
+        "errors": 0,
+        "exact": 21342,
+        "profile_result_sha256": "7c94d1aeb20a3ae14ba8ec59bc4032293923b6726043c8dd3504a3f473c30e55",
+        "total": 22924
+      },
+      "summary_sha256": "c419e2f27091d7a60304daecf7261df8a1de82f2bace4078081a4a12c1dafc42"
+    },
+    "primitive": {
+      "observed_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "1f44a533e70ade8c5ce8764074e903b8c099bd398ea0da7c57ac046e8a2e5828",
+        "total": 960
+      },
+      "summary_sha256": "8c2bc99985130f07d90dcb32df9b4149b54419f7a7e9288c35f2afefc43e1521"
+    }
+  },
+  "native_completed_audit_sha256": "6ee68bf24a1e89de47a9ee9167034da60a2dfd4309226b84cbcb8575d8a86cb5",
+  "native_diagnostic_receipt_sha256": "c772beaae937e56b8647b67fcd841099dae57d05810e1cd28b36dd873d3bd91c",
+  "native_metadata_cache_fresh": true,
+  "observed_exit_code": 1,
+  "owner_pid": 292262,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "png_pool": "/mnt/e/openui-v02-qualification-d174ea0b/renderer-cache/png",
+  "private_candidate_source_measured": false,
+  "public_source": {
+    "clean": true,
+    "commit": "e98a5a17b6c9700a641079f3137572e0dfc85dd7",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c1ad161332023bb4c144d499f97c0c0fc0379f8577c791408bcf47d1bcd4e961",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "public_source_after": {
+    "clean": true,
+    "commit": "e98a5a17b6c9700a641079f3137572e0dfc85dd7",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c1ad161332023bb4c144d499f97c0c0fc0379f8577c791408bcf47d1bcd4e961",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "public_source_unchanged": true,
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "e98a5a17b6c9700a641079f3137572e0dfc85dd7",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c1ad161332023bb4c144d499f97c0c0fc0379f8577c791408bcf47d1bcd4e961",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "e98a5a17b6c9700a641079f3137572e0dfc85dd7",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c1ad161332023bb4c144d499f97c0c0fc0379f8577c791408bcf47d1bcd4e961",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_identity_reader_sha256": "d034540153e35cad3cbfc63a13e0bcfb17df4cbdb89a6d22e1439f7bc39435ec",
+  "source_unchanged": true,
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/nero/code/open-ui/tools/qualification/build_renderer.py",
+        "--source-root",
+        "/home/nero/code/open-ui",
+        "--results-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-v3632/guarded-build",
+        "--target-dir",
+        "/mnt/e/openui-v02-cargo-c73754e2/target",
+        "--cargo-config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "--offline"
+      ],
+      "log_sha256": "d1c04441ab7b030a14cce509f962944865371e95e16e6716139f4423499ec355",
+      "name": "guarded-build",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/nero/code/open-ui/tools/qualification/run_renderer_matrix.py",
+        "--suite",
+        "focused",
+        "--results-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-v3632/focused-matrix",
+        "--cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-cache-v3632",
+        "--oracle-cache-dir",
+        "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+        "--pixel-compare",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-v3632/guarded-build/pixel_compare",
+        "--build-receipt",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-v3632/guarded-build/receipt.json",
+        "--chrome",
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--raster-backend",
+        "cpu-skia",
+        "--jobs",
+        "2"
+      ],
+      "log_sha256": "e6e918ee9497abf178d261f1d583590b07a27f3f6a2b834afb08257474056238",
+      "name": "focused",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/nero/code/open-ui/tools/qualification/run_renderer_matrix.py",
+        "--suite",
+        "primitive",
+        "--results-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-v3632/primitive-matrix",
+        "--cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-cache-v3632",
+        "--oracle-cache-dir",
+        "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+        "--pixel-compare",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-v3632/guarded-build/pixel_compare",
+        "--build-receipt",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-v3632/guarded-build/receipt.json",
+        "--chrome",
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--raster-backend",
+        "cpu-skia",
+        "--jobs",
+        "2"
+      ],
+      "log_sha256": "1fd1a4a6132c16936fde94f9cc96462de66d3558e154f7a72fb97ef082d7c57b",
+      "name": "primitive",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/nero/code/open-ui/tools/qualification/run_renderer_matrix.py",
+        "--suite",
+        "full",
+        "--results-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-v3632/full-matrix",
+        "--cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-cache-v3632",
+        "--oracle-cache-dir",
+        "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+        "--pixel-compare",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-v3632/guarded-build/pixel_compare",
+        "--build-receipt",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-v3632/guarded-build/receipt.json",
+        "--chrome",
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--raster-backend",
+        "cpu-skia",
+        "--jobs",
+        "8"
+      ],
+      "log_sha256": "8ad99fbea77ffd2dcd643329f8164f84514fe985adf3ae7428885057f692e39a",
+      "name": "full",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/home/nero/code/open-ui/tools/qualification/run_renderer_matrix.py",
+        "--suite",
+        "expanded",
+        "--results-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-v3632/expanded-matrix",
+        "--cache-dir",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-cache-v3632",
+        "--oracle-cache-dir",
+        "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+        "--pixel-compare",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-v3632/guarded-build/pixel_compare",
+        "--build-receipt",
+        "/mnt/d/openui-v02-qualification-d174ea0b/public-native-font-units-renderer-v3632/guarded-build/receipt.json",
+        "--chrome",
+        "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+        "--raster-backend",
+        "cpu-skia",
+        "--jobs",
+        "8"
+      ],
+      "log_sha256": "fec54feebc150818726d9f39ffa61fd4b6fa355dbd2adf1ff24ca72781341ba8",
+      "name": "expanded",
+      "observed_exit_code": 1
+    }
+  ]
+}

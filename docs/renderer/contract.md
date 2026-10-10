@@ -24,26 +24,40 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
+Fresh complete CPU qualification at clean `e98a5a17` is exact on focused
+**640/640** and primitive **960/960** comparisons. Original **21,342/22,924**
+and expanded **22,145/23,728** are exact, with zero render errors. Both full
+pixel gates still exit 1 for 1,582 and 1,583 differences. All 48,252 comparison
+rows retain the preceding native pixels and every Chromium reference field,
+with no gains, losses or worsened differences.
+
+All **8,637 locked all-targets tests** and **8,639 workspace
+and documentation tests** pass with every feature enabled; 13 existing
+workspace tests remain ignored. Seven explicit hosted hardening jobs pass at
+the same checkpoint. Broader native APIs, residual ownership, compositor,
+physical lab and release qualification remain open.
+[Completed combined evidence](generated/native-font-units-public-v2.json).
+
 Retained native font-unit declarations are implemented at clean `45d21648`.
 The consuming Rust app's ancestor-font callback matches 8/8 images and 32/32
 bounds against repeated pinned Chromium captures at all four required profiles.
 Workspace and C/C++ consumers pass, preserving the existing ABI. These native
-app results do not qualify the complete renderer matrices or every font context;
-fresh complete qualification remains required.
+app results qualify their measured subset. Both complete pixel gates above
+remain failed; broader font contexts still require qualification.
 [API scope and preserved evidence](native-font-relative-lengths.md).
 
 The shared fieldset paint correction is integrated after clean private
 verification at `0a5f5587`: 21,342/22,924 original and 22,145/23,728 expanded
 exact, four gains and no regressions. Focused and primitive matrices are exact;
-all Chromium fields are unchanged. Both full gates remain failed and fresh
-combined umbrella qualification is pending. Four neighboring reduction cases
+all Chromium fields are unchanged. Both full gates remain failed in the fresh
+combined umbrella run above. Four neighboring reduction cases
 and 882 original residual IDs remain open.
 [Native Rust investigation and evidence](fragment-decoration-clip-investigation.md#native-fieldset-paint-follow-up).
 
 Fresh canonical Rust consumer verification at `dc8a540e` also passes all
 187 bounds and fragment-rectangle sets, repeated renders, callbacks, teardown
-and 168 paint tests. Four neighboring images still differ; complete canonical
-renderer/workspace qualification remains pending.
+and 168 paint tests. Four neighboring images still differ. Complete combined
+renderer/workspace results are recorded above.
 
 Fresh canonical qualification at clean umbrella checkpoint `72f5b41e` measures
 the integrated native keyboard and control work. Rust, C and C++ each match

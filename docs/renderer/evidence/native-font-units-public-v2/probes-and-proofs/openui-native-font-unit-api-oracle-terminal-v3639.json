@@ -1,0 +1,17 @@
+{
+  "actual_owner_session": 9618,
+  "actual_owner_exit_code": 1,
+  "owner_absent": true,
+  "all_local_commands_terminal": true,
+  "source": {
+    "clean": true,
+    "commit": "e98a5a17b6c9700a641079f3137572e0dfc85dd7",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c1ad161332023bb4c144d499f97c0c0fc0379f8577c791408bcf47d1bcd4e961",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "failure": "RuntimeError('Chromium exited before exposing its DevTools endpoint')",
+  "receipt_sha256": "216b3f2a14e60b0beaf8b6cbf07f14e2a8da5df7cf52bfc1f9092c43ee5d38b5",
+  "reference_only": true,
+  "native_api_qualification": false
+}

@@ -22,6 +22,22 @@ remain open.
 
 ## Current implementation checkpoint
 
+Fresh complete CPU qualification at clean `e98a5a17` is exact on focused
+**640/640** and primitive **960/960** comparisons. Original **21,342/22,924**
+and expanded **22,145/23,728** are exact, with zero render errors. Both full
+pixel gates still exit 1 for 1,582 and 1,583 differences. All 48,252 comparison
+rows retain the preceding native pixels and every Chromium reference field,
+with no gains, losses or worsened differences.
+
+All **8,637 locked all-targets tests** and **8,639 workspace
+and documentation tests** pass with every feature enabled; 13 existing
+workspace tests remain ignored. Seven explicit hosted hardening jobs pass at
+the same checkpoint. Broader native APIs, residual ownership, compositor,
+physical lab and release qualification remain open.
+[Completed combined evidence](../renderer/generated/native-font-units-public-v2.json).
+
+### Earlier native app verification
+
 Clean code checkpoint `45d21648` implements retained native `ch`, `ex` and `lh`
 declarations. They use the selected font and final style context, refresh after
 native font changes and shared font registration, and support nested edge/gap,
@@ -46,13 +62,13 @@ expanded exact, zero errors, four exact gains and no losses or worsened rows.
 Focused 640/640 and primitive 960/960 remain exact. Every Chromium reference
 field is unchanged. Both full gates still exit 1; 882 original residual IDs,
 four reduced neighboring edge cases, complete native APIs and release gates
-remain open. Fresh combined umbrella qualification is pending.
+remain open. Fresh combined umbrella results are recorded above.
 [Investigation and preserved evidence](../renderer/fragment-decoration-clip-investigation.md#native-fieldset-paint-follow-up).
 
 Fresh canonical Rust consumer verification at `dc8a540e` also passes all
 187 bounds and fragment-rectangle sets, repeated renders, callbacks, teardown
-and 168 paint tests. Four neighboring images still differ; complete canonical
-renderer/workspace qualification remains pending.
+and 168 paint tests. Four neighboring images still differ. Complete combined
+renderer/workspace results are recorded above.
 
 ### Preceding canonical qualification
 

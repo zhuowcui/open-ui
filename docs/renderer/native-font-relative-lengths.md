@@ -42,6 +42,27 @@ Open UI executes no JavaScript and provides no script bindings.
 
 ## Current measured checkpoint
 
+Fresh complete CPU qualification at clean `e98a5a17` is exact on focused
+**640/640** and primitive **960/960** comparisons. Original **21,342/22,924**
+and expanded **22,145/23,728** are exact, with zero render errors. Both full
+pixel gates still exit 1 for 1,582 and 1,583 differences. All 48,252 comparison
+rows retain the preceding native pixels and every Chromium reference field,
+with no gains, losses or worsened differences.
+
+All **8,637 locked all-targets tests** and **8,639 workspace
+and documentation tests** pass with every feature enabled; 13 existing
+workspace tests remain ignored. Seven explicit hosted hardening jobs pass at
+the same checkpoint. Broader native APIs, residual ownership, compositor,
+physical lab and release qualification remain open.
+[Completed combined evidence](generated/native-font-units-public-v2.json).
+
+A separate reference-only probe records 100 Chromium geometry observations
+at five scales, with two independent processes agreeing. It covers relative
+line-height values and mixed-unit animation for remaining native API work.
+No native app runs in that probe; it qualifies no native API or pixels.
+
+### Earlier native app verification at `45d21648`
+
 Clean canonical `45d21648` passes all **8,625 workspace all-targets tests**,
 zero failures or ignores. Four new Engine guards cover declaration ordering,
 nested units, parent and pseudo contexts, same-unit animation changes and
@@ -69,9 +90,10 @@ computed line-height rules without replacing the global font factory or shaped
 glyph advance pipeline. The earlier regressing private font patches below
 remain unapplied.
 
-Complete focused, primitive, original and expanded renderer qualification on
-this change remains required. Mixed-unit animation, retained font-relative
-line-height declarations, and complete root, font-size-adjust, orientation,
+Complete focused, primitive, original and expanded matrices have run at the
+combined checkpoint above; both full pixel gates still fail. Mixed-unit
+animation, retained font-relative line-height declarations, and complete
+root, font-size-adjust, orientation,
 missing-glyph and metric-override contexts remain open. These app results do
 not qualify every needed native API or the release.
 [179 preserved artifacts and terminal proofs](generated/native-font-units-v1.json).

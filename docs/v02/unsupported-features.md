@@ -53,6 +53,9 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   focused and primitive 40-profile CPU matrices are exact;
 - complete coverage of needed element operations through public native Rust
   APIs still requires review and verification from consuming applications;
+- retained `ch`, `ex` and `lh` declarations work in the measured native app
+  cases, but mixed-unit animation, font-relative line-height declarations and
+  complete adjusted-font/root/orientation contexts remain native API work;
 - native scroll-into-view is implemented through shared Rust/C/accessibility
   operations, but scroll-margin/padding support, full option coverage and four
   reduced endpoint pixel differences remain open; own umbrella geometry is

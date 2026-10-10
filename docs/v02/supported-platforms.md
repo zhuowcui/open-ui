@@ -109,15 +109,17 @@ The versioned [C editing command](native-c-editing-commands.md) calls the same
 retained Rust document and event path. Complete editor scrolling and pixels
 remain open.
 
-The [native font-relative helper](../renderer/native-font-relative-lengths.md)
-resolves `ch`, `ex` and `lh` from an owned computed style and the app's font
-collection. Apps currently assign a pixel value and recompute after font changes.
-The [private upright correction](../renderer/native-glyph-mask.md) matches all
-1,440 measured rectangles, with 160 gains and no losses; it captures no native
-pixels and remains unapplied. Its parent glyph correction passes focused and
-primitive checks but regresses both complete censuses and is rejected.
-Automatic typed declarations, complete contexts and C parity remain native
-API work. None of these operations requires JavaScript.
+The [retained native font-unit declarations](../renderer/native-font-relative-lengths.md)
+let apps assign `LengthValue::Ch`, `Ex` and `Lh` directly. The shared Engine
+recomputes them after font changes; apps do not need to assign pixel lengths
+again. C uses the same Engine through appended length-unit tags. A consuming
+Rust callback app matches 8/8 Chromium images and 32/32 bounds at the four
+required profiles. The owned metric-query helper remains available for apps
+that deliberately want a captured pixel value.
+Mixed-unit animation, retained font-relative line-height declarations and
+broader font contexts remain native API work. Earlier private upright/glyph
+experiments retain their own evidence and promotion status. None of these
+operations requires JavaScript.
 
 The [native Rust raster options](native-rust-raster-options.md) expose the
 Engine's immutable selection directly to consuming apps. Rust callback,

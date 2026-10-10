@@ -1,0 +1,62 @@
+{
+  "actual_owner_exit_code": 0,
+  "actual_owner_session": 26611,
+  "all_local_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "audit_driver_sha256": "102418735c705b0765fcb4148f3f080cc24718fec38675f14e3d16237d1e4999",
+  "compiled_paths": 226,
+  "complete": true,
+  "fresh_local_records": 212,
+  "full_renderer_contract_qualified": false,
+  "javascript_executed_by_openui": false,
+  "owner_absent": true,
+  "previous_terminal_sha256": "030f6f6a60866abdfad937eb47aa1461f2ab2e9606e5c61c4109674a853ee59e",
+  "receipt_sha256": "16e30f04453ab30235320847a0b09fef13086c035bb48fa08412b6e44a673d2c",
+  "release_qualified": false,
+  "results": {
+    "workspace-all-targets-all-features": {
+      "command": [
+        "cargo",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--message-format=json-render-diagnostics"
+      ],
+      "failed": 0,
+      "groups": 192,
+      "ignored": 0,
+      "passed": 8637
+    },
+    "workspace-and-docs-all-features": {
+      "command": [
+        "cargo",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--workspace",
+        "--all-features",
+        "--message-format=json-render-diagnostics"
+      ],
+      "failed": 0,
+      "groups": 160,
+      "ignored": 13,
+      "passed": 8639
+    }
+  },
+  "retired_for_reexecution_after_source_or_target_mutation": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "e98a5a17b6c9700a641079f3137572e0dfc85dd7",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c1ad161332023bb4c144d499f97c0c0fc0379f8577c791408bcf47d1bcd4e961",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
