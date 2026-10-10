@@ -1088,6 +1088,57 @@ impl Engine {
         Ok(ActivationResult { changed })
     }
 
+    /// Return the next focusable radio for native keyboard navigation.
+    /// Navigation includes unnamed radios, whose checked states remain independent.
+    /// This query changes no selection, focus, layout or event state.
+    pub fn radio_keyboard_target(
+        &self,
+        handle: NodeHandle,
+        forward: bool,
+    ) -> Result<Option<NodeHandle>, EngineError> {
+        self.resolve(handle)?;
+        if !self
+            .controls
+            .get(&handle.index)
+            .is_some_and(|state| state.role == FormControlRole::Radio)
+        {
+            return Err(EngineError::NotAControl);
+        }
+        if !self.is_focusable(handle) {
+            return Ok(None);
+        }
+        let name = self.attribute(handle, "name")?.unwrap_or_default();
+        let owner = self.form_owner(handle)?;
+        let mut peers = Vec::new();
+        let mut stack = vec![self.tree_root(handle)?];
+        while let Some(node) = stack.pop() {
+            if self
+                .controls
+                .get(&node.index)
+                .is_some_and(|state| state.role == FormControlRole::Radio)
+                && self.attribute(node, "name")?.unwrap_or_default() == name
+                && self.form_owner(node)? == owner
+                && self.is_focusable(node)
+            {
+                peers.push(node);
+            }
+            stack.extend(self.children(node)?.into_iter().rev());
+        }
+        let Some(index) = peers.iter().position(|node| *node == handle) else {
+            return Ok(None);
+        };
+        if peers.len() < 2 {
+            return Ok(None);
+        }
+        Ok(Some(
+            peers[if forward {
+                (index + 1) % peers.len()
+            } else {
+                (index + peers.len() - 1) % peers.len()
+            }],
+        ))
+    }
+
     pub fn adjust_control(
         &mut self,
         handle: NodeHandle,
@@ -1417,6 +1468,7 @@ impl Engine {
         };
         if !self.node_is_connected(node)
             || self.is_disabled(handle)
+            || self.document.node(node).style.visibility != openui_style::Visibility::Visible
             || !self.is_inside_modal(handle)
         {
             return false;

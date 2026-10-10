@@ -37,6 +37,8 @@ pub(crate) struct DocumentInner {
     pub resource_provider: RefCell<Option<Box<ResourceProvider>>>,
     pub clipboard: RefCell<String>,
     composition_target: Cell<Option<NodeHandle>>,
+    keyboard_activation: Cell<Option<(NodeHandle, u64)>>,
+    keyboard_activation_generation: Cell<u64>,
     composition_generation: Cell<u64>,
     modal_generation: Cell<u64>,
     animation_events: RefCell<Vec<AnimationEvent>>,
@@ -45,6 +47,28 @@ pub(crate) struct DocumentInner {
     transaction_depth: Cell<usize>,
     #[cfg(feature = "ffi-integration")]
     foreign_event_handler: RefCell<Option<Rc<ForeignEventHandler>>>,
+}
+
+struct KeyboardActivationRelease {
+    document: Rc<DocumentInner>,
+    activation: Option<(NodeHandle, u64)>,
+}
+impl KeyboardActivationRelease {
+    fn release(&self) -> bool {
+        let current = self.document.keyboard_activation.get();
+        let matches = self.activation.is_some() && current == self.activation;
+        if matches {
+            self.document.keyboard_activation.set(None);
+        }
+        matches
+    }
+}
+impl Drop for KeyboardActivationRelease {
+    fn drop(&mut self) {
+        if self.document.keyboard_activation.get() == self.activation {
+            self.document.keyboard_activation.set(None);
+        }
+    }
 }
 
 struct ClickScope {
@@ -111,6 +135,8 @@ impl Document {
                 resource_provider: RefCell::new(None),
                 clipboard: RefCell::new(String::new()),
                 composition_target: Cell::new(None),
+                keyboard_activation: Cell::new(None),
+                keyboard_activation_generation: Cell::new(0),
                 composition_generation: Cell::new(0),
                 modal_generation: Cell::new(0),
                 animation_events: RefCell::new(Vec::new()),
@@ -141,6 +167,8 @@ impl Document {
                 resource_provider: RefCell::new(None),
                 clipboard: RefCell::new(String::new()),
                 composition_target: Cell::new(None),
+                keyboard_activation: Cell::new(None),
+                keyboard_activation_generation: Cell::new(0),
                 composition_generation: Cell::new(0),
                 modal_generation: Cell::new(0),
                 animation_events: RefCell::new(Vec::new()),
@@ -1024,15 +1052,46 @@ impl Document {
         }
         let target =
             self.with_engine(|engine| engine.focused().unwrap_or_else(|| engine.root()))?;
+        let key = key_text.unwrap_or_default();
+        let is_space = key_code == 32 || key == " ";
+        let release =
+            (event_type == KeyEventType::Up && is_space).then(|| KeyboardActivationRelease {
+                document: self.inner.clone(),
+                activation: self.inner.keyboard_activation.get(),
+            });
         let event = Event::keyboard(event_type.name(), key_code, key_text, modifiers);
         self.dispatch_to(target, &event)?;
+        if let Some(release) = release {
+            let armed = release.activation.map(|(node, _)| node);
+            let was_armed = release.release();
+            if !event.default_prevented()
+                && was_armed
+                && armed == Some(target)
+                && self.target_is_live(target)?
+                && self.with_engine(Engine::focused)? == Some(target)
+                && self.with_engine(|engine| engine.can_focus(target))??
+            {
+                let activate = self.with_engine(|engine| {
+                    engine.control_state(target).map(|state| {
+                        state.is_some_and(|state| match state.role {
+                            FormControlRole::Button | FormControlRole::Checkbox => true,
+                            FormControlRole::Radio => !state.checked,
+                            _ => false,
+                        })
+                    })
+                })??;
+                if activate {
+                    self.dispatch_keyboard_click(target, modifiers)?;
+                }
+            }
+            return Ok(!event.default_prevented());
+        }
         if event.default_prevented() {
             return Ok(false);
         }
         if event_type != KeyEventType::Down {
             return Ok(true);
         }
-        let key = key_text.unwrap_or_default();
         if key_code == 9 || key.eq_ignore_ascii_case("tab") {
             return self
                 .advance_focus(if modifiers.contains(Modifiers::SHIFT) {
@@ -1066,19 +1125,41 @@ impl Document {
             (35, _) | (_, "end") => Some(ControlAdjustment::Maximum),
             _ => None,
         };
-        let adjustable = self.with_engine(|engine| {
+        let role = self.with_engine(|engine| {
             engine
                 .control_state(target)
                 .ok()
                 .flatten()
-                .is_some_and(|state| {
-                    matches!(
-                        state.role,
-                        FormControlRole::Range | FormControlRole::Radio | FormControlRole::Select
-                    )
-                })
+                .map(|state| state.role)
         })?;
-        if adjustable {
+        if role == Some(FormControlRole::Radio) {
+            if let Some(adjustment) = adjustment {
+                if matches!(
+                    adjustment,
+                    ControlAdjustment::Previous | ControlAdjustment::Next
+                ) && !modifiers.contains(Modifiers::CTRL)
+                    && !modifiers.contains(Modifiers::META)
+                    && !modifiers.contains(Modifiers::ALT)
+                {
+                    let horizontal = matches!(key_code, 37 | 39)
+                        || key.eq_ignore_ascii_case("ArrowLeft")
+                        || key.eq_ignore_ascii_case("ArrowRight");
+                    let next = self.with_engine(|engine| {
+                        let reversed = horizontal
+                            && engine.computed_style(target)?.direction
+                                == openui_style::Direction::Rtl;
+                        let forward = matches!(adjustment, ControlAdjustment::Next) ^ reversed;
+                        engine.radio_keyboard_target(target, forward)
+                    })??;
+                    if let Some(next) = next {
+                        self.change_focus(Some(next), FocusOrigin::Keyboard)?;
+                        self.dispatch_keyboard_click(next, modifiers)?;
+                    }
+                }
+                return Ok(true);
+            }
+        }
+        if matches!(role, Some(FormControlRole::Range | FormControlRole::Select)) {
             if let Some(adjustment) = adjustment {
                 return self.adjust_focused(adjustment).map(|_| true);
             }
@@ -1177,8 +1258,30 @@ impl Document {
                 }
                 return Ok(true);
             }
-            let click = Event::keyboard("click", key_code, key_text, modifiers);
-            self.dispatch_click(target, &click)?;
+            if is_space
+                && matches!(
+                    role,
+                    Some(
+                        FormControlRole::Button
+                            | FormControlRole::Checkbox
+                            | FormControlRole::Radio
+                    )
+                )
+                && self.with_engine(Engine::focused)? == Some(target)
+                && self.with_engine(|engine| engine.can_focus(target))??
+            {
+                let generation = self
+                    .inner
+                    .keyboard_activation_generation
+                    .get()
+                    .wrapping_add(1);
+                self.inner.keyboard_activation_generation.set(generation);
+                self.inner
+                    .keyboard_activation
+                    .set(Some((target, generation)));
+            } else if (key_code == 13 || key == "Enter") && role == Some(FormControlRole::Button) {
+                self.dispatch_keyboard_click(target, modifiers)?;
+            }
         }
         Ok(true)
     }
@@ -1577,19 +1680,26 @@ impl Document {
         }
     }
 
-    fn notify_control_activation(
+    fn notify_control_activation(&self, target: NodeHandle) -> Result<(), Error> {
+        if !self.control_target_is_live(target)? {
+            return Ok(());
+        }
+        self.dispatch_to(target, &Event::keyboard("input", 0, None, Modifiers::NONE))?;
+        if self.control_target_is_live(target)? {
+            self.dispatch_to(target, &Event::keyboard("change", 0, None, Modifiers::NONE))?;
+        }
+        Ok(())
+    }
+
+    fn dispatch_keyboard_click(
         &self,
         target: NodeHandle,
         modifiers: Modifiers,
     ) -> Result<(), Error> {
-        if !self.control_target_is_live(target)? {
-            return Ok(());
-        }
-        self.dispatch_to(target, &Event::keyboard("input", 0, None, modifiers))?;
-        if self.control_target_is_live(target)? {
-            self.dispatch_to(target, &Event::keyboard("change", 0, None, modifiers))?;
-        }
-        Ok(())
+        self.dispatch_click(
+            target,
+            &Event::pointer("click", 0, 0.0, 0.0, MouseButton::Left, modifiers),
+        )
     }
 
     fn dispatch_click(&self, target: NodeHandle, event: &Event) -> Result<(), Error> {
@@ -1634,9 +1744,8 @@ impl Document {
             false
         };
         dispatched?;
-        let modifiers = Modifiers(event.modifiers as u32);
         if notify {
-            self.notify_control_activation(target, modifiers)?;
+            self.notify_control_activation(target)?;
         } else if !canceled
             && self.control_target_is_live(target)?
             && !self.with_engine(|engine| {
@@ -1651,7 +1760,7 @@ impl Document {
         {
             let changed = self.with_engine_mut(|engine| engine.activate(target))?;
             for changed in changed.changed {
-                self.notify_control_activation(changed, modifiers)?;
+                self.notify_control_activation(changed)?;
             }
         }
         Ok(())
@@ -1775,6 +1884,7 @@ impl Document {
         if previous == next {
             return Ok(());
         }
+        self.inner.keyboard_activation.set(None);
         if self
             .inner
             .composition_target
@@ -1862,6 +1972,7 @@ impl Document {
         if previous == next {
             return Ok(());
         }
+        self.inner.keyboard_activation.set(None);
         if self
             .inner
             .composition_target
