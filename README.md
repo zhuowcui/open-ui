@@ -27,6 +27,19 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
+The native keyboard control fixes are integrated at code checkpoint
+`a0841c9e`. Rust, C and C++ apps each match the same 99 measured Chromium
+scenarios, with repeated runs identical. Radio arrow navigation, Space release,
+modifiers, cancellation and callback changes use the shared native document.
+C adds `oui_element_is_active_v1`; the ABI has 131 exports and the same 34
+layouts, preserving all 130 preceding exports. Two Rust cancellation/panic
+recovery guards and C/C++ ownership and callback guards pass.
+
+These checks measure state and events. Keyboard appearance, broader keyboard
+APIs, fresh workspace and hosted checks, neighboring regressions and renderer
+qualification remain open on this source. No new pixel result is claimed.
+[Native keyboard evidence](docs/renderer/generated/native-keyboard-controls-v1.json).
+
 The [native form association APIs](docs/v02/native-form-owner.md) are integrated
 at clean code checkpoint `a401a8ac`. Rust, C and C++ apps each match all 396
 measured behavior cases against pinned Chromium, including 88 new form-owner

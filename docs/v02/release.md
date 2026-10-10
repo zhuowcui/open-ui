@@ -4,6 +4,19 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
+The native keyboard control fixes are integrated at code checkpoint
+`a0841c9e`. Rust, C and C++ apps each match the same 99 measured Chromium
+scenarios, with repeated runs identical. Radio arrow navigation, Space release,
+modifiers, cancellation and callback changes use the shared native document.
+C adds `oui_element_is_active_v1`; the ABI has 131 exports and the same 34
+layouts, preserving all 130 preceding exports. Two Rust cancellation/panic
+recovery guards and C/C++ ownership and callback guards pass.
+
+These checks measure state and events. Keyboard appearance, broader keyboard
+APIs, fresh workspace and hosted checks, neighboring regressions and renderer
+qualification remain open on this source. No new pixel result is claimed.
+[Native keyboard evidence](../renderer/generated/native-keyboard-controls-v1.json).
+
 The [native editing and rounded border follow-up](../renderer/native-editing-and-rounded-border.md)
 is integrated and verified on clean PR checkpoint `5b05e1b5`. Its native Rust
 app passes 35/35 images twice; focused **640/640** and primitive **960/960**

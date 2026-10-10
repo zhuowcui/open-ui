@@ -40,6 +40,14 @@ requirement also applies when the corresponding Chromium test uses JavaScript
 or is excluded from the pixel matrix. An internal Engine operation or a
 test-only fixture does not complete the public application API.
 
+Native keyboard control defaults now run through public
+`Document::dispatch_key_input` and Rust callbacks; C uses the same retained
+document. Rust, C and C++ each match 99 measured Chromium scenarios at clean
+code checkpoint `a0841c9e`. C exposes the native active-state query through
+`oui_element_is_active_v1`. These state and event checks leave keyboard pixels,
+broader keyboard APIs and current-source full qualification open.
+[Evidence](../renderer/generated/native-keyboard-controls-v1.json).
+
 Lookup, mutation, geometry, focus, scrolling, controls, and event dispatch
 operate directly on the native engine:
 

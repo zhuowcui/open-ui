@@ -1,0 +1,29 @@
+{
+  "actual_audit_exit_code": 0,
+  "actual_owner_exit_code": 1,
+  "all_commands_terminal": true,
+  "audit_session_closed": 62881,
+  "audit_sha256": "f123225cfd60de191a3fc27c8deba638b0a1140a882e335c64893f865756e2be",
+  "earlier_audit_helper_exit_code": 1,
+  "earlier_audit_helper_reason": "Sorted JSON stage keys were read outside compilation order; chronological artifact audit verified all hashes after correction",
+  "failure": "AssertionError('compile-control_keyboard-c')",
+  "main_source": {
+    "clean": true,
+    "commit": "635619da2000ef5db258f97623689cd474084fdb",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "e71e3cab5b633e4989ae69097d7d3984894635b1beef0169b068362061c78773",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "owner_absent": true,
+  "owner_session_closed": 25274,
+  "receipt_sha256": "531edde522b2e54cd1c04896a6ac67e3b3d21fbf334dc69e725e738336b344bb",
+  "retired_for_reexecution_after_source_or_target_mutation": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "f1fe644952b1f73dcec917bf76204fa2c5a2d627",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c9d23385272546ca177afbc6430b9cefb14aa559561ca1af1a29e42b1015058d",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
