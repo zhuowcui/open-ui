@@ -24,6 +24,38 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
+## Cleared empty boxes (native repair; clean full verification pending)
+
+The shared block layout now calculates clearance using the complete collapsed
+margin group of an empty cleared box. Previously it placed the box before the
+descendant bottom margin was known, then counted that margin again. The repair
+retains the shared float width calculation and adds no font-name, size, scale,
+test-ID or output-pixel correction.
+
+A consuming Rust app creates eight reduced cases, including four nonempty
+neighbors, and removes margins through a Rust click callback. The dirty-source
+repair matches pinned Chromium in **8/8 images and 320/320 bounds** across all
+four required profiles. Its clean prior baseline was **4/8 images and 256/320
+bounds exact**. Independent process and unchanged-frame repeats, callback
+counts and weak teardown pass. All **1,182 layout/text/paint tests** pass, with
+zero failures or ignores, including eight oracle-derived Engine scenarios.
+
+A selected sweep restores **all 16 exact comparisons** lost by the preceding
+atomic sizing change. Its **17/20 exact** comparisons have zero errors and no
+exact losses against the earlier clean renderer. Three existing scroll-button
+appearance differences remain, including the earlier worsened comparison.
+Focused **640/640** and primitive **960/960** are exact and unchanged; all
+**1,620 selected/focused/primitive rows**, fresh linked artifacts and unchanged
+Chromium reference fields are audited.
+
+These are dirty-source diagnostic results. Clean native execution, complete
+original and expanded censuses, full workspace/ABI and current checkpoint
+hosted checks remain pending. This repair does not establish full renderer,
+complete native API or release qualification. Open UI never executes
+JavaScript; applications use public Rust operations and callbacks. Chromium
+alone defines expected pixels.
+[Immutable repair evidence](generated/native-float-clearance-v1.json).
+
 ## Shared atomic sizing (clean measurement; regression gate failed)
 
 The integrated sizing change fails the full-census regression gate and requires

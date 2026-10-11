@@ -3870,6 +3870,12 @@ pub(crate) fn block_layout_contents(
                 } else {
                     // Block-level child.
 
+                    let clearance_state = (child_style.clear != Clear::None).then_some((
+                        block_offset,
+                        margin_strut,
+                        intrinsic_block_size,
+                    ));
+
                     // Handle clear property — CSS 2.1 §8.3.1 / §9.5.2.
                     // Compute hypothetical position (with margin collapsing) first,
                     // then determine clearance as additional distance needed.
@@ -4078,6 +4084,7 @@ pub(crate) fn block_layout_contents(
                         &mut pending_self_collapsing,
                         false,
                         Some(&exclusion_space_mixed),
+                        clearance_state,
                     );
 
                     if child_is_zero_clamp_overflow
@@ -4387,6 +4394,12 @@ pub(crate) fn block_layout_contents(
                 continue;
             }
 
+            let clearance_state = (child_style.clear != Clear::None).then_some((
+                block_offset,
+                margin_strut,
+                intrinsic_block_size,
+            ));
+
             // Handle clear property — CSS 2.1 §8.3.1 / §9.5.2.
             // Compute hypothetical position (with margin collapsing) first,
             // then determine clearance as additional distance needed.
@@ -4635,6 +4648,7 @@ pub(crate) fn block_layout_contents(
                 &mut pending_self_collapsing,
                 document_element_ignores_float,
                 Some(&exclusion_space),
+                clearance_state,
             );
 
             // For auto-height BFC children, verify the laid-out fragment doesn't
@@ -4759,6 +4773,7 @@ pub(crate) fn block_layout_contents(
                             &mut pending_self_collapsing,
                             document_element_ignores_float,
                             Some(&exclusion_space),
+                            None,
                         );
 
                         // Update float offset to verified values.
@@ -6804,6 +6819,7 @@ fn layout_block_child(
     pending_self_collapsing: &mut Vec<usize>,
     ignore_float_out_of_flow: bool,
     parent_exclusion_space: Option<&ExclusionSpace>,
+    clearance_state: Option<(LayoutUnit, MarginStrut, LayoutUnit)>,
 ) {
     let child_style = &doc.node(child_id).style;
 
@@ -7094,6 +7110,34 @@ fn layout_block_child(
         && !child_has_in_flow_positioned_content
         && !child_has_list_marker_content
         && (child_fragment.oof_candidates.is_empty() || child_style.clear != Clear::None);
+
+    // A self-collapsing child joins its own end margin and descendant margins
+    // to its start margin. The caller's provisional clearance was computed
+    // before that collapsed group was known. Recompute the hypothetical border
+    // edge from the saved flow state so clearance does not count that group
+    // a second time. Keep the provisional position used for child layout.
+    if child_is_self_collapsing {
+        if let (Some((prior_offset, mut collapsed, prior_intrinsic)), Some(exclusions)) =
+            (clearance_state, parent_exclusion_space)
+        {
+            collapsed.append_normal(child_margin.top);
+            collapsed.append_normal(child_margin.bottom);
+            for strut in [
+                child_fragment.start_margin_strut,
+                child_fragment.end_margin_strut,
+            ] {
+                collapsed.append_normal(strut.positive_margin);
+                collapsed.append_normal(strut.negative_margin);
+            }
+            let clearance_target = exclusions
+                .clearance_offset(clear_type_from_style(child_style.clear))
+                + content_edge;
+            let border_edge = (prior_offset + collapsed.sum()).max_of(clearance_target);
+            *block_offset = border_edge - collapsed.sum();
+            *margin_strut = collapsed;
+            *intrinsic_block_size = prior_intrinsic;
+        }
+    }
 
     // CSS 2.1 §8.3.1: Absorb child's propagated start margin strut.
     // If the child itself had an unresolved start margin (its first
@@ -36166,5 +36210,78 @@ mod tests {
         let bfc_fragment = fragment_for_node(&fragment, bfc).expect("separated BFC fragment");
         assert_eq!(wrapper_fragment.offset.top, LayoutUnit::zero());
         assert_eq!(bfc_fragment.offset.top, LayoutUnit::from_i32(200));
+    }
+
+    #[test]
+    fn clearance_uses_collapsed_descendant_margin_before_empty_fit_content_placement() {
+        for nested in [false, true] {
+            for margin in [75, 100] {
+                for min_width in [0, 20] {
+                    let mut doc = Document::new();
+                    let outer = doc.create_node(ElementTag::Div);
+                    doc.update_resolved_style(outer, |style| style.display = Display::InlineBlock);
+                    doc.append_child(doc.root(), outer);
+                    let float = doc.create_node(ElementTag::Div);
+                    doc.update_resolved_style(float, |style| {
+                        style.display = Display::Block;
+                        style.float = Float::Left;
+                        style.width = Length::px(100.0);
+                        style.height = Length::px(100.0);
+                    });
+                    doc.append_child(outer, float);
+                    let clear = doc.create_node(ElementTag::Div);
+                    doc.update_resolved_style(clear, |style| {
+                        style.display = Display::Block;
+                        style.clear = Clear::Both;
+                    });
+                    doc.append_child(outer, clear);
+                    let fit = if nested {
+                        let fit = doc.create_node(ElementTag::Div);
+                        doc.update_resolved_style(fit, |style| style.display = Display::Block);
+                        doc.append_child(clear, fit);
+                        fit
+                    } else {
+                        clear
+                    };
+                    doc.update_resolved_style(fit, |style| {
+                        style.width = Length::fit_content();
+                        style.min_width = Length::px(min_width as f32);
+                    });
+                    let padding = doc.create_node(ElementTag::Div);
+                    doc.update_resolved_style(padding, |style| {
+                        style.display = Display::Block;
+                        style.padding_top = Length::percent(100.0);
+                        style.margin_bottom = Length::px(margin as f32);
+                    });
+                    doc.append_child(fit, padding);
+                    let fragment = block_layout(
+                        &doc,
+                        doc.root(),
+                        &ConstraintSpace::for_root(
+                            LayoutUnit::from_i32(800),
+                            LayoutUnit::from_i32(600),
+                        ),
+                    );
+                    let outer_fragment = fragment_for_node(&fragment, outer).expect("atomic outer");
+                    let clear_fragment =
+                        fragment_for_node(&fragment, clear).expect("cleared block");
+                    let fit_fragment =
+                        fragment_for_node(&fragment, fit).expect("fit-content block");
+                    assert_eq!(outer_fragment.size.width, LayoutUnit::from_i32(100));
+                    assert_eq!(clear_fragment.offset.top, LayoutUnit::from_i32(100));
+                    assert_eq!(fit_fragment.size.width, LayoutUnit::from_i32(min_width));
+                    assert_eq!(fit_fragment.size.height, LayoutUnit::from_i32(min_width));
+                    let expected_height = if min_width == 0 {
+                        100
+                    } else {
+                        100 + min_width + margin
+                    };
+                    assert_eq!(
+                        outer_fragment.size.height,
+                        LayoutUnit::from_i32(expected_height)
+                    );
+                }
+            }
+        }
     }
 }
