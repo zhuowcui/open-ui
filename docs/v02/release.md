@@ -4,6 +4,45 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
+## Resolved font raster selection (clean census; remaining gates open)
+
+Ordinary author text now selects its raster policy from each resolved font
+run, replacing the rule based on the first authored family name. Aliased,
+grayscale and LCD runs retain their own edging when mixed in one text blob.
+The two-file change adds no font-name, size, scale or test-ID exception.
+
+Fresh CPU verification at clean `98d18982` measures **21,350/22,924
+original** and **22,153/23,728 expanded** exact comparisons,
+with **1,574 / 1,575 differences**, zero errors and
+actual exits **1 / 1**. Focused **640/640** and primitive
+**960/960** are exact. All **48,252 rows**, fresh linked artifacts and unchanged
+Chromium references are audited.
+The original census gains **0** exact comparisons, loses **0**, and worsens **0** differences against the previous clean source.
+The expanded census gains **0** exact comparisons, loses **0**, and worsens **0** differences against the previous clean source.
+
+All **12 hosted jobs** pass on this source, with zero skipped jobs: format,
+ordinary CI and all seven explicitly dispatched hardening jobs. The hosted
+X11 software/Mesa and pure Wayland consumers pass; physical lab qualification
+remains open.
+[Hardening run 38100438813](https://github.com/zhuowcui/open-ui/actions/runs/38100438813).
+
+Earlier dirty-source native diagnostics preserve pixels and bounds when the
+same font bytes are registered under another name, at five profiles, and
+different font bytes still change pixels. Both Rust callbacks, repeats and
+weak teardown pass, as do **1,181 layout/text/paint tests**. That application
+remains **0/15 whole images and 165/210 bounds exact**, with four images worse
+than its baseline. These are earlier diagnostics, not a clean application
+measurement at `98d18982`. Intrinsic width, consecutive floats, fallback line
+height and other raster differences remain open.
+
+There are **875 residual original test IDs**, including
+**875 without a reviewed ownership entry**.
+Clean native application, complete workspace and ABI checks remain pending.
+The full Chromium pixel, complete native API, compositor, physical lab and
+release gates remain open. Open UI never executes JavaScript; apps use public
+native Rust APIs and Rust callbacks. Chromium alone defines expected pixels.
+[Immutable clean census evidence](../renderer/generated/native-font-families-v3.json).
+
 ## Corrected text raster policy (clean verification)
 
 Fresh CPU verification at clean `ccb2dfa9` measures **21,350/22,924
@@ -423,10 +462,10 @@ six successful jobs and five skips. Skips do not satisfy required release gates.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | [Complete corrected font checkpoint](../renderer/generated/native-monochrome-strikes-v4.json) at clean `ccb2dfa9`: 21,350/22,924 exact, 1,574 different, zero errors; actual exit 1. Chromium references are unchanged; 875 residual original IDs need closure | fail |
-| Focused and primitive raster | [Complete corrected font checkpoint](../renderer/generated/native-monochrome-strikes-v4.json) at clean `ccb2dfa9`: 640/640 focused and 960/960 primitive exact; all 1,600 native images and Chromium reference fields remain unchanged | source-attributed scoped pass |
+| Four-profile renderer matrix | [Clean resolved-font census](../renderer/generated/native-font-families-v3.json) at clean `98d18982`: 21,350/22,924 exact, 1,574 different, zero errors; actual exit 1. Chromium references are unchanged; 875 residual original IDs need closure | fail |
+| Focused and primitive raster | [Clean resolved-font census](../renderer/generated/native-font-families-v3.json) at clean `98d18982`: 640/640 focused and 960/960 primitive exact; all 1,600 native images and Chromium reference fields remain unchanged | source-attributed scoped pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | [Complete corrected font checkpoint](../renderer/generated/native-monochrome-strikes-v4.json) at clean `ccb2dfa9`: 22,153/23,728 exact, 1,575 different, zero errors; actual exit 1. 200/201 additions exact at all four profiles; 35 AST-lowered cases remain outside the current manifest and unqualified on this source. Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | [Clean resolved-font census](../renderer/generated/native-font-families-v3.json) at clean `98d18982`: 22,153/23,728 exact, 1,575 different, zero errors; actual exit 1. 200/201 additions exact at all four profiles; 35 AST-lowered cases remain outside the current manifest and unqualified on this source. Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | [Complete corrected font checkpoint](../renderer/generated/native-monochrome-strikes-v4.json) at clean `ccb2dfa9`: 8,642 all-targets and 8,644 workspace/documentation tests pass, zero failed, 13 existing workspace ignores; 30 C and 24 C++ consumers pass, with 131 exports and 34 layouts | scoped verification pass; full pixel gates fail |
 | Rust 1.85 MSRV | [Same-source explicit hardening](https://github.com/zhuowcui/open-ui/actions/runs/38091227950): MSRV passes at `ccb2dfa9`; all seven jobs succeed, zero skips | pass |

@@ -24,29 +24,44 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
-## Resolved font raster selection (candidate, complete qualification pending)
+## Resolved font raster selection (clean census; remaining gates open)
 
 Ordinary author text now selects its raster policy from each resolved font
 run, replacing the rule based on the first authored family name. Aliased,
 grayscale and LCD runs retain their own edging when mixed in one text blob.
 The two-file change adds no font-name, size, scale or test-ID exception.
 
-The public Rust font-family consumer now preserves both pixels and bounds
-when the same font bytes are registered under another name, at all four
-required profiles and a 3× neighbor. Different font bytes still change pixels
-at all five profiles. Both native Rust callbacks, process/frame repeats and
-weak teardown pass. All **1,181 layout/text/paint tests** pass with no failures
-or ignores. Fresh focused **640/640** and primitive **960/960** comparisons
-are exact, with all 1,600 native images and Chromium references unchanged.
+Fresh CPU verification at clean `98d18982` measures **21,350/22,924
+original** and **22,153/23,728 expanded** exact comparisons,
+with **1,574 / 1,575 differences**, zero errors and
+actual exits **1 / 1**. Focused **640/640** and primitive
+**960/960** are exact. All **48,252 rows**, fresh linked artifacts and unchanged
+Chromium references are audited.
+The original census gains **0** exact comparisons, loses **0**, and worsens **0** differences against the previous clean source.
+The expanded census gains **0** exact comparisons, loses **0**, and worsens **0** differences against the previous clean source.
 
-The font-family consumer remains **0/15 whole images and 165/210 bounds exact**;
-four images worsen against its baseline. Intrinsic width, consecutive floats,
-fallback line height and other raster differences remain open. These are
-dirty-source diagnostics. Clean original/expanded censuses, complete workspace,
-ABI and hosted checks on this candidate remain pending. The earlier clean
-`ccb2dfa9` census below is not a measurement of this candidate. No renderer,
-complete native API or release qualification is claimed.
-[Immutable candidate evidence](generated/native-font-families-v2.json).
+All **12 hosted jobs** pass on this source, with zero skipped jobs: format,
+ordinary CI and all seven explicitly dispatched hardening jobs. The hosted
+X11 software/Mesa and pure Wayland consumers pass; physical lab qualification
+remains open.
+[Hardening run 38100438813](https://github.com/zhuowcui/open-ui/actions/runs/38100438813).
+
+Earlier dirty-source native diagnostics preserve pixels and bounds when the
+same font bytes are registered under another name, at five profiles, and
+different font bytes still change pixels. Both Rust callbacks, repeats and
+weak teardown pass, as do **1,181 layout/text/paint tests**. That application
+remains **0/15 whole images and 165/210 bounds exact**, with four images worse
+than its baseline. These are earlier diagnostics, not a clean application
+measurement at `98d18982`. Intrinsic width, consecutive floats, fallback line
+height and other raster differences remain open.
+
+There are **875 residual original test IDs**, including
+**875 without a reviewed ownership entry**.
+Clean native application, complete workspace and ABI checks remain pending.
+The full Chromium pixel, complete native API, compositor, physical lab and
+release gates remain open. Open UI never executes JavaScript; apps use public
+native Rust APIs and Rust callbacks. Chromium alone defines expected pixels.
+[Immutable clean census evidence](generated/native-font-families-v3.json).
 
 ## Native font family API probe (failures remain)
 

@@ -22,29 +22,44 @@ remain open.
 
 ## Current implementation checkpoint
 
-### Resolved font raster selection (candidate, complete qualification pending)
+### Resolved font raster selection (clean census; remaining gates open)
 
 Ordinary author text now selects its raster policy from each resolved font
 run, replacing the rule based on the first authored family name. Aliased,
 grayscale and LCD runs retain their own edging when mixed in one text blob.
 The two-file change adds no font-name, size, scale or test-ID exception.
 
-The public Rust font-family consumer now preserves both pixels and bounds
-when the same font bytes are registered under another name, at all four
-required profiles and a 3× neighbor. Different font bytes still change pixels
-at all five profiles. Both native Rust callbacks, process/frame repeats and
-weak teardown pass. All **1,181 layout/text/paint tests** pass with no failures
-or ignores. Fresh focused **640/640** and primitive **960/960** comparisons
-are exact, with all 1,600 native images and Chromium references unchanged.
+Fresh CPU verification at clean `98d18982` measures **21,350/22,924
+original** and **22,153/23,728 expanded** exact comparisons,
+with **1,574 / 1,575 differences**, zero errors and
+actual exits **1 / 1**. Focused **640/640** and primitive
+**960/960** are exact. All **48,252 rows**, fresh linked artifacts and unchanged
+Chromium references are audited.
+The original census gains **0** exact comparisons, loses **0**, and worsens **0** differences against the previous clean source.
+The expanded census gains **0** exact comparisons, loses **0**, and worsens **0** differences against the previous clean source.
 
-The font-family consumer remains **0/15 whole images and 165/210 bounds exact**;
-four images worsen against its baseline. Intrinsic width, consecutive floats,
-fallback line height and other raster differences remain open. These are
-dirty-source diagnostics. Clean original/expanded censuses, complete workspace,
-ABI and hosted checks on this candidate remain pending. The earlier clean
-`ccb2dfa9` census below is not a measurement of this candidate. No renderer,
-complete native API or release qualification is claimed.
-[Immutable candidate evidence](../renderer/generated/native-font-families-v2.json).
+All **12 hosted jobs** pass on this source, with zero skipped jobs: format,
+ordinary CI and all seven explicitly dispatched hardening jobs. The hosted
+X11 software/Mesa and pure Wayland consumers pass; physical lab qualification
+remains open.
+[Hardening run 38100438813](https://github.com/zhuowcui/open-ui/actions/runs/38100438813).
+
+Earlier dirty-source native diagnostics preserve pixels and bounds when the
+same font bytes are registered under another name, at five profiles, and
+different font bytes still change pixels. Both Rust callbacks, repeats and
+weak teardown pass, as do **1,181 layout/text/paint tests**. That application
+remains **0/15 whole images and 165/210 bounds exact**, with four images worse
+than its baseline. These are earlier diagnostics, not a clean application
+measurement at `98d18982`. Intrinsic width, consecutive floats, fallback line
+height and other raster differences remain open.
+
+There are **875 residual original test IDs**, including
+**875 without a reviewed ownership entry**.
+Clean native application, complete workspace and ABI checks remain pending.
+The full Chromium pixel, complete native API, compositor, physical lab and
+release gates remain open. Open UI never executes JavaScript; apps use public
+native Rust APIs and Rust callbacks. Chromium alone defines expected pixels.
+[Immutable clean census evidence](../renderer/generated/native-font-families-v3.json).
 
 ### Native font family API probe (failures remain)
 
@@ -1432,12 +1447,12 @@ private runtime is promoted or admitted by this documentation checkpoint.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean umbrella census | [Complete corrected font checkpoint](../renderer/generated/native-monochrome-strikes-v4.json) at `ccb2dfa9`: 21,350/22,924 exact, 1,574 different, 0 errors; expanded 22,153/23,728 exact, 1,575 different; both actual exits 1; 875 residual original IDs |
+| Latest complete clean umbrella census | [Clean resolved-font census](../renderer/generated/native-font-families-v3.json) at `98d18982`: 21,350/22,924 exact, 1,574 different, 0 errors; expanded 22,153/23,728 exact, 1,575 different; both actual exits 1; 875 residual original IDs |
 | Previous native event census | `1c8540e9`: 21,334/22,924 exact, 1,590 different, 0 errors; expanded 22,137/23,728 exact, 1,591 different, 0 errors. Historical measurement; both pixel gates failed |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
-| Focused / primitive 40-profile matrices | 640/640 / 960/960 exact at clean `ccb2dfa9`; all 1,600 native images and Chromium reference fields unchanged. [Complete corrected font checkpoint](../renderer/generated/native-monochrome-strikes-v4.json) |
-| Expanded native final-state additions | 200/201 additional cases exact at all four profiles in the clean `ccb2dfa9` run |
-| Pending native final-state candidates | 35 AST-lowered cases remain outside this clean manifest; earlier pending evidence does not qualify them on `ccb2dfa9` |
+| Focused / primitive 40-profile matrices | 640/640 / 960/960 exact at clean `98d18982`; all 1,600 native images and Chromium reference fields unchanged. [Clean resolved-font census](../renderer/generated/native-font-families-v3.json) |
+| Expanded native final-state additions | 200/201 additional cases exact at all four profiles in the clean `98d18982` run |
+| Pending native final-state candidates | 35 AST-lowered cases remain outside this clean manifest and unqualified on `98d18982` |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,706; the 236 AST-audited candidates are tracked separately from admitted pixel cases |
 | Accountability audit | 7/7 |
@@ -2615,12 +2630,11 @@ load it.
   it reached 408/640 focused and 624/960 primitive exact, below CPU Skia's
   640/640 and 960/960. It remains unpromoted; OpenGL presentation still uploads
   a CPU-rasterized frame.
-- The [current hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36365378115)
-  still fails AddressSanitizer, LeakSanitizer, and fuzz on process-exit
-  Fontconfig allocations. Its MSRV, Miri, Linux platform, and C UBSan jobs
-  passed.
-- The four-profile Chromium census fails exactness; 914 residual test IDs
-  have no reviewed owner. Both 40-profile CPU raster matrices are exact.
+- The four-profile Chromium census fails exactness at clean `98d18982`;
+  875 residual test IDs have no reviewed owner.
+  Both 40-profile CPU raster matrices are exact. All 12 hosted jobs, including
+  all seven explicitly dispatched hardening jobs, pass with zero skips.
+  [Same-source hardening](https://github.com/zhuowcui/open-ui/actions/runs/38100438813).
 - The C ABI covers the retained engine, headless renderer, owned full
   accessibility-tree snapshots, and the shared Rust Linux event loop;
   release-lab AT-SPI and packaged native C/C++ application qualification remain open.
