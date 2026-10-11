@@ -515,6 +515,26 @@ impl ShapeResult {
                 continue;
             }
             let source_font = run.font_data.sk_font();
+            // Author text follows the resolved face's raster parameters. A
+            // registered alias and a fallback run must not inherit another
+            // face's edging from the authored family list or enclosing blob.
+            let raster_policy = match raster_policy {
+                TextRasterPolicy::ChromiumAuthorLcd | TextRasterPolicy::ChromiumAuthorAliased => {
+                    match source_font.edging() {
+                        Edging::Alias => TextRasterPolicy::ChromiumAuthorAliased,
+                        Edging::SubpixelAntiAlias => TextRasterPolicy::ChromiumAuthorLcd,
+                        Edging::AntiAlias => TextRasterPolicy::Skia,
+                    }
+                }
+                policy => policy,
+            };
+            // Monochrome runs retain their local positions. Only LCD runs
+            // select a mask phase using the enclosing logical origin.
+            let device_origin_x = if raster_policy == TextRasterPolicy::ChromiumAuthorAliased {
+                None
+            } else {
+                device_origin_x
+            };
             // Chromium asks FreeType/fontations for the device-size aliased
             // strike. Building the compatible outline at the CSS size and
             // scaling its already grid-fitted path widened every rotated Ahem

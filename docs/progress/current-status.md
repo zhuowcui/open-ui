@@ -22,6 +22,30 @@ remain open.
 
 ## Current implementation checkpoint
 
+### Resolved font raster selection (candidate, complete qualification pending)
+
+Ordinary author text now selects its raster policy from each resolved font
+run, replacing the rule based on the first authored family name. Aliased,
+grayscale and LCD runs retain their own edging when mixed in one text blob.
+The two-file change adds no font-name, size, scale or test-ID exception.
+
+The public Rust font-family consumer now preserves both pixels and bounds
+when the same font bytes are registered under another name, at all four
+required profiles and a 3× neighbor. Different font bytes still change pixels
+at all five profiles. Both native Rust callbacks, process/frame repeats and
+weak teardown pass. All **1,181 layout/text/paint tests** pass with no failures
+or ignores. Fresh focused **640/640** and primitive **960/960** comparisons
+are exact, with all 1,600 native images and Chromium references unchanged.
+
+The font-family consumer remains **0/15 whole images and 165/210 bounds exact**;
+four images worsen against its baseline. Intrinsic width, consecutive floats,
+fallback line height and other raster differences remain open. These are
+dirty-source diagnostics. Clean original/expanded censuses, complete workspace,
+ABI and hosted checks on this candidate remain pending. The earlier clean
+`ccb2dfa9` census below is not a measurement of this candidate. No renderer,
+complete native API or release qualification is claimed.
+[Immutable candidate evidence](../renderer/generated/native-font-families-v2.json).
+
 ### Native font family API probe (failures remain)
 
 A [public Rust consumer](../../bindings/rust/openui/examples/native_font_family_probe.rs) registers

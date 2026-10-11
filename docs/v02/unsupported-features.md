@@ -58,6 +58,14 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   and 60/60 bounds exact in the measured rectangle cases. Mixed-unit animation,
   complete adjusted-font/root/orientation contexts and text line-box/glyph
   qualification remain native API work;
+- a shared candidate removes first-authored-family raster selection and
+  preserves pixels/bounds under same-byte font aliases at five profiles. Its
+  1,181 layout/text/paint tests and 640/960 raster matrices pass, with all 1,600
+  raster comparisons unchanged. Native font-family images remain 0/15 exact,
+  bounds remain 165/210 exact, and four images worsen from baseline. Clean
+  full censuses, workspace, ABI and hosted checks remain pending; no complete
+  renderer or native API qualification is claimed.
+  [Candidate evidence](../renderer/generated/native-font-families-v2.json);
 - clean `ccb2dfa9` matches all ten measured native shaping images and 70
   bounds. Complete comparison restores all 16 lost exact results, retains the
   seven gains and repairs all 34 worsened differences from rejected `40ff6178`.
