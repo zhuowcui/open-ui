@@ -218,7 +218,7 @@ fn borrowed_listener_storage_preserves_add_outputs_destroy_tokens_and_aliases() 
 }
 
 #[test]
-fn native_removal_invalidates_manual_c_route_callbacks() {
+fn native_removal_invalidates_shared_c_route_callbacks() {
     let (doc, node, state) = fixture();
     let context = Context::new(doc, node, false);
     let data = (&context as *const Context).cast_mut().cast();
@@ -236,7 +236,7 @@ fn native_removal_invalidates_manual_c_route_callbacks() {
             length: 0,
         },
     );
-    invoke_event_listeners(&state, handle, false, &mut raw).unwrap();
+    dispatch_event_to(&state, handle, node as usize, &mut raw, false).unwrap();
     assert!(context.log.borrow().is_empty());
     assert_eq!(oui_listener_destroy(listener), OuiStatus::Ok);
     assert_eq!(oui_element_destroy(node), OuiStatus::Ok);
@@ -300,7 +300,7 @@ fn rust_and_c_registrations_follow_one_order_and_immediate_stop_state() {
                 length: 0,
             },
         );
-        invoke_event_listeners(&state, handle, false, &mut raw).unwrap();
+        dispatch_event_to(&state, handle, node as usize, &mut raw, false).unwrap();
         assert!(context.log.borrow().is_empty());
         assert_eq!(oui_listener_destroy(listener), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(node), OuiStatus::Ok);

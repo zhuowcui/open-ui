@@ -21,6 +21,76 @@ pub(crate) fn app_state(app: *mut OuiApp) -> Result<Rc<AppState>, ApiError> {
     }
 }
 
+struct RawEventContext {
+    document: std::rc::Weak<DocumentState>,
+    native_address: usize,
+    target_address: usize,
+}
+
+thread_local! {
+    static RAW_EVENTS: RefCell<Vec<RawEventContext>> = const { RefCell::new(Vec::new()) };
+}
+
+/// Retain the caller's target alias only for this synchronous native event.
+/// A projected pseudo target uses the already resolved public origin alias.
+/// Nested events get independent scopes; no borrowed C event is retained.
+pub(crate) struct RawEventScope {
+    native_address: usize,
+}
+
+impl RawEventScope {
+    pub(crate) fn new(
+        state: &Rc<DocumentState>,
+        native: &openui::Event,
+        target_address: usize,
+    ) -> Result<Self, ApiError> {
+        let native_address = native as *const openui::Event as usize;
+        RAW_EVENTS.with(|events| {
+            let mut events = events.try_borrow_mut().map_err(|_| {
+                ApiError::new(OuiStatus::Reentrant, "raw event context is borrowed")
+            })?;
+            events.try_reserve(1).map_err(|_| {
+                ApiError::new(
+                    OuiStatus::OutOfMemory,
+                    "raw event context allocation failed",
+                )
+            })?;
+            events.push(RawEventContext {
+                document: Rc::downgrade(state),
+                native_address,
+                target_address,
+            });
+            Ok(Self { native_address })
+        })
+    }
+}
+
+impl Drop for RawEventScope {
+    fn drop(&mut self) {
+        RAW_EVENTS.with(|events| {
+            let removed = events.borrow_mut().pop();
+            debug_assert!(removed.is_some_and(|event| event.native_address == self.native_address));
+        });
+    }
+}
+
+fn raw_event_target_address(state: &Rc<DocumentState>, native: &openui::Event) -> Option<usize> {
+    RAW_EVENTS.with(|events| {
+        events
+            .borrow()
+            .iter()
+            .rev()
+            .find(|event| {
+                event.native_address == native as *const openui::Event as usize
+                    && event
+                        .document
+                        .upgrade()
+                        .is_some_and(|document| Rc::ptr_eq(&document, state))
+            })
+            .map(|event| event.target_address)
+    })
+}
+
 pub(crate) fn dispatch_native_listener(
     state: &Rc<DocumentState>,
     listener_id: u64,
@@ -81,7 +151,9 @@ pub(crate) fn dispatch_native_listener(
     event.delta_y = native.delta_y;
     event.key_code = native.key_code;
     event.pointer_id = native.pointer_id as u32;
-    event.target = element_address(state, target).unwrap_or(0) as *mut OuiElement;
+    event.target = raw_event_target_address(state, native)
+        .unwrap_or_else(|| element_address(state, target).unwrap_or(0))
+        as *mut OuiElement;
     if native.default_prevented() {
         event.flags |= OUI_EVENT_FLAG_DEFAULT_PREVENTED;
     }
@@ -94,7 +166,14 @@ pub(crate) fn dispatch_native_listener(
     let _event_scope = super::event_properties::EventPropertiesScope::new(state, native, &event);
     let _focus_scope = super::focus_events::FocusEventScope::new(state, native, &event);
     let _input_scope = super::input_events::InputEventScope::new(state, native, &event);
-    invoke_event_listener(state, listener_id, node, capture, &mut event)?;
+    invoke_event_listener(
+        state,
+        listener_id,
+        node,
+        capture,
+        native.cancelable(),
+        &mut event,
+    )?;
     if event.flags & OUI_EVENT_FLAG_DEFAULT_PREVENTED != 0 {
         native.prevent_default();
     }

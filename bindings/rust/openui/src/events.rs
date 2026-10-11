@@ -78,7 +78,11 @@ struct EventState {
     default_prevented: Cell<bool>,
     propagation_stopped: Cell<bool>,
     immediate_propagation_stopped: Cell<bool>,
+    dispatching: Cell<bool>,
+    completed_propagation_stopped: Cell<bool>,
+    completed_immediate_propagation_stopped: Cell<bool>,
     phase: Cell<Option<EventPhase>>,
+    last_dispatch_phase: Cell<Option<EventPhase>>,
     target: RefCell<Option<WeakElement>>,
     current_target: RefCell<Option<WeakElement>>,
     related_target: RefCell<Option<WeakElement>>,
@@ -104,9 +108,47 @@ impl EventState {
                     | "change"
                     | "select"
                     | "selectionchange"
+                    // Chromium 147.0.7727.50 PointerEventFactory::
+                    // SetEventSpecificFields and MouseEventManager's native
+                    // boundary event initializer. Explicit Event::new options
+                    // are independent of these native source defaults.
+                    | "pointerenter"
+                    | "pointerleave"
+                    | "pointercancel"
+                    | "mouseenter"
+                    | "mouseleave"
+                    | "mousecancel"
             ),
             ..Self::default()
         })
+    }
+}
+
+pub(crate) struct DispatchScope<'a> {
+    event: &'a Event,
+}
+
+impl Drop for DispatchScope<'_> {
+    fn drop(&mut self) {
+        // Chromium's post-dispatch cleanup resets both stop flags so the same
+        // owned event may be dispatched again. Cancellation remains set. The
+        // C facade's existing result flags use completed-route snapshots.
+        self.event
+            .state
+            .completed_propagation_stopped
+            .set(self.event.state.propagation_stopped.replace(false));
+        self.event
+            .state
+            .completed_immediate_propagation_stopped
+            .set(
+                self.event
+                    .state
+                    .immediate_propagation_stopped
+                    .replace(false),
+            );
+        self.event.state.dispatching.set(false);
+        *self.event.state.current_target.borrow_mut() = None;
+        self.event.state.phase.set(None);
     }
 }
 
@@ -139,6 +181,38 @@ pub struct Event {
 }
 
 impl Event {
+    /// Create an application event with explicit propagation and cancellation
+    /// options. Payload fields may be filled before native dispatch. This does
+    /// not perform an edit or synthesize platform input.
+    ///
+    /// Use [`Self::native`] for the framework's native source defaults, or the
+    /// normalized Document input methods for editing and platform defaults.
+    pub fn new(event_type: impl Into<String>, bubbles: bool, cancelable: bool) -> Self {
+        let mut event = Self::keyboard(event_type, 0, None, Modifiers::NONE);
+        let state = Rc::get_mut(&mut event.state).expect("new event state");
+        state.bubbles = bubbles;
+        state.cancelable = cancelable;
+        event
+    }
+
+    /// Create a raw event using the framework's normalized native source
+    /// policy and an optional source timestamp (zero means unavailable).
+    /// Native pointer enter/leave/cancel events are noncancelable; enter and
+    /// leave do not bubble. Explicit [`Self::new`] options remain independent.
+    /// Raw input events carry no typed editing intent; use Document's input
+    /// operations when an edit and owned input metadata are required.
+    pub fn native(event_type: impl Into<String>, timestamp_ns: u64) -> Self {
+        let mut event = Self::keyboard(event_type, 0, None, Modifiers::NONE);
+        event.is_composing = matches!(
+            event.event_type.as_str(),
+            "compositionstart" | "compositionupdate"
+        );
+        Rc::get_mut(&mut event.state)
+            .expect("new event state")
+            .timestamp_ns = timestamp_ns;
+        event
+    }
+
     pub(crate) fn pointer(
         event_type: impl Into<String>,
         pointer_id: u64,
@@ -247,6 +321,48 @@ impl Event {
 
     pub(crate) fn set_phase(&self, phase: EventPhase) {
         self.state.phase.set(Some(phase));
+        self.state.last_dispatch_phase.set(Some(phase));
+    }
+
+    pub(crate) fn is_dispatching(&self) -> bool {
+        self.state.dispatching.get()
+    }
+
+    pub(crate) fn set_dispatch_target(&self, target: WeakElement) {
+        *self.state.target.borrow_mut() = Some(target);
+    }
+
+    pub(crate) fn dispatch_scope(&self) -> Result<DispatchScope<'_>, crate::Error> {
+        if self.state.dispatching.replace(true) {
+            return Err(crate::Error::ReentrantMutation);
+        }
+        self.state.last_dispatch_phase.set(None);
+        self.state.completed_propagation_stopped.set(false);
+        self.state
+            .completed_immediate_propagation_stopped
+            .set(false);
+        Ok(DispatchScope { event: self })
+    }
+
+    /// Preserve the legacy facade's completed-route phase without retaining an
+    /// active listener or duplicating the native route. Rust phase() is None
+    /// once callbacks return.
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn last_dispatch_phase_for_native_facade(&self) -> Option<EventPhase> {
+        self.state.last_dispatch_phase.get()
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn completed_propagation_stopped_for_native_facade(&self) -> bool {
+        self.state.completed_propagation_stopped.get()
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn completed_immediate_propagation_stopped_for_native_facade(&self) -> bool {
+        self.state.completed_immediate_propagation_stopped.get()
     }
 
     pub(crate) fn listener_scope(

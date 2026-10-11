@@ -620,6 +620,9 @@ typedef struct OuiAnimationEvent {
   OuiElement* target;
 } OuiAnimationEvent;
 
+/* Callback payload is borrowed from an owned native event. Only flags carry
+ * cancellation/propagation requests back to the shared dispatcher. Copy text
+ * before returning if it is needed later; do not retain callback event pointers. */
 typedef struct OuiEvent {
   uint32_t struct_size;
   uint32_t abi_version;
@@ -888,6 +891,16 @@ OuiStatus oui_document_update(OuiDocument* document);
 OuiStatus oui_document_dispatch_pending_events_v1(OuiDocument* document, uint32_t* out_pending);
 OuiStatus oui_document_render_rgba(OuiDocument* document, OuiBitmap* out_bitmap);
 OuiStatus oui_document_render_png(OuiDocument* document, OuiBuffer** out_buffer);
+/* Explicit events use the same ordered Rust/C capture/target/bubble route.
+ * Native source bubbling/cancellation policy is used because this descriptor
+ * has no explicit policy fields. Pointer enter/leave do not bubble; those events
+ * and pointer cancel are noncancelable. Click, focus/blur and legacy text/IME
+ * defaults retain their native operations. Normalized editing APIs below are
+ * preferred when a focused edit and owned input metadata are needed. Callback
+ * cancellation may prevent a default; callbacks run without engine borrows.
+ * Input/output descriptor storage remains readable/writable through dispatch;
+ * result flags, target, current_target and completed-route phase are returned.
+ * The legacy completed-route phase differs from an active callback phase. */
 OuiStatus oui_document_dispatch_event(OuiDocument* document, OuiElement* target, OuiEvent* event);
 
 /* Call only on the owning thread during a native FOCUS, BLUR, FOCUS_IN or
@@ -1084,6 +1097,10 @@ OuiStatus oui_element_set_accessibility_live(OuiElement* element, OuiAccessibili
 OuiStatus oui_element_set_accessibility_hidden(OuiElement* element, uint8_t hidden);
 OuiStatus oui_element_set_accessibility_relation(OuiElement* element, OuiAccessibilityRelation relation, OuiElement* const* targets, size_t target_count);
 OuiStatus oui_element_perform_accessibility_action(OuiElement* element, OuiAccessibilityAction action, OuiUtf8 value, size_t anchor, size_t focus);
+/* callback/user_data must remain valid through every active callback, including
+ * when that callback destroys its own registration. Callbacks run on the owning
+ * thread after engine/listener borrows end, may reenter native APIs, must not
+ * unwind, and must not retain the borrowed event pointer. */
 OuiStatus oui_element_add_event_listener(OuiElement* element, OuiEventType event_type, uint8_t capture, OuiEventCallback callback, void* user_data, OuiListener** out_listener);
 OuiStatus oui_listener_destroy(OuiListener* listener);
 
@@ -1169,8 +1186,9 @@ OuiStatus oui_event_input_info_v1(const OuiEvent* event,
 /* Immutable properties for an event delivered through the shared native Rust
  * pipeline. The event pointer is borrowed for its active owning-thread callback.
  * Nested callbacks may query an outer active event. Pointers are matched against
- * active scopes without reading expired event memory. Legacy explicit events
- * without a shared native route return OUI_ERROR_INVALID_STATE.
+ * active scopes without reading expired event memory. Explicit raw events use
+ * the shared native route too; queries outside an active callback return
+ * OUI_ERROR_INVALID_STATE.
  * Initialize struct_size and abi_version. Output remains unchanged on error;
  * bytes beyond the current struct are preserved. Cancellation and propagation
  * state continue to be available in OuiEvent.flags. No ownership is transferred. */

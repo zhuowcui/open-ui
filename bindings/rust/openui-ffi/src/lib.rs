@@ -24,6 +24,8 @@ mod listener_lifetime_tests;
 mod native_app;
 #[cfg(test)]
 mod native_app_tests;
+#[cfg(test)]
+mod raw_event_tests;
 mod registry;
 mod scroll_button;
 #[cfg(test)]
@@ -52,10 +54,10 @@ use openui_compositor::SoftwareCompositor;
 use openui_dom::ElementTag;
 use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
-    AnimationEventKind, AnimationId, AnimationTimeline, ControlAdjustment, Engine,
-    EventPhase as EngineEventPhase, FontAxisRange, FontContainerFormat, FontFaceDescriptor,
-    FontFeatureDefault, FontMetricOverrides, FontStyleRange, FontUnicodeRange, NodeHandle,
-    PointerEventKind, ViewportAuthority, ViewportMetrics,
+    AnimationEventKind, AnimationId, AnimationTimeline, ControlAdjustment, Engine, FontAxisRange,
+    FontContainerFormat, FontFaceDescriptor, FontFeatureDefault, FontMetricOverrides,
+    FontStyleRange, FontUnicodeRange, NodeHandle, PointerEventKind, ViewportAuthority,
+    ViewportMetrics,
 };
 use openui_style::{
     parse_literal, AnimationOptions, AnimationPhase, Border, BorderStyle, Color,
@@ -1969,45 +1971,12 @@ pub extern "C" fn oui_listener_destroy(listener: *mut OuiListener) -> OuiStatus 
     })
 }
 
-fn event_can_be_canceled(event_type: u32) -> bool {
-    // Native input/change notify an already completed edit or activation.
-    // Keep the existing policy for other nonfocus event kinds until each
-    // has its own pinned Chromium and consuming-app qualification.
-    !matches!(event_type, 12 | 13 | 16 | 17 | 25 | 26 | 27 | 28)
-}
-
-fn invoke_event_listeners(
-    state: &DocumentState,
-    node: NodeHandle,
-    capture: bool,
-    event: &mut OuiEvent,
-) -> Result<(), ApiError> {
-    let ids: Vec<_> = state
-        .listeners
-        .try_borrow()
-        .map_err(|_| ApiError::new(OuiStatus::Reentrant, "listener list is borrowed"))?
-        .iter()
-        .filter(|listener| {
-            listener.node == node
-                && listener.event_type == event.event_type
-                && listener.capture == capture
-        })
-        .map(|listener| listener.id)
-        .collect();
-    for id in ids {
-        invoke_event_listener(state, id, node, Some(capture), event)?;
-        if event.flags & OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED != 0 {
-            break;
-        }
-    }
-    Ok(())
-}
-
 fn invoke_event_listener(
     state: &DocumentState,
     id: u64,
     node: NodeHandle,
     capture: Option<bool>,
+    cancelable: bool,
     event: &mut OuiEvent,
 ) -> Result<(), ApiError> {
     if event.flags & OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED != 0 {
@@ -2048,7 +2017,7 @@ fn invoke_event_listener(
         // No engine or listener-list borrow is held, so reentrant API calls are
         // explicitly permitted. The event pointer lives through the call.
         unsafe { (listener.callback)(event, listener.user_data) };
-        if !event_can_be_canceled(event.event_type) {
+        if !cancelable {
             event.flags &= !OUI_EVENT_FLAG_DEFAULT_PREVENTED;
         }
         if event.flags & OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED != 0 {
@@ -2081,6 +2050,18 @@ fn validate_event(event: &OuiEvent) -> Result<(), ApiError> {
         return Err(invalid("event coordinates and deltas must be finite"));
     }
     Ok(())
+}
+
+// Validate a declared prefix before borrowing the complete current layout.
+// SAFETY: event is nonnull; its prefix is aligned/readable as u32 fields. A size
+// field is readable even when the descriptor declares an undersized header.
+unsafe fn validate_event_header(event: *const OuiEvent) -> Result<(), ApiError> {
+    let struct_size = unsafe { ptr::read(event.cast::<u32>()) };
+    if struct_size < 2 * size_of::<u32>() as u32 {
+        return Err(invalid("event header is too small"));
+    }
+    let abi_version = unsafe { ptr::read(event.cast::<u32>().add(1)) };
+    check_header(struct_size, abi_version, size_of::<OuiEvent>())
 }
 
 fn synthesized_event(event_type: u32, text: OuiUtf8) -> OuiEvent {
@@ -2117,9 +2098,6 @@ fn dispatch_event_to(
     } else {
         element_address(state, public_target)?
     };
-    if !event_can_be_canceled(event.event_type) {
-        event.flags &= !OUI_EVENT_FLAG_DEFAULT_PREVENTED;
-    }
     if apply_default && event.event_type == 4 {
         let mut native = openui::Event::click_for_native_facade(event.timestamp_ns);
         native.mouse_x = event.x;
@@ -2130,6 +2108,7 @@ fn dispatch_event_to(
         native.key_text = utf8(event.text, "event text")?;
         native.modifiers = event.modifiers as i32;
         native.pointer_id = u64::from(event.pointer_id);
+        let _raw_scope = native_app::RawEventScope::new(state, &native, public_target_address)?;
         state
             .native
             .dispatch_click_for_native_facade(target, &native)
@@ -2138,10 +2117,10 @@ fn dispatch_event_to(
         if native.default_prevented() {
             event.flags |= OUI_EVENT_FLAG_DEFAULT_PREVENTED;
         }
-        if native.propagation_stopped() {
+        if native.completed_propagation_stopped_for_native_facade() {
             event.flags |= OUI_EVENT_FLAG_PROPAGATION_STOPPED;
         }
-        if native.immediate_propagation_stopped() {
+        if native.completed_immediate_propagation_stopped_for_native_facade() {
             event.flags |= OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED;
         }
         event.target = public_target_address as *mut OuiElement;
@@ -2164,10 +2143,10 @@ fn dispatch_event_to(
         }
         .map_err(native_app::native_error)?;
         event.flags = 0;
-        if native.propagation_stopped() {
+        if native.completed_propagation_stopped_for_native_facade() {
             event.flags |= OUI_EVENT_FLAG_PROPAGATION_STOPPED;
         }
-        if native.immediate_propagation_stopped() {
+        if native.completed_immediate_propagation_stopped_for_native_facade() {
             event.flags |= OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED;
         }
         event.target = public_target_address as *mut OuiElement;
@@ -2192,48 +2171,48 @@ fn dispatch_event_to(
         }
         .map_err(native_app::native_error);
     }
-    let route = borrow_engine(state)?.event_route(target)?;
-    event.flags &= !(OUI_EVENT_FLAG_DEFAULT_PREVENTED
-        | OUI_EVENT_FLAG_PROPAGATION_STOPPED
-        | OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED);
+    let event_name = native_app::native_event_name(event.event_type)
+        .ok_or_else(|| invalid("unknown event type"))?;
+    let mut native = openui::Event::native(event_name, event.timestamp_ns);
+    native.mouse_x = event.x;
+    native.mouse_y = event.y;
+    native.delta_x = event.delta_x;
+    native.delta_y = event.delta_y;
+    native.key_code = event.key_code;
+    native.key_text = utf8(event.text, "event text")?;
+    native.modifiers = event.modifiers as i32;
+    native.pointer_id = u64::from(event.pointer_id);
+    // The existing C descriptor has no button field; its pointer source is
+    // the framework's primary button, as in the explicit click adapter.
+    if matches!(event.event_type, 1 | 2 | 3 | 14 | 15 | 24) {
+        native.mouse_button = openui::MouseButton::Left as i32;
+    }
+    let _raw_scope = native_app::RawEventScope::new(state, &native, public_target_address)?;
+    let result = state
+        .native
+        .dispatch_raw_event_for_native_facade(target, &native, apply_default)
+        .map_err(native_app::native_error);
+    // Preserve the legacy C result fields without walking the event route a
+    // second time. Callback scopes and Rust current_target have already ended.
+    event.flags = 0;
+    if native.default_prevented() {
+        event.flags |= OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+    }
+    if native.completed_propagation_stopped_for_native_facade() {
+        event.flags |= OUI_EVENT_FLAG_PROPAGATION_STOPPED;
+    }
+    if native.completed_immediate_propagation_stopped_for_native_facade() {
+        event.flags |= OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED;
+    }
     event.target = public_target_address as *mut OuiElement;
-    for step in route.steps {
-        match step.phase {
-            EngineEventPhase::Capture => {
-                event.phase = 1;
-                invoke_event_listeners(state, step.node, true, event)?;
-            }
-            EngineEventPhase::Target => {
-                event.phase = 2;
-                invoke_event_listeners(state, step.node, true, event)?;
-                if event.flags & OUI_EVENT_FLAG_PROPAGATION_STOPPED == 0 {
-                    invoke_event_listeners(state, step.node, false, event)?;
-                }
-            }
-            EngineEventPhase::Bubble => {
-                if matches!(event.event_type, 12 | 13) {
-                    continue;
-                }
-                event.phase = 3;
-                invoke_event_listeners(state, step.node, false, event)?;
-            }
-        }
-        if event.flags & OUI_EVENT_FLAG_PROPAGATION_STOPPED != 0 {
-            break;
-        }
-    }
     event.current_target = ptr::null_mut();
-    if apply_default && event.flags & OUI_EVENT_FLAG_DEFAULT_PREVENTED == 0 {
-        let text = utf8(event.text, "event text")?;
-        match event.event_type {
-            8 => borrow_engine_mut(state)?.insert_text(target, &text)?,
-            10 => borrow_engine_mut(state)?.update_composition(target, &text)?,
-            11 if text.is_empty() => borrow_engine_mut(state)?.cancel_composition(target)?,
-            11 => borrow_engine_mut(state)?.commit_composition(target, &text)?,
-            _ => {}
-        }
-    }
-    Ok(())
+    event.phase = match native.last_dispatch_phase_for_native_facade() {
+        Some(openui::EventPhase::Capture) => 1,
+        Some(openui::EventPhase::Target) => 2,
+        Some(openui::EventPhase::Bubble) => 3,
+        None => 0,
+    };
+    result
 }
 
 // SAFETY CONTRACT: document and target are live same-document handles; `event`
@@ -2248,6 +2227,8 @@ pub extern "C" fn oui_document_dispatch_event(
         if event.is_null() {
             return Err(invalid("event is null"));
         }
+        // SAFETY: inspect the declared header before the complete layout.
+        unsafe { validate_event_header(event)? };
         // SAFETY: the caller guarantees a readable/writable `OuiEvent` that
         // remains alive for this synchronous dispatch.
         let event = unsafe { &mut *event };
@@ -2341,6 +2322,8 @@ pub extern "C" fn oui_document_dispatch_pointer_event(
         if event.is_null() {
             return Err(invalid("event is null"));
         }
+        // SAFETY: inspect the declared header before the complete layout.
+        unsafe { validate_event_header(event)? };
         // SAFETY: the caller guarantees a live, writable event for this call.
         let event = unsafe { &mut *event };
         validate_event(event)?;

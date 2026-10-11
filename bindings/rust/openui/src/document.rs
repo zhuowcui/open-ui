@@ -27,6 +27,9 @@ use std::sync::atomic::{AtomicU64, Ordering};
 #[cfg(test)]
 #[path = "listener_tests.rs"]
 mod listener_tests;
+#[cfg(test)]
+#[path = "raw_event_tests.rs"]
+mod raw_event_tests;
 #[path = "selection_tasks.rs"]
 mod selection_tasks;
 
@@ -1897,6 +1900,69 @@ impl Document {
             .map_err(Into::into)
     }
 
+    /// Dispatch an application event through the shared native listener route.
+    /// Returns false when a cancelable event was prevented. Click uses native
+    /// control activation; other raw events are notifications. Use the focused
+    /// input, composition and pointer APIs for normalized platform defaults.
+    /// Callbacks run without document or listener borrows. A distinct event may
+    /// be dispatched recursively; redispatching the active event is rejected.
+    pub fn dispatch_event(&self, target: &Element, event: &Event) -> Result<bool, Error> {
+        if !Rc::ptr_eq(&self.inner, &target.document.inner) {
+            return Err(openui_engine::EngineError::WrongDocument.into());
+        }
+        if event.event_type.is_empty()
+            || !event.mouse_x.is_finite()
+            || !event.mouse_y.is_finite()
+            || !event.delta_x.is_finite()
+            || !event.delta_y.is_finite()
+            || event.modifiers as u32 & !0x1f != 0
+        {
+            return Err(Error::InvalidArgument("invalid native event payload"));
+        }
+        if event.event_type == "click" {
+            self.dispatch_click_event(target.handle, event)
+        } else {
+            self.dispatch_to(target.handle, event)?;
+            Ok(!event.default_prevented())
+        }
+    }
+
+    /// The existing C explicit event operation has legacy text/composition
+    /// defaults. Keep those mutations in the retained Document after the same
+    /// listener route, distinct from normalized focused input operations.
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn dispatch_raw_event_for_native_facade(
+        &self,
+        target: NodeHandle,
+        event: &Event,
+        apply_default: bool,
+    ) -> Result<(), Error> {
+        self.dispatch_to(target, event)?;
+        if apply_default && !event.default_prevented() {
+            match event.event_type.as_str() {
+                "textinput" => {
+                    self.with_engine_mut(|engine| engine.insert_text(target, &event.key_text))?;
+                }
+                "compositionupdate" => {
+                    self.with_engine_mut(|engine| {
+                        engine.update_composition(target, &event.key_text)
+                    })?;
+                }
+                "compositionend" if event.key_text.is_empty() => {
+                    self.with_engine_mut(|engine| engine.cancel_composition(target))?;
+                }
+                "compositionend" => {
+                    self.with_engine_mut(|engine| {
+                        engine.commit_composition(target, &event.key_text)
+                    })?;
+                }
+                _ => {}
+            }
+        }
+        Ok(())
+    }
+
     #[cfg(feature = "ffi-integration")]
     #[doc(hidden)]
     pub fn dispatch_click_for_native_facade(
@@ -1961,6 +2027,9 @@ impl Document {
         event: &Event,
         simulated: bool,
     ) -> Result<(), Error> {
+        if event.is_dispatching() {
+            return Err(Error::ReentrantMutation);
+        }
         // A normal click observes user activation eligibility and suppresses
         // reentrant simulated clicks. Explicit raw events remain dispatchable
         // on disabled controls and may nest distinct owned events.
@@ -2030,8 +2099,13 @@ impl Document {
     }
 
     fn dispatch_to(&self, target: NodeHandle, event: &Event) -> Result<(), Error> {
+        let _dispatch_scope = event.dispatch_scope()?;
         let route = self.with_engine(|engine| engine.event_route(target))??;
         let target = route.target;
+        event.set_dispatch_target(Element::from_handle(self.clone(), target).downgrade());
+        if event.propagation_stopped() {
+            return Ok(());
+        }
         for step in route.steps {
             if step.phase == EngineEventPhase::Bubble && !event.bubbles() {
                 continue;
