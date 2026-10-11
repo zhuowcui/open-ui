@@ -1,0 +1,207 @@
+"""Offline lowering of the reviewed table inputs; never run by the native app.
+
+This intentionally accepts only the selectors and declarations present here.
+Unknown syntax is an error. The runtime consumer uses typed native setters.
+Original HTML bytes are retained; separately instrumented oracles add IDs to
+its HTML5-parsed DOM, including real parser-inserted tbody nodes.
+"""
+from __future__ import annotations
+import argparse
+import hashlib
+import json
+import re
+from pathlib import Path
+from html.parser import HTMLParser
+import html5lib
+
+HERE = Path(__file__).resolve().parent
+SIDES = ('top', 'right', 'bottom', 'left')
+BORDER_STYLES = {'none', 'hidden', 'solid', 'double', 'dotted', 'dashed', 'ridge', 'groove', 'inset', 'outset'}
+DISPLAY = {'body':'block', 'section':'block', 'div':'block', 'table':'table', 'caption':'table-caption', 'colgroup':'table-column-group', 'col':'table-column', 'thead':'table-header-group', 'tbody':'table-row-group', 'tfoot':'table-footer-group', 'tr':'table-row', 'td':'table-cell'}
+POINTS = [[0,0],[7.5,7.5],[8,8],[8.5,8.5],[9,9],[16,16],[24,24],[40,40],[72,24],[24,72],[100,24],[120,24],[160,40],[208,40],[216,40],[250,40],[100,100],[200,100],[310,230]]
+
+
+def sha(raw): return hashlib.sha256(raw).hexdigest()
+
+def px(value):
+    match = re.fullmatch(r'([+-]?(?:\d+(?:\.\d*)?|\.\d+))(?:px)?', value.strip())
+    if not match: raise ValueError('unsupported length: '+value)
+    return float(match[1])
+
+def color(value):
+    value=value.strip()
+    if value=='currentColor': return 'currentColor'
+    if value=='white': return [255,255,255,1]
+    if value=='black': return [0,0,0,1]
+    if re.fullmatch(r'#[0-9a-fA-F]{3}',value): return [*[int(c*2,16) for c in value[1:]],1]
+    if re.fullmatch(r'#[0-9a-fA-F]{6}',value): return [*[int(value[i:i+2],16) for i in [1,3,5]],1]
+    match=re.fullmatch(r'rgba\((\d+),(\d+),(\d+),([\d.]+)\)',value.replace(' ',''))
+    if match: return [*[int(match[i]) for i in [1,2,3]],float(match[4])]
+    raise ValueError('unsupported color: '+value)
+
+def expand(name,value):
+    if name=='border' or re.fullmatch(r'border-(top|right|bottom|left)',name):
+        parts=value.split()
+        assert len(parts)==3 and parts[1] in BORDER_STYLES,(name,value)
+        sides=SIDES if name=='border' else [name.split('-')[1]]
+        return {f'border-{side}-{field}':v for side in sides for field,v in [('width',px(parts[0])),('style',parts[1]),('color',color(parts[2]))]}
+    if name in ['border-width','border-style','border-color']:
+        field=name[7:]
+        parsed=px(value) if field=='width' else color(value) if field=='color' else value
+        return {f'border-{side}-{field}':parsed for side in SIDES}
+    if name=='font':
+        size,family=value.split()
+        return {'font-size':px(size),'font-family':family,'font-weight':400,'line-height':'normal'}
+    if name in ['padding','margin']:
+        return {name+'-'+side:px(value) for side in SIDES}
+    if name=='border-spacing':
+        values=[px(v) for v in value.split()]
+        assert len(values) in [1,2]
+        return {name:values if len(values)==2 else values*2}
+    if name=='background': return {'background-color':color(value)}
+    if name=='columns': return {'column-count':int(value)}
+    if name=='transform':
+        match=re.fullmatch(r'translate\(([^,]+),([^,]+)\)',value)
+        assert match,value
+        return {name:[px(match[1]),px(match[2])]}
+    if name in ['color','background-color'] or re.fullmatch(r'border-(top|right|bottom|left)-color',name): return {name:color(value)}
+    if name in ['width','height','left','top','column-gap','margin-left','margin-top','padding-top','padding-right','padding-bottom','padding-left'] or re.fullmatch(r'border-(top|right|bottom|left)-width',name): return {name:px(value)}
+    if name=='line-height': return {name:'normal' if value=='normal' else px(value)}
+    if name=='opacity': return {name:float(value)}
+    if name in ['position','writing-mode','direction','visibility','break-inside','border-collapse'] or re.fullmatch(r'border-(top|right|bottom|left)-style',name): return {name:value}
+    raise ValueError('unsupported declaration '+name+':'+value)
+
+def declarations(text):
+    result={}
+    for declaration in text.split(';'):
+        if not declaration.strip(): continue
+        name,value=declaration.split(':',1)
+        result.update(expand(name.strip(),value.strip()))
+    return result
+
+def simple_matches(element,selector,parents):
+    match=re.fullmatch(r'([a-z]+)(?::(first-child|nth-child\((\d+)\)))?',selector)
+    if not match: raise ValueError('unsupported selector '+selector)
+    if element.tag!=match[1]: return False
+    if not match[2]: return True
+    parent=parents.get(element)
+    if parent is None: return False
+    siblings=[child for child in parent if isinstance(child.tag,str)]
+    return siblings.index(element)+1==(1 if match[2]=='first-child' else int(match[3]))
+
+def selector_matches(element,selector,parents):
+    parts=selector.split()
+    if not simple_matches(element,parts[-1],parents): return False
+    ancestor=parents.get(element)
+    for part in reversed(parts[:-1]):
+        while ancestor is not None and not simple_matches(ancestor,part,parents): ancestor=parents.get(ancestor)
+        if ancestor is None: return False
+        ancestor=parents.get(ancestor)
+    return True
+
+def ua_style(tag):
+    style={'display':DISPLAY[tag]}
+    if tag=='body':
+        style.update({'font-family':'Times New Roman','font-size':16,'font-weight':400,'line-height':'normal','color':[0,0,0,1]})
+    # Exact .50 html.css:267-333 supplies these table UA values.
+    if tag=='table':
+        style.update({'box-sizing':'border-box','text-indent':0})
+        style.update({f'border-{side}-color':[128,128,128,1] for side in SIDES})
+    if tag in ['thead','tbody','tfoot','tr','td']: style['vertical-align']='middle'
+    if tag=='caption': style['text-align']='center'
+    return style
+
+class AuthoredIDs(HTMLParser):
+    def __init__(self): super().__init__(convert_charrefs=False);self.index=0;self.pieces=[]
+    def handle_starttag(self,tag,attrs):
+        text=self.get_starttag_text()
+        if tag in DISPLAY and tag!='body':
+            self.index+=1
+            text=text[:-1]+f' id="node-{self.index:04}" data-native-probe="true">'
+        self.pieces.append(text)
+    def handle_endtag(self,tag): self.pieces.append('</'+tag+'>')
+    def handle_data(self,data): self.pieces.append(data)
+    def handle_decl(self,decl): self.pieces.append('<!'+decl+'>')
+    def handle_entityref(self,name): self.pieces.append('&'+name+';')
+    def handle_charref(self,name): self.pieces.append('&#'+name+';')
+    def handle_comment(self,data): self.pieces.append('<!--'+data+'-->')
+
+def parsed_signature(tree):
+    return [(element.tag, {k:v for k,v in element.attrib.items() if k not in ['id','data-native-probe']},element.text,element.tail) for element in tree.iter() if isinstance(element.tag,str)]
+
+def lower(name,raw,purpose,origin):
+    text=raw.decode()
+    assert '<script' not in text.lower()
+    original=html5lib.parse(text,namespaceHTMLElements=False)
+    instrument=AuthoredIDs();instrument.feed(text);instrument.close()
+    tree=html5lib.parse(''.join(instrument.pieces),namespaceHTMLElements=False)
+    assert parsed_signature(original)==parsed_signature(tree),'instrumentation changed DOM input'
+    body=tree.find('body')
+    parents={child:parent for parent in tree.iter() for child in parent}
+    rules=[]
+    for style_element in tree.findall('./head/style'):
+        for rule in re.finditer(r'([^{}]+)\{([^{}]*)\}',style_element.text or ''):
+            for selector in rule[1].split(','):
+                selector=selector.strip()
+                specificity=(selector.count(':'),len(selector.split()))
+                rules.append((selector,specificity,declarations(rule[2])))
+    nodes=[];implicit=0
+    for element in body.iter():
+        if not isinstance(element.tag,str): continue
+        assert element.tag in DISPLAY,element.tag
+        parser_inserted=element is not body and 'id' not in element.attrib
+        if parser_inserted:
+            implicit+=1;element.set('id',f'implicit-{implicit:04}');element.set('data-native-probe','true')
+        style=ua_style(element.tag);winning={}
+        for order,(selector,specificity,properties) in enumerate(rules):
+            if selector_matches(element,selector,parents):
+                for key,value in properties.items():
+                    priority=(*specificity,order)
+                    if key not in winning or priority>=winning[key][0]:winning[key]=(priority,value)
+        style.update({key:value for key,(_,value) in winning.items()})
+        if element.get('style'):style.update(declarations(element.get('style')))
+        parent=parents.get(element)
+        attributes={key:value for key,value in element.attrib.items() if key not in ['id','data-native-probe','style']}
+        nodes.append({'id':'body' if element is body else element.get('id'), 'parent':None if element is body else ('body' if parent is body else parent.get('id')), 'tag':element.tag, 'probe':element is not body, 'source_origin':'html-parser' if parser_inserted else 'authored', 'attributes':attributes, 'text':element.text or '', 'styles':style})
+        # These reviewed inputs have no meaningful mixed/tail text. Fail closed
+        # rather than losing formatting text if future guards expand the syntax.
+        assert all(not (child.tail or '').strip() for child in element),name
+    oracle='<!doctype html>'+html5lib.serialize(tree,omit_optional_tags=False,quote_attr_values='always',alphabetical_attributes=True)
+    reparsed=html5lib.parse(oracle,namespaceHTMLElements=False)
+    assert parsed_signature(original)==parsed_signature(reparsed)
+    oracle_path=HERE/'oracle'/f'{name}.html';oracle_path.parent.mkdir(exist_ok=True)
+    oracle_path.write_text(oracle)
+    return {'name':name,'purpose':purpose,'origin':origin,'original_sha256':sha(raw),'oracle':'oracle/'+name+'.html','oracle_sha256':sha(oracle.encode()),'nodes':nodes,'hit_points':POINTS,'requires_continuations':name in ['fragmented-row','fragmented-body'],'qualified':False}
+
+NEIGHBORS={
+ 'neighbor-none-hidden': 'td{border:5px none #173;background:#ddd}td:first-child{border-style:hidden}tr{border:9px solid #b32}table{border:11px groove #084}',
+ 'neighbor-unequal-winners':'td{border:1px solid #369}td:nth-child(2){border-left-width:7px}',
+ 'neighbor-column-group-ties':'colgroup{border:5px solid rgba(31,47,83,.6)}colgroup:nth-child(2){border-color:rgba(97,43,13,.6)}',
+ 'neighbor-rowspan-sections':'td{border:3px solid #369}tbody{border:5px groove #084}',
+ 'neighbor-ordinary-box':'td{border:5px solid #315b93}div{width:29px;height:23px;border:5px solid #315b93;margin-top:7px}'
+}
+
+def generate():
+    reviewed=json.loads((HERE/'original/guard-plan.json').read_bytes())
+    assert len(reviewed['cases'])==26
+    cases=[]
+    for case in reviewed['cases']:
+        raw=(HERE/'original'/(case['name']+'.html')).read_bytes()
+        assert sha(raw)==case['sha256'],case['name']
+        cases.append(lower(case['name'],raw,case['purpose'],'reviewed-original'))
+    common='body{margin:8px;background:white}table{border-collapse:collapse;border-spacing:0}td{width:29px;height:23px;padding:3px;font:16px monospace}caption{height:13px}'
+    for name,styles in NEIGHBORS.items():
+        markup='<table><tr><td>A</td><td>B</td></tr><tr><td>C</td><td>D</td></tr></table>'
+        if name=='neighbor-column-group-ties':markup='<table><colgroup><col></colgroup><colgroup><col></colgroup><tbody><tr><td>A</td><td>B</td></tr><tr><td>C</td><td>D</td></tr></tbody></table>'
+        if name=='neighbor-rowspan-sections':markup='<table><tbody><tr><td rowspan="0">A</td><td>B</td></tr><tr><td>C</td></tr></tbody><tbody><tr><td rowspan="9">D</td><td>E</td></tr><tr><td>F</td></tr></tbody></table>'
+        if name=='neighbor-ordinary-box':markup+='<div></div>'
+        raw=('<!doctype html><meta charset="utf-8"><style>'+common+styles+'</style>'+markup+'\n').encode()
+        (HERE/'neighbors').mkdir(exist_ok=True)
+        (HERE/'neighbors'/(name+'.html')).write_bytes(raw)
+        cases.append(lower(name,raw,'Neighbor guard: '+name,'new-native-neighbor'))
+    data={'schema_version':1,'pixel_target':'Chromium 147.0.7727.50','pixel_tolerance':0,'javascript_executed_by_openui':False,'original_case_count':26,'neighbor_case_count':len(NEIGHBORS),'qualified':False,'cases':cases,'must_compare':['pixels','owned_bounds','every_client_rect','hit_targets','scroll_offsets','scroll_metrics','unchanged_frames','callback_mutation_and_restoration','weak_teardown'],'open_scope':['internal immutable graph/source-ownership/effect counts require layout/paint guards; no public introspection API','body Times New Roman and generic monospace resolution must be measured with pinned fontconfig and font-file hashes','native fractional scroll dimensions and browser integer reflected dimensions must be reconciled without pixel or geometry tolerance','all original four and focused forty profiles, affected primitive phases, full census and frozen evidence remain unexecuted']}
+    (HERE/'fixtures.json').write_text(json.dumps(data,sort_keys=True,indent=2)+'\n')
+    print('Lowered 26 original + '+str(len(NEIGHBORS))+' neighboring source inputs; no renderer executed')
+
+if __name__=='__main__':
+    parser=argparse.ArgumentParser(description=__doc__);parser.parse_args();generate()
