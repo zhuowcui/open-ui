@@ -16844,12 +16844,40 @@ fn paint_table_column_backgrounds(
         .map(|column| {
             (
                 column,
-                table_part_positioning_rect(
-                    column,
-                    PhysicalOffset::new(
-                        offset.left + column.offset.left,
-                        offset.top + column.offset.top,
-                    ),
+                table.table_column_background_positioning.map_or_else(
+                    || {
+                        table_part_positioning_rect(
+                            column,
+                            PhysicalOffset::new(
+                                offset.left + column.offset.left,
+                                offset.top + column.offset.top,
+                            ),
+                        )
+                    },
+                    |positioning| {
+                        let converter = openui_geometry::WritingModeConverter::new(
+                            positioning.writing_direction,
+                            positioning.rect.size,
+                        );
+                        let mut size = converter.to_logical_size(positioning.rect.size);
+                        size.inline_size = converter.to_logical_size(column.size).inline_size;
+                        let rect = converter.to_physical_rect(openui_geometry::LogicalRect::new(
+                            openui_geometry::LogicalOffset::new(
+                                column
+                                    .table_column_background_inline_offset
+                                    .unwrap_or(LayoutUnit::zero()),
+                                LayoutUnit::zero(),
+                            ),
+                            size,
+                        ));
+                        Rect::from_xywh(
+                            (offset.left + positioning.rect.offset.left + rect.offset.left)
+                                .to_f32(),
+                            (offset.top + positioning.rect.offset.top + rect.offset.top).to_f32(),
+                            rect.size.width.to_f32(),
+                            rect.size.height.to_f32(),
+                        )
+                    },
                 ),
             )
         })

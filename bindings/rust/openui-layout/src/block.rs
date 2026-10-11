@@ -1531,6 +1531,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // Ancestors can resize and project child fragments. Capture scroll
     // geometry once, after the document's final physical layout is complete.
     if node_id == doc.root() {
+        crate::table::populate_column_background_positioning(doc, &mut fragment);
         crate::scroll_area::populate(doc, &mut fragment);
     }
     fragment

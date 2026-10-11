@@ -85,6 +85,14 @@ impl FragmentTablePart {
     }
 }
 
+/// Final layout geometry used to position column/group backgrounds across
+/// the real section continuations of one authored table.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct TableColumnBackgroundPositioning {
+    pub rect: PhysicalRect,
+    pub writing_direction: WritingDirectionMode,
+}
+
 /// Immutable geometry of the document's viewport scroll container.
 ///
 /// Scrollbar gutters belong to the viewport, rather than to an authored
@@ -456,6 +464,15 @@ pub struct Fragment {
     /// structure retains its role without gaining authored box ownership.
     pub table_part: Option<FragmentTablePart>,
 
+    /// Column/group source inline offset relative to the first table track.
+    /// This remains logical through fragment projection and source cloning.
+    pub table_column_background_inline_offset: Option<LayoutUnit>,
+
+    /// Full stitched section union in this table continuation's local physical
+    /// coordinates. Final document layout owns this positioning rectangle;
+    /// actual retained cells independently determine the painted area.
+    pub table_column_background_positioning: Option<TableColumnBackgroundPositioning>,
+
     /// Shared source-space decoration geometry for a sliced continuation.
     /// `None` means this fragment owns an independent positioning area (the
     /// normal case, including `box-decoration-break:clone`).
@@ -644,6 +661,8 @@ impl Fragment {
             decoration_clip_rects: Vec::new(),
             table_row_span: 1,
             table_part: None,
+            table_column_background_inline_offset: None,
+            table_column_background_positioning: None,
             decoration_slice: None,
             paint_zero_block_outline: false,
             is_block_end_decoration_marker: false,
@@ -719,6 +738,8 @@ impl Fragment {
             decoration_clip_rects: Vec::new(),
             table_row_span: 1,
             table_part: None,
+            table_column_background_inline_offset: None,
+            table_column_background_positioning: None,
             decoration_slice: None,
             paint_zero_block_outline: false,
             is_block_end_decoration_marker: false,
