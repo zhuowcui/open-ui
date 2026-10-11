@@ -18,6 +18,11 @@ leaves every original pixel unchanged. Five separately versioned neighboring
 inputs cover none/hidden borders, unequal conflict winners, shared column-group
 joint order, section-limited rowspans and ordinary box-border painting.
 
+Run `python3 -B tools/qualification/native_collapsed_tables/lower_guards.py --check`
+to verify the generated native descriptors, instrumented HTML and neighboring
+inputs without writing files. The scheduled owner requires this check to pass
+before invoking Chromium or building the native consumer.
+
 Native output retains initial, repeated, callback and restored PNG bytes, every
 public bounds/client-rectangle result, fixed hit targets, raw scroll dimensions
 and offsets, reflected spans, callback targets and weak-handle cleanup. Real
@@ -34,9 +39,22 @@ compiler artifacts for every expected local package, and retains the binary
 and artifact hashes. Compiler JSON and metadata use separate stdout/stderr
 logs. It runs Engine, layout, paint, public span and conformance guards and
 checks their named successful executions. Browser processes are stopped before
-native raster commands begin. All commands record their actual exit status.
+native raster commands begin. Guards keep checking the retained executable's
+bytes before and during native commands. Every original, instrumented and native
+PNG must have the contract's physical dimensions before comparison.
+Per-command receipts retain known actual exit statuses; the owner records an
+intended return code and requires an external producer/reaping receipt for its
+actual exit. Setup saves partial evidence before allocating temporary inputs.
+Cleanup retires every owned process group, including descendants whose leader
+has exited, and saves failures before the final receipt.
 The default scope is 31 cases over the four original and forty focused profiles,
 with two independent browser and native runs and three compared states.
+
+`python3 -B tools/qualification/native_collapsed_tables/test_run_matrix.py -v`
+checks setup and cleanup failure receipts, wrong image sizes, executable-byte
+drift and a live Python descendant after its process-group leader exits. These
+fault guards have passed. They do not execute Cargo, Chromium or native raster
+code and do not qualify the scheduled comparison matrix.
 
 The external consumer lock seed preserves the previously measured consuming
 application dependency graph with its new package name. TOML was parsed; Cargo

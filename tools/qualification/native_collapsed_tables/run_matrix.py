@@ -28,16 +28,46 @@ READY="new Promise(resolve=>{const done=()=>document.fonts.ready.then(()=>reques
 def load(path): return json.loads(Path(path).read_bytes())
 def sha(path):
     with Path(path).open('rb') as stream: return hashlib.file_digest(stream,'sha256').hexdigest()
+def verify_hashes(inventory):
+    for path,expected in inventory.items(): assert sha(path)==expected,path
 def json_save(path,value):
     temporary=path.with_name(path.name+'.tmp')
     temporary.write_text(json.dumps(value,sort_keys=True,indent=2)+'\n')
     os.replace(temporary,path)
+def group_members(group):
+    """Return live writers, including descendants of an exited group leader."""
+    members=[]
+    for entry in os.scandir('/proc'):
+        if not entry.name.isdigit(): continue
+        try: fields=(Path(entry.path)/'stat').read_text().rsplit(')',1)[1].split()
+        except (FileNotFoundError,ProcessLookupError): continue
+        # An unreadable status is unknown, never proof that a group is absent.
+        if int(fields[2])==group and fields[0] not in ('Z','X'):
+            members.append(int(entry.name))
+    return sorted(members)
 def stop(child):
-    if child.poll() is None:
-        os.killpg(child.pid,signal.SIGTERM)
-        try: child.wait(timeout=20)
-        except subprocess.TimeoutExpired: os.killpg(child.pid,signal.SIGKILL);child.wait(timeout=20)
-    return child.wait()
+    # Every owned child starts a new session. Its descendants can remain after
+    # child.poll() reaps the leader, so always retire the whole owned group.
+    for action in (signal.SIGTERM,signal.SIGKILL):
+        try: os.killpg(child.pid,action)
+        except ProcessLookupError: pass
+        if action==signal.SIGTERM:
+            try: child.wait(timeout=5)
+            except subprocess.TimeoutExpired: pass
+    code=child.wait(timeout=5)
+    deadline=time.monotonic()+5
+    while group_members(child.pid):
+        if time.monotonic()>=deadline:
+            raise TimeoutError(f'owned process group {child.pid} still has writers')
+        time.sleep(0.01)
+    return code
+def rgba(path,physical):
+    from PIL import Image
+    with Image.open(path) as image:
+        expected=(int(physical['width']),int(physical['height']))
+        assert image.size==expected,f'{path}: image size {image.size} != contract {expected}'
+        converted=image.convert('RGBA')
+        return dict(width=converted.width,height=converted.height,rgba_sha256=hashlib.sha256(converted.tobytes()).hexdigest(),png_sha256=sha(path))
 def profiles(contract,suite):
     rows=[]
     sets=[('full',contract['qualification_profiles']),('focused',contract['focused_cross_product'])]
@@ -69,48 +99,32 @@ def main():
     from renderer_source_identity import repository_source_identity
     from tools.accountability import run_all_pixel_comparisons as capture
     from residuals import analyze_image_difference
-    from PIL import Image
     source=repository_source_identity(ROOT)
     assert source['clean'] and source['commit']==args.expected_commit
     assert not args.output.exists(),'output must be fresh'
     assert not args.output.resolve().is_relative_to(ROOT.resolve()),'evidence must stay outside source tree'
     args.output.mkdir()
-    temporary=Path(tempfile.mkdtemp(prefix='openui-collapsed-table-',dir='/dev/shm'))
-    project=args.output/'consumer';(project/'src').mkdir(parents=True)
-    app_source=ROOT/'bindings/rust/openui/examples/native_collapsed_table.rs'
-    shutil.copyfile(app_source,project/'src/main.rs')
-    manifest=(HERE/'consumer/Cargo.toml.in').read_text().replace('@OPENUI_ROOT@',str(ROOT))
-    (project/'Cargo.toml').write_text(manifest)
-    shutil.copyfile(HERE/'consumer/Cargo.lock',project/'Cargo.lock')
-    fixture_path=HERE/'fixtures.json';fixtures=load(fixture_path)
-    assert fixtures['original_case_count']==26 and len(fixtures['cases'])==31
-    cases=fixtures['cases']
-    if args.case:
-        assert len(set(args.case))==len(args.case)
-        by_name={case['name']:case for case in cases}
-        assert set(args.case)<=by_name.keys()
-        cases=[case for case in cases if case['name'] in args.case]
-    contract_path=ROOT/'docs/renderer/generated/qualification-contract-v2.json'
-    selected_profiles=profiles(load(contract_path),args.suite)
-    inputs={str(path):sha(path) for path in sorted(HERE.rglob('*')) if path.is_file()}
-    inputs.update({str(app_source):sha(app_source),str(contract_path):sha(contract_path),str(ROOT/'bindings/rust/Cargo.lock'):sha(ROOT/'bindings/rust/Cargo.lock'),str(args.prior_reaping_receipt):sha(args.prior_reaping_receipt)})
-    inputs.update({str(path):sha(path) for path in project.rglob('*') if path.is_file()})
-    chrome_env=capture.chrome_environment(str(args.chromium.parent),True,False)
-    chrome_env['TMPDIR']=str(temporary)
-    chrome_env.pop('LD_PRELOAD',None)
-    env=dict(os.environ,CARGO_TARGET_DIR=str(args.target),CARGO_PROFILE_DEV_DEBUG='0',CARGO_PROFILE_TEST_DEBUG='0',CARGO_INCREMENTAL='0',CARGO_BUILD_JOBS='4',RUST_MIN_STACK='4194304',PYTHONDONTWRITEBYTECODE='1',TMPDIR=str(temporary),FONTCONFIG_FILE=chrome_env['FONTCONFIG_FILE'])
-    env.pop('LD_PRELOAD',None);env.pop('LD_LIBRARY_PATH',None)
-    report=dict(schema_version=1,owner_pid=os.getpid(),source=source,input_sha256=inputs,driver_sha256=sha(__file__),chromium_binary=str(args.chromium),chromium_binary_sha256=sha(args.chromium),fontconfig=str(Path(chrome_env['FONTCONFIG_FILE'])),fontconfig_sha256=sha(chrome_env['FONTCONFIG_FILE']),capture_harness_sha256=sha(ROOT/'tools/accountability/run_all_pixel_comparisons.py'),planned_case_count=len(cases)*len(selected_profiles),required_full_scope=(not args.case and args.suite=='all'),profiles=selected_profiles,policy=args.policy,pixel_target='Chromium 147.0.7727.50',pixel_tolerance=0,javascript_executed_by_openui=False,oracle_html_has_scripts=False,oracle_measurement_uses_cdp_scripts=True,all_commands_terminal=False,matrix_qualified=False,renderer_qualified=False,release_qualified=False,steps=[],cases=[],test_results=[])
+    # Save partial truth before any temporary directories, copies or font setup.
+    report=dict(schema_version=2,owner_pid=os.getpid(),source=source,input_sha256={},driver_sha256=sha(__file__),chromium_binary=str(args.chromium),required_full_scope=(not args.case and args.suite=='all'),policy=args.policy,pixel_target='Chromium 147.0.7727.50',pixel_tolerance=0,javascript_executed_by_openui=False,oracle_html_has_scripts=False,oracle_measurement_uses_cdp_scripts=True,setup_complete=False,all_commands_terminal=False,owned_groups_absent=False,matrix_qualified=False,renderer_qualified=False,release_qualified=False,steps=[],cases=[],test_results=[],cleanup_errors=[])
     receipt=args.output/'receipt.json'
-    compiled={};retained=None;children=[]
+    inputs={};compiled={};retained=None;children=[];retired=set();temporary=None
     def save(): json_save(receipt,report)
+    def retire(child,name):
+        if child.pid in retired: return True
+        try:
+            stop(child)
+            retired.add(child.pid)
+            return True
+        except BaseException as error:
+            report['cleanup_errors'].append(dict(name=name,pid=child.pid,error=repr(error)))
+            return False
     def guard():
         assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip()==source['commit']
         assert subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'],cwd=ROOT)==b''
-        for path,expected in inputs.items(): assert sha(path)==expected,path
+        verify_hashes(inputs)
         assert sha(args.chromium)==report['chromium_binary_sha256']
         assert sha(chrome_env['FONTCONFIG_FILE'])==report['fontconfig_sha256']
-        for path,expected in compiled.items(): assert sha(path)==expected,path
+        verify_hashes(compiled)
     def run(name,command,timeout=1200,cwd=ROOT/'bindings/rust'):
         guard();print('Starting '+name,flush=True)
         output=args.output/(name+'.stdout.log');errors=args.output/(name+'.stderr.log')
@@ -127,14 +141,12 @@ def main():
             failure=repr(error)
             raise
         finally:
-            if child is not None: code=stop(child)
-            report['steps'].append(dict(name=name,command=command,pid=child.pid if child else None,actual_exit_code=code,failure=failure,stdout_sha256=sha(output) if output.exists() else None,stderr_sha256=sha(errors) if errors.exists() else None))
+            cleaned=child is None or retire(child,name)
+            if child is not None: code=child.poll()
+            report['steps'].append(dict(name=name,command=command,pid=child.pid if child else None,actual_exit_code=code,failure=failure,owned_group_absent=cleaned,stdout_sha256=sha(output) if output.exists() else None,stderr_sha256=sha(errors) if errors.exists() else None))
             report.pop('current_process',None);save()
+            if not cleaned and failure is None: raise RuntimeError(name+' cleanup failed')
         return code,output
-    def rgba(path):
-        with Image.open(path) as image:
-            converted=image.convert('RGBA')
-            return dict(width=converted.width,height=converted.height,rgba_sha256=hashlib.sha256(converted.tobytes()).hexdigest(),png_sha256=sha(path))
     def evaluate(client,expression):
         result=client.command('Runtime.evaluate',dict(expression=expression,awaitPromise=True,returnByValue=True))
         assert 'exceptionDetails' not in result,result
@@ -171,7 +183,7 @@ def main():
                         for number in [1,2]:
                             filename=folder/f'chromium-{repeat}-{key}-{number}.png'
                             raw=base64.b64decode(client.command('Page.captureScreenshot',dict(format='png',fromSurface=True,captureBeyondViewport=False))['data'],validate=True)
-                            filename.write_bytes(raw);images.append(rgba(filename))
+                            filename.write_bytes(raw);images.append(rgba(filename,profile['physical']))
                         assert images[0]==images[1],'browser unchanged frame differs'
                         observation=dict(images=images)
                         if input_kind=='instrumented':
@@ -188,13 +200,52 @@ def main():
                 entry['oracles'].append(result);save()
                 print(json.dumps(dict(stage='oracle',profile=profile['name'],case=case['name'],repeat=repeat,instrumentation_pixel_inert=result['instrumentation_pixel_inert'])),flush=True)
         finally:
-            if client:client.close()
-            capture._stop_chromium_process(child)
-            assert child.poll() is not None
-            report['steps'].append(dict(name=f"chromium-{profile['name']}-{repeat}",command=command,pid=child.pid,actual_exit_code=child.wait()))
-            report.pop('current_process',None);shutil.rmtree(profile_dir);save()
-    save();code=1
+            name=f"chromium-{profile['name']}-{repeat}"
+            # Closing a websocket must not prevent retiring browser writers.
+            if client: capture._close_chromium_client(client)
+            cleaned=retire(child,name)
+            report['steps'].append(dict(name=name,command=command,pid=child.pid,actual_exit_code=child.poll(),owned_group_absent=cleaned))
+            report.pop('current_process',None)
+            if cleaned:
+                try: shutil.rmtree(profile_dir)
+                except BaseException as error:
+                    report['cleanup_errors'].append(dict(name=name+'-profile',error=repr(error)))
+                    cleaned=False
+            save()
+            if not cleaned: raise RuntimeError(name+' cleanup failed')
+    code=1
     try:
+        save()
+        temporary=Path(tempfile.mkdtemp(prefix='openui-collapsed-table-',dir='/dev/shm'))
+        report['temporary_directory']=str(temporary);save()
+        project=args.output/'consumer';(project/'src').mkdir(parents=True)
+        app_source=ROOT/'bindings/rust/openui/examples/native_collapsed_table.rs'
+        shutil.copyfile(app_source,project/'src/main.rs')
+        manifest=(HERE/'consumer/Cargo.toml.in').read_text().replace('@OPENUI_ROOT@',str(ROOT))
+        (project/'Cargo.toml').write_text(manifest)
+        shutil.copyfile(HERE/'consumer/Cargo.lock',project/'Cargo.lock')
+        fixture_path=HERE/'fixtures.json';fixtures=load(fixture_path)
+        assert fixtures['original_case_count']==26 and len(fixtures['cases'])==31
+        cases=fixtures['cases']
+        if args.case:
+            assert len(set(args.case))==len(args.case)
+            by_name={case['name']:case for case in cases}
+            assert set(args.case)<=by_name.keys()
+            cases=[case for case in cases if case['name'] in args.case]
+        contract_path=ROOT/'docs/renderer/generated/qualification-contract-v2.json'
+        selected_profiles=profiles(load(contract_path),args.suite)
+        inputs.update({str(path):sha(path) for path in sorted(HERE.rglob('*')) if path.is_file()})
+        inputs.update({str(app_source):sha(app_source),str(contract_path):sha(contract_path),str(ROOT/'bindings/rust/Cargo.lock'):sha(ROOT/'bindings/rust/Cargo.lock'),str(args.prior_reaping_receipt):sha(args.prior_reaping_receipt)})
+        inputs.update({str(path):sha(path) for path in project.rglob('*') if path.is_file()})
+        chrome_env=capture.chrome_environment(str(args.chromium.parent),True,False)
+        chrome_env['TMPDIR']=str(temporary)
+        chrome_env.pop('LD_PRELOAD',None)
+        env=dict(os.environ,CARGO_TARGET_DIR=str(args.target),CARGO_PROFILE_DEV_DEBUG='0',CARGO_PROFILE_TEST_DEBUG='0',CARGO_INCREMENTAL='0',CARGO_BUILD_JOBS='4',RUST_MIN_STACK='4194304',PYTHONDONTWRITEBYTECODE='1',TMPDIR=str(temporary),FONTCONFIG_FILE=chrome_env['FONTCONFIG_FILE'])
+        env.pop('LD_PRELOAD',None);env.pop('LD_LIBRARY_PATH',None)
+        report.update(input_sha256=inputs,chromium_binary_sha256=sha(args.chromium),fontconfig=str(Path(chrome_env['FONTCONFIG_FILE'])),fontconfig_sha256=sha(chrome_env['FONTCONFIG_FILE']),capture_harness_sha256=sha(ROOT/'tools/accountability/run_all_pixel_comparisons.py'),planned_case_count=len(cases)*len(selected_profiles),profiles=selected_profiles,setup_complete=True)
+        save()
+        status,_=run('lowering-input-check',[sys.executable,'-B',str(HERE/'lower_guards.py'),'--check'],cwd=ROOT)
+        assert status==0,'native table inputs differ from their shared offline lowering'
         status,version_log=run('chromium-version',[str(args.chromium),'--version'],cwd=ROOT)
         assert status==0
         report['chromium_version']=version_log.read_text().strip();assert report['chromium_version'].split()[-1]=='147.0.7727.50'
@@ -246,6 +297,7 @@ def main():
         assert binary and {record['package_id'] for record in artifacts}==local_ids,'incomplete local compiler receipt'
         retained=args.output/'native-consumer';shutil.copyfile(binary,retained);retained.chmod(0o755)
         assert sha(retained)==sha(binary)
+        compiled[str(retained)]=sha(retained)
         report.update(compiler_artifacts=artifacts,compiled_artifact_sha256=compiled,retained_binary=str(retained),binary_sha256=sha(retained));save()
         for profile in selected_profiles:
             directory=args.output/profile['name'];directory.mkdir()
@@ -266,8 +318,9 @@ def main():
                         snapshot=load(native/bounds_name)
                         reference=folder/f'chromium-1-instrumented-{state}-1.png'
                         assert sha(reference)==expected['images'][0]['png_sha256']
+                        frame=rgba(native/image_name,profile['physical'])
                         difference=analyze_image_difference(reference,native/image_name)
-                        observation['states'][state]=dict(snapshot=snapshot,snapshot_exact=snapshot==expected['snapshot'],difference=difference,frame=rgba(native/image_name))
+                        observation['states'][state]=dict(snapshot=snapshot,snapshot_exact=snapshot==expected['snapshot'],difference=difference,frame=frame)
                     entry['native'].append(observation);save()
                 entry['complete']=len(entry['native'])==2 and all(set(row['states'])=={'initial','callback','restored'} for row in entry['native'])
                 oracle_repeat=entry['oracles'][0]['states']==entry['oracles'][1]['states']
@@ -284,13 +337,24 @@ def main():
     except BaseException as error:
         report['failure']=repr(error);raise
     finally:
-        for child in children:stop(child)
-        report['all_commands_terminal']=all(child.poll() is not None for child in children)
-        report['observed_exit_code']=code
+        for child in children: retire(child,'owner-finally')
+        report['owned_groups_absent']=all(child.pid in retired for child in children)
+        report['all_commands_terminal']=report['owned_groups_absent'] and all(child.poll() is not None for child in children)
+        if temporary is not None and report['owned_groups_absent']:
+            try: shutil.rmtree(temporary)
+            except BaseException as error:
+                report['cleanup_errors'].append(dict(name='temporary-directory',error=repr(error)))
+        report['temporary_directory_removed']=temporary is None or not temporary.exists()
+        code=int(bool(code or report['cleanup_errors'] or not report['all_commands_terminal'] or not report['temporary_directory_removed']))
+        # Only the external producer/reaping receipt can record Python's actual
+        # exit. An exception after the last save must not look like actual 0.
+        report['intended_return_code']=code
+        report['actual_owner_exit_requires_external_receipt']=True
         report['fresh_independent_audit_and_saved_reaping_required']=True
         report['matrix_qualified']=False
-        save();shutil.rmtree(temporary)
-    print(json.dumps(dict(planned=report['planned_case_count'],complete=report.get('completed_case_count',0),exact=report.get('exact_case_count',0),observed_exit_code=code,all_commands_terminal=report['all_commands_terminal'],matrix_qualified=False)),flush=True)
+        try: save()
+        finally: lock.close()
+    print(json.dumps(dict(planned=report['planned_case_count'],complete=report.get('completed_case_count',0),exact=report.get('exact_case_count',0),intended_return_code=code,all_commands_terminal=report['all_commands_terminal'],matrix_qualified=False)),flush=True)
     return code
 
 if __name__=='__main__':raise SystemExit(main())
