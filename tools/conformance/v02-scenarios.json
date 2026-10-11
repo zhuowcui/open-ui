@@ -72,6 +72,7 @@
     { "id": "repeated_headless_frames_are_byte_identical", "domains": ["lifecycle"] },
     { "id": "flex_dashboard_layout_has_geometry", "domains": ["layout"] },
     { "id": "table_application_fixture_lays_out", "domains": ["layout"] },
+    { "id": "native_table_span_attributes_share_typed_reflection_and_callback_layout", "domains": ["layout", "events", "lifecycle"] },
     { "id": "emoji_and_bidi_text_render_without_loss", "domains": ["text"] },
     { "id": "independent_documents_keep_focus_isolated", "domains": ["lifecycle", "events"] }
   ]

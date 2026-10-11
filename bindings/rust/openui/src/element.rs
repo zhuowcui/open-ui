@@ -94,6 +94,37 @@ impl Element {
             .map_err(Into::into)
     }
 
+    /// Reflected column span for td/th, or span for col/colgroup. Values are
+    /// clamped to 1..=1000; other element kinds return an error.
+    pub fn column_span(&self) -> Result<u32, Error> {
+        self.document
+            .with_engine(|engine| engine.column_span(self.handle))?
+            .map_err(Into::into)
+    }
+
+    /// Set colspan (td/th) or span (col/colgroup) through the shared native
+    /// attribute/layout path. Zero reflects as one. Values above i32::MAX
+    /// store the default one, matching the pinned unsigned reflection rule.
+    pub fn set_column_span(&self, value: u32) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_column_span(self.handle, value))
+    }
+
+    /// Reflected row span for td/th, clamped to 0..=65534. Zero extends to the
+    /// end of the containing row group; it never crosses into the next group.
+    pub fn row_span(&self) -> Result<u32, Error> {
+        self.document
+            .with_engine(|engine| engine.row_span(self.handle))?
+            .map_err(Into::into)
+    }
+
+    /// Set rowspan through the same path used by generic attribute changes.
+    /// Values above i32::MAX store the default one. Other element kinds fail.
+    pub fn set_row_span(&self, value: u32) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_row_span(self.handle, value))
+    }
+
     pub fn append_child(&self, child: &Element) -> Result<(), Error> {
         if !Rc::ptr_eq(&self.document.inner, &child.document.inner) {
             return Err(openui_engine::EngineError::WrongDocument.into());

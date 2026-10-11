@@ -6,6 +6,7 @@ mod control_geometry;
 mod forms;
 mod interaction;
 mod scroll_into_view;
+mod table_spans;
 
 pub use scroll_into_view::{ScrollAlignment, ScrollIntoViewContainer, ScrollIntoViewOptions};
 
@@ -1251,12 +1252,13 @@ impl Engine {
             )?;
         }
         self.sync_control_attribute(handle, &name, &value);
+        let table_span = self.sync_table_span_attribute(node, &name, Some(&value));
         self.mark_dirty(
             if name == "open" && self.document.node(node).tag == ElementTag::Details {
                 InvalidationClass::Subtree
             } else if name == "disabled" {
                 InvalidationClass::Paint
-            } else if self.control_attribute_changes_geometry(node, &name) {
+            } else if table_span || self.control_attribute_changes_geometry(node, &name) {
                 InvalidationClass::Intrinsic
             } else {
                 InvalidationClass::Accessibility
@@ -1294,6 +1296,7 @@ impl Engine {
                 )?;
             }
             self.remove_control_attribute(handle, &name.to_ascii_lowercase());
+            let table_span = self.sync_table_span_attribute(node, &name.to_ascii_lowercase(), None);
             self.mark_dirty(
                 if name.eq_ignore_ascii_case("open")
                     && self.document.node(node).tag == ElementTag::Details
@@ -1301,7 +1304,8 @@ impl Engine {
                     InvalidationClass::Subtree
                 } else if name.eq_ignore_ascii_case("disabled") {
                     InvalidationClass::Paint
-                } else if self.control_attribute_changes_geometry(node, &name.to_ascii_lowercase())
+                } else if table_span
+                    || self.control_attribute_changes_geometry(node, &name.to_ascii_lowercase())
                 {
                     InvalidationClass::Intrinsic
                 } else {

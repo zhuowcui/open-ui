@@ -1982,3 +1982,37 @@ fn independent_documents_keep_focus_isolated() {
     assert!(first_button.has_focus().unwrap());
     assert!(!second_button.has_focus().unwrap());
 }
+
+#[test]
+fn native_table_span_attributes_share_typed_reflection_and_callback_layout() {
+    let document = document();
+    let table = child(&document, "table");
+    let row = Element::create(&document, "tr").unwrap();
+    let cell = Element::create(&document, "td").unwrap();
+    table.append_child(&row).unwrap();
+    row.append_child(&cell).unwrap();
+    cell.set_height(LengthValue::px(10.0)).unwrap();
+    cell.set_width(LengthValue::px(10.0)).unwrap();
+    let before = cell.client_rects().unwrap();
+    let callbacks = Rc::new(Cell::new(0));
+    let count = callbacks.clone();
+    let weak = cell.downgrade();
+    cell.on("click", move |_| {
+        let cell = weak.upgrade().unwrap();
+        cell.set_column_span(2).unwrap();
+        cell.set_attribute("rowspan", "-0tail").unwrap();
+        count.set(count.get() + 1);
+    })
+    .unwrap();
+    cell.click().unwrap();
+    assert_eq!(callbacks.get(), 1);
+    assert_eq!(cell.column_span().unwrap(), 2);
+    assert_eq!(cell.row_span().unwrap(), 0);
+    assert_eq!(cell.get_attribute("colspan").unwrap().as_deref(), Some("2"));
+    assert!(!cell.client_rects().unwrap().is_empty());
+    cell.remove_attribute("colspan").unwrap();
+    cell.remove_attribute("rowspan").unwrap();
+    assert_eq!(cell.column_span().unwrap(), 1);
+    assert_eq!(cell.row_span().unwrap(), 1);
+    assert_eq!(cell.client_rects().unwrap(), before);
+}
