@@ -802,7 +802,8 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/containment.rs",
-        "bindings/rust/openui-layout/src/scroll_area.rs"
+        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "contain",
       "field": "contain",

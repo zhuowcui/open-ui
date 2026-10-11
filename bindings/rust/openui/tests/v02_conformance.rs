@@ -656,6 +656,82 @@ fn native_geometry_updates_after_scroll_transform_and_detachment() {
 }
 
 #[test]
+fn native_table_helpers_preserve_owned_geometry_and_single_effects() {
+    for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+        let document = Document::with_viewport_metrics(
+            ViewportMetrics::from_logical_size(320.0, 240.0, scale).unwrap(),
+        )
+        .unwrap();
+        let table = child(&document, "div");
+        table.set_display(Display::Table).unwrap();
+        table.set_width(LengthValue::px(120.0)).unwrap();
+        table
+            .set_border_spacing((Length::px(0.0), Length::px(0.0)))
+            .unwrap();
+        let caption = Element::create(&document, "div").unwrap();
+        caption.set_display(Display::TableCaption).unwrap();
+        caption.set_height(LengthValue::px(16.0)).unwrap();
+        table.append_child(&caption).unwrap();
+        let group = Element::create(&document, "div").unwrap();
+        group.set_display(Display::TableRowGroup).unwrap();
+        table.append_child(&group).unwrap();
+        let cell = Element::create(&document, "div").unwrap();
+        cell.set_display(Display::TableCell).unwrap();
+        cell.set_width(LengthValue::px(120.0)).unwrap();
+        cell.set_height(LengthValue::px(24.0)).unwrap();
+        cell.set_id("owned table cell").unwrap();
+        group.append_child(&cell).unwrap();
+        let original = table.client_rects().unwrap();
+        assert_eq!(original.len(), 1);
+        assert_eq!(
+            (
+                original[0].x,
+                original[0].y,
+                original[0].width,
+                original[0].height
+            ),
+            (0.0, 0.0, 120.0, 40.0)
+        );
+        assert_eq!(group.client_rects().unwrap().len(), 1);
+        table
+            .set_transform(TransformList(vec![TransformOperation::Translate(
+                LengthValue::px(13.0),
+                LengthValue::px(7.0),
+            )]))
+            .unwrap();
+        group
+            .set_transform(TransformList(vec![TransformOperation::Translate(
+                LengthValue::px(4.0),
+                LengthValue::px(3.0),
+            )]))
+            .unwrap();
+        let expected = cell.bounding_rect().unwrap().unwrap();
+        assert_eq!(
+            (expected.x, expected.y, expected.width, expected.height),
+            (17.0, 26.0, 120.0, 24.0)
+        );
+        assert_eq!(cell.client_rects().unwrap(), [expected]);
+        assert_eq!(group.client_rects().unwrap(), [expected]);
+        assert_eq!(table.client_rects().unwrap().len(), 1);
+        assert_eq!(
+            document
+                .hit_test(20.0, 29.0)
+                .unwrap()
+                .unwrap()
+                .get_attribute("id")
+                .unwrap()
+                .as_deref(),
+            Some("owned table cell")
+        );
+        group.set_pointer_events(PointerEvents::None).unwrap();
+        group.set_visibility(Visibility::Hidden).unwrap();
+        assert_eq!(group.client_rects().unwrap(), [expected]);
+        assert_eq!(table.client_rects().unwrap().len(), 1);
+        assert_eq!((original[0].x, original[0].y), (0.0, 0.0));
+    }
+}
+
+#[test]
 fn native_class_lookup_tracks_event_driven_updates_and_detachment() {
     let document = document();
     let first = child(&document, "div");

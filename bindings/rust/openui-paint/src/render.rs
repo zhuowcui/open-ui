@@ -59,7 +59,7 @@ fn content_requires_tiling(fragment: &Fragment, scale: f64) -> bool {
 }
 
 fn has_promoted_non_axis_transform(fragment: &Fragment, doc: &Document) -> bool {
-    let is_promoted = !fragment.node_id.is_none() && {
+    let is_promoted = fragment.owns_element_box() && {
         let style = &doc.node(fragment.node_id).style;
         style.will_change_transform
             && style.transform != openui_style::Transform2D::IDENTITY

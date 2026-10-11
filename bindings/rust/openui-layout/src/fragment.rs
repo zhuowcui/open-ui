@@ -32,6 +32,18 @@ pub enum FragmentKind {
     ColumnBox,
 }
 
+/// Whether a fragment carries its source element's box or only layout structure.
+///
+/// Layout helpers can reuse an authored node for style lookup without owning
+/// that element's geometry, input target, or independently applied effects.
+/// Continuations of an authored box retain `AuthoredElement` ownership.
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+pub enum FragmentBoxOwnership {
+    #[default]
+    AuthoredElement,
+    LayoutHelper,
+}
+
 /// Immutable geometry of the document's viewport scroll container.
 ///
 /// Scrollbar gutters belong to the viewport, rather than to an authored
@@ -212,6 +224,11 @@ pub struct Fragment {
 
     /// What type of fragment.
     pub kind: FragmentKind,
+
+    /// Ownership of the source element's box, independent of style lookup.
+    /// Anonymous layout boxes and decoration helpers retain their source
+    /// `node_id` without creating another authored element box.
+    pub box_ownership: FragmentBoxOwnership,
 
     /// Offset from the parent fragment's top-left corner.
     pub offset: PhysicalOffset,
@@ -509,11 +526,24 @@ pub struct Fragment {
 }
 
 impl Fragment {
+    /// Whether this box contributes geometry and input for its source element.
+    ///
+    /// Authored viewport boxes preserve the root element's geometry. Text,
+    /// column fragments and helpers can reference the same node for paint
+    /// without owning another element box.
+    #[inline]
+    pub fn owns_element_box(&self) -> bool {
+        matches!(self.kind, FragmentKind::Box | FragmentKind::Viewport)
+            && self.box_ownership == FragmentBoxOwnership::AuthoredElement
+            && !self.node_id.is_none()
+    }
+
     /// Create a new box fragment.
     pub fn new_box(node_id: NodeId, size: PhysicalSize) -> Self {
         Self {
             node_id,
             kind: FragmentKind::Box,
+            box_ownership: FragmentBoxOwnership::AuthoredElement,
             offset: PhysicalOffset::zero(),
             size,
             principal_box_rect: None,
@@ -583,6 +613,7 @@ impl Fragment {
         Self {
             node_id,
             kind: FragmentKind::Text,
+            box_ownership: FragmentBoxOwnership::LayoutHelper,
             offset: PhysicalOffset::zero(),
             size,
             principal_box_rect: None,
@@ -711,6 +742,39 @@ impl Fragment {
 mod tests {
     use super::*;
     use openui_style::Direction;
+
+    #[test]
+    fn element_box_ownership_preserves_authored_continuations_and_viewports() {
+        let mut doc = openui_dom::Document::new();
+        let node = doc.create_node(openui_dom::ElementTag::Div);
+        let authored = Fragment::new_box(node, PhysicalSize::zero());
+        assert!(authored.owns_element_box());
+
+        let mut continuation = authored.clone();
+        continuation.is_first_for_node = false;
+        continuation.is_last_for_node = false;
+        assert!(continuation.owns_element_box());
+
+        let mut viewport = authored.clone();
+        viewport.kind = FragmentKind::Viewport;
+        assert!(viewport.owns_element_box());
+
+        let mut helper = authored.clone();
+        helper.box_ownership = FragmentBoxOwnership::LayoutHelper;
+        assert!(!helper.owns_element_box());
+        assert_eq!(helper.node_id, node);
+
+        for kind in [
+            FragmentKind::Text,
+            FragmentKind::ColumnRule,
+            FragmentKind::ColumnBox,
+        ] {
+            let mut nonbox = authored.clone();
+            nonbox.kind = kind;
+            assert!(!nonbox.owns_element_box());
+        }
+        assert!(!Fragment::new_box(NodeId::NONE, PhysicalSize::zero()).owns_element_box());
+    }
 
     #[test]
     fn text_run_orientation_matrix_is_layout_authoritative() {

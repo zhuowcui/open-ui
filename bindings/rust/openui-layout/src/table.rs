@@ -20,7 +20,7 @@ use crate::block::{
     project_logical_fragment_tree_to_physical, resolve_border, resolve_margins, resolve_padding,
 };
 use crate::constraint_space::ConstraintSpace;
-use crate::fragment::{CollapsedBorderSegment, Fragment};
+use crate::fragment::{CollapsedBorderSegment, Fragment, FragmentBoxOwnership};
 use crate::intrinsic_sizing::{
     compute_intrinsic_block_sizes, compute_intrinsic_inline_sizes, IntrinsicSizes,
 };
@@ -216,6 +216,20 @@ fn collapsed_structural_border_wins(
                 || (structural_width == cell_width
                     && collapsed_border_style_priority(structural_style)
                         > collapsed_border_style_priority(cell_style))))
+}
+
+fn row_owns_authored_element_box(doc: &Document, row: &TableRow) -> bool {
+    !row.anonymous
+        && doc.node(row.node_id).tag != ElementTag::Text
+        && doc.node(row.node_id).style.display == Display::TableRow
+}
+
+fn is_authored_row_group(doc: &Document, node_id: NodeId) -> bool {
+    doc.node(node_id).tag != ElementTag::Text
+        && matches!(
+            doc.node(node_id).style.display,
+            Display::TableRowGroup | Display::TableHeaderGroup | Display::TableFooterGroup
+        )
 }
 
 fn collect_row_cells(doc: &Document, row_id: NodeId, cells: &mut Vec<NodeId>) {
@@ -1198,6 +1212,7 @@ fn layout_cell(
         fn remap(fragment: &mut Fragment, wrapper: NodeId, text: NodeId, source: NodeId) {
             if fragment.node_id == wrapper {
                 fragment.node_id = NodeId::NONE;
+                fragment.box_ownership = FragmentBoxOwnership::LayoutHelper;
             } else if fragment.node_id == text {
                 fragment.node_id = source;
             }
@@ -1210,6 +1225,15 @@ fn layout_cell(
     } else {
         block_layout(doc, slot.node_id, &cell_space)
     };
+    // Improper row-group contents are laid out once inside an anonymous
+    // cell. This content carrier reuses the group's style identity; the
+    // enclosing authored group owns its element box and effects.
+    if matches!(
+        style.display,
+        Display::TableRowGroup | Display::TableHeaderGroup | Display::TableFooterGroup
+    ) {
+        fragment.box_ownership = FragmentBoxOwnership::LayoutHelper;
+    }
     normalize_multicol_child_outer_box(doc, &mut fragment, table_space.writing_direction);
     if style.display == Display::TableCell
         && crate::inline::algorithm::has_inline_children(doc, slot.node_id)
@@ -1267,6 +1291,7 @@ fn layout_cell(
         alignment_height = natural_height;
         let mut anonymous =
             Fragment::new_box(NodeId::NONE, PhysicalSize::new(width, natural_height));
+        anonymous.box_ownership = FragmentBoxOwnership::LayoutHelper;
         anonymous.first_baseline = Some(baseline);
         anonymous.last_baseline = fragment.last_baseline.map(|value| value + margins.top);
         anonymous.children.push(fragment);
@@ -2250,6 +2275,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             table_id,
             PhysicalSize::new(border_box_width, grid_border_box_height),
         );
+        grid_decoration.box_ownership = FragmentBoxOwnership::LayoutHelper;
         grid_decoration.offset = PhysicalOffset::new(LayoutUnit::zero(), block_cursor);
         grid_decoration.border = if style.border_collapse == BorderCollapse::Collapse {
             BoxStrut::zero()
@@ -2709,6 +2735,9 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
                     },
                 ),
             );
+            if !row_owns_authored_element_box(doc, &model.rows[index]) {
+                row.box_ownership = FragmentBoxOwnership::LayoutHelper;
+            }
             row.border = if !model.rows[index].anonymous
                 && style.border_collapse == BorderCollapse::Collapse
             {
@@ -2887,6 +2916,9 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
                     group_bottom - group_top,
                 ),
             );
+            if !is_authored_row_group(doc, group_id) {
+                group.box_ownership = FragmentBoxOwnership::LayoutHelper;
+            }
             group.border = if style.border_collapse == BorderCollapse::Collapse {
                 logical_border(&doc.node(group_id).style, writing_direction)
             } else {
@@ -3047,6 +3079,112 @@ mod tests {
     use super::*;
     use openui_dom::ElementTag;
     use openui_geometry::Length;
+
+    fn count_owned_boxes(fragment: &Fragment, node: NodeId) -> usize {
+        usize::from(fragment.node_id == node && fragment.owns_element_box())
+            + fragment
+                .children
+                .iter()
+                .map(|child| count_owned_boxes(child, node))
+                .sum::<usize>()
+    }
+
+    fn count_style_helpers(fragment: &Fragment, node: NodeId) -> usize {
+        usize::from(
+            fragment.node_id == node
+                && fragment.box_ownership == FragmentBoxOwnership::LayoutHelper,
+        ) + fragment
+            .children
+            .iter()
+            .map(|child| count_style_helpers(child, node))
+            .sum::<usize>()
+    }
+
+    #[test]
+    fn table_grid_and_anonymous_row_helpers_do_not_own_the_table_box() {
+        let mut doc = Document::new();
+        let table = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(table, |style| style.display = Display::Table);
+        doc.append_child(doc.root(), table);
+        let caption = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(caption, |style| {
+            style.display = Display::TableCaption;
+            style.height = Length::px(2.0);
+        });
+        doc.append_child(table, caption);
+        let cell = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(cell, |style| {
+            style.display = Display::TableCell;
+            style.width = Length::px(8.0);
+            style.height = Length::px(6.0);
+        });
+        doc.append_child(table, cell);
+
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100));
+        let fragment = table_layout(&doc, table, &space);
+        assert_eq!(count_owned_boxes(&fragment, table), 1);
+        assert_eq!(count_style_helpers(&fragment, table), 2);
+        assert_eq!(count_owned_boxes(&fragment, caption), 1);
+        assert_eq!(count_owned_boxes(&fragment, cell), 1);
+    }
+
+    #[test]
+    fn anonymous_row_group_content_retains_one_authored_group_box() {
+        for display in [
+            Display::TableRowGroup,
+            Display::TableHeaderGroup,
+            Display::TableFooterGroup,
+        ] {
+            let mut doc = Document::new();
+            let table = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(table, |style| style.display = Display::Table);
+            doc.append_child(doc.root(), table);
+            let group = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(group, |style| style.display = display);
+            doc.append_child(table, group);
+            let mut authored_children = Vec::new();
+            for _ in 0..2 {
+                let child = doc.create_node(ElementTag::Div);
+                doc.update_resolved_style(child, |style| {
+                    style.display = Display::Block;
+                    style.width = Length::px(12.0);
+                    style.height = Length::px(7.0);
+                });
+                doc.append_child(group, child);
+                authored_children.push(child);
+            }
+
+            let space =
+                ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100));
+            let fragment = table_layout(&doc, table, &space);
+            assert_eq!(count_owned_boxes(&fragment, group), 1, "{display:?}");
+            assert_eq!(count_style_helpers(&fragment, group), 2, "{display:?}");
+            for child in authored_children {
+                assert_eq!(count_owned_boxes(&fragment, child), 1, "{display:?}");
+            }
+        }
+    }
+
+    #[test]
+    fn authored_table_rows_keep_ownership_when_their_tag_is_generic() {
+        let mut doc = Document::new();
+        let row_id = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(row_id, |style| style.display = Display::TableRow);
+        let row = TableRow {
+            node_id: row_id,
+            group_id: None,
+            cells: Vec::new(),
+            anonymous: false,
+        };
+        assert!(row_owns_authored_element_box(&doc, &row));
+        let mut anonymous = row.clone();
+        anonymous.anonymous = true;
+        assert!(!row_owns_authored_element_box(&doc, &anonymous));
+
+        doc.update_resolved_style(row_id, |style| style.display = Display::TableRowGroup);
+        assert!(!row_owns_authored_element_box(&doc, &row));
+        assert!(is_authored_row_group(&doc, row_id));
+    }
 
     #[test]
     fn places_colspan_and_rowspan_without_overlap() {

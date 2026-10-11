@@ -721,6 +721,37 @@ fn fragment_has_overflowing_in_flow_monolithic_descendant(
     })
 }
 
+// Formatting helpers borrow the authored node's decoration style, but do not
+// create another application of that element's effects. Text keeps its existing
+// per-run inherited-style path, and real authored continuations remain owners.
+fn is_formatting_helper(fragment: &Fragment) -> bool {
+    matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport)
+        && !fragment.owns_element_box()
+}
+
+fn helper_paint_style(fragment: &Fragment, style: &ComputedStyle) -> Option<ComputedStyle> {
+    is_formatting_helper(fragment).then(|| {
+        style.derive(|adjusted| {
+            adjusted.transform = openui_style::Transform2D::IDENTITY;
+            adjusted.establishes_transform_containing_block = false;
+            adjusted.will_change_transform = false;
+            adjusted.opacity = 1.0;
+            adjusted.filter_blur = 0.0;
+            adjusted.filter_grayscale = 0.0;
+            adjusted.clip_path_inset = None;
+            adjusted.mask_layers.clear();
+            adjusted.position = Position::Static;
+            adjusted.z_index = None;
+            adjusted.float = openui_style::Float::None;
+            adjusted.contain = openui_style::Containment::NONE;
+            // Layout's has_overflow_clip/axis metadata still supplies structural
+            // clips. The borrowed style does not add another authored scrollport.
+            adjusted.overflow_x = Overflow::Visible;
+            adjusted.overflow_y = Overflow::Visible;
+        })
+    })
+}
+
 /// Paint a fragment tree onto a Skia canvas.
 ///
 /// This is the main entry point — paints the fragment and all its children
@@ -765,7 +796,7 @@ fn paint_fragment_tracked(
             false,
         );
     }
-    if !fragment.node_id.is_none() && doc.node(fragment.node_id).is_svg_foreign_object {
+    if fragment.owns_element_box() && doc.node(fragment.node_id).is_svg_foreign_object {
         // SVG root placement is pixel-snapped before the foreignObject's
         // local CSS decoration is replayed. Keep that translation separate
         // from its local edge snapping (SVGRootPainter and
@@ -1228,11 +1259,13 @@ fn paint_fragment_contents(
         });
         canvas_adjusted_style = Some(adjusted);
     }
-    let style = if fragment.kind == FragmentKind::Text {
+    let source_style = if fragment.kind == FragmentKind::Text {
         fragment.inherited_style.as_ref().unwrap_or(original_style)
     } else {
         canvas_adjusted_style.as_ref().unwrap_or(original_style)
     };
+    let helper_style = helper_paint_style(fragment, source_style);
+    let style = helper_style.as_ref().unwrap_or(source_style);
     let _background_effect = BackgroundEffectScope::new(fragment, style);
     let promoted_transform_parent_offset = PhysicalOffset::new(
         abs_offset.left - fragment.offset.left,
@@ -1276,8 +1309,8 @@ fn paint_fragment_contents(
     } else {
         style.transform
     };
-    let has_transform = transform != openui_style::Transform2D::IDENTITY
-        && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport);
+    let has_transform =
+        fragment.owns_element_box() && transform != openui_style::Transform2D::IDENTITY;
     let has_precomposited_transform = has_transform
         && style.will_change_transform
         && (transform.b != 0.0 || transform.c != 0.0)
@@ -1380,8 +1413,7 @@ fn paint_fragment_contents(
         canvas.save();
         canvas.concat(&matrix);
     }
-    let has_clip_path = style.clip_path_inset.is_some()
-        && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport);
+    let has_clip_path = fragment.owns_element_box() && style.clip_path_inset.is_some();
     if let Some(inset) = style.clip_path_inset.as_ref().filter(|_| has_clip_path) {
         let width = fragment.size.width.to_f32();
         let height = fragment.size.height.to_f32();
@@ -1446,8 +1478,7 @@ fn paint_fragment_contents(
     if let Some(paint) = filter_paint.as_ref() {
         canvas.save_layer(&SaveLayerRec::default().paint(paint));
     }
-    let needs_mask_layer = !style.mask_layers.is_empty()
-        && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport);
+    let needs_mask_layer = fragment.owns_element_box() && !style.mask_layers.is_empty();
     if needs_mask_layer {
         canvas.save_layer_alpha_f(None, 1.0);
     }
@@ -1510,16 +1541,19 @@ fn paint_fragment_contents(
                         paint_opacity,
                     );
                 }
-                paint_media_element(canvas, fragment, doc, style, abs_offset, paint_opacity);
-                paint_form_control(canvas, fragment, doc, abs_offset, paint_opacity);
-                paint_embedded_canvas(canvas, fragment, doc, style, abs_offset, paint_opacity);
-                paint_missing_image(canvas, fragment, doc, style, abs_offset, paint_opacity);
-                paint_replaced_content(canvas, fragment, doc, style, abs_offset, paint_opacity);
+                if fragment.owns_element_box() {
+                    paint_media_element(canvas, fragment, doc, style, abs_offset, paint_opacity);
+                    paint_form_control(canvas, fragment, doc, abs_offset, paint_opacity);
+                    paint_embedded_canvas(canvas, fragment, doc, style, abs_offset, paint_opacity);
+                    paint_missing_image(canvas, fragment, doc, style, abs_offset, paint_opacity);
+                    paint_replaced_content(canvas, fragment, doc, style, abs_offset, paint_opacity);
+                }
                 let outside_marker_clipped = style.list_style_position
                     == ListStylePosition::Outside
                     && (style.overflow_x != Overflow::Visible
                         || style.overflow_y != Overflow::Visible);
-                if style.display == Display::ListItem
+                if fragment.owns_element_box()
+                    && style.display == Display::ListItem
                     && style.list_style_type != ListStyleType::None
                     && !outside_marker_clipped
                 {
@@ -1569,7 +1603,10 @@ fn paint_fragment_contents(
     {
         // The platform control renderer above consumed the directional
         // single-character content with its native LCD mask.
-    } else if let Some(scrollport) = fragment.viewport_scrollport {
+    } else if let Some(scrollport) = fragment
+        .viewport_scrollport
+        .filter(|_| fragment.owns_element_box())
+    {
         canvas.save();
         // With no reserved gutter, viewport clipping belongs to the final
         // surface/tile assembly. Applying that edge again during document
@@ -5417,7 +5454,7 @@ fn paint_descendant_column_rules(
 }
 
 fn should_paint_outline(fragment: &Fragment, doc: &Document, style: &ComputedStyle) -> bool {
-    if !style.has_outline() {
+    if is_formatting_helper(fragment) || !style.has_outline() {
         return false;
     }
     // The body canvas does not acquire an outline from an empty principal
@@ -5536,7 +5573,7 @@ struct FragmentedInlineOofEntry<'a> {
 fn collect_inline_oof_ids(fragment: &Fragment, doc: &Document, result: &mut BTreeSet<usize>) {
     use openui_style::Position;
 
-    if !fragment.node_id.is_none() {
+    if fragment.owns_element_box() {
         let node = doc.node(fragment.node_id);
         if matches!(node.style.position, Position::Absolute | Position::Fixed)
             && node.style.z_index.is_none()
@@ -5562,7 +5599,7 @@ fn collect_fragmented_inline_oof_entries<'a>(
 ) {
     use openui_style::Position;
 
-    if !fragment.node_id.is_none() {
+    if fragment.owns_element_box() {
         let node = doc.node(fragment.node_id);
         if matches!(node.style.position, Position::Absolute | Position::Fixed)
             && node.style.z_index.is_none()
@@ -5985,7 +6022,9 @@ fn paint_children_with_stacking_order(
     let mut non_negative_z: Vec<(i32, usize, StackingEntry)> = Vec::new();
     let parent_is_flex = children
         .iter()
-        .filter_map(|child| (!child.node_id.is_none()).then_some(child.node_id))
+        .filter_map(|child| {
+            (!child.node_id.is_none() && !is_formatting_helper(child)).then_some(child.node_id)
+        })
         .filter_map(|child_id| {
             let parent_id = doc.node(child_id).parent;
             (!parent_id.is_none()).then_some(parent_id)
@@ -5995,7 +6034,10 @@ fn paint_children_with_stacking_order(
     let mut order = 0usize;
 
     for (i, child) in children.iter().enumerate() {
-        if child.node_id.is_none() || child.kind == FragmentKind::ColumnRule {
+        if child.node_id.is_none()
+            || child.kind == FragmentKind::ColumnRule
+            || is_formatting_helper(child)
+        {
             // Anonymous fragments (line boxes, etc.) and generated column
             // rules are in-flow paint artifacts. A rule carries its multicol
             // owner's node ID solely as paint identity; it must not inherit
@@ -6087,7 +6129,7 @@ fn paint_children_with_stacking_order(
             } else {
                 let cs = &doc.node(child.node_id).style;
                 child.has_overflow_clip
-                    || (matches!(child.kind, FragmentKind::Box | FragmentKind::Viewport)
+                    || (child.owns_element_box()
                         && (cs.overflow_x != Overflow::Visible
                             || cs.overflow_y != Overflow::Visible))
             };
@@ -6603,6 +6645,7 @@ fn prepaint_in_flow_block_decorations(
     for (position, &idx) in in_flow.iter().enumerate() {
         let fragment = &children[idx];
         if fragment.node_id.is_none()
+            || is_formatting_helper(fragment)
             || fragment.kind != FragmentKind::Box
             || fragment.skip_box_decoration
             || fragment.paint_background_color_override.is_some()
@@ -6915,6 +6958,44 @@ fn collect_shared_column_decorations<'a>(
         parent_offset.top + fragment.offset.top,
     );
     let mut child_clips = clips.to_vec();
+    if is_formatting_helper(fragment) {
+        if fragment.has_overflow_clip {
+            let logical_clip = column_fragmentainer_clip_rect(
+                fragment,
+                fragment_offset,
+                doc.device_scale_factor(),
+            );
+            let mut physical_clip =
+                outward_snap_rect_to_physical(logical_clip, doc.device_scale_factor());
+            if fragment.inline_axis_clip_only && !fragment.is_first_for_node {
+                let snapping = RasterSnapping::new(doc.device_scale_factor());
+                if fragment_block_axis_is_x(fragment) {
+                    physical_clip.top =
+                        snapping.logical_coordinate(logical_clip.top, PhysicalSnap::Ceil);
+                } else {
+                    physical_clip.left =
+                        snapping.logical_coordinate(logical_clip.left, PhysicalSnap::Ceil);
+                }
+            }
+            child_clips.push(SharedColumnClip {
+                rect: physical_clip,
+                antialias: false,
+                translate_with_relative: true,
+            });
+        }
+        for child in &fragment.children {
+            collect_shared_column_decorations(
+                child,
+                doc,
+                fragment_offset,
+                &child_clips,
+                ancestor_node_ids,
+                false,
+                output,
+            );
+        }
+        return;
+    }
     if !fragment.node_id.is_none()
         && doc.node(fragment.node_id).style.position == openui_style::Position::Relative
         && fragment.fragmentation_visual_offset != PhysicalOffset::zero()
@@ -7545,6 +7626,9 @@ fn stacking_entry_pointer(entry: &StackingEntry<'_>) -> Option<usize> {
 ///   - Elements with a transform, including identity-valued transforms
 fn is_fragment_stacking_context(fragment: &Fragment, doc: &Document) -> bool {
     use openui_style::Position;
+    if is_formatting_helper(fragment) {
+        return false;
+    }
     if fragment.kind == FragmentKind::Viewport {
         return true;
     }
@@ -7591,7 +7675,7 @@ fn fragment_has_positioned_table_internal_descendant(fragment: &Fragment, doc: &
                 | openui_style::Position::Relative
                 | openui_style::Position::Sticky
         );
-        (positioned && style.display.is_table_internal())
+        (!is_formatting_helper(child) && positioned && style.display.is_table_internal())
             || fragment_has_positioned_table_internal_descendant(child, doc)
     })
 }
@@ -7625,7 +7709,8 @@ fn fragment_has_interleaved_flex_stacking_descendant(fragment: &Fragment, doc: &
         if child.node_id.is_none() {
             return fragment_has_interleaved_flex_stacking_descendant(child, doc);
         }
-        (doc.node(child.node_id).style.z_index.is_some()
+        (!is_formatting_helper(child)
+            && doc.node(child.node_id).style.z_index.is_some()
             && flex_item_interleaves_with_positioned_sibling(child.node_id, doc))
             || fragment_has_interleaved_flex_stacking_descendant(child, doc)
     })
@@ -7673,8 +7758,11 @@ fn collect_positioned_z_auto_descendants<'a>(
             continue;
         }
 
-        if child.node_id.is_none() {
-            // Anonymous box: recurse.
+        if child.node_id.is_none() || is_formatting_helper(child) {
+            // A helper owns no stacking context; keep its structural clip.
+            if is_formatting_helper(child) && child.has_overflow_clip {
+                continue;
+            }
             collect_positioned_z_auto_descendants(
                 child,
                 doc,
@@ -7736,7 +7824,7 @@ fn collect_positioned_z_auto_descendants<'a>(
             // Ordinary block descendants remain in this fragment's recursive
             // paint order, which also preserves local rounded-edge compositing.
             let clips_overflow = child.has_overflow_clip
-                || (matches!(child.kind, FragmentKind::Box | FragmentKind::Viewport)
+                || (child.owns_element_box()
                     && (child_style.overflow_x != Overflow::Visible
                         || child_style.overflow_y != Overflow::Visible));
             if is_positioned
@@ -7765,7 +7853,7 @@ fn collect_positioned_z_auto_descendants<'a>(
             // overflow. Elements inside an overflow-clipping container must
             // remain inside it — hoisting them out would bypass the clip.
             let clips_overflow = child.has_overflow_clip
-                || (matches!(child.kind, FragmentKind::Box | FragmentKind::Viewport)
+                || (child.owns_element_box()
                     && (child_style.overflow_x != Overflow::Visible
                         || child_style.overflow_y != Overflow::Visible));
             if !clips_overflow {
@@ -7798,7 +7886,10 @@ fn collect_fragmented_opacity_stacking_contexts<'a>(
         parent_offset.top + fragment.offset.top,
     );
     for child in &fragment.children {
-        if child.node_id.is_none() {
+        if child.node_id.is_none() || is_formatting_helper(child) {
+            if is_formatting_helper(child) && child.has_overflow_clip {
+                continue;
+            }
             collect_fragmented_opacity_stacking_contexts(
                 child,
                 doc,
@@ -7824,7 +7915,7 @@ fn collect_fragmented_opacity_stacking_contexts<'a>(
             hoisted_ptrs.push(pointer);
         } else if !is_fragment_stacking_context(child, doc) {
             let clips_overflow = child.has_overflow_clip
-                || (matches!(child.kind, FragmentKind::Box | FragmentKind::Viewport)
+                || (child.owns_element_box()
                     && (style.overflow_x != Overflow::Visible
                         || style.overflow_y != Overflow::Visible));
             if !clips_overflow {
@@ -7899,10 +7990,11 @@ fn collect_negative_z_descendants<'a>(
         }
 
         let child_style = &doc.node(child.node_id).style;
-        let is_positioned = matches!(
-            child_style.position,
-            Position::Absolute | Position::Fixed | Position::Relative | Position::Sticky
-        );
+        let is_positioned = !is_formatting_helper(child)
+            && matches!(
+                child_style.position,
+                Position::Absolute | Position::Fixed | Position::Relative | Position::Sticky
+            );
         if is_positioned && child_style.z_index.is_some_and(|z| z < 0) {
             let ptr = child as *const Fragment as usize;
             let entry = if let Some(clip) = child_opaque_clip {
@@ -7919,7 +8011,9 @@ fn collect_negative_z_descendants<'a>(
             continue;
         }
 
-        if !is_fragment_stacking_context(child, doc) {
+        if !is_fragment_stacking_context(child, doc)
+            && (!is_formatting_helper(child) || !child.has_overflow_clip)
+        {
             collect_negative_z_descendants(
                 child,
                 doc,
@@ -7950,7 +8044,7 @@ fn collect_positioned_descendant_stacking_contexts<'a>(
 
     for child in &fragment.children {
         let mut collected = false;
-        if !child.node_id.is_none() {
+        if !child.node_id.is_none() && !is_formatting_helper(child) {
             let child_id = child.node_id;
             let child_style = &doc.node(child_id).style;
             let is_positioned = matches!(
@@ -7977,7 +8071,7 @@ fn collect_positioned_descendant_stacking_contexts<'a>(
             }
         }
 
-        if !collected {
+        if !collected && (!is_formatting_helper(child) || !child.has_overflow_clip) {
             collect_positioned_descendant_stacking_contexts(
                 child,
                 doc,
@@ -8021,7 +8115,7 @@ fn collect_flex_negative_stacking_descendants<'a>(
 ) {
     use openui_style::Position;
 
-    if !fragment.node_id.is_none() {
+    if !fragment.node_id.is_none() && !is_formatting_helper(fragment) {
         let style = &doc.node(fragment.node_id).style;
         let is_positioned = matches!(
             style.position,
@@ -8040,6 +8134,9 @@ fn collect_flex_negative_stacking_descendants<'a>(
         parent_offset.left + fragment.offset.left,
         parent_offset.top + fragment.offset.top,
     );
+    if is_formatting_helper(fragment) && fragment.has_overflow_clip {
+        return;
+    }
     for child in &fragment.children {
         collect_flex_negative_stacking_descendants(child, doc, fragment_offset, order, entries);
     }
@@ -8053,7 +8150,11 @@ fn collect_flex_negative_stacking_descendants<'a>(
 /// set, or the style's `overflow-x`/`overflow-y` is not `visible` for a
 /// box-level fragment.
 fn needs_overflow_clip(fragment: &Fragment, style: &ComputedStyle, doc: &Document) -> bool {
-    if doc.node(fragment.node_id).tag == openui_dom::ElementTag::Body
+    if is_formatting_helper(fragment) {
+        return fragment.has_overflow_clip;
+    }
+    if !fragment.node_id.is_none()
+        && doc.node(fragment.node_id).tag == openui_dom::ElementTag::Body
         && doc.body_overflow_is_propagated()
     {
         return false;
@@ -8075,7 +8176,7 @@ fn needs_overflow_clip(fragment: &Fragment, style: &ComputedStyle, doc: &Documen
 
 fn descendant_outline_outset(fragment: &Fragment, doc: &Document) -> f32 {
     fragment.children.iter().fold(0.0_f32, |outset, child| {
-        let own = if child.node_id.is_none() {
+        let own = if child.node_id.is_none() || is_formatting_helper(child) {
             0.0
         } else {
             let style = &doc.node(child.node_id).style;
@@ -8092,7 +8193,7 @@ fn fragment_outline_crosses_slice(
     slice: Rect,
     block_axis_is_x: bool,
 ) -> bool {
-    if fragment.node_id.is_none() || fragment.kind != FragmentKind::Box {
+    if !fragment.owns_element_box() || fragment.kind != FragmentKind::Box {
         return false;
     }
     let style = &doc.node(fragment.node_id).style;
@@ -8128,7 +8229,7 @@ fn fragment_outline_reaches_slice_edge(
     slice: Rect,
     block_axis_is_x: bool,
 ) -> bool {
-    if fragment.node_id.is_none() || fragment.kind != FragmentKind::Box {
+    if !fragment.owns_element_box() || fragment.kind != FragmentKind::Box {
         return false;
     }
     let style = &doc.node(fragment.node_id).style;
@@ -8188,7 +8289,7 @@ fn collect_fragmented_descendant_outline_owners(
 }
 
 fn collect_subtree_outline_owners(fragment: &Fragment, doc: &Document, owners: &mut Vec<usize>) {
-    if !fragment.node_id.is_none()
+    if fragment.owns_element_box()
         && fragment.kind == FragmentKind::Box
         && doc.node(fragment.node_id).style.has_outline()
     {
@@ -9167,7 +9268,8 @@ fn truncated_table_row_group_end(fragment: &Fragment, style: &ComputedStyle) -> 
 /// fractional resample. Ganesh keeps an explicit layer because its replay
 /// backend owns that surface and transform directly.
 fn has_composited_scroll_contents(fragment: &Fragment, style: &ComputedStyle) -> bool {
-    if style.raster_configuration.backend != RasterBackend::GaneshGl {
+    if !fragment.owns_element_box() || style.raster_configuration.backend != RasterBackend::GaneshGl
+    {
         return false;
     }
     let overflow = fragment.scrollable_overflow();
@@ -9194,7 +9296,8 @@ fn needs_fractional_cpu_scroll_backing(
     style: &ComputedStyle,
     clip_rect: Rect,
 ) -> bool {
-    if style.raster_configuration.backend == RasterBackend::GaneshGl
+    if !fragment.owns_element_box()
+        || style.raster_configuration.backend == RasterBackend::GaneshGl
         || style.device_scale_factor.fract().abs() <= f64::EPSILON
     {
         return false;
@@ -9245,6 +9348,9 @@ fn element_scroll_paint_translation(
     scroll_x: f32,
     scroll_y: f32,
 ) -> (f32, f32) {
+    if !fragment.owns_element_box() {
+        return (0.0, 0.0);
+    }
     // Fragmentation also installs overflow clips and records a scroll area,
     // but those slices have no scroll transform. Only an authored scroll
     // container owns the origin and physical translation below.
@@ -9411,7 +9517,7 @@ fn paint_composited_scroll_contents(
         1.0,
     );
 
-    let (scroll_x, scroll_y) = if fragment.node_id.is_none() {
+    let (scroll_x, scroll_y) = if !fragment.owns_element_box() {
         (0.0, 0.0)
     } else {
         let node = doc.node(fragment.node_id);
@@ -9744,7 +9850,9 @@ fn paint_with_overflow_clip(
     };
 
     let (clip_x, clip_y, clip_w, clip_h) = if fragment.block_axis_clip_only
-        && !(style.has_border_radius() && !fragment.ignore_border_radius)
+        && !(fragment.owns_element_box()
+            && style.has_border_radius()
+            && !fragment.ignore_border_radius)
     {
         if fragment_block_axis_is_x(fragment) {
             (clip_x, -100_000.0_f32, clip_w, 200_000.0_f32)
@@ -9767,8 +9875,10 @@ fn paint_with_overflow_clip(
         clip_rect
     };
 
-    let rounded_clip_rrect =
-        (style.has_border_radius() && !fragment.ignore_border_radius).then(|| {
+    let rounded_clip_rrect = (fragment.owns_element_box()
+        && style.has_border_radius()
+        && !fragment.ignore_border_radius)
+        .then(|| {
             build_clip_rrect(
                 &clip_rect,
                 fragment,
@@ -9888,7 +9998,7 @@ fn paint_with_overflow_clip(
         // Sticky offsets were resolved against the same document-owned scroll
         // state by layout, while scrollbars remain fixed in the scrollport.
         canvas.save();
-        let (scroll_x, scroll_y) = if fragment.node_id.is_none() {
+        let (scroll_x, scroll_y) = if !fragment.owns_element_box() {
             (0.0, 0.0)
         } else {
             let node = doc.node(fragment.node_id);
@@ -11322,6 +11432,9 @@ pub(crate) fn paint_viewport_scrollbars(
     doc: &Document,
     offset: PhysicalOffset,
 ) {
+    if !fragment.owns_element_box() {
+        return;
+    }
     let Some(scrollport) = fragment.viewport_scrollport else {
         return;
     };
@@ -11340,6 +11453,9 @@ fn paint_element_scrollbars(
     doc: &Document,
     offset: PhysicalOffset,
 ) {
+    if !fragment.owns_element_box() {
+        return;
+    }
     let (Some(bars), Some(area)) = (fragment.element_scrollbars, fragment.scroll_area) else {
         return;
     };
@@ -14275,6 +14391,7 @@ fn paint_background_layers(
         let mut clip =
             clip_override.unwrap_or_else(|| background_box_rect(layer.clip, border_rect, fragment));
         if clip_override.is_none()
+            && fragment.is_none_or(|fragment| fragment.owns_element_box())
             && style.is_scroll_container()
             && layer.attachment == BackgroundAttachment::Local
         {
@@ -14916,7 +15033,7 @@ fn fragment_rect_for_node<'a>(
         parent_offset.left + fragment.offset.left,
         parent_offset.top + fragment.offset.top,
     );
-    if fragment.node_id == node_id {
+    if fragment.owns_element_box() && fragment.node_id == node_id {
         return Some((
             Rect::from_xywh(
                 offset.left.to_f32(),
@@ -16932,7 +17049,8 @@ fn paint_box_decoration_background(
             visible_color = Some(color);
         }
     }
-    let effective_background_clip = if style.is_scroll_container()
+    let effective_background_clip = if fragment.owns_element_box()
+        && style.is_scroll_container()
         && style.background_attachment == BackgroundAttachment::Local
     {
         BackgroundClip::PaddingBox
@@ -17104,7 +17222,8 @@ fn paint_box_decoration_background(
         // A local background is exposed through the scrollport's hard clip
         // before its rounded fill is rasterized (AdjustRectForScrolledContent).
         // Retain that clip separately from the antialiased fill contour.
-        let _local_background_clip = if style.is_scroll_container()
+        let _local_background_clip = if fragment.owns_element_box()
+            && style.is_scroll_container()
             && style.background_attachment == BackgroundAttachment::Local
         {
             let guard = skia_safe::AutoCanvasRestore::guard(canvas, true);
@@ -20031,6 +20150,9 @@ fn paint_outline(
     style: &ComputedStyle,
     abs_offset: PhysicalOffset,
 ) {
+    if is_formatting_helper(fragment) {
+        return;
+    }
     if PAINTED_FRAGMENTED_OUTLINES.with(|painted| {
         painted
             .borrow()
@@ -21728,6 +21850,121 @@ mod tests {
             .bytes()
             .expect("pixel bytes")
             .to_vec()
+    }
+
+    #[test]
+    fn formatting_helpers_keep_decoration_without_repeating_element_effects() {
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Table);
+        let child = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), owner);
+        doc.append_child(owner, child);
+        let image = doc.register_image_resource(
+            "helper-effect-mask.png",
+            "image/png",
+            "adcf99b02f2084a28ce5f227d472c2a757393184e472ba7b3ccba8ce11ed617b",
+            include_bytes!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/../../../tools/accountability/data/wpt_assets/sp13p/blue-and-red-diamonds-81x81.png"
+            )).to_vec(),
+        );
+        doc.update_resolved_style(owner, |style| {
+            style.display = Display::Table;
+            style.background_color = Color::from_rgba8(200, 40, 80, 255);
+            style.opacity = 0.6;
+            style.filter_blur = 0.75;
+            style.filter_grayscale = 0.4;
+            style.transform.e = 4.0;
+            style.transform.f = 3.0;
+            style.clip_path_inset = Some(std::array::from_fn(|_| openui_geometry::Length::px(2.0)));
+            style
+                .mask_layers
+                .push(BackgroundLayer::new(CssImage::Raster(image)));
+            style.outline_style = BorderStyle::Solid;
+            style.outline_width = 1;
+        });
+        doc.update_resolved_style(child, |style| {
+            style.background_color = Color::from_rgba8(20, 160, 220, 255);
+        });
+        let size = PhysicalSize::new(LayoutUnit::from_i32(24), LayoutUnit::from_i32(24));
+        let mut child_fragment = Fragment::new_box(
+            child,
+            PhysicalSize::new(LayoutUnit::from_i32(16), LayoutUnit::from_i32(12)),
+        );
+        child_fragment.offset =
+            PhysicalOffset::new(LayoutUnit::from_i32(3), LayoutUnit::from_i32(5));
+        let mut flat = Fragment::new_box(owner, size);
+        flat.children.push(child_fragment.clone());
+        let mut nested = flat.clone();
+        nested.skip_box_decoration = true;
+        let mut grid = Fragment::new_box(owner, size);
+        grid.box_ownership = openui_layout::FragmentBoxOwnership::LayoutHelper;
+        let mut row = grid.clone();
+        row.skip_box_decoration = true;
+        row.children.push(child_fragment);
+        nested.children = vec![grid, row];
+        for scale in [1.0_f64, 1.25, 1.5, 2.0, 3.0] {
+            doc.update_resolved_style(owner, |style| style.device_scale_factor = scale);
+            doc.update_resolved_style(child, |style| style.device_scale_factor = scale);
+            let render = |fragment: &Fragment| {
+                reset_picture_paint_state();
+                set_paint_viewport_size(64.0, 64.0);
+                let mut surface = surfaces::raster_n32_premul((192, 192)).expect("surface");
+                surface.canvas().clear(skia_safe::Color::WHITE);
+                surface.canvas().scale((scale as f32, scale as f32));
+                let saves = surface.canvas().save_count();
+                paint_fragment_tracked(surface.canvas(), fragment, &doc, PhysicalOffset::zero());
+                assert_eq!(surface.canvas().save_count(), saves);
+                surface_bytes(&mut surface)
+            };
+            let expected = render(&flat);
+            assert!(expected
+                .chunks_exact(4)
+                .any(|pixel| pixel != [255, 255, 255, 255]));
+            assert_eq!(render(&nested), expected, "scale={scale}");
+        }
+    }
+
+    #[test]
+    fn formatting_helper_keeps_its_structural_clip_without_an_authored_scrollport() {
+        let mut doc = Document::new();
+        let source = doc.create_node(ElementTag::Div);
+        let control = doc.create_node(ElementTag::Div);
+        let child = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(source, |style| {
+            style.opacity = 0.4;
+            style.transform.e = 8.0;
+            style.overflow_x = Overflow::Scroll;
+            style.overflow_y = Overflow::Scroll;
+        });
+        doc.update_resolved_style(child, |style| style.background_color = Color::BLACK);
+        let size = PhysicalSize::new(LayoutUnit::from_i32(10), LayoutUnit::from_i32(10));
+        let mut helper = Fragment::new_box(source, size);
+        helper.box_ownership = openui_layout::FragmentBoxOwnership::LayoutHelper;
+        helper.skip_box_decoration = true;
+        helper.has_overflow_clip = true;
+        helper.children.push(Fragment::new_box(
+            child,
+            PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(20)),
+        ));
+        let mut reference = helper.clone();
+        reference.node_id = control;
+        reference.box_ownership = openui_layout::FragmentBoxOwnership::AuthoredElement;
+        let render = |fragment: &Fragment| {
+            reset_picture_paint_state();
+            let mut surface = surfaces::raster_n32_premul((32, 32)).expect("surface");
+            surface.canvas().clear(skia_safe::Color::WHITE);
+            paint_fragment_tracked(surface.canvas(), fragment, &doc, PhysicalOffset::zero());
+            surface_bytes(&mut surface)
+        };
+        let clipped = render(&helper);
+        assert_eq!(clipped, render(&reference));
+        helper.has_overflow_clip = false;
+        assert_ne!(
+            render(&helper),
+            clipped,
+            "helper's structural clip must constrain child ink"
+        );
     }
 
     #[test]

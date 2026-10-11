@@ -2244,7 +2244,7 @@ impl Engine {
 
     fn layout_scroll_area(&self, node: NodeId) -> Option<openui_layout::ScrollArea> {
         fn find(fragment: &Fragment, node: NodeId) -> Option<openui_layout::ScrollArea> {
-            if fragment.node_id == node {
+            if fragment.owns_element_box() && fragment.node_id == node {
                 if let Some(area) = fragment.scroll_area {
                     return Some(area);
                 }
@@ -2389,7 +2389,7 @@ impl Engine {
                 seen: &mut std::collections::HashSet<NodeId>,
                 changes: &mut Vec<(NodeId, f32, f32)>,
             ) {
-                if let Some(area) = fragment.scroll_area {
+                if let Some(area) = fragment.scroll_area.filter(|_| fragment.owns_element_box()) {
                     if seen.insert(fragment.node_id) {
                         let node = document.node(fragment.node_id);
                         let (x, y) =
@@ -2625,10 +2625,13 @@ impl Engine {
                 fragment.offset.left.to_f32(),
                 fragment.offset.top.to_f32(),
             ));
-            let (world, node_style) = if fragment.node_id.is_none() {
-                (translated, None)
-            } else {
-                let style = &document.node(fragment.node_id).style;
+            // Helpers retain a style source for decoration and structural
+            // clips, but authored effects belong to the element's own box.
+            let node_style =
+                (!fragment.node_id.is_none()).then(|| &document.node(fragment.node_id).style);
+            let owns_box = fragment.owns_element_box()
+                && document.node(fragment.node_id).tag != ElementTag::Text;
+            let world = if let Some(style) = node_style.filter(|_| owns_box) {
                 let transform = style.transform;
                 let origin_x = resolve_origin(&style.transform_origin.0, width);
                 let origin_y = resolve_origin(&style.transform_origin.1, height);
@@ -2640,25 +2643,18 @@ impl Engine {
                     e: transform.e,
                     f: transform.f,
                 };
-                (
-                    translated
-                        .then(Affine::translate(origin_x, origin_y))
-                        .then(transform)
-                        .then(Affine::translate(-origin_x, -origin_y)),
-                    Some(style),
-                )
+                translated
+                    .then(Affine::translate(origin_x, origin_y))
+                    .then(transform)
+                    .then(Affine::translate(-origin_x, -origin_y))
+            } else {
+                translated
             };
             let box_world = world.then(Affine::translate(
                 border_box.offset.left.to_f32(),
                 border_box.offset.top.to_f32(),
             ));
-            if node_style.is_some()
-                && document.node(fragment.node_id).tag != ElementTag::Text
-                && matches!(
-                    fragment.kind,
-                    openui_layout::FragmentKind::Box | openui_layout::FragmentKind::Viewport
-                )
-            {
+            if owns_box {
                 rects
                     .entry(fragment.node_id)
                     .or_default()
@@ -2668,7 +2664,7 @@ impl Engine {
             let world_to_local = box_world.inverse();
             let mut own_clips = inherited_clips.to_vec();
             if let Some(style) = node_style {
-                if let Some(inset) = style.clip_path_inset {
+                if let Some(inset) = style.clip_path_inset.filter(|_| owns_box) {
                     let resolve = |length: &openui_geometry::Length, size: f32| {
                         if length.is_fixed() {
                             length.value()
@@ -2692,8 +2688,7 @@ impl Engine {
                         });
                     }
                 }
-                let node = document.node(fragment.node_id);
-                let pointer_eligible = node.tag != ElementTag::Text
+                let pointer_eligible = owns_box
                     && style.visibility == openui_style::Visibility::Visible
                     && style.pointer_events == openui_style::PointerEvents::Auto;
                 if let Some(world_to_local) = world_to_local
@@ -2710,8 +2705,9 @@ impl Engine {
                 // An authored overflow clip belongs to the element's border
                 // box. A synthetic continuation clip still bounds the larger
                 // flow extent carrying its visible descendants.
-                let clips_authored_box = style.overflow_x != openui_style::Overflow::Visible
-                    || style.overflow_y != openui_style::Overflow::Visible;
+                let clips_authored_box = owns_box
+                    && (style.overflow_x != openui_style::Overflow::Visible
+                        || style.overflow_y != openui_style::Overflow::Visible);
                 let (clip_world, clip_width, clip_height) =
                     if let Some(scrollport) = fragment.viewport_scrollport {
                         (
@@ -2742,7 +2738,7 @@ impl Engine {
                         world_to_local,
                         width: clip_width,
                         height: clip_height,
-                        radii: if fragment.ignore_border_radius {
+                        radii: if fragment.ignore_border_radius || !owns_box {
                             [(0.0, 0.0); 4]
                         } else {
                             [
@@ -2755,15 +2751,15 @@ impl Engine {
                     });
                 }
             }
-            let child_world = if fragment.node_id.is_none() {
-                world
-            } else {
+            let child_world = if owns_box {
                 let node = document.node(fragment.node_id);
                 world.then(Affine::translate(-node.scroll_left, -node.scroll_top))
+            } else {
+                world
             };
             let mut children: Vec<_> = fragment.children.iter().enumerate().collect();
             children.sort_by_key(|(order, child)| {
-                let z = if child.node_id.is_none() {
+                let z = if !child.owns_element_box() {
                     0
                 } else {
                     document.node(child.node_id).style.z_index.unwrap_or(0)
@@ -2773,7 +2769,7 @@ impl Engine {
             let child_entries_start = out.len();
             let mut paint_ranges = Vec::with_capacity(children.len());
             for (order, child) in children {
-                let (z, phase) = if child.node_id.is_none() {
+                let (z, phase) = if !child.owns_element_box() {
                     (
                         0,
                         openui_paint::paint_order::InFlowPaintPhase::BlockBackground,
