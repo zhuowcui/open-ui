@@ -20,8 +20,9 @@ pub use crate::view_node::{mount_view, IntoView, ViewNode};
 pub use crate::ElementTag;
 pub use crate::{
     AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole, EditCommand,
-    EngineOptions, RangeSelectionMode, RasterConfiguration, ScrollMetrics, SelectionDirection,
-    TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
+    EngineOptions, RangeSelectionMode, RasterBackend, RasterConfiguration, RasterPixelGeometry,
+    ScrollMetrics, SelectionDirection, TextDirection, TextEdging, TextHinting,
+    TextRasterConfiguration, TextUnit, ViewportAuthority, ViewportMetrics,
 };
 pub use openui_macros::{component, view};
 pub use openui_text::{

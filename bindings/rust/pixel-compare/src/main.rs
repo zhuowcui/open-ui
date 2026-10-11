@@ -261,6 +261,7 @@ fn parse_viewport_options(
                     "deterministic-alias-subpixel" => {
                         RasterConfiguration::deterministic_aliased(true)
                     }
+                    "chromium-linux-monochrome" => RasterConfiguration::chromium_linux_monochrome(),
                     "chromium-linux-lcd" => RasterConfiguration::chromium_linux_lcd(),
                     "legacy-deterministic-alias" => {
                         RasterConfiguration::legacy_deterministic_aliased(false)

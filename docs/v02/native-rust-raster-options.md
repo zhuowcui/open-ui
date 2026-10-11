@@ -36,6 +36,24 @@ CPU frame. Selecting Ganesh explicitly does not make the software compositor
 fall back to CPU; software bitmap and PNG methods return an error for that
 selection. Direct Ganesh rendering remains unqualified.
 
+## Explicit monochrome font policy
+
+`RasterConfiguration::chromium_linux_monochrome()` selects full hinting and
+integer author-text advances for the pinned Chromium Linux monochrome font
+profile. Native control labels retain their separate raster settings. Select
+this configuration in `EngineOptions` before constructing the document.
+
+The main `openui` crate and its prelude also expose `RasterBackend`,
+`RasterPixelGeometry`, `TextRasterConfiguration`, `TextEdging`, and `TextHinting`
+so a consuming Rust app can express its raster settings directly. These are
+native Rust options; application interaction continues to use Rust callbacks
+and public element methods. Open UI never runs JavaScript.
+
+This profile is under pixel verification. It is not the default, and it has
+not passed the full renderer or release gates. Existing no-hint profiles keep
+their original settings. The renderer diagnostic accepts the explicit
+`--raster-config chromium-linux-monochrome` selection.
+
 ## Executed verification
 
 The [source-identified record](../renderer/generated/native-rust-options-v1.json)
