@@ -23,7 +23,7 @@ use openui_geometry::{
     BoxStrut, LayoutUnit, PhysicalOffset, PhysicalSnap, RasterBackend, RasterSnapping, TextEdging,
     TextHinting,
 };
-use openui_layout::{Fragment, FragmentKind};
+use openui_layout::{Fragment, FragmentKind, FragmentTablePart};
 use openui_style::{
     BackgroundAttachment, BackgroundClip, BackgroundLayer, BackgroundPosition, BackgroundRepeat,
     BackgroundSize, BorderImage, BorderImageLength, BorderImageRepeat, BorderStyle, Color,
@@ -772,7 +772,11 @@ fn paint_fragment_tracked(
     doc: &Document,
     offset: PhysicalOffset,
 ) {
-    if fragment.is_hidden_for_paint {
+    if fragment.is_hidden_for_paint
+        || fragment
+            .table_part
+            .is_some_and(|part| part.column_range().is_some())
+    {
         return;
     }
     // A box that crosses a fractional viewport edge is cut by the physical
@@ -1518,6 +1522,22 @@ fn paint_fragment_contents(
 
     if style.visibility == Visibility::Visible && style.display.is_flex() {
         paint_flex_negative_stacking_children(canvas, fragment, doc, abs_offset);
+    }
+
+    // Table part visibility does not suppress its background inside an
+    // explicitly visible originating cell (.50 TableCellPainter). Effects
+    // still belong to this authored part's existing atomic paint traversal.
+    if style.visibility != Visibility::Visible
+        && fragment
+            .table_part
+            .is_some_and(FragmentTablePart::paints_into_cells)
+        && !fragment.skip_box_decoration
+        && !PREPAINTED_BOX_DECORATIONS.with(|set| {
+            set.borrow()
+                .contains(&(fragment as *const Fragment as usize))
+        })
+    {
+        paint_fragment_box_decoration(canvas, fragment, doc, style, abs_offset, 1.0);
     }
 
     // ── Paint this fragment (skip if visibility: hidden) ─────────────
@@ -6187,21 +6207,27 @@ fn paint_children_with_stacking_order(
     // .50 BoxFragmentPainter paints a table's collapsed graph in descendant
     // block backgrounds, before foreground/text. Negative stacking entries
     // keep their phase above; self-painting parts remain atomic below.
-    let _table_background_phase = table_owner.and_then(|table| {
-        if table.collapsed_table_border_data.is_none()
-            || doc.node(table.node_id).style.visibility != Visibility::Visible
-            || PREPAINTED_COLLAPSED_TABLE_BORDERS
-                .with(|set| set.borrow().contains(&(table as *const Fragment as usize)))
-        {
-            return None;
-        }
-        let mut phase = CollapsedTableBackgroundPhase::default();
-        for child in children {
-            prepaint_collapsed_table_backgrounds(canvas, child, doc, offset, &mut phase);
-        }
-        crate::collapsed_table_painter::paint(canvas, table, doc, offset);
-        Some(phase)
-    });
+    let _table_background_phase = table_owner
+        .filter(|table| {
+            table.table_part == Some(FragmentTablePart::Table)
+                || table.collapsed_table_border_data.is_some()
+        })
+        .map(|table| {
+            let mut phase = CollapsedTableBackgroundPhase::default();
+            prepaint_table_grid_decoration(canvas, table, doc, offset, &mut phase);
+            paint_table_column_backgrounds(canvas, table, doc, offset, &mut phase);
+            if table.collapsed_table_border_data.is_some()
+                && doc.node(table.node_id).style.visibility == Visibility::Visible
+                && !PREPAINTED_COLLAPSED_TABLE_BORDERS
+                    .with(|set| set.borrow().contains(&(table as *const Fragment as usize)))
+            {
+                for child in children {
+                    prepaint_collapsed_table_backgrounds(canvas, child, doc, offset, &mut phase);
+                }
+                crate::collapsed_table_painter::paint(canvas, table, doc, offset);
+            }
+            phase
+        });
 
     // Column rules paint behind column contents; overflowing descendants may
     // cover them in the gap.
@@ -6566,6 +6592,7 @@ fn paint_children_with_stacking_order(
                             && fragment.block_axis_clip_only
                             && !fragment.skip_box_decoration
                             && fragment.paint_background_color_override.is_none()
+                            && fragment.table_part.is_none()
                             && fragment.decoration_clip_rects.is_empty()
                             && fragment.promoted_transform_ancestors.is_empty()
                             && (!matches!(entry, StackingEntry::Direct(_))
@@ -6722,6 +6749,9 @@ fn prepaint_collapsed_table_backgrounds(
 ) {
     let pointer = fragment as *const Fragment as usize;
     if fragment.is_hidden_for_paint
+        || fragment
+            .table_part
+            .is_some_and(|part| part.column_range().is_some())
         || fragment.kind == FragmentKind::Text
         || fragment.kind == FragmentKind::ColumnRule
         || HOIST_SKIP.with(|set| set.borrow().contains(&pointer))
@@ -6768,7 +6798,10 @@ fn prepaint_collapsed_table_backgrounds(
         .map(|color| original_style.derive(|style| style.background_color = color));
     let style = adjusted_style.as_ref().unwrap_or(original_style);
     if fragment.kind == FragmentKind::Box
-        && style.visibility == Visibility::Visible
+        && (style.visibility == Visibility::Visible
+            || fragment
+                .table_part
+                .is_some_and(FragmentTablePart::paints_into_cells))
         && !fragment.skip_box_decoration
         && !PREPAINTED_BOX_DECORATIONS.with(|set| set.borrow().contains(&pointer))
     {
@@ -6777,6 +6810,11 @@ fn prepaint_collapsed_table_backgrounds(
             set.borrow_mut().insert(pointer);
         });
         phase.decorations.push(pointer);
+    }
+
+    if fragment.table_part == Some(FragmentTablePart::Table) {
+        prepaint_table_grid_decoration(canvas, fragment, doc, offset, phase);
+        paint_table_column_backgrounds(canvas, fragment, doc, offset, phase);
     }
 
     // Descendant backgrounds obey the same authored overflow coordinate
@@ -7011,7 +7049,8 @@ fn can_coalesce_identical_solid_decoration(
     decoration: &SharedColumnDecoration<'_>,
     style: &ComputedStyle,
 ) -> bool {
-    style.opacity >= 1.0
+    decoration.fragment.table_part.is_none()
+        && style.opacity >= 1.0
         && style.background_color.is_opaque()
         && style.background_layers.is_empty()
         && style.background_linear_gradient.is_none()
@@ -16467,6 +16506,388 @@ fn paint_box_shadows(
     }
 }
 
+/// Visit cells in the actual retained section/row continuation. A nested
+/// table belongs to its own paint phase; out-of-flow row children are not
+/// originating cells. No geometry is recovered by DOM tag or rectangle dedupe.
+fn for_each_table_background_cell(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+    visit: &mut impl FnMut(&Fragment, PhysicalOffset),
+) {
+    if fragment.is_hidden_for_paint {
+        return;
+    }
+    let structural_clip = fragment.table_part == Some(FragmentTablePart::Section)
+        && fragment.has_overflow_clip
+        && fragment.block_axis_clip_only;
+    if structural_clip {
+        canvas.save();
+        canvas.clip_rect(
+            column_block_only_clip_rect(fragment, offset, doc.device_scale_factor()),
+            ClipOp::Intersect,
+            false,
+        );
+    }
+    match fragment.table_part {
+        Some(FragmentTablePart::Row) => {
+            for cell in &fragment.children {
+                if matches!(cell.table_part, Some(FragmentTablePart::Cell { .. })) {
+                    visit(
+                        cell,
+                        PhysicalOffset::new(
+                            offset.left + cell.offset.left,
+                            offset.top + cell.offset.top,
+                        ),
+                    );
+                }
+            }
+        }
+        Some(FragmentTablePart::Section | FragmentTablePart::Table) => {
+            for child in &fragment.children {
+                if matches!(
+                    child.table_part,
+                    Some(FragmentTablePart::Section | FragmentTablePart::Row)
+                ) {
+                    for_each_table_background_cell(
+                        canvas,
+                        child,
+                        doc,
+                        PhysicalOffset::new(
+                            offset.left + child.offset.left,
+                            offset.top + child.offset.top,
+                        ),
+                        visit,
+                    );
+                }
+            }
+        }
+        _ => {}
+    }
+    if structural_clip {
+        canvas.restore();
+    }
+}
+
+fn table_part_positioning_rect(fragment: &Fragment, offset: PhysicalOffset) -> Rect {
+    // A continuation paints only its retained cells, but resumes the image in
+    // the same stitched part positioning box. Existing layout slice metadata
+    // carries the logical block offset and writing direction through projection.
+    decoration_source_rect(
+        fragment,
+        Rect::from_xywh(
+            offset.left.to_f32(),
+            offset.top.to_f32(),
+            fragment.size.width.to_f32(),
+            fragment.size.height.to_f32(),
+        ),
+    )
+}
+
+fn repeated_background_image_occludes_color(
+    doc: &Document,
+    style: &ComputedStyle,
+    clip: BackgroundClip,
+) -> bool {
+    style.background_layers.last().is_some_and(|layer| {
+        layer.clip == clip
+            && matches!(
+                layer.repeat_x,
+                BackgroundRepeat::Repeat | BackgroundRepeat::Round
+            )
+            && matches!(
+                layer.repeat_y,
+                BackgroundRepeat::Repeat | BackgroundRepeat::Round
+            )
+            && matches!(layer.image, CssImage::Raster(id)
+                if crate::image_resource::decode_image_resource(doc, id)
+                    .is_ok_and(|image| image.is_opaque()))
+    })
+}
+
+/// .50 TableCellPainter::PaintBackgroundForTablePart uses the cell as the
+/// painting object and the part as the image client/positioning object. A
+/// rowspan may paint outside a row's own box, so intersecting a full-row fill
+/// with the cell is not equivalent to this operation.
+fn paint_table_part_background_in_cell(
+    canvas: &Canvas,
+    part: &Fragment,
+    doc: &Document,
+    style: &ComputedStyle,
+    positioning_rect: Rect,
+    cell: &Fragment,
+    cell_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    if cell.is_hidden_for_paint
+        || cell.node_id.is_none()
+        || doc.node(cell.node_id).style.visibility != Visibility::Visible
+        || doc.canvas_background_source() == Some(cell.node_id)
+    {
+        return;
+    }
+    let _used_border_clip = collapsed_cell_background_clip(canvas, cell, doc, cell_offset);
+    let cell_style = &doc.node(cell.node_id).style;
+    // Background outsets come from the positioning part, not the cell's own
+    // borders/padding (BoxBackgroundPaintContext::BorderOutsets/PaddingOutsets).
+    // The additional collapsed used-border clip above remains cell-owned.
+    let mut fill_geometry = Fragment::new_box(cell.node_id, cell.size);
+    fill_geometry.border = part.border;
+    fill_geometry.padding = part.padding;
+    fill_geometry.ignore_border_radius = cell.ignore_border_radius;
+    fill_geometry.collapsed_table_border_participant = true;
+    let cell_rect = Rect::from_xywh(
+        cell_offset.left.to_f32(),
+        cell_offset.top.to_f32(),
+        cell.size.width.to_f32(),
+        cell.size.height.to_f32(),
+    );
+    let color_clip = style
+        .background_layers
+        .last()
+        .map_or(style.background_clip, |layer| layer.clip);
+    if !style.background_color.is_transparent()
+        && !(opacity_multiplier >= 1.0
+            && repeated_background_image_occludes_color(doc, style, color_clip))
+    {
+        let color_style = cell_style.derive(|fill| {
+            fill.background_color = style.background_color;
+            fill.background_clip = style
+                .background_layers
+                .last()
+                .map_or(style.background_clip, |layer| layer.clip);
+            fill.background_attachment = BackgroundAttachment::Scroll;
+            fill.background_layers.clear();
+            fill.background_linear_gradient = None;
+            fill.box_shadow.clear();
+            fill.border_image = None;
+            fill.border_top_style = BorderStyle::None;
+            fill.border_right_style = BorderStyle::None;
+            fill.border_bottom_style = BorderStyle::None;
+            fill.border_left_style = BorderStyle::None;
+        });
+        // Reuse the ordinary color/rounded-contour path. This lightweight
+        // geometry has no child coverage to cull and no border/shadow phase.
+        paint_box_decoration_background(
+            canvas,
+            &fill_geometry,
+            doc,
+            &color_style,
+            cell_offset,
+            opacity_multiplier,
+        );
+    }
+    let legacy_layer = style
+        .background_linear_gradient
+        .as_ref()
+        .filter(|_| style.background_layers.is_empty())
+        .map(|gradient| {
+            let mut layer =
+                BackgroundLayer::new(CssImage::LinearGradient(openui_style::CssLinearGradient {
+                    angle_degrees: gradient.angle_degrees,
+                    corner_direction: None,
+                    repeating: gradient.repeating,
+                    color_space: GradientColorSpace::Srgb,
+                    stops: gradient
+                        .stops
+                        .iter()
+                        .map(|stop| openui_style::GradientStop {
+                            color: StyleColor::Resolved(stop.color),
+                            position: stop.position,
+                        })
+                        .collect(),
+                }));
+            layer.clip = style.background_clip;
+            layer.attachment = style.background_attachment;
+            layer
+        });
+    for layer in style
+        .background_layers
+        .iter()
+        .rev()
+        .chain(legacy_layer.iter())
+    {
+        let clip = background_box_rect(layer.clip, cell_rect, Some(&fill_geometry));
+        if clip.width() <= 0.0 || clip.height() <= 0.0 {
+            continue;
+        }
+        let layer_style = style.derive(|fill| {
+            fill.background_layers = vec![layer.clone()];
+            fill.background_linear_gradient = None;
+        });
+        canvas.save();
+        if cell_style.has_border_radius() && !cell.ignore_border_radius {
+            let radii = background_clip_radii(cell_style, Some(&fill_geometry), cell_rect, clip);
+            canvas.clip_rrect(RRect::new_rect_radii(clip, &radii), ClipOp::Intersect, true);
+        }
+        if layer.clip == BackgroundClip::BorderArea {
+            canvas.clip_rect(
+                background_box_rect(BackgroundClip::PaddingBox, cell_rect, Some(&fill_geometry)),
+                ClipOp::Difference,
+                false,
+            );
+        }
+        // Image size/phase use the full part rectangle; every layer's own clip
+        // uses the cell rectangle. clip_override also disables ordinary box
+        // border bleed adjustments, as required by the pinned table context.
+        paint_background_layers(
+            canvas,
+            doc,
+            Some(part),
+            &layer_style,
+            positioning_rect,
+            opacity_multiplier,
+            Some(clip),
+            false,
+        );
+        canvas.restore();
+    }
+}
+
+fn paint_table_part_background(
+    canvas: &Canvas,
+    part: &Fragment,
+    doc: &Document,
+    style: &ComputedStyle,
+    offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    // Anonymous structure borrows a style source but has no authored
+    // background/shadow of its own. Its originating cells still paint normally.
+    if !part.owns_element_box() {
+        return;
+    }
+    let paint_rect = Rect::from_xywh(
+        offset.left.round().to_f32(),
+        offset.top.round().to_f32(),
+        (offset.left + part.size.width).round().to_f32() - offset.left.round().to_f32(),
+        (offset.top + part.size.height).round().to_f32() - offset.top.round().to_f32(),
+    );
+    if style.visibility == Visibility::Visible {
+        paint_box_shadows(canvas, style, paint_rect, false, true);
+    }
+    let positioning_rect = table_part_positioning_rect(part, offset);
+    for_each_table_background_cell(canvas, part, doc, offset, &mut |cell, cell_offset| {
+        paint_table_part_background_in_cell(
+            canvas,
+            part,
+            doc,
+            style,
+            positioning_rect,
+            cell,
+            cell_offset,
+            opacity_multiplier,
+        );
+    });
+    if style.visibility == Visibility::Visible {
+        paint_box_shadows(canvas, style, paint_rect, true, true);
+    }
+}
+
+fn prepaint_table_grid_decoration(
+    canvas: &Canvas,
+    table: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+    phase: &mut CollapsedTableBackgroundPhase,
+) {
+    if !table.skip_box_decoration || doc.node(table.node_id).style.visibility != Visibility::Visible
+    {
+        return;
+    }
+    for grid in table
+        .children
+        .iter()
+        .filter(|child| child.table_part == Some(FragmentTablePart::GridDecoration))
+    {
+        let pointer = grid as *const Fragment as usize;
+        if PREPAINTED_BOX_DECORATIONS.with(|set| set.borrow().contains(&pointer)) {
+            continue;
+        }
+        let source_style = &doc.node(grid.node_id).style;
+        let helper_style = helper_paint_style(grid, source_style);
+        paint_fragment_box_decoration(
+            canvas,
+            grid,
+            doc,
+            helper_style.as_ref().unwrap_or(source_style),
+            PhysicalOffset::new(offset.left + grid.offset.left, offset.top + grid.offset.top),
+            1.0,
+        );
+        PREPAINTED_BOX_DECORATIONS.with(|set| {
+            set.borrow_mut().insert(pointer);
+        });
+        phase.decorations.push(pointer);
+    }
+}
+
+fn paint_table_column_backgrounds(
+    canvas: &Canvas,
+    table: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+    phase: &mut CollapsedTableBackgroundPhase,
+) {
+    let columns: Vec<_> = table
+        .children
+        .iter()
+        .filter(|child| {
+            child
+                .table_part
+                .is_some_and(|part| part.column_range().is_some())
+        })
+        .filter(|child| {
+            !PREPAINTED_BOX_DECORATIONS
+                .with(|set| set.borrow().contains(&(*child as *const Fragment as usize)))
+        })
+        .map(|column| {
+            (
+                column,
+                table_part_positioning_rect(
+                    column,
+                    PhysicalOffset::new(
+                        offset.left + column.offset.left,
+                        offset.top + column.offset.top,
+                    ),
+                ),
+            )
+        })
+        .collect();
+    // The pinned order is row, then originating cell, then ordered column
+    // sources. Reversing this into source-major draws changes translucent joins.
+    for_each_table_background_cell(canvas, table, doc, offset, &mut |cell, cell_offset| {
+        let Some(FragmentTablePart::Cell { column_index }) = cell.table_part else {
+            return;
+        };
+        for &(column, positioning_rect) in &columns {
+            if column
+                .table_part
+                .and_then(FragmentTablePart::column_range)
+                .is_some_and(|range| range.contains(&column_index))
+            {
+                paint_table_part_background_in_cell(
+                    canvas,
+                    column,
+                    doc,
+                    &doc.node(column.node_id).style,
+                    positioning_rect,
+                    cell,
+                    cell_offset,
+                    1.0,
+                );
+            }
+        }
+    });
+    for (column, _) in columns {
+        let pointer = column as *const Fragment as usize;
+        PREPAINTED_BOX_DECORATIONS.with(|set| {
+            set.borrow_mut().insert(pointer);
+        });
+        phase.decorations.push(pointer);
+    }
+}
+
 struct CollapsedCellBackgroundClip<'a>(&'a Canvas);
 
 impl Drop for CollapsedCellBackgroundClip<'_> {
@@ -16548,6 +16969,19 @@ fn paint_fragment_box_decoration(
     mut abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
+    if fragment
+        .table_part
+        .is_some_and(|part| part.column_range().is_some())
+    {
+        return;
+    }
+    if fragment
+        .table_part
+        .is_some_and(FragmentTablePart::paints_into_cells)
+    {
+        paint_table_part_background(canvas, fragment, doc, style, abs_offset, opacity_multiplier);
+        return;
+    }
     let _collapsed_cell_background_clip =
         collapsed_cell_background_clip(canvas, fragment, doc, abs_offset);
     let mut fieldset_decoration_fragment = None;
@@ -16960,6 +17394,7 @@ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Docum
                 || child.skip_box_decoration
                 || child.decoration_paint_block_size.is_some()
                 || child.decoration_slice.is_some()
+                || child.table_part.is_some()
                 || !child.decoration_clip_rects.is_empty()
                 || !child.is_first_for_node
                 || !child.is_last_for_node
@@ -16981,6 +17416,7 @@ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Docum
             || child.skip_box_decoration
             || child.decoration_paint_block_size.is_some()
             || child.decoration_slice.is_some()
+            || child.table_part.is_some()
             || !child.decoration_clip_rects.is_empty()
             || !child.is_first_for_node
             || !child.is_last_for_node
@@ -17456,23 +17892,7 @@ fn paint_box_decoration_background(
         && opaque_in_flow_child_covers_inner_border_box(fragment, doc);
     let background_color_is_occluded = opacity_multiplier >= 1.0
         && (opaque_child_occludes_background
-            || style.background_layers.last().is_some_and(|layer| {
-                layer.clip == effective_background_clip
-                    && matches!(
-                        layer.repeat_x,
-                        BackgroundRepeat::Repeat | BackgroundRepeat::Round
-                    )
-                    && matches!(
-                        layer.repeat_y,
-                        BackgroundRepeat::Repeat | BackgroundRepeat::Round
-                    )
-                    && matches!(
-                        layer.image,
-                        CssImage::Raster(id)
-                            if crate::image_resource::decode_image_resource(doc, id)
-                                .is_ok_and(|image| image.is_opaque())
-                    )
-            }));
+            || repeated_background_image_occludes_color(doc, style, effective_background_clip));
     if !style.background_color.is_transparent() && !background_color_is_occluded {
         // A local background is exposed through the scrollport's hard clip
         // before its rounded fill is rasterized (AdjustRectForScrolledContent).
@@ -22106,6 +22526,256 @@ mod tests {
             .bytes()
             .expect("pixel bytes")
             .to_vec()
+    }
+
+    fn table_background_guard_document(
+        collapse: openui_style::BorderCollapse,
+    ) -> (Document, NodeId, NodeId, [NodeId; 2], [NodeId; 3]) {
+        let mut doc = Document::new();
+        let table = doc.create_node(ElementTag::Table);
+        let section = doc.create_node(ElementTag::TableBody);
+        let rows = [
+            doc.create_node(ElementTag::TableRow),
+            doc.create_node(ElementTag::TableRow),
+        ];
+        let cells = [
+            doc.create_node(ElementTag::TableCell),
+            doc.create_node(ElementTag::TableCell),
+            doc.create_node(ElementTag::TableCell),
+        ];
+        doc.append_child(doc.root(), table);
+        doc.append_child(table, section);
+        for row in rows {
+            doc.append_child(section, row);
+        }
+        doc.append_child(rows[0], cells[0]);
+        doc.append_child(rows[0], cells[1]);
+        doc.append_child(rows[1], cells[2]);
+        doc.update_resolved_style(table, |style| {
+            style.display = Display::Table;
+            style.border_collapse = collapse;
+        });
+        doc.update_resolved_style(section, |style| style.display = Display::TableRowGroup);
+        for row in rows {
+            doc.update_resolved_style(row, |style| style.display = Display::TableRow);
+        }
+        for cell in cells {
+            doc.update_resolved_style(cell, |style| {
+                style.display = Display::TableCell;
+                style.visibility = Visibility::Visible;
+                style.width = openui_geometry::Length::px(20.0);
+                style.height = openui_geometry::Length::px(10.0);
+            });
+        }
+        doc.node_mut(cells[0]).table_row_span = 2;
+        (doc, table, section, rows, cells)
+    }
+
+    fn layout_table_background_guard(doc: &Document, table: NodeId) -> Fragment {
+        openui_layout::table_layout(
+            doc,
+            table,
+            &openui_layout::ConstraintSpace::for_root(
+                LayoutUnit::from_i32(80),
+                LayoutUnit::from_i32(40),
+            ),
+        )
+    }
+
+    #[test]
+    fn originating_row_background_follows_the_entire_rowspan_cell() {
+        for collapse in [
+            openui_style::BorderCollapse::Separate,
+            openui_style::BorderCollapse::Collapse,
+        ] {
+            let (mut doc, table, _, rows, _) = table_background_guard_document(collapse);
+            doc.update_resolved_style(rows[0], |style| style.background_color = Color::GREEN);
+            let fragment = layout_table_background_guard(&doc, table);
+            let mut surface = surfaces::raster_n32_premul((80, 40)).unwrap();
+            surface.canvas().clear(skia_safe::Color::WHITE);
+            paint_fragment(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+            let pixels = surface_bytes(&mut surface);
+            let pixel = |x: usize, y: usize| &pixels[(y * 80 + x) * 4..][..4];
+            assert_eq!(pixel(10, 5), [0, 128, 0, 255]);
+            assert_eq!(pixel(30, 5), [0, 128, 0, 255]);
+            assert_eq!(
+                pixel(10, 15),
+                [0, 128, 0, 255],
+                "originating row paints below its own box inside the rowspan"
+            );
+            assert_eq!(
+                pixel(30, 15),
+                [255, 255, 255, 255],
+                "the neighboring second-row cell gets its own row source"
+            );
+        }
+    }
+
+    #[test]
+    fn hidden_structural_background_sources_reach_explicitly_visible_cells_only() {
+        for hide_section in [false, true] {
+            let (mut doc, table, section, rows, cells) =
+                table_background_guard_document(openui_style::BorderCollapse::Collapse);
+            let source = if hide_section { section } else { rows[0] };
+            doc.update_resolved_style(source, |style| {
+                style.visibility = Visibility::Hidden;
+                style.background_color = Color::GREEN;
+            });
+            doc.update_resolved_style(cells[1], |style| style.visibility = Visibility::Hidden);
+            let fragment = layout_table_background_guard(&doc, table);
+            let mut surface = surfaces::raster_n32_premul((80, 40)).unwrap();
+            surface.canvas().clear(skia_safe::Color::WHITE);
+            paint_fragment(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+            let pixels = surface_bytes(&mut surface);
+            let pixel = |x: usize, y: usize| &pixels[(y * 80 + x) * 4..][..4];
+            assert_eq!(pixel(10, 5), [0, 128, 0, 255]);
+            assert_eq!(pixel(10, 15), [0, 128, 0, 255]);
+            assert_eq!(
+                pixel(30, 5),
+                [255, 255, 255, 255],
+                "hidden cells receive no structural fill"
+            );
+            assert_eq!(
+                pixel(30, 15),
+                if hide_section {
+                    [0, 128, 0, 255]
+                } else {
+                    [255, 255, 255, 255]
+                }
+            );
+        }
+    }
+
+    #[test]
+    fn column_background_uses_cell_origin_and_full_authored_span_sources() {
+        let mut doc = Document::new();
+        let table = doc.create_node(ElementTag::Table);
+        let group = doc.create_node(ElementTag::TableColumnGroup);
+        let columns = [
+            doc.create_node(ElementTag::TableColumn),
+            doc.create_node(ElementTag::TableColumn),
+        ];
+        let row = doc.create_node(ElementTag::TableRow);
+        let cell = doc.create_node(ElementTag::TableCell);
+        doc.append_child(doc.root(), table);
+        doc.append_child(table, group);
+        for column in columns {
+            doc.append_child(group, column);
+        }
+        doc.append_child(table, row);
+        doc.append_child(row, cell);
+        doc.update_resolved_style(table, |style| {
+            style.display = Display::Table;
+            style.border_collapse = openui_style::BorderCollapse::Collapse;
+        });
+        doc.update_resolved_style(group, |style| {
+            style.display = Display::TableColumnGroup;
+            style.background_color = Color::BLACK;
+        });
+        for column in columns {
+            doc.update_resolved_style(column, |style| {
+                style.display = Display::TableColumn;
+                style.width = openui_geometry::Length::px(20.0);
+            });
+        }
+        doc.update_resolved_style(columns[0], |style| {
+            style.background_color = Color::GREEN;
+            style.visibility = Visibility::Hidden;
+        });
+        doc.update_resolved_style(columns[1], |style| {
+            style.background_color = Color::from_rgba8(128, 128, 128, 255)
+        });
+        doc.update_resolved_style(row, |style| style.display = Display::TableRow);
+        doc.update_resolved_style(cell, |style| {
+            style.display = Display::TableCell;
+            style.width = openui_geometry::Length::px(40.0);
+            style.height = openui_geometry::Length::px(10.0);
+            style.visibility = Visibility::Visible;
+        });
+        doc.node_mut(cell).table_col_span = 2;
+        let fragment = layout_table_background_guard(&doc, table);
+        let mut surface = surfaces::raster_n32_premul((80, 40)).unwrap();
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        paint_fragment(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+        let pixels = surface_bytes(&mut surface);
+        let pixel = |x: usize, y: usize| &pixels[(y * 80 + x) * 4..][..4];
+        assert_eq!(pixel(10, 5), [0, 128, 0, 255]);
+        assert_eq!(
+            pixel(30, 5),
+            [0, 128, 0, 255],
+            "the second track is not a new source inside a colspan"
+        );
+        assert_eq!(pixel(45, 5), [255, 255, 255, 255]);
+    }
+
+    #[test]
+    fn table_part_gradient_keeps_one_row_positioning_area_across_neighboring_cells() {
+        let (mut doc, table, _, rows, _) =
+            table_background_guard_document(openui_style::BorderCollapse::Separate);
+        doc.update_resolved_style(rows[0], |style| {
+            style.background_layers = vec![BackgroundLayer::new(CssImage::LinearGradient(
+                CssLinearGradient {
+                    angle_degrees: 90.0,
+                    corner_direction: None,
+                    repeating: false,
+                    color_space: GradientColorSpace::Srgb,
+                    stops: vec![
+                        GradientStop {
+                            color: StyleColor::Resolved(Color::BLACK),
+                            position: GradientStopPosition::Percent(0.0),
+                        },
+                        GradientStop {
+                            color: StyleColor::Resolved(Color::WHITE),
+                            position: GradientStopPosition::Percent(100.0),
+                        },
+                    ],
+                },
+            ))];
+        });
+        let fragment = layout_table_background_guard(&doc, table);
+        fn find_row(fragment: &Fragment, node: NodeId) -> Option<&Fragment> {
+            if fragment.node_id == node && fragment.table_part == Some(FragmentTablePart::Row) {
+                return Some(fragment);
+            }
+            fragment
+                .children
+                .iter()
+                .find_map(|child| find_row(child, node))
+        }
+        let row = find_row(&fragment, rows[0]).unwrap();
+        let mut actual = surfaces::raster_n32_premul((80, 40)).unwrap();
+        let mut expected = surfaces::raster_n32_premul((80, 40)).unwrap();
+        actual.canvas().clear(skia_safe::Color::WHITE);
+        expected.canvas().clear(skia_safe::Color::WHITE);
+        paint_table_part_background(
+            actual.canvas(),
+            row,
+            &doc,
+            &doc.node(rows[0]).style,
+            PhysicalOffset::zero(),
+            1.0,
+        );
+        // Independent ordinary box painting provides the neighboring guard:
+        // splitting an image among cells must not restart its positioning area.
+        let mut whole_row = Fragment::new_box(rows[0], row.size);
+        whole_row.collapsed_table_border_participant = true;
+        paint_box_decoration_background(
+            expected.canvas(),
+            &whole_row,
+            &doc,
+            &doc.node(rows[0]).style,
+            PhysicalOffset::zero(),
+            1.0,
+        );
+        // The rowspan legitimately receives the row image below the row. The
+        // ordinary neighboring guard covers the first row's full painted band.
+        let actual = surface_bytes(&mut actual);
+        let expected = surface_bytes(&mut expected);
+        assert_eq!(&actual[..80 * 10 * 4], &expected[..80 * 10 * 4]);
+        assert_ne!(
+            &actual[(5 * 80 + 5) * 4..][..4],
+            &actual[(5 * 80 + 35) * 4..][..4]
+        );
     }
 
     #[test]

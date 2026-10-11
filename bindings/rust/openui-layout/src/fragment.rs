@@ -44,6 +44,47 @@ pub enum FragmentBoxOwnership {
     LayoutHelper,
 }
 
+/// The table formatting role retained by layout for background painting.
+///
+/// These are source identities and grid indices, not copied paint rectangles.
+/// Fragment projection and continuation slicing preserve them while the
+/// painter uses the actual cell fragments in each retained row. In particular,
+/// a spanning cell receives the background of its originating column only.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FragmentTablePart {
+    Table,
+    /// The table grid decoration delegated by a captioned authored wrapper.
+    GridDecoration,
+    Section,
+    Row,
+    Cell {
+        column_index: usize,
+    },
+    Column {
+        start_column: usize,
+        span: usize,
+    },
+    ColumnGroup {
+        start_column: usize,
+        span: usize,
+    },
+}
+
+impl FragmentTablePart {
+    pub fn column_range(self) -> Option<std::ops::Range<usize>> {
+        match self {
+            Self::Column { start_column, span } | Self::ColumnGroup { start_column, span } => {
+                Some(start_column..start_column.saturating_add(span))
+            }
+            _ => None,
+        }
+    }
+
+    pub fn paints_into_cells(self) -> bool {
+        matches!(self, Self::Section | Self::Row)
+    }
+}
+
 /// Immutable geometry of the document's viewport scroll container.
 ///
 /// Scrollbar gutters belong to the viewport, rather than to an authored
@@ -411,6 +452,10 @@ pub struct Fragment {
     /// Non-cell fragments and cells clamped to one available row use one.
     pub table_row_span: usize,
 
+    /// Layout-owned table background source/target classification. Anonymous
+    /// structure retains its role without gaining authored box ownership.
+    pub table_part: Option<FragmentTablePart>,
+
     /// Shared source-space decoration geometry for a sliced continuation.
     /// `None` means this fragment owns an independent positioning area (the
     /// normal case, including `box-decoration-break:clone`).
@@ -598,6 +643,7 @@ impl Fragment {
             is_hidden_for_paint: false,
             decoration_clip_rects: Vec::new(),
             table_row_span: 1,
+            table_part: None,
             decoration_slice: None,
             paint_zero_block_outline: false,
             is_block_end_decoration_marker: false,
@@ -672,6 +718,7 @@ impl Fragment {
             is_hidden_for_paint: false,
             decoration_clip_rects: Vec::new(),
             table_row_span: 1,
+            table_part: None,
             decoration_slice: None,
             paint_zero_block_outline: false,
             is_block_end_decoration_marker: false,

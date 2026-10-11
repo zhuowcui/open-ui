@@ -46,7 +46,7 @@ pub use exclusions::ExclusionSpace;
 pub use flex::flex_layout;
 pub use fragment::{
     resolve_text_run_orientation, DecorationSlice, Fragment, FragmentBoxOwnership, FragmentKind,
-    TextRunOrientation, ViewportScrollport,
+    FragmentTablePart, TextRunOrientation, ViewportScrollport,
 };
 pub use fragmentation::{
     BlockBreakToken, BreakAppeal, BreakToken, FragmentainerSpace, InlineBreakToken,

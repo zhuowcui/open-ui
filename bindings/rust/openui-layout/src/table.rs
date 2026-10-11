@@ -19,7 +19,7 @@ use crate::block::{
     project_logical_fragment_tree_to_physical, resolve_border, resolve_margins, resolve_padding,
 };
 use crate::constraint_space::ConstraintSpace;
-use crate::fragment::{Fragment, FragmentBoxOwnership};
+use crate::fragment::{Fragment, FragmentBoxOwnership, FragmentTablePart};
 use crate::intrinsic_sizing::{
     compute_intrinsic_block_sizes, compute_intrinsic_block_sizes_with_used_border,
     compute_intrinsic_inline_sizes, IntrinsicSizes,
@@ -2146,9 +2146,6 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         .copied()
         .fold(LayoutUnit::zero(), |a, b| a + b)
         + block_spacing * LayoutUnit::from_i32(model.rows.len().saturating_sub(1) as i32);
-    let clip_structural_backgrounds_to_cells = structural_perimeter.is_none()
-        && style.border_collapse == BorderCollapse::Separate
-        && (inline_spacing > LayoutUnit::zero() || block_spacing > LayoutUnit::zero());
     let grid_border_box_offset = block_cursor;
     if !model.captions.is_empty() {
         // Captions belong to the table wrapper but sit outside the table-grid
@@ -2160,6 +2157,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             PhysicalSize::new(border_box_width, grid_border_box_height),
         );
         grid_decoration.box_ownership = FragmentBoxOwnership::LayoutHelper;
+        grid_decoration.table_part = Some(FragmentTablePart::GridDecoration);
         grid_decoration.collapsed_table_border_participant = resolved.is_some();
         grid_decoration.offset = PhysicalOffset::new(LayoutUnit::zero(), block_cursor);
         grid_decoration.border = if style.border_collapse == BorderCollapse::Collapse {
@@ -2178,53 +2176,58 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
     } else {
         geometry_border.left + padding.left
     };
-    let mut column_inline_offset = table_inline_start + inline_spacing;
-    for (index, &column_id) in model.columns.iter().take(column_count).enumerate() {
-        let mut column = if structural_perimeter.is_some() {
-            Fragment::new_box(
-                column_id,
-                PhysicalSize::new(grid_border_box_width, grid_border_box_height),
-            )
+    // Blink's ColumnGeometriesBuilder retains one full-span positioning box
+    // per authored column/group, with the group preceding its child columns.
+    // The cells, rather than these boxes, determine the painted area below.
+    let mut column_offsets = Vec::with_capacity(column_count);
+    let mut column_cursor = table_inline_start + inline_spacing;
+    for &width in &track_widths {
+        column_offsets.push(column_cursor);
+        column_cursor = column_cursor + width + inline_spacing;
+    }
+    let mut column_sources: Vec<_> = model
+        .column_group_sources
+        .iter()
+        .map(|source| (source, true))
+        .chain(model.column_sources.iter().map(|source| (source, false)))
+        .filter(|(source, _)| source.start < column_count && source.span > 0)
+        .collect();
+    // Groups are disjoint in the repaired table model. For the same starting
+    // track a group precedes its first child; other sources follow grid order.
+    column_sources.sort_by_key(|(source, is_group)| (source.start, !is_group));
+    for (source, is_group) in column_sources {
+        let end = source.start.saturating_add(source.span).min(column_count);
+        let span = end - source.start;
+        let last = end - 1;
+        let width = column_offsets[last] + track_widths[last] - column_offsets[source.start];
+        let mut column = Fragment::new_box(source.node_id, PhysicalSize::new(width, cells_height));
+        column.table_part = Some(if is_group {
+            FragmentTablePart::ColumnGroup {
+                start_column: source.start,
+                span,
+            }
         } else {
-            Fragment::new_box(
-                column_id,
-                PhysicalSize::new(track_widths[index], cells_height),
-            )
-        };
+            FragmentTablePart::Column {
+                start_column: source.start,
+                span,
+            }
+        });
         column.border = BoxStrut::zero();
         column.collapsed_table_border_participant = resolved.is_some();
         column.padding = logical_padding(
-            &doc.node(column_id).style,
+            &doc.node(source.node_id).style,
             grid_outer_width,
             writing_direction,
         );
-        column.offset = if structural_perimeter.is_some() {
-            PhysicalOffset::new(LayoutUnit::zero(), block_cursor)
-        } else {
-            PhysicalOffset::new(
-                table_part_inline_offset(
-                    column_inline_offset,
-                    column.size.width,
-                    border_box_width,
-                    writing_direction,
-                ),
-                cells_top,
-            )
-        };
-        if clip_structural_backgrounds_to_cells {
-            column.decoration_clip_rects = row_starts
-                .iter()
-                .copied()
-                .zip(row_heights.iter().copied())
-                .map(|(row_top, row_height)| {
-                    PhysicalRect::new(
-                        PhysicalOffset::new(LayoutUnit::zero(), row_top - cells_top),
-                        PhysicalSize::new(track_widths[index], row_height),
-                    )
-                })
-                .collect();
-        }
-        column_inline_offset = column_inline_offset + track_widths[index] + inline_spacing;
+        column.offset = PhysicalOffset::new(
+            table_part_inline_offset(
+                column_offsets[source.start],
+                width,
+                border_box_width,
+                writing_direction,
+            ),
+            cells_top,
+        );
         children.push(column);
     }
 
@@ -2299,6 +2302,9 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         };
         shift_children(&mut cell.fragment, align_offset);
         cell.fragment.table_row_span = cell.slot.row_span;
+        cell.fragment.table_part = Some(FragmentTablePart::Cell {
+            column_index: cell.slot.column,
+        });
         let geometry = canonical_cell_geometry(
             cell_region(cell.slot),
             &canonical_columns,
@@ -2437,6 +2443,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             if !row_owns_authored_element_box(doc, &model.rows[index]) {
                 row.box_ownership = FragmentBoxOwnership::LayoutHelper;
             }
+            row.table_part = Some(FragmentTablePart::Row);
             row.border = BoxStrut::zero();
             row.collapsed_table_border_participant = resolved.is_some();
             row.paint_border_after_children = false;
@@ -2460,16 +2467,6 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
                 },
             );
             row.children = std::mem::take(&mut row_cells[index]);
-            if clip_structural_backgrounds_to_cells {
-                let mut track_left = inline_spacing;
-                for &track_width in &track_widths {
-                    row.decoration_clip_rects.push(PhysicalRect::new(
-                        PhysicalOffset::new(track_left, LayoutUnit::zero()),
-                        PhysicalSize::new(track_width, row_heights[index]),
-                    ));
-                    track_left = track_left + track_width + inline_spacing;
-                }
-            }
             row.oof_candidates = adopt_child_oof_candidates(&mut row.children);
             row.first_baseline =
                 (row_baselines[index] > LayoutUnit::zero()).then_some(row_baselines[index]);
@@ -2517,6 +2514,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             if !is_authored_row_group(doc, group_id) {
                 group.box_ownership = FragmentBoxOwnership::LayoutHelper;
             }
+            group.table_part = Some(FragmentTablePart::Section);
             group.border = BoxStrut::zero();
             group.collapsed_table_border_participant = resolved.is_some();
             group.collapsed_table_section = section_data;
@@ -2527,19 +2525,6 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             );
             group.offset = PhysicalOffset::new(table_content_left, group_top);
             group.children = row_fragments;
-            if clip_structural_backgrounds_to_cells {
-                for row in group_start..group_end_index {
-                    let local_top = row_starts[row] - group_top;
-                    let mut track_left = inline_spacing;
-                    for &track_width in &track_widths {
-                        group.decoration_clip_rects.push(PhysicalRect::new(
-                            PhysicalOffset::new(track_left, local_top),
-                            PhysicalSize::new(track_width, row_heights[row]),
-                        ));
-                        track_left = track_left + track_width + inline_spacing;
-                    }
-                }
-            }
             group.oof_candidates = adopt_child_oof_candidates(&mut group.children);
             crate::relative::apply_relative_offset(
                 &mut group,
@@ -2575,6 +2560,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
                 PhysicalSize::new(actual_grid_width, group_bottom - group_top),
             );
             section.box_ownership = FragmentBoxOwnership::LayoutHelper;
+            section.table_part = Some(FragmentTablePart::Section);
             section.skip_box_decoration = true;
             section.collapsed_table_border_participant = true;
             section.collapsed_table_section = Some(section_data);
@@ -2629,6 +2615,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         BoxStrut::zero()
     };
     table.margin = margin;
+    table.table_part = Some(FragmentTablePart::Table);
     table.children = children;
     table.skip_box_decoration = !model.captions.is_empty();
     table.collapsed_table_border_participant = resolved.is_some();
@@ -2994,6 +2981,78 @@ mod tests {
     }
 
     #[test]
+    fn column_background_sources_keep_full_spans_and_originating_cell_indices() {
+        for collapse in [BorderCollapse::Separate, BorderCollapse::Collapse] {
+            let mut doc = Document::new();
+            let table = doc.create_node(ElementTag::Table);
+            let group = doc.create_node(ElementTag::TableColumnGroup);
+            let column = doc.create_node(ElementTag::TableColumn);
+            let row = doc.create_node(ElementTag::TableRow);
+            let cell = doc.create_node(ElementTag::TableCell);
+            doc.append_child(doc.root(), table);
+            doc.append_child(table, group);
+            doc.append_child(group, column);
+            doc.append_child(table, row);
+            doc.append_child(row, cell);
+            doc.update_resolved_style(table, |style| {
+                style.display = Display::Table;
+                style.border_collapse = collapse;
+            });
+            doc.update_resolved_style(group, |style| style.display = Display::TableColumnGroup);
+            doc.update_resolved_style(column, |style| style.display = Display::TableColumn);
+            doc.update_resolved_style(row, |style| style.display = Display::TableRow);
+            doc.update_resolved_style(cell, |style| {
+                style.display = Display::TableCell;
+                style.width = Length::px(60.0);
+                style.height = Length::px(10.0);
+            });
+            doc.node_mut(column).table_col_span = 3;
+            doc.node_mut(cell).table_col_span = 3;
+            let fragment = table_layout(
+                &doc,
+                table,
+                &ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100)),
+            );
+            let sources: Vec<_> = fragment
+                .children
+                .iter()
+                .filter(|child| {
+                    child
+                        .table_part
+                        .is_some_and(|part| part.column_range().is_some())
+                })
+                .collect();
+            assert_eq!(
+                sources.len(),
+                2,
+                "one geometry per authored group/column, regardless of span"
+            );
+            assert_eq!(sources[0].node_id, group);
+            assert_eq!(sources[1].node_id, column);
+            for source in sources {
+                assert_eq!(source.table_part.unwrap().column_range(), Some(0..3));
+                assert_eq!(source.size.width, LayoutUnit::from_i32(60));
+                assert!(source.owns_element_box());
+            }
+            fn find_cell(fragment: &Fragment, id: NodeId) -> Option<&Fragment> {
+                if fragment.node_id == id
+                    && matches!(fragment.table_part, Some(FragmentTablePart::Cell { .. }))
+                {
+                    return Some(fragment);
+                }
+                fragment
+                    .children
+                    .iter()
+                    .find_map(|child| find_cell(child, id))
+            }
+            assert_eq!(
+                find_cell(&fragment, cell).unwrap().table_part,
+                Some(FragmentTablePart::Cell { column_index: 0 })
+            );
+        }
+    }
+
+    #[test]
     fn collapsed_column_groups_share_marker_order_before_the_table() {
         use crate::resolved_table_borders::ResolvedEdge;
 
@@ -3106,6 +3165,14 @@ mod tests {
         let fragment = table_layout(&doc, table, &space);
         assert_eq!(count_owned_boxes(&fragment, table), 1);
         assert_eq!(count_style_helpers(&fragment, table), 2);
+        assert_eq!(
+            fragment
+                .children
+                .iter()
+                .filter(|child| child.table_part == Some(FragmentTablePart::GridDecoration))
+                .count(),
+            1
+        );
         assert_eq!(count_owned_boxes(&fragment, caption), 1);
         assert_eq!(count_owned_boxes(&fragment, cell), 1);
     }
