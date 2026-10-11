@@ -2515,7 +2515,6 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         .map(|baseline| {
             grid_child_baseline_offset(doc, fragment.children.last().unwrap(), baseline)
         });
-    crate::block::apply_static_scroll_snap(doc, &mut fragment);
     overflow_from_children(&mut fragment, style);
     fragment
 }

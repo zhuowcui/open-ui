@@ -232,6 +232,10 @@ SUPPORTED_PROPERTIES = {
     'container', 'container-type', 'container-name', 'margin-trim',
     'scroll-marker-group', 'scroll-target-group',
     'scroll-snap-align', 'scroll-snap-type', 'scroll-snap-stop',
+    'scroll-padding', 'scroll-padding-top', 'scroll-padding-right',
+    'scroll-padding-bottom', 'scroll-padding-left',
+    'scroll-margin', 'scroll-margin-top', 'scroll-margin-right',
+    'scroll-margin-bottom', 'scroll-margin-left',
     # Replaced content and deterministic effects
     'object-fit', 'object-position', 'transform', 'transform-origin',
     'filter',
@@ -294,9 +298,6 @@ IGNORED_PROPERTIES = {
     'word-break', 'overflow-wrap', 'line-break', 'hyphens',
     'list-style', 'list-style-type', 'list-style-position',
     'cursor', 'pointer-events', 'user-select',
-    # `scroll-snap-stop` only changes traversal through intermediate snap
-    # positions; static snap geometry is emitted separately.
-    'scroll-snap-stop',
     # Print/page
     'print-color-adjust', 'image-rendering', 'size',
 }
@@ -7331,33 +7332,82 @@ def generate_single_style(
         if val in mapping:
             return f"{s}.scroll_target_group = {mapping[val]};"
 
+    # Snap inputs retain their complete computed state. They use Engine's
+    # ordinary scroll geometry and offsets, including later native mutations.
     if prop == 'scroll-snap-align':
         tokens = val.split()
-        if len(tokens) in (1, 2):
-            # SP19 stores the cohort's shared/inline alignment point.  All
-            # selected rows use identical one-value axis alignment.
-            mapping = {
-                'none': 'ScrollSnapAlign::None',
-                'start': 'ScrollSnapAlign::Start',
-                'center': 'ScrollSnapAlign::Center',
-                'end': 'ScrollSnapAlign::End',
-            }
-            if tokens[0] in mapping and (len(tokens) == 1 or tokens[1] == tokens[0]):
-                return f"{s}.scroll_snap_align = {mapping[tokens[0]]};"
+        mapping = {
+            'none': 'ScrollSnapAlign::None',
+            'start': 'ScrollSnapAlign::Start',
+            'center': 'ScrollSnapAlign::Center',
+            'end': 'ScrollSnapAlign::End',
+        }
+        if len(tokens) not in (1, 2) or not all(token in mapping for token in tokens):
+            return None
+        if len(tokens) == 1:
+            return f"{s}.scroll_snap_align = {mapping[tokens[0]]};"
+        return [
+            f"{s}.scroll_snap_align = ScrollSnapAlign::None;",
+            f"{s}.scroll_snap_align_block = Some({mapping[tokens[0]]});",
+            f"{s}.scroll_snap_align_inline = Some({mapping[tokens[1]]});",
+        ]
 
     if prop == 'scroll-snap-type':
         tokens = val.split()
-        if tokens:
-            mapping = {
-                'none': 'ScrollSnapAxis::None',
-                'x': 'ScrollSnapAxis::X',
-                'y': 'ScrollSnapAxis::Y',
-                'both': 'ScrollSnapAxis::Both',
-                'inline': 'ScrollSnapAxis::Inline',
-                'block': 'ScrollSnapAxis::Block',
-            }
-            if tokens[0] in mapping:
-                return f"{s}.scroll_snap_axis = {mapping[tokens[0]]};"
+        mapping = {
+            'none': 'ScrollSnapAxis::None',
+            'x': 'ScrollSnapAxis::X',
+            'y': 'ScrollSnapAxis::Y',
+            'both': 'ScrollSnapAxis::Both',
+            'inline': 'ScrollSnapAxis::Inline',
+            'block': 'ScrollSnapAxis::Block',
+        }
+        if not tokens or len(tokens) > 2 or tokens[0] not in mapping:
+            return None
+        if tokens[0] == 'none':
+            return f"{s}.scroll_snap_axis = ScrollSnapAxis::None;" if len(tokens) == 1 else None
+        if len(tokens) == 2 and tokens[1] not in {'mandatory', 'proximity'}:
+            return None
+        # Chromium147 ParseSingleValue serializes axis-only and explicit
+        # proximity identically. Mandatory must remain an explicit value.
+        strictness = 'Mandatory' if len(tokens) == 2 and tokens[1] == 'mandatory' else 'Proximity'
+        return [
+            f"{s}.scroll_snap_axis = {mapping[tokens[0]]};",
+            f"{s}.scroll_snap_strictness = ScrollSnapStrictness::{strictness};",
+        ]
+
+    if prop == 'scroll-snap-stop':
+        mapping = {'normal': 'ScrollSnapStop::Normal', 'always': 'ScrollSnapStop::Always'}
+        if val in mapping:
+            return f"{s}.scroll_snap_stop = {mapping[val]};"
+        return None
+
+    if prop in {'scroll-padding', 'scroll-margin'}:
+        tokens = _grid_tokens(val)
+        sides = _expand_four(tokens) if tokens else None
+        if not sides:
+            return None
+        lines = []
+        for side, value in zip(('top', 'right', 'bottom', 'left'), sides):
+            code = generate_single_style(f'{prop}-{side}', value, s, font_size, radius_basis)
+            if not code:
+                return None
+            lines.extend(code if isinstance(code, list) else [code])
+        return lines
+
+    if prop in {
+        'scroll-padding-top', 'scroll-padding-right', 'scroll-padding-bottom', 'scroll-padding-left',
+        'scroll-margin-top', 'scroll-margin-right', 'scroll-margin-bottom', 'scroll-margin-left',
+    }:
+        margin = prop.startswith('scroll-margin-')
+        if margin and ('%' in val or val == 'auto'):
+            return None
+        if not margin and re.fullmatch(r'-(?:\d+(?:\.\d*)?|\.\d+)(?:[a-zA-Z]+|%)?', val):
+            return None
+        length = parse_length(val, font_size)
+        if length:
+            return f"{s}.{prop.replace('-', '_')} = {length};"
+        return None
 
     # ── replaced content and deterministic effects ──
     if prop == 'object-fit':

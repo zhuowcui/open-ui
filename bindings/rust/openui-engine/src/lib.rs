@@ -1411,17 +1411,6 @@ impl Engine {
         if property.metadata().inherited || value.depends_on_font_metrics() {
             self.refresh_inherited_styles(node)?;
         }
-        if matches!(
-            property,
-            StyleProperty::ScrollSnapAxis
-                | StyleProperty::ScrollSnapStrictness
-                | StyleProperty::ScrollPaddingTop
-                | StyleProperty::ScrollPaddingRight
-                | StyleProperty::ScrollPaddingBottom
-                | StyleProperty::ScrollPaddingLeft
-        ) {
-            self.document.node_mut(node).native_scroll_snap_managed = true;
-        }
         let mut has_animation = false;
         for animation in self.animations.values_mut().filter(|animation| {
             animation.target == handle && animation.keyframes.property() == property
@@ -1441,7 +1430,9 @@ impl Engine {
     /// Apply a schema-generated computed longhand to a resolved snapshot.
     /// Omitted fields retain their computed defaults; they must not inherit
     /// again. This input freezes the current author declarations into computed
-    /// state. Native applications use `set_property` or framework setters to
+    /// state. Scroll snapping still uses the retained Engine layout barrier,
+    /// offsets and target identities. Native applications use `set_property` or
+    /// framework setters to
     /// retain declarations that respond to parent and viewport changes.
     #[doc(hidden)]
     pub fn set_renderer_style(
@@ -2004,11 +1995,17 @@ impl Engine {
                 if !value.is_finite() {
                     return Err(EngineError::Render("scroll offset must be finite".into()));
                 }
+                if self.document.node(node).scroll_left != value {
+                    self.queue_snap_end_axis(handle, 0);
+                }
                 self.document.node_mut(node).scroll_left = value;
             }
             RendererNodeState::ScrollTop(value) => {
                 if !value.is_finite() {
                     return Err(EngineError::Render("scroll offset must be finite".into()));
+                }
+                if self.document.node(node).scroll_top != value {
+                    self.queue_snap_end_axis(handle, 1);
                 }
                 self.document.node_mut(node).scroll_top = value;
             }
@@ -2226,6 +2223,7 @@ impl Engine {
         y: f32,
     ) -> Result<(), EngineError> {
         let node = self.resolve(handle)?;
+        self.scroll_buttons.pending_end_axes.remove(&handle);
         self.scroll_animations
             .retain(|_, animation| animation.target != handle);
         if (

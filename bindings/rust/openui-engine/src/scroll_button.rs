@@ -59,6 +59,10 @@ pub(crate) struct ScrollButtons {
     pub directions: HashMap<(NodeHandle, ScrollButtonDirection), NodeHandle>,
     pub snap_targets: HashMap<NodeHandle, [Option<NodeHandle>; 2]>,
     pub targeted_areas: HashMap<NodeHandle, NodeHandle>,
+    /// End-position requests awaiting their first complete layout. Snapshot
+    /// construction can precede attachment/resources; native callers resolve
+    /// endpoints immediately through the same selection operation.
+    pub pending_end_axes: HashMap<NodeHandle, [bool; 2]>,
     pub next_order: u64,
     pub dirty: bool,
 }
@@ -745,6 +749,10 @@ fn select_end_position(
             }
             position[axis] = result.offset;
             targets[axis] = Some(result.area.handle);
+        } else if axes[axis] {
+            // A completed proximity endpoint without a candidate has no
+            // committed snap target on that axis.
+            targets[axis] = None;
         }
     }
     (position, targets)
@@ -790,7 +798,6 @@ impl Engine {
             .insert_pseudo_element(node, PseudoElementKind::ScrollButton(direction));
         let button = self.register_native_node(pseudo);
         self.initialize_control(button, ElementTag::Button);
-        self.document.node_mut(node).native_scroll_snap_managed = true;
         let state = ScrollButtonState {
             origin,
             direction,
@@ -1080,6 +1087,9 @@ impl Engine {
         self.scroll_buttons
             .targeted_areas
             .retain(|origin, target| !removed.contains(origin) && !removed.contains(target));
+        self.scroll_buttons
+            .pending_end_axes
+            .retain(|origin, _| !removed.contains(origin));
         self.scroll_buttons.snap_targets.retain(|origin, targets| {
             for target in targets {
                 if target.is_some_and(|target| removed.contains(&target)) {
@@ -1454,27 +1464,45 @@ impl Engine {
         Ok(())
     }
 
-    /// Settle all native authored snap containers against the new layout,
+    pub(crate) fn queue_snap_end_axis(&mut self, origin: NodeHandle, axis: usize) {
+        self.scroll_buttons
+            .pending_end_axes
+            .entry(origin)
+            .or_default()[axis] = true;
+        self.scroll_animations
+            .retain(|_, animation| animation.target != origin);
+    }
+
+    /// Settle all authored snap containers against the new layout,
     /// retaining still-present target identities before distance selection.
     /// Called within the existing layout barrier, never recursively via update.
     pub(crate) fn settle_native_snap_after_layout(&mut self, root: &Fragment) -> bool {
         fn collect(
             fragment: &Fragment,
             document: &openui_dom::Document,
+            pending_nodes: &HashSet<NodeId>,
             out: &mut HashSet<NodeId>,
         ) {
+            let pending = pending_nodes.contains(&fragment.node_id);
             if fragment.owns_element_box()
                 && !fragment.node_id.is_none()
-                && document.node(fragment.node_id).native_scroll_snap_managed
+                && (document.node(fragment.node_id).style.scroll_snap_axis != ScrollSnapAxis::None
+                    || pending)
             {
                 out.insert(fragment.node_id);
             }
             for child in &fragment.children {
-                collect(child, document, out);
+                collect(child, document, pending_nodes, out);
             }
         }
+        let pending_nodes = self
+            .scroll_buttons
+            .pending_end_axes
+            .keys()
+            .filter_map(|origin| self.resolve(*origin).ok())
+            .collect();
         let mut origins = HashSet::new();
-        collect(root, &self.document, &mut origins);
+        collect(root, &self.document, &pending_nodes, &mut origins);
         let mut ordered: Vec<_> = origins.into_iter().collect();
         ordered.sort_by_key(|node| self.node_slots.get(node).copied().unwrap_or(u32::MAX));
         let mut changed = false;
@@ -1483,6 +1511,7 @@ impl Engine {
                 continue;
             };
             let origin = self.handle_for_slot(*index);
+            let requested_axes = self.scroll_buttons.pending_end_axes.remove(&origin);
             let geometry = match self.snap_geometry(root, origin) {
                 Ok(Some(value)) => value,
                 _ => continue,
@@ -1503,6 +1532,7 @@ impl Engine {
                 data.scroll_left - geometry.minimum[0],
                 data.scroll_top - geometry.minimum[1],
             ];
+            let has_prior_layout = self.scroll_buttons.snap_targets.contains_key(&origin);
             let old = self
                 .scroll_buttons
                 .snap_targets
@@ -1514,10 +1544,14 @@ impl Engine {
                 current,
                 geometry.port,
                 geometry.maximum,
-                geometry.axes,
+                requested_axes
+                    .filter(|_| has_prior_layout)
+                    .map_or(geometry.axes, |axes| {
+                        [axes[0] && geometry.axes[0], axes[1] && geometry.axes[1]]
+                    }),
                 geometry.strictness,
                 old,
-                true,
+                requested_axes.is_none(),
                 self.scroll_buttons.targeted_areas.get(&origin).copied(),
                 geometry.horizontal,
             );
@@ -1545,7 +1579,7 @@ impl Engine {
         y: f32,
     ) -> Result<(f32, f32), EngineError> {
         let node = self.resolve(origin)?;
-        if !self.document.node(node).native_scroll_snap_managed {
+        if self.document.node(node).style.scroll_snap_axis == ScrollSnapAxis::None {
             return Ok((x, y));
         }
         let Some(root) = self.latest_fragment.as_ref() else {
@@ -1755,6 +1789,10 @@ fn find_fragment(fragment: &Fragment, node: NodeId) -> Option<&Fragment> {
         .iter()
         .find_map(|child| find_fragment(child, node))
 }
+
+#[cfg(test)]
+#[path = "snapshot_scroll_snap_tests.rs"]
+mod snapshot_scroll_snap_tests;
 
 #[cfg(test)]
 mod tests {

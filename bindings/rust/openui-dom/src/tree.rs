@@ -220,10 +220,6 @@ pub struct NodeData {
     /// constraints and paint translates scrollable descendants by it.
     pub scroll_left: f32,
     pub scroll_top: f32,
-    /// Retained Engine scroll-snap state supplies offsets and target identity.
-    /// Such scrollers must not receive the renderer's legacy initial child
-    /// translation for a single static snap area.
-    pub native_scroll_snap_managed: bool,
 
     /// HTML table span metadata. Values are normalized to at least one by the
     /// porter; row span zero remains representable for HTML's "to row-group
@@ -308,7 +304,6 @@ impl NodeData {
             attributes: BTreeMap::new(),
             scroll_left: 0.0,
             scroll_top: 0.0,
-            native_scroll_snap_managed: false,
             table_col_span: 1,
             table_row_span: 1,
             replaced: None,

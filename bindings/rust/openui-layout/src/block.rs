@@ -23,9 +23,8 @@ use openui_geometry::{
 use openui_style::{
     BoxDecorationBreak, BoxSizing, BreakInside, BreakValue, Clear, ColumnSpan, ComputedStyle,
     ContentPosition, Direction, Display, Float, FontFamily, ItemPosition, LineHeight,
-    ListStylePosition, ListStyleType, MarginTrim, Overflow, Position, PositionArea,
-    ScrollSnapAlign, ScrollSnapAxis, TextAlign, TextEmphasisMark, VerticalAlign, WebkitBoxOrient,
-    WhiteSpace,
+    ListStylePosition, ListStyleType, MarginTrim, Overflow, Position, PositionArea, TextAlign,
+    TextEmphasisMark, VerticalAlign, WebkitBoxOrient, WhiteSpace,
 };
 
 use crate::constraint_space::ConstraintSpace;
@@ -5431,8 +5430,6 @@ pub(crate) fn block_layout_contents(
         FragmentKind::Box
     };
 
-    apply_static_scroll_snap(doc, &mut fragment);
-
     // Sticky descendants are constrained by their nearest scroll container,
     // not merely left at their normal-flow position.  At this point the
     // scrollport and every descendant containing block have final physical
@@ -5615,130 +5612,6 @@ fn suppress_nested_principal_decoration_duplicates(fragment: &mut Fragment) {
     }
 
     visit(fragment, &mut Vec::new(), None);
-}
-
-/// Resolve the deterministic initial snapshot for a scroll container with one
-/// unambiguous snap area. Multiple candidates retain the ordinary zero-scroll
-/// position; a unique authored snap area is aligned to the snapport exactly as
-/// Chromium does before the frozen SP19 screenshot.
-pub(crate) fn apply_static_scroll_snap(doc: &Document, scroll_container: &mut Fragment) {
-    if scroll_container.node_id.is_none() {
-        return;
-    }
-    if doc
-        .node(scroll_container.node_id)
-        .native_scroll_snap_managed
-    {
-        return;
-    }
-    let container_style = &doc.node(scroll_container.node_id).style;
-    let axis = container_style.scroll_snap_axis;
-    if axis == ScrollSnapAxis::None {
-        return;
-    }
-
-    fn collect(
-        doc: &Document,
-        fragment: &Fragment,
-        parent_offset: PhysicalOffset,
-        candidates: &mut Vec<(NodeId, PhysicalOffset, PhysicalSize, ScrollSnapAlign)>,
-    ) {
-        let offset = PhysicalOffset::new(
-            parent_offset.left + fragment.offset.left,
-            parent_offset.top + fragment.offset.top,
-        );
-        if !fragment.node_id.is_none() {
-            let style = &doc.node(fragment.node_id).style;
-            if style.scroll_snap_align != ScrollSnapAlign::None
-                && !candidates
-                    .iter()
-                    .any(|(node, _, _, _)| *node == fragment.node_id)
-            {
-                candidates.push((
-                    fragment.node_id,
-                    offset,
-                    fragment.size,
-                    style.scroll_snap_align,
-                ));
-            }
-            if style.scroll_snap_axis != ScrollSnapAxis::None {
-                return;
-            }
-        }
-        for child in &fragment.children {
-            collect(doc, child, offset, candidates);
-        }
-    }
-
-    let mut candidates = Vec::new();
-    for child in &scroll_container.children {
-        collect(doc, child, PhysicalOffset::zero(), &mut candidates);
-    }
-    if candidates.len() != 1 {
-        return;
-    }
-    let (_, target_offset, target_size, alignment) = candidates[0];
-    let horizontal_inline = container_style.writing_mode.is_horizontal();
-    let snap_x = matches!(axis, ScrollSnapAxis::X | ScrollSnapAxis::Both)
-        || (axis == ScrollSnapAxis::Inline && horizontal_inline)
-        || (axis == ScrollSnapAxis::Block && !horizontal_inline);
-    let snap_y = matches!(axis, ScrollSnapAxis::Y | ScrollSnapAxis::Both)
-        || (axis == ScrollSnapAxis::Block && horizontal_inline)
-        || (axis == ScrollSnapAxis::Inline && !horizontal_inline);
-
-    let snapport_left = scroll_container.border.left;
-    let snapport_top = scroll_container.border.top;
-    let snapport_width = (scroll_container.size.width
-        - scroll_container.border.left
-        - scroll_container.border.right)
-        .clamp_negative_to_zero();
-    let snapport_height = (scroll_container.size.height
-        - scroll_container.border.top
-        - scroll_container.border.bottom)
-        .clamp_negative_to_zero();
-    let aligned_delta = |start: LayoutUnit,
-                         extent: LayoutUnit,
-                         target_start: LayoutUnit,
-                         target_extent: LayoutUnit|
-     -> LayoutUnit {
-        let desired = match alignment {
-            ScrollSnapAlign::Start => start,
-            ScrollSnapAlign::Center => start + extent / 2,
-            ScrollSnapAlign::End => start + extent,
-            ScrollSnapAlign::None => return LayoutUnit::zero(),
-        };
-        let target = match alignment {
-            ScrollSnapAlign::Start => target_start,
-            ScrollSnapAlign::Center => target_start + target_extent / 2,
-            ScrollSnapAlign::End => target_start + target_extent,
-            ScrollSnapAlign::None => target_start,
-        };
-        desired - target
-    };
-    let delta_x = if snap_x {
-        aligned_delta(
-            snapport_left,
-            snapport_width,
-            target_offset.left,
-            target_size.width,
-        )
-    } else {
-        LayoutUnit::zero()
-    };
-    let delta_y = if snap_y {
-        aligned_delta(
-            snapport_top,
-            snapport_height,
-            target_offset.top,
-            target_size.height,
-        )
-    } else {
-        LayoutUnit::zero()
-    };
-    for child in &mut scroll_container.children {
-        child.offset.left = child.offset.left + delta_x;
-        child.offset.top = child.offset.top + delta_y;
-    }
 }
 
 pub(crate) fn apply_sticky_descendants_in_scrollport(
@@ -19773,7 +19646,6 @@ fn layout_inline_multicol(
         container.padding = *padding;
         container.has_overflow_clip = true;
     }
-    apply_static_scroll_snap(doc, &mut container);
     container
 }
 
