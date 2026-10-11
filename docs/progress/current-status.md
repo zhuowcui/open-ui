@@ -20,37 +20,52 @@ product. Waves W0 through W10 are locally committed. W11 source packaging and
 documentation are implemented, but final external and hardware qualifications
 remain open.
 
-## Fractional intrinsic text widths (scoped verification)
+## Fractional intrinsic text widths (rejected after full verification)
 
-The shared intrinsic-size conversion now preserves small positive font advances when rounding up to the layout grid, following pinned Chromium. A public Rust guard creates an inline block, changes its font alias through a Rust callback and checks neighboring fixed-width floats.
+The strict-ceil conversion is rejected in its current form. The complete
+original and expanded censuses each lose **21 exact comparisons**, gain none,
+and worsen **23 comparisons** against the preceding applied renderer. Against
+accepted `98d18982`, each has **24 worsened comparisons**. The repair must
+preserve the required native fractional-width behavior and fix the regressions.
+The cause has not yet been established by a reduced geometry comparison.
 
-The clean font probe at `f7d5e313` measures **180/210 bounds** exact. The
-strict-ceil diagnostic trial measures **190/210**, with **ten gains and no
-losses**, at all five scales. All **15 app pictures remain byte-identical**
-and none are yet Chromium-exact. Same-byte font aliases, independent process
-and unchanged-frame repeats, two Rust callbacks and weak teardown pass.
-All **1,181 layout/text/paint tests and three public Rust API tests** pass.
-The previous normalization-only assertion is replaced by the measured native
-application guard. The 1,470 direct font samples remain diagnostics; they do
-not capture Chromium's internal strike settings or Engine inline segmentation.
+At clean `d6d9dfe9`,
+the consuming Rust app verifies **190/210 bounds**, reproducing the dirty
+trial exactly. This retains ten bounds gained from the preceding font probe,
+with no lost bounds. All **15 pictures remain byte-identical**, with **0/15**
+whole images exact. Same-byte aliases, different faces, two Rust callbacks,
+independent processes, unchanged frames and weak teardown pass. All **1,181
+layout/text/paint tests and three public Rust API tests** pass.
 
-The affected 342-case sweep measures **1270/1,368 exact**, with
-**98 existing differences**, zero errors, 0
-exact losses and 0 worsened differences. Focused **640/640**
-and primitive **960/960** are exact. All **2,968 rows**, fresh
-compiled libraries and unchanged Chromium reference fields are independently
-audited. Every owner and audit is terminal and reaped before later changes.
-These are source-attributed diagnostics from a dirty trial. Current clean-source
-full original and expanded qualification remains pending. The last complete
-clean census remains **21,350/22,924 original** and **22,153/23,728 expanded**
-exact, with zero errors; both pixel gates still fail.
+Fresh complete CPU verification measures **21,329/22,924 original**
+and **22,132/23,728 expanded** exact, with **1,595 /
+1,596 differences**, zero errors and actual exits **1 / 1**.
+Focused **640/640** and primitive **960/960** are exact.
+All **48,252 rows**, fresh linked libraries and unchanged Chromium reference
+fields are independently audited. Owners and audits are terminal and reaped
+before later source or target changes.
+
+Against preceding applied `81381713`, the original census gains
+**0**, loses **21** and worsens **23**;
+the expanded census gains **0**, loses
+**21** and worsens **23**.
+The required comparison against accepted `98d18982` still has
+**21 exact losses and 24 worsened original differences**;
+its strict nonregression gate remains failed. Scoped checks did not detect
+these regressions and do not replace this
+global gate. There are **890 residual original IDs**,
+**890 without reviewed ownership entries**.
 
 Open UI never executes JavaScript. Every needed element operation must be
 implemented in the shared Rust Engine and callable through public native Rust
 APIs and Rust callbacks. Chromium alone defines expected pixels; old Open UI
-screenshots preserve history. Complete font/control behavior, every required
-native API, reviewed residual ownership, compositor/3D, hardware and release
-qualification remain open. [Immutable evidence](../renderer/generated/native-strict-intrinsic-ceil-v1.json).
+images preserve history. Remaining font/control behavior, every required native
+API, reviewed residual ownership, compositor/3D, hardware and release checks
+remain open. No complete renderer, native API or release pass is claimed.
+Source review also found no public `Element` operation for creating, styling
+or activating scroll buttons; internal pseudo-element insertion does not
+qualify that application API.
+[Immutable clean evidence](../renderer/generated/native-strict-intrinsic-ceil-v2.json). The earlier dirty trial remains unchanged.
 
 ## Cleared empty boxes (clean verification; pixel gate still failed)
 
