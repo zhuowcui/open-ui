@@ -76,6 +76,7 @@ pub(crate) struct ListenerRef {
 #[derive(Clone)]
 pub(crate) struct ListenerRecord {
     pub id: u64,
+    pub native_registration_id: u64,
     pub node: NodeHandle,
     pub event_type: u32,
     pub capture: bool,
@@ -267,28 +268,65 @@ pub(crate) fn ffi_value<T: Copy>(
 }
 
 pub(crate) fn register(handle: LocalHandle) -> Result<usize, ApiError> {
-    let token = NEXT_TOKEN.fetch_add(16, Ordering::Relaxed);
-    if token > isize::MAX as usize - 16 {
-        return Err(ApiError::new(
-            OuiStatus::OutOfMemory,
-            "opaque handle space exhausted",
-        ));
-    }
-    let kind = handle.kind();
+    register_with_commit(handle, |_| Ok(()))
+}
+
+/// Acquire all fallible ownership storage before committing related state.
+/// `commit` must not invoke application callbacks or reenter the registry; an
+/// error must leave its related state unchanged. Skipped tokens are never reused.
+pub(crate) fn register_with_commit(
+    handle: LocalHandle,
+    commit: impl FnOnce(usize) -> Result<(), ApiError>,
+) -> Result<usize, ApiError> {
+    register_with_factory(|token| {
+        commit(token)?;
+        Ok(handle)
+    })
+}
+
+/// Reserve ownership storage before creating anything whose rollback would be
+/// fallible. The factory follows the same no-callback/no-reentry commit rules.
+pub(crate) fn register_with_factory(
+    create: impl FnOnce(usize) -> Result<LocalHandle, ApiError>,
+) -> Result<usize, ApiError> {
     LOCAL_HANDLES.with(|handles| {
-        handles.borrow_mut().insert(token, handle);
-    });
-    global_handles()
-        .lock()
-        .map_err(|_| ApiError::new(OuiStatus::Internal, "handle registry is poisoned"))?
-        .insert(
+        let mut local = handles
+            .try_borrow_mut()
+            .map_err(|_| ApiError::new(OuiStatus::Reentrant, "handle registry is borrowed"))?;
+        let mut global = global_handles()
+            .lock()
+            .map_err(|_| ApiError::new(OuiStatus::Internal, "handle registry is poisoned"))?;
+        local.try_reserve(1).map_err(|_| {
+            ApiError::new(
+                OuiStatus::OutOfMemory,
+                "local handle registry allocation failed",
+            )
+        })?;
+        global.try_reserve(1).map_err(|_| {
+            ApiError::new(
+                OuiStatus::OutOfMemory,
+                "global handle registry allocation failed",
+            )
+        })?;
+        let token = NEXT_TOKEN
+            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+                value
+                    .checked_add(16)
+                    .filter(|next| *next <= isize::MAX as usize)
+            })
+            .map_err(|_| ApiError::new(OuiStatus::OutOfMemory, "opaque handle space exhausted"))?;
+        let handle = create(token)?;
+        let kind = handle.kind();
+        local.insert(token, handle);
+        global.insert(
             token,
             GlobalHandle {
                 thread: std::thread::current().id(),
                 kind,
             },
         );
-    Ok(token)
+        Ok(token)
+    })
 }
 
 fn validate(address: usize, expected: HandleKind) -> Result<(), ApiError> {
@@ -329,24 +367,114 @@ pub(crate) fn get(address: usize, expected: HandleKind) -> Result<LocalHandle, A
 }
 
 pub(crate) fn destroy(address: usize, expected: HandleKind) -> Result<LocalHandle, ApiError> {
-    validate(address, expected)?;
-    let removed = LOCAL_HANDLES.with(|handles| {
-        handles
+    destroy_with_commit(address, expected, |_| Ok(()))
+}
+
+/// Like registration, destruction commits related state and both registries
+/// only after all fallible guards are held. The returned owner drops after the
+/// guards are released; no destructor or application callback runs under them.
+pub(crate) fn destroy_with_commit(
+    address: usize,
+    expected: HandleKind,
+    commit: impl FnOnce(&LocalHandle) -> Result<(), ApiError>,
+) -> Result<LocalHandle, ApiError> {
+    if address == 0 {
+        return Err(ApiError::new(OuiStatus::InvalidArgument, "null handle"));
+    }
+    LOCAL_HANDLES.with(|handles| {
+        let mut local = handles
             .try_borrow_mut()
-            .map_err(|_| ApiError::new(OuiStatus::Reentrant, "handle registry is borrowed"))?
+            .map_err(|_| ApiError::new(OuiStatus::Reentrant, "handle registry is borrowed"))?;
+        let mut global = global_handles()
+            .lock()
+            .map_err(|_| ApiError::new(OuiStatus::Internal, "handle registry is poisoned"))?;
+        let metadata = global.get(&address).ok_or_else(|| {
+            ApiError::new(OuiStatus::InvalidHandle, "unknown or destroyed handle")
+        })?;
+        if metadata.thread != std::thread::current().id() {
+            return Err(ApiError::new(
+                OuiStatus::WrongThread,
+                "handle used from a thread other than its owner",
+            ));
+        }
+        if metadata.kind != expected {
+            return Err(ApiError::new(
+                OuiStatus::InvalidHandle,
+                "opaque handle has the wrong type",
+            ));
+        }
+        let owner = local
+            .get(&address)
+            .ok_or_else(|| ApiError::new(OuiStatus::InvalidHandle, "handle is unavailable"))?;
+        commit(owner)?;
+        let removed = local
             .remove(&address)
-            .ok_or_else(|| ApiError::new(OuiStatus::InvalidHandle, "handle is unavailable"))
-    })?;
-    global_handles()
-        .lock()
-        .map_err(|_| ApiError::new(OuiStatus::Internal, "handle registry is poisoned"))?
-        .remove(&address);
-    Ok(removed)
+            .expect("validated owner remains live without callbacks");
+        global.remove(&address);
+        Ok(removed)
+    })
 }
 
 #[cfg(test)]
 mod miri_handle_tests {
     use super::*;
+
+    #[test]
+    fn failed_registry_commit_never_publishes_or_consumes_ownership() {
+        let minted = Cell::new(0);
+        let error = register_with_commit(LocalHandle::Buffer(Rc::new(vec![1])), |token| {
+            minted.set(token);
+            Err(ApiError::new(OuiStatus::InvalidState, "commit rejected"))
+        })
+        .unwrap_err();
+        assert_eq!(error.status, OuiStatus::InvalidState);
+        assert_eq!(
+            get(minted.get(), HandleKind::Buffer).err().unwrap().status,
+            OuiStatus::InvalidHandle
+        );
+
+        let token = register(LocalHandle::Buffer(Rc::new(vec![2]))).unwrap();
+        assert_ne!(token, minted.get());
+        let error = destroy_with_commit(token, HandleKind::Buffer, |_| {
+            Err(ApiError::new(
+                OuiStatus::Reentrant,
+                "related storage borrowed",
+            ))
+        })
+        .err()
+        .unwrap();
+        assert_eq!(error.status, OuiStatus::Reentrant);
+        assert!(matches!(
+            get(token, HandleKind::Buffer),
+            Ok(LocalHandle::Buffer(_))
+        ));
+        destroy(token, HandleKind::Buffer).unwrap();
+    }
+
+    #[test]
+    fn borrowed_local_registry_rejects_register_and_preserves_destroy_owner() {
+        let token = register(LocalHandle::Buffer(Rc::new(vec![3]))).unwrap();
+        LOCAL_HANDLES.with(|handles| {
+            let held = handles.borrow();
+            assert_eq!(
+                register(LocalHandle::Buffer(Rc::new(vec![4])))
+                    .err()
+                    .unwrap()
+                    .status,
+                OuiStatus::Reentrant
+            );
+            assert_eq!(
+                destroy(token, HandleKind::Buffer).err().unwrap().status,
+                OuiStatus::Reentrant
+            );
+            assert!(held.contains_key(&token));
+        });
+        assert!(matches!(
+            get(token, HandleKind::Buffer),
+            Ok(LocalHandle::Buffer(_))
+        ));
+        destroy(token, HandleKind::Buffer).unwrap();
+    }
 
     #[test]
     fn opaque_handles_reject_wrong_kind_thread_and_reuse() {

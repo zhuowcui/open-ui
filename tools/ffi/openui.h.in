@@ -1196,6 +1196,93 @@ OuiStatus oui_element_associated_form_v1(OuiElement* element, OuiElement** out_f
  * oui_element_associated_form_v1. No layout, event dispatch or scripts run. */
 OuiStatus oui_element_parent_v1(OuiElement* element, OuiElement** out_parent);
 
+/* Native retained scroll buttons. Physical and logical directions remain
+ * distinct identities; logical directions resolve through the origin's writing
+ * mode. Every origin/direction pair is unique. Controls follow their origin
+ * through moves, detachment and removal; they cannot be moved independently. */
+typedef enum OuiScrollButtonDirectionV1 {
+  OUI_SCROLL_BUTTON_UP = 0,
+  OUI_SCROLL_BUTTON_RIGHT = 1,
+  OUI_SCROLL_BUTTON_DOWN = 2,
+  OUI_SCROLL_BUTTON_LEFT = 3,
+  OUI_SCROLL_BUTTON_BLOCK_START = 4,
+  OUI_SCROLL_BUTTON_BLOCK_END = 5,
+  OUI_SCROLL_BUTTON_INLINE_START = 6,
+  OUI_SCROLL_BUTTON_INLINE_END = 7
+} OuiScrollButtonDirectionV1;
+typedef enum OuiScrollButtonAvailabilityV1 {
+  OUI_SCROLL_BUTTON_AVAILABLE = 0,
+  OUI_SCROLL_BUTTON_BOUNDARY = 1,
+  OUI_SCROLL_BUTTON_NO_SCROLLPORT = 2,
+  OUI_SCROLL_BUTTON_AUTHORED_DISABLED = 3,
+  OUI_SCROLL_BUTTON_UNSUPPORTED = 4
+} OuiScrollButtonAvailabilityV1;
+typedef enum OuiScrollSnapStrictnessV1 {
+  OUI_SCROLL_SNAP_MANDATORY = 0,
+  OUI_SCROLL_SNAP_PROXIMITY = 1
+} OuiScrollSnapStrictnessV1;
+typedef enum OuiScrollButtonSnapPhaseV1 {
+  OUI_SCROLL_BUTTON_CURRENT_SNAP = 0,
+  OUI_SCROLL_BUTTON_PREVIEW_SNAP = 1
+} OuiScrollButtonSnapPhaseV1;
+/* Initialize struct_size and abi_version before querying. Owned numerical
+ * values use logical CSS pixels. has_target=0 makes target_x/target_y zero.
+ * The current and preview node identities use the separate owned-alias query.
+ * Layout is resolved before the snapshot. Errors leave all bytes unchanged;
+ * bytes beyond the current structure are preserved. No handle is retained in
+ * this copied structure; its contents survive mutation/document destruction. */
+typedef struct OuiScrollButtonStateV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t direction;
+  uint32_t availability;
+  uint8_t enabled;
+  uint8_t has_target;
+  uint8_t reserved[6];
+  double current_x;
+  double current_y;
+  double target_x;
+  double target_y;
+} OuiScrollButtonStateV1;
+/* All operations require owning-thread live handles. Outputs are writable
+ * caller storage and remain unchanged on error. Creation and queries return
+ * independently owned OuiElement aliases, released with oui_element_destroy.
+ * Destroying an alias leaves the control retained; oui_element_remove removes
+ * the control and invalidates every alias. The document must remain live.
+ * Missing directions and absent snap targets return OUI_OK and NULL. */
+OuiStatus oui_element_create_scroll_button_v1(OuiElement* origin, uint32_t direction, OuiElement** out_button);
+OuiStatus oui_element_get_scroll_button_v1(OuiElement* origin, uint32_t direction, OuiElement** out_button);
+OuiStatus oui_scroll_button_get_origin_v1(OuiElement* button, OuiElement** out_origin);
+OuiStatus oui_scroll_button_set_direction_v1(OuiElement* button, uint32_t direction);
+OuiStatus oui_scroll_button_get_state_v1(OuiElement* button, OuiScrollButtonStateV1* out_state);
+/* axis is physical X=0 or Y=1; phase selects committed or next-page identities.
+ * The shared Engine resolves layout before reading these identities. */
+OuiStatus oui_scroll_button_get_snap_target_v1(OuiElement* button, uint32_t axis, uint32_t phase, OuiElement** out_target);
+/* UNSUPPORTED is an open native behavior gap. This copies its reason as UTF-8
+ * without a terminator; other availability states return an empty string.
+ * NULL/zero capacity queries the required length. BUFFER_TOO_SMALL reports the
+ * required length and leaves destination bytes unchanged. */
+OuiStatus oui_scroll_button_copy_unavailable_reason_v1(OuiElement* button, uint8_t* destination, size_t capacity, size_t* out_length);
+/* Use ordinary element APIs for text, properties, disabled and aria-label.
+ * Set native appearance to 0 for author decoration or 1 for native decoration.
+ * Register listeners on the origin: public event targets and activeElement are
+ * the origin, while the Engine retains the button's hit/default-action identity.
+ * Activation shares the Rust cancelable click/accessibility default path; Enter
+ * and Space use key-down. Scroll activation emits no input/change events.
+ * Callbacks run after Engine/platform borrows end; the existing listener and
+ * user_data ownership/thread rules apply. Safe from an owning-thread callback. */
+OuiStatus oui_scroll_button_activate_v1(OuiElement* button);
+OuiStatus oui_element_set_native_appearance_v1(OuiElement* control, uint8_t enabled);
+OuiStatus oui_element_set_scroll_snap_strictness_v1(OuiElement* origin, uint32_t strictness);
+/* Explicit native end-of-scroll barrier. The shared Engine chooses the snap
+ * destination from current geometry and preserves committed target identity.
+ * out_changed is 0 or 1 and is written only on success. */
+OuiStatus oui_element_settle_scroll_snap_v1(OuiElement* origin, uint8_t* out_changed);
+/* Select an authored descendant as the preference for snap tie-breaking.
+ * NULL clears the preference. This starts no scroll and emits no event.
+ * Non-NULL target must be live and belong to the origin's document. */
+OuiStatus oui_element_set_scroll_snap_target_v1(OuiElement* origin, OuiElement* target);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif

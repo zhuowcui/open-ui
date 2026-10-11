@@ -114,6 +114,10 @@
       "align": 4,
       "size": 16
     },
+    "OuiScrollButtonStateV1": {
+      "align": 8,
+      "size": 56
+    },
     "OuiScrollMetricsV1": {
       "align": 8,
       "size": 40

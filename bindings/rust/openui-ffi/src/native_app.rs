@@ -6,6 +6,9 @@ pub(crate) fn native_error(error: openui::Error) -> ApiError {
     match error {
         openui::Error::Engine(error) => error.into(),
         openui::Error::ReentrantMutation => ApiError::new(OuiStatus::Reentrant, error.to_string()),
+        openui::Error::Io(error) if error.kind() == std::io::ErrorKind::OutOfMemory => {
+            ApiError::new(OuiStatus::OutOfMemory, error.to_string())
+        }
         openui::Error::InvalidArgument(message) => invalid(message),
         _ => ApiError::new(OuiStatus::InvalidState, error.to_string()),
     }
@@ -20,6 +23,7 @@ pub(crate) fn app_state(app: *mut OuiApp) -> Result<Rc<AppState>, ApiError> {
 
 pub(crate) fn dispatch_native_listener(
     state: &Rc<DocumentState>,
+    listener_id: u64,
     node: NodeHandle,
     target: NodeHandle,
     native: &openui::Event,
@@ -90,13 +94,7 @@ pub(crate) fn dispatch_native_listener(
     let _event_scope = super::event_properties::EventPropertiesScope::new(state, native, &event);
     let _focus_scope = super::focus_events::FocusEventScope::new(state, native, &event);
     let _input_scope = super::input_events::InputEventScope::new(state, native, &event);
-    match capture {
-        Some(capture) => invoke_event_listeners(state, node, capture, &mut event)?,
-        None => {
-            invoke_event_listeners(state, node, true, &mut event)?;
-            invoke_event_listeners(state, node, false, &mut event)?;
-        }
-    }
+    invoke_event_listener(state, listener_id, node, capture, &mut event)?;
     if event.flags & OUI_EVENT_FLAG_DEFAULT_PREVENTED != 0 {
         native.prevent_default();
     }
@@ -106,6 +104,49 @@ pub(crate) fn dispatch_native_listener(
         native.stop_propagation();
     }
     Ok(())
+}
+
+/// One name per C event kind. The shared native listener adapter also matches
+/// the historical mouse aliases for pointer registrations.
+pub(crate) fn native_event_name(event_type: u32) -> Option<&'static str> {
+    Some(match event_type {
+        1 => "pointerdown",
+        2 => "pointerup",
+        3 => "pointermove",
+        4 => "click",
+        5 => "wheel",
+        6 => "keydown",
+        7 => "keyup",
+        8 => "textinput",
+        9 => "compositionstart",
+        10 => "compositionupdate",
+        11 => "compositionend",
+        12 => "focus",
+        13 => "blur",
+        14 => "pointerenter",
+        15 => "pointerleave",
+        16 => "input",
+        17 => "change",
+        18 => "beforeinput",
+        19 => "scroll",
+        20 => "animationstart",
+        21 => "animationiteration",
+        22 => "animationend",
+        23 => "animationcancel",
+        24 => "pointercancel",
+        25 => "focusin",
+        26 => "focusout",
+        27 => "select",
+        28 => "selectionchange",
+        _ => return None,
+    })
+}
+
+pub(crate) fn callback_error(error: ApiError) -> openui::Error {
+    match error.status {
+        OuiStatus::Reentrant => openui::Error::ReentrantMutation,
+        _ => openui::Error::Platform(error.message),
+    }
 }
 
 thread_local! {

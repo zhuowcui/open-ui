@@ -7,6 +7,8 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
 mod accessibility_snapshot;
+#[cfg(test)]
+mod copy_output_tests;
 mod editing_command;
 #[cfg(test)]
 mod element_relation_tests;
@@ -17,10 +19,15 @@ mod focus_events;
 mod focus_tests;
 mod generated;
 mod input_events;
+#[cfg(test)]
+mod listener_lifetime_tests;
 mod native_app;
 #[cfg(test)]
 mod native_app_tests;
 mod registry;
+mod scroll_button;
+#[cfg(test)]
+mod scroll_button_tests;
 mod types;
 mod value;
 
@@ -30,6 +37,14 @@ pub use event_properties::oui_event_properties_v1;
 pub use focus_events::{oui_document_focused_element_v1, oui_event_focus_info_v1};
 pub use input_events::oui_event_input_info_v1;
 pub use native_app::{oui_app_request_exit, oui_app_run};
+pub use scroll_button::{
+    oui_element_create_scroll_button_v1, oui_element_get_scroll_button_v1,
+    oui_element_set_native_appearance_v1, oui_element_set_scroll_snap_strictness_v1,
+    oui_element_set_scroll_snap_target_v1, oui_element_settle_scroll_snap_v1,
+    oui_scroll_button_activate_v1, oui_scroll_button_copy_unavailable_reason_v1,
+    oui_scroll_button_get_origin_v1, oui_scroll_button_get_snap_target_v1,
+    oui_scroll_button_get_state_v1, oui_scroll_button_set_direction_v1,
+};
 pub use types::*;
 
 use generated::{property_from_raw, valid_event_type};
@@ -100,19 +115,9 @@ fn write_element_handle(
     if out.is_null() {
         return Err(invalid("output element pointer is null"));
     }
-    let token = register(LocalHandle::Element(ElementRef {
-        document: Rc::downgrade(state),
-        node,
-    }))?;
-    state
-        .element_handles
-        .try_borrow_mut()
-        .map_err(|_| ApiError::new(OuiStatus::Reentrant, "element handle map is borrowed"))?
-        .entry(node)
-        .or_default()
-        .push(token);
+    let token = focus_events::owned_element_handle(state, node)?;
     // SAFETY: the caller guarantees writable storage for one opaque pointer.
-    unsafe { ptr::write(out, token as *mut OuiElement) };
+    unsafe { ptr::write(out, token) };
     Ok(())
 }
 
@@ -144,17 +149,6 @@ fn new_document(config: &OuiDocumentConfig) -> Result<Rc<DocumentState>, ApiErro
         element_handles: RefCell::new(std::collections::HashMap::new()),
         animation_events: RefCell::new(Vec::new()),
     });
-    let weak = Rc::downgrade(&state);
-    state
-        .native
-        .set_foreign_event_handler(Rc::new(move |node, target, event, capture| {
-            if let Some(state) = weak.upgrade() {
-                native_app::dispatch_native_listener(&state, node, target, event, capture)
-                    .map_err(|error| openui::Error::Platform(error.message))?;
-            }
-            Ok(())
-        }))
-        .map_err(native_app::native_error)?;
     Ok(state)
 }
 
@@ -380,6 +374,9 @@ fn copy_bytes_to_c(
     if out_length.is_null() {
         return Err(invalid(format!("{label} length output is null")));
     }
+    if destination.is_null() && capacity != 0 {
+        return Err(invalid(format!("{label} destination is null")));
+    }
     // SAFETY: caller supplies writable storage for one size_t.
     unsafe { ptr::write(out_length, value.len()) };
     if destination.is_null() && capacity == 0 {
@@ -392,9 +389,6 @@ fn copy_bytes_to_c(
         ));
     }
     if !value.is_empty() {
-        if destination.is_null() {
-            return Err(invalid(format!("{label} destination is null")));
-        }
         // SAFETY: capacity and null were validated and buffers do not overlap.
         unsafe { ptr::copy_nonoverlapping(value.as_ptr(), destination, value.len()) };
     }
@@ -411,6 +405,9 @@ fn copy_array_to_c<T: Copy>(
     if out_count.is_null() {
         return Err(invalid(format!("{label} count output is null")));
     }
+    if destination.is_null() && capacity != 0 {
+        return Err(invalid(format!("{label} destination is null")));
+    }
     // SAFETY: caller supplies writable storage for one size_t.
     unsafe { ptr::write(out_count, value.len()) };
     if destination.is_null() && capacity == 0 {
@@ -423,9 +420,6 @@ fn copy_array_to_c<T: Copy>(
         ));
     }
     if !value.is_empty() {
-        if destination.is_null() {
-            return Err(invalid(format!("{label} destination is null")));
-        }
         // SAFETY: element capacity and null were validated.
         unsafe { ptr::copy_nonoverlapping(value.as_ptr(), destination, value.len()) };
     }
@@ -1290,21 +1284,48 @@ pub extern "C" fn oui_element_destroy(element_handle: *mut OuiElement) -> OuiSta
     ffi(|| {
         let element = element(element_handle as usize)?;
         if let Some(state) = element.document.upgrade() {
-            state
+            let mut listeners = state
                 .listeners
                 .try_borrow_mut()
-                .map_err(|_| ApiError::new(OuiStatus::Reentrant, "listener list is borrowed"))?
-                .retain(|record| record.element_address != element_handle as usize);
-            if let Ok(mut handles) = state.element_handles.try_borrow_mut() {
+                .map_err(|_| ApiError::new(OuiStatus::Reentrant, "listener list is borrowed"))?;
+            let mut handles = state.element_handles.try_borrow_mut().map_err(|_| {
+                ApiError::new(OuiStatus::Reentrant, "element handle map is borrowed")
+            })?;
+            let mut native_ids = Vec::new();
+            native_ids.try_reserve(listeners.len()).map_err(|_| {
+                ApiError::new(OuiStatus::OutOfMemory, "listener removal allocation failed")
+            })?;
+            native_ids.extend(
+                listeners
+                    .iter()
+                    .filter(|record| record.element_address == element_handle as usize)
+                    .map(|record| record.native_registration_id),
+            );
+            let mut removed_native = None;
+            registry::destroy_with_commit(element_handle as usize, HandleKind::Element, |_| {
+                // Extract callback owners without dropping arbitrary captures
+                // while the native/C lists, alias map or registries are borrowed.
+                removed_native = Some(
+                    state
+                        .native
+                        .take_foreign_listeners_for_native_facade(&native_ids)
+                        .map_err(native_app::native_error)?,
+                );
+                listeners.retain(|record| record.element_address != element_handle as usize);
                 if let Some(addresses) = handles.get_mut(&element.node) {
                     addresses.retain(|address| *address != element_handle as usize);
                     if addresses.is_empty() {
                         handles.remove(&element.node);
                     }
                 }
-            }
+                Ok(())
+            })?;
+            drop(handles);
+            drop(listeners);
+            drop(removed_native);
+        } else {
+            destroy(element_handle as usize, HandleKind::Element)?;
         }
-        destroy(element_handle as usize, HandleKind::Element)?;
         Ok(())
     })
 }
@@ -1856,30 +1877,58 @@ pub extern "C" fn oui_element_add_event_listener(
         let state = element_document(&element)?;
         borrow_engine(&state)?.element_tag(element.node)?;
         let id = state.next_listener.get();
-        state.next_listener.set(
-            id.checked_add(1)
-                .ok_or_else(|| ApiError::new(OuiStatus::InvalidState, "listener ID overflow"))?,
-        );
-        state
+        let next_id = id
+            .checked_add(1)
+            .ok_or_else(|| ApiError::new(OuiStatus::InvalidState, "listener ID overflow"))?;
+        let mut listeners = state
             .listeners
             .try_borrow_mut()
-            .map_err(|_| ApiError::new(OuiStatus::Reentrant, "listener list is borrowed"))?
-            .push(ListenerRecord {
-                id,
-                node: element.node,
-                event_type: event_type as u32,
-                capture: capture != 0,
-                callback,
-                user_data,
-                element_address: element_handle as usize,
-            });
-        write_handle(
-            out_listener,
+            .map_err(|_| ApiError::new(OuiStatus::Reentrant, "listener list is borrowed"))?;
+        listeners.try_reserve(1).map_err(|_| {
+            ApiError::new(OuiStatus::OutOfMemory, "listener list allocation failed")
+        })?;
+        let weak = Rc::downgrade(&state);
+        let handler = Rc::new(move |node, target, event: &openui::Event, capture| {
+            if let Some(state) = weak.upgrade() {
+                native_app::dispatch_native_listener(&state, id, node, target, event, capture)
+                    .map_err(native_app::callback_error)?;
+            }
+            Ok(())
+        });
+        let event_name = native_app::native_event_name(event_type as u32)
+            .ok_or_else(|| invalid("unknown event type"))?;
+        let token = registry::register_with_commit(
             LocalHandle::Listener(ListenerRef {
                 document: Rc::downgrade(&state),
                 id,
             }),
-        )
+            |_| {
+                let native_registration_id = state
+                    .native
+                    .add_foreign_listener_for_native_facade(
+                        element.node,
+                        event_name,
+                        capture != 0,
+                        handler,
+                    )
+                    .map_err(native_app::native_error)?;
+                listeners.push(ListenerRecord {
+                    id,
+                    native_registration_id,
+                    node: element.node,
+                    event_type: event_type as u32,
+                    capture: capture != 0,
+                    callback,
+                    user_data,
+                    element_address: element_handle as usize,
+                });
+                state.next_listener.set(next_id);
+                Ok(())
+            },
+        )?;
+        // SAFETY: all fallible work is complete; caller supplied pointer storage.
+        unsafe { ptr::write(out_listener, token as *mut OuiListener) };
+        Ok(())
     })
 }
 
@@ -1887,16 +1936,34 @@ pub extern "C" fn oui_element_add_event_listener(
 #[no_mangle]
 pub extern "C" fn oui_listener_destroy(listener: *mut OuiListener) -> OuiStatus {
     ffi(|| {
-        let listener = match destroy(listener as usize, HandleKind::Listener)? {
+        let value = match get(listener as usize, HandleKind::Listener)? {
             LocalHandle::Listener(value) => value,
             _ => unreachable!("kind checked by registry"),
         };
-        if let Some(state) = listener.document.upgrade() {
-            state
+        if let Some(state) = value.document.upgrade() {
+            let mut listeners = state
                 .listeners
                 .try_borrow_mut()
-                .map_err(|_| ApiError::new(OuiStatus::Reentrant, "listener list is borrowed"))?
-                .retain(|record| record.id != listener.id);
+                .map_err(|_| ApiError::new(OuiStatus::Reentrant, "listener list is borrowed"))?;
+            let mut removed_native = None;
+            registry::destroy_with_commit(listener as usize, HandleKind::Listener, |_| {
+                if let Some(record) = listeners.iter().find(|record| record.id == value.id) {
+                    removed_native = Some(
+                        state
+                            .native
+                            .take_foreign_listeners_for_native_facade(&[
+                                record.native_registration_id
+                            ])
+                            .map_err(native_app::native_error)?,
+                    );
+                }
+                listeners.retain(|record| record.id != value.id);
+                Ok(())
+            })?;
+            drop(listeners);
+            drop(removed_native);
+        } else {
+            destroy(listener as usize, HandleKind::Listener)?;
         }
         Ok(())
     })
@@ -1915,7 +1982,7 @@ fn invoke_event_listeners(
     capture: bool,
     event: &mut OuiEvent,
 ) -> Result<(), ApiError> {
-    let callbacks: Vec<_> = state
+    let ids: Vec<_> = state
         .listeners
         .try_borrow()
         .map_err(|_| ApiError::new(OuiStatus::Reentrant, "listener list is borrowed"))?
@@ -1925,12 +1992,59 @@ fn invoke_event_listeners(
                 && listener.event_type == event.event_type
                 && listener.capture == capture
         })
-        .cloned()
+        .map(|listener| listener.id)
         .collect();
-    for listener in callbacks {
+    for id in ids {
+        invoke_event_listener(state, id, node, Some(capture), event)?;
+        if event.flags & OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED != 0 {
+            break;
+        }
+    }
+    Ok(())
+}
+
+fn invoke_event_listener(
+    state: &DocumentState,
+    id: u64,
+    node: NodeHandle,
+    capture: Option<bool>,
+    event: &mut OuiEvent,
+) -> Result<(), ApiError> {
+    if event.flags & OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED != 0 {
+        return Ok(());
+    }
+    let listener = state
+        .listeners
+        .try_borrow()
+        .map_err(|_| ApiError::new(OuiStatus::Reentrant, "listener list is borrowed"))?
+        .iter()
+        .find(|listener| {
+            listener.id == id
+                && listener.node == node
+                && listener.event_type == event.event_type
+                && capture.is_none_or(|capture| listener.capture == capture)
+        })
+        .cloned();
+    if let Some(listener) = listener {
+        let event_name = native_app::native_event_name(listener.event_type)
+            .ok_or_else(|| invalid("listener has unknown event type"))?;
+        if !state
+            .native
+            .is_foreign_listener_registered_for_native_facade(
+                listener.native_registration_id,
+                listener.node,
+                event_name,
+                listener.capture,
+            )
+            .map_err(native_app::native_error)?
+        {
+            return Ok(());
+        }
         event.current_target = listener.element_address as *mut OuiElement;
         // SAFETY: listener registration requires the callback to remain
-        // callable and user_data to remain valid until listener destruction.
+        // callable and user_data to remain valid through this active call, even
+        // when the callback destroys its own listener. Removed later IDs are
+        // looked up again and skipped; readded listeners have new identities.
         // No engine or listener-list borrow is held, so reentrant API calls are
         // explicitly permitted. The event pointer lives through the call.
         unsafe { (listener.callback)(event, listener.user_data) };
@@ -1939,7 +2053,6 @@ fn invoke_event_listeners(
         }
         if event.flags & OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED != 0 {
             event.flags |= OUI_EVENT_FLAG_PROPAGATION_STOPPED;
-            break;
         }
     }
     Ok(())
@@ -1998,6 +2111,12 @@ fn dispatch_event_to(
     event: &mut OuiEvent,
     apply_default: bool,
 ) -> Result<(), ApiError> {
+    let public_target = borrow_engine(state)?.public_event_target(target);
+    let public_target_address = if public_target == target {
+        target_address
+    } else {
+        element_address(state, public_target)?
+    };
     if !event_can_be_canceled(event.event_type) {
         event.flags &= !OUI_EVENT_FLAG_DEFAULT_PREVENTED;
     }
@@ -2025,7 +2144,7 @@ fn dispatch_event_to(
         if native.immediate_propagation_stopped() {
             event.flags |= OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED;
         }
-        event.target = target_address as *mut OuiElement;
+        event.target = public_target_address as *mut OuiElement;
         event.current_target = ptr::null_mut();
         event.phase = 2;
         return Ok(());
@@ -2051,7 +2170,7 @@ fn dispatch_event_to(
         if native.immediate_propagation_stopped() {
             event.flags |= OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED;
         }
-        event.target = target_address as *mut OuiElement;
+        event.target = public_target_address as *mut OuiElement;
         event.current_target = ptr::null_mut();
         event.phase = 2;
         return Ok(());
@@ -2061,7 +2180,7 @@ fn dispatch_event_to(
         event.flags &= !(OUI_EVENT_FLAG_DEFAULT_PREVENTED
             | OUI_EVENT_FLAG_PROPAGATION_STOPPED
             | OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED);
-        event.target = target_address as *mut OuiElement;
+        event.target = public_target_address as *mut OuiElement;
         event.current_target = ptr::null_mut();
         event.phase = 2;
         return if event.event_type == 12 {
@@ -2077,7 +2196,7 @@ fn dispatch_event_to(
     event.flags &= !(OUI_EVENT_FLAG_DEFAULT_PREVENTED
         | OUI_EVENT_FLAG_PROPAGATION_STOPPED
         | OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED);
-    event.target = target_address as *mut OuiElement;
+    event.target = public_target_address as *mut OuiElement;
     for step in route.steps {
         match step.phase {
             EngineEventPhase::Capture => {
@@ -2337,7 +2456,13 @@ pub extern "C" fn oui_document_advance_focus(
             .native
             .advance_focus(direction)
             .map_err(native_app::native_error)?;
-        if let Some(node) = borrow_engine(&state)?.focused() {
+        let focused = {
+            let engine = borrow_engine(&state)?;
+            engine
+                .focused()
+                .map(|node| engine.public_event_target(node))
+        };
+        if let Some(node) = focused {
             let address = element_address(&state, node)?;
             // SAFETY: output storage was validated above.
             unsafe { ptr::write(out_element, address as *mut OuiElement) };

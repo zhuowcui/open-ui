@@ -56,11 +56,37 @@ pub(crate) fn owned_element_handle(
         .element_handles
         .try_borrow_mut()
         .map_err(|_| ApiError::new(OuiStatus::Reentrant, "element handle map is borrowed"))?;
-    let token = register(LocalHandle::Element(ElementRef {
-        document: Rc::downgrade(document),
-        node,
-    }))?;
-    handles.entry(node).or_default().push(token);
+    let mut new_aliases = Vec::new();
+    if let Some(aliases) = handles.get_mut(&node) {
+        aliases.try_reserve(1).map_err(|_| {
+            ApiError::new(OuiStatus::OutOfMemory, "element alias allocation failed")
+        })?;
+    } else {
+        handles.try_reserve(1).map_err(|_| {
+            ApiError::new(
+                OuiStatus::OutOfMemory,
+                "element handle map allocation failed",
+            )
+        })?;
+        new_aliases.try_reserve(1).map_err(|_| {
+            ApiError::new(OuiStatus::OutOfMemory, "element alias allocation failed")
+        })?;
+    }
+    let token = registry::register_with_commit(
+        LocalHandle::Element(ElementRef {
+            document: Rc::downgrade(document),
+            node,
+        }),
+        |token| {
+            if let Some(aliases) = handles.get_mut(&node) {
+                aliases.push(token);
+            } else {
+                new_aliases.push(token);
+                handles.insert(node, new_aliases);
+            }
+            Ok(())
+        },
+    )?;
     Ok(token as *mut OuiElement)
 }
 
@@ -75,7 +101,12 @@ pub extern "C" fn oui_document_focused_element_v1(
             return Err(invalid("focused element output is null"));
         }
         let state = document(document_handle as usize)?;
-        let focused = borrow_engine(&state)?.focused();
+        let focused = {
+            let engine = borrow_engine(&state)?;
+            engine
+                .focused()
+                .map(|node| engine.public_event_target(node))
+        };
         let handle = if let Some(node) = focused {
             owned_element_handle(&state, node)?
         } else {

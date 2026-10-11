@@ -241,6 +241,18 @@ pub(crate) fn property_from_raw(value: i32) -> Option<StyleProperty> {
         235 => Some(StyleProperty::ShapeImageThreshold),
         236 => Some(StyleProperty::ShapeMargin),
         237 => Some(StyleProperty::ShapeOutside),
+        238 => Some(StyleProperty::ScrollPaddingTop),
+        239 => Some(StyleProperty::ScrollPaddingRight),
+        240 => Some(StyleProperty::ScrollPaddingBottom),
+        241 => Some(StyleProperty::ScrollPaddingLeft),
+        242 => Some(StyleProperty::ScrollMarginTop),
+        243 => Some(StyleProperty::ScrollMarginRight),
+        244 => Some(StyleProperty::ScrollMarginBottom),
+        245 => Some(StyleProperty::ScrollMarginLeft),
+        246 => Some(StyleProperty::ScrollSnapStrictness),
+        247 => Some(StyleProperty::ScrollSnapStop),
+        248 => Some(StyleProperty::ScrollSnapAlignBlock),
+        249 => Some(StyleProperty::ScrollSnapAlignInline),
         _ => None,
     }
 }
@@ -484,6 +496,18 @@ pub(crate) fn expected_value_tag(property: StyleProperty) -> u32 {
         StyleProperty::ShapeImageThreshold => 2,
         StyleProperty::ShapeMargin => 1,
         StyleProperty::ShapeOutside => 6,
+        StyleProperty::ScrollPaddingTop => 1,
+        StyleProperty::ScrollPaddingRight => 1,
+        StyleProperty::ScrollPaddingBottom => 1,
+        StyleProperty::ScrollPaddingLeft => 1,
+        StyleProperty::ScrollMarginTop => 1,
+        StyleProperty::ScrollMarginRight => 1,
+        StyleProperty::ScrollMarginBottom => 1,
+        StyleProperty::ScrollMarginLeft => 1,
+        StyleProperty::ScrollSnapStrictness => 6,
+        StyleProperty::ScrollSnapStop => 6,
+        StyleProperty::ScrollSnapAlignBlock => 6,
+        StyleProperty::ScrollSnapAlignInline => 6,
     }
 }
 

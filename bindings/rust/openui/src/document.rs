@@ -2,7 +2,8 @@
 
 use crate::element::{class_tokens, validate_class_token, Element};
 use crate::events::{
-    Event, EventPhase, InputType, KeyEventType, Listener, Modifiers, MouseButton, MouseEventType,
+    Event, EventCallback, EventPhase, InputType, KeyEventType, Listener, Modifiers, MouseButton,
+    MouseEventType,
 };
 use crate::style::{Bitmap, Error};
 use openui_compositor::SoftwareCompositor;
@@ -21,7 +22,11 @@ use openui_text::{
 use std::cell::{Cell, RefCell};
 use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
+use std::sync::atomic::{AtomicU64, Ordering};
 
+#[cfg(test)]
+#[path = "listener_tests.rs"]
+mod listener_tests;
 #[path = "selection_tasks.rs"]
 mod selection_tasks;
 
@@ -31,9 +36,60 @@ type ResourceProvider = dyn Fn(&str) -> Option<Vec<u8>>;
 type ForeignEventHandler =
     dyn Fn(NodeHandle, NodeHandle, &Event, Option<bool>) -> Result<(), Error>;
 
+static NEXT_LISTENER_REGISTRATION_ID: AtomicU64 = AtomicU64::new(1);
+
+#[derive(Clone)]
+pub(crate) enum RegisteredCallback {
+    Rust(EventCallback),
+    #[cfg(feature = "ffi-integration")]
+    Foreign(Rc<ForeignEventHandler>),
+}
+
+#[derive(Clone)]
+pub(crate) struct RegisteredListener {
+    id: u64,
+    capture: bool,
+    callback: RegisteredCallback,
+}
+
+#[cfg(feature = "ffi-integration")]
+fn foreign_event_key(event_type: &str) -> &str {
+    match event_type {
+        "mousedown" => "pointerdown",
+        "mouseup" => "pointerup",
+        "mousemove" => "pointermove",
+        "mouseenter" => "pointerenter",
+        "mouseleave" => "pointerleave",
+        "mousecancel" => "pointercancel",
+        _ => event_type,
+    }
+}
+
+impl RegisteredCallback {
+    fn matches_event(&self, registered: &str, actual: &str) -> bool {
+        match self {
+            Self::Rust(_) => registered == actual,
+            #[cfg(feature = "ffi-integration")]
+            Self::Foreign(_) => foreign_event_key(registered) == foreign_event_key(actual),
+        }
+    }
+}
+
+fn listener_allocation_error() -> Error {
+    Error::Io(std::io::Error::from(std::io::ErrorKind::OutOfMemory))
+}
+
+fn owned_listener_event_key(value: &str) -> Result<String, Error> {
+    let mut key = String::new();
+    key.try_reserve(value.len())
+        .map_err(|_| listener_allocation_error())?;
+    key.push_str(value);
+    Ok(key)
+}
+
 pub(crate) struct DocumentInner {
     pub engine: Rc<RefCell<Engine>>,
-    pub listeners: RefCell<HashMap<ListenerKey, Vec<Listener>>>,
+    pub listeners: RefCell<HashMap<ListenerKey, Vec<RegisteredListener>>>,
     pub resource_provider: RefCell<Option<Box<ResourceProvider>>>,
     pub clipboard: RefCell<String>,
     composition_target: Cell<Option<NodeHandle>>,
@@ -185,11 +241,14 @@ impl Document {
     #[cfg(feature = "ffi-integration")]
     #[doc(hidden)]
     pub fn set_foreign_event_handler(&self, handler: Rc<ForeignEventHandler>) -> Result<(), Error> {
-        *self
-            .inner
-            .foreign_event_handler
-            .try_borrow_mut()
-            .map_err(|_| Error::ReentrantMutation)? = Some(handler);
+        let previous = {
+            self.inner
+                .foreign_event_handler
+                .try_borrow_mut()
+                .map_err(|_| Error::ReentrantMutation)?
+                .replace(handler)
+        };
+        drop(previous);
         Ok(())
     }
 
@@ -1603,15 +1662,167 @@ impl Document {
         event_type: &str,
         listener: Listener,
     ) -> Result<(), Error> {
+        self.add_registered_listener(
+            handle,
+            event_type,
+            listener.capture,
+            RegisteredCallback::Rust(listener.callback),
+        )?;
+        Ok(())
+    }
+
+    fn add_registered_listener(
+        &self,
+        handle: NodeHandle,
+        event_type: &str,
+        capture: bool,
+        callback: RegisteredCallback,
+    ) -> Result<u64, Error> {
         self.with_engine(|engine| handle.downgrade().upgrade(engine))??;
-        self.inner
+        let key = (handle, owned_listener_event_key(event_type)?);
+        let mut map = self
+            .inner
             .listeners
             .try_borrow_mut()
-            .map_err(|_| Error::ReentrantMutation)?
-            .entry((handle, event_type.to_owned()))
-            .or_default()
-            .push(listener);
-        Ok(())
+            .map_err(|_| Error::ReentrantMutation)?;
+        if let Some(list) = map.get_mut(&key) {
+            list.try_reserve(1)
+                .map_err(|_| listener_allocation_error())?;
+        } else {
+            map.try_reserve(1)
+                .map_err(|_| listener_allocation_error())?;
+        }
+        let mut fresh = Vec::new();
+        if !map.contains_key(&key) {
+            fresh
+                .try_reserve(1)
+                .map_err(|_| listener_allocation_error())?;
+        }
+        let id = NEXT_LISTENER_REGISTRATION_ID
+            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |id| id.checked_add(1))
+            .map_err(|_| listener_allocation_error())?;
+        let listener = RegisteredListener {
+            id,
+            capture,
+            callback,
+        };
+        if let Some(list) = map.get_mut(&key) {
+            list.push(listener);
+        } else {
+            fresh.push(listener);
+            map.insert(key, fresh);
+        }
+        Ok(id)
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn add_foreign_listener_for_native_facade(
+        &self,
+        handle: NodeHandle,
+        event_type: &str,
+        capture: bool,
+        handler: Rc<ForeignEventHandler>,
+    ) -> Result<u64, Error> {
+        self.add_registered_listener(
+            handle,
+            foreign_event_key(event_type),
+            capture,
+            RegisteredCallback::Foreign(handler),
+        )
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn is_listener_registered_for_native_facade(&self, id: u64) -> Result<bool, Error> {
+        let map = self
+            .inner
+            .listeners
+            .try_borrow()
+            .map_err(|_| Error::ReentrantMutation)?;
+        Ok(map
+            .values()
+            .any(|list| list.iter().any(|listener| listener.id == id)))
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn is_foreign_listener_registered_for_native_facade(
+        &self,
+        id: u64,
+        node: NodeHandle,
+        event_type: &str,
+        capture: bool,
+    ) -> Result<bool, Error> {
+        let key = (
+            node,
+            owned_listener_event_key(foreign_event_key(event_type))?,
+        );
+        let map = self
+            .inner
+            .listeners
+            .try_borrow()
+            .map_err(|_| Error::ReentrantMutation)?;
+        Ok(map.get(&key).is_some_and(|list| {
+            list.iter().any(|listener| {
+                listener.id == id
+                    && listener.capture == capture
+                    && matches!(listener.callback, RegisteredCallback::Foreign(_))
+            })
+        }))
+    }
+
+    /// Remove only foreign registrations without dropping their handlers. The
+    /// facade retains the returned owners until its own ownership guards end.
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn take_foreign_listeners_for_native_facade(
+        &self,
+        ids: &[u64],
+    ) -> Result<Vec<Rc<ForeignEventHandler>>, Error> {
+        let mut map = self
+            .inner
+            .listeners
+            .try_borrow_mut()
+            .map_err(|_| Error::ReentrantMutation)?;
+        let mut count = 0;
+        for listener in map
+            .values()
+            .flatten()
+            .filter(|listener| ids.contains(&listener.id))
+        {
+            if !matches!(listener.callback, RegisteredCallback::Foreign(_)) {
+                return Err(Error::InvalidArgument("registration is not foreign"));
+            }
+            count += 1;
+        }
+        let mut removed = Vec::new();
+        removed
+            .try_reserve(count)
+            .map_err(|_| listener_allocation_error())?;
+        for list in map.values_mut() {
+            let mut index = 0;
+            while index < list.len() {
+                if ids.contains(&list[index].id) {
+                    let listener = list.remove(index);
+                    if let RegisteredCallback::Foreign(handler) = listener.callback {
+                        removed.push(handler);
+                    }
+                } else {
+                    index += 1;
+                }
+            }
+        }
+        map.retain(|_, list| !list.is_empty());
+        drop(map);
+        Ok(removed)
+    }
+
+    #[cfg(feature = "ffi-integration")]
+    #[doc(hidden)]
+    pub fn remove_listener_for_native_facade(&self, id: u64) -> Result<bool, Error> {
+        let removed = self.take_foreign_listeners_for_native_facade(&[id])?;
+        Ok(!removed.is_empty())
     }
 
     pub(crate) fn remove_listeners(
@@ -1619,22 +1830,44 @@ impl Document {
         handle: NodeHandle,
         event_type: &str,
     ) -> Result<(), Error> {
-        self.inner
-            .listeners
-            .try_borrow_mut()
-            .map_err(|_| Error::ReentrantMutation)?
-            .remove(&(handle, event_type.to_owned()));
+        let key = (handle, owned_listener_event_key(event_type)?);
+        let removed = {
+            self.inner
+                .listeners
+                .try_borrow_mut()
+                .map_err(|_| Error::ReentrantMutation)?
+                .remove(&key)
+        };
+        // Last application captures can run Drop; release every list borrow first.
+        drop(removed);
         Ok(())
     }
 
     pub(crate) fn remove_node(&self, handle: NodeHandle) -> Result<(), Error> {
         let handles = self.subtree_handles(handle)?;
-        self.with_engine_mut(|engine| engine.remove(handle))?;
-        self.inner
+        let mut map = self
+            .inner
             .listeners
             .try_borrow_mut()
-            .map_err(|_| Error::ReentrantMutation)?
-            .retain(|(node, _), _| !handles.contains(node));
+            .map_err(|_| Error::ReentrantMutation)?;
+        let mut keys = Vec::new();
+        keys.try_reserve(map.len())
+            .map_err(|_| listener_allocation_error())?;
+        for key in map.keys().filter(|(node, _)| handles.contains(node)) {
+            keys.push((key.0, owned_listener_event_key(&key.1)?));
+        }
+        let mut removed = Vec::new();
+        removed
+            .try_reserve(keys.len())
+            .map_err(|_| listener_allocation_error())?;
+        self.with_engine_mut(|engine| engine.remove(handle))?;
+        for key in keys {
+            if let Some(list) = map.remove(&key) {
+                removed.push(list);
+            }
+        }
+        drop(map);
+        drop(removed);
         Ok(())
     }
 
@@ -1846,6 +2079,48 @@ impl Document {
             Element::from_handle(self.clone(), target).downgrade(),
             Element::from_handle(self.clone(), node).downgrade(),
         );
+        let exact_key = (node, owned_listener_event_key(&event.event_type)?);
+        let alias_key: Option<ListenerKey> = {
+            #[cfg(feature = "ffi-integration")]
+            {
+                let canonical = foreign_event_key(&event.event_type);
+                if canonical != event.event_type.as_str() {
+                    Some((node, owned_listener_event_key(canonical)?))
+                } else {
+                    None
+                }
+            }
+            #[cfg(not(feature = "ffi-integration"))]
+            {
+                None
+            }
+        };
+        // Freeze registration identities before the legacy global hook. Added
+        // listeners wait until a later invocation; nested dispatch sees its own
+        // current list. Callback owners are cloned only immediately before use.
+        let mut ids = {
+            let map = self
+                .inner
+                .listeners
+                .try_borrow()
+                .map_err(|_| Error::ReentrantMutation)?;
+            let mut ids = Vec::new();
+            for key in std::iter::once(&exact_key).chain(alias_key.as_ref()) {
+                let Some(list) = map.get(key) else {
+                    continue;
+                };
+                ids.try_reserve(list.len())
+                    .map_err(|_| listener_allocation_error())?;
+                for listener in list.iter().filter(|listener| {
+                    capture.is_none_or(|capture| listener.capture == capture)
+                        && listener.callback.matches_event(&key.1, &event.event_type)
+                }) {
+                    ids.push(listener.id);
+                }
+            }
+            ids
+        };
+        ids.sort_unstable();
         #[cfg(feature = "ffi-integration")]
         {
             let handler = self
@@ -1861,19 +2136,30 @@ impl Document {
         if event.immediate_propagation_stopped() {
             return Ok(());
         }
-        let callbacks: Vec<_> = self
-            .inner
-            .listeners
-            .try_borrow()
-            .map_err(|_| Error::ReentrantMutation)?
-            .get(&(node, event.event_type.clone()))
-            .into_iter()
-            .flat_map(|listeners| listeners.iter())
-            .filter(|listener| capture.is_none_or(|capture| listener.capture == capture))
-            .map(|listener| listener.callback.clone())
-            .collect();
-        for callback in callbacks {
-            callback(event);
+        for id in ids {
+            let listener = {
+                let map = self
+                    .inner
+                    .listeners
+                    .try_borrow()
+                    .map_err(|_| Error::ReentrantMutation)?;
+                std::iter::once(&exact_key)
+                    .chain(alias_key.as_ref())
+                    .filter_map(|key| map.get(key))
+                    .flatten()
+                    .find(|listener| listener.id == id)
+                    .cloned()
+            };
+            let Some(listener) = listener else {
+                continue;
+            };
+            match listener.callback {
+                RegisteredCallback::Rust(callback) => callback(event),
+                #[cfg(feature = "ffi-integration")]
+                RegisteredCallback::Foreign(handler) => {
+                    handler(node, target, event, Some(listener.capture))?
+                }
+            }
             if event.immediate_propagation_stopped() {
                 break;
             }

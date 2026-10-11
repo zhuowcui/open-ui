@@ -151,6 +151,24 @@ pub struct OuiScrollMetricsV1 {
     pub scroll_height: f64,
 }
 
+/// Owned numerical scroll-button state in logical CSS pixels. Related node
+/// identities are queried separately as independently owned element aliases.
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct OuiScrollButtonStateV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub direction: u32,
+    pub availability: u32,
+    pub enabled: u8,
+    pub has_target: u8,
+    pub reserved: [u8; 6],
+    pub current_x: f64,
+    pub current_y: f64,
+    pub target_x: f64,
+    pub target_y: f64,
+}
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct OuiFontUnicodeRange {
