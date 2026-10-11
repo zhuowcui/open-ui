@@ -22,6 +22,31 @@ remain open.
 
 ## Current implementation checkpoint
 
+### Native font family API probe (failures remain)
+
+A [public Rust consumer](../../bindings/rust/openui/examples/native_font_family_probe.rs) registers
+immutable font bytes and changes element font families through two Rust click
+callbacks. It measures bounds, repeats frames and verifies weak teardown; no
+JavaScript runs in the app. Independent pinned Chromium captures at the four
+required profiles and a 3× neighbor confirm that aliases of the same font
+bytes preserve pixels and bounds, while changing the face changes both.
+
+The native baseline is **0/15 whole images and 165/210 bounds exact**.
+Changing only the registered family name incorrectly changes native pixels.
+Unbreakable text width, consecutive floats and fallback line height also
+have measured differences. All process/frame repeats, callbacks and teardown
+pass. These are dirty-source application diagnostics, with actual exit 1;
+they do not replace or qualify the complete census below.
+
+The shared shaping/intrinsic candidate reaches **180/210 bounds**, with no
+lost exact bounds, but worsens **all 15 images** and remains 0/15 images exact.
+All **1,181 layout/text/paint tests** pass with zero failures or ignores.
+The candidate is rejected and the prior runtime is restored. Both measured
+sources, unchanged Chromium references, raw images, reports and terminal
+proofs are preserved in [versioned evidence](../renderer/generated/native-font-families-v1.json).
+Shared font selection, raster policy, intrinsic metrics and fallback line
+metrics remain required native implementation work.
+
 ### Corrected text raster policy (clean verification)
 
 Fresh CPU verification at clean `ccb2dfa9` measures **21,350/22,924

@@ -65,6 +65,12 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   pass on the corrected source. Original 21,350/22,924 and expanded
   22,153/23,728 remain failed, with zero errors.
   [Complete corrected-source evidence](../renderer/generated/native-monochrome-strikes-v4.json).
+  A new [public Rust font-family probe](../../bindings/rust/openui/examples/native_font_family_probe.rs)
+  confirms that same-byte aliases change native pixels despite unchanged
+  Chromium pixels, and that intrinsic widths/fallback line height differ.
+  Baseline 0/15 images and 165/210 bounds are exact. A shared candidate improves
+  bounds to 180/210 but worsens all 15 images; it is rejected and restored.
+  [Immutable diagnostic evidence](../renderer/generated/native-font-families-v1.json).
   Homogeneous shaping remains restricted to the deterministic fallback-family
   profile; complete support for other native family lists is required work.
   Old Open UI screenshots do not constrain that work. See the
