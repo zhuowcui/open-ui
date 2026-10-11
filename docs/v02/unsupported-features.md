@@ -47,6 +47,13 @@ experiment exists in the repository.
 
 These are implementation gaps, not accepted final-v0.2 omissions:
 
+- the shared intrinsic-ceil diagnostic gains ten native bounds (190/210 exact)
+  without changing any of 15 app pictures. All 1,181 layout/text/paint tests and
+  three public Rust API tests pass. The affected 342-case sweep, focused and
+  primitive matrices independently audit 2,968 rows with unchanged Chromium
+  references. Current clean-source full qualification and remaining shared
+  font/control behavior are open. No complete renderer, native API or release
+  pass is claimed. [Evidence](../renderer/generated/native-strict-intrinsic-ceil-v1.json);
 - clean `81381713` verifies the cleared-empty-box repair: 8/8 native images,
   320/320 bounds and all 1,182 layout/text/paint tests pass. Original
   21,350/22,924 and expanded 22,153/23,728 still fail with 1,574/1,575

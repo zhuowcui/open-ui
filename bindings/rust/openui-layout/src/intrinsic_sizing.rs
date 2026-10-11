@@ -278,23 +278,13 @@ fn active_clone_end_edges(stack: &[IntrinsicInlineBox]) -> LayoutUnit {
         .fold(LayoutUnit::zero(), |sum, entry| sum + entry.end_edge)
 }
 
-/// Convert a shaped advance to Blink's 1/64px intrinsic-size grid.
+/// Convert a measured advance to Blink's 1/64px intrinsic-size grid.
 ///
-/// Font backends can return an advance a few floating-point ulps above an
-/// exact LayoutUnit boundary (for example, 48.000004px). Ceil-converting that
-/// value creates a synthetic 1/64px intrinsic contribution. Normalize only
-/// values already within 1/4096px of the fixed-point grid; other advances
-/// retain the conservative ceil used to avoid unintended wrapping.
+/// Blink's ShapeResult::SnappedWidth uses LayoutUnit::FromFloatCeil. Small
+/// positive fractions remain part of the intrinsic width, including when an
+/// advance lies just above an existing grid boundary.
 fn intrinsic_text_width(width: f32) -> LayoutUnit {
-    let nearest = LayoutUnit::from_f32_round(width);
-    let backend_roundoff = (32.0 * f32::EPSILON * width.abs().max(1.0))
-        .max(1.0 / 4096.0)
-        .min(1.0 / 256.0);
-    if (width - nearest.to_f32()).abs() <= backend_roundoff {
-        nearest
-    } else {
-        LayoutUnit::from_f32_ceil(width)
-    }
+    LayoutUnit::from_f32_ceil(width)
 }
 
 fn intrinsic_close_rounding_excess(data: &InlineItemsData, close_item_index: usize) -> LayoutUnit {
@@ -4017,18 +4007,6 @@ mod tests {
         let sizes = compute_logical_intrinsic_inline_sizes(&doc, container);
         assert_eq!(sizes.min, LayoutUnit::from_i32(100));
         assert_eq!(sizes.max, sizes.min);
-    }
-
-    #[test]
-    fn intrinsic_text_width_normalizes_backend_roundoff_at_layout_unit_boundaries() {
-        assert_eq!(
-            intrinsic_text_width(208.000_396_729),
-            LayoutUnit::from_i32(208)
-        );
-        assert_eq!(
-            intrinsic_text_width(48.01),
-            LayoutUnit::from_raw(48 * 64 + 1)
-        );
     }
 
     #[test]
