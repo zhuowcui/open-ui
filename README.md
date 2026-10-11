@@ -27,22 +27,43 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
-### Reduced table geometry findings (diagnostic; repair open)
+### Table ownership and opacity repair (full renderer gate open)
 
-A clean public Rust table consumer at `c6a0b92e` exposes a shared native API
-gap: `client_rects()` returns three table boxes where Chromium returns one.
-Synthetic table boxes reuse the authored node identity, and source inspection
-shows repeated transform, clip, hit and scroll handling. The collapsed cell
-also reports paint extent instead of its used border box. These require
-layout-owned authored/helper identity and resolved cell geometry.
+A clean public Rust table consumer at `c4e8a809` matches pinned Chromium in
+**25/25 pictures**, **275/275 geometry records** and **250/250 hit checks**.
+It covers five scales and five states: base, translated, clipped, scrolled and
+opacity. The older twenty table comparisons gain no newly wrong pixels;
+their collapsed cell geometry and glyph differences remain open.
 
-Across five scales and both explicit text policies, **8/20 pictures** and
-**75/170 complete geometry records** agree exactly. Baseline markers preserve
-all pixels and common geometry. The reduced sample does not reproduce the
-four original table regressions; default policy and full-census totals are
-unchanged. Forty native processes, 16 fresh compiler records, 29 compiled
-paths and 80 original PNG files are independently verified.
-[Measured findings and required repair](docs/renderer/native-table-origin.md).
+Layout now distinguishes authored element boxes from table formatting helpers.
+Geometry, hit testing and painting apply authored effects to the owning box,
+while helpers retain decoration, structural clips and child traversal. All
+opacity groups now use the destination's ordinary intermediate format.
+
+A separate diagnostic measures **720 operation cases twice** with identical
+outputs using the same compiled Skia as the preceding Engine measurement.
+For groups with multiple draws, ordinary N32 layers reproduce Chromium's
+opacity values; F16 layers reproduce the old native differences. The fresh
+Engine comparisons verify the shared repair in the public Rust app.
+
+Layout **675/675** and native conformance **59/59** pass at `c4e8a809`.
+The full paint run exposed two outline tests using boxes without an authored
+node. Their setup now creates real element identities; the exact pixel
+assertions are unchanged. Paint **170/170** passes at `0d178e2c`, whose
+production painter is identical to the measured `c4e8a809` code. The first
+failed paint run remains preserved alongside the corrected result.
+
+The last complete original census remains **21,329/22,924 exact (93.04%)**,
+with 1,595 differences and zero render errors. Focused, primitive and complete
+censuses must be rerun on the changed renderer. Whole-project completion has
+no measured percentage; remaining native APIs, compositor and release gates
+are still required.
+
+Open UI never executes JavaScript. Apps use public native Rust methods and
+callbacks over the shared Engine. Every needed element behavior requires a
+native API. Pinned Chromium defines expected pixels and geometry.
+
+[Table ownership and opacity evidence](docs/renderer/native-table-ownership-opacity.md).
 
 ### Explicit monochrome matrices (diagnostic; policy not promoted)
 
@@ -71,8 +92,9 @@ unchanged. Exact candidate matrices do not establish full renderer qualification
 
 The worsened `display-contents-table-002`/reference pictures have a one-column
 caption shift at 1.25× and narrow glyph-column changes at 1.5×. Their root cause
-and reviewed ownership remain open. The reduced public Rust consumer above
-exposes geometry gaps but does not reproduce these original regressions. The last complete original census remains **21,329/22,924 exact**,
+and reviewed ownership remain open. The earlier reduced public Rust consumer identified geometry gaps. The new
+ownership consumer verifies its declared geometry and hit checks, while the
+original glyph regressions remain open. The last complete original census remains **21,329/22,924 exact**,
 with **1,595 differences**, zero errors. No new complete original or expanded
 census is claimed. Every needed native Rust API remains required; Open UI
 never executes JavaScript.

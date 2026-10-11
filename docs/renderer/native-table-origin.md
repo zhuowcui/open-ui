@@ -1,5 +1,18 @@
 # Native table geometry and border findings
 
+## Current ownership and opacity checkpoint
+
+The new [ownership and opacity measurement](native-table-ownership-opacity.md)
+records **25/25 exact pictures**, **275/275 geometry records** and **250/250 hit
+checks** at clean `c4e8a809`. A separate 720-case repeated CPU diagnostic explains
+the measured N32/F16 opacity distinction. Layout and native conformance pass;
+all 170 paint tests pass after correcting authored-box test setup at `0d178e2c`.
+The last complete original census remains 21,329/22,924 exact; new focused,
+primitive and complete runs are still required.
+
+## Historical table-origin diagnostic at `c6a0b92e`
+
+
 This is a reduced diagnostic, measured from clean `c6a0b92e`. It does not
 qualify the renderer or complete the native geometry APIs. Pinned Chromium
 147.0.7727.50 defines expected pixels and geometry. Open UI executes no
