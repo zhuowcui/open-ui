@@ -22417,8 +22417,11 @@ mod tests {
         surface.canvas().clear(skia_safe::Color::WHITE);
         surface.canvas().scale((1.25, 1.25));
 
+        let mut document = Document::new();
+        let node = document.create_node(ElementTag::Div);
+        document.append_child(document.root(), node);
         let fragment = Fragment::new_box(
-            NodeId::NONE,
+            node,
             PhysicalSize::new(LayoutUnit::from_i32(300), LayoutUnit::zero()),
         );
         let mut style = ComputedStyle::default();
@@ -22446,8 +22449,13 @@ mod tests {
         surface.canvas().clear(skia_safe::Color::WHITE);
         surface.canvas().scale((1.25, 1.25));
 
+        let mut document = Document::new();
+        let parent_node = document.create_node(ElementTag::Div);
+        let spanner_node = document.create_node(ElementTag::Div);
+        document.append_child(document.root(), parent_node);
+        document.append_child(parent_node, spanner_node);
         let mut spanner = Fragment::new_box(
-            NodeId::NONE,
+            spanner_node,
             PhysicalSize::new(LayoutUnit::from_i32(300), LayoutUnit::zero()),
         );
         spanner.paint_zero_block_outline = true;
@@ -22466,7 +22474,7 @@ mod tests {
         );
 
         let parent = Fragment::new_box(
-            NodeId::NONE,
+            parent_node,
             PhysicalSize::new(LayoutUnit::from_i32(300), LayoutUnit::from_i32(19)),
         );
         let mut parent_style = ComputedStyle::default();
