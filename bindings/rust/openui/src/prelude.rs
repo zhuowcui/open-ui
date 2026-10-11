@@ -13,6 +13,10 @@ pub use crate::document::Document;
 pub use crate::element::{Element, WeakElement};
 pub use crate::events::*;
 pub use crate::renderer::{DynChild, For, Show};
+pub use crate::scroll_button::{
+    ScrollButton, ScrollButtonAvailability, ScrollButtonDirection, ScrollButtonState,
+    ScrollSnapStrictness,
+};
 pub use crate::style::*;
 pub use crate::text_node::{TextNode, WeakTextNode};
 pub use crate::typed_style::*;

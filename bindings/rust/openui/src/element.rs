@@ -310,6 +310,13 @@ impl Element {
         })
     }
 
+    /// Select native control decoration or fully authored decoration.
+    /// The control retains its role, events, focus and shared default action.
+    pub fn set_native_appearance(&self, enabled: bool) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_native_control_appearance(self.handle, enabled))
+    }
+
     /// Atomically replace a supported pseudo-element declaration list.
     pub fn set_pseudo_style(
         &self,
@@ -865,8 +872,11 @@ impl Element {
     }
 
     pub fn has_focus(&self) -> Result<bool, Error> {
-        self.document
-            .with_engine(|engine| engine.focused() == Some(self.handle))
+        self.document.with_engine(|engine| {
+            engine
+                .focused()
+                .is_some_and(|focused| engine.public_event_target(focused) == self.handle)
+        })
     }
 
     /// Dispatch a native click and run the element's default activation unless canceled.

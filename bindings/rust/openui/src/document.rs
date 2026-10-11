@@ -724,6 +724,9 @@ impl Document {
         target: NodeHandle,
         action: AccessibilityAction,
     ) -> Result<(), Error> {
+        if self.with_engine(|engine| engine.is_scroll_button(target))?? {
+            self.with_engine_mut(|engine| engine.update().map(|_| ()))?;
+        }
         match action {
             AccessibilityAction::Focus => {
                 return self.change_focus(Some(target), FocusOrigin::Accessibility);
@@ -1092,6 +1095,25 @@ impl Document {
         if event_type != KeyEventType::Down {
             return Ok(true);
         }
+        if (is_space || key_code == 13 || key.eq_ignore_ascii_case("enter"))
+            && self.target_is_live(target)?
+            && self.with_engine(|engine| engine.is_scroll_button(target))??
+        {
+            // Scroll buttons activate directly on keydown. They neither
+            // synthesize click nor arm generic Button's Space-keyup action.
+            self.inner.keyboard_activation.set(None);
+            self.with_engine_mut(|engine| engine.update().map(|_| ()))?;
+            if self.target_is_live(target)?
+                && self.with_engine(Engine::focused)? == Some(target)
+                && self.with_engine(|engine| engine.can_focus(target))??
+            {
+                let previous = self.with_engine(Engine::focused)?;
+                self.with_engine_mut(|engine| engine.activate(target))?;
+                let next = self.with_engine(Engine::focused)?;
+                self.dispatch_focus_change(previous, next)?;
+            }
+            return Ok(true);
+        }
         if key_code == 9 || key.eq_ignore_ascii_case("tab") {
             return self
                 .advance_focus(if modifiers.contains(Modifiers::SHIFT) {
@@ -1315,7 +1337,11 @@ impl Document {
     }
 
     pub fn focused_element(&self) -> Result<Option<Element>, Error> {
-        let handle = self.with_engine(|engine| engine.focused())?;
+        let handle = self.with_engine(|engine| {
+            engine
+                .focused()
+                .map(|node| engine.public_event_target(node))
+        })?;
         Ok(handle.map(|handle| Element::from_handle(self.clone(), handle)))
     }
 
@@ -1343,6 +1369,7 @@ impl Document {
         if direction != -1 && direction != 1 {
             return Err(Error::InvalidArgument("focus direction must be -1 or 1"));
         }
+        self.with_engine_mut(|engine| engine.update().map(|_| ()))?;
         let next = self.with_engine(|engine| engine.next_focus_target(direction))??;
         if let Some(next) = next {
             self.change_focus(Some(next), FocusOrigin::Keyboard)?;
@@ -1633,19 +1660,8 @@ impl Document {
     }
 
     fn subtree_handles(&self, root: NodeHandle) -> Result<Vec<NodeHandle>, Error> {
-        self.with_engine(|engine| {
-            fn collect(engine: &Engine, node: NodeHandle, result: &mut Vec<NodeHandle>) {
-                result.push(node);
-                if let Ok(children) = engine.children(node) {
-                    for child in children {
-                        collect(engine, child, result);
-                    }
-                }
-            }
-            let mut result = Vec::new();
-            collect(engine, root, &mut result);
-            result
-        })
+        self.with_engine(|engine| engine.owned_subtree_handles(root))?
+            .map_err(Into::into)
     }
 
     #[cfg(feature = "ffi-integration")]
@@ -1715,6 +1731,17 @@ impl Document {
         // A normal click observes user activation eligibility and suppresses
         // reentrant simulated clicks. Explicit raw events remain dispatchable
         // on disabled controls and may nest distinct owned events.
+        if self.with_engine(|engine| engine.is_scroll_button(target))?? {
+            self.with_engine_mut(|engine| {
+                let state = engine.scroll_button_state(target)?;
+                if let openui_engine::ScrollButtonAvailability::Unsupported(reason) =
+                    state.availability
+                {
+                    return Err(openui_engine::EngineError::InvalidInput(reason));
+                }
+                Ok(())
+            })?;
+        }
         if simulated && self.with_engine(|engine| engine.is_effectively_disabled(target))?? {
             return Ok(());
         }
@@ -1758,7 +1785,10 @@ impl Document {
                     })
             })?
         {
+            let previous = self.with_engine(Engine::focused)?;
             let changed = self.with_engine_mut(|engine| engine.activate(target))?;
+            let next = self.with_engine(Engine::focused)?;
+            self.dispatch_focus_change(previous, next)?;
             for changed in changed.changed {
                 self.notify_control_activation(changed)?;
             }
@@ -1768,6 +1798,7 @@ impl Document {
 
     fn dispatch_to(&self, target: NodeHandle, event: &Event) -> Result<(), Error> {
         let route = self.with_engine(|engine| engine.event_route(target))??;
+        let target = route.target;
         for step in route.steps {
             if step.phase == EngineEventPhase::Bubble && !event.bubbles() {
                 continue;
@@ -1861,13 +1892,20 @@ impl Document {
     }
 
     pub(crate) fn focus_element(&self, target: NodeHandle) -> Result<(), Error> {
+        if self.with_engine(|engine| engine.is_scroll_button(target))?? {
+            self.with_engine_mut(|engine| engine.update().map(|_| ()))?;
+        }
         self.change_focus(Some(target), FocusOrigin::Script)
     }
 
     pub(crate) fn blur_element(&self, target: NodeHandle) -> Result<(), Error> {
         // A blur on another valid element is a no-op, including for composition.
         self.with_engine(|engine| target.downgrade().upgrade(engine))??;
-        if self.with_engine(Engine::focused)? == Some(target) {
+        if self.with_engine(|engine| {
+            engine.focused().is_some_and(|focused| {
+                focused == target || engine.public_event_target(focused) == target
+            })
+        })? {
             self.change_focus(None, FocusOrigin::Script)?;
         }
         Ok(())
@@ -1960,7 +1998,10 @@ impl Document {
         event_type: &str,
         related: Option<NodeHandle>,
     ) -> Result<(), Error> {
-        let related = related.map(|handle| Element::from_handle(self.clone(), handle).downgrade());
+        let related = related
+            .map(|handle| self.with_engine(|engine| engine.public_event_target(handle)))
+            .transpose()?
+            .map(|handle| Element::from_handle(self.clone(), handle).downgrade());
         self.dispatch_to(target, &Event::focus(event_type, related))
     }
 

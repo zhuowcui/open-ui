@@ -76,6 +76,7 @@ pub mod signal;
 pub mod document;
 pub mod element;
 pub mod events;
+pub mod scroll_button;
 pub mod style;
 pub mod text_node;
 
@@ -110,6 +111,10 @@ pub use events::{
     MouseEventType,
 };
 pub use openui_dom::ElementTag;
+pub use scroll_button::{
+    ScrollButton, ScrollButtonAvailability, ScrollButtonDirection, ScrollButtonState,
+    ScrollSnapStrictness,
+};
 pub use style::{Bitmap, Error, Rect};
 pub use text_node::{TextNode, WeakTextNode};
 

@@ -5,8 +5,13 @@ mod animation;
 mod control_geometry;
 mod forms;
 mod interaction;
+mod scroll_button;
 mod scroll_into_view;
 mod table_spans;
+
+pub use scroll_button::{
+    ScrollButtonAvailability, ScrollButtonDirection, ScrollButtonState, ScrollSnapStrictness,
+};
 
 pub use scroll_into_view::{ScrollAlignment, ScrollIntoViewContainer, ScrollIntoViewOptions};
 
@@ -390,6 +395,7 @@ pub struct Engine {
     hover_paths: HashMap<u64, Vec<NodeHandle>>,
     active_pointers: HashMap<u64, NodeHandle>,
     controls: HashMap<u32, ControlState>,
+    scroll_buttons: scroll_button::ScrollButtons,
     radio_associations: HashMap<u32, forms::RadioAssociation>,
     semantics: HashMap<u32, accessibility::SemanticProperties>,
     accessibility_nodes: HashMap<AccessibilityNodeId, AccessibilityNode>,
@@ -478,6 +484,7 @@ impl Engine {
             hover_paths: HashMap::new(),
             active_pointers: HashMap::new(),
             controls: HashMap::new(),
+            scroll_buttons: scroll_button::ScrollButtons::default(),
             radio_associations: HashMap::new(),
             semantics: HashMap::new(),
             accessibility_nodes: HashMap::new(),
@@ -830,6 +837,7 @@ impl Engine {
         parent: NodeHandle,
         child: NodeHandle,
     ) -> Result<(), EngineError> {
+        self.validate_owned_scroll_button_move(child)?;
         let parent = self.resolve(parent)?;
         let child = self.resolve(child)?;
         if !self.document.node(child).parent.is_none() {
@@ -843,6 +851,7 @@ impl Engine {
             ancestor = self.document.node(ancestor).parent;
         }
         self.document.append_child(parent, child);
+        self.relocate_owned_scroll_buttons()?;
         self.refresh_inherited_styles(child)?;
         self.reconcile_radio_subtree(child)?;
         self.mark_dirty(InvalidationClass::Subtree);
@@ -855,6 +864,7 @@ impl Engine {
         parent: NodeHandle,
         child: NodeHandle,
     ) -> Result<(), EngineError> {
+        self.validate_owned_scroll_button_move(child)?;
         let mut ancestor = self.resolve(parent)?;
         let child = self.resolve(child)?;
         while !ancestor.is_none() {
@@ -903,6 +913,7 @@ impl Engine {
         self.document.detach(child_node);
         self.remove_radio_subtree(child_node)?;
         self.document.append_child(parent_node, child_node);
+        self.relocate_owned_scroll_buttons()?;
         self.refresh_inherited_styles(child_node)?;
         self.reconcile_radio_subtree(child_node)?;
         self.mark_dirty(InvalidationClass::Subtree);
@@ -934,6 +945,7 @@ impl Engine {
         } else {
             self.document.insert_before(insertion_point, child_node);
         }
+        self.relocate_owned_scroll_buttons()?;
         self.refresh_inherited_styles(child_node)?;
         self.reconcile_radio_subtree(child_node)?;
         self.mark_dirty(InvalidationClass::Subtree);
@@ -956,6 +968,7 @@ impl Engine {
             .children(node)
             .filter_map(|child| self.node_slots.get(&child))
             .map(|index| self.handle_for_slot(*index))
+            .filter(|handle| !self.scroll_buttons.bindings.contains_key(handle))
             .collect())
     }
 
@@ -991,6 +1004,7 @@ impl Engine {
             data.pseudo_origin = NodeId::NONE;
             data.scroll_left = 0.0;
             data.scroll_top = 0.0;
+            data.native_scroll_snap_managed = false;
             data.attributes.remove("data-oui-focused");
             data.attributes.remove("data-oui-composition-start");
             data.attributes.remove("data-oui-composition-end");
@@ -1062,6 +1076,7 @@ impl Engine {
     /// Detach an authored subtree without invalidating its handles or losing
     /// its state. The caller may edit and reattach it later.
     pub fn detach(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
+        self.validate_owned_scroll_button_move(handle)?;
         let node = self.resolve(handle)?;
         if node == self.document.root() {
             return Err(EngineError::RootRemoval);
@@ -1072,6 +1087,7 @@ impl Engine {
         let mut descendants = Vec::new();
         self.collect_subtree(node, &mut descendants);
         self.document.detach(node);
+        self.relocate_owned_scroll_buttons()?;
         let detached_handles: Vec<_> = descendants
             .iter()
             .filter_map(|node| self.node_slots.get(node))
@@ -1131,6 +1147,7 @@ impl Engine {
             .map(|index| self.handle_for_slot(*index))
             .collect();
         self.clear_subtree_presentation_state(&removed_handles);
+        self.forget_scroll_button_handles(&removed_handles);
         self.remove_radio_subtree(node)?;
         for node in &descendants {
             if let Some(index) = self.node_slots.remove(node) {
@@ -1545,7 +1562,12 @@ impl Engine {
                             .into_iter()
                             .map(|(_, property, value)| (property, value)),
                     );
-                    let parent_node = self.document.node(node).parent;
+                    let parent_node = self
+                        .scroll_buttons
+                        .bindings
+                        .get(&self.handle_for_slot(index))
+                        .and_then(|binding| self.resolve(binding.origin).ok())
+                        .unwrap_or(self.document.node(node).parent);
                     let parent = if parent_node.is_none() {
                         initial.clone()
                     } else {
@@ -2359,6 +2381,9 @@ impl Engine {
 
     pub fn update(&mut self) -> Result<&SceneSnapshot, EngineError> {
         self.synchronize_font_collection()?;
+        if !self.dirty.layout && self.latest_fragment.is_some() {
+            self.refresh_scroll_button_states();
+        }
         if self.dirty.hit_test && !self.dirty.layout {
             if let Some(fragment) = self.latest_fragment.clone() {
                 self.rebuild_hit_test(&fragment);
@@ -2428,7 +2453,9 @@ impl Engine {
             self.stats.layouts += 1;
             self.rebuild_hit_test(&fragment);
             self.latest_fragment = Some(fragment);
+            self.scroll_buttons.dirty = true;
         }
+        self.refresh_scroll_button_states();
         let fragment = self
             .latest_fragment
             .as_ref()
@@ -2562,12 +2589,27 @@ impl Engine {
         slot.node.ok_or(EngineError::StaleHandle)
     }
     fn collect_subtree(&self, node: NodeId, out: &mut Vec<NodeId>) {
-        out.push(node);
-        for child in self.document.children(node) {
-            self.collect_subtree(child, out);
+        fn walk(
+            engine: &Engine,
+            node: NodeId,
+            out: &mut Vec<NodeId>,
+            seen: &mut std::collections::HashSet<NodeId>,
+        ) {
+            if !seen.insert(node) {
+                return;
+            }
+            out.push(node);
+            for child in engine.document.children(node) {
+                walk(engine, child, out, seen);
+            }
+            for button in engine.owned_buttons(node) {
+                walk(engine, button, out, seen);
+            }
         }
+        walk(self, node, out, &mut std::collections::HashSet::new());
     }
     fn mark_dirty(&mut self, class: InvalidationClass) {
+        self.scroll_buttons.dirty = true;
         match class {
             InvalidationClass::Composite => {
                 self.dirty.compositing = true;

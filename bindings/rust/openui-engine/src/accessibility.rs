@@ -242,6 +242,9 @@ impl Engine {
         action: AccessibilityAction,
     ) -> Result<ActivationResult, EngineError> {
         self.resolve(handle)?;
+        if self.is_scroll_button(handle)? {
+            self.update()?;
+        }
         let disabled = self.is_effectively_disabled(handle)?;
         if disabled
             && matches!(
@@ -489,7 +492,7 @@ impl Engine {
             data.tag == ElementTag::Details && self.document.attribute(dom_id, "open").is_none();
         let mut first_summary_seen = false;
         let visible_children: Vec<_> = self
-            .children(handle)?
+            .presentation_children(handle)?
             .into_iter()
             .filter(|child| {
                 if !closed_details {

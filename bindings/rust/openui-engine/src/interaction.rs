@@ -378,6 +378,7 @@ pub struct CheckableActivation {
 impl Engine {
     pub fn event_route(&self, target: NodeHandle) -> Result<EventRoute, EngineError> {
         self.resolve(target)?;
+        let target = self.public_event_target(target);
         let mut path = vec![target];
         let mut current = target;
         while let Some(parent) = self.parent(current)? {
@@ -1015,6 +1016,9 @@ impl Engine {
 
     pub fn activate(&mut self, handle: NodeHandle) -> Result<ActivationResult, EngineError> {
         let node = self.resolve(handle)?;
+        if self.scroll_buttons.bindings.contains_key(&handle) {
+            return self.activate_scroll_button(handle);
+        }
         if self.is_disabled(handle) {
             return Ok(ActivationResult { changed: vec![] });
         }
@@ -1436,6 +1440,7 @@ impl Engine {
     }
 
     fn path_to_root(&self, target: NodeHandle) -> Result<Vec<NodeHandle>, EngineError> {
+        let target = self.public_event_target(target);
         let mut result = vec![target];
         let mut current = target;
         while let Some(parent) = self.parent(current)? {
@@ -1449,6 +1454,24 @@ impl Engine {
     pub fn is_own_disabled(&self, handle: NodeHandle) -> Result<bool, EngineError> {
         let node = self.resolve(handle)?;
         Ok(self.document.own_form_control_disabled(node))
+    }
+
+    /// Select native control decoration or authored decoration through the
+    /// retained paint pipeline. This changes no role, callbacks or default.
+    pub fn set_native_control_appearance(
+        &mut self,
+        handle: NodeHandle,
+        enabled: bool,
+    ) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
+        if !self.controls.contains_key(&handle.index) {
+            return Err(EngineError::NotAControl);
+        }
+        if self.document.node(node).form_control_native_appearance != enabled {
+            self.document.node_mut(node).form_control_native_appearance = enabled;
+            self.mark_dirty(openui_style::InvalidationClass::Intrinsic);
+        }
+        Ok(())
     }
 
     /// Query own or inherited disabled state without layout or mutation.
@@ -1498,7 +1521,7 @@ impl Engine {
         let Some(modal) = self.modal_root else {
             return true;
         };
-        let mut current = Some(handle);
+        let mut current = Some(self.public_event_target(handle));
         while let Some(node) = current {
             if node == modal {
                 return true;
@@ -1537,7 +1560,7 @@ impl Engine {
             }
         }
         *order += 1;
-        for child in self.children(node)? {
+        for child in self.presentation_children(node)? {
             self.collect_focus_candidates(child, order, result)?;
         }
         Ok(())
@@ -1549,7 +1572,7 @@ impl Engine {
         result: &mut Vec<NodeHandle>,
     ) -> Result<(), EngineError> {
         result.push(node);
-        for child in self.children(node)? {
+        for child in self.presentation_children(node)? {
             self.collect_focus_document_order(child, result)?;
         }
         Ok(())

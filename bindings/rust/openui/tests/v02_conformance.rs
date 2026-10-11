@@ -31,6 +31,263 @@ fn nested_scroll_fixture(document: &Document) -> Element {
     scroller
 }
 
+fn styled_scroll_button(origin: &Element, direction: ScrollButtonDirection) -> ScrollButton {
+    let button = origin.create_scroll_button(direction).unwrap();
+    button.set_native_appearance(false).unwrap();
+    button
+        .set_property(StyleProperty::Width, LengthValue::px(24.0).into())
+        .unwrap();
+    button
+        .set_property(StyleProperty::Height, LengthValue::px(20.0).into())
+        .unwrap();
+    button
+}
+
+#[test]
+fn native_scroll_buttons_share_pointer_key_and_accessibility_defaults() {
+    let document = document();
+    let scroller = nested_scroll_fixture(&document);
+    scroller.set_id("scroll-origin").unwrap();
+    let next = styled_scroll_button(&scroller, ScrollButtonDirection::Right);
+    next.set_accessibility_label("Next page").unwrap();
+    let clicks = Rc::new(Cell::new(0));
+    let form_events = Rc::new(Cell::new(0));
+    let cancel = Rc::new(Cell::new(false));
+    let observed = clicks.clone();
+    let canceled = cancel.clone();
+    scroller
+        .on("click", move |event| {
+            assert_eq!(
+                event
+                    .target()
+                    .unwrap()
+                    .get_attribute("id")
+                    .unwrap()
+                    .as_deref(),
+                Some("scroll-origin")
+            );
+            assert_eq!(
+                event
+                    .current_target()
+                    .unwrap()
+                    .get_attribute("id")
+                    .unwrap()
+                    .as_deref(),
+                Some("scroll-origin")
+            );
+            observed.set(observed.get() + 1);
+            if canceled.get() {
+                event.prevent_default();
+            }
+        })
+        .unwrap();
+    for name in ["input", "change"] {
+        let observed = form_events.clone();
+        scroller
+            .on(name, move |_| observed.set(observed.get() + 1))
+            .unwrap();
+    }
+    // Creation has not painted yet; ordinary native activation must flush its
+    // derived eligibility rather than observe the construction-time disabled flag.
+    next.activate().unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 87.0);
+    assert_eq!(clicks.get(), 1);
+    scroller.scroll_to(0.0, 0.0).unwrap();
+    cancel.set(true);
+    next.perform_accessibility_action(AccessibilityAction::Click)
+        .unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 0.0);
+    cancel.set(false);
+    let rect = next.bounding_rect().unwrap().unwrap();
+    for event in [MouseEventType::Down, MouseEventType::Up] {
+        document
+            .dispatch_mouse_event(
+                event,
+                rect.x + 12.0,
+                rect.y + 10.0,
+                MouseButton::Left,
+                Modifiers::NONE,
+            )
+            .unwrap();
+    }
+    assert_eq!(scroller.scroll_left().unwrap(), 87.0);
+    assert_eq!(clicks.get(), 3);
+    scroller.scroll_to(0.0, 0.0).unwrap();
+    next.focus().unwrap();
+    assert_eq!(
+        document
+            .focused_element()
+            .unwrap()
+            .unwrap()
+            .get_attribute("id")
+            .unwrap()
+            .as_deref(),
+        Some("scroll-origin")
+    );
+    assert!(scroller.has_focus().unwrap());
+    document
+        .dispatch_key_event(KeyEventType::Down, 32, Some(" "), Modifiers::NONE)
+        .unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 87.0);
+    document
+        .dispatch_key_event(KeyEventType::Up, 32, Some(" "), Modifiers::NONE)
+        .unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 87.0);
+    document
+        .dispatch_key_event(KeyEventType::Down, 13, Some("Enter"), Modifiers::NONE)
+        .unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 174.0);
+    assert_eq!(clicks.get(), 3, "keyboard defaults do not synthesize click");
+    assert_eq!(form_events.get(), 0, "page scrolling is not a form edit");
+    let id = next.accessibility_node_id().unwrap();
+    let update = document.accessibility_update().unwrap();
+    let node = &update.nodes.iter().find(|(node, _)| *node == id).unwrap().1;
+    assert_eq!(node.role(), AccessibilityRole::Button);
+    assert_eq!(node.label(), Some("Next page"));
+}
+
+#[test]
+fn native_scroll_button_availability_tracks_resize_and_author_suppression() {
+    let document = document();
+    let scroller = nested_scroll_fixture(&document);
+    let previous = styled_scroll_button(&scroller, ScrollButtonDirection::Left);
+    let next = styled_scroll_button(&scroller, ScrollButtonDirection::Right);
+    assert!(!previous.is_enabled().unwrap());
+    assert!(next.is_enabled().unwrap());
+    scroller.scroll_to(f64::MAX, 0.0).unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 200.0);
+    assert!(previous.is_enabled().unwrap());
+    assert_eq!(
+        next.state().unwrap().availability,
+        ScrollButtonAvailability::Boundary
+    );
+    previous.set_disabled(true).unwrap();
+    assert_eq!(
+        previous.state().unwrap().availability,
+        ScrollButtonAvailability::AuthoredDisabled
+    );
+    previous.activate().unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 200.0);
+    previous.set_disabled(false).unwrap();
+    previous.activate().unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 113.0);
+    let content = scroller.first_child().unwrap().unwrap();
+    content.set_width(LengthValue::px(140.0)).unwrap();
+    assert_eq!(next.state().unwrap().current_offset.0, 40.0);
+    assert!(!next.is_enabled().unwrap());
+    content.set_width(LengthValue::px(400.0)).unwrap();
+    assert!(next.is_enabled().unwrap());
+    scroller.set_display(Display::None).unwrap();
+    assert_eq!(
+        next.state().unwrap().availability,
+        ScrollButtonAvailability::NoScrollport
+    );
+}
+
+#[test]
+fn native_scroll_button_lifetime_follows_the_origin() {
+    let document = document();
+    let scroller = nested_scroll_fixture(&document);
+    let next = styled_scroll_button(&scroller, ScrollButtonDirection::InlineEnd);
+    assert!(scroller
+        .create_scroll_button(ScrollButtonDirection::InlineEnd)
+        .is_err());
+    assert!(next.is_enabled().unwrap());
+    assert!(scroller
+        .first_child()
+        .unwrap()
+        .unwrap()
+        .next_sibling()
+        .unwrap()
+        .is_none());
+    let clone = scroller.clone_subtree().unwrap();
+    assert!(clone
+        .scroll_button(ScrollButtonDirection::InlineEnd)
+        .unwrap()
+        .is_none());
+    scroller.detach().unwrap();
+    assert_eq!(
+        next.state().unwrap().availability,
+        ScrollButtonAvailability::NoScrollport
+    );
+    assert!(next.bounding_rect().unwrap().is_none());
+    let container = child(&document, "div");
+    container.append_child(&scroller).unwrap();
+    assert!(next.is_enabled().unwrap());
+    assert!(next.bounding_rect().unwrap().is_some());
+    next.set_direction(ScrollButtonDirection::Right).unwrap();
+    assert!(scroller
+        .scroll_button(ScrollButtonDirection::InlineEnd)
+        .unwrap()
+        .is_none());
+    let collision = styled_scroll_button(&scroller, ScrollButtonDirection::Left);
+    assert!(next.set_direction(ScrollButtonDirection::Left).is_err());
+    assert_eq!(next.direction().unwrap(), ScrollButtonDirection::Right);
+    collision.remove().unwrap();
+    scroller.remove().unwrap();
+    assert!(next.state().is_err());
+    assert!(next.activate().is_err());
+}
+
+#[test]
+fn native_scroll_button_pages_choose_multiple_and_covering_snap_areas() {
+    let document = document();
+    let scroller = child(&document, "div");
+    sized(&scroller, 80.0, 100.0);
+    scroller.set_overflow(Overflow::Scroll).unwrap();
+    scroller.set_scrollbar_width(ScrollbarWidth::None).unwrap();
+    scroller.set_scroll_snap_axis(ScrollSnapAxis::Y).unwrap();
+    for _ in 0..3 {
+        let area = Element::create(&document, "div").unwrap();
+        sized(&area, 80.0, 60.0);
+        area.set_scroll_snap_align(ScrollSnapAlign::Start).unwrap();
+        scroller.append_child(&area).unwrap();
+    }
+    let next = styled_scroll_button(&scroller, ScrollButtonDirection::Down);
+    assert_eq!(next.state().unwrap().target_offset.unwrap().1, 60.0);
+    let target = next.state().unwrap().snap_targets[1].unwrap();
+    next.activate().unwrap();
+    assert_eq!(scroller.scroll_top().unwrap(), 60.0);
+    assert_eq!(next.state().unwrap().current_snap_targets[1], Some(target));
+    // Replace several small targets with one oversized region: a page inside
+    // it must be reachable instead of jumping to its aligned starting edge.
+    scroller.set_text("").unwrap();
+    let area = Element::create(&document, "div").unwrap();
+    sized(&area, 80.0, 300.0);
+    area.set_scroll_snap_align(ScrollSnapAlign::Start).unwrap();
+    scroller.append_child(&area).unwrap();
+    scroller.scroll_to(0.0, 0.0).unwrap();
+    assert_eq!(next.state().unwrap().target_offset.unwrap().1, 87.0);
+    next.activate().unwrap();
+    assert_eq!(scroller.scroll_top().unwrap(), 87.0);
+}
+
+#[test]
+fn native_scroll_button_logical_direction_and_scrollbar_page_geometry() {
+    let document = document();
+    let scroller = nested_scroll_fixture(&document);
+    scroller
+        .set_direction(openui::typed_style::Direction::Rtl)
+        .unwrap();
+    let inline_end = styled_scroll_button(&scroller, ScrollButtonDirection::InlineEnd);
+    let inline_start = styled_scroll_button(&scroller, ScrollButtonDirection::InlineStart);
+    assert!(inline_end.is_enabled().unwrap());
+    assert!(!inline_start.is_enabled().unwrap());
+    inline_end.activate().unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), -87.0);
+    assert!(inline_start.is_enabled().unwrap());
+    scroller
+        .set_direction(openui::typed_style::Direction::Ltr)
+        .unwrap();
+    scroller.scroll_to(0.0, 0.0).unwrap();
+    scroller.set_scrollbar_width(ScrollbarWidth::Auto).unwrap();
+    let metrics = scroller.scroll_metrics().unwrap().unwrap();
+    assert_eq!((metrics.client_width, metrics.client_height), (85.0, 65.0));
+    assert_eq!(inline_end.state().unwrap().target_offset.unwrap().0, 74.0);
+    let down = styled_scroll_button(&scroller, ScrollButtonDirection::Down);
+    assert_eq!(down.state().unwrap().target_offset.unwrap().1, 56.0);
+}
+
 fn animation_options(duration_ms: f64) -> AnimationOptions {
     AnimationOptions {
         duration_ms,

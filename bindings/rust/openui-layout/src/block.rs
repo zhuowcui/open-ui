@@ -5625,6 +5625,12 @@ pub(crate) fn apply_static_scroll_snap(doc: &Document, scroll_container: &mut Fr
     if scroll_container.node_id.is_none() {
         return;
     }
+    if doc
+        .node(scroll_container.node_id)
+        .native_scroll_snap_managed
+    {
+        return;
+    }
     let container_style = &doc.node(scroll_container.node_id).style;
     let axis = container_style.scroll_snap_axis;
     if axis == ScrollSnapAxis::None {
