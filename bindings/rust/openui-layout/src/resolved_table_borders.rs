@@ -467,6 +467,81 @@ pub fn canonical_cell_geometry(
     })
 }
 
+/// The rows actually materialized in one table-section continuation.
+///
+/// `row_offsets` contains one section-local logical block boundary per row,
+/// followed by the terminal boundary. Source row identities survive section
+/// repetition and slicing; paint must not recover them from DOM order or the
+/// table wrapper's decoration offset.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CollapsedTableSectionData {
+    pub global_start_row: usize,
+    pub row_offsets: Vec<LayoutUnit>,
+    pub is_start_row_fragmented: bool,
+    pub is_end_row_fragmented: bool,
+}
+
+impl CollapsedTableSectionData {
+    /// Project this continuation's existing rows into a local block slice.
+    /// The immutable table graph and its source row numbering do not change.
+    pub fn project_block_slice(&mut self, consumed: LayoutUnit, size: LayoutUnit) {
+        let row_count = self.row_offsets.len().saturating_sub(1);
+        if row_count == 0 {
+            return;
+        }
+        let start = consumed.clamp_negative_to_zero();
+        let end = start + size.clamp_negative_to_zero();
+        if start == LayoutUnit::zero()
+            && size > LayoutUnit::zero()
+            && end >= *self.row_offsets.last().expect("section terminal boundary")
+        {
+            return;
+        }
+        if size <= LayoutUnit::zero() {
+            self.row_offsets.clear();
+            self.is_start_row_fragmented = false;
+            self.is_end_row_fragmented = false;
+            return;
+        }
+        let first = (0..row_count).find(|&row| {
+            self.row_offsets[row + 1] > start
+                || (self.row_offsets[row] == self.row_offsets[row + 1]
+                    && self.row_offsets[row] >= start
+                    && self.row_offsets[row] < end)
+        });
+        let Some(first) = first else {
+            self.global_start_row += row_count;
+            self.row_offsets.clear();
+            self.is_start_row_fragmented = false;
+            self.is_end_row_fragmented = false;
+            return;
+        };
+        let last = (first..row_count)
+            .take_while(|&row| self.row_offsets[row] < end)
+            .last();
+        let Some(last) = last else {
+            self.row_offsets.clear();
+            self.is_start_row_fragmented = false;
+            self.is_end_row_fragmented = false;
+            return;
+        };
+        let source_start = self.row_offsets[first];
+        let source_end = self.row_offsets[last + 1];
+        let starts_in_row = start > source_start;
+        let ends_in_row = end < source_end;
+        let previous_start_fragmented = self.is_start_row_fragmented;
+        let previous_end_fragmented = self.is_end_row_fragmented;
+        self.row_offsets = self.row_offsets[first..=last + 1]
+            .iter()
+            .map(|&offset| offset.max_of(start).min_of(end) - start)
+            .collect();
+        self.global_start_row += first;
+        self.is_start_row_fragmented = starts_in_row || (first == 0 && previous_start_fragmented);
+        self.is_end_row_fragmented =
+            ends_in_row || (last + 1 == row_count && previous_end_fragmented);
+    }
+}
+
 /// Immutable logical edge winners and canonical grid tracks for the table
 /// paint owner. Cell layout uses independent half struts; painting must keep
 /// these full-width source segments and junction orders separate.
@@ -484,6 +559,58 @@ pub struct CollapsedTableBorderData {
 mod tests {
     use super::*;
     use openui_dom::{Document, ElementTag};
+
+    #[test]
+    fn section_continuations_preserve_source_rows_and_partial_row_flags() {
+        let original = CollapsedTableSectionData {
+            global_start_row: 7,
+            row_offsets: [0, 10, 20, 30].map(LayoutUnit::from_i32).to_vec(),
+            is_start_row_fragmented: false,
+            is_end_row_fragmented: false,
+        };
+        let repeated_header = original.clone();
+        let mut body = original.clone();
+        body.project_block_slice(LayoutUnit::from_i32(5), LayoutUnit::from_i32(20));
+        assert_eq!(body.global_start_row, 7);
+        assert_eq!(body.row_offsets, [0, 5, 15, 20].map(LayoutUnit::from_i32));
+        assert!(body.is_start_row_fragmented);
+        assert!(body.is_end_row_fragmented);
+        assert_eq!(repeated_header, original);
+
+        // A nested fragmentainer consumes local continuation coordinates.
+        // It must neither advance the source row twice nor retain partial-row
+        // flags belonging to rows which have now been completely consumed.
+        body.project_block_slice(LayoutUnit::from_i32(5), LayoutUnit::from_i32(10));
+        let mut direct = original.clone();
+        direct.project_block_slice(LayoutUnit::from_i32(10), LayoutUnit::from_i32(10));
+        assert_eq!(body, direct);
+        assert_eq!(body.global_start_row, 8);
+        assert_eq!(body.row_offsets, [0, 10].map(LayoutUnit::from_i32));
+        assert!(!body.is_start_row_fragmented);
+        assert!(!body.is_end_row_fragmented);
+    }
+
+    #[test]
+    fn section_projection_retains_collapsed_row_identity_and_clears_empty_slices() {
+        let mut section = CollapsedTableSectionData {
+            global_start_row: 4,
+            row_offsets: [0, 10, 10, 20, 20].map(LayoutUnit::from_i32).to_vec(),
+            is_start_row_fragmented: false,
+            is_end_row_fragmented: false,
+        };
+        let full = section.clone();
+        section.project_block_slice(LayoutUnit::zero(), LayoutUnit::from_i32(20));
+        assert_eq!(section, full);
+        section.project_block_slice(LayoutUnit::from_i32(10), LayoutUnit::from_i32(10));
+        assert_eq!(section.global_start_row, 5);
+        assert_eq!(section.row_offsets, [0, 0, 10].map(LayoutUnit::from_i32));
+        assert!(!section.is_start_row_fragmented);
+        assert!(!section.is_end_row_fragmented);
+        section.project_block_slice(LayoutUnit::zero(), LayoutUnit::zero());
+        assert!(section.row_offsets.is_empty());
+        assert!(!section.is_start_row_fragmented);
+        assert!(!section.is_end_row_fragmented);
+    }
 
     fn box_input(
         node: NodeId,

@@ -391,6 +391,9 @@ pub struct Fragment {
     /// Resolved full-width table paint sources, owned once by the table.
     /// Geometry clients use each cell's already-resolved Fragment::border.
     pub collapsed_table_border_data: Option<std::sync::Arc<crate::CollapsedTableBorderData>>,
+    /// Actual source rows and local boundaries of this section continuation.
+    /// The full resolved graph remains owned once by the enclosing table.
+    pub collapsed_table_section: Option<crate::resolved_table_borders::CollapsedTableSectionData>,
     /// This grid participant's authored border is painted by the table's
     /// resolved graph, independently of its used layout border strut.
     pub collapsed_table_border_participant: bool,
@@ -590,6 +593,7 @@ impl Fragment {
             paint_border_after_children: false,
             collapsed_border_segments: Vec::new(),
             collapsed_table_border_data: None,
+            collapsed_table_section: None,
             collapsed_table_border_participant: false,
             is_hidden_for_paint: false,
             decoration_clip_rects: Vec::new(),
@@ -663,6 +667,7 @@ impl Fragment {
             paint_border_after_children: false,
             collapsed_border_segments: Vec::new(),
             collapsed_table_border_data: None,
+            collapsed_table_section: None,
             collapsed_table_border_participant: false,
             is_hidden_for_paint: false,
             decoration_clip_rects: Vec::new(),

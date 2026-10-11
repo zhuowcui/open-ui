@@ -9529,6 +9529,9 @@ fn retain_monolithic_descendants_for_slice_with_atomic_nodes(
                 && (intersection_start > child_source_start || intersection_end < child_source_end)
             {
                 let crop_start = intersection_start - child_source_start;
+                if let Some(rows) = child.collapsed_table_section.as_mut() {
+                    rows.project_block_slice(crop_start, intersection_end - intersection_start);
+                }
                 child.offset.top = intersection_start - ancestor_source_offset;
                 child.size.height = intersection_end - intersection_start;
                 for descendant in &mut child.children {
@@ -9763,7 +9766,17 @@ fn repeated_table_sections(fragment: &Fragment, doc: &Document) -> RepeatedTable
     let mut body_content_end = LayoutUnit::zero();
     let mut body_end = LayoutUnit::zero();
     for child in &fragment.children {
-        if child.node_id.is_none() || child.node_id == fragment.node_id {
+        if child.node_id.is_none() {
+            if child.collapsed_table_section.is_some() {
+                body_start = Some(
+                    body_start.map_or(child.offset.top, |start| start.min_of(child.offset.top)),
+                );
+                body_content_end = body_content_end.max_of(child.offset.top + child.size.height);
+                body_end = body_end.max_of(child.offset.top + child.size.height);
+            }
+            continue;
+        }
+        if child.node_id == fragment.node_id {
             continue;
         }
         let style = &doc.node(child.node_id).style;
@@ -9842,6 +9855,74 @@ fn repeated_table_flow_block_size(
             + continuation_capacity * full_continuations as i32
             + repeated
             + final_body
+    }
+}
+
+/// Project the table's actual child sections after continuation placement.
+/// Repeated header/footer sections retain their own source rows; advancing
+/// body sections select only the rows intersecting their assigned local box.
+/// The table's Arc of edge winners is never resized or rewritten.
+fn project_collapsed_table_sections(table: &mut Fragment) {
+    let Some(data) = table.collapsed_table_border_data.as_ref() else {
+        return;
+    };
+    let direction = data.writing_direction;
+    let table_converter = WritingModeConverter::new(direction, table.size);
+    let table_block_size = table_converter.to_logical_size(table.size).block_size;
+    for section in &mut table.children {
+        if section.collapsed_table_section.is_none() {
+            continue;
+        }
+        let source_rect =
+            table_converter.to_logical_rect(PhysicalRect::new(section.offset, section.size));
+        let source_start = source_rect.offset.block_offset;
+        let source_end = source_start + source_rect.size.block_size;
+        let visible_start = source_start.max_of(LayoutUnit::zero());
+        let visible_end = source_end.min_of(table_block_size);
+        let visible_size = (visible_end - visible_start).clamp_negative_to_zero();
+        let consumed = (visible_start - source_start).clamp_negative_to_zero();
+        if consumed == LayoutUnit::zero() && visible_size == source_rect.size.block_size {
+            continue;
+        }
+        if let Some(rows) = section.collapsed_table_section.as_mut() {
+            rows.project_block_slice(consumed, visible_size);
+        }
+        let old_converter = WritingModeConverter::new(direction, section.size);
+        let mut visible_rect = source_rect;
+        visible_rect.offset.block_offset = visible_start;
+        visible_rect.size.block_size = visible_size;
+        let physical_rect = table_converter.to_physical_rect(visible_rect);
+        section.offset = physical_rect.offset;
+        section.size = physical_rect.size;
+        let new_converter = WritingModeConverter::new(direction, section.size);
+        for row in &mut section.children {
+            let mut logical_offset = old_converter.to_logical_offset(row.offset, row.size);
+            logical_offset.block_offset = logical_offset.block_offset - consumed;
+            row.offset = new_converter.to_physical_offset(logical_offset, row.size);
+        }
+        for clip in &mut section.decoration_clip_rects {
+            let mut logical_clip = old_converter.to_logical_rect(*clip);
+            logical_clip.offset.block_offset = logical_clip.offset.block_offset - consumed;
+            *clip = new_converter.to_physical_rect(logical_clip);
+        }
+        if let Some(overflow) = section.overflow_rect.as_mut() {
+            let mut logical_overflow = old_converter.to_logical_rect(*overflow);
+            logical_overflow.offset.block_offset = logical_overflow.offset.block_offset - consumed;
+            *overflow = new_converter.to_physical_rect(logical_overflow);
+        }
+        let previous_slice = section.decoration_slice;
+        section.decoration_slice = Some(crate::fragment::DecorationSlice {
+            source_block_offset: previous_slice
+                .map_or(LayoutUnit::zero(), |slice| slice.source_block_offset)
+                + consumed,
+            source_block_size: previous_slice
+                .map_or(source_rect.size.block_size, |slice| slice.source_block_size),
+        });
+        section.fragmentation_writing_direction = Some(direction);
+        section.is_first_for_node &= consumed == LayoutUnit::zero();
+        section.is_last_for_node &= consumed + visible_size >= source_rect.size.block_size;
+        section.has_overflow_clip = true;
+        section.block_axis_clip_only = true;
     }
 }
 
@@ -10176,7 +10257,16 @@ fn captioned_repeated_table_flow(
     let mut body_start: Option<LayoutUnit> = None;
     let mut body_end = LayoutUnit::zero();
     for child in &fragment.children {
-        if child.node_id.is_none() || child.node_id == fragment.node_id {
+        if child.node_id.is_none() {
+            if child.collapsed_table_section.is_some() {
+                body_start = Some(
+                    body_start.map_or(child.offset.top, |start| start.min_of(child.offset.top)),
+                );
+                body_end = body_end.max_of(child.offset.top + child.size.height);
+            }
+            continue;
+        }
+        if child.node_id == fragment.node_id {
             continue;
         }
         let style = &doc.node(child.node_id).style;
@@ -10305,27 +10395,39 @@ fn prepare_captioned_repeated_table_slice(
     let mut footer_offset = (fragment_block_size - flow.footer).clamp_negative_to_zero();
 
     for child in &mut fragment.children {
-        if child.node_id.is_none() || child.node_id == fragment.node_id {
+        if (child.node_id.is_none() && child.collapsed_table_section.is_none())
+            || child.node_id == fragment.node_id
+        {
             continue;
         }
-        let style = &doc.node(child.node_id).style;
-        match style.display {
-            Display::TableHeaderGroup if style.break_inside.is_avoid() => {
+        let style = (!child.node_id.is_none()).then(|| &doc.node(child.node_id).style);
+        match style.map_or(Display::TableRowGroup, |style| style.display) {
+            Display::TableHeaderGroup
+                if style.is_some_and(|style| style.break_inside.is_avoid()) =>
+            {
                 child.offset.top = flow_consumed + header_offset;
                 header_offset = header_offset + child.size.height;
             }
-            Display::TableFooterGroup if style.break_inside.is_avoid() => {
+            Display::TableFooterGroup
+                if style.is_some_and(|style| style.break_inside.is_avoid()) =>
+            {
                 child.offset.top = flow_consumed + footer_offset;
                 footer_offset = footer_offset + child.size.height;
             }
             Display::TableCaption | Display::TableColumn | Display::TableColumnGroup => {}
-            _ if !style.position.is_positioned() => {
+            _ if !style.is_some_and(|style| style.position.is_positioned()) => {
                 let source_start =
                     (child.offset.top - grid_gap - flow.body_start).clamp_negative_to_zero();
                 let source_end = source_start + child.size.height;
                 let visible_start = source_start.max_of(body_consumed);
                 let visible_end = source_end.min_of(body_consumed + body_capacity);
                 let crop_start = (visible_start - source_start).clamp_negative_to_zero();
+                if let Some(rows) = child.collapsed_table_section.as_mut() {
+                    rows.project_block_slice(
+                        crop_start,
+                        (visible_end - visible_start).clamp_negative_to_zero(),
+                    );
+                }
                 child.offset.top = flow_consumed + flow.header + visible_start - body_consumed;
                 child.size.height = (visible_end - visible_start).clamp_negative_to_zero();
                 child.has_overflow_clip = true;
@@ -10431,13 +10533,13 @@ fn clip_repeated_table_body_slice(
     flow_translation: LayoutUnit,
 ) {
     for child in &mut table.children {
-        if child.node_id.is_none() {
+        if child.node_id.is_none() && child.collapsed_table_section.is_none() {
             continue;
         }
-        let style = &doc.node(child.node_id).style;
-        if style.position.is_positioned()
+        let style = (!child.node_id.is_none()).then(|| &doc.node(child.node_id).style);
+        if style.is_some_and(|style| style.position.is_positioned())
             || matches!(
-                style.display,
+                style.map_or(Display::TableRowGroup, |style| style.display),
                 Display::TableHeaderGroup
                     | Display::TableFooterGroup
                     | Display::TableCaption
@@ -10459,6 +10561,9 @@ fn clip_repeated_table_body_slice(
         let visible_end = source_end.min_of(body_consumed + body_capacity);
         let visible_size = (visible_end - visible_start).clamp_negative_to_zero();
         let crop_start = (visible_start - source_start).clamp_negative_to_zero();
+        if let Some(rows) = child.collapsed_table_section.as_mut() {
+            rows.project_block_slice(crop_start, visible_size);
+        }
         child.offset.top = sections.header + visible_start - body_consumed + flow_translation;
         child.size.height = visible_size;
         child.has_overflow_clip = true;
@@ -10575,6 +10680,7 @@ fn prepare_nested_nonrepeated_table_slice(
                 source_block_offset: local_consumed,
                 source_block_size: source_size,
             });
+            project_collapsed_table_sections(table);
             column.offset.top = LayoutUnit::zero();
             column.size.height = fragment_block_size;
             fragment.children = fragment
@@ -10710,6 +10816,7 @@ fn prepare_nested_repeated_table_slice(
                     source_block_offset: body_consumed,
                     source_block_size: sections.body_start + sections.body_size + sections.footer,
                 });
+                project_collapsed_table_sections(table);
                 column_ordinal += 1;
                 break;
             }
@@ -10848,6 +10955,7 @@ fn prepare_nested_repeated_table_slice(
                     sections,
                 ),
             });
+            project_collapsed_table_sections(table);
             column.offset.top = LayoutUnit::zero();
             column.size.height = fragment_block_size;
             // A single-column inner multicol may already have materialized
@@ -14731,6 +14839,12 @@ fn slice_translated_fragment_descendants(
                     Some(intersection_end - intersection_start);
             }
         } else {
+            if let Some(rows) = descendant.collapsed_table_section.as_mut() {
+                rows.project_block_slice(
+                    descendant_source_start,
+                    intersection_end - intersection_start,
+                );
+            }
             descendant.offset.top = intersection_start - source_start + visual_translation.top;
             descendant.size.height = intersection_end - intersection_start;
         }
@@ -14792,6 +14906,9 @@ fn materialize_nontranslated_transform_slice(
             previous_slice.map_or(original_fragment_size, |slice| slice.source_block_size);
         let source_offset =
             previous_slice.map_or(LayoutUnit::zero(), |slice| slice.source_block_offset) + consumed;
+        if let Some(rows) = child.collapsed_table_section.as_mut() {
+            rows.project_block_slice(consumed, visible_end - visible_start);
+        }
         for descendant in &mut child.children {
             descendant.offset.top = descendant.offset.top - consumed;
         }
@@ -18858,6 +18975,7 @@ fn trim_table_rows_to_fragment(
                     let is_cell = !cell.node_id.is_none()
                         && doc.node(cell.node_id).style.display == Display::TableCell;
                     if !is_cell
+                        || cell.collapsed_table_border_participant
                         || cell.paint_border_after_children
                         || cell.border.bottom <= LayoutUnit::zero()
                     {
@@ -28515,6 +28633,7 @@ fn layout_multicol(
                                     .iter()
                                     .filter(|descendant| {
                                         descendant.node_id.is_none()
+                                            && descendant.collapsed_table_section.is_none()
                                             && descendant.kind == FragmentKind::Box
                                             && descendant.size.height > column_height
                                             && descendant.offset.top >= content_consumed
@@ -29789,6 +29908,7 @@ fn layout_multicol(
                                 nested_oversized_monolithic_line_in_part
                                     || child_frag.children.iter().any(|descendant| {
                                         descendant.node_id.is_none()
+                                            && descendant.collapsed_table_section.is_none()
                                             && descendant.kind == FragmentKind::Box
                                             && descendant.size.height > column_height
                                             && descendant.offset.top >= slice_start
@@ -29796,6 +29916,7 @@ fn layout_multicol(
                                     });
                             part.children.retain(|descendant| {
                                 !descendant.node_id.is_none()
+                                    || descendant.collapsed_table_section.is_some()
                                     || descendant.kind != FragmentKind::Box
                                     || descendant.size.height <= column_height
                                     || (descendant.offset.top >= slice_start
@@ -31361,6 +31482,7 @@ fn layout_multicol(
                             while per_col_children.len() <= part_col_idx {
                                 per_col_children.push(Vec::new());
                             }
+                            project_collapsed_table_sections(&mut part);
                             per_col_children[part_col_idx].push(part);
                             if !(resumed_owned_multicol_overflow
                                 && content_consumed >= child_height)
@@ -34079,6 +34201,69 @@ mod tests {
     use openui_dom::ElementTag;
     use openui_geometry::Length;
     use openui_style::*;
+
+    #[test]
+    fn collapsed_section_projection_rebases_rows_without_mutating_shared_source_graph() {
+        let mut doc = Document::new();
+        let table_node = doc.create_node(ElementTag::Table);
+        doc.append_child(doc.root(), table_node);
+        doc.update_resolved_style(table_node, |style| {
+            style.display = Display::Table;
+            style.border_collapse = BorderCollapse::Collapse;
+        });
+        for _ in 0..3 {
+            let row = doc.create_node(ElementTag::TableRow);
+            let cell = doc.create_node(ElementTag::TableCell);
+            doc.append_child(table_node, row);
+            doc.append_child(row, cell);
+            doc.update_resolved_style(row, |style| style.display = Display::TableRow);
+            doc.update_resolved_style(cell, |style| {
+                style.display = Display::TableCell;
+                style.width = Length::px(20.0);
+                style.height = Length::px(10.0);
+            });
+        }
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100));
+        let mut table = crate::table::table_layout(&doc, table_node, &space);
+        let graph = table.collapsed_table_border_data.as_ref().unwrap().clone();
+        let section = table
+            .children
+            .iter_mut()
+            .find(|child| child.collapsed_table_section.is_some())
+            .unwrap();
+        section.offset.top = LayoutUnit::from_i32(-15);
+        table.size.height = LayoutUnit::from_i32(10);
+        project_collapsed_table_sections(&mut table);
+        let section = table
+            .children
+            .iter()
+            .find(|child| child.collapsed_table_section.is_some())
+            .unwrap();
+        let rows = section.collapsed_table_section.as_ref().unwrap();
+        assert_eq!(rows.global_start_row, 1);
+        assert_eq!(rows.row_offsets, [0, 5, 10].map(LayoutUnit::from_i32));
+        assert!(rows.is_start_row_fragmented);
+        assert!(rows.is_end_row_fragmented);
+        assert_eq!(section.offset.top, LayoutUnit::zero());
+        assert_eq!(section.size.height, LayoutUnit::from_i32(10));
+        assert_eq!(section.children[1].offset.top, LayoutUnit::from_i32(-5));
+        assert_eq!(section.children[2].offset.top, LayoutUnit::from_i32(5));
+        assert!(std::sync::Arc::ptr_eq(
+            &graph,
+            table.collapsed_table_border_data.as_ref().unwrap()
+        ));
+        assert_eq!(graph.rows.len(), 3);
+        let retained_rows = rows.clone();
+        project_collapsed_table_sections(&mut table);
+        assert_eq!(
+            table
+                .children
+                .iter()
+                .find_map(|child| child.collapsed_table_section.as_ref())
+                .unwrap(),
+            &retained_rows
+        );
+    }
 
     fn fragment_for_node(fragment: &Fragment, node_id: NodeId) -> Option<&Fragment> {
         if fragment.node_id == node_id {
