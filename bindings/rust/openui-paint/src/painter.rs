@@ -21,6 +21,7 @@ use openui_dom::{
 };
 use openui_geometry::{
     BoxStrut, LayoutUnit, PhysicalOffset, PhysicalSnap, RasterBackend, RasterSnapping, TextEdging,
+    TextHinting,
 };
 use openui_layout::{Fragment, FragmentKind};
 use openui_style::{
@@ -403,6 +404,18 @@ fn replays_aliased_ahem_start_for_raster_policy(
     style: &ComputedStyle,
     deterministic_text_profile: bool,
 ) -> bool {
+    let text_raster = if style.native_control_text {
+        style.raster_configuration.native_text
+    } else if style.embedded_document_text {
+        style.raster_configuration.embedded_text
+    } else {
+        style.raster_configuration.author_text
+    };
+    // Fitted monochrome outlines already contain their block-start row.
+    // Applying the legacy unhinted-mask replay draws an extra physical row.
+    if text_raster.edging == TextEdging::Alias && text_raster.hinting != TextHinting::None {
+        return false;
+    }
     if deterministic_text_profile {
         return true;
     }
