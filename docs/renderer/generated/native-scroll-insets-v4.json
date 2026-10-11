@@ -1,0 +1,237 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "docs/renderer/generated/native-scroll-insets-v3.json",
+      "sha256": "ec5b7a19961b19a3151bf40159c1ba0d594575d8e0e5ab14e30ee9fd7518077d"
+    },
+    {
+      "path": "docs/renderer/evidence/native-clip-containment-v1/native-clip-containment-v1.patch",
+      "sha256": "3e9a72557f8dfe17633c8c1ef741b6fc00b0cff4aba46416d5ef7f4a75f92b6a"
+    },
+    {
+      "path": "docs/renderer/evidence/native-reveal-containers-v1/native-reveal-containers-v1.patch",
+      "sha256": "716f1c41535bd534493c9369ddf5ac4435261c82c048c435e1dece989e4e6616"
+    },
+    {
+      "path": "docs/renderer/evidence/native-reveal-containers-v1/native-reveal-containers.c",
+      "sha256": "9450766b695c75811d646491d329a75637459002b6cf9dbf3801f29b9d59ea76"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-screen-complete-audit-v687.json",
+      "sha256": "eed64f6f58248a7c146fdf0333c452b356966d7872a740b38ab5dd2e718752d5"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-screen-regression-review-v723.json",
+      "sha256": "28ff88aaaa3f0584b930fe1647fad8ad8ddb6337b5cf1636152e0177ed866b7a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-screen-clean-full-v681/full-summary.json",
+      "sha256": "e5ab97bf4a5079e7eb9c8c2d99797fcba1011b076ad223922f50e4fbd04d7048"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-screen-full-exit-v681.json",
+      "sha256": "0706f6bde8459712d2521e572ef8344525ebc53e0fe527ea32e9e13002886f59"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-screen-clean-expanded-v681/expanded-summary.json",
+      "sha256": "6a2611bc0901ed0be5cae20373956ad5586e1a30660b00b52fca136dd04b7eec"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-screen-expanded-exit-v681.json",
+      "sha256": "72d6e352bb14b1143819e89ebd055e5ee96d156c8f650f9827e630d4daea5102"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-clip-containment-prototype-v696.json",
+      "sha256": "69f50a922395f6e3ee2e7eab2be5a38851b3229cd67a3578b0c921fb681407d9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-clip-containment-clean-v698/build.json",
+      "sha256": "d79fe5d09e68d4ff6ab3acce88fa984677dc37bf95346fb540853740187d0eae"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-clip-containment-checks-v705/receipt.json",
+      "sha256": "8cd9c9d975e0ac1301367c22d78be9c31713a0992409f56e7c330a9afb36db33"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-clip-containment-native-v700/receipt.json",
+      "sha256": "007c75a77957da8280a1ca629982bfdd191bd9ce35cae191e51baa23eb1c7d18"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-clip-containment-reveal-v701/comparison.json",
+      "sha256": "045cce57da1d71b50c60465dea51d8eca01be347fb2a9cd41f09aaa58fec4c4d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-clip-containment-native-audit-v715.json",
+      "sha256": "e361822a722342af68766de04c278a33514f682cff0b9e2f0ab044687296adec"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-clip-containment-clean-focused-v703/focused-summary.json",
+      "sha256": "51609faf3ae550b325e4c9e1055161c604a75a1d4f1a0027ec6f38347390901a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-clip-containment-clean-primitive-v703/primitive-summary.json",
+      "sha256": "d81936cfd0f42131d9c8f16d774bb248fe45bdb9cd1f3dd76281a2f19081177e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-clip-containment-focused-exit-v703.json",
+      "sha256": "2592eed9d58978033893c02f9df41fdcdbc978a46775d5c5e20ae17160089460"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-clip-containment-primitive-exit-v703.json",
+      "sha256": "034e483068e4fa8eea92f4255ed196803d69d1b7d8be9864f76b4c4b6c192d48"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-clip-containment-raster-audit-v714.json",
+      "sha256": "59d4175e1b33637e9021843f9e48d05d16261d1abb062179d340dc933b444835"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-traversal-oracle-v706/oracle.json",
+      "sha256": "93480c636e4f98f9d333a1b0d8fa6981220ee9b7d5ce4aff5d7ef026124303bb"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-traversal-failed-attempt-v709.json",
+      "sha256": "aee6827708758091190dbf6a80e9582a32b620502052670001b4ce6f85d9a0a6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-traversal-compare-v711/comparison.json",
+      "sha256": "f43278a7501788ab82b7c985e81ccf9ea07e593277b278c515a9600efcc5bdf0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-containers-prototype-v712.json",
+      "sha256": "7527cf7e16656cd9210f126f7b6ea0d5ab154e1f0d51a4d1a92fe4e7e1bac683"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-containers-clean-v713/build.json",
+      "sha256": "acef696dfa43d6ec105b3707c9d1a2f5e19ab30c609fb068e7bc08c215ad71e2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-containers-checks-v716/receipt.json",
+      "sha256": "c0a9492e39987cc5ec2f717776283bec6d901c4e48082cc47f6afcf6adadbdab"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-containers-c-v717/comparison.json",
+      "sha256": "324494d49a43afbc7788ca1f8b94777008259de8945e1a6a19b056066b89c269"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-containers-rust-v718/comparison.json",
+      "sha256": "6358440dc3710ddb4648e336407f825780532840075c28747fe37156535048c0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-containers-insets-v720/comparison.json",
+      "sha256": "f13535317a043de88ab678cc04adbcb02baf665994d7323a2cfb29cb55ba290b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-containers-audit-v724.json",
+      "sha256": "77f958e0bbd5e56c79dade7a2ba6a138a2c32c06d79a56526cd8cb10949c30d3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-reveal-containers-insets-audit-v728.json",
+      "sha256": "49396880830c4d5ee0d97af20867ab191b5bc1135689c5e201436202d91b0ced"
+    }
+  ],
+  "clip_candidate": {
+    "all_1600_comparison_invariants_unchanged": true,
+    "all_previously_exact_native_bytes_unchanged": true,
+    "complete_original_and_expanded_runs": "running; no qualifying result yet",
+    "focused_exact": 640,
+    "native_c_exact_losses": 0,
+    "native_c_geometry_exact": 175,
+    "native_c_new_exact_vs_screen": 10,
+    "native_c_pixels_exact": 175,
+    "native_rust_geometry_and_pixels_exact": 510,
+    "primitive_exact": 960,
+    "read_only_checks_passed": 10,
+    "remaining": "General clip intersections, effect/transform/backing property spaces and complete qualification",
+    "source": {
+      "clean": true,
+      "commit": "cf59ea2915435fec371947c03d2e612230bb4b78",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "2dd8e9e86a62dc7543256482dc6e640cc806e0d6bb28073df3d325d89be43984",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace_failed": 0,
+    "workspace_ignored": 13,
+    "workspace_passed": 8532
+  },
+  "complete_screen_candidate": {
+    "actual_full_and_expanded_exits": [
+      1,
+      1
+    ],
+    "addition_cases": 201,
+    "additions_exact_at_all_four_profiles": 200,
+    "all_804_addition_invariants_unchanged": true,
+    "all_chromium_bytes_and_identities_unchanged": true,
+    "changed_comparisons": 45,
+    "delta_vs_umbrella": {
+      "exact_losses": 2,
+      "improved": 28,
+      "new_exact": 8,
+      "same_pixel_count": 8,
+      "worsened": 9
+    },
+    "exact_losses": 2,
+    "promotion_allowed": false,
+    "required_gate": "fail",
+    "residual_original_ids": 882,
+    "results": {
+      "expanded": {
+        "different": 1585,
+        "errors": 0,
+        "exact": 22143,
+        "profile_result_sha256": "b8168bf3a558d5fb5d28dd432a6ff62dd1ccac7d2fedc0ccfcd5cc5421617390",
+        "total": 23728
+      },
+      "full": {
+        "different": 1584,
+        "errors": 0,
+        "exact": 21340,
+        "profile_result_sha256": "ba2229c177d4c74b1286b8575e393f534abef4d3b5df072b95f956207d791ef5",
+        "total": 22924
+      }
+    },
+    "source": {
+      "clean": true,
+      "commit": "dac78e258a039c9488952114fb1c877ea0689625",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "590377b0d0ad1ddf1f52254fb56a61b9ae80d079c52c5574cc5ed1a99870178c",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "javascript_executed_by_openui": false,
+  "native_reveal_containers_candidate": {
+    "all_510_existing_rust_states_unchanged": true,
+    "all_previously_exact_c_bytes_unchanged": true,
+    "all_rust_c_geometry_and_pixels_identical": true,
+    "changes": [
+      "Retain actual fragment-box ancestry for native reveal",
+      "Public transforms establish a containing block including identity; none removes it",
+      "Layout invalidation when containing-block ownership changes, including animation values"
+    ],
+    "complete_original_and_expanded_runs": "not started",
+    "focused_and_primitive_runs": "running; no qualifying result yet",
+    "native_c_exact_losses": 0,
+    "native_c_geometry_and_pixels_exact": 60,
+    "native_c_geometry_gains_vs_screen": 25,
+    "native_c_pixel_gains_vs_screen": 15,
+    "native_rust_geometry_and_pixels_exact": 90,
+    "read_only_checks_passed": 10,
+    "remaining": "Broader transformed/fragmented and fixed viewport traversal, full option and native API coverage, renderer qualification",
+    "source": {
+      "clean": true,
+      "commit": "6d6768a8a23e4af6cf1b3abe6523509ccc7e2576",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "c1a85131ed5871faafd8a9d6b4c6c519b4ca4cb876dde32d66908c7f836b1eec",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace_failed": 0,
+    "workspace_ignored": 13,
+    "workspace_passed": 8535
+  },
+  "new_cases_admitted": 0,
+  "pixel_target": "immutable pinned Chromium; zero tolerance",
+  "pixel_tolerance": 0,
+  "release_qualification": false,
+  "schema_version": 1
+}

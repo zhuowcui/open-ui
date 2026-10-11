@@ -1,0 +1,251 @@
+{
+  "all_fifteen_read_only_checks_passed": true,
+  "api_rendering_behavior_qualified": false,
+  "artifact_bytes": 1105599,
+  "artifact_count": 26,
+  "artifacts": [
+    {
+      "bytes": 9346,
+      "path": "docs/renderer/evidence/native-font-choice-v1/checks.json",
+      "sha256": "7230cd5095f271a0b541ee0ec98c37053aa8707f01145d9faa0df337d88aefff",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/receipt.json"
+    },
+    {
+      "bytes": 95,
+      "decompressed_bytes": 81,
+      "decompressed_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-renderer.log.gz",
+      "sha256": "d2b79cb72721d10fece4b15d0f646423937282376e09b24612cf252d1dfa8316",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/renderer.log"
+    },
+    {
+      "bytes": 79,
+      "decompressed_bytes": 59,
+      "decompressed_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-multicol.log.gz",
+      "sha256": "fd7419d14ad0bcdcbbacbaf00c01710e85416d2018b9addb2b26f3cff95775e1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/multicol.log"
+    },
+    {
+      "bytes": 102,
+      "decompressed_bytes": 86,
+      "decompressed_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-sp17.log.gz",
+      "sha256": "3f7d3c871f9e93684439793e60873829691e5dee51d51b30ab55fa940ef55df4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/sp17.log"
+    },
+    {
+      "bytes": 123,
+      "decompressed_bytes": 121,
+      "decompressed_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-sp18.log.gz",
+      "sha256": "50c99e0d37a26a36c607fd5e7dbf96f4aedf46d045824ff09490252f4c3a35ee",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/sp18.log"
+    },
+    {
+      "bytes": 143,
+      "decompressed_bytes": 142,
+      "decompressed_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-sp20.log.gz",
+      "sha256": "3705c08adcf75d9113bbf4ee522c73c0bbcdb1f0e9e50947c0a4eb54e214d64e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/sp20.log"
+    },
+    {
+      "bytes": 80,
+      "decompressed_bytes": 63,
+      "decompressed_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-v02.log.gz",
+      "sha256": "ec1277c807103cfdee77b77954961b24a58ce62612d9dbf58594043db7efc478",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/v02.log"
+    },
+    {
+      "bytes": 57,
+      "decompressed_bytes": 37,
+      "decompressed_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-style.log.gz",
+      "sha256": "1b70c8a7ba0f84375105255b165129e2f427ca1072a832c28efb9f840d539b10",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/style.log"
+    },
+    {
+      "bytes": 52,
+      "decompressed_bytes": 32,
+      "decompressed_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-ffi.log.gz",
+      "sha256": "55406c87d9571bf98d31b05240f488bb4ab3c159f8a3c2f654148ee72b439592",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/ffi.log"
+    },
+    {
+      "bytes": 65,
+      "decompressed_bytes": 45,
+      "decompressed_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-archive.log.gz",
+      "sha256": "d9ac32c4015a03a8f742aaef97d2271555824a1bc37f48615bc942ea11dc71d8",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/archive.log"
+    },
+    {
+      "bytes": 1055,
+      "decompressed_bytes": 2867,
+      "decompressed_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-accountability.log.gz",
+      "sha256": "a7ddfb15636772a7ed177d92cd310c67cc38a082a9aae491e62d04518aa2f463",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/accountability.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-rust-format.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/rust-format.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-syntax-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/syntax-c.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-syntax-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/syntax-cpp.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-clang-format.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/clang-format.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-font-choice-v1/check-native-options-rust-format.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-choice-checks-v1839/native-options-rust-format.log"
+    },
+    {
+      "bytes": 3811,
+      "path": "docs/renderer/evidence/native-font-choice-v1/checks.py",
+      "sha256": "65dbe37eb8f08d24bae663c978d5b00c342b5f376e6b953df6d86434bec7b97c",
+      "source_path": "/tmp/openui-native-font-choice-checks-v1839.py"
+    },
+    {
+      "bytes": 4850,
+      "path": "docs/renderer/evidence/native-font-choice-v1/preserver.py",
+      "sha256": "86ac4d9956b6449bf138a7df13ec47cb09e2186e13ba208a990cb2daf4b0637a",
+      "source_path": "/tmp/openui-native-font-choice-preserve-v1841.py"
+    },
+    {
+      "bytes": 11237,
+      "path": "docs/renderer/evidence/native-font-choice-v1/source/bindings/rust/openui-geometry/src/raster.rs",
+      "sha256": "691f9a721676dcd24a0813572846202ad61f8b9f5fee1401422240728fbe6e3d",
+      "source_path": "/dev/shm/openui-native-font-choice-c68d946c-v1838/bindings/rust/openui-geometry/src/raster.rs"
+    },
+    {
+      "bytes": 955054,
+      "path": "docs/renderer/evidence/native-font-choice-v1/source/bindings/rust/openui-paint/src/painter.rs",
+      "sha256": "831e3cbdb9fc7c9705eb0210956126683285da6396b28d6b47f87097e177f64b",
+      "source_path": "/dev/shm/openui-native-font-choice-c68d946c-v1838/bindings/rust/openui-paint/src/painter.rs"
+    },
+    {
+      "bytes": 21683,
+      "path": "docs/renderer/evidence/native-font-choice-v1/source/bindings/rust/openui-paint/src/text_painter.rs",
+      "sha256": "97152ca8b584649047a8ac8ec67b087173cf8c2f18b8c5d1366bfb9ef1023465",
+      "source_path": "/dev/shm/openui-native-font-choice-c68d946c-v1838/bindings/rust/openui-paint/src/text_painter.rs"
+    },
+    {
+      "bytes": 28313,
+      "path": "docs/renderer/evidence/native-font-choice-v1/source/bindings/rust/openui-text/src/font/platform.rs",
+      "sha256": "32f761f4b746a6cf8b21982a2aa9e0c25467c25ee1df0ad7b3b21b3faad354cc",
+      "source_path": "/dev/shm/openui-native-font-choice-c68d946c-v1838/bindings/rust/openui-text/src/font/platform.rs"
+    },
+    {
+      "bytes": 746,
+      "path": "docs/renderer/evidence/native-font-choice-v1/source/bindings/rust/openui-text/src/shaping/mod.rs",
+      "sha256": "794ba552217a48e8e8dc8503759e00a250841b087c82179bec70eed588241ebf",
+      "source_path": "/dev/shm/openui-native-font-choice-c68d946c-v1838/bindings/rust/openui-text/src/shaping/mod.rs"
+    },
+    {
+      "bytes": 46752,
+      "path": "docs/renderer/evidence/native-font-choice-v1/source/bindings/rust/openui-text/src/shaping/shape_result.rs",
+      "sha256": "f500e306503ca7bd1517582b06be8a25159bf6cef17623b982243af2d54f0baa",
+      "source_path": "/dev/shm/openui-native-font-choice-c68d946c-v1838/bindings/rust/openui-text/src/shaping/shape_result.rs"
+    },
+    {
+      "bytes": 5083,
+      "path": "docs/renderer/evidence/native-font-choice-v1/source/bindings/rust/openui/examples/native_glyph_coverage.rs",
+      "sha256": "57f04c98eafe6e34832c2880bae0e35252a84e939a40c75aaba8820f9b35d1b3",
+      "source_path": "/dev/shm/openui-native-font-choice-c68d946c-v1838/bindings/rust/openui/examples/native_glyph_coverage.rs"
+    },
+    {
+      "bytes": 16773,
+      "path": "docs/renderer/evidence/native-font-choice-v1/native-font-choice.patch",
+      "sha256": "b4fd4ae18a4973b5a678ab2460c3cbc01f3f140d21507277f99287cd3684a740"
+    }
+  ],
+  "backend": "RasterBackend::ChromiumLinuxFontations",
+  "candidate_applied_to_umbrella": false,
+  "compiled": false,
+  "existing_defaults_unchanged": true,
+  "immutable_typeface_choice_retained_with_resolved_fonts": true,
+  "javascript_executed_by_openui": false,
+  "native_apps_executed": false,
+  "new_release_states_admitted": 0,
+  "no_new_font_family_size_fixture_or_test_id_rule": true,
+  "ordinary_freetype_choice_preserved": true,
+  "own_hosted_hardening_executed": false,
+  "parent_candidate_native_pixels_unqualified": true,
+  "parent_commit": "c68d946c18ecd1bb6d2f3f84accecaa84cba3651",
+  "pixel_matrices_executed": false,
+  "pixel_tolerance": 0,
+  "public_native_rust_apis_required": true,
+  "public_rust_constructor": "RasterConfiguration::chromium_linux_fontations_lcd",
+  "release_qualification": false,
+  "remaining_qualification": [
+    "Clean compilation and consuming native Rust app execution",
+    "Exact saved native Fontations reference images and complete scale and phase sweep",
+    "Default native font pixels",
+    "All raster-field effects, unsupported outlines and color or variable font behavior",
+    "Neighboring writing-mode, decoration, shadow, clipping and transform cases",
+    "All four renderer matrices and actual hosted jobs"
+  ],
+  "rust_tests_executed": false,
+  "same_retained_engine": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "ef8880b083876319df54599416c0fe11c543a26c",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "6cc716662c812617f2d860da1892d58b0b6acb9db14fee53db26d3136b077893",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "ef8880b083876319df54599416c0fe11c543a26c",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "6cc716662c812617f2d860da1892d58b0b6acb9db14fee53db26d3136b077893",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

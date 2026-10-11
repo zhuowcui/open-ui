@@ -1,0 +1,30 @@
+{
+  "absent_source_private_test_not_executed": true,
+  "all_six_build_stages_pass": true,
+  "build_receipt_sha256": "d471333ab9addbe52f1f147e010b09b534ba50d9c590bb8438334d760e0d3419",
+  "failed": 0,
+  "four_pixel_matrices_terminal": false,
+  "ignored": 13,
+  "native_build_inputs_equal_current_umbrella": "3827199abc0e0a0d8ef6b5ba15e3606d73cda91b",
+  "old_cached_workspace_records_requalified": false,
+  "passed": 8531,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "2e443f49d49b81d65674f64bb099fed2922775b5",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5377ee4175f9eac313c9d4c08e1e8f3c9d2aff100fa73cb8d716188e9efb1584",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "2e443f49d49b81d65674f64bb099fed2922775b5",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5377ee4175f9eac313c9d4c08e1e8f3c9d2aff100fa73cb8d716188e9efb1584",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "text_library_tests": 341,
+  "whole_pipeline_release_qualification": false,
+  "workspace_and_abi_build_source_attribution": "scoped clean pass",
+  "workspace_packages_cleaned": 18
+}

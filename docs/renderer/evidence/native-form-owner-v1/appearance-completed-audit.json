@@ -1,0 +1,36 @@
+{
+  "actual_whole_exit_code": 0,
+  "all_native_apis_qualified": false,
+  "all_source_bytes_unchanged": true,
+  "cases_verified": 160,
+  "complete": true,
+  "copied_private_app_source_and_artifact_proven": true,
+  "exact": 160,
+  "images_verified": 640,
+  "implementation_integrated": false,
+  "javascript_executed_by_openui": false,
+  "logs_verified": 320,
+  "main_source": {
+    "clean": true,
+    "commit": "783e11f44b0e1cd0023018d24e667d27f0b91bb8",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "09626c257b1039fb97272f3c71a24ebf3e36fb40df431fa3f3998f02c7933e43",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "metadata_rows_verified": 320,
+  "native_appearance_qualified": true,
+  "owner_terminal": true,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "receipt_sha256": "f6798e205763b578019d14ac5405487e8ca6c6a9839076c4dc0f2c07ab9bd888",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "a401a8ac8c33cc5e24ed9bb19934061716cd84dd",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "ebebbc58bd6f89eb5f03af1e3eae9cb961463a3f1be749c23315206c03c735f9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

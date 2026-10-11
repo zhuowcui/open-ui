@@ -6,11 +6,30 @@
 // the remaining readable/writable-memory preconditions in its safety contract.
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
+mod accessibility_snapshot;
+mod editing_command;
+#[cfg(test)]
+mod element_relation_tests;
+mod element_relations;
+mod event_properties;
+mod focus_events;
+#[cfg(test)]
+mod focus_tests;
 mod generated;
+mod input_events;
+mod native_app;
+#[cfg(test)]
+mod native_app_tests;
 mod registry;
 mod types;
 mod value;
 
+pub use editing_command::oui_element_edit_text_v1;
+pub use element_relations::{oui_element_associated_form_v1, oui_element_parent_v1};
+pub use event_properties::oui_event_properties_v1;
+pub use focus_events::{oui_document_focused_element_v1, oui_event_focus_info_v1};
+pub use input_events::oui_event_input_info_v1;
+pub use native_app::{oui_app_request_exit, oui_app_run};
 pub use types::*;
 
 use generated::{property_from_raw, valid_event_type};
@@ -19,9 +38,9 @@ use openui_dom::ElementTag;
 use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
     AnimationEventKind, AnimationId, AnimationTimeline, ControlAdjustment, Engine,
-    EventPhase as EngineEventPhase, FocusOrigin, FontAxisRange, FontContainerFormat,
-    FontFaceDescriptor, FontFeatureDefault, FontMetricOverrides, FontStyleRange, FontUnicodeRange,
-    NodeHandle, PointerEventKind, ViewportAuthority, ViewportMetrics,
+    EventPhase as EngineEventPhase, FontAxisRange, FontContainerFormat, FontFaceDescriptor,
+    FontFeatureDefault, FontMetricOverrides, FontStyleRange, FontUnicodeRange, NodeHandle,
+    PointerEventKind, ViewportAuthority, ViewportMetrics,
 };
 use openui_style::{
     parse_literal, AnimationOptions, AnimationPhase, Border, BorderStyle, Color,
@@ -32,8 +51,9 @@ use openui_style::{
 };
 use registry::{
     borrow_engine, borrow_engine_mut, bytes, destroy, document, element, element_document, ffi,
-    ffi_preserve, ffi_value, get, last_error, register, utf8, ApiError, AppState, DocumentState,
-    ElementRef, FontFaceRef, HandleKind, ListenerRecord, ListenerRef, LocalHandle, ResourceRef,
+    ffi_preserve, ffi_value, get, last_error, register, utf8, AccessibilitySnapshotState, ApiError,
+    AppState, DocumentState, ElementRef, FontFaceRef, HandleKind, ListenerRecord, ListenerRef,
+    LocalHandle, ResourceRef,
 };
 use std::cell::{Cell, RefCell};
 use std::ffi::c_void;
@@ -114,14 +134,28 @@ fn new_document(config: &OuiDocumentConfig) -> Result<Rc<DocumentState>, ApiErro
         size_of::<OuiDocumentConfig>(),
     )?;
     let viewport = viewport_metrics(&config.viewport)?;
-    Ok(Rc::new(DocumentState {
-        engine: RefCell::new(Engine::new(viewport)?),
+    let engine = Rc::new(RefCell::new(Engine::new(viewport)?));
+    let state = Rc::new(DocumentState {
+        native: openui::Document::from_shared_engine(engine.clone()),
+        engine,
         update_depth: Cell::new(0),
         listeners: RefCell::new(Vec::new()),
         next_listener: Cell::new(1),
         element_handles: RefCell::new(std::collections::HashMap::new()),
         animation_events: RefCell::new(Vec::new()),
-    }))
+    });
+    let weak = Rc::downgrade(&state);
+    state
+        .native
+        .set_foreign_event_handler(Rc::new(move |node, target, event, capture| {
+            if let Some(state) = weak.upgrade() {
+                native_app::dispatch_native_listener(&state, node, target, event, capture)
+                    .map_err(|error| openui::Error::Platform(error.message))?;
+            }
+            Ok(())
+        }))
+        .map_err(native_app::native_error)?;
+    Ok(state)
 }
 
 fn viewport_metrics(raw: &OuiViewportMetrics) -> Result<ViewportMetrics, ApiError> {
@@ -667,7 +701,7 @@ pub extern "C" fn oui_app_create(
         if config.backend > 2 {
             return Err(invalid("unknown backend preference"));
         }
-        let title = utf8(config.title, "title")?;
+        let _title = utf8(config.title, "title")?;
         let document_config = OuiDocumentConfig {
             struct_size: size_of::<OuiDocumentConfig>() as u32,
             abi_version: OUI_ABI_VERSION,
@@ -683,8 +717,14 @@ pub extern "C" fn oui_app_create(
         };
         let state = Rc::new(AppState {
             document: new_document(&document_config)?,
-            _title: title,
-            _backend: config.backend,
+            #[cfg(all(feature = "linux", target_os = "linux"))]
+            title: _title,
+            #[cfg(all(feature = "linux", target_os = "linux"))]
+            backend: config.backend,
+            running: Cell::new(false),
+            has_run: Cell::new(false),
+            exit_requested: Cell::new(false),
+            exit_handle: RefCell::new(None),
         });
         write_handle(out_app, LocalHandle::App(state))
     })
@@ -694,6 +734,13 @@ pub extern "C" fn oui_app_create(
 #[no_mangle]
 pub extern "C" fn oui_app_destroy(app: *mut OuiApp) -> OuiStatus {
     ffi(|| {
+        let state = native_app::app_state(app)?;
+        if state.running.get() {
+            return Err(ApiError::new(
+                OuiStatus::InvalidState,
+                "cannot destroy an app while its native run is active",
+            ));
+        }
         destroy(app as usize, HandleKind::App)?;
         Ok(())
     })
@@ -752,6 +799,31 @@ pub extern "C" fn oui_document_root(
         let state = document(document_handle as usize)?;
         let node = borrow_engine(&state)?.root();
         write_element_handle(out_root, &state, node)
+    })
+}
+
+// SAFETY CONTRACT: `document` is live, `id` names readable UTF-8 bytes, and
+// `out_element` is writable. A found result is an owned handle; release it
+// with `oui_element_destroy`. A missing ID writes null and returns success.
+#[no_mangle]
+pub extern "C" fn oui_document_element_by_id(
+    document_handle: *mut OuiDocument,
+    id: OuiUtf8,
+    out_element: *mut *mut OuiElement,
+) -> OuiStatus {
+    ffi(|| {
+        if out_element.is_null() {
+            return Err(invalid("out_element is null"));
+        }
+        // SAFETY: the caller guarantees storage for one output pointer.
+        unsafe { ptr::write(out_element, ptr::null_mut()) };
+        let state = document(document_handle as usize)?;
+        let id = utf8(id, "id")?;
+        let node = borrow_engine(&state)?.element_by_id(&id);
+        if let Some(node) = node {
+            write_element_handle(out_element, &state, node)?;
+        }
+        Ok(())
     })
 }
 
@@ -855,6 +927,10 @@ pub extern "C" fn oui_document_update(document_handle: *mut OuiDocument) -> OuiS
                 "cannot update during a transaction",
             ));
         }
+        state
+            .native
+            .dispatch_pending_events()
+            .map_err(native_app::native_error)?;
         borrow_engine_mut(&state)?.update()?;
         Ok(())
     })
@@ -1159,8 +1235,33 @@ pub extern "C" fn oui_element_create(
             return Err(invalid("out_element is null"));
         }
         let state = document(document_handle as usize)?;
-        let node = borrow_engine_mut(&state)?.create_element(element_tag(tag)?)?;
+        let node = {
+            let mut engine = borrow_engine_mut(&state)?;
+            if tag == 39 {
+                engine.create_svg_foreign_object()?
+            } else {
+                engine.create_native_element(element_tag(tag)?)?
+            }
+        };
         write_element_handle(out_element, &state, node)
+    })
+}
+
+// SAFETY CONTRACT: source is a live owning-thread handle and out_clone points
+// to writable storage for one owned element handle. No callback borrows survive.
+#[no_mangle]
+pub extern "C" fn oui_element_clone_subtree_v1(
+    source: *mut OuiElement,
+    out_clone: *mut *mut OuiElement,
+) -> OuiStatus {
+    ffi(|| {
+        if out_clone.is_null() {
+            return Err(invalid("out_clone is null"));
+        }
+        let source = element(source as usize)?;
+        let state = element_document(&source)?;
+        let node = borrow_engine_mut(&state)?.clone_subtree(source.node)?;
+        write_element_handle(out_clone, &state, node)
     })
 }
 
@@ -1218,7 +1319,10 @@ pub extern "C" fn oui_element_append_child(
         let parent = element(parent as usize)?;
         let child = element(child as usize)?;
         let state = same_document(&parent, &child)?;
-        borrow_engine_mut(&state)?.append_child(parent.node, child.node)?;
+        state
+            .native
+            .append_child_for_native_facade(parent.node, child.node)
+            .map_err(native_app::native_error)?;
         Ok(())
     })
 }
@@ -1241,7 +1345,10 @@ pub extern "C" fn oui_element_insert_before(
                 "elements belong to different documents",
             ));
         }
-        borrow_engine_mut(&state)?.insert_before(parent.node, child.node, before.node)?;
+        state
+            .native
+            .insert_before_for_native_facade(parent.node, child.node, before.node)
+            .map_err(native_app::native_error)?;
         Ok(())
     })
 }
@@ -1250,6 +1357,20 @@ pub extern "C" fn oui_element_insert_before(
 #[no_mangle]
 pub extern "C" fn oui_element_remove(element_handle: *mut OuiElement) -> OuiStatus {
     ffi(|| with_element_mut(element_handle as usize, Engine::remove))
+}
+
+// SAFETY CONTRACT: `element` is a live node handle owned by this thread.
+// The retained node and handle remain valid for later reattachment.
+#[no_mangle]
+pub extern "C" fn oui_element_detach(element_handle: *mut OuiElement) -> OuiStatus {
+    ffi(|| {
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        state
+            .native
+            .detach_for_native_facade(element.node)
+            .map_err(native_app::native_error)
+    })
 }
 
 // SAFETY CONTRACT: `element` is a live element handle owned by this thread.
@@ -1267,7 +1388,7 @@ pub extern "C" fn oui_element_set_text(
     ffi(|| {
         let text = utf8(text, "text")?;
         with_element_mut(element_handle as usize, |engine, node| {
-            engine.set_text(node, text)
+            engine.set_text_content(node, text)
         })
     })
 }
@@ -1285,9 +1406,43 @@ pub extern "C" fn oui_element_set_attribute(
             return Err(invalid("attribute name is empty"));
         }
         let value = utf8(value, "attribute value")?;
-        with_element_mut(element_handle as usize, |engine, node| {
-            engine.set_attribute(node, name, value)
-        })
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        state
+            .native
+            .set_attribute_for_native_facade(element.node, &name, &value)
+            .map_err(native_app::native_error)
+    })
+}
+
+// SAFETY CONTRACT: name is readable UTF-8 and out_value is writable pointer
+// storage. A present attribute returns one owned buffer, including an empty
+// attribute. The caller destroys that buffer; absent attributes return null.
+#[no_mangle]
+pub extern "C" fn oui_element_get_attribute_v1(
+    element_handle: *mut OuiElement,
+    name: OuiUtf8,
+    out_value: *mut *mut OuiBuffer,
+) -> OuiStatus {
+    ffi(|| {
+        if out_value.is_null() {
+            return Err(invalid("attribute output is null"));
+        }
+        let name = utf8(name, "attribute name")?;
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let value = borrow_engine(&state)?
+            .attribute(element.node, &name)?
+            .map(|text| text.as_bytes().to_vec());
+        let buffer = if let Some(value) = value {
+            register(LocalHandle::Buffer(Rc::new(value)))? as *mut OuiBuffer
+        } else {
+            ptr::null_mut()
+        };
+        // SAFETY: validated output storage. All fallible work precedes the
+        // ownership transfer, and errors do not modify out_value.
+        unsafe { ptr::write(out_value, buffer) };
+        Ok(())
     })
 }
 
@@ -1302,9 +1457,13 @@ pub extern "C" fn oui_element_remove_attribute(
         if name.is_empty() {
             return Err(invalid("attribute name is empty"));
         }
-        with_element_mut(element_handle as usize, |engine, node| {
-            engine.remove_attribute(node, &name).map(|_| ())
-        })
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        state
+            .native
+            .remove_attribute_for_native_facade(element.node, &name)
+            .map(|_| ())
+            .map_err(native_app::native_error)
     })
 }
 
@@ -1440,6 +1599,78 @@ pub extern "C" fn oui_element_get_bounds(
     })
 }
 
+// SAFETY CONTRACT: `element` is live. `out_count` is writable. When copying,
+// `rects` is writable for `capacity` rectangles and does not overlap outputs.
+#[no_mangle]
+pub extern "C" fn oui_element_get_client_rects_v1(
+    element_handle: *mut OuiElement,
+    rects: *mut OuiRect,
+    capacity: usize,
+    out_count: *mut usize,
+) -> OuiStatus {
+    ffi(|| {
+        if out_count.is_null() {
+            return Err(invalid("rectangle count output is null"));
+        }
+        let source = element(element_handle as usize)?;
+        let state = element_document(&source)?;
+        let owned: Vec<_> = borrow_engine_mut(&state)?
+            .client_rects(source.node)?
+            .into_iter()
+            .map(|rect| OuiRect {
+                x: rect.x,
+                y: rect.y,
+                width: rect.width,
+                height: rect.height,
+            })
+            .collect();
+        copy_array_to_c(&owned, rects, capacity, out_count, "client rectangles")
+    })
+}
+
+// SAFETY CONTRACT: `out_metrics` has a readable initialized version header and,
+// when its declared size is sufficient, writable storage for the complete
+// structure. `out_has_metrics` is writable, nonoverlapping byte storage.
+// Both outputs are unchanged on error; a missing layout box returns zero sizes.
+#[no_mangle]
+pub extern "C" fn oui_element_get_scroll_metrics_v1(
+    element_handle: *mut OuiElement,
+    out_metrics: *mut OuiScrollMetricsV1,
+    out_has_metrics: *mut u8,
+) -> OuiStatus {
+    ffi(|| {
+        if out_metrics.is_null() || out_has_metrics.is_null() {
+            return Err(invalid("scroll metrics output is null"));
+        }
+        // Read the prefix before borrowing the full versioned structure. A
+        // caller with an older, shorter allocation can be rejected safely.
+        let struct_size = unsafe { ptr::read(out_metrics.cast::<u32>()) };
+        if struct_size < 2 * size_of::<u32>() as u32 {
+            return Err(invalid("scroll metrics header is too small"));
+        }
+        let abi_version = unsafe { ptr::read(out_metrics.cast::<u32>().add(1)) };
+        check_header(struct_size, abi_version, size_of::<OuiScrollMetricsV1>())?;
+        let source = element(element_handle as usize)?;
+        let state = element_document(&source)?;
+        let metrics = borrow_engine_mut(&state)?.scroll_metrics(source.node)?;
+        let output = OuiScrollMetricsV1 {
+            struct_size,
+            abi_version,
+            client_width: metrics.map_or(0.0, |value| value.client_width),
+            client_height: metrics.map_or(0.0, |value| value.client_height),
+            scroll_width: metrics.map_or(0.0, |value| value.scroll_width),
+            scroll_height: metrics.map_or(0.0, |value| value.scroll_height),
+        };
+        // SAFETY: both outputs were validated above and the C contract requires
+        // writable, properly aligned and nonoverlapping caller storage.
+        unsafe {
+            ptr::write(out_metrics, output);
+            ptr::write(out_has_metrics, u8::from(metrics.is_some()));
+        }
+        Ok(())
+    })
+}
+
 // SAFETY CONTRACT: `element` is live; offsets must be finite.
 #[no_mangle]
 pub extern "C" fn oui_element_scroll_to(
@@ -1450,6 +1681,70 @@ pub extern "C" fn oui_element_scroll_to(
     ffi(|| {
         with_element_mut(element_handle as usize, |engine, node| {
             engine.scroll_to(node, x, y)
+        })
+    })
+}
+
+fn scroll_into_view_options(
+    block: u32,
+    inline: u32,
+    container: u32,
+) -> Result<openui_engine::ScrollIntoViewOptions, ApiError> {
+    use openui_engine::{ScrollAlignment, ScrollIntoViewContainer, ScrollIntoViewOptions};
+    let alignment = |value| match value {
+        0 => Ok(ScrollAlignment::Start),
+        1 => Ok(ScrollAlignment::Center),
+        2 => Ok(ScrollAlignment::End),
+        3 => Ok(ScrollAlignment::Nearest),
+        _ => Err(invalid("invalid scroll alignment")),
+    };
+    Ok(ScrollIntoViewOptions {
+        block: alignment(block)?,
+        inline: alignment(inline)?,
+        container: match container {
+            0 => ScrollIntoViewContainer::All,
+            1 => ScrollIntoViewContainer::Nearest,
+            _ => return Err(invalid("invalid scroll container selection")),
+        },
+    })
+}
+
+// SAFETY CONTRACT: `element_handle` is a live element handle. All options are
+// validated before borrowing the shared Engine; panics remain contained.
+#[no_mangle]
+pub extern "C" fn oui_element_scroll_into_view_v1(
+    element_handle: *mut OuiElement,
+    block: u32,
+    inline: u32,
+    container: u32,
+) -> OuiStatus {
+    ffi(|| {
+        let options = scroll_into_view_options(block, inline, container)?;
+        with_element_mut(element_handle as usize, |engine, node| {
+            engine.scroll_into_view(node, options)
+        })
+    })
+}
+
+// SAFETY CONTRACT: `element_handle` is live. Duration is finite/non-negative.
+// No callback is invoked while the Engine/platform state is borrowed.
+#[no_mangle]
+pub extern "C" fn oui_element_smooth_scroll_into_view_v1(
+    element_handle: *mut OuiElement,
+    block: u32,
+    inline: u32,
+    container: u32,
+    duration_ms: f64,
+) -> OuiStatus {
+    ffi(|| {
+        let options = scroll_into_view_options(block, inline, container)?;
+        if !duration_ms.is_finite() || duration_ms < 0.0 {
+            return Err(invalid("scroll duration must be finite and non-negative"));
+        }
+        with_element_mut(element_handle as usize, |engine, node| {
+            engine
+                .smooth_scroll_into_view(node, options, duration_ms)
+                .map(|_| ())
         })
     })
 }
@@ -1467,7 +1762,11 @@ pub extern "C" fn oui_element_get_scroll_offset(
         }
         let source = element(element_handle as usize)?;
         let state = element_document(&source)?;
-        let (x, y) = borrow_engine(&state)?.scroll_offset(source.node)?;
+        let (x, y) = {
+            let mut engine = borrow_engine_mut(&state)?;
+            engine.update()?;
+            engine.scroll_offset(source.node)?
+        };
         // SAFETY: both pointers are caller-provided writable `double` slots.
         unsafe {
             ptr::write(out_x, x);
@@ -1478,15 +1777,31 @@ pub extern "C" fn oui_element_get_scroll_offset(
 }
 
 // SAFETY CONTRACT: `element` is a live element handle owned by this thread.
+// Listener user_data stays live through synchronous callbacks. Callbacks run
+// after engine and facade borrows have been released and may mutate the document.
 #[no_mangle]
 pub extern "C" fn oui_element_focus(element_handle: *mut OuiElement) -> OuiStatus {
-    ffi(|| with_element_mut(element_handle as usize, Engine::focus))
+    ffi(|| {
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        state
+            .native
+            .focus_element_for_native_facade(element.node)
+            .map_err(native_app::native_error)
+    })
 }
 
 // SAFETY CONTRACT: `element` is a live element handle owned by this thread.
 #[no_mangle]
 pub extern "C" fn oui_element_blur(element_handle: *mut OuiElement) -> OuiStatus {
-    ffi(|| with_element_mut(element_handle as usize, Engine::blur))
+    ffi(|| {
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        state
+            .native
+            .blur_element_for_native_facade(element.node)
+            .map_err(native_app::native_error)
+    })
 }
 
 // SAFETY CONTRACT: `element` is a live element handle owned by this thread.
@@ -1587,6 +1902,13 @@ pub extern "C" fn oui_listener_destroy(listener: *mut OuiListener) -> OuiStatus 
     })
 }
 
+fn event_can_be_canceled(event_type: u32) -> bool {
+    // Native input/change notify an already completed edit or activation.
+    // Keep the existing policy for other nonfocus event kinds until each
+    // has its own pinned Chromium and consuming-app qualification.
+    !matches!(event_type, 12 | 13 | 16 | 17 | 25 | 26 | 27 | 28)
+}
+
 fn invoke_event_listeners(
     state: &DocumentState,
     node: NodeHandle,
@@ -1612,6 +1934,13 @@ fn invoke_event_listeners(
         // No engine or listener-list borrow is held, so reentrant API calls are
         // explicitly permitted. The event pointer lives through the call.
         unsafe { (listener.callback)(event, listener.user_data) };
+        if !event_can_be_canceled(event.event_type) {
+            event.flags &= !OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+        }
+        if event.flags & OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED != 0 {
+            event.flags |= OUI_EVENT_FLAG_PROPAGATION_STOPPED;
+            break;
+        }
     }
     Ok(())
 }
@@ -1621,7 +1950,11 @@ fn validate_event(event: &OuiEvent) -> Result<(), ApiError> {
     if !valid_event_type(event.event_type) {
         return Err(invalid("unknown event type"));
     }
-    if event.flags & !(OUI_EVENT_FLAG_DEFAULT_PREVENTED | OUI_EVENT_FLAG_PROPAGATION_STOPPED) != 0
+    if event.flags
+        & !(OUI_EVENT_FLAG_DEFAULT_PREVENTED
+            | OUI_EVENT_FLAG_PROPAGATION_STOPPED
+            | OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED)
+        != 0
         || event.modifiers & !0x1f != 0
     {
         return Err(invalid("event contains unknown flag bits"));
@@ -1665,8 +1998,85 @@ fn dispatch_event_to(
     event: &mut OuiEvent,
     apply_default: bool,
 ) -> Result<(), ApiError> {
+    if !event_can_be_canceled(event.event_type) {
+        event.flags &= !OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+    }
+    if apply_default && event.event_type == 4 {
+        let mut native = openui::Event::click_for_native_facade(event.timestamp_ns);
+        native.mouse_x = event.x;
+        native.mouse_y = event.y;
+        native.delta_x = event.delta_x;
+        native.delta_y = event.delta_y;
+        native.key_code = event.key_code;
+        native.key_text = utf8(event.text, "event text")?;
+        native.modifiers = event.modifiers as i32;
+        native.pointer_id = u64::from(event.pointer_id);
+        state
+            .native
+            .dispatch_click_for_native_facade(target, &native)
+            .map_err(native_app::native_error)?;
+        event.flags = 0;
+        if native.default_prevented() {
+            event.flags |= OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+        }
+        if native.propagation_stopped() {
+            event.flags |= OUI_EVENT_FLAG_PROPAGATION_STOPPED;
+        }
+        if native.immediate_propagation_stopped() {
+            event.flags |= OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED;
+        }
+        event.target = target_address as *mut OuiElement;
+        event.current_target = ptr::null_mut();
+        event.phase = 2;
+        return Ok(());
+    }
+    if matches!(event.event_type, 25 | 26 | 27 | 28) {
+        // Explicit notifications have no focus default action. Share the Rust
+        // route so native listeners and versioned metadata see the same event.
+        // The ordinary focus/blur branch below still performs a real transfer.
+        let native = if matches!(event.event_type, 25 | 26) {
+            state
+                .native
+                .dispatch_focus_notification_for_native_facade(target, event.event_type == 25)
+        } else {
+            state
+                .native
+                .dispatch_selection_notification_for_native_facade(target, event.event_type == 27)
+        }
+        .map_err(native_app::native_error)?;
+        event.flags = 0;
+        if native.propagation_stopped() {
+            event.flags |= OUI_EVENT_FLAG_PROPAGATION_STOPPED;
+        }
+        if native.immediate_propagation_stopped() {
+            event.flags |= OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED;
+        }
+        event.target = target_address as *mut OuiElement;
+        event.current_target = ptr::null_mut();
+        event.phase = 2;
+        return Ok(());
+    }
+    if apply_default && matches!(event.event_type, 12 | 13) {
+        utf8(event.text, "event text")?;
+        event.flags &= !(OUI_EVENT_FLAG_DEFAULT_PREVENTED
+            | OUI_EVENT_FLAG_PROPAGATION_STOPPED
+            | OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED);
+        event.target = target_address as *mut OuiElement;
+        event.current_target = ptr::null_mut();
+        event.phase = 2;
+        return if event.event_type == 12 {
+            state
+                .native
+                .focus_accessibility_element_for_native_facade(target)
+        } else {
+            state.native.blur_element_for_native_facade(target)
+        }
+        .map_err(native_app::native_error);
+    }
     let route = borrow_engine(state)?.event_route(target)?;
-    event.flags &= !(OUI_EVENT_FLAG_DEFAULT_PREVENTED | OUI_EVENT_FLAG_PROPAGATION_STOPPED);
+    event.flags &= !(OUI_EVENT_FLAG_DEFAULT_PREVENTED
+        | OUI_EVENT_FLAG_PROPAGATION_STOPPED
+        | OUI_EVENT_FLAG_IMMEDIATE_PROPAGATION_STOPPED);
     event.target = target_address as *mut OuiElement;
     for step in route.steps {
         match step.phase {
@@ -1677,9 +2087,14 @@ fn dispatch_event_to(
             EngineEventPhase::Target => {
                 event.phase = 2;
                 invoke_event_listeners(state, step.node, true, event)?;
-                invoke_event_listeners(state, step.node, false, event)?;
+                if event.flags & OUI_EVENT_FLAG_PROPAGATION_STOPPED == 0 {
+                    invoke_event_listeners(state, step.node, false, event)?;
+                }
             }
             EngineEventPhase::Bubble => {
+                if matches!(event.event_type, 12 | 13) {
+                    continue;
+                }
                 event.phase = 3;
                 invoke_event_listeners(state, step.node, false, event)?;
             }
@@ -1692,26 +2107,10 @@ fn dispatch_event_to(
     if apply_default && event.flags & OUI_EVENT_FLAG_DEFAULT_PREVENTED == 0 {
         let text = utf8(event.text, "event text")?;
         match event.event_type {
-            4 => {
-                let changed = borrow_engine_mut(state)?.activate(target)?.changed;
-                for changed in changed {
-                    let Ok(address) = element_address(state, changed) else {
-                        continue;
-                    };
-                    for event_type in [16, 17] {
-                        let mut derived = *event;
-                        derived.event_type = event_type;
-                        dispatch_event_to(state, changed, address, &mut derived, false)?;
-                    }
-                }
-            }
             8 => borrow_engine_mut(state)?.insert_text(target, &text)?,
             10 => borrow_engine_mut(state)?.update_composition(target, &text)?,
-            11 => borrow_engine_mut(state)?.finish_composition(target)?,
-            12 => {
-                borrow_engine_mut(state)?.focus_with_origin(target, FocusOrigin::Accessibility)?;
-            }
-            13 => borrow_engine_mut(state)?.blur(target)?,
+            11 if text.is_empty() => borrow_engine_mut(state)?.cancel_composition(target)?,
+            11 => borrow_engine_mut(state)?.commit_composition(target, &text)?,
             _ => {}
         }
     }
@@ -1746,6 +2145,71 @@ pub extern "C" fn oui_document_dispatch_event(
     })
 }
 
+// SAFETY CONTRACT: document is an owning-thread handle; key is readable for its
+// declared versioned size and UTF-8 slices remain readable through the call.
+// Listener callbacks and user_data follow the existing synchronous contract.
+#[no_mangle]
+pub extern "C" fn oui_document_dispatch_key_input_v1(
+    document_handle: *mut OuiDocument,
+    key: *const OuiEvent,
+    committed_text: OuiUtf8,
+) -> OuiStatus {
+    ffi(|| {
+        let state = document(document_handle as usize)?;
+        if key.is_null() {
+            return Err(invalid("key descriptor is null"));
+        }
+        // SAFETY: a versioned descriptor begins with a readable size field.
+        let struct_size = unsafe { ptr::read(key.cast::<u32>()) };
+        if struct_size < 2 * size_of::<u32>() as u32 {
+            return Err(invalid("key descriptor header is too small"));
+        }
+        // SAFETY: the declared header covers the ABI-version field.
+        let abi_version = unsafe { ptr::read(key.cast::<u32>().add(1)) };
+        check_header(struct_size, abi_version, size_of::<OuiEvent>())?;
+        // SAFETY: the validated declared size covers the complete descriptor.
+        let key = unsafe { *key };
+        validate_event(&key)?;
+        if key.flags != 0 {
+            return Err(invalid("key descriptor flags must be zero"));
+        }
+        let event_type = match key.event_type {
+            6 => openui::KeyEventType::Down,
+            7 => openui::KeyEventType::Up,
+            _ => return Err(invalid("normalized key input requires key-down or key-up")),
+        };
+        let key_text = utf8(key.text, "logical key name")?;
+        let committed_text = utf8(committed_text, "committed text")?;
+        state
+            .native
+            .dispatch_key_input(
+                event_type,
+                key.key_code,
+                (!key_text.is_empty()).then_some(key_text.as_str()),
+                (!committed_text.is_empty()).then_some(committed_text.as_str()),
+                openui::Modifiers(key.modifiers),
+            )
+            .map_err(native_app::native_error)
+    })
+}
+
+// SAFETY CONTRACT: document is an owning-thread handle; text remains readable
+// through this call. Callbacks execute after engine and listener borrows end.
+#[no_mangle]
+pub extern "C" fn oui_document_dispatch_text_input_v1(
+    document_handle: *mut OuiDocument,
+    text: OuiUtf8,
+) -> OuiStatus {
+    ffi(|| {
+        let state = document(document_handle as usize)?;
+        let text = utf8(text, "committed text")?;
+        state
+            .native
+            .dispatch_text_input(&text)
+            .map_err(native_app::native_error)
+    })
+}
+
 // SAFETY CONTRACT: `document` is live and `event` is readable/writable for its
 // declared size through all synchronous callbacks. The event type is pointer
 // down, up, or move; hit testing supplies the target.
@@ -1765,6 +2229,7 @@ pub extern "C" fn oui_document_dispatch_pointer_event(
             1 => PointerEventKind::Down,
             2 => PointerEventKind::Up,
             3 => PointerEventKind::Move,
+            24 => PointerEventKind::Cancel,
             _ => return Err(invalid("pointer dispatch requires a pointer event type")),
         };
         let state = document(document_handle as usize)?;
@@ -1798,7 +2263,10 @@ pub extern "C" fn oui_document_dispatch_pointer_event(
             return Ok(());
         }
         if kind == PointerEventKind::Down {
-            let _ = borrow_engine_mut(&state)?.focus_with_origin(target, FocusOrigin::Pointer);
+            state
+                .native
+                .focus_pointer_element_for_native_facade(target)
+                .map_err(native_app::native_error)?;
         }
         if let Some((changed, fraction)) = update.range_value {
             let did_change = borrow_engine_mut(&state)?.set_range_fraction(changed, fraction)?;
@@ -1865,7 +2333,11 @@ pub extern "C" fn oui_document_advance_focus(
         // SAFETY: the caller guarantees storage for one output pointer.
         unsafe { ptr::write(out_element, ptr::null_mut()) };
         let state = document(document_handle as usize)?;
-        if let Some(node) = borrow_engine_mut(&state)?.advance_focus(direction)? {
+        state
+            .native
+            .advance_focus(direction)
+            .map_err(native_app::native_error)?;
+        if let Some(node) = borrow_engine(&state)?.focused() {
             let address = element_address(&state, node)?;
             // SAFETY: output storage was validated above.
             unsafe { ptr::write(out_element, address as *mut OuiElement) };
@@ -1895,8 +2367,10 @@ pub extern "C" fn oui_document_set_modal_root(
             }
             Some(root.node)
         };
-        borrow_engine_mut(&state)?.set_modal_root(root)?;
-        Ok(())
+        state
+            .native
+            .set_modal_root_for_native_facade(root)
+            .map_err(native_app::native_error)
     })
 }
 
@@ -1910,8 +2384,10 @@ pub extern "C" fn oui_element_set_control_value(
         let value = utf8(value, "control value")?;
         let element = element(element_handle as usize)?;
         let state = element_document(&element)?;
-        borrow_engine_mut(&state)?.set_control_value(element.node, value)?;
-        Ok(())
+        state
+            .native
+            .set_control_value_for_native_facade(element.node, &value)
+            .map_err(native_app::native_error)
     })
 }
 
@@ -1968,8 +2444,10 @@ pub extern "C" fn oui_element_set_selection(
     ffi(|| {
         let element = element(element_handle as usize)?;
         let state = element_document(&element)?;
-        borrow_engine_mut(&state)?.set_selection(element.node, anchor, focus)?;
-        Ok(())
+        state
+            .native
+            .set_selection_for_native_facade(element.node, anchor, focus)
+            .map_err(native_app::native_error)
     })
 }
 
@@ -1994,6 +2472,241 @@ pub extern "C" fn oui_element_get_selection(
         unsafe {
             ptr::write(out_anchor, selection.0);
             ptr::write(out_focus, selection.1);
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: document is an owning-thread handle, out_pending is writable.
+// One bounded turn releases engine/listener borrows before callbacks; a callback
+// may queue a later turn. User data follows the existing listener lifetime rules.
+#[no_mangle]
+pub extern "C" fn oui_document_dispatch_pending_events_v1(
+    document_handle: *mut OuiDocument,
+    out_pending: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_pending.is_null() {
+            return Err(invalid("pending output is null"));
+        }
+        let state = document(document_handle as usize)?;
+        state
+            .native
+            .dispatch_pending_events()
+            .map_err(native_app::native_error)?;
+        let pending = state
+            .native
+            .has_pending_events()
+            .map_err(native_app::native_error)?;
+        // SAFETY: the caller supplies writable storage for one uint32_t.
+        unsafe {
+            ptr::write(out_pending, u32::from(pending));
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: element is an owning-thread live text-control handle.
+#[no_mangle]
+pub extern "C" fn oui_element_set_selection_range_v1(
+    element_handle: *mut OuiElement,
+    start: usize,
+    end: usize,
+    direction: u32,
+) -> OuiStatus {
+    ffi(|| {
+        let direction = match direction {
+            0 => openui::SelectionDirection::None,
+            1 => openui::SelectionDirection::Forward,
+            2 => openui::SelectionDirection::Backward,
+            _ => return Err(invalid("invalid selection direction")),
+        };
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        state
+            .native
+            .set_selection_range_for_native_facade(element.node, start, end, direction)
+            .map_err(native_app::native_error)
+    })
+}
+
+// SAFETY CONTRACT: element is live; out_direction is writable for one uint32_t.
+#[no_mangle]
+pub extern "C" fn oui_element_get_selection_direction_v1(
+    element_handle: *mut OuiElement,
+    out_direction: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_direction.is_null() {
+            return Err(invalid("direction output is null"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let direction = {
+            let engine = borrow_engine(&state)?;
+            let control = engine
+                .control_state(element.node)?
+                .filter(|c| {
+                    matches!(
+                        c.role,
+                        openui_dom::FormControlRole::TextInput
+                            | openui_dom::FormControlRole::TextArea
+                    )
+                })
+                .ok_or_else(|| {
+                    ApiError::new(
+                        OuiStatus::InvalidState,
+                        "element is not an editable control",
+                    )
+                })?;
+            match control.selection_direction() {
+                openui::SelectionDirection::None => 0,
+                openui::SelectionDirection::Forward => 1,
+                openui::SelectionDirection::Backward => 2,
+                _ => return Err(invalid("unknown native selection direction")),
+            }
+        };
+        // SAFETY: output was validated above and is written only on success.
+        unsafe {
+            ptr::write(out_direction, direction);
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: element is live, replacement is readable for its UTF-8 length.
+#[no_mangle]
+pub extern "C" fn oui_element_replace_control_range_v1(
+    element_handle: *mut OuiElement,
+    replacement: OuiUtf8,
+    start: usize,
+    end: usize,
+    mode: u32,
+) -> OuiStatus {
+    ffi(|| {
+        let mode = match mode {
+            0 => openui::RangeSelectionMode::Preserve,
+            1 => openui::RangeSelectionMode::Select,
+            2 => openui::RangeSelectionMode::Start,
+            3 => openui::RangeSelectionMode::End,
+            _ => return Err(invalid("invalid range selection mode")),
+        };
+        let replacement = utf8(replacement, "range replacement")?;
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        state
+            .native
+            .replace_control_range_for_native_facade(element.node, &replacement, start, end, mode)
+            .map_err(native_app::native_error)
+    })
+}
+
+// SAFETY CONTRACT: owning-thread live element; output is writable.
+#[no_mangle]
+pub extern "C" fn oui_element_is_own_disabled_v1(
+    element_handle: *mut OuiElement,
+    out_disabled: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_disabled.is_null() {
+            return Err(invalid("own disabled output is null"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let disabled = borrow_engine(&state)?.is_own_disabled(element.node)?;
+        // SAFETY: caller-owned writable output; all errors leave it unchanged.
+        unsafe {
+            ptr::write(out_disabled, u32::from(disabled));
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: owning-thread live element; output is writable.
+#[no_mangle]
+pub extern "C" fn oui_element_is_effectively_disabled_v1(
+    element_handle: *mut OuiElement,
+    out_disabled: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_disabled.is_null() {
+            return Err(invalid("effective disabled output is null"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let disabled = borrow_engine(&state)?.is_effectively_disabled(element.node)?;
+        // SAFETY: caller-owned writable output; all errors leave it unchanged.
+        unsafe {
+            ptr::write(out_disabled, u32::from(disabled));
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: element is live on the owning thread, output is writable.
+#[no_mangle]
+pub extern "C" fn oui_element_is_connected_v1(
+    element_handle: *mut OuiElement,
+    out_connected: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_connected.is_null() {
+            return Err(invalid("connected output is null"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let connected = borrow_engine(&state)?.is_connected(element.node)?;
+        // SAFETY: writable output was validated before querying or mutation.
+        unsafe {
+            ptr::write(out_connected, u32::from(connected));
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: element is live on the owning thread, output is writable.
+#[no_mangle]
+pub extern "C" fn oui_element_is_active_v1(
+    element_handle: *mut OuiElement,
+    out_active: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_active.is_null() {
+            return Err(invalid("active output is null"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let active = borrow_engine(&state)?.is_active(element.node)?;
+        // SAFETY: caller guarantees writable storage; errors leave it unchanged.
+        unsafe {
+            ptr::write(out_active, u32::from(active));
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: both handles are owning-thread live nodes, output writable.
+#[no_mangle]
+pub extern "C" fn oui_element_is_same_node_v1(
+    first: *mut OuiElement,
+    second: *mut OuiElement,
+    out_same: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_same.is_null() {
+            return Err(invalid("node equality output is null"));
+        }
+        let first = element(first as usize)?;
+        let second = element(second as usize)?;
+        let a = element_document(&first)?;
+        let b = element_document(&second)?;
+        let same = a
+            .native
+            .is_same_node_for_native_facade(first.node, &b.native, second.node)
+            .map_err(native_app::native_error)?;
+        // SAFETY: writable output was validated; errors leave it unchanged.
+        unsafe {
+            ptr::write(out_same, u32::from(same));
         }
         Ok(())
     })
@@ -2034,7 +2747,7 @@ pub extern "C" fn oui_element_get_control_flags(
     })
 }
 
-// SAFETY CONTRACT: `element` is a live checkbox/radio and checked is 0 or 1.
+// SAFETY CONTRACT: element is a live input and checked is 0 or 1.
 #[no_mangle]
 pub extern "C" fn oui_element_set_checked(
     element_handle: *mut OuiElement,
@@ -2141,6 +2854,7 @@ pub extern "C" fn oui_element_set_accessibility_role(
             13 => AccessibilityRole::Heading,
             14 => AccessibilityRole::Status,
             15 => AccessibilityRole::Alert,
+            16 => AccessibilityRole::Unknown,
             _ => return Err(invalid("unknown accessibility role")),
         };
         engine.set_accessibility_role(element.node, role)?;
@@ -2289,37 +3003,10 @@ pub extern "C" fn oui_element_perform_accessibility_action(
         };
         let element = element(element_handle as usize)?;
         let state = element_document(&element)?;
-        let ordinary_event_type = match &action {
-            AccessibilityAction::Click => Some(4),
-            AccessibilityAction::Focus => Some(12),
-            AccessibilityAction::Blur => Some(13),
-            _ => None,
-        };
-        if let Some(event_type) = ordinary_event_type {
-            let mut event = synthesized_event(event_type, value);
-            dispatch_event_to(
-                &state,
-                element.node,
-                element_handle as usize,
-                &mut event,
-                true,
-            )?;
-            return Ok(());
-        }
-
-        let changed = borrow_engine_mut(&state)?
-            .perform_accessibility_action(element.node, action)?
-            .changed;
-        for changed in changed {
-            let Ok(address) = element_address(&state, changed) else {
-                continue;
-            };
-            for event_type in [16, 17] {
-                let mut event = synthesized_event(event_type, value);
-                dispatch_event_to(&state, changed, address, &mut event, false)?;
-            }
-        }
-        Ok(())
+        state
+            .native
+            .perform_accessibility_action_for_native_facade(element.node, action)
+            .map_err(native_app::native_error)
     })
 }
 
@@ -2536,40 +3223,58 @@ fn c_length(value: LengthValue) -> OuiLength {
         LengthValue::ViewportHeight(value) => OuiLength { value, unit: 5 },
         LengthValue::ViewportMin(value) => OuiLength { value, unit: 8 },
         LengthValue::ViewportMax(value) => OuiLength { value, unit: 9 },
+        LengthValue::Ch(value) => OuiLength { value, unit: 10 },
+        LengthValue::Ex(value) => OuiLength { value, unit: 11 },
+        LengthValue::Lh(value) => OuiLength { value, unit: 12 },
     }
 }
 
 fn c_enum(value: &StyleValue) -> Option<i32> {
-    use openui_style::{ContentDistribution, ContentPosition, ItemPosition};
+    use openui_style::{ContentDistribution, ContentPosition, ItemPosition, OverflowAlignment};
     Some(match value {
         StyleValue::Display(value) => *value as i32,
         StyleValue::Position(value) => *value as i32,
         StyleValue::Overflow(value) => *value as i32,
         StyleValue::FlexDirection(value) => *value as i32,
         StyleValue::FlexWrap(value) => *value as i32,
-        StyleValue::ItemAlignment(value) => match value.position {
-            ItemPosition::Normal => 0,
-            ItemPosition::Stretch => 1,
-            ItemPosition::Center => 2,
-            ItemPosition::Start => 3,
-            ItemPosition::End => 4,
-            ItemPosition::FlexStart => 5,
-            ItemPosition::FlexEnd => 6,
-            ItemPosition::Baseline => 7,
-            _ => return None,
-        },
-        StyleValue::ContentAlignment(value) => match (value.position, value.distribution) {
-            (ContentPosition::Normal, ContentDistribution::Default) => 0,
-            (ContentPosition::Start, _) => 1,
-            (ContentPosition::End, _) => 2,
-            (ContentPosition::Center, _) => 3,
-            (ContentPosition::FlexStart, _) => 4,
-            (ContentPosition::FlexEnd, _) => 5,
-            (_, ContentDistribution::SpaceBetween) => 6,
-            (_, ContentDistribution::SpaceAround) => 7,
-            (_, ContentDistribution::SpaceEvenly) => 8,
-            _ => return None,
-        },
+        StyleValue::ItemAlignment(value) if value.overflow == OverflowAlignment::Default => {
+            match value.position {
+                ItemPosition::Normal => 0,
+                ItemPosition::Stretch => 1,
+                ItemPosition::Center => 2,
+                ItemPosition::Start => 3,
+                ItemPosition::End => 4,
+                ItemPosition::FlexStart => 5,
+                ItemPosition::FlexEnd => 6,
+                ItemPosition::Baseline => 7,
+                ItemPosition::Auto => 8,
+                ItemPosition::SelfStart => 9,
+                ItemPosition::SelfEnd => 10,
+                ItemPosition::Left => 11,
+                ItemPosition::Right => 12,
+                ItemPosition::LastBaseline => 13,
+                ItemPosition::Legacy => 14,
+            }
+        }
+        StyleValue::ContentAlignment(value) if value.overflow == OverflowAlignment::Default => {
+            match (value.position, value.distribution) {
+                (ContentPosition::Normal, ContentDistribution::Default) => 0,
+                (ContentPosition::Start, ContentDistribution::Default) => 1,
+                (ContentPosition::End, ContentDistribution::Default) => 2,
+                (ContentPosition::Center, ContentDistribution::Default) => 3,
+                (ContentPosition::FlexStart, ContentDistribution::Default) => 4,
+                (ContentPosition::FlexEnd, ContentDistribution::Default) => 5,
+                (ContentPosition::Normal, ContentDistribution::SpaceBetween) => 6,
+                (ContentPosition::Normal, ContentDistribution::SpaceAround) => 7,
+                (ContentPosition::Normal, ContentDistribution::SpaceEvenly) => 8,
+                (ContentPosition::Normal, ContentDistribution::Stretch) => 9,
+                (ContentPosition::Baseline, ContentDistribution::Default) => 10,
+                (ContentPosition::LastBaseline, ContentDistribution::Default) => 11,
+                (ContentPosition::Left, ContentDistribution::Default) => 12,
+                (ContentPosition::Right, ContentDistribution::Default) => 13,
+                _ => return None,
+            }
+        }
         StyleValue::Cursor(value) => *value as i32,
         StyleValue::ListStyle(value) => *value as i32,
         StyleValue::PointerEvents(value) => *value as i32,
@@ -2595,33 +3300,69 @@ pub extern "C" fn oui_style_value_parse(
         let parsed =
             parse_literal(property, &literal).map_err(|error| invalid(error.to_string()))?;
         let tag = generated::expected_value_tag(property);
-        let data = match (tag, &parsed) {
-            (1, StyleValue::Length(value)) => OuiStylePayload {
-                length: c_length(*value),
-            },
-            (2, StyleValue::Number(value)) => OuiStylePayload { number: *value },
-            (2, StyleValue::FontWeight(value)) => OuiStylePayload { number: value.0 },
-            (3, StyleValue::Integer(value)) => OuiStylePayload { integer: *value },
-            (4, StyleValue::Color(value)) => OuiStylePayload {
-                color: OuiColor {
-                    red: (value.r * 255.0).round() as u8,
-                    green: (value.g * 255.0).round() as u8,
-                    blue: (value.b * 255.0).round() as u8,
-                    alpha: (value.a * 255.0).round() as u8,
+        let native_value = || -> Result<_, ApiError> {
+            Ok(OuiStylePayload {
+                compound: register(LocalHandle::PropertyCompound(property, parsed.clone()))?
+                    as *const OuiStyleCompound,
+            })
+        };
+        let (tag, data) = match (tag, &parsed) {
+            (1, StyleValue::Length(value)) => (
+                1,
+                OuiStylePayload {
+                    length: c_length(*value),
                 },
+            ),
+            (2, StyleValue::Number(value)) => (2, OuiStylePayload { number: *value }),
+            (2, StyleValue::FontWeight(value)) => (2, OuiStylePayload { number: value.0 }),
+            (3, StyleValue::Integer(value)) => (3, OuiStylePayload { integer: *value }),
+            (3, StyleValue::Renderer(openui_style::RendererStyleValue::ColumnCount(value))) => (
+                3,
+                OuiStylePayload {
+                    integer: match value {
+                        None => 0,
+                        Some(count) => i32::try_from(*count)
+                            .map_err(|_| invalid("column count exceeds the C integer range"))?,
+                    },
+                },
+            ),
+            (
+                3,
+                StyleValue::Renderer(
+                    openui_style::RendererStyleValue::Orphans(value)
+                    | openui_style::RendererStyleValue::Widows(value),
+                ),
+            ) => match i32::try_from(*value) {
+                Ok(value) => (3, OuiStylePayload { integer: value }),
+                Err(_) => (6, native_value()?),
             },
-            (5, value) => OuiStylePayload {
-                enum_value: c_enum(value)
-                    .ok_or_else(|| invalid("literal has no C enum encoding"))?,
+            (4, StyleValue::Color(value)) => (
+                4,
+                OuiStylePayload {
+                    color: OuiColor {
+                        red: (value.r * 255.0).round() as u8,
+                        green: (value.g * 255.0).round() as u8,
+                        blue: (value.b * 255.0).round() as u8,
+                        alpha: (value.a * 255.0).round() as u8,
+                    },
+                },
+            ),
+            (5, value) => match c_enum(value) {
+                Some(value) => (5, OuiStylePayload { enum_value: value }),
+                None => (6, native_value()?),
             },
-            (6, _) => OuiStylePayload {
-                compound: register(LocalHandle::Compound(parsed))? as *const OuiStyleCompound,
-            },
-            _ => {
-                return Err(invalid(
-                    "literal does not match generated property value tag",
-                ))
-            }
+            // Renderer longhands own one property; retain that identity in
+            // the carrier so a different compound property rejects it before
+            // touching the retained document.
+            (6, StyleValue::Renderer(_)) => (6, native_value()?),
+            (6, _) => (
+                6,
+                OuiStylePayload {
+                    compound: register(LocalHandle::Compound(parsed.clone()))?
+                        as *const OuiStyleCompound,
+                },
+            ),
+            _ => (6, native_value()?),
         };
         // SAFETY: the caller promises writable storage and null was rejected.
         unsafe {
@@ -2634,6 +3375,73 @@ pub extern "C" fn oui_style_value_parse(
                 },
             )
         };
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `out_value` points to one writable tagged-value record.
+// The returned property-bound compound is owned by the calling thread.
+#[no_mangle]
+pub extern "C" fn oui_style_value_color_f32_v1(
+    property: i32,
+    red: f32,
+    green: f32,
+    blue: f32,
+    alpha: f32,
+    out_value: *mut OuiStyleValue,
+) -> OuiStatus {
+    ffi(|| {
+        if out_value.is_null() {
+            return Err(invalid("style value output is null"));
+        }
+        let property = property_from_raw(property)
+            .ok_or_else(|| invalid("unknown style property identifier"))?;
+        if ![red, green, blue, alpha]
+            .into_iter()
+            .all(|channel| channel.is_finite() && (0.0..=1.0).contains(&channel))
+        {
+            return Err(invalid(
+                "color channels must be finite and in the range 0..=1",
+            ));
+        }
+        let color = Color::from_rgba_f32(red, green, blue, alpha);
+        let value = match property {
+            StyleProperty::TextDecorationColor => {
+                StyleValue::Renderer(openui_style::RendererStyleValue::TextDecorationColor(
+                    openui_style::StyleColor::Resolved(color),
+                ))
+            }
+            StyleProperty::TextEmphasisColor => {
+                StyleValue::Renderer(openui_style::RendererStyleValue::TextEmphasisColor(
+                    openui_style::StyleColor::Resolved(color),
+                ))
+            }
+            _ if property.metadata().value_kind == openui_style::ValueKind::Color => {
+                StyleValue::Color(color)
+            }
+            _ => {
+                return Err(ApiError::new(
+                    OuiStatus::WrongValueType,
+                    "property does not accept a color value",
+                )
+                .detail(property as u32));
+            }
+        };
+        let compound = register(LocalHandle::PropertyCompound(property, value))?;
+        // SAFETY: the caller promises writable storage; null was rejected.
+        // All validation and allocation have succeeded before changing it.
+        unsafe {
+            ptr::write(
+                out_value,
+                OuiStyleValue {
+                    tag: 6,
+                    reserved: 0,
+                    data: OuiStylePayload {
+                        compound: compound as *const OuiStyleCompound,
+                    },
+                },
+            );
+        }
         Ok(())
     })
 }
@@ -2975,6 +3783,71 @@ pub extern "C" fn oui_buffer_destroy(buffer: *mut OuiBuffer) -> OuiStatus {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn c_clone_subtree_rejects_bad_owners_and_preserves_live_dirty_state() {
+        let document = create_document(100, 100);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let original = create_element(document, 23, root);
+        assert_eq!(
+            oui_element_set_attribute(original, text("type"), text("radio")),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_element_set_checked(original, 1), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_clone_subtree_v1(original, ptr::null_mut()),
+            OuiStatus::InvalidArgument
+        );
+        let mut clone = ptr::null_mut();
+        assert_eq!(
+            oui_element_clone_subtree_v1(original, &mut clone),
+            OuiStatus::Ok
+        );
+        let mut connected = 99;
+        assert_eq!(
+            oui_element_is_connected_v1(clone, &mut connected),
+            OuiStatus::Ok
+        );
+        assert_eq!(connected, 0);
+        assert_eq!(
+            oui_element_set_attribute(clone, text("checked"), text("")),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            oui_element_remove_attribute(clone, text("checked")),
+            OuiStatus::Ok
+        );
+        let mut flags = 0;
+        assert_eq!(
+            oui_element_get_control_flags(clone, &mut flags),
+            OuiStatus::Ok
+        );
+        assert_ne!(flags & OUI_CONTROL_CHECKED, 0);
+        let mut preserved = clone;
+        assert_eq!(
+            oui_element_clone_subtree_v1(ptr::null_mut(), &mut preserved),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(preserved, clone);
+        let address = original as usize;
+        let wrong_thread = std::thread::spawn(move || {
+            let mut output = ptr::null_mut();
+            oui_element_clone_subtree_v1(address as *mut OuiElement, &mut output)
+        })
+        .join()
+        .unwrap();
+        assert_eq!(wrong_thread, OuiStatus::WrongThread);
+        assert_eq!(oui_element_destroy(original), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_clone_subtree_v1(original, &mut preserved),
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(preserved, clone);
+        assert_eq!(oui_element_destroy(clone), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
     use openui_style::StyleProperty;
     use std::mem::{align_of, size_of};
 
@@ -3142,6 +4015,13 @@ mod tests {
         );
         assert_eq!(
             (
+                size_of::<OuiScrollMetricsV1>(),
+                align_of::<OuiScrollMetricsV1>()
+            ),
+            (40, 8)
+        );
+        assert_eq!(
+            (
                 size_of::<OuiFontUnicodeRange>(),
                 align_of::<OuiFontUnicodeRange>()
             ),
@@ -3210,10 +4090,45 @@ mod tests {
         assert_eq!((size_of::<OuiEvent>(), align_of::<OuiEvent>()), (88, 8));
         assert_eq!(
             (
+                size_of::<OuiEventPropertiesV1>(),
+                align_of::<OuiEventPropertiesV1>()
+            ),
+            (16, 4)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiInputEventInfoV1>(),
+                align_of::<OuiInputEventInfoV1>()
+            ),
+            (40, 8)
+        );
+        assert_eq!(
+            (
                 size_of::<OuiAccessibilityUpdate>(),
                 align_of::<OuiAccessibilityUpdate>()
             ),
             (40, 8)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiAccessibilitySnapshotInfo>(),
+                align_of::<OuiAccessibilitySnapshotInfo>()
+            ),
+            (56, 8)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiAccessibilityNodeInfo>(),
+                align_of::<OuiAccessibilityNodeInfo>()
+            ),
+            (120, 8)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiAccessibilityNodeState>(),
+                align_of::<OuiAccessibilityNodeState>()
+            ),
+            (112, 8)
         );
         assert_eq!(
             (size_of::<OuiErrorInfo>(), align_of::<OuiErrorInfo>()),
@@ -3375,6 +4290,137 @@ mod tests {
         assert_eq!(oui_font_face_destroy(face), OuiStatus::Ok);
         assert_eq!(oui_font_face_destroy(face), OuiStatus::InvalidHandle);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_element_text_content_renders_and_matches_native_rust() {
+        use openui::prelude::*;
+
+        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+            let mut config = document_config(800, 600);
+            config.viewport.device_scale_factor = scale;
+            // Logical dimensions are authoritative; derive physical dimensions
+            // at this scale instead of retaining the helper's scale-1 values.
+            config.viewport.physical_width = 0;
+            config.viewport.physical_height = 0;
+            let mut c_document = ptr::null_mut();
+            assert_eq!(oui_document_create(&config, &mut c_document), OuiStatus::Ok);
+            let mut root = ptr::null_mut();
+            assert_eq!(oui_document_root(c_document, &mut root), OuiStatus::Ok);
+            let c_text = create_element(c_document, 0, root);
+
+            let descriptor = OuiFontFaceDescriptor {
+                struct_size: size_of::<OuiFontFaceDescriptor>() as u32,
+                abi_version: OUI_ABI_VERSION,
+                family: text("Ahem"),
+                face_index: 0,
+                style: OUI_FONT_FACE_STYLE_NORMAL,
+                style_min: 0.0,
+                style_max: 0.0,
+                weight_min: 400.0,
+                weight_max: 400.0,
+                stretch_min: 100.0,
+                stretch_max: 100.0,
+                unicode_ranges: ptr::null(),
+                unicode_range_count: 0,
+                feature_defaults: ptr::null(),
+                feature_default_count: 0,
+                size_adjust: 0.0,
+                ascent_override: 0.0,
+                descent_override: 0.0,
+                line_gap_override: 0.0,
+                flags: 0,
+                reserved: 0,
+            };
+            let bytes = include_bytes!("../../openui-text/fonts/Ahem.ttf");
+            let mut face = ptr::null_mut();
+            assert_eq!(
+                oui_document_register_font(
+                    c_document,
+                    bytes.as_ptr(),
+                    bytes.len(),
+                    &descriptor,
+                    &mut face,
+                ),
+                OuiStatus::Ok
+            );
+            let mut family = ptr::null_mut();
+            assert_eq!(
+                oui_font_family_create(text("Ahem"), 0, &mut family),
+                OuiStatus::Ok
+            );
+            assert_eq!(
+                oui_element_set_property(
+                    c_text,
+                    StyleProperty::FontFamily as i32,
+                    &OuiStyleValue {
+                        tag: 6,
+                        reserved: 0,
+                        data: OuiStylePayload { compound: family },
+                    },
+                ),
+                OuiStatus::Ok
+            );
+            assert_eq!(oui_style_compound_destroy(family), OuiStatus::Ok);
+            for (property, literal) in [
+                (StyleProperty::Position, "absolute"),
+                (StyleProperty::Left, "20px"),
+                (StyleProperty::Top, "20px"),
+                (StyleProperty::FontSize, "20px"),
+                (StyleProperty::LineHeight, "1"),
+            ] {
+                let mut value = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+                assert_eq!(
+                    oui_style_value_parse(property as i32, text(literal), value.as_mut_ptr()),
+                    OuiStatus::Ok
+                );
+                // SAFETY: the successful constructor initializes the value.
+                let value = unsafe { value.assume_init() };
+                assert_eq!(
+                    oui_element_set_property(c_text, property as i32, &value),
+                    OuiStatus::Ok
+                );
+                if value.tag == 6 {
+                    // SAFETY: the tag selects this initialized union member.
+                    assert_eq!(
+                        oui_style_compound_destroy(unsafe { value.data.compound } as *mut _),
+                        OuiStatus::Ok
+                    );
+                }
+            }
+
+            let rust_document = openui::Document::with_font_collection(
+                ViewportMetrics::from_logical_size(800.0, 600.0, scale).unwrap(),
+                FontCollection::deterministic_test(),
+            )
+            .unwrap();
+            let rust_text = openui::Element::create(&rust_document, "div").unwrap();
+            rust_text.set_position(Position::Absolute).unwrap();
+            rust_text.set_left(Length::px(20.0)).unwrap();
+            rust_text.set_top(Length::px(20.0)).unwrap();
+            rust_text
+                .set_font_family(FontFamilyList::single("Ahem"))
+                .unwrap();
+            rust_text.set_font_size(LengthValue::px(20.0)).unwrap();
+            rust_text.set_line_height(LineHeight::Number(1.0)).unwrap();
+            rust_document.body().append_child(&rust_text).unwrap();
+            for content in ["X", "XX", "", "X"] {
+                rust_text.set_text(content).unwrap();
+                assert_eq!(oui_element_set_text(c_text, text(content)), OuiStatus::Ok);
+                let mut actual = OuiRect::default();
+                assert_eq!(oui_element_get_bounds(c_text, &mut actual), OuiStatus::Ok);
+                let expected = rust_text.bounding_rect().unwrap().unwrap();
+                assert_eq!(
+                    (actual.x, actual.y, actual.width, actual.height),
+                    (expected.x, expected.y, expected.width, expected.height),
+                    "C text setter must create authored text children: scale={scale}, text={content:?}"
+                );
+            }
+            assert_eq!(oui_element_destroy(c_text), OuiStatus::Ok);
+            assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+            assert_eq!(oui_font_face_destroy(face), OuiStatus::Ok);
+            assert_eq!(oui_document_destroy(c_document), OuiStatus::Ok);
+        }
     }
 
     #[test]
@@ -3685,35 +4731,31 @@ mod tests {
 
     #[test]
     fn rust_and_c_paths_produce_identical_headless_pixels() {
-        let mut engine =
-            Engine::new(ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap()).unwrap();
-        let direct = engine.create_element(ElementTag::Div).unwrap();
-        engine.append_child(engine.root(), direct).unwrap();
-        engine
+        // Compare the consuming Rust and C application APIs, including their
+        // native element defaults. Raw Engine construction intentionally keeps
+        // CSS initial values for callers installing a complete resolved style.
+        let rust_document = openui::Document::new(64, 64).unwrap();
+        let direct = openui::Element::create(&rust_document, "div").unwrap();
+        rust_document.body().append_child(&direct).unwrap();
+        direct
             .set_property(
-                direct,
                 openui_style::StyleProperty::Width,
                 openui_style::LengthValue::px(32.0).into(),
             )
             .unwrap();
-        engine
+        direct
             .set_property(
-                direct,
                 openui_style::StyleProperty::Height,
                 openui_style::LengthValue::px(32.0).into(),
             )
             .unwrap();
-        engine
+        direct
             .set_property(
-                direct,
                 openui_style::StyleProperty::BackgroundColor,
                 Color::RED.into(),
             )
             .unwrap();
-        let expected = SoftwareCompositor::default()
-            .render(&engine.scene().unwrap())
-            .unwrap()
-            .pixels;
+        let expected = rust_document.render_to_bitmap().unwrap().pixels().to_vec();
 
         let document = create_document(64, 64);
         let mut root = ptr::null_mut();
@@ -3757,6 +4799,142 @@ mod tests {
     }
 
     #[test]
+    fn c_scroll_metrics_validate_output_headers_and_ownership() {
+        let document_handle = create_document(32, 32);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document_handle, &mut root), OuiStatus::Ok);
+        let mut output = OuiScrollMetricsV1 {
+            struct_size: size_of::<OuiScrollMetricsV1>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            client_width: -1.0,
+            client_height: -1.0,
+            scroll_width: -1.0,
+            scroll_height: -1.0,
+        };
+        let initial = output;
+        let mut found = 55;
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, ptr::null_mut(), &mut found),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output, ptr::null_mut()),
+            OuiStatus::InvalidArgument
+        );
+        output.abi_version = 1;
+        let wrong_version = output;
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output, &mut found),
+            OuiStatus::AbiMismatch
+        );
+        assert_eq!(output, wrong_version);
+        assert_eq!(found, 55);
+        output = initial;
+        let mut short_header = [8_u32, OUI_ABI_VERSION];
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, short_header.as_mut_ptr().cast(), &mut found),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(short_header, [8, OUI_ABI_VERSION]);
+        assert_eq!(found, 55);
+        let state = document(document_handle as usize).unwrap();
+        let held = borrow_engine(&state).unwrap();
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output, &mut found),
+            OuiStatus::Reentrant
+        );
+        assert_eq!(output, initial);
+        assert_eq!(found, 55);
+        drop(held);
+        drop(state);
+
+        let address = root as usize;
+        let wrong_thread = std::thread::spawn(move || {
+            let mut output = initial;
+            let mut found = 55;
+            let status = oui_element_get_scroll_metrics_v1(
+                address as *mut OuiElement,
+                &mut output,
+                &mut found,
+            );
+            assert_eq!(output, initial);
+            assert_eq!(found, 55);
+            status
+        })
+        .join()
+        .unwrap();
+        assert_eq!(wrong_thread, OuiStatus::WrongThread);
+        assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output, &mut found),
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(output, initial);
+        assert_eq!(found, 55);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_scroll_metrics_preserve_larger_caller_storage_and_absent_boxes() {
+        #[repr(C)]
+        struct Extended {
+            metrics: OuiScrollMetricsV1,
+            tail: u64,
+        }
+        let document = create_document(80, 50);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let mut output = Extended {
+            metrics: OuiScrollMetricsV1 {
+                struct_size: size_of::<Extended>() as u32,
+                abi_version: OUI_ABI_VERSION,
+                client_width: -1.0,
+                client_height: -1.0,
+                scroll_width: -1.0,
+                scroll_height: -1.0,
+            },
+            tail: 0xdead_beef_1234_5678,
+        };
+        let mut found = 0;
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(root, &mut output.metrics, &mut found),
+            OuiStatus::Ok
+        );
+        assert_eq!(found, 1);
+        assert_eq!(output.metrics.client_width, 80.0);
+        assert_eq!(output.metrics.client_height, 50.0);
+        assert_eq!(output.metrics.scroll_width, 80.0);
+        assert_eq!(output.metrics.scroll_height, 50.0);
+        assert_eq!(output.metrics.struct_size, size_of::<Extended>() as u32);
+        assert_eq!(output.tail, 0xdead_beef_1234_5678);
+        let owned = output.metrics;
+        let detached = create_element(document, 0, ptr::null_mut());
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(detached, &mut output.metrics, &mut found),
+            OuiStatus::Ok
+        );
+        assert_eq!(found, 0);
+        assert_eq!(output.metrics.client_width, 0.0);
+        assert_eq!(output.metrics.client_height, 0.0);
+        assert_eq!(output.metrics.scroll_width, 0.0);
+        assert_eq!(output.metrics.scroll_height, 0.0);
+        assert_eq!(output.tail, 0xdead_beef_1234_5678);
+        assert_eq!(oui_element_remove(detached), OuiStatus::Ok);
+        let absent = output.metrics;
+        assert_eq!(
+            oui_element_get_scroll_metrics_v1(detached, &mut output.metrics, &mut found),
+            OuiStatus::StaleHandle
+        );
+        assert_eq!(output.metrics, absent);
+        assert_eq!(found, 0);
+        assert_eq!(oui_element_destroy(detached), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+        assert_eq!(owned.client_width, 80.0);
+        assert_eq!(owned.client_height, 50.0);
+    }
+
+    #[test]
     fn app_and_document_handles_have_independent_explicit_lifetimes() {
         let title = "Open\0UI";
         let config = OuiAppConfig {
@@ -3774,6 +4952,46 @@ mod tests {
         assert_eq!(oui_app_document(app, &mut document), OuiStatus::Ok);
         assert_eq!(oui_app_destroy(app), OuiStatus::Ok);
         assert_eq!(oui_document_update(document), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_id_lookup_returns_owned_attached_element_handles() {
+        let document = create_document(64, 64);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let child = create_element(document, 0, root);
+        assert_eq!(
+            oui_element_set_attribute(child, text("id"), text("control")),
+            OuiStatus::Ok
+        );
+
+        let mut found = ptr::null_mut();
+        assert_eq!(
+            oui_document_element_by_id(document, text("control"), &mut found),
+            OuiStatus::Ok
+        );
+        assert!(!found.is_null());
+        assert_ne!(found, child);
+        assert_eq!(oui_element_detach(found), OuiStatus::Ok);
+
+        let mut missing = found;
+        assert_eq!(
+            oui_document_element_by_id(document, text("control"), &mut missing),
+            OuiStatus::Ok
+        );
+        assert!(missing.is_null());
+        assert_eq!(oui_element_append_child(root, child), OuiStatus::Ok);
+        assert_eq!(
+            oui_document_element_by_id(document, text("control"), &mut missing),
+            OuiStatus::Ok
+        );
+        assert!(!missing.is_null());
+
+        assert_eq!(oui_element_destroy(found), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(missing), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(child), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
     }
 
@@ -3802,6 +5020,36 @@ mod tests {
         assert_eq!(oui_element_destroy(second_element), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(first), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(second), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn detached_c_nodes_keep_their_handles_until_explicit_removal() {
+        let document = create_document(64, 64);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let parent = create_element(document, 0, root);
+        let child = create_element(document, 0, parent);
+        let mut text_node = ptr::null_mut();
+        assert_eq!(
+            oui_text_create(document, text("native"), &mut text_node),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_element_append_child(parent, text_node), OuiStatus::Ok);
+
+        assert_eq!(oui_element_detach(parent), OuiStatus::Ok);
+        assert_eq!(oui_element_detach(parent), OuiStatus::Ok);
+        assert_eq!(set_length(child, 4, 20.0), OuiStatus::Ok);
+        assert_eq!(oui_element_detach(text_node), OuiStatus::Ok);
+        assert_eq!(oui_element_append_child(parent, text_node), OuiStatus::Ok);
+        assert_eq!(oui_element_append_child(root, parent), OuiStatus::Ok);
+        assert_eq!(oui_element_remove(parent), OuiStatus::Ok);
+        assert_eq!(set_length(child, 4, 30.0), OuiStatus::StaleHandle);
+
+        assert_eq!(oui_element_destroy(text_node), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(child), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(parent), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
     }
 
     #[test]
@@ -4054,6 +5302,415 @@ mod tests {
     }
 
     #[test]
+    fn completed_input_notifications_discard_c_cancellation_in_each_callback() {
+        #[derive(Default)]
+        struct Seen {
+            attempts: usize,
+            later_flags: Vec<u32>,
+        }
+        unsafe extern "C" fn cancel(event: *mut OuiEvent, data: *mut c_void) {
+            // SAFETY: the synchronous test dispatch provides a writable event
+            // and the registered Seen value stays live until listener teardown.
+            let (seen, event) = unsafe { (&mut *(data as *mut Seen), &mut *event) };
+            seen.attempts += 1;
+            event.flags |= OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+        }
+        unsafe extern "C" fn observe(event: *mut OuiEvent, data: *mut c_void) {
+            // SAFETY: these pointers obey the same test callback lifetime.
+            let (seen, event) = unsafe { (&mut *(data as *mut Seen), &*event) };
+            seen.later_flags.push(event.flags);
+        }
+        let document = create_document(160, 100);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let input = create_element(document, 23, root);
+        let mut seen = Seen::default();
+        let data = (&mut seen as *mut Seen).cast::<c_void>();
+        let mut listeners = Vec::new();
+        for callback in [cancel as OuiEventCallback, observe as OuiEventCallback] {
+            let mut listener = ptr::null_mut();
+            assert_eq!(
+                oui_element_add_event_listener(input, 16, 0, Some(callback), data, &mut listener),
+                OuiStatus::Ok
+            );
+            listeners.push(listener);
+        }
+        assert_eq!(oui_element_focus(input), OuiStatus::Ok);
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, text("A")),
+            OuiStatus::Ok
+        );
+        let mut bytes = [0; 16];
+        let mut length = 0;
+        assert_eq!(
+            oui_element_copy_control_value(input, bytes.as_mut_ptr(), bytes.len(), &mut length),
+            OuiStatus::Ok
+        );
+        assert_eq!(&bytes[..length], b"A");
+        assert_eq!(seen.attempts, 1);
+        assert_eq!(seen.later_flags, [0]);
+        // Explicit facade notifications use the same cancellation policy,
+        // including an incoming descriptor that tries to mark input canceled.
+        let mut event = synthesized_event(16, empty_utf8());
+        event.flags = OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+        assert_eq!(
+            oui_document_dispatch_event(document, input, &mut event),
+            OuiStatus::Ok
+        );
+        assert_eq!(event.flags, 0);
+        assert_eq!(seen.attempts, 2);
+        assert_eq!(seen.later_flags, [0, 0]);
+        for listener in listeners {
+            assert_eq!(oui_listener_destroy(listener), OuiStatus::Ok);
+        }
+        assert_eq!(oui_element_destroy(input), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn normalized_c_keyboard_and_text_share_cancelable_document_defaults() {
+        struct Observations {
+            target: *mut OuiElement,
+            cancel_key: bool,
+            cancel_text: bool,
+            make_read_only: bool,
+            events: Vec<(u32, String, String)>,
+        }
+        unsafe extern "C" fn observe(event: *mut OuiEvent, user_data: *mut c_void) {
+            // SAFETY: the test owns both values through synchronous dispatch.
+            let event = unsafe { &mut *event };
+            let seen = unsafe { &mut *user_data.cast::<Observations>() };
+            let mut value = [0; 64];
+            let mut length = 0;
+            assert_eq!(
+                oui_element_copy_control_value(
+                    seen.target,
+                    value.as_mut_ptr(),
+                    value.len(),
+                    &mut length
+                ),
+                OuiStatus::Ok
+            );
+            let event_text = if event.text.length == 0 {
+                String::new()
+            } else {
+                // SAFETY: event text remains readable through this callback.
+                String::from_utf8(
+                    unsafe { std::slice::from_raw_parts(event.text.data, event.text.length) }
+                        .to_vec(),
+                )
+                .unwrap()
+            };
+            seen.events.push((
+                event.event_type,
+                event_text,
+                String::from_utf8(value[..length].to_vec()).unwrap(),
+            ));
+            if (event.event_type == 6 && seen.cancel_key)
+                || (event.event_type == 18 && seen.cancel_text)
+            {
+                event.flags |= OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+            }
+            if event.event_type == 18 && seen.make_read_only {
+                assert_eq!(
+                    oui_element_set_attribute(seen.target, text("readonly"), empty_utf8()),
+                    OuiStatus::Ok
+                );
+            }
+        }
+        fn value(target: *mut OuiElement) -> String {
+            let mut bytes = [0; 64];
+            let mut length = 0;
+            assert_eq!(
+                oui_element_copy_control_value(
+                    target,
+                    bytes.as_mut_ptr(),
+                    bytes.len(),
+                    &mut length
+                ),
+                OuiStatus::Ok
+            );
+            String::from_utf8(bytes[..length].to_vec()).unwrap()
+        }
+        let document = create_document(160, 100);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let textarea = create_element(document, 31, root);
+        assert_eq!(
+            oui_element_set_control_value(textarea, text("é👍z")),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_element_set_selection(textarea, 2, 6), OuiStatus::Ok);
+        assert_eq!(oui_element_focus(textarea), OuiStatus::Ok);
+        let mut seen = Box::new(Observations {
+            target: textarea,
+            cancel_key: false,
+            cancel_text: false,
+            make_read_only: false,
+            events: Vec::new(),
+        });
+        let mut listeners = Vec::new();
+        for kind in [6, 18, 16, 4] {
+            let mut listener = ptr::null_mut();
+            assert_eq!(
+                oui_element_add_event_listener(
+                    textarea,
+                    kind,
+                    0,
+                    Some(observe),
+                    (&mut *seen as *mut Observations).cast(),
+                    &mut listener
+                ),
+                OuiStatus::Ok
+            );
+            listeners.push(listener);
+        }
+        let mut enter = event(6, "Enter");
+        enter.key_code = 13;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &enter, text("\r")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é\nz");
+        assert_eq!(
+            seen.events,
+            vec![
+                (6, "Enter".into(), "é👍z".into()),
+                (18, "\n".into(), "é👍z".into()),
+                (16, "\n".into(), "é\nz".into())
+            ]
+        );
+        let mut anchor = 0;
+        let mut focus = 0;
+        assert_eq!(
+            oui_element_get_selection(textarea, &mut anchor, &mut focus),
+            OuiStatus::Ok
+        );
+        assert_eq!((anchor, focus), (3, 3));
+        let mut key_up = event(7, "Enter");
+        key_up.key_code = 13;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key_up, text("\r")),
+            OuiStatus::Ok
+        );
+        let mut shortcut = event(6, "q");
+        shortcut.key_code = 81;
+        for modifiers in [2, 8] {
+            shortcut.modifiers = modifiers;
+            assert_eq!(
+                oui_document_dispatch_key_input_v1(document, &shortcut, text("q")),
+                OuiStatus::Ok
+            );
+            assert_eq!(value(textarea), "é\nz");
+        }
+        seen.events.clear();
+        seen.cancel_key = true;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &enter, text("\r")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é\nz");
+        assert_eq!(seen.events.len(), 1);
+        seen.cancel_key = false;
+        seen.cancel_text = true;
+        seen.events.clear();
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &enter, text("\r")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é\nz");
+        assert_eq!(seen.events.len(), 2);
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, text("blocked")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é\nz");
+        seen.cancel_text = false;
+        let mut undo = event(6, "z");
+        undo.key_code = 90;
+        undo.modifiers = 2;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &undo, text("z")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é👍z");
+        // Undo restores the value and collapses selection at the end. Establish
+        // the intended replacement range through the native application API.
+        assert_eq!(oui_element_set_selection(textarea, 2, 6), OuiStatus::Ok);
+        seen.events.clear();
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, text("!")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é!z");
+        assert_eq!(
+            seen.events,
+            vec![
+                (18, "!".into(), "é👍z".into()),
+                (16, "!".into(), "é!z".into())
+            ]
+        );
+        seen.make_read_only = true;
+        seen.events.clear();
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, text("blocked")),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é!z");
+        assert_eq!(seen.events.len(), 1);
+        seen.events.clear();
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, text("blocked")),
+            OuiStatus::Ok
+        );
+        assert!(seen.events.is_empty());
+        let mut backspace = event(6, "Backspace");
+        backspace.key_code = 8;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &backspace, empty_utf8()),
+            OuiStatus::Ok
+        );
+        assert_eq!(value(textarea), "é!z");
+        for listener in listeners {
+            assert_eq!(oui_listener_destroy(listener), OuiStatus::Ok);
+        }
+        assert_eq!(oui_element_destroy(textarea), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn normalized_c_input_validates_headers_utf8_and_thread_ownership() {
+        let document = create_document(100, 100);
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, ptr::null(), empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        let short_size = 4_u32;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(
+                document,
+                (&short_size as *const u32).cast(),
+                empty_utf8()
+            ),
+            OuiStatus::InvalidArgument
+        );
+        let short_header = [8_u32, OUI_ABI_VERSION];
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(
+                document,
+                short_header.as_ptr().cast(),
+                empty_utf8()
+            ),
+            OuiStatus::InvalidArgument
+        );
+        let mut key = event(6, "a");
+        key.key_code = 65;
+        key.abi_version = 1;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, text("a")),
+            OuiStatus::AbiMismatch
+        );
+        key.abi_version = OUI_ABI_VERSION;
+        key.event_type = 4;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        key.event_type = 6;
+        key.modifiers = 1 << 31;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        key.modifiers = 0;
+        key.flags = OUI_EVENT_FLAG_DEFAULT_PREVENTED;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        key.flags = 0;
+        let invalid_bytes = [0xff_u8];
+        let invalid_text = OuiUtf8 {
+            data: invalid_bytes.as_ptr(),
+            length: 1,
+        };
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, invalid_text),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, invalid_text),
+            OuiStatus::InvalidArgument
+        );
+        key.text = invalid_text;
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, empty_utf8()),
+            OuiStatus::InvalidArgument
+        );
+        key.text = text("a");
+        let address = document as usize;
+        let wrong_thread = std::thread::spawn(move || {
+            oui_document_dispatch_text_input_v1(address as *mut OuiDocument, text("a"))
+        })
+        .join()
+        .unwrap();
+        assert_eq!(wrong_thread, OuiStatus::WrongThread);
+        assert_eq!(
+            oui_document_dispatch_key_input_v1(document, &key, text("a")),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+        assert_eq!(
+            oui_document_dispatch_text_input_v1(document, empty_utf8()),
+            OuiStatus::InvalidHandle
+        );
+    }
+
+    #[test]
+    fn c_composition_dispatch_commits_final_text_and_restores_canceled_edits() {
+        let document = create_document(100, 100);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let input = create_element(document, 23, root);
+        assert_eq!(
+            oui_element_set_control_value(input, text("kept")),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_element_set_selection(input, 0, 4), OuiStatus::Ok);
+        for (kind, value) in [(9, ""), (10, "preview"), (10, ""), (11, "漢字")] {
+            let mut event = event(kind, value);
+            assert_eq!(
+                oui_document_dispatch_event(document, input, &mut event),
+                OuiStatus::Ok
+            );
+        }
+        let mut bytes = vec![0; "漢字".len()];
+        let mut written = 0;
+        assert_eq!(
+            oui_element_copy_control_value(input, bytes.as_mut_ptr(), bytes.len(), &mut written),
+            OuiStatus::Ok
+        );
+        assert_eq!(std::str::from_utf8(&bytes).unwrap(), "漢字");
+        for (kind, value) in [(9, ""), (10, "preview"), (11, "")] {
+            let mut event = event(kind, value);
+            assert_eq!(
+                oui_document_dispatch_event(document, input, &mut event),
+                OuiStatus::Ok
+            );
+        }
+        assert_eq!(
+            oui_element_copy_control_value(input, bytes.as_mut_ptr(), bytes.len(), &mut written),
+            OuiStatus::Ok
+        );
+        assert_eq!(std::str::from_utf8(&bytes).unwrap(), "漢字");
+        assert_eq!(oui_element_destroy(input), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
     fn c_accessibility_updates_actions_and_validation_share_engine_state() {
         let document = create_document(100, 100);
         let mut root = ptr::null_mut();
@@ -4147,11 +5804,53 @@ mod tests {
         );
         assert_eq!(update.full_tree, 1);
         assert!(update.updated_nodes >= 2);
+        let mut first_snapshot = ptr::null_mut();
+        assert_eq!(
+            accessibility_snapshot::oui_document_accessibility_snapshot(
+                document,
+                ptr::null(),
+                &mut first_snapshot,
+            ),
+            OuiStatus::Ok
+        );
+        let mut state = OuiAccessibilityNodeState {
+            struct_size: size_of::<OuiAccessibilityNodeState>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            ..Default::default()
+        };
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_node_state(
+                first_snapshot,
+                id,
+                &mut state,
+            ),
+            OuiStatus::Ok
+        );
+        assert_ne!(state.flags & (1 << 5), 0);
+        assert_eq!(state.flags & (1 << 6), 0);
         assert_eq!(
             oui_element_perform_accessibility_action(checkbox, 0, empty_utf8(), 0, 0),
             OuiStatus::Ok
         );
         assert_eq!(log, [42, 62, 72]);
+        let mut second_snapshot = ptr::null_mut();
+        assert_eq!(
+            accessibility_snapshot::oui_document_accessibility_snapshot(
+                document,
+                first_snapshot,
+                &mut second_snapshot,
+            ),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_node_state(
+                second_snapshot,
+                id,
+                &mut state,
+            ),
+            OuiStatus::Ok
+        );
+        assert_ne!(state.flags & (1 << 6), 0);
         assert_eq!(
             oui_document_accessibility_update(document, &mut update),
             OuiStatus::Ok
@@ -4165,12 +5864,71 @@ mod tests {
         );
         assert_eq!(update.reduced_motion, 1);
 
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_destroy(second_snapshot),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_destroy(first_snapshot),
+            OuiStatus::Ok
+        );
+
         assert_eq!(oui_listener_destroy(click_listener), OuiStatus::Ok);
         assert_eq!(oui_listener_destroy(input_listener), OuiStatus::Ok);
         assert_eq!(oui_listener_destroy(change_listener), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(checkbox), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_accessibility_snapshot_rejects_wrong_document_and_outlives_its_document() {
+        let first_document = create_document(40, 40);
+        let second_document = create_document(40, 40);
+        let mut first_snapshot = ptr::null_mut();
+        assert_eq!(
+            accessibility_snapshot::oui_document_accessibility_snapshot(
+                first_document,
+                ptr::null(),
+                &mut first_snapshot,
+            ),
+            OuiStatus::Ok
+        );
+        let mut unrelated_snapshot = ptr::null_mut();
+        assert_eq!(
+            accessibility_snapshot::oui_document_accessibility_snapshot(
+                second_document,
+                first_snapshot,
+                &mut unrelated_snapshot,
+            ),
+            OuiStatus::WrongDocument
+        );
+        assert!(unrelated_snapshot.is_null());
+        let mut info = OuiAccessibilitySnapshotInfo {
+            struct_size: size_of::<OuiAccessibilitySnapshotInfo>() as u32,
+            abi_version: OUI_ABI_VERSION + 1,
+            ..Default::default()
+        };
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_info(first_snapshot, &mut info),
+            OuiStatus::AbiMismatch
+        );
+        assert_eq!(oui_document_destroy(first_document), OuiStatus::Ok);
+        info.abi_version = OUI_ABI_VERSION;
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_info(first_snapshot, &mut info),
+            OuiStatus::Ok
+        );
+        assert!(info.node_count >= 1);
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_destroy(first_snapshot),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_info(first_snapshot, &mut info),
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(oui_document_destroy(second_document), OuiStatus::Ok);
     }
 
     #[test]
@@ -4237,5 +5995,891 @@ mod tests {
 
         assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn native_scalar_extensions_keep_owned_property_identity_and_full_values() {
+        use openui_style::{OverflowAlignment, StyleColor};
+        let document_handle = create_document(64, 64);
+        let element_handle = create_element(document_handle, 0, ptr::null_mut());
+        for (property, literal) in [
+            (StyleProperty::AlignSelf, "safe center"),
+            (StyleProperty::AlignContent, "unsafe end"),
+            (StyleProperty::BorderBottomColor, "currentcolor"),
+            (StyleProperty::ScrollbarTrackColor, "auto"),
+            (StyleProperty::Orphans, "4294967295"),
+        ] {
+            let mut parsed = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+            assert_eq!(
+                oui_style_value_parse(property as i32, text(literal), parsed.as_mut_ptr()),
+                OuiStatus::Ok
+            );
+            // SAFETY: successful parsing initialized the output and selected its payload.
+            let parsed = unsafe { parsed.assume_init() };
+            assert_eq!(parsed.tag, 6);
+            let compound = unsafe { parsed.data.compound } as usize;
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &parsed),
+                OuiStatus::Ok
+            );
+            let reference = element(element_handle as usize).unwrap();
+            let state = element_document(&reference).unwrap();
+            let snapshot = borrow_engine(&state)
+                .unwrap()
+                .computed_style(reference.node)
+                .unwrap()
+                .clone();
+            match property {
+                StyleProperty::AlignSelf => {
+                    assert_eq!(snapshot.align_self.overflow, OverflowAlignment::Safe)
+                }
+                StyleProperty::AlignContent => {
+                    assert_eq!(snapshot.align_content.overflow, OverflowAlignment::Unsafe)
+                }
+                StyleProperty::BorderBottomColor => {
+                    assert_eq!(snapshot.border_bottom_color, StyleColor::CurrentColor)
+                }
+                StyleProperty::ScrollbarTrackColor => {
+                    assert_eq!(snapshot.scrollbar_track_color, None)
+                }
+                StyleProperty::Orphans => assert_eq!(snapshot.orphans, u32::MAX),
+                _ => unreachable!(),
+            }
+            assert_eq!(
+                oui_element_set_property(element_handle, StyleProperty::Width as i32, &parsed),
+                OuiStatus::WrongValueType
+            );
+            assert_eq!(
+                oui_element_set_property(
+                    element_handle,
+                    StyleProperty::WritingMode as i32,
+                    &parsed
+                ),
+                OuiStatus::WrongValueType
+            );
+            let mut reserved = parsed;
+            reserved.reserved = 1;
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &reserved),
+                OuiStatus::WrongValueType
+            );
+            assert_eq!(
+                format!("{snapshot:?}"),
+                format!(
+                    "{:?}",
+                    borrow_engine(&state)
+                        .unwrap()
+                        .computed_style(reference.node)
+                        .unwrap()
+                )
+            );
+            std::thread::spawn(move || {
+                let own_document = create_document(16, 16);
+                let own_element = create_element(own_document, 0, ptr::null_mut());
+                let foreign = OuiStyleValue {
+                    tag: 6,
+                    reserved: 0,
+                    data: OuiStylePayload {
+                        compound: compound as *const OuiStyleCompound,
+                    },
+                };
+                assert_eq!(
+                    oui_element_set_property(own_element, property as i32, &foreign),
+                    OuiStatus::WrongThread
+                );
+                assert_eq!(
+                    oui_style_compound_destroy(compound as *mut OuiStyleCompound),
+                    OuiStatus::WrongThread
+                );
+                assert_eq!(oui_element_destroy(own_element), OuiStatus::Ok);
+                assert_eq!(oui_document_destroy(own_document), OuiStatus::Ok);
+            })
+            .join()
+            .unwrap();
+            assert_eq!(
+                oui_style_compound_destroy(compound as *mut OuiStyleCompound),
+                OuiStatus::Ok
+            );
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &parsed),
+                OuiStatus::InvalidHandle
+            );
+            // Submitting cloned the value into retained state before its carrier was released.
+            assert_eq!(
+                format!("{snapshot:?}"),
+                format!(
+                    "{:?}",
+                    borrow_engine(&state)
+                        .unwrap()
+                        .computed_style(reference.node)
+                        .unwrap()
+                )
+            );
+        }
+        assert_eq!(oui_element_destroy(element_handle), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn native_float_colors_preserve_precision_property_identity_and_ownership() {
+        use openui_style::StyleColor;
+        let document_handle = create_document(64, 64);
+        let element_handle = create_element(document_handle, 0, ptr::null_mut());
+        let color = Color::from_rgba_f32(0.123456, 0.234567, 0.345678, 0.5);
+        let properties = [
+            StyleProperty::BackgroundColor,
+            StyleProperty::Color,
+            StyleProperty::BorderTopColor,
+            StyleProperty::BorderRightColor,
+            StyleProperty::BorderBottomColor,
+            StyleProperty::BorderLeftColor,
+            StyleProperty::ColumnRuleColor,
+            StyleProperty::OutlineColor,
+            StyleProperty::ScrollbarTrackColor,
+            StyleProperty::ScrollbarThumbColor,
+            StyleProperty::TextDecorationColor,
+            StyleProperty::TextEmphasisColor,
+        ];
+        for property in properties {
+            let mut output = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+            assert_eq!(
+                oui_style_value_color_f32_v1(
+                    property as i32,
+                    color.r,
+                    color.g,
+                    color.b,
+                    color.a,
+                    output.as_mut_ptr()
+                ),
+                OuiStatus::Ok
+            );
+            // SAFETY: success initialized the tagged record and compound payload.
+            let output = unsafe { output.assume_init() };
+            assert_eq!((output.tag, output.reserved), (6, 0));
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &output),
+                OuiStatus::Ok
+            );
+            let reference = element(element_handle as usize).unwrap();
+            let state = element_document(&reference).unwrap();
+            let snapshot = borrow_engine(&state)
+                .unwrap()
+                .computed_style(reference.node)
+                .unwrap()
+                .clone();
+            let resolved = match property {
+                StyleProperty::BackgroundColor => snapshot.background_color,
+                StyleProperty::Color => snapshot.color,
+                StyleProperty::BorderTopColor => snapshot.border_top_color.resolve(&color),
+                StyleProperty::BorderRightColor => snapshot.border_right_color.resolve(&color),
+                StyleProperty::BorderBottomColor => snapshot.border_bottom_color.resolve(&color),
+                StyleProperty::BorderLeftColor => snapshot.border_left_color.resolve(&color),
+                StyleProperty::ColumnRuleColor => snapshot.column_rule_color.resolve(&color),
+                StyleProperty::OutlineColor => snapshot.outline_color.resolve(&color),
+                StyleProperty::ScrollbarTrackColor => snapshot.scrollbar_track_color.unwrap(),
+                StyleProperty::ScrollbarThumbColor => snapshot.scrollbar_thumb_color.unwrap(),
+                StyleProperty::TextDecorationColor => {
+                    assert_eq!(snapshot.text_decoration_color, StyleColor::Resolved(color));
+                    snapshot.text_decoration_color.resolve(&color)
+                }
+                StyleProperty::TextEmphasisColor => {
+                    assert_eq!(snapshot.text_emphasis_color, StyleColor::Resolved(color));
+                    snapshot.text_emphasis_color.resolve(&color)
+                }
+                _ => unreachable!(),
+            };
+            assert_eq!(resolved, color);
+            assert_ne!(resolved.a, 128.0 / 255.0);
+            assert_eq!(
+                oui_element_set_property(element_handle, StyleProperty::Width as i32, &output),
+                OuiStatus::WrongValueType
+            );
+            let other_color = if property == StyleProperty::Color {
+                StyleProperty::BackgroundColor
+            } else {
+                StyleProperty::Color
+            };
+            assert_eq!(
+                oui_element_set_property(element_handle, other_color as i32, &output),
+                OuiStatus::WrongValueType
+            );
+            let compound = unsafe { output.data.compound } as usize;
+            std::thread::spawn(move || {
+                assert_eq!(
+                    oui_style_compound_destroy(compound as *mut OuiStyleCompound),
+                    OuiStatus::WrongThread
+                );
+            })
+            .join()
+            .unwrap();
+            assert_eq!(
+                oui_style_compound_destroy(compound as *mut OuiStyleCompound),
+                OuiStatus::Ok
+            );
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &output),
+                OuiStatus::InvalidHandle
+            );
+            assert_eq!(
+                format!("{snapshot:?}"),
+                format!(
+                    "{:?}",
+                    borrow_engine(&state)
+                        .unwrap()
+                        .computed_style(reference.node)
+                        .unwrap()
+                )
+            );
+        }
+        assert_eq!(oui_element_destroy(element_handle), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn invalid_float_colors_leave_output_unchanged() {
+        for index in 0..4 {
+            for invalid_channel in [f32::NAN, f32::INFINITY, f32::NEG_INFINITY, -0.01, 1.01] {
+                let mut channels = [0.5; 4];
+                channels[index] = invalid_channel;
+                let mut output = OuiStyleValue {
+                    tag: 77,
+                    reserved: 42,
+                    data: OuiStylePayload { integer: 123 },
+                };
+                assert_eq!(
+                    oui_style_value_color_f32_v1(
+                        StyleProperty::Color as i32,
+                        channels[0],
+                        channels[1],
+                        channels[2],
+                        channels[3],
+                        &mut output
+                    ),
+                    OuiStatus::InvalidArgument
+                );
+                assert_eq!(
+                    (output.tag, output.reserved, unsafe { output.data.integer }),
+                    (77, 42, 123)
+                );
+            }
+        }
+        for (property, expected) in [
+            (i32::MAX, OuiStatus::InvalidArgument),
+            (StyleProperty::Width as i32, OuiStatus::WrongValueType),
+        ] {
+            let mut output = OuiStyleValue {
+                tag: 77,
+                reserved: 42,
+                data: OuiStylePayload { integer: 123 },
+            };
+            assert_eq!(
+                oui_style_value_color_f32_v1(property, 0.0, 0.0, 0.0, 1.0, &mut output),
+                expected
+            );
+            assert_eq!(
+                (output.tag, output.reserved, unsafe { output.data.integer }),
+                (77, 42, 123)
+            );
+        }
+        assert_eq!(
+            oui_style_value_color_f32_v1(
+                StyleProperty::Color as i32,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                ptr::null_mut()
+            ),
+            OuiStatus::InvalidArgument
+        );
+    }
+
+    #[test]
+    fn native_fragment_keywords_reach_engine_and_keep_owned_property_identity() {
+        use openui_style::{
+            BoxDecorationBreak, BreakInside, BreakValue, ColumnFill, ColumnSpan, ColumnWrap,
+            RendererStyleValue as R,
+        };
+        let document_handle = create_document(64, 48);
+        let element_handle = create_element(document_handle, 0, ptr::null_mut());
+        for (property, literal, expected) in [
+            (
+                StyleProperty::ColumnFill,
+                "auto",
+                R::ColumnFill(ColumnFill::Auto),
+            ),
+            (
+                StyleProperty::BreakInside,
+                "avoid",
+                R::BreakInside(BreakInside::Avoid),
+            ),
+            (
+                StyleProperty::BreakBefore,
+                "column",
+                R::BreakBefore(BreakValue::Column),
+            ),
+            (
+                StyleProperty::BreakAfter,
+                "avoid-page",
+                R::BreakAfter(BreakValue::AvoidPage),
+            ),
+            (
+                StyleProperty::ColumnSpan,
+                "all",
+                R::ColumnSpan(ColumnSpan::All),
+            ),
+            (
+                StyleProperty::ColumnWrap,
+                "nowrap",
+                R::ColumnWrap(ColumnWrap::NoWrap),
+            ),
+            (
+                StyleProperty::BoxDecorationBreak,
+                "clone",
+                R::BoxDecorationBreak(BoxDecorationBreak::Clone),
+            ),
+            (
+                StyleProperty::BorderTopStyle,
+                "outset",
+                R::BorderTopStyle(BorderStyle::Outset),
+            ),
+            (
+                StyleProperty::BorderRightStyle,
+                "inset",
+                R::BorderRightStyle(BorderStyle::Inset),
+            ),
+            (
+                StyleProperty::BorderBottomStyle,
+                "ridge",
+                R::BorderBottomStyle(BorderStyle::Ridge),
+            ),
+            (
+                StyleProperty::BorderLeftStyle,
+                "groove",
+                R::BorderLeftStyle(BorderStyle::Groove),
+            ),
+            (
+                StyleProperty::ColumnRuleStyle,
+                "double",
+                R::ColumnRuleStyle(BorderStyle::Double),
+            ),
+            (
+                StyleProperty::OutlineStyle,
+                "dashed",
+                R::OutlineStyle(BorderStyle::Dashed),
+            ),
+        ] {
+            let mut parsed = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+            assert_eq!(
+                oui_style_value_parse(property as i32, text(literal), parsed.as_mut_ptr()),
+                OuiStatus::Ok,
+                "native keyword constructor must accept {property:?} {literal}"
+            );
+            // SAFETY: a successful constructor initialized the tagged record.
+            let parsed = unsafe { parsed.assume_init() };
+            assert_eq!((parsed.tag, parsed.reserved), (6, 0));
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &parsed),
+                OuiStatus::Ok
+            );
+            let reference = element(element_handle as usize).unwrap();
+            let state = element_document(&reference).unwrap();
+            let snapshot = borrow_engine(&state)
+                .unwrap()
+                .computed_style(reference.node)
+                .unwrap()
+                .clone();
+            assert_eq!(
+                openui_style::value_from_computed(&snapshot, property),
+                StyleValue::Renderer(expected.clone())
+            );
+            let other = if property == StyleProperty::ColumnFill {
+                StyleProperty::BreakInside
+            } else {
+                StyleProperty::ColumnFill
+            };
+            assert_eq!(
+                oui_element_set_property(element_handle, other as i32, &parsed),
+                OuiStatus::WrongValueType
+            );
+            let mut invalid = parsed;
+            invalid.reserved = 1;
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &invalid),
+                OuiStatus::WrongValueType
+            );
+            let compound = unsafe { parsed.data.compound } as usize;
+            if property == StyleProperty::ColumnFill {
+                std::thread::spawn(move || {
+                    let own_document = create_document(16, 16);
+                    let own_element = create_element(own_document, 0, ptr::null_mut());
+                    let foreign = OuiStyleValue {
+                        tag: 6,
+                        reserved: 0,
+                        data: OuiStylePayload {
+                            compound: compound as *const OuiStyleCompound,
+                        },
+                    };
+                    assert_eq!(
+                        oui_element_set_property(own_element, property as i32, &foreign),
+                        OuiStatus::WrongThread
+                    );
+                    assert_eq!(
+                        oui_style_compound_destroy(compound as *mut OuiStyleCompound),
+                        OuiStatus::WrongThread
+                    );
+                    assert_eq!(oui_element_destroy(own_element), OuiStatus::Ok);
+                    assert_eq!(oui_document_destroy(own_document), OuiStatus::Ok);
+                })
+                .join()
+                .unwrap();
+            }
+            assert_eq!(
+                oui_style_compound_destroy(compound as *mut OuiStyleCompound),
+                OuiStatus::Ok
+            );
+            assert_eq!(
+                oui_element_set_property(element_handle, property as i32, &parsed),
+                OuiStatus::InvalidHandle
+            );
+            assert_eq!(
+                openui_style::value_from_computed(
+                    &borrow_engine(&state)
+                        .unwrap()
+                        .computed_style(reference.node)
+                        .unwrap(),
+                    property
+                ),
+                StyleValue::Renderer(expected)
+            );
+            assert_eq!(
+                format!("{snapshot:?}"),
+                format!(
+                    "{:?}",
+                    borrow_engine(&state)
+                        .unwrap()
+                        .computed_style(reference.node)
+                        .unwrap()
+                )
+            );
+            let mut output = OuiStyleValue {
+                tag: 77,
+                reserved: 42,
+                data: OuiStylePayload { integer: 123 },
+            };
+            assert_eq!(
+                oui_style_value_parse(property as i32, text("invalid-keyword"), &mut output),
+                OuiStatus::InvalidArgument
+            );
+            assert_eq!(
+                (output.tag, output.reserved, unsafe { output.data.integer }),
+                (77, 42, 123)
+            );
+        }
+        assert_eq!(oui_element_destroy(element_handle), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn native_table_display_literals_keep_existing_scalar_encoding() {
+        let document_handle = create_document(64, 48);
+        let element_handle = create_element(document_handle, 0, ptr::null_mut());
+        for (literal, expected) in [
+            ("inline-table", openui_style::Display::InlineTable),
+            ("table-row-group", openui_style::Display::TableRowGroup),
+            (
+                "table-header-group",
+                openui_style::Display::TableHeaderGroup,
+            ),
+            (
+                "table-footer-group",
+                openui_style::Display::TableFooterGroup,
+            ),
+            ("table-row", openui_style::Display::TableRow),
+            ("table-cell", openui_style::Display::TableCell),
+            (
+                "table-column-group",
+                openui_style::Display::TableColumnGroup,
+            ),
+            ("table-column", openui_style::Display::TableColumn),
+            ("table-caption", openui_style::Display::TableCaption),
+        ] {
+            let mut parsed = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+            assert_eq!(
+                oui_style_value_parse(
+                    StyleProperty::Display as i32,
+                    text(literal),
+                    parsed.as_mut_ptr()
+                ),
+                OuiStatus::Ok
+            );
+            let parsed = unsafe { parsed.assume_init() };
+            assert_eq!(
+                (parsed.tag, parsed.reserved, unsafe {
+                    parsed.data.enum_value
+                }),
+                (5, 0, expected as i32)
+            );
+            assert_eq!(
+                oui_element_set_property(element_handle, StyleProperty::Display as i32, &parsed),
+                OuiStatus::Ok
+            );
+            let reference = element(element_handle as usize).unwrap();
+            let state = element_document(&reference).unwrap();
+            assert_eq!(
+                borrow_engine(&state)
+                    .unwrap()
+                    .computed_style(reference.node)
+                    .unwrap()
+                    .display,
+                expected
+            );
+        }
+        assert_eq!(oui_element_destroy(element_handle), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn invalid_native_literals_preserve_output_and_existing_scalar_encodings() {
+        for (property, literal) in [
+            (StyleProperty::FilterBlur, "NaN"),
+            (StyleProperty::OverflowClipMargin, "inf"),
+            (StyleProperty::Left, "NaNpx"),
+            (StyleProperty::ColumnWidth, "infem"),
+            (StyleProperty::AlignSelf, "safe stretch"),
+            (StyleProperty::AlignContent, "safe space-between"),
+            (StyleProperty::Orphans, "-1"),
+            (StyleProperty::Widows, "4294967296"),
+        ] {
+            let mut output = OuiStyleValue {
+                tag: 77,
+                reserved: 42,
+                data: OuiStylePayload { integer: 123 },
+            };
+            assert_eq!(
+                oui_style_value_parse(property as i32, text(literal), &mut output),
+                OuiStatus::InvalidArgument
+            );
+            assert_eq!(
+                (output.tag, output.reserved, unsafe { output.data.integer }),
+                (77, 42, 123)
+            );
+        }
+        for (property, literals) in [
+            (
+                StyleProperty::AlignItems,
+                &[
+                    "normal",
+                    "stretch",
+                    "center",
+                    "start",
+                    "end",
+                    "flex-start",
+                    "flex-end",
+                    "baseline",
+                    "auto",
+                    "self-start",
+                    "self-end",
+                    "left",
+                    "right",
+                    "last baseline",
+                    "legacy",
+                ][..],
+            ),
+            (
+                StyleProperty::JustifyContent,
+                &[
+                    "normal",
+                    "start",
+                    "end",
+                    "center",
+                    "flex-start",
+                    "flex-end",
+                    "space-between",
+                    "space-around",
+                    "space-evenly",
+                    "stretch",
+                    "baseline",
+                    "last baseline",
+                    "left",
+                    "right",
+                ][..],
+            ),
+        ] {
+            for (number, literal) in literals.iter().enumerate() {
+                let mut output = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+                assert_eq!(
+                    oui_style_value_parse(property as i32, text(literal), output.as_mut_ptr()),
+                    OuiStatus::Ok
+                );
+                let output = unsafe { output.assume_init() };
+                assert_eq!(output.tag, 5);
+                assert_eq!(unsafe { output.data.enum_value }, number as i32);
+                assert_eq!(
+                    value::style_value(property, &output).unwrap(),
+                    parse_literal(property, literal).unwrap()
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn c_native_node_queries_keep_owned_aliases_and_follow_detached_ancestors() {
+        let doc = create_document(64, 64);
+        let mut first = ptr::null_mut();
+        let mut alias = ptr::null_mut();
+        assert_eq!(oui_document_root(doc, &mut first), OuiStatus::Ok);
+        assert_eq!(oui_document_root(doc, &mut alias), OuiStatus::Ok);
+        assert_ne!(first, alias);
+        let parent = create_element(doc, 0, first);
+        let child = create_element(doc, 0, parent);
+        let mut out = 55;
+        assert_eq!(
+            oui_element_is_same_node_v1(first, alias, &mut out),
+            OuiStatus::Ok
+        );
+        assert_eq!(out, 1);
+        assert_eq!(oui_element_destroy(first), OuiStatus::Ok);
+        assert_eq!(oui_element_is_connected_v1(alias, &mut out), OuiStatus::Ok);
+        assert_eq!(out, 1);
+        assert_eq!(
+            oui_element_is_same_node_v1(alias, child, &mut out),
+            OuiStatus::Ok
+        );
+        assert_eq!(out, 0);
+        let other = create_document(64, 64);
+        let mut other_root = ptr::null_mut();
+        assert_eq!(oui_document_root(other, &mut other_root), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_is_same_node_v1(alias, other_root, &mut out),
+            OuiStatus::Ok
+        );
+        assert_eq!(out, 0);
+        assert_eq!(oui_element_is_connected_v1(child, &mut out), OuiStatus::Ok);
+        assert_eq!(out, 1);
+        assert_eq!(oui_element_detach(parent), OuiStatus::Ok);
+        assert_eq!(oui_element_is_connected_v1(child, &mut out), OuiStatus::Ok);
+        assert_eq!(out, 0);
+        assert_eq!(oui_element_append_child(alias, parent), OuiStatus::Ok);
+        assert_eq!(oui_element_is_connected_v1(child, &mut out), OuiStatus::Ok);
+        assert_eq!(out, 1);
+        for handle in [child, parent, alias, other_root] {
+            assert_eq!(oui_element_destroy(handle), OuiStatus::Ok);
+        }
+        for handle in [doc, other] {
+            assert_eq!(oui_document_destroy(handle), OuiStatus::Ok);
+        }
+    }
+
+    #[test]
+    fn c_native_node_queries_reject_invalid_stale_reentrant_and_wrong_thread_handles() {
+        let doc = create_document(64, 64);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(doc, &mut root), OuiStatus::Ok);
+        let child = create_element(doc, 0, root);
+        let mut out = 55;
+        assert_eq!(
+            oui_element_is_connected_v1(root, ptr::null_mut()),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(
+            oui_element_is_same_node_v1(root, root, ptr::null_mut()),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(
+            oui_element_is_connected_v1(ptr::null_mut(), &mut out),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(out, 55);
+        assert_eq!(
+            oui_element_is_same_node_v1(root, ptr::null_mut(), &mut out),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(out, 55);
+        let unknown = ptr::without_provenance_mut::<OuiElement>(usize::MAX);
+        assert_eq!(
+            oui_element_is_connected_v1(unknown, &mut out),
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(out, 55);
+        assert_eq!(
+            oui_element_is_same_node_v1(root, unknown, &mut out),
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(out, 55);
+        let state = document(doc as usize).unwrap();
+        let held = borrow_engine_mut(&state).unwrap();
+        assert_eq!(
+            oui_element_is_connected_v1(root, &mut out),
+            OuiStatus::Reentrant
+        );
+        assert_eq!(out, 55);
+        assert_eq!(
+            oui_element_is_same_node_v1(root, root, &mut out),
+            OuiStatus::Reentrant
+        );
+        assert_eq!(out, 55);
+        drop(held);
+        drop(state);
+        let address = root as usize;
+        std::thread::spawn(move || {
+            let mut out = 55;
+            let root = address as *mut OuiElement;
+            assert_eq!(
+                oui_element_is_connected_v1(root, &mut out),
+                OuiStatus::WrongThread
+            );
+            assert_eq!(out, 55);
+            assert_eq!(
+                oui_element_is_same_node_v1(root, root, &mut out),
+                OuiStatus::WrongThread
+            );
+            assert_eq!(out, 55);
+        })
+        .join()
+        .unwrap();
+        assert_eq!(oui_element_remove(child), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_is_connected_v1(child, &mut out),
+            OuiStatus::StaleHandle
+        );
+        assert_eq!(out, 55);
+        assert_eq!(
+            oui_element_is_same_node_v1(root, child, &mut out),
+            OuiStatus::StaleHandle
+        );
+        assert_eq!(out, 55);
+        assert_eq!(
+            oui_element_is_same_node_v1(child, root, &mut out),
+            OuiStatus::StaleHandle
+        );
+        assert_eq!(out, 55);
+        assert_eq!(oui_document_destroy(doc), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_is_connected_v1(root, &mut out),
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(out, 55);
+        assert_eq!(oui_element_destroy(child), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+    }
+    #[test]
+    fn c_active_query_rejects_reentrant_borrow_without_writing_output() {
+        let doc = create_document(64, 64);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(doc, &mut root), OuiStatus::Ok);
+        let state = document(doc as usize).unwrap();
+        let held = borrow_engine_mut(&state).unwrap();
+        let mut out = 73;
+        assert_eq!(
+            oui_element_is_active_v1(root, &mut out),
+            OuiStatus::Reentrant
+        );
+        assert_eq!(out, 73);
+        drop(held);
+        assert_eq!(oui_element_is_active_v1(root, &mut out), OuiStatus::Ok);
+        assert_eq!(out, 0);
+        drop(state);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(doc), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_disabled_queries_preserve_outputs_on_invalid_stale_thread_and_borrow_errors() {
+        type Query = extern "C" fn(*mut OuiElement, *mut u32) -> OuiStatus;
+        let queries: [Query; 2] = [
+            oui_element_is_own_disabled_v1,
+            oui_element_is_effectively_disabled_v1,
+        ];
+        let doc = create_document(64, 64);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(doc, &mut root), OuiStatus::Ok);
+        let fieldset = create_element(doc, 27, root);
+        let input = create_element(doc, 23, fieldset);
+        assert_eq!(
+            oui_element_set_attribute(fieldset, text("disabled"), empty_utf8()),
+            OuiStatus::Ok
+        );
+        let mut output = 55;
+        assert_eq!(
+            oui_element_is_own_disabled_v1(input, &mut output),
+            OuiStatus::Ok
+        );
+        assert_eq!(output, 0);
+        assert_eq!(
+            oui_element_is_effectively_disabled_v1(input, &mut output),
+            OuiStatus::Ok
+        );
+        assert_eq!(output, 1);
+        let mut flags = 99;
+        assert_eq!(
+            oui_element_get_control_flags(input, &mut flags),
+            OuiStatus::Ok
+        );
+        assert_eq!(flags & 1, 0);
+        for query in queries {
+            output = 55;
+            assert_eq!(query(input, ptr::null_mut()), OuiStatus::InvalidArgument);
+            assert_eq!(output, 55);
+            assert_eq!(
+                query(ptr::null_mut(), &mut output),
+                OuiStatus::InvalidArgument
+            );
+            assert_eq!(output, 55);
+            assert_eq!(
+                query(1usize as *mut OuiElement, &mut output),
+                OuiStatus::InvalidHandle
+            );
+            assert_eq!(output, 55);
+        }
+        let state = document(doc as usize).unwrap();
+        let held = borrow_engine_mut(&state).unwrap();
+        for query in queries {
+            output = 55;
+            assert_eq!(query(input, &mut output), OuiStatus::Reentrant);
+            assert_eq!(output, 55);
+        }
+        drop(held);
+        drop(state);
+        let address = input as usize;
+        std::thread::spawn(move || {
+            for query in queries {
+                let mut output = 55;
+                assert_eq!(
+                    query(address as *mut OuiElement, &mut output),
+                    OuiStatus::WrongThread
+                );
+                assert_eq!(output, 55);
+            }
+        })
+        .join()
+        .unwrap();
+        assert_eq!(oui_element_detach(fieldset), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_is_effectively_disabled_v1(input, &mut output),
+            OuiStatus::Ok
+        );
+        assert_eq!(output, 1);
+        assert_eq!(oui_element_append_child(root, input), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_is_effectively_disabled_v1(input, &mut output),
+            OuiStatus::Ok
+        );
+        assert_eq!(output, 0);
+        assert_eq!(oui_element_remove(input), OuiStatus::Ok);
+        for query in queries {
+            output = 55;
+            assert_eq!(query(input, &mut output), OuiStatus::StaleHandle);
+            assert_eq!(output, 55);
+        }
+        assert_eq!(oui_document_destroy(doc), OuiStatus::Ok);
+        for query in queries {
+            output = 55;
+            assert_eq!(query(root, &mut output), OuiStatus::InvalidHandle);
+            assert_eq!(output, 55);
+        }
+        for handle in [input, fieldset, root] {
+            assert_eq!(oui_element_destroy(handle), OuiStatus::Ok);
+        }
     }
 }

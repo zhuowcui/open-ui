@@ -1,0 +1,412 @@
+{
+  "all_native_apis_qualified": false,
+  "c_consumers": 16,
+  "c_cpp_observations": {
+    "baseline-c": {
+      "binary_sha256": "166a8f806c8aa83a1c5961404d37a02f8b7c742a48dd87cd8b66becce68a27e4",
+      "exact": false,
+      "observed": {
+        "checked": true,
+        "rows": [
+          {
+            "after": false,
+            "target": "text",
+            "type": "beforeinput"
+          },
+          {
+            "after": true,
+            "target": "text",
+            "type": "input"
+          },
+          {
+            "after": true,
+            "target": "text",
+            "type": "beforeinput"
+          },
+          {
+            "after": true,
+            "target": "box",
+            "type": "input"
+          },
+          {
+            "after": true,
+            "target": "box",
+            "type": "change"
+          }
+        ],
+        "value": "A"
+      },
+      "repeated_identical": true
+    },
+    "baseline-cpp": {
+      "binary_sha256": "6ced14bdd0a76c522bdd4bea05518fb8834b701492e30899a075205bf2f49b8c",
+      "exact": false,
+      "observed": {
+        "checked": true,
+        "rows": [
+          {
+            "after": false,
+            "target": "text",
+            "type": "beforeinput"
+          },
+          {
+            "after": true,
+            "target": "text",
+            "type": "input"
+          },
+          {
+            "after": true,
+            "target": "text",
+            "type": "beforeinput"
+          },
+          {
+            "after": true,
+            "target": "box",
+            "type": "input"
+          },
+          {
+            "after": true,
+            "target": "box",
+            "type": "change"
+          }
+        ],
+        "value": "A"
+      },
+      "repeated_identical": true
+    },
+    "candidate-c": {
+      "binary_sha256": "3e1528093451ee7a181873f22d111b89725fec560d47f0c1df063ca452ad9252",
+      "exact": true,
+      "observed": {
+        "checked": true,
+        "rows": [
+          {
+            "after": false,
+            "target": "text",
+            "type": "beforeinput"
+          },
+          {
+            "after": false,
+            "target": "text",
+            "type": "input"
+          },
+          {
+            "after": true,
+            "target": "text",
+            "type": "beforeinput"
+          },
+          {
+            "after": false,
+            "target": "box",
+            "type": "input"
+          },
+          {
+            "after": false,
+            "target": "box",
+            "type": "change"
+          }
+        ],
+        "value": "A"
+      },
+      "repeated_identical": true
+    },
+    "candidate-cpp": {
+      "binary_sha256": "241234fabb8b99748bc27a1f6d70ebd588f775c2605bc354d5b004307a289c24",
+      "exact": true,
+      "observed": {
+        "checked": true,
+        "rows": [
+          {
+            "after": false,
+            "target": "text",
+            "type": "beforeinput"
+          },
+          {
+            "after": false,
+            "target": "text",
+            "type": "input"
+          },
+          {
+            "after": true,
+            "target": "text",
+            "type": "beforeinput"
+          },
+          {
+            "after": false,
+            "target": "box",
+            "type": "input"
+          },
+          {
+            "after": false,
+            "target": "box",
+            "type": "change"
+          }
+        ],
+        "value": "A"
+      },
+      "repeated_identical": true
+    }
+  },
+  "c_exports": 116,
+  "c_layouts": 32,
+  "combined_source_verification_pending": true,
+  "cpp_consumers": 10,
+  "existing_exports_and_layouts_unchanged": true,
+  "headless_c_tests": 48,
+  "implementation_integrated": true,
+  "integration_commit": "c09eb639",
+  "javascript_executed_by_openui": false,
+  "native_check_source": {
+    "clean": true,
+    "commit": "0b249f3b1c9f2e441a9dce283166643c03937d91",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "015ec0068e9851c73e6ad02da84eafab19d95ef55e074a39160ab29face049d5",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native_runtime_source": {
+    "clean": true,
+    "commit": "cd6f9d4bfa980fc9daa85f564e77326816b75e1b",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "2472e581be50319f1fa02d4df7ede0dd10a1544ed91d4f831b5018ecbfc8c167",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "new_release_comparisons_admitted": 0,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "predecessor_normal_ci": {
+    "all_jobs_terminal": true,
+    "failed": [],
+    "full_pixel_gate_passed": false,
+    "github_checks_sha256": "5e85f78923b90db89b9b8136937ad4c81206e78d95072d2ca9f67fbee5a54d60",
+    "passed": [
+      "rust-parity",
+      "clang-format",
+      "historical-pixel-audit",
+      "gn-format",
+      "conformance-and-platform",
+      "python-accountability"
+    ],
+    "physical_lab_qualified": false,
+    "release_qualification": false,
+    "run_urls": [
+      "https://github.com/zhuowcui/open-ui/actions/runs/37701512622",
+      "https://github.com/zhuowcui/open-ui/actions/runs/37701512626",
+      "https://github.com/zhuowcui/open-ui/actions/runs/37701512629"
+    ],
+    "schema_version": 1,
+    "skipped": [
+      "msrv",
+      "miri-handles",
+      "native-sanitizers",
+      "c-undefined-sanitizer",
+      "fuzz-smoke"
+    ],
+    "source_commit": "20849fe7e791e95679b03f6a0972c1983a77e6cf"
+  },
+  "prior_c_guard_compilation_failure": "AssertionError('candidate-c-input-guard')",
+  "prior_interrupted_checks": {
+    "first_disk_guard": true,
+    "first_exit_code": 1,
+    "second_disk_guard": true,
+    "second_exit_code": 1
+  },
+  "release_qualification": false,
+  "remaining_gates": [
+    "actual combined-source native and renderer verification",
+    "hosted hardening on new combined source",
+    "remaining needed native APIs",
+    "full Chromium equality and reference reconciliation",
+    "compositor 3D hardware accessibility performance and release artifacts"
+  ],
+  "review_evidence": [
+    {
+      "decoded_sha256": "cc2fea343969157d98b8514509905126c1d2df95ccc5b8f75e77db3648dad605",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-input-rust-verification-v2622/receipt.json",
+      "path": "docs/renderer/evidence/native-input-notifications-v1/rust-runtime.json.gz",
+      "sha256": "ea10bb87b0b9e56548b3015607363802f14d2c11271fa58106df641dea4a5e06"
+    },
+    {
+      "decoded_sha256": "d93c43502ea67fa8a673b537e8ea4cde74a8f132e852a591701b1bbc9a626343",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-input-c-verification-v2625/receipt.json",
+      "path": "docs/renderer/evidence/native-input-notifications-v1/c-cpp-runtime.json.gz",
+      "sha256": "6a5e7f396a419fe8727303d367ab537a4c1c94405e7fbc5ae50ae42b4a7510dc"
+    },
+    {
+      "decoded_sha256": "c885aa50ef1ccd874064ddfa053ce1eaa99d8327abe2c8287eb46a18555fda6e",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-input-checks-v2630/receipt.json",
+      "path": "docs/renderer/evidence/native-input-notifications-v1/workspace-and-interruption.json.gz",
+      "sha256": "549ec9b840ac0230b284c0d51a95124040b9b05fd630718948cfc563140f5ff8"
+    },
+    {
+      "decoded_sha256": "5a5272cffd6bdeba37baa2fd82e4702a582e5ea5c74ee8144bb995b0685d1679",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-input-checks-v2630/locked-workspace-tests.log",
+      "path": "docs/renderer/evidence/native-input-notifications-v1/workspace-tests.log.gz",
+      "sha256": "32de04ad46bc3d788a076854a7998add93932d56caaeb9f16455ce97d91883f4"
+    },
+    {
+      "decoded_sha256": "023cf63288526769f3e7ff96d10819befba639eec378d3837046fb82da6bcbe9",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-input-checks-v2638/receipt.json",
+      "path": "docs/renderer/evidence/native-input-notifications-v1/second-storage-interruption.json.gz",
+      "sha256": "e79ce6988db613541282c10425f898e3d148d66b571bd0797509e6ef475f7c0b"
+    },
+    {
+      "decoded_sha256": "c9e5595e405bdb1a5e8820439b98e84424a6a308d5a07c2a857d08c2814c5256",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-input-checks-v2640/receipt.json",
+      "path": "docs/renderer/evidence/native-input-notifications-v1/completed-checks.json.gz",
+      "sha256": "cde22745d2238476dc302655bdbc4ca6cefaa47d9c66949d558c7ab3f65a6a21"
+    },
+    {
+      "decoded_sha256": "883af1caecc3e261acee047c1e9f210538aca909786daf13e729bcc88e2bd990",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-input-checks-v2640/all-c-cpp-consumers.log",
+      "path": "docs/renderer/evidence/native-input-notifications-v1/abi-consumers.log.gz",
+      "sha256": "f6b843cd31fae8835a704004566328f1138e29e9570b154af25075849d4b1a62"
+    },
+    {
+      "decoded_sha256": "96e0f6e70c1dadb7810e8158e78c41110068aec641d8249deb587e8c7cc73f71",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-input-checks-v2640/headless-c-abi-tests.log",
+      "path": "docs/renderer/evidence/native-input-notifications-v1/headless-c-tests.log.gz",
+      "sha256": "46918e2e674a5471edecf7f3898e431bd036a400b9eaf4dda1434389470bb927"
+    },
+    {
+      "decoded_sha256": "0c5c5c930c280e68fbed5ef2a86f23515a2faa0a1cdf35cc8dde04323a8aaf5c",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-input-rust-verification-v2619/receipt.json",
+      "path": "docs/renderer/evidence/native-input-notifications-v1/first-c-compile-failure.json.gz",
+      "sha256": "2587e2c910423838482c3536e325a851d0e4901af027c24402c60b47a35a3f11"
+    },
+    {
+      "decoded_sha256": "723abe0906abbf162af25377add921ead8767442bc9032249c4af64e95510a64",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-input-rust-verification-v2619/candidate-c-input-guard.log",
+      "path": "docs/renderer/evidence/native-input-notifications-v1/first-c-compile-failure.log.gz",
+      "sha256": "dd80eff6f9d74273800c8ff338770d25586288a2cd0be392cd8a9dc33415c871"
+    },
+    {
+      "decoded_sha256": "e7bb8614598299d1389d90429b5f73928e6bd2ead0140f0052183878ec012a59",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-input-cancel-oracle-v2607/receipt.json",
+      "path": "docs/renderer/evidence/native-input-notifications-v1/chromium-receipt.json.gz",
+      "sha256": "a69f6e6157a6526315038e2669a9b16b9ee2eaee5f0a11fa3eca7d4357ac0bc5"
+    },
+    {
+      "decoded_sha256": "70a9a8e4db76ad2d0013f68d432d6e647a46a6796b957b57dea485a3f4226900",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-input-cancel-oracle-v2607/observations-1.json",
+      "path": "docs/renderer/evidence/native-input-notifications-v1/chromium-observations.json.gz",
+      "sha256": "fd7e7f311fd78681a02c6b1576c45171feb1ea8c255ec6401aba27d3dd3d9c31"
+    },
+    {
+      "decoded_sha256": "952d7212361fe4c7d6fde2f206e68d412183cb12e8a645b73e10cf040c3a1d2f",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-normal-ci-v2635/report.json",
+      "path": "docs/renderer/evidence/native-input-notifications-v1/preceding-hosted-ci.json.gz",
+      "sha256": "e1275e15e56d21747d6778c09187b6d247f3372b41126d61120370dddcbd31db"
+    }
+  ],
+  "runtime_observations": {
+    "baseline": {
+      "binary_sha256": "7618c6f09a788de2015fd9b017411618c3fa867f8efa342fc94d76e63f9d5be9",
+      "exact": false,
+      "observed": {
+        "checked": true,
+        "rows": [
+          {
+            "after": false,
+            "before": false,
+            "bubbles": true,
+            "cancelable": true,
+            "target": "text",
+            "type": "beforeinput"
+          },
+          {
+            "after": true,
+            "before": false,
+            "bubbles": true,
+            "cancelable": true,
+            "target": "text",
+            "type": "input"
+          },
+          {
+            "after": true,
+            "before": false,
+            "bubbles": true,
+            "cancelable": true,
+            "target": "text",
+            "type": "beforeinput"
+          },
+          {
+            "after": true,
+            "before": false,
+            "bubbles": true,
+            "cancelable": true,
+            "target": "box",
+            "type": "input"
+          },
+          {
+            "after": true,
+            "before": false,
+            "bubbles": true,
+            "cancelable": true,
+            "target": "box",
+            "type": "change"
+          }
+        ],
+        "value": "A"
+      },
+      "repeated_identical": true
+    },
+    "candidate": {
+      "binary_sha256": "3cac26abca9081641530d74becc15d5dca167e755aa3cfeff76dfe55c8f9046c",
+      "exact": true,
+      "observed": {
+        "checked": true,
+        "rows": [
+          {
+            "after": false,
+            "before": false,
+            "bubbles": true,
+            "cancelable": true,
+            "target": "text",
+            "type": "beforeinput"
+          },
+          {
+            "after": false,
+            "before": false,
+            "bubbles": true,
+            "cancelable": false,
+            "target": "text",
+            "type": "input"
+          },
+          {
+            "after": true,
+            "before": false,
+            "bubbles": true,
+            "cancelable": true,
+            "target": "text",
+            "type": "beforeinput"
+          },
+          {
+            "after": false,
+            "before": false,
+            "bubbles": true,
+            "cancelable": false,
+            "target": "box",
+            "type": "input"
+          },
+          {
+            "after": false,
+            "before": false,
+            "bubbles": true,
+            "cancelable": false,
+            "target": "box",
+            "type": "change"
+          }
+        ],
+        "value": "A"
+      },
+      "repeated_identical": true
+    }
+  },
+  "schema_version": 1,
+  "verification_stages_completed": 20,
+  "workspace_tests": {
+    "failed": 0,
+    "ignored": 13,
+    "passed": 8597
+  }
+}

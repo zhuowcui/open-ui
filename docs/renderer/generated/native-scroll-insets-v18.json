@@ -1,0 +1,107 @@
+{
+  "baseline_native_c": {
+    "different_states": [
+      "animation-half",
+      "animation-start",
+      "child-transition-after-color",
+      "child-transition-cancel"
+    ],
+    "independent_reference_runs": 2,
+    "library_source_receipt": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-inherited-clean-v1071/build.json",
+      "sha256": "338e43528b2e4fc821d4c5e74775f037cbb1b3e9ae31561b54ba7b5541806b50"
+    },
+    "native_queries_exact": 4,
+    "native_queries_total": 8,
+    "owner": "openui-engine",
+    "queries": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-query-v1087/receipt.json",
+      "sha256": "4ea1074102ba36bf963b0ed75b7f345392a2b69dd8fd50fa72261f340528f53f"
+    },
+    "reference": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-oracle-v1088/receipt.json",
+      "sha256": "f99791ace86eb5b565760857496607b1b43bb23bc04da37661e6ae35499f7635"
+    },
+    "reviewed_causes": [
+      "Relative font animation values resolve against the animated element current size instead of its parent size.",
+      "Font animation/transition changes do not refresh font-dependent lengths authored on the same element.",
+      "A transition to a previously unauthored property fails to add that property to ordered author replay."
+    ],
+    "source": {
+      "clean": true,
+      "commit": "f328ed62bcae1d3368cd930c7e4130d265ca0883",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "fa885a341ff0ff2ecb64c133dbfa4ebced6929692660889e926df931ec274893",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "contract": "Open UI executes no JavaScript in any version. Needed application behavior uses public native Rust methods and Rust callbacks over the shared Engine. Pinned Chromium is the sole pixel target; old Open UI bytes are immutable provenance only.",
+  "new_release_states_admitted": 0,
+  "prior_f328_focused_primitive": {
+    "all_1600_comparison_invariants_unchanged": true,
+    "audit": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-inherited-raster-audit-v1081.json",
+      "sha256": "83eb77ef80a4e39811de596424220507713922e1a47c2328967941649f52d03f"
+    },
+    "focused_exact": 640,
+    "primitive_exact": 960
+  },
+  "prior_f328_full_pixel_pipeline": {
+    "full_counts_not_claimed": true,
+    "source": "f328ed62bcae1d3368cd930c7e4130d265ca0883",
+    "status": "running at this snapshot; complete totals not measured"
+  },
+  "prior_snapshot": {
+    "path": "docs/renderer/generated/native-scroll-insets-v17.json",
+    "sha256": "2968bdc32b43f2220f03b82daac1ccbfae579552e6b68c3233ae768b5cc9f23d"
+  },
+  "private_native_relative_candidate": {
+    "applied": false,
+    "base": "f328ed62bcae1d3368cd930c7e4130d265ca0883",
+    "changes": [
+      "Retain native pseudo declarations and recompute them after origin inheritance, mutations, detach/reattach, clone and viewport changes.",
+      "Share native computed declaration resolution across ordinary and pseudo styles, including parent-relative calculated font sizes.",
+      "Expose LengthValue::calc_percent_px as a public typed Rust constructor.",
+      "Publish the new font animation sample before recomputing dependent styles and descendants.",
+      "Retain transition targets in ordered author replay."
+    ],
+    "diagnostic_commit": "9840f4c274f322007dc9836e08c9935ed52ee8f9",
+    "fresh_cargo_build_run": false,
+    "live_verification_receipt": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-after-census-v1092/receipt.json",
+    "new_regression_tests": 5,
+    "new_regression_tests_run": false,
+    "own_pixel_matrices_run": false,
+    "patch": {
+      "path": "docs/renderer/evidence/native-inherited-styles-v1/native-relative-styles-v1.patch",
+      "sha256": "09a5eb549b56be4c1afa687e922e0c4b4d374d4857b5d831f7815f88388538b6"
+    },
+    "patch_reverse_check_exit": 0,
+    "public_native_rust_consumer": "bindings/rust/openui/examples/native_relative_styles.rs",
+    "public_native_rust_consumer_run": false,
+    "qualification": "awaiting own baseline/fixed Rust probes, complete workspace/ABI build, native Chromium image sweeps and complete pixel matrices; builds wait for the prior pixel pipeline to finish",
+    "queued_verification": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-queued-snapshot-v1099.json",
+      "sha256": "6379a8df6cf835993b64dc12b28e16a6b86b573d0c0425ccff0fee7eb76ae288"
+    },
+    "read_only_checks": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-checks-v1091/receipt.json",
+      "sha256": "ea5ca1fbf3585a01fad97932b24ddcd388c6ab32225d91484861a48e51c2af03"
+    },
+    "read_only_checks_passed": 10,
+    "source": {
+      "clean": true,
+      "commit": "3f1d296f4ecb4ff4b895b3755d1fd7b3472c7b42",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "1f50134db36acad5d6d430694b8b0ab43c0dd1a6f558f70fbaeb77450ca6e1d5",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "required_work_still_open": [
+    "Full original and expanded Chromium exactness and reviewed ownership of residuals.",
+    "Complete public native API coverage; an internal fixture or Chromium script exclusion does not waive it.",
+    "Remaining compositor, 3D, hardening, platform/accessibility, performance, packaging, provenance and release gates."
+  ],
+  "schema_version": 1
+}

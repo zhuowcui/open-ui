@@ -25,6 +25,53 @@ const MAX_INSTANCE_CACHE: usize = 256;
 
 static NEXT_COLLECTION_ID: AtomicU64 = AtomicU64::new(1);
 
+// Skia's global strike cache retains typefaces after their document font
+// collections are released. Finish that cache lifetime when the last collection,
+// resolved font instance, and retained paint recording are gone. Serializing
+// acquisition with retirement prevents a new client from starting while
+// preceding clients are being retired.
+static FONT_CACHE_CLIENTS: Mutex<usize> = Mutex::new(0);
+
+/// Keeps cached font resources alive for an immutable paint recording.
+///
+/// This token owns no font registry, document state, or application callbacks.
+/// It must be dropped after the recording's Skia pictures and font resources.
+#[doc(hidden)]
+pub struct FontCacheLifetime {
+    _private: (),
+}
+
+impl FontCacheLifetime {
+    pub(crate) fn new() -> Self {
+        let mut clients = FONT_CACHE_CLIENTS
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        *clients += 1;
+        Self { _private: () }
+    }
+}
+
+impl Clone for FontCacheLifetime {
+    fn clone(&self) -> Self {
+        Self::new()
+    }
+}
+
+impl Drop for FontCacheLifetime {
+    fn drop(&mut self) {
+        let mut clients = FONT_CACHE_CLIENTS
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        *clients -= 1;
+        if *clients == 0 {
+            // This releases cached strikes, which own references to typefaces.
+            // Existing SkFont/Typeface objects remain valid. Fontconfig itself
+            // stays initialized; other libraries may own their configurations.
+            skia_safe::graphics::purge_font_cache();
+        }
+    }
+}
+
 /// Stable identifier for an application-registered font face.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct FontFaceHandle {
@@ -284,6 +331,9 @@ pub struct FontCollection {
     system: SendFontMgr,
     hyphenation_registry: Arc<HyphenationRegistry>,
     state: Mutex<CollectionState>,
+    // Rust drops fields in declaration order. Retire the strike cache after
+    // the system manager and this collection's cached font instances are gone.
+    _cache_lifetime: FontCacheLifetime,
 }
 
 impl std::fmt::Debug for FontCollection {
@@ -297,8 +347,15 @@ impl std::fmt::Debug for FontCollection {
 }
 
 impl FontCollection {
+    /// Retain the shared font-cache lifetime without retaining this registry.
+    #[doc(hidden)]
+    pub fn retain_cache_lifetime(&self) -> FontCacheLifetime {
+        self._cache_lifetime.clone()
+    }
+
     /// Construct a production collection backed by installed system fonts.
     pub fn system() -> Arc<Self> {
+        let cache_lifetime = FontCacheLifetime::new();
         Arc::new(Self {
             id: NEXT_COLLECTION_ID.fetch_add(1, Ordering::Relaxed),
             system: SendFontMgr(FontMgr::default()),
@@ -315,6 +372,7 @@ impl FontCollection {
                 cache_hits: 0,
                 cache_misses: 0,
             }),
+            _cache_lifetime: cache_lifetime,
         })
     }
 
@@ -707,6 +765,7 @@ impl FontCollection {
 
 impl Default for FontCollection {
     fn default() -> Self {
+        let cache_lifetime = FontCacheLifetime::new();
         Self {
             id: NEXT_COLLECTION_ID.fetch_add(1, Ordering::Relaxed),
             system: SendFontMgr(FontMgr::default()),
@@ -723,6 +782,7 @@ impl Default for FontCollection {
                 cache_hits: 0,
                 cache_misses: 0,
             }),
+            _cache_lifetime: cache_lifetime,
         }
     }
 }

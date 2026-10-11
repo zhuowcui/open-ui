@@ -1,0 +1,305 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index eb92dda6..d9b2900a 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -231,6 +231,7 @@ struct Slot {
+     generation: u32,
+     node: Option<NodeId>,
+     authored: BTreeMap<u16, StyleValue>,
++    resolved_style_snapshot: bool,
+ }
+ 
+ #[derive(Debug, Clone, Copy)]
+@@ -437,6 +438,7 @@ impl Engine {
+             generation: 1,
+             node: Some(root_node),
+             authored: BTreeMap::new(),
++            resolved_style_snapshot: false,
+         };
+         Ok(Self {
+             id: NEXT_DOCUMENT_ID.fetch_add(1, Ordering::Relaxed),
+@@ -793,6 +795,7 @@ impl Engine {
+             let slot = &mut self.slots[index as usize];
+             slot.node = Some(node);
+             slot.authored.clear();
++            slot.resolved_style_snapshot = false;
+             index
+         } else {
+             let index = self.slots.len() as u32;
+@@ -800,6 +803,7 @@ impl Engine {
+                 generation: 1,
+                 node: Some(node),
+                 authored: BTreeMap::new(),
++                resolved_style_snapshot: false,
+             });
+             index
+         };
+@@ -832,6 +836,7 @@ impl Engine {
+             ancestor = self.document.node(ancestor).parent;
+         }
+         self.document.append_child(parent, child);
++        self.refresh_inherited_writing_modes(child);
+         self.mark_dirty(InvalidationClass::Subtree);
+         Ok(())
+     }
+@@ -853,6 +858,7 @@ impl Engine {
+         }
+         self.document.detach(child_node);
+         self.document.append_child(parent_node, child_node);
++        self.refresh_inherited_writing_modes(child_node);
+         self.mark_dirty(InvalidationClass::Subtree);
+         Ok(())
+     }
+@@ -882,6 +888,7 @@ impl Engine {
+         }
+         self.document.detach(child_node);
+         self.document.insert_before(before_node, child_node);
++        self.refresh_inherited_writing_modes(child_node);
+         self.mark_dirty(InvalidationClass::Subtree);
+         Ok(())
+     }
+@@ -942,6 +949,8 @@ impl Engine {
+             data.attributes.remove("data-oui-composition-end");
+             *self.document.node_mut(duplicate_node) = data;
+             self.slots[duplicate.index as usize].authored = authored;
++            self.slots[duplicate.index as usize].resolved_style_snapshot =
++                self.slots[original.index as usize].resolved_style_snapshot;
+             if let Some(mut control) = control {
+                 control.clear_composition();
+                 self.controls.insert(duplicate.index, control);
+@@ -966,7 +975,9 @@ impl Engine {
+                 semantics.remap_cloned_relations(&clones);
+             }
+         }
+-        Ok(root.expect("validated source produces a root clone"))
++        let root = root.expect("validated source produces a root clone");
++        self.refresh_inherited_writing_modes(self.resolve(root)?);
++        Ok(root)
+     }
+ 
+     /// Find the first attached element with this ID in document order.
+@@ -1006,6 +1017,7 @@ impl Engine {
+         let mut descendants = Vec::new();
+         self.collect_subtree(node, &mut descendants);
+         self.document.detach(node);
++        self.refresh_inherited_writing_modes(node);
+         let detached_handles: Vec<_> = descendants
+             .iter()
+             .filter_map(|node| self.node_slots.get(node))
+@@ -1221,6 +1233,9 @@ impl Engine {
+         self.slots[handle.index as usize]
+             .authored
+             .insert(property as u16, value.clone());
++        if property == StyleProperty::WritingMode {
++            self.refresh_inherited_writing_modes(node);
++        }
+         let mut has_animation = false;
+         for animation in self.animations.values_mut().filter(|animation| {
+             animation.target == handle && animation.keyframes.property() == property
+@@ -1274,11 +1289,44 @@ impl Engine {
+     ) -> Result<(), EngineError> {
+         let node = self.resolve(handle)?;
+         self.document.install_resolved_style(node, style);
++        self.slots[handle.index as usize].resolved_style_snapshot = true;
++        self.refresh_inherited_writing_modes(node);
+         self.dirty.hit_test = true;
+         self.mark_dirty(InvalidationClass::Subtree);
+         Ok(())
+     }
+ 
++    /// Resolve inherited writing mode before queries and layout. An authored
++    /// value, including an explicit initial value, overrides inheritance.
++    /// Anonymous and pseudo style snapshots arrive fully resolved and keep
++    /// their supplied value; their descendants inherit from that value.
++    fn refresh_inherited_writing_modes(&mut self, root: NodeId) {
++        let mut pending = vec![root];
++        while let Some(node) = pending.pop() {
++            let index = self.node_slots.get(&node).copied();
++            let inherits = index.is_some_and(|index| {
++                let slot = &self.slots[index as usize];
++                !slot.resolved_style_snapshot
++                    && !slot
++                        .authored
++                        .contains_key(&(StyleProperty::WritingMode as u16))
++            });
++            if inherits {
++                let parent = self.document.node(node).parent;
++                let writing_mode = if parent.is_none() {
++                    openui_style::WritingMode::HorizontalTb
++                } else {
++                    self.document.node(parent).style.writing_mode
++                };
++                self.document.update_resolved_style(node, |style| {
++                    style.writing_mode = writing_mode;
++                });
++            }
++            let children: Vec<_> = self.document.children(node).collect();
++            pending.extend(children.into_iter().rev());
++        }
++    }
++
+     /// Mutate validated non-style state needed by static renderer fixtures.
+     #[doc(hidden)]
+     pub fn set_renderer_node_state(
+@@ -2349,6 +2397,139 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn native_writing_mode_inheritance_tracks_attachment_mutation_and_reparenting() {
++        use openui_style::WritingMode;
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(640.0, 480.0, 1.0).unwrap()).unwrap();
++        let vertical = engine.create_native_element(ElementTag::Div).unwrap();
++        let horizontal = engine.create_native_element(ElementTag::Div).unwrap();
++        let wrapper = engine.create_native_element(ElementTag::Div).unwrap();
++        let child = engine.create_native_element(ElementTag::Div).unwrap();
++        engine.append_child(engine.root(), vertical).unwrap();
++        engine.append_child(engine.root(), horizontal).unwrap();
++        engine.append_child(wrapper, child).unwrap();
++        engine
++            .set_property(
++                vertical,
++                StyleProperty::WritingMode,
++                WritingMode::VerticalRl.into(),
++            )
++            .unwrap();
++        engine.append_child(vertical, wrapper).unwrap();
++        assert_eq!(
++            engine.computed_style(wrapper).unwrap().writing_mode,
++            WritingMode::VerticalRl
++        );
++        assert_eq!(
++            engine.computed_style(child).unwrap().writing_mode,
++            WritingMode::VerticalRl
++        );
++        let owned = engine.computed_style(child).unwrap().clone();
++        engine
++            .set_property(
++                vertical,
++                StyleProperty::WritingMode,
++                WritingMode::VerticalLr.into(),
++            )
++            .unwrap();
++        assert_eq!(
++            engine.computed_style(child).unwrap().writing_mode,
++            WritingMode::VerticalLr
++        );
++        assert_eq!(owned.writing_mode, WritingMode::VerticalRl);
++        engine
++            .set_property(
++                child,
++                StyleProperty::WritingMode,
++                WritingMode::HorizontalTb.into(),
++            )
++            .unwrap();
++        engine.append_or_move_child(horizontal, wrapper).unwrap();
++        assert_eq!(
++            engine.computed_style(wrapper).unwrap().writing_mode,
++            WritingMode::HorizontalTb
++        );
++        engine.append_or_move_child(vertical, wrapper).unwrap();
++        assert_eq!(
++            engine.computed_style(wrapper).unwrap().writing_mode,
++            WritingMode::VerticalLr
++        );
++        assert_eq!(
++            engine.computed_style(child).unwrap().writing_mode,
++            WritingMode::HorizontalTb
++        );
++        engine.detach(wrapper).unwrap();
++        assert_eq!(
++            engine.computed_style(wrapper).unwrap().writing_mode,
++            WritingMode::HorizontalTb
++        );
++        let anchor = engine.create_native_element(ElementTag::Div).unwrap();
++        engine.append_child(vertical, anchor).unwrap();
++        engine.insert_before(vertical, wrapper, anchor).unwrap();
++        assert_eq!(
++            engine.computed_style(wrapper).unwrap().writing_mode,
++            WritingMode::VerticalLr
++        );
++    }
++
++    #[test]
++    fn native_writing_mode_preserves_resolved_snapshots_and_updates_text_clones() {
++        use openui_style::WritingMode;
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(640.0, 480.0, 1.0).unwrap()).unwrap();
++        let parent = engine.create_native_element(ElementTag::Div).unwrap();
++        let child = engine.create_native_element(ElementTag::Div).unwrap();
++        let text = engine.create_text("native text").unwrap();
++        engine.append_child(engine.root(), parent).unwrap();
++        engine.append_child(child, text).unwrap();
++        engine.append_child(parent, child).unwrap();
++        engine
++            .set_property(
++                parent,
++                StyleProperty::WritingMode,
++                WritingMode::VerticalRl.into(),
++            )
++            .unwrap();
++        assert_eq!(
++            engine.computed_style(text).unwrap().writing_mode,
++            WritingMode::VerticalRl
++        );
++        let duplicate = engine.clone_subtree(child).unwrap();
++        let duplicate_text = engine.children(duplicate).unwrap()[0];
++        assert_eq!(
++            engine.computed_style(duplicate_text).unwrap().writing_mode,
++            WritingMode::HorizontalTb
++        );
++        engine.append_child(parent, duplicate).unwrap();
++        assert_eq!(
++            engine.computed_style(duplicate_text).unwrap().writing_mode,
++            WritingMode::VerticalRl
++        );
++        engine
++            .install_derived_style(child, ComputedStyle::initial())
++            .unwrap();
++        engine
++            .set_property(
++                parent,
++                StyleProperty::WritingMode,
++                WritingMode::VerticalLr.into(),
++            )
++            .unwrap();
++        assert_eq!(
++            engine.computed_style(child).unwrap().writing_mode,
++            WritingMode::HorizontalTb
++        );
++        assert_eq!(
++            engine.computed_style(text).unwrap().writing_mode,
++            WritingMode::HorizontalTb
++        );
++        assert_eq!(
++            engine.computed_style(duplicate_text).unwrap().writing_mode,
++            WritingMode::VerticalLr
++        );
++    }
++
+     #[test]
+     fn collapsed_end_margins_are_queryable_through_native_scroll_mutations() {
+         for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+diff --git a/bindings/rust/openui/examples/native_scroll_collapsed.rs b/bindings/rust/openui/examples/native_scroll_collapsed.rs
+index 0a48b675..218965f6 100644
+--- a/bindings/rust/openui/examples/native_scroll_collapsed.rs
++++ b/bindings/rust/openui/examples/native_scroll_collapsed.rs
+@@ -129,6 +129,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     } else {
+         None
+     };
++    for element in [&scroller, &parent, &target]
++        .into_iter()
++        .chain(_leading.iter())
++        .chain(_following.iter())
++    {
++        assert_eq!(
++            element.computed_style()?.writing_mode,
++            mode,
++            "native child must inherit the connected parent's writing mode"
++        );
++    }
+     let original = scroller.scroll_metrics()?.ok_or("missing scroll metrics")?;
+     let original_height = original.scroll_height;
+     let initial = snapshot(&scroller, &target, "initial")?;

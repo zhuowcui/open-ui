@@ -1,0 +1,3091 @@
+   Compiling bytemuck_derive v1.10.2 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/vendor/bytemuck_derive-v1)
+   Compiling openui-geometry v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/openui-geometry)
+   Compiling openui-style v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/openui-style)
+   Compiling openui-ffi v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/openui-ffi)
+   Compiling pixel-compare v0.1.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/pixel-compare)
+   Compiling bytemuck v1.25.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/vendor/bytemuck-v1)
+   Compiling font-types v0.11.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/vendor/font-types-v0_11)
+   Compiling winit v0.30.13
+   Compiling read-fonts v0.37.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/vendor/read-fonts-v0_37)
+   Compiling softbuffer v0.4.8
+   Compiling openui-macros v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/openui-macros)
+   Compiling accesskit_winit v0.34.0
+   Compiling glutin-winit v0.5.0
+   Compiling openui-platform v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/openui-platform)
+   Compiling skrifa v0.40.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/vendor/skrifa-v0_40)
+   Compiling openui-text v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/openui-text)
+   Compiling openui-dom v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/openui-dom)
+   Compiling openui-layout v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/openui-layout)
+warning: unused import: `BfcOffset`
+  --> openui-layout/src/bfc_resolution.rs:17:23
+   |
+17 | use openui_geometry::{BfcOffset, BoxStrut, LayoutUnit, MarginStrut};
+   |                       ^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `balance_columns`
+     --> openui-layout/src/block.rs:19571:9
+      |
+19571 |         balance_columns, balance_columns_with_margins, compute_column_positions,
+      |         ^^^^^^^^^^^^^^^
+
+warning: unused import: `super::*`
+    --> openui-layout/src/intrinsic_sizing.rs:3974:9
+     |
+3974 |     use super::*;
+     |         ^^^^^^^^
+
+warning: unused import: `std::sync::Arc`
+  --> openui-layout/src/new_formatting_context.rs:17:5
+   |
+17 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+
+warning: unused import: `ClearType`
+  --> openui-layout/src/new_formatting_context.rs:24:25
+   |
+24 | use crate::exclusions::{ClearType, ExclusionSpace};
+   |                         ^^^^^^^^^
+
+warning: unused import: `crate::layout_result::LayoutResult`
+  --> openui-layout/src/new_formatting_context.rs:26:5
+   |
+26 | use crate::layout_result::LayoutResult;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: variable `reconstructed_block_in_inline` is assigned to, but never used
+    --> openui-layout/src/block.rs:2104:9
+     |
+2104 |     let mut reconstructed_block_in_inline = false;
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = note: consider using `_reconstructed_block_in_inline` instead
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+    --> openui-layout/src/block.rs:6781:9
+     |
+6781 |     let mut child_margin = resolve_margins_in_parent_axes(
+     |         ----^^^^^^^^^^^^
+     |         |
+     |         help: remove this `mut`
+     |
+     = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `balance_columns`
+     --> openui-layout/src/block.rs:19571:9
+      |
+19571 |         balance_columns, balance_columns_with_margins, compute_column_positions,
+      |         ^^^^^^^^^^^^^^^
+      |
+      = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `source_caption_end` is never read
+    --> openui-layout/src/block.rs:9551:5
+     |
+9550 | struct CaptionedRepeatedTableFlow {
+     |        -------------------------- field in this struct
+9551 |     source_caption_end: LayoutUnit,
+     |     ^^^^^^^^^^^^^^^^^^
+     |
+     = note: `CaptionedRepeatedTableFlow` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `columns_needed_for_height` is never used
+   --> openui-layout/src/multicol/mod.rs:705:4
+    |
+705 | fn columns_needed_for_height(
+    |    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+   Compiling openui-paint v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/openui-paint)
+warning: use of deprecated module `skia_safe::gradient_shader`: Use the skia_safe::gradient module
+  --> openui-paint/src/painter.rs:39:20
+   |
+39 |     color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, ClipOp, Color4f,
+   |                    ^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear_with_interpolation`: Use the skia_safe::gradient module
+    --> openui-paint/src/painter.rs:1860:45
+     |
+1860 |     scrim_paint.set_shader(gradient_shader::linear_with_interpolation(
+     |                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14056:51
+      |
+14056 |                 paint.set_shader(gradient_shader::linear_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14069:51
+      |
+14069 |                 paint.set_shader(gradient_shader::linear(
+      |                                                   ^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14082:51
+      |
+14082 |                 paint.set_shader(gradient_shader::linear_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14178:55
+      |
+14178 |                     paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14192:55
+      |
+14192 |                     paint.set_shader(gradient_shader::two_point_conical(
+      |                                                       ^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14208:55
+      |
+14208 |                     paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14228:51
+      |
+14228 |                 paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14242:51
+      |
+14242 |                 paint.set_shader(gradient_shader::two_point_conical(
+      |                                                   ^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::two_point_conical_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14258:51
+      |
+14258 |                 paint.set_shader(gradient_shader::two_point_conical_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::sweep_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14318:51
+      |
+14318 |                 paint.set_shader(gradient_shader::sweep_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::sweep`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14332:51
+      |
+14332 |                 paint.set_shader(gradient_shader::sweep(
+      |                                                   ^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::sweep_with_interpolation`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:14346:51
+      |
+14346 |                 paint.set_shader(gradient_shader::sweep_with_interpolation(
+      |                                                   ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `skia_safe::gradient_shader::linear`: Use the skia_safe::gradient module
+     --> openui-paint/src/painter.rs:17719:55
+      |
+17719 |                     paint.set_shader(gradient_shader::linear(
+      |                                                       ^^^^^^
+
+warning: variant `RestoreTo` is never constructed
+  --> openui-paint/src/paint_record.rs:16:5
+   |
+13 | enum Operation {
+   |      --------- variant in this enum
+...
+16 |     RestoreTo(usize),
+   |     ^^^^^^^^^
+   |
+   = note: `Operation` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: methods `restore_to_count` and `save_count` are never used
+   --> openui-paint/src/paint_record.rs:131:19
+    |
+119 | impl dyn PaintCanvas + '_ {
+    | ------------------------- methods in this implementation
+...
+131 |     pub(crate) fn restore_to_count(&self, count: usize) -> &Self {
+    |                   ^^^^^^^^^^^^^^^^
+...
+137 |     pub(crate) fn save_count(&self) -> usize {
+    |                   ^^^^^^^^^^
+
+warning: `openui-layout` (lib) generated 10 warnings (run `cargo fix --lib -p openui-layout` to apply 7 suggestions)
+   Compiling openui-compositor v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/openui-compositor)
+   Compiling openui-engine v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/openui-engine)
+warning: unused variable: `left`
+    --> openui-layout/src/out_of_flow.rs:2232:14
+     |
+2232 |         let (left, width, ml, mr) = resolve_horizontal(
+     |              ^^^^ help: if this is intentional, prefix it with an underscore: `_left`
+
+warning: unused variable: `width`
+    --> openui-layout/src/out_of_flow.rs:2232:20
+     |
+2232 |         let (left, width, ml, mr) = resolve_horizontal(
+     |                    ^^^^^ help: if this is intentional, prefix it with an underscore: `_width`
+
+warning: unused variable: `ml`
+    --> openui-layout/src/out_of_flow.rs:2232:27
+     |
+2232 |         let (left, width, ml, mr) = resolve_horizontal(
+     |                           ^^ help: if this is intentional, prefix it with an underscore: `_ml`
+
+warning: unused variable: `mr`
+    --> openui-layout/src/out_of_flow.rs:2232:31
+     |
+2232 |         let (left, width, ml, mr) = resolve_horizontal(
+     |                               ^^ help: if this is intentional, prefix it with an underscore: `_mr`
+
+warning: unused variable: `mt`
+    --> openui-layout/src/out_of_flow.rs:2284:27
+     |
+2284 |         let (top, height, mt, mb) = resolve_vertical(
+     |                           ^^ help: if this is intentional, prefix it with an underscore: `_mt`
+
+warning: unused variable: `mb`
+    --> openui-layout/src/out_of_flow.rs:2284:31
+     |
+2284 |         let (top, height, mt, mb) = resolve_vertical(
+     |                               ^^ help: if this is intentional, prefix it with an underscore: `_mb`
+
+warning: `openui-paint` (lib) generated 17 warnings
+warning: function `cb_size` is never used
+    --> openui-layout/src/out_of_flow.rs:2214:8
+     |
+2214 |     fn cb_size(w: i32, h: i32) -> PhysicalSize {
+     |        ^^^^^^^
+
+warning: function `static_pos` is never used
+    --> openui-layout/src/out_of_flow.rs:2218:8
+     |
+2218 |     fn static_pos(l: i32, t: i32) -> PhysicalOffset {
+     |        ^^^^^^^^^^
+
+   Compiling openui v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/openui)
+warning: `openui-layout` (lib test) generated 16 warnings (7 duplicates) (run `cargo fix --lib -p openui-layout --tests` to apply 7 suggestions)
+   Compiling counter v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/examples/counter)
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css2_floats.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_backgrounds.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_box.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_break.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_display.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_flexbox.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_multicol.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_overflow.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_position.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeHandle as NodeId`
+ --> pixel-compare/src/wpt/wpt_css_sizing.rs:6:42
+  |
+6 | use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};
+  |                                          ^^^^^^^^^^^^^^^^^^^^
+
+   Compiling dashboard v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/examples/dashboard)
+   Compiling framework-test v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/examples/framework-test)
+   Compiling todo v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/examples/todo)
+   Compiling hello v0.2.0 (/dev/shm/openui-native-border-guard-619a465c/bindings/rust/examples/hello)
+warning: unused imports: `PathBuf` and `Path`
+  --> openui-paint/tests/sp12_i4_overflow_pixel_tests.rs:15:17
+   |
+15 | use std::path::{Path, PathBuf};
+   |                 ^^^^  ^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `render_to_png`
+  --> openui-paint/tests/sp12_i4_overflow_pixel_tests.rs:21:20
+   |
+21 | use openui_paint::{render_to_png, render_to_surface};
+   |                    ^^^^^^^^^^^^^
+
+warning: function `assert_pixel_color` is never used
+  --> openui-paint/tests/sp12_i4_overflow_pixel_tests.rs:72:4
+   |
+72 | fn assert_pixel_color(surface: &mut Surface, x: i32, y: i32, expected: (u8, u8, u8), msg: &str) {
+   |    ^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `l3`
+    --> openui-paint/tests/sp12_i1_block_pixel_tests.rs:2752:9
+     |
+2752 |     let l3 = add_colored_block(&mut doc, l2, 80.0, 60.0, Color::BLUE);
+     |         ^^ help: if this is intentional, prefix it with an underscore: `_l3`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `child`
+    --> openui-paint/tests/sp12_i1_block_pixel_tests.rs:2922:9
+     |
+2922 |     let child = add_colored_block(&mut doc, parent, 100.0, 40.0, Color::BLUE);
+     |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_child`
+
+warning: unused variable: `l4`
+    --> openui-paint/tests/sp12_i1_block_pixel_tests.rs:3182:9
+     |
+3182 |     let l4 = add_colored_block(
+     |         ^^ help: if this is intentional, prefix it with an underscore: `_l4`
+
+warning: unused variable: `h`
+    --> openui-paint/tests/sp12_i1_block_pixel_tests.rs:3227:9
+     |
+3227 |     let h = add_colored_block(&mut doc, vp, 0.0, 60.0, Color::from_rgba8(0, 0, 128, 255));
+     |         ^ help: if this is intentional, prefix it with an underscore: `_h`
+
+warning: unused variable: `b`
+    --> openui-paint/tests/sp12_i1_block_pixel_tests.rs:3381:16
+     |
+3381 |     let (r, g, b, _) = get_pixel(&mut s, 120, 60);
+     |                ^ help: if this is intentional, prefix it with an underscore: `_b`
+
+warning: `openui-paint` (test "sp12_i4_overflow_pixel_tests") generated 3 warnings (run `cargo fix --test "sp12_i4_overflow_pixel_tests" -p openui-paint` to apply 2 suggestions)
+warning: `openui-paint` (test "sp12_i1_block_pixel_tests") generated 5 warnings (run `cargo fix --test "sp12_i1_block_pixel_tests" -p openui-paint` to apply 5 suggestions)
+warning: unused imports: `PathBuf` and `Path`
+  --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:13:17
+   |
+13 | use std::path::{Path, PathBuf};
+   |                 ^^^^  ^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `render_to_png`
+  --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:19:20
+   |
+19 | use openui_paint::{render_to_png, render_to_surface};
+   |                    ^^^^^^^^^^^^^
+
+warning: struct `PixelDiff` is never constructed
+  --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:27:8
+   |
+27 | struct PixelDiff {
+   |        ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `mismatch_percentage` is never used
+  --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:36:8
+   |
+35 | impl PixelDiff {
+   | -------------- method in this implementation
+36 |     fn mismatch_percentage(&self) -> f64 {
+   |        ^^^^^^^^^^^^^^^^^^^
+
+warning: function `pixel_diff` is never used
+  --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:61:4
+   |
+61 | fn pixel_diff(a: &(u32, u32, Vec<u8>), b: &(u32, u32, Vec<u8>), tolerance: u8) -> PixelDiff {
+   |    ^^^^^^^^^^
+
+warning: constant `MAGENTA` is never used
+   --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:195:7
+    |
+195 | const MAGENTA: (u8, u8, u8) = (255, 0, 255);
+    |       ^^^^^^^
+
+warning: constant `ORANGE` is never used
+   --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:197:7
+    |
+197 | const ORANGE: (u8, u8, u8) = (255, 165, 0);
+    |       ^^^^^^
+
+warning: function `add_block` is never used
+   --> openui-paint/tests/sp12_i2_float_pixel_tests.rs:214:4
+    |
+214 | fn add_block(doc: &mut Document, parent: NodeId, width_px: f32) -> NodeId {
+    |    ^^^^^^^^^
+
+warning: `openui-paint` (test "sp12_i2_float_pixel_tests") generated 8 warnings (run `cargo fix --test "sp12_i2_float_pixel_tests" -p openui-paint` to apply 2 suggestions)
+warning: unused imports: `PathBuf` and `Path`
+  --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:14:17
+   |
+14 | use std::path::{Path, PathBuf};
+   |                 ^^^^  ^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `render_to_png`
+  --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:20:20
+   |
+20 | use openui_paint::{render_to_png, render_to_surface};
+   |                    ^^^^^^^^^^^^^
+
+warning: unused variable: `div`
+   --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:427:9
+    |
+427 |     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
+    |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `div`
+   --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:926:9
+    |
+926 |     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
+    |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: unused variable: `div`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1623:9
+     |
+1623 |     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::RED);
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: unused variable: `div`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1634:9
+     |
+1634 |     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::RED);
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: unused variable: `div`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1704:9
+     |
+1704 |     let div = add_positioned_block(&mut doc, vp, 60.0, 30.0, Position::Absolute, Color::BLUE);
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: unused variable: `div`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1720:9
+     |
+1720 |     let div = add_positioned_block(&mut doc, vp, 60.0, 30.0, Position::Absolute, Color::RED);
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: unused variable: `a`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1735:9
+     |
+1735 |     let a = add_positioned_block(&mut doc, vp, 60.0, 30.0, Position::Absolute, Color::RED);
+     |         ^ help: if this is intentional, prefix it with an underscore: `_a`
+
+warning: unused variable: `b`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1736:9
+     |
+1736 |     let b = add_positioned_block(&mut doc, vp, 60.0, 30.0, Position::Absolute, Color::BLUE);
+     |         ^ help: if this is intentional, prefix it with an underscore: `_b`
+
+warning: unused variable: `abs`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1760:9
+     |
+1760 |     let abs = add_positioned_block(
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_abs`
+
+warning: unused variable: `div`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1799:9
+     |
+1799 |     let div = add_positioned_block(&mut doc, vp, 200.0, 100.0, Position::Absolute, Color::GREEN);
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: unused variable: `div`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1814:9
+     |
+1814 |     let div = add_positioned_block(&mut doc, vp, 10.0, 10.0, Position::Absolute, Color::RED);
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: unused variable: `div`
+    --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:1922:9
+     |
+1922 |     let div = add_positioned_block(&mut doc, vp, 60.0, 30.0, Position::Fixed, Color::RED);
+     |         ^^^ help: if this is intentional, prefix it with an underscore: `_div`
+
+warning: struct `PixelDiff` is never constructed
+  --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:28:8
+   |
+28 | struct PixelDiff {
+   |        ^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `mismatch_percentage` is never used
+  --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:37:8
+   |
+36 | impl PixelDiff {
+   | -------------- method in this implementation
+37 |     fn mismatch_percentage(&self) -> f64 {
+   |        ^^^^^^^^^^^^^^^^^^^
+
+warning: function `pixel_diff` is never used
+  --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:62:4
+   |
+62 | fn pixel_diff(a: &(u32, u32, Vec<u8>), b: &(u32, u32, Vec<u8>), tolerance: u8) -> PixelDiff {
+   |    ^^^^^^^^^^
+
+warning: constant `CYAN` is never used
+   --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:195:7
+    |
+195 | const CYAN: (u8, u8, u8) = (0, 255, 255);
+    |       ^^^^
+
+warning: constant `MAGENTA` is never used
+   --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:196:7
+    |
+196 | const MAGENTA: (u8, u8, u8) = (255, 0, 255);
+    |       ^^^^^^^
+
+warning: constant `ORANGE` is never used
+   --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:198:7
+    |
+198 | const ORANGE: (u8, u8, u8) = (255, 165, 0);
+    |       ^^^^^^
+
+warning: function `add_block` is never used
+   --> openui-paint/tests/sp12_i3_position_pixel_tests.rs:219:4
+    |
+219 | fn add_block(doc: &mut Document, parent: NodeId, width_px: f32) -> NodeId {
+    |    ^^^^^^^^^
+
+warning: `openui-paint` (test "sp12_i3_position_pixel_tests") generated 21 warnings (run `cargo fix --test "sp12_i3_position_pixel_tests" -p openui-paint` to apply 14 suggestions)
+warning: constant `WHITE` is never used
+  --> openui-paint/tests/sp13_j_inline_pixel_tests.rs:42:7
+   |
+42 | const WHITE: (u8, u8, u8) = (255, 255, 255);
+   |       ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `openui-paint` (test "sp13_j_inline_pixel_tests") generated 1 warning
+warning: unused import: `openui_layout::Fragment`
+  --> openui-layout/tests/sp13_d_oof_inline_tests.rs:12:5
+   |
+12 | use openui_layout::Fragment;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `openui-layout` (test "sp13_d_oof_inline_tests") generated 1 warning (run `cargo fix --test "sp13_d_oof_inline_tests" -p openui-layout` to apply 1 suggestion)
+warning: unused import: `ComputedStyle`
+  --> openui-layout/tests/sp13_a_float_inline_tests.rs:11:20
+   |
+11 | use openui_style::{ComputedStyle, Display, Float};
+   |                    ^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `line_children`
+   --> openui-layout/tests/sp13_a_float_inline_tests.rs:106:9
+    |
+106 |     let line_children: Vec<&Fragment> = children
+    |         ^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_line_children`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `openui-layout` (test "sp13_a_float_inline_tests") generated 2 warnings (run `cargo fix --test "sp13_a_float_inline_tests" -p openui-layout` to apply 2 suggestions)
+warning: unused import: `BoxSizing`
+  --> openui-layout/tests/flex_fixes_validation.rs:13:5
+   |
+13 |     BoxSizing, ContentAlignment, ContentDistribution, ContentPosition, Display, FlexDirection,
+   |     ^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `make_flex_w` is never used
+  --> openui-layout/tests/flex_fixes_validation.rs:38:4
+   |
+38 | fn make_flex_w(doc: &mut Document, w: i32) -> NodeId {
+   |    ^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `openui-layout` (test "flex_fixes_validation") generated 2 warnings (run `cargo fix --test "flex_fixes_validation" -p openui-layout` to apply 1 suggestion)
+warning: unused import: `openui_style::ComputedStyle`
+   --> openui-layout/tests/advanced_text_tests.rs:473:5
+    |
+473 | use openui_style::ComputedStyle;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `openui-layout` (test "advanced_text_tests") generated 1 warning (run `cargo fix --test "advanced_text_tests" -p openui-layout` to apply 1 suggestion)
+warning: `openui-paint` (lib test) generated 17 warnings (17 duplicates)
+warning: unused imports: `BreakCandidate`, `ScoreLineBreaker`, and `ScoreParams`
+  --> openui-layout/tests/sp13_h_advanced_tests.rs:27:85
+   |
+27 |     balance_score, candidates_from_word_widths, requires_scoring, score_line_break, BreakCandidate,
+   |                                                                                     ^^^^^^^^^^^^^^
+28 |     FitnessClass, ScoreLineBreaker, ScoreParams,
+   |                   ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `LineHeight`
+  --> openui-layout/tests/sp13_h_advanced_tests.rs:32:44
+   |
+32 |     ComputedStyle, Display, InitialLetter, LineHeight, TextDecorationLine, TextWrap,
+   |                                            ^^^^^^^^^^
+
+warning: unused import: `ComputedStyle`
+  --> openui-layout/tests/inline_layout_tests.rs:12:5
+   |
+12 |     ComputedStyle, Direction, Display, LineHeight, TextAlign, VerticalAlign, WhiteSpace,
+   |     ^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `openui-layout` (test "sp13_h_advanced_tests") generated 2 warnings (run `cargo fix --test "sp13_h_advanced_tests" -p openui-layout` to apply 2 suggestions)
+warning: unused import: `FirstLetterStyle`
+  --> openui-layout/tests/sp13_i_wpt_tests.rs:26:5
+   |
+26 |     FirstLetterStyle,
+   |     ^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `BreakCandidate`
+  --> openui-layout/tests/sp13_i_wpt_tests.rs:37:85
+   |
+37 |     balance_score, candidates_from_word_widths, requires_scoring, score_line_break, BreakCandidate,
+   |                                                                                     ^^^^^^^^^^^^^^
+
+warning: unused import: `LineHeight`
+  --> openui-layout/tests/sp13_i_wpt_tests.rs:44:20
+   |
+44 |     InitialLetter, LineHeight, Position, TextDecorationLine, TextWrap,
+   |                    ^^^^^^^^^^
+
+warning: `openui-layout` (test "inline_layout_tests") generated 1 warning (run `cargo fix --test "inline_layout_tests" -p openui-layout` to apply 1 suggestion)
+warning: `openui-layout` (test "sp13_i_wpt_tests") generated 3 warnings (run `cargo fix --test "sp13_i_wpt_tests" -p openui-layout` to apply 3 suggestions)
+warning: unused import: `std::sync::Arc`
+ --> openui-layout/tests/sp12_overflow_tests.rs:6:5
+  |
+6 | use std::sync::Arc;
+  |     ^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused imports: `BreakPoint` and `break_after_appeal`
+ --> openui-layout/tests/sp12_fragmentation_tests.rs:8:5
+  |
+8 |     break_after_appeal, break_before_appeal, find_best_break_point, join_break_between,
+  |     ^^^^^^^^^^^^^^^^^^
+9 |     should_break_after, should_break_before, BlockBreakToken, BreakAppeal, BreakPoint, BreakToken,
+  |                                                                            ^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused imports: `BoxStrut` and `PhysicalOffset`
+ --> openui-layout/tests/sp12_overflow_tests.rs:9:23
+  |
+9 | use openui_geometry::{BoxStrut, LayoutUnit, Length, PhysicalOffset, PhysicalRect, PhysicalSize};
+  |                       ^^^^^^^^                      ^^^^^^^^^^^^^^
+
+warning: unused import: `FragmentKind`
+  --> openui-layout/tests/sp12_overflow_tests.rs:10:82
+   |
+10 | use openui_layout::{block_layout, establishes_new_fc, ConstraintSpace, Fragment, FragmentKind};
+   |                                                                                  ^^^^^^^^^^^^
+
+warning: `openui-layout` (test "sp12_fragmentation_tests") generated 1 warning (run `cargo fix --test "sp12_fragmentation_tests" -p openui-layout` to apply 1 suggestion)
+warning: unused import: `ComputedStyle`
+ --> openui-layout/tests/sp17_multicol_positioned_fragmentation_tests.rs:7:41
+  |
+7 |     BorderStyle, BoxSizing, ColumnFill, ComputedStyle, Direction, Display, Position, WritingMode,
+  |                                         ^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `openui-layout` (test "sp12_overflow_tests") generated 3 warnings (run `cargo fix --test "sp12_overflow_tests" -p openui-layout` to apply 3 suggestions)
+warning: `openui-layout` (test "sp17_multicol_positioned_fragmentation_tests") generated 1 warning (run `cargo fix --test "sp17_multicol_positioned_fragmentation_tests" -p openui-layout` to apply 1 suggestion)
+warning: unused import: `ComputedStyle`
+  --> openui-layout/tests/inline_layout_advanced_tests.rs:11:5
+   |
+11 |     ComputedStyle, Direction, Display, LineHeight, TextAlign, VerticalAlign, WhiteSpace,
+   |     ^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `openui-layout` (test "inline_layout_advanced_tests") generated 1 warning (run `cargo fix --test "inline_layout_advanced_tests" -p openui-layout` to apply 1 suggestion)
+warning: unused import: `PhysicalOffset`
+  --> openui-layout/tests/sp12_h7_overflow_tests.rs:13:43
+   |
+13 | use openui_geometry::{LayoutUnit, Length, PhysicalOffset, PhysicalRect, PhysicalSize};
+   |                                           ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `i`
+    --> openui-layout/tests/sp12_h3_float_tests.rs:4766:9
+     |
+4766 |     for i in 0..10 {
+     |         ^ help: if this is intentional, prefix it with an underscore: `_i`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `openui-layout` (test "sp12_h3_float_tests") generated 1 warning (run `cargo fix --test "sp12_h3_float_tests" -p openui-layout` to apply 1 suggestion)
+warning: `openui-layout` (test "sp12_h7_overflow_tests") generated 1 warning (run `cargo fix --test "sp12_h7_overflow_tests" -p openui-layout` to apply 1 suggestion)
+warning: unused imports: `FontVariantEastAsian`, `FontVariantLigatures`, and `FontVariantNumeric`
+  --> openui-text/tests/wpt_font_tests.rs:12:45
+   |
+12 |     FontVariantAlternates, FontVariantCaps, FontVariantEastAsian, FontVariantLigatures,
+   |                                             ^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^
+13 |     FontVariantNumeric, FontVariantPosition, FontVariation, FontWeight, GenericFontFamily,
+   |     ^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused imports: `FontCache` and `FontFallbackList`
+  --> openui-text/tests/wpt_font_tests.rs:17:31
+   |
+17 | use openui_text::font::{Font, FontCache, FontDescription, FontFallbackList, FontMetrics};
+   |                               ^^^^^^^^^                   ^^^^^^^^^^^^^^^^
+
+warning: function `make_font_with_stretch` is never used
+  --> openui-text/tests/wpt_font_tests.rs:47:4
+   |
+47 | fn make_font_with_stretch(stretch: FontStretch) -> Font {
+   |    ^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `openui-text` (test "wpt_font_tests") generated 3 warnings (run `cargo fix --test "wpt_font_tests" -p openui-text` to apply 2 suggestions)
+warning: `pixel-compare` (bin "pixel_compare" test) generated 10 warnings (run `cargo fix --bin "pixel_compare" -p pixel-compare --tests` to apply 10 suggestions)
+    Finished `test` profile [unoptimized] target(s) in 3m 07s
+     Running unittests src/main.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/counter-67729a5a04c4b6fb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/dashboard-d7856b15d0a7669f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/framework_test-e8d821b2b8edf5a9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/hello-1602b6252cad3b6d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui-156636a211f5994b)
+
+running 84 tests
+test app::tests::invalid_builder_size_is_fallible ... ok
+test app::tests::cancelled_native_keydown_does_not_insert_committed_text ... ok
+test document::tests::programmatic_focus_uses_native_event_path_after_engine_borrow ... ok
+test app::tests::native_textarea_enter_inserts_one_cancelable_newline ... ok
+test document::tests::rust_event_targets_clear_listener_state_on_foreign_callback_error ... ok
+test document::tests::rust_event_dispatch_clears_phase_after_callbacks_return ... ok
+test app::tests::app_from_document_retains_existing_nodes_and_exit_handle ... ok
+test app::tests::native_named_keys_and_noneditable_controls_do_not_receive_text ... ok
+test document::tests::rust_event_targets_follow_delegated_listener_scope_and_generations ... ok
+test document::tests::headless_text_input_handles_graphemes_clipboard_undo_and_composition ... ok
+test element::tests::cloned_subtree_keeps_native_content_but_has_independent_handles ... ok
+test document::tests::tab_order_skips_disabled_controls_and_modal_focus_restores ... ok
+test document::tests::rust_event_targets_clear_listener_state_on_callback_panic ... ok
+test element::tests::native_replaced_elements_use_chromium_host_clip_defaults ... ok
+test events::tests::event_control_state_is_shared_by_clones ... ok
+test renderer::tests::effect_skips_when_condition_unchanged ... ok
+test element::tests::typed_animation_uses_manual_clock_and_dispatches_events ... ok
+test renderer::tests::effect_tracks_signal_changes ... ok
+test element::tests::stale_weak_and_cross_document_handles_are_safe ... ok
+test renderer::tests::for_keyed_diff_logic ... ok
+test renderer::tests::scope_disposes_on_branch_switch ... ok
+test renderer::tests::scope_nesting_disposes_children ... ok
+test tests::batch_defers_effects ... ok
+test tests::batch_multiple_signals ... ok
+test tests::batch_nested ... ok
+test tests::batch_no_changes ... ok
+test tests::batch_with_memo ... ok
+test tests::disposed_scope_effects_dont_run ... ok
+test tests::effect_does_not_run_for_non_dependencies ... ok
+test tests::effect_dynamic_dependencies ... ok
+test tests::effect_nested_signal_access ... ok
+test tests::effect_rerun_sees_latest_value ... ok
+test tests::effect_reruns_on_dependency_change ... ok
+test tests::effect_runs_immediately ... ok
+test element::tests::events_capture_target_and_bubble_without_reentrant_borrows ... ok
+test document::tests::rust_event_targets_follow_pointer_capture_and_boundary_dispatch ... ok
+test tests::effect_tracks_multiple_dependencies ... ok
+test document::tests::accessibility_tree_and_actions_use_the_same_control_state ... ok
+test document::tests::pointer_and_keyboard_defaults_drive_controls_after_dispatch ... ok
+test document::tests::native_element_click_runs_callbacks_then_control_activation ... ok
+test tests::effect_updates_signal_chain ... ok
+test tests::effect_with_conditional_panic_guard ... ok
+test element::tests::native_svg_viewport_bounds_survive_decoration_mutation_and_cloning ... ok
+test tests::effect_with_no_dependencies_runs_once ... ok
+test tests::integration_diamond_dependency ... ok
+test tests::integration_effect_writing_back_to_signal ... ok
+test tests::integration_memo_in_effect ... ok
+test tests::integration_rapid_updates ... ok
+test tests::integration_rapid_updates_batched ... ok
+test tests::integration_scope_cleanup_frees_resources ... ok
+test tests::integration_scope_with_memo_and_effect ... ok
+test tests::integration_signal_effect_signal_chain ... ok
+test tests::memo_chained ... ok
+test tests::memo_computes_on_creation ... ok
+test tests::memo_is_copy ... ok
+test tests::memo_recomputes_on_dependency_change ... ok
+test tests::memo_returns_cached_value ... ok
+test tests::memo_skips_update_when_value_unchanged ... ok
+test tests::memo_with_string ... ok
+test app::tests::normalized_platform_events_drive_the_headless_reference_path ... ok
+test tests::multiple_effects_same_signal ... ok
+test app::tests::headless_app_mounts_and_renders_the_typed_view_path ... ok
+test app::tests::platform_observer_can_mutate_and_request_exit_after_render_borrows ... ok
+test app::tests::event_driven_signal_updates_retarget_the_native_text_node ... ok
+test tests::multiple_scopes_independent ... ok
+test tests::on_cleanup_multiple ... ok
+test app::tests::show_and_keyed_for_mutate_retained_nodes ... ok
+test tests::on_cleanup_runs_on_dispose ... ok
+test tests::scope_collects_effects ... ok
+test tests::scope_nested_dispose ... ok
+test tests::scope_without_effects ... ok
+test tests::signal_bool ... ok
+test tests::signal_create_and_get ... ok
+test tests::signal_is_copy ... ok
+test tests::signal_multiple_independent ... ok
+test tests::signal_option ... ok
+test tests::signal_set_and_get ... ok
+test tests::signal_set_many_times ... ok
+test tests::signal_update_in_place ... ok
+test tests::signal_update_numeric ... ok
+test app::tests::native_ime_commits_after_empty_preview_and_cancels_on_window_focus_loss ... ok
+test tests::signal_with_string ... ok
+test tests::signal_with_struct ... ok
+test tests::signal_with_vec ... ok
+
+test result: ok. 84 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running tests/native_insets.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/native_insets-1a3bffc3b896f469)
+
+running 1 test
+test public_native_insets_survive_callbacks_resize_and_document_teardown ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running tests/native_primitive_styles.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/native_primitive_styles-4ae98692cc036f1a)
+
+running 1 test
+test native_author_values_match_typed_app_state_and_pixels_through_callbacks ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.91s
+
+     Running tests/v02_conformance.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/v02_conformance-38bf9536c309bd43)
+
+running 58 tests
+test accessibility_relations_reject_cross_document_targets ... ok
+test cross_document_ownership_is_rejected ... ok
+test checkbox_keyboard_activation_toggles ... ok
+test animation_cancel_restores_underlying_value ... ok
+test accessibility_action_uses_control_pipeline ... ok
+test ime_callbacks_cannot_redirect_an_edit_to_a_different_focused_control ... ok
+test clipboard_copy_and_paste ... ok
+test editing_undo_and_redo ... ok
+test ime_callback_restarting_the_same_control_keeps_the_new_edit ... ok
+test ime_commit_can_be_canceled_by_a_native_beforeinput_callback ... ok
+test ime_commits_final_text_after_platform_clears_preview_as_one_undo_step ... ok
+test computed_style_is_an_owned_native_snapshot ... ok
+test ime_callbacks_may_remove_the_target_without_terminating_input_dispatch ... ok
+test ime_ignores_noneditable_controls_and_cancels_when_disabled ... ok
+test ime_composition_commits_once ... ok
+test keyframe_animation_dispatches_end ... ok
+test independent_documents_keep_focus_isolated ... ok
+test modal_focus_is_contained_and_restored ... ok
+test large_list_updates_remain_mutable ... ok
+test named_radio_group_is_exclusive ... ok
+test native_class_lookup_tracks_event_driven_updates_and_detachment ... ok
+test native_detach_preserves_subtree_handles_and_listeners_for_reattachment ... ok
+test native_kind_lookup_tracks_tree_order_and_detachment ... ok
+test native_id_lookup_follows_attached_document_order ... ok
+test pointer_capture_lifecycle_is_validated ... ok
+test removed_weak_handle_expires ... ok
+test reduced_motion_finishes_animation ... ok
+test flex_dashboard_layout_has_geometry ... ok
+test accessibility_tree_has_stable_nodes ... ok
+test native_geometry_is_independent_of_pointer_and_visibility ... ok
+test scroll_snap_selects_nearest_point ... ok
+test nested_scroll_container_consumes_wheel ... ok
+test responsive_viewport_reflows_geometry ... ok
+test native_layout_read_then_id_style_mutation_updates_the_same_document ... ok
+test native_geometry_preserves_empty_and_singular_boxes ... ok
+test hover_and_active_state_follow_pointer ... ok
+test button_pointer_activation_dispatches_click ... ok
+test scroll_timeline_samples_from_offset ... ok
+test smooth_scroll_uses_manual_clock ... ok
+test synchronous_resource_provider_is_deterministic ... ok
+test static_headless_scene ... ok
+test repeated_headless_frames_are_byte_identical ... ok
+test tab_focus_order_skips_disabled ... ok
+test textarea_accepts_multiline_text ... ok
+test typed_transition_retains_target ... ok
+test unicode_grapheme_editing ... ok
+test view_timeline_uses_retained_geometry ... ok
+test native_geometry_updates_after_scroll_transform_and_detachment ... ok
+test native_geometry_includes_all_column_fragments ... ok
+test viewport_smooth_scroll_clamps_its_target_and_tracks_content_shrink ... ok
+test viewport_native_scroll_clamps_extremes_and_resolves_pending_layout ... ok
+test viewport_wheel_uses_the_same_limits_and_respects_cancelation ... ok
+test ime_cancel_restores_selection_pixels_and_existing_redo ... ok
+test table_application_fixture_lays_out ... ok
+test read_only_text_controls_keep_selection_and_reject_native_edits ... ok
+test native_text_nodes_attach_move_and_keep_element_traversal_typed ... ok
+test batched_tree_transaction ... ok
+test emoji_and_bidi_text_render_without_loss ... ok
+
+test result: ok. 58 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+
+     Running unittests src/lib.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui_compositor-462385fff493034c)
+
+running 6 tests
+test tests::immutable_scenes_can_cross_render_threads ... ok
+test tests::mailbox_coalesces_to_the_newest_complete_scene ... ok
+test tests::damage_is_converted_outward_to_physical_pixels ... ok
+test tests::software_compositor_reuses_unchanged_frames ... ok
+test tests::software_frame_cache_accepts_new_viewports_with_equal_generations ... ok
+test tests::frame_cache_releases_recordings_on_replacement_png_and_drop ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running unittests src/lib.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui_dom-213b170c8e63229c)
+
+running 16 tests
+test tree::tests::detach_repairs_sibling_links ... ok
+test tree::tests::append_children ... ok
+test tree::tests::installed_resolved_style_retains_document_raster_context ... ok
+test tree::tests::create_document ... ok
+test tree::tests::root_overflow_prevents_body_overflow_propagation ... ok
+test tree::tests::nested_children ... ok
+test tree::tests::fieldset_rendered_legend_follows_display_contents_box_children ... ok
+test tree::tests::root_background_precedes_body_canvas_propagation ... ok
+test tree::tests::style_mutation ... ok
+test tree::tests::authored_legacy_root_background_precedes_registered_body ... ok
+test tree::tests::hidden_or_unboxed_root_body_cannot_supply_canvas_background ... ok
+test tree::tests::pseudo_nodes_use_css_tree_order_and_materialize_attr_text ... ok
+test tree::tests::released_detached_nodes_reuse_arena_storage ... ok
+test tree::tests::image_layers_participate_in_complete_canvas_background_selection ... ok
+test tree::tests::generated_counters_scope_format_and_quotes ... ok
+test tree::tests::explicitly_registered_legacy_body_propagates_canvas_background ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running unittests src/lib.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui_engine-70cf898c51ae3c54)
+
+running 37 tests
+test interaction::tests::event_route_is_capture_target_bubble ... ok
+test animation::tests::reduced_motion_finishes_finite_animations ... ok
+test animation::tests::manual_clock_samples_and_emits_lifecycle_events ... ok
+test animation::tests::transition_keeps_its_authored_target_after_completion ... ok
+test interaction::tests::input_button_type_attributes_preserve_button_role ... ok
+test interaction::tests::checkbox_and_named_radio_activation_are_deterministic ... ok
+test animation::tests::pause_seek_reverse_and_cancel_are_deterministic ... ok
+test accessibility::tests::platform_requests_validate_ids_and_convert_character_offsets ... ok
+test interaction::tests::text_editing_uses_grapheme_boundaries_and_supports_undo ... ok
+test scroll_into_view::tests::detached_foreign_and_stale_targets_keep_handle_rules ... ok
+test accessibility::tests::initial_tree_infers_control_semantics_bounds_and_stable_ids ... ok
+test interaction::tests::pointer_state_synthesizes_enter_leave_and_activation ... ok
+test scroll_into_view::tests::nearest_container_does_not_scroll_its_parent ... ok
+test scroll_into_view::tests::clip_is_not_a_scroll_container ... ok
+test accessibility::tests::cloned_subtree_relations_target_cloned_descendants ... ok
+test scroll_into_view::tests::smooth_reveal_plans_outer_destination_from_final_inner_view ... ok
+test accessibility::tests::complete_snapshot_does_not_consume_incremental_updates ... ok
+test tests::application_fonts_are_document_owned_invalidate_and_survive_in_scenes ... ok
+test tests::invalidation_runs_only_the_required_visual_stages ... ok
+test scroll_into_view::tests::accessibility_reveal_uses_the_same_nested_nearest_operation ... ok
+test animation::tests::smooth_scroll_and_snap_use_the_manual_clock ... ok
+test scroll_into_view::tests::reveal_nested_hidden_scrollports_and_preserve_unchanged_frame ... ok
+test accessibility::tests::unchanged_updates_are_empty_and_actions_share_control_state ... ok
+test tests::logical_layout_rasterizes_at_the_authoritative_physical_size ... ok
+test scroll_into_view::tests::reduced_motion_and_zero_duration_settle_and_invalid_duration_is_atomic ... ok
+test tests::hit_testing_respects_transforms_pointer_eligibility_and_rounded_clips ... ok
+test tests::pseudo_styles_and_language_use_validated_public_paths ... ok
+test tests::resources_are_document_owned ... ok
+test tests::retained_tree_supports_safe_reordering ... ok
+test tests::unchanged_scene_performs_no_lifecycle_work ... ok
+test tests::long_running_mutations_reuse_owned_storage ... ok
+test tests::typed_tree_renders_through_scene_compositor ... ok
+test tests::stale_and_cross_document_handles_are_rejected ... ok
+test tests::viewport_units_recompute_and_scale_invalidates_all_visual_stages ... ok
+test accessibility::tests::editable_controls_expose_text_runs_and_selection ... ok
+test tests::compositor_distinguishes_owned_recordings_with_equal_document_generations ... ok
+test tests::native_bevel_border_raises_low_contrast_colors_without_changing_author_style ... ok
+
+test result: ok. 37 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+     Running tests/retained_scene_lifetime.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/retained_scene_lifetime-ef94f861dcfa795e)
+
+running 1 test
+test saved_scenes_replay_after_engine_drop_and_unchanged_frames_reuse_raster ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+     Running unittests src/lib.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui_ffi-a87adbbc101f4196)
+
+running 32 tests
+test tests::frozen_layout_metadata_matches_rust ... ok
+test tests::invalid_float_colors_leave_output_unchanged ... ok
+test registry::miri_handle_tests::opaque_handles_reject_wrong_kind_thread_and_reuse ... ok
+test tests::malformed_inputs_report_structured_thread_local_errors ... ok
+test tests::invalid_native_literals_preserve_output_and_existing_scalar_encodings ... ok
+test native_app_tests::native_run_config_and_lifecycle_reject_invalid_ownership ... ok
+test tests::c_typography_literal_values_are_typed_and_owned ... ok
+test tests::handles_are_thread_affine_without_dereferencing_foreign_tokens ... ok
+test tests::c_scroll_metrics_validate_output_headers_and_ownership ... ok
+test tests::event_order_is_deterministic_and_callbacks_can_reenter ... ok
+test tests::c_animation_api_samples_controls_and_reports_events ... ok
+test tests::c_composition_dispatch_commits_final_text_and_restores_canceled_edits ... ok
+test tests::c_id_lookup_returns_owned_attached_element_handles ... ok
+test tests::detached_c_nodes_keep_their_handles_until_explicit_removal ... ok
+test tests::normalized_c_input_validates_headers_utf8_and_thread_ownership ... ok
+test tests::native_float_colors_preserve_precision_property_identity_and_ownership ... ok
+test tests::normalized_c_keyboard_and_text_share_cancelable_document_defaults ... ok
+test tests::c_font_registration_queries_and_removal_validate_lifetimes ... ok
+test tests::ownership_generation_and_value_tags_are_validated ... ok
+test tests::panics_are_contained ... ok
+test tests::native_scalar_extensions_keep_owned_property_identity_and_full_values ... ok
+test tests::c_font_metadata_matches_pinned_multiformat_fixtures ... ok
+test tests::app_and_document_handles_have_independent_explicit_lifetimes ... ok
+test tests::c_scroll_metrics_preserve_larger_caller_storage_and_absent_boxes ... ok
+test tests::transactions_and_compound_types_are_checked ... ok
+test native_app_tests::linux::native_accessibility_actions_reach_c_controls_and_c_listeners ... ok
+test tests::c_accessibility_snapshot_rejects_wrong_document_and_outlives_its_document ... ok
+test tests::c_events_hit_testing_and_control_state_share_engine_defaults ... ok
+test tests::c_accessibility_updates_actions_and_validation_share_engine_state ... ok
+test tests::rust_and_c_paths_produce_identical_headless_pixels ... ok
+test tests::typed_tree_renders_and_buffers_have_explicit_lifetimes ... ok
+test native_app_tests::linux::c_native_keyboard_uses_rust_editing_and_reentrant_cancellation ... ok
+
+test result: ok. 32 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running unittests src/lib.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui_geometry-491e7f0313386ddc)
+
+running 102 tests
+test bfc_offset::tests::bfc_offset_equality ... ok
+test bfc_offset::tests::bfc_offset_add_assign ... ok
+test bfc_offset::tests::bfc_rect_basic ... ok
+test bfc_offset::tests::bfc_rect_equality ... ok
+test bfc_offset::tests::bfc_offset_default_is_zero ... ok
+test bfc_offset::tests::bfc_rect_both_max_inline_is_zero ... ok
+test box_strut::tests::horizontal_ltr_and_rtl_map_inline_edges ... ok
+test box_strut::tests::vertical_and_sideways_modes_map_all_edges ... ok
+test bfc_offset::tests::bfc_rect_max_block_size ... ok
+test bfc_offset::tests::bfc_rect_max_inline_size ... ok
+test box_strut::tests::physical_logical_round_trip_covers_all_direction_flags ... ok
+test layout_unit::tests::floor_positive ... ok
+test layout_unit::tests::ceil_positive ... ok
+test layout_unit::tests::ceil_negative ... ok
+test layout_unit::tests::floor_negative ... ok
+test layout_unit::tests::fraction_preserves_sign ... ok
+test layout_unit::tests::divide_layout_units ... ok
+test layout_unit::tests::from_float_ceil_floor_round ... ok
+test layout_unit::tests::fractional_bits_and_denominator ... ok
+test bfc_offset::tests::bfc_offset_add_delta ... ok
+test layout_unit::tests::from_float_truncates_not_rounds ... ok
+test layout_unit::tests::from_integer_saturating ... ok
+test layout_unit::tests::indefinite_size ... ok
+test layout_unit::tests::margin_collapsing_math ... ok
+test layout_unit::tests::mul_div_fused ... ok
+test layout_unit::tests::multiply_layout_units ... ok
+test layout_unit::tests::multiply_overflow_saturates ... ok
+test layout_unit::tests::nan_produces_zero ... ok
+test layout_unit::tests::round_to_nearest ... ok
+test layout_unit::tests::saturating_add ... ok
+test layout_unit::tests::sub_pixel_precision ... ok
+test length::tests::auto_is_auto ... ok
+test length::tests::default_is_zero_fixed ... ok
+test length::tests::equality ... ok
+test length::tests::none_for_max_dimensions ... ok
+test length::tests::percent_stores_value ... ok
+test margin_strut::tests::discard_margins_prevents_append ... ok
+test margin_strut::tests::discard_margins_returns_zero ... ok
+test margin_strut::tests::empty_strut_is_zero ... ok
+test margin_strut::tests::mixed_margins_collapse ... ok
+test margin_strut::tests::negative_margins_take_most_negative ... ok
+test margin_strut::tests::positive_margins_take_largest ... ok
+test margin_strut::tests::quirky_container_start_ignores_quirky ... ok
+test margin_strut::tests::quirky_container_sum_ignores_quirky ... ok
+test margin_strut::tests::quirky_margin_takes_largest ... ok
+test margin_strut::tests::quirky_vs_normal_takes_larger ... ok
+test margin_strut::tests::trim_leading_flag_preserved ... ok
+test min_max_sizes::tests::add_to_both ... ok
+test min_max_sizes::tests::clamp_within_range ... ok
+test min_max_sizes::tests::encompass_raises_both ... ok
+test min_max_sizes::tests::shrink_to_lowers_both ... ok
+test raster::tests::ganesh_profile_is_explicit_and_immutable ... ok
+test raster::tests::legacy_profiles_preserve_text_policy_on_the_software_backend ... ok
+test raster::tests::outward_span_contains_fractional_logical_bounds ... ok
+test raster::tests::snaps_coordinates_through_fractional_device_scales ... ok
+test raster::tests::snaps_lengths_with_a_physical_minimum ... ok
+test viewport::tests::deterministic_fractional_matrix_preserves_authority ... ok
+test viewport::tests::logical_authority_uses_winit_rounding ... ok
+test viewport::tests::physical_authority_preserves_native_surface ... ok
+test viewport::tests::rejects_non_finite_and_unrepresentable_metrics ... ok
+test writing_mode::tests::default_is_horizontal_ltr ... ok
+test writing_mode::tests::full_size_child_offset_round_trip ... ok
+test writing_mode::tests::offset_htb_ltr ... ok
+test writing_mode::tests::offset_htb_rtl ... ok
+test writing_mode::tests::offset_round_trip_htb_ltr ... ok
+test writing_mode::tests::offset_round_trip_htb_rtl ... ok
+test writing_mode::tests::offset_round_trip_slr_ltr ... ok
+test writing_mode::tests::offset_round_trip_slr_rtl ... ok
+test writing_mode::tests::offset_round_trip_srl_ltr ... ok
+test writing_mode::tests::offset_round_trip_vlr_ltr ... ok
+test writing_mode::tests::offset_round_trip_vlr_rtl ... ok
+test writing_mode::tests::offset_round_trip_vrl_ltr ... ok
+test writing_mode::tests::offset_round_trip_vrl_rtl ... ok
+test writing_mode::tests::offset_slr_ltr ... ok
+test writing_mode::tests::offset_slr_rtl ... ok
+test writing_mode::tests::offset_vlr_ltr ... ok
+test writing_mode::tests::offset_vlr_rtl ... ok
+test writing_mode::tests::offset_vrl_ltr ... ok
+test writing_mode::tests::offset_vrl_rtl ... ok
+test writing_mode::tests::physical_to_logical_offset_vlr_ltr_specific ... ok
+test writing_mode::tests::physical_to_logical_offset_vrl_ltr_specific ... ok
+test writing_mode::tests::rect_htb_ltr ... ok
+test writing_mode::tests::rect_htb_rtl ... ok
+test writing_mode::tests::rect_round_trip_htb_ltr ... ok
+test writing_mode::tests::rect_round_trip_htb_rtl ... ok
+test writing_mode::tests::rect_round_trip_slr_ltr ... ok
+test writing_mode::tests::rect_round_trip_slr_rtl ... ok
+test writing_mode::tests::rect_round_trip_srl_ltr ... ok
+test writing_mode::tests::rect_round_trip_vlr_ltr ... ok
+test writing_mode::tests::rect_round_trip_vlr_rtl ... ok
+test writing_mode::tests::rect_round_trip_vrl_ltr ... ok
+test writing_mode::tests::rect_round_trip_vrl_rtl ... ok
+test writing_mode::tests::rect_vlr_ltr ... ok
+test writing_mode::tests::rect_vrl_ltr ... ok
+test writing_mode::tests::size_horizontal_tb ... ok
+test writing_mode::tests::size_round_trip_horizontal ... ok
+test writing_mode::tests::size_round_trip_vertical_lr ... ok
+test writing_mode::tests::size_round_trip_vertical_rl ... ok
+test writing_mode::tests::size_vertical_lr ... ok
+test writing_mode::tests::size_vertical_rl ... ok
+test writing_mode::tests::zero_offset_round_trip ... ok
+test writing_mode::tests::zero_size_offset_round_trip ... ok
+
+test result: ok. 102 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+
+     Running unittests src/lib.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui_layout-bc19428802ee7bff)
+
+running 669 tests
+test bfc_resolution::tests::needs_relayout_when_mismatch ... ok
+test bfc_resolution::tests::needs_relayout_false_when_unresolved ... ok
+test bfc_resolution::tests::should_resolve_content ... ok
+test bfc_resolution::tests::estimate_computation ... ok
+test bfc_resolution::tests::should_resolve_new_fc ... ok
+test bfc_resolution::tests::should_not_resolve_when_none_apply ... ok
+test bfc_resolution::tests::should_resolve_border_padding ... ok
+test bfc_resolution::tests::should_resolve_clear ... ok
+test bfc_resolution::tests::state_starts_unresolved ... ok
+test bfc_resolution::tests::state_with_estimate ... ok
+test bfc_resolution::tests::pending_floats_empty_by_default ... ok
+test bfc_resolution::tests::pending_floats_add_and_count ... ok
+test bfc_resolution::tests::double_resolve_is_noop ... ok
+test bfc_resolution::tests::resolve_matching_estimate_no_relayout ... ok
+test bfc_resolution::tests::resolve_transitions_state ... ok
+test bfc_resolution::tests::resolve_different_estimate_triggers_relayout ... ok
+test bfc_resolution::tests::pending_floats_positioned_on_resolve ... ok
+test bfc_resolution::tests::multiple_pending_floats_all_positioned ... ok
+test block::tests::crossing_text_ink_preserves_only_the_retained_boundary_line ... ok
+test block::tests::atomic_inline_is_a_monolithic_flex_fragmentation_unit ... ok
+test block::tests::atomic_inline_is_not_reclassified_by_ordinary_block_fragmentation ... ok
+test block::tests::children_stack_vertically ... ok
+test block::tests::border_and_padding ... ok
+test block::tests::auto_width_subtracts_fixed_margins ... ok
+test block::tests::border_box_sizing ... ok
+test block::tests::auto_margin_centering ... ok
+test block::tests::direct_same_node_wrapper_delegates_decoration_to_inner_box ... ok
+test block::tests::delegated_principal_box_leaves_decoration_to_its_first_owner ... ok
+test block::tests::display_none_skipped ... ok
+test block::tests::empty_block_collapses_both_margins_with_adjacent_siblings ... ok
+test block::tests::first_child_margin_with_parent_border ... ok
+test block::tests::bottom_aligned_abspos_uses_border_box_before_fragmenting_visible_overflow ... ok
+test block::tests::empty_bordered_block_retains_its_own_column_continuations ... ok
+test block::tests::fixed_width_and_height ... ok
+test block::tests::flow_root_contains_floats_from_nested_pure_inline_context ... ok
+test block::tests::indefinite_percentage_height_uses_preferred_ratio_like_auto ... ok
+test block::tests::last_child_bottom_margin_with_parent_border ... ok
+test block::tests::margin_collapsing_between_siblings ... ok
+test block::tests::margin_creates_spacing ... ok
+test block::tests::min_height_with_content_box_sizing ... ok
+test block::tests::min_max_width ... ok
+test block::tests::nested_layout ... ok
+test block::tests::inline_block_children_produce_line_boxes ... ok
+test block::tests::consecutive_clearing_break_without_intervening_float_keeps_line_strut ... ok
+test block::tests::auto_bfc_relayouts_into_narrowest_full_height_float_shelf ... ok
+test block::tests::inline_children_produce_line_boxes ... ok
+test block::tests::empty_structural_inline_does_not_insert_mixed_flow_line ... ok
+test block::tests::clearing_break_starts_following_floats_on_a_new_shelf ... ok
+test block::tests::block_in_inline_margin_collapses_and_later_float_keeps_source_position ... ok
+test block::tests::nested_monolithic_break_extends_auto_flex_decoration_through_overflow ... ok
+test block::tests::nested_monolithic_flex_breaks_follow_float_contents ... ok
+test block::tests::outline_detection_follows_anonymous_fragment_wrappers ... ok
+test block::tests::nested_principal_box_keeps_content_but_skips_duplicate_decoration ... ok
+test block::tests::overconstrained_auto_margins_become_zero ... ok
+test block::tests::percentage_height_in_auto_height_parent_is_indefinite ... ok
+test block::tests::percentage_height_resolves_against_parent_height ... ok
+test block::tests::percentage_margin_resolves_against_parent_content_box ... ok
+test block::tests::percentage_width ... ok
+test block::tests::reconstructed_inline_keep_requires_a_spanner_interruption ... ok
+test block::tests::relative_percentage_inset_uses_explicit_parent_height ... ok
+test block::tests::single_div_fills_width ... ok
+test block::tests::unresolved_percentage_height_does_not_double_count_border ... ok
+test block::tests::vertical_rl_document_body_grows_from_initial_scroll_origin ... ok
+test block::tests::span_inline_block_is_atomic_inline ... ok
+test block::tests::viewport_applies_sticky_top_constraint_at_zero_scroll ... ok
+test block::tests::viewport_does_not_reapply_nested_scrollport_sticky_constraints ... ok
+test block::tests::viewport_uses_available_height ... ok
+test block::tests::replaced_border_box_ratio_coerces_natural_size_with_padding ... ok
+test block::tests::percentage_padding_resolves_against_containing_block_not_content_box ... ok
+test block::tests::bfc_margin_separates_from_float_through_phantom_inline ... ok
+test block::tests::padding_does_not_double_subtract_in_inline_layout ... ok
+test block::tests::display_none_child_does_not_split_inline_run ... ok
+test block::tests::out_of_flow_child_does_not_split_inline_run ... ok
+test block::tests::mixed_content_splits_transparent_inline_around_nested_block ... ok
+test block::tests::mixed_content_preserves_block_children ... ok
+test block::tests::whitespace_only_inline_run_retains_cleared_floats ... ok
+test block::tests::zero_height_multicol_uses_authored_gap_for_wrapped_row_origin ... ok
+test constraint_space::tests::explicit_block_child_constructor_converts_parent_axes ... ok
+test constraint_space::tests::legacy_root_constructor_remains_horizontal_ltr ... ok
+test constraint_space::tests::orthogonal_child_boundary_transposes_size_pairs_once ... ok
+test constraint_space::tests::parallel_or_direction_only_child_boundary_preserves_extents ... ok
+test constraint_space::tests::vertical_root_converts_physical_viewport_to_logical_size ... ok
+test containment::tests::inline_size_container_substitutes_only_its_inline_axis ... ok
+test block::tests::zero_height_positioned_multicol_continuation_has_no_parent_decoration ... ok
+test containment::tests::size_containment_uses_physical_fallbacks ... ok
+test css_sizing::tests::aspect_ratio_both_definite_ignored ... ok
+test css_sizing::tests::aspect_ratio_height_to_width ... ok
+test css_sizing::tests::aspect_ratio_width_to_height ... ok
+test css_sizing::tests::aspect_ratio_with_auto_flag_no_intrinsic_falls_back ... ok
+test css_sizing::tests::aspect_ratio_with_auto_flag_uses_intrinsic ... ok
+test css_sizing::tests::aspect_ratio_zero_ratio_returns_unchanged ... ok
+test css_sizing::tests::resolve_fit_content_above_max ... ok
+test css_sizing::tests::resolve_fit_content_below_min ... ok
+test css_sizing::tests::resolve_fit_content_between_min_and_max ... ok
+test css_sizing::tests::resolve_max_content_keyword ... ok
+test css_sizing::tests::resolve_min_content_keyword ... ok
+test css_sizing::tests::resolve_stretch_clamps_negative_to_zero ... ok
+test css_sizing::tests::resolve_stretch_keyword ... ok
+test css_sizing::tests::sizing_keyword_from_length_auto ... ok
+test css_sizing::tests::sizing_keyword_from_length_fixed_returns_none ... ok
+test css_sizing::tests::sizing_keyword_from_length_max_content ... ok
+test css_sizing::tests::sizing_keyword_from_length_min_content ... ok
+test css_sizing::tests::sizing_keyword_from_length_stretch ... ok
+test exclusions::exclusion_space::tests::active_float_query_excludes_ended_shelves ... ok
+test exclusions::exclusion_space::tests::both_floats_narrow_space ... ok
+test exclusions::exclusion_space::tests::clearance_offset_both ... ok
+test exclusions::exclusion_space::tests::clearance_offset_left ... ok
+test exclusions::exclusion_space::tests::content_drops_below_float_if_no_space ... ok
+test exclusions::exclusion_space::tests::empty_space_full_opportunity ... ok
+test exclusions::exclusion_space::tests::has_floats ... ok
+test exclusions::exclusion_space::tests::left_float_reduces_inline_space ... ok
+test exclusions::exclusion_space::tests::multiple_stacked_left_floats ... ok
+test exclusions::exclusion_space::tests::opportunity_below_expired_float ... ok
+test exclusions::exclusion_space::tests::right_float_reduces_inline_space ... ok
+test exclusions::float_utils::tests::float_with_margins_next_to_existing ... ok
+test exclusions::float_utils::tests::float_with_nonzero_origin ... ok
+test exclusions::float_utils::tests::later_float_cannot_start_above_prior_opposite_side_float ... ok
+test exclusions::float_utils::tests::left_float_drops_below_existing ... ok
+test exclusions::float_utils::tests::left_float_empty_space ... ok
+test exclusions::float_utils::tests::left_float_with_margins ... ok
+test exclusions::float_utils::tests::margin_box_inline_size_with_margins ... ok
+test exclusions::float_utils::tests::margin_box_inline_size_zero_margins ... ok
+test exclusions::float_utils::tests::negative_margin_box_block_size_clamps_to_zero ... ok
+test exclusions::float_utils::tests::negative_margin_box_inline_size_clamps_to_zero ... ok
+test exclusions::float_utils::tests::positioned_float_fragment_has_correct_size ... ok
+test exclusions::float_utils::tests::right_float_empty_space ... ok
+test exclusions::float_utils::tests::right_float_next_to_left_float ... ok
+test exclusions::float_utils::tests::right_float_with_margins ... ok
+test exclusions::float_utils::tests::second_left_float_stacks_beside_first ... ok
+test exclusions::float_utils::tests::signed_negative_margin_box_still_participates_in_float_placement ... ok
+test flex::algorithm::tests::abspos_main_edges_resolve_distribution_physical_sides_and_reverse_once ... ok
+test flex::algorithm::tests::abspos_cross_edges_keep_axis_self_and_wrap_semantics_distinct ... ok
+test flex::algorithm::tests::align_items_center ... ok
+test flex::algorithm::tests::baseline_line_cross_size_combines_ascent_and_trailing_margin ... ok
+test flex::algorithm::tests::baseline_line_cross_size_preserves_legacy_line_clamp_measurement ... ok
+test flex::algorithm::tests::basic_row_flex_three_items ... ok
+test flex::algorithm::tests::empty_flex_item_synthesizes_container_baseline_from_cross_end ... ok
+test flex::algorithm::tests::flex_direction_column ... ok
+test flex::algorithm::tests::flex_direction_row_reverse ... ok
+test flex::algorithm::tests::flex_grow_equal ... ok
+test flex::algorithm::tests::flex_grow_weighted ... ok
+test flex::algorithm::tests::gap_between_items ... ok
+test flex::algorithm::tests::flex_wrap_basic ... ok
+test flex::algorithm::tests::item_axis_mapping_keeps_sizes_bases_and_flags_in_one_child_coordinate_system ... ok
+test flex::algorithm::tests::horizontal_rtl_logical_end_margins_match_row_gaps ... ok
+test flex::algorithm::tests::horizontal_rtl_row_wrap_positions_items_from_inline_start ... ok
+test flex::algorithm::tests::justify_content_center ... ok
+test flex::algorithm::tests::justify_content_space_between ... ok
+test flex::algorithm::tests::nested_empty_flex_item_still_supplies_container_baseline ... ok
+test flex::algorithm::tests::main_axis_auto_margin_preserves_fixed_opposite_margin ... ok
+test flex::algorithm::tests::order_property ... ok
+test flex::algorithm::tests::overflow_padding_does_not_extend_an_items_existing_overflow_rect ... ok
+test flex::algorithm::tests::reversed_scrollable_flex_overflow_puts_end_padding_at_start ... ok
+test flex::algorithm::tests::safe_flex_start_keeps_overflowing_column_reverse_item_at_start ... ok
+test flex::algorithm::tests::scrollable_flex_overflow_includes_margin_box_and_end_padding ... ok
+test flex::algorithm::tests::stretch_cross_size_transfers_natural_ratio_to_flex_auto_minimum ... ok
+test flex::algorithm::tests::horizontal_rtl_gap_and_logical_margin_reference_share_fragment_geometry ... ok
+test flex::algorithm::tests::stretched_flex_item_resolves_percentage_replaced_descendant_for_basis ... ok
+test flex::algorithm::tests::vertical_inline_flex_column_wrap_intrinsic_sizing_is_crash_safe ... ok
+test flex::algorithm::tests::vertical_lr_column_wrap_uses_block_main_and_inline_cross_axes ... ok
+test flex::algorithm::tests::vertical_lr_row_wrap_follows_inline_then_block_axes ... ok
+test flex::algorithm::tests::vertical_column_cross_margin_reduces_fit_content_before_wrapping ... ok
+test flex::algorithm::tests::vertical_lr_rtl_row_starts_at_physical_bottom ... ok
+test flex::algorithm::tests::vertical_inline_flex_column_shrink_wraps_logical_block_contributions ... ok
+test flex::algorithm::tests::vertical_nowrap_flex_defers_orthogonal_baseline_synthesis_to_ifc ... ok
+test flex::alignment::tests::align_self_center ... ok
+test flex::algorithm::tests::vertical_rl_row_wrap_flips_physical_block_placement ... ok
+test flex::alignment::tests::align_self_wrap_reverse_flips ... ok
+test flex::alignment::tests::auto_margins_main_both ... ok
+test flex::alignment::tests::auto_margins_main_start_only ... ok
+test flex::alignment::tests::auto_margins_no_positive_space ... ok
+test flex::algorithm::tests::vertical_row_baseline_synthesis_does_not_expand_cross_size ... ok
+test flex::alignment::tests::flex_start_reversed ... ok
+test flex::alignment::tests::justify_content_center ... ok
+test flex::alignment::tests::justify_content_flex_end ... ok
+test flex::alignment::tests::justify_content_flex_start ... ok
+test flex::alignment::tests::justify_content_space_around ... ok
+test flex::alignment::tests::justify_content_space_between ... ok
+test flex::alignment::tests::justify_content_space_evenly ... ok
+test flex::alignment::tests::space_around_negative_fallback ... ok
+test flex::alignment::tests::space_between_negative_fallback ... ok
+test flex::intrinsic::tests::row_multi_line_min_is_max ... ok
+test flex::intrinsic::tests::row_single_line_min_is_sum ... ok
+test flex::intrinsic::tests::row_with_gaps ... ok
+test flex::item::tests::margin_box_sizes ... ok
+test flex::line::tests::new_line ... ok
+test flex::algorithm::tests::vertical_nowrap_matrix_preserves_axes_and_reverse_order ... ok
+test flex::line_breaker::tests::empty_items ... ok
+test flex::line_breaker::tests::first_item_always_on_first_line ... ok
+test flex::line_breaker::tests::multi_line_wrap ... ok
+test flex::line_breaker::tests::single_line_nowrap ... ok
+test flex::algorithm::tests::vertical_gap_001_through_007_patterns_preserve_logical_axes ... ok
+test flex::line_breaker::tests::wrap_with_gap ... ok
+test flex::line_flexer::tests::equal_grow_distributes_evenly ... ok
+test flex::line_flexer::tests::equal_shrink ... ok
+test flex::line_flexer::tests::fractional_flex_factor_less_than_one ... ok
+test flex::line_flexer::tests::gap_reduces_free_space ... ok
+test flex::line_flexer::tests::max_constraint_freezes_item ... ok
+test flex::line_flexer::tests::min_constraint_freezes_item ... ok
+test flex::line_flexer::tests::multiple_max_constraints ... ok
+test flex::line_flexer::tests::no_flex_items_keep_hypothetical ... ok
+test flex::line_flexer::tests::shrink_weighted_by_base_size ... ok
+test flex::line_flexer::tests::weighted_grow ... ok
+test fragment::tests::text_run_orientation_matrix_is_layout_authoritative ... ok
+test fragment::tests::vertical_mixed_keeps_upright_and_unsplit_mixed_runs_explicit ... ok
+test fragmentation::tests::block_break_token_break_before ... ok
+test fragmentation::tests::block_break_token_creation ... ok
+test fragmentation::tests::break_appeal_methods ... ok
+test fragmentation::tests::break_appeal_ordering ... ok
+test fragmentation::tests::fragmentainer_consume ... ok
+test fragmentation::tests::fragmentainer_exhausted ... ok
+test fragmentation::tests::fragmentainer_not_exhausted ... ok
+test fragmentation::tests::fragmentainer_remaining ... ok
+test fragmentation::tests::join_break_between_auto_passthrough ... ok
+test fragmentation::tests::join_break_between_avoid_specificity ... ok
+test fragmentation::tests::join_break_between_forced_wins ... ok
+test fragmentation::tests::join_break_between_stronger_forced ... ok
+test fragmentation::tests::should_break_after_values ... ok
+test fragmentation::tests::should_break_before_values ... ok
+test inflow_position::tests::inflow_child_data_construction ... ok
+test grid::tests::forced_break_clearance_does_not_expand_an_ending_grid_area ... ok
+test inflow_position::tests::previous_inflow_position_defaults ... ok
+test grid::tests::forced_descendant_overflow_does_not_expand_a_stretched_grid_item ... ok
+test inline::algorithm::tests::baseline_shift_baseline ... ok
+test inline::algorithm::tests::atomic_inline_block_layout_width_not_overridden_with_border ... ok
+test inline::algorithm::tests::baseline_shift_percentage_uses_element_line_height ... ok
+test inline::algorithm::tests::baseline_shift_percentage_with_normal_line_height ... ok
+test inline::algorithm::tests::atomic_inline_percentage_height_indefinite_container_uses_auto ... ok
+test inline::algorithm::tests::baseline_shift_sub ... ok
+test inline::algorithm::tests::atomic_inline_block_layout_width_preserved ... ok
+test inline::algorithm::tests::baseline_shift_super ... ok
+test inline::algorithm::tests::atomic_inline_percentage_height_resolves_against_container ... ok
+test inline::algorithm::tests::baseline_snapping_distinguishes_normal_and_explicit_line_height ... ok
+test inline::algorithm::tests::fallback_run_metrics_expand_the_normal_line_box ... ok
+test inline::algorithm::tests::decorated_inline_produces_a_real_box_fragment ... ok
+test inline::algorithm::tests::bidi_reordering_splits_and_rebalances_inline_fragments ... ok
+test inline::algorithm::tests::float_after_clearing_break_defers_block_progression_to_clearance ... ok
+test inline::algorithm::tests::ellipsis_uses_block_font_for_measurement ... ok
+test inline::algorithm::tests::empty_undecorated_inline_descendants_do_not_create_line_height ... ok
+test inline::algorithm::tests::float_after_forced_break_uses_the_following_line_source_position ... ok
+test inline::algorithm::tests::float_after_multiple_preserved_newlines_uses_the_final_source_line ... ok
+test inline::algorithm::tests::hang_width_does_not_cause_overflow_alignment ... ok
+test inline::algorithm::tests::fragmented_positioned_inline_ignores_empty_continuation_shell ... ok
+test inline::algorithm::tests::float_after_ported_preserved_newline_uses_the_following_line_source_position ... ok
+test inline::algorithm::tests::has_inline_children_block_only ... ok
+test inline::algorithm::tests::has_inline_children_span ... ok
+test inline::algorithm::tests::generated_line_clamp_marker_retains_its_semantic_role ... ok
+test inline::algorithm::tests::inline_decoration_uses_rounded_font_content_bounds ... ok
+test inline::algorithm::tests::inline_block_baseline_descends_through_block_in_inline_wrapper ... ok
+test inline::algorithm::tests::has_inline_children_text_node ... ok
+test inline::algorithm::tests::is_cjk_character_detects_han_ideographs ... ok
+test inline::algorithm::tests::is_cjk_character_detects_kana_and_hangul ... ok
+test inline::algorithm::tests::line_height_half_leading_odd ... ok
+test inline::algorithm::tests::line_height_metrics_length ... ok
+test inline::algorithm::tests::leading_out_of_flow_distinguishes_generated_box_from_continuation ... ok
+test inline::algorithm::tests::line_height_metrics_normal ... ok
+test inline::algorithm::tests::line_height_metrics_number ... ok
+test inline::algorithm::tests::line_height_metrics_percentage ... ok
+test inline::algorithm::tests::inline_metrics_stack_affects_layout ... ok
+test inline::algorithm::tests::text_align_center ... ok
+test inline::algorithm::tests::text_align_center_with_hang_width ... ok
+test inline::algorithm::tests::positioned_inline_containing_block_keeps_empty_first_fragment ... ok
+test inline::algorithm::tests::text_align_end_ltr ... ok
+test inline::algorithm::tests::text_align_end_ltr_with_hang_width ... ok
+test inline::algorithm::tests::ltr_ellipsis_not_at_start ... ok
+test inline::algorithm::tests::text_align_end_rtl ... ok
+test inline::algorithm::tests::rtl_ellipsis_truncates_from_left ... ok
+test inline::algorithm::tests::text_align_justify_last_line_falls_back ... ok
+test inline::algorithm::tests::text_align_justify_with_hang_width ... ok
+test inline::algorithm::tests::text_align_last_center_with_hang_width ... ok
+test inline::algorithm::tests::text_align_left ... ok
+test inline::algorithm::tests::text_align_left_unaffected_by_hang_width ... ok
+test inline::algorithm::tests::text_align_right ... ok
+test inline::algorithm::tests::text_align_right_overflow_extends_toward_line_left ... ok
+test inline::algorithm::tests::text_align_right_with_hang_width ... ok
+test inline::algorithm::tests::text_align_start_ltr ... ok
+test inline::algorithm::tests::text_align_start_rtl ... ok
+test inline::algorithm::tests::text_align_start_rtl_overflow_extends_toward_inline_end ... ok
+test inline::algorithm::tests::text_align_start_rtl_with_hang_width ... ok
+test inline::algorithm::tests::text_top_uses_half_leading_adjusted_metrics ... ok
+test inline::algorithm::tests::vertical_align_middle_uses_parent_x_height ... ok
+test inline::algorithm::tests::vertical_align_text_top_uses_parent_inline_metrics ... ok
+test inline::first_letter::tests::cjk_character ... ok
+test inline::algorithm::tests::text_fragment_has_nonzero_baseline_offset ... ok
+test inline::first_letter::tests::empty_text_returns_none ... ok
+test inline::first_letter::tests::first_letter_style_drop_cap ... ok
+test inline::first_letter::tests::has_first_letter_content_false ... ok
+test inline::algorithm::tests::wrapped_inline_fragments_have_first_and_last_continuations ... ok
+test inline::first_letter::tests::has_first_letter_content_true ... ok
+test inline::first_letter::tests::leading_whitespace_then_letter ... ok
+test inline::first_letter::tests::letter_with_both_punctuation ... ok
+test inline::first_letter::tests::letter_with_leading_punctuation ... ok
+test inline::first_letter::tests::letter_with_trailing_punctuation ... ok
+test inline::first_letter::tests::multibyte_letter ... ok
+test inline::first_letter::tests::non_collapsible_spaces_join_a_following_first_letter ... ok
+test inline::first_letter::tests::first_letter_metrics_from_font_size ... ok
+test inline::first_letter::tests::number_as_first_letter ... ok
+test inline::first_letter::tests::open_bracket_then_letter ... ok
+test inline::first_letter::tests::punctuation_only_returns_none ... ok
+test inline::first_letter::tests::simple_letter ... ok
+test inline::first_letter::tests::split_first_letter_basic ... ok
+test inline::first_letter::tests::split_first_letter_with_punctuation ... ok
+test inline::first_letter::tests::whitespace_only_returns_none ... ok
+test inline::first_line::tests::default_overrides_produce_identical_style ... ok
+test inline::first_line::tests::effective_first_line_with_override ... ok
+test inline::first_line::tests::effective_first_line_without_override ... ok
+test inline::first_line::tests::first_line_property_list_completeness ... ok
+test inline::first_line::tests::font_size_override_applies ... ok
+test inline::first_line::tests::multiple_overrides_apply ... ok
+test inline::first_line::tests::resolve_first_line_returns_none_when_absent ... ok
+test inline::first_line::tests::resolve_first_line_returns_some_when_present ... ok
+test inline::initial_letter::tests::available_width_clamped_to_zero ... ok
+test inline::initial_letter::tests::available_width_reduced ... ok
+test inline::initial_letter::tests::initial_letter_compute_height ... ok
+test inline::initial_letter::tests::create_initial_letter_style_sets_font_size ... ok
+test inline::initial_letter::tests::initial_letter_effective_sink ... ok
+test inline::initial_letter::tests::drop_cap_3_lines ... ok
+test inline::initial_letter::tests::initial_letter_sink_offset ... ok
+test inline::initial_letter::tests::exclusion_for_raised_cap_only_first_line ... ok
+test inline::initial_letter::tests::line_exclusion_detection ... ok
+test inline::initial_letter::tests::exclusion_rect_basic ... ok
+test inline::initial_letter::tests::raised_cap_3_lines ... ok
+test inline::initial_letter::tests::sunken_cap_3_size_2_sink ... ok
+test inline::initial_letter::tests::validate_normal_values ... ok
+test inline::initial_letter::tests::validate_rejects_invalid ... ok
+test inline::initial_letter::tests::two_line_drop_cap ... ok
+test inline::items_builder::tests::atomic_inline_gets_bidi_level_from_rtl_context ... ok
+test inline::items_builder::tests::display_none_child_not_collected_in_ifc ... ok
+test inline::items_builder::tests::intrinsic_size_block_wider_than_inline_rows ... ok
+test inline::items_builder::tests::combining_grapheme_is_not_split_across_fallback_boundaries ... ok
+test inline::items_builder::tests::intrinsic_size_empty_block_with_border_counted ... ok
+test inline::items_builder::tests::intrinsic_size_empty_span_with_border_counted ... ok
+test inline::items_builder::tests::intrinsic_size_empty_span_with_padding_counted ... ok
+test inline::items_builder::tests::intrinsic_size_flex_children_use_max_not_sum ... ok
+test inline::items_builder::tests::intrinsic_size_flow_root_children_use_max ... ok
+test inline::items_builder::tests::intrinsic_size_applies_text_transform ... ok
+test inline::items_builder::tests::intrinsic_size_grid_children_use_max_not_sum ... ok
+test inline::items_builder::tests::intrinsic_size_inline_around_block_uses_max_not_sum ... ok
+test inline::items_builder::tests::intrinsic_size_collapses_whitespace_in_normal_mode ... ok
+test inline::items_builder::tests::intrinsic_size_inline_block_children_sum ... ok
+test inline::items_builder::tests::intrinsic_size_inline_row_flushed_before_block ... ok
+test inline::items_builder::tests::out_of_flow_child_not_collected_in_ifc ... ok
+test inline::items_builder::tests::intrinsic_size_normal_does_not_split_on_newlines ... ok
+test inline::items_builder::tests::unicode_bidi_controls_cover_embed_override_isolate_and_plaintext ... ok
+test inline::items_builder::tests::intrinsic_size_preline_splits_on_newlines ... ok
+test inline::items_builder::tests::unicode_bidi_isolate_override_injects_correct_chars ... ok
+test inline::items_builder::tests::intrinsic_size_pre_splits_on_newlines ... ok
+test inline::items_builder::tests::unicode_bidi_normal_does_not_inject_control_chars ... ok
+test inline::items_builder::tests::unicode_bidi_embed_ltr_affects_bidi_level ... ok
+test inline::items_builder::tests::intrinsic_size_skips_floated_child ... ok
+test inline::items_builder::tests::intrinsic_size_skips_display_none ... ok
+test inline::line_breaker::tests::atomic_inline_width_auto_adds_border_padding_to_intrinsic ... ok
+test inline::items_builder::tests::shaping_split_remaps_positioned_inline_static_placeholder ... ok
+test inline::items_builder::tests::intrinsic_size_skips_absolutely_positioned ... ok
+test inline::items_builder::tests::unicode_bidi_override_forces_direction ... ok
+test inline::line_breaker::tests::atomic_inline_width_border_box_does_not_double_add ... ok
+test inline::line_breaker::tests::atomic_inline_width_content_box_adds_border_padding ... ok
+test inline::items_builder::tests::mixed_script_fallback_and_vertical_orientation_boundaries_split_runs ... ok
+test inline::line_breaker::tests::break_all_respects_grapheme_clusters ... ok
+test inline::line_breaker::tests::chromium_url_breaks_at_hyphens_not_solidus_boundaries ... ok
+test inline::line_breaker::tests::find_break_opportunities_includes_soft_hyphens_in_manual_mode ... ok
+test inline::line_breaker::tests::hang_width_empty_line ... ok
+test inline::line_breaker::tests::character_break_complex_script_does_not_split_joining_sequence ... ok
+test inline::line_breaker::tests::collapsible_space_at_line_start_has_zero_advance ... ok
+test inline::line_breaker::tests::checkpoint_restore_rebreaks_the_same_text_at_a_wider_width ... ok
+test inline::line_breaker::tests::hang_width_non_text_last_item ... ok
+test inline::line_breaker::tests::hang_width_ideographic_space_prewrap ... ok
+test inline::line_breaker::tests::hang_width_ideographic_space_normal_strips ... ok
+test inline::line_breaker::tests::hang_width_mixed_spaces_prewrap ... ok
+test inline::line_breaker::tests::hang_width_no_trailing_spaces ... ok
+test inline::line_breaker::tests::hang_width_nonzero_for_prewrap_at_item_end ... ok
+test inline::line_breaker::tests::hang_width_nonzero_for_prewrap_mid_item ... ok
+test inline::line_breaker::tests::hang_width_only_spaces_prewrap ... ok
+test inline::line_breaker::tests::hang_width_tab_character_prewrap ... ok
+test inline::line_breaker::tests::hang_width_prewrap_multi_space ... ok
+test inline::line_breaker::tests::hang_width_zero_for_break_spaces ... ok
+test inline::line_breaker::tests::hang_width_zero_for_nowrap ... ok
+test inline::line_breaker::tests::inline_close_absorbs_bidi_shaping_run_rounding_excess ... ok
+test inline::line_breaker::tests::hang_width_zero_for_normal_whitespace ... ok
+test inline::line_breaker::tests::is_cjk_character_detection ... ok
+test inline::line_breaker::tests::hang_width_zero_for_pre ... ok
+test inline::line_breaker::tests::keep_all_allows_hyphen_breaks ... ok
+test inline::line_breaker::tests::hang_width_zero_for_preline ... ok
+test inline::line_breaker::tests::keep_all_allows_space_breaks ... ok
+test inline::line_breaker::tests::keep_all_suppresses_cjk_breaks ... ok
+test inline::line_breaker::tests::last_soft_hyphen_before_utility ... ok
+test inline::line_breaker::tests::hyphenation_engine_basic_operation ... ok
+test inline::line_breaker::tests::line_info_hang_width_default_is_zero ... ok
+test inline::line_breaker::tests::hyphenation_engine_css_limits ... ok
+test inline::line_breaker::tests::line_info_has_forced_hyphen_default_is_false ... ok
+test inline::line_breaker::tests::normal_line_break_keeps_apostrophe_contractions_together ... ok
+test inline::line_breaker::tests::line_breaker_hyphens_none_ignores_soft_hyphens ... ok
+test inline::line_breaker::tests::line_breaker_manual_mode_uses_soft_hyphens ... ok
+test inline::line_breaker::tests::pre_wrap_overflow_wrap_break_word_breaks_long_word ... ok
+test inline::line_breaker::tests::soft_hyphen_detection_utility ... ok
+test inline::line_breaker::tests::pre_wrap_wraps_before_newline ... ok
+test inline::line_breaker::tests::soft_hyphen_locations_in_text ... ok
+test inline::line_breaker::tests::oversized_first_word_resumes_at_following_whitespace_break ... ok
+test inline::line_breaker::tests::strip_soft_hyphens_for_display ... ok
+test inline::line_breaker::tests::line_breaker_auto_mode_uses_patterns ... ok
+test inline::line_breaker::tests::set_hyphens_configures_engine ... ok
+test inline::line_breaker::tests::strip_trailing_spaces_multi_space_at_item_end ... ok
+test inline::line_breaker::tests::strip_trailing_spaces_normal_at_item_end_trims_text_range ... ok
+test inline::line_breaker::tests::strip_trailing_spaces_pre_preserves_spaces_mid_item ... ok
+test inline::line_breaker::tests::strip_trailing_spaces_pre_wrap_hangs_spaces ... ok
+test inline::line_breaker::tests::test_allows_line_wrap ... ok
+test inline::line_breaker::tests::strip_trailing_spaces_prewrap_at_item_end_preserves_text_range ... ok
+test inline::line_breaker::tests::test_break_all ... ok
+test inline::line_breaker::tests::test_byte_to_char_offset_ascii ... ok
+test inline::line_breaker::tests::strip_trailing_spaces_trims_text_range_at_item_end ... ok
+test inline::line_breaker::tests::strip_trailing_spaces_single_space_at_item_end ... ok
+test inline::line_breaker::tests::test_byte_to_char_offset_multibyte ... ok
+test inline::line_breaker::tests::strip_trailing_spaces_trims_text_range_mid_item ... ok
+test inline::line_breaker::tests::test_find_space_breaks ... ok
+test inline::line_breaker::tests::test_find_uax14_breaks_hyphen ... ok
+test inline::line_breaker::tests::test_find_uax14_breaks_multiple_words ... ok
+test inline::line_breaker::tests::test_find_uax14_breaks_simple ... ok
+test inline::line_breaker::tests::test_has_forced_newline ... ok
+test inline::line_breaker::tests::vertical_atomic_inline_uses_height_and_logical_inline_edges ... ok
+test inline::line_width::tests::both_floats_narrow_from_both_sides ... ok
+test inline::line_width::tests::empty_exclusion_space_returns_full_width ... ok
+test inline::line_width::tests::float_taller_than_content_narrows_all_lines ... ok
+test inline::line_width::tests::full_height_line_advances_when_shelves_have_no_common_space ... ok
+test inline::line_width::tests::full_height_line_ignores_zero_height_float_at_its_start ... ok
+test inline::line_width::tests::full_height_line_uses_narrowest_future_shelf ... ok
+test inline::line_width::tests::full_height_line_wraps_at_zero_height_float_coordinate ... ok
+test inline::line_width::tests::left_float_narrows_from_left ... ok
+test inline::line_width::tests::next_float_bottom_visits_left_and_right_edges_in_order ... ok
+test inline::line_breaker::tests::whitespace_before_inline_keeps_a_fitting_hyphenated_prefix ... ok
+test inline::line_breaker::tests::whitespace_before_unbreakable_inline_rewinds_its_min_content_unit ... ok
+test inline::line_width::tests::next_float_bottom_without_floats_is_none ... ok
+test inline::line_width::tests::no_exclusion_space_returns_full_width ... ok
+test inline::line_width::tests::right_float_narrows_from_right ... ok
+test inline::score_line_breaker::tests::adjustment_ratio_perfect ... ok
+test inline::score_line_breaker::tests::adjustment_ratio_shrink ... ok
+test inline::score_line_breaker::tests::adjustment_ratio_stretch ... ok
+test inline::score_line_breaker::tests::badness_capped_at_10000 ... ok
+test inline::score_line_breaker::tests::badness_moderate_stretch ... ok
+test inline::score_line_breaker::tests::badness_perfect_fit ... ok
+test inline::score_line_breaker::tests::balance_mode_produces_balanced_lines ... ok
+test inline::score_line_breaker::tests::balance_score_perfectly_balanced ... ok
+test inline::score_line_breaker::tests::balance_score_unbalanced ... ok
+test inline::score_line_breaker::tests::does_not_require_scoring_wrap ... ok
+test inline::score_line_breaker::tests::fallback_for_long_paragraph ... ok
+test inline::score_line_breaker::tests::fitness_class_from_ratio ... ok
+test inline::score_line_breaker::tests::nowrap_mode_skips_scoring ... ok
+test inline::score_line_breaker::tests::requires_scoring_balance ... ok
+test inline::score_line_breaker::tests::requires_scoring_pretty ... ok
+test inline::score_line_breaker::tests::single_word_no_breaks ... ok
+test inline::score_line_breaker::tests::transition_penalty_adjacent ... ok
+test inline::score_line_breaker::tests::transition_penalty_non_adjacent ... ok
+test inline::score_line_breaker::tests::two_lines_simple ... ok
+test inline::score_line_breaker::tests::variance_empty ... ok
+test inline::score_line_breaker::tests::variance_nonzero ... ok
+test inline::score_line_breaker::tests::variance_uniform ... ok
+test inline::score_line_breaker::tests::wrap_mode_skips_scoring ... ok
+test inline::text_combine::tests::active_when_all_and_vertical ... ok
+test inline::text_combine::tests::centering_offset_when_narrower ... ok
+test inline::text_combine::tests::centering_offset_zero_when_compressed ... ok
+test inline::text_combine::tests::centering_offset_zero_when_exact ... ok
+test inline::text_combine::tests::combined_width_preserved ... ok
+test inline::text_combine::tests::date_day_single_digit ... ok
+test inline::text_combine::tests::date_month_two_digits ... ok
+test inline::text_combine::tests::empty_text ... ok
+test inline::text_combine::tests::exact_fit_no_compression ... ok
+test inline::text_combine::tests::fractional_font_size ... ok
+test inline::text_combine::tests::horizontal_mode_no_effect ... ok
+test inline::text_combine::tests::inactive_when_horizontal ... ok
+test inline::text_combine::tests::inactive_when_none ... ok
+test inline::text_combine::tests::inactive_when_none_and_horizontal ... ok
+test inline::text_combine::tests::inline_advance_equals_font_size ... ok
+test inline::text_combine::tests::large_font_size_less_compression ... ok
+test inline::text_combine::tests::layout_clone_and_copy ... ok
+test inline::text_combine::tests::layout_debug_format ... ok
+test inline::text_combine::tests::negative_font_size ... ok
+test inline::text_combine::tests::no_compression_single_char ... ok
+test inline::text_combine::tests::paint_transform_compressed ... ok
+test inline::text_combine::tests::paint_transform_horizontal_noop ... ok
+test inline::text_combine::tests::paint_transform_no_compression ... ok
+test inline::text_combine::tests::scale_factor_for_wide_text ... ok
+test inline::text_combine::tests::sideways_lr_no_effect ... ok
+test inline::text_combine::tests::sideways_rl_no_effect ... ok
+test inline::text_combine::tests::target_width_equals_font_size ... ok
+test inline::text_combine::tests::tiny_advance_large_centering ... ok
+test inline::text_combine::tests::two_digit_compression ... ok
+test inline::text_combine::tests::vertical_lr_activates ... ok
+test inline::text_combine::tests::vertical_offset_default_zero ... ok
+test inline::text_combine::tests::vertical_rl_activates ... ok
+test inline::text_combine::tests::very_long_text_extreme_compression ... ok
+test inline::text_combine::tests::year_four_digits ... ok
+test inline::text_combine::tests::zero_advance ... ok
+test inline::text_combine::tests::zero_font_size ... ok
+test intrinsic_sizing::tests::adjacent_inline_blocks_wrap_for_min_content_but_not_max_content ... ok
+test intrinsic_sizing::tests::cleared_float_starts_a_new_intrinsic_row ... ok
+test intrinsic_sizing::tests::degenerate_preferred_ratio_preserves_replaced_natural_ratio ... ok
+test intrinsic_sizing::tests::fit_content_minimum_preserves_both_intrinsic_endpoints ... ok
+test intrinsic_sizing::tests::collapsible_interior_whitespace_retains_one_advance ... ok
+test intrinsic_sizing::tests::intrinsic_calc_max_width_with_percentage_is_unconstrained ... ok
+test intrinsic_sizing::tests::intrinsic_calc_min_width_keeps_definite_term ... ok
+test intrinsic_sizing::tests::inline_flex_intrinsic_size_includes_negative_item_margin ... ok
+test intrinsic_sizing::tests::intrinsic_sizes_zero_default ... ok
+test intrinsic_sizing::tests::intrinsic_text_width_normalizes_backend_roundoff_at_layout_unit_boundaries ... ok
+test intrinsic_sizing::tests::forced_break_separates_float_intrinsic_rows ... ok
+test intrinsic_sizing::tests::collapsible_boundary_whitespace_does_not_inflate_intrinsic_width ... ok
+test intrinsic_sizing::tests::shrink_to_fit_uses_available_in_between ... ok
+test intrinsic_sizing::tests::shrink_to_fit_uses_max_when_available_exceeds ... ok
+test intrinsic_sizing::tests::max_content_combines_float_and_unbroken_inline_line ... ok
+test intrinsic_sizing::tests::shrink_to_fit_uses_min_when_available_too_small ... ok
+test intrinsic_sizing::tests::negative_inline_margin_cannot_invert_intrinsic_endpoints ... ok
+test intrinsic_sizing::tests::non_breaking_space_is_not_trimmed_as_css_whitespace ... ok
+test intrinsic_sizing::tests::line_break_anywhere_uses_character_min_content_opportunities ... ok
+test intrinsic_sizing::tests::text_min_content_widest_word ... ok
+test intrinsic_sizing::tests::vertical_inline_intrinsic_uses_atomic_height_and_forced_lines ... ok
+test intrinsic_sizing::tests::text_single_word_min_equals_max ... ok
+test intrinsic_sizing::tests::vertical_inline_intrinsic_maxes_normal_flow_block_children ... ok
+test intrinsic_sizing::tests::wrapped_flex_max_content_cannot_shrink_below_min_content ... ok
+test layout_result::tests::adjoining_object_types ... ok
+test layout_result::tests::bfc_offset_resolved_status ... ok
+test layout_result::tests::success_result_defaults ... ok
+test length_resolver::tests::resolve_auto ... ok
+test length_resolver::tests::resolve_calc_against_indefinite ... ok
+test intrinsic_sizing::tests::zero_column_width_does_not_add_hypothetical_min_content_gaps ... ok
+test length_resolver::tests::resolve_calc_percent_px ... ok
+test length_resolver::tests::resolve_calc_percent_px_positive_offset ... ok
+test length_resolver::tests::resolve_fixed ... ok
+test length_resolver::tests::resolve_none ... ok
+test length_resolver::tests::resolve_percent ... ok
+test length_resolver::tests::resolve_percent_against_indefinite ... ok
+test logical_geometry::tests::block_child_boundary_uses_computed_direction_and_transposes_both_bases ... ok
+test logical_geometry::tests::completed_logical_size_converts_to_physical_fragment_size ... ok
+test logical_geometry::tests::flex_child_boundary_preserves_parallel_axes ... ok
+test logical_geometry::tests::horizontal_projection_is_a_strict_no_op_for_sizes ... ok
+test logical_geometry::tests::sideways_lr_rtl_combines_line_flip_and_direction ... ok
+test logical_geometry::tests::vertical_rl_projection_swaps_axes_and_maps_edges ... ok
+test margin_collapsing::tests::absolute_is_bfc ... ok
+test margin_collapsing::tests::block_with_border_bottom_no_collapse ... ok
+test margin_collapsing::tests::block_with_border_top_no_collapse ... ok
+test margin_collapsing::tests::block_with_children_no_collapse ... ok
+test margin_collapsing::tests::block_with_line_boxes_no_collapse ... ok
+test margin_collapsing::tests::block_with_min_height_no_collapse ... ok
+test margin_collapsing::tests::empty_block_collapses_through ... ok
+test margin_collapsing::tests::empty_block_with_zero_height_collapses ... ok
+test margin_collapsing::tests::flex_is_bfc ... ok
+test margin_collapsing::tests::float_is_bfc ... ok
+test margin_collapsing::tests::flow_root_is_bfc ... ok
+test margin_collapsing::tests::inline_block_is_bfc ... ok
+test margin_collapsing::tests::normal_block_no_bfc ... ok
+test margin_collapsing::tests::overflow_hidden_is_bfc ... ok
+test margin_collapsing::tests::resolve_mixed ... ok
+test margin_collapsing::tests::resolve_negative_only ... ok
+test margin_collapsing::tests::resolve_positive_only ... ok
+test margin_collapsing::tests::resolve_zero ... ok
+test multicol::tests::balance_collapses_adjoining_margins_of_empty_blocks ... ok
+test multicol::tests::balance_equal_content ... ok
+test multicol::tests::balance_keeps_empty_block_start_strut_intact ... ok
+test multicol::tests::balance_uneven_content ... ok
+test multicol::tests::normal_gap_uses_the_font_used_pixel_size ... ok
+test multicol::tests::positions_round_cumulative_fractional_edges ... ok
+test multicol::tests::resolve_auto_auto ... ok
+test multicol::tests::resolve_only_count ... ok
+test multicol::tests::resolve_only_width ... ok
+test multicol::tests::resolve_zero_width_uses_minimum_fragmentainer_width ... ok
+test new_formatting_context::tests::absolute_position_creates_fc ... ok
+test new_formatting_context::tests::flex_creates_fc ... ok
+test new_formatting_context::tests::float_avoidance_no_floats ... ok
+test new_formatting_context::tests::float_avoidance_result_default ... ok
+test new_formatting_context::tests::float_creates_fc ... ok
+test new_formatting_context::tests::flow_root_creates_fc ... ok
+test new_formatting_context::tests::new_fc_constraint_space_has_fresh_exclusion_space ... ok
+test new_formatting_context::tests::new_fc_end_margin_strut_is_empty ... ok
+test new_formatting_context::tests::normal_inline_does_not_create_fc ... ok
+test new_formatting_context::tests::overflow_hidden_creates_fc ... ok
+test new_formatting_context::tests::root_always_creates_new_fc ... ok
+test out_of_flow::tests::negative_vertical_auto_margins_remain_symmetric ... ok
+test out_of_flow::tests::orthogonal_child_constraints_transpose_sizes_bases_and_fixed_flags ... ok
+test out_of_flow::tests::physical_auto_margins_and_overconstraint_follow_axis_start ... ok
+test out_of_flow::tests::physical_start_polarity_uses_the_complete_writing_direction ... ok
+test out_of_flow::tests::resolve_horizontal_all_specified ... ok
+test out_of_flow::tests::resolve_horizontal_auto_margins_center ... ok
+test out_of_flow::tests::resolve_vertical_all_specified ... ok
+test out_of_flow::tests::resolve_vertical_auto_height ... ok
+test relative::tests::bottom_only ... ok
+test out_of_flow::tests::shrink_to_fit_empty_doc ... ok
+test relative::tests::left_and_right_ltr_ignores_right ... ok
+test out_of_flow::tests::shrink_to_fit_negative_available_clamped ... ok
+test relative::tests::left_and_right_rtl_ignores_left ... ok
+test relative::tests::left_only ... ok
+test relative::tests::negative_offsets ... ok
+test relative::tests::nested_relative_positioning ... ok
+test relative::tests::percentage_offsets ... ok
+test relative::tests::relative_no_offsets ... ok
+test relative::tests::right_only ... ok
+test relative::tests::static_position_is_noop ... ok
+test relative::tests::top_and_bottom_ignores_bottom ... ok
+test relative::tests::top_and_left ... ok
+test relative::tests::top_only ... ok
+test ruby::layout::tests::annotation_size_is_font_times_line_height ... ok
+test ruby::layout::tests::annotation_size_zero_font ... ok
+test ruby::layout::tests::annotation_width_preserved ... ok
+test ruby::layout::tests::base_width_preserved ... ok
+test ruby::layout::tests::both_zero_width ... ok
+test ruby::layout::tests::center_equal_widths_zero_offsets ... ok
+test ruby::layout::tests::center_short_annotation ... ok
+test ruby::layout::tests::center_under_wide_base ... ok
+test ruby::layout::tests::center_wide_annotation ... ok
+test ruby::layout::tests::clamp_overhang_basic_excess ... ok
+test ruby::layout::tests::clamp_overhang_equal_widths ... ok
+test ruby::layout::tests::clamp_overhang_large_font_limits ... ok
+test ruby::layout::tests::clamp_overhang_limited_by_available_after ... ok
+test ruby::layout::tests::clamp_overhang_limited_by_available_before ... ok
+test ruby::layout::tests::clamp_overhang_limited_by_both_sides ... ok
+test ruby::layout::tests::clamp_overhang_negative_available_treated_as_zero ... ok
+test ruby::layout::tests::clamp_overhang_no_excess ... ok
+test ruby::layout::tests::clamp_overhang_zero_available ... ok
+test ruby::layout::tests::column_width_annotation_wider ... ok
+test ruby::layout::tests::column_width_equal_widths ... ok
+test ruby::layout::tests::column_width_is_max_of_base_and_annotation ... ok
+test ruby::layout::tests::fractional_widths ... ok
+test ruby::layout::tests::max_overhang_half_font_size ... ok
+test ruby::layout::tests::max_overhang_negative_font_clamped ... ok
+test ruby::layout::tests::negative_font_size_clamped ... ok
+test ruby::layout::tests::negative_widths_clamped_to_zero ... ok
+test ruby::layout::tests::over_position_negative_block_offset ... ok
+test ruby::layout::tests::over_position_with_large_font ... ok
+test ruby::layout::tests::overhang_asymmetric_available ... ok
+test ruby::layout::tests::overhang_with_small_excess ... ok
+test ruby::layout::tests::overhang_zero_font_size ... ok
+test ruby::layout::tests::ruby_info_clone_eq ... ok
+test ruby::layout::tests::ruby_info_construction ... ok
+test ruby::layout::tests::ruby_info_under_position ... ok
+test ruby::layout::tests::sideways_lr_produces_valid_layout ... ok
+test ruby::layout::tests::sideways_rl_produces_valid_layout ... ok
+test ruby::layout::tests::space_around_equal_widths ... ok
+test ruby::layout::tests::space_around_short_annotation ... ok
+test ruby::layout::tests::space_around_wide_annotation ... ok
+test ruby::layout::tests::space_between_offsets_are_zero ... ok
+test ruby::layout::tests::space_between_under_position ... ok
+test ruby::layout::tests::space_between_wide_annotation ... ok
+test ruby::layout::tests::start_align_over_position ... ok
+test ruby::layout::tests::start_align_under_position ... ok
+test ruby::layout::tests::start_offsets_are_zero ... ok
+test ruby::layout::tests::start_wide_annotation ... ok
+test ruby::layout::tests::under_position_annotation_size ... ok
+test ruby::layout::tests::under_position_zero_block_offset ... ok
+test ruby::layout::tests::vertical_lr_produces_valid_layout ... ok
+test ruby::layout::tests::vertical_rl_produces_valid_layout ... ok
+test ruby::layout::tests::very_large_widths ... ok
+test ruby::layout::tests::zero_width_annotation ... ok
+test ruby::layout::tests::zero_width_base ... ok
+test size_constraints::tests::box_sizing_border_box_clamps_negative ... ok
+test size_constraints::tests::box_sizing_border_box_subtracts ... ok
+test size_constraints::tests::box_sizing_content_box_no_change ... ok
+test size_constraints::tests::resolve_max_none_is_max ... ok
+test size_constraints::tests::resolve_max_percent ... ok
+test size_constraints::tests::resolve_min_auto_is_zero ... ok
+test size_constraints::tests::resolve_min_percent ... ok
+test size_constraints::tests::unconstrained_defaults ... ok
+test sticky::tests::axis_end_inset_sticks ... ok
+test sticky::tests::axis_no_insets_returns_zero ... ok
+test sticky::tests::axis_start_inset_sticks ... ok
+test sticky::tests::clamp_within_containing_block ... ok
+test sticky::tests::constraint_rect_none_is_all_none ... ok
+test sticky::tests::zero_sticky_movement_does_not_reposition_outside_containing_block ... ok
+test table::tests::auto_track_distribution_matches_chromium_max_guess_rounding ... ok
+test table::tests::auto_track_distribution_preserves_subpixel_remainder ... ok
+test table::tests::fixed_layout_distributes_remaining_track_space ... ok
+test table::tests::places_colspan_and_rowspan_without_overlap ... ok
+test table::tests::table_fixup_preserves_cell_runs_and_reorders_only_first_header_and_footer ... ok
+test table::tests::auto_table_width_honors_unbreakable_cell_min_content ... ok
+
+test result: ok. 669 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.90s
+
+     Running tests/advanced_text_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/advanced_text_tests-86c06f0ecb95a57f)
+
+running 60 tests
+test line_info_has_ellipsis_default_false ... ok
+test line_info_new_defaults ... ok
+test line_info_is_last_line ... ok
+test line_info_text_align_justify ... ok
+test line_info_remaining_width ... ok
+test line_info_remaining_negative_when_overflow ... ok
+test line_info_forced_break ... ok
+test line_info_remaining_zero_when_full ... ok
+test line_info_has_content_empty ... ok
+test line_info_has_content_with_text ... ok
+test spacing_empty_text_no_crash ... ok
+test spacing_letter_spacing_single_char ... ok
+test spacing_letter_spacing_increases_width ... ok
+test spacing_both_letter_and_word ... ok
+test spacing_word_spacing_only_affects_spaces ... ok
+test spacing_rtl_text_with_spacing ... ok
+test spacing_negative_letter_spacing ... ok
+test spacing_word_spacing_increases_width ... ok
+test spacing_multiple_spaces_word_spacing ... ok
+test spacing_zero_spacing_no_change ... ok
+test transform_capitalize_after_apostrophe ... ok
+test bidi_integration_rtl_text_align_end ... ok
+test text_indent_with_right_align ... ok
+test bidi_integration_ltr_with_bidi_level ... ok
+test text_indent_positive ... ok
+test text_indent_large_value ... ok
+test ellipsis_no_effect_when_fits ... ok
+test bidi_integration_rtl_direction ... ok
+test text_indent_negative_hanging ... ok
+test text_indent_auto_is_zero ... ok
+test text_indent_with_center_align ... ok
+test text_indent_zero_no_offset ... ok
+test text_indent_percentage ... ok
+test bidi_integration_ltr_layout ... ok
+test bidi_integration_rtl_right_alignment ... ok
+test transform_capitalize_after_hyphen ... ok
+test transform_capitalize_already_capitalized ... ok
+test text_indent_only_first_line ... ok
+test text_indent_does_not_affect_subsequent_lines ... ok
+test transform_capitalize_leading_spaces ... ok
+test transform_capitalize_multiple_spaces ... ok
+test transform_capitalize_simple ... ok
+test transform_capitalize_single_word ... ok
+test transform_empty_string ... ok
+test transform_full_width_ascii ... ok
+test transform_full_width_digits ... ok
+test transform_full_width_non_ascii_passthrough ... ok
+test transform_full_width_space ... ok
+test transform_lowercase_already_lower ... ok
+test transform_full_width_in_layout ... ok
+test transform_lowercase_simple ... ok
+test transform_none_unchanged ... ok
+test transform_integration_capitalize_in_layout ... ok
+test transform_unicode_uppercase_cafe ... ok
+test transform_unicode_uppercase_german_sharp_s ... ok
+test transform_integration_uppercase_in_layout ... ok
+test transform_uppercase_already_upper ... ok
+test transform_integration_with_line_breaking ... ok
+test transform_uppercase_mixed ... ok
+test transform_uppercase_simple ... ok
+
+test result: ok. 60 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running tests/edge_case_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/edge_case_tests-40b568cb0fdea1f5)
+
+running 30 tests
+test edge_empty_text_no_crash ... ok
+test edge_empty_string_shaped_zero_width ... ok
+test edge_empty_fragment_width ... ok
+test edge_block_layout_empty_text_no_crash ... ok
+test edge_only_tabs_collapses ... ok
+test edge_only_spaces_collapses ... ok
+test edge_only_newlines_collapses ... ok
+test edge_rtl_direction_produces_fragment ... ok
+test edge_rtl_text_align_start_offsets_right ... ok
+test edge_mixed_tiny_and_normal_text ... ok
+test edge_single_char_produces_text_fragment ... ok
+test edge_line_height_much_larger_than_font ... ok
+test edge_block_layout_multiple_paragraphs ... ok
+test edge_line_height_less_than_font_no_crash ... ok
+test edge_single_char_positive_line_height ... ok
+test edge_multiple_text_nodes_combined ... ok
+test edge_layout_at_width_zero_no_crash ... ok
+test edge_large_indent_with_center_alignment_no_crash ... ok
+test edge_alternating_text_and_spaces ... ok
+test edge_single_very_long_word ... ok
+test edge_ltr_text_in_rtl_paragraph_renders ... ok
+test edge_narrow_container_forces_wrapping ... ok
+test edge_ten_text_nodes_all_contribute ... ok
+test edge_text_empty_text_merges ... ok
+test edge_100_words_many_lines ... ok
+test edge_unicode_single_char_produces_layout ... ok
+test edge_very_small_font_layout_succeeds ... ok
+test edge_whitespace_between_words_single_line ... ok
+test edge_500_words_no_crash ... ok
+test edge_very_large_text_content ... ok
+
+test result: ok. 30 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.65s
+
+     Running tests/flex_alignment.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/flex_alignment-e4b2b387eb55ac06)
+
+running 80 tests
+test ac_flex_start ... ok
+test ac_flex_end_column ... ok
+test ac_space_between_2_lines ... ok
+test ac_with_row_gap ... ok
+test ac_flex_start_single_line ... ok
+test ac_center_diff_line_heights ... ok
+test ac_space_evenly_2_lines ... ok
+test ac_stretch ... ok
+test ac_wrap_reverse ... ok
+test ac_flex_end_with_row_gap ... ok
+test ac_space_between_3_lines ... ok
+test ac_center_column ... ok
+test ac_space_between_column ... ok
+test ac_space_around_2_lines ... ok
+test ac_space_around_3_lines ... ok
+test ac_flex_end ... ok
+test ac_stretch_explicit_height ... ok
+test ac_center ... ok
+test ac_center_wrap_reverse ... ok
+test ac_space_between_single_line ... ok
+test ai_center ... ok
+test ai_center_column ... ok
+test ai_center_column_reverse ... ok
+test ai_center_diff_heights ... ok
+test ai_center_with_margins ... ok
+test ai_center_row_reverse ... ok
+test ai_center_with_wrap ... ok
+test ai_flex_end ... ok
+test ai_flex_end_column ... ok
+test ai_flex_end_diff_heights ... ok
+test ai_flex_start ... ok
+test ai_flex_end_varying_heights ... ok
+test ai_flex_start_column ... ok
+test ai_flex_start_with_border ... ok
+test ai_flex_start_varying_heights ... ok
+test ai_stretch_auto_height ... ok
+test ai_stretch_column ... ok
+test ai_stretch_explicit_height ... ok
+test ai_stretch_with_padding ... ok
+test as_all_different ... ok
+test ai_stretch_with_wrap ... ok
+test as_auto_inherits_align_items ... ok
+test as_center_one_others_stretch ... ok
+test as_center_multiline ... ok
+test as_center_with_margins ... ok
+test as_column_direction ... ok
+test as_flex_end_in_flex_start_container ... ok
+test as_flex_start_in_center_container ... ok
+test as_flex_end_with_border ... ok
+test as_in_row_reverse ... ok
+test as_override_single ... ok
+test as_multiple_unique ... ok
+test as_stretch_auto_cross ... ok
+test as_stretch_in_center_container ... ok
+test as_stretch_explicit_cross ... ok
+test jc_center_column ... ok
+test jc_center ... ok
+test jc_center_different_sizes ... ok
+test jc_center_single_item ... ok
+test jc_center_with_column_gap ... ok
+test jc_flex_end ... ok
+test jc_flex_end_column ... ok
+test jc_flex_end_with_margins ... ok
+test jc_flex_start_default ... ok
+test jc_flex_start_with_gap ... ok
+test jc_no_free_space ... ok
+test jc_overflow ... ok
+test jc_row_reverse ... ok
+test jc_space_around_2_items ... ok
+test jc_space_around_1_item ... ok
+test jc_space_around_3_items ... ok
+test jc_space_between_1_item ... ok
+test jc_space_between_3_items ... ok
+test jc_space_between_2_items ... ok
+test jc_space_between_unequal ... ok
+test jc_space_between_column ... ok
+test jc_space_between_with_gap ... ok
+test jc_space_evenly_1_item ... ok
+test jc_space_evenly_2_items ... ok
+test jc_space_evenly_3_items ... ok
+
+test result: ok. 80 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running tests/flex_direction_wrap.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/flex_direction_wrap-f774ac200f703550)
+
+running 88 tests
+test auto_margin_both_centers ... ok
+test auto_margin_left_second_item ... ok
+test auto_margin_left_pushes_right ... ok
+test auto_margin_with_flex_grow ... ok
+test dir_column_items_top_to_bottom ... ok
+test auto_margin_left_first_right_last ... ok
+test auto_margin_top_in_row ... ok
+test auto_margins_in_column_direction ... ok
+test dir_column_explicit_width_no_stretch ... ok
+test auto_margin_overrides_justify_content ... ok
+test dir_column_five_items ... ok
+test dir_column_grow_distributes_height ... ok
+test auto_margin_right_pushes_left ... ok
+test auto_margin_bottom_in_row ... ok
+test auto_margin_both_main_axis_centers ... ok
+test dir_column_auto_width_stretches ... ok
+test auto_margin_top_bottom_centers_vertically ... ok
+test auto_margin_no_free_space ... ok
+test auto_margin_cross_axis_different_heights ... ok
+test auto_margins_multiple_items ... ok
+test dir_column_justify_center ... ok
+test dir_column_reverse_justify_center ... ok
+test dir_column_reverse_items_bottom_to_top ... ok
+test dir_column_reverse_positions_mirrored ... ok
+test dir_column_space_between ... ok
+test dir_row_different_sized_items ... ok
+test dir_column_reverse_with_grow ... ok
+test dir_row_five_items ... ok
+test dir_row_height_is_cross_axis ... ok
+test dir_row_items_left_to_right ... ok
+test dir_row_reverse_items_right_to_left ... ok
+test dir_row_reverse_positions_mirrored ... ok
+test dir_row_reverse_three_different_sizes ... ok
+test dir_row_reverse_space_between ... ok
+test dir_row_reverse_with_grow ... ok
+test gap_both_in_wrap ... ok
+test gap_column_gap_in_row ... ok
+test gap_column_gap_in_wrap ... ok
+test gap_explicit_zero ... ok
+test gap_in_column_flex ... ok
+test gap_in_column_reverse ... ok
+test gap_in_row_reverse ... ok
+test gap_larger_than_container ... ok
+test gap_larger_than_free_space ... ok
+test gap_row_gap_in_column ... ok
+test gap_row_gap_in_wrap ... ok
+test gap_single_item_no_gap ... ok
+test gap_with_flex_grow ... ok
+test gap_with_two_items ... ok
+test gap_with_space_between ... ok
+test nowrap_items_overflow ... ok
+test order_all_same_dom_preserved ... ok
+test order_default_dom_order ... ok
+test order_equal_preserves_dom_order ... ok
+test order_five_items_various ... ok
+test order_mixed_positive_negative ... ok
+test explicit_physical_item_sizes_survive_all_orthogonal_flex_axis_mappings ... ok
+test order_negative_comes_first ... ok
+test order_reorder_three_items ... ok
+test order_only_one_nonzero ... ok
+test order_with_row_reverse ... ok
+test order_with_wrap ... ok
+test orthogonal_stretch_transfers_aspect_ratio_through_the_border_box ... ok
+test orthogonal_center_and_stretch_keep_the_resolved_physical_cross_size ... ok
+test horizontal_rtl_flex_flow_places_items_by_logical_main_and_cross_axes ... ok
+test vertical_column_auto_block_size_uses_physical_width_as_main_size ... ok
+test vertical_column_wrap_flexes_each_physical_row_independently ... ok
+test wrap_column_with_explicit_height ... ok
+test wrap_column_wraps_to_next_column ... ok
+test wrap_cross_axis_positions_of_lines ... ok
+test wrap_different_sizes_line_composition ... ok
+test orthogonal_intrinsic_min_max_and_fit_content_select_the_physical_axis ... ok
+test wrap_each_item_own_line ... ok
+test wrap_items_exactly_fill_lines ... ok
+test wrap_items_wrap_to_next_line ... ok
+test wrap_items_with_margins ... ok
+test wrap_reverse_column ... ok
+test wrap_reverse_items_wrap_upward ... ok
+test wrap_reverse_line_order_reversed ... ok
+test wrap_reverse_with_align_content_center ... ok
+test wrap_single_item_no_wrapping ... ok
+test wrap_six_items_three_lines_of_two ... ok
+test wrap_two_on_first_one_wraps ... ok
+test wrap_with_both_gaps ... ok
+test wrap_with_column_gap ... ok
+test wrap_with_row_gap ... ok
+test wrap_with_flex_grow ... ok
+test vertical_flex_flow_places_cmyk_items_by_logical_main_and_cross_axes ... ok
+
+test result: ok. 88 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+     Running tests/flex_edge_cases.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/flex_edge_cases-67413cae76d386b8)
+
+running 80 tests
+test c1_05_min_width_with_flex_grow ... ok
+test c1_14_min_and_max_range_on_same_item ... ok
+test c1_06_max_width_with_flex_grow_extra_to_others ... ok
+test c1_07_min_height_column_flex ... ok
+test c2_05_flex_shrink_with_padding ... ok
+test c1_04_max_width_smaller_than_basis ... ok
+test c1_15_min_greater_than_max_min_wins ... ok
+test c1_12_multiple_one_with_min_one_without ... ok
+test c1_13_all_items_max_width_grow_stops ... ok
+test c1_03_min_width_larger_than_basis ... ok
+test c1_11_min_width_overflows_container ... ok
+test c1_02_max_width_prevents_grow ... ok
+test c2_02_item_border_increases_size ... ok
+test c2_03_item_padding_border_width ... ok
+test c1_10_max_width_equals_basis_no_growth ... ok
+test c2_01_item_padding_increases_size ... ok
+test c1_09_min_width_zero_allows_shrink ... ok
+test c2_04_flex_grow_with_padding ... ok
+test c1_08_max_height_column_flex ... ok
+test c1_01_min_width_prevents_shrink ... ok
+test c2_06_container_padding_shifts_items ... ok
+test c2_07_container_border_shifts_items ... ok
+test c2_09_container_border_plus_padding ... ok
+test c2_08_container_padding_and_item_padding ... ok
+test c2_10_asymmetric_padding ... ok
+test c2_11_padding_column_direction ... ok
+test c2_12_border_column_direction ... ok
+test c2_13_container_border_justify_center ... ok
+test c2_15_item_border_with_margins ... ok
+test c2_14_container_padding_align_center ... ok
+test c3_01_flex_inside_flex ... ok
+test c3_02_inner_flex_grows ... ok
+test c3_03_column_inside_row ... ok
+test c3_04_row_inside_column ... ok
+test c3_05_nested_different_justify ... ok
+test c3_06_nested_different_align ... ok
+test c3_07_three_levels ... ok
+test c3_08_inner_wrap_inside_outer ... ok
+test c3_09_inner_flex_sized_by_content ... ok
+test c3_10_nested_grow_at_both_levels ... ok
+test c4_01_block_layout_dispatches_flex ... ok
+test c4_02_block_layout_block_display ... ok
+test c4_04_block_layout_flex_column ... ok
+test c4_03_block_flex_matches_flex_layout ... ok
+test c5_01_empty_flex_container ... ok
+test c4_05_block_layout_wrapped_flex ... ok
+test c5_02_single_item ... ok
+test c5_04_single_item_centered ... ok
+test c5_05_all_auto_sized_items ... ok
+test c5_03_single_item_grow_fills ... ok
+test c5_06_zero_size_items ... ok
+test c5_07_zero_width_container ... ok
+test c5_08_zero_height_container ... ok
+test c5_09_very_large_container ... ok
+test c5_10_very_small_container ... ok
+test c6_01_item_width_50_percent ... ok
+test c6_02_item_width_100_percent ... ok
+test c6_03_two_percentage_items ... ok
+test c6_05_percentage_margin ... ok
+test c6_04_percentage_flex_basis ... ok
+test c6_06_percentage_padding ... ok
+test c6_07_percentage_width_column ... ok
+test c6_09_percentages_over_100 ... ok
+test c6_08_percentage_height_column ... ok
+test c6_10_percentage_with_min_width ... ok
+test c7_01_navigation_bar ... ok
+test c7_03_sidebar_layout ... ok
+test c7_04_grid_like_wrap ... ok
+test c7_02_card_layout ... ok
+test c7_05_holy_grail_layout ... ok
+test c7_06_toolbar_with_gap ... ok
+test c7_07_form_layout ... ok
+test c7_08_centering_single_item ... ok
+test c7_10_responsive_cards_wrap ... ok
+test c7_09_equal_height_columns ... ok
+test c7_12_split_button ... ok
+test c7_11_footer_at_bottom ... ok
+test c7_14_tab_bar_equal ... ok
+test c7_13_breadcrumbs_with_gap ... ok
+test c7_15_dashboard_percentage_wrap ... ok
+
+test result: ok. 80 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running tests/flex_fixes_validation.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/flex_fixes_validation-4b6aff5e64e640c5)
+
+running 28 tests
+test column_wrap_intrinsic_width ... ok
+test gap_not_before_first_or_after_last ... ok
+test align_center_positions_correctly ... ok
+test column_wrap_two_items_per_column ... ok
+test column_wrap_with_gap_between_lines ... ok
+test align_self_column_flex ... ok
+test column_wrap_line_cross_offset ... ok
+test align_stretch_with_margins ... ok
+test align_self_override ... ok
+test gap_does_not_participate_in_grow ... ok
+test gap_single_item_no_gap ... ok
+test align_center_in_multiline ... ok
+test gap_row_gap_between_lines ... ok
+test align_stretch_explicit_height_no_stretch ... ok
+test gap_in_column_flex ... ok
+test align_stretch_fills_line_cross_size ... ok
+test column_wrap_basic ... ok
+test gap_column_gap_basic ... ok
+test align_flex_end_positions_at_bottom ... ok
+test gap_with_space_between ... ok
+test gap_with_wrap_both_gaps ... ok
+test min_auto_column_flex_min_height ... ok
+test min_auto_clamp_by_specified_size ... ok
+test min_auto_explicit_min_width_zero ... ok
+test min_auto_overflow_hidden_allows_shrink ... ok
+test min_auto_overflow_scroll_allows_shrink ... ok
+test min_auto_prevents_shrink_below_content ... ok
+test inline_children_max_content_sums ... ok
+
+test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/flex_grow_shrink.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/flex_grow_shrink-918d3ae706e3bdf3)
+
+running 81 tests
+test basis_zero_all_space_distributable ... ok
+test basis_plus_shrink ... ok
+test basis_auto_with_margin ... ok
+test basis_auto_no_width_empty_div ... ok
+test basis_auto_with_padding ... ok
+test basis_larger_than_container ... ok
+test basis_min_width_interaction ... ok
+test basis_zero_grow_one_equal_widths ... ok
+test basis_auto_uses_width ... ok
+test basis_auto_width_auto_both ... ok
+test basis_three_different_values ... ok
+test basis_zero_column_direction ... ok
+test basis_column_direction ... ok
+test basis_percent ... ok
+test basis_plus_grow ... ok
+test basis_zero_grow_one_all_equal ... ok
+test basis_overrides_width ... ok
+test basis_auto_with_border ... ok
+test basis_max_width_interaction ... ok
+test basis_specific_px ... ok
+test container_exact_match_basis_sum ... ok
+test container_very_large_width ... ok
+test container_zero_width ... ok
+test flex_auto_shorthand ... ok
+test exact_fit_no_grow_no_shrink ... ok
+test flex_none_shorthand ... ok
+test grow_all_zero_no_growth ... ok
+test flex_one_shorthand ... ok
+test grow_and_shrink_same_item_negative_space ... ok
+test grow_and_shrink_same_item_positive_space ... ok
+test grow_column_direction ... ok
+test grow_five_items_varied ... ok
+test grow_fractional_values ... ok
+test grow_large_ratio_1000_to_1 ... ok
+test grow_max_width_truncates_growth ... ok
+test grow_row_reverse ... ok
+test grow_single_item_fills_remaining ... ok
+test grow_single_item_in_container ... ok
+test grow_three_items_weighted_1_2_1 ... ok
+test grow_two_items_equal_split ... ok
+test grow_with_border_padding ... ok
+test grow_with_column_gap ... ok
+test grow_with_flex_basis ... ok
+test grow_with_margins ... ok
+test grow_with_max_width ... ok
+test grow_with_min_width ... ok
+test grow_with_width_basis_auto ... ok
+test grow_with_wrap_only_within_line ... ok
+test grow_with_zero_basis ... ok
+test grow_zero_items_dont_grow ... ok
+test inflexible_items_grow0_shrink0 ... ok
+test mix_some_grow_others_fixed_basis ... ok
+test multiple_rounds_min_max ... ok
+test rounding_100px_among_3_items ... ok
+test negative_free_all_shrink_zero_overflow ... ok
+test rounding_odd_free_space ... ok
+test shrink_all_zero_overflow ... ok
+test shrink_basis_zero_no_shrink ... ok
+test shrink_column_direction ... ok
+test shrink_doesnt_apply_in_wrap ... ok
+test shrink_equal ... ok
+test shrink_factor_times_basis_weighting ... ok
+test shrink_large_items_proportionally ... ok
+test shrink_min_width_floor ... ok
+test shrink_mixed_values ... ok
+test shrink_one_frozen_two_shrink ... ok
+test shrink_one_hits_min_redistributes ... ok
+test shrink_row_reverse ... ok
+test shrink_single_item ... ok
+test shrink_to_zero ... ok
+test shrink_weighted_1_2_1 ... ok
+test shrink_with_border_padding ... ok
+test shrink_with_gap_reducing_space ... ok
+test shrink_with_margins ... ok
+test shrink_with_max_width_already_within ... ok
+test shrink_with_min_width_preventing_full_shrink ... ok
+test shrink_zero_items_dont_shrink ... ok
+test small_basis_large_grow ... ok
+test some_grow_some_dont ... ok
+test tiny_free_space_1px ... ok
+test very_large_container ... ok
+
+test result: ok. 81 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+     Running tests/flex_wpt_spec.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/flex_wpt_spec-d0975b6d43cccf58)
+
+running 80 tests
+test spec_9_3_collect_into_lines_nowrap ... ok
+test spec_5_4_order_with_reverse ... ok
+test spec_9_3_initial_free_space ... ok
+test spec_9_3_line_free_space_negative ... ok
+test spec_9_2_cross_size_row ... ok
+test spec_9_3_gap_reduces_available_space ... ok
+test spec_9_2_hypothetical_size_clamped_by_max ... ok
+test spec_5_4_order_ties_use_dom_order ... ok
+test spec_9_2_cross_size_column ... ok
+test spec_9_2_hypothetical_size_clamped_by_min ... ok
+test spec_9_2_determine_main_size_row ... ok
+test spec_5_4_order_with_wrap ... ok
+test spec_9_2_flex_basis_auto_with_width ... ok
+test spec_5_4_order_affects_layout ... ok
+test spec_9_2_flex_basis_zero ... ok
+test spec_9_2_determine_main_size_column ... ok
+test spec_9_3_collect_into_lines_wrap ... ok
+test spec_5_4_order_negative_values ... ok
+test spec_9_2_flex_basis_auto_no_width ... ok
+test spec_9_2_flex_basis_definite ... ok
+test spec_9_3_line_free_space_positive ... ok
+test spec_9_3_multi_line_three_lines ... ok
+test spec_9_3_multi_line_two_lines ... ok
+test spec_9_3_remaining_free_space_after_grow ... ok
+test spec_9_3_remaining_free_space_after_shrink ... ok
+test spec_9_3_single_line_negative_free_space ... ok
+test spec_9_3_single_line_positive_free_space ... ok
+test spec_9_3_single_line_zero_free_space ... ok
+test spec_9_3_wrap_breaks_after_item_not_mid_item ... ok
+test spec_9_3_wrap_with_different_item_sizes ... ok
+test spec_9_4_align_items_center_positions ... ok
+test spec_9_4_align_items_flex_start_no_stretch ... ok
+test spec_9_4_align_items_flex_end_positions ... ok
+test spec_9_4_align_self_override ... ok
+test spec_9_4_column_cross_size ... ok
+test spec_9_4_cross_auto_margins ... ok
+test spec_9_4_line_cross_size_tallest_item ... ok
+test spec_9_4_cross_auto_margins_absorb_space ... ok
+test spec_9_4_line_height_with_margins ... ok
+test spec_9_4_multi_line_independent_cross_sizes ... ok
+test spec_9_4_no_stretch_explicit_cross_size ... ok
+test spec_9_4_stretch_auto_cross_size ... ok
+test spec_9_4_stretch_in_wrap ... ok
+test spec_9_4_stretch_respects_max ... ok
+test spec_9_5_justify_center ... ok
+test spec_9_4_stretch_respects_min ... ok
+test spec_9_5_justify_center_with_gap ... ok
+test spec_9_5_justify_flex_end ... ok
+test spec_9_5_justify_flex_start ... ok
+test spec_9_5_justify_overflow_flex_start ... ok
+test spec_9_5_justify_space_around ... ok
+test spec_9_5_justify_space_between ... ok
+test spec_9_5_justify_space_between_single_item ... ok
+test spec_9_5_justify_space_evenly ... ok
+test spec_9_6_align_content_center ... ok
+test spec_9_6_align_content_flex_end ... ok
+test spec_9_5_justify_with_auto_margins ... ok
+test spec_9_6_align_content_flex_start ... ok
+test spec_9_6_align_content_single_line ... ok
+test spec_9_6_align_content_space_around ... ok
+test spec_9_6_align_content_space_between ... ok
+test spec_9_6_align_content_space_evenly ... ok
+test spec_9_6_align_content_stretch ... ok
+test spec_9_6_align_content_wrap_reverse ... ok
+test spec_9_6_align_content_with_row_gap ... ok
+test spec_9_9_container_auto_height_row ... ok
+test spec_9_9_container_auto_height_row_wrap ... ok
+test spec_9_9_container_auto_width_column ... ok
+test spec_9_9_container_border_box ... ok
+test spec_9_9_container_border_shifts_content ... ok
+test spec_9_9_container_definite_height_column ... ok
+test spec_9_9_container_definite_width ... ok
+test spec_9_9_container_max_width_clamp ... ok
+test spec_9_9_container_min_width_clamp ... ok
+test spec_9_9_container_padding_shifts_content ... ok
+test spec_misc_all_basis_zero_grow_equal ... ok
+test spec_misc_empty_flex_container ... ok
+test spec_misc_flex_none_equivalent ... ok
+test spec_misc_flex_auto_equivalent ... ok
+test spec_misc_single_child ... ok
+
+test result: ok. 80 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+     Running tests/inline_items_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/inline_items_tests-b4388de167fd36cf)
+
+running 67 tests
+test collapse_whitespace_empty ... ok
+test collapse_spaces_preserve_newlines_empty ... ok
+test collapse_whitespace_newlines ... ok
+test collapse_whitespace_leading_trailing ... ok
+test collapse_whitespace_cr_and_ff ... ok
+test collapse_spaces_preserve_newlines_space_before_newline ... ok
+test collapse_whitespace_only_spaces ... ok
+test collapse_spaces_preserve_newlines_tabs_collapse ... ok
+test collapse_whitespace_basic ... ok
+test collapse_whitespace_multiple_spaces ... ok
+test collapse_whitespace_no_spaces ... ok
+test collapse_spaces_preserve_newlines_multiple_newlines ... ok
+test collapse_spaces_preserve_newlines_spaces_collapse ... ok
+test collapse_spaces_preserve_newlines_basic ... ok
+test collapse_whitespace_mixed ... ok
+test collapse_whitespace_single_space ... ok
+test collapse_whitespace_tabs ... ok
+test expand_tabs_basic_tab_size_8 ... ok
+test expand_tabs_mid_line ... ok
+test expand_tabs_no_tabs_returns_same ... ok
+test expand_tabs_resets_at_newline ... ok
+test expand_tabs_tab_size_4 ... ok
+test end_collapse_type_collapsible_for_trailing_space ... ok
+test bidi_level_rtl ... ok
+test end_collapse_type_not_collapsible_for_no_trailing_space ... ok
+test bidi_level_ltr_default ... ok
+test empty_text_node_produces_no_items ... ok
+test bidi_split_items_have_correct_levels ... ok
+test bidi_mixed_text_splits_into_runs ... ok
+test bidi_all_ltr_no_split ... ok
+test inline_block_produces_atomic_inline ... ok
+test multiple_spans_with_text ... ok
+test mixed_inline_elements_flatten_correctly ... ok
+test multiple_text_nodes_concatenate ... ok
+test multiple_text_nodes_have_separate_style_indices ... ok
+test nested_spans_produce_correct_order ... ok
+test newline_in_normal_mode_becomes_space ... ok
+test no_children_produces_empty_items ... ok
+test open_close_tag_bidi_level_rtl_with_span ... ok
+test open_close_tag_text_ranges_are_empty ... ok
+test pre_line_multiple_newlines_strip_intermediate_spaces ... ok
+test pre_line_strips_leading_spaces_after_newline ... ok
+test pre_line_collapses_spaces_keeps_newlines ... ok
+test pre_line_strips_tabs_after_newline ... ok
+test process_white_space_break_spaces ... ok
+test process_white_space_normal ... ok
+test process_white_space_nowrap ... ok
+test process_white_space_pre ... ok
+test process_white_space_pre_line ... ok
+test process_white_space_pre_line_with_newlines ... ok
+test process_white_space_pre_with_newlines ... ok
+test process_white_space_pre_wrap ... ok
+test span_produces_open_close_tags ... ok
+test pre_preserves_all_spaces ... ok
+test style_to_font_description_preserves_size ... ok
+test style_to_font_description_preserves_weight ... ok
+test style_index_references_correct_style ... ok
+test text_only_produces_text_item ... ok
+test text_ranges_are_correct_byte_offsets ... ok
+test text_shape_result_is_none_before_shaping ... ok
+test unicode_text_byte_offsets_correct ... ok
+test whitespace_collapsing_in_normal_mode ... ok
+test whitespace_only_text_normal_produces_single_space ... ok
+test shaped_text_has_nonzero_width ... ok
+test open_close_tags_have_no_shape_result ... ok
+test shaping_populates_shape_result ... ok
+test shaped_text_width_increases_with_more_text ... ok
+
+test result: ok. 67 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/inline_layout_advanced_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/inline_layout_advanced_tests-42c81c3aff5624a6)
+
+running 46 tests
+test adv_edge_empty_string_produces_zero_height ... ok
+test adv_edge_only_whitespace_minimal_layout ... ok
+test adv_line_height_two_nodes_tallest_wins ... ok
+test adv_edge_single_character_correct_line_box ... ok
+test adv_edge_very_wide_container_all_on_one_line ... ok
+test adv_bonus_vertical_align_percentage_differs_from_baseline ... ok
+test adv_bonus_pre_wrap_preserves_spaces ... ok
+test adv_line_height_large_number_multiplier ... ok
+test adv_bonus_nowrap_all_on_one_line ... ok
+test adv_mixed_nested_spans_render_text ... ok
+test adv_bonus_line_height_length_1px_very_compact ... ok
+test adv_line_height_length_100px ... ok
+test adv_mixed_multiple_text_nodes_concatenated ... ok
+test adv_edge_block_layout_fragment_width_matches_container ... ok
+test adv_edge_very_narrow_container_multiple_lines ... ok
+test adv_mixed_spans_different_font_sizes ... ok
+test adv_line_height_number_half_smaller_than_default ... ok
+test adv_line_height_number_zero_produces_minimal_height ... ok
+test adv_bonus_text_indent_zero_is_default ... ok
+test adv_line_height_percentage_50_smaller_than_normal ... ok
+test adv_mixed_text_before_and_after_span ... ok
+test adv_bonus_block_layout_wrapping_produces_taller_block ... ok
+test adv_mixed_text_empty_span_text ... ok
+test adv_multi_line_adjacent_lines ... ok
+test adv_multi_line_count_matches_expected ... ok
+test adv_multi_line_text_fragments_on_different_lines ... ok
+test adv_multi_line_same_height_same_font ... ok
+test adv_text_align_center_approximately_centered ... ok
+test adv_multi_line_three_lines_y_increases ... ok
+test adv_multi_line_height_grows_with_more_lines ... ok
+test adv_text_align_justify_single_line_not_stretched ... ok
+test adv_text_align_left_short_text_at_zero ... ok
+test adv_text_align_right_short_text_offset_positive ... ok
+test adv_text_align_start_with_rtl_direction ... ok
+test adv_text_indent_large_value_may_push_text_off ... ok
+test adv_text_indent_negative_shifts_first_line_left ... ok
+test adv_text_align_justify_two_words_wider_spacing ... ok
+test adv_text_indent_only_affects_first_line ... ok
+test adv_vertical_align_bottom_near_line_box_bottom ... ok
+test adv_text_indent_positive_shifts_first_line_right ... ok
+test adv_vertical_align_length_positive_shifts_up ... ok
+test adv_vertical_align_super_offset_differs_from_baseline ... ok
+test adv_text_indent_with_center_alignment ... ok
+test adv_vertical_align_top_near_line_box_top ... ok
+test adv_vertical_align_length_negative_shifts_down ... ok
+test adv_vertical_align_sub_offset_below_baseline ... ok
+
+test result: ok. 46 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running tests/inline_layout_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/inline_layout_tests-0ef9bf7362adb8dd)
+
+running 118 tests
+test inline_block_auto_width_no_children_still_zero ... ok
+test atomic_inline_auto_width_zero ... ok
+test atomic_inline_with_explicit_width_takes_space ... ok
+test edge_empty_text_node ... ok
+test inline_block_auto_width_deeply_nested_text ... ok
+test inline_block_auto_width_nested_text_nonzero ... ok
+test edge_only_whitespace ... ok
+test edge_single_character ... ok
+test edge_very_long_word_overflow ... ok
+test edge_tab_characters_collapse ... ok
+test edge_multiple_spaces_between_words ... ok
+test edge_mixed_latin_text ... ok
+test inline_block_explicit_height_respected ... ok
+test edge_zero_width_produces_many_lines ... ok
+test ellipsis_fragment_has_shape_result ... ok
+test ellipsis_fragment_exists_when_overflow_hidden ... ok
+test inline_block_bfc_contains_child_margin_top ... ok
+test inline_block_bfc_contains_child_margin_bottom ... ok
+test inline_block_auto_height_from_block_layout ... ok
+test inline_block_bfc_multiple_child_margins ... ok
+test edge_many_text_nodes ... ok
+test edge_unicode_text ... ok
+test inline_block_nested_text_full_layout_has_width ... ok
+test forced_break_after_overflowing_atomic_does_not_add_an_empty_line ... ok
+test inline_block_preserves_children_from_block_layout ... ok
+test inline_flex_auto_width_preserves_fixed_item_min_content_width ... ok
+test integration_block_with_only_block_children_unchanged ... ok
+test integration_block_with_border_and_text ... ok
+test integration_block_width_correct ... ok
+test integration_block_with_padding_and_text ... ok
+test integration_empty_block_still_works ... ok
+test integration_block_with_span_text ... ok
+test integration_block_with_text_has_height ... ok
+test integration_block_with_text_produces_content ... ok
+test integration_multiple_text_nodes ... ok
+test integration_nested_spans ... ok
+test integration_text_with_right_align ... ok
+test integration_two_blocks_one_inline_one_block ... ok
+test integration_viewport_with_text_block ... ok
+test justify_character_data_updated ... ok
+test justify_expands_space_glyph_advances ... ok
+test justify_multiple_spaces_expand_proportionally ... ok
+test integration_width_constraint_affects_wrapping ... ok
+test line_height_default_normal_produces_positive_height ... ok
+test line_height_explicit_px_value ... ok
+test line_height_explicit_number_multiplier ... ok
+test line_height_fragment_kind_is_text ... ok
+test line_height_half_leading_distributes_evenly ... ok
+test line_height_large_value_creates_tall_line ... ok
+test line_height_line_box_kind_is_box ... ok
+test line_height_line_box_width_equals_available ... ok
+test line_height_number_one_matches_font_metrics ... ok
+test line_height_percentage_value ... ok
+test line_height_multiple_fonts_tallest_wins ... ok
+test line_height_shape_result_attached ... ok
+test line_height_single_line_has_one_line_box ... ok
+test line_height_strut_from_parent_block_always_contributes ... ok
+test line_height_text_fragment_has_font_height ... ok
+test line_height_text_fragment_inside_line_box ... ok
+test line_height_zero_does_not_crash ... ok
+test line_height_text_has_positive_width ... ok
+test line_height_text_offset_within_line_box ... ok
+test multi_line_all_text_fragments_have_shape_results ... ok
+test multi_line_all_lines_have_text ... ok
+test multi_line_consistent_line_heights_same_font ... ok
+test multi_line_each_line_below_previous ... ok
+test multi_line_empty_text_produces_no_lines ... ok
+test multi_line_exact_fit_no_wrap ... ok
+test multi_line_different_font_sizes ... ok
+test multi_line_first_line_starts_at_top ... ok
+test multi_line_forced_break_creates_new_line ... ok
+test multi_line_last_line_bottom_equals_total_height ... ok
+test multi_line_line_boxes_span_available_width ... ok
+test multi_line_narrow_width_causes_many_lines ... ok
+test multi_line_height_grows_with_lines ... ok
+test multi_line_no_gap_between_text_fragments ... ok
+test multi_line_pre_whitespace_preserves_newlines ... ok
+test multi_line_text_fragments_ordered_horizontally ... ok
+test multi_line_total_height_is_sum_of_lines ... ok
+test multi_line_two_text_nodes_same_line ... ok
+test multi_line_width_does_not_exceed_available ... ok
+test text_align_center_offset_positive ... ok
+test multi_line_wrapping_at_available_width ... ok
+test text_align_default_is_start ... ok
+test text_align_end_ltr_is_right ... ok
+test text_align_justify_last_line_not_justified ... ok
+test text_align_end_rtl_is_left ... ok
+test text_align_justify_non_last_line_no_crash ... ok
+test text_align_center_is_between_left_and_right ... ok
+test text_align_does_not_affect_height ... ok
+test text_align_right_offset_positive ... ok
+test text_align_left_offset_zero ... ok
+test text_align_right_consistent_across_lines ... ok
+test text_align_start_ltr_is_left ... ok
+test text_align_start_rtl_is_right ... ok
+test text_align_with_overflow ... ok
+test vertical_align_baseline_default ... ok
+test vertical_align_bottom ... ok
+test vertical_align_does_not_change_inline_size ... ok
+test vertical_align_length_negative ... ok
+test vertical_align_length_positive ... ok
+test vertical_align_middle ... ok
+test vertical_align_mixed_on_same_line ... ok
+test vertical_align_preserves_text_content ... ok
+test vertical_align_percentage ... ok
+test vertical_align_length_zero_same_as_baseline ... ok
+test vertical_align_sub_different_from_baseline ... ok
+test vertical_align_sub_expands_line_box ... ok
+test vertical_align_sub_lowers_text ... ok
+test vertical_align_super_above_sub ... ok
+test vertical_align_super_raises_text ... ok
+test vertical_align_text_bottom ... ok
+test vertical_align_super_different_from_baseline ... ok
+test vertical_align_text_top ... ok
+test vertical_align_top ... ok
+test vertical_align_super_expands_line_box ... ok
+test wrapped_text_sub_range_character_count ... ok
+test wrapped_text_sub_range_not_full_run ... ok
+
+test result: ok. 118 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+
+     Running tests/line_break_property_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/line_break_property_tests-1fcc6451fbff6251)
+
+running 52 tests
+test computed_style_default_line_break_is_auto ... ok
+test computed_style_line_break_can_be_set ... ok
+test line_break_clone_copy ... ok
+test chinese_ideographs_normal_breaks ... ok
+test auto_same_as_normal_for_mixed ... ok
+test auto_same_as_normal_for_cjk ... ok
+test anywhere_empty_text_no_break ... ok
+test anywhere_breaks_between_every_cjk_char ... ok
+test anywhere_breaks_within_latin_word ... ok
+test anywhere_breaks_in_mixed_cjk_latin ... ok
+test anywhere_overrides_all_word_break_modes ... ok
+test anywhere_breaks_between_every_latin_char ... ok
+test anywhere_preserves_grapheme_clusters ... ok
+test anywhere_overrides_word_break_keep_all ... ok
+test anywhere_single_char_no_break ... ok
+test anywhere_overrides_word_break_normal ... ok
+test auto_same_as_normal_for_latin ... ok
+test line_break_debug_format ... ok
+test japanese_hiragana_strict_small_kana ... ok
+test japanese_katakana_prolonged_strict ... ok
+test chinese_with_comma_strict_vs_loose ... ok
+test line_break_default_is_auto ... ok
+test line_break_equality ... ok
+test line_break_initial_is_auto ... ok
+test line_break_repr_values ... ok
+test loose_allows_break_before_fullwidth_comma ... ok
+test loose_allows_break_before_fullwidth_period ... ok
+test loose_allows_break_before_ideographic_comma ... ok
+test loose_allows_break_before_ideographic_period ... ok
+test loose_more_breaks_than_strict_for_cjk ... ok
+test loose_preserves_normal_breaks ... ok
+test loose_with_keep_all_adds_loose_breaks ... ok
+test mixed_cjk_latin_anywhere_breaks_all ... ok
+test mixed_latin_cjk_normal_breaks ... ok
+test mixed_latin_cjk_strict_preserves_latin_breaks ... ok
+test normal_cjk_breaks_between_ideographs ... ok
+test normal_hyphen_break ... ok
+test normal_latin_space_breaks ... ok
+test strict_allows_latin_space_breaks ... ok
+test strict_allows_normal_cjk_breaks ... ok
+test strict_no_break_before_ideographic_comma ... ok
+test strict_no_break_before_ideographic_period ... ok
+test strict_no_break_before_iteration_mark_noma ... ok
+test strict_no_break_before_iteration_mark_vertical ... ok
+test strict_no_break_before_prolonged_sound_mark ... ok
+test strict_no_break_before_right_corner_bracket ... ok
+test strict_no_break_before_small_hiragana_a ... ok
+test strict_no_break_before_small_katakana_a ... ok
+test strict_with_break_all_still_restricts ... ok
+test strict_with_multiple_small_kana ... ok
+test linebreaker_anywhere_breaks_every_char ... ok
+test linebreaker_strict_prevents_break_before_chouon ... ok
+
+test result: ok. 52 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/line_breaking_advanced_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/line_breaking_advanced_tests-b0e9e8b54801c5bb)
+
+running 48 tests
+test infinite_width_used_width_positive ... ok
+test infinite_width_is_last_line ... ok
+test has_ellipsis_defaults_false ... ok
+test infinite_width_all_on_one_line ... ok
+test long_word_alone_first_line_has_content ... ok
+test available_width_stored_consistently_across_lines ... ok
+test each_line_has_positive_used_width ... ok
+test many_words_wrapping_naturally ... ok
+test is_last_line_true_only_on_final ... ok
+test overflow_wrap_break_word_with_break_all_interaction ... ok
+test long_word_overflow_wrap_normal_one_line ... ok
+test overflow_wrap_break_word_breaks_unbreakable_word ... ok
+test long_word_break_all_breaks_between_chars ... ok
+test long_word_overflow_wrap_break_word_multiple_lines ... ok
+test overflow_wrap_anywhere_breaks_mid_word_like_break_word ... ok
+test cjk_breaks_between_any_two_characters ... ok
+test cjk_keep_all_behavior ... ok
+test multiple_trailing_spaces_excluded ... ok
+test text_align_left_default ... ok
+test cjk_mixed_with_latin ... ok
+test overflow_wrap_normal_overflows_unbreakable_word ... ok
+test pre_line_wraps_long_content ... ok
+test overflow_wrap_break_word_prefers_word_boundaries ... ok
+test pre_wrap_newline_plus_soft_wrap ... ok
+test text_align_justify_propagated ... ok
+test text_align_right_propagated ... ok
+test trailing_space_does_not_add_extra_line ... ok
+test trailing_space_in_pre_preserved ... ok
+test three_words_each_on_own_line ... ok
+test white_space_nowrap_all_on_one_line ... ok
+test white_space_pre_breaks_at_explicit_newline ... ok
+test white_space_pre_line_collapses_spaces_but_breaks_at_newline ... ok
+test white_space_pre_multiple_newlines_each_creates_line ... ok
+test white_space_pre_no_word_wrap_break ... ok
+test white_space_normal_collapses_and_wraps ... ok
+test trailing_space_not_counted_in_used_width ... ok
+test word_boundary_break_after_period_in_sentence ... ok
+test word_boundary_break_at_hyphen_when_narrow ... ok
+test word_boundary_multiple_spaces_break_at_boundary ... ok
+test white_space_pre_wrap_breaks_at_newline_and_wraps ... ok
+test zero_width_every_word_separate_line ... ok
+test word_break_break_all_abcdef_width_for_three_chars ... ok
+test word_boundary_soft_hyphen_is_break_opportunity ... ok
+test word_boundary_non_breaking_space_prevents_break ... ok
+test word_break_break_all_splits_mid_word ... ok
+test word_break_normal_does_not_break_mid_word ... ok
+test word_break_break_all_produces_more_lines_than_normal ... ok
+test word_break_keep_all_latin_same_as_normal ... ok
+
+test result: ok. 48 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running tests/line_breaking_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/line_breaking_tests-b50ef3ad23ec4db3)
+
+running 60 tests
+test cjk_breaks_between_ideographs ... ok
+test cjk_three_chars_have_two_breaks ... ok
+test cjk_mixed_with_latin_breaks ... ok
+test empty_text_produces_no_lines ... ok
+test line_breaker_finished_on_empty ... ok
+test line_info_used_width_nonzero ... ok
+test line_has_content_returns_true_for_text ... ok
+test line_info_is_last_line_true_for_single_line ... ok
+test line_breaker_is_finished_after_all_consumed ... ok
+test available_width_stored_in_line_info ... ok
+test item_index_references_original_items ... ok
+test multiple_text_items_on_same_line ... ok
+test line_items_have_correct_item_type ... ok
+test inline_size_matches_used_width_single_item ... ok
+test long_word_overflows_if_first_on_line ... ok
+test break_at_hyphen ... ok
+test last_line_marker_multiline ... ok
+test line_info_is_last_line_false_for_first_of_multiple ... ok
+test break_all_unicode ... ok
+test line_info_has_forced_break_false_for_soft_break ... ok
+test available_width_exactly_matches_no_break ... ok
+test multiple_lines_correct_distribution ... ok
+test break_spaces_wraps ... ok
+test multiple_text_nodes_break_correctly ... ok
+test keep_all_only_breaks_at_spaces ... ok
+test only_whitespace_text ... ok
+test negative_width_available ... ok
+test pre_leading_newline ... ok
+test pre_line_newline_forces_break ... ok
+test pre_newline_forces_break ... ok
+test overflow_wrap_anywhere_breaks_mid_word ... ok
+test pre_multiple_newlines ... ok
+test overflow_wrap_break_word_breaks_mid_word ... ok
+test pre_trailing_newline ... ok
+test pre_line_wraps_at_spaces ... ok
+test pre_wrap_breaks_at_available_width ... ok
+test pre_wrap_preserves_spaces ... ok
+test remaining_width_correct ... ok
+test pre_wrap_breaks_at_spaces ... ok
+test shape_result_present_in_line_items ... ok
+test single_word_fits_on_line ... ok
+test span_open_close_on_same_line ... ok
+test second_text_item_causes_break ... ok
+test single_word_wide_available ... ok
+test text_align_is_propagated ... ok
+test text_items_have_text_range_on_line ... ok
+test single_character_per_line_break_all ... ok
+test two_words_fit_on_wide_line ... ok
+test trailing_space_stripped_from_split_item_at_end ... ok
+test three_words_three_lines ... ok
+test used_width_accumulates_across_items ... ok
+test white_space_nowrap_prevents_breaks ... ok
+test white_space_pre_preserves_newlines ... ok
+test whitespace_pre_no_wrap ... ok
+test two_words_break_when_narrow ... ok
+test zero_width_available_forces_content ... ok
+test trailing_space_stripped_from_full_item ... ok
+test word_break_break_all_breaks_between_characters ... ok
+test word_break_break_word_same_as_overflow_wrap_break_word ... ok
+test very_long_text_many_lines ... ok
+
+test result: ok. 60 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+
+     Running tests/sp11_round12_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round12_fix_tests-0b23d5324baafeb5)
+
+running 8 tests
+test cross_node_space_collapse_preserves_non_space_boundary ... ok
+test cross_node_trailing_leading_spaces_collapse_to_single ... ok
+test cross_node_prewrap_does_not_collapse_spaces ... ok
+test text_indent_with_text_align_center_content_centered_in_remaining ... ok
+test text_indent_with_text_align_right_no_overflow ... ok
+test inline_span_border_contributes_to_used_width ... ok
+test prewrap_forced_overlong_before_newline_no_extra_blank_line ... ok
+test inline_span_padding_causes_earlier_line_break ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/sp11_round16_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round16_fix_tests-ee17c837b19a4b72)
+
+running 6 tests
+test open_tag_percentage_padding_uses_containing_block_not_line_available ... ok
+test percentage_padding_on_inline_resolves_against_containing_block ... ok
+test ellipsis_trimming_does_not_split_grapheme_clusters ... ok
+test half_leading_preserves_subpixel_line_height_1_2_font_16 ... ok
+test rtl_ellipsis_at_start_via_line_breaker ... ok
+test rtl_narrow_container_ellipsis_at_start ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/sp11_round19_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round19_fix_tests-f5bcf6d2ea8fc3aa)
+
+running 7 tests
+test tab_expansion_position_dependent_not_column_count ... ok
+test tab_expansion_length_based_tab_size ... ok
+test tab_expansion_advance_based_with_larger_space ... ok
+test rtl_span_asymmetric_border_uses_correct_side ... ok
+test rtl_span_asymmetric_padding_inline_start_is_right ... ok
+test justify_prewrap_multiple_trailing_spaces_not_expanded ... ok
+test justify_single_trailing_space_not_expanded ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/sp11_round20_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round20_fix_tests-ceaf434badbcf7dd)
+
+running 20 tests
+test int_line_spacing_zero_gap ... ok
+test int_ascent_rounds_half_up ... ok
+test int_line_spacing_rounds_sum ... ok
+test int_ascent_rounds_to_nearest ... ok
+test tab_expansion_proportional_wide_chars ... ok
+test tab_expansion_proportional_narrow_chars ... ok
+test tab_expansion_uniform_width_matches_old_behavior ... ok
+test capitalize_titlecase_digraph_identity ... ok
+test capitalize_1st_no_spurious_cap ... ok
+test capitalize_armenian_ligature ... ok
+test capitalize_digit_then_space_then_word ... ok
+test capitalize_leading_digits_in_word ... ok
+test capitalize_eszett_to_ss ... ok
+test bidi_visual_reorder_even_levels_no_reversal ... ok
+test cross_node_normal_spaces_still_collapse ... ok
+test bidi_reorder_all_even_levels_preserves_order ... ok
+test cross_node_pre_space_does_not_collapse_next ... ok
+test justify_exclude_trailing_spaces ... ok
+test justify_exclude_all_trailing ... ok
+test justify_accumulator_precision_no_drift ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/sp11_round21_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round21_fix_tests-0fde45930f2ca65e)
+
+running 12 tests
+test half_leading_floor_ceil_snap_total_equals_line_height ... ok
+test atomic_inline_percentage_width_resolves ... ok
+test half_leading_ascent_uses_floor ... ok
+test text_align_last_auto_falls_back_to_start ... ok
+test text_align_last_center_on_last_line ... ok
+test text_justify_none_suppresses_justification ... ok
+test atomic_inline_auto_with_min_width_uses_floor ... ok
+test atomic_inline_max_width_clamps ... ok
+test text_justify_inter_word_counts_spaces ... ok
+test text_justify_inter_character_counts_all_gaps ... ok
+test div_display_inline_creates_inline_box_not_atomic ... ok
+test div_display_inline_block_still_atomic ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/sp11_round22_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round22_fix_tests-1c968db549f2e785)
+
+running 6 tests
+test text_align_last_mapping_logic_comprehensive ... ok
+test text_align_last_end_with_text_align_start ... ok
+test text_align_last_auto_with_non_justify_preserves_text_align ... ok
+test text_align_last_center_with_text_align_left ... ok
+test inter_character_justify_single_item_expands_shape ... ok
+test inter_character_justify_boundary_gaps_between_items ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/sp11_round23_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round23_fix_tests-6f899e1d11a1c6f5)
+
+running 5 tests
+test computed_style_locale_defaults_to_none ... ok
+test style_to_font_description_locale_none_by_default ... ok
+test style_to_font_description_plumbs_locale ... ok
+test inter_char_justification_text_only_counts_internal_gaps ... ok
+test inter_char_justification_no_gap_across_atomic_inline ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/sp11_round24_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round24_fix_tests-e5877a166615a18d)
+
+running 7 tests
+test r24_auto_width_inline_block_no_children_zero_width ... ok
+test r24_auto_width_respects_min_width_floor ... ok
+test r24_atomic_inline_children_contain_text_fragments ... ok
+test r24_atomic_inline_with_text_child_has_children ... ok
+test r24_text_justify_auto_latin_uses_inter_word ... ok
+test r24_auto_width_inline_block_with_text_nonzero_width ... ok
+test r24_text_justify_auto_cjk_uses_inter_character ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/sp11_round28_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round28_fix_tests-2666adfdaa83e0a3)
+
+running 2 tests
+test r28_valign_percentage_uses_int_line_spacing_for_normal ... ok
+test r28_valign_percentage_consistent_with_explicit_length ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/sp11_round2_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round2_fix_tests-15141f927ed95de2)
+
+running 17 tests
+test atomic_inline_has_correct_width ... ok
+test atomic_inline_has_correct_height ... ok
+test bidi_ltr_text_remains_ltr_shaped ... ok
+test bidi_rtl_text_shaped_with_rtl_direction ... ok
+test ellipsis_not_applied_when_text_fits ... ok
+test trailing_space_at_item_end_stripped ... ok
+test bidi_mixed_text_items_split_and_shaped_correctly ... ok
+test atomic_inline_produces_box_fragment ... ok
+test ellipsis_fragment_has_text_content ... ok
+test ellipsis_clips_long_text_instead_of_removing ... ok
+test justification_excludes_trailing_space_from_expansion ... ok
+test ellipsis_fragment_exists_when_overflow ... ok
+test ellipsis_total_width_within_available ... ok
+test justification_last_line_not_expanded ... ok
+test justification_text_aligns_to_edges ... ok
+test trailing_space_mid_item_strip_reduces_width ... ok
+test trailing_space_strip_wrapping_consistency ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/sp11_round3_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round3_fix_tests-87180358f1b9438a)
+
+running 5 tests
+test atomic_inline_middle_splits_height ... ok
+test atomic_inline_tall_expands_line_height ... ok
+test trailing_space_multibyte_accented ... ok
+test ellipsis_inherits_parent_text_color ... ok
+test trailing_space_non_ascii_cafe ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/sp11_round4_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round4_fix_tests-7555cf842a3e2716)
+
+running 3 tests
+test atomic_inline_valign_bottom_at_line_bottom ... ok
+test atomic_inline_valign_top_at_line_top ... ok
+test atomic_inline_valign_middle_centered_around_baseline ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/sp11_round7_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round7_fix_tests-2a1c5c522f7e48f4)
+
+running 5 tests
+test narrow_box_ellipsis_still_shows_ellipsis ... ok
+test break_spaces_wrapping_preserves_space_at_line_end ... ok
+test break_spaces_preserves_trailing_spaces ... ok
+test atomic_inline_valign_length_shifted_above_baseline ... ok
+test atomic_inline_valign_percentage_shifted ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/sp11_round8_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round8_fix_tests-fc085d213eb85415)
+
+running 4 tests
+test atomic_inline_valign_percentage_uses_line_height_not_box_height ... ok
+test atomic_inline_valign_percentage_different_line_heights ... ok
+test atomic_inline_middle_small_centered ... ok
+test atomic_inline_middle_with_text_no_overflow_above ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/sp11_round9_fix_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp11_round9_fix_tests-18ecf29a5fa09df4)
+
+running 4 tests
+test atomic_inline_sub_line_expanded ... ok
+test atomic_inline_valign_negative_length_reduces_line_height ... ok
+test atomic_inline_text_top_no_overflow ... ok
+test atomic_inline_text_bottom_no_overflow ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/sp12_abspos_tests.rs (/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/sp12_abspos_tests-eae63a2ea7217ec6)
+
+running 20 tests

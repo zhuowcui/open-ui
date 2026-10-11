@@ -1,0 +1,98 @@
+{
+  "all_commands_terminal": true,
+  "immutable_probe_hashes": {
+    "/tmp/openui-cache-umbrella-build-v1289.py": "596c8b67096382796fbb0e51a670cd275df1bc9de8087659be83a99febbdaaef",
+    "/tmp/openui-cache-umbrella-guards-v1288.py": "91b41a1c6424b54db1bd1b2140e475c0d88077b012e696eda8ff8d20f1e80b60",
+    "/tmp/openui-cache-umbrella-matrices-v1290.py": "88bfcab9ba926690735e45ca838a4d6cf6e2fcb1b0d17050dadea893e31bab5b"
+  },
+  "inherits_intrinsic_or_lcd_trial_source": false,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "ordered_build_and_image_stages": true,
+  "owned_recording_causation_verified_on_this_rebase": false,
+  "prior_terminal_pipeline_sha256": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-pipeline-v1265/receipt.json": "e858a66175baab8ee7fee07eb8b66347f5da334f2f27e3f9c00373c60d8ed290",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-backends-pipeline-v1281/receipt.json": "7f956a806bd2caac2e61d0452bcbb3964a4e9f03365352fac25a3a9ab7e18e3e",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/scene-recording-cache-pipeline-v1233/receipt.json": "3efbbb2a9666f9c08640f95b4b9653ae5bb6444d23f24258c6a7d0f0babe6bb6"
+  },
+  "probe_sha256": "ac4a8f20adec117a65190d0ac539543c830ebb11f213188beaefb5964c34f17d",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "3ff5f8af8ad5442f636fd15a0299e23b5e8694da",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "07c441f963b5155bd83cfdd5b72b830f69b4cee635ec394f29c29917dff022fb",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "3ff5f8af8ad5442f636fd15a0299e23b5e8694da",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "07c441f963b5155bd83cfdd5b72b830f69b4cee635ec394f29c29917dff022fb",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "complete-requires-results-review",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-cache-umbrella-guards-v1288.py"
+      ],
+      "log_sha256": "ad51f42a65d601d01481297c0f65b5e482b6451e2edb44c23310970282ed8a60",
+      "name": "regression-guards",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-cache-umbrella-build-v1289.py"
+      ],
+      "log_sha256": "c9fd25ff2d10fd8681cee97a3696abe4c23be8c3254e76563bd8b4fc7a3c6c3f",
+      "name": "native-build",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-cache-umbrella-matrices-v1290.py",
+        "focused"
+      ],
+      "log_sha256": "910400bddca542b9ded89026ae86ef6a4f2c8551fd1a558dc1cf75098a039a22",
+      "name": "focused",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-cache-umbrella-matrices-v1290.py",
+        "primitive"
+      ],
+      "log_sha256": "898285f7b0b26ae82290c819af11dcf45ae032a5c40f4e15360d88ffba792c2d",
+      "name": "primitive",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-cache-umbrella-matrices-v1290.py",
+        "full"
+      ],
+      "log_sha256": "e19cd777c809d91791d1077ba582f9b87e4f8209173bf8875019b88c1ea018f1",
+      "name": "full",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-cache-umbrella-matrices-v1290.py",
+        "expanded"
+      ],
+      "log_sha256": "4a921bfe1576ebac7d1e410ea84994324d54b3c4f08fd153c2860b8f3fa2b92d",
+      "name": "expanded",
+      "observed_exit_code": 1
+    }
+  ]
+}

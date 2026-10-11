@@ -1,0 +1,237 @@
+{
+  "ast_audit_sha256": "e4d0e1e28db5aa92f3012aee162b33cfaffa52a181b37bf82bd22a7bf8b428b8",
+  "chromium": {
+    "binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "build_identity": "147.0.7727.50",
+    "capture_harness_sha256": "1aa6f07a50e71c82ae715502b86f974915128f057c6963a6dfd49319fba3f582"
+  },
+  "contract_sha256": "bd31f7168671d23139ea9de51965f3612a3d7e88df89302c725be085ba4c5e09",
+  "demoted": [
+    {
+      "comparisons": [
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 0,
+            "green": 0,
+            "red": 0
+          },
+          "connected_region_count": 0,
+          "diff_signature_sha256": "b74c2debcc932b1c09c883f76b0a26a4c1bb29c387b464694c01f43b297c4c4a",
+          "mismatch_bounds": null,
+          "mismatched_pixels": 0,
+          "profile": "legacy-800x600@1",
+          "status": "exact"
+        },
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 0,
+            "green": 0,
+            "red": 0
+          },
+          "connected_region_count": 0,
+          "diff_signature_sha256": "b74c2debcc932b1c09c883f76b0a26a4c1bb29c387b464694c01f43b297c4c4a",
+          "mismatch_bounds": null,
+          "mismatched_pixels": 0,
+          "profile": "mobile-375x667@2",
+          "status": "exact"
+        },
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 255,
+            "green": 255,
+            "red": 255
+          },
+          "connected_region_count": 20,
+          "diff_signature_sha256": "e4d634b9e692b91a374f07a278f9526af79c45454c24a8c120e358974cbd2d33",
+          "mismatch_bounds": {
+            "height": 291,
+            "width": 152,
+            "x": 26,
+            "y": 61
+          },
+          "mismatched_pixels": 1315,
+          "profile": "desktop-1280x720@1.25",
+          "status": "different"
+        },
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 0,
+            "green": 0,
+            "red": 0
+          },
+          "connected_region_count": 0,
+          "diff_signature_sha256": "b74c2debcc932b1c09c883f76b0a26a4c1bb29c387b464694c01f43b297c4c4a",
+          "mismatch_bounds": null,
+          "mismatched_pixels": 0,
+          "profile": "desktop-1920x1080@1.5",
+          "status": "exact"
+        }
+      ],
+      "test_id": "wpt/css_display/display-contents-dynamic-fieldset-legend-001"
+    },
+    {
+      "comparisons": [
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 0,
+            "green": 0,
+            "red": 0
+          },
+          "connected_region_count": 0,
+          "diff_signature_sha256": "b74c2debcc932b1c09c883f76b0a26a4c1bb29c387b464694c01f43b297c4c4a",
+          "mismatch_bounds": null,
+          "mismatched_pixels": 0,
+          "profile": "legacy-800x600@1",
+          "status": "exact"
+        },
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 255,
+            "green": 255,
+            "red": 255
+          },
+          "connected_region_count": 2,
+          "diff_signature_sha256": "b21cb984a817c1535ea7fe6f143069b3a387c8b770a1b96539cc2177f12275c4",
+          "mismatch_bounds": {
+            "height": 32,
+            "width": 33,
+            "x": 40,
+            "y": 40
+          },
+          "mismatched_pixels": 64,
+          "profile": "mobile-375x667@2",
+          "status": "different"
+        },
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 0,
+            "green": 0,
+            "red": 0
+          },
+          "connected_region_count": 0,
+          "diff_signature_sha256": "b74c2debcc932b1c09c883f76b0a26a4c1bb29c387b464694c01f43b297c4c4a",
+          "mismatch_bounds": null,
+          "mismatched_pixels": 0,
+          "profile": "desktop-1280x720@1.25",
+          "status": "exact"
+        },
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 0,
+            "green": 0,
+            "red": 0
+          },
+          "connected_region_count": 0,
+          "diff_signature_sha256": "b74c2debcc932b1c09c883f76b0a26a4c1bb29c387b464694c01f43b297c4c4a",
+          "mismatch_bounds": null,
+          "mismatched_pixels": 0,
+          "profile": "desktop-1920x1080@1.5",
+          "status": "exact"
+        }
+      ],
+      "test_id": "wpt/css_multicol/crashtests_table-cell-writing-mode-root"
+    },
+    {
+      "comparisons": [
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 0,
+            "green": 0,
+            "red": 0
+          },
+          "connected_region_count": 0,
+          "diff_signature_sha256": "b74c2debcc932b1c09c883f76b0a26a4c1bb29c387b464694c01f43b297c4c4a",
+          "mismatch_bounds": null,
+          "mismatched_pixels": 0,
+          "profile": "legacy-800x600@1",
+          "status": "exact"
+        },
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 0,
+            "green": 0,
+            "red": 0
+          },
+          "connected_region_count": 0,
+          "diff_signature_sha256": "b74c2debcc932b1c09c883f76b0a26a4c1bb29c387b464694c01f43b297c4c4a",
+          "mismatch_bounds": null,
+          "mismatched_pixels": 0,
+          "profile": "mobile-375x667@2",
+          "status": "exact"
+        },
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 48,
+            "green": 0,
+            "red": 48
+          },
+          "connected_region_count": 1,
+          "diff_signature_sha256": "fe056a0dcb76541f0f7c6885da411a9ede39240974ac573c28aaefc7f0f45000",
+          "mismatch_bounds": {
+            "height": 125,
+            "width": 1,
+            "x": 87,
+            "y": 275
+          },
+          "mismatched_pixels": 125,
+          "profile": "desktop-1280x720@1.25",
+          "status": "different"
+        },
+        {
+          "channel_delta_extrema": {
+            "alpha": 0,
+            "blue": 0,
+            "green": 0,
+            "red": 0
+          },
+          "connected_region_count": 0,
+          "diff_signature_sha256": "b74c2debcc932b1c09c883f76b0a26a4c1bb29c387b464694c01f43b297c4c4a",
+          "mismatch_bounds": null,
+          "mismatched_pixels": 0,
+          "profile": "desktop-1920x1080@1.5",
+          "status": "exact"
+        }
+      ],
+      "test_id": "wpt/css_position/containing-block-change-button"
+    }
+  ],
+  "demoted_count": 3,
+  "matrix_report_sha256": "02735b2ac1666b4974ec2d4ef490fd657abb9476ca8bb6515a1cc930c4e06392",
+  "openui": {
+    "binary_sha256": "ae12f52a82ac0c56ea19f28c7fe3e3c577411fef7d6b2aa68fa91ce973e38cfc",
+    "raster_backend_identity": {
+      "backend": "cpu-skia",
+      "color_type": "N32-premultiplied",
+      "driver": null,
+      "gl_renderer": null,
+      "gl_version": null,
+      "sample_count": 0,
+      "surface_properties": "scene-raster-configuration-v1"
+    }
+  },
+  "original_manifest_sha256": "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f",
+  "output_sha256": "d73b83dea24421722e932974194165ee4276f757209f6a1052072a2dc0fae88a",
+  "prior_admitted_count": 200,
+  "prior_expanded_manifest_sha256": "e1bd3cdad5b48d267856f06e112dd33bdfd00e1e8a7270128730f14d536dee46",
+  "retained_four_profile_exact_count": 197,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "d73077e7418bf209148d32581211169de4a3318c",
+    "harness_sha256": "b2638f1e1ad8b683528946073086d01419aa5e9b71134eedd5bf259b2a76114b",
+    "source_tree_sha256": "a91e184902d13ad203694fdccd3c2e48f8cfd649ceea473890748cd8e5d96ccc",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "status": "diagnostic-requalification; original contract remains blocked"
+}

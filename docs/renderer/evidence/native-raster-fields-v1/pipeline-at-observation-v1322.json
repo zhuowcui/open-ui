@@ -1,0 +1,46 @@
+{
+  "all_commands_terminal": false,
+  "consumer_compile_correction_only": false,
+  "immutable_probe_hashes": {
+    "/tmp/openui-native-raster-fields-application-v1322.py": "0cea16e50c86b3d3c5ebf084e2266fbfac5cac1ee22bf6a3ef15fcdb1b5b92b6",
+    "/tmp/openui-native-raster-fields-build-v1322.py": "34e40941516ebb7d9a91a01cf923b210a8b28e116b7c33f074ef009b0be2989a",
+    "/tmp/openui-native-raster-fields-consumer-v1322.py": "b3af62c0abef9fa3786ba253e28ca789f456e6656b5378dd868f87f132590ff6",
+    "/tmp/openui-native-raster-fields-guards-v1322.py": "cdace1ce6920c7f08454e93d0a220ab1bcd1b250af6543a059d7cc5d3c74d609",
+    "/tmp/openui-native-raster-fields-matrices-v1322.py": "d39e3301dc93fee81444bd50858ae22cb25ce40dac051aea1abc3a000f04a640",
+    "/tmp/openui-native-raster-fields-sizing-v1322.py": "2b5391bbd2db2760d736aae79cd86e4d6aebc181874e80e3bf4bb2432775e9b2",
+    "/tmp/openui-native-raster-fields-static-v1322.py": "25eddab661823e1131fd97a7e89945dc5003574adb85b518f8416976306acb57"
+  },
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "ordered_build_and_image_stages": true,
+  "original_pixel_gate_remains_required": true,
+  "prior_whole_pipelines": [
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json"
+  ],
+  "probe_sha256": "24d49e33b231c632041120ce279ac37e1bec6a875b82cc0ac9c2df162e042da3",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "renderer_production_unchanged_from_prior_candidate": false,
+  "schema_version": 1,
+  "selection_hashes": {},
+  "source": {
+    "clean": true,
+    "commit": "bcb7063f5f51fd32160f3095b546c226f8e89ff9",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "2a40d6ae90d2dddfe05de318cba6a270a030428834f33482d62ac763c9b823ae",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "bcb7063f5f51fd32160f3095b546c226f8e89ff9",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "2a40d6ae90d2dddfe05de318cba6a270a030428834f33482d62ac763c9b823ae",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "awaiting-entire-clean-cache-fieldset-font-and-c-raster-retry-pipelines",
+  "steps": []
+}

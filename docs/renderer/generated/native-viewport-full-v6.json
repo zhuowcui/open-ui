@@ -1,0 +1,96 @@
+{
+  "artifacts": [
+    {
+      "path": "docs/renderer/generated/native-viewport-full-v5.json",
+      "sha256": "597825ed208a647fb5088dbf124abe42e773559229e3bcec04b8368753657d47"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-workspace-v43/workspace.json",
+      "sha256": "a1195bd9d780fad6e1ee484f0599ec2aa86d5f392979a7d0036fdd6fe47df4e8"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-workspace-v43.log",
+      "sha256": "a503bf11f6532b0c2b934cf9275ced65dc763d92fe654c7f1c3da5a1eb64e3c3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-workspace-v43/before.png",
+      "sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-workspace-v43/produced.png",
+      "sha256": "23b3d97436ebb63a32051c3f17a8e5e50ebc136fd8b4b2b86a64d7a84bfa3b13"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-release-source-v45.json",
+      "sha256": "f47f5ca19e9c5818d9ffa323ae77f4fe3a4d32144a5a39b4ca45201aa6ca038a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-release-source-v45.log",
+      "sha256": "d08a8af21975df89969d24c7409f282fb7fc1571df563105f44315da749acbb1"
+    }
+  ],
+  "client_scissor_candidate_applied_to_umbrella": false,
+  "client_scissor_complete_original_and_expanded_censuses": "still required",
+  "client_scissor_focused_and_primitive": "running on immutable clean 079208f8; no result claimed",
+  "client_scissor_workspace": {
+    "artifact": {
+      "before_sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871",
+      "produced_sha256": "23b3d97436ebb63a32051c3f17a8e5e50ebc136fd8b4b2b86a64d7a84bfa3b13",
+      "restored_sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871"
+    },
+    "command": [
+      "cargo",
+      "--config",
+      ".cargo/config.chromium.toml",
+      "test",
+      "--workspace",
+      "--locked"
+    ],
+    "failed": 0,
+    "ignored": 13,
+    "log_sha256": "a503bf11f6532b0c2b934cf9275ced65dc763d92fe654c7f1c3da5a1eb64e3c3",
+    "passed": 8498,
+    "process_exit_code": 0,
+    "source": {
+      "clean": true,
+      "commit": "079208f814689c3f5222944b53f2291c8188510d",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "542a675bebe51361cc011b6118c5d5751f41a8c91792034c5b8e27832e356b9f",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "079208f814689c3f5222944b53f2291c8188510d",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "542a675bebe51361cc011b6118c5d5751f41a8c91792034c5b8e27832e356b9f",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test_profile_debug": 0,
+    "test_result_lines": 147
+  },
+  "clip_repair_complete_original_and_expanded_censuses": "still running on immutable clean 1366b72f; no new complete total claimed",
+  "native_comparisons": 850,
+  "native_fractional_pixel_failures": 166,
+  "native_pixel_exact": 684,
+  "policy": "Chromium is the sole pixel target; Open UI runs no JavaScript; every required application interaction must have a public native Rust API.",
+  "previous_evidence": "docs/renderer/generated/native-viewport-full-v5.json",
+  "release_qualification": false,
+  "schema_version": 1,
+  "umbrella_release_source_verification": {
+    "command": [
+      "python3",
+      "tools/release/build_v02_linux.py",
+      "--verify-source"
+    ],
+    "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-release-source-v45.log",
+    "log_sha256": "d08a8af21975df89969d24c7409f282fb7fc1571df563105f44315da749acbb1",
+    "observed_exit_code": 0,
+    "source_after_verification": {
+      "clean": true,
+      "commit": "44efd1bfa528ce2e46fadb4a0e1dd14fc80c50cf",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "03743ec16c7a60f8e8818486e1ea7ee039c7e8fe97509f35def9fad67f0ec500",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

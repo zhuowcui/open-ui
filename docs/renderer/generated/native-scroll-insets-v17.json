@@ -1,0 +1,139 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-inherited-clean-v1071/build.json",
+      "sha256": "338e43528b2e4fc821d4c5e74775f037cbb1b3e9ae31561b54ba7b5541806b50"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-inherited-checks-v1070/receipt.json",
+      "sha256": "c6b8ae4b96f8785c700ce2cdaf473356d8a6542cd17492263051cca37c703c82"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-inherited-oracle-v1072/receipt.json",
+      "sha256": "84ee43da9d7b4d2868f1fc4fc72d326cd499e21ff08dd1a0b9a605bbdb64ee33"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-inherited-diagnostic-v1067/receipt.json",
+      "sha256": "633c79c61a210441f70eed7a4fa61eb8b6fea1cc422bb7215d87454916b87a83"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-inherited-fixed-v1069/receipt.json",
+      "sha256": "99f9e445e44d5606a8c8c42605419a251bf414c2b4c9fc3458a5f1b74c970f85"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-inherited-diagnostic-v1065/receipt.json",
+      "sha256": "2a20c8d05e0741da21ef9f64cba5a36fbc0c3e604a2fad588aab9205e41b56fe"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-inherited-diagnostic-v1066/receipt.json",
+      "sha256": "3a161a083f709c386e38b5263a426b4c5966e3d24e3c6cf76289e8d3c4e2d79b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-v1062/receipt.json",
+      "sha256": "894c7e06b528fbcff1f80cf44a1ef1177487e7d2d9ab89c07db652df3e8ca3b0"
+    },
+    {
+      "path": "docs/renderer/evidence/native-inherited-styles-v1/native-inherited-styles-v1.patch",
+      "sha256": "4e036905d488ea8168c9d23e8846b696388eca590dd018d0e88d213d36306cb8"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-inherited-format-v1078.json",
+      "sha256": "5ecb292e7539b3c899bed3d66778f3a6d9fef3e985da6cdc02367efe518e88ce"
+    }
+  ],
+  "base_commit": "8744ff195f6c979da5b36596d86a7a47a43df33b",
+  "broader_qualification": {
+    "full_censuses_not_started_at_snapshot": true,
+    "initial_raster_suites_running": true,
+    "no_complete_pixel_or_count_claim": true,
+    "own_source_manual_hardening_not_run": true
+  },
+  "current_umbrella_documentation": {
+    "all_three_hosted_workflows_complete_success": true,
+    "private_runtime_qualification": false,
+    "skipped_jobs": 5,
+    "skipped_jobs_are_not_passes": true,
+    "source": "8744ff195f6c979da5b36596d86a7a47a43df33b",
+    "successful_jobs": 6
+  },
+  "failing_native_diagnosis": {
+    "actual_public_rust_app_exit": 101,
+    "actual_unit_test_exit": 101,
+    "images_rendered": 0,
+    "owner": "openui-engine",
+    "preceding_test_harness_compile_failures_preserved": true,
+    "root_cause": "Native attachment and parent style mutations retain initial child styles, and relative font size uses the child current size instead of its parent. Cached declarations also lose ordering across shorthand/longhand updates.",
+    "source": {
+      "clean": true,
+      "commit": "cf0d330fa26063ab7499e89fc768865ce87713fb",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "8546a43026b77a4dbc8d557cd74cfca32420e2f2b02e6fc153b1a01c4c9dcd31",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unit_tests_failed": 2
+  },
+  "new_release_states_admitted": 0,
+  "own_verification": {
+    "all_abi_artifact_bytes_unchanged": true,
+    "all_seven_fresh_build_stages_zero": true,
+    "all_ten_readonly_checks_zero": true,
+    "all_two_repeat_chromium_images_identical": true,
+    "c_consumers_passed": 11,
+    "callbacks_and_owned_snapshots_survive_teardown": true,
+    "cargo_fmt_all_actual_exit": 0,
+    "chromium_pixel_comparisons_exact": 10,
+    "chromium_pixel_comparisons_total": 10,
+    "cpp_consumers_passed": 5,
+    "current_exports_preserved": 113,
+    "direct_rustfmt_generated_include_probe_is_not_the_cargo_fmt_gate": true,
+    "rust_application_runs_passed": 5,
+    "workspace_failed": 0,
+    "workspace_ignored": 13,
+    "workspace_passed": 8530
+  },
+  "patch": "docs/renderer/evidence/native-inherited-styles-v1/native-inherited-styles-v1.patch",
+  "patch_reverse_check_actual_exit": 0,
+  "permanent_application_contract": "Open UI executes no JavaScript. Interaction uses public native Rust methods and Rust callbacks. Needed element behavior must be implemented in the shared Engine and callable by consuming apps.",
+  "pixel_target": "Pinned Chromium only, zero tolerance",
+  "previous_index": {
+    "path": "docs/renderer/generated/native-scroll-insets-v16.json",
+    "sha256": "e480f72f693d5a4f516c13e5753ad66b3cf99f5e9e3d8c05ef1703fc621166f7"
+  },
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "remaining": [
+    "Review focused and primitive matrices, then complete original and expanded censuses without changing immutable Chromium inputs.",
+    "Broader native inheritance, relative-style, alias, pseudo and animation semantics still require qualification before promotion.",
+    "Existing native scrolling paint failures, complete public API coverage, compositor/3D/blocked-UI animation, hardening and release-lab gates remain open."
+  ],
+  "schema_version": 1,
+  "shared_implementation": {
+    "authored_declaration_order_preserved": true,
+    "cursor_uses_existing_native_ancestor_lookup": true,
+    "fully_resolved_anonymous_and_pseudo_snapshots_preserved": true,
+    "generated_from_canonical_inherited_property_flags": true,
+    "inherited_animation_values_propagate_to_descendants": true,
+    "modeled_inherited_fields": 72,
+    "no_fixture_specific_or_post_raster_pixels": true,
+    "other_em_lengths_use_final_element_font_size": true,
+    "percentage_line_height_computes_before_inheritance": true,
+    "relative_font_size_uses_parent": true,
+    "rem_lengths_use_root_font_size": true,
+    "tree_operations": [
+      "attach",
+      "parent mutation",
+      "detach",
+      "reparent",
+      "insert",
+      "clone"
+    ]
+  },
+  "source": {
+    "clean": true,
+    "commit": "f328ed62bcae1d3368cd930c7e4130d265ca0883",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "fa885a341ff0ff2ecb64c133dbfa4ebced6929692660889e926df931ec274893",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

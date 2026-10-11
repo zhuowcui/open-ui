@@ -1,0 +1,73 @@
+{
+  "actual_exit_code": 0,
+  "actual_public_source_equals_measured_private_source": true,
+  "all_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "detached_hardlinks": [
+    {
+      "old_device": 2096,
+      "old_inode": 2018059,
+      "old_inode_bytes_preserved": true,
+      "original_link_count": 2,
+      "original_sha256": "54a511c2403abc7edc1bf3990a7e922d7658bb73b2c86f84cc8ca749ebf8cae7",
+      "path": ".github/workflows/ci.yml"
+    },
+    {
+      "old_device": 2096,
+      "old_inode": 12644862,
+      "old_inode_bytes_preserved": true,
+      "original_link_count": 2,
+      "original_sha256": "917090eb95b34706312748efd728b5c5a567ff615a1c1f3c43684e7c0a9e49d2",
+      "path": "bindings/rust/openui-ffi/src/focus_events.rs"
+    },
+    {
+      "old_device": 2096,
+      "old_inode": 23663,
+      "old_inode_bytes_preserved": true,
+      "original_link_count": 24,
+      "original_sha256": "dd7791561c782d4d0ee02ed86ddf85d846ef44decf4bbf19de9c17fe91ae3c25",
+      "path": "bindings/rust/openui-layout/src/block.rs"
+    },
+    {
+      "old_device": 2096,
+      "old_inode": 12644964,
+      "old_inode_bytes_preserved": true,
+      "original_link_count": 2,
+      "original_sha256": "20f7b5f878aef0e91c454d0087fa7ab7a6b121ab76fa0a062f4b991280e60863",
+      "path": "examples/c_v02/CMakeLists.txt"
+    }
+  ],
+  "historical_measurements_remain_labeled_private": true,
+  "implementation_integrated": true,
+  "javascript_executed_by_openui": false,
+  "measured_commit": "a401a8ac8c33cc5e24ed9bb19934061716cd84dd",
+  "new_public_qualification_commands_executed": false,
+  "owner_pid": 85500,
+  "pixel_target": "pinned Chromium",
+  "private_source": {
+    "clean": true,
+    "commit": "a401a8ac8c33cc5e24ed9bb19934061716cd84dd",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "ebebbc58bd6f89eb5f03af1e3eae9cb961463a3f1be749c23315206c03c735f9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "probe_sha256": "39780a7e5a040fe4fcde51a5cf828f8b0f6eba87eb9d89cf87f0300a42adcde3",
+  "public_source": {
+    "clean": true,
+    "commit": "a401a8ac8c33cc5e24ed9bb19934061716cd84dd",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "ebebbc58bd6f89eb5f03af1e3eae9cb961463a3f1be749c23315206c03c735f9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "schema_version": 1,
+  "source_base": "783e11f44b0e1cd0023018d24e667d27f0b91bb8",
+  "steps": [
+    {
+      "actual_exit_code": 0,
+      "name": "adopt-exact-measured-commit"
+    }
+  ],
+  "terminal_proof_sha256": "bd35014d1fa7ec9fe8bd89e8ef1365b80c32f665b7c864a3e683eca6ccf42bda"
+}

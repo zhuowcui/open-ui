@@ -1,0 +1,14 @@
+{
+  "all_commands_terminal": true,
+  "all_four_projections_recomputed_identically": true,
+  "cargo_commands_run": 0,
+  "chromium_pixel_qualification": false,
+  "cross_source_result_substitution": false,
+  "debug_receipt_sha256": "99875e691e37958f9254a937aeca22921c4fc9206538effd1f19ec7030036f23",
+  "observed_exit_code": 0,
+  "probe_sha256": "815c0a50f1d4ca8ae42159fff10bebad526d272d6914c02ca3c8ba698b933bf9",
+  "projection_receipt_sha256": "d66a688cd82db8fd6ce529d08224b53b6747a7e261a6fb84d76ebda8df72a96d",
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0
+}

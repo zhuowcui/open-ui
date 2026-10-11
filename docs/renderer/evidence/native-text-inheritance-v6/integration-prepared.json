@@ -1,0 +1,23 @@
+{
+  "branch": "agent/native-text-style-integration-v1709",
+  "prior_whole_owners": 41,
+  "probe_sha256": "6a8a8ea4784241fd57248c6a64529d88496d6cc3b982df1251f03a0a6695612b",
+  "release_qualification": false,
+  "required_build_stages": 13,
+  "required_workspace_packages_cleaned": 18,
+  "root": "/dev/shm/openui-native-text-style-integration-6def29f8",
+  "schema_version": 1,
+  "scripts": {
+    "/tmp/openui-native-text-style-integration-build-v1709.py": "7c83b739fda885e37c6c9d430ac71bef1d213c8676eb906a037ec1fa6bd42187",
+    "/tmp/openui-native-text-style-integration-pipeline-v1710.py": "d074c496147fe6be7fa63da64c7117961a8f59b87b23580af7852c23f87044c2"
+  },
+  "source": {
+    "clean": true,
+    "commit": "6def29f8ec6e10d87b5778df9dd1ed0157cf0cb4",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "a91b541fd2f8886db8bbacbf32db0fe7c978ec152751b654464ec2d727d14998",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_code_matches_tested_41": true,
+  "whole_owner_lock_preserves_gaps": true
+}

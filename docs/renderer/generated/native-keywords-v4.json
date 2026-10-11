@@ -1,0 +1,315 @@
+{
+  "abi_checker_stopped_by_storage_guard": true,
+  "actual_c_cpp_native_app_and_pixel_gates_unexecuted_in_original_owner": true,
+  "actual_guard_stage_exits": [
+    0,
+    101,
+    0,
+    0,
+    0,
+    0
+  ],
+  "actual_native_rust_callback_and_geometry_app_passed_at_five_scales": true,
+  "all_original_stages_terminal": true,
+  "all_three_fixed_named_guards_passed": true,
+  "artifact_bytes": 452998,
+  "artifact_count": 34,
+  "artifacts": [
+    {
+      "bytes": 4700,
+      "path": "docs/renderer/evidence/native-keywords-v4/original-owner-terminal.json",
+      "sha256": "189711442797ae28149d346c7caa1b75dc768e81066bdab258f1167b79a12ba7",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-pipeline-v1773/receipt.json"
+    },
+    {
+      "bytes": 179,
+      "decompressed_bytes": 744,
+      "decompressed_sha256": "4a546910406c93f4510426a26becca6f515790fba320887f98fce7b0e0a423a8",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/owner-guards.log.gz",
+      "sha256": "b7f37aa600db6d5b69fa5c94e8888c89a3e6ac38954765bbf248cfadf48fc9ea",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-pipeline-v1773/guards.log"
+    },
+    {
+      "bytes": 189,
+      "decompressed_bytes": 619,
+      "decompressed_sha256": "2e3f53e90938e6affe2e86fbdcf10dda699366ee342bc8cda6e66cf8487778a0",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/owner-native-build.log.gz",
+      "sha256": "9395b2a701ddfef7acd444a4da2474838ecc81c47429214b8849bac021db50ce",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-pipeline-v1773/native-build.log"
+    },
+    {
+      "bytes": 8142,
+      "path": "docs/renderer/evidence/native-keywords-v4/guards-terminal.json",
+      "sha256": "aac2e9336f9e616ed701e65be88841f7ecce1cffc0760f0461682250ca9798cb",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-guards-v1772/receipt.json"
+    },
+    {
+      "bytes": 55,
+      "decompressed_bytes": 37,
+      "decompressed_sha256": "19a09816d74e4ad70e3881280fccbb1a08d0232019567a4f0be5060feef87cb7",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/clean-baseline.log.gz",
+      "sha256": "e0841395194edc2bc98972761ce764191d1a75ca4af9f1abec289dffd84f1709",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-guards-v1772/clean-baseline.log"
+    },
+    {
+      "bytes": 2334,
+      "decompressed_bytes": 11759,
+      "decompressed_sha256": "763db33be671b52147e4c0ff2493c5c6676ddb3859b184c5350ee375d5436b56",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/baseline-native-keyword-guard.log.gz",
+      "sha256": "a31d280c7be1280712fd1885d985678c058315c729e32589e35da8f298b1ad30",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-guards-v1772/baseline-native-keyword-guard.log"
+    },
+    {
+      "bytes": 56,
+      "decompressed_bytes": 38,
+      "decompressed_sha256": "4986a0d6ccd4f6d0b9f3dd86a9035395968e1d89d1888220a0c31685656d6fbe",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/clean-fixed.log.gz",
+      "sha256": "6facf9cff8ca1e458c205499502df291c7af297b027439bebec83b30cd6b59e1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-guards-v1772/clean-fixed.log"
+    },
+    {
+      "bytes": 1994,
+      "decompressed_bytes": 10442,
+      "decompressed_sha256": "5046898cde2f97926ac7b74b80eeff401c124259f0a9417abb1662d7a465c663",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/fixed-native-keyword-guard.log.gz",
+      "sha256": "1e34cba01422375c22eaaac63e06ad86957200e7b2f52215197b1f77da3ec31a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-guards-v1772/fixed-native-keyword-guard.log"
+    },
+    {
+      "bytes": 1894,
+      "decompressed_bytes": 9316,
+      "decompressed_sha256": "a76974d8c706da0006ffef7bbc1809a9f88a002bcfde5d484dac500291e70d14",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/fixed-table-display-guard.log.gz",
+      "sha256": "80b99f102b84d130bc069450b2b08cfddf3901bd3fb16f52e1653913dd107bc6",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-guards-v1772/fixed-table-display-guard.log"
+    },
+    {
+      "bytes": 340,
+      "decompressed_bytes": 491,
+      "decompressed_sha256": "fef8fc15c09e5fd222f60d9911d69c4819a90e213fd9130afc84a8687219c4f9",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/fixed-enum-coverage-guard.log.gz",
+      "sha256": "4f9009363189d9e970419912b8ecd01105f6c9cdc809f090585eafe98c96af3d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-guards-v1772/fixed-enum-coverage-guard.log"
+    },
+    {
+      "bytes": 6328,
+      "path": "docs/renderer/evidence/native-keywords-v4/build-stopped.json",
+      "sha256": "4795069932c02a93a2a487c33fce4e11f67ff7a9c314c17eefac4b35f63afc45",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-clean-v1772/build.json"
+    },
+    {
+      "bytes": 56,
+      "decompressed_bytes": 38,
+      "decompressed_sha256": "18c9a47b17699bea3c996498013585ed56ebfd2a55caa0b325d84ae948952e70",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/build-clean-workspace.log.gz",
+      "sha256": "e430ad5e60b6496ff637b609ae69ea4b54c9e642ee11f53aaa1a35ac98b636eb",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-clean-v1772/clean-workspace.log"
+    },
+    {
+      "bytes": 86752,
+      "decompressed_bytes": 489872,
+      "decompressed_sha256": "8ec56775d073c4c9ae415e6e632c1cbd59aeb14ea7c02d0bd85f221f09e249cf",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/build-workspace.log.gz",
+      "sha256": "d0720d45a11d1c75d0651f6f247b381a4af0a31fe9c12604ba0db40837e3350d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-clean-v1772/workspace.log"
+    },
+    {
+      "bytes": 1790,
+      "decompressed_bytes": 9788,
+      "decompressed_sha256": "dccb97931578e5e032a576c2a6a0d465d859867dea4907cd257adbbee7a21ba3",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/build-keywords-build.log.gz",
+      "sha256": "fe9c1d83ff126ba97af8860c26bfbd33fef8ef8059b069b4294ed343fbf75b2b",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-clean-v1772/keywords-build.log"
+    },
+    {
+      "bytes": 1791,
+      "decompressed_bytes": 9436,
+      "decompressed_sha256": "fee76e1ae2c16f102f171501021228a78e7127672965c1113daec7e174230378",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/build-ffi-build.log.gz",
+      "sha256": "6678302fb0665072e7a7bbb3c104c6e147424769fa6cd60e5b2f2049bd2201d9",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-clean-v1772/ffi-build.log"
+    },
+    {
+      "bytes": 1925,
+      "decompressed_bytes": 11807,
+      "decompressed_sha256": "e49755f1e87ead4a665f96d3aa9d7963fdc568e36d84c2146624d85ff5d6b838",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/build-pixel-build.log.gz",
+      "sha256": "eb28fa4036bfad21f56e60b1a68a926f890893f9008785c22224929e6c166cfb",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-clean-v1772/pixel-build.log"
+    },
+    {
+      "bytes": 113,
+      "decompressed_bytes": 390,
+      "decompressed_sha256": "3c2b1832984b8911e44c2cae6303350d10aa4cad9443a721cb88b3dcb70cef72",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/build-native-rust-geometry.log.gz",
+      "sha256": "4d8d4c92aca8999e6dd674a45dea9e055b1c60187a961441694b1dcf164b8c6c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-clean-v1772/native-rust-geometry.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/build-ffi-consumers.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-clean-v1772/ffi-consumers.log"
+    },
+    {
+      "bytes": 13060,
+      "path": "docs/renderer/evidence/native-keywords-v4/openui-native-image-coverage-fieldsets-v1448.py",
+      "sha256": "b1a480f5f49bada97d341d5cf5e7626f8f03496bc87b4ef83b40c298331d1710",
+      "source_path": "/tmp/openui-native-image-coverage-fieldsets-v1448.py"
+    },
+    {
+      "bytes": 6482,
+      "path": "docs/renderer/evidence/native-keywords-v4/openui-native-keywords-current-build-v1772.py",
+      "sha256": "951ecd666b24ea386f995ceda059f00dc1d522b56da9204098b7ad14c39591b5",
+      "source_path": "/tmp/openui-native-keywords-current-build-v1772.py"
+    },
+    {
+      "bytes": 7199,
+      "path": "docs/renderer/evidence/native-keywords-v4/openui-native-keywords-current-consumer-v1772.py",
+      "sha256": "79c2fb91c5c241731e2fed6ee24313a6e38152e82879dabc5455a94e8f54b9c5",
+      "source_path": "/tmp/openui-native-keywords-current-consumer-v1772.py"
+    },
+    {
+      "bytes": 6893,
+      "path": "docs/renderer/evidence/native-keywords-v4/openui-native-keywords-current-guards-v1772.py",
+      "sha256": "3e2ea9e8bf8fa3a129b9b48a946ca3d23fe5ecd9db30742b2b2e34e39e65dc2b",
+      "source_path": "/tmp/openui-native-keywords-current-guards-v1772.py"
+    },
+    {
+      "bytes": 2155,
+      "path": "docs/renderer/evidence/native-keywords-v4/openui-native-keywords-current-matrices-v1772.py",
+      "sha256": "2bd713c109afc179e2cb7ca18b6dc09f3dc678d25a64113f9c147526633acafe",
+      "source_path": "/tmp/openui-native-keywords-current-matrices-v1772.py"
+    },
+    {
+      "bytes": 9751,
+      "path": "docs/renderer/evidence/native-keywords-v4/openui-native-keywords-current-table-geometry-v1772.py",
+      "sha256": "bbd7a6e16afe6fc008b8e6a8614d62b31abb8a088cf6f81cffccf6aea478b7e3",
+      "source_path": "/tmp/openui-native-keywords-current-table-geometry-v1772.py"
+    },
+    {
+      "bytes": 7789,
+      "path": "docs/renderer/evidence/native-keywords-v4/original-owner.py",
+      "sha256": "69f944bb110f5b7044d613f7d081b8a190b437fec02bb4f0bd38b23eb4767577",
+      "source_path": "/tmp/openui-native-keywords-current-pipeline-v1773.py"
+    },
+    {
+      "bytes": 2850,
+      "path": "docs/renderer/evidence/native-keywords-v4/original-preparation.json",
+      "sha256": "2462b06d6e3f31b249a51a71be5832557ae64e6a18284b3c16a4ad77e0b35a07",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-prepared-v1772.json"
+    },
+    {
+      "bytes": 1323,
+      "path": "docs/renderer/evidence/native-keywords-v4/abi-scratch-relocation.json",
+      "sha256": "6ceffa0d3f8d75d4487669776ea43de50e1dc3cdf1c0ddb1c017be0dc1f02b8f",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-abi-scratch-relocation-v1777.json"
+    },
+    {
+      "bytes": 244897,
+      "decompressed_bytes": 1077923,
+      "decompressed_sha256": "ff12dc766993a5bdd06c29af8f714b733c6961efc9626bc06f342f17c3d5e781",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-keywords-v4/cargo-cache-relocation.json.gz",
+      "sha256": "72ef58d8525cfe650c807830fa19ff226e9e5fcb80f7bdf9e88a851633435379",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-cargo-cache-relocation-v1778.json"
+    },
+    {
+      "bytes": 2861,
+      "path": "docs/renderer/evidence/native-keywords-v4/fresh-retry-preparation.json",
+      "sha256": "f02fac60f3f16f2240e8ba893bdaaabf1524f94b6c3be806e75e35266ed5d05e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-prepared-v1779.json"
+    },
+    {
+      "bytes": 10528,
+      "path": "docs/renderer/evidence/native-keywords-v4/openui-native-keywords-current-prepare-v1772.py",
+      "sha256": "a0a91a030676593a2ec1a0ea87ec31f403c47b37e373acc10c189b01882a2891",
+      "source_path": "/tmp/openui-native-keywords-current-prepare-v1772.py"
+    },
+    {
+      "bytes": 2598,
+      "path": "docs/renderer/evidence/native-keywords-v4/openui-native-keywords-abi-scratch-relocate-v1777.py",
+      "sha256": "6259ecbb81acd0f86921deb8ad51d218139317b86d3193aae0de54c22ebd6c27",
+      "source_path": "/tmp/openui-native-keywords-abi-scratch-relocate-v1777.py"
+    },
+    {
+      "bytes": 2033,
+      "path": "docs/renderer/evidence/native-keywords-v4/openui-native-cargo-cache-relocate-v1778.py",
+      "sha256": "f724acb45babafd374a111e7da318163a5b47dd40da0e554ae73b0e45da3f75b",
+      "source_path": "/tmp/openui-native-cargo-cache-relocate-v1778.py"
+    },
+    {
+      "bytes": 7020,
+      "path": "docs/renderer/evidence/native-keywords-v4/openui-native-keywords-retry-prepare-v1779.py",
+      "sha256": "b229373a3dbb2c9aa9ce2b6570f58a51c8eccf1ffd6cfbe9cc7d38a98d2b25dd",
+      "source_path": "/tmp/openui-native-keywords-retry-prepare-v1779.py"
+    },
+    {
+      "bytes": 6901,
+      "path": "docs/renderer/evidence/native-keywords-v4/preserver.py",
+      "sha256": "a08688ce976a1098f9829f8a4242f18110adf0ad3107600de60493dbfb3e01a8",
+      "source_path": "/tmp/openui-native-keywords-failure-and-ci-preserve-v1781.py"
+    }
+  ],
+  "baseline_actual_exit": 101,
+  "baseline_source": {
+    "clean": true,
+    "commit": "7cb31314f2f871e9d1bb6fc0dc63c594bb1cf20e",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "7b950f598e01f1d311048d5dd743aab9a9b37cd3b2b77d9d036c9b22f93efe8d",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "candidate_applied_to_umbrella": false,
+  "fresh_retry_required_and_separately_prepared": true,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "original_build_actual_exits": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    -15
+  ],
+  "original_owner_actual_exit": 241,
+  "pixel_tolerance": 0,
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "temporary_storage_correction_preserves_all_bytes_and_original_paths": true,
+  "workspace_failed": 0,
+  "workspace_ignored": 13,
+  "workspace_passed": 8554
+}

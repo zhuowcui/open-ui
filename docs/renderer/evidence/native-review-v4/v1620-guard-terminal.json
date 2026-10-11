@@ -1,0 +1,95 @@
+{
+  "all_commands_terminal": true,
+  "baseline_regression_reproduced": false,
+  "failure": "",
+  "javascript_executed_by_openui": false,
+  "observed_exit_code": 1,
+  "probe_sha256": "737a76b5f3dc8bec1073950cec189ca485ed8d8dd1a008a8759ec30751e69e39",
+  "promotion_allowed": false,
+  "public_native_rust_api": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "selected_native_test_names": [
+    "tests::c_element_text_content_renders_and_matches_native_rust"
+  ],
+  "source": {
+    "clean": true,
+    "commit": "d5bd17d77a2262f10b97e445d380723dff093d51",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5fc3bf9fc5707fd81a25f112511faf5b129c9bdbf1e09d66bf3b19093e3b2056",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "d5bd17d77a2262f10b97e445d380723dff093d51",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5fc3bf9fc5707fd81a25f112511faf5b129c9bdbf1e09d66bf3b19093e3b2056",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "failed",
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "clean-baseline",
+      "observed_exit_code": -15,
+      "source": {
+        "clean": true,
+        "commit": "1c1b1bffb9cc5b50513e1b060ce25a9c7295ece1",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "bf398127ec89a4520ecabb65b5b9bcb01afb79682cfa37a868a56dc0d233b887",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "1c1b1bffb9cc5b50513e1b060ce25a9c7295ece1",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "bf398127ec89a4520ecabb65b5b9bcb01afb79682cfa37a868a56dc0d233b887",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "workspace_cleaned_at_every_source_switch": true
+}

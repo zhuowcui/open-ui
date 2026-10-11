@@ -1,0 +1,42 @@
+{
+  "actual_child_exit_code": 101,
+  "all_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "child_pid": 269360,
+  "command": [
+    "cargo",
+    "--config",
+    "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+    "test",
+    "--locked",
+    "--offline",
+    "-p",
+    "openui-engine",
+    "--lib",
+    "native_font_unit"
+  ],
+  "dirty_diagnostic": true,
+  "driver_sha256": "ec617933e5e08de9f5ee4f0c5a66b87cdebe21a2aef2fbe99230b4198a09ddc0",
+  "full_renderer_contract_qualified": false,
+  "javascript_executed_by_openui": false,
+  "observed_exit_code": 101,
+  "owner_pid": 269289,
+  "release_qualified": false,
+  "schema_version": 1,
+  "source": {
+    "clean": false,
+    "commit": "f688913e642338a793dc3331117e6d4bd84508d3",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "998cfedccb941d2e770f167599aa541edd82f4d07cb5c08198034c0fb4e624f3",
+    "status_sha256": "6be182948d5c8a3c05cad082d8b82f152c6c566f7855a75c6a0b40183db2f6ec"
+  },
+  "source_after": {
+    "clean": false,
+    "commit": "f688913e642338a793dc3331117e6d4bd84508d3",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "998cfedccb941d2e770f167599aa541edd82f4d07cb5c08198034c0fb4e624f3",
+    "status_sha256": "6be182948d5c8a3c05cad082d8b82f152c6c566f7855a75c6a0b40183db2f6ec"
+  },
+  "source_unchanged": true,
+  "tests_log_sha256": "38c5266e273a6a18553e303ef056b0d9c5ea81eda95448ebf20704455c1be89c"
+}

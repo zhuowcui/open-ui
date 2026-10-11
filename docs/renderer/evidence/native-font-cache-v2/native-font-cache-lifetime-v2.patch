@@ -1,0 +1,424 @@
+diff --git a/bindings/rust/openui-engine/tests/retained_scene_lifetime.rs b/bindings/rust/openui-engine/tests/retained_scene_lifetime.rs
+new file mode 100644
+index 00000000..e03a2474
+--- /dev/null
++++ b/bindings/rust/openui-engine/tests/retained_scene_lifetime.rs
+@@ -0,0 +1,39 @@
++use openui_compositor::SoftwareCompositor;
++use openui_engine::{Engine, ViewportMetrics};
++
++#[test]
++fn saved_scenes_replay_after_engine_drop_and_unchanged_frames_reuse_raster() {
++    let viewport = ViewportMetrics::from_logical_size(160.0, 64.0, 1.25).unwrap();
++    let mut engine = Engine::new(viewport).unwrap();
++    let text = engine.create_text("Original native text").unwrap();
++    engine.append_child(engine.root(), text).unwrap();
++    let scene = engine.scene().unwrap();
++    let stats = engine.stats();
++    let unchanged = engine.scene().unwrap();
++    assert_eq!(engine.stats(), stats);
++    assert_eq!(scene.generation(), unchanged.generation());
++    let mut compositor = SoftwareCompositor::default();
++    let expected = compositor.render(&scene).unwrap();
++    assert_eq!(compositor.render(&unchanged).unwrap(), expected);
++    assert_eq!(compositor.stats().rasterized, 1);
++    assert_eq!(compositor.stats().reused, 1);
++
++    engine.set_text(text, "Changed native text").unwrap();
++    let changed = engine.scene().unwrap();
++    let changed_frame = compositor.render(&changed).unwrap();
++    assert_ne!(changed_frame.pixels, expected.pixels);
++    drop(unchanged);
++    drop(compositor);
++    drop(engine);
++    let (replayed, changed_replayed) = std::thread::spawn(move || {
++        // Fresh compositors force real drawing after all mutable state is gone.
++        (
++            SoftwareCompositor::default().render(&scene).unwrap(),
++            SoftwareCompositor::default().render(&changed).unwrap(),
++        )
++    })
++    .join()
++    .unwrap();
++    assert_eq!(replayed, expected);
++    assert_eq!(changed_replayed, changed_frame);
++}
+diff --git a/bindings/rust/openui-paint/src/content_layer.rs b/bindings/rust/openui-paint/src/content_layer.rs
+index d4a0579b..f15e157b 100644
+--- a/bindings/rust/openui-paint/src/content_layer.rs
++++ b/bindings/rust/openui-paint/src/content_layer.rs
+@@ -15,6 +15,8 @@ pub struct RecordedContentLayer {
+     pub scroll_translation: (f32, f32),
+     pub picture: Picture,
+     pub(crate) paint_record: crate::paint_record::LayerPaintRecord,
++    // A caller may clone a content layer independently of its parent scene.
++    pub(crate) _font_cache_lifetime: openui_text::font::FontCacheLifetime,
+ }
+ 
+ impl RecordedContentLayer {
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index b20a81c8..86c93884 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -1619,6 +1619,7 @@ fn paint_fragment_contents(
+                 && rect_known_to_be_opaque.bottom >= bounds.bottom,
+             scroll_translation,
+             picture,
++            _font_cache_lifetime: doc.font_collection().retain_cache_lifetime(),
+         };
+         layer.replay(canvas, doc.device_scale_factor());
+         VIEWPORT_CONTENT_LAYER.with(|recorded| *recorded.borrow_mut() = Some(layer));
+diff --git a/bindings/rust/openui-paint/src/render.rs b/bindings/rust/openui-paint/src/render.rs
+index 5287818d..4633bfca 100644
+--- a/bindings/rust/openui-paint/src/render.rs
++++ b/bindings/rust/openui-paint/src/render.rs
+@@ -103,6 +103,9 @@ pub struct RecordedPicture {
+     /// Retains immutable registered bytes for every face referenced by a
+     /// scene, even if the live document unregisters that face immediately.
+     pub(crate) retained_font_bytes: Arc<[Arc<[u8]>]>,
++    // Recordings can be rasterized after their document is destroyed. Retire
++    // cached strikes only after every retained picture/font resource above.
++    pub(crate) _font_cache_lifetime: openui_text::font::FontCacheLifetime,
+ }
+ 
+ impl RecordedPicture {
+@@ -228,6 +231,7 @@ pub fn record_fragment(
+         direct_replay,
+         content_requires_tiling,
+         retained_font_bytes: doc.font_collection().retained_face_bytes(),
++        _font_cache_lifetime: doc.font_collection().retain_cache_lifetime(),
+     })
+ }
+ 
+diff --git a/bindings/rust/openui-paint/tests/recorded_font_lifetime.rs b/bindings/rust/openui-paint/tests/recorded_font_lifetime.rs
+new file mode 100644
+index 00000000..8afbb1ae
+--- /dev/null
++++ b/bindings/rust/openui-paint/tests/recorded_font_lifetime.rs
+@@ -0,0 +1,91 @@
++use openui_dom::{Document, ElementTag};
++use openui_geometry::ViewportMetrics;
++use openui_paint::{rasterize_picture, record_document, RecordedPicture};
++use openui_style::{Overflow, StyleProperty};
++use std::sync::Arc;
++
++fn recording(scrolling: bool) -> RecordedPicture {
++    let mut document = Document::new();
++    let collection = Arc::downgrade(document.font_collection());
++    let root = document.root();
++    if scrolling {
++        document
++            .apply_style_property(
++                root,
++                StyleProperty::OverflowY,
++                &Overflow::Scroll.into(),
++                (120.0, 48.0),
++            )
++            .unwrap();
++    }
++    let text = document.create_node(ElementTag::Text);
++    document.node_mut(text).text = Some("Native text remains owned by the recording".into());
++    document.append_child(root, text);
++    let viewport = ViewportMetrics::from_logical_size(120.0, 48.0, 1.25).unwrap();
++    let (fragment, picture) = record_document(&document, viewport).unwrap();
++    drop(fragment);
++    drop(document);
++    // A recording keeps its cache lifetime, not mutable registry/DOM state.
++    assert!(collection.upgrade().is_none());
++    picture
++}
++
++fn pixels(picture: &RecordedPicture) -> Vec<u8> {
++    let mut surface = rasterize_picture(picture).unwrap();
++    let image = surface.image_snapshot();
++    let info = image
++        .image_info()
++        .with_color_type(skia_safe::ColorType::RGBA8888);
++    let mut pixels = vec![0; info.compute_min_byte_size()];
++    assert!(image.read_pixels(
++        &info,
++        &mut pixels,
++        info.min_row_bytes(),
++        (0, 0),
++        skia_safe::image::CachingHint::Allow,
++    ));
++    pixels
++}
++
++// Isolated process: the shared unit-test harness has unrelated live documents.
++#[test]
++fn retained_recordings_own_font_lifetime_through_replay_and_layer_clones() {
++    assert_eq!(skia_safe::graphics::font_cache_count_used(), 0);
++    let picture = recording(false);
++    let expected = pixels(&picture);
++    let used = skia_safe::graphics::font_cache_count_used();
++    assert!(used > 0);
++    let clone = picture.clone();
++    drop(picture);
++    assert_eq!(skia_safe::graphics::font_cache_count_used(), used);
++    let replayed = std::thread::spawn(move || {
++        let actual = pixels(&clone);
++        assert!(skia_safe::graphics::font_cache_count_used() > 0);
++        actual
++    })
++    .join()
++    .unwrap();
++    assert_eq!(replayed, expected);
++    assert_eq!(skia_safe::graphics::font_cache_count_used(), 0);
++
++    let scrolling = recording(true);
++    let layer = scrolling
++        .viewport_content_layer()
++        .expect("scrolling viewport retains a content layer")
++        .clone();
++    drop(scrolling);
++    assert!(skia_safe::graphics::font_cache_count_used() > 0);
++    // Dropping unrelated recordings must not evict a surviving layer's cache.
++    let temporary = recording(false);
++    drop(temporary);
++    assert!(skia_safe::graphics::font_cache_count_used() > 0);
++    std::thread::spawn(move || {
++        let mut surface = skia_safe::surfaces::raster_n32_premul((150, 60)).unwrap();
++        surface.canvas().draw_picture(&layer.picture, None, None);
++        assert!(skia_safe::graphics::font_cache_count_used() > 0);
++        drop(layer);
++    })
++    .join()
++    .unwrap();
++    assert_eq!(skia_safe::graphics::font_cache_count_used(), 0);
++}
+diff --git a/bindings/rust/openui-text/src/font/collection.rs b/bindings/rust/openui-text/src/font/collection.rs
+index b74e64df..a465fdc3 100644
+--- a/bindings/rust/openui-text/src/font/collection.rs
++++ b/bindings/rust/openui-text/src/font/collection.rs
+@@ -25,6 +25,53 @@ const MAX_INSTANCE_CACHE: usize = 256;
+ 
+ static NEXT_COLLECTION_ID: AtomicU64 = AtomicU64::new(1);
+ 
++// Skia's global strike cache retains typefaces after their document font
++// collections are released. Finish that cache lifetime when the last collection,
++// resolved font instance, and retained paint recording are gone. Serializing
++// acquisition with retirement prevents a new client from starting while
++// preceding clients are being retired.
++static FONT_CACHE_CLIENTS: Mutex<usize> = Mutex::new(0);
++
++/// Keeps cached font resources alive for an immutable paint recording.
++///
++/// This token owns no font registry, document state, or application callbacks.
++/// It must be dropped after the recording's Skia pictures and font resources.
++#[doc(hidden)]
++pub struct FontCacheLifetime {
++    _private: (),
++}
++
++impl FontCacheLifetime {
++    pub(crate) fn new() -> Self {
++        let mut clients = FONT_CACHE_CLIENTS
++            .lock()
++            .unwrap_or_else(|poisoned| poisoned.into_inner());
++        *clients += 1;
++        Self { _private: () }
++    }
++}
++
++impl Clone for FontCacheLifetime {
++    fn clone(&self) -> Self {
++        Self::new()
++    }
++}
++
++impl Drop for FontCacheLifetime {
++    fn drop(&mut self) {
++        let mut clients = FONT_CACHE_CLIENTS
++            .lock()
++            .unwrap_or_else(|poisoned| poisoned.into_inner());
++        *clients -= 1;
++        if *clients == 0 {
++            // This releases cached strikes, which own references to typefaces.
++            // Existing SkFont/Typeface objects remain valid. Fontconfig itself
++            // stays initialized; other libraries may own their configurations.
++            skia_safe::graphics::purge_font_cache();
++        }
++    }
++}
++
+ /// Stable identifier for an application-registered font face.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+ pub struct FontFaceHandle {
+@@ -284,6 +331,9 @@ pub struct FontCollection {
+     system: SendFontMgr,
+     hyphenation_registry: Arc<HyphenationRegistry>,
+     state: Mutex<CollectionState>,
++    // Rust drops fields in declaration order. Retire the strike cache after
++    // the system manager and this collection's cached font instances are gone.
++    _cache_lifetime: FontCacheLifetime,
+ }
+ 
+ impl std::fmt::Debug for FontCollection {
+@@ -297,8 +347,15 @@ impl std::fmt::Debug for FontCollection {
+ }
+ 
+ impl FontCollection {
++    /// Retain the shared font-cache lifetime without retaining this registry.
++    #[doc(hidden)]
++    pub fn retain_cache_lifetime(&self) -> FontCacheLifetime {
++        self._cache_lifetime.clone()
++    }
++
+     /// Construct a production collection backed by installed system fonts.
+     pub fn system() -> Arc<Self> {
++        let cache_lifetime = FontCacheLifetime::new();
+         Arc::new(Self {
+             id: NEXT_COLLECTION_ID.fetch_add(1, Ordering::Relaxed),
+             system: SendFontMgr(FontMgr::default()),
+@@ -315,6 +372,7 @@ impl FontCollection {
+                 cache_hits: 0,
+                 cache_misses: 0,
+             }),
++            _cache_lifetime: cache_lifetime,
+         })
+     }
+ 
+@@ -707,6 +765,7 @@ impl FontCollection {
+ 
+ impl Default for FontCollection {
+     fn default() -> Self {
++        let cache_lifetime = FontCacheLifetime::new();
+         Self {
+             id: NEXT_COLLECTION_ID.fetch_add(1, Ordering::Relaxed),
+             system: SendFontMgr(FontMgr::default()),
+@@ -723,6 +782,7 @@ impl Default for FontCollection {
+                 cache_hits: 0,
+                 cache_misses: 0,
+             }),
++            _cache_lifetime: cache_lifetime,
+         }
+     }
+ }
+diff --git a/bindings/rust/openui-text/src/font/mod.rs b/bindings/rust/openui-text/src/font/mod.rs
+index e3291ca5..85284bde 100644
+--- a/bindings/rust/openui-text/src/font/mod.rs
++++ b/bindings/rust/openui-text/src/font/mod.rs
+@@ -18,6 +18,8 @@ mod platform;
+ mod relative;
+ 
+ pub use cache::FontCache;
++#[doc(hidden)]
++pub use collection::FontCacheLifetime;
+ pub use collection::{
+     FontAxisRange, FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat,
+     FontFaceDescriptor, FontFaceHandle, FontFaceInfo, FontFeatureDefault, FontMetricOverrides,
+diff --git a/bindings/rust/openui-text/src/font/platform.rs b/bindings/rust/openui-text/src/font/platform.rs
+index ed290a9c..8fa16a8a 100644
+--- a/bindings/rust/openui-text/src/font/platform.rs
++++ b/bindings/rust/openui-text/src/font/platform.rs
+@@ -12,6 +12,7 @@ use skia_safe::{
+     FontStyle as SkFontStyle, GlyphId, Rect, Typeface,
+ };
+ 
++use super::collection::FontCacheLifetime;
+ use super::metrics::FontMetrics;
+ use super::{FontFeatureDefault, FontMetricOverrides};
+ 
+@@ -40,6 +41,9 @@ pub struct FontPlatformData {
+     /// 0.0 for normal/italic styles. CSS default oblique is 14°.
+     synthetic_oblique_angle: f32,
+     feature_defaults: Vec<FontFeatureDefault>,
++    // Resolved font data can outlive the collection that selected it. Keep the
++    // strike cache lifetime active until these owned font objects are released.
++    _cache_lifetime: FontCacheLifetime,
+ }
+ 
+ /// OpenType `vhea`/`vmtx` data retained with a resolved face.
+@@ -254,6 +258,7 @@ impl FontPlatformData {
+         device_scale_factor: f64,
+         configuration: ResolvedFontConfiguration,
+     ) -> Self {
++        let cache_lifetime = FontCacheLifetime::new();
+         // Font matching may return a regular face when a family has no bold
+         // member (Ahem is the canonical example). CSS font synthesis requires
+         // a synthetic bold face in that case; SkFont does not infer it from
+@@ -346,6 +351,7 @@ impl FontPlatformData {
+             synthetic_bold,
+             synthetic_oblique_angle: oblique_angle,
+             feature_defaults: configuration.feature_defaults,
++            _cache_lifetime: cache_lifetime,
+         }
+     }
+ 
+diff --git a/bindings/rust/openui-text/tests/font_cache_lifetime.rs b/bindings/rust/openui-text/tests/font_cache_lifetime.rs
+new file mode 100644
+index 00000000..ac6ff332
+--- /dev/null
++++ b/bindings/rust/openui-text/tests/font_cache_lifetime.rs
+@@ -0,0 +1,70 @@
++use openui_text::font::{FontCache, FontDescription};
++
++// This integration test runs in its own process. Other text tests may use the
++// same global Skia cache in parallel, so its lifetime counts cannot be checked
++// from the crate's shared unit-test process.
++#[test]
++fn fonts_outlive_their_collection_and_last_client_retires_cached_strikes() {
++    assert_eq!(skia_safe::graphics::font_cache_count_used(), 0);
++    let description = FontDescription::default();
++    let mut first = FontCache::new();
++    let first_font = first
++        .get_font_platform_data("sans-serif", &description)
++        .expect("installed sans-serif font");
++    let mut second = FontCache::new();
++    let second_font = second
++        .get_font_platform_data("sans-serif", &description)
++        .expect("installed sans-serif font");
++    let metrics = second_font.sk_font().metrics().0;
++    let used = skia_safe::graphics::font_cache_count_used();
++    assert!(used > 0);
++
++    drop(first);
++    drop(first_font);
++    assert_eq!(skia_safe::graphics::font_cache_count_used(), used);
++    assert_eq!(second_font.sk_font().metrics().0, metrics);
++
++    drop(second);
++    // A caller owns this resolved font beyond the selecting collection's life.
++    assert_eq!(skia_safe::graphics::font_cache_count_used(), used);
++    assert_eq!(second_font.sk_font().metrics().0, metrics);
++    drop(second_font);
++    assert_eq!(skia_safe::graphics::font_cache_count_used(), 0);
++
++    // Repeated construction/retirement must not accumulate cached typefaces.
++    for _ in 0..3 {
++        let mut cache = FontCache::new();
++        let font = cache
++            .get_font_platform_data("sans-serif", &description)
++            .expect("installed sans-serif font");
++        assert_eq!(font.sk_font().metrics().0, metrics);
++        assert!(skia_safe::graphics::font_cache_count_used() > 0);
++        drop(font);
++        drop(cache);
++        assert_eq!(skia_safe::graphics::font_cache_count_used(), 0);
++    }
++
++    // Cache retirement races with collection acquisition on other threads.
++    // Each thread keeps an owned font beyond the collection's lifetime.
++    let start = std::sync::Arc::new(std::sync::Barrier::new(8));
++    std::thread::scope(|scope| {
++        for _ in 0..8 {
++            let start = start.clone();
++            let description = description.clone();
++            scope.spawn(move || {
++                start.wait();
++                for _ in 0..16 {
++                    let mut cache = FontCache::new();
++                    let font = cache
++                        .get_font_platform_data("sans-serif", &description)
++                        .expect("installed sans-serif font");
++                    drop(cache);
++                    assert_eq!(font.sk_font().metrics().0, metrics);
++                    std::thread::yield_now();
++                    drop(font);
++                }
++            });
++        }
++    });
++    assert_eq!(skia_safe::graphics::font_cache_count_used(), 0);
++}

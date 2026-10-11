@@ -1,0 +1,92 @@
+{
+  "all_commands_terminal": true,
+  "failed_jobs": 0,
+  "javascript_executed_by_openui": false,
+  "job_logs": [
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 6,
+      "job_id": 112071893546,
+      "name": "fuzz-smoke",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/112071893546.log",
+      "run_id": 37402273852,
+      "sha256": "ca4b95049475c1f09563f750b1d17ee07f758d016bf7205fd85e8fc7808a0447"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 7,
+      "job_id": 112071893641,
+      "name": "miri-handles",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/112071893641.log",
+      "run_id": 37402273852,
+      "sha256": "f5d4353449b1dbe22ebbb01724568504b696775044e40fa9d287824c4de353ef"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 15,
+      "job_id": 112071893651,
+      "name": "conformance-and-platform",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/112071893651.log",
+      "run_id": 37402273852,
+      "sha256": "bda1304606f3efefe6391a5985f3f3890a8d2ef33033606be9d937c7a0342cb9"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 6,
+      "job_id": 112071893664,
+      "name": "native-sanitizers (address)",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/112071893664.log",
+      "run_id": 37402273852,
+      "sha256": "1b9c32018614d8cd92350488ffbfcffe0775721db47db3c0790346f240a3f279"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 6,
+      "job_id": 112071893683,
+      "name": "native-sanitizers (leak)",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/112071893683.log",
+      "run_id": 37402273852,
+      "sha256": "cc4fdf63b8e6acda655feedb1218e4d3e15dccdfc6575a635b940250f53025f4"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 6,
+      "job_id": 112071893713,
+      "name": "msrv",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/112071893713.log",
+      "run_id": 37402273852,
+      "sha256": "d519f619b91e5e9589bcab96e4cc16c78027a78f1cf37fae18ac2b460730d264"
+    },
+    {
+      "capture_actual_exit": 0,
+      "conclusion": "success",
+      "executed_steps": 6,
+      "job_id": 112071893718,
+      "name": "c-undefined-sanitizer",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/112071893718.log",
+      "run_id": 37402273852,
+      "sha256": "e49230ee832b3c5ace5167fe5e90e6a94b3bb2587a11c9628483aad6df6e50cd"
+    }
+  ],
+  "probe_sha256": "4ff6d54933f041d059cba32df06e0fa0518dd523427b15a28f5e746a61da0d89",
+  "release_qualification": false,
+  "schema_version": 1,
+  "skipped_jobs": 0,
+  "source": "27a47ba25185e20e7ae20801d0a45a386ce9e78c",
+  "successful_jobs": 7,
+  "workflows": [
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-hosted-v1807/37402273852.json",
+      "run_id": 37402273852,
+      "sha256": "34b6dd6e3f194e3c9c9b0ecad021577740ccf4b1a37e6911b67377a35d775049"
+    }
+  ]
+}

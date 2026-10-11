@@ -1,0 +1,51 @@
+{
+  "active_sources_or_probes_changed": false,
+  "all_commands_terminal": true,
+  "artifacts": [
+    {
+      "active_executable_pids": [],
+      "all_declared_build_steps_passed": true,
+      "build_receipt_sha256": "457c5e4abf309bf62fc24211d22cdc1baf24cd8d6ee1186be117ebffa55ffab2",
+      "build_steps": 8,
+      "bytes": 233343984,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-scroll-inline-clean-v386/pixel_compare",
+      "original_path_preserved_as_symlink": true,
+      "sha256": "b1d8b0fe47d6c75ba37fdc9a8ff23f7db5eb4a91b31f72722b4935436ae375b3",
+      "source": "8687c4d3e6a519376fe6cb49782b453f6f240082",
+      "stored_path": "/mnt/e/openui-v02-qualification-d174ea0b/retired-artifact-relocation-v1681/native-scroll-inline-clean-v386-pixel_compare"
+    },
+    {
+      "active_executable_pids": [],
+      "all_declared_build_steps_passed": true,
+      "build_receipt_sha256": "73df112485dbb3a4de810d4a9e846902ae85fa670debe6618f709e2af1630904",
+      "build_steps": 3,
+      "bytes": 339648184,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/generated-tile-clean-v150/pixel_compare",
+      "original_path_preserved_as_symlink": true,
+      "sha256": "b7a2e6fdcbaf9944264de42233823f6f1a25293c130acac47d67c8f3304b8689",
+      "source": "16fc959dc287c7f0b68680f89470ed1fd127043b",
+      "stored_path": "/mnt/e/openui-v02-qualification-d174ea0b/retired-artifact-relocation-v1681/generated-tile-clean-v150-pixel_compare"
+    },
+    {
+      "active_executable_pids": [],
+      "all_declared_build_steps_passed": true,
+      "build_receipt_sha256": "9d78912e626e1ed5a8e9e1584e4639ce59a4888cb26db2947917d614f9a68c51",
+      "build_steps": 3,
+      "bytes": 339649376,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/scroll-opaque-clean-v173/pixel_compare",
+      "original_path_preserved_as_symlink": true,
+      "sha256": "f81ed33376d14ab8dcf2352d0826ead98f1126985415447cf8a2c3a436c51675",
+      "source": "b3c54ea84da0afa3195c5d5c43acfe885cd03fca",
+      "stored_path": "/mnt/e/openui-v02-qualification-d174ea0b/retired-artifact-relocation-v1681/scroll-opaque-clean-v173-pixel_compare"
+    }
+  ],
+  "cargo_or_raster_commands_run": 0,
+  "old_executable_bytes_preserved": true,
+  "oracle_or_reference_images_changed": false,
+  "probe_sha256": "f77f25642a4509f7b0f317f69359fc93e6ddac191cf9279c62c1f9076f9e97c2",
+  "release_qualification": false,
+  "root_free_bytes_after": 1619824640,
+  "root_free_bytes_before": 707178496,
+  "schema_version": 1,
+  "source_files_changed": false
+}

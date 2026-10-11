@@ -1,0 +1,48 @@
+{
+  "all_commands_terminal": false,
+  "branch": "agent/native-raster-consumer-v1393",
+  "commit": "3d4eea1184ac6703ae4b29de12ddb4cb75fe5ed3",
+  "direct_cache_regression_qualification": false,
+  "last_observed_jobs": [
+    {
+      "conclusion": "",
+      "name": "fuzz-smoke",
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "",
+      "name": "c-undefined-sanitizer",
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "",
+      "name": "native-sanitizers (leak)",
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "",
+      "name": "miri-handles",
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "",
+      "name": "conformance-and-platform",
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "",
+      "name": "msrv",
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "",
+      "name": "native-sanitizers (address)",
+      "status": "in_progress"
+    }
+  ],
+  "probe_sha256": "800afbcdee6e257e814a988f29b463ef50a171dfc36428a44f3f43e94be12a05",
+  "release_qualification": false,
+  "run_id": 37255347853,
+  "schema_version": 1,
+  "state": "running-own-source-manual-hardening"
+}

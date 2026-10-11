@@ -5,7 +5,8 @@
 //! ```
 
 pub use crate::app::{
-    App, AppBuilder, BackendPreference, HeadlessApp, LogicalSize, RenderOptions, WindowOptions,
+    App, AppBuilder, AppExitHandle, BackendPreference, HeadlessApp, LogicalSize, RenderOptions,
+    WindowOptions,
 };
 pub use crate::context::{current_document, with_document};
 pub use crate::document::Document;
@@ -16,9 +17,11 @@ pub use crate::style::*;
 pub use crate::text_node::{TextNode, WeakTextNode};
 pub use crate::typed_style::*;
 pub use crate::view_node::{mount_view, IntoView, ViewNode};
+pub use crate::ElementTag;
 pub use crate::{
-    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
-    ViewportAuthority, ViewportMetrics,
+    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole, EditCommand,
+    EngineOptions, RangeSelectionMode, RasterConfiguration, ScrollMetrics, SelectionDirection,
+    TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
 };
 pub use openui_macros::{component, view};
 pub use openui_text::{

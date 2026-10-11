@@ -1,0 +1,133 @@
+{
+  "all_commands_terminal": true,
+  "consumer_compile_correction_only": true,
+  "immutable_probe_hashes": {
+    "/tmp/openui-native-fieldset-retry-build-v1310.py": "fbf05263bc9bb2353e3449a2b7869bfe6a212b5c096b201a846bcbebbb8cddf7",
+    "/tmp/openui-native-fieldset-retry-consumer-v1310.py": "892c1cc0dd0e1a1892b61ac152654323d064186262ec4e84169ab1470c298062",
+    "/tmp/openui-native-fieldset-retry-guards-v1310.py": "c86aeb2b34aa57d92c329b9a0c77fd45dcd7ffa2bf21e9bfbd5ffc65f069bb7b",
+    "/tmp/openui-native-fieldset-retry-matrices-v1310.py": "b356340a6c7eae7e1c78a6b36998c84b31e21d6ae8b37c479dabe45595205a14",
+    "/tmp/openui-native-fieldset-retry-sizing-v1310.py": "e93b0a61ee4dc0f0dfb28812ef1346eadcbbac5ff536d9459286ee020b302553"
+  },
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "ordered_build_and_image_stages": true,
+  "original_pixel_gate_remains_required": true,
+  "prior_terminal_pipeline_sha256": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json": "95da859e07156b9162940ee12d3a3a437d56f1a44dd5f55ce080fc84cf19a1aa"
+  },
+  "prior_whole_pipelines": [
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json"
+  ],
+  "probe_sha256": "f85c3ef56566e9c708ab71b34098d62916c4544694b604969a94c28c7b8b5c5a",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "renderer_production_unchanged_from_prior_candidate": true,
+  "schema_version": 1,
+  "selection_hashes": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-selection-v1310.json": "197050888cd8e21e7a75994605fe33be7658932a004d4321133a6cd00d46c2e2"
+  },
+  "source": {
+    "clean": true,
+    "commit": "abed078ddb2c8c2442155d14571cbadcb3b94758",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "06533d8e6fbd039e36dd039f7e9d956b51a5b69d3ac457c06c977c8ae917771a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "abed078ddb2c8c2442155d14571cbadcb3b94758",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "06533d8e6fbd039e36dd039f7e9d956b51a5b69d3ac457c06c977c8ae917771a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "complete-requires-results-review",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-fieldset-retry-guards-v1310.py"
+      ],
+      "log_sha256": "d5a0b9b9b17d52a35ebce67e74bb9504b0ddf896db766b4a5f10d8334372f78f",
+      "name": "regression-guards",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-fieldset-retry-build-v1310.py"
+      ],
+      "log_sha256": "538525db32ee343b9651b074f85174f30039838187d0b59ad17aff4221ba7869",
+      "name": "native-build",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-fieldset-retry-sizing-v1310.py"
+      ],
+      "log_sha256": "0a04f81f34deec0ac9c77e7c2eb287c6a8c190bdf06418f32c80e9f6ebc16c4f",
+      "name": "intrinsic-native",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-fieldset-retry-consumer-v1310.py"
+      ],
+      "log_sha256": "049574c158c783b835928bccc0ead6d8d754c87d153f29d1100e9f12c2f5289e",
+      "name": "fieldset-native",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-fieldset-retry-matrices-v1310.py",
+        "selection"
+      ],
+      "log_sha256": "1f44ea85bdd68596f80635db363d038ed2e1deace7f63779a8ba365c4fa122cd",
+      "name": "selection",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-fieldset-retry-matrices-v1310.py",
+        "focused"
+      ],
+      "log_sha256": "df78575512052b24c1b4b573c9e958df8b8415e5e0d862aa974207538156643b",
+      "name": "focused",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-fieldset-retry-matrices-v1310.py",
+        "primitive"
+      ],
+      "log_sha256": "ddf1372e3c2916a9997738c276caa081b9d52d11b26a3d1b084afe7db75b2f03",
+      "name": "primitive",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-fieldset-retry-matrices-v1310.py",
+        "full"
+      ],
+      "log_sha256": "e0061bdd26f41e7f49579e92e900255848a2395bae12445c40c00070d796ee62",
+      "name": "full",
+      "observed_exit_code": 1
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-fieldset-retry-matrices-v1310.py",
+        "expanded"
+      ],
+      "log_sha256": "0fb3d9badbc30c7680f1ddce5320616f4ee173205a10a64deea9bab5e71cd2a8",
+      "name": "expanded",
+      "observed_exit_code": 1
+    }
+  ]
+}

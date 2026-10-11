@@ -1,0 +1,56 @@
+{
+  "all_commands_terminal": true,
+  "chrome_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "fixture_sha256": "286ee2fcf41814345fb48d5bbd0dc54088c88c6484c99f3f602c944bc117e095",
+  "harness_sha256": "97444384d43fd032a13f71c2b5c8330b6bc7533157f5af17ffc93488a341e321",
+  "javascript_executed_by_openui": false,
+  "keypress_api_not_measured": true,
+  "native_api_qualified": false,
+  "observed_event_types": [
+    "keydown",
+    "keyup",
+    "click",
+    "input",
+    "change",
+    "focus",
+    "focusin",
+    "blur",
+    "focusout"
+  ],
+  "observed_exit_code": 0,
+  "owner_pid": 95090,
+  "previous_diagnostic_correction": "v3503 and v3504 are preserved. Each case now replaces body to remove accumulated root event listeners. Physical keyDown uses committed Space/Enter text; button checked expando is not assigned.",
+  "probe_sha256": "f829b548bcddb566a8218b3df361a48ab856068e758bc8af02d8a5f4e926a9c5",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "repeated_observations_identical": true,
+  "runs": [
+    {
+      "observations_sha256": "799f7f66b86996af673421593c48e9abfba6e2790f595ea1e1d6de7d0fca338c",
+      "repeat": 1,
+      "scenarios": 99
+    },
+    {
+      "observations_sha256": "799f7f66b86996af673421593c48e9abfba6e2790f595ea1e1d6de7d0fca338c",
+      "repeat": 2,
+      "scenarios": 99
+    }
+  ],
+  "schema_version": 1,
+  "script_runs_only_in_separate_chromium": true,
+  "source": {
+    "clean": true,
+    "commit": "635619da2000ef5db258f97623689cd474084fdb",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "e71e3cab5b633e4989ae69097d7d3984894635b1beef0169b068362061c78773",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "635619da2000ef5db258f97623689cd474084fdb",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "e71e3cab5b633e4989ae69097d7d3984894635b1beef0169b068362061c78773",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true
+}

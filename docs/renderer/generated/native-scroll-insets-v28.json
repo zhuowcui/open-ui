@@ -1,0 +1,447 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-clean-v1206/build.json",
+      "sha256": "9836684cb22f779cc3a17fad189270c52ef4a3bf5076804547c554e3154c02c4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-checks-v1207/receipt.json",
+      "sha256": "52e7496357418031782ca9c8df9f05284be50917a3afb6471f59c0b4f680e617"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-shared-consumer-v1203/receipt.json",
+      "sha256": "0868c659fb998b554030aa36bba23422f0d2f7c5c5197c6fde7fff75fbee4ade"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-followup-consumer-v1210/receipt.json",
+      "sha256": "3b133cf9786ce50647e1e86edb61ae1a880a30780b373d5d966429413267819b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-followup-static-v1211/receipt.json",
+      "sha256": "ffa9c3c14ce981db9e6e0ba24d6d930ed011e723537ac781db350724212095b3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-lcd-checks-v1217/receipt.json",
+      "sha256": "4c71318db15f0081ec12b7075b784040ab83f2bb0187bdd24d5cd89623364d96"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scene-recording-cache-checks-v1231/receipt.json",
+      "sha256": "24d55e8c938aaabeee2a36dc46e513f79f179918785e84049831f1b9e1cc522b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-raster-audit-v1229.json",
+      "sha256": "2aef6b836b1ad5489dab595a3fb10b6d978f9c0de570db43ef3f929377c95f9b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-full-audit-v1243.json",
+      "sha256": "f2fc8a44661d2eda6ec62599bacea19532ccc9c1f912e788759615047d73b506"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-expanded-audit-v1243.json",
+      "sha256": "784593dcd16925f9f4952a3305b64ac6f91e46981aebd7ec3cef07a03e439a45"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-followup-pipeline-v1208/receipt.json",
+      "sha256": "351a59344a4b40d768098029875e7ede06a3e5d35b6b7994159e224623bff782"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scene-recording-cache-hardening-v1245/receipt.json",
+      "sha256": "ed90d4d339ebceb700c46287279136b8b5f96421e31d4dc15e439861bd4ffb55"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/ahem-legend-query-v1251/receipt.json",
+      "sha256": "90c6e1dfb0864baa04a2fa3d862eeb29f37574c8dc73f848fd4dc39a1bf7e9dd"
+    }
+  ],
+  "build": {
+    "c_consumers": 11,
+    "c_exports": 113,
+    "cpp_consumers": 5,
+    "read_only_checks_passed": 10,
+    "stages_passed": 9,
+    "workspace_failed": 0,
+    "workspace_ignored": 13,
+    "workspace_passed": 8544
+  },
+  "complete_census": {
+    "actual_comparison_exit_codes": [
+      1,
+      1
+    ],
+    "all_reference_invariants_unchanged": true,
+    "baseline_source": {
+      "clean": true,
+      "commit": "5cc75147b89e74198102314657689ab6bec1f77c",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "ede290a86642a93227b44509da846fc2b22821f235129c93c8d79d54c6a0f5ff",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "changed_comparison_root_causes_reviewed": false,
+    "evidence": {
+      "path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-census-audit-v1.json",
+      "sha256": "cce9d1e312dd48c80f3d3f83ee99dc7925972a4b28ab249fe4699335f4bb106b"
+    },
+    "expanded": {
+      "addition_cases_exact_all_four_profiles": 199,
+      "addition_cases_total": 201,
+      "audit": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-expanded-audit-v1243.json",
+        "sha256": "784593dcd16925f9f4952a3305b64ac6f91e46981aebd7ec3cef07a03e439a45"
+      },
+      "deltas": {
+        "addition_comparisons": 804,
+        "addition_invariants_unchanged": 800,
+        "all_nine_invariants_unchanged": 23609,
+        "changed_comparisons": 119,
+        "different": 1665,
+        "exact": 22063,
+        "exact_gains": 0,
+        "exact_losses": 74,
+        "mismatch_count_worsens": 97,
+        "original_comparisons_agree": 22924,
+        "total": 23728
+      },
+      "results": {
+        "different": 1665,
+        "errors": 0,
+        "exact": 22063,
+        "profile_result_sha256": "f5a1a548266c6901c9065f02edc3df39b7b405169a29224f7142dc1d2875a4f6",
+        "total": 23728
+      },
+      "separate_original_census_agrees_all_22924": true
+    },
+    "original": {
+      "audit": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-full-audit-v1243.json",
+        "sha256": "f2fc8a44661d2eda6ec62599bacea19532ccc9c1f912e788759615047d73b506"
+      },
+      "changed_test_ids": [
+        "wpt/css2_floats/floats-in-table-caption-001",
+        "wpt/css_break/table-cell-padding-block-in-inline-crash",
+        "wpt/css_display/display-contents-table-002",
+        "wpt/css_display/display-contents-table-002-ref",
+        "wpt/css_multicol/multicol-span-all-004",
+        "wpt/css_multicol/multicol-span-all-004-ref",
+        "wpt/css_overflow/line-clamp_line-clamp-auto-045",
+        "wpt/css_overflow/line-clamp_webkit-line-clamp-024",
+        "wpt/css_overflow/overflow-alignment-001-ref",
+        "wpt/css_overflow/overflow-alignment-002-ref",
+        "wpt/css_overflow/scroll-markers_scroll-buttons-appearance",
+        "wpt/css_sizing/block-size-with-min-or-max-content-1-ref",
+        "wpt/css_sizing/block-size-with-min-or-max-content-1a",
+        "wpt/css_sizing/block-size-with-min-or-max-content-1b",
+        "wpt/css_sizing/clone-intrinsic-size-ref",
+        "wpt/css_sizing/clone-nowrap-intrinsic-size",
+        "wpt/css_sizing/clone-nowrap-intrinsic-size-bidi",
+        "wpt/css_sizing/clone-nowrap-intrinsic-size-bidi-ref",
+        "wpt/css_sizing/clone-nowrap-intrinsic-size-ref",
+        "wpt/css_sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-001",
+        "wpt/css_sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-002",
+        "wpt/css_sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-003",
+        "wpt/css_sizing/float-clearance-with-margin-collapse-and-fit-content-and-padding-percentage-004",
+        "wpt/css_sizing/intrinsic-percent-replaced-022",
+        "wpt/css_sizing/intrinsic-percent-replaced-023",
+        "wpt/css_sizing/intrinsic-percent-replaced-029.tentative",
+        "wpt/css_sizing/intrinsic-percent-replaced-030.tentative",
+        "wpt/css_sizing/intrinsic-size-min-content-box-sizing",
+        "wpt/css_sizing/slice-intrinsic-size-ref",
+        "wpt/css_sizing/slice-nowrap-intrinsic-size",
+        "wpt/css_sizing/slice-nowrap-intrinsic-size-bidi",
+        "wpt/css_sizing/slice-nowrap-intrinsic-size-bidi-ref",
+        "wpt/css_sizing/slice-nowrap-intrinsic-size-ref"
+      ],
+      "deltas": {
+        "all_nine_invariants_unchanged": 22809,
+        "changed_comparisons": 115,
+        "different": 1660,
+        "exact": 21264,
+        "exact_gains": 0,
+        "exact_losses": 70,
+        "mismatch_count_worsens": 93,
+        "total": 22924
+      },
+      "remaining_test_id_count": 896,
+      "results": {
+        "different": 1660,
+        "errors": 0,
+        "exact": 21264,
+        "profile_result_sha256": "81718e87ab2219983e8bd1547044fa26375b3afa7bfb839f5d23e20fa9058b2b",
+        "total": 22924
+      }
+    },
+    "original_comparisons_agree_between_suites": 22924,
+    "promotion_allowed": false,
+    "source": {
+      "clean": true,
+      "commit": "c170aa7eaeca3c1e8f93eabda11ff777df46937e",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "17053cfb5603971b87c3c9c16a03c3a08b1dd41fb7054d3b197174dcdcb5cf40",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "contract": "Open UI executes no JavaScript in any version. Consuming apps call public native Rust APIs and Rust callbacks over the shared Engine. Needed browser element behavior must be implemented in Rust and tested from a consuming app. Chromium alone supplies expected pixels with zero tolerance; old Open UI screenshots are immutable provenance.",
+  "javascript_executed_by_openui": false,
+  "legend_reduction_queries": {
+    "evidence": {
+      "path": "docs/renderer/evidence/fieldset-legend-origin-query-v1.json",
+      "sha256": "97babb2c86ddf4dfbb3bb758beda6ba19ee9633080b945abe54d9ddf5e01b4e8"
+    },
+    "full_reduced_second_legend_agrees": true,
+    "independent_queries_identical": true,
+    "native_pixel_comparisons": 0,
+    "raster_root_cause_reviewed": false
+  },
+  "local_builds_and_image_sweeps_are_separate": true,
+  "native_sizing": {
+    "cases_per_scale": 200,
+    "geometry_exact": 1000,
+    "geometry_total": 1000,
+    "no_resource_guard_triggered": true,
+    "observed_comparison_exit_code": 0,
+    "peak_rss_bytes": 84824064,
+    "pixel_comparisons_total": 0,
+    "public_native_callback_and_owned_bounds_runs_passed": 5,
+    "runs_passed": 5,
+    "shared_fixes": [
+      "Propagate only newly added float exclusions from block wrappers.",
+      "Use shared intrinsic min/max sizing for native atomic boxes independently of font profile.",
+      "Reset advance rounding after forced newlines.",
+      "Keep the first unbreakable text unit together across inline and shaping boundaries, retaining Unicode soft opportunities."
+    ]
+  },
+  "native_static_position": {
+    "geometry_exact": 120,
+    "geometry_total": 120,
+    "independent_native_repeats_identical": 60,
+    "observed_comparison_exit_code": 1,
+    "owner": "openui-paint author text raster policy and outline selection",
+    "pixel_exact": 0,
+    "pixel_total": 120,
+    "policies": {
+      "chromium-linux-lcd": {
+        "deterministic_repeats": 30,
+        "geometry_exact": 60,
+        "native_runs_passed": 60,
+        "pixel_exact": 0,
+        "total": 60
+      },
+      "default": {
+        "deterministic_repeats": 30,
+        "geometry_exact": 60,
+        "native_runs_passed": 60,
+        "pixel_exact": 0,
+        "total": 60
+      }
+    },
+    "references_unchanged": true,
+    "representative_lcd_difference": {
+      "alpha_and_blue_identical": true,
+      "case": "inline-reset",
+      "changed_channels": [
+        "red",
+        "green"
+      ],
+      "connected_regions": 6,
+      "maximum_green_absolute_delta": 11,
+      "maximum_red_absolute_delta": 7,
+      "mismatched_pixels": 192,
+      "scale": 1,
+      "state": "before"
+    },
+    "root_cause_status": "reviewed policy-selection omission; pixel causation remains a hypothesis until the prepared fix is tested"
+  },
+  "new_public_rust_api": [
+    "Document::with_options",
+    "Document::with_font_collection_and_options",
+    "Document::raster_configuration",
+    "AppBuilder::raster_configuration",
+    "HeadlessApp::with_options"
+  ],
+  "new_release_states_admitted": 0,
+  "pipeline_observation": {
+    "all_commands_terminal": true,
+    "full_census_pass_claimed": false,
+    "snapshot_path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-pipeline-snapshot-v6.json",
+    "snapshot_sha256": "351a59344a4b40d768098029875e7ede06a3e5d35b6b7994159e224623bff782",
+    "state": "complete-requires-results-review",
+    "static_pixels_pass_claimed": false
+  },
+  "prepared_lcd_followup": {
+    "compiled": false,
+    "full_workspace_verified": false,
+    "inherits_intrinsic_census_regressions": true,
+    "native_pixels_verified": false,
+    "no_fixture_id_selection": true,
+    "no_implicit_backend_selection": true,
+    "patch": {
+      "bytes": 1217,
+      "path": "docs/renderer/evidence/native-inherited-styles-v1/native-lcd-outline-policy-v1.patch",
+      "sha256": "7b6471dca2b99680d06bcb0a78e726c54690657be272661968f5e0ec15dbeba1"
+    },
+    "pipeline_observation": {
+      "all_commands_terminal": false,
+      "snapshot_path": "docs/renderer/evidence/native-inherited-styles-v1/native-lcd-pipeline-snapshot-v2.json",
+      "snapshot_sha256": "5de1c9ecf617579905991e892429835847af337fa122cdd6727fb8a1e0ac9add",
+      "state": "running-native-build"
+    },
+    "promotion_allowed": false,
+    "read_only_checks_passed": 10,
+    "reviewed_omission": "Explicit Chromium LCD author text selected LCD surface/font settings but paint_text still selected the portable Skia outline path. The compatible author outline path was used only for escape from the aliased font profile.",
+    "shared_fix": "Select the compatible author outline policy whenever immutable raster configuration explicitly requests the Chromium Linux backend and LCD author text. Native-control and embedded-document paths remain independently selected.",
+    "source": {
+      "clean": true,
+      "commit": "52788b83f72025430614c046065aae526230ae75",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "8e470497ebaae7b57f6c6572ba612cdc7cfde3c6558c1b1d0bdad310e3df5acb",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "prepared_scene_recording_cache": {
+    "baseline_regression_test_executed": false,
+    "baseline_test_only_checkpoint": "a49d100100b1372aa49e6dabcd87bbebed275ae4",
+    "compiled": false,
+    "fixed_regression_tests_executed": false,
+    "full_workspace_verified": false,
+    "hosted_hardening": {
+      "all_observed_jobs_passed": true,
+      "direct_cache_regression_qualification": false,
+      "evidence": {
+        "path": "docs/renderer/evidence/native-inherited-styles-v1/native-scene-recording-cache-hardening-v1.json",
+        "sha256": "e90b2b4a7c7b025a0ba619d633eec696c3c8cd8bd6ae668659c680f771aa1310"
+      },
+      "jobs": [
+        {
+          "conclusion": "success",
+          "name": "conformance-and-platform",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "miri-handles",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "c-undefined-sanitizer",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "msrv",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "native-sanitizers (address)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "fuzz-smoke",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "native-sanitizers (leak)",
+          "status": "completed"
+        }
+      ],
+      "observed_watch_exit_code": 0,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/scene-recording-cache-hardening-v1245/receipt.json",
+        "sha256": "ed90d4d339ebceb700c46287279136b8b5f96421e31d4dc15e439861bd4ffb55"
+      },
+      "release_qualification": false,
+      "run_id": 37216268089,
+      "scope": "Hosted conformance, Linux consumers, MSRV, Miri, sanitizers and fuzz smoke. Direct cache baseline/fixed and Ganesh unit guards are still queued.",
+      "skipped_jobs": 0,
+      "source_commit": "107e2e36c3a0fb57ddb85cac14d9c4fdb1dcf2da",
+      "successful_jobs": 7
+    },
+    "inherits_intrinsic_census_regressions": true,
+    "native_pixels_verified": false,
+    "no_fixture_id_selection": true,
+    "no_implicit_backend_selection": true,
+    "owner": "openui-compositor CPU and Ganesh immutable frame caches",
+    "patch": {
+      "bytes": 13813,
+      "path": "docs/renderer/evidence/native-inherited-styles-v1/native-scene-recording-cache-v1.patch",
+      "sha256": "7fa592568d14e8d508b6b57676c57d0aa07166051e25c866dfeda0beb9c0267f"
+    },
+    "pipeline_observation": {
+      "all_commands_terminal": false,
+      "snapshot_path": "docs/renderer/evidence/native-inherited-styles-v1/native-scene-recording-cache-snapshot-v2.json",
+      "snapshot_sha256": "9facd9c53b811b5783489ed32c866165aa9dcf88e44bf9205329e52f1e03baed",
+      "state": "awaiting-separate-intrinsic-and-lcd-pipelines"
+    },
+    "promotion_allowed": false,
+    "public_interfaces_changed": false,
+    "read_only_checks_passed": 10,
+    "reviewed_source_cause": "Scene generations restart per Engine, while both compositors reuse a frame by generation alone. A different document can therefore receive the previous document frame. Ganesh may also return that cached frame before validating a CPU scene.",
+    "shared_fix": "Cache an owned immutable recording with the completed frame and require recording identity plus generation before reuse. The strong recording owner prevents allocation-address reuse. Ganesh releases that owner before its graphics context.",
+    "source": {
+      "clean": true,
+      "commit": "107e2e36c3a0fb57ddb85cac14d9c4fdb1dcf2da",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "ef67a5b541e9ebf2c2d9eed8d3a2406ea9a488ed514eba3563fd7a8716f8020a",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tests_prepared": [
+      "Independent native documents with equal scene generations and different colors at five scales, after document destruction.",
+      "New viewport, device scale and raster policy with the same generation.",
+      "Recording retention and release on replacement, PNG rendering and compositor destruction.",
+      "Explicit Mesa Ganesh recording changes, repeated frame reuse, CPU scene rejection and PNG cache invalidation."
+    ]
+  },
+  "prior_snapshot": {
+    "path": "docs/renderer/generated/native-scroll-insets-v27.json",
+    "sha256": "f752304aa164bcdca9b8be5569c3546909f73f7deb08737b02062877fa604365"
+  },
+  "probe_sha256": "6847225051dd9af8a8474ae768028bce524b2c0b2b101fb51a7f970e310e1d27",
+  "promotion_allowed": false,
+  "raster_matrices": {
+    "all_1600_comparison_invariants_unchanged": true,
+    "audit": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-raster-audit-v1229.json",
+      "sha256": "2aef6b836b1ad5489dab595a3fb10b6d978f9c0de570db43ef3f929377c95f9b"
+    },
+    "focused_exact": 640,
+    "focused_total": 640,
+    "observed_exit_codes": [
+      0,
+      0
+    ],
+    "primitive_exact": 960,
+    "primitive_total": 960,
+    "source": {
+      "clean": true,
+      "commit": "c170aa7eaeca3c1e8f93eabda11ff777df46937e",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "17053cfb5603971b87c3c9c16a03c3a08b1dd41fb7054d3b197174dcdcb5cf40",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "reference_inputs_changed": false,
+  "release_qualification": false,
+  "required_work_still_open": [
+    "Complete original and expanded Chromium equality with reviewed residual ownership.",
+    "Fix native absolute intrinsic widths and review glyph advance and paint discrepancies.",
+    "Complete all needed public native Rust element APIs and shared C/accessibility parity.",
+    "Complete compositor/3D, blocked-UI animation, hardening, hardware, accessibility, performance, packaging, provenance and approved signed publication.",
+    "Minimize and repair all 70 original and four addition exact losses while preserving the 1,000 native sizing matches. The intrinsic candidate and its descendants remain unapplied."
+  ],
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "c170aa7eaeca3c1e8f93eabda11ff777df46937e",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "17053cfb5603971b87c3c9c16a03c3a08b1dd41fb7054d3b197174dcdcb5cf40",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_patch": {
+    "bytes": 49872,
+    "path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-and-raster-options-v6.patch",
+    "sha256": "dc460445d4e56fbc9b8438fc4069176d64cd018270fa88280c15afe3c5c02809"
+  }
+}

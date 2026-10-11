@@ -1,0 +1,46 @@
+{
+  "adapted_from": {
+    "/tmp/openui-native-glyph-descriptor-guards-v1764.py": "a05a60e3f2d5e6a38deede24dfe8098e9a3bdd7fea8049b3c047500997b55c4e",
+    "/tmp/openui-native-intrinsic-snap-build-v1716.py": "a7f43ba1ddece13f1ffaa5acb29326950b4a8ff7afabc2ef506731a7456be893",
+    "/tmp/openui-native-intrinsic-snap-pipeline-v1717.py": "a6af386e748c2627a49e0a7b152d6365e8427e9ef10fb081d9e71b1b652d520c",
+    "/tmp/openui-native-keywords-consumer-v1587.py": "3d8084e35dff75c5500e7f8407a42e6bbaede08709a4ea47804038f5017082b2",
+    "/tmp/openui-native-keywords-matrices-v1587.py": "beec17f8ed3d37bf2f35622e85da62fdca3d94b0251f21555e86ec40b52a3f51",
+    "/tmp/openui-native-keywords-table-geometry-v1587.py": "08d863fadc18d93661a76819580741e81b7e7b412dca729f45e7862e68be5ec9"
+  },
+  "baseline_root": "/dev/shm/openui-native-keywords-baseline-7cb31314-v1772",
+  "baseline_source": {
+    "clean": true,
+    "commit": "7cb31314f2f871e9d1bb6fc0dc63c594bb1cf20e",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "7b950f598e01f1d311048d5dd743aab9a9b37cd3b2b77d9d036c9b22f93efe8d",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "cargo_commands_run": 0,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "pixel_tolerance": 0,
+  "probe_sha256": "a0a91a030676593a2ec1a0ea87ec31f403c47b37e373acc10c189b01882a2891",
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "required_fixed_named_guards": 3,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "scripts": {
+    "/tmp/openui-native-keywords-current-build-v1772.py": "951ecd666b24ea386f995ceda059f00dc1d522b56da9204098b7ad14c39591b5",
+    "/tmp/openui-native-keywords-current-consumer-v1772.py": "79c2fb91c5c241731e2fed6ee24313a6e38152e82879dabc5455a94e8f54b9c5",
+    "/tmp/openui-native-keywords-current-guards-v1772.py": "3e2ea9e8bf8fa3a129b9b48a946ca3d23fe5ecd9db30742b2b2e34e39e65dc2b",
+    "/tmp/openui-native-keywords-current-matrices-v1772.py": "2bd713c109afc179e2cb7ca18b6dc09f3dc678d25a64113f9c147526633acafe",
+    "/tmp/openui-native-keywords-current-pipeline-v1773.py": "69f944bb110f5b7044d613f7d081b8a190b437fec02bb4f0bd38b23eb4767577",
+    "/tmp/openui-native-keywords-current-table-geometry-v1772.py": "bbd7a6e16afe6fc008b8e6a8614d62b31abb8a088cf6f81cffccf6aea478b7e3"
+  },
+  "source": {
+    "clean": true,
+    "commit": "7d6ffabfea1f72c90f97475488dba8a8058ac4c7",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c24ab4b7c6003be5febbf60385f34286f8af2025b9d836361de70dc10281a2fe",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_checks_passed": 16,
+  "stages": 8,
+  "workspace_build_stages": 13
+}

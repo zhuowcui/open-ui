@@ -1,0 +1,89 @@
+{
+  "accepted_expanded_exact": 22137,
+  "accepted_original_exact": 21334,
+  "actual_cross_language_geometry_matches_rust": true,
+  "actual_cross_language_images": 400,
+  "actual_cross_language_images_matching_rust": 400,
+  "all_chromium_reference_bytes_unchanged": true,
+  "all_native_app_commands_terminal": true,
+  "all_native_repeat_runs_identical": true,
+  "app_actual_exit": 1,
+  "artifact_bytes": 1883916,
+  "artifact_count": 5,
+  "artifacts": [
+    {
+      "bytes": 1827408,
+      "decompressed_bytes": 52911241,
+      "decompressed_sha256": "e05ea78e7ed8b270c5c1f31a82f3df50c41442633368890a86985637fa64524c",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v2/native-consumer-terminal.json.gz",
+      "sha256": "4a8bc7e718ff8583de11de9cbef2724558bd13dae7551dbdd1645794c9b8170a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-consumer-v1677/receipt.json"
+    },
+    {
+      "bytes": 18016,
+      "path": "docs/renderer/evidence/native-text-inheritance-v2/owner-at-observation.json",
+      "sha256": "0ea78196ad3a149493506b968e47938aa49538c7868aa853c585d43bf2e53b02",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-pipeline-v1678/receipt.json"
+    },
+    {
+      "bytes": 14095,
+      "path": "docs/renderer/evidence/native-text-inheritance-v2/native-application.log",
+      "sha256": "55e3a817767442936a4dc2637d7d8d9c72afcec3a6c9d7f644b343a7ba792df1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-pipeline-v1678/native-application.log"
+    },
+    {
+      "bytes": 20166,
+      "path": "docs/renderer/evidence/native-text-inheritance-v2/consumer-probe.py",
+      "sha256": "c126d6071a0eb1c77362bb86b4df4e24e5e6bb8e5dc4fc7cf46f8cd554c0c6da",
+      "source_path": "/tmp/openui-native-text-style-runtime-consumer-v1677.py"
+    },
+    {
+      "bytes": 4231,
+      "path": "docs/renderer/evidence/native-text-inheritance-v2/openui-native-text-inheritance-app-preserve-v1683.py",
+      "sha256": "9095e18e6ec98b197503ec4ddd9bc7f091e10cf2236bf6a0aeb5249edb36ef6c",
+      "source_path": "/tmp/openui-native-text-inheritance-app-preserve-v1683.py"
+    }
+  ],
+  "chromium_exact_geometry_states": 34560,
+  "chromium_exact_images": 0,
+  "default_native_raster_still_not_chromium_exact": true,
+  "focused_primitive_original_expanded_still_required": true,
+  "geometry_differences": {
+    "count": 3840,
+    "family": "Ahem",
+    "native_width_short_by_css_pixels": 0.015625,
+    "only_width_differs": true,
+    "sizes": [
+      12,
+      16
+    ]
+  },
+  "javascript_executed_by_openui": false,
+  "native_cases": 100,
+  "native_geometry_states": 38400,
+  "native_images": 600,
+  "native_inheritance_applied_only_on_private_source": true,
+  "new_release_states_admitted": 0,
+  "owner": "native-text-style-runtime-pipeline-v1678",
+  "owner_terminal_at_observation": false,
+  "pixel_tolerance": 0,
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "rust_self_rows_excluded": 200,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "41b616c3be5224b074e9d06ba6aa963731a1b265",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "2f5e480b3a582fbc34561d02b44cabaeb658d11f8a247381c8f5e56cae253c59",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "41b616c3be5224b074e9d06ba6aa963731a1b265",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "2f5e480b3a582fbc34561d02b44cabaeb658d11f8a247381c8f5e56cae253c59",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

@@ -1,0 +1,291 @@
+{
+  "actual_whole_exit_code": 1,
+  "all_native_apis_qualified": false,
+  "candidate_nonregression_verified": true,
+  "chromium_reference_fields_unchanged": true,
+  "combined_umbrella_source_qualification_pending": true,
+  "evidence": [
+    {
+      "decoded_sha256": "60b4b533f8c056cc44a391cf4dcb9a098a49288c1ebd80548b6fbcd45de671a9",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/receipt.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/renderer-receipt.json.gz",
+      "sha256": "f6d6266f9609d283363ae738ace95dbe9f00fb78403cae2da52f31e568a72e4f"
+    },
+    {
+      "decoded_sha256": "ba83ed1ace411f9d25f097a4262d988311f025d4ca5137756322ccbd5e76362d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial-build.log",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/renderer-trial-build.log.gz",
+      "sha256": "5f14f0c14cf896033ffec976c5318a6d8b4f609ba2cc070e1bbf1592ee5b5872"
+    },
+    {
+      "decoded_sha256": "9ab9122014d643e727a3512d2b63c6b68c88afbb76952eb0a4c706e188e68246",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial-focused.log",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/renderer-trial-focused.log.gz",
+      "sha256": "974cd97e062eadf211254d8d4e7c349fe39eaf31408436db6d0a1f018a9477b1"
+    },
+    {
+      "decoded_sha256": "4244e3ef985f25038e5fd284d31099d3bd397208e19ec89ea61dc8cf10292a84",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial-primitive.log",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/renderer-trial-primitive.log.gz",
+      "sha256": "75cad91057f7c2c43ba5eb5ace8ade1a5bd42ab2d7e140c9679f25bd45170a03"
+    },
+    {
+      "decoded_sha256": "2bfae17da938ac87ddbba038fa8c470a733b5bbd4656c5742df1ef07d992d54b",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial-full.log",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/renderer-trial-full.log.gz",
+      "sha256": "6e74337320b65333d0fbe9dd2c7e7840ffd7ff2f756bb6a7ce03e0bf7d629b2b"
+    },
+    {
+      "decoded_sha256": "67811606f432f2d319f8d97f396ee18ac5a7e967cbfc984bee64b0ce6e2e8954",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial-expanded.log",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/renderer-trial-expanded.log.gz",
+      "sha256": "aac93389d4aab70c26275b2198d58e710a2e3dd8490b1dbfa636fa93b40d4522"
+    },
+    {
+      "decoded_sha256": "04bb054bb5d0dfa8353b8056b97caff6838b767694f60f2926097723d49714e4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial/focused-matrix/focused-summary.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/focused-summary.json.gz",
+      "sha256": "cf66d6a6854367c6e3cb36a795fa29115f2d2afd64cadca284d555d45d86da7f"
+    },
+    {
+      "decoded_sha256": "ae66459c26ddaef48ba276cedc4b0efc876acd4a5bad9560ab2f368cd939d4d3",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial/primitive-matrix/primitive-summary.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/primitive-summary.json.gz",
+      "sha256": "36064fcd3c963809c5e74647b172d96949869b264872b42f82e0efb6add1cc2c"
+    },
+    {
+      "decoded_sha256": "e6abce3dc9736faebadcb82f50c2346ce758180592ab4bb6dc328b30312faae6",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial/full-matrix/full-summary.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/full-summary.json.gz",
+      "sha256": "dcf6b3df5cf902e1696a7cbc379aeae986e21798321452530a4b2479e1dfe5ba"
+    },
+    {
+      "decoded_sha256": "92bb0009dcb3b702dd495b40b4d4773bde9638678784bdf778153505ffcb831e",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial/expanded-matrix/expanded-summary.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/expanded-summary.json.gz",
+      "sha256": "85a45a32225c4be085fcf470e473e28b9503ed00ef7d4f7b2db7f3dcc2212ad6"
+    },
+    {
+      "decoded_sha256": "5c2ae333bd9c1216364a27b463e8e531f91487310c9b773390e041a4e86000c8",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial/guarded-build/receipt.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/guarded-build-receipt.json.gz",
+      "sha256": "bcd737e7b5c835cc00c685ce9e1f62e4694ecbf60fb21c2de71d3575fe5fba24"
+    },
+    {
+      "decoded_sha256": "08340dcc49c8378cb482c4ad92e4676697c0492a535ef688df77ef1061f7dc15",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial/guarded-build/metadata.stdout",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/guarded-build-metadata.stdout.gz",
+      "sha256": "034ada23d9700b74eb3ec581f4479d4f7a634c445b92930311b74dbd21793f20"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial/guarded-build/metadata.stderr",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/guarded-build-metadata.stderr.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial/guarded-build/clean-local-packages.stdout",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/guarded-build-clean-local-packages.stdout.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e90437b24aeef6e22c8e9802904ef377e3feedd4284b3da31c5f40365aece6d4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial/guarded-build/clean-local-packages.stderr",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/guarded-build-clean-local-packages.stderr.gz",
+      "sha256": "9ba23f1fdd4ca392ea1a63b9a302f76b98a42b010c075b90aa853f91dd270057"
+    },
+    {
+      "decoded_sha256": "2a042e9d0d5d096fc26924bf6b5f97e1f743bbb236fd793d4aea33cb4b48216d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial/guarded-build/build.stdout",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/guarded-build-build.stdout.gz",
+      "sha256": "dc362e5e4d4347995ab88cf0e26bef416fb56c7c0db55e0cf1790f07da09c0c5"
+    },
+    {
+      "decoded_sha256": "8addb6b464d72f18e90d88ba497c9414586a1ad4cf25ce0d5552e1dfc36fda68",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3105/trial/guarded-build/build.stderr",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/guarded-build-build.stderr.gz",
+      "sha256": "16047e73071e07c61d1f344a4b8804b861ec7c89545af017e6a9d17b693e5f52"
+    },
+    {
+      "decoded_sha256": "b7feb0fd0f469aec8f29f1878fc8bbd5c0b8707e2abb527643fe69921a0cc145",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3100/receipt.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/aborted-renderer-v3100-receipt.json.gz",
+      "sha256": "afdaa82f94de8d42b899e442aa2041e55f69224bbcc0ef19901bc882b8fa0a62"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rounded-layer-renderer-v3100/trial-build.log",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/aborted-renderer-v3100-trial-build.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "63adca4ba011d83abf9780148ece2fe06b85ed26b55bff9aa5c46ee9e0036ea4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-selection-value-oracle-v3111/receipt.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/selection-value-receipt.json.gz",
+      "sha256": "d651951f562016def0c4322ed783e378b154ec930e4e40c94f6695d33ca9ae0d"
+    },
+    {
+      "decoded_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-selection-value-oracle-v3111/observations-1.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/selection-value-observations-1.json.gz",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf"
+    },
+    {
+      "decoded_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-selection-value-oracle-v3111/observations-2.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/selection-value-observations-2.json.gz",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf"
+    },
+    {
+      "decoded_sha256": "5dd4ca6bea1e862250ad9c7fe50c953c5b39c100933822a261e97f9df4d37cc6",
+      "original_path": "/tmp/openui-rounded-layer-completed-audit-v3115.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/openui-rounded-layer-completed-audit-v3115.json.gz",
+      "sha256": "36ce5357204d6894b07070865ffdcf06b631f80d9e0294759b923ce5e0346e83"
+    },
+    {
+      "decoded_sha256": "48c394c13303b96ef535a23737407919dcf375e767ef9b6a637dc1caa40f6458",
+      "original_path": "/tmp/openui-rounded-layer-completed-audit-v3115.py",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/openui-rounded-layer-completed-audit-v3115.py.gz",
+      "sha256": "b48b128b71418651559a0fc77fe89e15089fb4beac72ee812e24b19d35c0d8ba"
+    },
+    {
+      "decoded_sha256": "e5013415eb520ebf7efea686d40ada7bea0afc0ef8da2c916203234dcb028e73",
+      "original_path": "/tmp/openui-native-rounded-layer-renderer-v3105.py",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/openui-native-rounded-layer-renderer-v3105.py.gz",
+      "sha256": "a1d7281d12706fdf60f5e6c44f664854c7134566b415470d12d6558e2b79ec10"
+    },
+    {
+      "decoded_sha256": "9242a723137f0a0369ee9a64288278975d64f6e19ca1b066b61212f9bcb9e436",
+      "original_path": "/tmp/openui-native-rounded-layer-renderer-v3100.py",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/openui-native-rounded-layer-renderer-v3100.py.gz",
+      "sha256": "ce0d7711676fd894a6e9f8675c4c3b611453227023f054f4c15607494ce551d0"
+    },
+    {
+      "decoded_sha256": "4f4f0765d686c692d262d65bfadecef5bd818d81682d0936392458652b1fd528",
+      "original_path": "/tmp/openui-native-rounded-layer-renderer-restart-audit-v3107.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/openui-native-rounded-layer-renderer-restart-audit-v3107.json.gz",
+      "sha256": "b5ea5f4415659370fbcac141891d1db25e8031537baa1dc327eea0ecbb9506e0"
+    },
+    {
+      "decoded_sha256": "d034540153e35cad3cbfc63a13e0bcfb17df4cbdb89a6d22e1439f7bc39435ec",
+      "original_path": "/tmp/openui-parallel-source-identity-v3047.py",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/openui-parallel-source-identity-v3047.py.gz",
+      "sha256": "2190c64b756a252ac1285172b7514f8b0eebc9e986327c867c764fea0a269a0b"
+    },
+    {
+      "decoded_sha256": "97af0f017e9ef2ee0677683f14d480b2d049c5df1de48ad76a336f903443e4a7",
+      "original_path": "/tmp/openui-qualified-source-reader-executor-v3104.py",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/openui-qualified-source-reader-executor-v3104.py.gz",
+      "sha256": "89eed7436393f434b55c402d1be73d7863c2a89804f9117cd7ec560bb80205bd"
+    },
+    {
+      "decoded_sha256": "aa5635a08c1bd89f3825aa88986e1c5dd526c6d41e8025facfa23f54edfa822a",
+      "original_path": "/tmp/openui-source-reader-current-proof-v3103.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/openui-source-reader-current-proof-v3103.json.gz",
+      "sha256": "a68dde754fc37dfe2fea3f1af4721e0466c844e49821fa84d0aa5b0119f2f357"
+    },
+    {
+      "decoded_sha256": "b8df0dce33ee68a788f9a4bfa5dafe3a7eb60ebb298bc244e04f0d7a0caff592",
+      "original_path": "/tmp/openui-owner3105-extra-inputs-v3108.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/openui-owner3105-extra-inputs-v3108.json.gz",
+      "sha256": "b36debcc486c0af60cd453c6ab9e22ea0892aa2b2c34e0859d3bb920b98d50f5"
+    },
+    {
+      "decoded_sha256": "879b54784cddc35f2de5f67f25e6d0511eec77c035b251f545a8a4a5ba21bf6b",
+      "original_path": "/tmp/openui-parallel-source-identity-proof-v3048.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/openui-parallel-source-identity-proof-v3048.json.gz",
+      "sha256": "dbd3cc54d71d37d21334c4d050dd476c6c3319409d870ec1100513b4d8be7899"
+    },
+    {
+      "decoded_sha256": "d4ff53705b37944e6f7fcf33c157f56dff5977ddd2cd7a28a9c79108d96dc72a",
+      "original_path": "/tmp/openui-native-selection-value-oracle-v3111.py",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/openui-native-selection-value-oracle-v3111.py.gz",
+      "sha256": "ce571edf42914c370c970dc0ac3b520b062866198d62993442a5a8e3cb2e4d66"
+    },
+    {
+      "decoded_sha256": "14edd3b16de606893bbca57111e44df94cf4a84a16ebf244a898cf49e76a9d06",
+      "original_path": "/tmp/openui-native-selection-value-audit-v3112.json",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/openui-native-selection-value-audit-v3112.json.gz",
+      "sha256": "550eb1a9a6b5bda866a3b8c20b4c8fdf2641aa8337a76c24ab77bb4626f6703c"
+    },
+    {
+      "decoded_sha256": "6424674c2597bd1bf2d81c27d0b84af9c2da7b96da07b750d552fd51cdec85db",
+      "original_path": "/tmp/openui-native-selection-value-review-v3113.md",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/openui-native-selection-value-review-v3113.md.gz",
+      "sha256": "84150f5ee5f6aa600adaba553c5cf455a225afa8befd6be0bcd7472500b72093"
+    },
+    {
+      "decoded_sha256": "2d1a2038e37fa003831c9bfe3a1f422b29b66bb37793ec3b1eda1b439714a018",
+      "original_path": "/tmp/openui-native-rounded-border-final-source-v3093.patch",
+      "path": "docs/renderer/evidence/native-rounded-layer-v3/openui-native-rounded-border-final-source-v3093.patch.gz",
+      "sha256": "df61d80ff4a595fcf53a9053cf585373b2e3ef85cbb3f3ab6c66a68a4e616392"
+    }
+  ],
+  "javascript_executed_by_openui": false,
+  "matrix_rows_verified": 48252,
+  "measured_private_source": {
+    "clean": true,
+    "commit": "6cc132dc88f63dd39a79ac3d98054d5d820e892f",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c71a78b581dbeae3f6f03bc58c33e0228e78ee07bf937a1249ceff6889f44641",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "measured_public_source": {
+    "clean": true,
+    "commit": "aae023a931da72c5d8782b018348d2851e6d425d",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "73fa97fb6287bec4756021afbce4aa46a5ca4afde2a3ae2b3dd34220210ff6fb",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native_selection_implementation_measured": false,
+  "new_selection_reference_cases": 24,
+  "new_selection_reference_rows": 26,
+  "painter_implementation_integrated": true,
+  "painter_sha256": "e63c9276dc0d462ef09ca5f4fcc0cab3f5ed8ee114ba89d55e42468a5116e7a5",
+  "pixel_tolerance": 0,
+  "release_qualified": false,
+  "results": {
+    "expanded": {
+      "actual_exit_code": 1,
+      "different": 1587,
+      "errors": 0,
+      "exact": 22141,
+      "gains": 8,
+      "losses": 0,
+      "total": 23728,
+      "worsened": 0
+    },
+    "focused": {
+      "actual_exit_code": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "gains": 0,
+      "losses": 0,
+      "total": 640,
+      "worsened": 0
+    },
+    "full": {
+      "actual_exit_code": 1,
+      "different": 1586,
+      "errors": 0,
+      "exact": 21338,
+      "gains": 8,
+      "losses": 0,
+      "total": 22924,
+      "worsened": 0
+    },
+    "primitive": {
+      "actual_exit_code": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "gains": 0,
+      "losses": 0,
+      "total": 960,
+      "worsened": 0
+    }
+  },
+  "schema_version": 3
+}

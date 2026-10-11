@@ -1,0 +1,261 @@
+{
+  "accepted_renderer": {
+    "expanded_exact": 22137,
+    "expanded_total": 23728,
+    "original_exact": 21334,
+    "original_total": 22924
+  },
+  "artifact_bytes": 1023709,
+  "artifact_count": 28,
+  "artifacts": [
+    {
+      "bytes": 257348,
+      "path": "docs/renderer/evidence/native-review-v1/intrinsic-audit.json",
+      "sha256": "93fb614be62ff308b07be4bd29fb8dc7274b3d4b77074baa73540d16d4523f95"
+    },
+    {
+      "bytes": 6785,
+      "path": "docs/renderer/evidence/native-review-v1/intrinsic-audit-probe.py",
+      "sha256": "1f45c333dc535d6e82a317c63c49de5b2536dfd3636e383328f12ca59918f8ff"
+    },
+    {
+      "bytes": 11916,
+      "path": "docs/renderer/evidence/native-review-v1/intrinsic-owner.json",
+      "sha256": "904985910012c4cb1e5e2778ef1e52901dc1fbdd1948fc41123587e3614c5811"
+    },
+    {
+      "bytes": 8998,
+      "path": "docs/renderer/evidence/native-review-v1/intrinsic-build.json",
+      "sha256": "efbdc2f87b695c7081cb6f7c38391f58869dfaa3f397f5fa9285f7743ff769b2"
+    },
+    {
+      "bytes": 634507,
+      "path": "docs/renderer/evidence/native-review-v1/intrinsic-consumer.json",
+      "sha256": "0810f9ea33a332cf64d49cfd4fdb0a4c3c69ebcacc8731ef41b7209db959f90c"
+    },
+    {
+      "bytes": 5198,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-checks.json",
+      "sha256": "fcc69df3c6c1e3196a88c3dd3516e73a018671b2971850fd48049abcb031bad1"
+    },
+    {
+      "bytes": 2654,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-checks-probe.py",
+      "sha256": "517db5faf5a2bd7c1cbc1af29153811f372e65a53be919966b0a99a2e5d8d473"
+    },
+    {
+      "bytes": 3081,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-queue.json",
+      "sha256": "ce99ca3bbabfb5919fc27dbee8966edb9bed11dbf4c96b078b6dea4adaec2e17"
+    },
+    {
+      "bytes": 43283,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-source.patch",
+      "sha256": "b531dd75760cf642b1b0108d28b0a73532dc3d4e6d3349bd144ecaf078c4dcb4"
+    },
+    {
+      "bytes": 15500,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-queue-probe.py",
+      "sha256": "5ffdd96ba401fb24b2cf67959e82c44619c17b0a13acbdd9c9579976e5189b8c"
+    },
+    {
+      "bytes": 81,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-check-renderer.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    {
+      "bytes": 59,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-check-multicol.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    {
+      "bytes": 86,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-check-sp17.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    {
+      "bytes": 121,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-check-sp18.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    {
+      "bytes": 142,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-check-sp20.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    {
+      "bytes": 63,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-check-v02.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    {
+      "bytes": 37,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-check-style.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    {
+      "bytes": 32,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-check-ffi.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    {
+      "bytes": 45,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-check-archive.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    {
+      "bytes": 2867,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-check-accountability.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-check-c-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-check-cpp-syntax.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-review-v1/native-enum-check-rust-format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6241,
+      "path": "docs/renderer/evidence/native-review-v1/openui-native-enum-values-build-v1512.py",
+      "sha256": "6afbb5f09b07058b50b552f69ec048cf1a4fb342cf6fa62ab4c8950fae92fd4c"
+    },
+    {
+      "bytes": 7175,
+      "path": "docs/renderer/evidence/native-review-v1/openui-native-enum-values-consumer-v1512.py",
+      "sha256": "b609ceaf6b57b943f818b42a9880858dd3fd5c347b0a682cc979ac1cf0c5fdbd"
+    },
+    {
+      "bytes": 7982,
+      "path": "docs/renderer/evidence/native-review-v1/openui-native-enum-values-guards-v1512.py",
+      "sha256": "effdd558f706a33f8b0acb53d69155b5fc43c0d05310a6ee65113cd2f9a85a90"
+    },
+    {
+      "bytes": 2073,
+      "path": "docs/renderer/evidence/native-review-v1/openui-native-enum-values-matrices-v1512.py",
+      "sha256": "0a139b1bcc4fa1c3cbb780ff5489824f0a0eeb0cf76a08c0b664017fea811dbc"
+    },
+    {
+      "bytes": 7435,
+      "path": "docs/renderer/evidence/native-review-v1/openui-native-enum-values-pipeline-v1513.py",
+      "sha256": "fda2341322d6bf2ffb590b4748b7ea57d2964a05855cbd6b37f1ca22870dbf8d"
+    }
+  ],
+  "javascript_executed_by_openui": false,
+  "native_enum_candidate": {
+    "all_four_pixel_matrices_pending": true,
+    "applied_to_umbrella": false,
+    "baseline": "33a6578b4c49bf83fbd40c77e409782d0e8f1e23",
+    "branch": "agent/native-enum-values-v1509",
+    "c_cpp_examples": [
+      "examples/c_v02/fragment_keywords.c",
+      "examples/c_v02/fragment_keywords.cc"
+    ],
+    "existing_abi_preserved_by_source": true,
+    "owned_compound_values": true,
+    "prior_whole_pipelines_required_terminal": 25,
+    "public_rust_application_example": "bindings/rust/openui/examples/native_fragment_keywords.rs",
+    "read_only_checks_passed": 13,
+    "required_chromium_captures": 40,
+    "required_native_images": 10,
+    "rust_c_cpp_execution_pending": true,
+    "source": "893ea292cacf49b50240ba3176f4dc9ff55829d7"
+  },
+  "new_release_states_admitted": 0,
+  "pixel_tolerance": 0,
+  "preserver_sha256": "21fe58d4f1fe24d2fe1d003bbede5c07f12fd8a75d20f4ac03fa8b72b0e6e694",
+  "rejected_intrinsic_candidate": {
+    "addition_cases_four_profile_exact": 199,
+    "all_chromium_oracle_invariants_unchanged": 48252,
+    "applied_to_umbrella": false,
+    "consuming_capture_gate_incomplete": true,
+    "reason": "Exact losses in complete matrices and incomplete consuming-app capture gate",
+    "source": {
+      "clean": true,
+      "commit": "a6d386e48d864a5769ebdadd8bc8dea46e4eff21",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "c13d4a17ea4f566d051eb86e105e7afd2fb33f9052fc0cde1832fd347dfae2a7",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "suites": {
+      "expanded": {
+        "actual_exit": 1,
+        "counts": {
+          "all_nine_invariants_unchanged": 23646,
+          "fewer_differing_pixels": 22,
+          "improved_to_exact": 0,
+          "lost_exactness": 39,
+          "more_differing_pixels": 60,
+          "rows": 23728
+        },
+        "results": {
+          "different": 1630,
+          "errors": 0,
+          "exact": 22098,
+          "total": 23728
+        }
+      },
+      "focused": {
+        "actual_exit": 0,
+        "counts": {
+          "all_nine_invariants_unchanged": 640,
+          "fewer_differing_pixels": 0,
+          "improved_to_exact": 0,
+          "lost_exactness": 0,
+          "more_differing_pixels": 0,
+          "rows": 640
+        },
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "total": 640
+        }
+      },
+      "full": {
+        "actual_exit": 1,
+        "counts": {
+          "all_nine_invariants_unchanged": 22846,
+          "fewer_differing_pixels": 22,
+          "improved_to_exact": 0,
+          "lost_exactness": 35,
+          "more_differing_pixels": 56,
+          "rows": 22924
+        },
+        "results": {
+          "different": 1625,
+          "errors": 0,
+          "exact": 21299,
+          "total": 22924
+        }
+      },
+      "primitive": {
+        "actual_exit": 0,
+        "counts": {
+          "all_nine_invariants_unchanged": 960,
+          "fewer_differing_pixels": 0,
+          "improved_to_exact": 0,
+          "lost_exactness": 0,
+          "more_differing_pixels": 0,
+          "rows": 960
+        },
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "total": 960
+        }
+      }
+    }
+  },
+  "release_qualification": false,
+  "schema_version": 1
+}

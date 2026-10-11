@@ -1,0 +1,909 @@
+{
+  "adapted_reference_function_sha256": "756ea31e96a2c468da1c258e97c1452e70ffa68f926280a836714c9e2e320a6b",
+  "all_commands_terminal": true,
+  "build_receipt_sha256": "4083c7a346b88fab318cfd5e32421ee249a5c329a0eb678a0b6caf05dbc70787",
+  "capture_conditions_unchanged": true,
+  "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+  "capture_visual_conditions_unchanged": true,
+  "cases": [
+    {
+      "images": [
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "e65a83429f5e4986a4beebd57ca22c4febabb7f222f44c63d5d75f9c18ed64f3",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 28,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 1,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 28,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 1,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_geometry_verified_by_application_assertions": true,
+          "native_png_sha256": "42abc7a8cd5e217fca1ef52e81a897fb2fde4dfb357964a49c65f9e4170e5cfd",
+          "state": "before"
+        },
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "b2e98d74ade8158a1331bb08c6323571decebd18533d59faf1b223c1b7669c64",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 24,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 1,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 24,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 1,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_geometry_verified_by_application_assertions": true,
+          "native_png_sha256": "7e3e260b23a84519d80c5941069e592c68ce4dc7b6cec05a3e084b882066b53e",
+          "state": "after"
+        }
+      ],
+      "scale": 1.0
+    },
+    {
+      "images": [
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "a74df3d71b3d9164da0467455085e114e76ec7aa7c917ca030c607e076117e6a",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 28,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 1.25,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 28,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 1.25,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_geometry_verified_by_application_assertions": true,
+          "native_png_sha256": "33d61453f1cd2651314df0b3503499f97fed7ece7f73016d54a4036dfa468060",
+          "state": "before"
+        },
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "a2704189614eb4e6610b3523a7f706175b23db8660cf9148981080fabfab5537",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 24,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 1.25,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 24,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 1.25,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_geometry_verified_by_application_assertions": true,
+          "native_png_sha256": "729398b03659f4cba5c7e01161b2bbf1a5f7a37c12819c839e7373261274cd75",
+          "state": "after"
+        }
+      ],
+      "scale": 1.25
+    },
+    {
+      "images": [
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "2ba03361b95b65eb16ae212e99d357b96d7d61831bbd59033a1a9d42598f3c42",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 28,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 1.5,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 28,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 1.5,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_geometry_verified_by_application_assertions": true,
+          "native_png_sha256": "05052b8e203d160c1037d4661f50ce43dc1a23a097fdcb8e389cb29875b205a0",
+          "state": "before"
+        },
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "186754e6ba4435b97c36363e13069315bb16bf89b2e153921e58fbd36b847f34",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 24,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 1.5,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 24,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 1.5,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_geometry_verified_by_application_assertions": true,
+          "native_png_sha256": "6e32cf9085e36efab02d8e91ae4aa7874c0b410760b357ea73e13a2661bedab5",
+          "state": "after"
+        }
+      ],
+      "scale": 1.5
+    },
+    {
+      "images": [
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "4f1531b2339ca5a407f649c30da637bf54a9b6be08b2dc91b4eb21527d2bbccc",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 28,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 2,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 28,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 2,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_geometry_verified_by_application_assertions": true,
+          "native_png_sha256": "5545c8a370c82042a02693bfd98ecb67780dffb704821aa5e85eac4f863db61a",
+          "state": "before"
+        },
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "40e11cf4c8c6fa55936fd7c0003cf1467d599b356f67756cd970fd941cb3da93",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 24,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 2,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 24,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 2,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_geometry_verified_by_application_assertions": true,
+          "native_png_sha256": "7f28080ec2597bc5095f7e71eebbc193f244906880af8275866d6b3d1474bc34",
+          "state": "after"
+        }
+      ],
+      "scale": 2.0
+    },
+    {
+      "images": [
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "5af081698d64bae5df66fb3a3fb173efa80e20dcadc8b375db22707646d16742",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 28,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 3,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 28,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 3,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_geometry_verified_by_application_assertions": true,
+          "native_png_sha256": "b1ab8b5024f0340689ff6690197305bccca8774015605db57440de38adf2a3fe",
+          "state": "before"
+        },
+        {
+          "analysis": {
+            "channel_deltas": {
+              "alpha": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "blue": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "green": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              },
+              "red": {
+                "changed_pixels": 0,
+                "maximum_absolute_delta": 0,
+                "maximum_signed_delta": 0,
+                "minimum_signed_delta": 0,
+                "signed_delta_sum": 0
+              }
+            },
+            "comparable": true,
+            "connected_region_count": 0,
+            "connected_regions": [],
+            "mismatch_bounds": null,
+            "mismatched_pixels": 0
+          },
+          "chromium_png_sha256": "1b72541053317afc4bc3aa4317cbaf7b8def54a90764802b02cb207efd2f7a61",
+          "geometry_exact": true,
+          "independent_reference_runs": [
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 24,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 3,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            },
+            {
+              "capture_count": 2,
+              "query": {
+                "bounds": {
+                  "height": 24,
+                  "width": 28,
+                  "x": 0,
+                  "y": 0
+                },
+                "metrics": {
+                  "dpr": 3,
+                  "height": 48,
+                  "width": 64
+                }
+              },
+              "repeated_capture_pair_identical": true
+            }
+          ],
+          "native_geometry_verified_by_application_assertions": true,
+          "native_png_sha256": "9b7f2961149aabbdb4bfe9b4f141e2104487033ef9f343ce037abb75178914b7",
+          "state": "after"
+        }
+      ],
+      "scale": 3.0
+    }
+  ],
+  "chrome_profile_storage_correction_only": true,
+  "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "fontconfig_sha256": "99fd54cf2f3875bba44a2272b3dfe5adc7c08263ca0511ec2473ec5e59c09195",
+  "inputs": {
+    "after": {
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-retry-options-consumer-v1814/after.html",
+      "sha256": "1c3f1e3cf05f084cb067aaceebcbc6527d7ced78a97cb269030ad58baa0d5193"
+    },
+    "before": {
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-retry-options-consumer-v1814/before.html",
+      "sha256": "0847b1401e497b93dcddd17db95013159892c5310c442b678db17dfe31c747ee"
+    }
+  },
+  "javascript_executed_by_openui": false,
+  "native_binary_sha256": "a128e9261875583923b98eae958f3cc221d21fad9a0386f782895ec422958f93",
+  "native_runs": [
+    {
+      "command": [
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-clean-v1810/native_raster_options",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-retry-options-consumer-v1814/native-1"
+      ],
+      "log_sha256": "eaa864b92112bc4aee364971f8a096a9ff9dc033166c03da0d4c3031ea42247c",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-clean-v1810/native_raster_options",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-retry-options-consumer-v1814/native-2"
+      ],
+      "log_sha256": "eaa864b92112bc4aee364971f8a096a9ff9dc033166c03da0d4c3031ea42247c",
+      "observed_exit_code": 0
+    }
+  ],
+  "new_release_states_admitted": 0,
+  "observed_exit_code": 0,
+  "original_reference_function_sha256": "f434cfbb9ad7746e87d7ccb0cc56e7019e2b658b29acfc72a3619d9d30f0594c",
+  "pixel_tolerance": 0,
+  "preserves_both_unstable_reference_captures": true,
+  "probe_sha256": "653a11dd61bd1095c47c838f5312c93dde7aa2d79ad3559da1657d2975d00825",
+  "promotion_allowed": false,
+  "public_native_rust_api": true,
+  "reference_adaptations": [
+    "Remove image natural-size assertion for a div case",
+    "Store Chromium profile and socket temporary files on a native Linux filesystem"
+  ],
+  "reference_source_sha256": "b1a480f5f49bada97d341d5cf5e7626f8f03496bc87b4ef83b40c298331d1710",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "2d338d6cf8334bae0d7893315d85633d2d586aad",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "cfbb9630870e1733b5ba0d622c7aba70dbe27f64bc2dbbf793d0336ffcaefa04",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "2d338d6cf8334bae0d7893315d85633d2d586aad",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "cfbb9630870e1733b5ba0d622c7aba70dbe27f64bc2dbbf793d0336ffcaefa04",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "strict_chromium_capture_pairs": true,
+  "totals": {
+    "consecutive_chromium_captures": 40,
+    "deterministic_native_image_pairs": 10,
+    "geometry_exact": 10,
+    "images": 10,
+    "independent_chromium_capture_processes": 20,
+    "native_application_runs": 2,
+    "native_callback_states": 10,
+    "pixel_exact": 10
+  },
+  "unstable_reference_captures": []
+}

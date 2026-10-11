@@ -1,0 +1,19 @@
+{
+  "api_state_and_owned_snapshot_and_teardown_required": true,
+  "baseline": "25322be849f1f0523a6e66291a567d0758931160",
+  "baseline_and_fixed_tests_not_yet_executed": true,
+  "baseline_root": "/dev/shm/openui-native-text-inheritance-baseline-90310e15",
+  "branch": "agent/native-text-inherited-styles-v1668",
+  "existing_native_inheritance_source": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+  "generated_properties_regenerated": true,
+  "javascript_executed_by_openui": false,
+  "new_test": "native_text_replacement_inherits_authored_fonts_through_rust_callbacks",
+  "old_c_abi_and_renderer_bodies_unchanged": true,
+  "parent": "90310e15b86bed558a79c8eb085d2a72092eab69",
+  "probe_sha256": "918f474d3e8cf8b4ef16f32408b5e8b357ca1fbc50f741458efb5096af732ee7",
+  "public_rust_callback_scales": 5,
+  "release_qualification": false,
+  "root": "/dev/shm/openui-native-text-inherited-styles-90310e15",
+  "schema_version": 1,
+  "source": "41b616c3be5224b074e9d06ba6aa963731a1b265"
+}

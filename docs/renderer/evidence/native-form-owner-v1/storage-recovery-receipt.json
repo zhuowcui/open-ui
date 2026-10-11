@@ -1,0 +1,114 @@
+{
+  "all_native_apis_qualified": false,
+  "all_operations_terminal": true,
+  "bytes_moved": 964866520,
+  "finished_utc": "2026-10-09T23:00:30.019315+00:00",
+  "kind": "byte-preserving storage relocation only; historical artifacts are not requalified",
+  "main_source": {
+    "clean": true,
+    "commit": "783e11f44b0e1cd0023018d24e667d27f0b91bb8",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "09626c257b1039fb97272f3c71a24ebf3e36fb40df431fa3f3998f02c7933e43",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "observed_exit_code": 0,
+  "owner_pid": 30543,
+  "pixel_qualification": false,
+  "references_fonts_source_and_build_target_untouched": true,
+  "release_qualified": false,
+  "root_free_after": 1124175872,
+  "root_free_before": 159649792,
+  "rows": [
+    {
+      "bytes": 107227888,
+      "bytes_verified_before_and_after": true,
+      "destination": "/mnt/d/openui-v02-storage-relocation-v3470/artifacts/svg-rebase-box-clean-v293/native_viewport_scroll",
+      "destination_mode": 511,
+      "original_mode": 493,
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/native_viewport_scroll",
+      "sha256": "fb86fc174266ce1760a82759b4fbdb8c8bacffb40bb8b2612b9dffcf12156abc"
+    },
+    {
+      "bytes": 107213960,
+      "bytes_verified_before_and_after": true,
+      "destination": "/mnt/d/openui-v02-storage-relocation-v3470/artifacts/svg-rebase-box-clean-v293/native_scroll_layer_opacity",
+      "destination_mode": 511,
+      "original_mode": 493,
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/native_scroll_layer_opacity",
+      "sha256": "b0e09b7952a2191c4c949f76600e16026d8bbee1d2c9adcc623f12c0b7e94ca2"
+    },
+    {
+      "bytes": 107204376,
+      "bytes_verified_before_and_after": true,
+      "destination": "/mnt/d/openui-v02-storage-relocation-v3470/artifacts/svg-rebase-box-clean-v293/native_svg_foreign_object",
+      "destination_mode": 511,
+      "original_mode": 493,
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/native_svg_foreign_object",
+      "sha256": "b7a64cd3c45f57c25b3569749295d36472bc955712ee402cc6acba39a2eb8a56"
+    },
+    {
+      "bytes": 107227048,
+      "bytes_verified_before_and_after": true,
+      "destination": "/mnt/d/openui-v02-storage-relocation-v3470/artifacts/svg-rebase-clean-v277/native_viewport_scroll",
+      "destination_mode": 511,
+      "original_mode": 493,
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/native_viewport_scroll",
+      "sha256": "90296285a75f4907dfd0158b211ad1dcb91271fa891ba0d46fd5195a72344144"
+    },
+    {
+      "bytes": 107213120,
+      "bytes_verified_before_and_after": true,
+      "destination": "/mnt/d/openui-v02-storage-relocation-v3470/artifacts/svg-rebase-clean-v277/native_scroll_layer_opacity",
+      "destination_mode": 511,
+      "original_mode": 493,
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/native_scroll_layer_opacity",
+      "sha256": "8452cc453c5df79f291b633ef1ff7de499a7ab3bf85980ba5fbb931c27641dc0"
+    },
+    {
+      "bytes": 107203536,
+      "bytes_verified_before_and_after": true,
+      "destination": "/mnt/d/openui-v02-storage-relocation-v3470/artifacts/svg-rebase-clean-v277/native_svg_foreign_object",
+      "destination_mode": 511,
+      "original_mode": 493,
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/native_svg_foreign_object",
+      "sha256": "13af402b1ce74e74f4a08192b5e73dda3806ccc2521e1fc06712bc34c5be7d57"
+    },
+    {
+      "bytes": 107204688,
+      "bytes_verified_before_and_after": true,
+      "destination": "/mnt/d/openui-v02-storage-relocation-v3470/artifacts/svg-curved-double-clean-v234/native_viewport_scroll",
+      "destination_mode": 511,
+      "original_mode": 493,
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/svg-curved-double-clean-v234/native_viewport_scroll",
+      "sha256": "3a66fc0e6dceadd0e0aa1a1eb201d47423c01eff150d2f0357f04167de4c1f54"
+    },
+    {
+      "bytes": 107190752,
+      "bytes_verified_before_and_after": true,
+      "destination": "/mnt/d/openui-v02-storage-relocation-v3470/artifacts/svg-curved-double-clean-v234/native_scroll_layer_opacity",
+      "destination_mode": 511,
+      "original_mode": 493,
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/svg-curved-double-clean-v234/native_scroll_layer_opacity",
+      "sha256": "5cc1d1e5fb75e1611005e40abf792b5f5d61c1fbd79d7f3b0382eeb6ad68606c"
+    },
+    {
+      "bytes": 107181152,
+      "bytes_verified_before_and_after": true,
+      "destination": "/mnt/d/openui-v02-storage-relocation-v3470/artifacts/svg-curved-double-clean-v234/native_svg_foreign_object",
+      "destination_mode": 511,
+      "original_mode": 493,
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/svg-curved-double-clean-v234/native_svg_foreign_object",
+      "sha256": "9e35c71968a3be4489926889b0ec130c16a72ad6474133d45d49ad552cfe4fa4"
+    }
+  ],
+  "schema_version": 1,
+  "skipped": [],
+  "source": {
+    "clean": true,
+    "commit": "a401a8ac8c33cc5e24ed9bb19934061716cd84dd",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "ebebbc58bd6f89eb5f03af1e3eae9cb961463a3f1be749c23315206c03c735f9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_git_checkpoints_unchanged": true
+}

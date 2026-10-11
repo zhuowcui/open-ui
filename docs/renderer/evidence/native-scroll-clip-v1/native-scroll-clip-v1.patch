@@ -1,0 +1,24 @@
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index b6559516..f257a9c2 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -10003,13 +10003,16 @@ fn paint_with_overflow_clip(
+         && !has_scroll_range
+         && (style.overflow_x == Overflow::Scroll || style.overflow_y == Overflow::Scroll)
+         && opaque_in_flow_child_covers_inner_border_box(fragment, doc);
++    // Raster-inducing scroll contents remain below their scrollport's
++    // geometric clip. At fractional replay scales, both auto and explicitly
++    // scrollable boxes retain that clip's analytic edge coverage, even when
++    // the scroll transform snaps an opaque child past the scrollport edge.
+     let antialias_transformed_clip = analytic_table_slice_end
+         || antialias_rectangular_overflow_clip(fragment, doc, style)
+         || (!composited_scroll_layer
+             && style.device_scale_factor.fract().abs() > f64::EPSILON
+-            && (style.overflow_x == Overflow::Auto
+-                || style.overflow_y == Overflow::Auto
+-                || implicit_scroll_backing_clip));
++            && (matches!(style.overflow_x, Overflow::Auto | Overflow::Scroll)
++                || matches!(style.overflow_y, Overflow::Auto | Overflow::Scroll)));
+ 
+     // When border-radius is set, clip to a rounded rect so children are
+     // clipped along the curves. Otherwise use a simple rect clip.

@@ -74,7 +74,9 @@ jobs:
           sudo apt-get install --yes --no-install-recommends \
             binutils build-essential clang cmake dpkg-dev libclang-18-dev \
             libfontconfig1-dev libfreetype-dev libgl1-mesa-dev ninja-build \
-            pkg-config python3 rpm
+            pkg-config python3 rpm libwayland-dev libx11-dev libx11-xcb-dev \
+            libxcb1-dev libxkbcommon-dev libxkbcommon-x11-0 libgl1-mesa-dri \
+            weston xvfb
           rustup toolchain install 1.85.0 --profile minimal
           rustup default 1.85.0
       - name: Build two clean SDKs
@@ -104,6 +106,28 @@ jobs:
             -DOpenUI_DIR=/usr/lib/cmake/OpenUI
           cmake --build "$RUNNER_TEMP/cmake-consumer"
           LD_LIBRARY_PATH=/usr/lib "$RUNNER_TEMP/cmake-consumer/openui_hello"
+      - name: Run packaged native C and C++ windows
+        run: |
+          for consumer in openui_native_c openui_native_cpp; do
+            for backend in 1 2; do
+              xvfb-run --auto-servernum env -u WAYLAND_DISPLAY LD_LIBRARY_PATH=/usr/lib \
+                timeout 45s "$RUNNER_TEMP/cmake-consumer/$consumer" "$backend"
+            done
+          done
+          export XDG_RUNTIME_DIR="$RUNNER_TEMP/openui-wayland"
+          mkdir -p "$XDG_RUNTIME_DIR"
+          chmod 700 "$XDG_RUNTIME_DIR"
+          weston --backend=headless-backend.so --socket=wayland-openui --idle-time=0 >"$RUNNER_TEMP/weston.log" 2>&1 &
+          weston_pid=$!
+          trap 'kill "$weston_pid" || true' EXIT
+          for attempt in $(seq 1 50); do
+            test -S "$XDG_RUNTIME_DIR/wayland-openui" && break
+            sleep 0.1
+          done
+          for consumer in openui_native_c openui_native_cpp; do
+            env -u DISPLAY WAYLAND_DISPLAY=wayland-openui LD_LIBRARY_PATH=/usr/lib \
+              timeout 45s "$RUNNER_TEMP/cmake-consumer/$consumer" 2
+          done
       - name: Sign release-tag artifacts with Sigstore
         if: startsWith(github.ref, 'refs/tags/v0.2.')
         uses: sigstore/cosign-installer@v4.1.2

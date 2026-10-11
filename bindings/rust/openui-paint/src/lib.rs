@@ -6,13 +6,17 @@
 //! This renders layout fragments to a Skia canvas using the exact same
 //! draw calls, paint flags, and coordinate handling as Blink.
 
+mod content_layer;
 pub mod decoration_painter;
 pub mod emphasis_painter;
 pub mod image_resource;
+pub mod paint_order;
+mod paint_record;
 mod painter;
 mod render;
 pub mod text_painter;
 
+pub use content_layer::RecordedContentLayer;
 pub use painter::compute_clip_rect;
 pub use painter::paint_fragment;
 pub use render::{

@@ -1,12 +1,16 @@
 # Sub-Project 3: Rendering Pipeline Build
 
+> **Historical plan only.** Open UI v0.2 uses a pure-Rust renderer and does not
+> embed Chromium or V8. It executes no JavaScript. Application interaction uses
+> the [public native Rust API](../v02/supported-platforms.md#native-interaction-api).
+
 > Extract Chromium's rendering code (style, layout, paint, cc/, Skia) and build it as a standalone library.
 
 ## Objective
 
 Get Chromium's actual rendering pipeline — from ComputedStyle through LayoutNG through paint through cc/ compositing through Skia rasterization — compiling and linking as a standalone shared library outside of a full Chromium build. This is the foundation everything else builds on.
 
-**This is NOT a reimplementation.** We extract the real Chromium source files, handle their dependencies, stub what we don't need (V8, networking), and produce a linkable library.
+**Historical objective:** extract the real Chromium source files, handle their dependencies, remove V8 and JavaScript bindings, stub unused infrastructure, and produce a linkable library. The supported framework instead uses the shared native Rust Engine described above.
 
 ## Scope
 
@@ -32,7 +36,7 @@ Get Chromium's actual rendering pipeline — from ComputedStyle through LayoutNG
 
 | Component | Strategy |
 |-----------|----------|
-| V8 | Stub binding interfaces — layout/paint never call V8 directly |
+| V8 and JavaScript bindings | Remove entirely; consuming apps call public native Rust APIs and supply Rust callbacks |
 | HTML parser | Remove entirely — we build DOM programmatically |
 | CSS text parser | Stub — we set style properties programmatically |
 | Network stack | Remove entirely |
@@ -56,7 +60,7 @@ Get Chromium's actual rendering pipeline — from ComputedStyle through LayoutNG
 
 3. **A3: Create GN build skeleton** — Set up `BUILD.gn` files that reference Chromium source files in their original locations (via the Chromium checkout symlink). Don't copy files — reference them. This way we track exactly which Chromium files we use.
 
-4. **A4: Create stub headers** — For V8, networking, and other removed components, create stub headers that satisfy `#include` directives with minimal/empty implementations.
+4. **A4: Create stub headers (historical extraction work)** — For networking and other removed infrastructure, create stub headers that satisfy `#include` directives with minimal/empty implementations. Do not add V8 or JavaScript binding interfaces. Needed element operations belong in the shared native Rust Engine and its public Rust API.
 
 ### Phase B: Base & Platform Compilation
 
@@ -150,9 +154,6 @@ This approach:
 For removed dependencies, we provide stub headers in `src/stubs/`:
 ```
 src/stubs/
-├── v8/                    # Empty V8 API headers
-│   ├── v8.h
-│   └── v8-isolate.h
 ├── net/                   # Empty networking headers
 ├── mojo/                  # Empty Mojo IPC headers
 └── services/              # Empty service headers
@@ -181,7 +182,7 @@ Stubs provide the minimal type definitions and function signatures needed to sat
 
 | Risk | Severity | Mitigation |
 |---|---|---|
-| V8 stubbing breaks compilation | **Critical** | Blink has deep V8 integration in DOM layer. We stub at the narrowest interface. Layout/paint/cc/ don't use V8 directly. |
+| Needed element operation lacks a public Rust API | **Critical** | Implement the operation and its events in the shared native Rust Engine and expose them to the consuming application. JavaScript bindings do not satisfy this requirement. |
 | `base/` subset is insufficient | **High** | Start broad (include more of base/), narrow later. Better to have extra code than missing deps. |
 | Circular dependencies | **High** | Chromium's include graph has cycles. May need to compile everything as a single target initially. |
 | DOM stubs inadequate for layout | **High** | LayoutNG has assumptions about the DOM tree. Our stubs must satisfy those assumptions precisely. |

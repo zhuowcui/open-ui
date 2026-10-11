@@ -1,0 +1,24 @@
+{
+  "all_commands_terminal": false,
+  "new_release_states_admitted": 0,
+  "probe_sha256": "4dfeb0c3cffa3dcfc35d7d7b976c1e38fc41270bf840ae63137ae9db4b5d5476",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "107e2e36c3a0fb57ddb85cac14d9c4fdb1dcf2da",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "ef67a5b541e9ebf2c2d9eed8d3a2406ea9a488ed514eba3563fd7a8716f8020a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "107e2e36c3a0fb57ddb85cac14d9c4fdb1dcf2da",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "ef67a5b541e9ebf2c2d9eed8d3a2406ea9a488ed514eba3563fd7a8716f8020a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "awaiting-separate-intrinsic-and-lcd-pipelines",
+  "steps": []
+}

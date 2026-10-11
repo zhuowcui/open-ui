@@ -1,0 +1,1110 @@
+{
+  "all_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "cases": [
+    {
+      "height": 600,
+      "runs": [
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-0/native-1",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "d4e2bf1140a8827d57a2a590f8b78fdcedb5cad36f857a801a73c7ed1826dbc2",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "e17eae469e8c821aceca60dfab0d55dcc9545fa14cf4476e2fe5eb9121e2e0d7",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        },
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-0/native-2",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "d4e2bf1140a8827d57a2a590f8b78fdcedb5cad36f857a801a73c7ed1826dbc2",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "e17eae469e8c821aceca60dfab0d55dcc9545fa14cf4476e2fe5eb9121e2e0d7",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        }
+      ],
+      "scale": 1.0,
+      "width": 800
+    },
+    {
+      "height": 720,
+      "runs": [
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-1/native-1",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "2dc1f259a61f2ea2efa066caac1d812ab7efa76ed359ba6268daac2d58e0d9f2",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "982b9573b4fb4e37a2f8f24f9a1f9240cd20ca03cb5fd7dd6086df05e9f211c4",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        },
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-1/native-2",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "2dc1f259a61f2ea2efa066caac1d812ab7efa76ed359ba6268daac2d58e0d9f2",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "982b9573b4fb4e37a2f8f24f9a1f9240cd20ca03cb5fd7dd6086df05e9f211c4",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        }
+      ],
+      "scale": 1.25,
+      "width": 1280
+    },
+    {
+      "height": 600,
+      "runs": [
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-2/native-1",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "0cc68da929a133e641d8e939fc9bc71a4f35c0896ac26c31a70561bd2fe98d6c",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "13f2a09168c7def1e539467860d897ffc7d95c45d6403285c154fa064da54a2d",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        },
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-2/native-2",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "0cc68da929a133e641d8e939fc9bc71a4f35c0896ac26c31a70561bd2fe98d6c",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "13f2a09168c7def1e539467860d897ffc7d95c45d6403285c154fa064da54a2d",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        }
+      ],
+      "scale": 2.0,
+      "width": 800
+    },
+    {
+      "height": 720,
+      "runs": [
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-3/native-1",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "6836f6855bf3e990d37595bc3dc5b0dc7867d12529c41b5aee462db7ae44413a",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "6fc893f64c23ff13cf17b266b6743ae2209e44289706231aafb351a7dca93c9e",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        },
+        {
+          "directory": "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-3/native-2",
+          "files": {
+            "after.json": "a97901a7a026ce54cd5cfc0ce5e0d1b04e6a91e50545ed28fbd15318aec32da7",
+            "after.png": "6836f6855bf3e990d37595bc3dc5b0dc7867d12529c41b5aee462db7ae44413a",
+            "before.json": "ff2077cb46c8c3dd3bcbd4c0f1501d3710e88bc382b8de9e0e283dc2b0482ece",
+            "before.png": "6fc893f64c23ff13cf17b266b6743ae2209e44289706231aafb351a7dca93c9e",
+            "lifecycle.json": "a5788a7097df2d105c5ddbccf4f12bbc4e15ca0e745e8de428b8f7dacbc0f8ca"
+          }
+        }
+      ],
+      "scale": 1.5,
+      "width": 1280
+    }
+  ],
+  "driver_sha256": "79d0ab2b074a21374f3f5b76800242b8d8b41263f85853485dd0c1eb1498bd81",
+  "ffi_library_sha256": "af1cada7fcb95083e2a4cfdc033f9027d0c7a7887863ef1a272f6dbf91ed237c",
+  "full_renderer_contract_qualified": false,
+  "historical_openui_archive_is_a_pixel_target": false,
+  "javascript_executed_by_openui": false,
+  "local_artifacts": [
+    {
+      "executable": null,
+      "features": [],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-geometry/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-geometry#0.2.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib": "97526b66167a5cac23217b365f2da3493a5daebb800d44d95793f35a364a1ce3",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta": "b1a58c060e7ff5f7d7659bc40b197a194c30c6bdaa4e11a239394c422d9df747"
+      },
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "openui_geometry",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/openui-geometry/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-3a810cf7a7c794b9.so"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-3a810cf7a7c794b9.so": "5de942c813faa27dc376afb8ef9e499c716715cb08d56e74d0af8c9995f58121"
+      },
+      "target": {
+        "crate_types": [
+          "proc-macro"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "proc-macro"
+        ],
+        "name": "bytemuck_derive",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-style/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-style#0.2.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib": "219ffa649698352a74b2311a41f6d40c2a42a8501e804534fcc3bb5727fbf35b",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta": "764998f757324091be89c40484ca182a087f0704e4b11c8af0e689c1e123b36a"
+      },
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "openui_style",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/openui-style/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [
+        "bytemuck_derive",
+        "derive",
+        "min_const_generics"
+      ],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rlib",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rmeta"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rlib": "fa80d54270eb95861d6464aa4a0b5dc3b84b286bc1b8a6da1b15450efd17953f",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-087b6a2b3a3980c7.rmeta": "73f0e4d2f5d4e00bd51a7d609dba89fd4ce83d0248d3bbe2f7cbfdb289598767"
+      },
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "bytemuck",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [
+        "bytemuck",
+        "std"
+      ],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rlib",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rmeta"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rlib": "8da6b957b293703154b061db7df7d82bd4ace6415ce3879faea5aa6b366069e9",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e33b946bf9cdb70b.rmeta": "5e663b9f31b1f0e065630c6c3cf328ec7de96dadea87146c1cd60c8b7fac94e3"
+      },
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "font_types",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-4a2a29060d246886.so"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-macros/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-macros#0.2.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-4a2a29060d246886.so": "261568b6ef1b30c1665497b7da78791e24fc5691f90c7284fbf04a81d91fe178"
+      },
+      "target": {
+        "crate_types": [
+          "proc-macro"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "proc-macro"
+        ],
+        "name": "openui_macros",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/openui-macros/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [
+        "std"
+      ],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rlib",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rmeta"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rlib": "b2fabc7e8a7fe2e006945d53e22d42614d36df687a3c0237cf98d489e9ecc695",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-f7fc50324ff71df1.rmeta": "ed51410f5c665d82cc0bcc84714360c344f549269f0a9c2d786ee42c9797029e"
+      },
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "read_fonts",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [
+        "autohint_shaping",
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rlib",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rmeta"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rlib": "fb2acc9bf295e839f2f76bb48f5df1acae40c0b208dc502d986c1bb88e772eff",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-35f5ca75a4e799ca.rmeta": "1c828881347236597f725f26e5621b62c461da6f6d69d08958578cfd424428bf"
+      },
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "skrifa",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rlib",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rmeta"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-dom/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-dom#0.2.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rlib": "d5439c5b74dbe4979080e7765e4591424b406ae3b5a90256d6c4f751eab547c6",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-d1c3bc152e8680f8.rmeta": "72f7186a9ce3217fafec405eed029c2867fcd7f872bba31cd77f63c5f1d08a8a"
+      },
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "openui_dom",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/openui-dom/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rlib",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rmeta"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-text/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-text#0.2.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rlib": "c2efdd4d272a7e51ecf60d01dcacafd5f16f211f336180cfd2ff54eb443318fd",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-685d07112f60e769.rmeta": "61538f4cbaa3358de7714c199677358a7a79e0ae2815a6aadb1916bef8013ccd"
+      },
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "openui_text",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/openui-text/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rlib",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rmeta"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-layout/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-layout#0.2.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rlib": "660a90005a7bceb5a230f1c9f9f391f726bf306f0a80de33c08359a6fc133b63",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-2b29aafb1a34dc59.rmeta": "080b4108f24bdf9cf9f8010a92c70222f4b03bf9d0d76b47e3148f2f0c4eed69"
+      },
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "openui_layout",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/openui-layout/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rlib",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rmeta"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-paint/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-paint#0.2.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rlib": "e0799aff82c91e7d6ed757e716f78f0c9b929b5d53968d145a4edadeec74a21c",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-3b124772dacb6746.rmeta": "10b417b9f14b03dfcfd482e7ab0bd19f3e211f8d8fc3e264c30f003867447604"
+      },
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "openui_paint",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/openui-paint/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [
+        "default"
+      ],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rlib",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rmeta"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-compositor/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-compositor#0.2.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rlib": "eb3eccef0ead8cb219d23f658dc4e739bdd73061e36f140d71a36b5f7ee2113a",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-2a790426442dcf82.rmeta": "016ac0f85005d31aae949ccd00628bcc55c6ec4d29efbc02d7116512573f08cb"
+      },
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "openui_compositor",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/openui-compositor/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rlib",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rmeta"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui-engine/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui-engine#0.2.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rlib": "82301bb09795be18e5b5b58a7b83045086b41715e535d688a964d034b8baa8bd",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-c971e3ea18717d45.rmeta": "332faf8029a5d5df116611ab9395219e5bb89ec22a728cb800cc7888ea7782bd"
+      },
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "openui_engine",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/openui-engine/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [
+        "default"
+      ],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-39a7fea72c83746e.rlib",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-39a7fea72c83746e.rmeta"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui#0.2.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-39a7fea72c83746e.rlib": "91c1fb34669517fdd4740fc513b48b7195f6aa7a26b1686892b63386c6125ffe",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-39a7fea72c83746e.rmeta": "1b86bce5df27c33b71a15e7884d7e2534065447d10509596b0a86b6915ad9ba1"
+      },
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "openui",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/openui/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_font_units",
+      "features": [
+        "default"
+      ],
+      "filenames": [
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_font_units"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/nero/code/open-ui/bindings/rust/openui/Cargo.toml",
+      "package_id": "path+file:///home/nero/code/open-ui/bindings/rust/openui#0.2.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "0",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "sha256": {
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_font_units": "e029ea715cd214b335e20eb9d8d2571795ba1d93c2fe19c600db4cf6ed28adec"
+      },
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "example"
+        ],
+        "name": "native_font_units",
+        "src_path": "/home/nero/code/open-ui/bindings/rust/openui/examples/native_font_units.rs",
+        "test": false
+      }
+    }
+  ],
+  "native_binary_sha256": "e029ea715cd214b335e20eb9d8d2571795ba1d93c2fe19c600db4cf6ed28adec",
+  "observed_exit_code": 0,
+  "owner_pid": 272098,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "release_qualified": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "45d2164801a94995bac4927fab2aa517b1364e6c",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "b3c3887214d9b5c9bb15eebaed8626e10d5611f0f6c046405f3db09b82751f59",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "45d2164801a94995bac4927fab2aa517b1364e6c",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "b3c3887214d9b5c9bb15eebaed8626e10d5611f0f6c046405f3db09b82751f59",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true,
+  "steps": [
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "python3",
+        "-B",
+        "tools/ffi/generate_ffi.py",
+        "--check"
+      ],
+      "cwd": "/home/nero/code/open-ui",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "name": "ffi-generator",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "python3",
+        "-B",
+        "tools/style/generate_properties.py",
+        "--check"
+      ],
+      "cwd": "/home/nero/code/open-ui",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "name": "style-generator",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "python3",
+        "-B",
+        "tools/qualification/generate_renderer_contract.py",
+        "--check"
+      ],
+      "cwd": "/home/nero/code/open-ui",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "name": "renderer-generator",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "python3",
+        "-B",
+        "tools/release/generate_v02_contract.py",
+        "--check"
+      ],
+      "cwd": "/home/nero/code/open-ui",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "name": "release-generator",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "python3",
+        "-B",
+        "tools/accountability/audit.py",
+        "--repository-only"
+      ],
+      "cwd": "/home/nero/code/open-ui",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+      "name": "accountability",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "cargo",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/nero/code/open-ui/bindings/rust",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "64c0abc058dfd7e3218f9852ff9b1157ee92b6b96ef306d5ad465e2c4588feb6",
+      "name": "metadata",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "cargo",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "clean",
+        "--locked",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/examples/counter#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/examples/dashboard#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/examples/framework-test#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/examples/hello#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/examples/todo#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/openui#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/openui-compositor#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/openui-dom#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/openui-engine#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/openui-ffi#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/openui-geometry#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/openui-layout#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/openui-macros#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/openui-paint#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/openui-platform#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/openui-style#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/openui-text#0.2.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/pixel-compare#0.1.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+        "-p",
+        "path+file:///home/nero/code/open-ui/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0"
+      ],
+      "cwd": "/home/nero/code/open-ui/bindings/rust",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "9334fcaf46b6d6f1dfbfdbfadacd4def3202f3c526cdda968c78659ad5f24480",
+      "name": "clean-local-packages",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "cargo",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui",
+        "--example",
+        "native_font_units",
+        "--message-format=json-render-diagnostics"
+      ],
+      "cwd": "/home/nero/code/open-ui/bindings/rust",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "20f1d5635b23e16acf64bf316eea0e5c30ea8da48908bffef11cffc8c296f7bb",
+      "name": "native-build",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/native_font_units",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-0/native-1",
+        "800",
+        "600",
+        "1.0"
+      ],
+      "cwd": "/home/nero/code/open-ui",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "profile-0-native-1",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/native_font_units",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-0/native-2",
+        "800",
+        "600",
+        "1.0"
+      ],
+      "cwd": "/home/nero/code/open-ui",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "profile-0-native-2",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/native_font_units",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-1/native-1",
+        "1280",
+        "720",
+        "1.25"
+      ],
+      "cwd": "/home/nero/code/open-ui",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "profile-1-native-1",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/native_font_units",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-1/native-2",
+        "1280",
+        "720",
+        "1.25"
+      ],
+      "cwd": "/home/nero/code/open-ui",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "profile-1-native-2",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/native_font_units",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-2/native-1",
+        "800",
+        "600",
+        "2.0"
+      ],
+      "cwd": "/home/nero/code/open-ui",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "profile-2-native-1",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/native_font_units",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-2/native-2",
+        "800",
+        "600",
+        "2.0"
+      ],
+      "cwd": "/home/nero/code/open-ui",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "profile-2-native-2",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/native_font_units",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-3/native-1",
+        "1280",
+        "720",
+        "1.5"
+      ],
+      "cwd": "/home/nero/code/open-ui",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "profile-3-native-1",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/native_font_units",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-font-units-checks-v3626/profile-3/native-2",
+        "1280",
+        "720",
+        "1.5"
+      ],
+      "cwd": "/home/nero/code/open-ui",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "profile-3-native-2",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "cargo",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--workspace",
+        "--all-targets"
+      ],
+      "cwd": "/home/nero/code/open-ui/bindings/rust",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "232d612650edc689ac0e7445ab26cbb9c1115d457ff2b601a53de341198096b8",
+      "name": "workspace-all-targets",
+      "passed": 8625
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "cargo",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-ffi"
+      ],
+      "cwd": "/home/nero/code/open-ui/bindings/rust",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "5e02dfa0813bc9e91fa9913e11ed49124254d9352e535516f87ef9c83c87daa7",
+      "name": "ffi-build",
+      "passed": 0
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "python3",
+        "-B",
+        "tools/ffi/verify_abi.py",
+        "--library",
+        "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.so"
+      ],
+      "cwd": "/home/nero/code/open-ui",
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "f6a11db6395827b2224062a54cc051919367c3132481827f03ee1009f1cc80f4",
+      "name": "abi-consumers",
+      "passed": 0
+    }
+  ]
+}

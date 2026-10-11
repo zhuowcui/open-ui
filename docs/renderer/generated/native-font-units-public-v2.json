@@ -1,0 +1,635 @@
+{
+  "actual_combined_umbrella_source_measured": true,
+  "all_local_commands_terminal": true,
+  "all_members_hash_verified": true,
+  "all_native_apis_qualified": false,
+  "archive": {
+    "bytes": 9739491,
+    "files": 57,
+    "members": [
+      {
+        "bytes": 12501,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/receipt.json",
+        "raw_bytes": 12501,
+        "raw_sha256": "c316e027fac4d1b1d6500c431b835ea4525b80e4b0e47fec8495ff629dde947b",
+        "sha256": "c316e027fac4d1b1d6500c431b835ea4525b80e4b0e47fec8495ff629dde947b"
+      },
+      {
+        "bytes": 596,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/guarded-build.log",
+        "raw_bytes": 596,
+        "raw_sha256": "d1c04441ab7b030a14cce509f962944865371e95e16e6716139f4423499ec355",
+        "sha256": "d1c04441ab7b030a14cce509f962944865371e95e16e6716139f4423499ec355"
+      },
+      {
+        "bytes": 1243,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/focused.log",
+        "raw_bytes": 1243,
+        "raw_sha256": "e6e918ee9497abf178d261f1d583590b07a27f3f6a2b834afb08257474056238",
+        "sha256": "e6e918ee9497abf178d261f1d583590b07a27f3f6a2b834afb08257474056238"
+      },
+      {
+        "bytes": 1247,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/primitive.log",
+        "raw_bytes": 1247,
+        "raw_sha256": "1fd1a4a6132c16936fde94f9cc96462de66d3558e154f7a72fb97ef082d7c57b",
+        "sha256": "1fd1a4a6132c16936fde94f9cc96462de66d3558e154f7a72fb97ef082d7c57b"
+      },
+      {
+        "bytes": 7202,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/full.log",
+        "raw_bytes": 7202,
+        "raw_sha256": "8ad99fbea77ffd2dcd643329f8164f84514fe985adf3ae7428885057f692e39a",
+        "sha256": "8ad99fbea77ffd2dcd643329f8164f84514fe985adf3ae7428885057f692e39a"
+      },
+      {
+        "bytes": 7454,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/expanded.log",
+        "raw_bytes": 7454,
+        "raw_sha256": "fec54feebc150818726d9f39ffa61fd4b6fa355dbd2adf1ff24ca72781341ba8",
+        "sha256": "fec54feebc150818726d9f39ffa61fd4b6fa355dbd2adf1ff24ca72781341ba8"
+      },
+      {
+        "bytes": 1323,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/guarded-build/build.stderr",
+        "raw_bytes": 1323,
+        "raw_sha256": "ac96d925c58c181e47ca0999be04d6b36a015f36c7d08ae55d1a9c4619dc5571",
+        "sha256": "ac96d925c58c181e47ca0999be04d6b36a015f36c7d08ae55d1a9c4619dc5571"
+      },
+      {
+        "bytes": 9754,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/guarded-build/build.stdout.gz",
+        "raw_bytes": 132209,
+        "raw_sha256": "a6057682924673b569006eaa96d32793a169db9de03b038c5770c735c2bc2495",
+        "sha256": "096d551c29f2cb47ef325d38e1287ed836299eaba2d0dc68b3d5875e266deaa2"
+      },
+      {
+        "bytes": 7543,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/guarded-build/clean-local-packages.stderr",
+        "raw_bytes": 7543,
+        "raw_sha256": "1c1086a63dc27b6f048b86342e3643320750a5d070c694fecb5b22282d2c0eaf",
+        "sha256": "1c1086a63dc27b6f048b86342e3643320750a5d070c694fecb5b22282d2c0eaf"
+      },
+      {
+        "bytes": 0,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/guarded-build/clean-local-packages.stdout",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/guarded-build/metadata.stderr",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 66678,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/guarded-build/metadata.stdout.gz",
+        "raw_bytes": 699631,
+        "raw_sha256": "64c0abc058dfd7e3218f9852ff9b1157ee92b6b96ef306d5ad465e2c4588feb6",
+        "sha256": "b43fa2590150a83fe22f2d74a6e85f60056462e3722cdde12e9010abc0af7ebe"
+      },
+      {
+        "bytes": 27346,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/guarded-build/receipt.json",
+        "raw_bytes": 27346,
+        "raw_sha256": "8762a0a82a3d51842e89071d11791c3cb178820e8540f9f322f20af29921998d",
+        "sha256": "8762a0a82a3d51842e89071d11791c3cb178820e8540f9f322f20af29921998d"
+      },
+      {
+        "bytes": 160555,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/focused-summary.json.gz",
+        "raw_bytes": 1646583,
+        "raw_sha256": "f3f36830836a362337a9c38c63bd2a1cc0304ca567d6360ef4c3b017c0cdf5a1",
+        "sha256": "11c8e00926480628521a250b6ed78f80508e8dcae0a387e11768eb91c6c35fe1"
+      },
+      {
+        "bytes": 222617,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/primitive-summary.json.gz",
+        "raw_bytes": 2455789,
+        "raw_sha256": "8c2bc99985130f07d90dcb32df9b4149b54419f7a7e9288c35f2afefc43e1521",
+        "sha256": "fbf3c92e685699bb5e55f0e283bb80af21b091b3fd756a060f3fc4161bf108f0"
+      },
+      {
+        "bytes": 4314536,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/full-summary.json.gz",
+        "raw_bytes": 70292075,
+        "raw_sha256": "c419e2f27091d7a60304daecf7261df8a1de82f2bace4078081a4a12c1dafc42",
+        "sha256": "de2cda16f1d0a52ac3d1a4c40feaab1816f01d06d7f044e3249b965d868a171d"
+      },
+      {
+        "bytes": 4425101,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/renderer/expanded-summary.json.gz",
+        "raw_bytes": 72329054,
+        "raw_sha256": "4f5e72fb51806b3a0350e878c7ea5111585fecaab4f850477dd8e1bec7975b60",
+        "sha256": "a038c922d1ff06b1b2d4a59c8a549de1471e237259ec90b9dec55e5867eefacc"
+      },
+      {
+        "bytes": 7544,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/workspace/clean-local-packages.log",
+        "raw_bytes": 7544,
+        "raw_sha256": "9babf117c3ab66d16e61bbac1ef0f5b54256fa93f9784dbd4bf19ed68973e1b9",
+        "sha256": "9babf117c3ab66d16e61bbac1ef0f5b54256fa93f9784dbd4bf19ed68973e1b9"
+      },
+      {
+        "bytes": 66678,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/workspace/metadata.log.gz",
+        "raw_bytes": 699631,
+        "raw_sha256": "64c0abc058dfd7e3218f9852ff9b1157ee92b6b96ef306d5ad465e2c4588feb6",
+        "sha256": "b43fa2590150a83fe22f2d74a6e85f60056462e3722cdde12e9010abc0af7ebe"
+      },
+      {
+        "bytes": 21282,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/workspace/receipt.json.gz",
+        "raw_bytes": 275853,
+        "raw_sha256": "16e30f04453ab30235320847a0b09fef13086c035bb48fa08412b6e44a673d2c",
+        "sha256": "b1e1b69031970e9a264619c6090ec8990e69dac40c7420acf8fbd27bbb383e61"
+      },
+      {
+        "bytes": 116922,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/workspace/workspace-all-targets-all-features.log.gz",
+        "raw_bytes": 913650,
+        "raw_sha256": "a0013d44768e6c5394e502e33d530cbb372858dba61e70b542f58698f12f27f9",
+        "sha256": "010d47417e7ba21015c831d3a16e9e32eac76fbe7ba42109fc19aa19c0b856d9"
+      },
+      {
+        "bytes": 115294,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/workspace/workspace-and-docs-all-features.log.gz",
+        "raw_bytes": 898177,
+        "raw_sha256": "e6d88e13bbcf11b1840ffab972c2c8a5a1cd3f63fa9ec2de4d8320ff257b7be6",
+        "sha256": "126c4d59dd6cab9299733c02e7511b63f51410584221178daa57e1f145685c24"
+      },
+      {
+        "bytes": 1839,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/reference-only-3639/receipt.json",
+        "raw_bytes": 1839,
+        "raw_sha256": "216b3f2a14e60b0beaf8b6cbf07f14e2a8da5df7cf52bfc1f9092c43ee5d38b5",
+        "sha256": "216b3f2a14e60b0beaf8b6cbf07f14e2a8da5df7cf52bfc1f9092c43ee5d38b5"
+      },
+      {
+        "bytes": 722,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/reference-only-3639/test.html",
+        "raw_bytes": 722,
+        "raw_sha256": "e6f0fb566e6949189a425d48047d3da7718616bb94c9de9a06465f5ba57a4088",
+        "sha256": "e6f0fb566e6949189a425d48047d3da7718616bb94c9de9a06465f5ba57a4088"
+      },
+      {
+        "bytes": 5239,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/reference-only-3642/observations-1.0-1.json",
+        "raw_bytes": 5239,
+        "raw_sha256": "f30ac3bbafe696d30ddaa6d89a8653d868f2634515cb051289aca7462eb67a03",
+        "sha256": "f30ac3bbafe696d30ddaa6d89a8653d868f2634515cb051289aca7462eb67a03"
+      },
+      {
+        "bytes": 5239,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/reference-only-3642/observations-1.0-2.json",
+        "raw_bytes": 5239,
+        "raw_sha256": "f30ac3bbafe696d30ddaa6d89a8653d868f2634515cb051289aca7462eb67a03",
+        "sha256": "f30ac3bbafe696d30ddaa6d89a8653d868f2634515cb051289aca7462eb67a03"
+      },
+      {
+        "bytes": 5245,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/reference-only-3642/observations-1.25-1.json",
+        "raw_bytes": 5245,
+        "raw_sha256": "dc31c633c7f535fae5f7027432bc15ab0c420cde6cbb3d478a107b4c97f2e828",
+        "sha256": "dc31c633c7f535fae5f7027432bc15ab0c420cde6cbb3d478a107b4c97f2e828"
+      },
+      {
+        "bytes": 5245,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/reference-only-3642/observations-1.25-2.json",
+        "raw_bytes": 5245,
+        "raw_sha256": "dc31c633c7f535fae5f7027432bc15ab0c420cde6cbb3d478a107b4c97f2e828",
+        "sha256": "dc31c633c7f535fae5f7027432bc15ab0c420cde6cbb3d478a107b4c97f2e828"
+      },
+      {
+        "bytes": 5243,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/reference-only-3642/observations-1.5-1.json",
+        "raw_bytes": 5243,
+        "raw_sha256": "ca642a688ae1d241dbca3c1245f8a0151eadfc12a2948f5d0b77d25d87366d67",
+        "sha256": "ca642a688ae1d241dbca3c1245f8a0151eadfc12a2948f5d0b77d25d87366d67"
+      },
+      {
+        "bytes": 5243,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/reference-only-3642/observations-1.5-2.json",
+        "raw_bytes": 5243,
+        "raw_sha256": "ca642a688ae1d241dbca3c1245f8a0151eadfc12a2948f5d0b77d25d87366d67",
+        "sha256": "ca642a688ae1d241dbca3c1245f8a0151eadfc12a2948f5d0b77d25d87366d67"
+      },
+      {
+        "bytes": 5239,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/reference-only-3642/observations-2.0-1.json",
+        "raw_bytes": 5239,
+        "raw_sha256": "229f0a064126c4d791550368051acdc22c2d5695994b43427364c20eeef2cb48",
+        "sha256": "229f0a064126c4d791550368051acdc22c2d5695994b43427364c20eeef2cb48"
+      },
+      {
+        "bytes": 5239,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/reference-only-3642/observations-2.0-2.json",
+        "raw_bytes": 5239,
+        "raw_sha256": "229f0a064126c4d791550368051acdc22c2d5695994b43427364c20eeef2cb48",
+        "sha256": "229f0a064126c4d791550368051acdc22c2d5695994b43427364c20eeef2cb48"
+      },
+      {
+        "bytes": 5239,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/reference-only-3642/observations-3.0-1.json",
+        "raw_bytes": 5239,
+        "raw_sha256": "a48732eec221119c470d157858cc724fb852179f2789e7b57dd1b7e84f049b5d",
+        "sha256": "a48732eec221119c470d157858cc724fb852179f2789e7b57dd1b7e84f049b5d"
+      },
+      {
+        "bytes": 5239,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/reference-only-3642/observations-3.0-2.json",
+        "raw_bytes": 5239,
+        "raw_sha256": "a48732eec221119c470d157858cc724fb852179f2789e7b57dd1b7e84f049b5d",
+        "sha256": "a48732eec221119c470d157858cc724fb852179f2789e7b57dd1b7e84f049b5d"
+      },
+      {
+        "bytes": 2601,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/reference-only-3642/receipt.json",
+        "raw_bytes": 2601,
+        "raw_sha256": "9c2fd892af6db94a1e2fb94f0eb89bac167bbc4d1b6a7d29ea22c136662b163b",
+        "sha256": "9c2fd892af6db94a1e2fb94f0eb89bac167bbc4d1b6a7d29ea22c136662b163b"
+      },
+      {
+        "bytes": 722,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/reference-only-3642/test.html",
+        "raw_bytes": 722,
+        "raw_sha256": "e6f0fb566e6949189a425d48047d3da7718616bb94c9de9a06465f5ba57a4088",
+        "sha256": "e6f0fb566e6949189a425d48047d3da7718616bb94c9de9a06465f5ba57a4088"
+      },
+      {
+        "bytes": 2012,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui_parallel_source_identity_v3060.py",
+        "raw_bytes": 2012,
+        "raw_sha256": "d034540153e35cad3cbfc63a13e0bcfb17df4cbdb89a6d22e1439f7bc39435ec",
+        "sha256": "d034540153e35cad3cbfc63a13e0bcfb17df4cbdb89a6d22e1439f7bc39435ec"
+      },
+      {
+        "bytes": 13161,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-public-native-font-units-renderer-v3632.py",
+        "raw_bytes": 13161,
+        "raw_sha256": "f78b7ef9259a865d557144a510080df757eb6aa2c271b2623bc3ce4e8cff2563",
+        "sha256": "f78b7ef9259a865d557144a510080df757eb6aa2c271b2623bc3ce4e8cff2563"
+      },
+      {
+        "bytes": 6931,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-public-native-font-units-renderer-audit-v3633.py",
+        "raw_bytes": 6931,
+        "raw_sha256": "e0f64764aad0d966c6bf7a9768a14c7867e24f90476b2c37631567652fb31894",
+        "sha256": "e0f64764aad0d966c6bf7a9768a14c7867e24f90476b2c37631567652fb31894"
+      },
+      {
+        "bytes": 2958,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-public-native-font-units-renderer-completed-audit-v3633.json",
+        "raw_bytes": 2958,
+        "raw_sha256": "39b10028facfd6b2020c17268513f6bc4d52024b09f92e69c76cf2e7bfd96ad3",
+        "sha256": "39b10028facfd6b2020c17268513f6bc4d52024b09f92e69c76cf2e7bfd96ad3"
+      },
+      {
+        "bytes": 2208,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-public-native-font-units-renderer-reaped-v3635.py",
+        "raw_bytes": 2208,
+        "raw_sha256": "b16a9beae20f6eefd9ea1ea1764ac0e0bdcbd91d136558dd6b9c21e32b8367f5",
+        "sha256": "b16a9beae20f6eefd9ea1ea1764ac0e0bdcbd91d136558dd6b9c21e32b8367f5"
+      },
+      {
+        "bytes": 2063,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-public-native-font-units-renderer-terminal-v3635.json",
+        "raw_bytes": 2063,
+        "raw_sha256": "030f6f6a60866abdfad937eb47aa1461f2ab2e9606e5c61c4109674a853ee59e",
+        "sha256": "030f6f6a60866abdfad937eb47aa1461f2ab2e9606e5c61c4109674a853ee59e"
+      },
+      {
+        "bytes": 6904,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-unit-api-oracle-v3639.py",
+        "raw_bytes": 6904,
+        "raw_sha256": "7e83e448904f71d3a09fe0166b1e2b522597166bf0a341daca09935d2ceb6428",
+        "sha256": "7e83e448904f71d3a09fe0166b1e2b522597166bf0a341daca09935d2ceb6428"
+      },
+      {
+        "bytes": 734,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-unit-api-oracle-terminal-v3639.json",
+        "raw_bytes": 734,
+        "raw_sha256": "94a457f78024a4fdbaa9e52b53f54adb4024c8f8937f1ab49c739cd0bb23e3ca",
+        "sha256": "94a457f78024a4fdbaa9e52b53f54adb4024c8f8937f1ab49c739cd0bb23e3ca"
+      },
+      {
+        "bytes": 6918,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-unit-api-oracle-v3642.py",
+        "raw_bytes": 6918,
+        "raw_sha256": "5ce8add3cf0c5789c281fef124c52f7ebec37442f9aea780d2b439a34dcf9f70",
+        "sha256": "5ce8add3cf0c5789c281fef124c52f7ebec37442f9aea780d2b439a34dcf9f70"
+      },
+      {
+        "bytes": 1990,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-unit-api-oracle-terminal-v3642.json",
+        "raw_bytes": 1990,
+        "raw_sha256": "57107d6d89867b36c8d9d118851debab66338013c58a52fea8bbbfcbd5f32bf1",
+        "sha256": "57107d6d89867b36c8d9d118851debab66338013c58a52fea8bbbfcbd5f32bf1"
+      },
+      {
+        "bytes": 6166,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-units-all-features-v3640.py",
+        "raw_bytes": 6166,
+        "raw_sha256": "482c563137b01d08a8067049e3895c81a16e7e7f502dcd2aca71143f61b2d825",
+        "sha256": "482c563137b01d08a8067049e3895c81a16e7e7f502dcd2aca71143f61b2d825"
+      },
+      {
+        "bytes": 3941,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-units-all-features-audit-v3641.py",
+        "raw_bytes": 3941,
+        "raw_sha256": "102418735c705b0765fcb4148f3f080cc24718fec38675f14e3d16237d1e4999",
+        "sha256": "102418735c705b0765fcb4148f3f080cc24718fec38675f14e3d16237d1e4999"
+      },
+      {
+        "bytes": 2001,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-units-all-features-terminal-v3641.json",
+        "raw_bytes": 2001,
+        "raw_sha256": "29033158aacb525f976075e9cd5779ee503d272cd3f244087f442ee41fe6e0a1",
+        "sha256": "29033158aacb525f976075e9cd5779ee503d272cd3f244087f442ee41fe6e0a1"
+      },
+      {
+        "bytes": 1937,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-units-all-features-reaped-v3643.py",
+        "raw_bytes": 1937,
+        "raw_sha256": "dd30c29b3ccf6d2c580477cfb7154f36d26d98d9c2c5c88ca47e02fa2b1db673",
+        "sha256": "dd30c29b3ccf6d2c580477cfb7154f36d26d98d9c2c5c88ca47e02fa2b1db673"
+      },
+      {
+        "bytes": 1829,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-units-all-features-reaped-v3643.json",
+        "raw_bytes": 1829,
+        "raw_sha256": "195c1744a761ab32316870f9c406825b67bacac18545d662e7e658071fb302c4",
+        "sha256": "195c1744a761ab32316870f9c406825b67bacac18545d662e7e658071fb302c4"
+      },
+      {
+        "bytes": 6910,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-units-public-archive-v3644.py",
+        "raw_bytes": 6910,
+        "raw_sha256": "7e092577c44b3ec9b1ebca266bd46d3683a53613694f22291ee8a6d7fbaa5ce3",
+        "sha256": "7e092577c44b3ec9b1ebca266bd46d3683a53613694f22291ee8a6d7fbaa5ce3"
+      },
+      {
+        "bytes": 2850,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-units-public-docs-v3647.py.gz",
+        "raw_bytes": 8886,
+        "raw_sha256": "7ec5e5e7ce78472ae2a36656f0fef206df9f887ac4082a583ac8d71fefdf5fc7",
+        "sha256": "754bbe754e6e39bef5647a3140e669e818db66736088258b33248e711f522ba9"
+      },
+      {
+        "bytes": 3568,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-units-test-count-review-v3638.json",
+        "raw_bytes": 3568,
+        "raw_sha256": "8a9e9f8fb005c1448b763b58beab6b89606b0f60a5453c71decd018d4056dd45",
+        "sha256": "8a9e9f8fb005c1448b763b58beab6b89606b0f60a5453c71decd018d4056dd45"
+      },
+      {
+        "bytes": 10703,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-font-units-hardening-v3645-observed-6.json",
+        "raw_bytes": 10703,
+        "raw_sha256": "c2e6262f3b5f2e828d3572c6c3081cc71d079f75ab622d404ca5fadaabdcabe0",
+        "sha256": "c2e6262f3b5f2e828d3572c6c3081cc71d079f75ab622d404ca5fadaabdcabe0"
+      },
+      {
+        "bytes": 802,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-font-units-hardening-terminal-v3645.json",
+        "raw_bytes": 802,
+        "raw_sha256": "8b62bc4f89c960e1925117198f7386f3a0cb123d87448ec485d3e755622e5b9c",
+        "sha256": "8b62bc4f89c960e1925117198f7386f3a0cb123d87448ec485d3e755622e5b9c"
+      },
+      {
+        "bytes": 1195,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-api-doc-correction-v3646.patch.gz",
+        "raw_bytes": 2587,
+        "raw_sha256": "6833d0e0f99f3f863556a8352d910b4b44be29ff2200b7a8bd534ddfe25b6049",
+        "sha256": "46bff62e89cf126b52a7fa804c17bac8a38423124d85967d9222f05f5e8ad148"
+      }
+    ]
+  },
+  "candidate_nonregression": true,
+  "chromium_reference_changed_rows": 0,
+  "comparison_rows_verified": 48252,
+  "compiled_workspace_paths": 226,
+  "fresh_local_workspace_artifact_records": 212,
+  "full_renderer_contract_qualified": false,
+  "hosted_hardening": {
+    "actual_workflow_conclusion": "success",
+    "all_local_gh_commands_terminal": true,
+    "all_native_apis_qualified": false,
+    "full_renderer_contract_qualified": false,
+    "head_sha": "e98a5a17b6c9700a641079f3137572e0dfc85dd7",
+    "jobs": {
+      "c-undefined-sanitizer": "success",
+      "conformance-and-platform": "success",
+      "fuzz-smoke": "success",
+      "miri-handles": "success",
+      "msrv": "success",
+      "native-sanitizers (address)": "success",
+      "native-sanitizers (leak)": "success"
+    },
+    "physical_hardware_qualified": false,
+    "raw_snapshot_sha256": "c2e6262f3b5f2e828d3572c6c3081cc71d079f75ab622d404ca5fadaabdcabe0",
+    "release_qualified": false,
+    "schema_version": 1,
+    "url": "https://github.com/zhuowcui/open-ui/actions/runs/38051654348",
+    "workflow_dispatch_run_id": 38051654348
+  },
+  "implementation_integrated": true,
+  "javascript_executed_by_openui": false,
+  "new_chromium_api_measurements": {
+    "independent_repeats": 2,
+    "initial_browser_start_failure_preserved": true,
+    "native_api_qualification": false,
+    "native_application_executed": false,
+    "native_pixel_qualification": false,
+    "reference_only": true,
+    "scales": [
+      1,
+      1.25,
+      1.5,
+      2,
+      3
+    ],
+    "unique_geometry_observations": 100
+  },
+  "old_openui_images_are_pixel_targets": false,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "prior_default_feature_test_scope_preserved": true,
+  "prior_public_app_proof": "docs/renderer/generated/native-font-units-v1.json",
+  "release_qualified": false,
+  "remaining": [
+    "all residual Chromium pixel differences and reviewed ownership",
+    "mixed-unit animation and retained font-relative line-height declarations",
+    "root, adjusted-font-size, orientation, missing-glyph and metric-override contexts",
+    "complete needed native APIs, compositor, physical lab and release qualification"
+  ],
+  "renderer": {
+    "expanded": {
+      "actual_exit_code": 1,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 1583,
+      "errors": 0,
+      "exact": 22145,
+      "gains": 0,
+      "losses": 0,
+      "total": 23728,
+      "worsened": 0
+    },
+    "focused": {
+      "actual_exit_code": 0,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "gains": 0,
+      "losses": 0,
+      "total": 640,
+      "worsened": 0
+    },
+    "full": {
+      "actual_exit_code": 1,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 1582,
+      "errors": 0,
+      "exact": 21342,
+      "gains": 0,
+      "losses": 0,
+      "total": 22924,
+      "worsened": 0
+    },
+    "primitive": {
+      "actual_exit_code": 0,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "gains": 0,
+      "losses": 0,
+      "total": 960,
+      "worsened": 0
+    }
+  },
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "e98a5a17b6c9700a641079f3137572e0dfc85dd7",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c1ad161332023bb4c144d499f97c0c0fc0379f8577c791408bcf47d1bcd4e961",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "storage_adjustments": [
+    {
+      "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-units-public-docs-v3647.py.gz",
+      "raw_bytes": 8886,
+      "raw_sha256": "7ec5e5e7ce78472ae2a36656f0fef206df9f887ac4082a583ac8d71fefdf5fc7",
+      "reason": "Preserve exact raw evidence bytes while avoiding whitespace diagnostics on embedded patch context and archived writer."
+    },
+    {
+      "path": "docs/renderer/evidence/native-font-units-public-v2/probes-and-proofs/openui-native-font-api-doc-correction-v3646.patch.gz",
+      "raw_bytes": 2587,
+      "raw_sha256": "6833d0e0f99f3f863556a8352d910b4b44be29ff2200b7a8bd534ddfe25b6049",
+      "reason": "Preserve exact raw evidence bytes while avoiding whitespace diagnostics on embedded patch context and archived writer."
+    }
+  ],
+  "workspace": {
+    "workspace-all-targets-all-features": {
+      "command": [
+        "cargo",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--message-format=json-render-diagnostics"
+      ],
+      "failed": 0,
+      "groups": 192,
+      "ignored": 0,
+      "passed": 8637
+    },
+    "workspace-and-docs-all-features": {
+      "command": [
+        "cargo",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--workspace",
+        "--all-features",
+        "--message-format=json-render-diagnostics"
+      ],
+      "failed": 0,
+      "groups": 160,
+      "ignored": 13,
+      "passed": 8639
+    }
+  }
+}

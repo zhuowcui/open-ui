@@ -52,6 +52,8 @@ def verify(archive_path: Path) -> None:
         f"{top}/lib/cmake/OpenUI/OpenUIConfig.cmake",
         f"{top}/debug/libopenui.so.debug",
         f"{top}/share/openui/examples/c/hello.c",
+        f"{top}/share/openui/examples/c/native/window.c",
+        f"{top}/share/openui/examples/c/native/window.cc",
         f"{top}/share/openui/licenses/Apache-2.0.txt",
         f"{top}/share/openui/openui.spdx.json",
         f"{top}/share/openui/BUILD-METADATA.json",

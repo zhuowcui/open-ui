@@ -1,0 +1,85 @@
+{
+  "cargo_or_image_command_executed_by_preparation": false,
+  "intrinsic_source": "a6d386e48d864a5769ebdadd8bc8dea46e4eff21",
+  "leading_test_baseline": "ac1eb2a7a0426040dc5ebbd5f3ffa13194db96dc",
+  "new_release_states_admitted": 0,
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "scripts": [
+    {
+      "path": "/tmp/openui-native-style-integration-guards-v1418.py",
+      "sha256": "6822c0308bcbb0148224c30a207d2b1e18fc60e877e19775c77dbebfbdc2c67f"
+    },
+    {
+      "path": "/tmp/openui-native-style-integration-build-v1418.py",
+      "sha256": "bd837a859140154ff367cca08571c67c3a763a58fabe03d0aff4ab7d3ed61a84"
+    },
+    {
+      "path": "/tmp/openui-native-style-integration-consumers-v1418.py",
+      "sha256": "1753b06029c991c6601d008928b575c8239dda62fe61aa37e592ec8ee4b372e5"
+    },
+    {
+      "path": "/tmp/openui-native-style-integration-relative-c-v1418.py",
+      "sha256": "231d7fba9575eace214001eed0d9bf12aac478a96fc959a6e3b7125b33f8d813"
+    },
+    {
+      "path": "/tmp/openui-native-style-integration-matrices-v1418.py",
+      "sha256": "308c3713cca06c038b0e5fa8bcf11c6409be3d66db1db8374e814e5b8e8216cb"
+    },
+    {
+      "path": "/tmp/openui-native-intrinsic-constraints-guards-v1418.py",
+      "sha256": "7ed61e68b44fa814bb6e05003e2d70dca48a7c672e4ab09438e2541e4b7085c2"
+    },
+    {
+      "path": "/tmp/openui-native-intrinsic-constraints-build-v1418.py",
+      "sha256": "387fbad63746d487bc97a9cdb9dffa84fe97d8c83cae94ba8394764053d3ef85"
+    },
+    {
+      "path": "/tmp/openui-native-intrinsic-constraints-sizing-v1418.py",
+      "sha256": "e5e800895dac61f34065a0142e0ea28e8ae190305fe5c2dbd67d6289fe49bf0c"
+    },
+    {
+      "path": "/tmp/openui-native-intrinsic-constraints-consumer-v1418.py",
+      "sha256": "a89e210f2680f607deefc79ce64316b3fefd2e337406d8d2d2af40dd395e5d1c"
+    },
+    {
+      "path": "/tmp/openui-native-intrinsic-constraints-matrices-v1418.py",
+      "sha256": "843a52f72039a0cf9f50536a51a0ef7cd252dbdfab391051aee4643fb2ed84c3"
+    },
+    {
+      "path": "/tmp/openui-native-style-integration-retry-pipeline-v1419.py",
+      "sha256": "8a394ba32530eb19ee82f6db03a760f73009976f561104b91cac8cd92b63d848"
+    },
+    {
+      "path": "/tmp/openui-native-intrinsic-constraints-retry-pipeline-v1420.py",
+      "sha256": "e3ff899f55d13b20d648026a4df4b4cdd07af5ea27d37caed34c0b6c3b2df0df"
+    }
+  ],
+  "selected_style_test_names": {
+    "fixed-native-inheritance-guard": [
+      "tests::native_inherited_styles_follow_parent_mutations_and_tree_changes"
+    ],
+    "native-inheritance-guards": [
+      "tests::native_inheritance_animated_font_resolves_relative_to_parent",
+      "tests::native_inheritance_computes_calculated_font_sizes_against_parent",
+      "tests::native_inheritance_computes_renderer_line_height_percentages",
+      "tests::native_inheritance_distinguishes_percentage_and_unitless_line_heights",
+      "tests::native_inheritance_recomputes_relative_lengths_and_preserves_declaration_order",
+      "tests::native_inheritance_refreshes_authored_pseudo_styles_after_origin_mutation",
+      "tests::native_inheritance_transition_retains_a_previously_unauthored_target",
+      "tests::native_inherited_styles_follow_parent_mutations_and_tree_changes",
+      "tests::native_resolved_computed_defaults_preserve_snapshots_and_native_inheritance"
+    ],
+    "owned-recording-guard": [
+      "tests::compositor_distinguishes_owned_recordings_with_equal_document_generations"
+    ],
+    "resolved-snapshot-guards": [
+      "tests::native_resolved_computed_defaults_preserve_snapshots_and_native_inheritance",
+      "tests::native_resolved_repeated_computed_value_preserves_unchanged_work",
+      "tests::native_resolved_style_animation_refreshes_target_and_native_dependents",
+      "tests::native_resolved_style_replacement_drops_previous_native_declarations"
+    ]
+  },
+  "style_source": "0ccc37da4a0def755d5b7f25bb93e92b789787ce"
+}

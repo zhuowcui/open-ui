@@ -1,0 +1,2168 @@
+{
+  "accepted_original_exact": 21334,
+  "accepted_original_total": 22924,
+  "all_candidates_private_and_unapplied": true,
+  "all_commands_terminal": true,
+  "archive": {
+    "all_member_bytes_verified": true,
+    "bytes": 938951,
+    "members": 2005,
+    "path": "docs/renderer/evidence/native-glyph-regressions-v1/completed-evidence.tar.gz",
+    "sha256": "dd4120eb84fca428bbc09951a409517bc8b7fa23196a789d09bbed52f11c186d"
+  },
+  "baseline_geometry_exact": true,
+  "baseline_images_exact": 12,
+  "chromium_reference_bytes_preserved": true,
+  "javascript_executed_by_openui": false,
+  "latest_exact_gains": 8,
+  "latest_exact_losses": 0,
+  "latest_geometry_exact": 30,
+  "latest_images_exact": 20,
+  "latest_more_wrong_states": 2,
+  "latest_native_image_bytes_equal_em_outline_trial": true,
+  "latest_two_desktop_input_states_worsen": true,
+  "no_new_release_state_admitted": true,
+  "original_expanded_focused_primitive_and_workspace_not_run_on_new_candidates": true,
+  "pixel_direction_review": "docs/renderer/generated/native-glyph-direction-v1.json",
+  "pixel_tolerance": 0,
+  "probe_sha256": "c19a08c0ffbc2775b9a0b18976a369157f21206d6e16ba4fbd2f9740ca63becb",
+  "promotion_allowed": false,
+  "public_source": {
+    "clean": true,
+    "commit": "b20f92432d3bece41c83935becbe258959f78174",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "850083814ceea6487f319af8bb0c40cb57b84ce46572c01242c573aec1c0822d",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "release_qualification": false,
+  "runs": [
+    {
+      "all_commands_terminal": true,
+      "changes": [
+        {
+          "before_wrong_pixels": 54,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 20829
+        },
+        {
+          "before_wrong_pixels": 54,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 20829
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 20775
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 20775
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 20775
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 20775
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 61728
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 61728
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 61620
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 61620
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 61620
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 61620
+        },
+        {
+          "before_wrong_pixels": 68,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 47207
+        },
+        {
+          "before_wrong_pixels": 68,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 47207
+        },
+        {
+          "before_wrong_pixels": 1440,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 48579
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 47139
+        },
+        {
+          "before_wrong_pixels": 1440,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 48579
+        },
+        {
+          "before_wrong_pixels": 361,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 47500
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 98598
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 98598
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 101109
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 101109
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 101109
+        },
+        {
+          "before_wrong_pixels": 649,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 99166
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 187137
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 187137
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "large-text-triple",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 186975
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "large-text-triple",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 186975
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": true,
+          "label": "sticky-triple",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 186975
+        },
+        {
+          "before_wrong_pixels": 2340,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 189270
+        }
+      ],
+      "exact_gains": 0,
+      "exact_losses": 12,
+      "more_wrong_states": 30,
+      "name": "native-glyph-regression-pipeline-v2307",
+      "observed_exit_code": 1,
+      "receipt_sha256": "ab8d8c15e95d6d0c02af97fc3fdcac305f17647a9720d468e84590d6bf3cd1d0",
+      "source": {
+        "clean": true,
+        "commit": "4839e107fee5ae07e28fcda990f3433216263580",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "fd2d4604943d6367b32558b865dddf6a6f28030c50904c0bf3e0f609f07ea2cc",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "totals": {
+        "different_images": 30,
+        "exact_geometry": 10,
+        "exact_images": 0,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    },
+    {
+      "all_commands_terminal": true,
+      "changes": [
+        {
+          "before_wrong_pixels": 54,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 54
+        },
+        {
+          "before_wrong_pixels": 54,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 54
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 108
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 108
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 68,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 68
+        },
+        {
+          "before_wrong_pixels": 68,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 68
+        },
+        {
+          "before_wrong_pixels": 1440,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 1440,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 361,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 361
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 81
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 81
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 2592
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 2592
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 2592
+        },
+        {
+          "before_wrong_pixels": 649,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 649
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 162
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 162
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 2340,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 2340
+        }
+      ],
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "more_wrong_states": 0,
+      "name": "native-glyph-regression-pipeline-v2309",
+      "observed_exit_code": 1,
+      "receipt_sha256": "12187d9169209127a4cdb148c2a9b568d4c4258b6ac6bb434c7abddd00a02c5a",
+      "source": {
+        "clean": true,
+        "commit": "4839e107fee5ae07e28fcda990f3433216263580",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "fd2d4604943d6367b32558b865dddf6a6f28030c50904c0bf3e0f609f07ea2cc",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "totals": {
+        "different_images": 18,
+        "exact_geometry": 30,
+        "exact_images": 12,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    },
+    {
+      "all_commands_terminal": true,
+      "changes": [
+        {
+          "before_wrong_pixels": 54,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 54,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 108
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 108
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 68,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 136
+        },
+        {
+          "before_wrong_pixels": 68,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 136
+        },
+        {
+          "before_wrong_pixels": 1440,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 1440,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 361,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 361
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 81
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 81
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 5184
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 649,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 649
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 162
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 162
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 2340,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        }
+      ],
+      "exact_gains": 5,
+      "exact_losses": 0,
+      "more_wrong_states": 3,
+      "name": "native-glyph-regression-pipeline-v2314",
+      "observed_exit_code": 1,
+      "receipt_sha256": "5869876362bd5210ae57c13ba82f181f26f643efc36559f86a54d60e1c682a17",
+      "source": {
+        "clean": true,
+        "commit": "2a75fdc1901b5b259398c2820e1a11921c239dfd",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "a735c12e8fda862c339145d4301e28e90b29218425f444f3834a2e2e16ca5c7f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "totals": {
+        "different_images": 13,
+        "exact_geometry": 30,
+        "exact_images": 17,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    },
+    {
+      "all_commands_terminal": true,
+      "changes": [
+        {
+          "before_wrong_pixels": 54,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 54,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 108
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 108
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 68,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 156
+        },
+        {
+          "before_wrong_pixels": 68,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 136
+        },
+        {
+          "before_wrong_pixels": 1440,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 1440,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 361,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 81
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 81
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 5184
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 649,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 162
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 162
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 2340,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        }
+      ],
+      "exact_gains": 7,
+      "exact_losses": 0,
+      "more_wrong_states": 3,
+      "name": "native-glyph-regression-pipeline-v2321",
+      "observed_exit_code": 1,
+      "receipt_sha256": "1d7c51ae4560db8b270b4b3015961a3691e09b9121168a53fb584c5d416de102",
+      "source": {
+        "clean": true,
+        "commit": "840b82ab7e1d02069a84b601ad947b32331b280a",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7da603341bf56d8334323518f4a97c04e280f99163bb17f355b4ef15b91be6c6",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "totals": {
+        "different_images": 11,
+        "exact_geometry": 30,
+        "exact_images": 19,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    },
+    {
+      "all_commands_terminal": true,
+      "changes": [
+        {
+          "before_wrong_pixels": 54,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 54,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 108
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 108
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 68,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 136
+        },
+        {
+          "before_wrong_pixels": 68,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 136
+        },
+        {
+          "before_wrong_pixels": 1440,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 1440,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 361,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 81
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 81
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 649,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 1298
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 162
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 162
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 2340,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        }
+      ],
+      "exact_gains": 7,
+      "exact_losses": 0,
+      "more_wrong_states": 3,
+      "name": "native-glyph-regression-pipeline-v2327",
+      "observed_exit_code": 1,
+      "receipt_sha256": "277718e8bb2231a8c2d9625ba5f0663c048c44a5e1b345fdbbe6a3b1956516c0",
+      "source": {
+        "clean": true,
+        "commit": "0c8692360aa726feb067ba55542eecb2bd21f256",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "769f5355a2b75cc96cbaae81ec0889bf90d326e57ead61908b64b1ae24c952fc",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "totals": {
+        "different_images": 11,
+        "exact_geometry": 30,
+        "exact_images": 19,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    },
+    {
+      "all_commands_terminal": true,
+      "changes": [
+        {
+          "before_wrong_pixels": 54,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 54,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 108
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 108
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 68,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 136
+        },
+        {
+          "before_wrong_pixels": 68,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 136
+        },
+        {
+          "before_wrong_pixels": 1440,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 1440,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 361,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 81
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 81
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 649,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 162
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 162
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 2340,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        }
+      ],
+      "exact_gains": 8,
+      "exact_losses": 0,
+      "more_wrong_states": 2,
+      "name": "native-glyph-regression-pipeline-v2336",
+      "observed_exit_code": 1,
+      "receipt_sha256": "db4ab9eca4d178465112f2eb86858c48a722669291013d60b6c31b8db2bfe3f7",
+      "source": {
+        "clean": true,
+        "commit": "e811f3d9a9c8f12c49a2ad918e763c72f042a2b9",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "497194a3a2beebf3e2452702e029e2986b18ae7d2afd764e717c99a6f8b0158d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "totals": {
+        "different_images": 10,
+        "exact_geometry": 30,
+        "exact_images": 20,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    },
+    {
+      "all_commands_terminal": true,
+      "changes": [
+        {
+          "before_wrong_pixels": 54,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 54,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "input-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-legacy",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 108
+        },
+        {
+          "before_wrong_pixels": 108,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 108
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-mobile",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 68,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "state": "before",
+          "wrong_pixels": 136
+        },
+        {
+          "before_wrong_pixels": 68,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-desktop",
+          "more_wrong_pixels": true,
+          "state": "after",
+          "wrong_pixels": 136
+        },
+        {
+          "before_wrong_pixels": 1440,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 1440,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 1440
+        },
+        {
+          "before_wrong_pixels": 361,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-desktop",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 81
+        },
+        {
+          "before_wrong_pixels": 81,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 81
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "large-text-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 2592,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 649,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-large",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 162
+        },
+        {
+          "before_wrong_pixels": 162,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "input-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 162
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "large-text-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 0,
+          "exact_gain": false,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "before",
+          "wrong_pixels": 0
+        },
+        {
+          "before_wrong_pixels": 2340,
+          "exact_gain": true,
+          "exact_loss": false,
+          "label": "sticky-triple",
+          "more_wrong_pixels": false,
+          "state": "after",
+          "wrong_pixels": 0
+        }
+      ],
+      "exact_gains": 8,
+      "exact_losses": 0,
+      "more_wrong_states": 2,
+      "name": "native-glyph-regression-pipeline-v2341",
+      "observed_exit_code": 1,
+      "receipt_sha256": "5133048198cd3c0a86389a6260f73b54b23d22d6e2a01cbc58024bd89dbc2086",
+      "source": {
+        "clean": true,
+        "commit": "4ae50fdd0e7bffa3d329833f6858383ab4764245",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "b9684a408863026c76a59dd992a938d830fa0671e310ccc73ab06a17ee7f821f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "totals": {
+        "different_images": 10,
+        "exact_geometry": 30,
+        "exact_images": 20,
+        "geometry_states": 30,
+        "image_states": 30
+      }
+    }
+  ],
+  "schema_version": 1,
+  "sources": [
+    {
+      "identity": {
+        "clean": true,
+        "commit": "4839e107fee5ae07e28fcda990f3433216263580",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "fd2d4604943d6367b32558b865dddf6a6f28030c50904c0bf3e0f609f07ea2cc",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "root": "private-native-aliased-mask-v2268"
+    },
+    {
+      "identity": {
+        "clean": true,
+        "commit": "2a75fdc1901b5b259398c2820e1a11921c239dfd",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "a735c12e8fda862c339145d4301e28e90b29218425f444f3834a2e2e16ca5c7f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "root": "private-native-aliased-hinting-v2312"
+    },
+    {
+      "identity": {
+        "clean": true,
+        "commit": "840b82ab7e1d02069a84b601ad947b32331b280a",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "7da603341bf56d8334323518f4a97c04e280f99163bb17f355b4ef15b91be6c6",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "root": "private-native-unhinted-origin-v2319"
+    },
+    {
+      "identity": {
+        "clean": true,
+        "commit": "0c8692360aa726feb067ba55542eecb2bd21f256",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "769f5355a2b75cc96cbaae81ec0889bf90d326e57ead61908b64b1ae24c952fc",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "root": "private-native-glyph-strike-size-v2325"
+    },
+    {
+      "identity": {
+        "clean": true,
+        "commit": "e811f3d9a9c8f12c49a2ad918e763c72f042a2b9",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "497194a3a2beebf3e2452702e029e2986b18ae7d2afd764e717c99a6f8b0158d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "root": "private-native-glyph-em-outlines-v2334"
+    },
+    {
+      "identity": {
+        "clean": true,
+        "commit": "4ae50fdd0e7bffa3d329833f6858383ab4764245",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "b9684a408863026c76a59dd992a938d830fa0671e310ccc73ab06a17ee7f821f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "root": "private-native-glyph-logical-transform-v2339"
+    }
+  ]
+}

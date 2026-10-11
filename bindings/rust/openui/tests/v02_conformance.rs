@@ -1,6 +1,6 @@
 use openui::prelude::*;
 use openui::{AccessibilityAction, AccessibilityRelation, KeyEventType, MouseEventType};
-use std::cell::Cell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
 fn document() -> Document {
@@ -17,6 +17,18 @@ fn sized(element: &Element, width: f32, height: f32) {
     element.set_display(Display::Block).unwrap();
     element.set_width(LengthValue::px(width)).unwrap();
     element.set_height(LengthValue::px(height)).unwrap();
+}
+
+// Scroll operations need reachable content; empty boxes have zero range.
+fn nested_scroll_fixture(document: &Document) -> Element {
+    let scroller = child(document, "div");
+    sized(&scroller, 100.0, 80.0);
+    scroller.set_overflow(Overflow::Scroll).unwrap();
+    scroller.set_scrollbar_width(ScrollbarWidth::None).unwrap();
+    let content = Element::create(document, "div").unwrap();
+    sized(&content, 300.0, 240.0);
+    scroller.append_child(&content).unwrap();
+    scroller
 }
 
 fn animation_options(duration_ms: f64) -> AnimationOptions {
@@ -50,6 +62,774 @@ fn batched_tree_transaction() {
         .unwrap();
     document.update_all().unwrap();
     assert!(document.body().first_child().unwrap().is_some());
+}
+
+#[test]
+fn native_id_lookup_follows_attached_document_order() {
+    let document = document();
+    let first = child(&document, "div");
+    first.set_id("container").unwrap();
+    let nested = Element::create(&document, "button").unwrap();
+    nested.set_id("action").unwrap();
+    first.append_child(&nested).unwrap();
+    let later = child(&document, "button");
+    later.set_id("action").unwrap();
+
+    let found = document.element_by_id("action").unwrap().unwrap();
+    assert_eq!(
+        found
+            .parent()
+            .unwrap()
+            .unwrap()
+            .get_attribute("id")
+            .unwrap()
+            .as_deref(),
+        Some("container")
+    );
+    first.remove().unwrap();
+    assert!(document.element_by_id("action").unwrap().is_some());
+    later.remove().unwrap();
+    assert!(document.element_by_id("action").unwrap().is_none());
+}
+
+#[test]
+fn native_detach_preserves_subtree_handles_and_listeners_for_reattachment() {
+    let document = document();
+    let container = child(&document, "div");
+    container.set_id("container").unwrap();
+    let button = Element::create(&document, "button").unwrap();
+    button.set_id("action").unwrap();
+    container.append_child(&button).unwrap();
+    let clicks = Rc::new(Cell::new(0));
+    let seen = clicks.clone();
+    button
+        .on("click", move |_| seen.set(seen.get() + 1))
+        .unwrap();
+    button.focus().unwrap();
+    assert!(document.focused_element().unwrap().is_some());
+
+    container.detach().unwrap();
+    assert!(container.parent().unwrap().is_none());
+    assert!(document.element_by_id("action").unwrap().is_none());
+    assert!(document.focused_element().unwrap().is_none());
+    assert_eq!(
+        button.parent().unwrap().unwrap().kind().unwrap(),
+        ElementTag::Div
+    );
+
+    container.set_width(LengthValue::px(70.0)).unwrap();
+    document.body().append_child(&container).unwrap();
+    assert!(document.element_by_id("action").unwrap().is_some());
+    button.click().unwrap();
+    assert_eq!(clicks.get(), 1);
+    container.remove().unwrap();
+    assert!(button.kind().is_err());
+}
+
+#[test]
+fn native_layout_read_then_id_style_mutation_updates_the_same_document() {
+    let document = document();
+    let target = child(&document, "div");
+    target.set_id("target").unwrap();
+    sized(&target, 80.0, 20.0);
+
+    // A Chromium fixture can use a layout read before changing an element's
+    // width. Applications perform both operations through retained Rust APIs.
+    assert!(document.body().bounding_rect().unwrap().is_some());
+    assert_eq!(target.bounding_rect().unwrap().unwrap().width, 80.0);
+    let found = document.element_by_id("target").unwrap().unwrap();
+    found.set_width(LengthValue::px(50.0)).unwrap();
+    assert_eq!(target.bounding_rect().unwrap().unwrap().width, 50.0);
+}
+
+#[test]
+fn native_geometry_includes_all_column_fragments() {
+    let document = document();
+    let columns = child(&document, "div");
+    columns.set_display(Display::Block).unwrap();
+    columns.set_width(LengthValue::px(300.0)).unwrap();
+    columns.set_column_count(Some(3)).unwrap();
+    columns.set_column_gap(LengthValue::px(24.0)).unwrap();
+    let wrapper = Element::create(&document, "div").unwrap();
+    wrapper.set_display(Display::Block).unwrap();
+    wrapper.set_max_height(LengthValue::px(160.0)).unwrap();
+    wrapper.set_id("constrained wrapper").unwrap();
+    wrapper
+        .set_accessibility_label("constrained wrapper")
+        .unwrap();
+    columns.append_child(&wrapper).unwrap();
+    let target = Element::create(&document, "div").unwrap();
+    sized(&target, 50.0, 200.0);
+    target
+        .set_border(Border {
+            width: 3.0,
+            style: BorderStyle::Solid,
+            color: Color::BLACK,
+        })
+        .unwrap();
+    wrapper.append_child(&target).unwrap();
+    target.set_id("overflowing child").unwrap();
+    target.set_accessibility_label("column target").unwrap();
+
+    let bounds = target.bounding_rect().unwrap().unwrap();
+    assert_eq!(bounds.x, 0.0);
+    assert_eq!(bounds.y, 0.0);
+    assert_eq!(bounds.width, 272.0);
+    assert_eq!(bounds.height, 68.671875);
+    assert_eq!(target.width().unwrap(), 272.0);
+    assert_eq!(target.height().unwrap(), 68.671875);
+    let tree = document.accessibility_update().unwrap();
+    let accessible = tree
+        .nodes
+        .iter()
+        .find(|(_, node)| node.label() == Some("column target"))
+        .unwrap();
+    let accessible_bounds = accessible.1.bounds().unwrap();
+    assert_eq!(
+        (
+            accessible_bounds.x0,
+            accessible_bounds.y0,
+            accessible_bounds.x1,
+            accessible_bounds.y1
+        ),
+        (0.0, 0.0, 272.0, 68.671875)
+    );
+    let rects = target.client_rects().unwrap();
+    assert_eq!(rects.len(), 3);
+    assert_eq!(
+        rects
+            .iter()
+            .map(|rect| (rect.x, rect.y, rect.width, rect.height))
+            .collect::<Vec<_>>(),
+        [
+            (0.0, 0.0, 56.0, 68.671875),
+            (108.0, 0.0, 56.0, 68.671875),
+            (216.0, 0.0, 56.0, 68.65625)
+        ]
+    );
+    // The constrained wrapper owns only 160px of source border box, while
+    // its taller child continues through the last column as visible overflow.
+    assert_eq!(
+        wrapper
+            .client_rects()
+            .unwrap()
+            .iter()
+            .map(|rect| (rect.x, rect.y, rect.width, rect.height))
+            .collect::<Vec<_>>(),
+        [
+            (0.0, 0.0, 84.0, 68.671875),
+            (108.0, 0.0, 84.0, 68.671875),
+            (216.0, 0.0, 84.0, 22.65625)
+        ]
+    );
+
+    let hit_id = |x, y| {
+        document
+            .hit_test(x, y)
+            .unwrap()
+            .and_then(|element| element.get_attribute("id").unwrap())
+    };
+    assert_eq!(hit_id(280.0, 10.0).as_deref(), Some("constrained wrapper"));
+    assert_ne!(hit_id(280.0, 40.0).as_deref(), Some("constrained wrapper"));
+    assert_eq!(hit_id(230.0, 40.0).as_deref(), Some("overflowing child"));
+
+    // Shortening the box does not shorten its overflowing child's fragments.
+    // Empty continuations remain in client_rects but do not enlarge bounds.
+    let owned_rects = wrapper.client_rects().unwrap();
+    let child_rects = target.client_rects().unwrap();
+    wrapper.set_max_height(LengthValue::px(120.0)).unwrap();
+    let shortened = wrapper.client_rects().unwrap();
+    assert_eq!(shortened[1].height, 51.328125);
+    assert_eq!(shortened[2].height, 0.0);
+    assert_eq!(wrapper.bounding_rect().unwrap().unwrap().width, 192.0);
+    assert_eq!(owned_rects[2].height, 22.65625);
+    assert_eq!(target.client_rects().unwrap(), child_rects);
+    assert_eq!(hit_id(230.0, 40.0).as_deref(), Some("overflowing child"));
+    assert_ne!(hit_id(280.0, 10.0).as_deref(), Some("constrained wrapper"));
+    let tree = document.accessibility_update().unwrap();
+    let accessible = tree
+        .nodes
+        .iter()
+        .find(|(_, node)| node.label() == Some("constrained wrapper"))
+        .unwrap();
+    let bounds = accessible.1.bounds().unwrap();
+    assert_eq!(
+        (bounds.x0, bounds.y0, bounds.x1, bounds.y1),
+        (0.0, 0.0, 192.0, 68.671875)
+    );
+
+    wrapper.set_max_height(LengthValue::px(0.0)).unwrap();
+    let empty_rects = wrapper.client_rects().unwrap();
+    assert_eq!(
+        empty_rects
+            .iter()
+            .map(|rect| (rect.x, rect.y, rect.width, rect.height))
+            .collect::<Vec<_>>(),
+        [
+            (0.0, 0.0, 84.0, 0.0),
+            (108.0, 0.0, 84.0, 0.0),
+            (216.0, 0.0, 84.0, 0.0)
+        ]
+    );
+    let empty = wrapper.bounding_rect().unwrap().unwrap();
+    // Pinned Chromium's rectangle union keeps the final all-empty fragment.
+    assert_eq!(
+        (empty.x, empty.y, empty.width, empty.height),
+        (216.0, 0.0, 84.0, 0.0)
+    );
+    let tree = document.accessibility_update().unwrap();
+    let accessible = tree
+        .nodes
+        .iter()
+        .find(|(_, node)| node.label() == Some("constrained wrapper"))
+        .unwrap();
+    let bounds = accessible.1.bounds().unwrap();
+    assert_eq!(
+        (bounds.x0, bounds.y0, bounds.x1, bounds.y1),
+        (216.0, 0.0, 300.0, 0.0)
+    );
+    assert_eq!(target.client_rects().unwrap(), child_rects);
+    wrapper.set_max_height(LengthValue::px(160.0)).unwrap();
+    wrapper.set_min_height(LengthValue::px(180.0)).unwrap();
+    assert_eq!(wrapper.client_rects().unwrap()[2].height, 42.65625);
+    assert_eq!(hit_id(280.0, 40.0).as_deref(), Some("constrained wrapper"));
+
+    // A clipping descendant must not turn the containing box's own end
+    // into an authored overflow clip. Its visible child remains interactive
+    // through the larger continuation extent carried by the fragmentainer.
+    wrapper.set_min_height(LengthValue::px(0.0)).unwrap();
+    let clipped_descendant = Element::create(&document, "div").unwrap();
+    sized(&clipped_descendant, 20.0, 20.0);
+    clipped_descendant.set_overflow(Overflow::Hidden).unwrap();
+    target.append_child(&clipped_descendant).unwrap();
+    assert_eq!(wrapper.client_rects().unwrap()[2].height, 22.65625);
+    assert_eq!(hit_id(230.0, 40.0).as_deref(), Some("overflowing child"));
+    assert_eq!(target.client_rects().unwrap(), child_rects);
+    // A small atomic child does not move its ancestors' decorations outside
+    // their column clips or extend the wrapper's own background into child flow.
+    document.body().set_background_color(Color::WHITE).unwrap();
+    columns
+        .set_background_color(Color::from_rgba8(128, 128, 128, 255))
+        .unwrap();
+    wrapper
+        .set_background_color(Color::from_rgba8(255, 255, 0, 255))
+        .unwrap();
+    let bitmap = document.render_to_bitmap().unwrap();
+    let pixel = |x: usize, y: usize| {
+        let offset = y * bitmap.stride() + x * 4;
+        &bitmap.pixels()[offset..offset + 4]
+    };
+    assert_eq!(pixel(0, 100), [255, 255, 255, 255]);
+    assert_eq!(pixel(60, 100), [255, 255, 255, 255]);
+    assert_eq!(pixel(280, 40), [128, 128, 128, 255]);
+    wrapper.set_max_height(LengthValue::px(120.0)).unwrap();
+    assert_eq!(wrapper.client_rects().unwrap()[1].height, 51.328125);
+    assert_eq!(hit_id(122.0, 60.0).as_deref(), Some("overflowing child"));
+    assert_ne!(hit_id(170.0, 60.0).as_deref(), Some("constrained wrapper"));
+    // Atomic contents establish a minimum feasible balanced column size.
+    // All columns share that size; an independently sized parent keeps its
+    // own final decoration after the contents end.
+    wrapper.set_max_height(LengthValue::px(160.0)).unwrap();
+    for (height, column_height, child_heights, wrapper_heights) in [
+        (68.0, 71.0, vec![71.0, 71.0, 64.0], vec![71.0, 71.0, 18.0]),
+        (69.0, 72.0, vec![72.0, 72.0, 62.0], vec![72.0, 72.0, 16.0]),
+        (90.0, 93.0, vec![93.0, 93.0, 20.0], vec![93.0, 67.0, 0.0]),
+        (200.0, 206.0, vec![206.0], vec![160.0]),
+        (300.0, 300.0, vec![206.0], vec![160.0]),
+    ] {
+        clipped_descendant
+            .set_height(LengthValue::px(height))
+            .unwrap();
+        assert_eq!(columns.height().unwrap(), column_height, "child {height}");
+        assert_eq!(
+            target
+                .client_rects()
+                .unwrap()
+                .iter()
+                .map(|r| r.height)
+                .collect::<Vec<_>>(),
+            child_heights,
+            "child {height}"
+        );
+        assert_eq!(
+            wrapper
+                .client_rects()
+                .unwrap()
+                .iter()
+                .map(|r| r.height)
+                .collect::<Vec<_>>(),
+            wrapper_heights,
+            "child {height}"
+        );
+    }
+    // A capped fragmentainer must defer an atomic child that cannot fit
+    // after the first border. The containing boxes keep their own fragments.
+    columns.set_max_height(LengthValue::px(80.0)).unwrap();
+    for (height, child_heights, wrapper_heights) in [
+        (90.0, vec![80.0, 90.0, 36.0], vec![80.0, 80.0, 0.0]),
+        (200.0, vec![80.0, 126.0], vec![80.0, 80.0]),
+        (300.0, vec![80.0, 126.0], vec![80.0, 80.0]),
+    ] {
+        clipped_descendant
+            .set_height(LengthValue::px(height))
+            .unwrap();
+        assert_eq!(columns.height().unwrap(), 80.0, "capped child {height}");
+        assert_eq!(
+            target
+                .client_rects()
+                .unwrap()
+                .iter()
+                .map(|r| r.height)
+                .collect::<Vec<_>>(),
+            child_heights,
+            "capped child {height}"
+        );
+        assert_eq!(
+            wrapper
+                .client_rects()
+                .unwrap()
+                .iter()
+                .map(|r| r.height)
+                .collect::<Vec<_>>(),
+            wrapper_heights,
+            "capped child {height}"
+        );
+        let bitmap = document.render_to_bitmap().unwrap();
+        let pixel = |x: usize, y: usize| {
+            let offset = y * bitmap.stride() + x * 4;
+            &bitmap.pixels()[offset..offset + 4]
+        };
+        assert_eq!(
+            pixel(0, 40),
+            [0, 0, 0, 255],
+            "first border for child {height}"
+        );
+        assert_eq!(
+            pixel(55, 40),
+            [0, 0, 0, 255],
+            "first border for child {height}"
+        );
+        assert_eq!(
+            pixel(170, 100),
+            [255, 255, 255, 255],
+            "own background for child {height}"
+        );
+    }
+    // The break uses the column's source coordinates through nested padding.
+    wrapper.set_padding_top(LengthValue::px(10.0)).unwrap();
+    for (height, child_heights, wrapper_heights) in [
+        (90.0, vec![70.0, 90.0, 46.0], vec![80.0, 90.0, 0.0]),
+        (200.0, vec![70.0, 136.0], vec![80.0, 90.0]),
+        (300.0, vec![70.0, 136.0], vec![80.0, 90.0]),
+    ] {
+        clipped_descendant
+            .set_height(LengthValue::px(height))
+            .unwrap();
+        let rects = target.client_rects().unwrap();
+        assert_eq!(rects[0].y, 10.0, "padded child {height}");
+        assert_eq!(rects[1].y, 0.0, "padded child {height}");
+        assert_eq!(
+            rects.iter().map(|r| r.height).collect::<Vec<_>>(),
+            child_heights,
+            "padded child {height}"
+        );
+        assert_eq!(
+            wrapper
+                .client_rects()
+                .unwrap()
+                .iter()
+                .map(|r| r.height)
+                .collect::<Vec<_>>(),
+            wrapper_heights,
+            "padded child {height}"
+        );
+    }
+    // Vertical writing uses maximum width as the containing block's bound.
+    // Its visible child still contributes all 206 block-axis pixels to balance.
+    for mode in [WritingMode::VerticalLr, WritingMode::VerticalRl] {
+        let vertical_document = Document::new(320, 240).unwrap();
+        let columns = child(&vertical_document, "div");
+        columns.set_display(Display::Block).unwrap();
+        columns.set_height(LengthValue::px(300.0)).unwrap();
+        columns
+            .set_property(
+                StyleProperty::WritingMode,
+                StyleValue::Renderer(RendererStyleValue::WritingMode(mode)),
+            )
+            .unwrap();
+        columns.set_column_count(Some(3)).unwrap();
+        columns.set_column_gap(LengthValue::px(24.0)).unwrap();
+        let wrapper = Element::create(&vertical_document, "div").unwrap();
+        wrapper.set_display(Display::Block).unwrap();
+        wrapper
+            .set_property(
+                StyleProperty::WritingMode,
+                StyleValue::Renderer(RendererStyleValue::WritingMode(mode)),
+            )
+            .unwrap();
+        wrapper.set_max_width(LengthValue::px(160.0)).unwrap();
+        columns.append_child(&wrapper).unwrap();
+        let target = Element::create(&vertical_document, "div").unwrap();
+        sized(&target, 200.0, 50.0);
+        target
+            .set_border(Border {
+                width: 3.0,
+                style: BorderStyle::Solid,
+                color: Color::BLACK,
+            })
+            .unwrap();
+        target.set_id("vertical overflowing child").unwrap();
+        wrapper.append_child(&target).unwrap();
+        assert_eq!(columns.width().unwrap(), 68.671875, "{mode:?}");
+        let parent_rects = wrapper.client_rects().unwrap();
+        let child_rects = target.client_rects().unwrap();
+        assert_eq!(
+            parent_rects
+                .iter()
+                .map(|r| (r.y, r.width, r.height))
+                .collect::<Vec<_>>(),
+            [
+                (0.0, 68.671875, 84.0),
+                (108.0, 68.671875, 84.0),
+                (216.0, 22.65625, 84.0)
+            ],
+            "{mode:?}"
+        );
+        assert_eq!(
+            child_rects
+                .iter()
+                .map(|r| (r.y, r.width, r.height))
+                .collect::<Vec<_>>(),
+            [
+                (0.0, 68.671875, 56.0),
+                (108.0, 68.671875, 56.0),
+                (216.0, 68.65625, 56.0)
+            ],
+            "{mode:?}"
+        );
+        assert_eq!(
+            parent_rects[2].x,
+            if mode == WritingMode::VerticalRl {
+                46.015625
+            } else {
+                0.0
+            }
+        );
+        let point = if mode == WritingMode::VerticalRl {
+            20.0
+        } else {
+            40.0
+        };
+        let hit = vertical_document.hit_test(point, 230.0).unwrap().unwrap();
+        assert_eq!(
+            hit.get_attribute("id").unwrap().as_deref(),
+            Some("vertical overflowing child")
+        );
+    }
+}
+
+#[test]
+fn native_geometry_is_independent_of_pointer_and_visibility() {
+    let document = document();
+    let target = child(&document, "div");
+    sized(&target, 80.0, 30.0);
+    let initial = target.bounding_rect().unwrap().unwrap();
+    target.set_pointer_events(PointerEvents::None).unwrap();
+    assert_eq!(target.bounding_rect().unwrap(), Some(initial));
+    assert_eq!(target.client_rects().unwrap(), [initial]);
+    target.set_visibility(Visibility::Hidden).unwrap();
+    assert_eq!(target.bounding_rect().unwrap(), Some(initial));
+    target.set_display(Display::None).unwrap();
+    assert!(target.bounding_rect().unwrap().is_none());
+    assert!(target.client_rects().unwrap().is_empty());
+}
+
+#[test]
+fn native_geometry_preserves_empty_and_singular_boxes() {
+    let document = document();
+    let target = child(&document, "div");
+    target.set_id("collapsed").unwrap();
+    sized(&target, 0.0, 30.0);
+    let bounds = target.bounding_rect().unwrap().unwrap();
+    assert_eq!((bounds.width, bounds.height), (0.0, 30.0));
+    assert_eq!(target.client_rects().unwrap(), [bounds]);
+    sized(&target, 80.0, 30.0);
+    target
+        .set_transform(TransformList(vec![TransformOperation::Scale(0.0, 1.0)]))
+        .unwrap();
+    let bounds = target.bounding_rect().unwrap().unwrap();
+    assert_eq!(
+        (bounds.x, bounds.y, bounds.width, bounds.height),
+        (40.0, 0.0, 0.0, 30.0)
+    );
+    assert_eq!(target.client_rects().unwrap(), [bounds]);
+    assert!(!document
+        .hit_test(40.0, 5.0)
+        .unwrap()
+        .is_some_and(|hit| { hit.get_attribute("id").unwrap().as_deref() == Some("collapsed") }));
+}
+
+#[test]
+fn native_geometry_updates_after_scroll_transform_and_detachment() {
+    for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+        let document = Document::with_viewport_metrics(
+            ViewportMetrics::from_logical_size(320.0, 240.0, scale).unwrap(),
+        )
+        .unwrap();
+        let scroller = child(&document, "div");
+        sized(&scroller, 80.0, 50.0);
+        scroller.set_overflow(Overflow::Hidden).unwrap();
+        let target = Element::create(&document, "div").unwrap();
+        sized(&target, 120.0, 100.0);
+        scroller.append_child(&target).unwrap();
+        let original = target.client_rects().unwrap();
+        assert_eq!(
+            (
+                original[0].x,
+                original[0].y,
+                original[0].width,
+                original[0].height
+            ),
+            (0.0, 0.0, 120.0, 100.0)
+        );
+
+        scroller.scroll_to(20.0, 30.0).unwrap();
+        let scrolled = target.bounding_rect().unwrap().unwrap();
+        assert_eq!(
+            (scrolled.x, scrolled.y, scrolled.width, scrolled.height),
+            (-20.0, -30.0, 120.0, 100.0)
+        );
+        target
+            .set_transform(TransformList(vec![TransformOperation::Translate(
+                LengthValue::px(15.0),
+                LengthValue::px(7.0),
+            )]))
+            .unwrap();
+        let transformed = target.bounding_rect().unwrap().unwrap();
+        assert_eq!(
+            (
+                transformed.x,
+                transformed.y,
+                transformed.width,
+                transformed.height
+            ),
+            (-5.0, -23.0, 120.0, 100.0)
+        );
+        assert_eq!((original[0].x, original[0].y), (0.0, 0.0));
+
+        target.detach().unwrap();
+        assert!(target.client_rects().unwrap().is_empty());
+        assert!(target.bounding_rect().unwrap().is_none());
+        scroller.append_child(&target).unwrap();
+        assert_eq!(target.client_rects().unwrap(), [transformed]);
+
+        // A detached query skips unrelated layout; an attached query is a
+        // layout barrier and clamps the parent's now-empty scrolling range.
+        target.detach().unwrap();
+        assert!(target.client_rects().unwrap().is_empty());
+        assert!(target.bounding_rect().unwrap().is_none());
+        assert!(target.scroll_metrics().unwrap().is_none());
+        let empty = scroller.scroll_metrics().unwrap().unwrap();
+        assert_eq!((empty.scroll_width, empty.scroll_height), (80.0, 50.0));
+        assert_eq!(
+            (
+                scroller.scroll_left().unwrap(),
+                scroller.scroll_top().unwrap()
+            ),
+            (0.0, 0.0)
+        );
+        scroller.append_child(&target).unwrap();
+        let after_barrier = target.bounding_rect().unwrap().unwrap();
+        assert_eq!(
+            (
+                after_barrier.x,
+                after_barrier.y,
+                after_barrier.width,
+                after_barrier.height
+            ),
+            (15.0, 7.0, 120.0, 100.0)
+        );
+        assert_eq!((original[0].x, original[0].y), (0.0, 0.0));
+        target.remove().unwrap();
+        assert!(target.client_rects().is_err());
+    }
+}
+
+#[test]
+fn native_class_lookup_tracks_event_driven_updates_and_detachment() {
+    let document = document();
+    let first = child(&document, "div");
+    first.set_id("first").unwrap();
+    first.set_class(" active\tprimary ").unwrap();
+    let second = child(&document, "div");
+    second.set_id("second").unwrap();
+    let button = child(&document, "button");
+    let second_for_callback = second.clone();
+    button
+        .on("click", move |_| {
+            assert!(second_for_callback.add_class("active").unwrap());
+        })
+        .unwrap();
+
+    assert!(first.has_class("active").unwrap());
+    assert!(!second.has_class("active").unwrap());
+    button.click().unwrap();
+    assert!(!second.add_class("active").unwrap());
+    let ids: Vec<_> = document
+        .elements_with_class("active")
+        .unwrap()
+        .into_iter()
+        .map(|element| element.get_attribute("id").unwrap().unwrap())
+        .collect();
+    assert_eq!(ids, ["first", "second"]);
+
+    assert!(second.remove_class("active").unwrap());
+    assert!(!second.remove_class("active").unwrap());
+    assert!(document.elements_with_class("active token").is_err());
+    first.remove().unwrap();
+    assert!(document.elements_with_class("active").unwrap().is_empty());
+}
+
+#[test]
+fn native_kind_lookup_tracks_tree_order_and_detachment() {
+    let document = document();
+    let first = child(&document, "div");
+    first.set_id("first").unwrap();
+    let nested = Element::create(&document, "textarea").unwrap();
+    first.append_child(&nested).unwrap();
+    let later = child(&document, "div");
+    later.set_id("later").unwrap();
+    let detached = Element::create(&document, "div").unwrap();
+    let _text = first.create_text_child("not an element").unwrap();
+
+    assert_eq!(nested.kind().unwrap(), ElementTag::TextArea);
+    let ids: Vec<_> = document
+        .elements_of_kind(ElementTag::Div)
+        .unwrap()
+        .into_iter()
+        .map(|element| element.get_attribute("id").unwrap().unwrap())
+        .collect();
+    assert_eq!(ids, ["first", "later"]);
+    assert!(document
+        .elements_of_kind(ElementTag::Text)
+        .unwrap()
+        .is_empty());
+    assert_eq!(
+        document
+            .elements_of_kind(ElementTag::TextArea)
+            .unwrap()
+            .len(),
+        1
+    );
+
+    first.remove().unwrap();
+    assert_eq!(
+        document
+            .elements_of_kind(ElementTag::TextArea)
+            .unwrap()
+            .len(),
+        0
+    );
+    assert_eq!(document.elements_of_kind(ElementTag::Div).unwrap().len(), 1);
+    assert!(nested.kind().is_err());
+    assert_eq!(detached.kind().unwrap(), ElementTag::Div);
+}
+
+#[test]
+fn native_text_nodes_attach_move_and_keep_element_traversal_typed() {
+    let document = document();
+    let container = child(&document, "div");
+    let first = Element::create(&document, "span").unwrap();
+    first.set_id("first").unwrap();
+    container.append_child(&first).unwrap();
+    let second = Element::create(&document, "span").unwrap();
+    second.set_id("second").unwrap();
+    container.append_child(&second).unwrap();
+
+    let leading_text = document.create_text_node("before").unwrap();
+    container.insert_text_before(&leading_text, &first).unwrap();
+    let mut middle_text = document.create_text_node("middle").unwrap();
+    container.insert_text_before(&middle_text, &second).unwrap();
+    assert_eq!(leading_text.data().unwrap(), "before");
+    assert_eq!(container.text_content().unwrap(), "beforemiddle");
+    assert_eq!(
+        container
+            .first_child()
+            .unwrap()
+            .unwrap()
+            .get_attribute("id")
+            .unwrap()
+            .as_deref(),
+        Some("first")
+    );
+    assert_eq!(
+        first
+            .next_sibling()
+            .unwrap()
+            .unwrap()
+            .get_attribute("id")
+            .unwrap()
+            .as_deref(),
+        Some("second")
+    );
+    assert!(second.next_sibling().unwrap().is_none());
+
+    let before = document.render_to_bitmap().unwrap();
+    leading_text.set_data("a longer native text node").unwrap();
+    assert_eq!(
+        container.text_content().unwrap(),
+        "a longer native text nodemiddle"
+    );
+    assert_ne!(
+        before.pixels(),
+        document.render_to_bitmap().unwrap().pixels()
+    );
+
+    let other = child(&document, "div");
+    other.set_id("text-parent").unwrap();
+    other.append_text_child(&middle_text).unwrap();
+    assert_eq!(middle_text.data().unwrap(), "middle");
+    assert_eq!(other.text_content().unwrap(), "middle");
+    assert!(other.first_child().unwrap().is_none());
+    assert_eq!(
+        middle_text
+            .parent()
+            .unwrap()
+            .unwrap()
+            .get_attribute("id")
+            .unwrap()
+            .as_deref(),
+        Some("text-parent")
+    );
+    middle_text.detach().unwrap();
+    assert!(middle_text.parent().unwrap().is_none());
+    assert_eq!(other.text_content().unwrap(), "");
+    middle_text.set_data("reattached").unwrap();
+    container.append_text_child(&middle_text).unwrap();
+    assert_eq!(
+        container.text_content().unwrap(),
+        "a longer native text nodereattached"
+    );
+    let foreign_document = Document::new(320, 240).unwrap();
+    let foreign = foreign_document.create_text_node("foreign").unwrap();
+    assert!(container.append_text_child(&foreign).is_err());
+}
+
+#[test]
+fn computed_style_is_an_owned_native_snapshot() {
+    let document = document();
+    let element = child(&document, "div");
+    element.set_width(LengthValue::px(42.0)).unwrap();
+    let original = element.computed_style().unwrap();
+
+    element.set_width(LengthValue::px(84.0)).unwrap();
+    let updated = element.computed_style().unwrap();
+    assert_ne!(original.width, updated.width);
+    assert_eq!(original.width, Length::px(42.0));
+    assert_eq!(updated.width, Length::px(84.0));
+
+    element.remove().unwrap();
+    assert!(element.computed_style().is_err());
 }
 
 #[test]
@@ -118,10 +898,26 @@ fn checkbox_keyboard_activation_toggles() {
     let checkbox = child(&document, "input");
     checkbox.set_attribute("type", "checkbox").unwrap();
     checkbox.focus().unwrap();
+    let events = Rc::new(RefCell::new(Vec::new()));
+    for kind in ["keydown", "keyup", "click", "input", "change"] {
+        let events = events.clone();
+        checkbox
+            .on(kind, move |_| events.borrow_mut().push(kind))
+            .unwrap();
+    }
     document
         .dispatch_key_event(KeyEventType::Down, 32, Some(" "), Modifiers::NONE)
         .unwrap();
+    assert!(!checkbox.is_checked().unwrap());
+    assert_eq!(events.borrow().as_slice(), ["keydown"]);
+    document
+        .dispatch_key_event(KeyEventType::Up, 32, Some(" "), Modifiers::NONE)
+        .unwrap();
     assert!(checkbox.is_checked().unwrap());
+    assert_eq!(
+        events.borrow().as_slice(),
+        ["keydown", "keyup", "click", "input", "change"]
+    );
 }
 
 #[test]
@@ -162,6 +958,194 @@ fn textarea_accepts_multiline_text() {
         textarea.control_value().unwrap().as_deref(),
         Some("one\ntwo")
     );
+
+    textarea.set_control_value("é👍z").unwrap();
+    textarea.set_selection(2, 6).unwrap();
+    let edits = Rc::new(RefCell::new(Vec::new()));
+    for event_type in ["beforeinput", "input"] {
+        let edits = edits.clone();
+        textarea
+            .on(event_type, move |event| {
+                edits
+                    .borrow_mut()
+                    .push((event.event_type.clone(), event.key_text.clone()));
+            })
+            .unwrap();
+    }
+    let clicks = Rc::new(Cell::new(0));
+    let seen_clicks = clicks.clone();
+    textarea
+        .on("click", move |_| seen_clicks.set(seen_clicks.get() + 1))
+        .unwrap();
+    document
+        .dispatch_key_input(
+            KeyEventType::Down,
+            13,
+            Some("Enter"),
+            Some("\r"),
+            Modifiers::NONE,
+        )
+        .unwrap();
+    assert_eq!(textarea.control_value().unwrap().as_deref(), Some("é\nz"));
+    assert_eq!(textarea.selection().unwrap(), Some((3, 3)));
+    assert_eq!(
+        &*edits.borrow(),
+        &[
+            ("beforeinput".to_owned(), "\n".to_owned()),
+            ("input".to_owned(), "\n".to_owned())
+        ]
+    );
+    assert_eq!(clicks.get(), 0);
+
+    for (kind, code, key, text, modifiers) in [
+        (KeyEventType::Up, 13, "Enter", "\r", Modifiers::NONE),
+        (KeyEventType::Down, 81, "q", "\r", Modifiers::NONE),
+        (KeyEventType::Down, 81, "q", "q", Modifiers::CTRL),
+        (KeyEventType::Down, 81, "q", "q", Modifiers::META),
+    ] {
+        document
+            .dispatch_key_input(kind, code, Some(key), Some(text), modifiers)
+            .unwrap();
+        assert_eq!(textarea.control_value().unwrap().as_deref(), Some("é\nz"));
+        assert_eq!(edits.borrow().len(), 2);
+    }
+
+    document
+        .dispatch_key_event(KeyEventType::Down, 90, Some("z"), Modifiers::CTRL)
+        .unwrap();
+    assert_eq!(textarea.control_value().unwrap().as_deref(), Some("é👍z"));
+    textarea
+        .on("keydown", |event| event.prevent_default())
+        .unwrap();
+    let event_count = edits.borrow().len();
+    document
+        .dispatch_key_event(KeyEventType::Down, 13, Some("Enter"), Modifiers::NONE)
+        .unwrap();
+    assert_eq!(textarea.control_value().unwrap().as_deref(), Some("é👍z"));
+    assert_eq!(edits.borrow().len(), event_count);
+    textarea.remove_event("keydown").unwrap();
+    textarea
+        .on("beforeinput", |event| event.prevent_default())
+        .unwrap();
+    document
+        .dispatch_key_event(KeyEventType::Down, 13, Some("Enter"), Modifiers::NONE)
+        .unwrap();
+    assert_eq!(textarea.control_value().unwrap().as_deref(), Some("é👍z"));
+    assert_eq!(edits.borrow().len(), event_count + 1);
+    textarea.remove_event("beforeinput").unwrap();
+
+    let input = child(&document, "input");
+    let callback_input = input.clone();
+    textarea
+        .on("keydown", move |_| callback_input.focus().unwrap())
+        .unwrap();
+    document
+        .dispatch_key_event(KeyEventType::Down, 13, Some("Enter"), Modifiers::NONE)
+        .unwrap();
+    assert_eq!(input.control_value().unwrap().as_deref(), Some(""));
+    assert_eq!(textarea.control_value().unwrap().as_deref(), Some("é👍z"));
+    textarea.remove_event("keydown").unwrap();
+    input.focus().unwrap();
+    let seen_clicks = clicks.clone();
+    input
+        .on("click", move |_| seen_clicks.set(seen_clicks.get() + 1))
+        .unwrap();
+    for (code, text) in [(13, "Enter"), (32, " ")] {
+        document
+            .dispatch_key_event(KeyEventType::Down, code, Some(text), Modifiers::NONE)
+            .unwrap();
+    }
+    assert_eq!(input.control_value().unwrap().as_deref(), Some(""));
+    assert_eq!(clicks.get(), 0);
+}
+
+#[test]
+fn read_only_text_controls_keep_selection_and_reject_native_edits() {
+    for tag in ["input", "textarea"] {
+        let document = document();
+        let target = child(&document, tag);
+        target.set_control_value("original").unwrap();
+        target.set_selection(0, 8).unwrap();
+        target.set_attribute("readonly", "").unwrap();
+        target.set_accessibility_label("readonly target").unwrap();
+        target.focus().unwrap();
+        let input_events = Rc::new(RefCell::new(Vec::new()));
+        for event_type in ["beforeinput", "input"] {
+            let seen = input_events.clone();
+            target
+                .on(event_type, move |event| {
+                    seen.borrow_mut()
+                        .push((event.event_type.clone(), event.key_text.clone()))
+                })
+                .unwrap();
+        }
+        document.dispatch_text_input("replacement").unwrap();
+        document
+            .dispatch_key_event(KeyEventType::Char, 0, Some("typed"), Modifiers::NONE)
+            .unwrap();
+        document
+            .dispatch_key_event(KeyEventType::Down, 8, Some("Backspace"), Modifiers::NONE)
+            .unwrap();
+        document
+            .dispatch_key_event(KeyEventType::Down, 13, Some("Enter"), Modifiers::NONE)
+            .unwrap();
+        document.dispatch_composition_start().unwrap();
+        document.dispatch_composition_update("preview").unwrap();
+        document.dispatch_composition_end("committed").unwrap();
+        assert_eq!(target.control_value().unwrap().as_deref(), Some("original"));
+        assert!(
+            input_events.borrow().is_empty(),
+            "{tag}: {:?}",
+            input_events.borrow()
+        );
+        assert!(target
+            .perform_accessibility_action(AccessibilityAction::SetValue("blocked".into()))
+            .is_err());
+        assert!(target
+            .perform_accessibility_action(AccessibilityAction::ReplaceSelectedText(
+                "blocked".into()
+            ))
+            .is_err());
+        assert_eq!(target.control_value().unwrap().as_deref(), Some("original"));
+        let tree = document.accessibility_update().unwrap();
+        let node = &tree
+            .nodes
+            .iter()
+            .find(|(_, node)| node.label() == Some("readonly target"))
+            .unwrap()
+            .1;
+        assert!(node.is_read_only());
+        assert!(!node.supports_action(openui::AccessibilityPlatformAction::SetValue));
+        assert!(!node.supports_action(openui::AccessibilityPlatformAction::ReplaceSelectedText));
+        assert!(node.supports_action(openui::AccessibilityPlatformAction::SetTextSelection));
+        document
+            .dispatch_key_event(KeyEventType::Down, 65, Some("a"), Modifiers::CTRL)
+            .unwrap();
+        assert_eq!(target.selection().unwrap(), Some((0, 8)));
+
+        // Explicit native application writes remain available in read-only mode.
+        target.set_control_value("application").unwrap();
+        assert_eq!(
+            target.control_value().unwrap().as_deref(),
+            Some("application")
+        );
+        target.set_selection(11, 11).unwrap();
+        target.remove_attribute("readonly").unwrap();
+        document
+            .dispatch_key_input(
+                KeyEventType::Down,
+                81,
+                Some("q"),
+                Some("!"),
+                Modifiers::NONE,
+            )
+            .unwrap();
+        assert_eq!(
+            target.control_value().unwrap().as_deref(),
+            Some("application!")
+        );
+        assert_eq!(input_events.borrow().len(), 2);
+    }
 }
 
 #[test]
@@ -173,6 +1157,261 @@ fn ime_composition_commits_once() {
     document.dispatch_composition_update("かな").unwrap();
     document.dispatch_composition_end("かな").unwrap();
     assert_eq!(input.control_value().unwrap().as_deref(), Some("かな"));
+}
+
+#[test]
+fn ime_commits_final_text_after_platform_clears_preview_as_one_undo_step() {
+    let document = document();
+    let input = child(&document, "input");
+    input.set_control_value("leftかなright").unwrap();
+    input.set_selection(4, 10).unwrap();
+    input.focus().unwrap();
+    let events = Rc::new(RefCell::new(Vec::new()));
+    for name in ["beforeinput", "compositionend", "input"] {
+        let observed = events.clone();
+        let retained = input.clone();
+        input
+            .on(name, move |event| {
+                // Native callbacks can inspect and mutate this same document.
+                retained.set_attribute("data-last-event", name).unwrap();
+                observed.borrow_mut().push((
+                    event.event_type.clone(),
+                    event.key_text.clone(),
+                    retained.control_value().unwrap().unwrap(),
+                ));
+            })
+            .unwrap();
+    }
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("ka").unwrap();
+    document.dispatch_composition_update("kanji").unwrap();
+    // Winit sends an empty preview immediately before the final commit.
+    document.dispatch_composition_update("").unwrap();
+    document.dispatch_composition_end("漢字").unwrap();
+    assert_eq!(
+        input.control_value().unwrap().as_deref(),
+        Some("left漢字right")
+    );
+    assert_eq!(
+        events.borrow().as_slice(),
+        [
+            ("beforeinput".into(), "漢字".into(), "leftright".into()),
+            (
+                "compositionend".into(),
+                "漢字".into(),
+                "left漢字right".into()
+            ),
+            ("input".into(), "漢字".into(), "left漢字right".into()),
+        ]
+    );
+    assert_eq!(input.selection().unwrap(), Some((10, 10)));
+    assert!(input
+        .get_attribute("data-oui-composition-start")
+        .unwrap()
+        .is_none());
+    document
+        .dispatch_key_event(KeyEventType::Down, 90, Some("z"), Modifiers::CTRL)
+        .unwrap();
+    assert_eq!(
+        input.control_value().unwrap().as_deref(),
+        Some("leftかなright")
+    );
+    document
+        .dispatch_key_event(
+            KeyEventType::Down,
+            90,
+            Some("z"),
+            Modifiers::CTRL | Modifiers::SHIFT,
+        )
+        .unwrap();
+    assert_eq!(
+        input.control_value().unwrap().as_deref(),
+        Some("left漢字right")
+    );
+    for name in ["beforeinput", "compositionend", "input"] {
+        input.remove_event(name).unwrap();
+    }
+}
+
+#[test]
+fn ime_cancel_restores_selection_pixels_and_existing_redo() {
+    let document = document();
+    let input = child(&document, "input");
+    input.set_control_value("original").unwrap();
+    input.focus().unwrap();
+    document.dispatch_text_input("!").unwrap();
+    document
+        .dispatch_key_event(KeyEventType::Down, 90, Some("z"), Modifiers::CTRL)
+        .unwrap();
+    input.set_selection(6, 2).unwrap();
+    let before = document.render_to_bitmap().unwrap();
+    let inputs = Rc::new(Cell::new(0));
+    let observed = inputs.clone();
+    input
+        .on("input", move |_| observed.set(observed.get() + 1))
+        .unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("仮").unwrap();
+    document.dispatch_composition_update("preview").unwrap();
+    document.dispatch_composition_cancel().unwrap();
+    assert_eq!(input.control_value().unwrap().as_deref(), Some("original"));
+    assert_eq!(input.selection().unwrap(), Some((2, 6)));
+    assert_eq!(inputs.get(), 0);
+    assert!(input
+        .get_attribute("data-oui-composition-start")
+        .unwrap()
+        .is_none());
+    assert_eq!(
+        before.pixels(),
+        document.render_to_bitmap().unwrap().pixels()
+    );
+    document
+        .dispatch_key_event(
+            KeyEventType::Down,
+            90,
+            Some("z"),
+            Modifiers::CTRL | Modifiers::SHIFT,
+        )
+        .unwrap();
+    assert_eq!(input.control_value().unwrap().as_deref(), Some("original!"));
+}
+
+#[test]
+fn ime_ignores_noneditable_controls_and_cancels_when_disabled() {
+    let document = document();
+    let button = child(&document, "button");
+    button.focus().unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("preview").unwrap();
+    document.dispatch_composition_end("committed").unwrap();
+    let input = child(&document, "input");
+    input.set_control_value("kept").unwrap();
+    input.focus().unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("preview").unwrap();
+    input.set_attribute("disabled", "").unwrap();
+    document.dispatch_composition_end("committed").unwrap();
+    assert_eq!(input.control_value().unwrap().as_deref(), Some("kept"));
+}
+
+#[test]
+fn ime_commit_can_be_canceled_by_a_native_beforeinput_callback() {
+    let document = document();
+    let input = child(&document, "input");
+    input.set_control_value("kept").unwrap();
+    input.set_selection(0, 4).unwrap();
+    input.focus().unwrap();
+    input
+        .on("beforeinput", |event| event.prevent_default())
+        .unwrap();
+    let inputs = Rc::new(Cell::new(0));
+    let observed = inputs.clone();
+    input
+        .on("input", move |_| observed.set(observed.get() + 1))
+        .unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("preview").unwrap();
+    document.dispatch_composition_end("committed").unwrap();
+    assert_eq!(input.control_value().unwrap().as_deref(), Some("kept"));
+    assert_eq!(input.selection().unwrap(), Some((0, 4)));
+    assert_eq!(inputs.get(), 0);
+
+    input.remove_event("beforeinput").unwrap();
+    let retained = document.clone();
+    input
+        .on("compositionstart", move |event| {
+            retained
+                .dispatch_composition_update("reentrant preview")
+                .unwrap();
+            event.prevent_default();
+        })
+        .unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_end("ignored commit").unwrap();
+    assert_eq!(input.control_value().unwrap().as_deref(), Some("kept"));
+    assert_eq!(inputs.get(), 0);
+    input.remove_event("compositionstart").unwrap();
+}
+
+#[test]
+fn ime_callbacks_cannot_redirect_an_edit_to_a_different_focused_control() {
+    let document = document();
+    let first = child(&document, "input");
+    let second = child(&document, "input");
+    first.set_control_value("first").unwrap();
+    second.set_control_value("second").unwrap();
+    first.focus().unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("preview").unwrap();
+    let next = second.clone();
+    first
+        .on("beforeinput", move |_| next.focus().unwrap())
+        .unwrap();
+    document.dispatch_composition_end("committed").unwrap();
+    document
+        .dispatch_composition_update("late preview")
+        .unwrap();
+    document.dispatch_composition_end("late commit").unwrap();
+    assert_eq!(first.control_value().unwrap().as_deref(), Some("first"));
+    assert_eq!(second.control_value().unwrap().as_deref(), Some("second"));
+    first.remove_event("beforeinput").unwrap();
+}
+
+#[test]
+fn ime_callback_restarting_the_same_control_keeps_the_new_edit() {
+    let document = document();
+    let input = child(&document, "input");
+    input.focus().unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("old preview").unwrap();
+    let restarted = Rc::new(Cell::new(false));
+    let once = restarted.clone();
+    let retained = document.clone();
+    input
+        .on("beforeinput", move |_| {
+            if !once.replace(true) {
+                retained.dispatch_composition_start().unwrap();
+                retained.dispatch_composition_update("new preview").unwrap();
+            }
+        })
+        .unwrap();
+    document.dispatch_composition_end("old commit").unwrap();
+    assert!(restarted.get());
+    assert_eq!(
+        input.control_value().unwrap().as_deref(),
+        Some("new preview")
+    );
+    document.dispatch_composition_end("new commit").unwrap();
+    assert_eq!(
+        input.control_value().unwrap().as_deref(),
+        Some("new commit")
+    );
+    input.remove_event("beforeinput").unwrap();
+}
+
+#[test]
+fn ime_callbacks_may_remove_the_target_without_terminating_input_dispatch() {
+    let document = document();
+    let input = child(&document, "input");
+    input.focus().unwrap();
+    document.dispatch_composition_start().unwrap();
+    document.dispatch_composition_update("preview").unwrap();
+    let removed = input.clone();
+    input
+        .on("beforeinput", move |_| removed.remove().unwrap())
+        .unwrap();
+    document.dispatch_composition_end("committed").unwrap();
+    assert!(document.focused_element().unwrap().is_none());
+
+    let input = child(&document, "input");
+    input.focus().unwrap();
+    document.dispatch_composition_start().unwrap();
+    let removed = input.clone();
+    input
+        .on("compositionend", move |_| removed.remove().unwrap())
+        .unwrap();
+    document.dispatch_composition_end("committed").unwrap();
+    assert!(document.focused_element().unwrap().is_none());
 }
 
 #[test]
@@ -273,9 +1512,7 @@ fn hover_and_active_state_follow_pointer() {
 #[test]
 fn nested_scroll_container_consumes_wheel() {
     let document = document();
-    let scroller = child(&document, "div");
-    sized(&scroller, 100.0, 80.0);
-    scroller.set_overflow(Overflow::Scroll).unwrap();
+    let scroller = nested_scroll_fixture(&document);
     document.update_all().unwrap();
     document
         .dispatch_wheel_event(10.0, 10.0, 4.0, 12.0, Modifiers::NONE)
@@ -289,10 +1526,125 @@ fn nested_scroll_container_consumes_wheel() {
     );
 }
 
+fn overflowing_viewport(document: &Document) -> Element {
+    let content = child(document, "div");
+    sized(&content, 300.0, 224.0);
+    content.set_position(Position::Absolute).unwrap();
+    content.set_left(Length::px(27.0)).unwrap();
+    content.set_top(Length::px(22.0)).unwrap();
+    content
+}
+
+#[test]
+fn viewport_native_scroll_clamps_extremes_and_resolves_pending_layout() {
+    let document = document();
+    let content = overflowing_viewport(&document);
+    let root = document.body();
+    root.scroll_to(f64::MAX, f64::MAX).unwrap();
+    // Repeated Chromium queries: both 15px bars leave a 305x225 client.
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (22.0, 21.0)
+    );
+    let rect = content.bounding_rect().unwrap().unwrap();
+    assert_eq!((rect.x, rect.y), (5.0, 1.0));
+    root.scroll_to(-1000.0, -1000.0).unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (0.0, 0.0)
+    );
+    root.scroll_to(1000.0, 1000.0).unwrap();
+    root.set_overflow(Overflow::Hidden).unwrap();
+    // Changing overflow removes both gutters and clamps the previous offset.
+    root.scroll_by(-1.0, -1.0).unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (6.0, 5.0)
+    );
+    content.set_width(LengthValue::px(80.0)).unwrap();
+    content.set_height(LengthValue::px(40.0)).unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (0.0, 0.0)
+    );
+    assert!(root.scroll_to(f64::INFINITY, 0.0).is_err());
+}
+
+#[test]
+fn viewport_wheel_uses_the_same_limits_and_respects_cancelation() {
+    let document = document();
+    let content = overflowing_viewport(&document);
+    let root = document.body();
+    document
+        .dispatch_wheel_event(30.0, 30.0, 1000.0, 1000.0, Modifiers::NONE)
+        .unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (22.0, 21.0)
+    );
+    root.scroll_to(0.0, 0.0).unwrap();
+    content
+        .on("wheel", |event| event.prevent_default())
+        .unwrap();
+    document
+        .dispatch_wheel_event(30.0, 30.0, 1000.0, 1000.0, Modifiers::NONE)
+        .unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (0.0, 0.0)
+    );
+    // Authored hidden and clip viewport overflow still allow Rust scroll calls.
+    for overflow in [Overflow::Hidden, Overflow::Clip] {
+        let document = Document::new(320, 240).unwrap();
+        let _content = overflowing_viewport(&document);
+        let root = document.body();
+        root.set_overflow(overflow).unwrap();
+        root.scroll_to(1000.0, 1000.0).unwrap();
+        assert_eq!(
+            (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+            (7.0, 6.0)
+        );
+        root.scroll_to(0.0, 0.0).unwrap();
+        document
+            .dispatch_wheel_event(30.0, 30.0, 1000.0, 1000.0, Modifiers::NONE)
+            .unwrap();
+        assert_eq!(
+            (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+            (0.0, 0.0)
+        );
+    }
+}
+
+#[test]
+fn viewport_smooth_scroll_clamps_its_target_and_tracks_content_shrink() {
+    let document = document();
+    let content = overflowing_viewport(&document);
+    let root = document.body();
+    root.smooth_scroll_to(1000.0, 1000.0, 100.0, Easing::Linear)
+        .unwrap();
+    document.advance_time(50.0).unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (11.0, 10.5)
+    );
+    document.advance_time(100.0).unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (22.0, 21.0)
+    );
+    content.set_width(LengthValue::px(80.0)).unwrap();
+    content.set_height(LengthValue::px(40.0)).unwrap();
+    assert_eq!(
+        (root.scroll_left().unwrap(), root.scroll_top().unwrap()),
+        (0.0, 0.0)
+    );
+    assert!(!document.is_animating().unwrap());
+}
+
 #[test]
 fn smooth_scroll_uses_manual_clock() {
     let document = document();
-    let scroller = child(&document, "div");
+    let scroller = nested_scroll_fixture(&document);
     scroller
         .smooth_scroll_to(100.0, 50.0, 100.0, Easing::Linear)
         .unwrap();
@@ -309,7 +1661,7 @@ fn smooth_scroll_uses_manual_clock() {
 #[test]
 fn scroll_snap_selects_nearest_point() {
     let document = document();
-    let scroller = child(&document, "div");
+    let scroller = nested_scroll_fixture(&document);
     scroller.scroll_to(70.0, 0.0).unwrap();
     scroller
         .settle_scroll_snap(&[0.0, 100.0], &[], 100.0, Easing::Linear)
@@ -393,7 +1745,7 @@ fn reduced_motion_finishes_animation() {
 #[test]
 fn scroll_timeline_samples_from_offset() {
     let document = document();
-    let scroller = child(&document, "div");
+    let scroller = nested_scroll_fixture(&document);
     let target = child(&document, "div");
     target
         .animate_on_scroll(

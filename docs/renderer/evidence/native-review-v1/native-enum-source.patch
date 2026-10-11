@@ -1,0 +1,911 @@
+diff --git a/bindings/rust/openui-ffi/src/lib.rs b/bindings/rust/openui-ffi/src/lib.rs
+index e75b935a..de2c4d2e 100644
+--- a/bindings/rust/openui-ffi/src/lib.rs
++++ b/bindings/rust/openui-ffi/src/lib.rs
+@@ -2941,6 +2941,10 @@ pub extern "C" fn oui_style_value_parse(
+                 Some(value) => (5, OuiStylePayload { enum_value: value }),
+                 None => (6, native_value()?),
+             },
++            // Renderer longhands own one property; retain that identity in
++            // the carrier so a different compound property rejects it before
++            // touching the retained document.
++            (6, StyleValue::Renderer(_)) => (6, native_value()?),
+             (6, _) => (
+                 6,
+                 OuiStylePayload {
+@@ -5603,6 +5607,251 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn native_fragment_keywords_reach_engine_and_keep_owned_property_identity() {
++        use openui_style::{
++            BoxDecorationBreak, BreakInside, BreakValue, ColumnFill, ColumnSpan, ColumnWrap,
++            RendererStyleValue as R,
++        };
++        let document_handle = create_document(64, 48);
++        let element_handle = create_element(document_handle, 0, ptr::null_mut());
++        for (property, literal, expected) in [
++            (
++                StyleProperty::ColumnFill,
++                "auto",
++                R::ColumnFill(ColumnFill::Auto),
++            ),
++            (
++                StyleProperty::BreakInside,
++                "avoid",
++                R::BreakInside(BreakInside::Avoid),
++            ),
++            (
++                StyleProperty::BreakBefore,
++                "column",
++                R::BreakBefore(BreakValue::Column),
++            ),
++            (
++                StyleProperty::BreakAfter,
++                "avoid-page",
++                R::BreakAfter(BreakValue::AvoidPage),
++            ),
++            (
++                StyleProperty::ColumnSpan,
++                "all",
++                R::ColumnSpan(ColumnSpan::All),
++            ),
++            (
++                StyleProperty::ColumnWrap,
++                "nowrap",
++                R::ColumnWrap(ColumnWrap::NoWrap),
++            ),
++            (
++                StyleProperty::BoxDecorationBreak,
++                "clone",
++                R::BoxDecorationBreak(BoxDecorationBreak::Clone),
++            ),
++            (
++                StyleProperty::BorderTopStyle,
++                "outset",
++                R::BorderTopStyle(BorderStyle::Outset),
++            ),
++            (
++                StyleProperty::BorderRightStyle,
++                "inset",
++                R::BorderRightStyle(BorderStyle::Inset),
++            ),
++            (
++                StyleProperty::BorderBottomStyle,
++                "ridge",
++                R::BorderBottomStyle(BorderStyle::Ridge),
++            ),
++            (
++                StyleProperty::BorderLeftStyle,
++                "groove",
++                R::BorderLeftStyle(BorderStyle::Groove),
++            ),
++            (
++                StyleProperty::ColumnRuleStyle,
++                "double",
++                R::ColumnRuleStyle(BorderStyle::Double),
++            ),
++            (
++                StyleProperty::OutlineStyle,
++                "dashed",
++                R::OutlineStyle(BorderStyle::Dashed),
++            ),
++        ] {
++            let mut parsed = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
++            assert_eq!(
++                oui_style_value_parse(property as i32, text(literal), parsed.as_mut_ptr()),
++                OuiStatus::Ok,
++                "native keyword constructor must accept {property:?} {literal}"
++            );
++            // SAFETY: a successful constructor initialized the tagged record.
++            let parsed = unsafe { parsed.assume_init() };
++            assert_eq!((parsed.tag, parsed.reserved), (6, 0));
++            assert_eq!(
++                oui_element_set_property(element_handle, property as i32, &parsed),
++                OuiStatus::Ok
++            );
++            let reference = element(element_handle as usize).unwrap();
++            let state = element_document(&reference).unwrap();
++            let snapshot = borrow_engine(&state)
++                .unwrap()
++                .computed_style(reference.node)
++                .unwrap()
++                .clone();
++            assert_eq!(
++                openui_style::value_from_computed(&snapshot, property),
++                StyleValue::Renderer(expected.clone())
++            );
++            let other = if property == StyleProperty::ColumnFill {
++                StyleProperty::BreakInside
++            } else {
++                StyleProperty::ColumnFill
++            };
++            assert_eq!(
++                oui_element_set_property(element_handle, other as i32, &parsed),
++                OuiStatus::WrongValueType
++            );
++            let mut invalid = parsed;
++            invalid.reserved = 1;
++            assert_eq!(
++                oui_element_set_property(element_handle, property as i32, &invalid),
++                OuiStatus::WrongValueType
++            );
++            let compound = unsafe { parsed.data.compound } as usize;
++            if property == StyleProperty::ColumnFill {
++                std::thread::spawn(move || {
++                    let own_document = create_document(16, 16);
++                    let own_element = create_element(own_document, 0, ptr::null_mut());
++                    let foreign = OuiStyleValue {
++                        tag: 6,
++                        reserved: 0,
++                        data: OuiStylePayload {
++                            compound: compound as *const OuiStyleCompound,
++                        },
++                    };
++                    assert_eq!(
++                        oui_element_set_property(own_element, property as i32, &foreign),
++                        OuiStatus::WrongThread
++                    );
++                    assert_eq!(
++                        oui_style_compound_destroy(compound as *mut OuiStyleCompound),
++                        OuiStatus::WrongThread
++                    );
++                    assert_eq!(oui_element_destroy(own_element), OuiStatus::Ok);
++                    assert_eq!(oui_document_destroy(own_document), OuiStatus::Ok);
++                })
++                .join()
++                .unwrap();
++            }
++            assert_eq!(
++                oui_style_compound_destroy(compound as *mut OuiStyleCompound),
++                OuiStatus::Ok
++            );
++            assert_eq!(
++                oui_element_set_property(element_handle, property as i32, &parsed),
++                OuiStatus::InvalidHandle
++            );
++            assert_eq!(
++                openui_style::value_from_computed(
++                    &borrow_engine(&state)
++                        .unwrap()
++                        .computed_style(reference.node)
++                        .unwrap(),
++                    property
++                ),
++                StyleValue::Renderer(expected)
++            );
++            assert_eq!(
++                format!("{snapshot:?}"),
++                format!(
++                    "{:?}",
++                    borrow_engine(&state)
++                        .unwrap()
++                        .computed_style(reference.node)
++                        .unwrap()
++                )
++            );
++            let mut output = OuiStyleValue {
++                tag: 77,
++                reserved: 42,
++                data: OuiStylePayload { integer: 123 },
++            };
++            assert_eq!(
++                oui_style_value_parse(property as i32, text("invalid-keyword"), &mut output),
++                OuiStatus::InvalidArgument
++            );
++            assert_eq!(
++                (output.tag, output.reserved, unsafe { output.data.integer }),
++                (77, 42, 123)
++            );
++        }
++        assert_eq!(oui_element_destroy(element_handle), OuiStatus::Ok);
++        assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
++    }
++
++    #[test]
++    fn native_table_display_literals_keep_existing_scalar_encoding() {
++        let document_handle = create_document(64, 48);
++        let element_handle = create_element(document_handle, 0, ptr::null_mut());
++        for (literal, expected) in [
++            ("inline-table", openui_style::Display::InlineTable),
++            ("table-row-group", openui_style::Display::TableRowGroup),
++            (
++                "table-header-group",
++                openui_style::Display::TableHeaderGroup,
++            ),
++            (
++                "table-footer-group",
++                openui_style::Display::TableFooterGroup,
++            ),
++            ("table-row", openui_style::Display::TableRow),
++            ("table-cell", openui_style::Display::TableCell),
++            (
++                "table-column-group",
++                openui_style::Display::TableColumnGroup,
++            ),
++            ("table-column", openui_style::Display::TableColumn),
++            ("table-caption", openui_style::Display::TableCaption),
++        ] {
++            let mut parsed = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
++            assert_eq!(
++                oui_style_value_parse(
++                    StyleProperty::Display as i32,
++                    text(literal),
++                    parsed.as_mut_ptr()
++                ),
++                OuiStatus::Ok
++            );
++            let parsed = unsafe { parsed.assume_init() };
++            assert_eq!(
++                (parsed.tag, parsed.reserved, unsafe {
++                    parsed.data.enum_value
++                }),
++                (5, 0, expected as i32)
++            );
++            assert_eq!(
++                oui_element_set_property(element_handle, StyleProperty::Display as i32, &parsed),
++                OuiStatus::Ok
++            );
++            let reference = element(element_handle as usize).unwrap();
++            let state = element_document(&reference).unwrap();
++            assert_eq!(
++                borrow_engine(&state)
++                    .unwrap()
++                    .computed_style(reference.node)
++                    .unwrap()
++                    .display,
++                expected
++            );
++        }
++        assert_eq!(oui_element_destroy(element_handle), OuiStatus::Ok);
++        assert_eq!(oui_document_destroy(document_handle), OuiStatus::Ok);
++    }
++
+     #[test]
+     fn invalid_native_literals_preserve_output_and_existing_scalar_encodings() {
+         for (property, literal) in [
+diff --git a/bindings/rust/openui-style/src/generated_properties.rs b/bindings/rust/openui-style/src/generated_properties.rs
+index d9e78722..c4a8b034 100644
+--- a/bindings/rust/openui-style/src/generated_properties.rs
++++ b/bindings/rust/openui-style/src/generated_properties.rs
+@@ -1203,18 +1203,136 @@ fn parse_renderer_author_literal(property: StyleProperty, input: &str) -> Option
+         StyleProperty::AlignContent => content_alignment_literal(input).map(StyleValue::ContentAlignment),
+         StyleProperty::AlignSelf => item_alignment_literal(input).map(StyleValue::ItemAlignment),
+         StyleProperty::BorderBottomColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderBottomColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
++        StyleProperty::BorderBottomStyle => (match input.trim() {
++            "none" => Some(BorderStyle::None),
++            "hidden" => Some(BorderStyle::Hidden),
++            "dotted" => Some(BorderStyle::Dotted),
++            "dashed" => Some(BorderStyle::Dashed),
++            "solid" => Some(BorderStyle::Solid),
++            "double" => Some(BorderStyle::Double),
++            "groove" => Some(BorderStyle::Groove),
++            "ridge" => Some(BorderStyle::Ridge),
++            "inset" => Some(BorderStyle::Inset),
++            "outset" => Some(BorderStyle::Outset),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BorderBottomStyle(value))),
+         StyleProperty::BorderBottomWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+         StyleProperty::BorderLeftColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderLeftColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
++        StyleProperty::BorderLeftStyle => (match input.trim() {
++            "none" => Some(BorderStyle::None),
++            "hidden" => Some(BorderStyle::Hidden),
++            "dotted" => Some(BorderStyle::Dotted),
++            "dashed" => Some(BorderStyle::Dashed),
++            "solid" => Some(BorderStyle::Solid),
++            "double" => Some(BorderStyle::Double),
++            "groove" => Some(BorderStyle::Groove),
++            "ridge" => Some(BorderStyle::Ridge),
++            "inset" => Some(BorderStyle::Inset),
++            "outset" => Some(BorderStyle::Outset),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BorderLeftStyle(value))),
+         StyleProperty::BorderLeftWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+         StyleProperty::BorderRightColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderRightColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
++        StyleProperty::BorderRightStyle => (match input.trim() {
++            "none" => Some(BorderStyle::None),
++            "hidden" => Some(BorderStyle::Hidden),
++            "dotted" => Some(BorderStyle::Dotted),
++            "dashed" => Some(BorderStyle::Dashed),
++            "solid" => Some(BorderStyle::Solid),
++            "double" => Some(BorderStyle::Double),
++            "groove" => Some(BorderStyle::Groove),
++            "ridge" => Some(BorderStyle::Ridge),
++            "inset" => Some(BorderStyle::Inset),
++            "outset" => Some(BorderStyle::Outset),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BorderRightStyle(value))),
+         StyleProperty::BorderRightWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+         StyleProperty::BorderTopColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderTopColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
++        StyleProperty::BorderTopStyle => (match input.trim() {
++            "none" => Some(BorderStyle::None),
++            "hidden" => Some(BorderStyle::Hidden),
++            "dotted" => Some(BorderStyle::Dotted),
++            "dashed" => Some(BorderStyle::Dashed),
++            "solid" => Some(BorderStyle::Solid),
++            "double" => Some(BorderStyle::Double),
++            "groove" => Some(BorderStyle::Groove),
++            "ridge" => Some(BorderStyle::Ridge),
++            "inset" => Some(BorderStyle::Inset),
++            "outset" => Some(BorderStyle::Outset),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BorderTopStyle(value))),
+         StyleProperty::BorderTopWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+         StyleProperty::Bottom => length(input).map(StyleValue::Length),
++        StyleProperty::BoxDecorationBreak => (match input.trim() {
++            "slice" => Some(BoxDecorationBreak::Slice),
++            "clone" => Some(BoxDecorationBreak::Clone),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BoxDecorationBreak(value))),
++        StyleProperty::BreakAfter => (match input.trim() {
++            "auto" => Some(BreakValue::Auto),
++            "avoid" => Some(BreakValue::Avoid),
++            "avoid-page" => Some(BreakValue::AvoidPage),
++            "avoid-column" => Some(BreakValue::AvoidColumn),
++            "page" => Some(BreakValue::Page),
++            "column" => Some(BreakValue::Column),
++            "left" => Some(BreakValue::Left),
++            "right" => Some(BreakValue::Right),
++            "always" => Some(BreakValue::Always),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BreakAfter(value))),
++        StyleProperty::BreakBefore => (match input.trim() {
++            "auto" => Some(BreakValue::Auto),
++            "avoid" => Some(BreakValue::Avoid),
++            "avoid-page" => Some(BreakValue::AvoidPage),
++            "avoid-column" => Some(BreakValue::AvoidColumn),
++            "page" => Some(BreakValue::Page),
++            "column" => Some(BreakValue::Column),
++            "left" => Some(BreakValue::Left),
++            "right" => Some(BreakValue::Right),
++            "always" => Some(BreakValue::Always),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BreakBefore(value))),
++        StyleProperty::BreakInside => (match input.trim() {
++            "auto" => Some(BreakInside::Auto),
++            "avoid" => Some(BreakInside::Avoid),
++            "avoid-page" => Some(BreakInside::AvoidPage),
++            "avoid-column" => Some(BreakInside::AvoidColumn),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BreakInside(value))),
++        StyleProperty::ColumnFill => (match input.trim() {
++            "balance" => Some(ColumnFill::Balance),
++            "balance-all" => Some(ColumnFill::BalanceAll),
++            "auto" => Some(ColumnFill::Auto),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::ColumnFill(value))),
+         StyleProperty::ColumnHeight => length(input).map(StyleValue::Length),
+         StyleProperty::ColumnRuleColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::ColumnRuleColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
++        StyleProperty::ColumnRuleStyle => (match input.trim() {
++            "none" => Some(BorderStyle::None),
++            "hidden" => Some(BorderStyle::Hidden),
++            "dotted" => Some(BorderStyle::Dotted),
++            "dashed" => Some(BorderStyle::Dashed),
++            "solid" => Some(BorderStyle::Solid),
++            "double" => Some(BorderStyle::Double),
++            "groove" => Some(BorderStyle::Groove),
++            "ridge" => Some(BorderStyle::Ridge),
++            "inset" => Some(BorderStyle::Inset),
++            "outset" => Some(BorderStyle::Outset),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::ColumnRuleStyle(value))),
+         StyleProperty::ColumnRuleWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
++        StyleProperty::ColumnSpan => (match input.trim() {
++            "none" => Some(ColumnSpan::None),
++            "all" => Some(ColumnSpan::All),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::ColumnSpan(value))),
+         StyleProperty::ColumnWidth => length(input).map(StyleValue::Length),
++        StyleProperty::ColumnWrap => (match input.trim() {
++            "auto" => Some(ColumnWrap::Auto),
++            "wrap" => Some(ColumnWrap::Wrap),
++            "nowrap" => Some(ColumnWrap::NoWrap),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::ColumnWrap(value))),
+         StyleProperty::FilterBlur => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+         StyleProperty::FilterGrayscale => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+         StyleProperty::JustifyItems => item_alignment_literal(input).map(StyleValue::ItemAlignment),
+@@ -1224,6 +1342,19 @@ fn parse_renderer_author_literal(property: StyleProperty, input: &str) -> Option
+         StyleProperty::Orphans => input.parse::<u32>().ok().map(|value| StyleValue::Renderer(RendererStyleValue::Orphans(value))),
+         StyleProperty::OutlineColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::OutlineColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
+         StyleProperty::OutlineOffset => input.parse::<i32>().ok().map(StyleValue::Integer),
++        StyleProperty::OutlineStyle => (match input.trim() {
++            "none" => Some(BorderStyle::None),
++            "hidden" => Some(BorderStyle::Hidden),
++            "dotted" => Some(BorderStyle::Dotted),
++            "dashed" => Some(BorderStyle::Dashed),
++            "solid" => Some(BorderStyle::Solid),
++            "double" => Some(BorderStyle::Double),
++            "groove" => Some(BorderStyle::Groove),
++            "ridge" => Some(BorderStyle::Ridge),
++            "inset" => Some(BorderStyle::Inset),
++            "outset" => Some(BorderStyle::Outset),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::OutlineStyle(value))),
+         StyleProperty::OverflowClipMargin => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+         StyleProperty::OverflowX => overflow_literal(input).map(StyleValue::Overflow),
+         StyleProperty::OverflowY => overflow_literal(input).map(StyleValue::Overflow),
+diff --git a/bindings/rust/openui-style/src/property.rs b/bindings/rust/openui-style/src/property.rs
+index b32756bb..54ca74d4 100644
+--- a/bindings/rust/openui-style/src/property.rs
++++ b/bindings/rust/openui-style/src/property.rs
+@@ -1655,6 +1655,15 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
+             "table" => Some(Display::Table),
+             "list-item" => Some(Display::ListItem),
+             "contents" => Some(Display::Contents),
++            "inline-table" => Some(Display::InlineTable),
++            "table-row-group" => Some(Display::TableRowGroup),
++            "table-header-group" => Some(Display::TableHeaderGroup),
++            "table-footer-group" => Some(Display::TableFooterGroup),
++            "table-row" => Some(Display::TableRow),
++            "table-cell" => Some(Display::TableCell),
++            "table-column-group" => Some(Display::TableColumnGroup),
++            "table-column" => Some(Display::TableColumn),
++            "table-caption" => Some(Display::TableCaption),
+             _ => None,
+         }
+         .map(StyleValue::Display),
+@@ -2628,6 +2637,121 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn native_fragment_keyword_values_cover_declared_enum_variants() {
++        fn check(property: StyleProperty, literal: &str, expected: RendererStyleValue) {
++            let value = parse_literal(property, literal).unwrap();
++            let mut style = ComputedStyle::initial();
++            apply_to_computed(&mut style, property, &value, (320.0, 240.0)).unwrap();
++            assert_eq!(
++                value_from_computed(&style, property),
++                StyleValue::Renderer(expected)
++            );
++            assert!(parse_literal(property, "invalid-keyword").is_err());
++            assert!(parse_literal(property, "auto; display: none").is_err());
++        }
++        use RendererStyleValue as R;
++        for (literal, variant) in [
++            ("none", BorderStyle::None),
++            ("hidden", BorderStyle::Hidden),
++            ("dotted", BorderStyle::Dotted),
++            ("dashed", BorderStyle::Dashed),
++            ("solid", BorderStyle::Solid),
++            ("double", BorderStyle::Double),
++            ("groove", BorderStyle::Groove),
++            ("ridge", BorderStyle::Ridge),
++            ("inset", BorderStyle::Inset),
++            ("outset", BorderStyle::Outset),
++        ] {
++            check(
++                StyleProperty::BorderTopStyle,
++                literal,
++                R::BorderTopStyle(variant),
++            );
++            check(
++                StyleProperty::BorderRightStyle,
++                literal,
++                R::BorderRightStyle(variant),
++            );
++            check(
++                StyleProperty::BorderBottomStyle,
++                literal,
++                R::BorderBottomStyle(variant),
++            );
++            check(
++                StyleProperty::BorderLeftStyle,
++                literal,
++                R::BorderLeftStyle(variant),
++            );
++            check(
++                StyleProperty::OutlineStyle,
++                literal,
++                R::OutlineStyle(variant),
++            );
++            check(
++                StyleProperty::ColumnRuleStyle,
++                literal,
++                R::ColumnRuleStyle(variant),
++            );
++        }
++        for (literal, variant) in [
++            ("auto", BreakValue::Auto),
++            ("avoid", BreakValue::Avoid),
++            ("avoid-page", BreakValue::AvoidPage),
++            ("avoid-column", BreakValue::AvoidColumn),
++            ("page", BreakValue::Page),
++            ("column", BreakValue::Column),
++            ("left", BreakValue::Left),
++            ("right", BreakValue::Right),
++            ("always", BreakValue::Always),
++        ] {
++            check(StyleProperty::BreakBefore, literal, R::BreakBefore(variant));
++            check(StyleProperty::BreakAfter, literal, R::BreakAfter(variant));
++        }
++        for (literal, variant) in [
++            ("auto", BreakInside::Auto),
++            ("avoid", BreakInside::Avoid),
++            ("avoid-page", BreakInside::AvoidPage),
++            ("avoid-column", BreakInside::AvoidColumn),
++        ] {
++            check(StyleProperty::BreakInside, literal, R::BreakInside(variant));
++        }
++        for (literal, variant) in [
++            ("auto", ColumnFill::Auto),
++            ("balance", ColumnFill::Balance),
++            ("balance-all", ColumnFill::BalanceAll),
++        ] {
++            check(StyleProperty::ColumnFill, literal, R::ColumnFill(variant));
++        }
++        for (literal, variant) in [
++            ("auto", ColumnWrap::Auto),
++            ("wrap", ColumnWrap::Wrap),
++            ("nowrap", ColumnWrap::NoWrap),
++        ] {
++            check(StyleProperty::ColumnWrap, literal, R::ColumnWrap(variant));
++        }
++        check(
++            StyleProperty::ColumnSpan,
++            "none",
++            R::ColumnSpan(ColumnSpan::None),
++        );
++        check(
++            StyleProperty::ColumnSpan,
++            "all",
++            R::ColumnSpan(ColumnSpan::All),
++        );
++        check(
++            StyleProperty::BoxDecorationBreak,
++            "slice",
++            R::BoxDecorationBreak(BoxDecorationBreak::Slice),
++        );
++        check(
++            StyleProperty::BoxDecorationBreak,
++            "clone",
++            R::BoxDecorationBreak(BoxDecorationBreak::Clone),
++        );
++    }
++
+     #[test]
+     fn parses_checked_literals_and_applies_them() {
+         let padding = parse_literal(StyleProperty::Padding, "8px 16px").unwrap();
+diff --git a/bindings/rust/openui/examples/native_fragment_keywords.rs b/bindings/rust/openui/examples/native_fragment_keywords.rs
+new file mode 100644
+index 00000000..ebffb4c1
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_fragment_keywords.rs
+@@ -0,0 +1,88 @@
++//! Use typed fragment styles and retained mutation from a consuming Rust app.
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut arguments = std::env::args().skip(1);
++    let output = arguments.next().map(PathBuf::from);
++    if arguments.next().is_some() {
++        return Err("expected at most one output directory".into());
++    }
++    for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++        let document = Document::with_font_collection(
++            ViewportMetrics::from_logical_size(64.0, 48.0, scale)?,
++            FontCollection::deterministic_test(),
++        )?;
++        let root = document.body();
++        root.set_background_color(Color::WHITE)?;
++        let card = Element::create(&document, "div")?;
++        card.set_width(LengthValue::px(20.0))?;
++        card.set_height(LengthValue::px(20.0))?;
++        card.set_border(Border {
++            width: 4.0,
++            style: BorderStyle::Solid,
++            color: Color::BLACK,
++        })?;
++        card.set_background_color(Color::BLUE)?;
++        card.set_column_fill(ColumnFill::Auto)?;
++        card.set_column_wrap(ColumnWrap::NoWrap)?;
++        card.set_column_span(ColumnSpan::None)?;
++        card.set_break_inside(BreakInside::Avoid)?;
++        card.set_break_before(BreakValue::AvoidColumn)?;
++        card.set_break_after(BreakValue::AvoidPage)?;
++        card.set_box_decoration_break(BoxDecorationBreak::Slice)?;
++        root.append_child(&card)?;
++        let before_style = card.computed_style()?;
++        let before = card.bounding_rect()?.ok_or("native card bounds required")?;
++        assert_eq!(
++            (before.x, before.y, before.width, before.height),
++            (0.0, 0.0, 28.0, 28.0)
++        );
++        assert_eq!(*before_style.column_fill(), ColumnFill::Auto);
++        assert_eq!(*before_style.break_inside(), BreakInside::Avoid);
++        let directory = output
++            .as_ref()
++            .map(|path| path.join(format!("scale-{scale}")));
++        if let Some(path) = &directory {
++            std::fs::create_dir_all(path)?;
++            std::fs::write(path.join("before.png"), document.render_to_png_buffer()?)?;
++        }
++        let calls = Rc::new(Cell::new(0));
++        let observed = calls.clone();
++        card.on("click", move |event: &Event| {
++            let target = event.target().expect("live native target");
++            target.set_column_fill(ColumnFill::Balance).unwrap();
++            target.set_break_inside(BreakInside::Auto).unwrap();
++            target.set_border_top_style(BorderStyle::None).unwrap();
++            target.set_background_color(Color::RED).unwrap();
++            observed.set(observed.get() + 1);
++        })?;
++        card.click()?;
++        assert_eq!(calls.get(), 1);
++        let after = card
++            .bounding_rect()?
++            .ok_or("mutated native card bounds required")?;
++        assert_eq!(
++            (after.x, after.y, after.width, after.height),
++            (0.0, 0.0, 28.0, 24.0)
++        );
++        assert_eq!(card.client_rects()?, vec![after]);
++        assert_eq!(*card.computed_style()?.column_fill(), ColumnFill::Balance);
++        assert_eq!(*card.computed_style()?.break_inside(), BreakInside::Auto);
++        assert_eq!(*before_style.column_fill(), ColumnFill::Auto);
++        assert_eq!(*before_style.border_top_style(), BorderStyle::Solid);
++        assert_eq!(before.height, 28.0);
++        if let Some(path) = &directory {
++            std::fs::write(path.join("after.png"), document.render_to_png_buffer()?)?;
++        }
++        let weak = card.downgrade();
++        drop(card);
++        drop(root);
++        drop(document);
++        assert!(weak.upgrade().is_none());
++        println!(
++            "native Rust fragment keywords: scale={scale} callback=1 owned-styles/bounds passed"
++        );
++    }
++    Ok(())
++}
+diff --git a/examples/c_v02/CMakeLists.txt b/examples/c_v02/CMakeLists.txt
+index 223b00f4..1574bfbe 100644
+--- a/examples/c_v02/CMakeLists.txt
++++ b/examples/c_v02/CMakeLists.txt
+@@ -3,7 +3,7 @@ project(OpenUIV02Examples LANGUAGES C CXX)
+ 
+ find_package(OpenUI 0.2 CONFIG REQUIRED)
+ 
+-foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics scroll_into_view primitive_styles svg_viewport float_colors)
++foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics scroll_into_view primitive_styles svg_viewport float_colors fragment_keywords)
+   add_executable(openui_${example} ${example}.c)
+   target_link_libraries(openui_${example} PRIVATE OpenUI::OpenUI)
+ endforeach()
+@@ -27,6 +27,10 @@ add_executable(openui_float_colors_cpp float_colors.cc)
+ target_link_libraries(openui_float_colors_cpp PRIVATE OpenUI::OpenUI)
+ set_target_properties(openui_float_colors_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
+ 
++add_executable(openui_fragment_keywords_cpp fragment_keywords.cc)
++target_link_libraries(openui_fragment_keywords_cpp PRIVATE OpenUI::OpenUI)
++set_target_properties(openui_fragment_keywords_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
++
+ add_executable(openui_native_c native/window.c)
+ target_link_libraries(openui_native_c PRIVATE OpenUI::OpenUI)
+ add_executable(openui_native_cpp native/window.cc)
+diff --git a/examples/c_v02/fragment_keywords.c b/examples/c_v02/fragment_keywords.c
+new file mode 100644
+index 00000000..db551433
+--- /dev/null
++++ b/examples/c_v02/fragment_keywords.c
+@@ -0,0 +1,140 @@
++/* Exercise owned native values and retained layout from a consuming C app. */
++#ifdef NDEBUG
++#undef NDEBUG
++#endif
++#include <assert.h>
++#include <stdio.h>
++#include <string.h>
++#include "openui.h"
++
++static OuiUtf8 utf8(const char* value) {
++  OuiUtf8 result = {(const uint8_t*)value, strlen(value)};
++  return result;
++}
++
++static void property(OuiElement* element, OuiStyleProperty id, const char* literal) {
++  OuiStyleValue value;
++  OuiStatus status = oui_style_value_parse(id, utf8(literal), &value);
++  if (status != OUI_OK)
++    fprintf(stderr, "native keyword %d '%s': %d\n", id, literal, status);
++  assert(status == OUI_OK);
++  assert(oui_element_set_property(element, id, &value) == OUI_OK);
++  if (value.tag == OUI_STYLE_VALUE_COMPOUND) {
++    OuiStyleProperty other = id == OUI_STYLE_PROPERTY_COLUMN_FILL
++                                 ? OUI_STYLE_PROPERTY_BREAK_INSIDE
++                                 : OUI_STYLE_PROPERTY_COLUMN_FILL;
++    assert(oui_element_set_property(element, other, &value) == OUI_ERROR_WRONG_VALUE_TYPE);
++    assert(oui_style_compound_destroy((OuiStyleCompound*)value.data.compound) == OUI_OK);
++    assert(oui_element_set_property(element, id, &value) == OUI_ERROR_INVALID_HANDLE);
++  }
++}
++
++typedef struct CallbackState {
++  OuiElement* card;
++  unsigned calls;
++} CallbackState;
++
++static void clicked(OuiEvent* event, void* data) {
++  CallbackState* state = (CallbackState*)data;
++  assert(event->event_type == OUI_EVENT_CLICK);
++  property(state->card, OUI_STYLE_PROPERTY_COLUMN_FILL, "balance");
++  property(state->card, OUI_STYLE_PROPERTY_BREAK_INSIDE, "auto");
++  property(state->card, OUI_STYLE_PROPERTY_BORDER_TOP_STYLE, "none");
++  ++state->calls;
++}
++
++static void native_keywords(double scale) {
++  OuiDocumentConfig config = {sizeof(config), OUI_ABI_VERSION,
++      {64.0, 48.0, (uint32_t)(64.0 * scale), (uint32_t)(48.0 * scale),
++       scale, OUI_VIEWPORT_LOGICAL, 0}};
++  OuiDocument* document = NULL;
++  OuiElement* root = NULL;
++  OuiElement* card = NULL;
++  OuiElement* probe = NULL;
++  assert(oui_document_create(&config, &document) == OUI_OK);
++  assert(oui_document_root(document, &root) == OUI_OK);
++  assert(oui_element_create(document, OUI_ELEMENT_DIV, &card) == OUI_OK);
++  assert(oui_element_create(document, OUI_ELEMENT_DIV, &probe) == OUI_OK);
++  const struct { OuiStyleProperty id; const char* literal; } cases[] = {
++    {OUI_STYLE_PROPERTY_COLUMN_FILL, "auto"},
++    {OUI_STYLE_PROPERTY_BREAK_INSIDE, "avoid"},
++    {OUI_STYLE_PROPERTY_BREAK_BEFORE, "column"},
++    {OUI_STYLE_PROPERTY_BREAK_AFTER, "avoid-page"},
++    {OUI_STYLE_PROPERTY_COLUMN_SPAN, "all"},
++    {OUI_STYLE_PROPERTY_COLUMN_WRAP, "nowrap"},
++    {OUI_STYLE_PROPERTY_BOX_DECORATION_BREAK, "clone"},
++    {OUI_STYLE_PROPERTY_BORDER_TOP_STYLE, "outset"},
++    {OUI_STYLE_PROPERTY_BORDER_RIGHT_STYLE, "inset"},
++    {OUI_STYLE_PROPERTY_BORDER_BOTTOM_STYLE, "ridge"},
++    {OUI_STYLE_PROPERTY_BORDER_LEFT_STYLE, "groove"},
++    {OUI_STYLE_PROPERTY_COLUMN_RULE_STYLE, "double"},
++    {OUI_STYLE_PROPERTY_OUTLINE_STYLE, "dashed"}
++  };
++  for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
++    property(probe, cases[i].id, cases[i].literal);
++    OuiStyleValue invalid;
++    memset(&invalid, 0, sizeof(invalid));
++    invalid.tag = 77;
++    invalid.reserved = 42;
++    invalid.data.integer = 123;
++    assert(oui_style_value_parse(cases[i].id, utf8("invalid-keyword"), &invalid) ==
++           OUI_ERROR_INVALID_ARGUMENT);
++    assert(invalid.tag == 77 && invalid.reserved == 42 && invalid.data.integer == 123);
++  }
++  const struct { const char* literal; OuiDisplay value; } displays[] = {
++    {"inline-table", OUI_DISPLAY_INLINE_TABLE},
++    {"table-row-group", OUI_DISPLAY_TABLE_ROW_GROUP},
++    {"table-header-group", OUI_DISPLAY_TABLE_HEADER_GROUP},
++    {"table-footer-group", OUI_DISPLAY_TABLE_FOOTER_GROUP},
++    {"table-row", OUI_DISPLAY_TABLE_ROW}, {"table-cell", OUI_DISPLAY_TABLE_CELL},
++    {"table-column-group", OUI_DISPLAY_TABLE_COLUMN_GROUP},
++    {"table-column", OUI_DISPLAY_TABLE_COLUMN}, {"table-caption", OUI_DISPLAY_TABLE_CAPTION}
++  };
++  for (size_t i = 0; i < sizeof(displays) / sizeof(displays[0]); ++i) {
++    OuiStyleValue value;
++    assert(oui_style_value_parse(OUI_STYLE_PROPERTY_DISPLAY, utf8(displays[i].literal), &value) == OUI_OK);
++    assert(value.tag == OUI_STYLE_VALUE_ENUM && value.data.enum_value == (int32_t)displays[i].value);
++    assert(oui_element_set_property(probe, OUI_STYLE_PROPERTY_DISPLAY, &value) == OUI_OK);
++  }
++  property(card, OUI_STYLE_PROPERTY_DISPLAY, "block");
++  property(card, OUI_STYLE_PROPERTY_WIDTH, "20px");
++  property(card, OUI_STYLE_PROPERTY_HEIGHT, "20px");
++  property(card, OUI_STYLE_PROPERTY_BORDER, "4px solid black");
++  property(card, OUI_STYLE_PROPERTY_COLUMN_FILL, "auto");
++  property(card, OUI_STYLE_PROPERTY_BREAK_INSIDE, "avoid");
++  assert(oui_element_append_child(root, card) == OUI_OK);
++  OuiRect before;
++  assert(oui_element_get_bounds(card, &before) == OUI_OK);
++  assert(before.x == 0.0f && before.y == 0.0f && before.width == 28.0f && before.height == 28.0f);
++  CallbackState state = {card, 0};
++  OuiListener* listener = NULL;
++  assert(oui_element_add_event_listener(card, OUI_EVENT_CLICK, 0, clicked, &state, &listener) == OUI_OK);
++  OuiEvent event;
++  memset(&event, 0, sizeof(event));
++  event.struct_size = sizeof(event);
++  event.abi_version = OUI_ABI_VERSION;
++  event.event_type = OUI_EVENT_CLICK;
++  assert(oui_document_dispatch_event(document, card, &event) == OUI_OK);
++  assert(state.calls == 1);
++  OuiRect after;
++  assert(oui_element_get_bounds(card, &after) == OUI_OK);
++  assert(after.x == 0.0f && after.y == 0.0f && after.width == 28.0f && after.height == 24.0f);
++  size_t count = 0;
++  OuiRect rect;
++  assert(oui_element_get_client_rects_v1(card, &rect, 1, &count) == OUI_OK && count == 1);
++  assert(rect.x == after.x && rect.y == after.y && rect.width == after.width && rect.height == after.height);
++  assert(before.width == 28.0f && before.height == 28.0f);
++  assert(oui_listener_destroy(listener) == OUI_OK);
++  assert(oui_element_destroy(probe) == OUI_OK);
++  assert(oui_element_destroy(card) == OUI_OK);
++  assert(oui_element_destroy(root) == OUI_OK);
++  assert(oui_document_destroy(document) == OUI_OK);
++  printf("native fragment keywords: scale=%g values=22 callback=1 owned-bounds passed\n", scale);
++}
++
++int main(void) {
++  const double scales[] = {1.0, 1.25, 1.5, 2.0, 3.0};
++  for (size_t i = 0; i < sizeof(scales) / sizeof(scales[0]); ++i)
++    native_keywords(scales[i]);
++  return 0;
++}
+diff --git a/examples/c_v02/fragment_keywords.cc b/examples/c_v02/fragment_keywords.cc
+new file mode 100644
+index 00000000..f6f0783d
+--- /dev/null
++++ b/examples/c_v02/fragment_keywords.cc
+@@ -0,0 +1,2 @@
++// Verify the same public SDK operations from C++17.
++#include "fragment_keywords.c"
+diff --git a/tools/style/generate_properties.py b/tools/style/generate_properties.py
+index 0d9c9b18..9559081b 100644
+--- a/tools/style/generate_properties.py
++++ b/tools/style/generate_properties.py
+@@ -188,6 +188,44 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
+         ("item-alignment", "ItemAlignment"): ("ItemAlignment", "*value", "item_alignment_literal(input).map(StyleValue::ItemAlignment)"),
+         ("content-alignment", "ContentAlignment"): ("ContentAlignment", "*value", "content_alignment_literal(input).map(StyleValue::ContentAlignment)"),
+     }
++    # These native value constructors are property-bound, owned renderer
++    # values. Keep every variant of each supported enum available through the
++    # same path that C uses, rather than interpreting an untyped enum number.
++    enum_keywords = {
++        "BorderStyle": {
++            "none": "None", "hidden": "Hidden", "dotted": "Dotted",
++            "dashed": "Dashed", "solid": "Solid", "double": "Double",
++            "groove": "Groove", "ridge": "Ridge", "inset": "Inset",
++            "outset": "Outset",
++        },
++        "BoxDecorationBreak": {"slice": "Slice", "clone": "Clone"},
++        "BreakValue": {
++            "auto": "Auto", "avoid": "Avoid", "avoid-page": "AvoidPage",
++            "avoid-column": "AvoidColumn", "page": "Page", "column": "Column",
++            "left": "Left", "right": "Right", "always": "Always",
++        },
++        "BreakInside": {
++            "auto": "Auto", "avoid": "Avoid", "avoid-page": "AvoidPage",
++            "avoid-column": "AvoidColumn",
++        },
++        "ColumnFill": {
++            "balance": "Balance", "balance-all": "BalanceAll", "auto": "Auto",
++        },
++        "ColumnSpan": {"none": "None", "all": "All"},
++        "ColumnWrap": {"auto": "Auto", "wrap": "Wrap", "nowrap": "NoWrap"},
++    }
++    enum_source = (ROOT / "bindings/rust/openui-style/src/enums.rs").read_text()
++    for enum_type, keywords in enum_keywords.items():
++        declaration = re.search(
++            rf"pub enum {re.escape(enum_type)} \{{(.*?)\n\}}", enum_source, re.S
++        )
++        if declaration is None:
++            raise SystemExit(f"missing native enum declaration: {enum_type}")
++        declared_variants = set(re.findall(
++            r"^\s*(\w+)\s*(?:=\s*\d+)?\s*,?\s*$", declaration[1], re.M
++        ))
++        if declared_variants != set(keywords.values()):
++            raise SystemExit(f"native keyword constructors do not cover {enum_type}")
+     primitive_apply_cases = []
+     primitive_parse_cases = []
+     for row in renderer_rows:
+@@ -195,6 +233,19 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
+             continue
+         shape = primitive_shapes.get((row["value_kind"], fields[field_names(row)[0]]))
+         if shape is None:
++            enum_type = fields[field_names(row)[0]]
++            if enum_type in enum_keywords:
++                name = row["rust_name"]
++                cases = "\n".join(
++                    f'            "{keyword}" => Some({enum_type}::{variant}),'
++                    for keyword, variant in enum_keywords[enum_type].items()
++                )
++                primitive_parse_cases.append(
++                    f"        StyleProperty::{name} => (match input.trim() {{\n"
++                    f"{cases}\n            _ => None,\n"
++                    f"        }}).map(|value| StyleValue::Renderer(RendererStyleValue::{name}(value))),"
++                )
++                continue
+             if row["value_kind"] in {key[0] for key in primitive_shapes}:
+                 raise SystemExit(f"missing author-value bridge for {row['css_name']}: {row['rust_type']}")
+             continue

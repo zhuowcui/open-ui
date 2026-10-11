@@ -1,0 +1,19 @@
+[agent/v02-final-closure def27834] Add native C text-content geometry parity regression
+ Date: Mon Oct 5 10:46:35 2026 -0700
+ 1 file changed, 127 insertions(+)
+[agent/v02-final-closure e1c9b3e1] Keep native text parity guard viewport internally consistent
+ Date: Mon Oct 5 11:23:01 2026 -0700
+ 1 file changed, 4 insertions(+)
+[agent/v02-final-closure 9eff803b] Share native Rust and C text replacement through Engine
+ Date: Mon Oct 5 10:54:18 2026 -0700
+ 6 files changed, 420 insertions(+), 3 deletions(-)
+ create mode 100644 bindings/rust/openui/examples/native_text_content.rs
+ create mode 100644 examples/c_v02/text_content.c
+ create mode 100644 examples/c_v02/text_content.cc
+[agent/v02-final-closure 6def29f8] Combine shared text replacement with native authored style inheritance
+ Date: Mon Oct 5 12:39:50 2026 -0700
+ 9 files changed, 2009 insertions(+), 62 deletions(-)
+ create mode 100644 bindings/rust/openui/examples/native_inherited_styles.rs
+ create mode 100644 bindings/rust/openui/examples/native_relative_styles.rs
+ create mode 100644 bindings/rust/openui/examples/native_static_position.rs
+ create mode 100644 bindings/rust/openui/tests/native_text_style_inheritance.rs

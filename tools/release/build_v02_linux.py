@@ -158,6 +158,8 @@ def build_libraries(target: str, epoch: int) -> Path:
             target,
             "--package",
             "openui-ffi",
+            "--features",
+            "linux",
         ],
         cwd=RUST,
         env=env,
@@ -422,7 +424,7 @@ Section: devel
 Priority: optional
 Architecture: {deb_arch}
 Maintainer: Open UI contributors
-Depends: libstdc++6, libfreetype6, libfontconfig1
+Depends: libstdc++6, libfreetype6, libfontconfig1, libx11-6, libxcb1, libxkbcommon0, libxkbcommon-x11-0, libwayland-client0, libwayland-cursor0, libwayland-egl1, libegl1, libglx0
 Installed-Size: {installed_size}
 Description: Open UI typed retained Linux and headless engine
  Includes the v0.2 C ABI, development headers, static library, examples,
@@ -457,7 +459,7 @@ License: Apache-2.0
 URL: https://github.com/zhuowcui/open-ui
 Source0: openui-sdk-payload.tar.gz
 BuildArch: {rpm_arch}
-Requires: libstdc++, freetype, fontconfig
+Requires: libstdc++, freetype, fontconfig, libX11.so.6()(64bit), libxcb.so.1()(64bit), libxkbcommon.so.0()(64bit), libxkbcommon-x11.so.0()(64bit), libwayland-client.so.0()(64bit), libwayland-cursor.so.0()(64bit), libwayland-egl.so.1()(64bit), libEGL.so.1()(64bit), libGLX.so.0()(64bit)
 
 %description
 Open UI v0.2 C ABI, headers, libraries, examples, and build metadata.

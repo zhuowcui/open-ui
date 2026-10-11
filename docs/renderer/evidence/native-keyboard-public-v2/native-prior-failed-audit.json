@@ -1,0 +1,12 @@
+{
+  "actual_audit_exit_code": 1,
+  "actual_owner_exit_code": 0,
+  "failed_assertion": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_ffi.a",
+  "failed_checker_sha256": "8ba139776d2c8cbdcc69faf8d6de0627bab280068c568b4ec83071ef7e8a4adb",
+  "owner_terminal": true,
+  "qualification_claimed": false,
+  "reason": "Later fresh compiler artifact uses root path; Cargo root/deps paths are current hardlink aliases. Old path ledger was not advanced by later record.",
+  "receipt_sha256": "8d82ce60a5da83f2fbb07cd5cd88e0893ae713023b606f998be4fa6e645e598b",
+  "schema_version": 1,
+  "source_or_target_changed": false
+}

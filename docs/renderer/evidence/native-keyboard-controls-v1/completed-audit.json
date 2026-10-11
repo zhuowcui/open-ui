@@ -1,0 +1,50 @@
+{
+  "actual_whole_exit_code": 0,
+  "all_native_apis_qualified": false,
+  "artifact_records": 67,
+  "behavior_exact": true,
+  "behavior_results": {
+    "c": {
+      "different": 0,
+      "exact": 99,
+      "total": 99
+    },
+    "cpp": {
+      "different": 0,
+      "exact": 99,
+      "total": 99
+    },
+    "rust": {
+      "different": 0,
+      "exact": 99,
+      "total": 99
+    }
+  },
+  "compiled_paths": 36,
+  "complete": true,
+  "cpp_c_behavior_qualification": true,
+  "exports": 131,
+  "layouts": 34,
+  "main_source": {
+    "clean": true,
+    "commit": "635619da2000ef5db258f97623689cd474084fdb",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "e71e3cab5b633e4989ae69097d7d3984894635b1beef0169b068362061c78773",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "owner_absent": true,
+  "owner_terminal": true,
+  "private_implementation": true,
+  "receipt_sha256": "ff2f05fd10ace63a8b339e16b22c3c9fd9c287ebd84a00185b070b81a2bafb80",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "retired_for_reexecution_after_next_source_or_target_epoch_change": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "a0841c9e6cdb4c2ab6fa55efa5ad4cf68e7353f6",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "824bc8e32392e40ba61d829890cded549f010d6c80f265ee26bf0724c73ab0ed",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

@@ -1,0 +1,265 @@
+diff --git a/bindings/rust/openui-ffi/src/lib.rs b/bindings/rust/openui-ffi/src/lib.rs
+index fc2967f7..de2c4d2e 100644
+--- a/bindings/rust/openui-ffi/src/lib.rs
++++ b/bindings/rust/openui-ffi/src/lib.rs
+@@ -2941,6 +2941,10 @@ pub extern "C" fn oui_style_value_parse(
+                 Some(value) => (5, OuiStylePayload { enum_value: value }),
+                 None => (6, native_value()?),
+             },
++            // Renderer longhands own one property; retain that identity in
++            // the carrier so a different compound property rejects it before
++            // touching the retained document.
++            (6, StyleValue::Renderer(_)) => (6, native_value()?),
+             (6, _) => (
+                 6,
+                 OuiStylePayload {
+diff --git a/bindings/rust/openui-style/src/generated_properties.rs b/bindings/rust/openui-style/src/generated_properties.rs
+index d9e78722..c4a8b034 100644
+--- a/bindings/rust/openui-style/src/generated_properties.rs
++++ b/bindings/rust/openui-style/src/generated_properties.rs
+@@ -1203,18 +1203,136 @@ fn parse_renderer_author_literal(property: StyleProperty, input: &str) -> Option
+         StyleProperty::AlignContent => content_alignment_literal(input).map(StyleValue::ContentAlignment),
+         StyleProperty::AlignSelf => item_alignment_literal(input).map(StyleValue::ItemAlignment),
+         StyleProperty::BorderBottomColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderBottomColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
++        StyleProperty::BorderBottomStyle => (match input.trim() {
++            "none" => Some(BorderStyle::None),
++            "hidden" => Some(BorderStyle::Hidden),
++            "dotted" => Some(BorderStyle::Dotted),
++            "dashed" => Some(BorderStyle::Dashed),
++            "solid" => Some(BorderStyle::Solid),
++            "double" => Some(BorderStyle::Double),
++            "groove" => Some(BorderStyle::Groove),
++            "ridge" => Some(BorderStyle::Ridge),
++            "inset" => Some(BorderStyle::Inset),
++            "outset" => Some(BorderStyle::Outset),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BorderBottomStyle(value))),
+         StyleProperty::BorderBottomWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+         StyleProperty::BorderLeftColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderLeftColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
++        StyleProperty::BorderLeftStyle => (match input.trim() {
++            "none" => Some(BorderStyle::None),
++            "hidden" => Some(BorderStyle::Hidden),
++            "dotted" => Some(BorderStyle::Dotted),
++            "dashed" => Some(BorderStyle::Dashed),
++            "solid" => Some(BorderStyle::Solid),
++            "double" => Some(BorderStyle::Double),
++            "groove" => Some(BorderStyle::Groove),
++            "ridge" => Some(BorderStyle::Ridge),
++            "inset" => Some(BorderStyle::Inset),
++            "outset" => Some(BorderStyle::Outset),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BorderLeftStyle(value))),
+         StyleProperty::BorderLeftWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+         StyleProperty::BorderRightColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderRightColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
++        StyleProperty::BorderRightStyle => (match input.trim() {
++            "none" => Some(BorderStyle::None),
++            "hidden" => Some(BorderStyle::Hidden),
++            "dotted" => Some(BorderStyle::Dotted),
++            "dashed" => Some(BorderStyle::Dashed),
++            "solid" => Some(BorderStyle::Solid),
++            "double" => Some(BorderStyle::Double),
++            "groove" => Some(BorderStyle::Groove),
++            "ridge" => Some(BorderStyle::Ridge),
++            "inset" => Some(BorderStyle::Inset),
++            "outset" => Some(BorderStyle::Outset),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BorderRightStyle(value))),
+         StyleProperty::BorderRightWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+         StyleProperty::BorderTopColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderTopColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
++        StyleProperty::BorderTopStyle => (match input.trim() {
++            "none" => Some(BorderStyle::None),
++            "hidden" => Some(BorderStyle::Hidden),
++            "dotted" => Some(BorderStyle::Dotted),
++            "dashed" => Some(BorderStyle::Dashed),
++            "solid" => Some(BorderStyle::Solid),
++            "double" => Some(BorderStyle::Double),
++            "groove" => Some(BorderStyle::Groove),
++            "ridge" => Some(BorderStyle::Ridge),
++            "inset" => Some(BorderStyle::Inset),
++            "outset" => Some(BorderStyle::Outset),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BorderTopStyle(value))),
+         StyleProperty::BorderTopWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+         StyleProperty::Bottom => length(input).map(StyleValue::Length),
++        StyleProperty::BoxDecorationBreak => (match input.trim() {
++            "slice" => Some(BoxDecorationBreak::Slice),
++            "clone" => Some(BoxDecorationBreak::Clone),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BoxDecorationBreak(value))),
++        StyleProperty::BreakAfter => (match input.trim() {
++            "auto" => Some(BreakValue::Auto),
++            "avoid" => Some(BreakValue::Avoid),
++            "avoid-page" => Some(BreakValue::AvoidPage),
++            "avoid-column" => Some(BreakValue::AvoidColumn),
++            "page" => Some(BreakValue::Page),
++            "column" => Some(BreakValue::Column),
++            "left" => Some(BreakValue::Left),
++            "right" => Some(BreakValue::Right),
++            "always" => Some(BreakValue::Always),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BreakAfter(value))),
++        StyleProperty::BreakBefore => (match input.trim() {
++            "auto" => Some(BreakValue::Auto),
++            "avoid" => Some(BreakValue::Avoid),
++            "avoid-page" => Some(BreakValue::AvoidPage),
++            "avoid-column" => Some(BreakValue::AvoidColumn),
++            "page" => Some(BreakValue::Page),
++            "column" => Some(BreakValue::Column),
++            "left" => Some(BreakValue::Left),
++            "right" => Some(BreakValue::Right),
++            "always" => Some(BreakValue::Always),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BreakBefore(value))),
++        StyleProperty::BreakInside => (match input.trim() {
++            "auto" => Some(BreakInside::Auto),
++            "avoid" => Some(BreakInside::Avoid),
++            "avoid-page" => Some(BreakInside::AvoidPage),
++            "avoid-column" => Some(BreakInside::AvoidColumn),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::BreakInside(value))),
++        StyleProperty::ColumnFill => (match input.trim() {
++            "balance" => Some(ColumnFill::Balance),
++            "balance-all" => Some(ColumnFill::BalanceAll),
++            "auto" => Some(ColumnFill::Auto),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::ColumnFill(value))),
+         StyleProperty::ColumnHeight => length(input).map(StyleValue::Length),
+         StyleProperty::ColumnRuleColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::ColumnRuleColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
++        StyleProperty::ColumnRuleStyle => (match input.trim() {
++            "none" => Some(BorderStyle::None),
++            "hidden" => Some(BorderStyle::Hidden),
++            "dotted" => Some(BorderStyle::Dotted),
++            "dashed" => Some(BorderStyle::Dashed),
++            "solid" => Some(BorderStyle::Solid),
++            "double" => Some(BorderStyle::Double),
++            "groove" => Some(BorderStyle::Groove),
++            "ridge" => Some(BorderStyle::Ridge),
++            "inset" => Some(BorderStyle::Inset),
++            "outset" => Some(BorderStyle::Outset),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::ColumnRuleStyle(value))),
+         StyleProperty::ColumnRuleWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
++        StyleProperty::ColumnSpan => (match input.trim() {
++            "none" => Some(ColumnSpan::None),
++            "all" => Some(ColumnSpan::All),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::ColumnSpan(value))),
+         StyleProperty::ColumnWidth => length(input).map(StyleValue::Length),
++        StyleProperty::ColumnWrap => (match input.trim() {
++            "auto" => Some(ColumnWrap::Auto),
++            "wrap" => Some(ColumnWrap::Wrap),
++            "nowrap" => Some(ColumnWrap::NoWrap),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::ColumnWrap(value))),
+         StyleProperty::FilterBlur => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+         StyleProperty::FilterGrayscale => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+         StyleProperty::JustifyItems => item_alignment_literal(input).map(StyleValue::ItemAlignment),
+@@ -1224,6 +1342,19 @@ fn parse_renderer_author_literal(property: StyleProperty, input: &str) -> Option
+         StyleProperty::Orphans => input.parse::<u32>().ok().map(|value| StyleValue::Renderer(RendererStyleValue::Orphans(value))),
+         StyleProperty::OutlineColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::OutlineColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
+         StyleProperty::OutlineOffset => input.parse::<i32>().ok().map(StyleValue::Integer),
++        StyleProperty::OutlineStyle => (match input.trim() {
++            "none" => Some(BorderStyle::None),
++            "hidden" => Some(BorderStyle::Hidden),
++            "dotted" => Some(BorderStyle::Dotted),
++            "dashed" => Some(BorderStyle::Dashed),
++            "solid" => Some(BorderStyle::Solid),
++            "double" => Some(BorderStyle::Double),
++            "groove" => Some(BorderStyle::Groove),
++            "ridge" => Some(BorderStyle::Ridge),
++            "inset" => Some(BorderStyle::Inset),
++            "outset" => Some(BorderStyle::Outset),
++            _ => None,
++        }).map(|value| StyleValue::Renderer(RendererStyleValue::OutlineStyle(value))),
+         StyleProperty::OverflowClipMargin => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+         StyleProperty::OverflowX => overflow_literal(input).map(StyleValue::Overflow),
+         StyleProperty::OverflowY => overflow_literal(input).map(StyleValue::Overflow),
+diff --git a/bindings/rust/openui-style/src/property.rs b/bindings/rust/openui-style/src/property.rs
+index 224406eb..54ca74d4 100644
+--- a/bindings/rust/openui-style/src/property.rs
++++ b/bindings/rust/openui-style/src/property.rs
+@@ -1655,6 +1655,15 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
+             "table" => Some(Display::Table),
+             "list-item" => Some(Display::ListItem),
+             "contents" => Some(Display::Contents),
++            "inline-table" => Some(Display::InlineTable),
++            "table-row-group" => Some(Display::TableRowGroup),
++            "table-header-group" => Some(Display::TableHeaderGroup),
++            "table-footer-group" => Some(Display::TableFooterGroup),
++            "table-row" => Some(Display::TableRow),
++            "table-cell" => Some(Display::TableCell),
++            "table-column-group" => Some(Display::TableColumnGroup),
++            "table-column" => Some(Display::TableColumn),
++            "table-caption" => Some(Display::TableCaption),
+             _ => None,
+         }
+         .map(StyleValue::Display),
+diff --git a/tools/style/generate_properties.py b/tools/style/generate_properties.py
+index 0d9c9b18..9559081b 100644
+--- a/tools/style/generate_properties.py
++++ b/tools/style/generate_properties.py
+@@ -188,6 +188,44 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
+         ("item-alignment", "ItemAlignment"): ("ItemAlignment", "*value", "item_alignment_literal(input).map(StyleValue::ItemAlignment)"),
+         ("content-alignment", "ContentAlignment"): ("ContentAlignment", "*value", "content_alignment_literal(input).map(StyleValue::ContentAlignment)"),
+     }
++    # These native value constructors are property-bound, owned renderer
++    # values. Keep every variant of each supported enum available through the
++    # same path that C uses, rather than interpreting an untyped enum number.
++    enum_keywords = {
++        "BorderStyle": {
++            "none": "None", "hidden": "Hidden", "dotted": "Dotted",
++            "dashed": "Dashed", "solid": "Solid", "double": "Double",
++            "groove": "Groove", "ridge": "Ridge", "inset": "Inset",
++            "outset": "Outset",
++        },
++        "BoxDecorationBreak": {"slice": "Slice", "clone": "Clone"},
++        "BreakValue": {
++            "auto": "Auto", "avoid": "Avoid", "avoid-page": "AvoidPage",
++            "avoid-column": "AvoidColumn", "page": "Page", "column": "Column",
++            "left": "Left", "right": "Right", "always": "Always",
++        },
++        "BreakInside": {
++            "auto": "Auto", "avoid": "Avoid", "avoid-page": "AvoidPage",
++            "avoid-column": "AvoidColumn",
++        },
++        "ColumnFill": {
++            "balance": "Balance", "balance-all": "BalanceAll", "auto": "Auto",
++        },
++        "ColumnSpan": {"none": "None", "all": "All"},
++        "ColumnWrap": {"auto": "Auto", "wrap": "Wrap", "nowrap": "NoWrap"},
++    }
++    enum_source = (ROOT / "bindings/rust/openui-style/src/enums.rs").read_text()
++    for enum_type, keywords in enum_keywords.items():
++        declaration = re.search(
++            rf"pub enum {re.escape(enum_type)} \{{(.*?)\n\}}", enum_source, re.S
++        )
++        if declaration is None:
++            raise SystemExit(f"missing native enum declaration: {enum_type}")
++        declared_variants = set(re.findall(
++            r"^\s*(\w+)\s*(?:=\s*\d+)?\s*,?\s*$", declaration[1], re.M
++        ))
++        if declared_variants != set(keywords.values()):
++            raise SystemExit(f"native keyword constructors do not cover {enum_type}")
+     primitive_apply_cases = []
+     primitive_parse_cases = []
+     for row in renderer_rows:
+@@ -195,6 +233,19 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
+             continue
+         shape = primitive_shapes.get((row["value_kind"], fields[field_names(row)[0]]))
+         if shape is None:
++            enum_type = fields[field_names(row)[0]]
++            if enum_type in enum_keywords:
++                name = row["rust_name"]
++                cases = "\n".join(
++                    f'            "{keyword}" => Some({enum_type}::{variant}),'
++                    for keyword, variant in enum_keywords[enum_type].items()
++                )
++                primitive_parse_cases.append(
++                    f"        StyleProperty::{name} => (match input.trim() {{\n"
++                    f"{cases}\n            _ => None,\n"
++                    f"        }}).map(|value| StyleValue::Renderer(RendererStyleValue::{name}(value))),"
++                )
++                continue
+             if row["value_kind"] in {key[0] for key in primitive_shapes}:
+                 raise SystemExit(f"missing author-value bridge for {row['css_name']}: {row['rust_type']}")
+             continue

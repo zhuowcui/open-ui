@@ -1,0 +1,99 @@
+{
+  "all_22924_chromium_inputs_unchanged": true,
+  "all_scoped_census_commands_terminal": true,
+  "applied_to_umbrella": false,
+  "cargo_commands_run": 0,
+  "changed": [],
+  "changed_comparisons": 0,
+  "changed_kinds": {
+    "changed-existing-difference": 0,
+    "exact-gain": 0,
+    "exact-loss": 0,
+    "worse-existing-difference": 0
+  },
+  "expanded_pending": true,
+  "file_hashes": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-full-v1456/full-summary.json": "dd2f5ce9377812818c9a1d393f1d98beb5da918737bfbecca4d78d888f476316",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-clean-full-v1528.log": "f67a21d4fdc8e5b45a420441dd8c6b03a3c017970963608b73c5a5ca2887c65b",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-clean-full-v1528/full-summary.json": "f73b3b26ecdae589d05ff823fd0a9f302fb6f65a4fa0c5e9fa78091dd1952b27",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-clean-v1528/build.json": "eb6fdd7b423ff3f41207a51f276ab5701483e431e75a0f262103aa25823aed2b",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-inline-replaced-full-exit-v1528.json": "30df51e825c215c59dd9bec2b6578fbc667e7ff19973fadda8d72e7c1b56d0f9"
+  },
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "observed_exit_code": 1,
+  "original_gate_passed": false,
+  "original_residual_ids": 882,
+  "pixel_tolerance": 0,
+  "prior_audit_failure": {
+    "actual_exit": 1,
+    "probe": "/tmp/openui-native-inline-replaced-full-audit-v1555.py",
+    "probe_sha256": "e03aee384a4aed6c3bbe51201db4f8565d669c0fcb66e0773064feed26fce7ca",
+    "reason": "Results contain the canonical profile hash in addition to the five aggregate counts; the first audit compared unlike schemas."
+  },
+  "prior_results": {
+    "different": 1590,
+    "errors": 0,
+    "exact": 21334,
+    "profile_result_sha256": "6d180f9ef0d5cdf1b1fd0eb078f26b72924727abaa855cb6141a715f1038a35f",
+    "total": 22924
+  },
+  "probe_sha256": "2cb6f75806656d562904e78d45320eb2045c7e9d4d26421d47809f28e502a57b",
+  "profiles": [
+    {
+      "different": 42,
+      "errors": 0,
+      "exact": 5689,
+      "profile": "legacy-800x600@1",
+      "total": 5731
+    },
+    {
+      "different": 247,
+      "errors": 0,
+      "exact": 5484,
+      "profile": "mobile-375x667@2",
+      "total": 5731
+    },
+    {
+      "different": 760,
+      "errors": 0,
+      "exact": 4971,
+      "profile": "desktop-1280x720@1.25",
+      "total": 5731
+    },
+    {
+      "different": 541,
+      "errors": 0,
+      "exact": 5190,
+      "profile": "desktop-1920x1080@1.5",
+      "total": 5731
+    }
+  ],
+  "promotion_allowed": false,
+  "public_native_rust_api_required": true,
+  "release_qualification": false,
+  "results": {
+    "different": 1590,
+    "errors": 0,
+    "exact": 21334,
+    "total": 22924
+  },
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "c92e2d08163779f5e55784f14e556ecaa9d16e7f",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "161deb9aa4a63ea5c5e66f7b7198d1d04acaf9f14e4593a949a771b1f838fc97",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "c92e2d08163779f5e55784f14e556ecaa9d16e7f",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "161deb9aa4a63ea5c5e66f7b7198d1d04acaf9f14e4593a949a771b1f838fc97",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "unchanged_nine_invariant_comparisons": 22924,
+  "whole_pipeline_terminal": false
+}

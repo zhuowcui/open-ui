@@ -1,0 +1,171 @@
+{
+  "actual_census_owner_exit": 1,
+  "addition_cases": 201,
+  "addition_cases_four_profile_exact": 200,
+  "all_chromium_inputs_unchanged": true,
+  "all_commands_terminal": true,
+  "all_seven_native_guards_actually_ran_and_passed_in_hosted_parity": true,
+  "archive_members": 50,
+  "artifacts": [
+    {
+      "bytes": 9856844,
+      "path": "docs/renderer/evidence/native-variable-font-instance-v2/completed-evidence.tar.gz",
+      "sha256": "b06da3c28907e7588d88789713785bc3d7c57f910226ab7c7dcbe03104e47b0f"
+    },
+    {
+      "bytes": 9092,
+      "path": "docs/renderer/evidence/native-variable-font-instance-v2/archive-members.json",
+      "sha256": "1263ccf61010be11702a2ebde472a318967c235b09fbfc25980186c16f61d62c"
+    }
+  ],
+  "candidate_has_exact_regressions": false,
+  "chromium_is_only_pixel_target": true,
+  "hosted_jobs": {
+    "failed": 0,
+    "skipped": 5,
+    "success": 13
+  },
+  "hosted_source": "e0e9382d284ca17aec1f6f75a96e2ed81f80e273",
+  "javascript_executed_by_openui": false,
+  "native_callback_reference_is_not_chromium": true,
+  "new_formal_wpt_owners_assigned": 0,
+  "new_release_states_admitted": 0,
+  "original_rows_agree_in_expanded": 22924,
+  "pixel_tolerance": 0,
+  "preserver_sha256": "c31d9f88ef27e6a7ae9ceebe7ad874df5401ade31ff02fdff290670665213674",
+  "prior_native_proof": {
+    "path": "docs/renderer/generated/native-variable-font-instance-v1.json",
+    "sha256": "e4dd2a4f5a1f04c4f066a6801c9e83cb37bf711a63678c787021d2f926f90403"
+  },
+  "receipts_sha256": {
+    "native-font-variation-census-pipeline-v1883/receipt.json": "9d58d70a2855f12cccff6fe34caa3c9589b04f235964b0fc8eab80cf843e9a1c",
+    "native-font-variation-matrix-audit-v1884.json": "2ddf1521e6a742b370c2647a5f2f343c45bd48c749292343d330e352e155a89e",
+    "native-font-variation-umbrella-checks-v1886/receipt.json": "b74fe94ecf5b692c278fbca3d8ae68d34cfa7d5d5ee14cf0e14132fe9adb4f9b",
+    "native-font-variation-umbrella-hosted-v1890/receipt.json": "c655bded927a4659b7a35935ca1a2c10d6b9c73f9f77918e5ccf31b046ec46c1"
+  },
+  "release_qualification": false,
+  "reviewed_root_cause_for_every_existing_residual": false,
+  "schema_version": 1,
+  "skipped_jobs_are_not_release_passes": true,
+  "source": {
+    "clean": true,
+    "commit": "feb7e872bd4b55bbbae40a600e280a1cb5ba2ac4",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "8455c81d37916fed23492460a2eca3eb967ba44e16ed634c6d1d52318cc49225",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "feb7e872bd4b55bbbae40a600e280a1cb5ba2ac4",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "8455c81d37916fed23492460a2eca3eb967ba44e16ed634c6d1d52318cc49225",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "suites": {
+    "expanded": {
+      "actual_exit": 1,
+      "actual_exit_receipt_sha256": "6be9d58a7861a8749be18f5233d86300c230a0a646deec2021db8227af03caed",
+      "changed_comparisons": 0,
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "immutable_chromium_rows": 23728,
+      "prior_results": {
+        "different": 1591,
+        "errors": 0,
+        "exact": 22137,
+        "profile_result_sha256": "771d82c99234368840907e102c43f01e1bdaa2b2b153136180d61b36058e777b",
+        "total": 23728
+      },
+      "prior_summary_sha256": "c76c650c6bff0f3cf4501da18d07e4729fc1b8fa72152bf83056c227be6d94c6",
+      "residual_ids": 883,
+      "results": {
+        "different": 1591,
+        "errors": 0,
+        "exact": 22137,
+        "profile_result_sha256": "3aee064ee1f705c0ea678e2a27eba466c0b23ea9f88fb92cfb45dff3f877128a",
+        "total": 23728
+      },
+      "summary_sha256": "bb31a2761e938733eae8b05461c1a58929e373044788f2b5e4b6487774e115f3",
+      "unchanged_nine_invariant_rows": 23728
+    },
+    "focused": {
+      "actual_exit": 0,
+      "actual_exit_receipt_sha256": "5e6797c9b6d90c338ab1f325e852a592ec512eac11fea7a2f9ae48f1a8759d40",
+      "changed_comparisons": 0,
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "immutable_chromium_rows": 640,
+      "prior_results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "4004c9a3ea384911ecdfd2b14e50d8444e5a7f164c41d240e2d12bb53ea62892",
+        "total": 640
+      },
+      "prior_summary_sha256": "aa7742bd16c6a605e57da1da336d58a9e79ff8306e6ad4474597de3ed9595ede",
+      "residual_ids": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "5f4a30451bb7f1f4b7bd4000dc27b4d354ba4c2e48280e1492b13e655f8155fe",
+        "total": 640
+      },
+      "summary_sha256": "a610ee00684fa52f1b2dbc1d3a4860b42c211175adc9e429f1745cfc220be235",
+      "unchanged_nine_invariant_rows": 640
+    },
+    "full": {
+      "actual_exit": 1,
+      "actual_exit_receipt_sha256": "fb8ecc93718019c730cc639734b4786768c9cb8ed3432b57b55e70eb8a610a2c",
+      "changed_comparisons": 0,
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "immutable_chromium_rows": 22924,
+      "prior_results": {
+        "different": 1590,
+        "errors": 0,
+        "exact": 21334,
+        "profile_result_sha256": "88979f0f86f82361c0a3cb9bdb8ebea3829f8965f64f476b6faa93088eac5bc1",
+        "total": 22924
+      },
+      "prior_summary_sha256": "ec1af319d6b9cf32a66d2d10b83bed0125570891f8c37454c30ca864627d0ced",
+      "residual_ids": 882,
+      "results": {
+        "different": 1590,
+        "errors": 0,
+        "exact": 21334,
+        "profile_result_sha256": "7b36bb5febd2e1bbc4a2d8da7f23d6c869141a228e28b6ee9488b7a288fad3fa",
+        "total": 22924
+      },
+      "summary_sha256": "c16d6605b51319c2da923f2859fe99c934efa585b2ef4d98bcaa0eb768da2e9b",
+      "unchanged_nine_invariant_rows": 22924
+    },
+    "primitive": {
+      "actual_exit": 0,
+      "actual_exit_receipt_sha256": "2745a951a58bbf0d79d7dfb59a533782871e8594159a4b32a027a4bb16916188",
+      "changed_comparisons": 0,
+      "exact_gains": 0,
+      "exact_losses": 0,
+      "immutable_chromium_rows": 960,
+      "prior_results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "45b7d2a6da7cde31a9104ddc63c36cbb9fe3105dcb95acc1532f338dd0126432",
+        "total": 960
+      },
+      "prior_summary_sha256": "43c4613c280e0f690bee1a69c9b978460611bfd027b162efc290cf2c0c148a78",
+      "residual_ids": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "0584492a1f508f68b61949b29c8f911d3fe89fccfbfe0d8e5d2e723870704aaf",
+        "total": 960
+      },
+      "summary_sha256": "7e8633d89eefa91ecb79b72bfb5e41a0293d4edca9443c0bf8b391146ae0c9d5",
+      "unchanged_nine_invariant_rows": 960
+    }
+  },
+  "umbrella_read_only_checks_passed": 15
+}

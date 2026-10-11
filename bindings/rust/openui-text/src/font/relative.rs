@@ -101,10 +101,19 @@ impl FontRelativeLengthResolver {
         style: &ComputedStyle,
         collection: std::sync::Arc<FontCollection>,
     ) -> Self {
-        let description = FontDescription::from_computed_style(style);
+        let mut description = FontDescription::from_computed_style(style);
+        // Font-relative references use Blink's effective font-cache size.
+        // Keep this metric query independent of the shaped glyph pipeline.
+        description.size = (description.size * 100.0).floor() / 100.0;
         let font = Font::new_in_collection(description, collection);
         let metrics = font.font_metrics().copied().unwrap_or_default();
-        Self::from_metrics(style.font_size, &style.line_height, &metrics)
+        let mut units = Self::from_metrics(style.font_size, &style.line_height, &metrics);
+        if let Some(primary) = font.primary_font() {
+            units.ch = primary.zero_inline_size(font.description().orientation);
+        } else if font.description().orientation == openui_style::FontOrientation::VerticalUpright {
+            units.ch = style.font_size;
+        }
+        units
     }
 
     /// Construct from explicit metrics, useful to layout and unit tests.
@@ -126,7 +135,13 @@ impl FontRelativeLengthResolver {
             font_size,
             ch,
             ex,
-            lh: used_line_height(metrics, line_height, font_size),
+            lh: match *line_height {
+                LineHeight::Number(number) => {
+                    let basis = openui_geometry::LayoutUnit::from_f32(font_size).to_f32();
+                    openui_geometry::LayoutUnit::from_f32(basis * (number * 100.0) / 100.0).to_f32()
+                }
+                _ => used_line_height(metrics, line_height, font_size),
+            },
         }
     }
 

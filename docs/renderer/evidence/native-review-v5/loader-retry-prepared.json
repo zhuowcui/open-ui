@@ -1,0 +1,105 @@
+{
+  "all_prior_owners_terminal": true,
+  "branch": "agent/native-text-loader-retry-v1655",
+  "installed_abi_soname": "libopenui.so.0",
+  "javascript_executed_by_openui": false,
+  "original_probe_sha256": {
+    "/tmp/openui-native-text-retry-build-v1649.py": "8cbcfb6022dc1d3bb4ba99ae0b23e92c49752028139ef853b1f5d09456b6ded1",
+    "/tmp/openui-native-text-retry-consumer-v1649.py": "a0461758419cd2b0fc38ff865698eff1f9f5d1f436c6ee52c4cebe1b6c5a1e60",
+    "/tmp/openui-native-text-retry-guards-v1649.py": "23c7d8763c2c4c8bc4857b27dd1db8ce89698c0747a80d39feb5c6daa1bfdc57",
+    "/tmp/openui-native-text-retry-matrices-v1649.py": "4ce155171ff7ab0e3cabdb6a6b7b76af75b74309aaf85788d7b591161b13d579",
+    "/tmp/openui-native-text-retry-pipeline-v1650.py": "741301f451744e544f8e4105c102bbf21b1054c719df8d4fa5c4d1eb9ac729ce"
+  },
+  "pixel_tolerance": 0,
+  "preflight": [
+    {
+      "guard_branch": "agent/native-text-loader-retry-v1655",
+      "kind": "guards",
+      "root": "/dev/shm/openui-native-text-loader-retry-90310e15"
+    },
+    {
+      "guard_branch": null,
+      "kind": "build",
+      "root": "/dev/shm/openui-native-text-loader-retry-90310e15"
+    },
+    {
+      "guard_branch": null,
+      "kind": "consumer",
+      "root": "/dev/shm/openui-native-text-loader-retry-90310e15"
+    },
+    {
+      "guard_branch": null,
+      "kind": "matrices",
+      "root": "/dev/shm/openui-native-text-loader-retry-90310e15"
+    }
+  ],
+  "preserves_old_failed_source_probes_and_receipts": true,
+  "prior_whole_owners": 35,
+  "prior_whole_pipelines": [
+    "cache-umbrella-pipeline-v1291",
+    "native-fieldset-retry-pipeline-v1310",
+    "native-font-retry-pipeline-v1311",
+    "native-c-raster-retry-pipeline-v1312",
+    "native-raster-fields-pipeline-v1337",
+    "native-default-strike-pipeline-v1338",
+    "cache-integration-pipeline-v1341",
+    "native-fieldset-capture-forensics-pipeline-v1346",
+    "native-style-integration-pipeline-v1354",
+    "native-intrinsic-constraints-pipeline-v1375",
+    "native-intrinsic-constraints-pipeline-v1369",
+    "native-raster-consumer-pipeline-v1398",
+    "umbrella-clean-workspace-pipeline-v1411",
+    "native-style-integration-retry-pipeline-v1419",
+    "native-intrinsic-constraints-retry-pipeline-v1420",
+    "native-raster-api-pipeline-v1425",
+    "native-image-occlusion-pipeline-v1437",
+    "native-image-coverage-pipeline-v1449",
+    "native-event-targets-pipeline-v1457",
+    "native-border-contrast-pipeline-v1462",
+    "native-intrinsic-cache-guard-pipeline-v1469",
+    "native-raster-fields-public-pipeline-v1470",
+    "native-image-imports-pipeline-v1471",
+    "native-rounded-border-pipeline-v1482",
+    "native-border-guard-pipeline-v1501",
+    "native-enum-values-pipeline-v1513",
+    "native-inline-replaced-pipeline-v1529",
+    "native-table-progress-pipeline-v1548",
+    "native-raster-fields-retry-pipeline-v1560",
+    "native-inline-fallback-pipeline-v1576",
+    "native-keywords-pipeline-v1588",
+    "native-table-source-pipeline-v1601",
+    "native-text-content-pipeline-v1621",
+    "native-text-content-viewport-pipeline-v1636",
+    "native-text-retry-pipeline-v1650"
+  ],
+  "probe_sha256": "34997a7568c95d89c86dfe2093de0f1d76146f1163eb01666ce441a735d6af2b",
+  "production_source_unchanged": true,
+  "release_qualification": false,
+  "repeated_clean_baseline_fixed_guards_required": true,
+  "required_geometry_states": 38400,
+  "required_native_images": 600,
+  "required_stages": 7,
+  "root": "/dev/shm/openui-native-text-loader-retry-90310e15",
+  "schema_version": 1,
+  "scripts": {
+    "/tmp/openui-native-text-loader-retry-build-v1655.py": "e011da0a11dec991307591989607d801cabdf79980844a06cd212f015356a62e",
+    "/tmp/openui-native-text-loader-retry-consumer-v1655.py": "345b71d8b86226f422a96249317bb23f409ce49dc79a0281fe250db1aaa07c4c",
+    "/tmp/openui-native-text-loader-retry-guards-v1655.py": "37dadb26aff6edd85a0f4682ae676efbf0839cf16c83abf38c2a4d897b4b3c09",
+    "/tmp/openui-native-text-loader-retry-matrices-v1655.py": "3c4bf31f2cd23454badf59b41bb9e553703ac378624fee8027b031f98e6e2ca4",
+    "/tmp/openui-native-text-loader-retry-pipeline-v1656.py": "329859c7fb1989405d49b415499d16003b03a81e8e9e04df305082e97bee09dd"
+  },
+  "source": {
+    "clean": true,
+    "commit": "90310e15b86bed558a79c8eb085d2a72092eab69",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "b041b21ae0794097c16a4faa287f99014bdb850273b87c06aed4e70796e8cd01",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "90310e15b86bed558a79c8eb085d2a72092eab69",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "b041b21ae0794097c16a4faa287f99014bdb850273b87c06aed4e70796e8cd01",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

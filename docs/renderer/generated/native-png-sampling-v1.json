@@ -1,0 +1,698 @@
+{
+  "accepted_renderer_unchanged": true,
+  "admitted": false,
+  "assets": [
+    {
+      "alpha_range": [
+        255,
+        255
+      ],
+      "dimensions": [
+        60,
+        60
+      ],
+      "file": "docs/renderer/evidence/native-png-sampling-v1/assets/green.png",
+      "has_icc_profile": false,
+      "name": "green",
+      "sha256": "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+      "source": "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css/css-backgrounds/support/60x60-green.png"
+    },
+    {
+      "alpha_range": [
+        255,
+        255
+      ],
+      "dimensions": [
+        100,
+        100
+      ],
+      "file": "docs/renderer/evidence/native-png-sampling-v1/assets/pattern.png",
+      "has_icc_profile": false,
+      "name": "pattern",
+      "sha256": "ae25e655dab70d3c7ebe81f4e0862a5a263b7198963f6ad5270a6cb04971b11d",
+      "source": "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css/css-backgrounds/support/100x100-blue-and-orange.png"
+    },
+    {
+      "alpha_range": [
+        255,
+        255
+      ],
+      "dimensions": [
+        300,
+        224
+      ],
+      "file": "docs/renderer/evidence/native-png-sampling-v1/assets/icc.png",
+      "has_icc_profile": true,
+      "name": "icc",
+      "sha256": "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+      "source": "/home/nero/code/open-ui/tools/accountability/data/wpt_assets/sp13p/css3.png"
+    },
+    {
+      "alpha_range": [
+        0,
+        255
+      ],
+      "dimensions": [
+        256,
+        256
+      ],
+      "file": "docs/renderer/evidence/native-png-sampling-v1/assets/alpha.png",
+      "has_icc_profile": false,
+      "name": "alpha",
+      "sha256": "d12d5ab18959a52d1e8aa538c63dfeffdd142bc4dd3e774d6ac839b6d310562b",
+      "source": "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css/CSS2/backgrounds/support/background-alpha-test.png"
+    },
+    {
+      "alpha_range": [
+        255,
+        255
+      ],
+      "dimensions": [
+        100,
+        100
+      ],
+      "file": "docs/renderer/evidence/native-png-sampling-v1/assets/border.png",
+      "has_icc_profile": false,
+      "name": "border",
+      "sha256": "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba",
+      "source": "/home/nero/chromium/src/third_party/blink/web_tests/external/wpt/css/css-backgrounds/support/outline-5px-10px-15px-20px-green.png"
+    }
+  ],
+  "capture_process_exit_code": 0,
+  "chromium_captures": [
+    {
+      "all_repeated_queries_and_captures_identical": true,
+      "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+      "cases": 108,
+      "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/chromium-1/summary.json",
+        "sha256": "57219b7d354a029b5bf6012d84e6dbd619464268b54c41f3c9a8e375b95536ae"
+      },
+      "scale": "1"
+    },
+    {
+      "all_repeated_queries_and_captures_identical": true,
+      "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+      "cases": 108,
+      "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/chromium-1.25/summary.json",
+        "sha256": "404a01891cf38ced28b8f719926668cccb21c21204a781a4126d2f006d382e8b"
+      },
+      "scale": "1.25"
+    },
+    {
+      "all_repeated_queries_and_captures_identical": true,
+      "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+      "cases": 108,
+      "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/chromium-1.5/summary.json",
+        "sha256": "13eeac5860e030793a256161c7020b8ffaa44cc9cf2cc6fdcb67b01a683df144"
+      },
+      "scale": "1.5"
+    },
+    {
+      "all_repeated_queries_and_captures_identical": true,
+      "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+      "cases": 108,
+      "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/chromium-2/summary.json",
+        "sha256": "3fdd25da35e39513fbd56455764ab0b73b8d50221d6c207a2ede196b52046a2a"
+      },
+      "scale": "2"
+    },
+    {
+      "all_repeated_queries_and_captures_identical": true,
+      "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+      "cases": 108,
+      "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/chromium-3/summary.json",
+        "sha256": "3026a9b39b9d35afc36b2122fe1b8a2f13b691378d128426fdcce980c889d4a8"
+      },
+      "scale": "3"
+    }
+  ],
+  "comparisons_per_implementation": 540,
+  "consumer": {
+    "path": "bindings/rust/openui/examples/native_png_sampling.rs",
+    "sha256": "4636ade7451b8183e17328f2992c3ab3cc24143e727029db030284e6edcb8f12"
+  },
+  "format_trial_against_n32": {
+    "changed": 136,
+    "chromium_bytes_unchanged": true,
+    "exact_regressions": 3,
+    "groups": {
+      "alpha/background": [
+        60,
+        2,
+        0
+      ],
+      "alpha/replaced": [
+        60,
+        0,
+        0
+      ],
+      "border/border": [
+        60,
+        19,
+        18
+      ],
+      "green/background": [
+        60,
+        18,
+        18
+      ],
+      "green/replaced": [
+        60,
+        36,
+        36
+      ],
+      "icc/background": [
+        60,
+        0,
+        0
+      ],
+      "icc/replaced": [
+        60,
+        13,
+        13
+      ],
+      "pattern/background": [
+        60,
+        10,
+        10
+      ],
+      "pattern/replaced": [
+        60,
+        0,
+        0
+      ]
+    },
+    "improved": 0,
+    "new_exact": 0,
+    "qualification": false,
+    "worsened": 116
+  },
+  "javascript_executed_by_openui": false,
+  "manifest": {
+    "path": "docs/renderer/evidence/native-png-sampling-v1/cases.json",
+    "sha256": "c5afe244bc59960cfa73de513026d245081b5e4016ed96b1418557d81c4c28c1"
+  },
+  "measurements": [
+    {
+      "different": 466,
+      "identity": {
+        "binary_sha256": "7b828715888bce2b6813deda0e62ba93d4970a1ee5edbc28f3868de008b86295",
+        "build_exit_code": 0,
+        "configuration_sha256": "53953fc0cf069fa4f1c2dd19bccb4fae7aafe960f12c84fc469e2dd13264c568",
+        "consumer_source_sha256": "4636ade7451b8183e17328f2992c3ab3cc24143e727029db030284e6edcb8f12",
+        "qualification": false,
+        "renderer_prototypes_applied": false,
+        "source": {
+          "clean": false,
+          "commit": "841b81e075d8316d02b6b7f1cc1274d24efb322e",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "cac0c827935ccfe7fe31aff1271b64dcd6dbd8c211281f418474e1517334966f",
+          "status_sha256": "a99d508e5971514da4c8f2dd7860406c97d83953b9e23c45bff8a8cf98ba9f6a"
+        }
+      },
+      "label": "branch",
+      "mismatched_pixels": 13455884,
+      "native_callback_once_and_teardown_checks": 540,
+      "owned_bounds_exact": 540,
+      "pixel_exact": 74,
+      "process_exit_code": 0,
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/branch-comparison-v1.json",
+        "sha256": "9848152bafa442bdf2cc16897afa3bb6d5d12102c7e7578d59769d6234432d58"
+      },
+      "total": 540
+    },
+    {
+      "different": 442,
+      "identity": {
+        "binary_sha256": "bc53816d97b8f062da0294e5911c70602575723b1136c304c95937194b04ad0e",
+        "build_exit_code": 0,
+        "paint_source_equals_frozen_svg_v5": true,
+        "qualification": false,
+        "source": {
+          "clean": false,
+          "commit": "841b81e075d8316d02b6b7f1cc1274d24efb322e",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "49ea0abb8b77b65dc9a5517057d1a64defcf52a913c268eb7237e7c79ca114a9",
+          "status_sha256": "19fef92427d7387e5780b10f13ae049f7d17d95ad7e760f845ab155640c4e2a9"
+        }
+      },
+      "label": "n32",
+      "mismatched_pixels": 9518203,
+      "native_callback_once_and_teardown_checks": 540,
+      "owned_bounds_exact": 540,
+      "pixel_exact": 98,
+      "process_exit_code": 0,
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/n32-comparison-v1.json",
+        "sha256": "748b9f719de96e196be14dc1f76b51b595100c562e473b313592bedad1da7046"
+      },
+      "total": 540
+    },
+    {
+      "different": 445,
+      "identity": {
+        "binary_sha256": "f68236ccdab84832d30a873992b6dacb52c6fa9ea3721febbcc57a603c6a610a",
+        "build_exit_code": 0,
+        "qualification": false,
+        "source": {
+          "clean": false,
+          "commit": "841b81e075d8316d02b6b7f1cc1274d24efb322e",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "f2565d241273f32a56352a3e08a1af8501795010cdc77f092811ce93f4f3ef5e",
+          "status_sha256": "19fef92427d7387e5780b10f13ae049f7d17d95ad7e760f845ab155640c4e2a9"
+        }
+      },
+      "label": "rgba",
+      "mismatched_pixels": 10076003,
+      "native_callback_once_and_teardown_checks": 540,
+      "owned_bounds_exact": 540,
+      "pixel_exact": 95,
+      "process_exit_code": 0,
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/rgba-comparison-v1.json",
+        "sha256": "c822b6eebc0e40c5635da6daa0e4bf7ad8ea2c050d4cf75aa5cf55ba0607161b"
+      },
+      "total": 540
+    },
+    {
+      "different": 394,
+      "identity": {
+        "binary_sha256": "41994797f4dedb5cea33608f47a48d00925cbfae5e26f4de96e14c21403c73a4",
+        "build_exit_code": 0,
+        "patch_format": "native-N32 unchanged",
+        "pixel_compare": {
+          "binary_sha256": "095c34c5db10022a695a5a5eb1cd2e047db083d4382dff9837578b0ec35b3723",
+          "build_exit_code": 0,
+          "build_identity": {
+            "schema_version": 1,
+            "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_ENABLE_LEGACY_SHADERCONTEXT\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+            "source": {
+              "clean": false,
+              "commit": "841b81e075d8316d02b6b7f1cc1274d24efb322e",
+              "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+              "source_tree_sha256": "5b7de7ab840a15d8a488343eda6d195ae37f26eb2fc519e731740997ea446d37",
+              "status_sha256": "19fef92427d7387e5780b10f13ae049f7d17d95ad7e760f845ab155640c4e2a9"
+            }
+          }
+        },
+        "qualification": false,
+        "source": {
+          "clean": false,
+          "commit": "841b81e075d8316d02b6b7f1cc1274d24efb322e",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "5b7de7ab840a15d8a488343eda6d195ae37f26eb2fc519e731740997ea446d37",
+          "status_sha256": "19fef92427d7387e5780b10f13ae049f7d17d95ad7e760f845ab155640c4e2a9"
+        }
+      },
+      "label": "neutral",
+      "mismatched_pixels": 7445395,
+      "native_callback_once_and_teardown_checks": 540,
+      "owned_bounds_exact": 540,
+      "pixel_exact": 146,
+      "process_exit_code": 0,
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/neutral-comparison-v1.json",
+        "sha256": "9b3016161278dc6f3a0836a6934dca01b21bbe0fede776f32f5261d156d84128"
+      },
+      "total": 540
+    }
+  ],
+  "neutral_gamma_against_n32": {
+    "changed": 120,
+    "chromium_bytes_unchanged": true,
+    "exact_regressions": 0,
+    "groups": {
+      "alpha/background": [
+        60,
+        2,
+        2
+      ],
+      "alpha/replaced": [
+        60,
+        0,
+        16
+      ],
+      "border/border": [
+        60,
+        19,
+        19
+      ],
+      "green/background": [
+        60,
+        18,
+        18
+      ],
+      "green/replaced": [
+        60,
+        36,
+        36
+      ],
+      "icc/background": [
+        60,
+        0,
+        0
+      ],
+      "icc/replaced": [
+        60,
+        13,
+        13
+      ],
+      "pattern/background": [
+        60,
+        10,
+        10
+      ],
+      "pattern/replaced": [
+        60,
+        0,
+        32
+      ]
+    },
+    "improved": 120,
+    "new_exact": 48,
+    "qualification": false,
+    "worsened": 0
+  },
+  "neutral_resource_delta": {
+    "changed_against_c9": [],
+    "chromium_bytes_and_identities_unchanged": true,
+    "evidence": {
+      "binary_unchanged": true,
+      "kind": "diagnostic-census",
+      "qualification_backend_match": true,
+      "qualified": false,
+      "source_unchanged": true,
+      "tolerance_pixels": 0
+    },
+    "process_exit_code": 0,
+    "qualification": false,
+    "results": {
+      "different": 0,
+      "errors": 0,
+      "exact": 4,
+      "profile_result_sha256": "6e26eab4487c20c71b710b602a646a6a060569d6851368f533fcfbe36033c175",
+      "total": 4
+    }
+  },
+  "original_format_delta": {
+    "changes": [
+      {
+        "after": 428,
+        "before": 428,
+        "profile": "legacy-800x600@1",
+        "test": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius"
+      },
+      {
+        "after": 3995,
+        "before": 4002,
+        "profile": "mobile-375x667@2",
+        "test": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius"
+      },
+      {
+        "after": 362,
+        "before": 732,
+        "profile": "desktop-1280x720@1.25",
+        "test": "wpt/css_backgrounds/background-334"
+      },
+      {
+        "after": 6769,
+        "before": 6812,
+        "profile": "desktop-1280x720@1.25",
+        "test": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius"
+      },
+      {
+        "after": 249,
+        "before": 311,
+        "profile": "desktop-1280x720@1.25",
+        "test": "wpt/css_backgrounds/border-image-017"
+      },
+      {
+        "after": 249,
+        "before": 311,
+        "profile": "desktop-1280x720@1.25",
+        "test": "wpt/css_backgrounds/border-image-018"
+      },
+      {
+        "after": 249,
+        "before": 311,
+        "profile": "desktop-1280x720@1.25",
+        "test": "wpt/css_backgrounds/border-image-019"
+      },
+      {
+        "after": 249,
+        "before": 311,
+        "profile": "desktop-1280x720@1.25",
+        "test": "wpt/css_backgrounds/border-image-020"
+      },
+      {
+        "after": 249,
+        "before": 311,
+        "profile": "desktop-1280x720@1.25",
+        "test": "wpt/css_backgrounds/border-image-slice-001"
+      },
+      {
+        "after": 249,
+        "before": 311,
+        "profile": "desktop-1280x720@1.25",
+        "test": "wpt/css_backgrounds/border-image-slice-002"
+      },
+      {
+        "after": 63,
+        "before": 65,
+        "profile": "desktop-1280x720@1.25",
+        "test": "wpt/css_flexbox/flexbox-whitespace-handling-001-ref"
+      },
+      {
+        "after": 63,
+        "before": 65,
+        "profile": "desktop-1280x720@1.25",
+        "test": "wpt/css_flexbox/flexbox-whitespace-handling-001a"
+      },
+      {
+        "after": 63,
+        "before": 65,
+        "profile": "desktop-1280x720@1.25",
+        "test": "wpt/css_flexbox/flexbox-whitespace-handling-001b"
+      },
+      {
+        "after": 817,
+        "before": 816,
+        "profile": "desktop-1920x1080@1.5",
+        "test": "wpt/css_backgrounds/background-334"
+      },
+      {
+        "after": 1256,
+        "before": 1293,
+        "profile": "desktop-1920x1080@1.5",
+        "test": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius"
+      },
+      {
+        "after": 225,
+        "before": 75,
+        "profile": "desktop-1920x1080@1.5",
+        "test": "wpt/css_backgrounds/border-image-017"
+      },
+      {
+        "after": 225,
+        "before": 75,
+        "profile": "desktop-1920x1080@1.5",
+        "test": "wpt/css_backgrounds/border-image-018"
+      },
+      {
+        "after": 225,
+        "before": 75,
+        "profile": "desktop-1920x1080@1.5",
+        "test": "wpt/css_backgrounds/border-image-019"
+      },
+      {
+        "after": 225,
+        "before": 75,
+        "profile": "desktop-1920x1080@1.5",
+        "test": "wpt/css_backgrounds/border-image-020"
+      },
+      {
+        "after": 225,
+        "before": 75,
+        "profile": "desktop-1920x1080@1.5",
+        "test": "wpt/css_backgrounds/border-image-slice-001"
+      },
+      {
+        "after": 225,
+        "before": 75,
+        "profile": "desktop-1920x1080@1.5",
+        "test": "wpt/css_backgrounds/border-image-slice-002"
+      },
+      {
+        "after": 156,
+        "before": 150,
+        "profile": "desktop-1920x1080@1.5",
+        "test": "wpt/css_flexbox/flexbox-whitespace-handling-001-ref"
+      },
+      {
+        "after": 156,
+        "before": 150,
+        "profile": "desktop-1920x1080@1.5",
+        "test": "wpt/css_flexbox/flexbox-whitespace-handling-001a"
+      },
+      {
+        "after": 156,
+        "before": 150,
+        "profile": "desktop-1920x1080@1.5",
+        "test": "wpt/css_flexbox/flexbox-whitespace-handling-001b"
+      }
+    ],
+    "chromium_bytes_and_identities_unchanged": true,
+    "process_exit_code": 1,
+    "release_qualification": false
+  },
+  "original_guards": [
+    {
+      "evidence": {
+        "binary_unchanged": true,
+        "kind": "diagnostic-census",
+        "qualification_backend_match": true,
+        "qualified": false,
+        "source_unchanged": true,
+        "tolerance_pixels": 0
+      },
+      "label": "rgba",
+      "process_exit_code": 1,
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/residual-rgba-v1/full-summary.json",
+        "sha256": "58649b28c4c7922d37c37a875f399170b3245717e9e31dca5efe99345c3ac082"
+      },
+      "results": {
+        "different": 24,
+        "errors": 0,
+        "exact": 20,
+        "profile_result_sha256": "03b46dfb54dec7c0100b974594b6cd1118b880af0d155bdfb57bf0dd16623718",
+        "total": 44
+      }
+    },
+    {
+      "evidence": {
+        "binary_unchanged": true,
+        "kind": "diagnostic-census",
+        "qualification_backend_match": true,
+        "qualified": false,
+        "source_unchanged": true,
+        "tolerance_pixels": 0
+      },
+      "label": "neutral",
+      "process_exit_code": 1,
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/residual-neutral-v2/full-summary.json",
+        "sha256": "ce595dfd05b48a0489a96d38ca6ce98ad70b3f32d0d1c721929624cc83136299"
+      },
+      "results": {
+        "different": 24,
+        "errors": 0,
+        "exact": 20,
+        "profile_result_sha256": "0b695a7da4cdd4292f32b88224e4877ac17d93fb6a5ca5fa8352f5528769b244",
+        "total": 44
+      }
+    },
+    {
+      "evidence": {
+        "binary_unchanged": true,
+        "kind": "diagnostic-census",
+        "qualification_backend_match": true,
+        "qualified": false,
+        "source_unchanged": true,
+        "tolerance_pixels": 0
+      },
+      "label": "neutral-resource",
+      "process_exit_code": 0,
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/neutral-resource-guards-v2/full-summary.json",
+        "sha256": "15dc8aadc3210c7bc1903165495d86bb471f172fe37728b869453d821e5718b7"
+      },
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 4,
+        "profile_result_sha256": "6e26eab4487c20c71b710b602a646a6a060569d6851368f533fcfbe36033c175",
+        "total": 4
+      }
+    }
+  ],
+  "original_neutral_delta": {
+    "changes": [],
+    "chromium_bytes_and_identities_unchanged": true,
+    "process_exit_code": 1,
+    "qualification": false,
+    "results": {
+      "different": 24,
+      "errors": 0,
+      "exact": 20,
+      "profile_result_sha256": "0b695a7da4cdd4292f32b88224e4877ac17d93fb6a5ca5fa8352f5528769b244",
+      "total": 44
+    }
+  },
+  "pixel_tolerance": 0,
+  "policy": "Chromium is the sole pixel target. Consuming applications use public native Rust APIs and callbacks. Historical Open UI outputs are provenance only.",
+  "primary_sources": [
+    {
+      "path": "out/renderer-evidence/native-resolved-image-patches-v1/pinned-source-v2/SkPngRustCodec.cpp",
+      "sha256": "766caf1d12b891799d95a9c37fee3473ea40e4667fcb87239e6712c452cde680",
+      "url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/codec/SkPngRustCodec.cpp"
+    },
+    {
+      "path": "out/renderer-evidence/native-resolved-image-patches-v1/pinned-source-v2/png_image_decoder.cc",
+      "sha256": "1e5cfe87a026049c1f60a11c72eccb1b4fbdd9608b5e7236b543792307fddc01",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/third_party/blink/renderer/platform/image-decoders/png/png_image_decoder.cc"
+    },
+    {
+      "path": "out/renderer-evidence/native-resolved-image-patches-v1/pinned-source-v2/image_decoder.cc",
+      "sha256": "3a01bd7e4b5b4ed387692535d962c51c214d4835c70c1226c21f73877a8f8b28",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/third_party/blink/renderer/platform/image-decoders/image_decoder.cc"
+    },
+    {
+      "local_path": "/home/nero/.cargo/git/checkouts/rust-skia-b4d79b6a888cdb4c/a31b86b/skia-bindings/skia/src/codec/SkPngCodec.cpp",
+      "path": "out/renderer-evidence/native-resolved-image-patches-v1/pinned-source-v2/SkPngCodec.cpp",
+      "sha256": "6c9b93b5d17ff66c0e46edbdba5baa56bdb522399ca697cc949f48a152bd55ef",
+      "source": "rust-skia workspace patch a31b86ba3b767344d39af3b8c30043003d8fc991; actual local Skia source"
+    }
+  ],
+  "prototype_patch": {
+    "applied": false,
+    "applies_to_umbrella_branch": true,
+    "artifact": {
+      "path": "docs/renderer/evidence/native-png-sampling-v1/png-neutral-gamma-prototype-v2.patch",
+      "sha256": "6e39ee34a628c9b7cd052ab6973a8009af7b1e97597a787afd3a4dfbe0bb5bc0"
+    },
+    "measured_with_other_unapplied_prototypes": true,
+    "standalone_build_qualified": false
+  },
+  "release_qualification": false,
+  "remaining_native_root_causes_reviewed": false,
+  "remaining_work": [
+    "394 native comparisons still have pixel differences in the neutral-gamma diagnostic",
+    "standalone decoder qualification under the release build configuration",
+    "complete clean original and expanded matrices and required focused/primitive gates",
+    "reviewed minimized evidence and ownership for every residual"
+  ],
+  "renderer_root_cause_owner": "openui-paint image resource decoding, sampling and compositing",
+  "schema_version": 1,
+  "states": 108,
+  "unit_tests": {
+    "failed": 0,
+    "log": {
+      "path": "out/renderer-evidence/native-resolved-image-patches-v1/neutral-gamma-tests-v2.log",
+      "sha256": "1b16149119b02816eb379291280ff986a96453c2e007962eb794693470862c14"
+    },
+    "passed": 2,
+    "process_exit_code": 0
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "all_commands_terminal": true,
+  "cargo_target_dir": "/mnt/e/openui-v02-cargo-c73754e2/target",
+  "probe_sha256": "c808dbccba606603a305536f7ed9b19d5bb3847abac80eb45fd53a566bb29e3c",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "27a47ba25185e20e7ae20801d0a45a386ce9e78c",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5b94003af7eefc5faf9af934c9123f5783f0ff600710bd7440ece2a2ee8ee28e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "27a47ba25185e20e7ae20801d0a45a386ce9e78c",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5b94003af7eefc5faf9af934c9123f5783f0ff600710bd7440ece2a2ee8ee28e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "f3ad7b2e5438078b9fc59976dec27dc218bf246dabe72d17d6b8d3ec9a1f68ca",
+      "name": "clean-workspace",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--workspace",
+        "--locked",
+        "--features",
+        "openui-ffi/linux"
+      ],
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 13,
+      "log_sha256": "87119e53080207cacff56703a74b49fdcf762b9d24a2d7355ad92f31676604ac",
+      "name": "workspace",
+      "observed_exit_code": 0,
+      "passed": 8555
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-clean-v1800/native_raster_options",
+      "binary_sha256": "d7d82d0e7767bfc0b41f1f1774609bf1a0182a9e884216c3afe42bf996967acc",
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "-p",
+        "openui",
+        "--example",
+        "native_raster_options"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "9f37e08a4971738b3523c8f990ba5837924a1b5293958f6c0f90bed2d8159d10",
+      "name": "options-build",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-clean-v1800/native_raster_options",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-options-clean-v1800/native-app-images"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "eaa864b92112bc4aee364971f8a096a9ff9dc033166c03da0d4c3031ea42247c",
+      "name": "native-rust-application",
+      "observed_exit_code": 0
+    }
+  ],
+  "workspace_packages_cleaned": 18
+}

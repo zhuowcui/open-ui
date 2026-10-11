@@ -1,0 +1,61 @@
+{
+  "all_nine_invariants_unchanged": 22924,
+  "artifacts": {
+    "baseline": {
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-clean-full-v1290/full-summary.json",
+      "sha256": "74a5c0c4ac8100e4655d9fa16b38c13f33e2bdf4cc1103d8a86f3183b9caf5c9"
+    },
+    "build": {
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-clean-v1340/build.json",
+      "sha256": "2c49ae0b5373012805c12ebcfd0b6667472e766e1831535690d27fd56aeff985"
+    },
+    "current": {
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-clean-full-v1340/full-summary.json",
+      "sha256": "e9677b4742b31d0d90f85f4e25846d798201f285b4c03bb407f5f243c8014cca"
+    },
+    "full_exit": {
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-integration-full-exit-v1340.json",
+      "sha256": "93ed52e8f9f510391d64213ee2650439e72d92bb25bbbdf0070a9ccab6127ab8"
+    }
+  },
+  "changed_comparisons": 0,
+  "chromium_inputs_images_and_oracle_identities_unchanged": true,
+  "complete_original_scope": true,
+  "exact_gains": 0,
+  "exact_losses": 0,
+  "expanded_result": "still running; not audited or admitted",
+  "full_stage_terminal": true,
+  "generated_ownership_ledger_qualifying": false,
+  "new_release_states_admitted": 0,
+  "observed_exit_code": 1,
+  "original_pixel_gate": "FAIL",
+  "probe_sha256": "ec106065b988d1cf567f7c024ebbaaebecd359da7cbedb9532247589001ea45d",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "residual_original_ids": 882,
+  "results": {
+    "different": 1590,
+    "errors": 0,
+    "exact": 21334,
+    "profile_result_sha256": "a0f38ec1ab7cba0e43c50462f34c38287b5c1c6a2a82129c7dd59590e6f4edab",
+    "total": 22924
+  },
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "289d5516dcbacd17f1a5b60046771bdfe28061a6",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "89e0849ae447e918edc932afb04de92a9832675b132b7656df30f603948d9aac",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "289d5516dcbacd17f1a5b60046771bdfe28061a6",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "89e0849ae447e918edc932afb04de92a9832675b132b7656df30f603948d9aac",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "whole_pipeline_state_at_observation": "running-expanded",
+  "whole_pipeline_terminal": false,
+  "zero_tolerance": true
+}

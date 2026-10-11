@@ -1,0 +1,849 @@
+{
+  "all_local_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "compiled_paths_verified": 29,
+  "compiler_artifact_records": 16,
+  "files": [
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-0__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-0/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-0__native-1__openui.png",
+      "raw_bytes": 6001,
+      "raw_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-0/native-1/openui.png",
+      "stored_bytes": 6001,
+      "stored_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-0__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-0/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-0__native-2__openui.png",
+      "raw_bytes": 6001,
+      "raw_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-0/native-2/openui.png",
+      "stored_bytes": 6001,
+      "stored_sha256": "24f78c2558af7b4c1481334ac7e977f3aedfa9fdfacf1a7baedd081c7440949b"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-0-native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-0-native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-0-native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-0-native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-1__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-1/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-1__native-1__openui.png",
+      "raw_bytes": 9663,
+      "raw_sha256": "f28a63a9122c418e5c3f42e4fe367c12b33c3f9849d2d86b40720cbb5760424e",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-1/native-1/openui.png",
+      "stored_bytes": 9663,
+      "stored_sha256": "f28a63a9122c418e5c3f42e4fe367c12b33c3f9849d2d86b40720cbb5760424e"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-1__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-1/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-1__native-2__openui.png",
+      "raw_bytes": 9663,
+      "raw_sha256": "f28a63a9122c418e5c3f42e4fe367c12b33c3f9849d2d86b40720cbb5760424e",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-1/native-2/openui.png",
+      "stored_bytes": 9663,
+      "stored_sha256": "f28a63a9122c418e5c3f42e4fe367c12b33c3f9849d2d86b40720cbb5760424e"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-1-native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-1-native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-1-native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-1-native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-10__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "7587f182639e4020231cb1f9ced1827b48c934f977456d4e76a6fe47ac81179d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-10/native-1/geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "767205f3930f02493f0eaa50222802658ad296fbfe7230337a1edd25c7bc87da"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-10__native-1__openui.png",
+      "raw_bytes": 12561,
+      "raw_sha256": "3d55e6d77037e04199a8545cdafa13d63942877e7c1c349cbe11e962bf3d2383",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-10/native-1/openui.png",
+      "stored_bytes": 12561,
+      "stored_sha256": "3d55e6d77037e04199a8545cdafa13d63942877e7c1c349cbe11e962bf3d2383"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-10__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "7587f182639e4020231cb1f9ced1827b48c934f977456d4e76a6fe47ac81179d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-10/native-2/geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "767205f3930f02493f0eaa50222802658ad296fbfe7230337a1edd25c7bc87da"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-10__native-2__openui.png",
+      "raw_bytes": 12561,
+      "raw_sha256": "3d55e6d77037e04199a8545cdafa13d63942877e7c1c349cbe11e962bf3d2383",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-10/native-2/openui.png",
+      "stored_bytes": 12561,
+      "stored_sha256": "3d55e6d77037e04199a8545cdafa13d63942877e7c1c349cbe11e962bf3d2383"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-10-native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-10-native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-10-native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-10-native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-2__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-2/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-2__native-1__openui.png",
+      "raw_bytes": 11948,
+      "raw_sha256": "7b1515fce8f99dccf481b273aaea90e4408878b321c6033930b3cca84b47cddd",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-2/native-1/openui.png",
+      "stored_bytes": 11948,
+      "stored_sha256": "7b1515fce8f99dccf481b273aaea90e4408878b321c6033930b3cca84b47cddd"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-2__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-2/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-2__native-2__openui.png",
+      "raw_bytes": 11948,
+      "raw_sha256": "7b1515fce8f99dccf481b273aaea90e4408878b321c6033930b3cca84b47cddd",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-2/native-2/openui.png",
+      "stored_bytes": 11948,
+      "stored_sha256": "7b1515fce8f99dccf481b273aaea90e4408878b321c6033930b3cca84b47cddd"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-2-native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-2-native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-2-native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-2-native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-3__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-3/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-3__native-1__openui.png",
+      "raw_bytes": 18671,
+      "raw_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-3/native-1/openui.png",
+      "stored_bytes": 18671,
+      "stored_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-3__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-3/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-3__native-2__openui.png",
+      "raw_bytes": 18671,
+      "raw_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-3/native-2/openui.png",
+      "stored_bytes": 18671,
+      "stored_sha256": "02858d2514f7f177ef94ad7fd8fd66bf623e72d3c62fd277cf1c36d527a24c94"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-3-native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-3-native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-3-native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-3-native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-4__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-4/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-4__native-1__openui.png",
+      "raw_bytes": 38449,
+      "raw_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-4/native-1/openui.png",
+      "stored_bytes": 38449,
+      "stored_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-4__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-4/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-4__native-2__openui.png",
+      "raw_bytes": 38449,
+      "raw_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-4/native-2/openui.png",
+      "stored_bytes": 38449,
+      "stored_sha256": "388e2b5f99b4ab1e7487170f5ac9bf1dbb35de49664d3b69d33e4169f5ca4518"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-4-native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-4-native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-4-native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-4-native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-5__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-5/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-5__native-1__openui.png",
+      "raw_bytes": 9256,
+      "raw_sha256": "9928957f82c35148d096ae766b2916787962b70f73bb9fcfb71b322cf6c23d11",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-5/native-1/openui.png",
+      "stored_bytes": 9256,
+      "stored_sha256": "9928957f82c35148d096ae766b2916787962b70f73bb9fcfb71b322cf6c23d11"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-5__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-5/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-5__native-2__openui.png",
+      "raw_bytes": 9256,
+      "raw_sha256": "9928957f82c35148d096ae766b2916787962b70f73bb9fcfb71b322cf6c23d11",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-5/native-2/openui.png",
+      "stored_bytes": 9256,
+      "stored_sha256": "9928957f82c35148d096ae766b2916787962b70f73bb9fcfb71b322cf6c23d11"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-5-native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-5-native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-5-native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-5-native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-6__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-6/native-1/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-6__native-1__openui.png",
+      "raw_bytes": 9586,
+      "raw_sha256": "277712b7ec53c43947b64a01d01c02f1de6d13fb4a27ed2d2718e6dc8ff59c33",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-6/native-1/openui.png",
+      "stored_bytes": 9586,
+      "stored_sha256": "277712b7ec53c43947b64a01d01c02f1de6d13fb4a27ed2d2718e6dc8ff59c33"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-6__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "10a7fd74126f1de32d0b7d039a1abb719d724b4dbd007956c908382bc8c23558",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-6/native-2/geometry.json",
+      "stored_bytes": 614,
+      "stored_sha256": "dcd79fb90a0e4ba162d3bc5e1327118b8a435d15bc1959f86a935449b9b57d3a"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-6__native-2__openui.png",
+      "raw_bytes": 9586,
+      "raw_sha256": "277712b7ec53c43947b64a01d01c02f1de6d13fb4a27ed2d2718e6dc8ff59c33",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-6/native-2/openui.png",
+      "stored_bytes": 9586,
+      "stored_sha256": "277712b7ec53c43947b64a01d01c02f1de6d13fb4a27ed2d2718e6dc8ff59c33"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-6-native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-6-native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-6-native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-6-native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-7__native-1__geometry.json.gz",
+      "raw_bytes": 7164,
+      "raw_sha256": "6d71cc7177b2930311231c6b56b7b3d94271bd15dc1707a3098c417dce722d68",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-7/native-1/geometry.json",
+      "stored_bytes": 628,
+      "stored_sha256": "431d607eb5816a82f25c56e5e8819e9d6dcbe653ad4ba1d431c20bb400a558ae"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-7__native-1__openui.png",
+      "raw_bytes": 9680,
+      "raw_sha256": "8af751e422f1101f7669268e06c1c067242889b12e2215154f644d7fce17e3b0",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-7/native-1/openui.png",
+      "stored_bytes": 9680,
+      "stored_sha256": "8af751e422f1101f7669268e06c1c067242889b12e2215154f644d7fce17e3b0"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-7__native-2__geometry.json.gz",
+      "raw_bytes": 7164,
+      "raw_sha256": "6d71cc7177b2930311231c6b56b7b3d94271bd15dc1707a3098c417dce722d68",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-7/native-2/geometry.json",
+      "stored_bytes": 628,
+      "stored_sha256": "431d607eb5816a82f25c56e5e8819e9d6dcbe653ad4ba1d431c20bb400a558ae"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-7__native-2__openui.png",
+      "raw_bytes": 9680,
+      "raw_sha256": "8af751e422f1101f7669268e06c1c067242889b12e2215154f644d7fce17e3b0",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-7/native-2/openui.png",
+      "stored_bytes": 9680,
+      "stored_sha256": "8af751e422f1101f7669268e06c1c067242889b12e2215154f644d7fce17e3b0"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-7-native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-7-native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-7-native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-7-native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-8__native-1__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "7587f182639e4020231cb1f9ced1827b48c934f977456d4e76a6fe47ac81179d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-8/native-1/geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "767205f3930f02493f0eaa50222802658ad296fbfe7230337a1edd25c7bc87da"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-8__native-1__openui.png",
+      "raw_bytes": 10265,
+      "raw_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-8/native-1/openui.png",
+      "stored_bytes": 10265,
+      "stored_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-8__native-2__geometry.json.gz",
+      "raw_bytes": 7084,
+      "raw_sha256": "7587f182639e4020231cb1f9ced1827b48c934f977456d4e76a6fe47ac81179d",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-8/native-2/geometry.json",
+      "stored_bytes": 623,
+      "stored_sha256": "767205f3930f02493f0eaa50222802658ad296fbfe7230337a1edd25c7bc87da"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-8__native-2__openui.png",
+      "raw_bytes": 10265,
+      "raw_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-8/native-2/openui.png",
+      "stored_bytes": 10265,
+      "stored_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-8-native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-8-native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-8-native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-8-native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-9__native-1__geometry.json.gz",
+      "raw_bytes": 7164,
+      "raw_sha256": "b228dcde8e787052f73aecd8fce43a6515e1952d8cbaa8fbd049c405d1d86b02",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-9/native-1/geometry.json",
+      "stored_bytes": 625,
+      "stored_sha256": "54b00178c1e355ce846c4d8cae28039d793a07e25aa006d8e13920baf2ff20d4"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-9__native-1__openui.png",
+      "raw_bytes": 10265,
+      "raw_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-9/native-1/openui.png",
+      "stored_bytes": 10265,
+      "stored_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-9__native-2__geometry.json.gz",
+      "raw_bytes": 7164,
+      "raw_sha256": "b228dcde8e787052f73aecd8fce43a6515e1952d8cbaa8fbd049c405d1d86b02",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-9/native-2/geometry.json",
+      "stored_bytes": 625,
+      "stored_sha256": "54b00178c1e355ce846c4d8cae28039d793a07e25aa006d8e13920baf2ff20d4"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-9__native-2__openui.png",
+      "raw_bytes": 10265,
+      "raw_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-9/native-2/openui.png",
+      "stored_bytes": 10265,
+      "stored_sha256": "c07a35e161aed6f3d1775052a4f599cfa9b54696cf6b06ec86bcfe9107eb620c"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-9-native-1.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-9-native-1.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__case-9-native-2.log.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/case-9-native-2.log",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__clean-local-packages.log.gz",
+      "raw_bytes": 7533,
+      "raw_sha256": "3d655283f69c58f8ddcff1a92e5cbb77d679977ae999093da0f6a73d1c49634e",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/clean-local-packages.log",
+      "stored_bytes": 625,
+      "stored_sha256": "5ae91613243af4989c85e63d53fc05147a60d02e927471abaf9a2f560e1e63eb"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__metadata.log.gz",
+      "raw_bytes": 699206,
+      "raw_sha256": "46f726d02970b676fa758561024d71b664769c01d61ad2afbd18defd2ff991f5",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/metadata.log",
+      "stored_bytes": 66659,
+      "stored_sha256": "8db6e9ffb75d4084c168da058cde361577a67aa2345fe542f857f6147611f936"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__native-build.log.gz",
+      "raw_bytes": 85197,
+      "raw_sha256": "80596c4d2dd09626e0a8537d8edf11439779c272558eeafb62c03df7c7202c1a",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/native-build.log",
+      "stored_bytes": 7696,
+      "stored_sha256": "e356cf408bc5e974d7231625d709914f0bdd248c10c224eff879cf78c406ef75"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__paint-tests.log.gz",
+      "raw_bytes": 22717,
+      "raw_sha256": "96f78c19fa221c3dbeffce79b1b29ea2ac7f2dd7bcc1887632a379abc2d2d917",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/paint-tests.log",
+      "stored_bytes": 5179,
+      "stored_sha256": "f281150dd59ddf49e10d0e1f9ebc54780eb143cfe17af714c1f6c219c8ab5225"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/public__receipt.json.gz",
+      "raw_bytes": 170767,
+      "raw_sha256": "42d89437aa8fe4d9eff08f37d16d9337f7a194fa76a9a1ebb16bdc4fcc001314",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3610/receipt.json",
+      "stored_bytes": 8690,
+      "stored_sha256": "e681497bf98b0f1eb567f298416423586b47bd39161548e762e751061e20c2a1"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/failed-build__clean-local-packages.log.gz",
+      "raw_bytes": 7544,
+      "raw_sha256": "b5b9618e498a52fe092b061138e9e54f39d9417590a173e70792352b0e334737",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3607/clean-local-packages.log",
+      "stored_bytes": 636,
+      "stored_sha256": "f3d677c6608a3cb78c14836a9b155c641eb2676b6b2414a42e349915ffa4708a"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/failed-build__metadata.log.gz",
+      "raw_bytes": 699206,
+      "raw_sha256": "46f726d02970b676fa758561024d71b664769c01d61ad2afbd18defd2ff991f5",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3607/metadata.log",
+      "stored_bytes": 66659,
+      "stored_sha256": "8db6e9ffb75d4084c168da058cde361577a67aa2345fe542f857f6147611f936"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/failed-build__native-build.log.gz",
+      "raw_bytes": 6991,
+      "raw_sha256": "60d0c3b41283a689b8f4f37a0de918afccce3e70ffd2d897b33d2ee32c8c08d7",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3607/native-build.log",
+      "stored_bytes": 1401,
+      "stored_sha256": "d9668d7ad92e3725f3a3a65ccf42e29d9f082ea15c9041ee09b0846654da9412"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/failed-build__receipt.json.gz",
+      "raw_bytes": 4785,
+      "raw_sha256": "9d0b05fff77b3400f6838e71972eb834276e1fb4cc9080d732afd657faca687a",
+      "source": "/mnt/d/openui-v02-qualification-d174ea0b/public-fieldset-native-checks-v3607/receipt.json",
+      "stored_bytes": 1284,
+      "stored_sha256": "543f82e64944ce459331e68081a20d9402ee0bd80e96d4a48a6258ce83b02d8c"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/openui-public-fieldset-native-checks-v3607.py.gz",
+      "raw_bytes": 8013,
+      "raw_sha256": "b77a1da09ae713dbb2241ab3e5b12975be2e695bca6b11b7df5ece0c209c5bb2",
+      "source": "/tmp/openui-public-fieldset-native-checks-v3607.py",
+      "stored_bytes": 2932,
+      "stored_sha256": "680dfa663265a1442720742a1e436b5bd887a42b0efdf47498a59c04cacd0f76"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/openui-public-fieldset-native-checks-v3610.py.gz",
+      "raw_bytes": 8443,
+      "raw_sha256": "19cfacfb160234b210e86118456885e0ad8df4ae8ba628389d9994ccb61a6c2d",
+      "source": "/tmp/openui-public-fieldset-native-checks-v3610.py",
+      "stored_bytes": 3031,
+      "stored_sha256": "56f3faa40757f7ef2bceac47fe6f22f93230026e8ab59573947dd2c54809afab"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/openui-public-fieldset-native-audit-v3611.py.gz",
+      "raw_bytes": 4435,
+      "raw_sha256": "509fdfdeec791bc5371e7bdc3a53f3280f86e9a049bdf2d67050a2705a233273",
+      "source": "/tmp/openui-public-fieldset-native-audit-v3611.py",
+      "stored_bytes": 1766,
+      "stored_sha256": "5754076bcb21458f0ade0db26196f9476907ebcc612139ebf6e4bad06129fa41"
+    },
+    {
+      "gzip": true,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/openui-public-fieldset-native-audit-v3613.py.gz",
+      "raw_bytes": 4435,
+      "raw_sha256": "7abd97fa06b6edf9e64cb561980aa397b41e9b8c03a0488d106975eaeb30f5fd",
+      "source": "/tmp/openui-public-fieldset-native-audit-v3613.py",
+      "stored_bytes": 1766,
+      "stored_sha256": "38b4b5dcdf289c1a5b70773ace5ffbd5cbd8ac7d27561b0593681666bc4096e7"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/openui-public-fieldset-native-failure-terminal-v3609.json",
+      "raw_bytes": 1039,
+      "raw_sha256": "3f3a91c9abe4f156c23694a622ff695e0c4c85e3d59fc0c49a37ba607c4a581d",
+      "source": "/tmp/openui-public-fieldset-native-failure-terminal-v3609.json",
+      "stored_bytes": 1039,
+      "stored_sha256": "3f3a91c9abe4f156c23694a622ff695e0c4c85e3d59fc0c49a37ba607c4a581d"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/openui-public-fieldset-native-audit-failure-v3612.json",
+      "raw_bytes": 1082,
+      "raw_sha256": "fdac5694b6d6dd6f71a8b61456b7aef67e30c5f840a2ac0aeedee2c961bffb39",
+      "source": "/tmp/openui-public-fieldset-native-audit-failure-v3612.json",
+      "stored_bytes": 1082,
+      "stored_sha256": "fdac5694b6d6dd6f71a8b61456b7aef67e30c5f840a2ac0aeedee2c961bffb39"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/openui-public-fieldset-native-terminal-v3613.json",
+      "raw_bytes": 1383,
+      "raw_sha256": "df6ae1977b16b68dd509e5e4102bac1923fc173ada2d36735992419434141ed0",
+      "source": "/tmp/openui-public-fieldset-native-terminal-v3613.json",
+      "stored_bytes": 1383,
+      "stored_sha256": "df6ae1977b16b68dd509e5e4102bac1923fc173ada2d36735992419434141ed0"
+    },
+    {
+      "gzip": false,
+      "path": "docs/renderer/evidence/native-fragmented-fieldset-public-v1/openui-public-fieldset-native-reaped-v3614.json",
+      "raw_bytes": 1084,
+      "raw_sha256": "4342a48bf63f346454d2e049d609f7f6bbccdf624f624b9ef503bb0912afe973",
+      "source": "/tmp/openui-public-fieldset-native-reaped-v3614.json",
+      "stored_bytes": 1084,
+      "stored_sha256": "4342a48bf63f346454d2e049d609f7f6bbccdf624f624b9ef503bb0912afe973"
+    }
+  ],
+  "full_renderer_contract_qualified": false,
+  "historical_openui_archive_is_a_pixel_target": false,
+  "implementation_integrated": true,
+  "independent_native_processes_per_case": 2,
+  "javascript_executed_by_openui": false,
+  "local_libraries_fresh": true,
+  "measured_source": {
+    "clean": true,
+    "commit": "dc8a540e6281a83dc2e71e5248f297e1c3baf83d",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "e6ac872db488e23c7d0967cb90e8bfc6848a53269549ad1f4817cc6bcb1e51f7",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native_actual_exit_code": 0,
+  "native_audit_actual_exit_code": 0,
+  "native_bounds_exact": 187,
+  "native_callbacks_repeats_and_teardown_pass": true,
+  "native_cases": 11,
+  "native_client_rect_sets_exact": 187,
+  "native_images_different": 4,
+  "native_images_exact": 7,
+  "native_interaction": "Public Rust methods and Rust callbacks over the retained Document",
+  "paint_tests_passed": 168,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "previous_private_evidence_unchanged": true,
+  "previous_private_index_sha256": "83d52273e26d688d5b14143d5eb59a02c4ba59c61edc0dc39590a9fd178d9073",
+  "private_renderer_matrix_results": {
+    "expanded": {
+      "actual_exit_code": 1,
+      "changed_rows": 7,
+      "chromium_reference_changed_rows": 0,
+      "different": 1583,
+      "errors": 0,
+      "exact": 22145,
+      "gains": 4,
+      "losses": 0,
+      "total": 23728,
+      "worsened": 0
+    },
+    "focused": {
+      "actual_exit_code": 0,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "gains": 0,
+      "losses": 0,
+      "total": 640,
+      "worsened": 0
+    },
+    "full": {
+      "actual_exit_code": 1,
+      "changed_rows": 7,
+      "chromium_reference_changed_rows": 0,
+      "different": 1582,
+      "errors": 0,
+      "exact": 21342,
+      "gains": 4,
+      "losses": 0,
+      "total": 22924,
+      "worsened": 0
+    },
+    "primitive": {
+      "actual_exit_code": 0,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "gains": 0,
+      "losses": 0,
+      "total": 960,
+      "worsened": 0
+    }
+  },
+  "private_renderer_source": {
+    "clean": true,
+    "commit": "0a5f558733b94f7d0d7dfb06a01454913015e77d",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "56780c592cc78e553946dc7909c7007d3afb766789d2a3307552e1d7eb054540",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "private_summary_count_correction": {
+    "correct": 187,
+    "field": "native_bounds_and_client_rect_sets_exact",
+    "previous": 143,
+    "reason": "17 owned handles percase across11 cases; actual raw geometry records and comparisons are unchanged"
+  },
+  "release_qualified": false,
+  "saved_audits_are_chronological_and_retired_for_reexecution": true,
+  "schema_version": 1,
+  "scope": "Fresh canonical native Rust consumer and paint tests; complete canonical renderer/workspace qualification remains pending."
+}

@@ -1,0 +1,520 @@
+{
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/axis-layers-raster-delta-v42.json",
+      "sha256": "80ed8bee5cf3f5ec611a2799cc76421b506b6c8f2d0a71163de43d4ccd8867ba"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/axis-layers-clean-focused-v40/focused-summary.json",
+      "sha256": "7ee1e5a0c16ad5258653c5d474ebe664ee0468a5b6cf532a3d3ab9932ba564b9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/axis-layers-clean-primitive-v40/primitive-summary.json",
+      "sha256": "2511b4ecb6e717a954d821c1034caab25ba4d406a9fa29292355d1a117878b18"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-delta-v42.json",
+      "sha256": "76d921ce290e8300e85a81b5b9db34ddf644e22e96aeeabfabb3213db90806a4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-channel-delta-v43.json",
+      "sha256": "d9f8aa1f3572b5680b7801d2b691913da4462e56d1188d353c589579c5466b23"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-clean-v42-comparison-v1.json",
+      "sha256": "afe586a370535955992057f5a7a205782d1ab84a20122962ec7c226fb686e555"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/client-scissor-clean-v42-comparison-v1.json",
+      "sha256": "30d5e9ce3f3303376bf755f26ec05ec1f3b8879f2eee78b74fc2feb5e9a6452b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-clean-v42/source-before-build.json",
+      "sha256": "ca593c5d5d2369e5fd452c518dcb2a2d68a7282e6e8489d9515036c64d883d05"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-clean-v42/source-after-native.json",
+      "sha256": "ca593c5d5d2369e5fd452c518dcb2a2d68a7282e6e8489d9515036c64d883d05"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-clean-v42/build.json",
+      "sha256": "214877bfbc641e460a4c45c269ffa8d7705e299251448e71bdbd478c4e57005f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-clean-v42/pixel-build.json",
+      "sha256": "8c7226070319ffeb8b82f0b2d641f8df8c653f9fcc0ffafffdaf87583b4f88d7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-clean-v42/renderer-build-identity.json",
+      "sha256": "2aece1f8631c4fe41833d9c67536574fcbdec414bd5990d80c06bdda44b98641"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-clean-v42.log",
+      "sha256": "2206cbda3d59f254c43790e47ddde90e28042b96dbdd1bed0617cef33ec118d1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-build-v42.log",
+      "sha256": "b7730114505012cdb75cb9ca8919502c5f50b8ef9f51f0b73d5ac905afef1703"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-pixel-build-v43.log",
+      "sha256": "110ab35024c1bb2b69211e2b74730726237f86c550d0d786bee997a740c75f08"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/picture-expanded-additions-v42.json",
+      "sha256": "98a4d46c847ea599fc910984d08a1ba516a34a3004cf0735c6c50d85b9e02830"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/primary-client-scissor-v44.json",
+      "sha256": "a4301fbc24c4ce75b5503d90c5e64418ae35c006216de46c5ebe9fa10ee9a9f4"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/draw_property_utils-147.50-v44.cc",
+      "sha256": "53fc90b66d265180f7313d8798f43470f4afca66fc59b79517820461940663c2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/software_renderer-147.50-v44.cc",
+      "sha256": "c3dec17e4de86214cf02d9d550281e11374ef49c005d34e6eb4d0c223c48042a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-checks-v44.json",
+      "sha256": "692428a7dd7a1e800662a83f3ee9dd1af6e5af0fe8a589a576da72ca34280ce5"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-ci-v44.json",
+      "sha256": "e6f72c9d36d868d09a4b2156aafe3fdfcb9dbd1e445e25f6bb58531e39949ad1"
+    },
+    {
+      "path": "docs/renderer/evidence/native-viewport-scroll-v1/client-scissor-prototype-v42.patch",
+      "sha256": "b27dbd66e0f83244f1a4a94f07c3ea81711d5c95f332649699f7d941e289445d"
+    }
+  ],
+  "client_scissor_candidate": {
+    "applied_to_umbrella": false,
+    "build": {
+      "build_command_exit_code": 0,
+      "clean_command_exit_code": 0,
+      "native_binary_sha256": "63d308880174c4dbecfee51f287ef251c3fc683e5711677c16fd28ef0299673d",
+      "source": {
+        "clean": true,
+        "commit": "079208f814689c3f5222944b53f2291c8188510d",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "542a675bebe51361cc011b6118c5d5751f41a8c91792034c5b8e27832e356b9f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "079208f814689c3f5222944b53f2291c8188510d",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "542a675bebe51361cc011b6118c5d5751f41a8c91792034c5b8e27832e356b9f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "channel_deltas": [
+      {
+        "after_absolute_channel_error": 358,
+        "after_mismatched_pixels": 54,
+        "before_absolute_channel_error": 50597,
+        "before_mismatched_pixels": 374,
+        "case": "256x256-scroll-0-0",
+        "improved_channel_cells": 963,
+        "owner": "openui-paint",
+        "scale": "1.25",
+        "worsened_channel_cells": 0
+      },
+      {
+        "after_absolute_channel_error": 16894,
+        "after_mismatched_pixels": 434,
+        "before_absolute_channel_error": 42494,
+        "before_mismatched_pixels": 434,
+        "case": "256x256-scroll-1000-1000",
+        "improved_channel_cells": 963,
+        "owner": "openui-paint",
+        "scale": "1.25",
+        "worsened_channel_cells": 0
+      },
+      {
+        "after_absolute_channel_error": 358,
+        "after_mismatched_pixels": 54,
+        "before_absolute_channel_error": 50597,
+        "before_mismatched_pixels": 374,
+        "case": "256x256-scroll--20--20",
+        "improved_channel_cells": 963,
+        "owner": "openui-paint",
+        "scale": "1.25",
+        "worsened_channel_cells": 0
+      },
+      {
+        "after_absolute_channel_error": 16894,
+        "after_mismatched_pixels": 434,
+        "before_absolute_channel_error": 42494,
+        "before_mismatched_pixels": 434,
+        "case": "256x256-scroll-wheel-1000",
+        "improved_channel_cells": 963,
+        "owner": "openui-paint",
+        "scale": "1.25",
+        "worsened_channel_cells": 0
+      }
+    ],
+    "differing_pixels_removed": 640,
+    "exact_losses": 0,
+    "focused_primitive_and_complete_census_status": "still required",
+    "geometry_oracles_callbacks_offsets_dimensions_and_teardown_unchanged": true,
+    "native_exact": 684,
+    "native_reports": [
+      {
+        "changed": [
+          {
+            "after": 54,
+            "after_sha256": "7a16b320dee8f8ee31f781294240ff3dc05f704a2275306a6cd9ae9639c65c12",
+            "before": 374,
+            "before_sha256": "fb38b0482ae8fcf9443e0ba77f3a2430f293fa99046bd23837ffaeac1eacef08",
+            "case": "256x256-scroll-0-0",
+            "scale": "1.25"
+          },
+          {
+            "after": 434,
+            "after_sha256": "8e9d7757aaf9e8df50758bec39929f9857d9a52625efb12f65e00434712dfee7",
+            "before": 434,
+            "before_sha256": "3d1fd5e39f5cfc5f56b0b043920828816ab09597199ceb64b826c30a1e9eb57c",
+            "case": "256x256-scroll-1000-1000",
+            "scale": "1.25"
+          },
+          {
+            "after": 54,
+            "after_sha256": "7a16b320dee8f8ee31f781294240ff3dc05f704a2275306a6cd9ae9639c65c12",
+            "before": 374,
+            "before_sha256": "fb38b0482ae8fcf9443e0ba77f3a2430f293fa99046bd23837ffaeac1eacef08",
+            "case": "256x256-scroll--20--20",
+            "scale": "1.25"
+          },
+          {
+            "after": 434,
+            "after_sha256": "8e9d7757aaf9e8df50758bec39929f9857d9a52625efb12f65e00434712dfee7",
+            "before": 434,
+            "before_sha256": "3d1fd5e39f5cfc5f56b0b043920828816ab09597199ceb64b826c30a1e9eb57c",
+            "case": "256x256-scroll-wheel-1000",
+            "scale": "1.25"
+          }
+        ],
+        "exact": 196,
+        "exact_losses": [],
+        "newly_exact": [],
+        "oracle_and_owned_geometry_unchanged": true,
+        "pixel_reduction": 640,
+        "total": 250,
+        "worse": []
+      },
+      {
+        "changed": [],
+        "exact": 488,
+        "exact_losses": [],
+        "newly_exact": [],
+        "oracle_and_owned_geometry_unchanged": true,
+        "pixel_reduction": 0,
+        "total": 600,
+        "worse": []
+      }
+    ],
+    "native_total": 850,
+    "newly_exact": 0,
+    "observed_native_exit_codes": [
+      0,
+      0
+    ],
+    "owner": "openui-paint",
+    "patch_path": "docs/renderer/evidence/native-viewport-scroll-v1/client-scissor-prototype-v42.patch",
+    "pixel_build": {
+      "pixel_binary_sha256": "6725a734868019fd9120657a942d05bf65c9028dd7c1ec44602b2cfe464f23a2",
+      "pixel_build_exit_code": 0,
+      "pixel_build_log_sha256": "110ab35024c1bb2b69211e2b74730726237f86c550d0d786bee997a740c75f08",
+      "source": {
+        "clean": true,
+        "commit": "079208f814689c3f5222944b53f2291c8188510d",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "542a675bebe51361cc011b6118c5d5751f41a8c91792034c5b8e27832e356b9f",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "remaining_fractional_failures": 166,
+    "reviewed_root_cause": "Chromium encloses the viewport client clip in physical pixels before applying an integer compositor scissor. A non-antialiased raw fractional Skia client clip rounds inward at 1.25 scale. The shared candidate encloses the reserved-gutter client clip using existing physical snapping. Other opaque-layer edge and scrollbar glyph differences remain failures.",
+    "source": {
+      "clean": true,
+      "commit": "079208f814689c3f5222944b53f2291c8188510d",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "542a675bebe51361cc011b6118c5d5751f41a8c91792034c5b8e27832e356b9f",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_clean_and_unchanged_through_build_and_completed_native_replays": true,
+    "workspace_status": "running on clean 079208f8; no result claimed"
+  },
+  "clip_repair_complete_censuses": "still running on immutable 1366b72f; no new complete original or expanded total claimed",
+  "expanded_addition_verification": {
+    "addition_count": 201,
+    "all_expanded_images_and_differences_unchanged_from_574864d0": true,
+    "canonical_result_hashes_and_counts_verified": true,
+    "evidence_kind": "diagnostic-census",
+    "exact_at_all_four_profiles": 200,
+    "expanded_results": {
+      "different": 1633,
+      "errors": 0,
+      "exact": 22095,
+      "profile_result_sha256": "b8d21249c21d25c361dc39a796b25c45737c1be8e63ae0cd9fa7bb1ffd4afa11",
+      "total": 23728
+    },
+    "observed_exit_code": 1,
+    "release_qualification": false,
+    "remaining_failing_additions": [
+      "wpt/css_display/display-contents-dynamic-fieldset-legend-001"
+    ],
+    "source": {
+      "clean": true,
+      "commit": "8f45444e9884b7e492585f0ce8692b5ee1af3b43",
+      "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+      "source_tree_sha256": "a55f4a897adccbed84573ae5f07348af6f7779d3d9a9a687cbde95bf97234bbc",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_clean_and_unchanged": true,
+    "unchanged_addition_comparisons": 804,
+    "verification_note": "The first verifier required qualified=true and stopped before addition analysis. These named reports are complete diagnostic censuses, not qualification passes. This analysis preserves qualified=false and verifies their immutable counts and pixels."
+  },
+  "per_axis_candidate": {
+    "applied_to_umbrella": false,
+    "differing_pixels_removed": 1898,
+    "exact_losses": 0,
+    "focused": {
+      "all_native_and_chromium_images_and_differences_unchanged": true,
+      "observed_process_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "37644d1d7b14a42c81f48c3f0f37a2f75b420158d0438c780876690d3e7f8e7a",
+        "total": 640
+      },
+      "source": {
+        "clean": true,
+        "commit": "cc056ceebf84f2f87b3eaa908e6009b2ba92656f",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "d8b482bec8bb0429d58ccbd432b331f87adda5f65d9ac1bac9e362689c9a413d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "focused",
+      "summary_path": "out/renderer-evidence/native-viewport-scroll-v1/axis-layers-clean-focused-v40/focused-summary.json",
+      "summary_sha256": "7ee1e5a0c16ad5258653c5d474ebe664ee0468a5b6cf532a3d3ab9932ba564b9"
+    },
+    "native_exact": 684,
+    "native_total": 850,
+    "newly_exact": 0,
+    "primitive": {
+      "all_native_and_chromium_images_and_differences_unchanged": true,
+      "observed_process_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "f8cd9dfac16a9fb3a17f6c1f727cba7b27c50f6bd6f93fa0bb351ed01c4848ab",
+        "total": 960
+      },
+      "source": {
+        "clean": true,
+        "commit": "cc056ceebf84f2f87b3eaa908e6009b2ba92656f",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "d8b482bec8bb0429d58ccbd432b331f87adda5f65d9ac1bac9e362689c9a413d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "suite": "primitive",
+      "summary_path": "out/renderer-evidence/native-viewport-scroll-v1/axis-layers-clean-primitive-v40/primitive-summary.json",
+      "summary_sha256": "2511b4ecb6e717a954d821c1034caab25ba4d406a9fa29292355d1a117878b18"
+    },
+    "remaining_full_and_workspace_qualification": "required; these focused and primitive runs do not close the complete gate",
+    "source": {
+      "clean": true,
+      "commit": "cc056ceebf84f2f87b3eaa908e6009b2ba92656f",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "d8b482bec8bb0429d58ccbd432b331f87adda5f65d9ac1bac9e362689c9a413d",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "policy": "Chromium is the sole pixel target. Open UI never executes JavaScript. Consuming applications use public native Rust methods and Rust callbacks; a missing needed public method remains unfinished work. Historical Open UI images remain immutable provenance only.",
+  "preceding_checkpoint_hosted_checks": {
+    "checkpoint": {
+      "headRefOid": "83635d1e7eea8dd73f2493264905869a3de21d9c",
+      "isDraft": true,
+      "state": "OPEN"
+    },
+    "checks": [
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37025327250/job/110898381276",
+        "name": "clang-format",
+        "state": "SUCCESS",
+        "workflow": "Format Check"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37025327699/job/110898383125",
+        "name": "historical-pixel-audit",
+        "state": "SUCCESS",
+        "workflow": "CI"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37025327699/job/110898383130",
+        "name": "python-accountability",
+        "state": "SUCCESS",
+        "workflow": "CI"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37025327699/job/110898382844",
+        "name": "rust-parity",
+        "state": "SUCCESS",
+        "workflow": "CI"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37025327250/job/110898381599",
+        "name": "gn-format",
+        "state": "SUCCESS",
+        "workflow": "Format Check"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37025326885/job/110898380561",
+        "name": "conformance-and-platform",
+        "state": "SUCCESS",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37025326885/job/110898381908",
+        "name": "msrv",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37025326885/job/110898383760",
+        "name": "miri-handles",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37025326885/job/110898382632",
+        "name": "native-sanitizers",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37025326885/job/110898382004",
+        "name": "c-undefined-sanitizer",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/37025326885/job/110898382087",
+        "name": "fuzz-smoke",
+        "state": "SKIPPED",
+        "workflow": "v0.2 Hardening"
+      }
+    ],
+    "skipped_jobs_are_not_passes": true
+  },
+  "previous_evidence": "docs/renderer/generated/native-viewport-full-v4.json",
+  "read_only_generator_and_archive_checks": [
+    {
+      "command": [
+        "python3",
+        "tools/qualification/generate_renderer_contract.py",
+        "--check"
+      ],
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-renderer-check-v44.log",
+      "log_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "name": "renderer",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp13r_multicol_closure.py",
+        "--check"
+      ],
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-multicol-check-v44.log",
+      "log_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "name": "multicol",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp17_closure.py",
+        "--check"
+      ],
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-sp17-check-v44.log",
+      "log_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "name": "sp17",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp18_closure.py",
+        "--check"
+      ],
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-sp18-check-v44.log",
+      "log_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "name": "sp18",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/wpt/generate_sp20_closure.py",
+        "--check"
+      ],
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-sp20-check-v44.log",
+      "log_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "name": "sp20",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/release/generate_v02_contract.py",
+        "--check"
+      ],
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-v02-check-v44.log",
+      "log_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "name": "v02",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/style/generate_properties.py",
+        "--check"
+      ],
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-style-check-v44.log",
+      "log_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "name": "style",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/ffi/generate_ffi.py",
+        "--check"
+      ],
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-ffi-check-v44.log",
+      "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "name": "ffi",
+      "process_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/accountability/restore_frozen_openui_archive.py",
+        "--check"
+      ],
+      "log_path": "out/renderer-evidence/native-viewport-scroll-v1/native-rust-contract-archive-check-v44.log",
+      "log_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+      "name": "archive",
+      "process_exit_code": 0
+    }
+  ],
+  "release_qualification": false,
+  "schema_version": 1
+}

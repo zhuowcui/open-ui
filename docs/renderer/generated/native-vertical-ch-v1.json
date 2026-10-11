@@ -1,0 +1,5376 @@
+{
+  "actual_diagnostic_exit": 0,
+  "all_commands_terminal": true,
+  "archive": {
+    "all_members_hash_verified": true,
+    "bytes": 129267,
+    "members": [
+      {
+        "bytes": 29247,
+        "name": "diagnostic/1.0/1-geometry.json",
+        "sha256": "e6856ff3a1d07b7651610e444829366a84a143def8a6f0c654e335d020c33310",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.0/1-geometry.json"
+      },
+      {
+        "bytes": 40154,
+        "name": "diagnostic/1.0/1.attempt.json",
+        "sha256": "03ff92ef7f6a45c22d4c08d8bfc5f3580e86cce5f3278539e4e316524886cf00",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.0/1.attempt.json"
+      },
+      {
+        "bytes": 2864,
+        "name": "diagnostic/1.0/1.png",
+        "sha256": "2adff54d64cb7c42097d78243a2e2dfcdb327128ac780ed737b696e81aa66ba3",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.0/1.png"
+      },
+      {
+        "bytes": 401,
+        "name": "diagnostic/1.0/1.stderr.log",
+        "sha256": "753a8130e2ca57f9aaab47a29af50dad89d4ddc212ee436c606f1a273c277e92",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.0/1.stderr.log"
+      },
+      {
+        "bytes": 29247,
+        "name": "diagnostic/1.0/2-geometry.json",
+        "sha256": "e6856ff3a1d07b7651610e444829366a84a143def8a6f0c654e335d020c33310",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.0/2-geometry.json"
+      },
+      {
+        "bytes": 40154,
+        "name": "diagnostic/1.0/2.attempt.json",
+        "sha256": "6edffa09b1621ff1f333776f109ea3deff20ae4e0db7e5eedf1fa9d31efdfd68",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.0/2.attempt.json"
+      },
+      {
+        "bytes": 2864,
+        "name": "diagnostic/1.0/2.png",
+        "sha256": "2adff54d64cb7c42097d78243a2e2dfcdb327128ac780ed737b696e81aa66ba3",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.0/2.png"
+      },
+      {
+        "bytes": 401,
+        "name": "diagnostic/1.0/2.stderr.log",
+        "sha256": "6cfcdc52780a882fd758dd102732e824dcde7f7fef88a47d804c1835b6fac58a",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.0/2.stderr.log"
+      },
+      {
+        "bytes": 25804,
+        "name": "diagnostic/1.0/test.html",
+        "sha256": "2ee07de34eaf46863afaac85260872b4bae47e7c103184931ca7a7d048e2b42b",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.0/test.html"
+      },
+      {
+        "bytes": 29247,
+        "name": "diagnostic/1.25/1-geometry.json",
+        "sha256": "e6856ff3a1d07b7651610e444829366a84a143def8a6f0c654e335d020c33310",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.25/1-geometry.json"
+      },
+      {
+        "bytes": 40364,
+        "name": "diagnostic/1.25/1.attempt.json",
+        "sha256": "16d8a0b12ec9cd7d9fff808cd0dc996e53bb05e686b499c0197c5846f7e6c3e7",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.25/1.attempt.json"
+      },
+      {
+        "bytes": 4023,
+        "name": "diagnostic/1.25/1.png",
+        "sha256": "d74e1700dc9ff2aee1d5a4dd41bbcfc8ed592252c61f2612eb1f8204e2a399a1",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.25/1.png"
+      },
+      {
+        "bytes": 401,
+        "name": "diagnostic/1.25/1.stderr.log",
+        "sha256": "671a8bb296bdbe19960651da4ba12eedefc7571457e985742f5723e356ab8d66",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.25/1.stderr.log"
+      },
+      {
+        "bytes": 29247,
+        "name": "diagnostic/1.25/2-geometry.json",
+        "sha256": "e6856ff3a1d07b7651610e444829366a84a143def8a6f0c654e335d020c33310",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.25/2-geometry.json"
+      },
+      {
+        "bytes": 40154,
+        "name": "diagnostic/1.25/2.attempt.json",
+        "sha256": "e6bdd4aa04366a187692055eef650c21c06abda5856b3c3a1df3fc3477061c70",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.25/2.attempt.json"
+      },
+      {
+        "bytes": 4023,
+        "name": "diagnostic/1.25/2.png",
+        "sha256": "d74e1700dc9ff2aee1d5a4dd41bbcfc8ed592252c61f2612eb1f8204e2a399a1",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.25/2.png"
+      },
+      {
+        "bytes": 401,
+        "name": "diagnostic/1.25/2.stderr.log",
+        "sha256": "f9c5303e716adac75dcc2ca8036d78b4ba455d3aca6e5d0867980585e1becbf7",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.25/2.stderr.log"
+      },
+      {
+        "bytes": 25804,
+        "name": "diagnostic/1.25/test.html",
+        "sha256": "2ee07de34eaf46863afaac85260872b4bae47e7c103184931ca7a7d048e2b42b",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.25/test.html"
+      },
+      {
+        "bytes": 29247,
+        "name": "diagnostic/1.5/1-geometry.json",
+        "sha256": "e6856ff3a1d07b7651610e444829366a84a143def8a6f0c654e335d020c33310",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.5/1-geometry.json"
+      },
+      {
+        "bytes": 40154,
+        "name": "diagnostic/1.5/1.attempt.json",
+        "sha256": "094bde9ff8ef62b990333022c961d3bb9f897f1936fb8e18c4c4c83a7bfec810",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.5/1.attempt.json"
+      },
+      {
+        "bytes": 5266,
+        "name": "diagnostic/1.5/1.png",
+        "sha256": "bcda9078909a3d85d185c65542ce4483cdf8e8a878a30c1a6b176027e2c71754",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.5/1.png"
+      },
+      {
+        "bytes": 401,
+        "name": "diagnostic/1.5/1.stderr.log",
+        "sha256": "d7979b5b2afa14df7783f0dab17c50db543c185b0a0056fad806771027308d92",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.5/1.stderr.log"
+      },
+      {
+        "bytes": 29247,
+        "name": "diagnostic/1.5/2-geometry.json",
+        "sha256": "e6856ff3a1d07b7651610e444829366a84a143def8a6f0c654e335d020c33310",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.5/2-geometry.json"
+      },
+      {
+        "bytes": 40154,
+        "name": "diagnostic/1.5/2.attempt.json",
+        "sha256": "78877986299b8b9df0babf6cb929a2de3a6ba480d2b0596a7bece467866c7c61",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.5/2.attempt.json"
+      },
+      {
+        "bytes": 5266,
+        "name": "diagnostic/1.5/2.png",
+        "sha256": "bcda9078909a3d85d185c65542ce4483cdf8e8a878a30c1a6b176027e2c71754",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.5/2.png"
+      },
+      {
+        "bytes": 401,
+        "name": "diagnostic/1.5/2.stderr.log",
+        "sha256": "7f628fbc58c9b78fb42dfc25482a9315b4568d612f9f7b3dd249a5bfed864f71",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.5/2.stderr.log"
+      },
+      {
+        "bytes": 25804,
+        "name": "diagnostic/1.5/test.html",
+        "sha256": "2ee07de34eaf46863afaac85260872b4bae47e7c103184931ca7a7d048e2b42b",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/1.5/test.html"
+      },
+      {
+        "bytes": 29247,
+        "name": "diagnostic/2.0/1-geometry.json",
+        "sha256": "e6856ff3a1d07b7651610e444829366a84a143def8a6f0c654e335d020c33310",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/2.0/1-geometry.json"
+      },
+      {
+        "bytes": 39944,
+        "name": "diagnostic/2.0/1.attempt.json",
+        "sha256": "8a92ec6abbd28e1e0c79a0adef9c92ca5617a098ce1975943f4648a9dee073c0",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/2.0/1.attempt.json"
+      },
+      {
+        "bytes": 8632,
+        "name": "diagnostic/2.0/1.png",
+        "sha256": "e113553379b317a477ad1c89e8b66e8ca4ab80d94b5500e50d47a4650871429c",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/2.0/1.png"
+      },
+      {
+        "bytes": 401,
+        "name": "diagnostic/2.0/1.stderr.log",
+        "sha256": "33c1986177d616b6c2d4d359fdf2cad0d47ddc14f346ccbfad1a5c712aea39cf",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/2.0/1.stderr.log"
+      },
+      {
+        "bytes": 29247,
+        "name": "diagnostic/2.0/2-geometry.json",
+        "sha256": "e6856ff3a1d07b7651610e444829366a84a143def8a6f0c654e335d020c33310",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/2.0/2-geometry.json"
+      },
+      {
+        "bytes": 40154,
+        "name": "diagnostic/2.0/2.attempt.json",
+        "sha256": "9359837bd0e7855b396782417adb6628e6598603b2ffee0a82d73af98d6f610d",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/2.0/2.attempt.json"
+      },
+      {
+        "bytes": 8632,
+        "name": "diagnostic/2.0/2.png",
+        "sha256": "e113553379b317a477ad1c89e8b66e8ca4ab80d94b5500e50d47a4650871429c",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/2.0/2.png"
+      },
+      {
+        "bytes": 616,
+        "name": "diagnostic/2.0/2.stderr.log",
+        "sha256": "43c8961cbecbec3c1908aa6bdef914099b6de2ab4422574e29624ade507189b1",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/2.0/2.stderr.log"
+      },
+      {
+        "bytes": 25804,
+        "name": "diagnostic/2.0/test.html",
+        "sha256": "2ee07de34eaf46863afaac85260872b4bae47e7c103184931ca7a7d048e2b42b",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/2.0/test.html"
+      },
+      {
+        "bytes": 29247,
+        "name": "diagnostic/3.0/1-geometry.json",
+        "sha256": "e6856ff3a1d07b7651610e444829366a84a143def8a6f0c654e335d020c33310",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/3.0/1-geometry.json"
+      },
+      {
+        "bytes": 40364,
+        "name": "diagnostic/3.0/1.attempt.json",
+        "sha256": "218c4d1b1791e6fbf91ecc2eaf3c86d176d75bda76b350a037e705cb940279d1",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/3.0/1.attempt.json"
+      },
+      {
+        "bytes": 16859,
+        "name": "diagnostic/3.0/1.png",
+        "sha256": "395c3b3486d5dba0222daff94a4a14c26fc0d65814ede6177945814e0a77162c",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/3.0/1.png"
+      },
+      {
+        "bytes": 401,
+        "name": "diagnostic/3.0/1.stderr.log",
+        "sha256": "8c29a8a21cd45fae5d8391de92b136759013d7046b8ddc7b427db156b02469e1",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/3.0/1.stderr.log"
+      },
+      {
+        "bytes": 29247,
+        "name": "diagnostic/3.0/2-geometry.json",
+        "sha256": "e6856ff3a1d07b7651610e444829366a84a143def8a6f0c654e335d020c33310",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/3.0/2-geometry.json"
+      },
+      {
+        "bytes": 40364,
+        "name": "diagnostic/3.0/2.attempt.json",
+        "sha256": "5ade8a9260bed31bc75c74d21e22e8f262302e8b124c82563a0666d34d6af53f",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/3.0/2.attempt.json"
+      },
+      {
+        "bytes": 16859,
+        "name": "diagnostic/3.0/2.png",
+        "sha256": "395c3b3486d5dba0222daff94a4a14c26fc0d65814ede6177945814e0a77162c",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/3.0/2.png"
+      },
+      {
+        "bytes": 401,
+        "name": "diagnostic/3.0/2.stderr.log",
+        "sha256": "bb7f0d5bac8207f3756a75b05948cc102a0934959836aee09195311be69ff946",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/3.0/2.stderr.log"
+      },
+      {
+        "bytes": 25804,
+        "name": "diagnostic/3.0/test.html",
+        "sha256": "2ee07de34eaf46863afaac85260872b4bae47e7c103184931ca7a7d048e2b42b",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/3.0/test.html"
+      },
+      {
+        "bytes": 11079,
+        "name": "diagnostic/native-build.log",
+        "sha256": "e5cc6f3cf96d5c4c2b88b365d5ed52ee9fa05385adcbd4a53df0b593e4aa95b8",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/native-build.log"
+      },
+      {
+        "bytes": 369384,
+        "name": "diagnostic/native-first.log",
+        "sha256": "76d640fbfc6ac38c94ce1940935271fe6b50dcf8ca4bb5d312b03b7f8ca0af6e",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/native-first.log"
+      },
+      {
+        "bytes": 0,
+        "name": "diagnostic/native-format.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/native-format.log"
+      },
+      {
+        "bytes": 406920,
+        "name": "diagnostic/native-metadata.log",
+        "sha256": "55571e025396848912be6f3b6663197b1214fab9592326af89d481b672711fc9",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/native-metadata.log"
+      },
+      {
+        "bytes": 369384,
+        "name": "diagnostic/native-second.log",
+        "sha256": "76d640fbfc6ac38c94ce1940935271fe6b50dcf8ca4bb5d312b03b7f8ca0af6e",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/native-second.log"
+      },
+      {
+        "bytes": 1072062,
+        "name": "diagnostic/receipt.json",
+        "sha256": "9ec5820dd347e7df1ff8e26eafa45579721be22601c218ed854be707dce063b8",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-pipeline-v2215/receipt.json"
+      },
+      {
+        "bytes": 17436,
+        "name": "native-app/Cargo.lock",
+        "sha256": "29fa14fdfa3eb2e316b84c5d935ef703e415fc616828e25aa3975934b0a652b2",
+        "source_path": "/home/nero/code/open-ui/out/private-native-apps/native-vertical-ch-v2213/Cargo.lock"
+      },
+      {
+        "bytes": 1468,
+        "name": "native-app/Cargo.toml",
+        "sha256": "fd8beed2d1f6047421294226f5e542a8f90435d46ed131edd792cadf8ae98c1a",
+        "source_path": "/home/nero/code/open-ui/out/private-native-apps/native-vertical-ch-v2213/Cargo.toml"
+      },
+      {
+        "bytes": 6660,
+        "name": "native-app/src/main.rs",
+        "sha256": "1821453cea499e284cf65309e0ab9df1aaa9a18df19030d7f425eaffefefc809",
+        "source_path": "/home/nero/code/open-ui/out/private-native-apps/native-vertical-ch-v2213/src/main.rs"
+      },
+      {
+        "bytes": 12137,
+        "name": "primary-source/open_type_vertical_data.cc",
+        "sha256": "657254cbdc026944d8082ce4ba3bebd6fa74b147e94e1b5b6e8b3332d1d9edd2",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-primary-v2214/open_type_vertical_data.cc"
+      },
+      {
+        "bytes": 3338,
+        "name": "primary-source/open_type_vertical_data.h",
+        "sha256": "4c51e48b18917508bfa601c154a66dbdbce4f06ab1793d9e52967b54f94fa3f6",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-primary-v2214/open_type_vertical_data.h"
+      },
+      {
+        "bytes": 1711,
+        "name": "primary-source/receipt.json",
+        "sha256": "77f2938e5612eeda49e200053fb9fc3ed9cd90436b00a7a4f0edeebfa23c6f22",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-primary-v2214/receipt.json"
+      },
+      {
+        "bytes": 10521,
+        "name": "primary-source/simple_font_data.h",
+        "sha256": "b04fba3f2877c9b39bd55eaa9aa61025aa28f8c90b121bdc14916f22bd5636da",
+        "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-vertical-ch-primary-v2214/simple_font_data.h"
+      },
+      {
+        "bytes": 12971,
+        "name": "probes-and-receipts/openui-native-vertical-ch-pipeline-v2215.py",
+        "sha256": "5f4082fd1f1dc48f1fd6de3aa12db6d533f3bcd1ddf20e366a3607ecebb0216f",
+        "source_path": "/tmp/openui-native-vertical-ch-pipeline-v2215.py"
+      },
+      {
+        "bytes": 902,
+        "name": "probes-and-receipts/openui-native-vertical-ch-prepare-v2213.json",
+        "sha256": "a2e7126dd673f2bbde0a29f4afab0436b55ab9ddd53882cfad7760d561796b8e",
+        "source_path": "/tmp/openui-native-vertical-ch-prepare-v2213.json"
+      },
+      {
+        "bytes": 4464,
+        "name": "probes-and-receipts/openui-native-vertical-ch-prepare-v2213.py",
+        "sha256": "9c37bc0f2f070061f947481ba61ca33386adc3e52a617e271b44b258a03c37be",
+        "source_path": "/tmp/openui-native-vertical-ch-prepare-v2213.py"
+      }
+    ],
+    "path": "docs/renderer/evidence/native-vertical-ch-v1/completed-evidence.tar.gz",
+    "sha256": "4c6b2979c87ed016da28c313188ecae50e572425cd11c31c7c88170df11cffc0"
+  },
+  "candidate_applied_to_umbrella": false,
+  "diagnostic_capture_lifecycle_wrapper_and_disable_dev_shm_recorded": true,
+  "different": 160,
+  "full_rect_exact": 1280,
+  "geometry_states": 1440,
+  "javascript_executed_by_openui": false,
+  "manual_resolution_does_not_complete_reactive_length_declarations": true,
+  "native_app_source": {
+    "clean": true,
+    "commit": "39890cdc43320a639e1e1c5e501b47bdb6851dd6",
+    "tree": "05d42958ed9dbaacefccbdc20c0e07304a78875d"
+  },
+  "native_callbacks_per_run": 720,
+  "native_cases": 720,
+  "native_outputs_byte_identical": true,
+  "native_pixels_captured": false,
+  "new_release_states_admitted": 0,
+  "pinned_capture_harness_bytes_unchanged": true,
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "residuals": [
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 18,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 18,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 45,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 45,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 19,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 19,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 47.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 47.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 18,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 18,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 45,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 45,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 19,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 19,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 47.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 47.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.25,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 18,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 18,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 45,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 45,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 19,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 19,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 47.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 47.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 1.5,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 18,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 18,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 45,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 45,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 19,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 19,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 47.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 47.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 2.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 18,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 18,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 45,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 15.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 45,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 15.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 19,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 19,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 10.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 10.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 47.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 16.0,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 47.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 25.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 16.0,
+        "resolved_pixels": 25.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.719999313354492,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.719999313354492,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 24,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 13.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 13.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 1.0,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 21,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 12.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 12.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-lr"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 60,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 32.5,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 20.3700008392334,
+        "resolved_pixels": 32.5
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "after"
+    },
+    {
+      "case": {
+        "coefficient": 2.5,
+        "family": "DejaVu Sans",
+        "orientation": "upright",
+        "scale": 3.0,
+        "size": 18.729999542236328,
+        "unit": "ch",
+        "writing": "vertical-rl"
+      },
+      "chromium": {
+        "height": 10,
+        "width": 52.5,
+        "x": 0,
+        "y": 0
+      },
+      "fix_qualified": false,
+      "native": {
+        "bounds": {
+          "height": 10.0,
+          "width": 30.0,
+          "x": 0.0,
+          "y": 0.0
+        },
+        "computed_font_size": 18.729999542236328,
+        "resolved_pixels": 30.0
+      },
+      "owner": "openui-text font-relative metric selection",
+      "review": "The helper reads metrics.zero_width from a horizontal measure even for FontOrientation::VerticalUpright. Pinned Chromium uses the zero-glyph vertical advance, with rounded ascent/descent fallback when vertical metrics are absent.",
+      "state": "before"
+    }
+  ],
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "4046d366eab0a9fc6aa161dc63d8e646104eab84",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "47c421ff2a8bd4eba17dded4c12e639225e582c240a55253c5315ba6b60f1664",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "4046d366eab0a9fc6aa161dc63d8e646104eab84",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "47c421ff2a8bd4eba17dded4c12e639225e582c240a55253c5315ba6b60f1664",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true
+}

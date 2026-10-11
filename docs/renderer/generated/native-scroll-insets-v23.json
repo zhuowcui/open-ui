@@ -1,0 +1,133 @@
+{
+  "applied_to_umbrella": false,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-clean-v1155/build.json",
+      "sha256": "7768e99cee4d9b4d1f289bafbf3ae373d9a65d3bdd102f0002fb8f13a1b78a32"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-after-census-v1157/receipt.json",
+      "sha256": "07f8a499368702c729107fac859b02ae4942ab50a78295486b7274b3efdad852"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-pipeline-v1161/receipt.json",
+      "sha256": "876c3eeef3bdde306ce1464ff38c236af59077ee3699b4a5b97cab93ecc3de26"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-baseline-v1168/receipt.json",
+      "sha256": "807c14c8ef2c0e40aed40ad9813f7e177bd469c4453227475f7f9001824ca79b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-fixed-guard-v1169/receipt.json",
+      "sha256": "e68120617cd632367c0c72f881b5bc87c91fa8c2b81bbade55070df4f6aa06dc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-checks-v1170/receipt.json",
+      "sha256": "157a3efa44bfdaa2a48fd7fd0e5be4cfb8807990b1694d44c099cd478c8fd9e4"
+    }
+  ],
+  "contract": "Open UI executes no JavaScript in any version. Consuming apps call public native Rust APIs and Rust callbacks over the shared Engine. Needed browser element behavior must be implemented in Rust and tested from a consuming app. Chromium alone supplies expected pixels with zero tolerance; old Open UI screenshots are immutable provenance.",
+  "corrected_baseline_guard": {
+    "expected_pinned_chromium_width_css_px": 80.015625,
+    "failed": 1,
+    "native_text_node_attached": true,
+    "observed_exit_code": 101,
+    "observed_initial_width_css_px": 80.0,
+    "passed": 0,
+    "source": {
+      "clean": true,
+      "commit": "e781cf980ef111148e65788f0fe0e7c0febec1b9",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "889ddc634d4736e00a3c2a176fcdcd790681ff5e4a22ad20d525e8795a9d09a7",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "corrected_fixed_guard": {
+    "failed": 0,
+    "observed_exit_code": 0,
+    "owned_earlier_bounds_preserved": true,
+    "passed": 1,
+    "scales": [
+      1,
+      1.25,
+      1.5,
+      2,
+      3
+    ],
+    "source": {
+      "clean": true,
+      "commit": "12769e70b6b5bdbe0e32907cfe368f2bd3e01971",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "f10538049d08543d9a93de03653d3f9e1a9e24254ad91451c46c726b3999e269",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "states": [
+      "initial",
+      "inherited-20px",
+      "inherited-28px",
+      "explicit-reset"
+    ]
+  },
+  "javascript_executed_by_openui": false,
+  "local_builds_and_image_sweeps_are_separate": true,
+  "new_public_rust_api": [
+    "Document::with_options",
+    "Document::with_font_collection_and_options",
+    "Document::raster_configuration",
+    "AppBuilder::raster_configuration",
+    "HeadlessApp::with_options"
+  ],
+  "new_release_states_admitted": 0,
+  "pipeline_observation": {
+    "fixed_census_pass_claimed": false,
+    "fixed_native_pixel_pass_claimed": false,
+    "fixed_workspace_pass_claimed": false,
+    "snapshot_path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-pipeline-snapshot-v2.json",
+    "snapshot_sha256": "f7470b6359de49a55cfd7202368aac013d68725ad1c83c5e8760e44be86d4003",
+    "state": "running-fresh-native-build"
+  },
+  "prior_snapshot": {
+    "path": "docs/renderer/generated/native-scroll-insets-v22.json",
+    "sha256": "98c3a617536203ed092e24ba2a8cc16aa190345c94d9427273346742dedf5a0b"
+  },
+  "prior_source_verification_failure": {
+    "correction": "Attach Engine::create_text under the native element, matching the public Rust path. Remove the irrelevant element-owned text check from intrinsic IFC detection.",
+    "public_raster_api_guards_passed": 2,
+    "reviewed_test_setup_error": "The new Engine guard stored text on a Div. Public Element::set_text creates and attaches an authored Text node, and the inline item builder traverses those children. The old guard measured an empty box on both baseline and fixed source; that failure was not evidence for the width defect. Failed build and test receipts are preserved.",
+    "source_commit": "c4a74a6d9a77a6f597601370d07343f16bbe5f0a",
+    "workspace_actual_exit_code": 101,
+    "workspace_failed": 1,
+    "workspace_incomplete": true,
+    "workspace_passed_before_stop": 208
+  },
+  "probe_sha256": "c881007350f7e4b2cb5550178559b10fb517d9a66cbf8df9eceb3354a8df9bd4",
+  "promotion_allowed": false,
+  "read_only_checks_passed": 10,
+  "reference_inputs_changed": false,
+  "release_qualification": false,
+  "required_work_still_open": [
+    "Complete original and expanded Chromium equality with reviewed residual ownership.",
+    "Fix native absolute intrinsic widths and review glyph advance and paint discrepancies.",
+    "Complete all needed public native Rust element APIs and shared C/accessibility parity.",
+    "Complete compositor/3D, blocked-UI animation, hardening, hardware, accessibility, performance, packaging, provenance and approved signed publication."
+  ],
+  "reviewed_shared_fix": [
+    "Preserve positive shaped advances through LayoutUnit ceiling.",
+    "Use the flattened shaped inline sequence for ordinary native text children and inline boxes.",
+    "Include first-line indentation with zero intrinsic percentage basis and retain calc fixed offsets.",
+    "Shape intrinsic fallback text instead of measuring unshaped glyphs."
+  ],
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "12769e70b6b5bdbe0e32907cfe368f2bd3e01971",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f10538049d08543d9a93de03653d3f9e1a9e24254ad91451c46c726b3999e269",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_patch": {
+    "bytes": 32963,
+    "path": "docs/renderer/evidence/native-inherited-styles-v1/native-intrinsic-and-raster-options-v2.patch",
+    "sha256": "f9d43e8c6799babf5dd1fe9aa1966a22e41cd3640917e225baf7c1f52b771900"
+  }
+}

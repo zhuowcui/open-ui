@@ -1,0 +1,58 @@
+{
+  "baseline_commit": "cd99c95278f89fb1590834fe358e93511353b106",
+  "branch": "agent/native-inline-fallback-retry-v1573",
+  "cargo_commands_run": 0,
+  "checks_receipt_sha256": "8a385cbe35f25b59fdbc9dab0bdfba55b46d573e419ffea69171d3de85999858",
+  "current_exports": 114,
+  "existing_exports_preserved": 113,
+  "geometry_receipt_sha256": "e9532bcfdae6a68e50c349b61723606ed0250f383c7b4f480430d8dd01fc6b4a",
+  "javascript_executed_by_openui": false,
+  "native_and_pixel_results_pending": true,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "ordered_chromium_geometry_queries": 120,
+  "original_probe_sha256": {
+    "/tmp/openui-native-inline-replaced-build-v1528.py": "d89f6dc8f25237ad5712893566428135bd4d8b52a5b1955d2d679b6925ac1a3e",
+    "/tmp/openui-native-inline-replaced-consumer-v1528.py": "66f21d1fa06ecee91e269a361e0fa2f645a515867c6f0b941d9856359ade052d",
+    "/tmp/openui-native-inline-replaced-guards-v1528.py": "7a50b829b2060082204ccfab8df84306735a7363d840ce5134b82bc00592d6e8",
+    "/tmp/openui-native-inline-replaced-matrices-v1528.py": "3a027beea7663c957ba0e3e8e1ff9d18e9a2a96c39fee633c3f3ac1b32eb97ba"
+  },
+  "pixel_tolerance": 0,
+  "prior_whole_owners": 29,
+  "probe_sha256": "3125074581bd0b398bee5a4f1a5a739cdede6b9c35cff2a4fcd13659b4bf3bbc",
+  "promotion_allowed": false,
+  "public_c_image_clear_method": "oui_element_clear_image",
+  "public_rust_image_clear_method": "Element::clear_image_resource",
+  "read_only_checks_passed": 13,
+  "release_qualification": false,
+  "required_consecutive_chromium_captures": 480,
+  "required_independent_chromium_processes": 240,
+  "required_native_images": 120,
+  "required_stages": 8,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "scripts": {
+    "/tmp/openui-native-inline-fallback-build-v1575.py": "be29fa44f59ef4acd815e8324b80b532464454ff5acc55a8c8fde177b82e7610",
+    "/tmp/openui-native-inline-fallback-guards-v1575.py": "052b75510b60bbbe7c222c7ffd2518e8e07b707dc68ee32ef1d2302cba06ef0b",
+    "/tmp/openui-native-inline-fallback-matrices-v1575.py": "3463210a9c56157778fc664d77672911f305b3fa3cd29860c26ccc6b1d8ef5cd",
+    "/tmp/openui-native-inline-fallback-pipeline-v1576.py": "d6562d1885ebc5fdf4741b786af4fab145a7b1228662cc049852e8d6842d2aa8",
+    "/tmp/openui-native-inline-fallback-resource-consumer-v1575.py": "e01db7a9cc233108dda6a3644d98c741495a1b75767da30d888d8dbd80881280",
+    "/tmp/openui-native-inline-fallback-transition-consumer-v1575.py": "6b02919202197b2c4c47834d5aec94e073985aa74312d22f9e206e51efff0cf7"
+  },
+  "source": {
+    "clean": true,
+    "commit": "7d09f7a159b2c3f211662d20dbf7c7092d6024ed",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c3ba134419dac78bbc35a1c72f8c390c5ad08b7bd95ff61ad00b533214069c54",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "7d09f7a159b2c3f211662d20dbf7c7092d6024ed",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "c3ba134419dac78bbc35a1c72f8c390c5ad08b7bd95ff61ad00b533214069c54",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "struct_layouts_unchanged": 30,
+  "two_query_runs_identical": true
+}

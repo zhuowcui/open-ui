@@ -1,0 +1,446 @@
+diff --git a/bindings/rust/openui-layout/src/block.rs b/bindings/rust/openui-layout/src/block.rs
+--- a/bindings/rust/openui-layout/src/block.rs
++++ b/bindings/rust/openui-layout/src/block.rs
+@@ -1521,6 +1521,56 @@
+ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
+     let physical_style = &doc.node(node_id).style;
+
++    // SVG foreignObject width/height describe its viewport, including the
++    // physical fragment, regardless of CSS box-sizing and border/padding.
++    // LayoutSVGForeignObject::UpdateSVGLayout supplies fixed logical sizes
++    // to BlockNode::Layout without inflating them to fit the decoration.
++    let svg_space = doc.node(node_id).is_svg_foreign_object.then(|| {
++        let (width_basis, height_basis) = if space.writing_direction.is_horizontal() {
++            (
++                space.percentage_resolution_inline_size,
++                space.percentage_resolution_block_size,
++            )
++        } else {
++            (
++                space.percentage_resolution_block_size,
++                space.percentage_resolution_inline_size,
++            )
++        };
++        let width = resolve_length(
++            &physical_style.width,
++            width_basis,
++            LayoutUnit::zero(),
++            LayoutUnit::zero(),
++        )
++        .clamp_negative_to_zero();
++        let height = resolve_length(
++            &physical_style.height,
++            height_basis,
++            LayoutUnit::zero(),
++            LayoutUnit::zero(),
++        )
++        .clamp_negative_to_zero();
++        let mut viewport_space = space.clone();
++        (
++            viewport_space.available_inline_size,
++            viewport_space.available_block_size,
++        ) = if space.writing_direction.is_horizontal() {
++            (width, height)
++        } else {
++            (height, width)
++        };
++        viewport_space.percentage_resolution_inline_size = viewport_space.available_inline_size;
++        viewport_space.percentage_resolution_block_size = viewport_space.available_block_size;
++        viewport_space.is_fixed_inline_size = true;
++        viewport_space.is_fixed_block_size = true;
++        viewport_space.is_new_formatting_context = true;
++        viewport_space.is_initial_block_size_indefinite = false;
++        viewport_space.exclusion_space = None;
++        viewport_space
++    });
++    let space = svg_space.as_ref().unwrap_or(space);
++
+     if doc.node(node_id).replaced.is_some() {
+         return replaced_layout(doc, node_id, space);
+     }
+@@ -1734,7 +1784,9 @@
+     }
+
+     // The total border-box inline size
+-    let border_box_inline = if style.box_sizing == BoxSizing::BorderBox {
++    let border_box_inline = if doc.node(node_id).is_svg_foreign_object {
++        space.available_inline_size
++    } else if style.box_sizing == BoxSizing::BorderBox {
+         content_inline_size.max_of(border_padding_inline)
+     } else {
+         content_inline_size + border_padding_inline
+@@ -8318,6 +8370,9 @@
+     content_inline_size: LayoutUnit,
+     is_viewport: bool,
+ ) -> LayoutUnit {
++    if doc.node(node_id).is_svg_foreign_object {
++        return space.available_block_size;
++    }
+     // When flex layout determines the exact block size, use it directly.
+     if space.is_fixed_block_size || space.stretch_block_size {
+         let available = space.available_block_size;
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -560,7 +560,30 @@
+             false,
+         );
+     }
+-    paint_fragment_contents(canvas, fragment, doc, offset);
++    if !fragment.node_id.is_none() && doc.node(fragment.node_id).is_svg_foreign_object {
++        // SVG root placement is pixel-snapped before the foreignObject's
++        // local CSS decoration is replayed. Keep that translation separate
++        // from its local edge snapping (SVGRootPainter and
++        // SVGForeignObjectPainter); combining them changes fractional widths.
++        let viewport_origin = PhysicalOffset::new(
++            offset.left + fragment.offset.left,
++            offset.top + fragment.offset.top,
++        );
++        canvas.save();
++        canvas.translate((
++            viewport_origin.left.round().to_f32(),
++            viewport_origin.top.round().to_f32(),
++        ));
++        paint_fragment_contents(
++            canvas,
++            fragment,
++            doc,
++            PhysicalOffset::new(-fragment.offset.left, -fragment.offset.top),
++        );
++        canvas.restore();
++    } else {
++        paint_fragment_contents(canvas, fragment, doc, offset);
++    }
+     if clips_fractional_terminal_column {
+         canvas.restore();
+     }
+@@ -15782,59 +15805,6 @@
+         return;
+     }
+     if fragment.decoration_clip_rects.is_empty() {
+-        let clip_svg_foreign_object = node.is_svg_foreign_object;
+-        if clip_svg_foreign_object {
+-            let x = abs_offset.left.round().to_f32();
+-            let y = abs_offset.top.round().to_f32();
+-            let border_box = Rect::from_xywh(
+-                x,
+-                y,
+-                fragment.size.width.to_f32(),
+-                fragment.size.height.to_f32(),
+-            );
+-            let viewport_width = (fragment.size.width
+-                - fragment.border.left
+-                - fragment.border.right
+-                - fragment.padding.left
+-                - fragment.padding.right)
+-                .clamp_negative_to_zero()
+-                .to_f32();
+-            let viewport_height = (fragment.size.height
+-                - fragment.border.top
+-                - fragment.border.bottom
+-                - fragment.padding.top
+-                - fragment.padding.bottom)
+-                .clamp_negative_to_zero()
+-                .to_f32();
+-            canvas.save();
+-            canvas.clip_rect(
+-                Rect::from_xywh(x, y, viewport_width, viewport_height),
+-                ClipOp::Intersect,
+-                false,
+-            );
+-            if style.has_border_radius() {
+-                let representative_border = fragment
+-                    .border
+-                    .top
+-                    .max_of(fragment.border.right)
+-                    .max_of(fragment.border.bottom)
+-                    .max_of(fragment.border.left)
+-                    .to_f32();
+-                canvas.clip_rrect(
+-                    RRect::new_rect_radii(
+-                        border_box,
+-                        &fragment_border_radii(style, fragment, &border_box, representative_border),
+-                    ),
+-                    ClipOp::Intersect,
+-                    true,
+-                );
+-            }
+-            // SVG foreignObject decoration is first rasterized into its SVG
+-            // viewport and then composited through the CSS rounded contour.
+-            // Chromium's tiny subpixel contour retains forty-nine fiftieths
+-            // of the covered source sample at the doubly-clipped corner.
+-            canvas.save_layer_alpha_f(border_box, 49.0 / 50.0);
+-        }
+         if (native_button_theme || native_scroll_button_theme || native_color_theme)
+             && fragment.size.width >= LayoutUnit::from_i32(6)
+             && fragment.size.height >= LayoutUnit::from_i32(6)
+@@ -15855,10 +15825,6 @@
+             opacity_multiplier,
+         );
+         paint_native_marker_group_scrollbar_arrows(canvas, fragment, node, style, abs_offset);
+-        if clip_svg_foreign_object {
+-            canvas.restore();
+-            canvas.restore();
+-        }
+         if clip_native_text_control_corners {
+             canvas.restore();
+         }
+@@ -17509,6 +17475,66 @@
+         return;
+     }
+
++    // BoxBorderPainter clamps each used edge to the snapped border-box
++    // dimension. A double edge narrower than three CSS pixels becomes
++    // solid. With an empty inner contour, a lone curved edge fills the box
++    // through its rounded outer contour and authored side rectangle.
++    let visible_sides = [
++        (bt, style.border_top_style),
++        (br, style.border_right_style),
++        (bb, style.border_bottom_style),
++        (bl, style.border_left_style),
++    ];
++    let mut visible_sides_iter =
++        visible_sides
++            .iter()
++            .enumerate()
++            .filter(|(_, (width, border_style))| {
++                *width > 0.0 && !matches!(border_style, BorderStyle::None | BorderStyle::Hidden)
++            });
++    let sole_side = visible_sides_iter
++        .next()
++        .filter(|_| visible_sides_iter.next().is_none());
++    if let Some((side, _)) = sole_side.filter(|_| has_border_radius) {
++        let (width, border_style) = visible_sides[side];
++        let box_extent = if side == 0 || side == 2 { h } else { w };
++        let used_width = width.min(box_extent);
++        let effective_solid = border_style == BorderStyle::Solid
++            || (border_style == BorderStyle::Double && used_width < 3.0);
++        if width >= box_extent && effective_solid {
++            let border_rect = Rect::from_xywh(x, y, w, h);
++            let outer_radii = fragment_border_radii(style, fragment, &border_rect, width);
++            let side_rect = match side {
++                0 => Rect::from_xywh(x, y, w, width),
++                1 => Rect::from_xywh(x + w - width, y, width, h),
++                2 => Rect::from_xywh(x, y + h - width, w, width),
++                _ => Rect::from_xywh(x, y, width, h),
++            };
++            let color = match side {
++                0 => style.border_top_color,
++                1 => style.border_right_color,
++                2 => style.border_bottom_color,
++                _ => style.border_left_color,
++            }
++            .resolve(&style.color);
++            let mut paint = Paint::default();
++            paint.set_anti_alias(true);
++            set_paint_css_color(&mut paint, &color);
++            canvas.save();
++            if !outer_rrect_clipped {
++                canvas.clip_rrect(
++                    RRect::new_rect_radii(border_rect, &outer_radii),
++                    ClipOp::Intersect,
++                    true,
++                );
++            }
++            canvas.clip_rect(side_rect, ClipOp::Intersect, true);
++            canvas.draw_rect(border_rect, &paint);
++            canvas.restore();
++            return;
++        }
++    }
++
+     let inherited_color = &style.color;
+     let side_specs = [
+         (
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -684,6 +684,24 @@
+         let handle = self.register_native_node(node);
+         self.initialize_control(handle, tag);
+         self.mark_dirty(InvalidationClass::Subtree);
++        Ok(handle)
++    }
++
++    /// Create a native SVG foreignObject viewport for retained UI children.
++    /// Width and height describe the viewport, including the fragment bounds;
++    /// border and padding do not enlarge it. Authored children, style, events,
++    /// and lifecycle use the same engine as ordinary elements. Its native
++    /// container kind is [`ElementTag::Div`].
++    pub fn create_svg_foreign_object(&mut self) -> Result<NodeHandle, EngineError> {
++        let handle = self.create_element(ElementTag::Div)?;
++        let node = self.resolve(handle)?;
++        let data = self.document.node_mut(node);
++        data.is_svg_foreign_object = true;
++        data.style.update_derived(|style| {
++            style.display = Display::Block;
++            style.overflow_x = openui_style::Overflow::Hidden;
++            style.overflow_y = openui_style::Overflow::Hidden;
++        });
+         Ok(handle)
+     }
+
+diff --git a/bindings/rust/openui/src/element.rs b/bindings/rust/openui/src/element.rs
+--- a/bindings/rust/openui/src/element.rs
++++ b/bindings/rust/openui/src/element.rs
+@@ -49,7 +49,14 @@
+ }
+
+ impl Element {
++    /// Create a native retained element. `foreignObject` creates an SVG
++    /// viewport for native UI children; like `div`, it has container kind
++    /// [`ElementTag::Div`]. No document scripts execute.
+     pub fn create(document: &Document, tag: &str) -> Result<Self, Error> {
++        if tag.eq_ignore_ascii_case("foreignobject") {
++            let handle = document.with_engine_mut(|engine| engine.create_svg_foreign_object())?;
++            return Ok(Self::from_handle(document.clone(), handle));
++        }
+         let (tag_kind, display) = tag_definition(tag)?;
+         let handle = document.with_engine_mut(|engine| engine.create_element(tag_kind))?;
+         if let Some(display) = display {
+@@ -875,6 +882,49 @@
+     }
+
+     #[test]
++    fn native_svg_viewport_bounds_survive_decoration_mutation_and_cloning() {
++        let document = Document::new(100, 100).unwrap();
++        let svg = Element::create(&document, "svg").unwrap();
++        svg.set_width(crate::typed_style::LengthValue::px(80.0))
++            .unwrap();
++        svg.set_height(crate::typed_style::LengthValue::px(60.0))
++            .unwrap();
++        document.body().append_child(&svg).unwrap();
++        let foreign = Element::create(&document, "foreignObject").unwrap();
++        foreign
++            .set_width(crate::typed_style::LengthValue::px(1.0))
++            .unwrap();
++        foreign
++            .set_height(crate::typed_style::LengthValue::px(1.0))
++            .unwrap();
++        svg.append_child(&foreign).unwrap();
++        let bounds = foreign.bounding_rect().unwrap().unwrap();
++        foreign.set_border_left_width(3).unwrap();
++        foreign
++            .set_border_left_style(openui_style::BorderStyle::Double)
++            .unwrap();
++        foreign
++            .set_padding(crate::typed_style::Edges::all(
++                crate::typed_style::LengthValue::px(2.0),
++            ))
++            .unwrap();
++        assert_eq!(foreign.bounding_rect().unwrap().unwrap(), bounds);
++        foreign
++            .set_box_sizing(openui_style::BoxSizing::BorderBox)
++            .unwrap();
++        assert_eq!(foreign.bounding_rect().unwrap().unwrap(), bounds);
++        let clone = foreign.clone_subtree().unwrap();
++        foreign.detach().unwrap();
++        svg.append_child(&clone).unwrap();
++        assert_eq!(clone.bounding_rect().unwrap().unwrap(), bounds);
++        clone
++            .set_width(crate::typed_style::LengthValue::px(8.0))
++            .unwrap();
++        let changed = clone.bounding_rect().unwrap().unwrap();
++        assert_eq!((changed.width, changed.height), (8.0, 1.0));
++    }
++
++    #[test]
+     fn typed_animation_uses_manual_clock_and_dispatches_events() {
+         let document = Document::new(100, 100).unwrap();
+         let element = Element::create(&document, "div").unwrap();
+diff --git a/bindings/rust/openui/examples/native_svg_foreign_object.rs b/bindings/rust/openui/examples/native_svg_foreign_object.rs
+new file mode 100644
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_svg_foreign_object.rs
+@@ -0,0 +1,91 @@
++//! SVG viewport decoration and native child layout through public Rust APIs.
++use openui::prelude::*;
++use std::path::PathBuf;
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let mut args = std::env::args().skip(1);
++    let output = PathBuf::from(args.next().ok_or("output directory required")?);
++    let scale: f64 = args.next().ok_or("scale required")?.parse()?;
++    let phase: f32 = args.next().ok_or("phase required")?.parse()?;
++    let width: f32 = args.next().ok_or("width required")?.parse()?;
++    let height: f32 = args.next().ok_or("height required")?.parse()?;
++    let border_width: f32 = args.next().ok_or("border width required")?.parse()?;
++    let border_style = match args.next().ok_or("border style required")?.as_str() {
++        "solid" => BorderStyle::Solid,
++        "double" => BorderStyle::Double,
++        _ => return Err("unknown border style".into()),
++    };
++    let radius: f32 = args.next().ok_or("radius required")?.parse()?;
++    let padding: f32 = args.next().ok_or("padding required")?.parse()?;
++    let sizing = match args.next().ok_or("box sizing required")?.as_str() {
++        "content-box" => BoxSizing::ContentBox,
++        "border-box" => BoxSizing::BorderBox,
++        _ => return Err("unknown box sizing".into()),
++    };
++    let opacity: f32 = args.next().ok_or("opacity required")?.parse()?;
++    let child_kind = args.next().ok_or("child kind required")?;
++    let writing_mode = match args.next().ok_or("writing mode required")?.as_str() {
++        "horizontal-tb" => WritingMode::HorizontalTb,
++        "vertical-rl" => WritingMode::VerticalRl,
++        _ => return Err("unknown writing mode".into()),
++    };
++    let document =
++        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(320.0, 240.0, scale)?)?;
++    let root = document.body();
++    root.set_background_color(Color::WHITE)?;
++    let svg = Element::create(&document, "svg")?;
++    svg.set_position(Position::Absolute)?;
++    svg.set_left(Length::px(20.0 + phase))?;
++    svg.set_top(Length::px(20.0 + phase))?;
++    svg.set_width(LengthValue::px(240.0))?;
++    svg.set_height(LengthValue::px(180.0))?;
++    svg.set_overflow(Overflow::Hidden)?;
++    svg.set_overflow_clip_box(OverflowClipBox::ContentBox)?;
++    root.append_child(&svg)?;
++    let foreign = Element::create(&document, "foreignObject")?;
++    foreign.set_width(LengthValue::px(width))?;
++    foreign.set_height(LengthValue::px(height))?;
++    foreign.set_border_left(Border {
++        width: border_width,
++        style: border_style,
++        color: Color::BLACK,
++    })?;
++    foreign.set_border_radius(CornerRadii(Edges::all(LengthValue::px(radius))))?;
++    foreign.set_padding(Edges::all(LengthValue::px(padding)))?;
++    foreign.set_box_sizing(sizing)?;
++    foreign.set_opacity(opacity)?;
++    foreign.set_writing_mode(writing_mode)?;
++    svg.append_child(&foreign)?;
++    let child = match child_kind.as_str() {
++        "none" => None,
++        "red" => {
++            let child = Element::create(&document, "div")?;
++            child.set_width(LengthValue::percent(100.0))?;
++            child.set_height(LengthValue::percent(100.0))?;
++            child.set_background_color(Color::RED)?;
++            foreign.append_child(&child)?;
++            Some(child)
++        }
++        _ => return Err("unknown child kind".into()),
++    };
++    let foreign_rect = foreign.bounding_rect()?.ok_or("viewport has no bounds")?;
++    let bounds = |r: Rect| {
++        format!(
++            "{{\"x\":{},\"y\":{},\"width\":{},\"height\":{}}}",
++            r.x, r.y, r.width, r.height
++        )
++    };
++    let mut geometry = format!(
++        "{{\"nodes\":{{\"foreign\":{{\"bounds\":{}}}",
++        bounds(foreign_rect)
++    );
++    if let Some(child) = child {
++        let rect = child.bounding_rect()?.ok_or("child has no bounds")?;
++        geometry.push_str(&format!(",\"content\":{{\"bounds\":{}}}", bounds(rect)));
++    }
++    geometry.push_str("}}\n");
++    std::fs::create_dir_all(&output)?;
++    std::fs::write(output.join("geometry.json"), geometry)?;
++    std::fs::write(output.join("openui.png"), document.render_to_png_buffer()?)?;
++    Ok(())
++}

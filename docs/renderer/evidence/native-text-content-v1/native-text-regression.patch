@@ -1,0 +1,138 @@
+diff --git a/bindings/rust/openui-ffi/src/lib.rs b/bindings/rust/openui-ffi/src/lib.rs
+index e75b935a..0dd8e316 100644
+--- a/bindings/rust/openui-ffi/src/lib.rs
++++ b/bindings/rust/openui-ffi/src/lib.rs
+@@ -3799,6 +3799,133 @@ mod tests {
+         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+     }
+ 
++    #[test]
++    fn c_element_text_content_renders_and_matches_native_rust() {
++        use openui::prelude::*;
++
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            let mut config = document_config(800, 600);
++            config.viewport.device_scale_factor = scale;
++            let mut c_document = ptr::null_mut();
++            assert_eq!(oui_document_create(&config, &mut c_document), OuiStatus::Ok);
++            let mut root = ptr::null_mut();
++            assert_eq!(oui_document_root(c_document, &mut root), OuiStatus::Ok);
++            let c_text = create_element(c_document, 0, root);
++
++            let descriptor = OuiFontFaceDescriptor {
++                struct_size: size_of::<OuiFontFaceDescriptor>() as u32,
++                abi_version: OUI_ABI_VERSION,
++                family: text("Ahem"),
++                face_index: 0,
++                style: OUI_FONT_FACE_STYLE_NORMAL,
++                style_min: 0.0,
++                style_max: 0.0,
++                weight_min: 400.0,
++                weight_max: 400.0,
++                stretch_min: 100.0,
++                stretch_max: 100.0,
++                unicode_ranges: ptr::null(),
++                unicode_range_count: 0,
++                feature_defaults: ptr::null(),
++                feature_default_count: 0,
++                size_adjust: 0.0,
++                ascent_override: 0.0,
++                descent_override: 0.0,
++                line_gap_override: 0.0,
++                flags: 0,
++                reserved: 0,
++            };
++            let bytes = include_bytes!("../../openui-text/fonts/Ahem.ttf");
++            let mut face = ptr::null_mut();
++            assert_eq!(
++                oui_document_register_font(
++                    c_document,
++                    bytes.as_ptr(),
++                    bytes.len(),
++                    &descriptor,
++                    &mut face,
++                ),
++                OuiStatus::Ok
++            );
++            let mut family = ptr::null_mut();
++            assert_eq!(
++                oui_font_family_create(text("Ahem"), 0, &mut family),
++                OuiStatus::Ok
++            );
++            assert_eq!(
++                oui_element_set_property(
++                    c_text,
++                    StyleProperty::FontFamily as i32,
++                    &OuiStyleValue {
++                        tag: 6,
++                        reserved: 0,
++                        data: OuiStylePayload { compound: family },
++                    },
++                ),
++                OuiStatus::Ok
++            );
++            assert_eq!(oui_style_compound_destroy(family), OuiStatus::Ok);
++            for (property, literal) in [
++                (StyleProperty::Position, "absolute"),
++                (StyleProperty::Left, "20px"),
++                (StyleProperty::Top, "20px"),
++                (StyleProperty::FontSize, "20px"),
++                (StyleProperty::LineHeight, "1"),
++            ] {
++                let mut value = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
++                assert_eq!(
++                    oui_style_value_parse(property as i32, text(literal), value.as_mut_ptr()),
++                    OuiStatus::Ok
++                );
++                // SAFETY: the successful constructor initializes the value.
++                let value = unsafe { value.assume_init() };
++                assert_eq!(
++                    oui_element_set_property(c_text, property as i32, &value),
++                    OuiStatus::Ok
++                );
++                if value.tag == 6 {
++                    // SAFETY: the tag selects this initialized union member.
++                    assert_eq!(
++                        oui_style_compound_destroy(unsafe { value.data.compound } as *mut _),
++                        OuiStatus::Ok
++                    );
++                }
++            }
++
++            let rust_document = openui::Document::with_font_collection(
++                ViewportMetrics::from_logical_size(800.0, 600.0, scale).unwrap(),
++                FontCollection::deterministic_test(),
++            )
++            .unwrap();
++            let rust_text = openui::Element::create(&rust_document, "div").unwrap();
++            rust_text.set_position(Position::Absolute).unwrap();
++            rust_text.set_left(Length::px(20.0)).unwrap();
++            rust_text.set_top(Length::px(20.0)).unwrap();
++            rust_text
++                .set_font_family(FontFamilyList::single("Ahem"))
++                .unwrap();
++            rust_text.set_font_size(LengthValue::px(20.0)).unwrap();
++            rust_text.set_line_height(LineHeight::Number(1.0)).unwrap();
++            rust_document.body().append_child(&rust_text).unwrap();
++            for content in ["X", "XX", "", "X"] {
++                rust_text.set_text(content).unwrap();
++                assert_eq!(oui_element_set_text(c_text, text(content)), OuiStatus::Ok);
++                let mut actual = OuiRect::default();
++                assert_eq!(oui_element_get_bounds(c_text, &mut actual), OuiStatus::Ok);
++                let expected = rust_text.bounding_rect().unwrap().unwrap();
++                assert_eq!(
++                    (actual.x, actual.y, actual.width, actual.height),
++                    (expected.x, expected.y, expected.width, expected.height),
++                    "C text setter must create authored text children: scale={scale}, text={content:?}"
++                );
++            }
++            assert_eq!(oui_element_destroy(c_text), OuiStatus::Ok);
++            assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
++            assert_eq!(oui_font_face_destroy(face), OuiStatus::Ok);
++            assert_eq!(oui_document_destroy(c_document), OuiStatus::Ok);
++        }
++    }
++
+     #[test]
+     fn c_font_metadata_matches_pinned_multiformat_fixtures() {
+         fn hash(hex: &str) -> [u8; 32] {

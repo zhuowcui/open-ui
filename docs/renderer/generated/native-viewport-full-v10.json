@@ -1,0 +1,183 @@
+{
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/client-scissor-clean-v42-comparison-v1.json",
+      "sha256": "afe586a370535955992057f5a7a205782d1ab84a20122962ec7c226fb686e555"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-clean-v90-comparison-v1.json",
+      "sha256": "ede99b6da87946357eb05781ee25292eab8fd6354ed0392d0b4fb0298efe6da3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/client-scissor-clean-v42-comparison-v1.json",
+      "sha256": "30d5e9ce3f3303376bf755f26ec05ec1f3b8879f2eee78b74fc2feb5e9a6452b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/umbrella-client-direction-clean-v90-comparison-v1.json",
+      "sha256": "b2b643217962ea460b33790d0656f2a2e6d41cca8438996294e75548a452b8b9"
+    },
+    {
+      "path": "docs/renderer/generated/native-viewport-full-v9.json",
+      "sha256": "9d353e9e4933ffb7ac4df2b2e92e97d5dd827ba1f63a69587d096efbbf025073"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-clean-v90/build.json",
+      "sha256": "0a13f4e67f6792d9b63525e6d0c5e88c7b274743bb6a3d6bf3e0924cff4a2fe7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-clean-v90/source-before.json",
+      "sha256": "d4ce45f1ac9645066cad636d93c35b52123830f8c43e3480ae7adf94cee660f0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-build-v90.log",
+      "sha256": "d1827086fece03a83024e7fd7bf4e303ba17f48c549b627fd2bb17918fe9a08b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-raster-delta-v91.json",
+      "sha256": "1f461583f28d0e4f2b7539188d9c1aa1cadd0703b2e0b51c358e51aa1d2af7cc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-focused-v87/focused-summary.json",
+      "sha256": "88ae789e976efcbd0c2a8f9454b03f2a38d5b3727ea5c908d9a4e5a1d3393704"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-focused-v87.log",
+      "sha256": "bee2e4d2f39af95ea682877fdf6ba2f55b022b6301ff3a6f03699da7dc4e063c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-primitive-v87/primitive-summary.json",
+      "sha256": "287ac0cf5c0cbd1ecf8e32baf9897880de57cd76db9e9f2f66b0efefe75fe647"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-primitive-v87.log",
+      "sha256": "f4a9e98e6d02ef725844f08bbea47a008e7ac8193c3dae4511a6ea9b28b38fdd"
+    }
+  ],
+  "corrected_solid_tile_candidate": {
+    "applied_to_umbrella": false,
+    "complete_focused_and_primitive": [
+      {
+        "all_native_and_chromium_images_oracle_identities_and_differences_unchanged": true,
+        "observed_exit_code": 0,
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-focused-v87/focused-summary.json",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "19b14fca73a6d01c8cb39e83d000101baefb54e7b84937ba169437ef034c1964",
+          "total": 640
+        },
+        "sha256": "88ae789e976efcbd0c2a8f9454b03f2a38d5b3727ea5c908d9a4e5a1d3393704",
+        "source": {
+          "clean": true,
+          "commit": "d64d3f7f14c1c066af092b6e7ec277e35fb3e94d",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "e09a79c07ea0f2e4f6dafe625421be45fa8489ea160b94a4c179a3e3552cb75c",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "source_after": {
+          "clean": true,
+          "commit": "d64d3f7f14c1c066af092b6e7ec277e35fb3e94d",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "e09a79c07ea0f2e4f6dafe625421be45fa8489ea160b94a4c179a3e3552cb75c",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "suite": "focused"
+      },
+      {
+        "all_native_and_chromium_images_oracle_identities_and_differences_unchanged": true,
+        "observed_exit_code": 0,
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/solid-tile-clip-clean-primitive-v87/primitive-summary.json",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "42d43d3d15656fd21654f104ccdafce67b2c8506ff0a16a253e3ffa3c8d543be",
+          "total": 960
+        },
+        "sha256": "287ac0cf5c0cbd1ecf8e32baf9897880de57cd76db9e9f2f66b0efefe75fe647",
+        "source": {
+          "clean": true,
+          "commit": "d64d3f7f14c1c066af092b6e7ec277e35fb3e94d",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "e09a79c07ea0f2e4f6dafe625421be45fa8489ea160b94a4c179a3e3552cb75c",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "source_after": {
+          "clean": true,
+          "commit": "d64d3f7f14c1c066af092b6e7ec277e35fb3e94d",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "e09a79c07ea0f2e4f6dafe625421be45fa8489ea160b94a4c179a3e3552cb75c",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "suite": "primitive"
+      }
+    ],
+    "complete_original_and_expanded_censuses": "Running on immutable clean d64d3f7f; no complete totals claimed.",
+    "native_comparisons": 850,
+    "native_exact": 706,
+    "remaining_fractional_failures": 144,
+    "source": {
+      "clean": true,
+      "commit": "d64d3f7f14c1c066af092b6e7ec277e35fb3e94d",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "e09a79c07ea0f2e4f6dafe625421be45fa8489ea160b94a4c179a3e3552cb75c",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "fresh_clean_umbrella_build": {
+    "clean_exit_code": 0,
+    "command": [
+      "cargo",
+      "--config",
+      ".cargo/config.chromium.toml",
+      "build",
+      "-p",
+      "openui",
+      "--example",
+      "native_viewport_scroll",
+      "--locked"
+    ],
+    "log_sha256": "d1827086fece03a83024e7fd7bf4e303ba17f48c549b627fd2bb17918fe9a08b",
+    "native_binary_sha256": "9c0ddadfccb69c357be4436a5d6d8bda7c4e553c31450c05470fd0c8ca186a94",
+    "native_build_exit_code": 0,
+    "source": {
+      "clean": true,
+      "commit": "a5547e7eb2560468c4f6862a0900456026f81ffb",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "1adc57e9ce97c314904a3a930041c0c8339cfc39bef515d4496e4d2e1de75394",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "a5547e7eb2560468c4f6862a0900456026f81ffb",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "1adc57e9ce97c314904a3a930041c0c8339cfc39bef515d4496e4d2e1de75394",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "fresh_umbrella_native_reports": [
+    {
+      "all_native_images_geometry_oracles_callbacks_teardowns_and_differences_identical_to_079208f8": true,
+      "comparisons": 250,
+      "exact": 196,
+      "observed_exit_code": 0,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/umbrella-client-clean-v90-comparison-v1.json",
+      "sha256": "ede99b6da87946357eb05781ee25292eab8fd6354ed0392d0b4fb0298efe6da3"
+    },
+    {
+      "all_native_images_geometry_oracles_callbacks_teardowns_and_differences_identical_to_079208f8": true,
+      "comparisons": 600,
+      "exact": 488,
+      "observed_exit_code": 0,
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/umbrella-client-direction-clean-v90-comparison-v1.json",
+      "sha256": "b2b643217962ea460b33790d0656f2a2e6d41cca8438996294e75548a452b8b9"
+    }
+  ],
+  "hosted_results": "Six ordinary jobs passed at 427f7df4; a5547e7e hosted runs are in progress. No success is attributed to a later commit.",
+  "policy": "Chromium is the sole pixel target. Open UI never executes JavaScript. Needed application behavior requires public native Rust methods and callbacks over the shared Engine.",
+  "previous_evidence": "docs/renderer/generated/native-viewport-full-v9.json",
+  "release_pixel_gate": "Still failing: the latest accepted complete census is 21,308/22,924 original and 22,111/23,728 expanded exact. Fresh umbrella native reproduction and private raster gates do not close it.",
+  "release_qualification": false,
+  "schema_version": 1
+}

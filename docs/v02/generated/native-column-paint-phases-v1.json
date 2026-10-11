@@ -1,0 +1,222 @@
+{
+  "matrix": {
+    "artifact": {
+      "path": "out/renderer-evidence/native-paint-phase-v1/matrix-delta-v1.json",
+      "sha256": "66ec320e97e5b1da7f823d6b016030110bef8831006fff72e53b1887739f9f38"
+    },
+    "suites": {
+      "cohort": {
+        "chromium_oracle_images_and_identities_unchanged": true,
+        "images_changed": 0,
+        "previously_exact_regressions": 0,
+        "report": "/home/nero/code/open-ui/out/renderer-evidence/native-paint-phase-v1/cohort/full-summary.json",
+        "report_sha256": "4aac1cb0eed65129e0807dec7068273330b1c01d98585572628558555bc0b195",
+        "results": {
+          "different": 646,
+          "errors": 0,
+          "exact": 7034,
+          "profile_result_sha256": "41b26eca99c6cc7949299e19b9e46fc37d2f3705168f3dd92161ab87356fd0f2",
+          "total": 7680
+        },
+        "source": {
+          "clean": false,
+          "commit": "497e322d646d079ccfb4e781fac99d8242b64051",
+          "harness_sha256": "e5d5d749235aeaf5f5d8c11b9af508922e549ec96b7830874289cfe0de608014",
+          "source_tree_sha256": "396fe01430278bb35ff0a23ccad17c4327beaa5e3aea3571eb7204ee876679d6",
+          "status_sha256": "09667439e9b6b41d6a3efee22520fd23c3ed6aaf2ea77b9e1656e8a33e8cef2b"
+        }
+      },
+      "focused": {
+        "chromium_oracle_images_and_identities_unchanged": true,
+        "images_changed": 0,
+        "previously_exact_regressions": 0,
+        "report": "/home/nero/code/open-ui/out/renderer-evidence/native-paint-phase-v1/focused/focused-summary.json",
+        "report_sha256": "5d7593e558b8a78fe063425d8ec00089a284c7ed572e809e0f7d5766cb60b442",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "f4ad08d9aad078f8ae1d267c8a6439c4c6fbbbcc24b05a58d76937f4b3b88f2b",
+          "total": 640
+        },
+        "source": {
+          "clean": false,
+          "commit": "497e322d646d079ccfb4e781fac99d8242b64051",
+          "harness_sha256": "e5d5d749235aeaf5f5d8c11b9af508922e549ec96b7830874289cfe0de608014",
+          "source_tree_sha256": "396fe01430278bb35ff0a23ccad17c4327beaa5e3aea3571eb7204ee876679d6",
+          "status_sha256": "09667439e9b6b41d6a3efee22520fd23c3ed6aaf2ea77b9e1656e8a33e8cef2b"
+        }
+      },
+      "primitive": {
+        "chromium_oracle_images_and_identities_unchanged": true,
+        "images_changed": 0,
+        "previously_exact_regressions": 0,
+        "report": "/home/nero/code/open-ui/out/renderer-evidence/native-paint-phase-v1/primitive/primitive-summary.json",
+        "report_sha256": "fffc01d15097f2c5f196a0f348d48b4903ab0929c045f3867e8348e7ec36dc1e",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "03861af29825c0f11344c59c381a30ff0e2c67959bd91e229fd73136e3809c62",
+          "total": 960
+        },
+        "source": {
+          "clean": false,
+          "commit": "497e322d646d079ccfb4e781fac99d8242b64051",
+          "harness_sha256": "e5d5d749235aeaf5f5d8c11b9af508922e549ec96b7830874289cfe0de608014",
+          "source_tree_sha256": "396fe01430278bb35ff0a23ccad17c4327beaa5e3aea3571eb7204ee876679d6",
+          "status_sha256": "09667439e9b6b41d6a3efee22520fd23c3ed6aaf2ea77b9e1656e8a33e8cef2b"
+        }
+      }
+    }
+  },
+  "native_neighbor_replay": {
+    "artifact": {
+      "path": "out/renderer-evidence/native-paint-phase-v1/native-neighbor-replay-v1/comparison.json",
+      "sha256": "e6ab7ddad08db627ec9f06e1189a7ba4dbf221cbeec9ae4a8eb7c87960d4956e"
+    },
+    "suites": {
+      "atomic": {
+        "geometry_and_pixels_exact": 144,
+        "geometry_changed": 0,
+        "geometry_exact": 144,
+        "images_changed": 0,
+        "pixels_exact": 144,
+        "previously_exact_regressions": 0,
+        "total": 144
+      },
+      "constrained": {
+        "geometry_and_pixels_exact": 60,
+        "geometry_changed": 0,
+        "geometry_exact": 60,
+        "images_changed": 0,
+        "pixels_exact": 60,
+        "previously_exact_regressions": 0,
+        "total": 65
+      },
+      "public-flex": {
+        "geometry_and_pixels_exact": 45,
+        "geometry_changed": 0,
+        "geometry_exact": 45,
+        "images_changed": 5,
+        "pixels_exact": 48,
+        "previously_exact_regressions": 0,
+        "total": 55
+      }
+    }
+  },
+  "policy": "Chromium is the sole pixel target. Open UI executes no JavaScript. The consuming app uses public Rust methods and Rust callbacks. Historical Open UI images are provenance only.",
+  "public_rust_consumer": {
+    "capture_repeat_audit": {
+      "path": "out/renderer-evidence/native-paint-phase-v1/public-native-final-delta-v1.json",
+      "sha256": "f62af542a30d91c6c8bd73697e1b1304bbe4fd5758da0f78b463a5c534379a2c"
+    },
+    "comparison": {
+      "path": "out/renderer-evidence/native-paint-phase-v1/final-public-native-comparison-v1.json",
+      "sha256": "7ef412b6f77b4a44870679ecf646440313162fc81552f0d61b9e62bea131243f"
+    },
+    "comparisons": 55,
+    "geometry_exact": 35,
+    "geometry_pixels_and_hit_targets_exact": 35,
+    "hit_targets_exact": 45,
+    "mutations_verified": [
+      "static to relative position and back",
+      "opaque to half opacity and back",
+      "native overlap activation invokes one Rust click callback",
+      "owned rectangle snapshot remains unchanged"
+    ],
+    "path": "bindings/rust/openui/examples/native_column_paint_phases.rs",
+    "pixels_exact": 38,
+    "scales": [
+      1,
+      1.25,
+      1.5,
+      2,
+      3
+    ],
+    "sha256": "4183326d075dc255ab151d15d5f97dab55a4e6664e05cc3d5bc212662548d40f"
+  },
+  "release_qualification": false,
+  "remaining_native_cases": [
+    {
+      "case": "row",
+      "owner": "openui-layout flex continuation; engine fragment input traversal",
+      "status": "geometry, pixels and pointer targets differ"
+    },
+    {
+      "case": "grid-following-sibling",
+      "owner": "openui-layout grid continuation; engine fragment input traversal",
+      "status": "geometry, pixels and pointer targets differ"
+    },
+    {
+      "case": "reverse",
+      "owner": "openui-layout flex continuation; openui-paint",
+      "status": "geometry differs at all scales; pixels differ at two scales"
+    },
+    {
+      "case": "following-inline-block",
+      "owner": "openui-layout inline continuation; openui-paint",
+      "status": "geometry and pixels differ; pointer targets match"
+    }
+  ],
+  "schema_version": 1,
+  "source": {
+    "checkpoint": "497e322d646d079ccfb4e781fac99d8242b64051",
+    "clean": false,
+    "code_file_sha256": {
+      "bindings/rust/openui-engine/src/lib.rs": "1b2686148dd4cb52bae7b5c6e52191ce268fbf27076e2f6cf799893d0ca70620",
+      "bindings/rust/openui-paint/src/lib.rs": "5d256ffee07efcbf1356b86ad8f71eaab3e92de93990060ad59ab522b01ea9b8",
+      "bindings/rust/openui-paint/src/paint_order.rs": "3d86dcd2111d52d6637eb5e0f466cd56685e202a20da4bc0935f2d4920bd94a4",
+      "bindings/rust/openui-paint/src/painter.rs": "ed521f025abc5761fe03464751be4dce397ee8ae5c28354544907fd7e7d1f150",
+      "bindings/rust/openui/examples/native_column_paint_phases.rs": "4183326d075dc255ab151d15d5f97dab55a4e6664e05cc3d5bc212662548d40f",
+      "examples/c_v02/geometry.c": "2414299cc6ae0d77f01aadf05526899ab4bcfadf6c9fee6ad9d1d730ec2e4add",
+      "tools/qualification/probe_native_geometry_oracle.py": "607cdc34b7c8b2a8bd2881b332a9daaf28238b21d4509fa9808a681b7760878f"
+    }
+  },
+  "status": "native correction verified; complete clean renderer qualification pending",
+  "verification": {
+    "abi": {
+      "c_consumers": 6,
+      "cpp_consumers": 1,
+      "log": "/tmp/openui-native-paint-hit-phase-abi-v2.log",
+      "status": "pass",
+      "symbols": 109
+    },
+    "accountability": {
+      "log": "/tmp/openui-native-paint-phase-accountability-v1.log",
+      "log_sha256": "3eb1bdd1433d5757ac36df64bbe7354c87eaa2c9991b6500b2209143032469e9",
+      "passed_checks": 7,
+      "status": "pass",
+      "total_checks": 7
+    },
+    "artifact": {
+      "path": "out/renderer-evidence/native-paint-phase-v1/native-api-verification-v2.json",
+      "sha256": "0e9a1a3ae38e8f16e276aad9a7fb20e563f2d6ba134bd184ce892c9ead40a393"
+    },
+    "ffi_library_sha256": "3d5cf3b5238b4ad8d605fa067abaf619fae51b2e57c821cd98a14c5267412f60",
+    "generated_contract_check_log": "/tmp/openui-native-paint-phase-renderer-check-v2.log",
+    "generator_artifact": "docs/renderer/generated/author-style-inventory.json",
+    "linux_conformance": {
+      "failed": 0,
+      "log": "/tmp/openui-native-paint-hit-phase-linux-conformance-v1.log",
+      "passed": 55,
+      "status": "pass"
+    },
+    "negative_c_guard": {
+      "expected_assertion": "oui_document_hit_test(document, 227.0f, 30.0f, &flex_hit) returns target",
+      "log": "/tmp/openui-native-paint-hit-phase-negative-c-v1.log",
+      "returncode": -6
+    },
+    "negative_rust_guard": {
+      "exit_code": 101,
+      "expected_assertion": "old engine returns following; new overlap assertion expects border",
+      "log": "/tmp/openui-native-paint-phase-negative-rust-v1.log"
+    },
+    "workspace": {
+      "failed": 0,
+      "ignored": 13,
+      "passed": 8491,
+      "suites": 147
+    }
+  }
+}

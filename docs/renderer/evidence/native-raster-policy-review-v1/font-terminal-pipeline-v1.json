@@ -1,0 +1,65 @@
+{
+  "all_commands_terminal": true,
+  "c_raster_configuration_parity": "unfinished required API work",
+  "immutable_probe_hashes": {
+    "/tmp/openui-native-font-backends-build-v1276.py": "4287f427e269bb618e91521deb406b1e8133a8f61bc0ea6ca8cc73ea1aabd4ce",
+    "/tmp/openui-native-font-backends-consumer-v1277.py": "afb474765414098571c70599318390283b80db5095541d4fb467aeb8ba6ba9d9",
+    "/tmp/openui-native-font-backends-guards-v1275.py": "26170f7bd58ab8217ad09da2180a46f4466e48f6b16a00c16ef4f39c865c8c30",
+    "/tmp/openui-native-font-backends-matrices-v1280.py": "24e69f273d77de0b4c993bb4dd852c48aba23d17df3b4c3d353167ac37879d90",
+    "/tmp/openui-native-font-backends-sizing-v1279.py": "0f285c02d7cc5cf3f06db3b0f5bdb71e1cf703b46d907a4875255352bef269e9",
+    "/tmp/openui-native-font-backends-static-v1278.py": "73c47a96cc6600ef5f15c6ceb71a6152db1ca55b062e6725c2b7fd00394e99de"
+  },
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "ordered_build_and_image_stages": true,
+  "physical_fontations_causation_proven": false,
+  "prior_terminal_pipeline_sha256": {
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-pipeline-v1265/receipt.json": "e858a66175baab8ee7fee07eb8b66347f5da334f2f27e3f9c00373c60d8ed290",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-lcd-pipeline-v1219/receipt.json": "f3afb2548a0d2e1d275096ac5fa8db74fa1749f9f46f250aaf0f451b392e951a",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/scene-recording-cache-pipeline-v1233/receipt.json": "3efbbb2a9666f9c08640f95b4b9653ae5bb6444d23f24258c6a7d0f0babe6bb6"
+  },
+  "probe_sha256": "98b8f0f3233c599ae9bb997fdc6cfaad7f62d5fccec62e35659460cc564b389e",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "selection": {
+    "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-backends-selection-v1280.json",
+    "sha256": "ca51d8b03dbff3b5c47f3f0dabf93fc631b37772947350a50e56f9e1bdbb00e2"
+  },
+  "source": {
+    "clean": true,
+    "commit": "0601cd30b9ba1d51d8642b164b74dea90d3e0809",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "44832bf0b1d7238a477d6b9527afaa56bbc28c0cf337fb9dffeaf1b1f7183fcc",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "0601cd30b9ba1d51d8642b164b74dea90d3e0809",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "44832bf0b1d7238a477d6b9527afaa56bbc28c0cf337fb9dffeaf1b1f7183fcc",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "stopped-on-harness-build-or-guard-failure-native-build",
+  "steps": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-font-backends-guards-v1275.py"
+      ],
+      "log_sha256": "6e90727167b68f0ae1aa5f3462ad04948fb658885fdde15661c6c3d4e1d66969",
+      "name": "regression-guards",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/openui-native-font-backends-build-v1276.py"
+      ],
+      "log_sha256": "1437b7a3963c6f38eb4ca2066473b6173a03a165436340f3bfc7fec276d7f0a1",
+      "name": "native-build",
+      "observed_exit_code": 101
+    }
+  ]
+}

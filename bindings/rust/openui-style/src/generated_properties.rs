@@ -925,6 +925,51 @@ impl RendererStyleValue {
         }
     }
 
+    pub(crate) fn from_author_value(
+        property: StyleProperty,
+        value: &StyleValue,
+        resolve_length: impl Fn(LengthValue) -> Length,
+    ) -> Option<Self> {
+        match (property, value) {
+            (StyleProperty::AlignContent, StyleValue::ContentAlignment(value)) => Some(Self::AlignContent(*value)),
+            (StyleProperty::AlignSelf, StyleValue::ItemAlignment(value)) => Some(Self::AlignSelf(*value)),
+            (StyleProperty::BorderBottomColor, StyleValue::Color(value)) => Some(Self::BorderBottomColor(StyleColor::Resolved(*value))),
+            (StyleProperty::BorderBottomWidth, StyleValue::Integer(value)) => Some(Self::BorderBottomWidth(*value)),
+            (StyleProperty::BorderLeftColor, StyleValue::Color(value)) => Some(Self::BorderLeftColor(StyleColor::Resolved(*value))),
+            (StyleProperty::BorderLeftWidth, StyleValue::Integer(value)) => Some(Self::BorderLeftWidth(*value)),
+            (StyleProperty::BorderRightColor, StyleValue::Color(value)) => Some(Self::BorderRightColor(StyleColor::Resolved(*value))),
+            (StyleProperty::BorderRightWidth, StyleValue::Integer(value)) => Some(Self::BorderRightWidth(*value)),
+            (StyleProperty::BorderTopColor, StyleValue::Color(value)) => Some(Self::BorderTopColor(StyleColor::Resolved(*value))),
+            (StyleProperty::BorderTopWidth, StyleValue::Integer(value)) => Some(Self::BorderTopWidth(*value)),
+            (StyleProperty::Bottom, StyleValue::Length(value)) => Some(Self::Bottom(resolve_length(*value))),
+            (StyleProperty::ColumnHeight, StyleValue::Length(value)) => Some(Self::ColumnHeight({ let value = resolve_length(*value); (!value.is_auto()).then_some(value) })),
+            (StyleProperty::ColumnRuleColor, StyleValue::Color(value)) => Some(Self::ColumnRuleColor(StyleColor::Resolved(*value))),
+            (StyleProperty::ColumnRuleWidth, StyleValue::Integer(value)) => Some(Self::ColumnRuleWidth(*value)),
+            (StyleProperty::ColumnWidth, StyleValue::Length(value)) => Some(Self::ColumnWidth({ let value = resolve_length(*value); (!value.is_auto()).then_some(value) })),
+            (StyleProperty::FilterBlur, StyleValue::Number(value)) => Some(Self::FilterBlur(*value)),
+            (StyleProperty::FilterGrayscale, StyleValue::Number(value)) => Some(Self::FilterGrayscale(*value)),
+            (StyleProperty::JustifyItems, StyleValue::ItemAlignment(value)) => Some(Self::JustifyItems(*value)),
+            (StyleProperty::JustifySelf, StyleValue::ItemAlignment(value)) => Some(Self::JustifySelf(*value)),
+            (StyleProperty::Left, StyleValue::Length(value)) => Some(Self::Left(resolve_length(*value))),
+            (StyleProperty::Order, StyleValue::Integer(value)) => Some(Self::Order(*value)),
+            (StyleProperty::Orphans, StyleValue::Integer(value)) => Some(Self::Orphans(u32::try_from(*value).ok()?)),
+            (StyleProperty::OutlineColor, StyleValue::Color(value)) => Some(Self::OutlineColor(StyleColor::Resolved(*value))),
+            (StyleProperty::OutlineOffset, StyleValue::Integer(value)) => Some(Self::OutlineOffset(*value)),
+            (StyleProperty::OverflowClipMargin, StyleValue::Number(value)) => Some(Self::OverflowClipMargin(*value)),
+            (StyleProperty::OverflowX, StyleValue::Overflow(value)) => Some(Self::OverflowX(*value)),
+            (StyleProperty::OverflowY, StyleValue::Overflow(value)) => Some(Self::OverflowY(*value)),
+            (StyleProperty::Right, StyleValue::Length(value)) => Some(Self::Right(resolve_length(*value))),
+            (StyleProperty::ScrollbarTrackColor, StyleValue::Color(value)) => Some(Self::ScrollbarTrackColor(Some(*value))),
+            (StyleProperty::Top, StyleValue::Length(value)) => Some(Self::Top(resolve_length(*value))),
+            (StyleProperty::Widows, StyleValue::Integer(value)) => Some(Self::Widows(u32::try_from(*value).ok()?)),
+            (StyleProperty::OutlineWidth, StyleValue::Integer(value)) => Some(Self::OutlineWidth(*value)),
+            (StyleProperty::ScrollbarThumbColor, StyleValue::Color(value)) => Some(Self::ScrollbarThumbColor(Some(*value))),
+            (StyleProperty::ShapeImageThreshold, StyleValue::Number(value)) => Some(Self::ShapeImageThreshold(*value)),
+            (StyleProperty::ShapeMargin, StyleValue::Length(value)) => Some(Self::ShapeMargin(resolve_length(*value))),
+            _ => None,
+        }
+    }
+
     pub(crate) fn from_computed(
         style: &ComputedStyle,
         property: StyleProperty,
@@ -1153,6 +1198,178 @@ impl RendererStyleValue {
     }
 }
 
+fn parse_renderer_author_literal(property: StyleProperty, input: &str) -> Option<StyleValue> {
+    match property {
+        StyleProperty::AlignContent => content_alignment_literal(input).map(StyleValue::ContentAlignment),
+        StyleProperty::AlignSelf => item_alignment_literal(input).map(StyleValue::ItemAlignment),
+        StyleProperty::BorderBottomColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderBottomColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::BorderBottomStyle => (match input.trim() {
+            "none" => Some(BorderStyle::None),
+            "hidden" => Some(BorderStyle::Hidden),
+            "dotted" => Some(BorderStyle::Dotted),
+            "dashed" => Some(BorderStyle::Dashed),
+            "solid" => Some(BorderStyle::Solid),
+            "double" => Some(BorderStyle::Double),
+            "groove" => Some(BorderStyle::Groove),
+            "ridge" => Some(BorderStyle::Ridge),
+            "inset" => Some(BorderStyle::Inset),
+            "outset" => Some(BorderStyle::Outset),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::BorderBottomStyle(value))),
+        StyleProperty::BorderBottomWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::BorderLeftColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderLeftColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::BorderLeftStyle => (match input.trim() {
+            "none" => Some(BorderStyle::None),
+            "hidden" => Some(BorderStyle::Hidden),
+            "dotted" => Some(BorderStyle::Dotted),
+            "dashed" => Some(BorderStyle::Dashed),
+            "solid" => Some(BorderStyle::Solid),
+            "double" => Some(BorderStyle::Double),
+            "groove" => Some(BorderStyle::Groove),
+            "ridge" => Some(BorderStyle::Ridge),
+            "inset" => Some(BorderStyle::Inset),
+            "outset" => Some(BorderStyle::Outset),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::BorderLeftStyle(value))),
+        StyleProperty::BorderLeftWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::BorderRightColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderRightColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::BorderRightStyle => (match input.trim() {
+            "none" => Some(BorderStyle::None),
+            "hidden" => Some(BorderStyle::Hidden),
+            "dotted" => Some(BorderStyle::Dotted),
+            "dashed" => Some(BorderStyle::Dashed),
+            "solid" => Some(BorderStyle::Solid),
+            "double" => Some(BorderStyle::Double),
+            "groove" => Some(BorderStyle::Groove),
+            "ridge" => Some(BorderStyle::Ridge),
+            "inset" => Some(BorderStyle::Inset),
+            "outset" => Some(BorderStyle::Outset),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::BorderRightStyle(value))),
+        StyleProperty::BorderRightWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::BorderTopColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::BorderTopColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::BorderTopStyle => (match input.trim() {
+            "none" => Some(BorderStyle::None),
+            "hidden" => Some(BorderStyle::Hidden),
+            "dotted" => Some(BorderStyle::Dotted),
+            "dashed" => Some(BorderStyle::Dashed),
+            "solid" => Some(BorderStyle::Solid),
+            "double" => Some(BorderStyle::Double),
+            "groove" => Some(BorderStyle::Groove),
+            "ridge" => Some(BorderStyle::Ridge),
+            "inset" => Some(BorderStyle::Inset),
+            "outset" => Some(BorderStyle::Outset),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::BorderTopStyle(value))),
+        StyleProperty::BorderTopWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::Bottom => length(input).map(StyleValue::Length),
+        StyleProperty::BoxDecorationBreak => (match input.trim() {
+            "slice" => Some(BoxDecorationBreak::Slice),
+            "clone" => Some(BoxDecorationBreak::Clone),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::BoxDecorationBreak(value))),
+        StyleProperty::BreakAfter => (match input.trim() {
+            "auto" => Some(BreakValue::Auto),
+            "avoid" => Some(BreakValue::Avoid),
+            "avoid-page" => Some(BreakValue::AvoidPage),
+            "avoid-column" => Some(BreakValue::AvoidColumn),
+            "page" => Some(BreakValue::Page),
+            "column" => Some(BreakValue::Column),
+            "left" => Some(BreakValue::Left),
+            "right" => Some(BreakValue::Right),
+            "always" => Some(BreakValue::Always),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::BreakAfter(value))),
+        StyleProperty::BreakBefore => (match input.trim() {
+            "auto" => Some(BreakValue::Auto),
+            "avoid" => Some(BreakValue::Avoid),
+            "avoid-page" => Some(BreakValue::AvoidPage),
+            "avoid-column" => Some(BreakValue::AvoidColumn),
+            "page" => Some(BreakValue::Page),
+            "column" => Some(BreakValue::Column),
+            "left" => Some(BreakValue::Left),
+            "right" => Some(BreakValue::Right),
+            "always" => Some(BreakValue::Always),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::BreakBefore(value))),
+        StyleProperty::BreakInside => (match input.trim() {
+            "auto" => Some(BreakInside::Auto),
+            "avoid" => Some(BreakInside::Avoid),
+            "avoid-page" => Some(BreakInside::AvoidPage),
+            "avoid-column" => Some(BreakInside::AvoidColumn),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::BreakInside(value))),
+        StyleProperty::ColumnFill => (match input.trim() {
+            "balance" => Some(ColumnFill::Balance),
+            "balance-all" => Some(ColumnFill::BalanceAll),
+            "auto" => Some(ColumnFill::Auto),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::ColumnFill(value))),
+        StyleProperty::ColumnHeight => length(input).map(StyleValue::Length),
+        StyleProperty::ColumnRuleColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::ColumnRuleColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::ColumnRuleStyle => (match input.trim() {
+            "none" => Some(BorderStyle::None),
+            "hidden" => Some(BorderStyle::Hidden),
+            "dotted" => Some(BorderStyle::Dotted),
+            "dashed" => Some(BorderStyle::Dashed),
+            "solid" => Some(BorderStyle::Solid),
+            "double" => Some(BorderStyle::Double),
+            "groove" => Some(BorderStyle::Groove),
+            "ridge" => Some(BorderStyle::Ridge),
+            "inset" => Some(BorderStyle::Inset),
+            "outset" => Some(BorderStyle::Outset),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::ColumnRuleStyle(value))),
+        StyleProperty::ColumnRuleWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::ColumnSpan => (match input.trim() {
+            "none" => Some(ColumnSpan::None),
+            "all" => Some(ColumnSpan::All),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::ColumnSpan(value))),
+        StyleProperty::ColumnWidth => length(input).map(StyleValue::Length),
+        StyleProperty::ColumnWrap => (match input.trim() {
+            "auto" => Some(ColumnWrap::Auto),
+            "wrap" => Some(ColumnWrap::Wrap),
+            "nowrap" => Some(ColumnWrap::NoWrap),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::ColumnWrap(value))),
+        StyleProperty::FilterBlur => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+        StyleProperty::FilterGrayscale => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+        StyleProperty::JustifyItems => item_alignment_literal(input).map(StyleValue::ItemAlignment),
+        StyleProperty::JustifySelf => item_alignment_literal(input).map(StyleValue::ItemAlignment),
+        StyleProperty::Left => length(input).map(StyleValue::Length),
+        StyleProperty::Order => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::Orphans => input.parse::<u32>().ok().map(|value| StyleValue::Renderer(RendererStyleValue::Orphans(value))),
+        StyleProperty::OutlineColor => if input.eq_ignore_ascii_case("currentcolor") { Some(StyleValue::Renderer(RendererStyleValue::OutlineColor(StyleColor::CurrentColor))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::OutlineOffset => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::OutlineStyle => (match input.trim() {
+            "none" => Some(BorderStyle::None),
+            "hidden" => Some(BorderStyle::Hidden),
+            "dotted" => Some(BorderStyle::Dotted),
+            "dashed" => Some(BorderStyle::Dashed),
+            "solid" => Some(BorderStyle::Solid),
+            "double" => Some(BorderStyle::Double),
+            "groove" => Some(BorderStyle::Groove),
+            "ridge" => Some(BorderStyle::Ridge),
+            "inset" => Some(BorderStyle::Inset),
+            "outset" => Some(BorderStyle::Outset),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::OutlineStyle(value))),
+        StyleProperty::OverflowClipMargin => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+        StyleProperty::OverflowX => overflow_literal(input).map(StyleValue::Overflow),
+        StyleProperty::OverflowY => overflow_literal(input).map(StyleValue::Overflow),
+        StyleProperty::Right => length(input).map(StyleValue::Length),
+        StyleProperty::ScrollbarTrackColor => if input == "auto" { Some(StyleValue::Renderer(RendererStyleValue::ScrollbarTrackColor(None))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::Top => length(input).map(StyleValue::Length),
+        StyleProperty::Widows => input.parse::<u32>().ok().map(|value| StyleValue::Renderer(RendererStyleValue::Widows(value))),
+        StyleProperty::OutlineWidth => input.parse::<i32>().ok().map(StyleValue::Integer),
+        StyleProperty::ScrollbarThumbColor => if input == "auto" { Some(StyleValue::Renderer(RendererStyleValue::ScrollbarThumbColor(None))) } else { color(input).map(StyleValue::Color) },
+        StyleProperty::ShapeImageThreshold => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+        StyleProperty::ShapeMargin => length(input).map(StyleValue::Length),
+        _ => None,
+    }
+}
+
 /// Engine-owned renderer state which is deliberately not an author property.
 /// Each entry has an explicit rationale in `internal-style-fields.csv`.
 #[doc(hidden)]
@@ -1200,7 +1417,334 @@ impl RendererInternalStyleValue {
     }
 }
 
+impl ComputedStyle {
+    /// Copy modeled inherited computed fields from a parent snapshot.
+    /// Authored values are reapplied by the retained engine afterwards.
+    #[doc(hidden)]
+    pub fn inherit_properties_from(&mut self, parent: &Self) {
+        self.fields.color = parent.fields.color.clone();
+        self.fields.direction = parent.fields.direction.clone();
+        self.fields.empty_cells = parent.fields.empty_cells.clone();
+        self.fields.font_family = parent.fields.font_family.clone();
+        self.fields.font_feature_settings = parent.fields.font_feature_settings.clone();
+        self.fields.font_kerning = parent.fields.font_kerning.clone();
+        self.fields.font_language_override = parent.fields.font_language_override.clone();
+        self.fields.font_optical_sizing = parent.fields.font_optical_sizing.clone();
+        self.fields.font_palette = parent.fields.font_palette.clone();
+        self.fields.font_size = parent.fields.font_size.clone();
+        self.fields.font_size_adjust = parent.fields.font_size_adjust.clone();
+        self.fields.font_smoothing = parent.fields.font_smoothing.clone();
+        self.fields.font_stretch = parent.fields.font_stretch.clone();
+        self.fields.font_style = parent.fields.font_style.clone();
+        self.fields.font_synthesis_position = parent.fields.font_synthesis_position.clone();
+        self.fields.font_synthesis_small_caps = parent.fields.font_synthesis_small_caps.clone();
+        self.fields.font_synthesis_style = parent.fields.font_synthesis_style.clone();
+        self.fields.font_synthesis_weight = parent.fields.font_synthesis_weight.clone();
+        self.fields.font_variant_alternates = parent.fields.font_variant_alternates.clone();
+        self.fields.font_variant_caps = parent.fields.font_variant_caps.clone();
+        self.fields.font_variant_east_asian = parent.fields.font_variant_east_asian.clone();
+        self.fields.font_variant_emoji = parent.fields.font_variant_emoji.clone();
+        self.fields.font_variant_ligatures = parent.fields.font_variant_ligatures.clone();
+        self.fields.font_variant_numeric = parent.fields.font_variant_numeric.clone();
+        self.fields.font_variant_position = parent.fields.font_variant_position.clone();
+        self.fields.font_variation_settings = parent.fields.font_variation_settings.clone();
+        self.fields.font_weight = parent.fields.font_weight.clone();
+        self.fields.hanging_punctuation = parent.fields.hanging_punctuation.clone();
+        self.fields.hyphenate_character = parent.fields.hyphenate_character.clone();
+        self.fields.hyphenate_limit_chars = parent.fields.hyphenate_limit_chars.clone();
+        self.fields.hyphens = parent.fields.hyphens.clone();
+        self.fields.letter_spacing = parent.fields.letter_spacing.clone();
+        self.fields.line_break = parent.fields.line_break.clone();
+        self.fields.line_height = parent.fields.line_height.clone();
+        self.fields.list_style_position = parent.fields.list_style_position.clone();
+        self.fields.list_style_type = parent.fields.list_style_type.clone();
+        self.fields.locale = parent.fields.locale.clone();
+        self.fields.orphans = parent.fields.orphans.clone();
+        self.fields.overflow_wrap = parent.fields.overflow_wrap.clone();
+        self.fields.pointer_events = parent.fields.pointer_events.clone();
+        self.fields.quotes = parent.fields.quotes.clone();
+        self.fields.ruby_align = parent.fields.ruby_align.clone();
+        self.fields.ruby_overhang = parent.fields.ruby_overhang.clone();
+        self.fields.ruby_position = parent.fields.ruby_position.clone();
+        self.fields.tab_size = parent.fields.tab_size.clone();
+        self.fields.text_align = parent.fields.text_align.clone();
+        self.fields.text_align_last = parent.fields.text_align_last.clone();
+        self.fields.text_autospace = parent.fields.text_autospace.clone();
+        self.fields.text_decoration_skip_ink = parent.fields.text_decoration_skip_ink.clone();
+        self.fields.text_emphasis_color = parent.fields.text_emphasis_color.clone();
+        self.fields.text_emphasis_fill = parent.fields.text_emphasis_fill.clone();
+        self.fields.text_emphasis_mark = parent.fields.text_emphasis_mark.clone();
+        self.fields.text_emphasis_position = parent.fields.text_emphasis_position.clone();
+        self.fields.text_indent = parent.fields.text_indent.clone();
+        self.fields.text_justify = parent.fields.text_justify.clone();
+        self.fields.text_orientation = parent.fields.text_orientation.clone();
+        self.fields.text_rendering = parent.fields.text_rendering.clone();
+        self.fields.text_shadow = parent.fields.text_shadow.clone();
+        self.fields.text_size_adjust = parent.fields.text_size_adjust.clone();
+        self.fields.text_spacing_trim = parent.fields.text_spacing_trim.clone();
+        self.fields.text_transform = parent.fields.text_transform.clone();
+        self.fields.text_underline_position = parent.fields.text_underline_position.clone();
+        self.fields.text_wrap = parent.fields.text_wrap.clone();
+        self.fields.text_wrap_mode = parent.fields.text_wrap_mode.clone();
+        self.fields.text_wrap_style = parent.fields.text_wrap_style.clone();
+        self.fields.visibility = parent.fields.visibility.clone();
+        self.fields.white_space = parent.fields.white_space.clone();
+        self.fields.white_space_collapse = parent.fields.white_space_collapse.clone();
+        self.fields.widows = parent.fields.widows.clone();
+        self.fields.word_break = parent.fields.word_break.clone();
+        self.fields.word_spacing = parent.fields.word_spacing.clone();
+        self.fields.writing_mode = parent.fields.writing_mode.clone();
+    }
+}
+
 impl StyleProperty {
+    #[doc(hidden)]
+    pub fn affects_same_fields_as(self, other: Self) -> bool {
+        self == other || self.mutation_fields().iter().any(|field| other.mutation_fields().contains(field))
+    }
+
+    fn mutation_fields(self) -> &'static [&'static str] {
+        match self {
+            Self::Display => &["display"],
+            Self::Position => &["position"],
+            Self::Overflow => &[],
+            Self::Width => &["width"],
+            Self::Height => &["height"],
+            Self::MinWidth => &["min_width"],
+            Self::MinHeight => &["min_height"],
+            Self::MaxWidth => &["max_width"],
+            Self::MaxHeight => &["max_height"],
+            Self::Margin => &[],
+            Self::MarginTop => &["margin_top"],
+            Self::MarginRight => &["margin_right"],
+            Self::MarginBottom => &["margin_bottom"],
+            Self::MarginLeft => &["margin_left"],
+            Self::Padding => &[],
+            Self::PaddingTop => &["padding_top"],
+            Self::PaddingRight => &["padding_right"],
+            Self::PaddingBottom => &["padding_bottom"],
+            Self::PaddingLeft => &["padding_left"],
+            Self::BackgroundColor => &["background_color"],
+            Self::Color => &["color"],
+            Self::Opacity => &["opacity"],
+            Self::ZIndex => &["z_index"],
+            Self::FlexDirection => &["flex_direction"],
+            Self::FlexWrap => &["flex_wrap"],
+            Self::FlexGrow => &["flex_grow"],
+            Self::FlexShrink => &["flex_shrink"],
+            Self::FlexBasis => &["flex_basis"],
+            Self::AlignItems => &["align_items"],
+            Self::JustifyContent => &["justify_content"],
+            Self::Gap => &[],
+            Self::RowGap => &["row_gap"],
+            Self::ColumnGap => &["column_gap"],
+            Self::FontFamily => &["font_family"],
+            Self::FontSize => &["font_size"],
+            Self::FontWeight => &["font_weight"],
+            Self::Border => &[],
+            Self::BorderTop => &[],
+            Self::BorderRight => &[],
+            Self::BorderBottom => &[],
+            Self::BorderLeft => &[],
+            Self::BorderRadius => &[],
+            Self::Cursor => &[],
+            Self::ListStyleType => &["list_style_type"],
+            Self::Transform => &["transform"],
+            Self::PointerEvents => &["pointer_events"],
+            Self::Direction => &["direction"],
+            Self::FontKerning => &["font_kerning"],
+            Self::FontOpticalSizing => &["font_optical_sizing"],
+            Self::FontPalette => &["font_palette"],
+            Self::FontSizeAdjust => &["font_size_adjust"],
+            Self::FontStretch => &["font_stretch"],
+            Self::FontStyle => &["font_style"],
+            Self::FontVariantLigatures => &["font_variant_ligatures"],
+            Self::FontVariantCaps => &["font_variant_caps"],
+            Self::FontVariantEastAsian => &["font_variant_east_asian"],
+            Self::FontVariantNumeric => &["font_variant_numeric"],
+            Self::FontVariantAlternates => &["font_variant_alternates"],
+            Self::FontVariantPosition => &["font_variant_position"],
+            Self::FontVariantEmoji => &["font_variant_emoji"],
+            Self::FontSynthesisWeight => &["font_synthesis_weight"],
+            Self::FontSynthesisStyle => &["font_synthesis_style"],
+            Self::FontSynthesisSmallCaps => &["font_synthesis_small_caps"],
+            Self::FontSynthesisPosition => &["font_synthesis_position"],
+            Self::FontFeatureSettings => &["font_feature_settings"],
+            Self::FontVariationSettings => &["font_variation_settings"],
+            Self::FontLanguageOverride => &["font_language_override"],
+            Self::LineHeight => &["line_height"],
+            Self::LetterSpacing => &["letter_spacing"],
+            Self::WordSpacing => &["word_spacing"],
+            Self::TextIndent => &["text_indent"],
+            Self::TextAlign => &["text_align"],
+            Self::TextAlignLast => &["text_align_last"],
+            Self::TextJustify => &["text_justify"],
+            Self::WordBreak => &["word_break"],
+            Self::OverflowWrap => &["overflow_wrap"],
+            Self::WordWrap => &["overflow_wrap"],
+            Self::LineBreak => &["line_break"],
+            Self::Hyphens => &["hyphens"],
+            Self::HyphenateLimitChars => &["hyphenate_limit_chars"],
+            Self::HyphenateCharacter => &["hyphenate_character"],
+            Self::WhiteSpaceCollapse => &["white_space_collapse", "white_space"],
+            Self::TextWrapMode => &["text_wrap_mode", "white_space", "text_wrap"],
+            Self::TextWrapStyle => &["text_wrap_style", "text_wrap"],
+            Self::TextAutospace => &["text_autospace"],
+            Self::TextSpacingTrim => &["text_spacing_trim"],
+            Self::TabSize => &["tab_size"],
+            Self::TextTransform => &["text_transform"],
+            Self::TextDecorationLine => &["text_decoration_line"],
+            Self::TextDecorationStyle => &["text_decoration_style"],
+            Self::TextDecorationColor => &["text_decoration_color"],
+            Self::TextDecorationThickness => &["text_decoration_thickness"],
+            Self::TextDecorationSkipInk => &["text_decoration_skip_ink"],
+            Self::TextUnderlineOffset => &["text_underline_offset"],
+            Self::TextUnderlinePosition => &["text_underline_position"],
+            Self::TextEmphasisStyle => &["text_emphasis_mark", "text_emphasis_fill"],
+            Self::TextEmphasisPosition => &["text_emphasis_position"],
+            Self::TextEmphasisColor => &["text_emphasis_color"],
+            Self::TextShadow => &["text_shadow"],
+            Self::TextOverflow => &["text_overflow"],
+            Self::TextSizeAdjust => &["text_size_adjust"],
+            Self::TextCombineUpright => &["text_combine_upright"],
+            Self::WritingMode => &["writing_mode"],
+            Self::TextOrientation => &["text_orientation"],
+            Self::UnicodeBidi => &["unicode_bidi"],
+            Self::VerticalAlign => &["vertical_align"],
+            Self::RubyAlign => &["ruby_align"],
+            Self::RubyPosition => &["ruby_position"],
+            Self::RubyOverhang => &["ruby_overhang"],
+            Self::HangingPunctuation => &["hanging_punctuation"],
+            Self::InitialLetter => &["initial_letter"],
+            Self::TextRendering => &["text_rendering"],
+            Self::WebkitFontSmoothing => &["font_smoothing"],
+            Self::LineClamp => &["line_clamp"],
+            Self::BlockEllipsis => &["block_ellipsis"],
+            Self::TextBoxEdge => &["text_box_edge"],
+            Self::TextBoxTrim => &["text_box_trim"],
+            Self::Font => &["font_style", "font_variant_caps", "font_weight", "font_stretch", "font_size", "line_height", "font_family", "font_variant_ligatures", "font_variant_numeric", "font_variant_east_asian", "font_variant_alternates", "font_variant_position", "font_variant_emoji", "font_optical_sizing", "font_size_adjust", "font_kerning", "font_feature_settings", "font_variation_settings", "font_language_override"],
+            Self::FontVariant => &["font_variant_ligatures", "font_variant_caps", "font_variant_alternates", "font_variant_numeric", "font_variant_east_asian", "font_variant_position", "font_variant_emoji"],
+            Self::FontSynthesis => &["font_synthesis_weight", "font_synthesis_style", "font_synthesis_small_caps", "font_synthesis_position"],
+            Self::WhiteSpace => &["white_space_collapse", "text_wrap_mode", "white_space", "text_wrap"],
+            Self::TextWrap => &["text_wrap_mode", "text_wrap_style", "text_wrap", "white_space"],
+            Self::TextDecoration => &["text_decoration_line", "text_decoration_style", "text_decoration_color", "text_decoration_thickness"],
+            Self::TextEmphasis => &["text_emphasis_mark", "text_emphasis_fill", "text_emphasis_color"],
+            Self::TextBox => &["text_box_trim", "text_box_edge"],
+            Self::AlignContent => &["align_content"],
+            Self::AlignSelf => &["align_self"],
+            Self::AspectRatio => &["aspect_ratio"],
+            Self::BackgroundAttachment => &["background_attachment"],
+            Self::BackgroundClip => &["background_clip"],
+            Self::BackgroundLayers => &["background_layers"],
+            Self::BackgroundLinearGradient => &["background_linear_gradient"],
+            Self::BorderBottomColor => &["border_bottom_color"],
+            Self::BorderBottomLeftRadius => &["border_bottom_left_radius"],
+            Self::BorderBottomRightRadius => &["border_bottom_right_radius"],
+            Self::BorderBottomStyle => &["border_bottom_style"],
+            Self::BorderBottomWidth => &["border_bottom_width"],
+            Self::BorderCollapse => &["border_collapse"],
+            Self::BorderImage => &["border_image"],
+            Self::BorderLeftColor => &["border_left_color"],
+            Self::BorderLeftStyle => &["border_left_style"],
+            Self::BorderLeftWidth => &["border_left_width"],
+            Self::BorderRadiusPercent => &["border_radius_percent"],
+            Self::BorderRightColor => &["border_right_color"],
+            Self::BorderRightStyle => &["border_right_style"],
+            Self::BorderRightWidth => &["border_right_width"],
+            Self::BorderSpacing => &["border_spacing"],
+            Self::BorderTopColor => &["border_top_color"],
+            Self::BorderTopLeftRadius => &["border_top_left_radius"],
+            Self::BorderTopRightRadius => &["border_top_right_radius"],
+            Self::BorderTopStyle => &["border_top_style"],
+            Self::BorderTopWidth => &["border_top_width"],
+            Self::Bottom => &["bottom"],
+            Self::BoxDecorationBreak => &["box_decoration_break"],
+            Self::BoxShadow => &["box_shadow"],
+            Self::BoxSizing => &["box_sizing"],
+            Self::BreakAfter => &["break_after"],
+            Self::BreakBefore => &["break_before"],
+            Self::BreakInside => &["break_inside"],
+            Self::CaptionSide => &["caption_side"],
+            Self::Clear => &["clear"],
+            Self::ClipPathInset => &["clip_path_inset"],
+            Self::ColumnCount => &["column_count"],
+            Self::ColumnFill => &["column_fill"],
+            Self::ColumnHeight => &["column_height"],
+            Self::ColumnRuleColor => &["column_rule_color"],
+            Self::ColumnRuleStyle => &["column_rule_style"],
+            Self::ColumnRuleWidth => &["column_rule_width"],
+            Self::ColumnSpan => &["column_span"],
+            Self::ColumnWidth => &["column_width"],
+            Self::ColumnWrap => &["column_wrap"],
+            Self::Contain => &["contain"],
+            Self::ContainIntrinsicHeight => &["contain_intrinsic_height"],
+            Self::ContainIntrinsicWidth => &["contain_intrinsic_width"],
+            Self::ContainerType => &["container_type"],
+            Self::Content => &["content"],
+            Self::FilterBlur => &["filter_blur"],
+            Self::FilterGrayscale => &["filter_grayscale"],
+            Self::Float => &["float"],
+            Self::GridAutoColumns => &["grid_auto_columns"],
+            Self::GridAutoFlow => &["grid_auto_flow"],
+            Self::GridAutoRows => &["grid_auto_rows"],
+            Self::GridColumn => &["grid_column"],
+            Self::GridRow => &["grid_row"],
+            Self::GridTemplateAreas => &["grid_template_areas"],
+            Self::GridTemplateColumns => &["grid_template_columns"],
+            Self::GridTemplateRows => &["grid_template_rows"],
+            Self::JustifyItems => &["justify_items"],
+            Self::JustifySelf => &["justify_self"],
+            Self::Left => &["left"],
+            Self::ListStylePosition => &["list_style_position"],
+            Self::Locale => &["locale"],
+            Self::MarginTrim => &["margin_trim"],
+            Self::MaskLayers => &["mask_layers"],
+            Self::ObjectFit => &["object_fit"],
+            Self::ObjectPosition => &["object_position"],
+            Self::Order => &["order"],
+            Self::Orphans => &["orphans"],
+            Self::OutlineColor => &["outline_color"],
+            Self::OutlineOffset => &["outline_offset"],
+            Self::OutlineStyle => &["outline_style"],
+            Self::OverflowClipBox => &["overflow_clip_box"],
+            Self::OverflowClipMargin => &["overflow_clip_margin"],
+            Self::OverflowX => &["overflow_x"],
+            Self::OverflowY => &["overflow_y"],
+            Self::PositionAnchor => &["position_anchor"],
+            Self::PositionArea => &["position_area"],
+            Self::Resize => &["resize"],
+            Self::Right => &["right"],
+            Self::ScrollMarkerGroup => &["scroll_marker_group"],
+            Self::ScrollSnapAlign => &["scroll_snap_align"],
+            Self::ScrollSnapAxis => &["scroll_snap_axis"],
+            Self::ScrollbarGutter => &["scrollbar_gutter"],
+            Self::ScrollbarTrackColor => &["scrollbar_track_color"],
+            Self::ScrollbarWidth => &["scrollbar_width"],
+            Self::TableLayout => &["table_layout"],
+            Self::Top => &["top"],
+            Self::TransformOrigin => &["transform_origin"],
+            Self::Visibility => &["visibility"],
+            Self::WebkitBoxOrient => &["webkit_box_orient"],
+            Self::Widows => &["widows"],
+            Self::TextEmphasisMark => &["text_emphasis_mark"],
+            Self::TextEmphasisFill => &["text_emphasis_fill"],
+            Self::AnchorName => &["anchor_name"],
+            Self::ContainerName => &["container_names"],
+            Self::ContentVisibility => &["content_visibility"],
+            Self::CounterIncrement => &["counter_increment"],
+            Self::CounterReset => &["counter_reset"],
+            Self::CounterSet => &["counter_set"],
+            Self::EmptyCells => &["empty_cells"],
+            Self::OutlineWidth => &["outline_width"],
+            Self::Quotes => &["quotes"],
+            Self::ScrollTargetGroup => &["scroll_target_group"],
+            Self::ScrollbarThumbColor => &["scrollbar_thumb_color"],
+            Self::ShapeImageThreshold => &["shape_image_threshold"],
+            Self::ShapeMargin => &["shape_margin"],
+            Self::ShapeOutside => &["shape_outside"],
+        }
+    }
+
     pub fn from_u16(value: u16) -> Option<Self> {
         PROPERTY_METADATA
             .get(value.checked_sub(1)? as usize)

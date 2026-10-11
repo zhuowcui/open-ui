@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "/dev/shm/openui-native-raster-fields-retry-e0dc491e/tools/qualification/run_renderer_matrix.py",
+    "--suite",
+    "full",
+    "--results-dir",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-selection-v1559",
+    "--cache-dir",
+    "/mnt/e/openui-v02-qualification-d174ea0b/renderer-cache",
+    "--oracle-cache-dir",
+    "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+    "--pixel-compare",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-retry-clean-v1559/pixel_compare",
+    "--chrome",
+    "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+    "--raster-backend",
+    "cpu-skia",
+    "--jobs",
+    "2",
+    "--ids-file",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-selection-v1311.json"
+  ],
+  "log_sha256": "12b3821b4def85cd2fc85a634901704e49e3843e05dcab399c7cd05624d17736",
+  "observed_exit_code": 1,
+  "release_qualification": false,
+  "schema_version": 1,
+  "suite": "selection"
+}

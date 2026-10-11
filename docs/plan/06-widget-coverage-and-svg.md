@@ -6,7 +6,7 @@
 
 With the full pipeline working (SP5), systematically enable and verify every HTML element type and CSS feature that affects visual rendering. Each element must render identically to Chromium. This includes the complete SVG stack.
 
-**Scope:** Every HTML element listed on MDN that produces visual output, except: `<iframe>`, `<script>`, `<noscript>`, `<object>`, `<embed>`, `<applet>`, `<frame>`, `<frameset>`. Also excludes interactive behaviors that require JavaScript (e.g., `<details>` expand/collapse) — those come from application code.
+**Scope:** Every HTML element listed on MDN that produces visual output, except: `<iframe>`, `<script>`, `<noscript>`, `<object>`, `<embed>`, `<applet>`, `<frame>`, `<frameset>`. Interactive behaviors, including `<details>` expansion, are implemented by the framework and consuming application through native Rust APIs. Open UI does not execute JavaScript.
 
 ## HTML Element Coverage
 

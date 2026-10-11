@@ -1,0 +1,628 @@
+{
+  "applied_to_umbrella": false,
+  "artifact_hashes": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overlay-clean-v16/native-identity.json",
+      "sha256": "b7d9c40414e5bdad821af5485a77117b93c2e1bf17cdb607773a21f01ec7b6b1",
+      "size": 753
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overlay-clean-v16/pixel-tool-identity.json",
+      "sha256": "3f6a93bc84fc80bdb28bab1664186ceead4aa65f5e084462d2f77844c69813d2",
+      "size": 1307
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overlay-workspace-v18/workspace.json",
+      "sha256": "7b4c7abc6387d9e51e69381cae04acc5ab18fc8d6d6030190e9b4464934d30bf",
+      "size": 849
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overlay-immutability-test-v15.log",
+      "sha256": "b30344e6aee3e3ac63e5a28ae4177bb5892d4673d7bcd1a3e22e99f2315e2316",
+      "size": 20145
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overlay-immutability-test-v16.log",
+      "sha256": "f2f96f1b8c04bd19ed8f442404dbae6d2291a5fc24fb5819bbf1b29369ed24a4",
+      "size": 8489
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overlay-clean-v16-comparison-v1.json",
+      "sha256": "886e4c20c03300bfed33afca035d15df591af91a5bdf43d57b758ed20b554421",
+      "size": 759876
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/overlay-clean-v16-comparison-v1.json",
+      "sha256": "da8af0997a6ac7de460bee2609c3377f8779ea498359046a693d72fc51cf5d4e",
+      "size": 1887652
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overlay-clean-v16-delta-v1.json",
+      "sha256": "8b7453b3e095d2f71cc228cd04611c38aa3b6bbe808fb613102f39cb3ea07ca1",
+      "size": 1295879
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overlay-channel-delta-v18.json",
+      "sha256": "98c24ba58050f3621d6f2532640236fe3e8bebb4a1d1f6915ce3a2662bfaff1b",
+      "size": 44398
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/quad-clean-v17/native-identity.json",
+      "sha256": "2997094cb0d818440366b4b19573d8602bccc497809b2edae044a926af0baf4f",
+      "size": 580
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/quad-clean-v17-comparison-v1.json",
+      "sha256": "2f07ccde0de75dbd9824560ef7897ff0d3724f04bd8b54036c95a77bd2d221de",
+      "size": 764853
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/quad-clean-v17-comparison-v1.json",
+      "sha256": "3482513eac9769f7247984dae78af5461862d81c8e04588e968dcac7582280aa",
+      "size": 1896359
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/quad-clean-v17-delta-v1.json",
+      "sha256": "7ea14d192ea40537df7691175fd75c368dcf53156ce17b384d92cfe34abc9137",
+      "size": 1804054
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overlay-clean-v16/source-after-gates-v18.json",
+      "sha256": "6c9a45c7d7da46fa690390ecf3e49f077045fbf25bfbe3b72308b816a371da23",
+      "size": 343
+    },
+    {
+      "path": "docs/renderer/evidence/native-viewport-scroll-v1/native-viewport-prototype-v18.patch",
+      "sha256": "f474632384ea18f026223cf1ebcbd31760ebdc2f6f585130cf87b23baa3e2221",
+      "size": 58237
+    },
+    {
+      "path": "docs/renderer/evidence/native-viewport-scroll-v1/rejected-physical-thumb-v17.patch",
+      "sha256": "7f7af488c79ea1a646d0b3cffab1444c5b22d3504bc3e1ba2ecf1c586f9e15c3",
+      "size": 1404
+    },
+    {
+      "path": "docs/renderer/generated/native-viewport-scroll-v2.json",
+      "sha256": "7323bec5c30a946d6c46f4e65685b062b8598279dd13a1fb889eeb97956e1fd1",
+      "size": 263937
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overlay-clean-focused-v18/focused-summary.json",
+      "sha256": "efa1b84030406a6e1c6f7b137c9f2c5f459146552af02ca7df877ceef1c3cdba",
+      "size": 1646410
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overlay-focused-delta-v18.json",
+      "sha256": "25791a870bc79e945017144a0b7432fc5f8466f062b2d69b0e688b75eb812de8",
+      "size": 1171
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overlay-clean-primitive-v18/primitive-summary.json",
+      "sha256": "2be869ae40c4fae5622e0c80685a75a8efbf63a4bab82b0028e4cc922ce94218",
+      "size": 2455616
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/overlay-primitive-delta-v18.json",
+      "sha256": "c172db5d4ed27323829835f09e055bc82dcc9359ac8b9ba09dd8e4744ace5b90",
+      "size": 1171
+    }
+  ],
+  "combined_full_runs": {
+    "expanded": {
+      "results_directory": "out/renderer-evidence/native-viewport-scroll-v1/combined-clean-expanded-v14",
+      "session_id": 39304,
+      "status": "running; incomplete and nonqualifying"
+    },
+    "full": {
+      "results_directory": "out/renderer-evidence/native-viewport-scroll-v1/combined-clean-full-v14",
+      "session_id": 22603,
+      "status": "running; incomplete and nonqualifying"
+    },
+    "later_overlay_is_not_in_these_runs": true,
+    "source": {
+      "clean": true,
+      "commit": "574864d0355f27b0b192834d53e191655fafb4d2",
+      "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+      "source_tree_sha256": "e49195e52172a354f52b9174610ea51034b9d52329f87140301dfb7ff577ce24",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "delta_from_combined_v14": {
+    "all_changed_images_improve_total_channel_error": true,
+    "all_native_geometry_and_chromium_references_unchanged": true,
+    "changed_images": 154,
+    "exact_losses": 0,
+    "integer_scale_comparisons": 510,
+    "integer_scales_1_2_3_exact": 510,
+    "newly_exact": 130,
+    "remaining_fractional_scale_failures": 169,
+    "worsened_channel_cells": 0
+  },
+  "hosted_checks_before_this_evidence_checkpoint": {
+    "commit": "6f2f2a7f926a6c86bc4ae51c54bc11b218149736",
+    "jobs": [
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/36996032474/job/110802830340",
+        "name": "rust-parity",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/36996032474/job/110802830216",
+        "name": "historical-pixel-audit",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/36996032051/job/110802828278",
+        "name": "gn-format",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/36996032119/job/110802828316",
+        "name": "conformance-and-platform",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/36996032474/job/110802830039",
+        "name": "python-accountability",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/36996032051/job/110802828269",
+        "name": "clang-format",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/36996032119/job/110802829488",
+        "name": "msrv",
+        "state": "SKIPPED"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/36996032119/job/110802829423",
+        "name": "miri-handles",
+        "state": "SKIPPED"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/36996032119/job/110802829824",
+        "name": "native-sanitizers",
+        "state": "SKIPPED"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/36996032119/job/110802829890",
+        "name": "c-undefined-sanitizer",
+        "state": "SKIPPED"
+      },
+      {
+        "link": "https://github.com/zhuowcui/open-ui/actions/runs/36996032119/job/110802829369",
+        "name": "fuzz-smoke",
+        "state": "SKIPPED"
+      }
+    ],
+    "passed": 6,
+    "skipped_not_passes": 5
+  },
+  "immutable_recording_test": {
+    "checks": "Recorded viewport ink survives live style mutation and document drop.",
+    "earlier_attempt": {
+      "commit": "c51dd73196c338cb19573a4938ea0841415e8d78",
+      "correction": "Use owned resolved-style update and engine raster-context APIs.",
+      "exit_code_observation": "not recovered after prior tool output truncation",
+      "log_sha256": "b30344e6aee3e3ac63e5a28ae4177bb5892d4673d7bcd1a3e22e99f2315e2316",
+      "result": "compile failure: test attempted assignment through immutable ComputedStyle dereference"
+    },
+    "log_sha256": "f2f96f1b8c04bd19ed8f442404dbae6d2291a5fc24fb5819bbf1b29369ed24a4",
+    "process_exit_code": 0
+  },
+  "matrices": {
+    "focused": {
+      "all_native_and_chromium_png_rgba_hashes_and_oracle_identities_unchanged": true,
+      "delta": {
+        "all_chromium_pixels_and_identities_unchanged": true,
+        "baseline_report_sha256": "7fea69507fee71a48f5004f88ffae1100ec4c16eb0cb43680dabb473425d4979",
+        "changed_images": 0,
+        "changes": [],
+        "comparison_count": 640,
+        "evidence": {
+          "binary_unchanged": true,
+          "kind": "qualification",
+          "qualification_backend_match": true,
+          "qualified": true,
+          "source_unchanged": true,
+          "tolerance_pixels": 0
+        },
+        "exact_regressions": [],
+        "improved": 0,
+        "new_exact": 0,
+        "process_exit_code": 0,
+        "report_sha256": "efa1b84030406a6e1c6f7b137c9f2c5f459146552af02ca7df877ceef1c3cdba",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "86b2076b22d6f4e0a7b8fe619febdad687552079238f7c8d8c2512ce32199549",
+          "total": 640
+        },
+        "source": {
+          "clean": true,
+          "commit": "ca49a1a6c98f403ad53eeac0bdd7c9a8c9532897",
+          "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+          "source_tree_sha256": "80c5a600dedef72e059c5b60db18f00371db7dc0fc6a3f535b4e6d1e0b98e51d",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "worsened": 0
+      },
+      "evidence": {
+        "binary_unchanged": true,
+        "kind": "qualification",
+        "qualification_backend_match": true,
+        "qualified": true,
+        "source_unchanged": true,
+        "tolerance_pixels": 0
+      },
+      "process_exit_code": 0,
+      "report": "out/renderer-evidence/native-viewport-scroll-v1/overlay-clean-focused-v18/focused-summary.json",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "86b2076b22d6f4e0a7b8fe619febdad687552079238f7c8d8c2512ce32199549",
+        "total": 640
+      },
+      "sha256": "efa1b84030406a6e1c6f7b137c9f2c5f459146552af02ca7df877ceef1c3cdba"
+    },
+    "primitive": {
+      "all_native_and_chromium_png_rgba_hashes_and_oracle_identities_unchanged": true,
+      "delta": {
+        "all_chromium_pixels_and_identities_unchanged": true,
+        "baseline_report_sha256": "9060db6ab0d5e3480969a04036374911c7c41bfd8c1bf876ae97ba3fa5544226",
+        "changed_images": 0,
+        "changes": [],
+        "comparison_count": 960,
+        "evidence": {
+          "binary_unchanged": true,
+          "kind": "qualification",
+          "qualification_backend_match": true,
+          "qualified": true,
+          "source_unchanged": true,
+          "tolerance_pixels": 0
+        },
+        "exact_regressions": [],
+        "improved": 0,
+        "new_exact": 0,
+        "process_exit_code": 0,
+        "report_sha256": "2be869ae40c4fae5622e0c80685a75a8efbf63a4bab82b0028e4cc922ce94218",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "5ce5de4e5f84b4af5218606f19d3a79b792ae424cb2dabd241e5544502d78148",
+          "total": 960
+        },
+        "source": {
+          "clean": true,
+          "commit": "ca49a1a6c98f403ad53eeac0bdd7c9a8c9532897",
+          "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+          "source_tree_sha256": "80c5a600dedef72e059c5b60db18f00371db7dc0fc6a3f535b4e6d1e0b98e51d",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "worsened": 0
+      },
+      "evidence": {
+        "binary_unchanged": true,
+        "kind": "qualification",
+        "qualification_backend_match": true,
+        "qualified": true,
+        "source_unchanged": true,
+        "tolerance_pixels": 0
+      },
+      "process_exit_code": 0,
+      "report": "out/renderer-evidence/native-viewport-scroll-v1/overlay-clean-primitive-v18/primitive-summary.json",
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "5ce5de4e5f84b4af5218606f19d3a79b792ae424cb2dabd241e5544502d78148",
+        "total": 960
+      },
+      "sha256": "2be869ae40c4fae5622e0c80685a75a8efbf63a4bab82b0028e4cc922ce94218"
+    }
+  },
+  "native_binary": {
+    "binary_sha256": "9e06877f4b06ae2af67a1400ccae2b25b3d9286451cbe16c5ad02c542d0dd41e",
+    "build_log_sha256": "bc57c3ede60d5bba38cf2fa56963bd084ee8f2f5442697366755431bfb30bf25",
+    "build_process_exit_code": 0,
+    "immutability_test_log_sha256": "f2f96f1b8c04bd19ed8f442404dbae6d2291a5fc24fb5819bbf1b29369ed24a4",
+    "immutability_test_process_exit_code": 0,
+    "source": {
+      "clean": true,
+      "commit": "ca49a1a6c98f403ad53eeac0bdd7c9a8c9532897",
+      "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+      "source_tree_sha256": "80c5a600dedef72e059c5b60db18f00371db7dc0fc6a3f535b4e6d1e0b98e51d",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test_profile_debug": 0
+  },
+  "native_controls": [
+    {
+      "all_native_callbacks_and_document_teardown_pass": true,
+      "all_offsets_owned_bounds_client_and_content_metrics_exact": true,
+      "by_scale": {
+        "1": {
+          "different": 0,
+          "exact": 50,
+          "total": 50
+        },
+        "1.25": {
+          "different": 28,
+          "exact": 22,
+          "total": 50
+        },
+        "1.5": {
+          "different": 26,
+          "exact": 24,
+          "total": 50
+        },
+        "2": {
+          "different": 0,
+          "exact": 50,
+          "total": 50
+        },
+        "3": {
+          "different": 0,
+          "exact": 50,
+          "total": 50
+        }
+      },
+      "different": 54,
+      "exact": 196,
+      "process_exit_code": 0,
+      "report": "out/renderer-evidence/native-viewport-scroll-v1/overlay-clean-v16-comparison-v1.json",
+      "sha256": "886e4c20c03300bfed33afca035d15df591af91a5bdf43d57b758ed20b554421",
+      "suite": "original",
+      "total": 250
+    },
+    {
+      "all_native_callbacks_and_document_teardown_pass": true,
+      "all_offsets_owned_bounds_client_and_content_metrics_exact": true,
+      "by_scale": {
+        "1": {
+          "different": 0,
+          "exact": 120,
+          "total": 120
+        },
+        "1.25": {
+          "different": 62,
+          "exact": 58,
+          "total": 120
+        },
+        "1.5": {
+          "different": 53,
+          "exact": 67,
+          "total": 120
+        },
+        "2": {
+          "different": 0,
+          "exact": 120,
+          "total": 120
+        },
+        "3": {
+          "different": 0,
+          "exact": 120,
+          "total": 120
+        }
+      },
+      "different": 115,
+      "exact": 485,
+      "process_exit_code": 0,
+      "report": "out/renderer-evidence/native-viewport-scroll-v1/direction-guards-v2/overlay-clean-v16-comparison-v1.json",
+      "sha256": "da8af0997a6ac7de460bee2609c3377f8779ea498359046a693d72fc51cf5d4e",
+      "suite": "direction",
+      "total": 600
+    }
+  ],
+  "overlay_full_census_status": "not run; focused/primitive results cannot establish the full original or expanded gate",
+  "pixel_tool": {
+    "binary_sha256": "7a06bdc21774c2b5fb1ae8e15572ac0407cc1b8ca8246e0f718fc4eb9112f895",
+    "build_log_sha256": "05a70da9b5a7d862a5312582fd7aeb07a9b08a330693ce0d652cfce1405af3f3",
+    "build_process_exit_code": 0,
+    "build_source_identity": {
+      "schema_version": 1,
+      "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+      "source": {
+        "clean": true,
+        "commit": "ca49a1a6c98f403ad53eeac0bdd7c9a8c9532897",
+        "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+        "source_tree_sha256": "80c5a600dedef72e059c5b60db18f00371db7dc0fc6a3f535b4e6d1e0b98e51d",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "source": {
+      "clean": true,
+      "commit": "ca49a1a6c98f403ad53eeac0bdd7c9a8c9532897",
+      "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+      "source_tree_sha256": "80c5a600dedef72e059c5b60db18f00371db7dc0fc6a3f535b4e6d1e0b98e51d",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "policy": {
+    "chromium_is_sole_pixel_target": true,
+    "historical_openui_images_are_not_expected_outputs": true,
+    "javascript_executed_by_openui": false,
+    "missing_public_native_rust_operations_remain_api_obligations": true,
+    "pixel_tolerance": 0
+  },
+  "previous_index": {
+    "path": "docs/renderer/generated/native-viewport-scroll-v2.json",
+    "sha256": "7323bec5c30a946d6c46f4e65685b062b8598279dd13a1fb889eeb97956e1fd1"
+  },
+  "primary_sources": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scrollbar_theme_aura.cc",
+      "sha256": "61b8530b521ae82820c2987b44b0129a7e711068c5cf7ac8f8447834e0bc9d9d",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/third_party/blink/renderer/core/scroll/scrollbar_theme_aura.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native_theme_base.cc",
+      "sha256": "bc7f19f1b86b74ff20f138e68f5807e288e9443ab48b9ac7be2b85e56fbcd738",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/ui/native_theme/native_theme_base.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native_theme_aura.cc",
+      "sha256": "48e570235532439954b704b902f90827387e55a5adbb9e9de24114c19397b21a",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/ui/native_theme/native_theme_aura.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native_theme.cc",
+      "sha256": "624d854d1be7371eb59a76cc6481d656980afb638fd29ee24e7e9a252f43d92f",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/ui/native_theme/native_theme.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scrollbar_theme.cc",
+      "sha256": "5b1ebed1eee76fa0f31a1f2220cd582f47bc7e2f06f0c2617e840a3c7249abc2",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/third_party/blink/renderer/core/scroll/scrollbar_theme.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/color_provider_utils.cc",
+      "sha256": "263d450f1c3d74825e1ecbe728334fe46ce93c2eb17641b8b16a91eefa49c3ed",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/ui/color/color_provider_utils.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native_theme_fluent.cc",
+      "sha256": "ef67061f4b81874905d730e95f2917330f55a2ced932eeae500709911586fb9d",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/ui/native_theme/native_theme_fluent.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native_theme_fluent.h",
+      "sha256": "c952713201f13e01046a88b2ce320ab05239aacbf1e12eebc48f9a0cd59edb69",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/ui/native_theme/native_theme_fluent.h?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scroll_utils.cc",
+      "sha256": "e21c75a74d8f4dd37824627232ee1a4c5c3a104226d131dacaa5c11328e3078e",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/input/scroll_utils.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scrollbar_theme_fluent.cc",
+      "sha256": "324941575ae5363bc3825963c77d019566642fd4bdc2e55303eca5a6e55be2bd",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/third_party/blink/renderer/core/scroll/scrollbar_theme_fluent.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/fluent_ui_color_mixer.cc",
+      "sha256": "dec2909b6af158f9da81a1b437c2362b3b293f0fe2b6edc4f98740f4af88feb8",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/ui/color/fluent_ui_color_mixer.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native_theme_features.cc",
+      "sha256": "7e016cfd27b2b18dd9f9d37eddbd5fc425cd7b26972330e22ed3cf24a2d3044d",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/ui/native_theme/features/native_theme_features.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/painted_scrollbar_layer.cc",
+      "sha256": "a773750f6da754ad9cd7b26814d69e1b3175c9be5553dbf70d34fe1c99e4848b",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/layers/painted_scrollbar_layer.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/solid_color_scrollbar_layer.cc",
+      "sha256": "166d5835419281e54be420c30106e2be22cfa8fc717213056334c8007f5e74e6",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/layers/solid_color_scrollbar_layer.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/nine_patch_thumb_scrollbar_layer.cc",
+      "sha256": "939da2928302ddaef9fb56300fd90c601422c4719ac8577b680be92ff98182e5",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/layers/nine_patch_thumb_scrollbar_layer.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/scrollbar_layer_impl_base.cc",
+      "sha256": "79724123c38d046aaa138b854b963d3e03fff69065631c271c50244f8effbeee",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/layers/scrollbar_layer_impl_base.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/paint_op.cc",
+      "sha256": "35c65f0a703629b2c519ff937db2875d594c7617b4502b23bca1229f9c65b1fe",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/paint/paint_op.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/painted_scrollbar_layer_impl.cc",
+      "sha256": "76409d7a1b45a080a62ce04d8e51f4fe93946086503f7841e8f8df6f9465bb33",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/cc/layers/painted_scrollbar_layer_impl.cc?format=TEXT"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/software_renderer.cc",
+      "sha256": "c3dec17e4de86214cf02d9d550281e11374ef49c005d34e6eb4d0c223c48042a",
+      "url": "https://chromium.googlesource.com/chromium/src/+/147.0.7727.50/components/viz/service/display/software_renderer.cc?format=TEXT"
+    }
+  ],
+  "prototype_patch": {
+    "apply_check_exit_code": 0,
+    "includes": "Native viewport metrics/clamping, earlier physical nine-patch and generic fixture input corrections, and untiled immutable viewport recording. Neutral gamma already exists on the umbrella.",
+    "path": "docs/renderer/evidence/native-viewport-scroll-v1/native-viewport-prototype-v18.patch",
+    "sha256": "f474632384ea18f026223cf1ebcbd31760ebdc2f6f585130cf87b23baa3e2221"
+  },
+  "rejected_physical_thumb_experiment": {
+    "changed_images": 138,
+    "disposition": "rejected; all changed fractional comparisons worsen despite unchanged exact totals",
+    "exact_losses": 0,
+    "newly_exact": 0,
+    "original_and_direction_process_exit_codes": [
+      0,
+      0
+    ],
+    "patch": "docs/renderer/evidence/native-viewport-scroll-v1/rejected-physical-thumb-v17.patch",
+    "source": {
+      "clean": true,
+      "commit": "91f5a6de1361e9ed46db019f0e90c1c0cbc5c377",
+      "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+      "source_tree_sha256": "b3161d234c7d711490d41a4f4f405fde1db083059922fb641d1c19ec9b564dba",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "worsened_comparisons": 138
+  },
+  "release_qualification": false,
+  "remaining_work": [
+    "169 fractional scrollbar pixel failures have paint ownership but their root causes are not yet reviewed; no pixel admission is inferred.",
+    "Complete the combined and later overlay full/expanded matrices and review every change before applying the prototype.",
+    "Native scrollbar pointer, keyboard and accessibility states; nested scroll metrics and limits; remaining overflow propagation; and C metric exposure remain open.",
+    "Original census still has 1,616 differences and 892 residual IDs without reviewed ownership at the accepted umbrella checkpoint.",
+    "Compositor, 3D, hardening, ordinary published-consumer builds, hardware, packaging and publication gates remain open."
+  ],
+  "root_cause": {
+    "destination_format": "N32 premultiplied sRGB; this finding does not rely on an F16 root surface.",
+    "finding": "Viewport scrollbars had been replayed inside synthetic document tiles. Chromium emits their compositor quads independently. Tile clip bounds changed rounded mask coverage. Recording immutable viewport controls separately and replaying them after document tiles fixes all observed integer-scale corner residuals. The complete public picture still contains document and controls.",
+    "owner": "openui-paint",
+    "reviewed": true
+  },
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "ca49a1a6c98f403ad53eeac0bdd7c9a8c9532897",
+    "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+    "source_tree_sha256": "80c5a600dedef72e059c5b60db18f00371db7dc0fc6a3f535b4e6d1e0b98e51d",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "ca49a1a6c98f403ad53eeac0bdd7c9a8c9532897",
+    "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+    "source_tree_sha256": "80c5a600dedef72e059c5b60db18f00371db7dc0fc6a3f535b4e6d1e0b98e51d",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "workspace": {
+    "artifact": {
+      "before_sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871",
+      "produced_sha256": "23b3d97436ebb63a32051c3f17a8e5e50ebc136fd8b4b2b86a64d7a84bfa3b13",
+      "restored_sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871"
+    },
+    "failed": 0,
+    "ignored": 13,
+    "log_sha256": "d57c2dbef60a9e98c478ecfe786f7d4139fb6874d738a12ce27f9f68e3a1c5aa",
+    "passed": 8498,
+    "process_exit_code": 0,
+    "source": {
+      "clean": true,
+      "commit": "ca49a1a6c98f403ad53eeac0bdd7c9a8c9532897",
+      "harness_sha256": "66acd1462d0ca4b465f061b82c9d03aac30219a55b6a3b248ecac6e0fd132923",
+      "source_tree_sha256": "80c5a600dedef72e059c5b60db18f00371db7dc0fc6a3f535b4e6d1e0b98e51d",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test_profile_debug": 0
+  }
+}

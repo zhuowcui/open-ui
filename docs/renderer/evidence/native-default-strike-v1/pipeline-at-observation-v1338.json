@@ -1,0 +1,51 @@
+{
+  "all_commands_terminal": false,
+  "consumer_compile_correction_only": false,
+  "expanded_summary_filename_corrected": true,
+  "immutable_probe_hashes": {
+    "/tmp/openui-native-default-strike-application-v1333.py": "851092eeb423d9430ffe493665707a2aab7ecebe42de43910ce5159b06b78e37",
+    "/tmp/openui-native-default-strike-build-v1333.py": "882bff6f7988582eca32999a8eb467f6843f59253d9c31fdb726fcf1e9bb1208",
+    "/tmp/openui-native-default-strike-consumer-v1333.py": "c640a861a5b06db6863935cd5930b083db2dd791e51d15888a3e21491a882891",
+    "/tmp/openui-native-default-strike-controls-v1333.py": "dc2556cf4760b982fa197cef4287f12cd59ecc17351f7eb0952b0a1250e1e88c",
+    "/tmp/openui-native-default-strike-guards-v1333.py": "de971804723e43571572d4d2b43a20c562aa3bcd3db61e992ebba48df432166b",
+    "/tmp/openui-native-default-strike-matrices-v1333.py": "0f5c7c04668804b438b0d6e054516672a48e081ca11a7302c33552127ea7e9f3",
+    "/tmp/openui-native-default-strike-sizing-v1333.py": "a5d23f79a41ebde30ef513e32d9af4f5ec3ad3274ec14f6d737ee1127bae0f1c",
+    "/tmp/openui-native-default-strike-static-v1333.py": "3c89bca93293a5bf1d09cdb1f468c102b2d8ed2439ad8829753ae3e5c42254ef"
+  },
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "old_openui_pixels_are_provenance_only": true,
+  "ordered_build_and_image_stages": true,
+  "original_pixel_gate_remains_required": true,
+  "prior_whole_pipelines": [
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/cache-umbrella-pipeline-v1291/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-retry-pipeline-v1310/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-font-retry-pipeline-v1311/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-c-raster-retry-pipeline-v1312/receipt.json",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-raster-fields-pipeline-v1337/receipt.json"
+  ],
+  "probe_sha256": "cf91c645f005d1dce7968de24ab0a38921bf1310de1fc6e4a63f6a2b3ca4231e",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "renderer_production_unchanged_from_prior_candidate": false,
+  "schema_version": 1,
+  "selection_hashes": {},
+  "source": {
+    "clean": true,
+    "commit": "5ef50aacaf98f5877b76ead68c2606c006103f48",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "36571d27dba156ede2457a2d4fcc1b52f579b66a5084dc6aa5ea487d34152348",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "5ef50aacaf98f5877b76ead68c2606c006103f48",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "36571d27dba156ede2457a2d4fcc1b52f579b66a5084dc6aa5ea487d34152348",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_and_stage_probes_unchanged": true,
+  "state": "awaiting-all-entire-prior-pipelines-expanded-filename-corrected",
+  "steps": [],
+  "supersedes_waiting_pipeline": "native-default-strike-pipeline-v1333"
+}

@@ -1,0 +1,15 @@
+diff --cc bindings/rust/openui-text/src/shaping/shape_result.rs
+index 0548ae42,fc772eec..00000000
+--- a/bindings/rust/openui-text/src/shaping/shape_result.rs
++++ b/bindings/rust/openui-text/src/shaping/shape_result.rs
+@@@ -975,7 -983,6 +983,10 @@@ mod tests 
+              }
+          }
+      }
+++<<<<<<< HEAD
+ +    use super::{chromium_lcd_raster_x, chromium_lcd_strike_y_offset};
+++=======
+++>>>>>>> 2f53d5de (fix(text): preserve physical strike descriptors and configured glyph coverage)
+      use skia_safe::{font::Edging, FontHinting};
+  
+      #[test]

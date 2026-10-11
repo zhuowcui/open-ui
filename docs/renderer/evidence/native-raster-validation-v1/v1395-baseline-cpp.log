@@ -1,0 +1,8 @@
+In file included from /dev/shm/openui-native-raster-validation-5ef50aac/examples/c_v02/raster_configuration.cc:2:
+/dev/shm/openui-native-raster-validation-5ef50aac/examples/c_v02/raster_configuration.c:223:12: error: no matching function for call to 'oui_element_get_bounds'
+  223 |     assert(oui_element_get_bounds(nodes[phase], &rect, &present) == OUI_OK && present == 1);
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+/dev/shm/openui-native-raster-validation-5ef50aac/include/openui.h:1004:11: note: candidate function not viable: requires 2 arguments, but 3 were provided
+ 1004 | OuiStatus oui_element_get_bounds(OuiElement* element, OuiRect* out_rect);
+      |           ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.

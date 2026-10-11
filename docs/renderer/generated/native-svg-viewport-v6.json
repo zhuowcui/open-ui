@@ -1,0 +1,987 @@
+{
+  "accepted_renderer_unchanged": true,
+  "artifacts": [
+    {
+      "path": "docs/renderer/generated/native-svg-viewport-v5.json",
+      "sha256": "826734aa7044f247f8dc1fcdfd1d9b2b3e28242ad62edb3381fa045873d2018a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-raster-delta-v279.json",
+      "sha256": "cc46ecbd9f4da91d42f9195df1e3161dc6709cd5a1e85f78d1b1b4110a0422d2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-region-original-delta-v282.json",
+      "sha256": "52a89417738bb355880267229344d9d855a9dbaf6f6991ab2794920130ece3cf"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-double-original-delta-v284.json",
+      "sha256": "35119689c6469aaaa292de8bfe55b125ea65a1c999177ae6e35e5dcfcf5a87c6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-source-verification-v276.json",
+      "sha256": "e4496602c34856437d00d3526546e477a72b3e42cfa32bdac1e99c24838bf9a0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-checks-v278.json",
+      "sha256": "0fc0472aa299d78b03b06e9c89f3ae2e0704c85a4129d08935264ddbf5ac5e5e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-checks-v281.json",
+      "sha256": "9771eaad62b2f21f349a6cef39d1cdaecc9a068a08d95c54f9289eed4c07da75"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-c-api-append-audit-v283.json",
+      "sha256": "d1769b11a92802489dae5ead97bc4d60dac8a7d8854f35674a46db24b12c44fd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-checks-v294.json",
+      "sha256": "01f00f38481a77483e79806e9fbf0d3b96aa944f1d664b009844493ba2222987"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-append-audit-v299.json",
+      "sha256": "2c51e849dd0da3be12c3364ff8af76afbdec03ccb307b339cfcc18a5efadb406"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-native-docs-ci-v294.json",
+      "sha256": "16304ba5c96718e801c7a441cc50ac9d6d95fa79e32d531e64460be76c42048c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-index-probe-failed-v304.json",
+      "sha256": "e1761388a0192c4af59c830c7a78cac06e8fd8d43e4c9354ae9b674957e8d721"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-region-clean-full-v272/full-summary.json",
+      "sha256": "7da5e92585f9631557aa28e00aef20e3f4f5a3a133bc660fdca49ef898b9b604"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-region-clean-full-v272.log",
+      "sha256": "e868fd63882839c2e452bd5c3706e5b84ec996c40fadf7bafcaccd5f89ec6832"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-region-full-exit-v272.json",
+      "sha256": "73fa8367a54b00fa5780d749788009d541a73a1ce639fc9b76887f59df36bacb"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-double-clean-full-v273/full-summary.json",
+      "sha256": "d9971efee2576c716c39d5757f1568de25605ad7e6ef8cf56e73a0f9a224b75d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-double-clean-full-v273.log",
+      "sha256": "b5512774de51ab83edf4753cd8c949b30ffa64bbf7c1794103376e6b6903597e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-double-full-exit-v273.json",
+      "sha256": "d41ecfe5c7304a50cbe826dfc984b643c5a30e6d4d622e78f4e02648e48df89b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-focused-v269/focused-summary.json",
+      "sha256": "db6b9207cf1667a93149bd397827b308ca3dad9027cda9f7fd73a5943a9bd24a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-focused-v269.log",
+      "sha256": "d52eac1a7d6d19173219826c7bca1e932f34b7fe1faa2c7fd7b5558b0ca09ffc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-focused-exit-v269.json",
+      "sha256": "77d272d71bee77f3fc6c84f57d6e835273636e35e8443ddbc7e1edd8adb46726"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-primitive-v269/primitive-summary.json",
+      "sha256": "3df1933312e392fbe788d988d05598b59f7e87c5d96d38513a7a908c3e11931f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-primitive-v269.log",
+      "sha256": "15157d3f1a31365ec09b38278e28ca1d8670894ce157640568287db6f0faeb68"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-primitive-exit-v269.json",
+      "sha256": "a023664aec957a15bf009c7984feb240ad218778613fa993826bb3213bfa2772"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-native-v285/comparison.json",
+      "sha256": "f3cbd72d3f1bf2906fb132c85e7915e6f8fe6e67050685937a99e6ca7a66b2e6"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-neighbors-v286/comparison.json",
+      "sha256": "46c2e569ad562e00b8fd756f973d3bb86116cf69dc15970f98cc14df5099718d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-viewport-v287/comparison.json",
+      "sha256": "b4d17e1f46ea7bff2884bad46739b332e2018331b5e29f24cd75104442dc1dab"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-layer-controls-v287/comparison.json",
+      "sha256": "4b982b11c2364bfe60f3ff3cd12fce63456a26bad83bcd8a7ce1851aacae74a8"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-native-v295/comparison.json",
+      "sha256": "242d6482c6cf1c83e83732de149a5d5a9581758966ddd19e724cd004f27a6ef3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-neighbors-v296/comparison.json",
+      "sha256": "26c6c0371b6a1fb08ff9e2d6c11f286a5b5f8fd87bfebd4b6b3fe0f2838cf7c1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-viewport-v297/comparison.json",
+      "sha256": "eb1e9986bacf75d7407308a6dccd6b3e2c4b741ba6e0d367a9f1bff7f42f9caa"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-layer-controls-v297/comparison.json",
+      "sha256": "874fba29dfa220440a655c48bcaa0f1afe251ad08dafada6cad81911e4955656"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-ffi-v288/receipt.json",
+      "sha256": "f65f6424a512805680bb3194c9ead9185265c4c749ae5c84cc17fa5e323232d2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-ffi-v288/verify.log",
+      "sha256": "49c085edb149c5b04c98e19e3cd24cc3d248cc3463ba9691b77dbc7329e3343e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-ffi-v294/receipt.json",
+      "sha256": "7efa21dbeeb11699ffc86c03774c5079e983a6cc3d7de376b7fab64792fd8a83"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-ffi-v294/verify.log",
+      "sha256": "ed1be8042f4d9f5f5f064444b52899288faa6107a726681a2b87c78514beca95"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-c-literal-diagnostic-v291/receipt.json",
+      "sha256": "bbe965bc791c60597c9f20ca6c2b2bf0049e3ea4024e9b645cc508519e51cdbf"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-c-literal-diagnostic-v291/probe.log",
+      "sha256": "21b154ab476b6d68809e637bbb5f01c9bca12df6e91d75e7535970332309eed8"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v292/receipt.json",
+      "sha256": "765bb33032f8801404d46a27f2fe30b8eff82609af0c5643e5d49b9fd04604fa"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-workspace-v298/receipt.json",
+      "sha256": "f3bbb4f6b74fadc0084c06f4040203e91818785bcc5ef2dc5101c5b7c97cf34a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-workspace-v298/clean.log",
+      "sha256": "1b8d57b6515dcb0fde31e50809e8149c1d40c9ea25580bde2b80e1ac5df942da"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-workspace-v298/workspace.log",
+      "sha256": "115d087c9dd5d42fd6bc6dde9a874a91be9cc76849feff6dc8af5d56c1eff0af"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-workspace-v298/before.png",
+      "sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-workspace-v298/produced.png",
+      "sha256": "23b3d97436ebb63a32051c3f17a8e5e50ebc136fd8b4b2b86a64d7a84bfa3b13"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-linux-workspace-v301/receipt.json",
+      "sha256": "374b5fc95ed5d417a6d9bed004374382f6285c8cbe0c13193468066a1b0f0524"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-linux-workspace-v301/clean.log",
+      "sha256": "0bdaeb2aa6a92a0fdfec2d2cc4d0ab71946de5d0654e08c526e4629130ae0f28"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-linux-workspace-v301/workspace.log",
+      "sha256": "c13777ef963825608ac9e18596fc4da1f5bef933362f48af006cc513233c2987"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-linux-workspace-v301/before.png",
+      "sha256": "c18c847b7ab493b099217cd9a710ab5d731026ca7474a0bcfc3be7a3e0be0871"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-linux-workspace-v301/produced.png",
+      "sha256": "23b3d97436ebb63a32051c3f17a8e5e50ebc136fd8b4b2b86a64d7a84bfa3b13"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-target-clean-v300/receipt.json",
+      "sha256": "6d2dd14300da94ece4931d296102f9dad163c9f23c1ffda9261fcd21be1b4cde"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-target-clean-v300/clean.log",
+      "sha256": "69c74047c5690fe3891319097af158513a75b61520833c0080b2953759bff73b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-target-clean-v303/receipt.json",
+      "sha256": "f41d7508c33c65eae6b5c4d032511d9cf17e6ee75ec26c615669bee65263e198"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-target-clean-v303/clean.log",
+      "sha256": "041cbd5d0472bc651a05941825270f775a17457f74ba11a1cab07cd49b4dc540"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/build.json",
+      "sha256": "b33310487e5f0d818b2e2899e2d322296d0a2c74cde7a3f09e7eb98fafb27553"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/source-before.json",
+      "sha256": "f15ee7be414d96262a0b09461efdd1c2b2f65bebc87c6196aab410f1d73b5a8b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/pixel-embedded-source-identity.json",
+      "sha256": "3d6500043de0458789105d4cc0bf4831722abb9b6915145c0eec51746f54c5bd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/clean.log",
+      "sha256": "b7a8f65ba63a6dc68e073b70702b697949c0bda54646ed855cc0c00d05a6a136"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/pixel-build.log",
+      "sha256": "7c9b0972848a8613fa630250710f2194e02679903e45516286f83db75bcd0681"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/pixel_compare",
+      "sha256": "a99d31b1e22c686e81352516bebd5e691d22ea51457c5054d8683664a479f540"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/svg-build.log",
+      "sha256": "f548cce2da3879d8fe9cc238454194c97c559dfaea3ba01057a6a4bdacbf9dd2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/native_svg_foreign_object",
+      "sha256": "13af402b1ce74e74f4a08192b5e73dda3806ccc2521e1fc06712bc34c5be7d57"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/native-build.log",
+      "sha256": "b6b28b48e3fe4e352188fbf50fe34e0ba51d7d6b0d46844aefd841cc1f53d730"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/native_viewport_scroll",
+      "sha256": "90296285a75f4907dfd0158b211ad1dcb91271fa891ba0d46fd5195a72344144"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/layer-controls-build.log",
+      "sha256": "1db75999f0064623a2b694ab570eb9ee96cd97890ee0fb9eae56644559183bc7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/native_scroll_layer_opacity",
+      "sha256": "8452cc453c5df79f291b633ef1ff7de499a7ab3bf85980ba5fbb931c27641dc0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/ffi-build.log",
+      "sha256": "36f76af377a6d1f411c5d8502f42aba2c343dd9a66924be7b5f27b752cced81c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/libopenui_ffi.so",
+      "sha256": "f8fdb6bf7832e1ca9394ddac31b52fbbe3f7c61a16bd5021c51311b757ae26b1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/build.json",
+      "sha256": "f3472f8357c1ab9ff55317d5bb5d13f42fdbff73b77741f836e0d4717790a0fb"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/source-before.json",
+      "sha256": "4503d4a75121821407ce9b7261be0785f00fadf40e71f9c790287a63c955cc26"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/pixel-embedded-source-identity.json",
+      "sha256": "69156d5a944cce85f3ea252b4a7d00df9777b26fe37dd610be38c5dce86bc440"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/clean.log",
+      "sha256": "1b8d57b6515dcb0fde31e50809e8149c1d40c9ea25580bde2b80e1ac5df942da"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/pixel-build.log",
+      "sha256": "f2dcf022f439b558a3bb510698cabca569dcfb24394ddd51408ac101398880a7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/pixel_compare",
+      "sha256": "8d6d1b40e8dbaf361e782bff0acb522af548931249045f09d5d555d51517487f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/svg-build.log",
+      "sha256": "c9fe4f4679afa7eee66be42afe3988d0b4d10f39bd10db7a72f0da7b3648f6e9"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/native_svg_foreign_object",
+      "sha256": "b7a64cd3c45f57c25b3569749295d36472bc955712ee402cc6acba39a2eb8a56"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/native-build.log",
+      "sha256": "9fba7ae13e0427d6c703b94cd9f0f6db1c2c26479e2573b57f732c23869cbd87"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/native_viewport_scroll",
+      "sha256": "fb86fc174266ce1760a82759b4fbdb8c8bacffb40bb8b2612b9dffcf12156abc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/layer-controls-build.log",
+      "sha256": "86ba85b1fcd930445a6ca5add8a298dca4e4b182d818c5856b0e0253fdf843db"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/native_scroll_layer_opacity",
+      "sha256": "b0e09b7952a2191c4c949f76600e16026d8bbee1d2c9adcc623f12c0b7e94ca2"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/ffi-build.log",
+      "sha256": "6dfc13910f051bb5c399a1d54625a5cdca2b3a3c53f6a678350e280d3b7788ae"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/libopenui_ffi.so",
+      "sha256": "b10c757d73fe4e3551ed37e60b4d3964ff7d9db8d5c316de1b235950177acc67"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-renderer-check-v278.log",
+      "sha256": "6ecbbbf9047953233f1eeb773290e2a3c417efeab664319bda4ff49f80d9d8cd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-multicol-check-v278.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-sp17-check-v278.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-sp18-check-v278.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-sp20-check-v278.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-v02-check-v278.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-style-check-v278.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-ffi-check-v278.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-archive-check-v278.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-accountability-check-v278.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-renderer-check-v281.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-multicol-check-v281.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-sp17-check-v281.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-sp18-check-v281.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-sp20-check-v281.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-v02-check-v281.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-style-check-v281.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-ffi-check-v281.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-archive-check-v281.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-accountability-check-v281.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-renderer-check-v294.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-multicol-check-v294.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-sp17-check-v294.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-sp18-check-v294.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-sp20-check-v294.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-v02-check-v294.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-style-check-v294.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-ffi-check-v294.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-archive-check-v294.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-accountability-check-v294.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    {
+      "path": "docs/renderer/evidence/native-svg-decoration-v1/native-svg-rebase-api-v293.patch",
+      "sha256": "e5eeed1d899a626ba47754d3a4aa9df3b6653bdee64e1a633188611b6fd352b9"
+    },
+    {
+      "path": "docs/renderer/evidence/native-svg-decoration-v1/native-c-v293/svg_viewport.c",
+      "sha256": "e647a7558fd408039c561f25d2d90053d7dd12881f431b0a67d6dddb2209d125"
+    },
+    {
+      "path": "docs/renderer/evidence/native-svg-decoration-v1/native-c-v293/svg_viewport.cc",
+      "sha256": "c5986548c92722cb1823f37d784218cb65bab67269c6125ed7f4a8c1d4e0c1fa"
+    }
+  ],
+  "candidate_c_abi": {
+    "appended_element_tag": {
+      "OUI_ELEMENT_SVG_FOREIGN_OBJECT": 39
+    },
+    "c_consumers": 9,
+    "cpp_consumers": 4,
+    "exports": 110,
+    "header_checksum": "sha256:b328744e7d5f17980ff5d5947f83fdf7dbb692ed004d119cffc3efbba04814e3",
+    "native_sizing_callback_and_owned_bounds_verified": true,
+    "observed_exit_code": 0,
+    "previous_element_tags_unchanged": 39,
+    "shared_conversion_failure_preserved_and_repaired": true,
+    "struct_layouts_unchanged": true
+  },
+  "complete_original_checkpoints": [
+    {
+      "comparison_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-region-clean-full-v272/full-summary.json",
+      "comparison_sha256": "7da5e92585f9631557aa28e00aef20e3f4f5a3a133bc660fdca49ef898b9b604",
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1599,
+        "errors": 0,
+        "exact": 21325,
+        "profile_result_sha256": "24d88a556c569fac81971950a6888b0bf1e0cc45645722a8cc93dfdbd2c6fdf8",
+        "total": 22924
+      },
+      "source": {
+        "clean": true,
+        "commit": "4daf187621f3b964abeb6ae7b281cb1cb727a954",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "e17c7f5d6b2d982c60da839b9a2d2272a996cf329ee2f4723a28abbd8444cf75",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "comparison_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-double-clean-full-v273/full-summary.json",
+      "comparison_sha256": "d9971efee2576c716c39d5757f1568de25605ad7e6ef8cf56e73a0f9a224b75d",
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1599,
+        "errors": 0,
+        "exact": 21325,
+        "profile_result_sha256": "13e9bf19856d0e01f1931d38e86b710ade21178758d996609783ede983d170bf",
+        "total": 22924
+      },
+      "source": {
+        "clean": true,
+        "commit": "169fc7fefd2a9baa9d8a7996922b8efdaeb63636",
+        "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+        "source_tree_sha256": "867783bc42b24f45fe88cbb7afefdf23a454d3cef2e10975cc294209ddf56082",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "hosted_checkpoint": {
+    "job_conclusions": {
+      "skipped": 5,
+      "success": 6
+    },
+    "skips_are_not_passes": true,
+    "source": {
+      "clean": true,
+      "commit": "59c5a2927d4a81463b14800c53eb91effd64c672",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "fb48d417aafd38d23c67bf94057c6decaa4d026cef3a0ec56c0675d108d075b3",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "javascript_executed_by_openui": false,
+  "latest_accepted_full_results": {
+    "different": 1616,
+    "errors": 0,
+    "exact": 21308,
+    "total": 22924
+  },
+  "locked_workspace": {
+    "default_features_passed": 8505,
+    "failed": 0,
+    "features": [
+      "openui-ffi/linux"
+    ],
+    "ignored": 13,
+    "observed_exit_code": 0,
+    "passed": 8516,
+    "source": {
+      "clean": true,
+      "commit": "8d5a58a1f4a954997e0301506347c96708d84860",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "d2150b78d0aac9bf703815827e57dce27eb43ff92d302a43556ad7710eccc991",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unchanged": true,
+    "successful_pins_unchanged": true,
+    "tracked_diagnostic_png_preserved_and_restored": true
+  },
+  "native_application_results": {
+    "all_1920_images_unchanged_against_curved_solid": true,
+    "all_native_callbacks_and_teardowns_checked": true,
+    "cases_admitted_to_release": 0,
+    "exact": 1176,
+    "existing_scroll_controls_exact": 850,
+    "owned_bounds_exact": 1920,
+    "remaining_pixel_failures": 744,
+    "scroll_layer_controls": {
+      "bounds_offsets_client_metrics_exact": 180,
+      "exact_pixels": 95,
+      "extent_metrics_exact": 0,
+      "total": 180
+    },
+    "total": 1920
+  },
+  "original_delta_against_accepted": {
+    "all_22924_chromium_images_and_identities_unchanged": true,
+    "changed_rows": 113,
+    "exact_losses": 0,
+    "improved": 80,
+    "new_exact": 17,
+    "same_pixel_count": 20,
+    "worsened": 13,
+    "worsened_rows": [
+      {
+        "after_mismatched_pixels": 4002,
+        "before_mismatched_pixels": 3995,
+        "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius",
+        "owner": "openui-paint",
+        "profile": "mobile-375x667@2",
+        "reviewed_root_cause": "pending"
+      },
+      {
+        "after_mismatched_pixels": 732,
+        "before_mismatched_pixels": 361,
+        "id": "wpt/css_backgrounds/background-334",
+        "owner": "openui-paint",
+        "profile": "desktop-1280x720@1.25",
+        "reviewed_root_cause": "pending"
+      },
+      {
+        "after_mismatched_pixels": 6812,
+        "before_mismatched_pixels": 6769,
+        "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius",
+        "owner": "openui-paint",
+        "profile": "desktop-1280x720@1.25",
+        "reviewed_root_cause": "pending"
+      },
+      {
+        "after_mismatched_pixels": 311,
+        "before_mismatched_pixels": 249,
+        "id": "wpt/css_backgrounds/border-image-017",
+        "owner": "openui-paint",
+        "profile": "desktop-1280x720@1.25",
+        "reviewed_root_cause": "pending"
+      },
+      {
+        "after_mismatched_pixels": 311,
+        "before_mismatched_pixels": 249,
+        "id": "wpt/css_backgrounds/border-image-018",
+        "owner": "openui-paint",
+        "profile": "desktop-1280x720@1.25",
+        "reviewed_root_cause": "pending"
+      },
+      {
+        "after_mismatched_pixels": 311,
+        "before_mismatched_pixels": 249,
+        "id": "wpt/css_backgrounds/border-image-019",
+        "owner": "openui-paint",
+        "profile": "desktop-1280x720@1.25",
+        "reviewed_root_cause": "pending"
+      },
+      {
+        "after_mismatched_pixels": 311,
+        "before_mismatched_pixels": 249,
+        "id": "wpt/css_backgrounds/border-image-020",
+        "owner": "openui-paint",
+        "profile": "desktop-1280x720@1.25",
+        "reviewed_root_cause": "pending"
+      },
+      {
+        "after_mismatched_pixels": 311,
+        "before_mismatched_pixels": 249,
+        "id": "wpt/css_backgrounds/border-image-slice-001",
+        "owner": "openui-paint",
+        "profile": "desktop-1280x720@1.25",
+        "reviewed_root_cause": "pending"
+      },
+      {
+        "after_mismatched_pixels": 311,
+        "before_mismatched_pixels": 249,
+        "id": "wpt/css_backgrounds/border-image-slice-002",
+        "owner": "openui-paint",
+        "profile": "desktop-1280x720@1.25",
+        "reviewed_root_cause": "pending"
+      },
+      {
+        "after_mismatched_pixels": 65,
+        "before_mismatched_pixels": 63,
+        "id": "wpt/css_flexbox/flexbox-whitespace-handling-001-ref",
+        "owner": "openui-paint",
+        "profile": "desktop-1280x720@1.25",
+        "reviewed_root_cause": "pending"
+      },
+      {
+        "after_mismatched_pixels": 65,
+        "before_mismatched_pixels": 63,
+        "id": "wpt/css_flexbox/flexbox-whitespace-handling-001a",
+        "owner": "openui-paint",
+        "profile": "desktop-1280x720@1.25",
+        "reviewed_root_cause": "pending"
+      },
+      {
+        "after_mismatched_pixels": 65,
+        "before_mismatched_pixels": 63,
+        "id": "wpt/css_flexbox/flexbox-whitespace-handling-001b",
+        "owner": "openui-paint",
+        "profile": "desktop-1280x720@1.25",
+        "reviewed_root_cause": "pending"
+      },
+      {
+        "after_mismatched_pixels": 1293,
+        "before_mismatched_pixels": 1256,
+        "id": "wpt/css_backgrounds/background-clip_clip-padding-box_with_radius",
+        "owner": "openui-paint",
+        "profile": "desktop-1920x1080@1.5",
+        "reviewed_root_cause": "pending"
+      }
+    ]
+  },
+  "patch": {
+    "applied_to_umbrella": false,
+    "path": "docs/renderer/evidence/native-svg-decoration-v1/native-svg-rebase-api-v293.patch",
+    "sha256": "e5eeed1d899a626ba47754d3a4aa9df3b6653bdee64e1a633188611b6fd352b9"
+  },
+  "pixel_tolerance": 0,
+  "prior_evidence": {
+    "path": "docs/renderer/generated/native-svg-viewport-v5.json",
+    "prior_artifact_hashes_reverified": 18,
+    "sha256": "826734aa7044f247f8dc1fcdfd1d9b2b3e28242ad62edb3381fa045873d2018a"
+  },
+  "qualification": {
+    "accepted_renderer_full_gate": "failing: 1616 original comparisons still differ",
+    "earlier_clean_originals": "complete private failures: 21325 exact, 1599 different, zero errors; source unchanged and observed exit 1",
+    "hardware_release": "awaiting later-provided lab and final publication approval/credentials",
+    "native_api": "basic Rust/C/C++ viewport construction, callback sizing, owned bounds and lifecycle verified; native SVG transforms and nested scroll ranges still require work",
+    "rebased_candidate_full_and_40_profiles": "fresh focused, primitive and original runs are live; no candidate matrix count inferred",
+    "rebased_expanded": "queued after original run",
+    "solid_border_40_profiles": "completed exact: 640 focused and 960 primitive comparisons, all invariants unchanged"
+  },
+  "read_only_candidate_checks": {
+    "checks": [
+      {
+        "command": [
+          "python3",
+          "tools/qualification/generate_renderer_contract.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-renderer-check-v294.log",
+        "log_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+        "name": "renderer",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp13r_multicol_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-multicol-check-v294.log",
+        "log_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+        "name": "multicol",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp17_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-sp17-check-v294.log",
+        "log_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+        "name": "sp17",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp18_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-sp18-check-v294.log",
+        "log_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+        "name": "sp18",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/wpt/generate_sp20_closure.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-sp20-check-v294.log",
+        "log_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+        "name": "sp20",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/release/generate_v02_contract.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-v02-check-v294.log",
+        "log_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+        "name": "v02",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/style/generate_properties.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-style-check-v294.log",
+        "log_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+        "name": "style",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/ffi/generate_ffi.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-ffi-check-v294.log",
+        "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+        "name": "ffi",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/accountability/restore_frozen_openui_archive.py",
+          "--check"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-archive-check-v294.log",
+        "log_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+        "name": "archive",
+        "process_exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "tools/accountability/audit.py",
+          "--repository-only"
+        ],
+        "log_path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-accountability-check-v294.log",
+        "log_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+        "name": "accountability",
+        "process_exit_code": 0
+      }
+    ],
+    "qualification_note": "Read-only generator, archive integrity and repository-accountability checks over an unchanged clean umbrella checkpoint. This is not a renderer pixel qualification run.",
+    "release_qualification": false,
+    "schema_version": 1,
+    "source": {
+      "clean": true,
+      "commit": "8d5a58a1f4a954997e0301506347c96708d84860",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "d2150b78d0aac9bf703815827e57dce27eb43ff92d302a43556ad7710eccc991",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_after": {
+      "clean": true,
+      "commit": "8d5a58a1f4a954997e0301506347c96708d84860",
+      "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+      "source_tree_sha256": "d2150b78d0aac9bf703815827e57dce27eb43ff92d302a43556ad7710eccc991",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "rebased_candidate_source": {
+    "clean": true,
+    "commit": "8d5a58a1f4a954997e0301506347c96708d84860",
+    "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+    "source_tree_sha256": "d2150b78d0aac9bf703815827e57dce27eb43ff92d302a43556ad7710eccc991",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "release_qualification": false,
+  "remaining_work": [
+    "744 native SVG pixel failures: rounded child clipping, fractional coverage and group opacity",
+    "fresh complete rebased original, expanded and 40-profile matrices",
+    "13 worsened original comparisons still lack reviewed root causes",
+    "native SVG coordinate/transform APIs and nested scroll ranges/extents",
+    "remaining original pixel residuals and reviewed ownership",
+    "immutable retained layers, presentation-owned animation and 3D behavior",
+    "required hardening, hardware, accessibility, packaging, signing and publication"
+  ],
+  "schema_version": 6,
+  "solid_border_completed_raster": {
+    "matrices": [
+      {
+        "all_eight_row_invariants_unchanged": true,
+        "observed_exit_code": 0,
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-focused-v269/focused-summary.json",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "b18650564a4c0be881491b0ead74fcb2f0e454a32341c63f8d64d48919539b9a",
+          "total": 640
+        },
+        "sha256": "db6b9207cf1667a93149bd397827b308ca3dad9027cda9f7fd73a5943a9bd24a",
+        "source": {
+          "clean": true,
+          "commit": "d94b55f83d32ad059bc93e5c1732ae74f0994d08",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "9aa5555588fe60761f9d08785cf30ff6a0d4b5f5089bf677ee257c176c3e7bc9",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "source_after": {
+          "clean": true,
+          "commit": "d94b55f83d32ad059bc93e5c1732ae74f0994d08",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "9aa5555588fe60761f9d08785cf30ff6a0d4b5f5089bf677ee257c176c3e7bc9",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "suite": "focused"
+      },
+      {
+        "all_eight_row_invariants_unchanged": true,
+        "observed_exit_code": 0,
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-curved-solid-clean-primitive-v269/primitive-summary.json",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "7ef32fcbfa47b107bac40e84ff62b62002516563ce0bd2e708cc2b5c6fd29348",
+          "total": 960
+        },
+        "sha256": "3df1933312e392fbe788d988d05598b59f7e87c5d96d38513a7a908c3e11931f",
+        "source": {
+          "clean": true,
+          "commit": "d94b55f83d32ad059bc93e5c1732ae74f0994d08",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "9aa5555588fe60761f9d08785cf30ff6a0d4b5f5089bf677ee257c176c3e7bc9",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "source_after": {
+          "clean": true,
+          "commit": "d94b55f83d32ad059bc93e5c1732ae74f0994d08",
+          "harness_sha256": "d3ff71b0e8bee4580d875d80cd3d23417175044d53ee17144753cad4428afdf7",
+          "source_tree_sha256": "9aa5555588fe60761f9d08785cf30ff6a0d4b5f5089bf677ee257c176c3e7bc9",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "suite": "primitive"
+      }
+    ],
+    "release_qualification": false,
+    "schema_version": 1
+  },
+  "source_append_audit": {
+    "all_39_prior_element_tags_unchanged": true,
+    "all_stored_source_bytes_verified": true,
+    "base": "59c5a2927d4a81463b14800c53eb91effd64c672",
+    "candidate": "8d5a58a1f4a954997e0301506347c96708d84860",
+    "current_c_consumer_receipt": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-ffi-v294/receipt.json",
+      "sha256": "7efa21dbeeb11699ffc86c03774c5079e983a6cc3d7de376b7fab64792fd8a83"
+    },
+    "exports_unchanged": 110,
+    "javascript_executed_by_openui": false,
+    "native_sizing_fix": "shared Rust conversion now accepts content-box and border-box; C/C++ callbacks verify ordinary box geometry changes and fixed SVG viewport dimensions",
+    "new_element_tag": {
+      "OUI_ELEMENT_SVG_FOREIGN_OBJECT": 39
+    },
+    "patch": {
+      "applied_to_umbrella": false,
+      "path": "docs/renderer/evidence/native-svg-decoration-v1/native-svg-rebase-api-v293.patch",
+      "sha256": "e5eeed1d899a626ba47754d3a4aa9df3b6653bdee64e1a633188611b6fd352b9"
+    },
+    "release_qualification": false,
+    "schema_version": 1,
+    "unchanged_api_abi_and_rgba_files": [
+      {
+        "path": "bindings/rust/openui-style/src/generated_properties.rs",
+        "sha256": "583aa4dcc7a18aab60bcad744d244302f0252537b48babaaea8220d4fcd6c57b"
+      },
+      {
+        "path": "bindings/rust/openui/src/style.rs",
+        "sha256": "3ba12057839aeadd23c81f8892104443f3250e7dde4503ac91a85f5207b21264"
+      },
+      {
+        "path": "bindings/rust/openui/tests/native_insets.rs",
+        "sha256": "1b21ca68096c62209400f52d7fb5c3b13c89a4265cc072c69ca4b9fcfc88702e"
+      },
+      {
+        "path": "bindings/rust/openui/tests/native_primitive_styles.rs",
+        "sha256": "c4909e8158775985e3b3573e5cb7300daf6df1d7cfb7aa4cdfae5c3ab75c4171"
+      },
+      {
+        "path": "bindings/rust/openui-ffi/src/value.rs",
+        "sha256": "85971ef7aecbbb5918355c2a5a35a91cea3146be33f9e24b815b5d4e1008f3c6"
+      },
+      {
+        "path": "bindings/rust/openui-ffi/src/types.rs",
+        "sha256": "82b27d94d3219a218927f4d7a799bc9e9cb0b1b7728d0493a8d809bdbc536827"
+      },
+      {
+        "path": "bindings/rust/openui-ffi/src/registry.rs",
+        "sha256": "937bd9a0e2eca0a6f7bede231a369c821c128c90ec0eeba1e807e061fd2b576d"
+      },
+      {
+        "path": "bindings/rust/openui-ffi/openui.map",
+        "sha256": "8c0e1911fbd05877a708d1df6c1e2444614dac5db6894890425bda366ce697c2"
+      },
+      {
+        "path": "bindings/rust/openui-compositor/src/lib.rs",
+        "sha256": "491e8d584382f11c7da15126bb9b6546542906fa497ba00aa2bc9752d8708a6b"
+      },
+      {
+        "path": "docs/v02/generated/openui-ffi-layout.json",
+        "sha256": "b1d214225748db72f52e63de0376f4d5654af70ee81be85a66ee94d6d6ca851d"
+      },
+      {
+        "path": "docs/v02/generated/openui-ffi-symbols.txt",
+        "sha256": "ff0c4db9b91e4f1fab3cd2737e507cc0b1c130a3e22cedd48e925f99578493c9"
+      }
+    ]
+  }
+}

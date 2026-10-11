@@ -1,0 +1,123 @@
+{
+  "failed_job_logs": {
+    "address": {
+      "capture_command_exit_code": 0,
+      "complete_log_verified": true,
+      "line_count": 2528,
+      "path": "out/renderer-evidence/native-image-clean-9b158cda/hosted-hardening-address-complete-v2.log",
+      "sha256": "06df743ccc36e7f65363c3a4ae69263ea666b51eb29c58fba8924cabab2f0a1c"
+    },
+    "fuzz": {
+      "capture_command_exit_code": 0,
+      "complete_log_verified": true,
+      "line_count": 2649,
+      "path": "out/renderer-evidence/native-image-clean-9b158cda/hosted-hardening-fuzz-complete-v2.log",
+      "sha256": "0d633b4274de5779f5ae75e672d196c5c5852442928b53c1e01515b75ed1df10"
+    },
+    "leak": {
+      "capture_command_exit_code": 0,
+      "complete_log_verified": true,
+      "line_count": 1230,
+      "path": "out/renderer-evidence/native-image-clean-9b158cda/hosted-hardening-leak-complete-v2.log",
+      "sha256": "0b4248e8a65157433147e0a3709112b8e9e5bb15e56492d23515c2585872d5fc"
+    }
+  },
+  "fuzz_stopped_at": "tree_mutations",
+  "jobs": [
+    {
+      "completed_at": "2026-10-01T09:16:12Z",
+      "conclusion": "success",
+      "name": "miri-handles",
+      "started_at": "2026-10-01T09:06:57Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36840619251/job/110298605182"
+    },
+    {
+      "completed_at": "2026-10-01T09:19:50Z",
+      "conclusion": "failure",
+      "name": "native-sanitizers (leak)",
+      "started_at": "2026-10-01T09:06:58Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36840619251/job/110298605371"
+    },
+    {
+      "completed_at": "2026-10-01T09:09:31Z",
+      "conclusion": "success",
+      "name": "conformance-and-platform",
+      "started_at": "2026-10-01T09:06:57Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36840619251/job/110298605519"
+    },
+    {
+      "completed_at": "2026-10-01T09:22:56Z",
+      "conclusion": "failure",
+      "name": "fuzz-smoke",
+      "started_at": "2026-10-01T09:06:57Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36840619251/job/110298605526"
+    },
+    {
+      "completed_at": "2026-10-01T09:19:16Z",
+      "conclusion": "failure",
+      "name": "native-sanitizers (address)",
+      "started_at": "2026-10-01T09:06:57Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36840619251/job/110298605572"
+    },
+    {
+      "completed_at": "2026-10-01T09:18:55Z",
+      "conclusion": "success",
+      "name": "c-undefined-sanitizer",
+      "started_at": "2026-10-01T09:06:57Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36840619251/job/110298605573"
+    },
+    {
+      "completed_at": "2026-10-01T09:23:12Z",
+      "conclusion": "success",
+      "name": "msrv",
+      "started_at": "2026-10-01T09:06:57Z",
+      "status": "completed",
+      "url": "https://github.com/zhuowcui/open-ui/actions/runs/36840619251/job/110298605622"
+    }
+  ],
+  "raw_status_sha256": "2b0ef8d63e312723b41c4d2133c41fb6f01e89db796e237bef04ad887b7eb4af",
+  "release_qualification": false,
+  "reviewed_failures": [
+    {
+      "allocation_count": 236,
+      "allocation_library": "libfontconfig.so.1",
+      "job": "address",
+      "leaked_bytes": 10476,
+      "owner": "openui-text system font collection and pinned Skia/Fontconfig integration",
+      "status": "open; native font-manager lifetime/root cause requires further review"
+    },
+    {
+      "allocation_count": 236,
+      "allocation_library": "libfontconfig.so.1",
+      "job": "leak",
+      "leaked_bytes": 10476,
+      "owner": "openui-text system font collection and pinned Skia/Fontconfig integration",
+      "status": "open; native font-manager lifetime/root cause requires further review"
+    },
+    {
+      "allocation_count": 59,
+      "allocation_library": "libfontconfig.so.1",
+      "job": "fuzz",
+      "leaked_bytes": 2606,
+      "owner": "openui-text system font collection and pinned Skia/Fontconfig integration",
+      "status": "open; native font-manager lifetime/root cause requires further review"
+    }
+  ],
+  "run_conclusion": "failure",
+  "run_status": "completed",
+  "run_url": "https://github.com/zhuowcui/open-ui/actions/runs/36840619251",
+  "sanitizer_ffi_tests_passed_before_process_exit_leak": 25,
+  "schema_version": 1,
+  "source_commit": "9b158cdaa444a018ca6c8f5a2245477b8c453713",
+  "unverified_later_fuzz_targets": [
+    "event_sequences",
+    "resources",
+    "animation_sampling"
+  ]
+}

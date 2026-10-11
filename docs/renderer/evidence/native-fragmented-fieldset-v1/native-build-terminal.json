@@ -1,0 +1,27 @@
+{
+  "actual_exit_code": 0,
+  "all_local_commands_terminal": true,
+  "audit_driver_sha256": "61a32d1bc9b4f9929b4fb9412fb20c8923bc66d8c7c1b38ca176c8ddec9be936",
+  "compiled_paths_verified": 29,
+  "diagnostic_only": true,
+  "main_source": {
+    "clean": true,
+    "commit": "6e301f588d4064bdffbe170bd6b521564b1f760c",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "500061a0a5c0c2c711b922b3778c519c5b0029bf81ca74e77c424fb978a24501",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "owner_absent": true,
+  "receipt_sha256": "b4aebc227f6dbac53f5d54f2784833b1750a690fc5054a3e33b0bab86dcb026c",
+  "release_qualified": false,
+  "retired_for_reexecution_after_source_or_target_mutation": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "0a5f558733b94f7d0d7dfb06a01454913015e77d",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "56780c592cc78e553946dc7909c7007d3afb766789d2a3307552e1d7eb054540",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_measured": true
+}

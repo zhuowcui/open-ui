@@ -1,0 +1,417 @@
+{
+  "artifact_bytes": 191629,
+  "artifact_count": 45,
+  "artifacts": {
+    "docs/renderer/evidence/native-image-edge-coverage-v1/clean-expanded-exit-v1410.log": {
+      "bytes": 7475,
+      "sha256": "519dd7a3d9f68d43249e8b5a323083d887c15b93fd9a3290ffd271f0abb11783"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/clean-expanded-summary-metadata-v1410.json": {
+      "bytes": 7788,
+      "sha256": "214bf954b6d551fb887aea886b0c8063499ae037ac890c6f671476b9909bea81"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/clean-full-exit-v1410.log": {
+      "bytes": 7223,
+      "sha256": "aa9ef461b35e9d3f65b8378c6f2bb93120746ced415e54da8dc0e0c51ba6c7df"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/clean-full-summary-metadata-v1410.json": {
+      "bytes": 7781,
+      "sha256": "8bb191084e74d2e7a0140a8b2d97e6f18b2a2b1de99fc9635d81e8c7fe7cc18b"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/coverage-check-accountability.log": {
+      "bytes": 2867,
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/coverage-check-archive.log": {
+      "bytes": 45,
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/coverage-check-ffi.log": {
+      "bytes": 32,
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/coverage-check-multicol.log": {
+      "bytes": 59,
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/coverage-check-renderer.log": {
+      "bytes": 81,
+      "sha256": "90abb0d1a675d399075cda5e2065a160491174ed874d3530b7ba5c064d60f81d"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/coverage-check-sp17.log": {
+      "bytes": 86,
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/coverage-check-sp18.log": {
+      "bytes": 121,
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/coverage-check-sp20.log": {
+      "bytes": 142,
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/coverage-check-style.log": {
+      "bytes": 37,
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/coverage-check-v02.log": {
+      "bytes": 63,
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/coverage-read-only-checks-v1448.json": {
+      "bytes": 3700,
+      "sha256": "8d79619dc2209125a53ede45a07fcbfed4ff7a1bbe3aa3e09a44e72c09e50bb7"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/engine-edge-baseline.patch": {
+      "bytes": 6249,
+      "sha256": "e577e7595d3d4f8583c9b485897bcf243c6dfd25ad3af07bd3c5a916eac7918d"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/native-image-blending-source-v1444.json": {
+      "bytes": 2730,
+      "sha256": "90508bc9a4d335e088dcba7c152004ad566f4783e0fc5314c7e4f4eb876ae731"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/native-image-coverage-pipeline-v1449-at-observation.json": {
+      "bytes": 4958,
+      "sha256": "74962f964c60b6a8db7f1b3c0c880acf58197c5ff3539492ac81732794b54cef"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/native-image-coverage-prepared-v1448.json": {
+      "bytes": 2489,
+      "sha256": "d5766de994fbec803a2ef46dec58f253a705eff460417d956ba3a015438cab64"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/native-image-occlusion-pipeline-v1437-at-observation.json": {
+      "bytes": 4777,
+      "sha256": "e930f3c35af4e2b468411daa5df4f522c67f764cede4d76e9688d8e31117f9be"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/native-intrinsic-constraints-retry-pipeline-v1420-at-observation.json": {
+      "bytes": 4854,
+      "sha256": "0ed30c8f3152b7224a13a09daf56751da95bd78b5cd76fa06acf212180ce0da0"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/native-raster-api-pipeline-v1425-at-observation.json": {
+      "bytes": 5263,
+      "sha256": "4d220c7edd1cde237b75fc6686ec0db28e59a49eb0aa2ac16be72e17d7679782"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/native-skia-blending-source-v1445.json": {
+      "bytes": 2223,
+      "sha256": "40bc57ed39ce6be1aceee3d4198f1b6fe6f7fa52c4e70b3b593f0cc18602083c"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/native-skia-coverage-match-v1448.json": {
+      "bytes": 2634,
+      "sha256": "a11a8c7a074662c3524bd6e15274093e73a143c8475bb4d1ca5aaba8cf8e3877"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/native-style-integration-retry-pipeline-v1419-at-observation.json": {
+      "bytes": 8812,
+      "sha256": "650ca72902814a412fd21e23d6cb91adfddf004ac4cccffd0d8dd5c32ef1de76"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/native_image_background_culling.rs": {
+      "bytes": 6262,
+      "sha256": "12beb3cbe29ff3e9996a0f4d7c13903092d95b33d4a197099c63991d524b8ad0"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/openui-clean-full-matrices-audit-v1448.py": {
+      "bytes": 5612,
+      "sha256": "4dd6208f58a67043adb179e80868672995dc707bd10c6dec416df6dcde6e540f"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/openui-native-image-blending-source-v1444.py": {
+      "bytes": 1957,
+      "sha256": "1ce47eb620c061435589f5c635c729055ba7a3d98a181b4b7d6679dfd7ae8101"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/openui-native-image-coverage-build-v1448.py": {
+      "bytes": 5316,
+      "sha256": "66941b354ef144fbd6cd2d02736575bb4a9773eafdf05b07e71084650b5ca140"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/openui-native-image-coverage-checks-v1448.py": {
+      "bytes": 1992,
+      "sha256": "618a80fa5cfd26123ed56f00b73524f93349164b199bda71101409a123ee4a0e"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/openui-native-image-coverage-consumer-v1448.py": {
+      "bytes": 11269,
+      "sha256": "e0561c724c1d0e364c68ef7a3c21469cdfe1489f2fd6ac14232520c909842d13"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/openui-native-image-coverage-fieldsets-v1448.py": {
+      "bytes": 13060,
+      "sha256": "b1a480f5f49bada97d341d5cf5e7626f8f03496bc87b4ef83b40c298331d1710"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/openui-native-image-coverage-guards-v1448.py": {
+      "bytes": 9245,
+      "sha256": "3f61b23dec161cb017954e297cf67bcb93b570e8a219df1c02290a592dc5cf22"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/openui-native-image-coverage-matrices-v1448.py": {
+      "bytes": 2088,
+      "sha256": "25e0055ab0b8fac75f84bfd5ee60d9580bba78e4f5dcdbfe1ec5f73127227a92"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/openui-native-image-coverage-pipeline-v1449.py": {
+      "bytes": 7301,
+      "sha256": "25dbe9a1e77d1aa7997f87c15c7d263a41ba39ad1a69b39a3d2e7d6b40d02e80"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/openui-native-image-coverage-prepare-v1448.py": {
+      "bytes": 9267,
+      "sha256": "497b28758d72fe55d73e17297cc1398fe3e1590d666e7f74a6fb2b86f5aa5a5a"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/openui-native-image-culling-hosted-v1442.py": {
+      "bytes": 2623,
+      "sha256": "fa45c12bc72d90df1e5080b41d8f1a1eebd97ffb6c3840ef62194880ef97e745"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/openui-native-skia-blending-source-v1445.py": {
+      "bytes": 1885,
+      "sha256": "b25c62a75ef9968dc5081728035f3ee47c0377f38140513d774baaa046508774"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/openui-native-skia-coverage-match-v1448.py": {
+      "bytes": 2702,
+      "sha256": "e731de3a25130b324699e992c23e69beb58a13ae085981bcc57d02b1843c2d95"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/parent-culling-hosted-v1442.json": {
+      "bytes": 1550,
+      "sha256": "75c83853ff3ea558641d5ffb680966a5769e7bbe1ed07ad842a3341875018464"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/sampled-image-coverage-candidate.patch": {
+      "bytes": 14500,
+      "sha256": "6f121a5bf23b8ad930a3716603f6696394ea5918b2fda77a47d64be2ad22ec27"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/umbrella-clean-full-matrices-audit-v1448.json": {
+      "bytes": 2782,
+      "sha256": "52acdf9ecf06ce938ce852e98ad83b2e87f26903c9d54d36337aa7b6110046ab"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/umbrella-clean-whole-owner-v1411.json": {
+      "bytes": 7713,
+      "sha256": "30cf0eab5f797c166e96c43bd89e4567ec0eba9298826e7ce099ae3d06f66e9a"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/umbrella-clean-workspace-expanded-exit-v1410.json": {
+      "bytes": 1014,
+      "sha256": "3e16950c8df9e4f836a16ee7b90bd123b48e6cf6d94ef8fc682bc113514f6a8b"
+    },
+    "docs/renderer/evidence/native-image-edge-coverage-v1/umbrella-clean-workspace-full-exit-v1410.json": {
+      "bytes": 1002,
+      "sha256": "030ad222b72ba0d6acbd54318918f8b1d19ca4ac0c7071afc13c8697b3e9bc8e"
+    }
+  },
+  "candidate_inherits_parent_hosted_pass": false,
+  "clean_complete_expanded": {
+    "actual_exit": 1,
+    "all_nine_comparison_invariants_unchanged": 23728,
+    "different": 1591,
+    "errors": 0,
+    "exact": 22137,
+    "exit_receipt_sha256": "3e16950c8df9e4f836a16ee7b90bd123b48e6cf6d94ef8fc682bc113514f6a8b",
+    "original_comparisons_matching_separate_census": 22924,
+    "prior_summary_sha256": "2ae854d5dc065f3bff64a2e0cf6ed6368a65b6cc991547e95347681c6e9135a5",
+    "profile_result_sha256": "3b9a47ab5fad99b484c378626c089a7fcf2abba4aa995ff956f3820294544761",
+    "residual_ids": 883,
+    "residual_ledger_qualifying": false,
+    "source_attributed_complete_pixel_gate_pass": false,
+    "summary_sha256": "b29e4560fabc65d9f2206fdc131d0c3757cfa934a3fc11bf0e25f557bda8bc56",
+    "total": 23728
+  },
+  "clean_complete_original": {
+    "actual_exit": 1,
+    "all_nine_comparison_invariants_unchanged": 22924,
+    "different": 1590,
+    "errors": 0,
+    "exact": 21334,
+    "exit_receipt_sha256": "030ad222b72ba0d6acbd54318918f8b1d19ca4ac0c7071afc13c8697b3e9bc8e",
+    "original_comparisons_matching_separate_census": 0,
+    "prior_summary_sha256": "e9677b4742b31d0d90f85f4e25846d798201f285b4c03bb407f5f243c8014cca",
+    "profile_result_sha256": "63bc9b7cdf805458c5bae49130a3c9ac970443befdf3ee85d599e41d82fc06e8",
+    "residual_ids": 882,
+    "residual_ledger_qualifying": false,
+    "source_attributed_complete_pixel_gate_pass": false,
+    "summary_sha256": "86a6ef3e692d6aefa7ab459720329ab9455c9d1626011a1b2ef6fbb13f07ecf6",
+    "total": 22924
+  },
+  "clean_source": {
+    "clean": true,
+    "commit": "2e443f49d49b81d65674f64bb099fed2922775b5",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "5377ee4175f9eac313c9d4c08e1e8f3c9d2aff100fa73cb8d716188e9efb1584",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "contract": {
+    "chromium_is_sole_pixel_target": true,
+    "javascript_executed_by_openui": false,
+    "needed_interaction_is_public_native_rust": true,
+    "old_openui_pixels_are_provenance_only": true,
+    "pixel_tolerance": 0
+  },
+  "earlier_unattributed_workspace_result_requalified": false,
+  "focused_exact": 640,
+  "image_coverage_candidate": {
+    "actual_pixel_improvement_claimed": false,
+    "all_four_renderer_matrices_required": true,
+    "applied_to_umbrella": false,
+    "assets": {
+      "1x1-white.png": {
+        "bytes": 109,
+        "sha256": "b31782b0ecaa71394f1bccf3cc4647ba70b7208464244546b48521a71e1f1dd0"
+      },
+      "green-200.png": {
+        "bytes": 275,
+        "sha256": "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe"
+      },
+      "green-transparent-200x200.png": {
+        "bytes": 2037,
+        "sha256": "77e8da29ee253660e7a650f43241d96e636b8e2cec5547cb99fd160e95419422"
+      }
+    },
+    "baseline": "6570b65258677fff7369b336db6e55bb7645daec",
+    "build_and_native_confirmation": "queued",
+    "fixture_specific_pixel_edits": false,
+    "geometry_coverage_applied_by_skia_draw": true,
+    "public_application_images_required": 720,
+    "read_only_checks_passed": 10,
+    "rectangular_clip_and_destination_share_one_contour": true,
+    "retained_fieldset_images_required": 128,
+    "shader_preserves_source_opacity": true,
+    "source": "2eacae2c8aad222850af30f9cea6f8a79bbddd4a",
+    "source_supported_blend_order_hypothesis": true
+  },
+  "local_sequence": "1411 terminal; 1419 -> 1420 -> 1425 -> 1437 -> 1449; every prior whole owner must be terminal",
+  "new_release_states_admitted": 0,
+  "observed_at_utc": "2026-10-05T05:51:42.653048+00:00",
+  "parent_culling_manual_hardening": {
+    "actual_exit": 0,
+    "all_commands_terminal": true,
+    "all_seven_jobs_passed": true,
+    "conclusion": "success",
+    "detail_sha256": "20039d6c8aa2ef441c8f8d4681ce58b707498778dc4bc84bf20abaa9622e7566",
+    "job_conclusions": {
+      "success": 7
+    },
+    "jobs": [
+      {
+        "conclusion": "success",
+        "name": "c-undefined-sanitizer",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "conformance-and-platform",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "msrv",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "miri-handles",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "fuzz-smoke",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "native-sanitizers (leak)",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "native-sanitizers (address)",
+        "status": "completed"
+      }
+    ],
+    "log_sha256": "e82e919ac283c1c089b4479faa2811b2715ccce3fe6fb037d201bd66612f7d9d",
+    "native_pixel_qualification": false,
+    "probe_sha256": "fa45c12bc72d90df1e5080b41d8f1a1eebd97ffb6c3840ef62194880ef97e745",
+    "release_qualification": false,
+    "run_id": 37265205988,
+    "run_url": "https://github.com/zhuowcui/open-ui/actions/runs/37265205988",
+    "schema_version": 1,
+    "skipped_jobs": 0,
+    "source": "d913041dba9b36987ce83a1b3ed85dc6b4bf93e4",
+    "state": "terminal-results-recorded",
+    "status": "completed",
+    "successful_jobs": 7
+  },
+  "pipelines_at_observation": {
+    "native-image-coverage-pipeline-v1449": {
+      "all_commands_terminal": false,
+      "source": "2eacae2c8aad222850af30f9cea6f8a79bbddd4a",
+      "stages_observed": 0,
+      "state": "awaiting-every-prior-whole-pipeline-including-image-background-culling"
+    },
+    "native-image-occlusion-pipeline-v1437": {
+      "all_commands_terminal": false,
+      "source": "d913041dba9b36987ce83a1b3ed85dc6b4bf93e4",
+      "stages_observed": 0,
+      "state": "awaiting-all-prior-whole-pipelines-including-style-intrinsic-and-raster-api-retries"
+    },
+    "native-intrinsic-constraints-retry-pipeline-v1420": {
+      "all_commands_terminal": false,
+      "source": "a6d386e48d864a5769ebdadd8bc8dea46e4eff21",
+      "stages_observed": 0,
+      "state": "awaiting-all-prior-whole-pipelines-including-clean-umbrella-revalidation"
+    },
+    "native-raster-api-pipeline-v1425": {
+      "all_commands_terminal": false,
+      "source": "fb284c54f9375aa57dcd53d825a87c191df2b9cb",
+      "stages_observed": 0,
+      "state": "awaiting-all-prior-whole-pipelines-including-style-and-intrinsic-retries"
+    },
+    "native-style-integration-retry-pipeline-v1419": {
+      "all_commands_terminal": false,
+      "source": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+      "stages_observed": 6,
+      "state": "running-focused"
+    }
+  },
+  "primitive_exact": 960,
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "reviewed_skia_files": {
+    "all_commands_terminal": true,
+    "all_compared_files_byte_identical": true,
+    "cargo_commands_run": 0,
+    "chromium_tag": "147.0.7727.50",
+    "compared_files": [
+      {
+        "byte_identical": true,
+        "local_sha256": "bdac62475f6db0c38ccfa399c0c46c22cf342961a3ad5cb1b14bc5b3306b87bd",
+        "official_url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/core/SkColorPriv.h?format=TEXT",
+        "source": "src/core/SkColorPriv.h",
+        "upstream_sha256": "bdac62475f6db0c38ccfa399c0c46c22cf342961a3ad5cb1b14bc5b3306b87bd"
+      },
+      {
+        "byte_identical": true,
+        "local_sha256": "2cb79bde4289dc979029782cb50f83fb4664d077e97d48398615ca71f8062687",
+        "official_url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/core/SkBlitter_ARGB32.cpp?format=TEXT",
+        "source": "src/core/SkBlitter_ARGB32.cpp",
+        "upstream_sha256": "2cb79bde4289dc979029782cb50f83fb4664d077e97d48398615ca71f8062687"
+      },
+      {
+        "byte_identical": true,
+        "local_sha256": "f2f5979f437e1b9e2d50d42838756cfd638c646ed452a71e177e94e140049ed5",
+        "official_url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/opts/SkRasterPipeline_opts.h?format=TEXT",
+        "source": "src/opts/SkRasterPipeline_opts.h",
+        "upstream_sha256": "f2f5979f437e1b9e2d50d42838756cfd638c646ed452a71e177e94e140049ed5"
+      },
+      {
+        "byte_identical": true,
+        "local_sha256": "29908a9956d23feb0d5029ad8c8b5c4823ab8f60701f7febdd24a5a0f2805703",
+        "official_url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/core/SkRasterPipelineBlitter.cpp?format=TEXT",
+        "source": "src/core/SkRasterPipelineBlitter.cpp",
+        "upstream_sha256": "29908a9956d23feb0d5029ad8c8b5c4823ab8f60701f7febdd24a5a0f2805703"
+      },
+      {
+        "byte_identical": true,
+        "local_sha256": "ea6f4d7033caffe6b0678c0938504994a27bebf4a8b245b6804b685ac2e2f4b1",
+        "official_url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/core/SkColorData.h?format=TEXT",
+        "source": "src/core/SkColorData.h",
+        "upstream_sha256": "ea6f4d7033caffe6b0678c0938504994a27bebf4a8b245b6804b685ac2e2f4b1"
+      }
+    ],
+    "pin_changed": false,
+    "probe_sha256": "e731de3a25130b324699e992c23e69beb58a13ae085981bcc57d02b1843c2d95",
+    "release_qualification": false,
+    "rust_skia_commit": "a31b86ba3b767344d39af3b8c30043003d8fc991",
+    "schema_version": 1,
+    "screenshots_generated": 0,
+    "upstream_skia_commit": "abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0",
+    "whole_source_equivalence_claimed": false
+  },
+  "schema_version": 1,
+  "workspace_failed": 0,
+  "workspace_ignored": 13,
+  "workspace_passed": 8531
+}

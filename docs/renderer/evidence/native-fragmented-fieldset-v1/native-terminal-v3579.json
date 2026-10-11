@@ -1,0 +1,57 @@
+{
+  "actual_exit_code": 0,
+  "all_local_commands_terminal": true,
+  "diagnostic_only": true,
+  "main_source": {
+    "clean": true,
+    "commit": "6e301f588d4064bdffbe170bd6b521564b1f760c",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "500061a0a5c0c2c711b922b3778c519c5b0029bf81ca74e77c424fb978a24501",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "owner_absent": true,
+  "receipt_sha256": "bae21462c9c1754668821d4f9126a199856c7458f061a7499cd0bd3c1962e1c9",
+  "release_qualified": false,
+  "repeated_pngs_verified": 30,
+  "results": [
+    {
+      "fragment_rects_exact": true,
+      "geometry_exact": true,
+      "scale": 1.0,
+      "wrong_pixels": 13960
+    },
+    {
+      "fragment_rects_exact": true,
+      "geometry_exact": true,
+      "scale": 1.25,
+      "wrong_pixels": 24744
+    },
+    {
+      "fragment_rects_exact": true,
+      "geometry_exact": true,
+      "scale": 1.5,
+      "wrong_pixels": 33400
+    },
+    {
+      "fragment_rects_exact": true,
+      "geometry_exact": true,
+      "scale": 2.0,
+      "wrong_pixels": 55840
+    },
+    {
+      "fragment_rects_exact": true,
+      "geometry_exact": true,
+      "scale": 3.0,
+      "wrong_pixels": 125640
+    }
+  ],
+  "retired_for_reexecution_after_source_or_target_mutation": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "6fe8a63f61d696a200a08a37765ab9182bb439ad",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "b8a576440d995681de056a66777902f58c53674062b153a7e6f03fd80366ae40",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

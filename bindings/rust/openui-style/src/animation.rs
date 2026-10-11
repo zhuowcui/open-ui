@@ -726,6 +726,15 @@ fn interpolate_length(from: LengthValue, to: LengthValue, progress: f32) -> Opti
         (LengthValue::Rem(from), LengthValue::Rem(to)) => {
             Some(LengthValue::Rem(lerp(from, to, progress)))
         }
+        (LengthValue::Ch(from), LengthValue::Ch(to)) => {
+            Some(LengthValue::Ch(lerp(from, to, progress)))
+        }
+        (LengthValue::Ex(from), LengthValue::Ex(to)) => {
+            Some(LengthValue::Ex(lerp(from, to, progress)))
+        }
+        (LengthValue::Lh(from), LengthValue::Lh(to)) => {
+            Some(LengthValue::Lh(lerp(from, to, progress)))
+        }
         (LengthValue::ViewportWidth(from), LengthValue::ViewportWidth(to)) => {
             Some(LengthValue::ViewportWidth(lerp(from, to, progress)))
         }

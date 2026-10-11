@@ -40,13 +40,14 @@ python3 tools/accountability/generate_sp12_5_csv.py
 python3 tools/accountability/audit.py
 ```
 
-Current verified snapshot:
+Historical SP20 snapshot under the original comparator (channel tolerance 4;
+rightmost 15 pixels excluded):
 
 | Metric | Value |
 |---|---:|
 | Chromium SP12-scope inventory rows | 7673 |
 | Ported/runnable WPT tests | 5731 |
-| Runnable passes | 5731 |
+| Reported runnable passes | 5731 |
 | Runnable failures | 0 |
 | Runnable render/diff errors | 0 |
 | Unported but explicitly categorized rows | 1942 |
@@ -54,24 +55,30 @@ Current verified snapshot:
 | `sp12_layout_bug` rows | 0 |
 | `needs_text` rows | 0 |
 | `needs_font_metrics` rows | 0 |
-| Verified SP20 exact baseline | 4962 |
-| Verified SP20 static-visual targets | 769 |
-| Excluded SP20 JavaScript-dependent rows | 1912 |
+| SP20 baseline pass records | 4962 |
+| SP20 static-visual target pass records | 769 |
+| SP20 rows whose Chromium WPT source contains JavaScript | 1912 |
 | Excluded SP20 nonvisual/crash-harness rows | 30 |
 
-This is the verified SP20 snapshot: all 4,962 baseline IDs and 769 static-visual
-targets pass at 0.0% mismatch. Both the focused manifest and the complete WPT
-run are 5,731/5,731 exact with zero failures and zero render/diff errors. The
-remaining 1,942 rows retain explicit ownership: 1,912 require JavaScript and 30
-are nonvisual or crash-harness rows.
+All 4,962 baseline IDs and 769 static-visual targets were recorded as passes
+with 0.0% mismatch under that comparator. These records do not establish exact
+RGBA pixels: 186 reported passes have nonzero compared channel deltas. The
+remaining 1,942 rows retain explicit historical classification: 1,912 have
+scripts in their Chromium WPT source and 30 are nonvisual or crash-harness
+rows. This classification does not mean Open UI runs JavaScript. Fixed final
+visual states can be built with native Rust test fixtures; application
+interaction uses the public native Rust API.
 
-The historical 0.0% result metadata is not a byte-exact current-renderer
-qualification. The required `frozen-pixel-replay` CI check compares fresh
-renders against the original 5,731 OpenUI PNGs without tolerance. Their bytes
+The `historical-pixel-audit` CI check verifies the archive and comparator
+metadata. Optional replay compares fresh renders with the original 5,731
+Open UI PNGs, but is diagnostic, not a pixel release gate. Their bytes
 are preserved in `data/pixel_comparison/frozen-openui-5731-v1.tar.xz`, whose
 SHA-256 and exact manifest membership are checked by
 `restore_frozen_openui_archive.py`. Restoring it never overwrites a differing
-local PNG. The Chromium oracle PNGs and result metadata are not refrozen.
+local PNG. The Chromium oracle PNGs and result metadata are not refrozen. The
+[frozen oracle audit](../../docs/renderer/frozen-oracle-audit.md) checks the
+historical policy separately. Exact pixel qualification compares with pinned
+Chromium through the zero-tolerance renderer matrix.
 
 ## Data Files
 
@@ -93,9 +100,13 @@ not it has a runnable Rust port.
 | `dependency` | Human-readable dependency label |
 | `notes` | Porter rejection reason or additional tracking note |
 
-`not_ported` is not an acceptable long-term category. Unported rows must be assigned
-to named categories such as `needs_javascript`, `needs_writing_mode`, `sp13_fragmentation`,
-`needs_grid`, or `needs_table_layout`.
+`not_ported` is not an acceptable long-term category. Unported rows must be
+assigned to named historical categories such as `needs_javascript`,
+`needs_writing_mode`, `sp13_fragmentation`, `needs_grid`, or
+`needs_table_layout`. `needs_javascript` labels a script in Chromium's WPT
+source that needs native final-state review; it is not a planned JavaScript
+runtime for Open UI. The consuming application receives public Rust methods
+for needed element interactions.
 
 ### Pixel Summary (`data/pixel_comparison/results/summary.json`)
 

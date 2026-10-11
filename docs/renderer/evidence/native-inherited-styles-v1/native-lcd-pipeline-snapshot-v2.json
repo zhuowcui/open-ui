@@ -1,0 +1,29 @@
+{
+  "all_commands_terminal": false,
+  "current_process": {
+    "pid": 2899842,
+    "program": "openui-native-lcd-build-v1218.py"
+  },
+  "new_release_states_admitted": 0,
+  "prior_terminal_pipeline_sha256": "351a59344a4b40d768098029875e7ede06a3e5d35b6b7994159e224623bff782",
+  "probe_sha256": "2f220a9de4be5328999e1fc1c9fac9a9ce3bf5c63fdf312a6e06d1d9f68c3aa2",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "52788b83f72025430614c046065aae526230ae75",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "8e470497ebaae7b57f6c6572ba612cdc7cfde3c6558c1b1d0bdad310e3df5acb",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "52788b83f72025430614c046065aae526230ae75",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "8e470497ebaae7b57f6c6572ba612cdc7cfde3c6558c1b1d0bdad310e3df5acb",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "running-native-build",
+  "steps": []
+}

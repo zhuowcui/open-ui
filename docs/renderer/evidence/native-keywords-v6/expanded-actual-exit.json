@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "/dev/shm/openui-native-keywords-pixels-7d6ffabf-v1785/tools/qualification/run_renderer_matrix.py",
+    "--suite",
+    "expanded",
+    "--results-dir",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-capture-clean-expanded-v1785",
+    "--cache-dir",
+    "/mnt/e/openui-v02-qualification-d174ea0b/renderer-cache",
+    "--oracle-cache-dir",
+    "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+    "--pixel-compare",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-current-retry-clean-v1779/pixel_compare",
+    "--chrome",
+    "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+    "--raster-backend",
+    "cpu-skia",
+    "--jobs",
+    "8"
+  ],
+  "log_sha256": "92134b51f970bdae0a0d1e411d9a086abc670d8032c88556d6087681d231051b",
+  "observed_exit_code": 1,
+  "release_qualification": false,
+  "schema_version": 1,
+  "suite": "expanded"
+}

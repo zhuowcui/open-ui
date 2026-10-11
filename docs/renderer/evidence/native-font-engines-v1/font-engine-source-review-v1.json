@@ -1,0 +1,30 @@
+{
+  "capture_harness": {
+    "excerpt": "            if use_sp18_features:\n                # Modern line-clamp is runtime-guarded in pinned Chromium 147.\n                cmd.insert(5, f\"--enable-blink-features={SP18_BLINK_FEATURES}\")\n            if use_real_font or use_freetype_backend:\n                # Pin Chromium's supported FreeType path for matching faces.\n                cmd.insert(\n                    5,\n                    \"--enable-features=FontDataServiceLinux:typeface/Freetype\",\n                )\n            process = subprocess.Popen(\n                cmd,",
+    "path": "tools/accountability/run_all_pixel_comparisons.py",
+    "sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+    "start_line": 725
+  },
+  "chromium_feature": {
+    "excerpt": "#if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)\nconst base::FeatureParam<FontDataServiceTypefaceType>::Option\n    font_data_service_typeface[] = {\n        {FontDataServiceTypefaceType::kFreetype, \"Freetype\"},\n        {FontDataServiceTypefaceType::kFontations, \"Fontations\"}};\n#if BUILDFLAG(IS_LINUX)\nBASE_FEATURE(kFontDataServiceLinux, base::FEATURE_ENABLED_BY_DEFAULT);\nBASE_FEATURE_ENUM_PARAM(FontDataServiceTypefaceType,\n                        kFontDataServiceTypefaceType,\n                        &kFontDataServiceLinux,\n                        \"typeface\",\n                        FontDataServiceTypefaceType::kFontations,\n                        &font_data_service_typeface);\n#else\nBASE_FEATURE(kFontDataServiceChromeOS, base::FEATURE_DISABLED_BY_DEFAULT);\nBASE_FEATURE_ENUM_PARAM(FontDataServiceTypefaceType,",
+    "path": "/home/nero/chromium/src/content/common/features.cc",
+    "sha256": "60c94a4f473080c51c5e985a3b136a789a5ce1292286db79053361d9e71a84d0",
+    "source_version": "MAJOR=147\nMINOR=0\nBUILD=7727\nPATCH=24\n",
+    "start_line": 284,
+    "version_note": "Local source is 147.0.7727.24; the immutable capture executable is 147.0.7727.50."
+  },
+  "fontations_strike": {
+    "excerpts": [
+      {
+        "excerpt": "};\n\nSkTypeface::LocalizedStrings* SkTypeface_Fontations::onCreateFamilyNameIterator() const {\n    return new SkrifaLocalizedStrings(fontations_ffi::get_localized_strings(*fBridgeFontRef));\n}\n\nclass SkFontationsScalerContext : public SkScalerContext {\npublic:\n    SkFontationsScalerContext(const SkTypeface_Fontations& realTypeface,\n                              const SkScalerContextEffects& effects,\n                              const SkDescriptor* desc,\n                              SkTypeface& proxyTypeface)\n            : SkScalerContext(proxyTypeface, effects, desc) // proxyTypeface owns the realTypeface\n            , fBridgeFontRef(realTypeface.getBridgeFontRef())\n            , fBridgeNormalizedCoords(realTypeface.getBridgeNormalizedCoords())\n            , fOutlines(realTypeface.getOutlines())\n            , fGlyphStyles(realTypeface.getGlyphStyles())\n            , fMappingIndex(realTypeface.getMappingIndex())\n            , fPalette(realTypeface.getPalette())\n            , fHintingInstance(fontations_ffi::no_hinting_instance()) {\n        using AutoHinting = fontations_ffi::AutoHintingControl;\n\n        fRec.computeMatrices(\n                SkScalerContextRec::PreMatrixScale::kVertical, &fScale, &fRemainingMatrix);",
+        "start_line": 340
+      },
+      {
+        "excerpt": "                        {\n                            autoHintingControl = AutoHinting::ForceForGlyf;\n                        }\n                        fHintingInstance = fontations_ffi::make_hinting_instance(\n                                fOutlines,\n                                fGlyphStyles,\n                                fScale.y(),\n                                fBridgeNormalizedCoords,\n                                true /* do_light_hinting */,\n                                false /* do_lcd_antialiasing */,\n                                false /* lcd_orientation_vertical */,\n                                autoHintingControl);\n                        fDoLinearMetrics = true;\n                        break;\n                    case SkFontHinting::kNormal:\n                        // No hinting to subpixel coordinates.\n                        fHintingInstance = fontations_ffi::make_hinting_instance(\n                                fOutlines,\n                                fGlyphStyles,\n                                fScale.y(),\n                                fBridgeNormalizedCoords,\n                                false /* do_light_hinting */,\n                                false /* do_lcd_antialiasing */,\n                                false /* lcd_orientation_vertical */,\n                                autoHintingControl);\n                        break;",
+        "start_line": 405
+      }
+    ],
+    "path": "/home/nero/chromium/src/third_party/skia/src/ports/SkTypeface_fontations.cpp",
+    "sha256": "0507775ddd5047dd51ea2f8317f1161541fa54c61ea72d066172c47bf109789e"
+  }
+}

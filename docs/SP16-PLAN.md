@@ -1,5 +1,10 @@
 # SP16 — Real-Font Metrics and Raster Parity
 
+> Historical sprint record. The current pixel target is Chromium, and old
+> Open UI screenshots are provenance. JavaScript references describe Chromium
+> test sources. Open UI executes no JavaScript; needed interaction belongs in
+> the [public native Rust API](v02/supported-platforms.md#native-interaction-api).
+
 ## Status
 
 SP16 is complete. Its immutable ledgers cover all 776 original
@@ -74,6 +79,7 @@ metadata-only runnable failure.
 ## Next handoff
 
 SP17 owns advanced text such as bidi, vertical writing, and complex scripts. The
-paused SP13 multicol/fragmentation clusters and the separately named JavaScript,
+paused SP13 multicol/fragmentation clusters and native mutations from Chromium
+script-based tests,
 grid, table, image, generated-content, and paint-quality systems remain outside
 SP16 ownership.

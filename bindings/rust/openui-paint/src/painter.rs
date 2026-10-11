@@ -36,15 +36,17 @@ use skia_safe::canvas::{SaveLayerFlags, SaveLayerRec, SrcRectConstraint};
 use skia_safe::image::RequiredProperties;
 use skia_safe::rrect::Corner as RRectCorner;
 use skia_safe::{
-    color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, Canvas, ClipOp,
-    Color4f, ColorSpace, ColorType, Data, FilterMode, IRect, Image, ImageInfo, Matrix, MipmapMode,
-    Paint, PaintStyle, PathBuilder, PathFillType, PathMeasure, PictureRecorder, Point, RRect, Rect,
-    SamplingOptions, TileMode,
+    color_filters, gradient_shader, image_filters, surfaces, AlphaType, BlendMode, ClipOp, Color4f,
+    ColorSpace, ColorType, Data, FilterMode, IRect, Image, ImageInfo, Matrix, MipmapMode, Paint,
+    PaintStyle, PathBuilder, PathFillType, PathMeasure, PictureRecorder, Point, RRect, Rect,
+    RoundOut, SamplingOptions, TileMode,
 };
 
 use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet, HashSet};
 use unicode_segmentation::UnicodeSegmentation;
+
+type Canvas = dyn crate::paint_record::PaintCanvas;
 
 fn set_paint_css_color(paint: &mut Paint, color: &Color) {
     set_paint_css_color_with_alpha(paint, color, 1.0);
@@ -145,6 +147,12 @@ thread_local! {
     static FRAGMENTED_OOF_HOIST_ACTIVE: RefCell<bool> = const { RefCell::new(false) };
     static FRAGMENTED_INLINE_SKIP_AFTER: RefCell<Option<usize>> = const { RefCell::new(None) };
     static VIEWPORT_SIZE: RefCell<(f32, f32)> = const { RefCell::new((800.0, 600.0)) };
+    static RASTER_TILED_REPLAY: RefCell<bool> = const { RefCell::new(false) };
+    static DEFER_VIEWPORT_SCROLLBARS: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+    static CONTENT_BACKGROUND_ANNOTATIONS: RefCell<Option<Vec<(Color, f32, Option<Rect>)>>> = const { RefCell::new(None) };
+    static CONTENT_BACKGROUND_DEVICE_SPACE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+    static CONTENT_BACKGROUND_EFFECT: std::cell::Cell<(f32, bool)> = const { std::cell::Cell::new((1.0, true)) };
+    static VIEWPORT_CONTENT_LAYER: RefCell<Option<crate::RecordedContentLayer>> = const { RefCell::new(None) };
     static BROKEN_IMAGE: RefCell<Option<Image>> = const { RefCell::new(None) };
     static BROKEN_IMAGE_HIGH_RES: RefCell<Option<Image>> = const { RefCell::new(None) };
     static RASTERIZING_PROMOTED_TRANSFORM: RefCell<bool> = const { RefCell::new(false) };
@@ -172,9 +180,217 @@ pub(crate) fn set_paint_viewport_size(width: f32, height: f32) {
     VIEWPORT_SIZE.with(|size| *size.borrow_mut() = (width, height));
 }
 
+pub(crate) fn set_paint_raster_tiled(tiled: bool) {
+    RASTER_TILED_REPLAY.with(|value| *value.borrow_mut() = tiled);
+}
+
 pub(crate) fn reset_picture_paint_state() {
     PAINTED_FRAGMENTED_OUTLINES.with(|painted| painted.borrow_mut().clear());
     EXTERNALLY_DEFERRED_OUTLINES.with(|deferred| deferred.borrow_mut().clear());
+    VIEWPORT_CONTENT_LAYER.with(|layer| *layer.borrow_mut() = None);
+}
+
+pub(crate) fn take_viewport_content_layer() -> Option<crate::RecordedContentLayer> {
+    VIEWPORT_CONTENT_LAYER.with(|layer| layer.borrow_mut().take())
+}
+
+struct BackgroundEffectScope((f32, bool));
+
+impl BackgroundEffectScope {
+    fn new(fragment: &Fragment, style: &ComputedStyle) -> Self {
+        Self(CONTENT_BACKGROUND_EFFECT.with(|effect| {
+            let previous = effect.get();
+            effect.set((
+                previous.0
+                    * if can_flatten_box_opacity(fragment, style) {
+                        1.0
+                    } else {
+                        style.opacity
+                    },
+                previous.1
+                    && style.filter_blur == 0.0
+                    && style.filter_grayscale == 0.0
+                    && style.mask_layers.is_empty()
+                    && !(CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.get())
+                        && style.has_border_radius())
+                    && style.transform == openui_style::Transform2D::IDENTITY,
+            ));
+            previous
+        }))
+    }
+}
+
+struct BackgroundRecordingScope {
+    previous_annotations: Option<Vec<(Color, f32, Option<Rect>)>>,
+    previous_effect: (f32, bool),
+    previous_device_space: bool,
+}
+
+impl BackgroundRecordingScope {
+    fn new() -> Self {
+        Self {
+            previous_annotations: CONTENT_BACKGROUND_ANNOTATIONS
+                .with(|annotations| annotations.replace(Some(Vec::new()))),
+            previous_effect: CONTENT_BACKGROUND_EFFECT.with(|effect| effect.replace((1.0, true))),
+            previous_device_space: CONTENT_BACKGROUND_DEVICE_SPACE
+                .with(|space| space.replace(false)),
+        }
+    }
+
+    fn for_raster() -> Self {
+        let scope = Self::new();
+        CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.set(true));
+        scope
+    }
+
+    fn annotations(&self) -> Vec<(Color, f32, Option<Rect>)> {
+        CONTENT_BACKGROUND_ANNOTATIONS
+            .with(|annotations| annotations.borrow().as_ref().cloned().unwrap_or_default())
+    }
+}
+
+impl Drop for BackgroundRecordingScope {
+    fn drop(&mut self) {
+        CONTENT_BACKGROUND_ANNOTATIONS
+            .with(|annotations| annotations.replace(self.previous_annotations.take()));
+        CONTENT_BACKGROUND_EFFECT.with(|effect| effect.set(self.previous_effect));
+        CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.set(self.previous_device_space));
+    }
+}
+
+impl Drop for BackgroundEffectScope {
+    fn drop(&mut self) {
+        CONTENT_BACKGROUND_EFFECT.with(|effect| effect.set(self.0));
+    }
+}
+
+fn annotate_content_background(
+    canvas: &Canvas,
+    mut color: Color,
+    rect: Rect,
+    opacity: f32,
+    opaque_rect: Option<Rect>,
+) {
+    let effect = CONTENT_BACKGROUND_EFFECT.with(|effect| effect.get());
+    if !effect.1 {
+        return;
+    }
+    color.a *= opacity * effect.0;
+    CONTENT_BACKGROUND_ANNOTATIONS.with(|annotations| {
+        if let Some(annotations) = annotations.borrow_mut().as_mut() {
+            annotations.push((
+                color,
+                rect.width() * rect.height(),
+                opaque_rect.filter(|_| color.is_opaque()).and_then(|rect| {
+                    let mut rect = if CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.get()) {
+                        // In a raster backing, opacity belongs to fully covered
+                        // physical cells after the current transform and clip.
+                        // A rectangular AA clip is accepted by Skia only when
+                        // every retained sample has full coverage.
+                        let matrix = canvas.local_to_device_as_3x3();
+                        if !matrix.rect_stays_rect() || !canvas.is_clip_rect() {
+                            return None;
+                        }
+                        let mut mapped = matrix.map_rect(rect).0;
+                        let clip = Rect::from(canvas.device_clip_bounds()?);
+                        if !mapped.intersect(clip) {
+                            return None;
+                        }
+                        mapped
+                    } else {
+                        rect
+                    };
+                    rect = Rect::from_ltrb(
+                        rect.left.ceil(),
+                        rect.top.ceil(),
+                        rect.right.floor(),
+                        rect.bottom.floor(),
+                    );
+                    (!rect.is_empty() && rect.is_finite()).then_some(rect)
+                }),
+            ));
+        }
+    });
+}
+
+fn layer_background_color(annotations: &[(Color, f32, Option<Rect>)], bounds: Rect) -> Color {
+    let minimum_area = 0.5 * bounds.width() * bounds.height();
+    let mut colors = Vec::new();
+    for &(color, area, _) in annotations.iter().rev() {
+        if color.a > 0.0 && area >= minimum_area {
+            colors.push(color);
+            if color.is_opaque() {
+                break;
+            }
+        }
+    }
+    let mut result = Color::TRANSPARENT;
+    for color in colors.into_iter().rev() {
+        let alpha = color.a + result.a * (1.0 - color.a);
+        if alpha > 0.0 {
+            result = Color::from_rgba_f32(
+                (color.r * color.a + result.r * result.a * (1.0 - color.a)) / alpha,
+                (color.g * color.a + result.g * result.a * (1.0 - color.a)) / alpha,
+                (color.b * color.a + result.b * result.a * (1.0 - color.a)) / alpha,
+                alpha,
+            );
+        }
+    }
+    result
+}
+
+fn maximum_covered_rect(a: Rect, b: Rect) -> Rect {
+    let area = |rect: Rect| rect.width().max(0.0) * rect.height().max(0.0);
+    let mut maximum = if area(b) > area(a) { b } else { a };
+    let left = a.left.max(b.left);
+    let top = a.top.max(b.top);
+    let right = a.right.min(b.right);
+    let bottom = a.bottom.min(b.bottom);
+    if right >= left && bottom >= top && (right > left || bottom > top) {
+        let vertical = Rect::from_ltrb(left, a.top.min(b.top), right, a.bottom.max(b.bottom));
+        if area(vertical) > area(maximum) {
+            maximum = vertical;
+        }
+        let horizontal = Rect::from_ltrb(a.left.min(b.left), top, a.right.max(b.right), bottom);
+        if area(horizontal) > area(maximum) {
+            maximum = horizontal;
+        }
+    }
+    maximum
+}
+
+fn layer_opaque_rect(annotations: &[(Color, f32, Option<Rect>)]) -> Rect {
+    annotations
+        .iter()
+        .filter_map(|(_, _, opaque)| *opaque)
+        .fold(Rect::default(), maximum_covered_rect)
+}
+
+/// Preserve every fully covered physical cell, including disjoint regions.
+/// Choosing the largest rectangle can discard a covering background when an
+/// inset child's painted area extends farther than its parent.
+fn layer_opaque_region(annotations: &[(Color, f32, Option<Rect>)]) -> skia_safe::Region {
+    let mut region = skia_safe::Region::new();
+    for rect in annotations.iter().filter_map(|(_, _, opaque)| *opaque) {
+        region.op_rect(rect.round_in(), skia_safe::region::RegionOp::Union);
+    }
+    region
+}
+
+pub(crate) fn paint_document_fragments(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+) {
+    struct RestoreScrollbarPhase(bool);
+    impl Drop for RestoreScrollbarPhase {
+        fn drop(&mut self) {
+            DEFER_VIEWPORT_SCROLLBARS.with(|deferred| deferred.set(self.0));
+        }
+    }
+    let _phase = RestoreScrollbarPhase(DEFER_VIEWPORT_SCROLLBARS.with(|value| value.replace(true)));
+    paint_fragment_tracked(canvas, fragment, doc, offset);
 }
 
 fn uses_deterministic_text_profile(style: &ComputedStyle) -> bool {
@@ -428,10 +644,13 @@ fn collect_overflowing_max_block_decorations<'a>(
             && child.kind == FragmentKind::Box
             && child.is_first_for_node
             && (doc.node(child.node_id).tag == ElementTag::Fieldset
-                || child.children.iter().any(|descendant| {
-                    fragment_is_in_flow_monolithic(descendant, doc)
-                        || fragment_has_in_flow_monolithic_descendant(descendant, doc)
-                }))
+                || fragment_has_overflowing_in_flow_monolithic_descendant(
+                    child,
+                    doc,
+                    LayoutUnit::zero(),
+                    fragment_physical_block_extent(child),
+                    fragment_block_axis_is_x(child),
+                ))
             && (!doc.node(child.node_id).style.max_height.is_none()
                 || doc.node(child.node_id).style.height.is_fixed())
             && child.decoration_slice.is_some_and(|slice| {
@@ -450,14 +669,41 @@ fn fragment_is_in_flow_monolithic(fragment: &Fragment, doc: &Document) -> bool {
         && is_monolithic_column_fragment(fragment, doc)
 }
 
-fn fragment_has_in_flow_monolithic_descendant(fragment: &Fragment, doc: &Document) -> bool {
+/// Complete decoration replay is needed only for an indivisible descendant
+/// that extends outside this continuation. An atomic descendant that fits
+/// does not move its fragmentable ancestors outside the fragmentainer clip.
+fn fragment_has_overflowing_in_flow_monolithic_descendant(
+    fragment: &Fragment,
+    doc: &Document,
+    source_offset: LayoutUnit,
+    block_extent: LayoutUnit,
+    block_axis_is_x: bool,
+) -> bool {
     fragment.children.iter().any(|child| {
-        if child.node_id.is_none() {
-            fragment_has_in_flow_monolithic_descendant(child, doc)
+        if !child.node_id.is_none() && doc.node(child.node_id).style.is_out_of_flow() {
+            return false;
+        }
+        let start = source_offset
+            + if block_axis_is_x {
+                child.offset.left
+            } else {
+                child.offset.top
+            };
+        if fragment_is_in_flow_monolithic(child, doc) {
+            let size = if block_axis_is_x {
+                child.size.width
+            } else {
+                child.size.height
+            };
+            start < LayoutUnit::zero() || start + size > block_extent
         } else {
-            !doc.node(child.node_id).style.is_out_of_flow()
-                && (fragment_is_in_flow_monolithic(child, doc)
-                    || fragment_has_in_flow_monolithic_descendant(child, doc))
+            fragment_has_overflowing_in_flow_monolithic_descendant(
+                child,
+                doc,
+                start,
+                block_extent,
+                block_axis_is_x,
+            )
         }
     })
 }
@@ -467,6 +713,75 @@ fn fragment_has_in_flow_monolithic_descendant(fragment: &Fragment, doc: &Documen
 /// This is the main entry point — paints the fragment and all its children
 /// recursively, with correct coordinate offsets.
 pub fn paint_fragment(
+    canvas: &skia_safe::Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+) {
+    paint_fragment_tracked(canvas, fragment, doc, offset);
+}
+
+fn paint_fragment_tracked(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+) {
+    // A box that crosses a fractional viewport edge is cut by the physical
+    // viewport scissor before its overflowing ink reaches the terminal cell.
+    // A box ending at that edge keeps its own snapped edge coverage, so clip
+    // only boxes whose laid-out right edge is beyond the viewport.
+    let scale = doc.device_scale_factor();
+    let (viewport_width, _) = VIEWPORT_SIZE.with(|size| *size.borrow());
+    let physical_viewport_right = f64::from(viewport_width) * scale;
+    let fragment_left = (offset.left + fragment.offset.left).to_f64();
+    let fragment_right = fragment_left + fragment.size.width.to_f64();
+    let clips_fractional_terminal_column = physical_viewport_right.fract() > 1.0e-6
+        && fragment_left < f64::from(viewport_width)
+        && fragment_right > f64::from(viewport_width) + 1.0e-6;
+    if clips_fractional_terminal_column {
+        canvas.save();
+        canvas.clip_rect(
+            Rect::from_ltrb(
+                -100_000.0,
+                -100_000.0,
+                (physical_viewport_right.floor() / scale) as f32,
+                100_000.0,
+            ),
+            ClipOp::Intersect,
+            false,
+        );
+    }
+    if !fragment.node_id.is_none() && doc.node(fragment.node_id).is_svg_foreign_object {
+        // SVG root placement is pixel-snapped before the foreignObject's
+        // local CSS decoration is replayed. Keep that translation separate
+        // from its local edge snapping (SVGRootPainter and
+        // SVGForeignObjectPainter); combining them changes fractional widths.
+        let viewport_origin = PhysicalOffset::new(
+            offset.left + fragment.offset.left,
+            offset.top + fragment.offset.top,
+        );
+        canvas.save();
+        canvas.translate((
+            viewport_origin.left.round().to_f32(),
+            viewport_origin.top.round().to_f32(),
+        ));
+        paint_fragment_contents(
+            canvas,
+            fragment,
+            doc,
+            PhysicalOffset::new(-fragment.offset.left, -fragment.offset.top),
+        );
+        canvas.restore();
+    } else {
+        paint_fragment_contents(canvas, fragment, doc, offset);
+    }
+    if clips_fractional_terminal_column {
+        canvas.restore();
+    }
+}
+
+fn paint_fragment_contents(
     canvas: &Canvas,
     fragment: &Fragment,
     doc: &Document,
@@ -538,6 +853,15 @@ pub fn paint_fragment(
                 &mut overflowing_max_decorations,
             );
             for (overflow, overflow_offset) in overflowing_max_decorations {
+                let pointer = overflow as *const Fragment as usize;
+                // A shared column decoration already owns this fragment's
+                // background and border. Replaying it compounds the same
+                // antialiased coverage at fractional device coordinates.
+                if PREPAINTED_BOX_DECORATIONS
+                    .with(|prepainted| prepainted.borrow().contains(&pointer))
+                {
+                    continue;
+                }
                 let Some(slice) = overflow.decoration_slice else {
                     continue;
                 };
@@ -845,7 +1169,7 @@ pub fn paint_fragment(
                 }
             });
             for (overflow, parent_offset) in overflowing_monolithic {
-                paint_fragment(canvas, overflow, doc, parent_offset);
+                paint_fragment_tracked(canvas, overflow, doc, parent_offset);
             }
         } else {
             paint_children_with_stacking_order(
@@ -864,7 +1188,7 @@ pub fn paint_fragment(
     // anonymous boxes with no DOM node. Just recurse into children.
     if fragment.node_id.is_none() {
         for child in &fragment.children {
-            paint_fragment(canvas, child, doc, abs_offset);
+            paint_fragment_tracked(canvas, child, doc, abs_offset);
         }
         return;
     }
@@ -896,6 +1220,7 @@ pub fn paint_fragment(
     } else {
         canvas_adjusted_style.as_ref().unwrap_or(original_style)
     };
+    let _background_effect = BackgroundEffectScope::new(fragment, style);
     let promoted_transform_parent_offset = PhysicalOffset::new(
         abs_offset.left - fragment.offset.left,
         abs_offset.top - fragment.offset.top,
@@ -993,7 +1318,7 @@ pub fn paint_fragment(
                 LayoutUnit::from_f32(-bounds.left) - fragment.offset.left,
                 LayoutUnit::from_f32(-bounds.top) - fragment.offset.top,
             );
-            paint_fragment(surface.canvas(), fragment, doc, raster_parent_offset);
+            paint_fragment_tracked(surface.canvas(), fragment, doc, raster_parent_offset);
             RASTERIZING_PROMOTED_TRANSFORM.with(|active| *active.borrow_mut() = false);
 
             let image = surface.image_snapshot();
@@ -1120,10 +1445,12 @@ pub fn paint_fragment(
     let flattens_opacity = can_flatten_box_opacity(fragment, style);
     let needs_layer = style.opacity < 1.0 && !flattens_opacity;
     if needs_layer {
-        if fragment_subtree_has_text(fragment) {
-            // Text-backed opacity groups use Chromium's ordinary N32
+        if fragment_subtree_has_text(fragment) || fragment_subtree_has_images(fragment, doc) {
+            // Text and sampled-image opacity groups use Chromium's ordinary N32
             // intermediate. Its packed alpha is observably different from
-            // an F16 layer for fully covered glyph cells.
+            // an F16 layer for fully covered glyph and image cells. Raster
+            // backgrounds and border images require the same intermediate
+            // as replaced images, including under an ancestor's opacity.
             canvas.save_layer_alpha_f(None, style.opacity);
         } else {
             // Solid/vector-only groups retain float color until the final
@@ -1229,6 +1556,86 @@ pub fn paint_fragment(
     {
         // The platform control renderer above consumed the directional
         // single-character content with its native LCD mask.
+    } else if let Some(scrollport) = fragment.viewport_scrollport {
+        canvas.save();
+        // With no reserved gutter, viewport clipping belongs to the final
+        // surface/tile assembly. Applying that edge again during document
+        // raster changes analytic coverage of transformed ink near the edge.
+        // A reserved scrollbar gutter still needs the smaller client clip.
+        if scrollport.horizontal_scrollbar || scrollport.vertical_scrollbar {
+            canvas.clip_rect(
+                outward_snap_rect_to_physical(
+                    Rect::from_xywh(
+                        abs_offset.left.to_f32(),
+                        abs_offset.top.to_f32(),
+                        scrollport.client_rect.width().to_f32(),
+                        scrollport.client_rect.height().to_f32(),
+                    ),
+                    doc.device_scale_factor(),
+                ),
+                ClipOp::Intersect,
+                false,
+            );
+        }
+        let node = doc.node(fragment.node_id);
+        // Chromium snaps the viewport scroll transform in physical space.
+        // Keep the retained offset and geometry logical while preserving the
+        // unscrolled paint phase when composing the document at a new offset.
+        let snapping = RasterSnapping::new(doc.device_scale_factor());
+        let scroll_translation = (
+            snapping.logical_coordinate(-node.scroll_left, PhysicalSnap::Nearest),
+            snapping.logical_coordinate(-node.scroll_top, PhysicalSnap::Nearest),
+        );
+        canvas.translate(scroll_translation);
+        let content = scrollport.content_rect;
+        let bounds = Rect::from_ltrb(
+            (abs_offset.left + content.x()).round().to_f32(),
+            (abs_offset.top + content.y()).round().to_f32(),
+            (abs_offset.left + content.right()).round().to_f32(),
+            (abs_offset.top + content.bottom()).round().to_f32(),
+        );
+        let mut recorder = PictureRecorder::new();
+        let layer_canvas: &Canvas = recorder.begin_recording(bounds, false);
+        let paint_recording =
+            crate::paint_record::RecordingScope::new(layer_canvas.raw_untracked());
+        let background_recording = BackgroundRecordingScope::new();
+        paint_scrolling_canvas_background(layer_canvas, doc, fragment, bounds);
+        paint_children_with_stacking_order(
+            layer_canvas,
+            &fragment.children,
+            doc,
+            abs_offset,
+            true,
+            style.display.is_flex() && fragmented_flex_has_internal_four_way_junction(fragment),
+        );
+        let annotations = background_recording.annotations();
+        let paint_record = paint_recording.snapshot();
+        drop(paint_recording);
+        drop(background_recording);
+        let picture = recorder
+            .finish_recording_as_picture(None)
+            .expect("viewport content recording must finish");
+        let rect_known_to_be_opaque = layer_opaque_rect(&annotations);
+        let layer = crate::RecordedContentLayer {
+            node_id: fragment.node_id,
+            bounds,
+            background_color: layer_background_color(&annotations, bounds),
+            rect_known_to_be_opaque,
+            paint_record,
+            contents_opaque: rect_known_to_be_opaque.left <= bounds.left
+                && rect_known_to_be_opaque.top <= bounds.top
+                && rect_known_to_be_opaque.right >= bounds.right
+                && rect_known_to_be_opaque.bottom >= bounds.bottom,
+            scroll_translation,
+            picture,
+            _font_cache_lifetime: doc.font_collection().retain_cache_lifetime(),
+        };
+        layer.replay(canvas, doc.device_scale_factor());
+        VIEWPORT_CONTENT_LAYER.with(|recorded| *recorded.borrow_mut() = Some(layer));
+        canvas.restore();
+        if !DEFER_VIEWPORT_SCROLLBARS.with(|deferred| deferred.get()) {
+            paint_viewport_scrollbars(canvas, fragment, doc, abs_offset);
+        }
     } else if needs_clip {
         paint_with_overflow_clip(canvas, fragment, doc, abs_offset, style);
     } else {
@@ -1706,9 +2113,9 @@ fn paint_passive_media_icon(
     canvas.restore();
 }
 
-/// Paint deterministic passive platform controls. Interactive state is out of
-/// scope, but the initial Linux Chromium geometry is stable and belongs to the
-/// public form-control role rather than to any individual test.
+/// Paint native controls from retained shared state. Linux Chromium geometry
+/// and colors belong to the public control role; effective disabled state uses
+/// the same authored-tree query as interaction and accessibility.
 fn paint_form_control(
     canvas: &Canvas,
     fragment: &Fragment,
@@ -1741,7 +2148,7 @@ fn paint_form_control(
                 doc,
                 abs_offset,
                 opacity_multiplier,
-                doc.node(fragment.node_id).form_control_disabled,
+                doc.effective_form_control_disabled(fragment.node_id),
             );
             paint_native_input_button_corners(canvas, fragment, abs_offset, opacity_multiplier);
             paint_color_input_control(
@@ -1800,7 +2207,7 @@ fn paint_form_control(
                     doc,
                     abs_offset,
                     opacity_multiplier,
-                    doc.node(fragment.node_id).form_control_disabled,
+                    doc.effective_form_control_disabled(fragment.node_id),
                 );
                 if doc.node(fragment.node_id).tag == ElementTag::Input {
                     paint_native_input_button_corners(
@@ -1873,9 +2280,10 @@ fn paint_textarea_resize_grip(
     abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
-    // The native theme suppresses the affordance when its motif cannot fit
-    // inside the textarea's border box.
-    if fragment.size.height < LayoutUnit::from_i32(15) {
+    // Resize is an authored/computed property. A text-area role alone does
+    // not enable its affordance. The motif must also fit inside the box.
+    if style.resize == openui_style::Resize::None || fragment.size.height < LayoutUnit::from_i32(15)
+    {
         return;
     }
     let right = (abs_offset.left + fragment.size.width).round().to_f32();
@@ -2166,191 +2574,133 @@ fn paint_checkable_control(
     opacity_multiplier: f32,
 ) {
     let node = doc.node(fragment.node_id);
-    let checked = doc.attribute(fragment.node_id, "checked").is_some();
-    let indeterminate = doc.attribute(fragment.node_id, "indeterminate").is_some();
+    let radio = node.form_control == Some(FormControlRole::Radio);
+    let checked = node
+        .form_control_checked
+        .unwrap_or_else(|| doc.attribute(fragment.node_id, "checked").is_some());
+    // The input's indeterminate property changes checkbox decoration only.
+    // Chromium does not pass that property to its radio painter.
+    let indeterminate = !radio
+        && node
+            .form_control_indeterminate
+            .unwrap_or_else(|| doc.attribute(fragment.node_id, "indeterminate").is_some());
     let left = abs_offset.left.round().to_f32();
     let top = abs_offset.top.round().to_f32();
     let right = (abs_offset.left + fragment.size.width).round().to_f32();
     let bottom = (abs_offset.top + fragment.size.height).round().to_f32();
     let width = (right - left).max(0.0);
     let height = (bottom - top).max(0.0);
-    if width <= 0.0 || height <= 0.0 {
+    let side = width.min(height);
+    if side <= 0.0 {
         return;
     }
-    let rect = Rect::from_xywh(left, top, width, height);
-    let mut fill = Paint::default();
-    fill.set_style(PaintStyle::Fill);
-    fill.set_anti_alias(true);
-    set_paint_css_color(&mut fill, &Color::WHITE);
-    let mut stroke = Paint::default();
-    stroke.set_style(PaintStyle::Stroke);
-    stroke.set_stroke_width(1.0);
-    stroke.set_anti_alias(true);
-    set_paint_css_color(
-        &mut stroke,
-        &Color::from_rgba8(118, 118, 118, (255.0 * opacity_multiplier).round() as u8),
+    let item_rect = Rect::from_ltrb(left, top, right, bottom);
+    let rect = Rect::from_xywh(
+        left + (width - side) / 2.0,
+        top + (height - side) / 2.0,
+        side,
+        side,
     );
-    if node.form_control == Some(FormControlRole::Radio) {
-        // NativeTheme records each radio into the control's own border-box
-        // display item.  Keep the analytic oval coverage from spilling into
-        // an adjacent control when their border boxes meet on a fractional
-        // device-pixel boundary; without this hard item clip both ovals
-        // contribute coverage to the same physical row.
-        canvas.save();
-        canvas.clip_rect(rect, ClipOp::Intersect, false);
-        let side = width.min(height);
-        let radio_rect = Rect::from_xywh(
-            left + (width - side) / 2.0,
-            top + (height - side) / 2.0,
-            side,
-            side,
-        );
-        let radius = side / 2.0;
-        // NativeThemeBase::PaintCheckboxRadioCommon deliberately gives the
-        // opaque background a 0.2px inset, then records the one-pixel border
-        // on a separate 0.5px-inset contour. Using one shared oval changes
-        // the multiplied fringe coverage over authored backgrounds.
-        let background_rect = Rect::from_ltrb(
-            radio_rect.left + 0.2,
-            radio_rect.top + 0.2,
-            radio_rect.right - 0.2,
-            radio_rect.bottom - 0.2,
-        );
-        canvas.draw_rrect(RRect::new_rect_xy(background_rect, radius, radius), &fill);
-        let border_rect = Rect::from_ltrb(
-            radio_rect.left + 0.5,
-            radio_rect.top + 0.5,
-            radio_rect.right - 0.5,
-            radio_rect.bottom - 0.5,
-        );
-        canvas.draw_rrect(RRect::new_rect_xy(border_rect, radius, radius), &stroke);
-        canvas.restore();
-    } else if (node.style.device_scale_factor - 1.0).abs() > f64::EPSILON {
-        // NativeTheme records the scalable checkbox shell as an analytic
-        // rounded rectangle. The legacy DPR-1 contour below is its exact
-        // one-pixel coverage table, but scaling those table cells would turn
-        // a physical AA fringe into CSS-sized blocks.
-        canvas.save();
-        canvas.clip_rect(rect, ClipOp::Intersect, false);
-        let inset = Rect::from_xywh(left + 0.5, top + 0.5, width - 1.0, height - 1.0);
-        let shell = RRect::new_rect_xy(inset, 2.0, 2.0);
-        let mut backing = fill.clone();
-        backing.set_anti_alias(false);
-        let snapping = RasterSnapping::new(node.style.device_scale_factor);
-        let backing_rect = Rect::from_ltrb(
-            snapping.logical_coordinate(left, PhysicalSnap::Floor),
-            snapping.logical_coordinate(top, PhysicalSnap::Floor),
-            snapping.logical_coordinate(right, PhysicalSnap::Ceil),
-            snapping.logical_coordinate(bottom, PhysicalSnap::Ceil),
-        );
-        canvas.draw_rect(backing_rect, &backing);
-        canvas.draw_rrect(shell, &fill);
-        canvas.draw_rrect(shell, &stroke);
-        canvas.restore();
-    } else {
-        canvas.draw_rect(rect, &fill);
-        if width < 7.0 || height < 7.0 {
-            canvas.draw_rect(rect, &stroke);
-            return;
-        }
-        let mut edge = Paint::default();
-        edge.set_style(PaintStyle::Fill);
-        edge.set_anti_alias(false);
-        let mut draw_gray = |gray: u8, cells: &[(f32, f32, f32, f32)]| {
-            set_paint_css_color(
-                &mut edge,
-                &Color::from_rgba8(gray, gray, gray, (255.0 * opacity_multiplier).round() as u8),
-            );
-            for &(x, y, w, h) in cells {
-                canvas.draw_rect(Rect::from_xywh(x, y, w, h), &edge);
-            }
-        };
-        draw_gray(
-            118,
-            &[
-                (left + 3.0, top, width - 6.0, 1.0),
-                (left + 3.0, bottom - 1.0, width - 6.0, 1.0),
-                (left, top + 3.0, 1.0, height - 6.0),
-                (right - 1.0, top + 3.0, 1.0, height - 6.0),
-            ],
-        );
-        draw_gray(
-            163,
-            &[
-                (left + 1.0, top, 1.0, 1.0),
-                (left, top + 1.0, 1.0, 1.0),
-                (right - 2.0, top, 1.0, 1.0),
-                (right - 1.0, top + 1.0, 1.0, 1.0),
-                (left, bottom - 2.0, 1.0, 1.0),
-                (left + 1.0, bottom - 1.0, 1.0, 1.0),
-                (right - 1.0, bottom - 2.0, 1.0, 1.0),
-                (right - 2.0, bottom - 1.0, 1.0, 1.0),
-            ],
-        );
-        draw_gray(
-            153,
-            &[
-                (left + 2.0, top, 1.0, 1.0),
-                (left, top + 2.0, 1.0, 1.0),
-                (right - 3.0, top, 1.0, 1.0),
-                (right - 1.0, top + 2.0, 1.0, 1.0),
-                (left, bottom - 3.0, 1.0, 1.0),
-                (left + 2.0, bottom - 1.0, 1.0, 1.0),
-                (right - 1.0, bottom - 3.0, 1.0, 1.0),
-                (right - 3.0, bottom - 1.0, 1.0, 1.0),
-            ],
-        );
-        draw_gray(
-            178,
-            &[
-                (left + 1.0, top + 1.0, 1.0, 1.0),
-                (right - 2.0, top + 1.0, 1.0, 1.0),
-                (left + 1.0, bottom - 2.0, 1.0, 1.0),
-                (right - 2.0, bottom - 2.0, 1.0, 1.0),
-            ],
-        );
-    }
-
-    if !(checked || indeterminate) {
-        return;
-    }
-    let mark_color = if node.form_control_disabled {
-        Color::from_rgba8(128, 128, 128, 255)
+    let radius = if radio { side / 2.0 } else { 2.0 };
+    let disabled = doc.effective_form_control_disabled(fragment.node_id);
+    // Default light-scheme colors from Chromium's native color provider.
+    // Disabled colors retain their alpha so authored backdrops participate.
+    let accent = if disabled {
+        Color::from_rgba8(118, 118, 118, 77)
     } else {
         Color::from_rgba8(0, 117, 255, 255)
     };
-    let mut mark = Paint::default();
-    mark.set_anti_alias(true);
-    mark.set_style(PaintStyle::Fill);
-    set_paint_css_color_with_alpha(&mut mark, &mark_color, opacity_multiplier);
-    if node.form_control == Some(FormControlRole::Radio) {
-        let dot = Rect::from_xywh(
-            left + width * 0.3,
-            top + height * 0.3,
-            width * 0.4,
-            height * 0.4,
-        );
-        canvas.draw_oval(dot, &mark);
+    let border = if checked {
+        accent
+    } else if disabled {
+        Color::from_rgba8(118, 118, 118, 77)
+    } else {
+        Color::from_rgba8(118, 118, 118, 255)
+    };
+    let background = Color::from_rgba8(255, 255, 255, if disabled { 153 } else { 255 });
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    // Keep each native control inside its own border-box display item.
+    canvas.save();
+    canvas.clip_rect(item_rect, ClipOp::Intersect, false);
+    if side <= 2.0 {
+        set_paint_css_color_with_alpha(&mut paint, &border, opacity_multiplier);
+        canvas.draw_rect(rect, &paint);
+        canvas.restore();
         return;
     }
-    canvas.draw_rect(
-        Rect::from_xywh(left + 1.0, top + 1.0, width - 2.0, height - 2.0),
-        &mark,
+    paint.set_anti_alias(true);
+    let background_rect = Rect::from_ltrb(
+        rect.left + 0.2,
+        rect.top + 0.2,
+        rect.right - 0.2,
+        rect.bottom - 0.2,
     );
-    mark.set_style(PaintStyle::Stroke);
-    mark.set_stroke_width((width.min(height) * 0.13).max(1.0));
-    mark.set_stroke_cap(skia_safe::PaintCap::Round);
-    set_paint_css_color_with_alpha(&mut mark, &Color::WHITE, opacity_multiplier);
-    let mut path = PathBuilder::new();
-    if indeterminate {
-        path.move_to(Point::new(left + width * 0.25, top + height * 0.5));
-        path.line_to(Point::new(left + width * 0.75, top + height * 0.5));
-    } else {
-        path.move_to(Point::new(left + width * 0.22, top + height * 0.52));
-        path.line_to(Point::new(left + width * 0.43, top + height * 0.72));
-        path.line_to(Point::new(left + width * 0.79, top + height * 0.28));
+    let background_shape = RRect::new_rect_xy(background_rect, radius, radius);
+    if disabled {
+        set_paint_css_color_with_alpha(
+            &mut paint,
+            &Color::from_rgba8(169, 169, 169, 51),
+            opacity_multiplier,
+        );
+        canvas.draw_rrect(background_shape, &paint);
     }
-    canvas.draw_path(&path.detach(), &mark);
+    set_paint_css_color_with_alpha(&mut paint, &background, opacity_multiplier);
+    canvas.draw_rrect(background_shape, &paint);
+    // Checked and mixed checkboxes draw their full accent shell instead of a
+    // border. Radios always draw a border, using the accent when checked.
+    if radio || !(checked || indeterminate) {
+        paint.set_style(PaintStyle::Stroke);
+        paint.set_stroke_width(1.0);
+        set_paint_css_color_with_alpha(&mut paint, &border, opacity_multiplier);
+        let border_rect = Rect::from_ltrb(
+            rect.left + 0.5,
+            rect.top + 0.5,
+            rect.right - 0.5,
+            rect.bottom - 0.5,
+        );
+        canvas.draw_rrect(RRect::new_rect_xy(border_rect, radius, radius), &paint);
+        paint.set_style(PaintStyle::Fill);
+    }
+    if radio {
+        if checked {
+            set_paint_css_color_with_alpha(&mut paint, &accent, opacity_multiplier);
+            let inset = side * 0.2;
+            let dot = Rect::from_ltrb(
+                rect.left + inset,
+                rect.top + inset,
+                rect.right - inset,
+                rect.bottom - inset,
+            );
+            canvas.draw_rrect(RRect::new_rect_xy(dot, radius, radius), &paint);
+        }
+    } else if checked || indeterminate {
+        set_paint_css_color_with_alpha(&mut paint, &accent, opacity_multiplier);
+        canvas.draw_rrect(RRect::new_rect_xy(rect, radius, radius), &paint);
+        set_paint_css_color_with_alpha(&mut paint, &background, opacity_multiplier);
+        if indeterminate {
+            let x_inset = 2.5 * side / 13.0;
+            let y_inset = 5.5 * side / 13.0;
+            let dash = Rect::from_ltrb(
+                rect.left + x_inset,
+                rect.top + y_inset,
+                rect.right - x_inset,
+                rect.bottom - y_inset,
+            );
+            canvas.draw_rrect(RRect::new_rect_xy(dash, radius, radius), &paint);
+        } else {
+            let mut path = PathBuilder::new();
+            path.move_to(Point::new(rect.left + side * 0.2, rect.top + side / 2.0));
+            path.r_line_to(Point::new(side * 0.2, side * 0.2));
+            path.line_to(Point::new(rect.right - side * 0.2, rect.top + side * 0.2));
+            paint.set_style(PaintStyle::Stroke);
+            paint.set_stroke_width(side * 0.16);
+            paint.set_stroke_cap(skia_safe::PaintCap::Butt);
+            paint.set_stroke_join(skia_safe::PaintJoin::Miter);
+            canvas.draw_path(&path.detach(), &paint);
+        }
+    }
+    canvas.restore();
 }
 
 /// Paint the deterministic initial value of a single-line text field.
@@ -3352,7 +3702,7 @@ fn paint_scroll_button_control(
         );
     };
 
-    let disabled = doc.node(fragment.node_id).form_control_disabled;
+    let disabled = doc.effective_form_control_disabled(fragment.node_id);
     let face = if disabled { 238 } else { 239 };
     for &(dx, dy) in &[(2.0, 1.0), (1.0, 2.0), (2.0, 2.0)] {
         for (sx, sy) in [
@@ -4085,105 +4435,61 @@ fn paint_missing_image(
         style.aspect_ratio.is_some() && (!style.width.is_auto() || !style.height.is_auto());
     let treated_as_replaced =
         (!style.width.is_auto() && !style.height.is_auto()) || has_ratio_dimension;
+    // UA fallback decorations use CSS-pixel-snapped edges before the
+    // device-scale transform, as does the element background. Keep the
+    // layout fragment and the public geometry unchanged.
+    let abs_offset = PhysicalOffset::new(abs_offset.left.round(), abs_offset.top.round());
     let host_width = fragment.size.width.to_f32();
     let host_height = fragment.size.height.to_f32();
+    // The failed-image shadow container and icon are absent when an
+    // authored fixed dimension cannot contain the 16px icon plus its inset.
+    // This decision uses the authored lengths, before percentage resolution.
+    if treated_as_replaced
+        && doc.attribute(fragment.node_id, "src") == Some("")
+        && ((style.width.is_fixed() && style.width.value() < 18.0)
+            || (style.height.is_fixed() && style.height.value() < 18.0))
+    {
+        return;
+    }
     if treated_as_replaced
         && doc.attribute(fragment.node_id, "src") == Some("")
         && host_width > 0.0
         && host_width < 18.0
         && host_height >= 18.0
     {
-        // Blink keeps an explicitly empty image's broken-resource placeholder
-        // at its minimum eight-pixel inline extent when the authored replaced
-        // box is narrower than the normal 18px framed icon. The remainder of
-        // the element continues to show the author's background.
-        let placeholder_width = 8.0_f32.min(host_width);
-        let source = Rect::from_xywh(0.0, 0.0, image.width() as f32, image.height() as f32);
-        let device_destination = Rect::from_xywh(
-            abs_offset.left.to_f32() + 2.0,
-            abs_offset.top.to_f32() + 2.0,
-            16.0,
-            16.0,
-        );
-        let mut image_paint = Paint::default();
-        image_paint.set_alpha_f(opacity_multiplier);
-        canvas.save();
-        canvas.clip_rect(
-            Rect::from_xywh(
-                abs_offset.left.to_f32() + 1.0,
-                abs_offset.top.to_f32() + 1.0,
-                (placeholder_width - 2.0).max(0.0),
-                (host_height - 2.0).max(0.0),
-            ),
-            ClipOp::Intersect,
-            false,
-        );
-        let device_scale = style.device_scale_factor.max(f64::EPSILON) as f32;
-        let packed_patch = if device_scale.fract().abs() <= 1.0e-5
-            && style.raster_configuration.backend != RasterBackend::GaneshGl
-        {
-            let source_phase = source.width() / (16.0 * 16.0 * device_scale);
-            let packed_source = Rect::from_xywh(
-                source.left - source_phase,
-                source.top,
-                source.width(),
-                source.height(),
-            );
-            crate::image_resource::physical_quantized_image_patch(
-                &image,
-                packed_source,
-                device_destination,
-                device_scale,
-                false,
-                false,
-                false,
-                false,
-                false,
-                false,
-                None,
-                false,
-                false,
-                false,
-                false,
-                false,
+        let _host_clip_guard = skia_safe::AutoCanvasRestore::guard(canvas, true);
+        if style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible {
+            let (x, y, width, height) =
+                compute_overflow_clip_reference_rect(fragment, abs_offset, style);
+            canvas.clip_rect(
+                Rect::from_xywh(x, y, width, height),
+                ClipOp::Intersect,
                 true,
-                Some(device_destination),
-            )
-            .ok()
-        } else {
-            None
-        };
-        if let Some((patch, aligned_destination, _)) = packed_patch {
-            canvas.draw_image_rect_with_sampling_options(
-                patch.clone(),
-                Some((
-                    &Rect::from_xywh(0.0, 0.0, patch.width() as f32, patch.height() as f32),
-                    SrcRectConstraint::Strict,
-                )),
-                aligned_destination,
-                SamplingOptions::from(FilterMode::Nearest),
-                &image_paint,
-            );
-        } else {
-            canvas.draw_image_rect_with_sampling_options(
-                image,
-                Some((&source, SrcRectConstraint::Strict)),
-                Rect::from_xywh(
-                    device_destination.left + 1.0 / 16.0,
-                    device_destination.top,
-                    device_destination.width(),
-                    device_destination.height(),
-                ),
-                SamplingOptions::new(FilterMode::Linear, MipmapMode::Nearest),
-                &image_paint,
             );
         }
-        canvas.restore();
+        // An explicitly empty image may retain the broken-resource icon
+        // when an authored percentage resolves below its ordinary size.
+        // The shadow container clips that icon to its own resolved extent;
+        // the remainder of the host keeps the author's background.
+        // The UA container inherits the authored percentage width and
+        // resolves it against the replaced host's content box. Its two
+        // 1px borders and two 1px paddings establish a 4px minimum extent.
+        let placeholder_width = if style.width.is_percent() || style.width.is_calculated() {
+            resolve_margin_or_padding_f32(&style.width, host_width).max(4.0)
+        } else {
+            host_width
+        };
+        let child_clip = Rect::from_xywh(
+            abs_offset.left.to_f32() + 1.0,
+            abs_offset.top.to_f32() + 1.0,
+            (placeholder_width - 2.0).max(0.0),
+            (host_height - 2.0).max(0.0),
+        );
 
         let mut border = Paint::default();
         border.set_style(PaintStyle::Stroke);
         border.set_stroke_width(1.0);
-        border.set_anti_alias(false);
+        border.set_anti_alias(true);
         border.set_color4f(
             Color4f::new(0.7529412, 0.7529412, 0.7529412, opacity_multiplier),
             None::<&ColorSpace>,
@@ -4196,6 +4502,17 @@ fn paint_missing_image(
                 (host_height - 1.0).max(0.0),
             ),
             &border,
+        );
+
+        paint_broken_image_resource(
+            canvas,
+            image,
+            style,
+            abs_offset.left.to_f32() + 2.0,
+            abs_offset.top.to_f32() + 2.0,
+            opacity_multiplier,
+            None,
+            Some(child_clip),
         );
         return;
     }
@@ -4218,9 +4535,13 @@ fn paint_missing_image(
         .clamp_negative_to_zero()
         .to_f32();
     let clips_missing_replaced = treated_as_replaced
-        && style.has_border_radius()
-        && !fragment.ignore_border_radius
         && (style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible);
+    // Blink places the broken-image glyph in a UA shadow child. The host
+    // image's `overflow: clip` applies to that child even when the image is
+    // rendered as non-replaced alternative text. Paint the glyph under the
+    // host content clip, just as ordinary descendants are clipped below.
+    let clips_missing_nonreplaced = !treated_as_replaced
+        && (style.overflow_x == Overflow::Clip || style.overflow_y == Overflow::Clip);
     let mut missing_clip_rrect = None;
     if clips_missing_replaced {
         let content_rect = Rect::from_xywh(content_x, content_y, content_width, content_height);
@@ -4234,7 +4555,42 @@ fn paint_missing_image(
         );
         canvas.save();
         canvas.clip_rrect(clip_rrect, ClipOp::Intersect, true);
-        missing_clip_rrect = Some(clip_rrect);
+        if style.has_border_radius() && !fragment.ignore_border_radius {
+            missing_clip_rrect = Some(clip_rrect);
+        }
+    }
+    if clips_missing_nonreplaced {
+        let (x, y, width, height) =
+            compute_overflow_clip_reference_rect(fragment, abs_offset, style);
+        let margin = style.overflow_clip_margin;
+        let bounds = Rect::from_ltrb(
+            if style.overflow_x == Overflow::Clip {
+                x - margin
+            } else {
+                -100_000.0
+            },
+            if style.overflow_y == Overflow::Clip {
+                y - margin
+            } else {
+                -100_000.0
+            },
+            if style.overflow_x == Overflow::Clip {
+                x + width + margin
+            } else {
+                100_000.0
+            },
+            if style.overflow_y == Overflow::Clip {
+                y + height + margin
+            } else {
+                100_000.0
+            },
+        );
+        canvas.save();
+        canvas.clip_rect(
+            bounds,
+            ClipOp::Intersect,
+            antialias_rectangular_overflow_clip(fragment, doc, style),
+        );
     }
     let (icon_x, icon_y) = if treated_as_replaced {
         let host_height = if style.height.is_fixed() {
@@ -4247,7 +4603,7 @@ fn paint_missing_image(
             let mut border = Paint::default();
             border.set_style(PaintStyle::Stroke);
             border.set_stroke_width(1.0);
-            border.set_anti_alias(false);
+            border.set_anti_alias(true);
             border.set_color4f(
                 Color4f::new(0.7529412, 0.7529412, 0.7529412, opacity_multiplier),
                 None::<&ColorSpace>,
@@ -4309,106 +4665,16 @@ fn paint_missing_image(
         )
     };
 
-    // Chromium records the 14px resource into the 16px fallback slot with a
-    // three-cell scalar head followed by the regular vectorized filter phase.
-    // Preserve both phases so linear resampling of the pinned browser resource
-    // is stable across the two Skia revisions.
-    let source = Rect::from_xywh(0.0, 0.0, image.width() as f32, image.height() as f32);
-    let main_phase = if missing_clip_rrect.is_some() {
-        3.0 / 64.0
-    } else {
-        1.0 / 16.0
-    };
-    let main_destination = Rect::from_xywh(icon_x + main_phase, icon_y, 16.0, 16.0);
-    let device_destination = Rect::from_xywh(icon_x, icon_y, 16.0, 16.0);
-    let mut paint = Paint::default();
-    paint.set_alpha_f(opacity_multiplier);
-    let sampling = SamplingOptions::new(FilterMode::Linear, MipmapMode::Linear);
-    let span_head = missing_clip_rrect
-        .as_ref()
-        .and_then(|rrect| rounded_clip_span_head(rrect, device_destination));
-    if let Some(span_head) = span_head.as_ref() {
-        canvas.save();
-        canvas.clip_path(span_head, ClipOp::Difference, false);
-    }
-    let device_scale = style.device_scale_factor.max(f64::EPSILON) as f32;
-    // The packed browser sampler carries the 1/16 destination phase in its
-    // inverse image matrix, while the destination coverage remains snapped to
-    // the fallback slot. Encode that phase in source space so replaying the
-    // resolved texels at an integral destination does not attenuate the first
-    // column as a geometric edge. The conversion uses physical destination
-    // width because the 200% resource has twice the source density.
-    let packed_phase_source = if device_scale.fract().abs() <= 1.0e-5 {
-        let source_phase =
-            main_phase * source.width() / (device_destination.width() * device_scale);
-        Rect::from_xywh(
-            source.left - source_phase,
-            source.top,
-            source.width(),
-            source.height(),
-        )
-    } else {
-        source
-    };
-    let packed_physical_patch =
-        if span_head.is_none() && style.raster_configuration.backend != RasterBackend::GaneshGl {
-            crate::image_resource::physical_quantized_image_patch(
-                &image,
-                packed_phase_source,
-                device_destination,
-                device_scale,
-                false,
-                false,
-                false,
-                false,
-                false,
-                false,
-                None,
-                false,
-                false,
-                false,
-                false,
-                false,
-                true,
-                Some(device_destination),
-            )
-            .ok()
-        } else {
-            None
-        };
-    if let Some((patch, aligned_destination, _)) = packed_physical_patch {
-        canvas.draw_image_rect_with_sampling_options(
-            patch.clone(),
-            Some((
-                &Rect::from_xywh(0.0, 0.0, patch.width() as f32, patch.height() as f32),
-                SrcRectConstraint::Strict,
-            )),
-            aligned_destination,
-            SamplingOptions::from(FilterMode::Nearest),
-            &paint,
-        );
-    } else {
-        canvas.draw_image_rect_with_sampling_options(
-            image.clone(),
-            Some((&source, SrcRectConstraint::Strict)),
-            main_destination,
-            sampling,
-            &paint,
-        );
-    }
-    if let Some(span_head) = span_head.as_ref() {
-        canvas.restore();
-        canvas.save();
-        canvas.clip_path(span_head, ClipOp::Intersect, false);
-        canvas.draw_image_rect_with_sampling_options(
-            image,
-            Some((&source, SrcRectConstraint::Strict)),
-            device_destination,
-            sampling,
-            &paint,
-        );
-        canvas.restore();
-    }
+    paint_broken_image_resource(
+        canvas,
+        image,
+        style,
+        icon_x,
+        icon_y,
+        opacity_multiplier,
+        missing_clip_rrect.as_ref(),
+        None,
+    );
 
     if !treated_as_replaced
         && doc
@@ -4435,9 +4701,228 @@ fn paint_missing_image(
             &alt_style,
         );
     }
-    if clips_missing_replaced {
+    if clips_missing_replaced || clips_missing_nonreplaced {
         canvas.restore();
     }
+}
+
+/// Sample the pinned fallback resource through the same physical transform
+/// for ordinary and clipped UA shadow content.
+fn paint_broken_image_resource(
+    canvas: &Canvas,
+    image: Image,
+    style: &ComputedStyle,
+    icon_x: f32,
+    icon_y: f32,
+    opacity_multiplier: f32,
+    missing_clip_rrect: Option<&RRect>,
+    child_clip: Option<Rect>,
+) {
+    // CPU slots sample through the legacy inverse matrix and restart at
+    // analytic coverage spans. Rounded clips retain their established direct
+    // resource path and its separate span head.
+    let source = Rect::from_xywh(0.0, 0.0, image.width() as f32, image.height() as f32);
+    let main_phase = if missing_clip_rrect.is_some() {
+        3.0 / 64.0
+    } else {
+        1.0 / 16.0
+    };
+    let main_destination = Rect::from_xywh(icon_x + main_phase, icon_y, 16.0, 16.0);
+    let device_destination = Rect::from_xywh(icon_x, icon_y, 16.0, 16.0);
+    let mut paint = Paint::default();
+    paint.set_alpha_f(opacity_multiplier);
+    let sampling = SamplingOptions::new(FilterMode::Linear, MipmapMode::Linear);
+    let span_head =
+        missing_clip_rrect.and_then(|rrect| rounded_clip_span_head(rrect, device_destination));
+    let visible_destination = child_clip.map_or(device_destination, |clip| {
+        Rect::from_ltrb(
+            device_destination.left.max(clip.left),
+            device_destination.top.max(clip.top),
+            device_destination.right.min(clip.right),
+            device_destination.bottom.min(clip.bottom),
+        )
+    });
+    if visible_destination.is_empty() {
+        return;
+    }
+    if let Some(span_head) = span_head.as_ref() {
+        canvas.save();
+        canvas.clip_path(span_head, ClipOp::Difference, false);
+    }
+    let device_scale = style.device_scale_factor.max(f64::EPSILON) as f32;
+    let packed_physical_patch =
+        if span_head.is_none() && style.raster_configuration.backend != RasterBackend::GaneshGl {
+            crate::image_resource::physical_quantized_broken_image_patch_with_clip(
+                &image,
+                source,
+                device_destination,
+                device_scale,
+                Some(visible_destination),
+            )
+            .ok()
+        } else {
+            None
+        };
+    if let Some((patch, aligned_destination, _)) = packed_physical_patch {
+        paint_legacy_image_resource(
+            canvas,
+            patch,
+            aligned_destination,
+            device_destination,
+            child_clip,
+            device_scale,
+            opacity_multiplier,
+        );
+    } else {
+        let _clip_guard = child_clip.map(|clip| {
+            let guard = skia_safe::AutoCanvasRestore::guard(canvas, true);
+            canvas.clip_rect(clip, ClipOp::Intersect, true);
+            guard
+        });
+        canvas.draw_image_rect_with_sampling_options(
+            image.clone(),
+            Some((&source, SrcRectConstraint::Strict)),
+            main_destination,
+            sampling,
+            &paint,
+        );
+    }
+    if let Some(span_head) = span_head.as_ref() {
+        canvas.restore();
+        canvas.save();
+        canvas.clip_path(span_head, ClipOp::Intersect, false);
+        canvas.draw_image_rect_with_sampling_options(
+            image,
+            Some((&source, SrcRectConstraint::Strict)),
+            device_destination,
+            sampling,
+            &paint,
+        );
+        canvas.restore();
+    }
+}
+
+/// Preserve Chromium's packed image blend with analytic coverage supplied
+/// separately from the sampled premultiplied texels.
+fn paint_legacy_image_resource(
+    canvas: &Canvas,
+    patch: Image,
+    aligned_destination: Rect,
+    destination: Rect,
+    clip: Option<Rect>,
+    scale: f32,
+    opacity: f32,
+) {
+    use skia_safe::runtime_effect::RuntimeEffect;
+    thread_local! {
+        static BLENDER: RuntimeEffect = RuntimeEffect::make_for_blender(r#"
+            uniform float coverage;
+            half4 main(half4 source, half4 destination) {
+                float4 src = floor(float4(source) * 255 + 0.5);
+                float4 dst = floor(float4(destination) * 255 + 0.5);
+                float srcScale = coverage + 1;
+                float inverse = 65535 - src.a * srcScale;
+                float dstScale = floor((inverse + floor(inverse / 256)) / 256);
+                return half4(floor((src * srcScale + dst * dstScale) / 256) / 255);
+            }
+        "#, None).expect("legacy image coverage blender");
+    }
+    fn segments(start: f32, end: f32, scale: f32) -> Vec<(f32, f32, u32)> {
+        let start = start * scale;
+        let end = end * scale;
+        let first = start.floor();
+        let last = end.ceil();
+        if last - first <= 1.0 {
+            return vec![(
+                first / scale,
+                last / scale,
+                ((end - start) * 256.0).ceil().min(255.0) as u32,
+            )];
+        }
+        let mut result = Vec::with_capacity(3);
+        if start != first {
+            result.push((
+                first / scale,
+                (first + 1.0) / scale,
+                ((first + 1.0 - start) * 256.0).ceil().min(255.0) as u32,
+            ));
+        }
+        if end.floor() > start.ceil() {
+            result.push((start.ceil() / scale, end.floor() / scale, 255));
+        }
+        if end != end.floor() {
+            result.push((
+                end.floor() / scale,
+                last / scale,
+                ((end - end.floor()) * 256.0).ceil().min(255.0) as u32,
+            ));
+        }
+        result
+    }
+    let matrix = Matrix::scale_translate(
+        (
+            aligned_destination.width() / patch.width() as f32,
+            aligned_destination.height() / patch.height() as f32,
+        ),
+        (aligned_destination.left, aligned_destination.top),
+    );
+    let texels = patch
+        .to_shader(
+            (TileMode::Clamp, TileMode::Clamp),
+            SamplingOptions::from(FilterMode::Nearest),
+            &matrix,
+        )
+        .expect("legacy image texel shader");
+    let visible = clip.map_or(destination, |clip| {
+        Rect::from_ltrb(
+            destination.left.max(clip.left),
+            destination.top.max(clip.top),
+            destination.right.min(clip.right),
+            destination.bottom.min(clip.bottom),
+        )
+    });
+    let horizontal = segments(visible.left, visible.right, scale);
+    let vertical = segments(visible.top, visible.bottom, scale);
+    let overlap = |pixel: f32, start: f32, end: f32| {
+        (end.min(pixel + 1.0) - start.max(pixel)).clamp(0.0, 1.0)
+    };
+    BLENDER.with(|effect| {
+        let mut paint = Paint::default();
+        paint.set_anti_alias(false);
+        paint.set_alpha_f(opacity);
+        paint.set_shader(texels);
+        for &(left, right, _) in &horizontal {
+            for &(top, bottom, _) in &vertical {
+                let x = (left * scale).round();
+                let y = (top * scale).round();
+                let image_x = (overlap(x, destination.left * scale, destination.right * scale)
+                    * 256.0)
+                    .ceil()
+                    .min(255.0) as u32;
+                let image_y = (overlap(y, destination.top * scale, destination.bottom * scale)
+                    * 256.0)
+                    .ceil()
+                    .min(255.0) as u32;
+                let image_coverage =
+                    crate::image_resource::combine_physical_axis_coverage(image_x, image_y);
+                // SkAAClip's rectangular path uses fixed_to_alpha: round
+                // the covered area times 255. Its mask intersects the image
+                // span through SkMulDiv255Round before the byte blend.
+                let clip_coverage = clip.map_or(255, |clip| {
+                    let cx = overlap(x, clip.left * scale, clip.right * scale);
+                    let cy = overlap(y, clip.top * scale, clip.bottom * scale);
+                    (cx * cy * 255.0).round() as u32
+                });
+                let coverage = ((image_coverage * clip_coverage + 127) / 255) as f32;
+                paint.set_blender(
+                    effect
+                        .make_blender(Data::new_copy(&coverage.to_ne_bytes()), None)
+                        .expect("legacy image coverage draw"),
+                );
+                canvas.draw_rect(Rect::from_ltrb(left, top, right, bottom), &paint);
+            }
+        }
+    });
 }
 
 /// Paint the propagated canvas of a statically lowered nested document into
@@ -4907,7 +5392,7 @@ fn paint_descendant_column_rules(
 ) {
     for child in children {
         if child.kind == FragmentKind::ColumnRule {
-            paint_fragment(canvas, child, doc, parent_offset);
+            paint_fragment_tracked(canvas, child, doc, parent_offset);
             continue;
         }
         let child_offset = PhysicalOffset::new(
@@ -5175,7 +5660,7 @@ fn repaint_fragmented_inline_source_range(
         if in_source_range && fragment.is_inline_box_fragment {
             canvas.save();
             canvas.clip_rect(clip, ClipOp::Intersect, false);
-            paint_fragment(canvas, fragment, doc, parent_offset);
+            paint_fragment_tracked(canvas, fragment, doc, parent_offset);
             canvas.restore();
             return;
         }
@@ -5353,13 +5838,13 @@ fn paint_shared_inline_oof_across_column_row(
         .iter()
         .filter(|child| child.kind == FragmentKind::ColumnRule)
     {
-        paint_fragment(canvas, rule, doc, offset);
+        paint_fragment_tracked(canvas, rule, doc, offset);
     }
     for column in children
         .iter()
         .filter(|child| child.kind == FragmentKind::ColumnBox)
     {
-        paint_fragment(canvas, column, doc, offset);
+        paint_fragment_tracked(canvas, column, doc, offset);
     }
     FRAGMENTED_INLINE_SKIP_AFTER.with(|source_after| *source_after.borrow_mut() = None);
     for (group_index, (inline_parent_id, group_ids)) in inline_groups.iter().enumerate() {
@@ -5376,7 +5861,7 @@ fn paint_shared_inline_oof_across_column_row(
             });
             canvas.save();
             canvas.clip_rect(entry.clip, ClipOp::Intersect, false);
-            paint_fragment(canvas, entry.fragment, doc, entry.parent_offset);
+            paint_fragment_tracked(canvas, entry.fragment, doc, entry.parent_offset);
             canvas.restore();
         }
         for column in children
@@ -5637,7 +6122,7 @@ fn paint_children_with_stacking_order(
     // cover them in the gap.
     for &idx in &in_flow {
         if matches!(children[idx].kind, FragmentKind::ColumnRule) {
-            paint_fragment(canvas, &children[idx], doc, offset);
+            paint_fragment_tracked(canvas, &children[idx], doc, offset);
         }
     }
 
@@ -5767,7 +6252,7 @@ fn paint_children_with_stacking_order(
             continue;
         }
         if children[idx].kind != FragmentKind::ColumnBox {
-            paint_fragment(canvas, &children[idx], doc, offset);
+            paint_fragment_tracked(canvas, &children[idx], doc, offset);
             in_flow_position += 1;
             continue;
         }
@@ -5807,7 +6292,7 @@ fn paint_children_with_stacking_order(
         }
         for &row_idx in &in_flow[in_flow_position..row_position_end] {
             if children[row_idx].kind != FragmentKind::ColumnRule {
-                paint_fragment(canvas, &children[row_idx], doc, offset);
+                paint_fragment_tracked(canvas, &children[row_idx], doc, offset);
             }
         }
         if !prepainted.is_empty() {
@@ -5950,23 +6435,129 @@ fn paint_children_with_stacking_order(
     }
 
     // Phase 3: Non-negative z-index positioned elements (+ hoisted z:auto).
-    for (_, _, entry) in &non_negative_z {
-        // A positioned z:auto fragment is not an atomic stacking context.
-        // Keep its independently hoisted inline-positioned descendants
-        // suppressed while the ancestor paints, then replay each descendant
-        // at its own document-order position.
-        let entry_pointer = stacking_entry_pointer(entry);
-        if let Some(pointer) = entry_pointer {
-            HOIST_SKIP.with(|s| {
-                s.borrow_mut().remove(&pointer);
+    let mut positioned_index = 0;
+    while positioned_index < non_negative_z.len() {
+        let first = stacking_entry_fragment(&non_negative_z[positioned_index].2, children);
+        let mut group_end = positioned_index + 1;
+        while group_end < non_negative_z.len()
+            && stacking_entry_fragment(&non_negative_z[group_end].2, children).node_id
+                == first.node_id
+        {
+            group_end += 1;
+        }
+
+        // A fragmented positioned box has one decoration phase across its
+        // continuations. Paint every slice of that box before its descendants:
+        // interleaving decoration and child ink per slice changes SrcOver
+        // coverage at a shared fractional column edge. Keep independent
+        // stacking contexts and effects on their existing atomic path.
+        let mut prepainted = Vec::new();
+        if group_end > positioned_index + 1 && !first.node_id.is_none() {
+            let node = doc.node(first.node_id);
+            let style = &node.style;
+            let simple_group = first.is_first_for_node
+                && stacking_entry_fragment(&non_negative_z[group_end - 1].2, children)
+                    .is_last_for_node
+                && !is_fragment_stacking_context(first, doc)
+                && style.visibility == Visibility::Visible
+                && style.transform == openui_style::Transform2D::IDENTITY
+                && style.filter_blur == 0.0
+                && style.filter_grayscale == 0.0
+                && style.clip_path_inset.is_none()
+                && style.mask_layers.is_empty()
+                && !style.has_border_radius()
+                && style.overflow_x == Overflow::Visible
+                && style.overflow_y == Overflow::Visible
+                && node.replaced.is_none()
+                && node.form_control.is_none()
+                && non_negative_z[positioned_index..group_end]
+                    .iter()
+                    .all(|(_, _, entry)| {
+                        let fragment = stacking_entry_fragment(entry, children);
+                        let pointer = fragment as *const Fragment as usize;
+                        fragment.kind == FragmentKind::Box
+                            && fragment.decoration_slice.is_some()
+                            && fragment.has_overflow_clip
+                            && fragment.block_axis_clip_only
+                            && !fragment.skip_box_decoration
+                            && fragment.paint_background_color_override.is_none()
+                            && fragment.decoration_clip_rects.is_empty()
+                            && fragment.promoted_transform_ancestors.is_empty()
+                            && (!matches!(entry, StackingEntry::Direct(_))
+                                || !HOIST_SKIP.with(|skipped| skipped.borrow().contains(&pointer)))
+                            && !PREPAINTED_BOX_DECORATIONS
+                                .with(|prepainted| prepainted.borrow().contains(&pointer))
+                    })
+                && non_negative_z[positioned_index..group_end]
+                    .iter()
+                    .any(|(_, _, entry)| {
+                        !stacking_entry_fragment(entry, children).children.is_empty()
+                    });
+            if simple_group {
+                for (_, _, entry) in &non_negative_z[positioned_index..group_end] {
+                    let fragment = stacking_entry_fragment(entry, children);
+                    if let StackingEntry::DescendantWithClip(_, _, clip_rect) = entry {
+                        canvas.save();
+                        canvas.clip_rect(
+                            outward_snap_rect_to_physical(*clip_rect, doc.device_scale_factor()),
+                            ClipOp::Intersect,
+                            false,
+                        );
+                    }
+                    let parent_offset = match entry {
+                        StackingEntry::Direct(_) => offset,
+                        StackingEntry::Descendant(_, parent_offset)
+                        | StackingEntry::DescendantWithClip(_, parent_offset, _) => *parent_offset,
+                    };
+                    paint_fragment_box_decoration(
+                        canvas,
+                        fragment,
+                        doc,
+                        style,
+                        PhysicalOffset::new(
+                            parent_offset.left + fragment.offset.left,
+                            parent_offset.top + fragment.offset.top,
+                        ),
+                        1.0,
+                    );
+                    if matches!(entry, StackingEntry::DescendantWithClip(..)) {
+                        canvas.restore();
+                    }
+                    prepainted.push(fragment as *const Fragment as usize);
+                }
+                PREPAINTED_BOX_DECORATIONS.with(|fragments| {
+                    fragments.borrow_mut().extend(prepainted.iter().copied());
+                });
+            }
+        }
+
+        for (_, _, entry) in &non_negative_z[positioned_index..group_end] {
+            // A positioned z:auto fragment is not an atomic stacking context.
+            // Keep its independently hoisted inline-positioned descendants
+            // suppressed while the ancestor paints, then replay each descendant
+            // at its own document-order position.
+            let entry_pointer = stacking_entry_pointer(entry);
+            if let Some(pointer) = entry_pointer {
+                HOIST_SKIP.with(|s| {
+                    s.borrow_mut().remove(&pointer);
+                });
+            }
+            paint_stacking_entry(canvas, entry, children, doc, offset);
+            if let Some(pointer) = entry_pointer {
+                HOIST_SKIP.with(|s| {
+                    s.borrow_mut().insert(pointer);
+                });
+            }
+        }
+        if !prepainted.is_empty() {
+            PREPAINTED_BOX_DECORATIONS.with(|fragments| {
+                let mut fragments = fragments.borrow_mut();
+                for pointer in &prepainted {
+                    fragments.remove(pointer);
+                }
             });
         }
-        paint_stacking_entry(canvas, entry, children, doc, offset);
-        if let Some(pointer) = entry_pointer {
-            HOIST_SKIP.with(|s| {
-                s.borrow_mut().insert(pointer);
-            });
-        }
+        positioned_index = group_end;
     }
 
     if !hoisted_ptrs.is_empty() {
@@ -5996,7 +6587,7 @@ fn prepaint_in_flow_block_decorations(
     offset: PhysicalOffset,
 ) -> Vec<usize> {
     let mut prepainted = Vec::new();
-    for &idx in in_flow {
+    for (position, &idx) in in_flow.iter().enumerate() {
         let fragment = &children[idx];
         if fragment.node_id.is_none()
             || fragment.kind != FragmentKind::Box
@@ -6007,20 +6598,39 @@ fn prepaint_in_flow_block_decorations(
             continue;
         }
         let style = &doc.node(fragment.node_id).style;
+        let qualified_text_profile = uses_deterministic_text_profile(style);
         if !style.display.is_block_level()
             || style.float != openui_style::Float::None
             || style.transform != openui_style::Transform2D::IDENTITY
             || style.filter_blur > 0.0
             || style.filter_grayscale > 0.0
             || style.clip_path_inset.is_some()
-            || !uses_deterministic_text_profile(style)
             || style.visibility != Visibility::Visible
             || style.opacity < 1.0
+            // Preserve the qualified deterministic-font path. Outside it,
+            // moving every decoration would reorder overlapping block and
+            // flex backgrounds, or split a mask/paint-containment group.
+            || (!qualified_text_profile
+                && (style.display.is_flex()
+                    || style.display.is_grid()
+                    || !style.mask_layers.is_empty()
+                    || style.has_paint_containment()
+                    || !earlier_inline_ink_reaches_block(
+                        children,
+                        &in_flow[..position],
+                        fragment,
+                        doc,
+                    )))
         {
             continue;
         }
         let pointer = fragment as *const Fragment as usize;
-        if PREPAINTED_BOX_DECORATIONS.with(|fragments| fragments.borrow().contains(&pointer)) {
+        // An overflowing monolithic child is replayed outside its column's
+        // clip. Its background belongs to that replay as well: prepainting
+        // it here would compound antialiased coverage when the child paints.
+        if HOIST_SKIP.with(|fragments| fragments.borrow().contains(&pointer))
+            || PREPAINTED_BOX_DECORATIONS.with(|fragments| fragments.borrow().contains(&pointer))
+        {
             continue;
         }
         let fragment_offset = PhysicalOffset::new(
@@ -6033,10 +6643,62 @@ fn prepaint_in_flow_block_decorations(
     prepainted
 }
 
+fn earlier_inline_ink_reaches_block(
+    children: &[Fragment],
+    earlier_in_flow: &[usize],
+    block: &Fragment,
+    doc: &Document,
+) -> bool {
+    let block_left = block.offset.left;
+    let block_right = block_left + block.size.width;
+    let block_top = block.offset.top;
+    earlier_in_flow.iter().any(|&idx| {
+        let earlier = &children[idx];
+        if earlier.kind != FragmentKind::Box || earlier.node_id.is_none() {
+            return false;
+        }
+        let style = &doc.node(earlier.node_id).style;
+        if style.display.is_flex() || style.display.is_grid() || earlier.has_overflow_clip {
+            return false;
+        }
+        text_fragment_reaches_block(earlier, earlier.offset, block_left, block_right, block_top)
+    })
+}
+
+fn text_fragment_reaches_block(
+    fragment: &Fragment,
+    offset: PhysicalOffset,
+    block_left: LayoutUnit,
+    block_right: LayoutUnit,
+    block_top: LayoutUnit,
+) -> bool {
+    if fragment.kind == FragmentKind::Text {
+        // A glyph can cover the adjacent device row even when its layout box
+        // ends exactly at the next block's border edge.
+        return offset.left < block_right
+            && offset.left + fragment.size.width > block_left
+            && offset.top <= block_top
+            && offset.top + fragment.size.height + LayoutUnit::from_i32(1) >= block_top;
+    }
+    fragment.children.iter().any(|child| {
+        text_fragment_reaches_block(
+            child,
+            PhysicalOffset::new(
+                offset.left + child.offset.left,
+                offset.top + child.offset.top,
+            ),
+            block_left,
+            block_right,
+            block_top,
+        )
+    })
+}
+
 #[derive(Clone, Copy)]
 struct SharedColumnClip {
     rect: Rect,
     antialias: bool,
+    translate_with_relative: bool,
 }
 
 struct SharedColumnDecoration<'a> {
@@ -6045,6 +6707,18 @@ struct SharedColumnDecoration<'a> {
     clips: Vec<SharedColumnClip>,
     ancestor_node_ids: Vec<NodeId>,
     starts_at_shared_edge: bool,
+}
+
+fn has_inline_ancestor(doc: &Document, node_id: NodeId) -> bool {
+    let mut ancestor = doc.node(node_id).parent;
+    while !ancestor.is_none() {
+        let node = doc.node(ancestor);
+        if node.style.display.is_inline_level() {
+            return true;
+        }
+        ancestor = node.parent;
+    }
+    false
 }
 
 fn decoration_coverage_rect(decoration: &SharedColumnDecoration<'_>) -> Rect {
@@ -6228,6 +6902,31 @@ fn collect_shared_column_decorations<'a>(
         parent_offset.top + fragment.offset.top,
     );
     let mut child_clips = clips.to_vec();
+    if !fragment.node_id.is_none()
+        && doc.node(fragment.node_id).style.position == openui_style::Position::Relative
+        && fragment.fragmentation_visual_offset != PhysicalOffset::zero()
+        // Fragmented inline containing blocks have a separate row paint
+        // owner. Their stored visual offset can include the inline ancestor's
+        // translation, so shifting this prepass's clips would replay content
+        // outside the row's authoritative fragmentainer interval.
+        && !has_inline_ancestor(doc, fragment.node_id)
+    {
+        // A relative box is laid out in its source fragmentainer and then
+        // visually translated. The synthetic fragmentainer clips follow that
+        // translation for its decorations and descendants. Authored overflow
+        // clips stay attached to their owning ancestor instead.
+        let shift = fragment.fragmentation_visual_offset;
+        for clip in &mut child_clips {
+            if clip.translate_with_relative {
+                clip.rect = Rect::from_ltrb(
+                    clip.rect.left + shift.left.to_f32(),
+                    clip.rect.top + shift.top.to_f32(),
+                    clip.rect.right + shift.left.to_f32(),
+                    clip.rect.bottom + shift.top.to_f32(),
+                );
+            }
+        }
+    }
     let mut child_ancestor_node_ids = ancestor_node_ids.to_vec();
     if fragment.kind == FragmentKind::ColumnBox {
         if fragment.has_overflow_clip {
@@ -6251,6 +6950,7 @@ fn collect_shared_column_decorations<'a>(
             child_clips.push(SharedColumnClip {
                 rect: physical_clip,
                 antialias: false,
+                translate_with_relative: true,
             });
         }
     } else if !fragment.node_id.is_none() {
@@ -6280,7 +6980,7 @@ fn collect_shared_column_decorations<'a>(
             output.push(SharedColumnDecoration {
                 fragment,
                 offset: fragment_offset,
-                clips: clips.to_vec(),
+                clips: child_clips.clone(),
                 ancestor_node_ids: ancestor_node_ids.to_vec(),
                 starts_at_shared_edge: false,
             });
@@ -6313,6 +7013,13 @@ fn collect_shared_column_decorations<'a>(
             return;
         }
         if has_authored_overflow_clip {
+            // An authored overflow box fixes the visible region for its
+            // descendants. Relative positioning inside it can move ink
+            // within that region, but cannot move the ancestor column's
+            // fragmentainer boundary beyond the overflow clip.
+            for clip in &mut child_clips {
+                clip.translate_with_relative = false;
+            }
             let (clip_x, clip_y, clip_width, clip_height) =
                 compute_overflow_clip_reference_rect(fragment, fragment_offset, style);
             let margin = style.overflow_clip_margin;
@@ -6351,6 +7058,7 @@ fn collect_shared_column_decorations<'a>(
                     outward_snap_rect_to_physical(logical_clip, style.device_scale_factor)
                 },
                 antialias,
+                translate_with_relative: false,
             });
         } else if fragment.has_overflow_clip {
             // Shared column-root decorations are lifted out of the ordinary
@@ -6379,6 +7087,7 @@ fn collect_shared_column_decorations<'a>(
             child_clips.push(SharedColumnClip {
                 rect: physical_clip,
                 antialias: false,
+                translate_with_relative: true,
             });
         }
     }
@@ -6513,6 +7222,7 @@ fn prepaint_shared_column_root_decorations(
                     doc.device_scale_factor(),
                 ),
                 antialias: false,
+                translate_with_relative: true,
             })
             .into_iter()
             .collect::<Vec<_>>();
@@ -6661,7 +7371,27 @@ fn prepaint_shared_column_root_decorations(
                             doc.device_scale_factor(),
                         )
                 });
-            if (!grouped && !precedes_grouped_decoration) || node_order.contains(&node_id) {
+            // Flex and grid items paint atomically after ordinary in-flow
+            // block backgrounds. Retain a later root block's background in
+            // this phase when it shares a column with an earlier atomic
+            // container; recursive painting then keeps the item's overflow
+            // above that background.
+            let follows_atomic_container = decoration.ancestor_node_ids.is_empty()
+                && doc.node(decoration.fragment.node_id).style.display == Display::Block
+                && doc.node(decoration.fragment.node_id).style.position
+                    == openui_style::Position::Static
+                && !doc
+                    .node(decoration.fragment.node_id)
+                    .style
+                    .has_paint_containment()
+                && decorations.iter().take(decoration_index).any(|earlier| {
+                    earlier.ancestor_node_ids.is_empty()
+                        && (doc.node(earlier.fragment.node_id).style.display.is_flex()
+                            || doc.node(earlier.fragment.node_id).style.display.is_grid())
+                });
+            if (!grouped && !precedes_grouped_decoration && !follows_atomic_container)
+                || node_order.contains(&node_id)
+            {
                 continue;
             }
             node_order.push(node_id);
@@ -6755,9 +7485,9 @@ fn paint_stacking_entry(
     offset: PhysicalOffset,
 ) {
     match entry {
-        StackingEntry::Direct(idx) => paint_fragment(canvas, &children[*idx], doc, offset),
+        StackingEntry::Direct(idx) => paint_fragment_tracked(canvas, &children[*idx], doc, offset),
         StackingEntry::Descendant(fragment, parent_offset) => {
-            paint_fragment(canvas, fragment, doc, *parent_offset)
+            paint_fragment_tracked(canvas, fragment, doc, *parent_offset)
         }
         StackingEntry::DescendantWithClip(fragment, parent_offset, clip_rect) => {
             canvas.save();
@@ -6766,9 +7496,20 @@ fn paint_stacking_entry(
                 ClipOp::Intersect,
                 false,
             );
-            paint_fragment(canvas, fragment, doc, *parent_offset);
+            paint_fragment_tracked(canvas, fragment, doc, *parent_offset);
             canvas.restore();
         }
+    }
+}
+
+fn stacking_entry_fragment<'a>(
+    entry: &'a StackingEntry<'a>,
+    children: &'a [Fragment],
+) -> &'a Fragment {
+    match entry {
+        StackingEntry::Direct(index) => &children[*index],
+        StackingEntry::Descendant(fragment, _)
+        | StackingEntry::DescendantWithClip(fragment, _, _) => fragment,
     }
 }
 
@@ -7254,7 +7995,7 @@ fn paint_flex_negative_stacking_children(
     // and inverted peers such as z-index:-2 followed by z-index:-1.
     entries.sort_by_key(|&(z, order, _, _)| (z, order));
     for (_, _, child, parent_offset) in entries {
-        paint_fragment(canvas, child, doc, parent_offset);
+        paint_fragment_tracked(canvas, child, doc, parent_offset);
     }
 }
 
@@ -7634,7 +8375,7 @@ fn repaint_later_siblings_over_fragmented_outlines(
                     deferred.remove(pointer);
                 }
             });
-            paint_fragment(canvas, child, doc, parent_offset);
+            paint_fragment_tracked(canvas, child, doc, parent_offset);
         }
         preceding_fragmented_outline |=
             fragmented_outline_crosses_slice(child, doc, parent_offset, slice, block_axis_is_x);
@@ -7748,6 +8489,27 @@ fn can_flatten_box_opacity(fragment: &Fragment, style: &ComputedStyle) -> bool {
 
 fn fragment_subtree_has_text(fragment: &Fragment) -> bool {
     fragment.kind == FragmentKind::Text || fragment.children.iter().any(fragment_subtree_has_text)
+}
+
+fn fragment_subtree_has_images(fragment: &Fragment, doc: &Document) -> bool {
+    (!fragment.node_id.is_none() && {
+        let node = doc.node(fragment.node_id);
+        node.tag == ElementTag::Image
+            || node.replaced.is_some()
+            || node
+                .style
+                .background_layers
+                .iter()
+                .any(|layer| matches!(layer.image, CssImage::Raster(_)))
+            || node
+                .style
+                .border_image
+                .as_ref()
+                .is_some_and(|border| matches!(border.source, CssImage::Raster(_)))
+    }) || fragment
+        .children
+        .iter()
+        .any(|child| fragment_subtree_has_images(child, doc))
 }
 
 fn paint_list_marker(
@@ -7873,13 +8635,20 @@ fn paint_list_marker(
 /// Per CSS spec, overflow clips to the **padding box** — the border-box
 /// inset by each side's border width. Returns `(x, y, width, height)`.
 pub fn compute_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> (f32, f32, f32, f32) {
+    let insets = fragment
+        .element_scrollbars
+        .map_or(openui_geometry::BoxStrut::zero(), |s| s.insets);
     // Pixel-snap the padding box edges independently for crisp clipping.
-    let clip_left = (offset.left + fragment.border.left).round().to_f32();
-    let clip_top = (offset.top + fragment.border.top).round().to_f32();
-    let clip_right = (offset.left + fragment.size.width - fragment.border.right)
+    let clip_left = (offset.left + fragment.border.left + insets.left)
         .round()
         .to_f32();
-    let clip_bottom = (offset.top + fragment.size.height - fragment.border.bottom)
+    let clip_top = (offset.top + fragment.border.top + insets.top)
+        .round()
+        .to_f32();
+    let clip_right = (offset.left + fragment.size.width - fragment.border.right - insets.right)
+        .round()
+        .to_f32();
+    let clip_bottom = (offset.top + fragment.size.height - fragment.border.bottom - insets.bottom)
         .round()
         .to_f32();
     let clip_w = (clip_right - clip_left).max(0.0);
@@ -8138,11 +8907,17 @@ fn compute_column_block_clip_rect(
         _ => {
             top -= start_ink;
             bottom += end_ink;
-            top = fragment
+            let child_top = fragment
                 .children
                 .iter()
                 .map(|child| (offset.top + child.offset.top).to_f32())
                 .fold(top, f32::min);
+            // A continuation may start fractionally above its column after
+            // LayoutUnit rounding. Preserve actual overflowing ink, but do
+            // not expand the clip for an offset smaller than one device cell.
+            if top - child_top >= (1.0 / device_scale) as f32 {
+                top = child_top;
+            }
         }
     }
 
@@ -8302,6 +9077,20 @@ fn half_open_physical_clip_rect(mut rect: Rect, device_scale: f64) -> Rect {
     rect
 }
 
+fn flat_shadow_exclusion_rect(rect: Rect, device_scale: f64) -> Rect {
+    // The flat shadow already carries fractional coverage at its border-box
+    // edge. Keep the hard exclusion clip inside that terminal physical cell
+    // so it does not discard the shadow's own partial sample before the
+    // element's opaque border and background are painted over it.
+    let snapping = RasterSnapping::new(device_scale);
+    let mut rect = rect;
+    rect.left = snapping.logical_coordinate(rect.left, PhysicalSnap::Ceil);
+    rect.top = snapping.logical_coordinate(rect.top, PhysicalSnap::Ceil);
+    rect.right = snapping.logical_coordinate(rect.right, PhysicalSnap::Floor);
+    rect.bottom = snapping.logical_coordinate(rect.bottom, PhysicalSnap::Floor);
+    rect
+}
+
 fn overflow_clip_reference_box(style: &ComputedStyle) -> OverflowClipBox {
     if style.overflow_x == Overflow::Clip || style.overflow_y == Overflow::Clip {
         style.overflow_clip_box
@@ -8326,12 +9115,36 @@ fn antialias_rectangular_overflow_clip(
     // device-aligned viewport scissor, not another analytic CSS content clip.
     let is_embedded_viewport = !fragment.node_id.is_none()
         && doc.node(fragment.node_id).tag == openui_dom::ElementTag::IFrame;
+    // A button's implicit content clip is a native control scissor. At a
+    // fractional device scale, its boundary covers the full physical cell
+    // touched by the button. The child's own analytic edge supplies coverage
+    // when the two edges coincide; antialiasing the clip as well would apply
+    // that half-pixel coverage twice.
+    let is_button_content_clip = !fragment.node_id.is_none()
+        && doc.node(fragment.node_id).tag == openui_dom::ElementTag::Button
+        && doc.node(fragment.node_id).form_control == Some(FormControlRole::Button)
+        && style.overflow_x == Overflow::Clip
+        && style.overflow_y == Overflow::Clip;
     !is_embedded_viewport
+        && !is_button_content_clip
         && !style.has_border_radius()
         && ((style.transform.b != 0.0 || style.transform.c != 0.0)
             || (style.device_scale_factor.fract().abs() > f64::EPSILON
                 && (matches!(style.overflow_x, Overflow::Hidden | Overflow::Clip)
                     || matches!(style.overflow_y, Overflow::Hidden | Overflow::Clip))))
+}
+
+/// A repeated table body's visible slice can end inside its source row group.
+/// Keep that fragmentainer edge in logical coordinates so the body's final
+/// coverage composes with the repeated footer's start edge at fractional DPR.
+fn truncated_table_row_group_end(fragment: &Fragment, style: &ComputedStyle) -> bool {
+    style.display == Display::TableRowGroup
+        && fragment.has_overflow_clip
+        && fragment.block_axis_clip_only
+        && fragment
+            .children
+            .iter()
+            .any(|child| child.offset.top + child.size.height > fragment.size.height)
 }
 
 /// Whether Blink assigns this box a separately rastered scroll-contents
@@ -8403,6 +9216,103 @@ fn scroll_backing_phase_adjustment(logical_origin: f32, backing_scale: f32) -> f
     }
     let compositor_phase = (backing_scale.ceil() - backing_scale).rem_euclid(1.0);
     (compositor_phase - physical_phase).rem_euclid(1.0) / backing_scale
+}
+
+/// Scroll translations without an authored transform ancestry use the same
+/// physical snapping as the viewport. Chromium creates a snapped compositor
+/// transform for every scroll node, including non-composited scrollers.
+/// Retained offsets and geometry stay logical; only paint movement is snapped.
+///
+/// An authored transform or SVG viewport supplies another screen-space
+/// origin. That path still needs the complete retained transform tree rather
+/// than independently snapping a local delta at the document's device scale.
+fn element_scroll_paint_translation(
+    fragment: &Fragment,
+    doc: &Document,
+    scroll_x: f32,
+    scroll_y: f32,
+) -> (f32, f32) {
+    // Fragmentation also installs overflow clips and records a scroll area,
+    // but those slices have no scroll transform. Only an authored scroll
+    // container owns the origin and physical translation below.
+    if fragment.node_id.is_none() || !doc.node(fragment.node_id).style.is_scroll_container() {
+        return (-scroll_x, -scroll_y);
+    }
+    let mut ancestor = fragment.node_id;
+    while !ancestor.is_none() {
+        let node = doc.node(ancestor);
+        if node.style.transform != openui_style::Transform2D::IDENTITY
+            || node.is_svg_foreign_object
+            || node.tag == openui_dom::ElementTag::Svg
+        {
+            return (-scroll_x, -scroll_y);
+        }
+        ancestor = node.parent;
+    }
+    let snapping = RasterSnapping::new(doc.device_scale_factor());
+    // Chromium snaps the translation of ScrollPosition = ScrollOrigin +
+    // ScrollOffset, and adds ScrollOrigin to its contents paint offset.
+    // Reversed axes can have a nonzero origin even at API offset zero.
+    let (origin_x, origin_y) = fragment.scroll_area.map_or((0.0, 0.0), |area| {
+        (
+            (area.client_rect.x() - area.content_rect.x())
+                .to_f32()
+                .floor(),
+            (area.client_rect.y() - area.content_rect.y())
+                .to_f32()
+                .floor(),
+        )
+    });
+    (
+        origin_x + snapping.logical_coordinate(-(scroll_x + origin_x), PhysicalSnap::Nearest),
+        origin_y + snapping.logical_coordinate(-(scroll_y + origin_y), PhysicalSnap::Nearest),
+    )
+}
+
+/// Prove opacity for the source cells reached by the visible linear-sampled
+/// quad. This uses owned paint coverage, never an inspection of raster pixels.
+fn scroll_quad_has_opaque_samples(
+    canvas: &Canvas,
+    opaque: &skia_safe::Region,
+    source: Rect,
+    destination: Rect,
+    width: i32,
+    height: i32,
+) -> bool {
+    let matrix = canvas.local_to_device_as_3x3();
+    if opaque.is_empty() || !matrix.rect_stays_rect() {
+        return false;
+    }
+    let (Some(inverse), Some(clip)) = (matrix.invert(), canvas.device_clip_bounds()) else {
+        return false;
+    };
+    let mut visible = inverse.map_rect(Rect::from(clip)).0;
+    if !visible.intersect(destination) || !visible.is_finite() {
+        return false;
+    }
+    let scale_x = source.width() / destination.width();
+    let scale_y = source.height() / destination.height();
+    // Linear filtering reaches a neighboring source center on each side.
+    // The strict source rectangle clamps outside the backing image bounds.
+    let samples = Rect::from_ltrb(
+        (source.left + (visible.left - destination.left) * scale_x - 0.5)
+            .floor()
+            .max(0.0),
+        (source.top + (visible.top - destination.top) * scale_y - 0.5)
+            .floor()
+            .max(0.0),
+        (source.left + (visible.right - destination.left) * scale_x + 0.5)
+            .ceil()
+            .min(width as f32),
+        (source.top + (visible.bottom - destination.top) * scale_y + 0.5)
+            .ceil()
+            .min(height as f32),
+    );
+    if samples.is_empty() || !samples.is_finite() {
+        return false;
+    }
+    let samples: IRect = samples.round_out();
+    opaque.contains_rect(samples)
 }
 
 fn paint_composited_scroll_contents(
@@ -8478,6 +9388,7 @@ fn paint_composited_scroll_contents(
         adjusted.border_image = None;
         adjusted.box_shadow.retain(|shadow| shadow.inset);
     });
+    let background_recording = BackgroundRecordingScope::for_raster();
     paint_box_decoration_background(
         surface.canvas(),
         fragment,
@@ -8494,8 +9405,12 @@ fn paint_composited_scroll_contents(
         (node.scroll_left, node.scroll_top)
     };
     surface.canvas().save();
-    if scroll_x != 0.0 || scroll_y != 0.0 {
-        surface.canvas().translate((-scroll_x, -scroll_y));
+    // The backing owns its raster and composition phase. Keep the retained
+    // offset logical inside it; direct-scroll snapping must not move these
+    // children independently of the background recorded above.
+    let translation = (-scroll_x, -scroll_y);
+    if translation != (0.0, 0.0) {
+        surface.canvas().translate(translation);
     }
     paint_children_with_stacking_order(
         surface.canvas(),
@@ -8507,6 +9422,9 @@ fn paint_composited_scroll_contents(
     );
     surface.canvas().restore();
 
+    let opaque_region = layer_opaque_region(&background_recording.annotations());
+    let composition_effect = background_recording.previous_effect;
+    drop(background_recording);
     let image = surface.image_snapshot();
     let destination = Rect::from_xywh(
         layer_rect.left + scroll_backing_phase_adjustment(layer_rect.left, backing_scale),
@@ -8515,19 +9433,7 @@ fn paint_composited_scroll_contents(
         physical_height as f32 / backing_scale,
     );
     let mut paint = Paint::default();
-    let image_matrix = Matrix::scale_translate(
-        (
-            destination.width() / physical_width as f32,
-            destination.height() / physical_height as f32,
-        ),
-        (destination.left, destination.top),
-    );
     paint.set_anti_alias(false);
-    paint.set_shader(image.to_shader(
-        (TileMode::Clamp, TileMode::Clamp),
-        SamplingOptions::from(FilterMode::Linear),
-        &image_matrix,
-    ));
     let snapping = RasterSnapping::new(style.device_scale_factor);
     let compositor_bounds = Rect::from_ltrb(
         destination.left,
@@ -8539,7 +9445,38 @@ fn paint_composited_scroll_contents(
             .bottom
             .max(snapping.logical_coordinate(layer_rect.bottom, PhysicalSnap::Ceil)),
     );
-    canvas.draw_rect(compositor_bounds, &paint);
+    // SoftwareRenderer replays a texture quad with DrawImageRect and a
+    // strict source rectangle. Preserve the backing's mapping when its
+    // physical compositor bounds extend beyond the content destination.
+    let source = Rect::from_xywh(
+        0.0,
+        0.0,
+        compositor_bounds.width() * backing_scale,
+        compositor_bounds.height() * backing_scale,
+    );
+    // Chromium omits blending only for an opaque quad with full composition
+    // opacity. An opaque authored color alone cannot establish that: clipped
+    // or rounded backgrounds can leave transparent backing cells.
+    if composition_effect == (1.0, true)
+        && style.opacity == 1.0
+        && scroll_quad_has_opaque_samples(
+            canvas,
+            &opaque_region,
+            source,
+            compositor_bounds,
+            physical_width,
+            physical_height,
+        )
+    {
+        paint.set_blend_mode(skia_safe::BlendMode::Src);
+    }
+    canvas.draw_image_rect_with_sampling_options(
+        image,
+        Some((&source, SrcRectConstraint::Strict)),
+        compositor_bounds,
+        SamplingOptions::from(FilterMode::Linear),
+        &paint,
+    );
     true
 }
 
@@ -8586,7 +9523,7 @@ fn paint_with_overflow_clip(
         Vec::new()
     };
     for legend_content in &unclipped_fieldset_legend_content {
-        paint_fragment(canvas, legend_content, doc, offset);
+        paint_fragment_tracked(canvas, legend_content, doc, offset);
     }
     let newly_skipped_legends: Vec<usize> = HOIST_SKIP.with(|skipped| {
         let mut skipped = skipped.borrow_mut();
@@ -8805,7 +9742,9 @@ fn paint_with_overflow_clip(
         (clip_x, clip_y, clip_w, clip_h)
     };
     let clip_rect = Rect::from_xywh(clip_x, clip_y, clip_w, clip_h);
-    let clip_rect = if fragmented_outline_clip.is_some() {
+    let analytic_table_slice_end = style.device_scale_factor.fract().abs() > f64::EPSILON
+        && truncated_table_row_group_end(fragment, style);
+    let clip_rect = if fragmented_outline_clip.is_some() && !analytic_table_slice_end {
         // This is a layout-owned continuation boundary, just like the
         // surrounding anonymous ColumnBox. Close it on the same outward
         // physical cells so outgoing and incoming fragments retain
@@ -8860,7 +9799,8 @@ fn paint_with_overflow_clip(
         && !has_scroll_range
         && (style.overflow_x == Overflow::Scroll || style.overflow_y == Overflow::Scroll)
         && opaque_in_flow_child_covers_inner_border_box(fragment, doc);
-    let antialias_transformed_clip = antialias_rectangular_overflow_clip(fragment, doc, style)
+    let antialias_transformed_clip = analytic_table_slice_end
+        || antialias_rectangular_overflow_clip(fragment, doc, style)
         || (!composited_scroll_layer
             && style.device_scale_factor.fract().abs() > f64::EPSILON
             && (style.overflow_x == Overflow::Auto
@@ -8941,8 +9881,9 @@ fn paint_with_overflow_clip(
             let node = doc.node(fragment.node_id);
             (node.scroll_left, node.scroll_top)
         };
-        if scroll_x != 0.0 || scroll_y != 0.0 {
-            canvas.translate((-scroll_x, -scroll_y));
+        let translation = element_scroll_paint_translation(fragment, doc, scroll_x, scroll_y);
+        if translation != (0.0, 0.0) {
+            canvas.translate(translation);
         }
         paint_children_with_stacking_order(
             canvas,
@@ -9009,7 +9950,9 @@ fn paint_with_overflow_clip(
         });
     }
 
-    paint_scrollbars_if_needed(canvas, fragment, style, &clip_rect);
+    if fragment.element_scrollbars.is_none() {
+        paint_scrollbars_if_needed(canvas, fragment, style, &clip_rect);
+    }
     paint_resize_handle_if_needed(canvas, style, &clip_rect);
 
     if let Some((mask, destination)) = packed_rounded_mask {
@@ -9029,6 +9972,7 @@ fn paint_with_overflow_clip(
     }
 
     canvas.restore();
+    paint_element_scrollbars(canvas, fragment, doc, offset);
 }
 
 /// Rasterize an axis-aligned rounded overflow clip on the qualification
@@ -9958,14 +10902,55 @@ fn draw_nonrenderable_uniform_rounded_border(
     border_rect: Rect,
     inner_rect: Rect,
     inner_radii: [Point; 4],
+    blend_with_background_at_inner_edge: bool,
     paint: &Paint,
 ) {
+    let has_radius = |radius: Point| radius.x > 0.0 || radius.y > 0.0;
     for side in [
         BorderSide::Top,
         BorderSide::Right,
         BorderSide::Bottom,
         BorderSide::Left,
     ] {
+        let straight = match side {
+            BorderSide::Top => !has_radius(inner_radii[0]) && !has_radius(inner_radii[1]),
+            BorderSide::Right => !has_radius(inner_radii[1]) && !has_radius(inner_radii[2]),
+            BorderSide::Bottom => !has_radius(inner_radii[2]) && !has_radius(inner_radii[3]),
+            BorderSide::Left => !has_radius(inner_radii[3]) && !has_radius(inner_radii[0]),
+        };
+        if straight && blend_with_background_at_inner_edge {
+            // This opaque same-color border and background share a fractional
+            // inner edge. Fill its straight side in one rectangle so the side
+            // polygon does not discard the border's coverage there.
+            let side_rect = match side {
+                BorderSide::Top => Rect::from_ltrb(
+                    border_rect.left,
+                    border_rect.top,
+                    border_rect.right,
+                    inner_rect.top,
+                ),
+                BorderSide::Right => Rect::from_ltrb(
+                    inner_rect.right,
+                    border_rect.top,
+                    border_rect.right,
+                    border_rect.bottom,
+                ),
+                BorderSide::Bottom => Rect::from_ltrb(
+                    border_rect.left,
+                    inner_rect.bottom,
+                    border_rect.right,
+                    border_rect.bottom,
+                ),
+                BorderSide::Left => Rect::from_ltrb(
+                    border_rect.left,
+                    border_rect.top,
+                    inner_rect.left,
+                    border_rect.bottom,
+                ),
+            };
+            canvas.draw_rect(side_rect, paint);
+            continue;
+        }
         canvas.save();
         let polygon =
             nonrenderable_border_side_clip_polygon(border_rect, inner_rect, inner_radii, side);
@@ -10224,113 +11209,6 @@ fn draw_renderable_outer_aa_fringe(
     canvas.draw_path(&fringe_path.detach(), &fringe_paint);
 }
 
-/// Match Chromium's GPU coverage quantization at the few samples where its
-/// integer-aligned circular border contour differs from Skia's CPU analytic
-/// rrect rasterizer by more than the pixel-comparison channel threshold.
-///
-/// The offsets are contour-local raster calibration points, not box- or
-/// document-specific coordinates. They apply only to translucent circular
-/// borders, where a small coverage difference remains visible after alpha
-/// compositing; opaque contours quantize to the same final pixels already.
-fn draw_translucent_rounded_border_gpu_fringe(
-    canvas: &Canvas,
-    border_rect: Rect,
-    outer_radii: &[Point; 4],
-    color: &Color,
-) {
-    if color.a >= 0.99 || color.a <= 0.0 {
-        return;
-    }
-    let circular = outer_radii
-        .iter()
-        .all(|radius| (radius.x - radius.y).abs() < 0.01);
-    if !circular {
-        return;
-    }
-
-    let draw_sample = |x: f32, y: f32, alpha: f32| {
-        let mut paint = Paint::default();
-        paint.set_style(PaintStyle::Fill);
-        paint.set_anti_alias(false);
-        paint.set_color4f(
-            Color4f::new(color.r, color.g, color.b, alpha),
-            None::<&ColorSpace>,
-        );
-        canvas.draw_rect(Rect::from_xywh(x, y, 1.0, 1.0), &paint);
-    };
-
-    let top_left = Point::new(
-        border_rect.left + outer_radii[0].x,
-        border_rect.top + outer_radii[0].y,
-    );
-    let top_right = Point::new(
-        border_rect.right - outer_radii[1].x,
-        border_rect.top + outer_radii[1].y,
-    );
-    let bottom_right = Point::new(
-        border_rect.right - outer_radii[2].x,
-        border_rect.bottom - outer_radii[2].y,
-    );
-    let bottom_left = Point::new(
-        border_rect.left + outer_radii[3].x,
-        border_rect.bottom - outer_radii[3].y,
-    );
-
-    if (outer_radii[0].x - 60.0).abs() < 0.01 {
-        draw_sample(top_left.x - 19.0, top_left.y - 58.0, 0.064);
-    }
-    if (outer_radii[1].x - 60.0).abs() < 0.01 {
-        draw_sample(top_right.x + 18.0, top_right.y - 58.0, 0.070);
-        draw_sample(top_right.x + 23.0, top_right.y - 56.0, 0.028);
-    }
-    if (outer_radii[3].x - 60.0).abs() < 0.01 {
-        draw_sample(bottom_left.x - 23.0, bottom_left.y + 55.0, 0.035);
-    }
-    if (outer_radii[2].x - 60.0).abs() < 0.01 {
-        draw_sample(bottom_right.x + 22.0, bottom_right.y + 55.0, 0.035);
-    }
-    if (outer_radii[3].x - 40.0).abs() < 0.01 {
-        draw_sample(bottom_left.x - 37.0, bottom_left.y + 15.0, 0.073);
-        draw_sample(bottom_left.x - 28.0, bottom_left.y + 28.0, 0.088);
-    }
-    if (outer_radii[2].x - 40.0).abs() < 0.01 {
-        draw_sample(bottom_right.x + 32.0, bottom_right.y + 23.0, 0.021);
-        draw_sample(bottom_right.x + 31.0, bottom_right.y + 24.0, 0.032);
-        draw_sample(bottom_right.x + 27.0, bottom_right.y + 28.0, 0.088);
-        draw_sample(bottom_right.x + 28.0, bottom_right.y + 28.0, 0.021);
-    }
-}
-
-fn erase_translucent_rounded_border_gpu_overdraw(
-    canvas: &Canvas,
-    border_rect: Rect,
-    outer_radii: &[Point; 4],
-    color: &Color,
-) {
-    if color.a >= 0.99
-        || color.a <= 0.0
-        || !outer_radii
-            .iter()
-            .all(|radius| (radius.x - radius.y).abs() < 0.01)
-        || (outer_radii[1].x - 40.0).abs() >= 0.01
-    {
-        return;
-    }
-    let top_right = Point::new(
-        border_rect.right - outer_radii[1].x,
-        border_rect.top + outer_radii[1].y,
-    );
-    let mut erase = Paint::default();
-    erase.set_style(PaintStyle::Fill);
-    erase.set_anti_alias(false);
-    erase.set_blend_mode(BlendMode::DstOut);
-    erase.set_color4f(Color4f::new(0.0, 0.0, 0.0, 0.05), None::<&ColorSpace>);
-    canvas.draw_rect(
-        Rect::from_xywh(top_right.x + 35.0, top_right.y - 18.0, 1.0, 1.0),
-        &erase,
-    );
-}
-
 fn descendant_overflow_bounds(fragment: &Fragment) -> Option<(f32, f32, f32, f32)> {
     let mut bounds: Option<(f32, f32, f32, f32)> = None;
     for child in &fragment.children {
@@ -10420,6 +11298,492 @@ fn paint_scrollbars_if_needed(
             &paint,
         );
     }
+}
+
+/// Paint the pinned Linux Chromium Fluent viewport scrollbar theme.
+/// Geometry follows ScrollbarThemeFluent and cc::ScrollUtils; colors follow
+/// ui/color/fluent_ui_color_mixer.cc in Chromium 147.0.7727.50.
+pub(crate) fn paint_viewport_scrollbars(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+) {
+    let Some(scrollport) = fragment.viewport_scrollport else {
+        return;
+    };
+    let source = if doc.body_overflow_is_propagated() {
+        doc.body_element().unwrap_or(fragment.node_id)
+    } else {
+        doc.document_element().unwrap_or(fragment.node_id)
+    };
+    let style = &doc.node(source).style;
+    paint_native_scrollbars(canvas, fragment, doc, offset, scrollport, style, false);
+}
+
+fn paint_element_scrollbars(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+) {
+    let (Some(bars), Some(area)) = (fragment.element_scrollbars, fragment.scroll_area) else {
+        return;
+    };
+    let scrollport = openui_layout::ViewportScrollport {
+        client_rect: area.client_rect,
+        content_rect: area.content_rect,
+        horizontal_scrollbar: bars.horizontal,
+        vertical_scrollbar: bars.vertical,
+        scrollbar_thickness: bars.thickness,
+        overflow_x: area.overflow_x,
+        overflow_y: area.overflow_y,
+        negative_x: area.negative_x,
+        negative_y: area.negative_y,
+    };
+    paint_native_scrollbars(
+        canvas,
+        fragment,
+        doc,
+        offset,
+        scrollport,
+        &doc.node(fragment.node_id).style,
+        doc.node(fragment.node_id)
+            .style
+            .writing_mode
+            .is_horizontal()
+            && doc.node(fragment.node_id).style.direction == openui_style::Direction::Rtl,
+    );
+}
+
+fn paint_native_scrollbars(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+    scrollport: openui_layout::ViewportScrollport,
+    style: &ComputedStyle,
+    vertical_on_left: bool,
+) {
+    let thickness = scrollport.scrollbar_thickness.to_f32();
+    let client_width = scrollport.client_rect.width().to_f32();
+    let client_height = scrollport.client_rect.height().to_f32();
+    let node = doc.node(fragment.node_id);
+    let mut track = Paint::default();
+    track.set_color(skia_safe::Color::from_rgb(252, 252, 252));
+    if let Some(color) = style.scrollbar_track_color {
+        set_paint_css_color(&mut track, &color);
+    }
+    let mut thumb = Paint::default();
+    thumb.set_anti_alias(true);
+    thumb.set_color(skia_safe::Color::from_rgb(139, 139, 139));
+    if let Some(color) = style.scrollbar_thumb_color {
+        set_paint_css_color(&mut thumb, &color);
+    }
+    canvas.save();
+    canvas.translate((
+        (offset.left + scrollport.client_rect.x()).to_f32(),
+        (offset.top + scrollport.client_rect.y()).to_f32(),
+    ));
+    let vertical_x = if vertical_on_left {
+        -thickness
+    } else {
+        client_width
+    };
+    let user_scrollable = (scrollport.horizontal_scrollbar
+        && scrollport.content_rect.width().to_f32() > client_width)
+        || (scrollport.vertical_scrollbar
+            && scrollport.content_rect.height().to_f32() > client_height);
+    if !user_scrollable {
+        // Without a user-scrollable translation Chromium records the controls
+        // as ordinary pictures. They use the full track raster, rather than
+        // the compact resource of a PaintedScrollbarLayer. The vertical
+        // picture also contains the adjoining corner.
+        for horizontal in [true, false] {
+            let visible = if horizontal {
+                scrollport.horizontal_scrollbar
+            } else {
+                scrollport.vertical_scrollbar
+            };
+            if !visible {
+                continue;
+            }
+            let length = if horizontal {
+                client_width
+            } else {
+                client_height
+            };
+            let corner = !horizontal && scrollport.horizontal_scrollbar;
+            let outer = if horizontal {
+                Rect::from_xywh(0.0, client_height, length, thickness)
+            } else {
+                Rect::from_xywh(vertical_x, 0.0, thickness, length)
+            };
+            paint_fluent_scrollbar_picture(
+                canvas,
+                outer,
+                horizontal,
+                corner,
+                style.device_scale_factor as f32,
+                &track,
+                &thumb,
+            );
+        }
+        canvas.restore();
+        return;
+    }
+    for horizontal in [false, true] {
+        let visible = if horizontal {
+            scrollport.horizontal_scrollbar
+        } else {
+            scrollport.vertical_scrollbar
+        };
+        if !visible {
+            continue;
+        }
+        let length = if horizontal {
+            client_width
+        } else {
+            client_height
+        };
+        let proportion = thickness / 15.0;
+        let button = (18.0 * proportion).round().min((length / 2.0).floor());
+        let track_length = (length - 2.0 * button).max(0.0);
+        let total = if horizontal {
+            scrollport.content_rect.width().to_f32()
+        } else {
+            scrollport.content_rect.height().to_f32()
+        };
+        let maximum = (total - length).max(0.0);
+        if maximum == 0.0 {
+            // Chromium chooses the scrollbar layer independently per axis.
+            // A forced bar with no range remains an ordinary picture even
+            // when the other axis uses a PaintedScrollbarLayer. Its adjacent
+            // corner shares that picture's raster and composition transform.
+            let outer = if horizontal {
+                Rect::from_xywh(0.0, client_height, length, thickness)
+            } else {
+                Rect::from_xywh(vertical_x, 0.0, thickness, length)
+            };
+            paint_fluent_scrollbar_picture(
+                canvas,
+                outer,
+                horizontal,
+                scrollport.horizontal_scrollbar && scrollport.vertical_scrollbar,
+                style.device_scale_factor as f32,
+                &track,
+                &thumb,
+            );
+            continue;
+        }
+        let scroll = if horizontal {
+            if scrollport.negative_x {
+                node.scroll_left - scrollport.content_rect.x().to_f32()
+            } else {
+                node.scroll_left
+            }
+        } else {
+            if scrollport.negative_y {
+                node.scroll_top - scrollport.content_rect.y().to_f32()
+            } else {
+                node.scroll_top
+            }
+        };
+        let thumb_length = ((length / total.max(1.0) * track_length).round())
+            .max((17.0 * proportion).round())
+            .min(track_length);
+        let raw_position = if maximum > 0.0 {
+            scroll.max(0.0) * (track_length - thumb_length) / maximum
+        } else {
+            0.0
+        };
+        let position = if raw_position > 0.0 && raw_position < 1.0 {
+            1.0
+        } else {
+            raw_position.trunc()
+        };
+        let raw_thickness = (9.0 * proportion).round();
+        let thumb_thickness = raw_thickness - (thickness - raw_thickness) % 2.0;
+        let outer = if horizontal {
+            Rect::from_xywh(0.0, client_height, length, thickness)
+        } else {
+            Rect::from_xywh(vertical_x, 0.0, thickness, length)
+        };
+        paint_fluent_scrollbar_track(
+            canvas,
+            outer,
+            horizontal,
+            button,
+            style.device_scale_factor as f32,
+            &track,
+            &thumb,
+        );
+        let thumb_rect = if horizontal {
+            Rect::from_xywh(
+                button + position,
+                client_height + (thickness - thumb_thickness) / 2.0,
+                thumb_length,
+                thumb_thickness,
+            )
+        } else {
+            Rect::from_xywh(
+                vertical_x + (thickness - thumb_thickness) / 2.0,
+                button + position,
+                thumb_thickness,
+                thumb_length,
+            )
+        };
+        if maximum > 0.0 && thumb_length > 0.0 {
+            // The software compositor clips a solid-color quad with the
+            // Fluent rounded-corner mask; it does not directly draw an RRect.
+            canvas.save();
+            canvas.clip_rrect(
+                RRect::new_rect_xy(thumb_rect, thumb_thickness, thumb_thickness),
+                ClipOp::Intersect,
+                true,
+            );
+            let mut fill = thumb.clone();
+            let scale = style.device_scale_factor as f32;
+            // cc encloses the thumb in physical content coordinates before
+            // replay. Keep the rounded mask in target coordinates. This quad
+            // is inset from its layer edges, so SoftwareRenderer does not
+            // enable geometric AA even when its layer origin is fractional.
+            let left = ((thumb_rect.left - outer.left) * scale).floor() / scale + outer.left;
+            let top = ((thumb_rect.top - outer.top) * scale).floor() / scale + outer.top;
+            let right = ((thumb_rect.right - outer.left) * scale).ceil() / scale + outer.left;
+            let bottom = ((thumb_rect.bottom - outer.top) * scale).ceil() / scale + outer.top;
+            fill.set_anti_alias(false);
+            canvas.draw_rect(Rect::new(left, top, right, bottom), &fill);
+            canvas.restore();
+        }
+    }
+    if scrollport.horizontal_scrollbar
+        && scrollport.vertical_scrollbar
+        && scrollport.content_rect.width().to_f32() > client_width
+        && scrollport.content_rect.height().to_f32() > client_height
+    {
+        // The adjoining corner has exterior compositor edges on both axes.
+        // Preserve their coverage when its physical origin is fractional.
+        let mut corner = track.clone();
+        corner.set_anti_alias(true);
+        canvas.draw_rect(
+            Rect::from_xywh(vertical_x, client_height, thickness, thickness),
+            &corner,
+        );
+    }
+    canvas.restore();
+}
+
+fn paint_fluent_scrollbar_picture(
+    canvas: &Canvas,
+    outer: Rect,
+    horizontal: bool,
+    corner: bool,
+    scale: f32,
+    track: &Paint,
+    thumb: &Paint,
+) {
+    let thickness = if horizontal {
+        outer.height()
+    } else {
+        outer.width()
+    };
+    let length = if horizontal {
+        outer.width()
+    } else {
+        outer.height()
+    };
+    let width = outer.width() + if corner && horizontal { thickness } else { 0.0 };
+    let height = outer.height()
+        + if corner && !horizontal {
+            thickness
+        } else {
+            0.0
+        };
+    let physical_width = (width * scale).ceil().max(1.0) as i32;
+    let physical_height = (height * scale).ceil().max(1.0) as i32;
+    let Some(mut surface) = surfaces::raster_n32_premul((physical_width, physical_height)) else {
+        return;
+    };
+    let painter = surface.canvas();
+    painter.clear(skia_safe::Color::TRANSPARENT);
+    painter.scale((scale, scale));
+    painter.draw_rect(Rect::from_xywh(0.0, 0.0, width, height), track);
+    let button = (18.0 * thickness / 15.0)
+        .round()
+        .min((length / 2.0).floor());
+    for forward in [false, true] {
+        let start = if forward { length - button } else { 0.0 };
+        let rect = if horizontal {
+            Rect::from_xywh(start, 0.0, button, thickness)
+        } else {
+            Rect::from_xywh(0.0, start, thickness, button)
+        };
+        paint_fluent_scrollbar_arrow(painter, rect, horizontal, forward, thumb);
+    }
+    let image = surface.image_snapshot();
+    let mut replay = Paint::default();
+    replay
+        .set_anti_alias((outer.left * scale).fract() != 0.0 || (outer.top * scale).fract() != 0.0);
+    canvas.save();
+    canvas.scale((scale.recip(), scale.recip()));
+    let source = Rect::from_xywh(0.0, 0.0, physical_width as f32, physical_height as f32);
+    canvas.draw_image_rect_with_sampling_options(
+        &image,
+        Some((&source, SrcRectConstraint::Strict)),
+        Rect::from_xywh(
+            outer.left * scale,
+            outer.top * scale,
+            physical_width as f32,
+            physical_height as f32,
+        ),
+        SamplingOptions::from(FilterMode::Linear),
+        &replay,
+    );
+    canvas.restore();
+}
+
+fn paint_fluent_scrollbar_track(
+    canvas: &Canvas,
+    outer: Rect,
+    horizontal: bool,
+    button: f32,
+    scale: f32,
+    track: &Paint,
+    thumb: &Paint,
+) {
+    // Chromium stores the track and buttons in a compact N32 nine-patch.
+    // The across-axis resource size floors while its length ceils. Keeping
+    // this raster transform separate from the presentation transform matters
+    // at fractional device scales.
+    let thickness = if horizontal {
+        outer.height()
+    } else {
+        outer.width()
+    };
+    let length = if horizontal {
+        outer.width()
+    } else {
+        outer.height()
+    };
+    let skin_length = length.min(2.0 * button + 1.0);
+    let across = (thickness * scale).floor().max(1.0) as i32;
+    let along = (skin_length * scale).ceil().max(1.0) as i32;
+    let (width, height) = if horizontal {
+        (along, across)
+    } else {
+        (across, along)
+    };
+    let Some(mut surface) = surfaces::raster_n32_premul((width, height)) else {
+        return;
+    };
+    let painter = surface.canvas();
+    painter.clear(skia_safe::Color::TRANSPARENT);
+    painter.scale((
+        width as f32 / if horizontal { skin_length } else { thickness },
+        height as f32 / if horizontal { thickness } else { skin_length },
+    ));
+    painter.draw_rect(
+        Rect::from_xywh(
+            0.0,
+            0.0,
+            if horizontal { skin_length } else { thickness },
+            if horizontal { thickness } else { skin_length },
+        ),
+        track,
+    );
+    for forward in [false, true] {
+        let start = if forward { skin_length - button } else { 0.0 };
+        let rect = if horizontal {
+            Rect::from_xywh(start, 0.0, button, thickness)
+        } else {
+            Rect::from_xywh(0.0, start, thickness, button)
+        };
+        paint_fluent_scrollbar_arrow(painter, rect, horizontal, forward, thumb);
+    }
+    let image = surface.image_snapshot();
+    let aperture_size = 2 - along % 2;
+    let aperture_start = along / 2 - (1 - along % 2);
+    let center = if horizontal {
+        IRect::from_xywh(aperture_start, 0, aperture_size, across)
+    } else {
+        IRect::from_xywh(0, aperture_start, across, aperture_size)
+    };
+    let destination = Rect::from_xywh(
+        outer.left * scale,
+        outer.top * scale,
+        (outer.width() * scale).ceil(),
+        (outer.height() * scale).ceil(),
+    );
+    let mut replay = Paint::default();
+    replay
+        .set_anti_alias((outer.left * scale).fract() != 0.0 || (outer.top * scale).fract() != 0.0);
+    // Nine-patch borders retain the source image's pixel dimensions. Replay
+    // in physical units, as Chromium's scaled track quads do, so those already
+    // scaled borders do not receive the device scale a second time.
+    canvas.save();
+    canvas.scale((scale.recip(), scale.recip()));
+    canvas.draw_image_nine(
+        &image,
+        center,
+        destination,
+        FilterMode::Linear,
+        Some(&replay),
+    );
+    canvas.restore();
+}
+
+fn paint_fluent_scrollbar_arrow(
+    canvas: &Canvas,
+    button: Rect,
+    horizontal: bool,
+    forward: bool,
+    color: &Paint,
+) {
+    let scale = button.width().max(button.height()) / 18.0;
+    let mut side = (9.0 * scale).ceil();
+    side += (button.width().min(button.height()) - side) % 2.0;
+    let mut x = (button.left + (button.width() - side) / 2.0).floor();
+    let mut y = (button.top + (button.height() - side) / 2.0).floor();
+    let shift = (if forward { scale } else { -scale }).round();
+    if horizontal {
+        x += shift;
+    } else {
+        y += shift;
+    }
+    let arrow_size = (side.round() as i32 / 2 + 1) as f32;
+    let mut points = if horizontal {
+        let start = x + (arrow_size as i32 / 2) as f32;
+        [
+            (start, y),
+            (start, y + side),
+            (start + arrow_size, y + side / 2.0),
+        ]
+    } else {
+        let start = y + side - (arrow_size as i32 / 2) as f32 + 1.0;
+        [
+            (x, start),
+            (x + side, start),
+            (x + side / 2.0, start - arrow_size),
+        ]
+    };
+    if horizontal && !forward {
+        for point in &mut points {
+            point.0 = x * 2.0 + side - point.0;
+        }
+    } else if !horizontal && forward {
+        for point in &mut points {
+            point.1 = y * 2.0 + side - point.1;
+        }
+    }
+    let mut path = PathBuilder::new();
+    path.move_to(points[0]);
+    path.line_to(points[1]);
+    path.line_to(points[2]);
+    path.close();
+    let mut paint = color.clone();
+    paint.set_anti_alias(false);
+    canvas.draw_path(&path.detach(), &paint);
 }
 
 /// Paint Chromium's seven-pixel native resize grip for a non-scrollbar
@@ -10575,7 +11939,7 @@ fn paint_text_fragment(
             let ancestor_node = doc.node(ancestor);
             if ancestor_node.form_control == Some(openui_dom::FormControlRole::Button)
                 && ancestor_node.form_control_native_appearance
-                && !ancestor_node.form_control_disabled
+                && !doc.effective_form_control_disabled(ancestor)
             {
                 found = true;
                 break;
@@ -10641,17 +12005,29 @@ fn paint_text_fragment(
             } else {
                 0.0
             };
-            canvas.translate(Point::new(
-                abs_offset.left.to_f32()
-                    + fragment.size.width.to_f32()
-                    + aliased_ahem_inline_shift
-                    // Native vertical controls align the clockwise glyph ink
-                    // to the device pixel after their logical inline padding.
-                    // The anonymous flex item's fractional Ahem advance would
-                    // otherwise expose one pixel into the block-start padding.
-                    + if native_vertical_button_text { 1.0 } else { 0.0 },
-                abs_offset.top.to_f32(),
-            ));
+            let horizontal_translation = abs_offset.left.to_f32()
+                + fragment.size.width.to_f32()
+                + aliased_ahem_inline_shift
+                // Native vertical controls align the clockwise glyph ink
+                // to the device pixel after their logical inline padding.
+                // The anonymous flex item's fractional Ahem advance would
+                // otherwise expose one pixel into the block-start padding.
+                + if native_vertical_button_text { 1.0 } else { 0.0 };
+            // The vertical-lr Ahem mask uses a physical block-axis column.
+            // Align the clockwise rotation anchor before rasterization so a
+            // fractional layout-unit advance cannot move the whole mask one
+            // device column. Other writing modes anchor the run differently.
+            let horizontal_translation = if style.writing_mode
+                == openui_style::WritingMode::VerticalLr
+                && all_ahem_runs
+                && style.raster_configuration.author_text.edging == TextEdging::Alias
+            {
+                RasterSnapping::new(style.device_scale_factor)
+                    .logical_coordinate(horizontal_translation, PhysicalSnap::Nearest)
+            } else {
+                horizontal_translation
+            };
+            canvas.translate(Point::new(horizontal_translation, abs_offset.top.to_f32()));
             canvas.rotate(90.0, None);
             (0.0, fragment.baseline_offset)
         }
@@ -11905,7 +13281,10 @@ fn draw_paint_with_physical_coverage(
             };
             let one_fractional_axis = (horizontal_coverage < 1.0) ^ (vertical_coverage < 1.0);
             let packed_coverage = if one_fractional_axis && square_coverage {
-                (((analytic_coverage * 256.0).floor() + 1.0).min(255.0)) / 255.0
+                // The box contour and the replaced-content clip each supply
+                // fractional coverage. Their product is packed once; closing
+                // it upward adds a color level at an exact quarter sample.
+                ((analytic_coverage * 256.0).floor().min(255.0)) / 255.0
             } else if !square_coverage {
                 // Display-item clip coverage is stored in an eight-bit mask
                 // before it modulates the generated image. Preserve the 256-
@@ -12083,14 +13462,23 @@ fn paint_css_image_tile(
             generated_image_backing_scale(wrap_x, source_width, width, raster_scale);
         let raster_scale_y =
             generated_image_backing_scale(wrap_y, source_height, height, raster_scale);
-        // Blink dithers a concrete generated image before applying its repeat
-        // shader, so the complete tile uses a local ordered-dither origin even
-        // when only one axis repeats. Framebuffer anchoring either axis would
-        // make a non-8px repeat period alternate colors.
+        // The concrete-tile fallback dithers before applying its repeat
+        // shader, so the complete tile uses a local ordered-dither origin.
+        // Framebuffer anchoring either axis would make a non-8px repeat
+        // period alternate colors.
         let phase_x = generated_image_raster_phase(physical_left, uses_repeated_shader);
         let phase_y = generated_image_raster_phase(physical_top, uses_repeated_shader);
-        let Some(mut surface) = surfaces::raster_n32_premul((width + phase_x, height + phase_y))
-        else {
+        // SkPictureShader caches an eight-bit generated tile in RGBA8888,
+        // tagged with the destination color space (sRGB for an untagged
+        // canvas). Retain that representation for the concrete-tile path;
+        // native N32 would select a different legacy image sampler.
+        let tile_info = ImageInfo::new(
+            (width + phase_x, height + phase_y),
+            ColorType::RGBA8888,
+            AlphaType::Premul,
+            ColorSpace::new_srgb(),
+        );
+        let Some(mut surface) = surfaces::raster(&tile_info, None, None) else {
             return;
         };
         surface.canvas().clear(skia_safe::Color::TRANSPARENT);
@@ -12873,7 +14261,10 @@ fn paint_background_layers(
         }
         let mut clip =
             clip_override.unwrap_or_else(|| background_box_rect(layer.clip, border_rect, fragment));
-        if clip_override.is_none() && layer.attachment == BackgroundAttachment::Local {
+        if clip_override.is_none()
+            && style.is_scroll_container()
+            && layer.attachment == BackgroundAttachment::Local
+        {
             // A local image scrolls with the element's contents and is exposed
             // through the scrollport. Its effective painting area cannot
             // extend beneath the border (notably through double-border gaps),
@@ -13015,10 +14406,9 @@ fn paint_background_layers(
             image_top,
             tile_height,
         );
-        // Repeated generated images are sampled as one concrete image shader.
-        // Rasterizing at the final (including `round`-adjusted) tile size lets
-        // linear filtering cross a fractional repeat seam without changing the
-        // gradient geometry to the pre-round authored size.
+        // The concrete-tile fallback rasterizes at the final (including
+        // `round`-adjusted) tile size. The recorded linear-gradient path below
+        // retains the gradient as a picture shader instead.
         let physical_tile_width = tile_width * style.device_scale_factor as f32;
         let physical_tile_height = tile_height * style.device_scale_factor as f32;
         let fractional_physical_tile = (physical_tile_width - physical_tile_width.round()).abs()
@@ -13043,6 +14433,21 @@ fn paint_background_layers(
             ) && ys.len() > 1,
             (tile_width, tile_height),
         );
+        // Blink records a generated background as a picture tile. In a
+        // one-axis linear-gradient repeat, the recorded shader preserves
+        // gradient color evaluation across the repeated tiles.
+        let recorded_one_axis_gradient_shader = matches!(layer.image, CssImage::LinearGradient(_))
+            && resample_from.is_some()
+            && ((matches!(
+                layer.repeat_x,
+                BackgroundRepeat::Repeat | BackgroundRepeat::Round
+            ) && xs.len() > 1
+                && layer.repeat_y == BackgroundRepeat::NoRepeat)
+                || (matches!(
+                    layer.repeat_y,
+                    BackgroundRepeat::Repeat | BackgroundRepeat::Round
+                ) && ys.len() > 1
+                    && layer.repeat_x == BackgroundRepeat::NoRepeat));
         canvas.save();
         let device_matrix = canvas.local_to_device_as_3x3();
         let antialias_transformed_clip = device_matrix.skew_x().abs() > f32::EPSILON
@@ -13070,9 +14475,8 @@ fn paint_background_layers(
             && xs.len() == 1
             && ys.len() == 1
             && clip_override.is_none();
-        let physical_generated_image_owns_rect_clip = generated_image
+        let repeated_generated_rect_clip = generated_image
             && resample_from.is_some()
-            && fractional_physical_clip_edge
             && matches!(
                 layer.repeat_x,
                 BackgroundRepeat::Repeat | BackgroundRepeat::Round
@@ -13082,7 +14486,10 @@ fn paint_background_layers(
                 BackgroundRepeat::Repeat | BackgroundRepeat::Round
             )
             && xs.len() > 1
-            && ys.len() > 1
+            && ys.len() > 1;
+        let physical_generated_image_owns_rect_clip = (recorded_one_axis_gradient_shader
+            || repeated_generated_rect_clip)
+            && fractional_physical_clip_edge
             && clip_override.is_none();
         if clip_override.is_some() {
             canvas.clip_rect(clip, ClipOp::Intersect, false);
@@ -13279,6 +14686,146 @@ fn paint_background_layers(
                 }
             }
         }
+        let single_axis_raster_repeat = (matches!(
+            layer.repeat_x,
+            BackgroundRepeat::Repeat | BackgroundRepeat::Round
+        ) && xs.len() > 1
+            && layer.repeat_y == BackgroundRepeat::NoRepeat)
+            || (matches!(
+                layer.repeat_y,
+                BackgroundRepeat::Repeat | BackgroundRepeat::Round
+            ) && ys.len() > 1
+                && layer.repeat_x == BackgroundRepeat::NoRepeat);
+        let fractional_device_scale =
+            (style.device_scale_factor - style.device_scale_factor.round()).abs() > 1.0e-5;
+        // Blink's bitmap DrawPattern paints a resized one-axis repeat with
+        // one image shader over the complete destination. Separate physical
+        // patches lose the shared repeat phase at fractional device scales.
+        // Native-size repeats keep their existing packed sampling path.
+        if single_axis_raster_repeat && fractional_device_scale {
+            if let CssImage::Raster(id) = &layer.image {
+                if let Ok(image) = crate::image_resource::decode_image_resource(doc, *id) {
+                    let resizes_bitmap = (tile_width - image.width() as f32).abs() > 1.0e-5
+                        || (tile_height - image.height() as f32).abs() > 1.0e-5;
+                    if resizes_bitmap {
+                        let matrix = Matrix::scale_translate(
+                            (
+                                tile_width / image.width() as f32,
+                                tile_height / image.height() as f32,
+                            ),
+                            (image_left, image_top),
+                        );
+                        let mut paint = Paint::default();
+                        paint.set_anti_alias(true);
+                        paint.set_alpha_f(opacity_multiplier);
+                        paint.set_shader(image.to_shader(
+                            (
+                                if layer.repeat_x == BackgroundRepeat::NoRepeat {
+                                    TileMode::Clamp
+                                } else {
+                                    TileMode::Repeat
+                                },
+                                if layer.repeat_y == BackgroundRepeat::NoRepeat {
+                                    TileMode::Clamp
+                                } else {
+                                    TileMode::Repeat
+                                },
+                            ),
+                            SamplingOptions::from(FilterMode::Linear),
+                            &matrix,
+                        ));
+                        let bounds = background_image_paint_bounds(
+                            clip,
+                            image_left,
+                            image_top,
+                            tile_width,
+                            tile_height,
+                            layer.repeat_x != BackgroundRepeat::NoRepeat,
+                            layer.repeat_y != BackgroundRepeat::NoRepeat,
+                        );
+                        if bounds.width() > 0.0 && bounds.height() > 0.0 {
+                            draw_paint_with_physical_coverage(
+                                canvas,
+                                bounds,
+                                &paint,
+                                opacity_multiplier,
+                                style.device_scale_factor,
+                                !square_opaque_border_bleed_clip,
+                            );
+                        }
+                        canvas.restore();
+                        continue;
+                    }
+                }
+            }
+        }
+        if recorded_one_axis_gradient_shader {
+            let source_rect = Rect::from_xywh(0.0, 0.0, tile_width, tile_height);
+            let mut recorder = PictureRecorder::new();
+            let recording_canvas = recorder.begin_recording(source_rect, false);
+            paint_css_image_tile(
+                recording_canvas,
+                doc,
+                style,
+                &layer.image,
+                source_rect,
+                false,
+                false,
+                false,
+                false,
+                None,
+                false,
+                false,
+                1.0,
+                None,
+                None,
+                None,
+                false,
+            );
+            if let Some(picture) = recorder.finish_recording_as_picture(None) {
+                let matrix = Matrix::translate((image_left, image_top));
+                let mut paint = Paint::default();
+                paint.set_anti_alias(true);
+                paint.set_alpha_f(opacity_multiplier);
+                paint.set_shader(picture.to_shader(
+                    (TileMode::Repeat, TileMode::Repeat),
+                    FilterMode::Linear,
+                    &matrix,
+                    None,
+                ));
+                let bounds = background_image_paint_bounds(
+                    clip,
+                    image_left,
+                    image_top,
+                    tile_width,
+                    tile_height,
+                    matches!(
+                        layer.repeat_x,
+                        BackgroundRepeat::Repeat | BackgroundRepeat::Round
+                    ),
+                    matches!(
+                        layer.repeat_y,
+                        BackgroundRepeat::Repeat | BackgroundRepeat::Round
+                    ),
+                );
+                if bounds.width() > 0.0 && bounds.height() > 0.0 {
+                    if physical_generated_image_owns_rect_clip {
+                        draw_paint_with_physical_coverage(
+                            canvas,
+                            bounds,
+                            &paint,
+                            opacity_multiplier,
+                            style.device_scale_factor,
+                            !square_opaque_border_bleed_clip,
+                        );
+                    } else {
+                        canvas.draw_rect(bounds, &paint);
+                    }
+                }
+                canvas.restore();
+                continue;
+            }
+        }
         let repeated_generated_shader = uses_single_repeated_generated_shader(
             resample_from.is_some(),
             layer.repeat_x,
@@ -13298,15 +14845,9 @@ fn paint_background_layers(
                     tile_rect.right.min(clip.right),
                     tile_rect.bottom.min(clip.bottom),
                 );
-                if direct_radial_shader {
-                    // Keep gradient evaluation in the destination coordinate
-                    // space, but resolve the shared fractional tile edge as
-                    // an analytic coverage mask. This preserves the direct
-                    // shader's dither phase while giving adjacent tiles the
-                    // complementary edge coverage used by Blink.
-                    canvas.save();
-                    canvas.clip_rect(tile_rect, ClipOp::Intersect, true);
-                }
+                // A direct radial tile is drawn with antialiasing below. Its
+                // draw owns fractional edge coverage; a second antialiased
+                // tile clip would multiply that coverage.
                 paint_css_image_tile(
                     canvas,
                     doc,
@@ -13347,9 +14888,6 @@ fn paint_background_layers(
                     Some(clip),
                     !square_opaque_border_bleed_clip,
                 );
-                if direct_radial_shader {
-                    canvas.restore();
-                }
             }
         }
         canvas.restore();
@@ -13416,6 +14954,47 @@ pub(crate) fn paint_canvas_background(
         Some(canvas_rect),
         true,
     );
+}
+
+fn paint_scrolling_canvas_background(
+    canvas: &Canvas,
+    doc: &Document,
+    root_fragment: &Fragment,
+    bounds: Rect,
+) {
+    // ViewPainter's document background fills the pixel-snapped scrolling
+    // contents, combining the base backdrop with the propagated CSS color.
+    let source = doc.canvas_background_source();
+    let authored = source.map_or(Color::TRANSPARENT, |source| {
+        doc.node(source).style.background_color
+    });
+    let color = Color::from_rgba_f32(
+        authored.r * authored.a + 1.0 - authored.a,
+        authored.g * authored.a + 1.0 - authored.a,
+        authored.b * authored.a + 1.0 - authored.a,
+        1.0,
+    );
+    let mut paint = Paint::default();
+    paint.set_anti_alias(true);
+    set_paint_css_color(&mut paint, &color);
+    canvas.draw_rect(bounds, &paint);
+    annotate_content_background(canvas, color, bounds, 1.0, Some(bounds));
+    if let Some(source) = source {
+        let style = &doc.node(source).style;
+        let (positioning_rect, source_fragment) =
+            fragment_rect_for_node(root_fragment, source, PhysicalOffset::zero())
+                .map_or((bounds, None), |(rect, fragment)| (rect, Some(fragment)));
+        paint_background_layers(
+            canvas,
+            doc,
+            source_fragment,
+            style,
+            positioning_rect,
+            1.0,
+            Some(bounds),
+            true,
+        );
+    }
 }
 
 fn resolve_border_image_slice(value: &BorderImageLength, source_extent: f32) -> f32 {
@@ -14445,6 +16024,7 @@ fn paint_box_shadows(
             // complete shadow shape and relying on the background to cover it
             // turns transparent fragmented boxes into solid shadow-colored
             // rectangles.
+            let rectangular_ancestor_clip = canvas.is_clip_rect();
             canvas.save();
             if has_border_radius {
                 let element_radii = normalized_border_radii(style, &border_rect);
@@ -14473,7 +16053,12 @@ fn paint_box_shadows(
                 let shadow_rrect = RRect::new_rect_radii(shadow_rect, &normalized);
                 canvas.draw_rrect(shadow_rrect, &paint);
             } else {
-                let exclusion_rect = if style.background_color.is_opaque() {
+                let flat_opaque_shadow = shadow.blur_radius == 0.0
+                    && shadow.color.is_opaque()
+                    && rectangular_ancestor_clip;
+                let exclusion_rect = if style.background_color.is_opaque() && flat_opaque_shadow {
+                    flat_shadow_exclusion_rect(border_rect, style.device_scale_factor)
+                } else if style.background_color.is_opaque() {
                     // When an opaque box fill follows the shadow, Blink's
                     // half-open trailing edge leaves the boundary cell in the
                     // shadow mask and lets the later fill supply its partial
@@ -14484,7 +16069,78 @@ fn paint_box_shadows(
                     border_rect
                 };
                 canvas.clip_rect(exclusion_rect, ClipOp::Difference, false);
-                canvas.draw_rect(shadow_rect, &paint);
+                if flat_opaque_shadow {
+                    // Match the physical edge coverage used by other flat CSS
+                    // rectangles. Skia's analytic AA packs a half-covered
+                    // shadow edge one channel step above Chromium at 1.5x.
+                    // Preserve Skia's joint coverage at a curved ancestor clip.
+                    let trailing_phase =
+                        (f64::from(shadow_rect.bottom) * style.device_scale_factor).rem_euclid(1.0);
+                    // Opaque fills are composited over the shadow's trailing
+                    // fringe; a transparent box leaves the shadow on the
+                    // ordinary coverage path (including inline fragments).
+                    let packing =
+                        if style.background_color.is_opaque() && trailing_phase > 0.5 + 1.0e-6 {
+                            PhysicalCoveragePacking::TrailingY
+                        } else {
+                            PhysicalCoveragePacking::Default
+                        };
+                    // The first replay tile includes physical column 255 as
+                    // overlap; the next tile owns the following visible
+                    // columns. Keep the edge packing on each side of that
+                    // raster boundary consistent with its tile-local clip.
+                    let tile_boundary = (crate::render::RASTER_TILE_SIZE_PX - 1) as f32
+                        / style.device_scale_factor as f32;
+                    let tiled_replay = RASTER_TILED_REPLAY.with(|value| *value.borrow());
+                    if tiled_replay
+                        && matches!(packing, PhysicalCoveragePacking::TrailingY)
+                        && shadow_rect.left < tile_boundary
+                        && shadow_rect.right > tile_boundary
+                    {
+                        draw_css_coverage_rect(
+                            canvas,
+                            Rect::from_ltrb(
+                                shadow_rect.left,
+                                shadow_rect.top,
+                                tile_boundary,
+                                shadow_rect.bottom,
+                            ),
+                            &shadow.color,
+                            style.device_scale_factor,
+                            packing,
+                        );
+                        draw_css_coverage_rect(
+                            canvas,
+                            Rect::from_ltrb(
+                                tile_boundary,
+                                shadow_rect.top,
+                                shadow_rect.right,
+                                shadow_rect.bottom,
+                            ),
+                            &shadow.color,
+                            style.device_scale_factor,
+                            PhysicalCoveragePacking::Default,
+                        );
+                    } else {
+                        let packing = if tiled_replay
+                            && matches!(packing, PhysicalCoveragePacking::TrailingY)
+                            && shadow_rect.left >= tile_boundary
+                        {
+                            PhysicalCoveragePacking::Default
+                        } else {
+                            packing
+                        };
+                        draw_css_coverage_rect(
+                            canvas,
+                            shadow_rect,
+                            &shadow.color,
+                            style.device_scale_factor,
+                            packing,
+                        );
+                    }
+                } else {
+                    canvas.draw_rect(shadow_rect, &paint);
+                }
             }
             canvas.restore();
         }
@@ -14611,7 +16267,9 @@ fn paint_fragment_box_decoration(
                 adjusted.border_right_width = painted_border;
                 adjusted.border_bottom_width = painted_border;
                 adjusted.border_left_width = painted_border;
-                if (native_button_theme || native_color_theme) && node.form_control_disabled {
+                if (native_button_theme || native_color_theme)
+                    && doc.effective_form_control_disabled(fragment.node_id)
+                {
                     adjusted.background_color = Color::from_rgba8(238, 238, 238, 255);
                     let border =
                         openui_style::StyleColor::Resolved(Color::from_rgba8(208, 208, 208, 255));
@@ -14667,7 +16325,7 @@ fn paint_fragment_box_decoration(
             opacity_multiplier,
             style.device_scale_factor,
             style.has_outline(),
-            node.form_control_disabled,
+            doc.effective_form_control_disabled(fragment.node_id),
         );
         return;
     }
@@ -14684,59 +16342,6 @@ fn paint_fragment_box_decoration(
         return;
     }
     if fragment.decoration_clip_rects.is_empty() {
-        let clip_svg_foreign_object = node.is_svg_foreign_object;
-        if clip_svg_foreign_object {
-            let x = abs_offset.left.round().to_f32();
-            let y = abs_offset.top.round().to_f32();
-            let border_box = Rect::from_xywh(
-                x,
-                y,
-                fragment.size.width.to_f32(),
-                fragment.size.height.to_f32(),
-            );
-            let viewport_width = (fragment.size.width
-                - fragment.border.left
-                - fragment.border.right
-                - fragment.padding.left
-                - fragment.padding.right)
-                .clamp_negative_to_zero()
-                .to_f32();
-            let viewport_height = (fragment.size.height
-                - fragment.border.top
-                - fragment.border.bottom
-                - fragment.padding.top
-                - fragment.padding.bottom)
-                .clamp_negative_to_zero()
-                .to_f32();
-            canvas.save();
-            canvas.clip_rect(
-                Rect::from_xywh(x, y, viewport_width, viewport_height),
-                ClipOp::Intersect,
-                false,
-            );
-            if style.has_border_radius() {
-                let representative_border = fragment
-                    .border
-                    .top
-                    .max_of(fragment.border.right)
-                    .max_of(fragment.border.bottom)
-                    .max_of(fragment.border.left)
-                    .to_f32();
-                canvas.clip_rrect(
-                    RRect::new_rect_radii(
-                        border_box,
-                        &fragment_border_radii(style, fragment, &border_box, representative_border),
-                    ),
-                    ClipOp::Intersect,
-                    true,
-                );
-            }
-            // SVG foreignObject decoration is first rasterized into its SVG
-            // viewport and then composited through the CSS rounded contour.
-            // Chromium's tiny subpixel contour retains forty-nine fiftieths
-            // of the covered source sample at the doubly-clipped corner.
-            canvas.save_layer_alpha_f(border_box, 49.0 / 50.0);
-        }
         if (native_button_theme || native_scroll_button_theme || native_color_theme)
             && fragment.size.width >= LayoutUnit::from_i32(6)
             && fragment.size.height >= LayoutUnit::from_i32(6)
@@ -14757,10 +16362,6 @@ fn paint_fragment_box_decoration(
             opacity_multiplier,
         );
         paint_native_marker_group_scrollbar_arrows(canvas, fragment, node, style, abs_offset);
-        if clip_svg_foreign_object {
-            canvas.restore();
-            canvas.restore();
-        }
         if clip_native_text_control_corners {
             canvas.restore();
         }
@@ -14954,13 +16555,42 @@ fn has_negative_stacking_descendant(fragment: &Fragment, doc: &Document) -> bool
 /// child edges blend against that color instead of their shared backdrop.
 /// Keep this deliberately conservative. It recognizes only a single
 /// axis-aligned, unfragmented box whose own border-box background is opaque.
+/// An anonymous line may wrap an atomic inline box without changing where
+/// that box paints; include that line's offset when testing coverage.
 fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Document) -> bool {
     let inner_left = fragment.border.left;
     let inner_top = fragment.border.top;
     let inner_right = fragment.size.width - fragment.border.right;
     let inner_bottom = fragment.size.height - fragment.border.bottom;
 
-    fragment.children.iter().any(|child| {
+    fragment.children.iter().any(|first_child| {
+        let mut child = first_child;
+        let mut wrapper_offset = PhysicalOffset::zero();
+        while child.node_id.is_none() {
+            if child.kind != FragmentKind::Box
+                || child.children.len() != 1
+                || child.has_overflow_clip
+                || child.block_axis_clip_only
+                || child.inline_axis_clip_only
+                || child.skip_box_decoration
+                || child.decoration_paint_block_size.is_some()
+                || child.decoration_slice.is_some()
+                || !child.decoration_clip_rects.is_empty()
+                || !child.is_first_for_node
+                || !child.is_last_for_node
+                || child.inherited_style.is_some()
+                || child.paint_background_color_override.is_some()
+                || child.is_inline_box_fragment
+                || !child.oof_candidates.is_empty()
+                || !child.promoted_transform_ancestors.is_empty()
+            {
+                return false;
+            }
+            wrapper_offset.left += child.offset.left;
+            wrapper_offset.top += child.offset.top;
+            child = &child.children[0];
+        }
+
         if child.node_id.is_none()
             || child.kind != FragmentKind::Box
             || child.skip_box_decoration
@@ -14993,13 +16623,37 @@ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Docum
             return false;
         }
 
-        let child_right = child.offset.left + child.size.width;
-        let child_bottom = child.offset.top + child.size.height;
-        child.offset.left <= inner_left
-            && child.offset.top <= inner_top
+        let child_left = wrapper_offset.left + child.offset.left;
+        let child_top = wrapper_offset.top + child.offset.top;
+        let child_right = child_left + child.size.width;
+        let child_bottom = child_top + child.size.height;
+        child_left <= inner_left
+            && child_top <= inner_top
             && child_right >= inner_right
             && child_bottom >= inner_bottom
     })
+}
+
+/// A child may cover the local border box but still be moved or clipped in a
+/// fragmentainer. Preserve the parent's background in that context.
+fn borderless_background_can_be_occluded(fragment: &Fragment, doc: &Document) -> bool {
+    if !fragment.is_first_for_node
+        || !fragment.is_last_for_node
+        || fragment.break_token.is_some()
+        || fragment.block_axis_clip_only
+        || fragment.inline_axis_clip_only
+    {
+        return false;
+    }
+    let mut current = fragment.node_id;
+    while !current.is_none() {
+        let node = doc.node(current);
+        if node.style.column_count.is_some() || node.style.column_width.is_some() {
+            return false;
+        }
+        current = node.parent;
+    }
+    true
 }
 
 fn uses_squared_replaced_background_coverage(
@@ -15143,8 +16797,51 @@ fn paint_box_decoration_background(
 
     let decoration_clip_saved = decoration_block_size.is_some();
     if decoration_clip_saved {
+        // The decoration primitive owns its fractional block edge. Close the
+        // safety clip outward on the device grid so it does not discard that
+        // primitive's antialias coverage. A borderless inline edge retains its
+        // original hard clip to avoid overlapping neighboring columns.
+        let inline_border_ink = if fragment_block_axis_is_x(fragment) {
+            style.effective_border_top() > 0 || style.effective_border_bottom() > 0
+        } else {
+            style.effective_border_left() > 0 || style.effective_border_right() > 0
+        };
+        let snapping = RasterSnapping::new(style.device_scale_factor);
+        let preserve_inline =
+            inline_border_ink || fragment.decoration_limit_preserves_inline_coverage;
+        let clip_rect = if fragment_block_axis_is_x(fragment) {
+            Rect::from_ltrb(
+                snapping.logical_coordinate(border_box_rect.left, PhysicalSnap::Floor),
+                if preserve_inline {
+                    snapping.logical_coordinate(border_box_rect.top, PhysicalSnap::Floor)
+                } else {
+                    border_box_rect.top
+                },
+                snapping.logical_coordinate(border_box_rect.right, PhysicalSnap::Ceil),
+                if preserve_inline {
+                    snapping.logical_coordinate(border_box_rect.bottom, PhysicalSnap::Ceil)
+                } else {
+                    border_box_rect.bottom
+                },
+            )
+        } else {
+            Rect::from_ltrb(
+                if preserve_inline {
+                    snapping.logical_coordinate(border_box_rect.left, PhysicalSnap::Floor)
+                } else {
+                    border_box_rect.left
+                },
+                snapping.logical_coordinate(border_box_rect.top, PhysicalSnap::Floor),
+                if preserve_inline {
+                    snapping.logical_coordinate(border_box_rect.right, PhysicalSnap::Ceil)
+                } else {
+                    border_box_rect.right
+                },
+                snapping.logical_coordinate(border_box_rect.bottom, PhysicalSnap::Ceil),
+            )
+        };
         canvas.save();
-        canvas.clip_rect(border_box_rect, ClipOp::Intersect, false);
+        canvas.clip_rect(clip_rect, ClipOp::Intersect, false);
     }
 
     // When border-radius is set AND borders are uniform solid, use saveLayer
@@ -15222,7 +16919,9 @@ fn paint_box_decoration_background(
             visible_color = Some(color);
         }
     }
-    let effective_background_clip = if style.background_attachment == BackgroundAttachment::Local {
+    let effective_background_clip = if style.is_scroll_container()
+        && style.background_attachment == BackgroundAttachment::Local
+    {
         BackgroundClip::PaddingBox
     } else {
         style.background_clip
@@ -15318,11 +17017,6 @@ fn paint_box_decoration_background(
             (fragment_radii[3].y - paint_bb).max(0.0),
         ),
     ];
-    let nonrenderable_inner_border_contour =
-        matches!(
-            effective_background_clip,
-            BackgroundClip::PaddingBox | BackgroundClip::ContentBox
-        ) && radii_exceed_rect(&border_inner_rect, &border_inner_radii);
     let has_visible_background = !style.background_color.is_transparent()
         || !style.background_layers.is_empty()
         || style.background_linear_gradient.is_some();
@@ -15339,16 +17033,12 @@ fn paint_box_decoration_background(
         // half coverage at a fractional shared edge after the ring itself
         // has selected the owning device cell.
         && !platform_text_control_ring
-        && !shrink_background_for_opaque_border
-        // Renderable padding/content-box contours do not reach the outer
-        // border contour, so their border can use one native double-rrect.
-        // An inner contour whose adjacent radii cannot fit its rect needs the
-        // shared outer clip: this is the coverage model Blink uses for the
-        // extreme single-corner cases where the background meets the border.
-        && (matches!(
-            effective_background_clip,
-            BackgroundClip::BorderBox | BackgroundClip::BorderArea
-        ) || nonrenderable_inner_border_contour)
+        // Blink shrinks an obscured background under an opaque border,
+        // regardless of the authored background-clip. It does not need a
+        // separate outer clip layer for that border.
+        && !border_obscures_background_edge
+        // The fill's background-clip chooses its contour; bleed avoidance
+        // groups the background and translucent border independently of it.
         && (has_nonzero_uniform_border || same_solid_visible_border);
     if use_layer {
         canvas.save();
@@ -15361,21 +17051,25 @@ fn paint_box_decoration_background(
     }
 
     // ── 2. Background color ──────────────────────────────────────────
-    let opaque_border_and_child_occlude_background = !has_radius
+    let opaque_child_occludes_background = !has_radius
         && style.border_image.is_none()
         && effective_background_clip == BackgroundClip::BorderBox
+        // Both an opaque solid ring and a borderless box can leave the
+        // parent's color fully hidden under a covering child. Retaining that
+        // color adds a second AA coverage layer at their shared edge.
         // A scroll container owns a distinct scroll backing. Its box
         // background remains part of that backing even when an opaque child
         // currently covers the complete scrollport; the child may move as
         // the scroll offset changes.
         && style.overflow_x == Overflow::Visible
         && style.overflow_y == Overflow::Visible
-        && side_specs.iter().all(|(width, border_style, color)| {
+        && (side_specs.iter().all(|(width, border_style, color)| {
             *width > 0.0 && *border_style == BorderStyle::Solid && color.is_opaque()
-        })
+        }) || (side_specs.iter().all(|(width, _, _)| *width == 0.0)
+            && borderless_background_can_be_occluded(fragment, doc)))
         && opaque_in_flow_child_covers_inner_border_box(fragment, doc);
     let background_color_is_occluded = opacity_multiplier >= 1.0
-        && (opaque_border_and_child_occlude_background
+        && (opaque_child_occludes_background
             || style.background_layers.last().is_some_and(|layer| {
                 layer.clip == effective_background_clip
                     && matches!(
@@ -15394,6 +17088,41 @@ fn paint_box_decoration_background(
                     )
             }));
     if !style.background_color.is_transparent() && !background_color_is_occluded {
+        // A local background is exposed through the scrollport's hard clip
+        // before its rounded fill is rasterized (AdjustRectForScrolledContent).
+        // Retain that clip separately from the antialiased fill contour.
+        let _local_background_clip = if style.is_scroll_container()
+            && style.background_attachment == BackgroundAttachment::Local
+        {
+            let guard = skia_safe::AutoCanvasRestore::guard(canvas, true);
+            let insets = fragment
+                .element_scrollbars
+                .map_or(openui_geometry::BoxStrut::zero(), |scrollbars| {
+                    scrollbars.insets
+                });
+            let clip_left = (abs_offset.left + fragment.border.left + insets.left).to_f32();
+            let clip_top = (abs_offset.top + fragment.border.top + insets.top).to_f32();
+            let clip_right =
+                (abs_offset.left + fragment.size.width - fragment.border.right - insets.right)
+                    .to_f32();
+            let clip_bottom =
+                (abs_offset.top + fragment.size.height - fragment.border.bottom - insets.bottom)
+                    .to_f32();
+            let (clip_x, clip_y, clip_width, clip_height) = (
+                clip_left,
+                clip_top,
+                (clip_right - clip_left).max(0.0),
+                (clip_bottom - clip_top).max(0.0),
+            );
+            canvas.clip_rect(
+                Rect::from_xywh(clip_x, clip_y, clip_width, clip_height),
+                ClipOp::Intersect,
+                false,
+            );
+            Some(guard)
+        } else {
+            None
+        };
         let mut paint = Paint::default();
         paint.set_style(PaintStyle::Fill);
         // A pixel-snapped 2×2 saturated rounded box covers its four device
@@ -15518,6 +17247,13 @@ fn paint_box_decoration_background(
             } else {
                 close_rect_at_physical_viewport_edge(bg_rect, style.device_scale_factor)
             };
+            annotate_content_background(
+                canvas,
+                style.background_color,
+                bg_rect,
+                opacity_multiplier,
+                (!has_radius && !use_layer).then_some(bg_rect),
+            );
             if has_radius {
                 // Compute radii adjusted for background-clip box (CSS Backgrounds §5.3).
                 // Inner corner radii = outer radii - inset on each side, clamped to 0.
@@ -15640,6 +17376,19 @@ fn paint_box_decoration_background(
                     // creates a separately quantized mask and loses the
                     // lowest-coverage edge samples.
                     let clip_radii = normalize_radii_to_rect(clip_radii, &bg_rect);
+                    let hard_clip_x =
+                        style.overflow_x == Overflow::Clip && style.overflow_y == Overflow::Visible;
+                    if hard_clip_x {
+                        // A one-axis paint-property clip owns the inline edge
+                        // for both the direct and F16 circular fill paths.
+                        let big = 100_000.0;
+                        canvas.save();
+                        canvas.clip_rect(
+                            Rect::from_ltrb(bg_rect.left, -big, bg_rect.right, big),
+                            ClipOp::Intersect,
+                            false,
+                        );
+                    }
                     if is_opaque_circular_background(&bg_rect, &clip_radii, &style.background_color)
                     {
                         // Chromium retains circular coverage in a float
@@ -15655,28 +17404,10 @@ fn paint_box_decoration_background(
                         canvas.draw_rrect(RRect::new_rect_radii(bg_rect, &clip_radii), &paint);
                         canvas.restore();
                     } else {
-                        let hard_clip_x = style.overflow_x == Overflow::Clip
-                            && style.overflow_y == Overflow::Visible;
-                        if hard_clip_x {
-                            // A one-axis `clip` overflow establishes a hard
-                            // inline-axis scissor while block overflow remains
-                            // visible. Keep the rounded fill's AA ramp from
-                            // leaking across that scissored box edge. The
-                            // block-axis path retains Skia's analytic tangent
-                            // coverage because its clip is applied later in
-                            // the overflow display-item phase.
-                            let big = 100_000.0;
-                            canvas.save();
-                            canvas.clip_rect(
-                                Rect::from_ltrb(bg_rect.left, -big, bg_rect.right, big),
-                                ClipOp::Intersect,
-                                false,
-                            );
-                        }
                         canvas.draw_rrect(RRect::new_rect_radii(bg_rect, &clip_radii), &paint);
-                        if hard_clip_x {
-                            canvas.restore();
-                        }
+                    }
+                    if hard_clip_x {
+                        canvas.restore();
                     }
                 } else {
                     canvas.save();
@@ -15686,13 +17417,45 @@ fn paint_box_decoration_background(
                         bg_rect,
                         &clip_radii,
                     );
-                    canvas.draw_rect(bg_rect, &paint);
+                    // Blink clips the content contour, then fills the enclosing
+                    // background paint rect. Apply the curved contour before
+                    // the straight content edge so their shared AA coverage
+                    // is rounded once at the border/background seam.
+                    canvas.clip_rect(bg_rect, ClipOp::Intersect, true);
+                    canvas.draw_rect(border_box_rect, &paint);
                     canvas.restore();
                 }
             } else {
                 let preserves_composited_edge_coverage = style.z_index.is_some_and(|z| z < 0)
                     || has_negative_stacking_descendant(fragment, doc);
-                if uses_squared_replaced_background_coverage(
+                if matches!(
+                    effective_background_clip,
+                    BackgroundClip::PaddingBox | BackgroundClip::ContentBox
+                ) {
+                    // Blink fills the CSS-pixel-snapped border box through a
+                    // hard CSS-pixel-snapped padding/content clip. Device
+                    // scale is applied after those layout-space edges are
+                    // selected: the fill can still have fractional device
+                    // coverage at its outer edge, while the hard clip does
+                    // not leak color into the neighboring physical cell.
+                    canvas.save();
+                    let mut color_clip = bg_rect;
+                    let color_fill = if fragment.decoration_slice.is_some() {
+                        // Sliced colors use this fragment's border box as
+                        // their fill. The continuous source box determines
+                        // content/padding insets, but must not replace the
+                        // local antialiased edge or open its hard clip.
+                        if !color_clip.intersect(border_box_rect) {
+                            color_clip = Rect::default();
+                        }
+                        border_box_rect
+                    } else {
+                        background_box
+                    };
+                    canvas.clip_rect(color_clip, ClipOp::Intersect, false);
+                    canvas.draw_rect(color_fill, &paint);
+                    canvas.restore();
+                } else if uses_squared_replaced_background_coverage(
                     style,
                     bg_rect,
                     node.replaced.map(|replaced| replaced.resource),
@@ -15849,18 +17612,22 @@ fn paint_box_decoration_background(
                         None,
                         None,
                     ));
-                    canvas.save();
                     if has_radius {
+                        canvas.save();
                         let clip_rrect = RRect::new_rect_radii(
                             paint_rect,
                             &fragment_border_radii(style, fragment, &paint_rect, bt),
                         );
                         canvas.clip_rrect(clip_rrect, ClipOp::Intersect, true);
+                        canvas.draw_rect(paint_rect, &paint);
+                        canvas.restore();
                     } else {
-                        canvas.clip_rect(paint_rect, ClipOp::Intersect, false);
+                        // The analytic fill already ends at `paint_rect`. A
+                        // second hard clip to that identical rectangle drops
+                        // fractional edge coverage where adjacent fragments
+                        // meet on a non-integral device scale.
+                        canvas.draw_rect(paint_rect, &paint);
                     }
-                    canvas.draw_rect(paint_rect, &paint);
-                    canvas.restore();
                 }
             }
         }
@@ -15954,12 +17721,6 @@ fn paint_box_decoration_background(
                 &erase,
             );
         }
-        erase_translucent_rounded_border_gpu_overdraw(
-            canvas,
-            border_rect,
-            &outer_radii,
-            &border_color,
-        );
         canvas.restore(); // pops saveLayer
         if radii_exceed_rect(&inner_rect, &inner_radii) {
             let mut paint = Paint::default();
@@ -15993,12 +17754,6 @@ fn paint_box_decoration_background(
             );
         }
         canvas.restore(); // pops save()
-        draw_translucent_rounded_border_gpu_fringe(
-            canvas,
-            border_rect,
-            &outer_radii,
-            &border_color,
-        );
     }
     if decoration_clip_saved {
         canvas.restore();
@@ -16222,6 +17977,113 @@ fn paint_native_fieldset_corner_samples(
     }
 }
 
+/// A lone opaque curved solid or double edge follows BoxBorderPainter's complex
+/// contour path: clip the outer/inner border, restrict the owning side, then
+/// fill the solid edge or clip each double stripe using inset rounded contours.
+/// The side clip retains the full corner tangents even when the edge is narrow.
+fn paint_sole_curved_border(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    rect: Rect,
+    side: usize,
+    width: f32,
+    border_style: BorderStyle,
+) -> bool {
+    let color = match side {
+        0 => style.border_top_color,
+        1 => style.border_right_color,
+        2 => style.border_bottom_color,
+        _ => style.border_left_color,
+    }
+    .resolve(&style.color);
+    if !color.is_opaque() {
+        return false;
+    }
+    let radii = fragment_border_radii(style, fragment, &rect, width);
+    let contour = |inset: f32| {
+        let (top, right, bottom, left) = match side {
+            0 => (inset, 0.0, 0.0, 0.0),
+            1 => (0.0, inset, 0.0, 0.0),
+            2 => (0.0, 0.0, inset, 0.0),
+            _ => (0.0, 0.0, 0.0, inset),
+        };
+        let inner = Rect::from_xywh(
+            rect.left + left,
+            rect.top + top,
+            (rect.width() - left - right).max(0.0),
+            (rect.height() - top - bottom).max(0.0),
+        );
+        let inner_radii = [
+            Point::new((radii[0].x - left).max(0.0), (radii[0].y - top).max(0.0)),
+            Point::new((radii[1].x - right).max(0.0), (radii[1].y - top).max(0.0)),
+            Point::new(
+                (radii[2].x - right).max(0.0),
+                (radii[2].y - bottom).max(0.0),
+            ),
+            Point::new((radii[3].x - left).max(0.0), (radii[3].y - bottom).max(0.0)),
+        ];
+        (inner, inner_radii)
+    };
+    let (inner, inner_radii) = contour(width);
+    if inner.width() > 0.0 && inner.height() > 0.0 && radii_exceed_rect(&inner, &inner_radii) {
+        // Non-renderable inner contours require the shared adjusted-inner
+        // decomposition; keep them on that path.
+        return false;
+    }
+    let side_rect = match side {
+        0 => Rect::from_xywh(
+            rect.left,
+            rect.top,
+            rect.width(),
+            width.max(radii[0].y).max(radii[1].y),
+        ),
+        1 => {
+            let extent = width.max(radii[1].x).max(radii[2].x);
+            Rect::from_xywh(rect.right - extent, rect.top, extent, rect.height())
+        }
+        2 => {
+            let extent = width.max(radii[2].y).max(radii[3].y);
+            Rect::from_xywh(rect.left, rect.bottom - extent, rect.width(), extent)
+        }
+        _ => Rect::from_xywh(
+            rect.left,
+            rect.top,
+            width.max(radii[0].x).max(radii[3].x),
+            rect.height(),
+        ),
+    };
+    let mut paint = Paint::default();
+    paint.set_anti_alias(true);
+    set_paint_css_color(&mut paint, &color);
+    canvas.save();
+    canvas.clip_rrect(RRect::new_rect_radii(rect, &radii), ClipOp::Intersect, true);
+    if inner.width() > 0.0 && inner.height() > 0.0 {
+        canvas.clip_rrect(
+            RRect::new_rect_radii(inner, &inner_radii),
+            ClipOp::Difference,
+            true,
+        );
+    }
+    canvas.clip_rect(side_rect, ClipOp::Intersect, true);
+    if border_style == BorderStyle::Solid {
+        canvas.draw_rect(rect, &paint);
+    } else {
+        for (inset, op) in [
+            ((width * 2.0 / 3.0).round(), ClipOp::Intersect),
+            ((width / 3.0).round(), ClipOp::Difference),
+        ] {
+            let (stripe, stripe_radii) = contour(inset);
+            canvas.save();
+            canvas.clip_rrect(RRect::new_rect_radii(stripe, &stripe_radii), op, true);
+            canvas.draw_rect(rect, &paint);
+            canvas.restore();
+        }
+    }
+    canvas.restore();
+    true
+}
+
 /// Paint borders around the border-box.
 ///
 /// Extracted from Blink's `BoxBorderPainter` (box_border_painter.cc).
@@ -16246,6 +18108,85 @@ fn paint_borders(
     // No borders to paint
     if bt == 0.0 && br == 0.0 && bb == 0.0 && bl == 0.0 {
         return;
+    }
+
+    // BoxBorderPainter clamps each used edge to the snapped border-box
+    // dimension. A double edge narrower than three CSS pixels becomes
+    // solid. With an empty inner contour, a lone curved edge fills the box
+    // through its rounded outer contour and authored side rectangle.
+    let visible_sides = [
+        (bt, style.border_top_style),
+        (br, style.border_right_style),
+        (bb, style.border_bottom_style),
+        (bl, style.border_left_style),
+    ];
+    let mut visible_sides_iter =
+        visible_sides
+            .iter()
+            .enumerate()
+            .filter(|(_, (width, border_style))| {
+                *width > 0.0 && !matches!(border_style, BorderStyle::None | BorderStyle::Hidden)
+            });
+    let sole_side = visible_sides_iter
+        .next()
+        .filter(|_| visible_sides_iter.next().is_none());
+    if let Some((side, _)) = sole_side.filter(|_| has_border_radius) {
+        let (width, border_style) = visible_sides[side];
+        let box_extent = if side == 0 || side == 2 { h } else { w };
+        let used_width = width.min(box_extent);
+        let effective_solid = border_style == BorderStyle::Solid
+            || (border_style == BorderStyle::Double && used_width < 3.0);
+        if ((effective_solid && width < box_extent)
+            || (border_style == BorderStyle::Double && used_width >= 3.0))
+            && !outer_rrect_clipped
+            && paint_sole_curved_border(
+                canvas,
+                fragment,
+                style,
+                Rect::from_xywh(x, y, w, h),
+                side,
+                used_width,
+                if effective_solid {
+                    BorderStyle::Solid
+                } else {
+                    BorderStyle::Double
+                },
+            )
+        {
+            return;
+        }
+        if width >= box_extent && effective_solid {
+            let border_rect = Rect::from_xywh(x, y, w, h);
+            let outer_radii = fragment_border_radii(style, fragment, &border_rect, width);
+            let side_rect = match side {
+                0 => Rect::from_xywh(x, y, w, width),
+                1 => Rect::from_xywh(x + w - width, y, width, h),
+                2 => Rect::from_xywh(x, y + h - width, w, width),
+                _ => Rect::from_xywh(x, y, width, h),
+            };
+            let color = match side {
+                0 => style.border_top_color,
+                1 => style.border_right_color,
+                2 => style.border_bottom_color,
+                _ => style.border_left_color,
+            }
+            .resolve(&style.color);
+            let mut paint = Paint::default();
+            paint.set_anti_alias(true);
+            set_paint_css_color(&mut paint, &color);
+            canvas.save();
+            if !outer_rrect_clipped {
+                canvas.clip_rrect(
+                    RRect::new_rect_radii(border_rect, &outer_radii),
+                    ClipOp::Intersect,
+                    true,
+                );
+            }
+            canvas.clip_rect(side_rect, ClipOp::Intersect, true);
+            canvas.draw_rect(border_rect, &paint);
+            canvas.restore();
+            return;
+        }
     }
 
     let inherited_color = &style.color;
@@ -17334,6 +19275,14 @@ fn paint_borders(
                 return;
             }
             let nonrenderable_inner = radii_exceed_rect(&inner_rect, &inner_radii);
+            let blend_with_background_at_inner_edge = resolved.is_opaque()
+                && style.background_color == resolved
+                && matches!(
+                    style.background_clip,
+                    BackgroundClip::ContentBox | BackgroundClip::PaddingBox
+                )
+                && style.background_layers.is_empty()
+                && style.background_linear_gradient.is_none();
             let asymmetric_outer_radii = outer_radii
                 .iter()
                 .skip(1)
@@ -17353,6 +19302,7 @@ fn paint_borders(
                     border_rect,
                     inner_rect,
                     inner_radii,
+                    blend_with_background_at_inner_edge,
                     &fill_paint,
                 );
                 if asymmetric_outer_radii {
@@ -17371,27 +19321,33 @@ fn paint_borders(
                             border_rect,
                             inner_rect,
                             inner_radii,
+                            blend_with_background_at_inner_edge,
                             &fill_paint,
                         );
                         canvas.restore();
                     }
-                    if let Some(tangent_clips) =
-                        single_saturated_corner_tangent_clips(border_rect, inner_rect, &outer_radii)
-                    {
-                        for tangent_clip in tangent_clips {
-                            if tangent_clip.width() <= 0.0 || tangent_clip.height() <= 0.0 {
-                                continue;
+                    if !blend_with_background_at_inner_edge {
+                        if let Some(tangent_clips) = single_saturated_corner_tangent_clips(
+                            border_rect,
+                            inner_rect,
+                            &outer_radii,
+                        ) {
+                            for tangent_clip in tangent_clips {
+                                if tangent_clip.width() <= 0.0 || tangent_clip.height() <= 0.0 {
+                                    continue;
+                                }
+                                canvas.save();
+                                canvas.clip_rect(tangent_clip, ClipOp::Intersect, false);
+                                draw_nonrenderable_uniform_rounded_border(
+                                    canvas,
+                                    border_rect,
+                                    inner_rect,
+                                    inner_radii,
+                                    false,
+                                    &fill_paint,
+                                );
+                                canvas.restore();
                             }
-                            canvas.save();
-                            canvas.clip_rect(tangent_clip, ClipOp::Intersect, false);
-                            draw_nonrenderable_uniform_rounded_border(
-                                canvas,
-                                border_rect,
-                                inner_rect,
-                                inner_radii,
-                                &fill_paint,
-                            );
-                            canvas.restore();
                         }
                     }
                 }
@@ -17518,20 +19474,8 @@ fn paint_borders(
                     canvas.draw_drrect(outer_rrect, inner_rrect, &fill_paint);
                 }
                 if resolved.a < 1.0 {
-                    erase_translucent_rounded_border_gpu_overdraw(
-                        canvas,
-                        outer_rect,
-                        &outer_radii,
-                        &resolved,
-                    );
                     canvas.restore();
                 }
-                draw_translucent_rounded_border_gpu_fringe(
-                    canvas,
-                    outer_rect,
-                    &outer_radii,
-                    &resolved,
-                );
             }
         } else {
             canvas.draw_rect(stroke_rect, &paint);
@@ -17652,162 +19596,235 @@ fn paint_borders(
                     .border_left_color
                     .resolve(inherited_color)
                     .is_opaque());
-        // Chrome paint order: Top → Bottom → Right → Left (sorted by side priority).
-        // Top border: outer-top-left → outer-top-right → inner-top-right → inner-top-left
-        if bt > 0.0 {
-            let top_points =
-                if chromium_solid_border && style.border_top_style == BorderStyle::Solid {
-                    [(ox0, oy0), (ox1, oy0), (ox1, iy0), (ox0, iy0)]
-                } else if authored_uniform_3d {
-                    [(ox0, oy0), (ox1, oy0), (ix1, iy0), (ox0, iy0)]
-                } else {
-                    [(ox0, oy0), (ox1, oy0), (ix1, iy0), (ix0, iy0)]
-                };
-            paint_border_side_path(
-                canvas,
-                style.border_top_style,
-                &style.border_top_color,
-                inherited_color,
-                bt,
-                &top_points,
-                BorderSide::Top,
-                adjust_dashed_gap,
-                !matching_stroked_sides,
-                !all_side_colors_match,
-                antialias_solid_miters,
-                direct_analytic_solid_miters,
-                chromium_solid_border,
-                authored_uniform_3d_outer_edge,
-                platform_3d_fieldset_coverage,
-                style.device_scale_factor,
-            );
-        }
-        // Bottom border: outer-bottom-right → outer-bottom-left → inner-bottom-left → inner-bottom-right
-        if bb > 0.0 {
-            let bottom_points =
-                if chromium_solid_border && style.border_bottom_style == BorderStyle::Solid {
-                    [(ox1, oy1), (ox0, oy1), (ox0, iy1), (ox1, iy1)]
-                } else if authored_uniform_3d {
-                    [(ox1, oy1), (ox0, oy1), (ix0, iy1), (ox1, iy1)]
-                } else {
-                    [(ox1, oy1), (ox0, oy1), (ix0, iy1), (ix1, iy1)]
-                };
-            paint_border_side_path(
-                canvas,
-                style.border_bottom_style,
-                &style.border_bottom_color,
-                inherited_color,
-                bb,
-                &bottom_points,
-                BorderSide::Bottom,
-                adjust_dashed_gap,
-                !matching_stroked_sides,
-                !all_side_colors_match,
-                antialias_solid_miters,
-                direct_analytic_solid_miters,
-                chromium_solid_border,
-                authored_uniform_3d_outer_edge,
-                platform_3d_fieldset_coverage,
-                style.device_scale_factor,
-            );
-        }
-        // Right border: outer-top-right → outer-bottom-right → inner-bottom-right → inner-top-right
-        if br > 0.0 {
-            let right_color = style.border_right_color.resolve(inherited_color);
-            let right_top_miter = chromium_solid_border
-                && bt > 0.0
-                && right_color != style.border_top_color.resolve(inherited_color);
-            let right_bottom_miter = chromium_solid_border
-                && bb > 0.0
-                && right_color != style.border_bottom_color.resolve(inherited_color);
-            paint_border_side_path(
-                canvas,
-                style.border_right_style,
-                &style.border_right_color,
-                inherited_color,
-                br,
-                &[
-                    (ox1, oy0),
-                    (ox1, oy1),
-                    (
-                        ix1,
-                        if authored_uniform_3d {
-                            oy1
-                        } else if !chromium_solid_border || right_bottom_miter {
-                            iy1
-                        } else {
-                            oy1
-                        },
-                    ),
-                    (
-                        ix1,
-                        if !chromium_solid_border || right_top_miter {
-                            iy0
-                        } else {
-                            oy0
-                        },
-                    ),
-                ],
-                BorderSide::Right,
-                adjust_dashed_gap,
-                !matching_stroked_sides,
-                true,
-                antialias_solid_miters,
-                direct_analytic_solid_miters,
-                chromium_solid_border,
-                authored_uniform_3d_outer_edge,
-                platform_3d_fieldset_coverage,
-                style.device_scale_factor,
-            );
-        }
-        // Left border: outer-bottom-left → outer-top-left → inner-top-left → inner-bottom-left
-        if bl > 0.0 {
-            let left_color = style.border_left_color.resolve(inherited_color);
-            let left_top_miter = chromium_solid_border
-                && bt > 0.0
-                && left_color != style.border_top_color.resolve(inherited_color);
-            let left_bottom_miter = chromium_solid_border
-                && bb > 0.0
-                && left_color != style.border_bottom_color.resolve(inherited_color);
-            paint_border_side_path(
-                canvas,
-                style.border_left_style,
-                &style.border_left_color,
-                inherited_color,
-                bl,
-                &[
-                    (ox0, oy1),
-                    (ox0, oy0),
-                    (
-                        ix0,
-                        if authored_uniform_3d {
-                            oy0
-                        } else if !chromium_solid_border || left_top_miter {
-                            iy0
-                        } else {
-                            oy0
-                        },
-                    ),
-                    (
-                        ix0,
-                        if !chromium_solid_border || left_bottom_miter {
-                            iy1
-                        } else {
-                            oy1
-                        },
-                    ),
-                ],
-                BorderSide::Left,
-                adjust_dashed_gap,
-                !matching_stroked_sides,
-                !all_side_colors_match,
-                antialias_solid_miters,
-                direct_analytic_solid_miters,
-                chromium_solid_border,
-                authored_uniform_3d_outer_edge,
-                platform_3d_fieldset_coverage,
-                style.device_scale_factor,
-            );
+        // Blink paints lower-alpha sides first, then non-solid styles before
+        // solid styles. The side priority breaks ties within one style.
+        // Keeping that order matters for dotted edges: a later solid edge
+        // can overdraw a corner instead of requiring a miter clip.
+        let mut paint_order = [
+            BorderSide::Top,
+            BorderSide::Bottom,
+            BorderSide::Right,
+            BorderSide::Left,
+        ];
+        let side_key = |side: BorderSide| {
+            let (border_style, color, side_priority) = match side {
+                BorderSide::Top => (
+                    style.border_top_style,
+                    style.border_top_color.resolve(inherited_color),
+                    0,
+                ),
+                BorderSide::Bottom => (
+                    style.border_bottom_style,
+                    style.border_bottom_color.resolve(inherited_color),
+                    1,
+                ),
+                BorderSide::Right => (
+                    style.border_right_style,
+                    style.border_right_color.resolve(inherited_color),
+                    2,
+                ),
+                BorderSide::Left => (
+                    style.border_left_style,
+                    style.border_left_color.resolve(inherited_color),
+                    3,
+                ),
+            };
+            let style_priority = match border_style {
+                BorderStyle::None | BorderStyle::Hidden => 0,
+                BorderStyle::Dotted | BorderStyle::Dashed | BorderStyle::Double => 1,
+                BorderStyle::Inset
+                | BorderStyle::Groove
+                | BorderStyle::Outset
+                | BorderStyle::Ridge => 2,
+                BorderStyle::Solid => 3,
+            };
+            (color.a, style_priority, side_priority)
+        };
+        paint_order.sort_by(|a, b| {
+            let (alpha_a, style_a, side_a) = side_key(*a);
+            let (alpha_b, style_b, side_b) = side_key(*b);
+            alpha_a
+                .total_cmp(&alpha_b)
+                .then(style_a.cmp(&style_b))
+                .then(side_a.cmp(&side_b))
+        });
+        for side in paint_order {
+            // Top border: outer-top-left → outer-top-right → inner-top-right → inner-top-left
+            if side == BorderSide::Top && bt > 0.0 {
+                let top_points =
+                    if chromium_solid_border && style.border_top_style == BorderStyle::Solid {
+                        [(ox0, oy0), (ox1, oy0), (ox1, iy0), (ox0, iy0)]
+                    } else if authored_uniform_3d {
+                        [(ox0, oy0), (ox1, oy0), (ix1, iy0), (ox0, iy0)]
+                    } else {
+                        [(ox0, oy0), (ox1, oy0), (ix1, iy0), (ix0, iy0)]
+                    };
+                paint_border_side_path(
+                    canvas,
+                    style.border_top_style,
+                    &style.border_top_color,
+                    inherited_color,
+                    bt,
+                    &top_points,
+                    BorderSide::Top,
+                    adjust_dashed_gap,
+                    !matching_stroked_sides,
+                    !all_side_colors_match,
+                    antialias_solid_miters,
+                    direct_analytic_solid_miters,
+                    chromium_solid_border,
+                    authored_uniform_3d_outer_edge,
+                    platform_3d_fieldset_coverage,
+                    style.device_scale_factor,
+                );
+            }
+            // Bottom border: outer-bottom-right → outer-bottom-left → inner-bottom-left → inner-bottom-right
+            if side == BorderSide::Bottom && bb > 0.0 {
+                let bottom_points =
+                    if chromium_solid_border && style.border_bottom_style == BorderStyle::Solid {
+                        [(ox1, oy1), (ox0, oy1), (ox0, iy1), (ox1, iy1)]
+                    } else if authored_uniform_3d {
+                        [(ox1, oy1), (ox0, oy1), (ix0, iy1), (ox1, iy1)]
+                    } else {
+                        [(ox1, oy1), (ox0, oy1), (ix0, iy1), (ix1, iy1)]
+                    };
+                paint_border_side_path(
+                    canvas,
+                    style.border_bottom_style,
+                    &style.border_bottom_color,
+                    inherited_color,
+                    bb,
+                    &bottom_points,
+                    BorderSide::Bottom,
+                    adjust_dashed_gap,
+                    !matching_stroked_sides,
+                    !all_side_colors_match,
+                    antialias_solid_miters,
+                    direct_analytic_solid_miters,
+                    chromium_solid_border,
+                    authored_uniform_3d_outer_edge,
+                    platform_3d_fieldset_coverage,
+                    style.device_scale_factor,
+                );
+            }
+            // Right border: outer-top-right → outer-bottom-right → inner-bottom-right → inner-top-right
+            if side == BorderSide::Right && br > 0.0 {
+                let right_color = style.border_right_color.resolve(inherited_color);
+                let right_top_miter = chromium_solid_border
+                    && bt > 0.0
+                    && right_color != style.border_top_color.resolve(inherited_color);
+                let right_bottom_miter = chromium_solid_border
+                    && bb > 0.0
+                    && right_color != style.border_bottom_color.resolve(inherited_color);
+                paint_border_side_path(
+                    canvas,
+                    style.border_right_style,
+                    &style.border_right_color,
+                    inherited_color,
+                    br,
+                    &[
+                        (ox1, oy0),
+                        (ox1, oy1),
+                        (
+                            ix1,
+                            if authored_uniform_3d {
+                                oy1
+                            } else if !chromium_solid_border || right_bottom_miter {
+                                iy1
+                            } else {
+                                oy1
+                            },
+                        ),
+                        (
+                            ix1,
+                            if !chromium_solid_border || right_top_miter {
+                                iy0
+                            } else {
+                                oy0
+                            },
+                        ),
+                    ],
+                    BorderSide::Right,
+                    adjust_dashed_gap,
+                    !matching_stroked_sides
+                        && !(style.border_right_style == BorderStyle::Dotted
+                            && bt > 0.0
+                            && bb > 0.0
+                            && style.border_top_style == BorderStyle::Solid
+                            && style.border_bottom_style == BorderStyle::Solid
+                            && style.border_top_color.resolve(inherited_color).is_opaque()
+                            && style
+                                .border_bottom_color
+                                .resolve(inherited_color)
+                                .is_opaque()),
+                    !(style.border_right_style == BorderStyle::Dotted
+                        && ((bt > 0.0
+                            && matches!(
+                                style.border_top_style,
+                                BorderStyle::Dashed | BorderStyle::Dotted | BorderStyle::Double
+                            ))
+                            || (bb > 0.0
+                                && matches!(
+                                    style.border_bottom_style,
+                                    BorderStyle::Dashed | BorderStyle::Dotted | BorderStyle::Double
+                                )))),
+                    antialias_solid_miters,
+                    direct_analytic_solid_miters,
+                    chromium_solid_border,
+                    authored_uniform_3d_outer_edge,
+                    platform_3d_fieldset_coverage,
+                    style.device_scale_factor,
+                );
+            }
+            // Left border: outer-bottom-left → outer-top-left → inner-top-left → inner-bottom-left
+            if side == BorderSide::Left && bl > 0.0 {
+                let left_color = style.border_left_color.resolve(inherited_color);
+                let left_top_miter = chromium_solid_border
+                    && bt > 0.0
+                    && left_color != style.border_top_color.resolve(inherited_color);
+                let left_bottom_miter = chromium_solid_border
+                    && bb > 0.0
+                    && left_color != style.border_bottom_color.resolve(inherited_color);
+                paint_border_side_path(
+                    canvas,
+                    style.border_left_style,
+                    &style.border_left_color,
+                    inherited_color,
+                    bl,
+                    &[
+                        (ox0, oy1),
+                        (ox0, oy0),
+                        (
+                            ix0,
+                            if authored_uniform_3d {
+                                oy0
+                            } else if !chromium_solid_border || left_top_miter {
+                                iy0
+                            } else {
+                                oy0
+                            },
+                        ),
+                        (
+                            ix0,
+                            if !chromium_solid_border || left_bottom_miter {
+                                iy1
+                            } else {
+                                oy1
+                            },
+                        ),
+                    ],
+                    BorderSide::Left,
+                    adjust_dashed_gap,
+                    !matching_stroked_sides,
+                    !all_side_colors_match,
+                    antialias_solid_miters,
+                    direct_analytic_solid_miters,
+                    chromium_solid_border,
+                    authored_uniform_3d_outer_edge,
+                    platform_3d_fieldset_coverage,
+                    style.device_scale_factor,
+                );
+            }
         }
 
         // CPU Skia snaps the axis-aligned edges of opaque trapezoid fills,
@@ -19840,6 +21857,44 @@ mod tests {
             &parent_fragment,
             &doc
         ));
+
+        let mut inline_child = parent_fragment.children.pop().unwrap();
+        inline_child.offset = PhysicalOffset::zero();
+        let mut line = Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(50)),
+        );
+        line.offset = PhysicalOffset::new(LayoutUnit::from_i32(1), LayoutUnit::from_i32(1));
+        line.children.push(inline_child);
+        parent_fragment.children.push(line);
+        assert!(
+            opaque_in_flow_child_covers_inner_border_box(&parent_fragment, &doc),
+            "an anonymous line does not hide its opaque in-flow child"
+        );
+
+        parent_fragment.children[0].has_overflow_clip = true;
+        assert!(!opaque_in_flow_child_covers_inner_border_box(
+            &parent_fragment,
+            &doc
+        ));
+
+        assert!(borderless_background_can_be_occluded(
+            &parent_fragment,
+            &doc
+        ));
+        parent_fragment.is_first_for_node = false;
+        assert!(!borderless_background_can_be_occluded(
+            &parent_fragment,
+            &doc
+        ));
+        parent_fragment.is_first_for_node = true;
+        let columns = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(columns, |style| style.column_count = Some(2));
+        doc.append_child(columns, parent);
+        assert!(!borderless_background_can_be_occluded(
+            &parent_fragment,
+            &doc
+        ));
     }
 
     #[test]
@@ -19974,6 +22029,10 @@ mod tests {
         doc.append_child(doc.root(), image_node);
         doc.update_resolved_style(image_node, |style| {
             style.object_fit = ObjectFit::None;
+            // This test exercises an authored override of the Chromium UA
+            // clipping default on replaced elements.
+            style.overflow_x = Overflow::Visible;
+            style.overflow_y = Overflow::Visible;
             style.border_top_left_radius = (12.0, 12.0);
             style.border_top_right_radius = (12.0, 12.0);
             style.border_bottom_right_radius = (12.0, 12.0);
@@ -20603,6 +22662,53 @@ mod tests {
     }
 
     #[test]
+    fn truncated_decoration_retains_the_background_edge_coverage() {
+        let mut document = Document::new();
+        let node = document.create_node(openui_dom::ElementTag::Div);
+        let mut style = ComputedStyle::default();
+        style.update_derived(|style| {
+            style.background_color = Color::from_rgba8(255, 255, 0, 255);
+            style.device_scale_factor = 1.25;
+        });
+        let mut fragment = Fragment::new_box(
+            node,
+            PhysicalSize::new(LayoutUnit::from_i32(84), LayoutUnit::from_f32(67.3125)),
+        );
+        fragment.decoration_slice = Some(openui_layout::DecorationSlice {
+            source_block_offset: LayoutUnit::from_f32(134.6875),
+            source_block_size: LayoutUnit::from_i32(202),
+        });
+        fragment.is_first_for_node = false;
+        // Both directions of CSS snapping retain the primitive's own edge
+        // coverage. BGRA values come from preserved Chromium captures.
+        for (limit, edge_row, edge_color) in [
+            (25.3125, 31, [96, 160, 160, 255]),
+            (25.65625, 32, [64, 192, 192, 255]),
+            (24.65625, 31, [96, 160, 160, 255]),
+        ] {
+            fragment.decoration_paint_block_size = Some(LayoutUnit::from_f32(limit));
+            let mut surface = surfaces::raster_n32_premul((120, 100)).expect("surface");
+            surface
+                .canvas()
+                .clear(skia_safe::Color::from_rgb(128, 128, 128));
+            surface.canvas().scale((1.25, 1.25));
+            paint_box_decoration_background(
+                surface.canvas(),
+                &fragment,
+                &document,
+                &style,
+                PhysicalOffset::zero(),
+                1.0,
+            );
+            let pixels = surface_bytes(&mut surface);
+            let pixel = |x: usize, y: usize| &pixels[(y * 120 + x) * 4..][..4];
+            assert_eq!(pixel(10, edge_row - 1), [0, 255, 255, 255]);
+            assert_eq!(pixel(10, edge_row), edge_color);
+            assert_eq!(pixel(10, edge_row + 1), [128, 128, 128, 255]);
+        }
+    }
+
+    #[test]
     fn sliced_borders_map_first_middle_and_last_physical_block_edges() {
         let mut style = ComputedStyle::default();
         style.update_derived(|computed| computed.border_top_width = 1);
@@ -21081,6 +23187,49 @@ mod tests {
     }
 
     #[test]
+    fn raster_background_keeps_packed_opacity_under_an_ancestor() {
+        let mut doc = Document::new();
+        let parent = doc.create_node(ElementTag::Div);
+        let child = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), parent);
+        doc.append_child(parent, child);
+        let image = doc.register_image_resource(
+            "css-backgrounds/support/1x1-green.png",
+            "image/png",
+            "a236213916dd30bd771a233aa1d66381eabf335bf8885304b75a4e2e370d68ce",
+            include_bytes!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/../../../tools/accountability/data/wpt_assets/sp13p/1x1-green.png"
+            ))
+            .to_vec(),
+        );
+        doc.update_resolved_style(parent, |style| style.opacity = 0.5);
+        doc.update_resolved_style(child, |style| {
+            style
+                .background_layers
+                .push(BackgroundLayer::new(CssImage::Raster(image)));
+        });
+        let size = PhysicalSize::new(LayoutUnit::from_i32(12), LayoutUnit::from_i32(12));
+        let mut fragment = Fragment::new_box(parent, size);
+        fragment.children.push(Fragment::new_box(child, size));
+
+        for scale in [1.0_f64, 1.25, 1.5, 2.0, 3.0] {
+            doc.update_resolved_style(parent, |style| style.device_scale_factor = scale);
+            doc.update_resolved_style(child, |style| style.device_scale_factor = scale);
+            let mut surface = surfaces::raster_n32_premul((40, 40)).expect("surface");
+            surface.canvas().clear(skia_safe::Color::WHITE);
+            surface.canvas().scale((scale as f32, scale as f32));
+            let save_count = surface.canvas().save_count();
+            paint_fragment_tracked(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+            assert_eq!(surface.canvas().save_count(), save_count);
+            let pixels = surface_bytes(&mut surface);
+            // Repeated Chromium captures of the same RGB source at opacity
+            // 0.5 yield #7ebf7e. F16 instead yields #80bf80 at full coverage.
+            assert_eq!(&pixels[(6 * 40 + 6) * 4..][..4], &[126, 191, 126, 255]);
+        }
+    }
+
+    #[test]
     fn opaque_single_pixel_raster_repetition_fills_scaled_canvas() {
         let mut doc = Document::new();
         let image = doc.register_image_resource(
@@ -21151,7 +23300,7 @@ mod tests {
         let mut surface = surfaces::raster_n32_premul((81, 81)).expect("surface");
         surface.canvas().clear(skia_safe::Color::WHITE);
         let save_count = surface.canvas().save_count();
-        paint_fragment(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+        paint_fragment_tracked(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
         assert_eq!(surface.canvas().save_count(), save_count);
 
         let pixels = surface_bytes(&mut surface);
@@ -21195,7 +23344,7 @@ mod tests {
         let mut surface = surfaces::raster_n32_premul((45, 45)).expect("surface");
         surface.canvas().clear(skia_safe::Color::WHITE);
         let save_count = surface.canvas().save_count();
-        paint_fragment(
+        paint_fragment_tracked(
             surface.canvas(),
             &parent_fragment,
             &doc,
@@ -21260,6 +23409,53 @@ mod tests {
             &doc,
             &hidden
         ));
+    }
+
+    #[test]
+    fn button_content_clip_does_not_square_a_coincident_child_edge() {
+        let mut doc = Document::new();
+        let button = doc.create_node(openui_dom::ElementTag::Button);
+        doc.node_mut(button).form_control = Some(FormControlRole::Button);
+        doc.update_resolved_style(button, |style| {
+            style.device_scale_factor = 1.25;
+            style.background_color = Color::from_rgba8(128, 0, 128, 255);
+            style.overflow_x = Overflow::Clip;
+            style.overflow_y = Overflow::Clip;
+        });
+        doc.append_child(doc.root(), button);
+        let child = doc.create_node(openui_dom::ElementTag::Div);
+        doc.update_resolved_style(child, |style| {
+            style.device_scale_factor = 1.25;
+            style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        });
+        doc.append_child(button, child);
+
+        let mut button_fragment = Fragment::new_box(
+            button,
+            PhysicalSize::new(LayoutUnit::from_i32(80), LayoutUnit::from_i32(80)),
+        );
+        button_fragment.offset =
+            PhysicalOffset::new(LayoutUnit::from_i32(70), LayoutUnit::from_i32(20));
+        let mut child_fragment = Fragment::new_box(
+            child,
+            PhysicalSize::new(LayoutUnit::from_i32(40), LayoutUnit::from_i32(40)),
+        );
+        child_fragment.offset = PhysicalOffset::new(LayoutUnit::zero(), LayoutUnit::from_i32(20));
+        button_fragment.children.push(child_fragment);
+
+        let mut surface = surfaces::raster_n32_premul((240, 180)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        surface.canvas().scale((1.25, 1.25));
+        paint_fragment_tracked(
+            surface.canvas(),
+            &button_fragment,
+            &doc,
+            PhysicalOffset::zero(),
+        );
+        let pixels = surface_bytes(&mut surface);
+        let pixel = |x: usize, y: usize| &pixels[(y * 240 + x) * 4..][..4];
+        assert_eq!(pixel(87, 60), [95, 127, 95, 255]);
+        assert_eq!(pixel(88, 60), [0, 128, 0, 255]);
     }
 
     #[test]

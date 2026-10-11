@@ -1,0 +1,52 @@
+{
+  "all_commands_terminal": true,
+  "all_requested_files_fetched": true,
+  "canvas_pixels_generated": 0,
+  "cargo_commands_run": 0,
+  "chromium_tag": "147.0.7727.50",
+  "files": [
+    {
+      "bytes": 45279,
+      "fetched": true,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-image-blending-source-v1444/software_renderer.cc",
+      "sha256": "c3dec17e4de86214cf02d9d550281e11374ef49c005d34e6eb4d0c223c48042a",
+      "source": "components/viz/service/display/software_renderer.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/components/viz/service/display/software_renderer.cc?format=TEXT"
+    },
+    {
+      "bytes": 180894,
+      "fetched": true,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-image-blending-source-v1444/skia_renderer.cc",
+      "sha256": "25acba6a30ac8a26042884aa550f01be848b03143825518c20b83775cd77ba1e",
+      "source": "components/viz/service/display/skia_renderer.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/components/viz/service/display/skia_renderer.cc?format=TEXT"
+    },
+    {
+      "bytes": 13262,
+      "fetched": true,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-image-blending-source-v1444/image_painter.cc",
+      "sha256": "5e4c4934020eb42e3708ff7108ef2632d8a5a83c1e08009d615d75ae1aaff646",
+      "source": "third_party/blink/renderer/core/paint/image_painter.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/core/paint/image_painter.cc?format=TEXT"
+    },
+    {
+      "bytes": 37397,
+      "fetched": true,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-image-blending-source-v1444/graphics_context.cc",
+      "sha256": "225ea1bac7d2dff2a8b5ca3280efc663101821fa1e4545beeb0bb0e7e4d6b96c",
+      "source": "third_party/blink/renderer/platform/graphics/graphics_context.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/graphics/graphics_context.cc?format=TEXT"
+    },
+    {
+      "bytes": 186066,
+      "fetched": true,
+      "path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-image-blending-source-v1444/DEPS",
+      "sha256": "c4a31c05527cbea2f31ab177acaf7f151cd91031d9927ab0b27158e09788cb16",
+      "source": "DEPS",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/DEPS?format=TEXT"
+    }
+  ],
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0
+}

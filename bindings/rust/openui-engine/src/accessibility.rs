@@ -12,7 +12,7 @@ pub use accesskit::{
     Action as AccessibilityPlatformAction, ActionData as AccessibilityActionData,
     ActionRequest as AccessibilityActionRequest, Live as AccessibilityLive,
     Node as AccessibilityNode, NodeId as AccessibilityNodeId, Role as AccessibilityRole,
-    TreeUpdate as AccessibilityTreeUpdate,
+    Toggled as AccessibilityToggled, TreeUpdate as AccessibilityTreeUpdate,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -52,6 +52,23 @@ pub(crate) struct SemanticProperties {
     described_by: Vec<NodeHandle>,
     controls: Vec<NodeHandle>,
     details: Vec<NodeHandle>,
+}
+
+impl SemanticProperties {
+    pub(crate) fn remap_cloned_relations(&mut self, clones: &HashMap<NodeHandle, NodeHandle>) {
+        for targets in [
+            &mut self.labelled_by,
+            &mut self.described_by,
+            &mut self.controls,
+            &mut self.details,
+        ] {
+            for target in targets {
+                if let Some(clone) = clones.get(target) {
+                    *target = *clone;
+                }
+            }
+        }
+    }
 }
 
 impl Engine {
@@ -210,12 +227,47 @@ impl Engine {
         })
     }
 
+    /// Return a complete owned semantic tree without consuming the incremental
+    /// AccessKit update stream. Callers can compare successive snapshots.
+    pub fn accessibility_snapshot(&mut self) -> Result<Vec<(NodeId, Node)>, EngineError> {
+        self.update()?;
+        let mut nodes: Vec<_> = self.build_accessibility_nodes()?.into_iter().collect();
+        nodes.sort_by_key(|(id, _)| id.0);
+        Ok(nodes)
+    }
+
     pub fn perform_accessibility_action(
         &mut self,
         handle: NodeHandle,
         action: AccessibilityAction,
     ) -> Result<ActivationResult, EngineError> {
         self.resolve(handle)?;
+        let disabled = self.is_effectively_disabled(handle)?;
+        if disabled
+            && matches!(
+                action,
+                AccessibilityAction::SetValue(_)
+                    | AccessibilityAction::ReplaceSelectedText(_)
+                    | AccessibilityAction::SetTextSelection { .. }
+            )
+        {
+            return Err(EngineError::NotEditable);
+        }
+        if disabled
+            && matches!(
+                action,
+                AccessibilityAction::Click
+                    | AccessibilityAction::Increment
+                    | AccessibilityAction::Decrement
+                    | AccessibilityAction::Expand
+                    | AccessibilityAction::Collapse
+                    | AccessibilityAction::SetValue(_)
+                    | AccessibilityAction::ReplaceSelectedText(_)
+                    | AccessibilityAction::SetTextSelection { .. }
+            )
+        {
+            return Ok(ActivationResult { changed: vec![] });
+        }
         match action {
             AccessibilityAction::Click => self.activate(handle),
             AccessibilityAction::Focus => {
@@ -232,7 +284,11 @@ impl Engine {
             }
             AccessibilityAction::Expand => {
                 let expanded = true;
-                self.sync_bool_attribute(handle, "open", expanded);
+                if self.element_tag(handle)? == ElementTag::Details {
+                    self.set_attribute(handle, "open", "")?;
+                } else {
+                    self.sync_bool_attribute(handle, "open", expanded);
+                }
                 if let Some(control) = self.controls.get_mut(&handle.index) {
                     control.open = expanded;
                 }
@@ -243,7 +299,11 @@ impl Engine {
             }
             AccessibilityAction::Collapse => {
                 let expanded = false;
-                self.sync_bool_attribute(handle, "open", expanded);
+                if self.element_tag(handle)? == ElementTag::Details {
+                    self.remove_attribute(handle, "open")?;
+                } else {
+                    self.sync_bool_attribute(handle, "open", expanded);
+                }
                 if let Some(control) = self.controls.get_mut(&handle.index) {
                     control.open = expanded;
                 }
@@ -253,6 +313,14 @@ impl Engine {
                 })
             }
             AccessibilityAction::SetValue(value) => {
+                if self
+                    .controls
+                    .get(&handle.index)
+                    .is_some_and(|control| is_editable(control.role))
+                    && !self.can_edit_text(handle)?
+                {
+                    return Err(EngineError::NotEditable);
+                }
                 self.set_control_value(handle, value)?;
                 Ok(ActivationResult {
                     changed: vec![handle],
@@ -269,7 +337,14 @@ impl Engine {
                 Ok(ActivationResult { changed: vec![] })
             }
             AccessibilityAction::ScrollIntoView => {
-                self.scroll_into_view(handle)?;
+                self.scroll_into_view(
+                    handle,
+                    crate::ScrollIntoViewOptions {
+                        block: crate::ScrollAlignment::Nearest,
+                        inline: crate::ScrollAlignment::Nearest,
+                        ..Default::default()
+                    },
+                )?;
                 Ok(ActivationResult { changed: vec![] })
             }
             AccessibilityAction::ScrollBy { delta_x, delta_y } => {
@@ -410,12 +485,28 @@ impl Engine {
             .and_then(|semantic| semantic.role)
             .unwrap_or_else(|| inferred_role(data.tag, control.map(|state| state.role), is_root));
         let mut node = Node::new(role);
-        let mut children: Vec<_> = self
-            .document
-            .children(dom_id)
-            .filter_map(|child| self.node_slots.get(&child))
-            .map(|index| node_id(self.handle_for_slot(*index)))
+        let closed_details =
+            data.tag == ElementTag::Details && self.document.attribute(dom_id, "open").is_none();
+        let mut first_summary_seen = false;
+        let visible_children: Vec<_> = self
+            .children(handle)?
+            .into_iter()
+            .filter(|child| {
+                if !closed_details {
+                    return true;
+                }
+                let is_summary = self
+                    .resolve(*child)
+                    .is_ok_and(|node| self.document.node(node).tag == ElementTag::Summary);
+                if is_summary && !first_summary_seen {
+                    first_summary_seen = true;
+                    true
+                } else {
+                    false
+                }
+            })
             .collect();
+        let mut children: Vec<_> = visible_children.iter().copied().map(node_id).collect();
         if control.is_some_and(|state| is_editable(state.role)) {
             children.insert(0, text_node_id(handle));
         }
@@ -504,14 +595,24 @@ impl Engine {
         if let Some(bounds) = self.accessibility_bounds(dom_id) {
             node.set_bounds(bounds);
         }
+        if self.is_effectively_disabled(handle)? {
+            node.set_disabled();
+        }
         if self.is_focusable(handle) {
             node.add_action(Action::Focus);
             node.add_action(Action::Blur);
         }
         if let Some(control) = control {
-            populate_control_accessibility(&mut node, control);
+            populate_control_accessibility(
+                &mut node,
+                control,
+                self.can_edit_text(handle)?,
+                self.is_effectively_disabled(handle)?,
+            );
         } else if matches!(data.tag, ElementTag::Summary) {
             node.add_action(Action::Click);
+        } else if data.tag == ElementTag::Details {
+            node.set_expanded(!closed_details);
         }
         if data.style.overflow_x != openui_style::Overflow::Visible
             || data.style.overflow_y != openui_style::Overflow::Visible
@@ -556,98 +657,76 @@ impl Engine {
             }
             nodes.insert(id, text);
         }
-        for child in self.children(handle)? {
+        for child in visible_children {
             self.build_accessibility_subtree(child, false, nodes)?;
         }
         Ok(())
     }
 
     fn accessibility_bounds(&self, dom_id: DomNodeId) -> Option<Rect> {
-        self.hit_test
-            .iter()
-            .rev()
-            .find(|entry| entry.node == dom_id)
-            .map(|entry| {
-                let corners = [
-                    entry.local_to_world.map(0.0, 0.0),
-                    entry.local_to_world.map(entry.width, 0.0),
-                    entry.local_to_world.map(0.0, entry.height),
-                    entry.local_to_world.map(entry.width, entry.height),
-                ];
-                let min_x = corners
-                    .iter()
-                    .map(|point| point.0)
-                    .fold(f32::INFINITY, f32::min);
-                let max_x = corners
-                    .iter()
-                    .map(|point| point.0)
-                    .fold(f32::NEG_INFINITY, f32::max);
-                let min_y = corners
-                    .iter()
-                    .map(|point| point.1)
-                    .fold(f32::INFINITY, f32::min);
-                let max_y = corners
-                    .iter()
-                    .map(|point| point.1)
-                    .fold(f32::NEG_INFINITY, f32::max);
-                Rect::new(min_x as f64, min_y as f64, max_x as f64, max_y as f64)
-            })
-    }
-
-    fn scroll_into_view(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
-        let bounds = self.bounds(handle)?;
-        let Some(bounds) = bounds else {
-            return Ok(());
-        };
-        let mut ancestor = self.parent(handle)?;
-        while let Some(node) = ancestor {
-            let style = self.computed_style(node)?;
-            if style.overflow_x != openui_style::Overflow::Visible
-                || style.overflow_y != openui_style::Overflow::Visible
-            {
-                let (x, y) = self.scroll_offset(node)?;
-                self.scroll_to(node, x.max(bounds.x as f64), y.max(bounds.y as f64))?;
-                break;
-            }
-            ancestor = self.parent(node)?;
-        }
-        Ok(())
+        self.node_bounds(dom_id).map(|bounds| {
+            Rect::new(
+                bounds.x as f64,
+                bounds.y as f64,
+                (bounds.x + bounds.width) as f64,
+                (bounds.y + bounds.height) as f64,
+            )
+        })
     }
 }
 
-fn populate_control_accessibility(node: &mut Node, control: &crate::ControlState) {
-    if control.disabled {
+fn populate_control_accessibility(
+    node: &mut Node,
+    control: &crate::ControlState,
+    editable: bool,
+    disabled: bool,
+) {
+    if disabled {
         node.set_disabled();
     }
     match control.role {
-        FormControlRole::Button => node.add_action(Action::Click),
+        FormControlRole::Button => {
+            if !disabled {
+                node.add_action(Action::Click);
+            }
+        }
         FormControlRole::Checkbox | FormControlRole::Radio => {
             node.set_toggled(if control.indeterminate {
                 Toggled::Mixed
             } else {
                 control.checked.into()
             });
-            node.add_action(Action::Click);
+            if !disabled {
+                node.add_action(Action::Click);
+            }
         }
         FormControlRole::TextInput | FormControlRole::TextArea => {
             node.set_value(&control.value);
             if !control.placeholder.is_empty() {
                 node.set_placeholder(&control.placeholder);
             }
-            node.add_action(Action::SetValue);
-            node.add_action(Action::ReplaceSelectedText);
-            node.add_action(Action::SetTextSelection);
+            if editable {
+                node.add_action(Action::SetValue);
+                node.add_action(Action::ReplaceSelectedText);
+            }
+            if !disabled {
+                node.add_action(Action::SetTextSelection);
+            }
         }
         FormControlRole::Select => {
             node.set_value(&control.value);
             node.set_expanded(control.open);
-            node.add_action(Action::Click);
-            node.add_action(Action::Increment);
-            node.add_action(Action::Decrement);
+            if !disabled {
+                node.add_action(Action::Click);
+                node.add_action(Action::Increment);
+                node.add_action(Action::Decrement);
+            }
         }
         FormControlRole::Option => {
             node.set_selected(control.selected);
-            node.add_action(Action::Click);
+            if !disabled {
+                node.add_action(Action::Click);
+            }
         }
         FormControlRole::Range => {
             let value = control.value.parse::<f64>().unwrap_or(control.min);
@@ -655,9 +734,11 @@ fn populate_control_accessibility(node: &mut Node, control: &crate::ControlState
             node.set_min_numeric_value(control.min);
             node.set_max_numeric_value(control.max);
             node.set_numeric_value_step(control.step);
-            node.add_action(Action::Increment);
-            node.add_action(Action::Decrement);
-            node.add_action(Action::SetValue);
+            if !disabled {
+                node.add_action(Action::Increment);
+                node.add_action(Action::Decrement);
+                node.add_action(Action::SetValue);
+            }
         }
         _ => {}
     }
@@ -802,6 +883,27 @@ mod tests {
     }
 
     #[test]
+    fn cloned_subtree_relations_target_cloned_descendants() {
+        let mut engine =
+            Engine::new(crate::ViewportMetrics::from_logical_size(200.0, 100.0, 1.0).unwrap())
+                .unwrap();
+        let group = engine.create_element(ElementTag::Div).unwrap();
+        let label = engine.create_element(ElementTag::Span).unwrap();
+        engine.append_child(group, label).unwrap();
+        engine
+            .set_accessibility_relation(group, AccessibilityRelation::LabelledBy, &[label])
+            .unwrap();
+        let cloned_group = engine.clone_subtree(group).unwrap();
+        let cloned_label = engine.children(cloned_group).unwrap()[0];
+        engine.append_child(engine.root(), cloned_group).unwrap();
+        let snapshot = engine.accessibility_snapshot().unwrap();
+        let cloned_id = engine.accessibility_node_id(cloned_group).unwrap();
+        let label_id = engine.accessibility_node_id(cloned_label).unwrap();
+        let (_, node) = snapshot.iter().find(|(id, _)| *id == cloned_id).unwrap();
+        assert_eq!(node.labelled_by(), &[label_id]);
+    }
+
+    #[test]
     fn unchanged_updates_are_empty_and_actions_share_control_state() {
         let mut engine =
             Engine::new(crate::ViewportMetrics::from_logical_size(200.0, 100.0, 1.0).unwrap())
@@ -818,6 +920,42 @@ mod tests {
         let changed = engine.accessibility_update().unwrap();
         assert_eq!(changed.nodes.len(), 1);
         assert_eq!(changed.nodes[0].1.toggled(), Some(Toggled::True));
+    }
+
+    #[test]
+    fn complete_snapshot_does_not_consume_incremental_updates() {
+        let mut engine =
+            Engine::new(crate::ViewportMetrics::from_logical_size(200.0, 100.0, 1.0).unwrap())
+                .unwrap();
+        let button = mounted_control(&mut engine, ElementTag::Button);
+        engine.set_accessibility_label(button, "Run").unwrap();
+        let id = engine.accessibility_node_id(button).unwrap();
+        let snapshot = engine.accessibility_snapshot().unwrap();
+        assert_eq!(
+            snapshot
+                .iter()
+                .find(|(node_id, _)| *node_id == id)
+                .unwrap()
+                .1
+                .label(),
+            Some("Run")
+        );
+        assert!(engine.accessibility_update().unwrap().tree.is_some());
+
+        engine.set_accessibility_label(button, "Stop").unwrap();
+        let snapshot = engine.accessibility_snapshot().unwrap();
+        assert_eq!(
+            snapshot
+                .iter()
+                .find(|(node_id, _)| *node_id == id)
+                .unwrap()
+                .1
+                .label(),
+            Some("Stop")
+        );
+        let update = engine.accessibility_update().unwrap();
+        assert_eq!(update.nodes.len(), 1);
+        assert_eq!(update.nodes[0].0, id);
     }
 
     #[test]

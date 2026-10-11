@@ -1,0 +1,213 @@
+diff --git a/bindings/rust/openui-layout/src/block.rs b/bindings/rust/openui-layout/src/block.rs
+index 67f1b911..14d50398 100644
+--- a/bindings/rust/openui-layout/src/block.rs
++++ b/bindings/rust/openui-layout/src/block.rs
+@@ -34869,9 +34869,19 @@ mod tests {
+         );
+         for (index, (wrapper, floated)) in wrappers.into_iter().enumerate() {
+             let wrapper_fragment = fragment_for_node(&fragment, wrapper).unwrap();
+-            assert_eq!(wrapper_fragment.float_exclusions.len(), 1, "wrapper {index}");
+-            assert_eq!(wrapper_fragment.offset.top, LayoutUnit::from_i32(index as i32 * 100));
+-            assert_eq!(fragment_for_node(&fragment, floated).unwrap().offset.top, LayoutUnit::zero());
++            assert_eq!(
++                wrapper_fragment.float_exclusions.len(),
++                1,
++                "wrapper {index}"
++            );
++            assert_eq!(
++                wrapper_fragment.offset.top,
++                LayoutUnit::from_i32(index as i32 * 100)
++            );
++            assert_eq!(
++                fragment_for_node(&fragment, floated).unwrap().offset.top,
++                LayoutUnit::zero()
++            );
+         }
+         assert_eq!(fragment.size.height, LayoutUnit::from_i32(160));
+     }
+diff --git a/bindings/rust/openui-layout/src/inline/items_builder.rs b/bindings/rust/openui-layout/src/inline/items_builder.rs
+index b6c55dcf..401177b6 100644
+--- a/bindings/rust/openui-layout/src/inline/items_builder.rs
++++ b/bindings/rust/openui-layout/src/inline/items_builder.rs
+@@ -1347,9 +1347,6 @@ impl<'a> InlineItemsBuilder<'a> {
+         let child_direction = style.direction.writing_direction(style.writing_mode);
+         let is_orthogonal =
+             child_direction.is_horizontal() != self.inline_writing_direction.is_horizontal();
+-        let deterministic_text_profile = style.font_family.families.iter().any(|family| {
+-            matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
+-        });
+         let own_inline_edges = if child_direction.is_horizontal() {
+             style.effective_border_left() as f32
+                 + style.effective_border_right() as f32
+@@ -1529,14 +1526,13 @@ impl<'a> InlineItemsBuilder<'a> {
+             )
+         })
+         .flatten();
+-        let has_consecutive_floats = deterministic_text_profile
+-            && self
+-                .doc
+-                .children(node_id)
+-                .filter(|child_id| self.doc.node(*child_id).style.float != Float::None)
+-                .take(2)
+-                .count()
+-                >= 2;
++        let has_consecutive_floats = self
++            .doc
++            .children(node_id)
++            .filter(|child_id| self.doc.node(*child_id).style.float != Float::None)
++            .take(2)
++            .count()
++            >= 2;
+         let mut flex_intrinsic_min = None;
+         let intrinsic_max = if specified_intrinsic.is_some() {
+             specified_intrinsic
+@@ -1605,22 +1601,17 @@ impl<'a> InlineItemsBuilder<'a> {
+             .to_f32();
+             (size > 0.0).then_some(size)
+         } else {
+-            // Generated builders use the complete flattened intrinsic stream
+-            // for atomic shrink-to-fit sizing. Besides accounting for floats,
++            // All native atomic boxes use the flattened intrinsic stream
++            // for shrink-to-fit sizing. Besides accounting for floats,
+             // this trims collapsible leading/trailing indentation whitespace
+             // around inline children instead of treating it as authored width.
+-            if deterministic_text_profile {
+-                let sizes = crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(
+-                    self.doc, node_id,
+-                );
+-                // InlineItem::intrinsic_inline_size is a content-box measure;
+-                // block_layout applies this atomic element's own edges.
+-                let max = (sizes.max.to_f32() - own_inline_edges).max(0.0);
+-                if max > 0.0 {
+-                    Some(max)
+-                } else {
+-                    self.compute_intrinsic_inline_size(node_id)
+-                }
++            let sizes =
++                crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(self.doc, node_id);
++            // InlineItem::intrinsic_inline_size is a content-box measure;
++            // block_layout applies this atomic element's own edges.
++            let max = (sizes.max.to_f32() - own_inline_edges).max(0.0);
++            if max > 0.0 {
++                Some(max)
+             } else {
+                 self.compute_intrinsic_inline_size(node_id)
+             }
+@@ -1636,14 +1627,6 @@ impl<'a> InlineItemsBuilder<'a> {
+                 // from its items. A zero endpoint lets an unwrapped inline
+                 // flex row shrink below the sum of its definite item widths.
+                 flex_intrinsic_min.unwrap_or(0.0)
+-            } else if !deterministic_text_profile {
+-                // Builders outside the pinned fallback profile retain the
+-                // legacy single intrinsic measure, which was capped directly
+-                // by the available size. A zero min-content endpoint makes the
+-                // tuple-based shrink-to-fit equation reproduce that behavior,
+-                // while regenerated builders opt into the complete min/max
+-                // algorithm below.
+-                0.0
+             } else if is_orthogonal || has_consecutive_floats {
+                 // Preserve orthogonal atomic paths' established completed-
+                 // fragment measure and zero min-content fallback.
+diff --git a/bindings/rust/openui-layout/src/intrinsic_sizing.rs b/bindings/rust/openui-layout/src/intrinsic_sizing.rs
+index 7f967d14..d7ea9542 100644
+--- a/bindings/rust/openui-layout/src/intrinsic_sizing.rs
++++ b/bindings/rust/openui-layout/src/intrinsic_sizing.rs
+@@ -560,6 +560,9 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
+ 
+                 let mut run_start = 0usize;
+                 let mut run_start_char = 0usize;
++                // A forced newline starts a separately snapped line. Soft
++                // breaks retain cumulative advance rounding within that line.
++                let mut line_start_char = 0usize;
+                 let chars: Vec<(usize, char)> = text.char_indices().collect();
+                 for (index, &(byte_index, ch)) in chars.iter().enumerate() {
+                     let char_end = index + 1;
+@@ -576,8 +579,11 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
+                     }
+ 
+                     if byte_index > run_start {
+-                        let max_width = intrinsic_text_width(shape.width_for_range(0, index))
+-                            - intrinsic_text_width(shape.width_for_range(0, run_start_char));
++                        let max_width =
++                            intrinsic_text_width(shape.width_for_range(line_start_char, index))
++                                - intrinsic_text_width(
++                                    shape.width_for_range(line_start_char, run_start_char),
++                                );
+                         let width = max_width;
+                         min_segment = min_segment + pending_min_collapsible_space;
+                         pending_min_collapsible_space = LayoutUnit::zero();
+@@ -623,9 +629,13 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
+                             &mut max_content,
+                             &mut pending_collapsible_space,
+                         );
++                        line_start_char = char_end;
+                     } else if is_break_all_character {
+-                        let max_width = intrinsic_text_width(shape.width_for_range(0, char_end))
+-                            - intrinsic_text_width(shape.width_for_range(0, index));
++                        let max_width =
++                            intrinsic_text_width(shape.width_for_range(line_start_char, char_end))
++                                - intrinsic_text_width(
++                                    shape.width_for_range(line_start_char, index),
++                                );
+                         let width = max_width;
+                         min_segment = min_segment + pending_min_collapsible_space;
+                         pending_min_collapsible_space = LayoutUnit::zero();
+@@ -650,8 +660,11 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
+                         soft_break_after_pending_edges = false;
+                         last_content_was_text = true;
+                     } else {
+-                        let max_width = intrinsic_text_width(shape.width_for_range(0, char_end))
+-                            - intrinsic_text_width(shape.width_for_range(0, index));
++                        let max_width =
++                            intrinsic_text_width(shape.width_for_range(line_start_char, char_end))
++                                - intrinsic_text_width(
++                                    shape.width_for_range(line_start_char, index),
++                                );
+                         let width = max_width;
+                         if collapses {
+                             pending_collapsible_space = max_width;
+@@ -683,9 +696,11 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
+                 }
+ 
+                 if run_start < text.len() {
+-                    let max_width =
+-                        intrinsic_text_width(shape.width_for_range(0, shape.num_characters))
+-                            - intrinsic_text_width(shape.width_for_range(0, run_start_char));
++                    let max_width = intrinsic_text_width(
++                        shape.width_for_range(line_start_char, shape.num_characters),
++                    ) - intrinsic_text_width(
++                        shape.width_for_range(line_start_char, run_start_char),
++                    );
+                     let width = max_width;
+                     min_segment = min_segment + pending_min_collapsible_space;
+                     pending_min_collapsible_space = LayoutUnit::zero();
+diff --git a/bindings/rust/openui/examples/native_intrinsic_sizes.rs b/bindings/rust/openui/examples/native_intrinsic_sizes.rs
+index c23a5ac2..9f6869c2 100644
+--- a/bindings/rust/openui/examples/native_intrinsic_sizes.rs
++++ b/bindings/rust/openui/examples/native_intrinsic_sizes.rs
+@@ -8,15 +8,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     let scale: f64 = args.next().ok_or("device scale required")?.parse()?;
+     let selected_cases = args
+         .next()
+-        .map(|arg| -> Result<std::ops::Range<usize>, Box<dyn std::error::Error>> {
+-            match arg.split_once(':') {
+-                Some((start, end)) => Ok(start.parse()?..end.parse()?),
+-                None => {
+-                    let index: usize = arg.parse()?;
+-                    Ok(index..index.checked_add(1).ok_or("case index overflow")?)
++        .map(
++            |arg| -> Result<std::ops::Range<usize>, Box<dyn std::error::Error>> {
++                match arg.split_once(':') {
++                    Some((start, end)) => Ok(start.parse()?..end.parse()?),
++                    None => {
++                        let index: usize = arg.parse()?;
++                        Ok(index..index.checked_add(1).ok_or("case index overflow")?)
++                    }
+                 }
+-            }
+-        })
++            },
++        )
+         .transpose()?;
+     if args.next().is_some()
+         || selected_cases

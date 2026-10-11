@@ -1,0 +1,56 @@
+{
+  "all_38400_chromium_bounds_unchanged": true,
+  "all_600_chromium_png_hashes_unchanged": true,
+  "all_600_difference_analyses_unchanged": true,
+  "all_600_native_png_hashes_unchanged": true,
+  "artifact_bytes": 75578,
+  "artifact_count": 3,
+  "artifacts": [
+    {
+      "bytes": 65783,
+      "decompressed_bytes": 1995415,
+      "decompressed_sha256": "cecd0b7a36fce58aab195b256082a42103265e65c2ae534d42eda2404a365e38",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v6/native-width-image-audit.json.gz",
+      "sha256": "5dd486986eabe888b69ea2a9242bbca7cf579779bfdb266a89ab0745a85ad461",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-width-image-audit-v1761.json"
+    },
+    {
+      "bytes": 4329,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v6/native-width-image-audit.py",
+      "sha256": "8b24877c3a7097f282d0063fb4982863a5b36ae7dd208fc8411986deb5144b61",
+      "source_path": "/tmp/openui-native-width-image-audit-v1761.py"
+    },
+    {
+      "bytes": 5466,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v6/preserver.py",
+      "sha256": "54a44e984b9378363a1c8a3e4dc8be7866085c05a7965d6bcb2acd1eb52fb672",
+      "source_path": "/tmp/openui-native-followup-results-preserve-v1763.py"
+    }
+  ],
+  "candidate_applied_to_umbrella": false,
+  "corrected_geometry_states": 3840,
+  "exact_width_delta": 0.015625,
+  "full_original_and_expanded_results_still_required": true,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "pixel_tolerance": 0,
+  "prior_source": {
+    "clean": true,
+    "commit": "41b616c3be5224b074e9d06ba6aa963731a1b265",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "2f5e480b3a582fbc34561d02b44cabaeb658d11f8a247381c8f5e56cae253c59",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "727da10e580c9439f5db83d36bfc3e2340168207",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "7a65e6a0ddd0eb28f3b8a542418b1aab409f4c4d88a6b00efaf2aece46a22ccd",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

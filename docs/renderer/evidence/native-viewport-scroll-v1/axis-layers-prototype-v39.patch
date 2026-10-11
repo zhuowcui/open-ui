@@ -1,0 +1,70 @@
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index d749b9a4..5e33c406 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -11151,6 +11151,28 @@ pub(crate) fn paint_viewport_scrollbars(
+         } else {
+             scrollport.content_rect.height().to_f32()
+         };
++        let maximum = (total - length).max(0.0);
++        if maximum == 0.0 {
++            // Chromium chooses the scrollbar layer independently per axis.
++            // A forced bar with no range remains an ordinary picture even
++            // when the other axis uses a PaintedScrollbarLayer. Its adjacent
++            // corner shares that picture's raster and composition transform.
++            let outer = if horizontal {
++                Rect::from_xywh(0.0, client_height, length, thickness)
++            } else {
++                Rect::from_xywh(client_width, 0.0, thickness, length)
++            };
++            paint_fluent_scrollbar_picture(
++                canvas,
++                outer,
++                horizontal,
++                scrollport.horizontal_scrollbar && scrollport.vertical_scrollbar,
++                style.device_scale_factor as f32,
++                &track,
++                &thumb,
++            );
++            continue;
++        }
+         let scroll = if horizontal {
+             if scrollport.negative_x {
+                 node.scroll_left - scrollport.content_rect.x().to_f32()
+@@ -11164,7 +11186,6 @@ pub(crate) fn paint_viewport_scrollbars(
+                 node.scroll_top
+             }
+         };
+-        let maximum = (total - length).max(0.0);
+         let thumb_length = ((length / total.max(1.0) * track_length).round())
+             .max((17.0 * proportion).round())
+             .min(track_length);
+@@ -11233,7 +11254,11 @@ pub(crate) fn paint_viewport_scrollbars(
+             canvas.restore();
+         }
+     }
+-    if scrollport.horizontal_scrollbar && scrollport.vertical_scrollbar {
++    if scrollport.horizontal_scrollbar
++        && scrollport.vertical_scrollbar
++        && scrollport.content_rect.width().to_f32() > client_width
++        && scrollport.content_rect.height().to_f32() > client_height
++    {
+         canvas.draw_rect(
+             Rect::from_xywh(client_width, client_height, thickness, thickness),
+             &track,
+@@ -11261,8 +11286,13 @@ fn paint_fluent_scrollbar_picture(
+     } else {
+         outer.height()
+     };
+-    let width = outer.width();
+-    let height = outer.height() + if corner { thickness } else { 0.0 };
++    let width = outer.width() + if corner && horizontal { thickness } else { 0.0 };
++    let height = outer.height()
++        + if corner && !horizontal {
++            thickness
++        } else {
++            0.0
++        };
+     let physical_width = (width * scale).ceil().max(1.0) as i32;
+     let physical_height = (height * scale).ceil().max(1.0) as i32;
+     let Some(mut surface) = surfaces::raster_n32_premul((physical_width, physical_height)) else {

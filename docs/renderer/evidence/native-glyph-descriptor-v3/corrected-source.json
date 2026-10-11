@@ -1,0 +1,26 @@
+{
+  "absent_test_api_corrected": true,
+  "baseline_commit": "54bcdeab5b021fc7899ca3e25868ab39182aee62",
+  "cargo_commands_run": 0,
+  "correction_is_test_only": true,
+  "javascript_executed_by_openui": false,
+  "native_build_guards_and_pixels_unexecuted": true,
+  "new_release_states_admitted": 0,
+  "parent": "2f53d5de2e6fce9b4c9dc2fbc94fcfc763544b23",
+  "patch_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-descriptor-corrected-source-v1754.patch",
+  "patch_sha256": "b6930bb09120979891e966b2436a51259a56815a4e26e52fbf4c68cf271340cc",
+  "pixel_tolerance": 0,
+  "production_code_unchanged_from_previous_candidate": true,
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "root": "/dev/shm/openui-native-glyph-descriptor-corrected-2f53d5de-v1754",
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "fce42e086dee48f6e2d725b2b4f3bb8815e79e5c",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "d84c1b9071a91e636207ff0c18db73dce4fbe9282a42ea82cb747a22b8ecc2a2",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

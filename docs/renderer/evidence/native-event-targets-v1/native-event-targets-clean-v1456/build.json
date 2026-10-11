@@ -1,0 +1,189 @@
+{
+  "all_commands_terminal": true,
+  "build_identity": {
+    "schema_version": 1,
+    "skia_gn_args": "extra_cflags += [ \"-DSK_SUPPORT_LEGACY_CONIC_CHOP\", \"-DSK_ENABLE_LEGACY_SHADERCONTEXT\", \"-DSK_USE_FREETYPE_EMBOLDEN\", \"-DSK_GAMMA_EXPONENT=1.2\", \"-DSK_GAMMA_CONTRAST=0.2\", \"-fno-strict-aliasing\", \"-msse3\", \"--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot\" ]",
+    "source": {
+      "clean": true,
+      "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "f9a60849daecfc54884266c3fdedca48d0de32d02066ae7c9b72881d1eef9a3e",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "cargo_target_dir": "/mnt/e/openui-v02-cargo-c73754e2/target",
+  "probe_sha256": "6f4397ecad6065fa68c0fbf7436c13974975a5ce085da282fc4fbbd8fda4197f",
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f9a60849daecfc54884266c3fdedca48d0de32d02066ae7c9b72881d1eef9a3e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f9a60849daecfc54884266c3fdedca48d0de32d02066ae7c9b72881d1eef9a3e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-text",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui",
+        "-p",
+        "openui-macros",
+        "-p",
+        "hello",
+        "-p",
+        "counter",
+        "-p",
+        "todo",
+        "-p",
+        "dashboard",
+        "-p",
+        "framework-test",
+        "-p",
+        "pixel-compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "ae8ad87ab9dd8807a3bfdce728bf044dbd4e152513cddb34d07db5b820cd927f",
+      "name": "clean-workspace",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--workspace",
+        "--locked",
+        "--features",
+        "openui-ffi/linux"
+      ],
+      "disk_guard_triggered": false,
+      "failed": 0,
+      "ignored": 13,
+      "known_unattributed_private_text_test_executed": false,
+      "log_sha256": "a4b610021164da5eb1097665573192b1fa67f62f32cba1a42d9ef886ee571729",
+      "name": "workspace",
+      "observed_exit_code": 0,
+      "passed": 8536
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/native_event_targets",
+      "binary_sha256": "d3d6248ff459eea0d6096a72140b41d9a95b270b11d03b6cab7bb1371b504392",
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "-p",
+        "openui",
+        "--example",
+        "native_event_targets"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "5079f7c6c0e85260749d2cf6cf64364b2a96db6e11882f905692256b4d314899",
+      "name": "event-build",
+      "observed_exit_code": 0
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/native_float_colors",
+      "binary_sha256": "b21f03154edc4b456a7c5b6bd6053c75c7d3a97037f0d1e765083968227e6358",
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "-p",
+        "openui",
+        "--example",
+        "native_float_colors"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "7a769a483bb8e081cc3b8e4514e0ed9929c5fc2d6d36d7744e445d6db5f28811",
+      "name": "float-build",
+      "observed_exit_code": 0
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/libopenui_ffi.so",
+      "binary_sha256": "34e6510bd983f14d63d6d66b2b367cc9b6d28845dff18fe731323f7b78469689",
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "-p",
+        "openui-ffi"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "39fefab20abf1049700b51da020036aec3c23d63afe184a323a8b50dfd94c32e",
+      "name": "ffi-build",
+      "observed_exit_code": 0
+    },
+    {
+      "binary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/pixel_compare",
+      "binary_sha256": "8f814517ea25a30d64815177e22fdd5d1630e79bb013f05db658f6410a54f869",
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "-p",
+        "pixel-compare",
+        "--bin",
+        "pixel_compare"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "07ae303ced1e8069b014b9a761fbb0ead4802cdf540984d6fb3a0021afbbaa0b",
+      "name": "pixel-build",
+      "observed_exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "/dev/shm/openui-native-event-targets-43706e83/tools/ffi/verify_abi.py",
+        "--library",
+        "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/libopenui_ffi.so"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "ddaa80f951dcac73fbd6e4b31520363fc6018e7190431acb89c643f9940fb2c1",
+      "name": "ffi-consumers",
+      "observed_exit_code": 0
+    }
+  ],
+  "workspace_packages_cleaned": 18
+}

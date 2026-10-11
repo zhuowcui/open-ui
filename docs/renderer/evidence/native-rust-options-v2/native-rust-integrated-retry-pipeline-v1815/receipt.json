@@ -1,0 +1,11 @@
+{
+  "all_commands_terminal": true,
+  "failure": "KeyError: link-c",
+  "images_generated": 0,
+  "observed_exit_code": 1,
+  "probe_sha256": "676bdf71730bbf4144b3e110aed899078043b57b67da3bb6abffb233508dc28e",
+  "release_qualification": false,
+  "schema_version": 1,
+  "stage": "preflight-binary-inventory",
+  "worker_processes_started": 0
+}

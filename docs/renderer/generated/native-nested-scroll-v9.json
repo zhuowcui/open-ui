@@ -1,0 +1,312 @@
+{
+  "actual_matrix_exits": {
+    "expanded": 1,
+    "focused": 0,
+    "original": 1,
+    "primitive": 0
+  },
+  "addition_cases": {
+    "exact_at_all_four_profiles": 200,
+    "failed": {
+      "wpt/css_display/display-contents-dynamic-fieldset-legend-001": [
+        {
+          "mismatched_pixels": 0,
+          "profile": "legacy-800x600@1",
+          "status": "exact"
+        },
+        {
+          "mismatched_pixels": 0,
+          "profile": "mobile-375x667@2",
+          "status": "exact"
+        },
+        {
+          "mismatched_pixels": 1315,
+          "profile": "desktop-1280x720@1.25",
+          "status": "different"
+        },
+        {
+          "mismatched_pixels": 0,
+          "profile": "desktop-1920x1080@1.5",
+          "status": "exact"
+        }
+      ]
+    },
+    "total": 201
+  },
+  "all_original_and_chromium_invariants_audited": true,
+  "artifacts": [
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-clean-v550/build.json",
+      "sha256": "c60bdaab98163fb112635a6652c2ee43062938466407055139fff691eaf0302c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-workspace-v549/receipt.json",
+      "sha256": "97b9e0cdc01c1eb1e7eb8bd4f36248d41d6c4d35fdb1488235287c374d20e73a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v543.json",
+      "sha256": "6b4db97a37be1600922f39b95c2610914ab47c4c879c4b07fc98fbf366184567"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-python-v555/receipt.json",
+      "sha256": "8a0b0ae88b427800e0cd1abbe4ddd0a9f559cf3e4df982212a07381ce719c7cc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-ffi-v551/receipt.json",
+      "sha256": "65af97b4ab782490898a28fa7ec6d353d04e8b9bccb0e1a75b1dd620e19d3844"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-reveal-v552/comparison.json",
+      "sha256": "9eb2f60b9aa6588dc27cc4da7c8bbe62892e06dc33ab1d4b9bda8f4cd9c9a3c3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-selection-audit-v567.json",
+      "sha256": "f91fb7ef27315cd2d6ff43705c8e47ab326ecc25a271199ca8b5c235c60e3e8a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-raster-audit-v570.json",
+      "sha256": "c742b4f55297c75594432eab6f8696562ffe0423f84a9b334b6bdeef19a233cc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-guards-v568.json",
+      "sha256": "a64facd2611da30a9715718589bc9b2d77b662d8b4d91a39b8d52304312c621b"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-cache-failure-v563.json",
+      "sha256": "0bf4cb17f4d3182b9ac028aecdb97b610412f833e870ac42d5d8dda16d8cb932"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/renderer-cache-copy-v564.json",
+      "sha256": "b42e0ecd579ef6318370fec6ca626a6e102b77689868ee24cdbf1ca9f88fb1ed"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-clean-full-v566/full-summary.json",
+      "sha256": "af82b95948466c278b0723081644fcab3c2ea724696d12df594d69fb4b389375"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-clean-expanded-v566/expanded-summary.json",
+      "sha256": "b6f631a11a5790765df0790f567ed74c23bc92567b3f34ff0a4fe8dbc56e0dac"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-full-exit-v566.json",
+      "sha256": "cad5e6cc1d5adeb33f047bebcb4352d84a3f19d3a1e8658adf966a862264953f"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-expanded-exit-v566.json",
+      "sha256": "c06fdc573325e5e25e34bf1d2c5a06020058e3febcf2066d4bfe781b594d430e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-umbrella-complete-audit-v595.json",
+      "sha256": "a1c173ac89002f47c2bccd676befa506214aa0b3945e30c2c967d9ef01053c14"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-v544.json",
+      "sha256": "28e258c51aa4496ac862acbb340ce189156834ecc892965604553f7fcb774b5d"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-hardening-complete-v578.json",
+      "sha256": "7c844afaaeeb58225e9e248cef5124b8b4cad7740b0eba5f9ab36f421537295a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-hardening-address-v576/receipt.json",
+      "sha256": "5f61407376460934259c12be3402160966e217855c3ce72ddea9045d612ea88c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-hardening-address-v576/job.log",
+      "sha256": "0633ec55918313c3af6b02f015f43b7d3eab471a69cd3be5c3f348329dc065f3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-hardening-leak-v572/receipt.json",
+      "sha256": "8f787270763257f68181a35f593e9f84ceb5c73de5965ae06b2932be1ffd0c47"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-hardening-leak-v572/job.log",
+      "sha256": "d600eae59ce398faa5c5f2da6c7a598268e4bc492a97bebb139cf558180155ac"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-hardening-fuzz-v579/receipt.json",
+      "sha256": "3c0ff97e2195735c4fc0c6de40c2530a4d455546710c2a782f0719bbe371f4ad"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-hardening-fuzz-v579/job.log",
+      "sha256": "ee3a86a3cbe90ffcff4d7d32de57a283df3c41988b75c8dbe81f4b6cb5ea48a7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-hardening-fuzz-review-v581/review.json",
+      "sha256": "6fbc1cc44925d9affed30239fc979004558bb0fad7697229a6102abc903af15e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-hardening-fuzz-review-v586.json",
+      "sha256": "eadc1b1df35d6067a7fc42fa6d1511cc8e1d8181d446f061b3eafbf62be51cea"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-fontconfig-ownership-review-v593.json",
+      "sha256": "f003af1e128834a0e84b07a872fc2805bd085eb1464a8fe36a717bff0670adab"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-font-cache-lifetime-candidate-v594/receipt.json",
+      "sha256": "2d7c268917f493d60fe095267890995b45deab0da1db5293b7abc828258004e7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-fontconfig-lifecycle-v580/receipt.json",
+      "sha256": "03be19da74b32b0bf1b75a09823bba1d2f921439230f27cd6c0e1abec248d41a"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-fontconfig-native-v583/receipt.json",
+      "sha256": "da211dec9dd50b3b148ff3ea285b08994f5bbff055ed02b29250e3384b72f14e"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-fontconfig-native-v584/receipt.json",
+      "sha256": "5b100b6b6293d4a5a29c1c8bfd3f5bd081b55d0fe1d5a6cfa8139752e23afc7c"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-fontconfig-native-v585/receipt.json",
+      "sha256": "893951e6dd944823d66c125f93723a6fd4134f82d623618714e4b361c10c4460"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-fontconfig-native-div-v587/receipt.json",
+      "sha256": "83e32c1877dcbcd43a7476ded65805e39a51cfd44552cb04528c120764103f38"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-fontconfig-skia-v588/receipt.json",
+      "sha256": "3d93a6ee215b584e5be7225700fbb668ab4ae8122b799c33c6920dea831f16e0"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-fontconfig-skia-metrics-v589/receipt.json",
+      "sha256": "bc35781d5aa7e8fc3deac0669f12e77685ce1e5d59d2d58c6d5fcf8614f1c0cc"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-fontconfig-skia-purge-v590/receipt.json",
+      "sha256": "3f8b1053ba2a081674f940197718f8f76636cf14f6425b2c495d6beb7595f8f3"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-fontconfig-skia-baseline-v591/receipt.json",
+      "sha256": "646ff5af7419bad44e3375764b00bda1a4471aa85ac088fc3c8c446a1e2b7ab7"
+    },
+    {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-fontconfig-skia-font-purge-v592/receipt.json",
+      "sha256": "eec5e0f5d24de59e05e56e7195428eb6b066be4edc0af52bfadf2a063f38a771"
+    }
+  ],
+  "delta_vs_backing": {
+    "changed": 20,
+    "exact_losses": 0,
+    "improved": 20,
+    "new_exact": 15
+  },
+  "delta_vs_svg": {
+    "changed": 14,
+    "exact_losses": 0,
+    "new_exact": 9,
+    "same_mismatch_count": 1,
+    "worsened_already_failing": 4
+  },
+  "focused_exact": "640/640",
+  "font_cache_candidate": {
+    "applied_to_umbrella": false,
+    "cpp_leak_and_retirement_reproduced": true,
+    "retained_scene_and_concurrent_lifetime_audit": "required",
+    "rust_compiled": false,
+    "source": "418f7242aa1eebfc1cee9eb50118aa2fcc3c606c"
+  },
+  "javascript_executed_by_openui": false,
+  "known_correction": "Fuzz operation decoding in v581 was wrong; v586 supersedes it. Input creates a div and requests a scene.",
+  "manual_hardening": {
+    "failed": [
+      "native-sanitizers (address)",
+      "native-sanitizers (leak)",
+      "fuzz-smoke"
+    ],
+    "not_run_fuzz_targets": [
+      "event_sequences",
+      "resources",
+      "animation_sampling"
+    ],
+    "passed": [
+      "conformance-and-platform",
+      "miri-handles",
+      "c-undefined-sanitizer",
+      "msrv"
+    ],
+    "run": 37131163576,
+    "source": "d174ea0b397a65dae76691db4b72c750f02b9914"
+  },
+  "open_work": [
+    "Original1590 and expanded1591 pixel differences, residual ownership and reproducers",
+    "Native reveal scroll-margin/padding, broad alignment and writing-mode behavior",
+    "785 native scroll and744 SVG diagnostic differences",
+    "General replacement of legacy contour sample calibrations",
+    "Font cache lifetime source fix and complete sanitizer/fuzz reruns",
+    "Compositor,3D,performance,accessibility,physical lab,packaging,signing and approved publication"
+  ],
+  "original_and_expanded": {
+    "expanded": {
+      "different": 1591,
+      "errors": 0,
+      "exact": 22137,
+      "profile_result_sha256": "c3bfba62f6e54cf95c5a95dda03fa3bf5b129855d1ba4334da350420e68f9605",
+      "total": 23728
+    },
+    "full": {
+      "different": 1590,
+      "errors": 0,
+      "exact": 21334,
+      "profile_result_sha256": "8108196f038bf65e7038a38b9617cbc272b66c25169f7289a2e8c8a75b15eb27",
+      "total": 22924
+    }
+  },
+  "original_and_expanded_gate": "fail",
+  "own_native_reveal": {
+    "endpoint_images_exact": "16/20",
+    "geometry_exact": "30/30",
+    "remaining": "four scale1.25 endpoints, each52 differing pixels"
+  },
+  "own_non_pixel": {
+    "c_exports": 112,
+    "c_headless_consumers_passed": 10,
+    "cpp_headless_consumers_passed": 4,
+    "python_tests_passed": 249,
+    "readonly_checks_passed": 10,
+    "workspace_failed": 0,
+    "workspace_ignored": 13,
+    "workspace_passed": 8523
+  },
+  "pixel_target": "pinned Chromium only",
+  "previous_immutable_index": {
+    "path": "docs/renderer/generated/native-nested-scroll-v8.json",
+    "sha256": "88d6ba5f1e947a2767d4943fad98826d15eb6c9095d8679bd0fb9886cf49d101"
+  },
+  "primitive_exact": "960/960",
+  "release_qualification": false,
+  "residual_original_test_ids": 882,
+  "reviewable_evidence": [
+    {
+      "path": "docs/renderer/evidence/native-font-cache-v1/font-selection.cc",
+      "sha256": "8fd905743b65a7423b9ae1b55479193a9efe5493186c0e6d1bce16d9ab27743f"
+    },
+    {
+      "path": "docs/renderer/evidence/native-font-cache-v1/font-metrics-leak.cc",
+      "sha256": "62ed1eee4c0248fc96b68cc7d948cf52d3fff6eb17a04ad7a9b2be9b0ac3f1fd"
+    },
+    {
+      "path": "docs/renderer/evidence/native-font-cache-v1/font-metrics-retirement.cc",
+      "sha256": "d6434b1b1c2ee009cd4ae2cbc5e84af9171efef25b8a71ed0798e79a0537e105"
+    },
+    {
+      "path": "docs/renderer/evidence/native-font-cache-v1/native-font-cache-lifetime-v1.patch",
+      "sha256": "b1b69fd255c20020be9ce0f7966044342e5125afd2307b34ebdd82de68cdf2ac"
+    },
+    {
+      "path": "docs/renderer/evidence/native-font-cache-v1/tree-mutations-leak-input.bin",
+      "sha256": "edfd2713ee5680062680cadd6b1efe88101bc3592b0f21012eedcebbf05408a0"
+    }
+  ],
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "d174ea0b397a65dae76691db4b72c750f02b9914",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "4f26203f35fb3884118cfe2d701f758c943b6916bdb36e22118b781bb453ee32",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

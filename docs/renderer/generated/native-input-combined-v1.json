@@ -1,0 +1,496 @@
+{
+  "all_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "c_abi": {
+    "c_consumers": 16,
+    "cpp_consumers": 10,
+    "current_exports": 116,
+    "current_layouts": 32,
+    "headless_tests": 48
+  },
+  "chromium_font_input_audit": {
+    "conclusion": "The capture identity does not individually record native fontconfig files or inherited environment inputs; this audit does not prove any of those changed or caused the pixel discrepancy.",
+    "configuration_files": 60,
+    "reference_rewritten": false,
+    "runtime_cause_proved": false
+  },
+  "chromium_repeat": {
+    "captures": 16,
+    "cases": 2,
+    "reference_rewritten": false,
+    "runtime_cause_proved": false,
+    "same_input_nondeterminism_observed": true,
+    "variants": {
+      "wpt/css2_floats/float-nowrap-3": 2,
+      "wpt/css2_floats/float-nowrap-4-ref2": 2
+    }
+  },
+  "combined_native_runtime_verified": true,
+  "combined_source_pixel_qualification": false,
+  "combined_static_nonregression_verified": true,
+  "comparisons": {
+    "expanded": {
+      "baseline_summary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2605/trial/expanded-matrix/expanded-summary.json",
+      "baseline_summary_sha256": "b523ccb49a4b03238c8e5408dcd757ad75693d68c006087bdf1ac3ce3d33a2d3",
+      "changes": [],
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "nine_invariants_preserved": true,
+      "rows_audited": 23728
+    },
+    "focused": {
+      "baseline_summary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2605/trial/focused-matrix/focused-summary.json",
+      "baseline_summary_sha256": "e9aaa1cac338d3fb48f768383d20084ba6c0877267a157ba10d99a1303ad5732",
+      "changes": [],
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "nine_invariants_preserved": true,
+      "rows_audited": 640
+    },
+    "full": {
+      "baseline_summary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2605/trial/full-matrix/full-summary.json",
+      "baseline_summary_sha256": "7196077d2f200aaa74ced29b0bfcdf4e58a8a4621144cf59775763466f4df405",
+      "changes": [],
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "nine_invariants_preserved": true,
+      "rows_audited": 22924
+    },
+    "primitive": {
+      "baseline_summary": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2605/trial/primitive-matrix/primitive-summary.json",
+      "baseline_summary_sha256": "8baef1700ef5662de57f2b58bd8d1e70e14f73cca38cc862a379d7242f8a94ea",
+      "changes": [],
+      "fields": [
+        "openui_png_sha256",
+        "openui_rgba_sha256",
+        "chromium_png_sha256",
+        "chromium_rgba_sha256",
+        "chromium_oracle_identity_sha256",
+        "chromium_oracle_rgba_sha256",
+        "mismatched_pixels",
+        "status",
+        "diff_signature"
+      ],
+      "nine_invariants_preserved": true,
+      "rows_audited": 960
+    }
+  },
+  "controls_previous_evidence": "docs/renderer/generated/native-controls-focus-v2.json",
+  "hosted_hardening": {
+    "all_jobs_terminal": true,
+    "failed": 0,
+    "github_run_sha256": "b2252aeb3cc748a96d78e7b9f2bb75e1ee6ff6764c9b8407077c3cd01a27ba67",
+    "jobs": [
+      {
+        "conclusion": "success",
+        "name": "fuzz-smoke"
+      },
+      {
+        "conclusion": "success",
+        "name": "native-sanitizers (leak)"
+      },
+      {
+        "conclusion": "success",
+        "name": "conformance-and-platform"
+      },
+      {
+        "conclusion": "success",
+        "name": "miri-handles"
+      },
+      {
+        "conclusion": "success",
+        "name": "native-sanitizers (address)"
+      },
+      {
+        "conclusion": "success",
+        "name": "msrv"
+      },
+      {
+        "conclusion": "success",
+        "name": "c-undefined-sanitizer"
+      }
+    ],
+    "passed": 7,
+    "physical_lab_qualified": false,
+    "release_qualification": false,
+    "run_url": "https://github.com/zhuowcui/open-ui/actions/runs/37703581768",
+    "schema_version": 1,
+    "skipped": 0,
+    "source_commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1"
+  },
+  "implementation_integrated": true,
+  "javascript_executed_by_openui": false,
+  "matrices": {
+    "trial-expanded": {
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1595,
+        "errors": 0,
+        "exact": 22133,
+        "profile_result_sha256": "3029da0a3f436d1e05a6c20bd2cc8b7caa7187e1f26139b5d8ca27ba8ff11f88",
+        "total": 23728
+      },
+      "summary_sha256": "c208f9664da9ab061b9feb139029812218353dfd4327ab85747121b9a30ddfab"
+    },
+    "trial-focused": {
+      "observed_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "profile_result_sha256": "33ee0f37801cbecd962ce55b650273c1558939a78777419f5bf055bd0c8098b5",
+        "total": 640
+      },
+      "summary_sha256": "e50d96b7cb1763593af30c3daeffaad7ea283fad949450aa465e86152130d2fc"
+    },
+    "trial-full": {
+      "observed_exit_code": 1,
+      "results": {
+        "different": 1594,
+        "errors": 0,
+        "exact": 21330,
+        "profile_result_sha256": "b77b9b555a06b79e736c0955e0ff05e18d2603389e0c2b3023f2f352728ae2d6",
+        "total": 22924
+      },
+      "summary_sha256": "da06ae38d3d47cdc18b29925d3c6673809e0b543fa6e2b7e1cdcdff4a6d41baa"
+    },
+    "trial-primitive": {
+      "observed_exit_code": 0,
+      "results": {
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "profile_result_sha256": "0ad1afd019b8f5e853463b59ec7770401ab9cc624737d6ed27afd594ba8ea875",
+        "total": 960
+      },
+      "summary_sha256": "873af970d535a55adeaccc851e050db01fea47ffaa0f2a8f7b7082b1ccc14588"
+    }
+  },
+  "measured_source": {
+    "clean": true,
+    "commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "e31d91f7ea96caa31e6ee580aedb73297d33fb8d0214605e88cd13d4a500456a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native_focus_observations": {
+    "c": {
+      "callback_rows": 338,
+      "differences": [],
+      "exact": true,
+      "first_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1",
+      "repeated_identical": true,
+      "scenarios": 12,
+      "second_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1"
+    },
+    "cpp": {
+      "callback_rows": 338,
+      "differences": [],
+      "exact": true,
+      "first_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1",
+      "repeated_identical": true,
+      "scenarios": 12,
+      "second_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1"
+    },
+    "rust": {
+      "callback_rows": 338,
+      "differences": [],
+      "exact": true,
+      "first_sha256": "ed3e1351cdc0c2b7e8ac36fb59babdf2e1baf919813f0e95e05168ed696eb47a",
+      "repeated_identical": true,
+      "scenarios": 12,
+      "second_sha256": "ed3e1351cdc0c2b7e8ac36fb59babdf2e1baf919813f0e95e05168ed696eb47a"
+    }
+  },
+  "native_input_observations": {
+    "c": {
+      "binary_sha256": "0a4e143fa97ea48f481d37791ca0c326d7db816f4ec67d2ae02faa1165987104",
+      "callback_rows": 5,
+      "exact": true,
+      "first_sha256": "d66d536902e04c92f1773605e6e560090bac1717b7fabc81ad78e2d79c5f1427",
+      "repeated_identical": true,
+      "second_sha256": "d66d536902e04c92f1773605e6e560090bac1717b7fabc81ad78e2d79c5f1427"
+    },
+    "cpp": {
+      "binary_sha256": "0b3de75da0e1c07cd268e266ac6760050a8018f6d9dbeffbf9d797f5ce143903",
+      "callback_rows": 5,
+      "exact": true,
+      "first_sha256": "d66d536902e04c92f1773605e6e560090bac1717b7fabc81ad78e2d79c5f1427",
+      "repeated_identical": true,
+      "second_sha256": "d66d536902e04c92f1773605e6e560090bac1717b7fabc81ad78e2d79c5f1427"
+    },
+    "rust": {
+      "binary_sha256": "57a44df1336fe42234faab633e50331809a3fbc50b4838a1b84a23c451d29616",
+      "callback_rows": 5,
+      "exact": true,
+      "first_sha256": "0cb4e0ec31cecce041d87ceaca1c217e96ca17687f21ed68879bd115ea3c95b2",
+      "repeated_identical": true,
+      "second_sha256": "0cb4e0ec31cecce041d87ceaca1c217e96ca17687f21ed68879bd115ea3c95b2"
+    }
+  },
+  "new_release_comparisons_admitted": 0,
+  "ordinary_ci": {
+    "all_jobs_terminal": true,
+    "failed": [],
+    "full_pixel_gate_passed": false,
+    "github_checks_sha256": "e3d288fa04e08528b2a9d3edec5856f14c6c228c3b6bfa55af83702ddd02edf2",
+    "passed": [
+      "rust-parity",
+      "clang-format",
+      "historical-pixel-audit",
+      "gn-format",
+      "conformance-and-platform",
+      "python-accountability"
+    ],
+    "physical_lab_qualified": false,
+    "release_qualification": false,
+    "run_urls": [
+      "https://github.com/zhuowcui/open-ui/actions/runs/37703521504",
+      "https://github.com/zhuowcui/open-ui/actions/runs/37703521606",
+      "https://github.com/zhuowcui/open-ui/actions/runs/37703521657"
+    ],
+    "schema_version": 1,
+    "skipped": [
+      "msrv",
+      "miri-handles",
+      "native-sanitizers",
+      "c-undefined-sanitizer",
+      "fuzz-smoke"
+    ],
+    "source_commit": "8e8318bf39a730baf16082c41ca3c6321d5e7ab1"
+  },
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "release_qualification": false,
+  "remaining_gates": [
+    "complete pinned Chromium equality",
+    "Chromium reference identity reconciliation",
+    "reviewed residual causes and ownership",
+    "complete needed native APIs",
+    "retained compositor and 3D behavior",
+    "physical Linux/GPU/accessibility/performance lab",
+    "reproducible packaging signing and publication"
+  ],
+  "residual_inventory": {
+    "differences": 1594,
+    "evidence_source": {
+      "clean": true,
+      "commit": "3ee3f9d3fb99a65e0582d8810ed9731ba21738da",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "53422f4afd10dfbf65566bfe0c14c24e3500b2a225cfd9e8c8e8b4cf4ec40016",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "module_counts": {
+      "css2_floats": 37,
+      "css_backgrounds": 349,
+      "css_break": 448,
+      "css_display": 31,
+      "css_flexbox": 177,
+      "css_multicol": 193,
+      "css_overflow": 165,
+      "css_position": 78,
+      "css_sizing": 116
+    },
+    "module_names_are_inventory_only_not_root_causes": true,
+    "reviewed_owned_test_ids": 0,
+    "unique_test_ids": 886
+  },
+  "review_evidence": [
+    {
+      "decoded_sha256": "b895d96936910eaa2047b14c94d21f9c91837af7459c3abceb39d5f114be92c2",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-owner-v2645/receipt.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/whole-owner.json.gz",
+      "sha256": "8ee19abda86bc5246667b0a5171030c11e7e8099e0b7be088df37f5ff85f1d12"
+    },
+    {
+      "decoded_sha256": "442945883634022907bf38dae7ecf198195075497bc6c63749bc9f0ba354017f",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-runtime-v2642/receipt.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/runtime.json.gz",
+      "sha256": "86f05fc31bcb16372ce03a4f5276795535ef471f99338a567bc740b176cfbf5e"
+    },
+    {
+      "decoded_sha256": "547384e44dbc1c8885d2e0d0c7eaf3e579599167f351ccd707777030e8f5321d",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-runtime-v2642/guarded-build/receipt.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/guarded-build.json.gz",
+      "sha256": "621cc5bee9284ed7c98b87292fb5f3ea83a1c8d1eff765045c3b98699e224861"
+    },
+    {
+      "decoded_sha256": "62ace6cd97a80c8742742dd70b2c3d73f5b545542c02eaa4e536ff6c8f929194",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-checks-v2643/receipt.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/workspace.json.gz",
+      "sha256": "81a771d3231e7b85122e62439d0646de709abddb944060794e3adbe7b12191f0"
+    },
+    {
+      "decoded_sha256": "35ec4a99d81852d7773a47361ea4334a56c22ff3c36a2468618745bea063261a",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-checks-v2643/locked-workspace-tests.log",
+      "path": "docs/renderer/evidence/native-input-combined-v1/workspace-tests.log.gz",
+      "sha256": "772d54c3f9126ef9d895e787a516c2efc8515459ee0c6c4b3d27365488202f2d"
+    },
+    {
+      "decoded_sha256": "883af1caecc3e261acee047c1e9f210538aca909786daf13e729bcc88e2bd990",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-checks-v2643/all-c-cpp-consumers.log",
+      "path": "docs/renderer/evidence/native-input-combined-v1/abi-consumers.log.gz",
+      "sha256": "f6b843cd31fae8835a704004566328f1138e29e9570b154af25075849d4b1a62"
+    },
+    {
+      "decoded_sha256": "a4449585cf7b3c110f68580c8c7208dce2a717f9e3bb50669d6f9f4079130f47",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2644/receipt.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/renderer.json.gz",
+      "sha256": "accce39828d97194b058abb90bf6689785478c970e00bcfa6177533930a346c3"
+    },
+    {
+      "decoded_sha256": "8fe08ae5bcb3cf7338d7e58bf945f70f9307093c8f48e8a0db0e34d087450103",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-normal-ci-v2654/report.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/normal-ci.json.gz",
+      "sha256": "6c49ae849ae64fa4b878434a585ade9840c6b7c359ce6b303c53be2025fc0440"
+    },
+    {
+      "decoded_sha256": "e3d288fa04e08528b2a9d3edec5856f14c6c228c3b6bfa55af83702ddd02edf2",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-normal-ci-v2654/github-checks.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/github-checks.json.gz",
+      "sha256": "1020045fb1298e49df83c6e8efcf787cf9aa867c94d5edf3ae9caf2f27f94955"
+    },
+    {
+      "decoded_sha256": "0ef455f029f72dd4e438d6f110b5ee610dd61258979bb8989351b5c8e30ae2a2",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-hosted-hardening-v2659/report.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/hosted-hardening.json.gz",
+      "sha256": "c45d1c04503d0bed7f1d2e260f8e2f8bd4ebecf4b2b74b9e548b05865eebc202"
+    },
+    {
+      "decoded_sha256": "b2252aeb3cc748a96d78e7b9f2bb75e1ee6ff6764c9b8407077c3cd01a27ba67",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-hosted-hardening-v2659/github-run.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/github-run.json.gz",
+      "sha256": "06cd0775468f5f93cc5bd9788172b78bc6d429365f2ca5f92a21f4656217957a"
+    },
+    {
+      "decoded_sha256": "d105d34991ba45c6910366553ec2a40009f1e48bc62c9c54cf5b07cbe9ab6cde",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-recorded-font-input-audit-v2648/receipt.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/font-input-audit.json.gz",
+      "sha256": "b4477cab883d26928ef0e4bd3b2418649c1054ac06eeea924da4a22ac6615f2c"
+    },
+    {
+      "decoded_sha256": "3fbadeef8fa0f577dd9c04c87305a2ee8c4f90355bd754c732f0b3101a6f2a7f",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-recorded-font-input-audit-v2648/fontconfig-files.txt",
+      "path": "docs/renderer/evidence/native-input-combined-v1/fontconfig-files.txt.gz",
+      "sha256": "06360748b18d6c85e7e2ecfd4fd9b1116cfca7d1e4131cbaee26cbc5e36b039f"
+    },
+    {
+      "decoded_sha256": "813859c71380be1fea6fa86ba138a64edc33eabe09c74a6c37ea92e3b91850d8",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-exact-oracle-repeat-v2669/receipt.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/chromium-production-repeat.json.gz",
+      "sha256": "a8de2664fad6ef7a369792f8b45fcd33120dcecd222e88c3003ddb0b98b7387e"
+    },
+    {
+      "decoded_sha256": "30830ab858071bba6b8a01653610d9f426b9afb2530be3399a9aa64aa9967feb",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-fontconfig-policy-probe-v2668/receipt.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/chromium-font-policy-diagnostic.json.gz",
+      "sha256": "79128a10c88c146408014cf512c970f77973d0b15c6a9b52101d7d335e10cc8c"
+    },
+    {
+      "decoded_sha256": "13f681bcc21ee22a2effc7c68672beb32d7b3e97b5f861c1ddcb485f98ee866f",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/chromium-metrics-font-barrier-v2671/receipt.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/chromium-delay-diagnostic.json.gz",
+      "sha256": "753409d483bf1a1629bb9854d9826baff160772ed7b0e0649df3ea965bf07a82"
+    },
+    {
+      "decoded_sha256": "d943d041fe6d71ad501f46eb56d22142896d3ee64532c65d570e8f318086a4bb",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-residual-current-inventory-v2667/receipt.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/residual-inventory.json.gz",
+      "sha256": "93f95f4ce2ae4f04b91dd53cf70e9db04edc5c9c4b5623273a8d8306d9ef84a6"
+    },
+    {
+      "decoded_sha256": "ed3e1351cdc0c2b7e8ac36fb59babdf2e1baf919813f0e95e05168ed696eb47a",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-runtime-v2642/rust-observations-1.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/rust-focus.json.gz",
+      "sha256": "408c72654628f534d53a94e026576012fecffd528005e150ac281c88c97da278"
+    },
+    {
+      "decoded_sha256": "0cb4e0ec31cecce041d87ceaca1c217e96ca17687f21ed68879bd115ea3c95b2",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-runtime-v2642/rust-input-1.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/rust-input.json.gz",
+      "sha256": "8122795d0ab3a169cafeeb7ab3160880898ef0dac006524d920e64e1362f831b"
+    },
+    {
+      "decoded_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-runtime-v2642/c-observations-1.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/c-focus.json.gz",
+      "sha256": "ed9bd73310b3321335e4ea3b277fd3ba4ac8c3e7d9337d75b4e3b63a11383eed"
+    },
+    {
+      "decoded_sha256": "d66d536902e04c92f1773605e6e560090bac1717b7fabc81ad78e2d79c5f1427",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-runtime-v2642/input-c-1.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/c-input.json.gz",
+      "sha256": "a7c8d7ba797b015ab623d3ac9c8c3acceb08924bef87472f61fd854a1a268fea"
+    },
+    {
+      "decoded_sha256": "d0f18f1cb2752d07d2324a73924118077c10e9342ad519cc13a0302ad5fe89b1",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-runtime-v2642/cpp-observations-1.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/cpp-focus.json.gz",
+      "sha256": "ed9bd73310b3321335e4ea3b277fd3ba4ac8c3e7d9337d75b4e3b63a11383eed"
+    },
+    {
+      "decoded_sha256": "d66d536902e04c92f1773605e6e560090bac1717b7fabc81ad78e2d79c5f1427",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-runtime-v2642/input-cpp-1.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/cpp-input.json.gz",
+      "sha256": "a7c8d7ba797b015ab623d3ac9c8c3acceb08924bef87472f61fd854a1a268fea"
+    },
+    {
+      "decoded_sha256": "e50d96b7cb1763593af30c3daeffaad7ea283fad949450aa465e86152130d2fc",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2644/trial/focused-matrix/focused-summary.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/focused-summary.json.gz",
+      "sha256": "0dc79530251d626965fca444040a3f776292da9aed9624d4f35c1e6600b9e18d"
+    },
+    {
+      "decoded_sha256": "873af970d535a55adeaccc851e050db01fea47ffaa0f2a8f7b7082b1ccc14588",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2644/trial/primitive-matrix/primitive-summary.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/primitive-summary.json.gz",
+      "sha256": "1d91c984fd490989d40136bdb90119a74440b077ce2fc31fe85ff620a545a977"
+    },
+    {
+      "decoded_sha256": "da06ae38d3d47cdc18b29925d3c6673809e0b543fa6e2b7e1cdcdff4a6d41baa",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2644/trial/full-matrix/full-summary.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/full-summary.json.gz",
+      "sha256": "7fba23e77851bf9c7c3252ac6842303de33fa103a8792c545f5085d8d72e1cb5"
+    },
+    {
+      "decoded_sha256": "c208f9664da9ab061b9feb139029812218353dfd4327ab85747121b9a30ddfab",
+      "original_path": "out/renderer-evidence/native-viewport-scroll-v1/native-combined-renderer-v2644/trial/expanded-matrix/expanded-summary.json",
+      "path": "docs/renderer/evidence/native-input-combined-v1/expanded-summary.json.gz",
+      "sha256": "117f55296b7bef6c3671f71de94f23fd1f6468043b71a538fabb6fad6add8ccf"
+    }
+  ],
+  "schema_version": 1,
+  "verification_stages": 20,
+  "workspace_tests": {
+    "failed": 0,
+    "ignored": 13,
+    "passed": 8597
+  }
+}

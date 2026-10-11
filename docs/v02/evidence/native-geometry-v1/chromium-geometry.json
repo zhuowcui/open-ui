@@ -1,0 +1,126 @@
+{
+  "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+  "cases": [
+    {
+      "case": "columns",
+      "geometry": {
+        "bounds": {
+          "height": 68.671875,
+          "width": 272,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 68.671875,
+            "width": 56,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "height": 68.671875,
+            "width": 56,
+            "x": 108,
+            "y": 0
+          },
+          {
+            "height": 68.65625,
+            "width": 56,
+            "x": 216,
+            "y": 0
+          }
+        ]
+      },
+      "input_sha256": "7df539f37d7a6f2d324a5db5dd03041f22fd63025baa3645b57846bef90a4f0b"
+    },
+    {
+      "case": "pointer-none",
+      "geometry": {
+        "bounds": {
+          "height": 30,
+          "width": 80,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 30,
+            "width": 80,
+            "x": 0,
+            "y": 0
+          }
+        ]
+      },
+      "input_sha256": "dd2ad6465ae449e63c80d6e3b967050677a574b58ee659eafc8e9d97be7482c0"
+    },
+    {
+      "case": "hidden",
+      "geometry": {
+        "bounds": {
+          "height": 30,
+          "width": 80,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 30,
+            "width": 80,
+            "x": 0,
+            "y": 0
+          }
+        ]
+      },
+      "input_sha256": "2fe770f6c906afbe299eeaa7cf3a78b21a170216544d09600e847cc866f9971f"
+    },
+    {
+      "case": "empty",
+      "geometry": {
+        "bounds": {
+          "height": 30,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 30,
+            "width": 0,
+            "x": 0,
+            "y": 0
+          }
+        ]
+      },
+      "input_sha256": "3ec60b566683c152ae13cf15959c68e109f51067b51ab684c4b4e1fd1f46c80f"
+    },
+    {
+      "case": "singular",
+      "geometry": {
+        "bounds": {
+          "height": 30,
+          "width": 0,
+          "x": 40,
+          "y": 0
+        },
+        "rects": [
+          {
+            "height": 30,
+            "width": 0,
+            "x": 40,
+            "y": 0
+          }
+        ]
+      },
+      "input_sha256": "91e431d2b943ffd7405a098a6bc73830313cb14558967d915cc1b9ed5d5038ff"
+    }
+  ],
+  "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "chromium_build": "Google Chrome for Testing 147.0.7727.50",
+  "release_qualification": false,
+  "schema_version": 1,
+  "viewport": [
+    320,
+    240,
+    1.0
+  ]
+}

@@ -1,0 +1,2008 @@
+diff --git a/bindings/rust/openui-dom/src/tree.rs b/bindings/rust/openui-dom/src/tree.rs
+index 31d2fedb..881247dc 100644
+--- a/bindings/rust/openui-dom/src/tree.rs
++++ b/bindings/rust/openui-dom/src/tree.rs
+@@ -409,12 +409,22 @@ impl Document {
+         value: &StyleValue,
+         viewport: (f32, f32),
+     ) -> Result<openui_style::InvalidationClass, PropertyTypeError> {
+-        apply_to_computed(
++        let invalidation = apply_to_computed(
+             &mut self.nodes[node.index()].style,
+             property,
+             value,
+             viewport,
+-        )
++        )?;
++        let root_font_size = self.nodes[self.root.index()].style.font_size;
++        self.nodes[node.index()]
++            .style
++            .resolve_scroll_insets(viewport, root_font_size);
++        if node == self.root && matches!(property, StyleProperty::FontSize | StyleProperty::Font) {
++            for child in &mut self.nodes {
++                child.style.resolve_scroll_insets(viewport, root_font_size);
++            }
++        }
++        Ok(invalidation)
+     }
+ 
+     /// Apply an ordered typed declaration list through the same boundary.
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index e71258b1..25ac1316 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -635,11 +635,25 @@ impl Engine {
+             for (raw_property, value) in authored {
+                 let property = StyleProperty::from_u16(raw_property)
+                     .ok_or(EngineError::InvalidInput("authored property ID is invalid"))?;
++                // Replaying these aliases in ID order would change their
++                // precedence. Their bounded history retains authored order.
++                if property.is_scroll_inset() {
++                    continue;
++                }
+                 self.document
+                     .apply_style_property(node, property, &value, viewport)
+                     .map_err(|_| EngineError::PropertyType { property })?;
+             }
+         }
++        let root_font_size = self.document.node(self.document.root()).style.font_size;
++        for index in 0..self.document.node_count() {
++            if let Some(node) = self.document.node_id_at(index) {
++                self.document
++                    .node_mut(node)
++                    .style
++                    .resolve_scroll_insets(viewport, root_font_size);
++            }
++        }
+         Ok(())
+     }
+ 
+@@ -1182,6 +1196,11 @@ impl Engine {
+             .authored
+             .get(&(property as u16))
+             == Some(&value)
++            && self
++                .document
++                .node(node)
++                .style
++                .scroll_inset_declaration_is_current(property, &value)
+         {
+             return Ok(());
+         }
+diff --git a/bindings/rust/openui-engine/src/scroll_into_view.rs b/bindings/rust/openui-engine/src/scroll_into_view.rs
+index a2c01596..b634f804 100644
+--- a/bindings/rust/openui-engine/src/scroll_into_view.rs
++++ b/bindings/rust/openui-engine/src/scroll_into_view.rs
+@@ -116,6 +116,222 @@ mod tests {
+         assert_eq!(stats, engine.stats());
+     }
+ 
++    // Values recorded from pinned Chromium 147's nested hidden-scrollport
++    // oracle at all five device scales, rather than computed by this helper.
++    #[test]
++    fn reveal_applies_margin_padding_percentages_and_collapsed_snapports() {
++        use openui_style::Edges;
++        for (margin, outer_padding, inner_padding, expected) in [
++            (
++                10.0,
++                LengthValue::auto(),
++                LengthValue::auto(),
++                (80.0, 220.0),
++            ),
++            (
++                0.0,
++                LengthValue::px(10.0),
++                LengthValue::px(10.0),
++                (80.0, 220.0),
++            ),
++            (
++                0.0,
++                LengthValue::percent(12.5),
++                LengthValue::percent(20.0),
++                (83.0, 220.0),
++            ),
++            (
++                0.0,
++                LengthValue::px(200.0),
++                LengthValue::px(200.0),
++                (0.0, 120.0),
++            ),
++        ] {
++            let (mut engine, outer, inner, target) = nested();
++            engine
++                .set_property(
++                    target,
++                    StyleProperty::ScrollMargin,
++                    Edges::all(LengthValue::px(margin)).into(),
++                )
++                .unwrap();
++            engine
++                .set_property(
++                    outer,
++                    StyleProperty::ScrollPadding,
++                    Edges::all(outer_padding).into(),
++                )
++                .unwrap();
++            engine
++                .set_property(
++                    inner,
++                    StyleProperty::ScrollPadding,
++                    Edges::all(inner_padding).into(),
++                )
++                .unwrap();
++            engine.scroll_into_view(target, nearest()).unwrap();
++            assert_eq!(engine.scroll_offset(outer).unwrap(), expected);
++            assert_eq!(
++                engine.scroll_offset(inner).unwrap(),
++                if outer_padding == LengthValue::px(200.0) {
++                    (0.0, 0.0)
++                } else {
++                    (0.0, 40.0)
++                }
++            );
++        }
++    }
++
++    #[test]
++    fn logical_insets_preserve_repeated_alias_priority_and_viewport_reprojection() {
++        let (mut engine, outer, _, target) = nested();
++        engine
++            .set_property(
++                target,
++                StyleProperty::ScrollMarginInlineEnd,
++                LengthValue::ViewportWidth(5.0).into(),
++            )
++            .unwrap();
++        engine
++            .set_property(
++                target,
++                StyleProperty::ScrollMarginRight,
++                LengthValue::px(7.0).into(),
++            )
++            .unwrap();
++        engine
++            .set_property(
++                target,
++                StyleProperty::ScrollMarginInlineEnd,
++                LengthValue::ViewportWidth(5.0).into(),
++            )
++            .unwrap();
++        assert_eq!(
++            engine
++                .computed_style(target)
++                .unwrap()
++                .scroll_margin_right
++                .value(),
++            16.0
++        );
++        engine
++            .set_viewport(ViewportMetrics::from_logical_size(400.0, 300.0, 1.0).unwrap())
++            .unwrap();
++        assert_eq!(
++            engine
++                .computed_style(target)
++                .unwrap()
++                .scroll_margin_right
++                .value(),
++            20.0
++        );
++        engine.scroll_into_view(target, nearest()).unwrap();
++        assert_eq!(engine.scroll_offset(outer).unwrap(), (90.0, 220.0));
++        let scene = engine.scene().unwrap();
++        let stats = engine.stats();
++        engine
++            .set_property(
++                target,
++                StyleProperty::ScrollMarginInlineEnd,
++                LengthValue::ViewportWidth(5.0).into(),
++            )
++            .unwrap();
++        assert_eq!(engine.scene().unwrap().generation(), scene.generation());
++        assert_eq!(engine.stats(), stats);
++    }
++
++    #[test]
++    fn reveal_rejects_invalid_insets_atomically_and_reprojects_relative_fonts() {
++        use openui_style::Edges;
++        let (mut engine, outer, _, target) = nested();
++        engine
++            .set_property(
++                target,
++                StyleProperty::ScrollMarginBottom,
++                LengthValue::Em(0.5).into(),
++            )
++            .unwrap();
++        engine
++            .set_property(
++                target,
++                StyleProperty::FontSize,
++                LengthValue::px(20.0).into(),
++            )
++            .unwrap();
++        engine
++            .set_property(
++                outer,
++                StyleProperty::ScrollPaddingBottom,
++                LengthValue::Rem(0.25).into(),
++            )
++            .unwrap();
++        engine
++            .set_property(
++                engine.root(),
++                StyleProperty::FontSize,
++                LengthValue::px(24.0).into(),
++            )
++            .unwrap();
++        assert_eq!(
++            engine
++                .computed_style(target)
++                .unwrap()
++                .scroll_margin_bottom
++                .value(),
++            10.0
++        );
++        assert_eq!(
++            engine
++                .computed_style(outer)
++                .unwrap()
++                .scroll_padding_bottom
++                .value(),
++            6.0
++        );
++        let scene = engine.scene().unwrap();
++        let stats = engine.stats();
++        for value in [
++            LengthValue::px(-1.0),
++            LengthValue::px(f32::NAN),
++            LengthValue::none(),
++        ] {
++            assert!(engine
++                .set_property(
++                    outer,
++                    StyleProperty::ScrollPadding,
++                    Edges {
++                        top: LengthValue::px(10.0),
++                        right: value,
++                        bottom: LengthValue::px(10.0),
++                        left: LengthValue::px(10.0)
++                    }
++                    .into()
++                )
++                .is_err());
++        }
++        assert!(engine
++            .set_property(
++                target,
++                StyleProperty::ScrollMarginTop,
++                LengthValue::percent(10.0).into()
++            )
++            .is_err());
++        assert_eq!(
++            engine
++                .computed_style(outer)
++                .unwrap()
++                .scroll_padding_bottom
++                .value(),
++            6.0
++        );
++        assert_eq!(
++            engine.computed_style(outer).unwrap().scroll_padding_top,
++            openui_geometry::Length::auto()
++        );
++        assert_eq!(engine.scene().unwrap().generation(), scene.generation());
++        assert_eq!(engine.stats(), stats);
++    }
++
+     #[test]
+     fn nearest_container_does_not_scroll_its_parent() {
+         let (mut engine, outer, inner, target) = nested();
+@@ -266,20 +482,12 @@ fn alignment_delta(
+             // already expose as much as this scrollport can show.
+             if (low >= 0.0 && high <= 0.0) || (low < 0.0 && high > 0.0) {
+                 0.0
+-            } else if low < 0.0 {
+-                if end - start <= client_end - client_start {
+-                    low
+-                } else {
+-                    high
+-                }
+-            } else if high > 0.0 {
+-                if end - start <= client_end - client_start {
+-                    high
+-                } else {
+-                    low
+-                }
++            } else if (end > client_end && end - start < client_end - client_start)
++                || (end < client_end && end - start > client_end - client_start)
++            {
++                high
+             } else {
+-                0.0
++                low
+             }
+         }
+     }
+@@ -351,6 +559,7 @@ impl Engine {
+         let horizontal = style.writing_mode.is_horizontal();
+         let inline_reversed =
+             (style.direction == Direction::Rtl) ^ (style.writing_mode == WritingMode::SidewaysLr);
++        let margin = style.resolved_scroll_margin();
+         let (x_align, y_align, x_reversed, y_reversed) = if horizontal {
+             (options.inline, options.block, inline_reversed, false)
+         } else {
+@@ -362,8 +571,12 @@ impl Engine {
+             )
+         };
+         // Chromium gives degenerate expose rectangles one logical pixel.
+-        exposed.width = exposed.width.max(1.0);
+-        exposed.height = exposed.height.max(1.0);
++        if exposed.width <= 0.0 {
++            exposed.width = 1.0;
++        }
++        if exposed.height <= 0.0 {
++            exposed.height = 1.0;
++        }
+         let mut plan = Vec::new();
+         let mut ancestor = self.parent(target)?;
+         while let Some(handle) = ancestor {
+@@ -385,22 +598,35 @@ impl Engine {
+             };
+             let local = map_rect(inverse, exposed);
+             let client = area.client_rect;
++            let padding = self
++                .document
++                .node(node)
++                .style
++                .resolved_scroll_padding(client.width().to_f32(), client.height().to_f32());
++            let client_left = client.x().to_f32() + padding.left;
++            let client_top = client.y().to_f32() + padding.top;
++            // Blink prevents a collapsed snapport from becoming zero-sized
++            // after contracting scroll padding, using one layout-unit tick.
++            let minimum = openui_geometry::LayoutUnit::epsilon().to_f32();
++            let client_right = (client.right().to_f32() - padding.right).max(client_left + minimum);
++            let client_bottom =
++                (client.bottom().to_f32() - padding.bottom).max(client_top + minimum);
+             let (x, y) = self.scroll_offset(handle)?;
+             let (new_x, new_y) = area.clamp_offset(
+                 (x + alignment_delta(
+-                    local.x,
+-                    local.x + local.width,
+-                    client.x().to_f32(),
+-                    client.right().to_f32(),
++                    local.x - margin.left,
++                    local.x + local.width + margin.right,
++                    client_left,
++                    client_right,
+                     x_align,
+                     x_reversed,
+                 ))
+                 .round(),
+                 (y + alignment_delta(
+-                    local.y,
+-                    local.y + local.height,
+-                    client.y().to_f32(),
+-                    client.bottom().to_f32(),
++                    local.y - margin.top,
++                    local.y + local.height + margin.bottom,
++                    client_top,
++                    client_bottom,
+                     y_align,
+                     y_reversed,
+                 ))
+diff --git a/bindings/rust/openui-ffi/src/generated.rs b/bindings/rust/openui-ffi/src/generated.rs
+index 3242fbce..7839c5f1 100644
+--- a/bindings/rust/openui-ffi/src/generated.rs
++++ b/bindings/rust/openui-ffi/src/generated.rs
+@@ -241,6 +241,24 @@ pub(crate) fn property_from_raw(value: i32) -> Option<StyleProperty> {
+         235 => Some(StyleProperty::ShapeImageThreshold),
+         236 => Some(StyleProperty::ShapeMargin),
+         237 => Some(StyleProperty::ShapeOutside),
++        238 => Some(StyleProperty::ScrollMargin),
++        239 => Some(StyleProperty::ScrollMarginTop),
++        240 => Some(StyleProperty::ScrollMarginRight),
++        241 => Some(StyleProperty::ScrollMarginBottom),
++        242 => Some(StyleProperty::ScrollMarginLeft),
++        243 => Some(StyleProperty::ScrollMarginBlockStart),
++        244 => Some(StyleProperty::ScrollMarginBlockEnd),
++        245 => Some(StyleProperty::ScrollMarginInlineStart),
++        246 => Some(StyleProperty::ScrollMarginInlineEnd),
++        247 => Some(StyleProperty::ScrollPadding),
++        248 => Some(StyleProperty::ScrollPaddingTop),
++        249 => Some(StyleProperty::ScrollPaddingRight),
++        250 => Some(StyleProperty::ScrollPaddingBottom),
++        251 => Some(StyleProperty::ScrollPaddingLeft),
++        252 => Some(StyleProperty::ScrollPaddingBlockStart),
++        253 => Some(StyleProperty::ScrollPaddingBlockEnd),
++        254 => Some(StyleProperty::ScrollPaddingInlineStart),
++        255 => Some(StyleProperty::ScrollPaddingInlineEnd),
+         _ => None,
+     }
+ }
+@@ -484,6 +502,24 @@ pub(crate) fn expected_value_tag(property: StyleProperty) -> u32 {
+         StyleProperty::ShapeImageThreshold => 2,
+         StyleProperty::ShapeMargin => 1,
+         StyleProperty::ShapeOutside => 6,
++        StyleProperty::ScrollMargin => 6,
++        StyleProperty::ScrollMarginTop => 1,
++        StyleProperty::ScrollMarginRight => 1,
++        StyleProperty::ScrollMarginBottom => 1,
++        StyleProperty::ScrollMarginLeft => 1,
++        StyleProperty::ScrollMarginBlockStart => 1,
++        StyleProperty::ScrollMarginBlockEnd => 1,
++        StyleProperty::ScrollMarginInlineStart => 1,
++        StyleProperty::ScrollMarginInlineEnd => 1,
++        StyleProperty::ScrollPadding => 6,
++        StyleProperty::ScrollPaddingTop => 1,
++        StyleProperty::ScrollPaddingRight => 1,
++        StyleProperty::ScrollPaddingBottom => 1,
++        StyleProperty::ScrollPaddingLeft => 1,
++        StyleProperty::ScrollPaddingBlockStart => 1,
++        StyleProperty::ScrollPaddingBlockEnd => 1,
++        StyleProperty::ScrollPaddingInlineStart => 1,
++        StyleProperty::ScrollPaddingInlineEnd => 1,
+     }
+ }
+ 
+diff --git a/bindings/rust/openui-style/internal-style-fields.csv b/bindings/rust/openui-style/internal-style-fields.csv
+index b7e9fb15..7630d516 100644
+--- a/bindings/rust/openui-style/internal-style-fields.csv
++++ b/bindings/rust/openui-style/internal-style-fields.csv
+@@ -15,3 +15,5 @@ placeholder_style,Stores the resolved immutable placeholder pseudo-element snaps
+ raster_configuration,Retains the immutable engine raster policy on every detached style snapshot used by text and paint.
+ device_scale_factor,Retains physical-pixel scale for font strike selection without changing logical text metrics.
+ will_change_transform,Caches compositing intent derived from authored will-change declarations.
++scroll_margin_declarations,Retains ordered native scroll inset declarations for physical/logical projection after writing-mode changes.
++scroll_padding_declarations,Retains ordered native scroll padding declarations for physical/logical projection after writing-mode changes.
+diff --git a/bindings/rust/openui-style/property-schema.csv b/bindings/rust/openui-style/property-schema.csv
+index da624b19..2303e743 100644
+--- a/bindings/rust/openui-style/property-schema.csv
++++ b/bindings/rust/openui-style/property-schema.csv
+@@ -236,3 +236,21 @@ id,rust_name,css_name,rust_type,value_kind,initial,inherited,invalidation,interp
+ 235,ShapeImageThreshold,shape-image-threshold,f32,number,renderer-initial,false,layout,number,shape_image_threshold
+ 236,ShapeMargin,shape-margin,Length,length,renderer-initial,false,layout,length,shape_margin
+ 237,ShapeOutside,shape-outside,ShapeOutside,compound,renderer-initial,false,layout,discrete,shape_outside
++238,ScrollMargin,scroll-margin,Edges<LengthValue>,edges,0px,false,layout,length-list,-
++239,ScrollMarginTop,scroll-margin-top,LengthValue,length,0px,false,layout,length,scroll_margin_top
++240,ScrollMarginRight,scroll-margin-right,LengthValue,length,0px,false,layout,length,scroll_margin_right
++241,ScrollMarginBottom,scroll-margin-bottom,LengthValue,length,0px,false,layout,length,scroll_margin_bottom
++242,ScrollMarginLeft,scroll-margin-left,LengthValue,length,0px,false,layout,length,scroll_margin_left
++243,ScrollMarginBlockStart,scroll-margin-block-start,LengthValue,length,0px,false,layout,length,-
++244,ScrollMarginBlockEnd,scroll-margin-block-end,LengthValue,length,0px,false,layout,length,-
++245,ScrollMarginInlineStart,scroll-margin-inline-start,LengthValue,length,0px,false,layout,length,-
++246,ScrollMarginInlineEnd,scroll-margin-inline-end,LengthValue,length,0px,false,layout,length,-
++247,ScrollPadding,scroll-padding,Edges<LengthValue>,edges,auto,false,layout,length-list,-
++248,ScrollPaddingTop,scroll-padding-top,LengthValue,length,auto,false,layout,length,scroll_padding_top
++249,ScrollPaddingRight,scroll-padding-right,LengthValue,length,auto,false,layout,length,scroll_padding_right
++250,ScrollPaddingBottom,scroll-padding-bottom,LengthValue,length,auto,false,layout,length,scroll_padding_bottom
++251,ScrollPaddingLeft,scroll-padding-left,LengthValue,length,auto,false,layout,length,scroll_padding_left
++252,ScrollPaddingBlockStart,scroll-padding-block-start,LengthValue,length,auto,false,layout,length,-
++253,ScrollPaddingBlockEnd,scroll-padding-block-end,LengthValue,length,auto,false,layout,length,-
++254,ScrollPaddingInlineStart,scroll-padding-inline-start,LengthValue,length,auto,false,layout,length,-
++255,ScrollPaddingInlineEnd,scroll-padding-inline-end,LengthValue,length,auto,false,layout,length,-
+diff --git a/bindings/rust/openui-style/src/computed.rs b/bindings/rust/openui-style/src/computed.rs
+index f2d220f2..f6326dcc 100644
+--- a/bindings/rust/openui-style/src/computed.rs
++++ b/bindings/rust/openui-style/src/computed.rs
+@@ -437,6 +437,18 @@ pub struct ComputedStyleFields {
+     /// CSS `scrollbar-gutter`. Initial: `auto`.
+     pub scrollbar_gutter: ScrollbarGutter,
+ 
++    /// Native reveal and snapping outsets. Margin starts at zero; padding at auto.
++    pub scroll_margin_top: Length,
++    pub scroll_margin_right: Length,
++    pub scroll_margin_bottom: Length,
++    pub scroll_margin_left: Length,
++    pub(crate) scroll_margin_declarations: crate::ScrollInsetDeclarations,
++    pub scroll_padding_top: Length,
++    pub scroll_padding_right: Length,
++    pub scroll_padding_bottom: Length,
++    pub scroll_padding_left: Length,
++    pub(crate) scroll_padding_declarations: crate::ScrollInsetDeclarations,
++
+     /// CSS `overflow-clip-margin`. Initial: `0.0` (px).
+     /// Specifies how far content may overflow before being clipped when
+     /// `overflow: clip` is used. Only applies to `overflow: clip`.
+@@ -1176,6 +1188,16 @@ impl ComputedStyle {
+                 resize: Resize::INITIAL,
+                 scrollbar_width: ScrollbarWidth::INITIAL,
+                 scrollbar_gutter: ScrollbarGutter::INITIAL,
++                scroll_margin_top: Length::zero(),
++                scroll_margin_right: Length::zero(),
++                scroll_margin_bottom: Length::zero(),
++                scroll_margin_left: Length::zero(),
++                scroll_margin_declarations: crate::ScrollInsetDeclarations::default(),
++                scroll_padding_top: Length::auto(),
++                scroll_padding_right: Length::auto(),
++                scroll_padding_bottom: Length::auto(),
++                scroll_padding_left: Length::auto(),
++                scroll_padding_declarations: crate::ScrollInsetDeclarations::default(),
+                 overflow_clip_margin: 0.0,
+                 overflow_clip_box: OverflowClipBox::default(),
+                 scrollbar_thumb_color: None,
+diff --git a/bindings/rust/openui-style/src/generated_computed_accessors.rs b/bindings/rust/openui-style/src/generated_computed_accessors.rs
+index c799da1b..11bd8f72 100644
+--- a/bindings/rust/openui-style/src/generated_computed_accessors.rs
++++ b/bindings/rust/openui-style/src/generated_computed_accessors.rs
+@@ -706,10 +706,50 @@ impl ComputedStyle {
+         &self.fields.ruby_position
+     }
+     #[inline]
++    pub fn scroll_margin_bottom(&self) -> &Length {
++        &self.fields.scroll_margin_bottom
++    }
++    #[inline]
++    pub fn scroll_margin_declarations(&self) -> &crate::ScrollInsetDeclarations {
++        &self.fields.scroll_margin_declarations
++    }
++    #[inline]
++    pub fn scroll_margin_left(&self) -> &Length {
++        &self.fields.scroll_margin_left
++    }
++    #[inline]
++    pub fn scroll_margin_right(&self) -> &Length {
++        &self.fields.scroll_margin_right
++    }
++    #[inline]
++    pub fn scroll_margin_top(&self) -> &Length {
++        &self.fields.scroll_margin_top
++    }
++    #[inline]
+     pub fn scroll_marker_group(&self) -> &ScrollMarkerGroup {
+         &self.fields.scroll_marker_group
+     }
+     #[inline]
++    pub fn scroll_padding_bottom(&self) -> &Length {
++        &self.fields.scroll_padding_bottom
++    }
++    #[inline]
++    pub fn scroll_padding_declarations(&self) -> &crate::ScrollInsetDeclarations {
++        &self.fields.scroll_padding_declarations
++    }
++    #[inline]
++    pub fn scroll_padding_left(&self) -> &Length {
++        &self.fields.scroll_padding_left
++    }
++    #[inline]
++    pub fn scroll_padding_right(&self) -> &Length {
++        &self.fields.scroll_padding_right
++    }
++    #[inline]
++    pub fn scroll_padding_top(&self) -> &Length {
++        &self.fields.scroll_padding_top
++    }
++    #[inline]
+     pub fn scroll_snap_align(&self) -> &ScrollSnapAlign {
+         &self.fields.scroll_snap_align
+     }
+diff --git a/bindings/rust/openui-style/src/generated_properties.rs b/bindings/rust/openui-style/src/generated_properties.rs
+index d9e78722..361948c5 100644
+--- a/bindings/rust/openui-style/src/generated_properties.rs
++++ b/bindings/rust/openui-style/src/generated_properties.rs
+@@ -241,6 +241,24 @@ pub enum StyleProperty {
+     ShapeImageThreshold = 235,
+     ShapeMargin = 236,
+     ShapeOutside = 237,
++    ScrollMargin = 238,
++    ScrollMarginTop = 239,
++    ScrollMarginRight = 240,
++    ScrollMarginBottom = 241,
++    ScrollMarginLeft = 242,
++    ScrollMarginBlockStart = 243,
++    ScrollMarginBlockEnd = 244,
++    ScrollMarginInlineStart = 245,
++    ScrollMarginInlineEnd = 246,
++    ScrollPadding = 247,
++    ScrollPaddingTop = 248,
++    ScrollPaddingRight = 249,
++    ScrollPaddingBottom = 250,
++    ScrollPaddingLeft = 251,
++    ScrollPaddingBlockStart = 252,
++    ScrollPaddingBlockEnd = 253,
++    ScrollPaddingInlineStart = 254,
++    ScrollPaddingInlineEnd = 255,
+ }
+ 
+ /// Schema-generated values for renderer longhands appended after the stable
+@@ -465,6 +483,14 @@ pub enum RendererStyleValue {
+     ShapeImageThreshold(f32),
+     ShapeMargin(Length),
+     ShapeOutside(ShapeOutside),
++    ScrollMarginTop(Length),
++    ScrollMarginRight(Length),
++    ScrollMarginBottom(Length),
++    ScrollMarginLeft(Length),
++    ScrollPaddingTop(Length),
++    ScrollPaddingRight(Length),
++    ScrollPaddingBottom(Length),
++    ScrollPaddingLeft(Length),
+ }
+ 
+ impl PartialEq for RendererStyleValue {
+@@ -698,6 +724,14 @@ impl RendererStyleValue {
+             Self::ShapeImageThreshold(..) => StyleProperty::ShapeImageThreshold,
+             Self::ShapeMargin(..) => StyleProperty::ShapeMargin,
+             Self::ShapeOutside(..) => StyleProperty::ShapeOutside,
++            Self::ScrollMarginTop(..) => StyleProperty::ScrollMarginTop,
++            Self::ScrollMarginRight(..) => StyleProperty::ScrollMarginRight,
++            Self::ScrollMarginBottom(..) => StyleProperty::ScrollMarginBottom,
++            Self::ScrollMarginLeft(..) => StyleProperty::ScrollMarginLeft,
++            Self::ScrollPaddingTop(..) => StyleProperty::ScrollPaddingTop,
++            Self::ScrollPaddingRight(..) => StyleProperty::ScrollPaddingRight,
++            Self::ScrollPaddingBottom(..) => StyleProperty::ScrollPaddingBottom,
++            Self::ScrollPaddingLeft(..) => StyleProperty::ScrollPaddingLeft,
+         }
+     }
+ 
+@@ -921,6 +955,14 @@ impl RendererStyleValue {
+             (StyleProperty::ShapeImageThreshold, Self::ShapeImageThreshold(value)) => { style.fields.shape_image_threshold = value.clone(); true },
+             (StyleProperty::ShapeMargin, Self::ShapeMargin(value)) => { style.fields.shape_margin = value.clone(); true },
+             (StyleProperty::ShapeOutside, Self::ShapeOutside(value)) => { style.fields.shape_outside = value.clone(); true },
++            (StyleProperty::ScrollMarginTop, Self::ScrollMarginTop(value)) => { style.fields.scroll_margin_top = value.clone(); true },
++            (StyleProperty::ScrollMarginRight, Self::ScrollMarginRight(value)) => { style.fields.scroll_margin_right = value.clone(); true },
++            (StyleProperty::ScrollMarginBottom, Self::ScrollMarginBottom(value)) => { style.fields.scroll_margin_bottom = value.clone(); true },
++            (StyleProperty::ScrollMarginLeft, Self::ScrollMarginLeft(value)) => { style.fields.scroll_margin_left = value.clone(); true },
++            (StyleProperty::ScrollPaddingTop, Self::ScrollPaddingTop(value)) => { style.fields.scroll_padding_top = value.clone(); true },
++            (StyleProperty::ScrollPaddingRight, Self::ScrollPaddingRight(value)) => { style.fields.scroll_padding_right = value.clone(); true },
++            (StyleProperty::ScrollPaddingBottom, Self::ScrollPaddingBottom(value)) => { style.fields.scroll_padding_bottom = value.clone(); true },
++            (StyleProperty::ScrollPaddingLeft, Self::ScrollPaddingLeft(value)) => { style.fields.scroll_padding_left = value.clone(); true },
+             _ => false,
+         }
+     }
+@@ -966,6 +1008,14 @@ impl RendererStyleValue {
+             (StyleProperty::ScrollbarThumbColor, StyleValue::Color(value)) => Some(Self::ScrollbarThumbColor(Some(*value))),
+             (StyleProperty::ShapeImageThreshold, StyleValue::Number(value)) => Some(Self::ShapeImageThreshold(*value)),
+             (StyleProperty::ShapeMargin, StyleValue::Length(value)) => Some(Self::ShapeMargin(resolve_length(*value))),
++            (StyleProperty::ScrollMarginTop, StyleValue::Length(value)) => Some(Self::ScrollMarginTop(resolve_length(*value))),
++            (StyleProperty::ScrollMarginRight, StyleValue::Length(value)) => Some(Self::ScrollMarginRight(resolve_length(*value))),
++            (StyleProperty::ScrollMarginBottom, StyleValue::Length(value)) => Some(Self::ScrollMarginBottom(resolve_length(*value))),
++            (StyleProperty::ScrollMarginLeft, StyleValue::Length(value)) => Some(Self::ScrollMarginLeft(resolve_length(*value))),
++            (StyleProperty::ScrollPaddingTop, StyleValue::Length(value)) => Some(Self::ScrollPaddingTop(resolve_length(*value))),
++            (StyleProperty::ScrollPaddingRight, StyleValue::Length(value)) => Some(Self::ScrollPaddingRight(resolve_length(*value))),
++            (StyleProperty::ScrollPaddingBottom, StyleValue::Length(value)) => Some(Self::ScrollPaddingBottom(resolve_length(*value))),
++            (StyleProperty::ScrollPaddingLeft, StyleValue::Length(value)) => Some(Self::ScrollPaddingLeft(resolve_length(*value))),
+             _ => None,
+         }
+     }
+@@ -1193,6 +1243,14 @@ impl RendererStyleValue {
+             StyleProperty::ShapeImageThreshold => Some(Self::ShapeImageThreshold(style.fields.shape_image_threshold.clone())),
+             StyleProperty::ShapeMargin => Some(Self::ShapeMargin(style.fields.shape_margin.clone())),
+             StyleProperty::ShapeOutside => Some(Self::ShapeOutside(style.fields.shape_outside.clone())),
++            StyleProperty::ScrollMarginTop => Some(Self::ScrollMarginTop(style.fields.scroll_margin_top.clone())),
++            StyleProperty::ScrollMarginRight => Some(Self::ScrollMarginRight(style.fields.scroll_margin_right.clone())),
++            StyleProperty::ScrollMarginBottom => Some(Self::ScrollMarginBottom(style.fields.scroll_margin_bottom.clone())),
++            StyleProperty::ScrollMarginLeft => Some(Self::ScrollMarginLeft(style.fields.scroll_margin_left.clone())),
++            StyleProperty::ScrollPaddingTop => Some(Self::ScrollPaddingTop(style.fields.scroll_padding_top.clone())),
++            StyleProperty::ScrollPaddingRight => Some(Self::ScrollPaddingRight(style.fields.scroll_padding_right.clone())),
++            StyleProperty::ScrollPaddingBottom => Some(Self::ScrollPaddingBottom(style.fields.scroll_padding_bottom.clone())),
++            StyleProperty::ScrollPaddingLeft => Some(Self::ScrollPaddingLeft(style.fields.scroll_padding_left.clone())),
+             _ => None,
+         }
+     }
+@@ -1235,6 +1293,14 @@ fn parse_renderer_author_literal(property: StyleProperty, input: &str) -> Option
+         StyleProperty::ScrollbarThumbColor => if input == "auto" { Some(StyleValue::Renderer(RendererStyleValue::ScrollbarThumbColor(None))) } else { color(input).map(StyleValue::Color) },
+         StyleProperty::ShapeImageThreshold => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
+         StyleProperty::ShapeMargin => length(input).map(StyleValue::Length),
++        StyleProperty::ScrollMarginTop => length(input).map(StyleValue::Length),
++        StyleProperty::ScrollMarginRight => length(input).map(StyleValue::Length),
++        StyleProperty::ScrollMarginBottom => length(input).map(StyleValue::Length),
++        StyleProperty::ScrollMarginLeft => length(input).map(StyleValue::Length),
++        StyleProperty::ScrollPaddingTop => length(input).map(StyleValue::Length),
++        StyleProperty::ScrollPaddingRight => length(input).map(StyleValue::Length),
++        StyleProperty::ScrollPaddingBottom => length(input).map(StyleValue::Length),
++        StyleProperty::ScrollPaddingLeft => length(input).map(StyleValue::Length),
+         _ => None,
+     }
+ }
+@@ -1260,6 +1326,8 @@ pub enum RendererInternalStyleValue {
+     RasterConfiguration(RasterConfiguration),
+     DeviceScaleFactor(f64),
+     WillChangeTransform(bool),
++    ScrollMarginDeclarations(crate::ScrollInsetDeclarations),
++    ScrollPaddingDeclarations(crate::ScrollInsetDeclarations),
+ }
+ 
+ impl RendererInternalStyleValue {
+@@ -1282,6 +1350,8 @@ impl RendererInternalStyleValue {
+             Self::RasterConfiguration(value) => style.raster_configuration = value,
+             Self::DeviceScaleFactor(value) => style.device_scale_factor = value,
+             Self::WillChangeTransform(value) => style.will_change_transform = value,
++            Self::ScrollMarginDeclarations(value) => style.scroll_margin_declarations = value,
++            Self::ScrollPaddingDeclarations(value) => style.scroll_padding_declarations = value,
+         });
+     }
+ }
+@@ -1534,6 +1604,24 @@ impl StyleProperty {
+             "shape-image-threshold" => Some(Self::ShapeImageThreshold),
+             "shape-margin" => Some(Self::ShapeMargin),
+             "shape-outside" => Some(Self::ShapeOutside),
++            "scroll-margin" => Some(Self::ScrollMargin),
++            "scroll-margin-top" => Some(Self::ScrollMarginTop),
++            "scroll-margin-right" => Some(Self::ScrollMarginRight),
++            "scroll-margin-bottom" => Some(Self::ScrollMarginBottom),
++            "scroll-margin-left" => Some(Self::ScrollMarginLeft),
++            "scroll-margin-block-start" => Some(Self::ScrollMarginBlockStart),
++            "scroll-margin-block-end" => Some(Self::ScrollMarginBlockEnd),
++            "scroll-margin-inline-start" => Some(Self::ScrollMarginInlineStart),
++            "scroll-margin-inline-end" => Some(Self::ScrollMarginInlineEnd),
++            "scroll-padding" => Some(Self::ScrollPadding),
++            "scroll-padding-top" => Some(Self::ScrollPaddingTop),
++            "scroll-padding-right" => Some(Self::ScrollPaddingRight),
++            "scroll-padding-bottom" => Some(Self::ScrollPaddingBottom),
++            "scroll-padding-left" => Some(Self::ScrollPaddingLeft),
++            "scroll-padding-block-start" => Some(Self::ScrollPaddingBlockStart),
++            "scroll-padding-block-end" => Some(Self::ScrollPaddingBlockEnd),
++            "scroll-padding-inline-start" => Some(Self::ScrollPaddingInlineStart),
++            "scroll-padding-inline-end" => Some(Self::ScrollPaddingInlineEnd),
+             _ => None,
+         }
+     }
+@@ -3914,6 +4002,186 @@ pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
+         invalidation: InvalidationClass::Layout,
+         interpolation: InterpolationKind::Discrete,
+     },
++    PropertyMetadata {
++        property: StyleProperty::ScrollMargin,
++        css_name: "scroll-margin",
++        rust_type: "Edges<LengthValue>",
++        value_kind: ValueKind::Edges,
++        initial: "0px",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::LengthList,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollMarginTop,
++        css_name: "scroll-margin-top",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "0px",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollMarginRight,
++        css_name: "scroll-margin-right",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "0px",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollMarginBottom,
++        css_name: "scroll-margin-bottom",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "0px",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollMarginLeft,
++        css_name: "scroll-margin-left",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "0px",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollMarginBlockStart,
++        css_name: "scroll-margin-block-start",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "0px",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollMarginBlockEnd,
++        css_name: "scroll-margin-block-end",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "0px",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollMarginInlineStart,
++        css_name: "scroll-margin-inline-start",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "0px",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollMarginInlineEnd,
++        css_name: "scroll-margin-inline-end",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "0px",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollPadding,
++        css_name: "scroll-padding",
++        rust_type: "Edges<LengthValue>",
++        value_kind: ValueKind::Edges,
++        initial: "auto",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::LengthList,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollPaddingTop,
++        css_name: "scroll-padding-top",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "auto",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollPaddingRight,
++        css_name: "scroll-padding-right",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "auto",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollPaddingBottom,
++        css_name: "scroll-padding-bottom",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "auto",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollPaddingLeft,
++        css_name: "scroll-padding-left",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "auto",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollPaddingBlockStart,
++        css_name: "scroll-padding-block-start",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "auto",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollPaddingBlockEnd,
++        css_name: "scroll-padding-block-end",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "auto",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollPaddingInlineStart,
++        css_name: "scroll-padding-inline-start",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "auto",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
++    PropertyMetadata {
++        property: StyleProperty::ScrollPaddingInlineEnd,
++        css_name: "scroll-padding-inline-end",
++        rust_type: "LengthValue",
++        value_kind: ValueKind::Length,
++        initial: "auto",
++        inherited: false,
++        invalidation: InvalidationClass::Layout,
++        interpolation: InterpolationKind::Length,
++    },
+ ];
+ 
+ /// Compile contract for every schema-generated Rust property builder.
+@@ -4158,6 +4426,24 @@ pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
+ ///     let _ = Style::default().shape_image_threshold(());
+ ///     let _ = Style::default().shape_margin(());
+ ///     let _ = Style::default().shape_outside(());
++///     let _ = Style::default().scroll_margin(());
++///     let _ = Style::default().scroll_margin_top(());
++///     let _ = Style::default().scroll_margin_right(());
++///     let _ = Style::default().scroll_margin_bottom(());
++///     let _ = Style::default().scroll_margin_left(());
++///     let _ = Style::default().scroll_margin_block_start(());
++///     let _ = Style::default().scroll_margin_block_end(());
++///     let _ = Style::default().scroll_margin_inline_start(());
++///     let _ = Style::default().scroll_margin_inline_end(());
++///     let _ = Style::default().scroll_padding(());
++///     let _ = Style::default().scroll_padding_top(());
++///     let _ = Style::default().scroll_padding_right(());
++///     let _ = Style::default().scroll_padding_bottom(());
++///     let _ = Style::default().scroll_padding_left(());
++///     let _ = Style::default().scroll_padding_block_start(());
++///     let _ = Style::default().scroll_padding_block_end(());
++///     let _ = Style::default().scroll_padding_inline_start(());
++///     let _ = Style::default().scroll_padding_inline_end(());
+ /// }
+ /// ```
+ #[doc(hidden)]
+@@ -4406,6 +4692,24 @@ mod generated_property_compile_pass {
+         let _ = Style::default().shape_image_threshold(unimplemented!());
+         let _ = Style::default().shape_margin(unimplemented!());
+         let _ = Style::default().shape_outside(unimplemented!());
++        let _ = Style::default().scroll_margin(unimplemented!());
++        let _ = Style::default().scroll_margin_top(unimplemented!());
++        let _ = Style::default().scroll_margin_right(unimplemented!());
++        let _ = Style::default().scroll_margin_bottom(unimplemented!());
++        let _ = Style::default().scroll_margin_left(unimplemented!());
++        let _ = Style::default().scroll_margin_block_start(unimplemented!());
++        let _ = Style::default().scroll_margin_block_end(unimplemented!());
++        let _ = Style::default().scroll_margin_inline_start(unimplemented!());
++        let _ = Style::default().scroll_margin_inline_end(unimplemented!());
++        let _ = Style::default().scroll_padding(unimplemented!());
++        let _ = Style::default().scroll_padding_top(unimplemented!());
++        let _ = Style::default().scroll_padding_right(unimplemented!());
++        let _ = Style::default().scroll_padding_bottom(unimplemented!());
++        let _ = Style::default().scroll_padding_left(unimplemented!());
++        let _ = Style::default().scroll_padding_block_start(unimplemented!());
++        let _ = Style::default().scroll_padding_block_end(unimplemented!());
++        let _ = Style::default().scroll_padding_inline_start(unimplemented!());
++        let _ = Style::default().scroll_padding_inline_end(unimplemented!());
+     }
+ }
+ 
+@@ -5122,4 +5426,58 @@ impl Style {
+     pub fn shape_outside(self, value: ShapeOutside) -> Self {
+         self.with_renderer(StyleProperty::ShapeOutside, RendererStyleValue::ShapeOutside(value))
+     }
++    pub fn scroll_margin(self, value: Edges<LengthValue>) -> Self {
++        self.with(StyleProperty::ScrollMargin, value)
++    }
++    pub fn scroll_margin_top(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollMarginTop, value)
++    }
++    pub fn scroll_margin_right(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollMarginRight, value)
++    }
++    pub fn scroll_margin_bottom(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollMarginBottom, value)
++    }
++    pub fn scroll_margin_left(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollMarginLeft, value)
++    }
++    pub fn scroll_margin_block_start(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollMarginBlockStart, value)
++    }
++    pub fn scroll_margin_block_end(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollMarginBlockEnd, value)
++    }
++    pub fn scroll_margin_inline_start(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollMarginInlineStart, value)
++    }
++    pub fn scroll_margin_inline_end(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollMarginInlineEnd, value)
++    }
++    pub fn scroll_padding(self, value: Edges<LengthValue>) -> Self {
++        self.with(StyleProperty::ScrollPadding, value)
++    }
++    pub fn scroll_padding_top(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollPaddingTop, value)
++    }
++    pub fn scroll_padding_right(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollPaddingRight, value)
++    }
++    pub fn scroll_padding_bottom(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollPaddingBottom, value)
++    }
++    pub fn scroll_padding_left(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollPaddingLeft, value)
++    }
++    pub fn scroll_padding_block_start(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollPaddingBlockStart, value)
++    }
++    pub fn scroll_padding_block_end(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollPaddingBlockEnd, value)
++    }
++    pub fn scroll_padding_inline_start(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollPaddingInlineStart, value)
++    }
++    pub fn scroll_padding_inline_end(self, value: LengthValue) -> Self {
++        self.with(StyleProperty::ScrollPaddingInlineEnd, value)
++    }
+ }
+diff --git a/bindings/rust/openui-style/src/lib.rs b/bindings/rust/openui-style/src/lib.rs
+index b3e620e3..69a5bd1b 100644
+--- a/bindings/rust/openui-style/src/lib.rs
++++ b/bindings/rust/openui-style/src/lib.rs
+@@ -11,6 +11,7 @@ mod enums;
+ mod font_types;
+ mod layout_systems;
+ mod property;
++mod scroll_insets;
+ mod typography;
+ 
+ pub use animation::*;
+@@ -29,4 +30,6 @@ pub use font_types::*;
+ pub use layout_systems::*;
+ pub use openui_geometry::Length;
+ pub use property::*;
++#[doc(hidden)]
++pub use scroll_insets::ScrollInsetDeclarations;
+ pub use typography::*;
+diff --git a/bindings/rust/openui-style/src/property.rs b/bindings/rust/openui-style/src/property.rs
+index b32756bb..be2fad09 100644
+--- a/bindings/rust/openui-style/src/property.rs
++++ b/bindings/rust/openui-style/src/property.rs
+@@ -1641,6 +1641,16 @@ fn parse_typography_literal(property: StyleProperty, input: &str) -> Option<Styl
+ 
+ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue, LiteralError> {
+     use StyleProperty as P;
++    if crate::scroll_insets::is_scroll_inset(property) {
++        let value = if crate::scroll_insets::is_scroll_inset_shorthand(property) {
++            edges(input).map(StyleValue::Edges)
++        } else {
++            length(input).map(StyleValue::Length)
++        };
++        return value
++            .filter(|value| crate::scroll_insets::valid_scroll_inset_value(property, value))
++            .ok_or_else(|| invalid(property, input));
++    }
+     let result = match property {
+         P::Display => match input {
+             "none" => Some(Display::None),
+@@ -2114,6 +2124,29 @@ pub fn apply_to_computed(
+     property: StyleProperty,
+     value: &StyleValue,
+     viewport: (f32, f32),
++) -> Result<InvalidationClass, PropertyTypeError> {
++    if let Some(result) = crate::scroll_insets::apply_scroll_inset(style, property, value, viewport)
++    {
++        return result;
++    }
++    let invalidation = apply_non_scroll_to_computed(style, property, value, viewport)?;
++    if matches!(
++        property,
++        StyleProperty::WritingMode
++            | StyleProperty::Direction
++            | StyleProperty::FontSize
++            | StyleProperty::Font
++    ) {
++        style.resolve_scroll_insets(viewport, 16.0);
++    }
++    Ok(invalidation)
++}
++
++fn apply_non_scroll_to_computed(
++    style: &mut ComputedStyle,
++    property: StyleProperty,
++    value: &StyleValue,
++    viewport: (f32, f32),
+ ) -> Result<InvalidationClass, PropertyTypeError> {
+     use StyleProperty as P;
+     let resolve = |v: LengthValue| v.resolve(viewport, style.fields.font_size, 16.0);
+@@ -2305,6 +2338,9 @@ pub fn apply_to_computed(
+ /// underlying value without maintaining a second handwritten style model.
+ pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> StyleValue {
+     use StyleProperty as P;
++    if let Some(value) = crate::scroll_insets::read_scroll_inset(style, property) {
++        return value;
++    }
+     if let Some(value) = RendererStyleValue::from_computed(style, property) {
+         return StyleValue::Renderer(value);
+     }
+@@ -2610,7 +2646,9 @@ mod tests {
+         assert_eq!(StyleProperty::TextEmphasis as u16, 124);
+         assert_eq!(StyleProperty::TextBox as u16, 125);
+         assert_eq!(StyleProperty::ShapeOutside as u16, 237);
+-        assert_eq!(PROPERTY_METADATA.len(), 237);
++        assert_eq!(StyleProperty::ScrollMargin as u16, 238);
++        assert_eq!(StyleProperty::ScrollPaddingInlineEnd as u16, 255);
++        assert_eq!(PROPERTY_METADATA.len(), 255);
+         for (index, metadata) in PROPERTY_METADATA.iter().enumerate() {
+             let id = u16::try_from(index + 1).unwrap();
+             assert_eq!(StyleProperty::from_u16(id), Some(metadata.property));
+@@ -2621,7 +2659,11 @@ mod tests {
+             assert_eq!(metadata.property.metadata(), metadata);
+         }
+         assert_eq!(StyleProperty::from_u16(0), None);
+-        assert_eq!(StyleProperty::from_u16(238), None);
++        assert_eq!(
++            StyleProperty::from_u16(238),
++            Some(StyleProperty::ScrollMargin)
++        );
++        assert_eq!(StyleProperty::from_u16(256), None);
+         assert_eq!(
+             StyleProperty::Opacity.metadata().invalidation,
+             InvalidationClass::Composite
+diff --git a/bindings/rust/openui-style/src/scroll_insets.rs b/bindings/rust/openui-style/src/scroll_insets.rs
+new file mode 100644
+index 00000000..d62e4bf8
+--- /dev/null
++++ b/bindings/rust/openui-style/src/scroll_insets.rs
+@@ -0,0 +1,471 @@
++//! Ordered physical and logical scroll outsets over the native style boundary.
++
++use crate::{
++    ComputedStyle, Direction, Edges, InvalidationClass, LengthValue, PropertyTypeError,
++    RendererStyleValue, StyleProperty, StyleValue, WritingMode,
++};
++use openui_geometry::{LayoutUnit, Length, LengthType};
++
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++enum Side {
++    Top,
++    Right,
++    Bottom,
++    Left,
++    BlockStart,
++    BlockEnd,
++    InlineStart,
++    InlineEnd,
++}
++
++impl Side {
++    fn physical(self, style: &ComputedStyle) -> usize {
++        use Side::*;
++        match self {
++            Top => 0,
++            Right => 1,
++            Bottom => 2,
++            Left => 3,
++            BlockStart | BlockEnd => {
++                let start = if style.writing_mode.is_horizontal() {
++                    0
++                } else if style.writing_mode.is_flipped_blocks() {
++                    1
++                } else {
++                    3
++                };
++                if self == BlockStart {
++                    start
++                } else {
++                    (start + 2) % 4
++                }
++            }
++            InlineStart | InlineEnd => {
++                let reversed = (style.direction == Direction::Rtl)
++                    ^ (style.writing_mode == WritingMode::SidewaysLr);
++                let start = if style.writing_mode.is_horizontal() {
++                    if reversed {
++                        1
++                    } else {
++                        3
++                    }
++                } else if reversed {
++                    2
++                } else {
++                    0
++                };
++                if self == InlineStart {
++                    start
++                } else {
++                    (start + 2) % 4
++                }
++            }
++        }
++    }
++
++    fn logical(self) -> bool {
++        matches!(
++            self,
++            Self::BlockStart | Self::BlockEnd | Self::InlineStart | Self::InlineEnd
++        )
++    }
++
++    fn can_overlap(self, other: Self) -> bool {
++        self == other || self.logical() != other.logical()
++    }
++}
++
++/// Bounded declaration order needed when physical and logical native setters
++/// share a side. This owns no document or callback.
++#[doc(hidden)]
++#[derive(Debug, Clone, Default)]
++pub struct ScrollInsetDeclarations(Vec<(Side, LengthValue)>);
++
++fn descriptor(property: StyleProperty) -> Option<(bool, Option<Side>)> {
++    use Side::*;
++    use StyleProperty as P;
++    Some(match property {
++        P::ScrollMargin => (false, None),
++        P::ScrollMarginTop => (false, Some(Top)),
++        P::ScrollMarginRight => (false, Some(Right)),
++        P::ScrollMarginBottom => (false, Some(Bottom)),
++        P::ScrollMarginLeft => (false, Some(Left)),
++        P::ScrollMarginBlockStart => (false, Some(BlockStart)),
++        P::ScrollMarginBlockEnd => (false, Some(BlockEnd)),
++        P::ScrollMarginInlineStart => (false, Some(InlineStart)),
++        P::ScrollMarginInlineEnd => (false, Some(InlineEnd)),
++        P::ScrollPadding => (true, None),
++        P::ScrollPaddingTop => (true, Some(Top)),
++        P::ScrollPaddingRight => (true, Some(Right)),
++        P::ScrollPaddingBottom => (true, Some(Bottom)),
++        P::ScrollPaddingLeft => (true, Some(Left)),
++        P::ScrollPaddingBlockStart => (true, Some(BlockStart)),
++        P::ScrollPaddingBlockEnd => (true, Some(BlockEnd)),
++        P::ScrollPaddingInlineStart => (true, Some(InlineStart)),
++        P::ScrollPaddingInlineEnd => (true, Some(InlineEnd)),
++        _ => return None,
++    })
++}
++
++pub(crate) fn is_scroll_inset(property: StyleProperty) -> bool {
++    descriptor(property).is_some()
++}
++
++impl StyleProperty {
++    #[doc(hidden)]
++    pub fn is_scroll_inset(self) -> bool {
++        is_scroll_inset(self)
++    }
++}
++
++pub(crate) fn is_scroll_inset_shorthand(property: StyleProperty) -> bool {
++    matches!(
++        property,
++        StyleProperty::ScrollMargin | StyleProperty::ScrollPadding
++    )
++}
++
++fn lengths(property: StyleProperty, value: &StyleValue) -> Option<Vec<(Side, LengthValue)>> {
++    let (_, side) = descriptor(property)?;
++    if let Some(side) = side {
++        let value = match value {
++            StyleValue::Length(value) => *value,
++            StyleValue::Renderer(value) if value.property() == property => {
++                use RendererStyleValue as R;
++                match value {
++                    R::ScrollMarginTop(value)
++                    | R::ScrollMarginRight(value)
++                    | R::ScrollMarginBottom(value)
++                    | R::ScrollMarginLeft(value)
++                    | R::ScrollPaddingTop(value)
++                    | R::ScrollPaddingRight(value)
++                    | R::ScrollPaddingBottom(value)
++                    | R::ScrollPaddingLeft(value) => (*value).into(),
++                    _ => return None,
++                }
++            }
++            _ => return None,
++        };
++        Some(vec![(side, value)])
++    } else if let StyleValue::Edges(value) = value {
++        Some(vec![
++            (Side::Top, value.top),
++            (Side::Right, value.right),
++            (Side::Bottom, value.bottom),
++            (Side::Left, value.left),
++        ])
++    } else {
++        None
++    }
++}
++
++fn valid_length(padding: bool, value: LengthValue) -> bool {
++    let (number, valid_kind) = match value {
++        LengthValue::Computed(value) => (
++            value.value(),
++            match value.length_type() {
++                LengthType::Fixed | LengthType::Calculated => true,
++                LengthType::Percent | LengthType::Auto => padding,
++                _ => false,
++            },
++        ),
++        LengthValue::Em(v)
++        | LengthValue::Rem(v)
++        | LengthValue::ViewportWidth(v)
++        | LengthValue::ViewportHeight(v)
++        | LengthValue::ViewportMin(v)
++        | LengthValue::ViewportMax(v) => (v, true),
++    };
++    valid_kind && number.is_finite() && (!padding || number >= 0.0)
++}
++
++pub(crate) fn valid_scroll_inset_value(property: StyleProperty, value: &StyleValue) -> bool {
++    let Some((padding, _)) = descriptor(property) else {
++        return false;
++    };
++    lengths(property, value).is_some_and(|values| {
++        values
++            .into_iter()
++            .all(|(_, value)| valid_length(padding, value))
++    })
++}
++
++pub(crate) fn apply_scroll_inset(
++    style: &mut ComputedStyle,
++    property: StyleProperty,
++    value: &StyleValue,
++    viewport: (f32, f32),
++) -> Option<Result<InvalidationClass, PropertyTypeError>> {
++    let (padding, _) = descriptor(property)?;
++    let failure = || PropertyTypeError {
++        property,
++        expected: property.metadata().value_kind,
++    };
++    let Some(values) = lengths(property, value) else {
++        return Some(Err(failure()));
++    };
++    // Validate the whole shorthand before changing any retained declaration.
++    if values.iter().any(|(_, value)| {
++        !valid_length(padding, *value)
++            || !value
++                .resolve(viewport, style.font_size, 16.0)
++                .value()
++                .is_finite()
++    }) {
++        return Some(Err(failure()));
++    }
++    let declarations = if padding {
++        &mut style.fields.scroll_padding_declarations.0
++    } else {
++        &mut style.fields.scroll_margin_declarations.0
++    };
++    for (side, value) in values {
++        declarations.retain(|(previous, _)| *previous != side);
++        declarations.push((side, value));
++    }
++    style.resolve_scroll_insets(viewport, 16.0);
++    Some(Ok(property.metadata().invalidation))
++}
++
++impl ComputedStyle {
++    /// Reproject native logical declarations after writing mode, font or
++    /// viewport changes. Relative values remain authored until this boundary.
++    #[doc(hidden)]
++    pub fn resolve_scroll_insets(&mut self, viewport: (f32, f32), root_font_size: f32) {
++        let resolve = |declarations: &ScrollInsetDeclarations, initial: Length| {
++            let mut values = [initial; 4];
++            for (side, value) in &declarations.0 {
++                values[side.physical(self)] =
++                    value.resolve(viewport, self.font_size, root_font_size);
++            }
++            values
++        };
++        let margin = resolve(&self.fields.scroll_margin_declarations, Length::zero());
++        let padding = resolve(&self.fields.scroll_padding_declarations, Length::auto());
++        if !self.fields.scroll_margin_declarations.0.is_empty() {
++            [
++                self.fields.scroll_margin_top,
++                self.fields.scroll_margin_right,
++                self.fields.scroll_margin_bottom,
++                self.fields.scroll_margin_left,
++            ] = margin;
++        }
++        if !self.fields.scroll_padding_declarations.0.is_empty() {
++            [
++                self.fields.scroll_padding_top,
++                self.fields.scroll_padding_right,
++                self.fields.scroll_padding_bottom,
++                self.fields.scroll_padding_left,
++            ] = padding;
++        }
++    }
++
++    /// A repeated declaration is a no-op only if later aliases cannot change
++    /// its winning side, including after a later writing-mode change.
++    #[doc(hidden)]
++    pub fn scroll_inset_declaration_is_current(
++        &self,
++        property: StyleProperty,
++        value: &StyleValue,
++    ) -> bool {
++        let Some((padding, _)) = descriptor(property) else {
++            return true;
++        };
++        let Some(values) = lengths(property, value) else {
++            return false;
++        };
++        let declarations = if padding {
++            &self.fields.scroll_padding_declarations.0
++        } else {
++            &self.fields.scroll_margin_declarations.0
++        };
++        values.into_iter().all(|(side, value)| {
++            declarations
++                .iter()
++                .position(|(other, stored)| *other == side && *stored == value)
++                .is_some_and(|index| {
++                    !declarations[index + 1..]
++                        .iter()
++                        .any(|(later, _)| side.can_overlap(*later))
++                })
++        })
++    }
++
++    /// Physical margin outsets in Blink's 1/64-pixel geometry units.
++    #[doc(hidden)]
++    pub fn resolved_scroll_margin(&self) -> Edges<f32> {
++        let pixels = |value: Length| LayoutUnit::from_f32(value.value()).to_f32();
++        Edges {
++            top: pixels(self.scroll_margin_top),
++            right: pixels(self.scroll_margin_right),
++            bottom: pixels(self.scroll_margin_bottom),
++            left: pixels(self.scroll_margin_left),
++        }
++    }
++
++    /// Percentages resolve against the corresponding scrollport dimension.
++    #[doc(hidden)]
++    pub fn resolved_scroll_padding(&self, width: f32, height: f32) -> Edges<f32> {
++        let pixels = |value: Length, basis: f32| {
++            LayoutUnit::from_f32(match value.length_type() {
++                LengthType::Auto => 0.0,
++                LengthType::Percent => basis * value.value() / 100.0,
++                _ => value.value(),
++            })
++            .to_f32()
++        };
++        Edges {
++            top: pixels(self.scroll_padding_top, height),
++            right: pixels(self.scroll_padding_right, width),
++            bottom: pixels(self.scroll_padding_bottom, height),
++            left: pixels(self.scroll_padding_left, width),
++        }
++    }
++}
++
++pub(crate) fn read_scroll_inset(
++    style: &ComputedStyle,
++    property: StyleProperty,
++) -> Option<StyleValue> {
++    let (padding, side) = descriptor(property)?;
++    let values = if padding {
++        [
++            style.scroll_padding_top,
++            style.scroll_padding_right,
++            style.scroll_padding_bottom,
++            style.scroll_padding_left,
++        ]
++    } else {
++        [
++            style.scroll_margin_top,
++            style.scroll_margin_right,
++            style.scroll_margin_bottom,
++            style.scroll_margin_left,
++        ]
++    };
++    Some(if let Some(side) = side {
++        StyleValue::Length(values[side.physical(style)].into())
++    } else {
++        StyleValue::Edges(Edges {
++            top: values[0].into(),
++            right: values[1].into(),
++            bottom: values[2].into(),
++            left: values[3].into(),
++        })
++    })
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use crate::{apply_to_computed, parse_literal, value_from_computed};
++
++    fn set(style: &mut ComputedStyle, property: StyleProperty, value: impl Into<StyleValue>) {
++        apply_to_computed(style, property, &value.into(), (320.0, 240.0)).unwrap();
++    }
++
++    #[test]
++    fn native_literal_and_typed_validation_agree_without_partial_mutation() {
++        for (property, accepted, rejected) in [
++            (StyleProperty::ScrollMargin, "-2px 1em 0 3rem", "2px 5%"),
++            (StyleProperty::ScrollPadding, "auto 20% 3px 1em", "1px -2px"),
++            (StyleProperty::ScrollMarginInlineStart, "-1.5px", "auto"),
++            (StyleProperty::ScrollPaddingBlockEnd, "12.5%", "none"),
++        ] {
++            let mut style = ComputedStyle::default();
++            set(
++                &mut style,
++                property,
++                parse_literal(property, accepted).unwrap(),
++            );
++            let before = value_from_computed(&style, property);
++            assert!(parse_literal(property, rejected).is_err());
++            let invalid = if is_scroll_inset_shorthand(property) {
++                StyleValue::Edges(Edges {
++                    top: LengthValue::px(5.0),
++                    right: LengthValue::px(f32::NAN),
++                    bottom: LengthValue::px(7.0),
++                    left: LengthValue::px(9.0),
++                })
++            } else {
++                LengthValue::px(f32::INFINITY).into()
++            };
++            assert!(apply_to_computed(&mut style, property, &invalid, (320.0, 240.0)).is_err());
++            assert_eq!(value_from_computed(&style, property), before);
++        }
++    }
++
++    #[test]
++    fn logical_insets_follow_all_native_writing_modes_and_directions() {
++        for (mode, ltr_side, rtl_side) in [
++            (WritingMode::HorizontalTb, 3, 1),
++            (WritingMode::VerticalRl, 0, 2),
++            (WritingMode::VerticalLr, 0, 2),
++            (WritingMode::SidewaysRl, 0, 2),
++            (WritingMode::SidewaysLr, 2, 0),
++        ] {
++            for (direction, side) in [(Direction::Ltr, ltr_side), (Direction::Rtl, rtl_side)] {
++                let mut style = ComputedStyle::default();
++                set(
++                    &mut style,
++                    StyleProperty::ScrollMarginInlineStart,
++                    LengthValue::px(17.0),
++                );
++                set(&mut style, StyleProperty::WritingMode, mode);
++                set(&mut style, StyleProperty::Direction, direction);
++                let margin = style.resolved_scroll_margin();
++                let mut expected = [0.0; 4];
++                expected[side] = 17.0;
++                assert_eq!(
++                    [margin.top, margin.right, margin.bottom, margin.left],
++                    expected
++                );
++                assert_eq!(
++                    value_from_computed(&style, StyleProperty::ScrollMarginInlineStart),
++                    LengthValue::px(17.0).into()
++                );
++            }
++        }
++    }
++
++    #[test]
++    fn physical_and_logical_insets_reproject_in_declaration_order() {
++        let mut style = ComputedStyle::default();
++        set(
++            &mut style,
++            StyleProperty::ScrollMarginInlineStart,
++            LengthValue::px(17.0),
++        );
++        set(
++            &mut style,
++            StyleProperty::ScrollMarginLeft,
++            LengthValue::px(7.0),
++        );
++        assert_eq!(style.scroll_margin_left.value(), 7.0);
++        set(
++            &mut style,
++            StyleProperty::ScrollMarginInlineStart,
++            LengthValue::px(17.0),
++        );
++        assert_eq!(style.scroll_margin_left.value(), 17.0);
++        set(
++            &mut style,
++            StyleProperty::WritingMode,
++            WritingMode::VerticalRl,
++        );
++        assert_eq!(style.scroll_margin_left.value(), 7.0);
++        assert_eq!(style.scroll_margin_top.value(), 17.0);
++        set(&mut style, StyleProperty::Direction, Direction::Rtl);
++        assert_eq!(style.scroll_margin_bottom.value(), 17.0);
++        assert_eq!(style.scroll_margin_top.value(), 0.0);
++        // An owned snapshot keeps its own declaration history.
++        let snapshot = style.clone();
++        set(
++            &mut style,
++            StyleProperty::ScrollMargin,
++            Edges::all(LengthValue::px(2.0)),
++        );
++        assert_eq!(style.scroll_margin_bottom.value(), 2.0);
++        assert_eq!(snapshot.scroll_margin_bottom.value(), 17.0);
++    }
++}
+diff --git a/bindings/rust/openui/examples/native_scroll_into_view.rs b/bindings/rust/openui/examples/native_scroll_into_view.rs
+index 1086e3c2..8b6b0b69 100644
+--- a/bindings/rust/openui/examples/native_scroll_into_view.rs
++++ b/bindings/rust/openui/examples/native_scroll_into_view.rs
+@@ -35,6 +35,111 @@ fn snapshot(
+     ))
+ }
+ 
++/// Exercise public native setters in the same consuming app as reveal.
++fn configure_insets(
++    document: &Document,
++    outer: &Element,
++    inner: &Element,
++    target: &Element,
++    case: &str,
++    scale: f64,
++) -> Result<ScrollIntoViewOptions, Error> {
++    let mut options = ScrollIntoViewOptions {
++        block: ScrollAlignment::Nearest,
++        inline: ScrollAlignment::Nearest,
++        container: ScrollIntoViewContainer::All,
++    };
++    match case {
++        "none" => {}
++        "margin" => target.set_scroll_margin(Edges::all(LengthValue::px(10.0)))?,
++        "negative-margin" => target.set_scroll_margin(Edges::all(LengthValue::px(-8.0)))?,
++        "padding" => {
++            outer.set_scroll_padding(Edges::all(LengthValue::px(10.0)))?;
++            inner.set_scroll_padding(Edges::all(LengthValue::px(10.0)))?;
++        }
++        "asymmetric" => {
++            target.set_scroll_margin(Edges {
++                top: LengthValue::px(7.0),
++                right: LengthValue::px(11.0),
++                bottom: LengthValue::px(13.0),
++                left: LengthValue::px(17.0),
++            })?;
++            outer.set_scroll_padding(Edges {
++                top: LengthValue::px(3.0),
++                right: LengthValue::px(5.0),
++                bottom: LengthValue::px(9.0),
++                left: LengthValue::px(15.0),
++            })?;
++            inner.set_scroll_padding(Edges {
++                top: LengthValue::px(4.0),
++                right: LengthValue::px(6.0),
++                bottom: LengthValue::px(8.0),
++                left: LengthValue::px(12.0),
++            })?;
++        }
++        "percent-padding" => {
++            outer.set_scroll_padding(Edges::all(LengthValue::percent(12.5)))?;
++            inner.set_scroll_padding(Edges::all(LengthValue::percent(20.0)))?;
++        }
++        "collapsed-padding" => {
++            outer.set_scroll_padding(Edges::all(LengthValue::px(200.0)))?;
++            inner.set_scroll_padding(Edges::all(LengthValue::px(200.0)))?;
++        }
++        "oversized-margin" => target.set_scroll_margin(Edges::all(LengthValue::px(100.0)))?,
++        "start" | "center" | "end" => {
++            target.set_scroll_margin(Edges::all(LengthValue::px(10.0)))?;
++            outer.set_scroll_padding(Edges::all(LengthValue::px(10.0)))?;
++            inner.set_scroll_padding(Edges::all(LengthValue::px(10.0)))?;
++            options.block = match case {
++                "start" => ScrollAlignment::Start,
++                "center" => ScrollAlignment::Center,
++                _ => ScrollAlignment::End,
++            };
++            options.inline = options.block;
++        }
++        "logical-rtl" => {
++            target.set_direction(Direction::Rtl)?;
++            target.set_scroll_margin_inline_start(LengthValue::px(13.0))?;
++            target.set_scroll_margin_block_end(LengthValue::px(7.0))?;
++            outer.set_scroll_padding_inline_end(LengthValue::px(11.0))?;
++            inner.set_scroll_padding_block_end(LengthValue::px(9.0))?;
++        }
++        "logical-reorder" | "writing-mode-change" => {
++            target.set_scroll_margin_inline_start(LengthValue::px(17.0))?;
++            target.set_scroll_margin_left(LengthValue::px(7.0))?;
++            // Repeating an authored value after an alias must restore priority.
++            target.set_scroll_margin_inline_start(LengthValue::px(17.0))?;
++            outer.set_scroll_padding_block_end(LengthValue::px(11.0))?;
++            outer.set_scroll_padding_bottom(LengthValue::px(5.0))?;
++            outer.set_scroll_padding_block_end(LengthValue::px(11.0))?;
++            if case == "writing-mode-change" {
++                target.set_writing_mode(WritingMode::VerticalRl)?;
++                target.set_direction(Direction::Rtl)?;
++            }
++        }
++        "relative-font" => {
++            target.set_scroll_margin_bottom(LengthValue::Em(0.5))?;
++            target.set_font_size(LengthValue::px(20.0))?;
++            outer.set_scroll_padding_bottom(LengthValue::Rem(0.25))?;
++            document.body().set_font_size(LengthValue::px(24.0))?;
++        }
++        "relative-viewport" => {
++            target.set_scroll_margin_bottom(LengthValue::ViewportHeight(2.5))?;
++            outer.set_scroll_padding_right(LengthValue::ViewportWidth(2.5))?;
++            // Reprojection must preserve physical/logical setter order.
++            target.set_scroll_margin_inline_end(LengthValue::px(11.0))?;
++            document.set_viewport(ViewportMetrics::from_logical_size(400.0, 300.0, scale)?)?;
++        }
++        "nearest-container" => {
++            target.set_scroll_margin(Edges::all(LengthValue::px(10.0)))?;
++            inner.set_scroll_padding(Edges::all(LengthValue::px(10.0)))?;
++            options.container = ScrollIntoViewContainer::Nearest;
++        }
++        _ => return Err(Error::InvalidArgument("unknown inset case")),
++    }
++    Ok(options)
++}
++
+ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     let mut args = std::env::args().skip(1);
+     let output = std::path::PathBuf::from(args.next().ok_or("output directory required")?);
+@@ -44,6 +149,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+         Some("clip") => Overflow::Clip,
+         _ => return Err("expected hidden or clip".into()),
+     };
++    let inset_case = args.next().unwrap_or_else(|| "none".into());
+     std::fs::create_dir_all(&output)?;
+     let document =
+         Document::with_viewport_metrics(ViewportMetrics::from_logical_size(320.0, 240.0, scale)?)?;
+@@ -62,11 +168,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     target.set_margin_left(LengthValue::px(150.0))?;
+     target.set_margin_top(LengthValue::px(120.0))?;
+     target.set_background_color(Color::from_rgba8(0, 128, 0, 255))?;
+-    let options = ScrollIntoViewOptions {
+-        block: ScrollAlignment::Nearest,
+-        inline: ScrollAlignment::Nearest,
+-        container: ScrollIntoViewContainer::All,
+-    };
++    let options = configure_insets(&document, &outer, &inner, &target, &inset_case, scale)?;
+     let calls = Rc::new(Cell::new(0));
+     let stage = Rc::new(Cell::new(0));
+     let callback_calls = calls.clone();
+diff --git a/bindings/rust/openui/src/generated_style_setters.rs b/bindings/rust/openui/src/generated_style_setters.rs
+index f977a5d2..999939d8 100644
+--- a/bindings/rust/openui/src/generated_style_setters.rs
++++ b/bindings/rust/openui/src/generated_style_setters.rs
+@@ -717,4 +717,58 @@ impl Element {
+     pub fn set_shape_outside(&self, value: ShapeOutside) -> Result<(), Error> {
+         self.set_property(StyleProperty::ShapeOutside, StyleValue::Renderer(RendererStyleValue::ShapeOutside(value)))
+     }
++    pub fn set_scroll_margin(&self, value: Edges<LengthValue>) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollMargin, value.into())
++    }
++    pub fn set_scroll_margin_top(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollMarginTop, value.into())
++    }
++    pub fn set_scroll_margin_right(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollMarginRight, value.into())
++    }
++    pub fn set_scroll_margin_bottom(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollMarginBottom, value.into())
++    }
++    pub fn set_scroll_margin_left(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollMarginLeft, value.into())
++    }
++    pub fn set_scroll_margin_block_start(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollMarginBlockStart, value.into())
++    }
++    pub fn set_scroll_margin_block_end(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollMarginBlockEnd, value.into())
++    }
++    pub fn set_scroll_margin_inline_start(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollMarginInlineStart, value.into())
++    }
++    pub fn set_scroll_margin_inline_end(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollMarginInlineEnd, value.into())
++    }
++    pub fn set_scroll_padding(&self, value: Edges<LengthValue>) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollPadding, value.into())
++    }
++    pub fn set_scroll_padding_top(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollPaddingTop, value.into())
++    }
++    pub fn set_scroll_padding_right(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollPaddingRight, value.into())
++    }
++    pub fn set_scroll_padding_bottom(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollPaddingBottom, value.into())
++    }
++    pub fn set_scroll_padding_left(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollPaddingLeft, value.into())
++    }
++    pub fn set_scroll_padding_block_start(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollPaddingBlockStart, value.into())
++    }
++    pub fn set_scroll_padding_block_end(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollPaddingBlockEnd, value.into())
++    }
++    pub fn set_scroll_padding_inline_start(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollPaddingInlineStart, value.into())
++    }
++    pub fn set_scroll_padding_inline_end(&self, value: LengthValue) -> Result<(), Error> {
++        self.set_property(StyleProperty::ScrollPaddingInlineEnd, value.into())
++    }
+ }
+diff --git a/docs/v02/generated/openui-ffi-checksum.txt b/docs/v02/generated/openui-ffi-checksum.txt
+index 36503ab8..683a778e 100644
+--- a/docs/v02/generated/openui-ffi-checksum.txt
++++ b/docs/v02/generated/openui-ffi-checksum.txt
+@@ -1 +1 @@
+-sha256:f351719823bc6bded0199b48a94e3c22e38935cd8a414abf0a994de1cf168780
++sha256:bec231d31e3adea6b378084cb398963c86beebc23d66e3fe9314482595dc4c6d
+diff --git a/docs/v02/generated/style-properties.md b/docs/v02/generated/style-properties.md
+index e433831f..1e46bf72 100644
+--- a/docs/v02/generated/style-properties.md
++++ b/docs/v02/generated/style-properties.md
+@@ -240,3 +240,21 @@
+ | 235 | `shape-image-threshold` | `shape_image_threshold` | `f32` | `renderer-initial` | false | layout | number |
+ | 236 | `shape-margin` | `shape_margin` | `Length` | `renderer-initial` | false | layout | length |
+ | 237 | `shape-outside` | `shape_outside` | `ShapeOutside` | `renderer-initial` | false | layout | discrete |
++| 238 | `scroll-margin` | `-` | `Edges<LengthValue>` | `0px` | false | layout | length-list |
++| 239 | `scroll-margin-top` | `scroll_margin_top` | `LengthValue` | `0px` | false | layout | length |
++| 240 | `scroll-margin-right` | `scroll_margin_right` | `LengthValue` | `0px` | false | layout | length |
++| 241 | `scroll-margin-bottom` | `scroll_margin_bottom` | `LengthValue` | `0px` | false | layout | length |
++| 242 | `scroll-margin-left` | `scroll_margin_left` | `LengthValue` | `0px` | false | layout | length |
++| 243 | `scroll-margin-block-start` | `-` | `LengthValue` | `0px` | false | layout | length |
++| 244 | `scroll-margin-block-end` | `-` | `LengthValue` | `0px` | false | layout | length |
++| 245 | `scroll-margin-inline-start` | `-` | `LengthValue` | `0px` | false | layout | length |
++| 246 | `scroll-margin-inline-end` | `-` | `LengthValue` | `0px` | false | layout | length |
++| 247 | `scroll-padding` | `-` | `Edges<LengthValue>` | `auto` | false | layout | length-list |
++| 248 | `scroll-padding-top` | `scroll_padding_top` | `LengthValue` | `auto` | false | layout | length |
++| 249 | `scroll-padding-right` | `scroll_padding_right` | `LengthValue` | `auto` | false | layout | length |
++| 250 | `scroll-padding-bottom` | `scroll_padding_bottom` | `LengthValue` | `auto` | false | layout | length |
++| 251 | `scroll-padding-left` | `scroll_padding_left` | `LengthValue` | `auto` | false | layout | length |
++| 252 | `scroll-padding-block-start` | `-` | `LengthValue` | `auto` | false | layout | length |
++| 253 | `scroll-padding-block-end` | `-` | `LengthValue` | `auto` | false | layout | length |
++| 254 | `scroll-padding-inline-start` | `-` | `LengthValue` | `auto` | false | layout | length |
++| 255 | `scroll-padding-inline-end` | `-` | `LengthValue` | `auto` | false | layout | length |
+diff --git a/examples/c_v02/scroll_into_view.c b/examples/c_v02/scroll_into_view.c
+index bfe89ca5..f9a01568 100644
+--- a/examples/c_v02/scroll_into_view.c
++++ b/examples/c_v02/scroll_into_view.c
+@@ -44,7 +44,15 @@ static void clicked(OuiEvent* event, void* user_data) {
+   ++state->calls;
+ }
+ 
+-static void run(double scale, const char* overflow, double final_y) {
++typedef struct InsetCase {
++  const char* name;
++  const char* margin;
++  const char* outer_padding;
++  const char* inner_padding;
++  double outer_x, outer_y, inner_y, target_x, target_y;
++} InsetCase;
++
++static void run(double scale, const char* overflow, const InsetCase* test) {
+   OuiDocumentConfig config = {sizeof(config),
+                               OUI_ABI_VERSION,
+                               {320.0, 240.0, (uint32_t)(320.0 * scale), (uint32_t)(240.0 * scale),
+@@ -65,6 +73,29 @@ static void run(double scale, const char* overflow, double final_y) {
+   OuiElement* target = block(d, inner, "20px", "20px");
+   property(target, OUI_STYLE_PROPERTY_MARGIN_LEFT, "150px");
+   property(target, OUI_STYLE_PROPERTY_MARGIN_TOP, "120px");
++  if (test->margin) property(target, OUI_STYLE_PROPERTY_SCROLL_MARGIN, test->margin);
++  if (test->outer_padding) property(outer, OUI_STYLE_PROPERTY_SCROLL_PADDING, test->outer_padding);
++  if (test->inner_padding) property(inner, OUI_STYLE_PROPERTY_SCROLL_PADDING, test->inner_padding);
++  if (strcmp(test->name, "logical-reorder") == 0) {
++    property(target, OUI_STYLE_PROPERTY_SCROLL_MARGIN_INLINE_START, "17px");
++    property(target, OUI_STYLE_PROPERTY_SCROLL_MARGIN_LEFT, "7px");
++    property(target, OUI_STYLE_PROPERTY_SCROLL_MARGIN_INLINE_START, "17px");
++    property(outer, OUI_STYLE_PROPERTY_SCROLL_PADDING_BLOCK_END, "11px");
++    property(outer, OUI_STYLE_PROPERTY_SCROLL_PADDING_BOTTOM, "5px");
++    property(outer, OUI_STYLE_PROPERTY_SCROLL_PADDING_BLOCK_END, "11px");
++  }
++  /* A rejected compound must not partly change the retained document. */
++  OuiStyleValue invalid_value;
++  const char* invalid = "3px -2px";
++  OuiUtf8 invalid_text = {(const uint8_t*)invalid, strlen(invalid)};
++  assert(oui_style_value_parse(OUI_STYLE_PROPERTY_SCROLL_PADDING, invalid_text, &invalid_value)
++         == OUI_ERROR_INVALID_ARGUMENT);
++  invalid = "10%";
++  invalid_text.data = (const uint8_t*)invalid;
++  invalid_text.length = strlen(invalid);
++  assert(oui_style_value_parse(OUI_STYLE_PROPERTY_SCROLL_MARGIN_LEFT, invalid_text, &invalid_value)
++         == OUI_ERROR_INVALID_ARGUMENT);
++
+   assert(oui_element_scroll_into_view_v1(target, 99, OUI_SCROLL_NEAREST,
+                                          OUI_SCROLL_CONTAINERS_ALL) == OUI_ERROR_INVALID_ARGUMENT);
+   assert(oui_element_smooth_scroll_into_view_v1(target, OUI_SCROLL_NEAREST, OUI_SCROLL_NEAREST,
+@@ -82,18 +113,18 @@ static void run(double scale, const char* overflow, double final_y) {
+   event.event_type = OUI_EVENT_CLICK;
+   assert(oui_document_dispatch_event(d, target, &event) == OUI_OK);
+   assert(state.calls == 1);
+-  offset(outer, 70, final_y);
+-  offset(inner, 0, strcmp(overflow, "clip") == 0 ? 0 : 40);
++  offset(outer, test->outer_x, test->outer_y);
++  offset(inner, 0, test->inner_y);
+   OuiRect bounds;
+   assert(oui_element_get_bounds(target, &bounds) == OUI_OK);
+-  assert(bounds.x == 120 && bounds.y == 90 && bounds.width == 20 && bounds.height == 20);
++  assert(bounds.x == test->target_x && bounds.y == test->target_y && bounds.width == 20 && bounds.height == 20);
+   assert(oui_element_scroll_to(outer, 0, 0) == OUI_OK);
+   assert(oui_element_scroll_to(inner, 0, 0) == OUI_OK);
+   assert(oui_element_smooth_scroll_into_view_v1(target, OUI_SCROLL_NEAREST, OUI_SCROLL_NEAREST,
+                                                 OUI_SCROLL_CONTAINERS_ALL, 100) == OUI_OK);
+   offset(outer, 0, 0);
+   assert(oui_document_set_animation_time(d, 100) == OUI_OK);
+-  offset(outer, 70, final_y);
++  offset(outer, test->outer_x, test->outer_y);
+   assert(oui_listener_destroy(listener) == OUI_OK);
+   assert(oui_element_destroy(target) == OUI_OK);
+   assert(oui_element_destroy(inner) == OUI_OK);
+@@ -104,10 +135,32 @@ static void run(double scale, const char* overflow, double final_y) {
+ }
+ 
+ int main(void) {
++  /* Pinned Chromium 147 oracle: seven native cases at five scales, both
++     hidden scrollports and overflow:clip. No script runs in this app. */
++  const InsetCase hidden_cases[] = {
++    {"none", NULL, NULL, NULL, 70, 220, 40, 120, 90},
++    {"margin", "10px", NULL, NULL, 80, 220, 40, 110, 90},
++    {"negative-margin", "-8px", NULL, NULL, 62, 212, 32, 128, 106},
++    {"padding", NULL, "10px", "10px", 80, 220, 40, 110, 90},
++    {"asymmetric", "7px 11px 13px 17px", "3px 5px 9px 15px", "4px 6px 8px 12px", 86, 220, 40, 104, 90},
++    {"percent-padding", NULL, "12.5%", "20%", 83, 220, 40, 107, 90},
++    {"logical-reorder", NULL, NULL, NULL, 70, 220, 40, 120, 90},
++  };
++  const InsetCase clip_cases[] = {
++    {"none", NULL, NULL, NULL, 70, 260, 0, 120, 90},
++    {"margin", "10px", NULL, NULL, 80, 270, 0, 110, 80},
++    {"negative-margin", "-8px", NULL, NULL, 62, 252, 0, 128, 98},
++    {"padding", NULL, "10px", "10px", 80, 270, 0, 110, 80},
++    {"asymmetric", "7px 11px 13px 17px", "3px 5px 9px 15px", "4px 6px 8px 12px", 86, 282, 0, 104, 68},
++    {"percent-padding", NULL, "12.5%", "20%", 83, 270, 0, 107, 80},
++    {"logical-reorder", NULL, NULL, NULL, 70, 271, 0, 120, 79},
++  };
+   const double scales[] = {1, 1.25, 1.5, 2, 3};
+   for (unsigned i = 0; i < sizeof(scales) / sizeof(scales[0]); ++i) {
+-    run(scales[i], "hidden", 220);
+-    run(scales[i], "clip", 260);
++    for (unsigned j = 0; j < sizeof(hidden_cases) / sizeof(hidden_cases[0]); ++j) {
++      run(scales[i], "hidden", &hidden_cases[j]);
++      run(scales[i], "clip", &clip_cases[j]);
++    }
+   }
+   return 0;
+ }
+diff --git a/include/openui_style_properties.h b/include/openui_style_properties.h
+index a7e15cdd..ab2bd307 100644
+--- a/include/openui_style_properties.h
++++ b/include/openui_style_properties.h
+@@ -244,6 +244,24 @@ typedef enum OuiStyleProperty {
+   OUI_STYLE_PROPERTY_SHAPE_IMAGE_THRESHOLD = 235,
+   OUI_STYLE_PROPERTY_SHAPE_MARGIN = 236,
+   OUI_STYLE_PROPERTY_SHAPE_OUTSIDE = 237,
++  OUI_STYLE_PROPERTY_SCROLL_MARGIN = 238,
++  OUI_STYLE_PROPERTY_SCROLL_MARGIN_TOP = 239,
++  OUI_STYLE_PROPERTY_SCROLL_MARGIN_RIGHT = 240,
++  OUI_STYLE_PROPERTY_SCROLL_MARGIN_BOTTOM = 241,
++  OUI_STYLE_PROPERTY_SCROLL_MARGIN_LEFT = 242,
++  OUI_STYLE_PROPERTY_SCROLL_MARGIN_BLOCK_START = 243,
++  OUI_STYLE_PROPERTY_SCROLL_MARGIN_BLOCK_END = 244,
++  OUI_STYLE_PROPERTY_SCROLL_MARGIN_INLINE_START = 245,
++  OUI_STYLE_PROPERTY_SCROLL_MARGIN_INLINE_END = 246,
++  OUI_STYLE_PROPERTY_SCROLL_PADDING = 247,
++  OUI_STYLE_PROPERTY_SCROLL_PADDING_TOP = 248,
++  OUI_STYLE_PROPERTY_SCROLL_PADDING_RIGHT = 249,
++  OUI_STYLE_PROPERTY_SCROLL_PADDING_BOTTOM = 250,
++  OUI_STYLE_PROPERTY_SCROLL_PADDING_LEFT = 251,
++  OUI_STYLE_PROPERTY_SCROLL_PADDING_BLOCK_START = 252,
++  OUI_STYLE_PROPERTY_SCROLL_PADDING_BLOCK_END = 253,
++  OUI_STYLE_PROPERTY_SCROLL_PADDING_INLINE_START = 254,
++  OUI_STYLE_PROPERTY_SCROLL_PADDING_INLINE_END = 255,
+ } OuiStyleProperty;
+ 
+ typedef enum OuiStyleValueTag {
+diff --git a/tools/style/generate_properties.py b/tools/style/generate_properties.py
+index 0d9c9b18..06d702c7 100644
+--- a/tools/style/generate_properties.py
++++ b/tools/style/generate_properties.py
+@@ -228,7 +228,7 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
+                 f"    pub fn {rust_method(row['css_name'])}(self, value: {row['rust_type']}) -> Self {{",
+                 (
+                     f"        self.with(StyleProperty::{row['rust_name']}, value)"
+-                    if int(row["id"]) <= 125
++                    if int(row["id"]) <= 125 or row["rust_type"] in {"LengthValue", "Edges<LengthValue>"}
+                     else f"        self.with_renderer(StyleProperty::{row['rust_name']}, RendererStyleValue::{row['rust_name']}(value))"
+                 ),
+                 "    }",
+@@ -421,7 +421,7 @@ def framework_output(schema: list[dict[str, str]]) -> bytes:
+                 f"    pub fn set_{rust_method(row['css_name'])}(&self, value: {row['rust_type']}) -> Result<(), Error> {{",
+                 (
+                     f"        self.set_property(StyleProperty::{row['rust_name']}, value.into())"
+-                    if int(row["id"]) <= 125
++                    if int(row["id"]) <= 125 or row["rust_type"] in {"LengthValue", "Edges<LengthValue>"}
+                     else f"        self.set_property(StyleProperty::{row['rust_name']}, StyleValue::Renderer(RendererStyleValue::{row['rust_name']}(value)))"
+                 ),
+                 "    }",

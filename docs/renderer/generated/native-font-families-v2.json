@@ -1,0 +1,1859 @@
+{
+  "actual_scope": "two runtime files: select ordinary author raster policy independently from each resolved font",
+  "all_local_commands_terminal": true,
+  "all_members_hash_verified": true,
+  "all_native_apis_qualified": false,
+  "archive": {
+    "bytes": 1489231,
+    "excluded": [
+      {
+        "bytes": 58294816,
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-resolved-raster-trial-v3847/native_font_family_probe",
+        "reason": "owned executable; fresh compiler provenance and hash archived",
+        "sha256": "9a39d4751a16dd4fcfc0c7e59ea4afab69b35da3943fda1bb32654b1ad199075"
+      },
+      {
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-resolved-raster-matrices-v3850",
+        "reason": "matrix capture PNGs and temporary HTML remain in the qualification directory; complete summaries, audited decoded-image hashes, immutable input identities and all raw build/matrix logs are archived"
+      },
+      {
+        "bytes": 233949016,
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-resolved-raster-matrices-v3850/guarded-build/pixel_compare",
+        "reason": "owned renderer executable; archived build receipt, fresh compiler records and verified binary hash identify the retained qualification executable",
+        "sha256": "05b1611e3210386e00398ea26dea1c0a23606e544cd39629a17a024555856cad"
+      }
+    ],
+    "files": 158,
+    "members": [
+      {
+        "bytes": 636,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/clean-local-packages.log.gz",
+        "raw_bytes": 7544,
+        "raw_sha256": "c00a8d09fa9453bf4be1fe708808fcb5be6b7d7a00be426f9f1087bb2f28f7a5",
+        "sha256": "0e9bcf079e6064d25cfda8ab91531baef192048a17a9b0c842b61352f7daf944"
+      },
+      {
+        "bytes": 66733,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/metadata.log.gz",
+        "raw_bytes": 700510,
+        "raw_sha256": "636559a528f7c5f5833381e73f3f0027c51e5588801a78aa4b174ac3610b1971",
+        "sha256": "c231a23c8043a166cfdc004d614f15c7262e5e2cfb5572a8466642a2a1214f17"
+      },
+      {
+        "bytes": 7692,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/native-build.log.gz",
+        "raw_bytes": 85189,
+        "raw_sha256": "07b9da94422028cb4bff80004bb774d00a8a769616a65c1dee6ae0d38fe65a4d",
+        "sha256": "086f89fa2a976ffa8885f192a2822918dc20c32259aa110d6156c38338f69abd"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0/native-1/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 10696,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0/native-1/after.png",
+        "raw_bytes": 10696,
+        "raw_sha256": "48834304c03169bd84ae8afcbdec01106e19024ab102f3a2a4752a53ae4cceb1",
+        "sha256": "48834304c03169bd84ae8afcbdec01106e19024ab102f3a2a4752a53ae4cceb1"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0/native-1/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 10346,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0/native-1/alias.png",
+        "raw_bytes": 10346,
+        "raw_sha256": "9efb480e1b3bc4b83aa6e4fb73021011ee1be173162b9b216d921b1bde81d7d7",
+        "sha256": "9efb480e1b3bc4b83aa6e4fb73021011ee1be173162b9b216d921b1bde81d7d7"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0/native-1/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 10346,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0/native-1/before.png",
+        "raw_bytes": 10346,
+        "raw_sha256": "9efb480e1b3bc4b83aa6e4fb73021011ee1be173162b9b216d921b1bde81d7d7",
+        "sha256": "9efb480e1b3bc4b83aa6e4fb73021011ee1be173162b9b216d921b1bde81d7d7"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0/native-2/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 10696,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0/native-2/after.png",
+        "raw_bytes": 10696,
+        "raw_sha256": "48834304c03169bd84ae8afcbdec01106e19024ab102f3a2a4752a53ae4cceb1",
+        "sha256": "48834304c03169bd84ae8afcbdec01106e19024ab102f3a2a4752a53ae4cceb1"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0/native-2/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 10346,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0/native-2/alias.png",
+        "raw_bytes": 10346,
+        "raw_sha256": "9efb480e1b3bc4b83aa6e4fb73021011ee1be173162b9b216d921b1bde81d7d7",
+        "sha256": "9efb480e1b3bc4b83aa6e4fb73021011ee1be173162b9b216d921b1bde81d7d7"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0/native-2/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 10346,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0/native-2/before.png",
+        "raw_bytes": 10346,
+        "raw_sha256": "9efb480e1b3bc4b83aa6e4fb73021011ee1be173162b9b216d921b1bde81d7d7",
+        "sha256": "9efb480e1b3bc4b83aa6e4fb73021011ee1be173162b9b216d921b1bde81d7d7"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-0-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1/native-1/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 22710,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1/native-1/after.png",
+        "raw_bytes": 22710,
+        "raw_sha256": "a84baf8768e59e4bed6f9916d89e20874812ea04f4abe131fb00870b6e28f2e9",
+        "sha256": "a84baf8768e59e4bed6f9916d89e20874812ea04f4abe131fb00870b6e28f2e9"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1/native-1/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 21966,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1/native-1/alias.png",
+        "raw_bytes": 21966,
+        "raw_sha256": "7c0f63a1344a3e15ed6e2e63d693f14932a8fcc250c727ced4275def4499b38f",
+        "sha256": "7c0f63a1344a3e15ed6e2e63d693f14932a8fcc250c727ced4275def4499b38f"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1/native-1/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 21966,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1/native-1/before.png",
+        "raw_bytes": 21966,
+        "raw_sha256": "7c0f63a1344a3e15ed6e2e63d693f14932a8fcc250c727ced4275def4499b38f",
+        "sha256": "7c0f63a1344a3e15ed6e2e63d693f14932a8fcc250c727ced4275def4499b38f"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1/native-2/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 22710,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1/native-2/after.png",
+        "raw_bytes": 22710,
+        "raw_sha256": "a84baf8768e59e4bed6f9916d89e20874812ea04f4abe131fb00870b6e28f2e9",
+        "sha256": "a84baf8768e59e4bed6f9916d89e20874812ea04f4abe131fb00870b6e28f2e9"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1/native-2/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 21966,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1/native-2/alias.png",
+        "raw_bytes": 21966,
+        "raw_sha256": "7c0f63a1344a3e15ed6e2e63d693f14932a8fcc250c727ced4275def4499b38f",
+        "sha256": "7c0f63a1344a3e15ed6e2e63d693f14932a8fcc250c727ced4275def4499b38f"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1/native-2/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 21966,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1/native-2/before.png",
+        "raw_bytes": 21966,
+        "raw_sha256": "7c0f63a1344a3e15ed6e2e63d693f14932a8fcc250c727ced4275def4499b38f",
+        "sha256": "7c0f63a1344a3e15ed6e2e63d693f14932a8fcc250c727ced4275def4499b38f"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-1-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2/native-1/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 17863,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2/native-1/after.png",
+        "raw_bytes": 17863,
+        "raw_sha256": "2639af640512bd481c3168a59473d01f7e9c4ec9588d5bee36f030694cd9d90c",
+        "sha256": "2639af640512bd481c3168a59473d01f7e9c4ec9588d5bee36f030694cd9d90c"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2/native-1/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 17480,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2/native-1/alias.png",
+        "raw_bytes": 17480,
+        "raw_sha256": "51b40da42941f7314fb1364e9bcf3f8b564d2791227152ae1d689233695acccd",
+        "sha256": "51b40da42941f7314fb1364e9bcf3f8b564d2791227152ae1d689233695acccd"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2/native-1/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 17480,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2/native-1/before.png",
+        "raw_bytes": 17480,
+        "raw_sha256": "51b40da42941f7314fb1364e9bcf3f8b564d2791227152ae1d689233695acccd",
+        "sha256": "51b40da42941f7314fb1364e9bcf3f8b564d2791227152ae1d689233695acccd"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2/native-2/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 17863,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2/native-2/after.png",
+        "raw_bytes": 17863,
+        "raw_sha256": "2639af640512bd481c3168a59473d01f7e9c4ec9588d5bee36f030694cd9d90c",
+        "sha256": "2639af640512bd481c3168a59473d01f7e9c4ec9588d5bee36f030694cd9d90c"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2/native-2/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 17480,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2/native-2/alias.png",
+        "raw_bytes": 17480,
+        "raw_sha256": "51b40da42941f7314fb1364e9bcf3f8b564d2791227152ae1d689233695acccd",
+        "sha256": "51b40da42941f7314fb1364e9bcf3f8b564d2791227152ae1d689233695acccd"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2/native-2/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 17480,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2/native-2/before.png",
+        "raw_bytes": 17480,
+        "raw_sha256": "51b40da42941f7314fb1364e9bcf3f8b564d2791227152ae1d689233695acccd",
+        "sha256": "51b40da42941f7314fb1364e9bcf3f8b564d2791227152ae1d689233695acccd"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-2-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3/native-1/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 35191,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3/native-1/after.png",
+        "raw_bytes": 35191,
+        "raw_sha256": "feaefbcdc6d6932dc8f872b8000977935349dab14693707048af2df0ff1fc179",
+        "sha256": "feaefbcdc6d6932dc8f872b8000977935349dab14693707048af2df0ff1fc179"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3/native-1/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 34769,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3/native-1/alias.png",
+        "raw_bytes": 34769,
+        "raw_sha256": "a21c1f72e0a41d764eaf27585a38ef877e32f37f21923b74f338f0427a8b2b16",
+        "sha256": "a21c1f72e0a41d764eaf27585a38ef877e32f37f21923b74f338f0427a8b2b16"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3/native-1/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 34769,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3/native-1/before.png",
+        "raw_bytes": 34769,
+        "raw_sha256": "a21c1f72e0a41d764eaf27585a38ef877e32f37f21923b74f338f0427a8b2b16",
+        "sha256": "a21c1f72e0a41d764eaf27585a38ef877e32f37f21923b74f338f0427a8b2b16"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3/native-2/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 35191,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3/native-2/after.png",
+        "raw_bytes": 35191,
+        "raw_sha256": "feaefbcdc6d6932dc8f872b8000977935349dab14693707048af2df0ff1fc179",
+        "sha256": "feaefbcdc6d6932dc8f872b8000977935349dab14693707048af2df0ff1fc179"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3/native-2/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 34769,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3/native-2/alias.png",
+        "raw_bytes": 34769,
+        "raw_sha256": "a21c1f72e0a41d764eaf27585a38ef877e32f37f21923b74f338f0427a8b2b16",
+        "sha256": "a21c1f72e0a41d764eaf27585a38ef877e32f37f21923b74f338f0427a8b2b16"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3/native-2/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 34769,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3/native-2/before.png",
+        "raw_bytes": 34769,
+        "raw_sha256": "a21c1f72e0a41d764eaf27585a38ef877e32f37f21923b74f338f0427a8b2b16",
+        "sha256": "a21c1f72e0a41d764eaf27585a38ef877e32f37f21923b74f338f0427a8b2b16"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-3-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4/native-1/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 46644,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4/native-1/after.png",
+        "raw_bytes": 46644,
+        "raw_sha256": "5c32bb05384cd516b35d8f23414f669a73a090022dfb8df04b83dfd895a23e09",
+        "sha256": "5c32bb05384cd516b35d8f23414f669a73a090022dfb8df04b83dfd895a23e09"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4/native-1/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 45752,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4/native-1/alias.png",
+        "raw_bytes": 45752,
+        "raw_sha256": "93605e177d8196918788951b572c0c6f4706b5d95abc1283152960a0c623ea55",
+        "sha256": "93605e177d8196918788951b572c0c6f4706b5d95abc1283152960a0c623ea55"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4/native-1/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 45752,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4/native-1/before.png",
+        "raw_bytes": 45752,
+        "raw_sha256": "93605e177d8196918788951b572c0c6f4706b5d95abc1283152960a0c623ea55",
+        "sha256": "93605e177d8196918788951b572c0c6f4706b5d95abc1283152960a0c623ea55"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4/native-2/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 46644,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4/native-2/after.png",
+        "raw_bytes": 46644,
+        "raw_sha256": "5c32bb05384cd516b35d8f23414f669a73a090022dfb8df04b83dfd895a23e09",
+        "sha256": "5c32bb05384cd516b35d8f23414f669a73a090022dfb8df04b83dfd895a23e09"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4/native-2/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 45752,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4/native-2/alias.png",
+        "raw_bytes": 45752,
+        "raw_sha256": "93605e177d8196918788951b572c0c6f4706b5d95abc1283152960a0c623ea55",
+        "sha256": "93605e177d8196918788951b572c0c6f4706b5d95abc1283152960a0c623ea55"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4/native-2/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 45752,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4/native-2/before.png",
+        "raw_bytes": 45752,
+        "raw_sha256": "93605e177d8196918788951b572c0c6f4706b5d95abc1283152960a0c623ea55",
+        "sha256": "93605e177d8196918788951b572c0c6f4706b5d95abc1283152960a0c623ea55"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/profile-4-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 33384,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/receipt.json.gz",
+        "raw_bytes": 608463,
+        "raw_sha256": "fa60009e4de8a91fedbd6ef044c534b534fa9f7d750a7d1373f697a87e21ab7e",
+        "sha256": "e9f4292c8fd74486ed03835cf2bd04f3e5780dd7092d744d57dd9047585b0ae7"
+      },
+      {
+        "bytes": 17612,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/native/text-layout-paint-guards.log.gz",
+        "raw_bytes": 95242,
+        "raw_sha256": "39d6669b1ff77c91cbca7c16defec7ea29a4ff843d337c7b279299f664f7fdc8",
+        "sha256": "56930a2922279dd69e001314050ec1838a29be9f480578141b13c07907eb604e"
+      },
+      {
+        "bytes": 160505,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/matrices/focused-matrix/focused-summary.json.gz",
+        "raw_bytes": 1646591,
+        "raw_sha256": "6a248dcf75082c7b7139635bf94af1f4ad2c432c8557a7b3dac76d5f9d53daa6",
+        "sha256": "56183559732775397b53c6b1409d367654186daf38b14fc467ffc02d5389c7f0"
+      },
+      {
+        "bytes": 296,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/matrices/focused.log.gz",
+        "raw_bytes": 1241,
+        "raw_sha256": "2c1c7e06e81435d4dfaf7982a4143e9584502212c7a975996ed5f1f166d58d7d",
+        "sha256": "18c5123b0d656c32fca6f13a9cf809ae17af1f3b9676e7e2080dac9a841065d5"
+      },
+      {
+        "bytes": 325,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/matrices/guarded-build/build.stderr.gz",
+        "raw_bytes": 1323,
+        "raw_sha256": "ac96d925c58c181e47ca0999be04d6b36a015f36c7d08ae55d1a9c4619dc5571",
+        "sha256": "46472de06923e480d9d29f62ef02d2d525eb1bc8250cf968acf5f4fc96165d01"
+      },
+      {
+        "bytes": 9759,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/matrices/guarded-build/build.stdout.gz",
+        "raw_bytes": 132209,
+        "raw_sha256": "a7acec70f0e9f521e04e2c27f1ca14d5e1d9dabe925c1f87459fb94111280bae",
+        "sha256": "6a605b2191cd7d19e1c8bdd5a0669849773357be1e77cf92afd5a9fae3269c5e"
+      },
+      {
+        "bytes": 636,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/matrices/guarded-build/clean-local-packages.stderr.gz",
+        "raw_bytes": 7544,
+        "raw_sha256": "c00a8d09fa9453bf4be1fe708808fcb5be6b7d7a00be426f9f1087bb2f28f7a5",
+        "sha256": "0e9bcf079e6064d25cfda8ab91531baef192048a17a9b0c842b61352f7daf944"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/matrices/guarded-build/clean-local-packages.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/matrices/guarded-build/metadata.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 66733,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/matrices/guarded-build/metadata.stdout.gz",
+        "raw_bytes": 700510,
+        "raw_sha256": "636559a528f7c5f5833381e73f3f0027c51e5588801a78aa4b174ac3610b1971",
+        "sha256": "c231a23c8043a166cfdc004d614f15c7262e5e2cfb5572a8466642a2a1214f17"
+      },
+      {
+        "bytes": 3640,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/matrices/guarded-build/receipt.json.gz",
+        "raw_bytes": 27345,
+        "raw_sha256": "ae969cd31666dcafa3a8294983d3bd6691c3f6ee605ad05367f8a2112a09b1ed",
+        "sha256": "77061164eceae648f0132638b45c6d0dd5bb16dc8fc0bf4070dffbc2d1cac8e3"
+      },
+      {
+        "bytes": 402,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/matrices/guarded-build.log.gz",
+        "raw_bytes": 595,
+        "raw_sha256": "2039f55c72b0ab7af6c86f7a8c27b99a4b7361b178ffd1f45aa390ca64beee7b",
+        "sha256": "6ea8baf05acb2af303097d355cd7ba3caef281032eaf33137c08a035142280a1"
+      },
+      {
+        "bytes": 222626,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/matrices/primitive-matrix/primitive-summary.json.gz",
+        "raw_bytes": 2455797,
+        "raw_sha256": "d4b157f7171e30136feb8ac068f79c5dc0449c7e96d58370adb5f61f00f20889",
+        "sha256": "5592945d47f40a0529366aeeeb40f8ad19ec6e063e0fdbb7fe122234f60f9f9d"
+      },
+      {
+        "bytes": 299,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/matrices/primitive.log.gz",
+        "raw_bytes": 1245,
+        "raw_sha256": "fa5277adfe3cec4d75ae3f34f0c1e756163ba1556e0715b789b8f3e73bac2ef5",
+        "sha256": "a03d546c8f41b6e78eebf25677078a4ab3ac015a4b2b633b6b259b2b517da071"
+      },
+      {
+        "bytes": 2055,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/matrices/receipt.json.gz",
+        "raw_bytes": 8635,
+        "raw_sha256": "2dde152c7e8af05f603b55e84b1ceed282c869067ce5a13360f9f4c9bfecac97",
+        "sha256": "a5434ec01c8fb49b0d4846c7939ba0a6123d9680e82757b0f5aa6c9e2ee1eb5e"
+      },
+      {
+        "bytes": 5514,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/measured-source/after/bindings/rust/openui-paint/src/text_painter.rs.gz",
+        "raw_bytes": 18382,
+        "raw_sha256": "393639a5e1993c11731941c6891f68d38b44716929a205afda3d339cab79f568",
+        "sha256": "e73df38673b2393a93247a80b70d136ed3d3cd710177c5a031aa75ba8947a099"
+      },
+      {
+        "bytes": 10862,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/measured-source/after/bindings/rust/openui-text/src/shaping/shape_result.rs.gz",
+        "raw_bytes": 44722,
+        "raw_sha256": "8e251b4e16c6d93941acdfc733821c217b79890bed2eafee92fc356f664c73bc",
+        "sha256": "2734bde852c36212bd1887712b53b7e77a46b6a3e200af5836a3998304ae3339"
+      },
+      {
+        "bytes": 5669,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/measured-source/before/bindings/rust/openui-paint/src/text_painter.rs.gz",
+        "raw_bytes": 18860,
+        "raw_sha256": "d81b807c4adec45597c8e84f1dd8c4587fba102af4b0e23ce44550bb221aa7de",
+        "sha256": "96839b98cfeb7eb0f80f373ea2d73264d563e0551f031ad867a91707a4ddce3f"
+      },
+      {
+        "bytes": 10646,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/measured-source/before/bindings/rust/openui-text/src/shaping/shape_result.rs.gz",
+        "raw_bytes": 43629,
+        "raw_sha256": "8ff93c6b12a74a1a861f7b037d4b10e46f8a41a010147abc31588be0054784b5",
+        "sha256": "e6cd811c1e35af1cdd39b9472459b18346220a6ed3814024b66900ded2185477"
+      },
+      {
+        "bytes": 558,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/measured-source/source.json.gz",
+        "raw_bytes": 1486,
+        "raw_sha256": "6a0670748d342078f09aa0dc64d7a33b9ebe585f1bd6f159aa210969ef2c6927",
+        "sha256": "23bae4b8ef489616a5a5af512ba93e4db3aac063d102d69ab1c738dd4dc8d0bb"
+      },
+      {
+        "bytes": 3297,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/probes-and-proofs/openui-native-resolved-raster-trial-v3847.py.gz",
+        "raw_bytes": 8369,
+        "raw_sha256": "cb143fd385849f136ea7dcefef7f411dd9933da0efc4a1c3e5b13c01dbd1ef54",
+        "sha256": "34ac3ea1756a37a0a1fd79c9eb9ae5f2f1fe385a80f499c2ccff4d8fe4fe3256"
+      },
+      {
+        "bytes": 2497,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/probes-and-proofs/openui-native-resolved-raster-trial-audit-v3848.py.gz",
+        "raw_bytes": 7281,
+        "raw_sha256": "0fad7e920b0ff03b781ddbe2816bc45bd1a925163f7ba04975ed2668ca8b5bd1",
+        "sha256": "8a52a678c8a21fe1bb249a1ad69782a13c0565b19a50cc07ffef427d5b4ed1b7"
+      },
+      {
+        "bytes": 945,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/probes-and-proofs/openui-native-resolved-raster-trial-audit-v3848.json.gz",
+        "raw_bytes": 1954,
+        "raw_sha256": "3c6b5815d1631077cc08dd29cc3f01dc6ee33a51d6266c29736088de6d66f5d3",
+        "sha256": "5ad262976b06221798f84c739169bca7f2fecdc36d228c91551e9b59dc0977fc"
+      },
+      {
+        "bytes": 941,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/probes-and-proofs/openui-native-resolved-raster-trial-reaping-v3849.py.gz",
+        "raw_bytes": 2097,
+        "raw_sha256": "f0a6e8edd42867689e613b48c2f365caec1782c5e73eff1e12d66739f3736d3a",
+        "sha256": "e6d4a523d8ac0d3de0275670462eec2b1e2eee16b20f75a824c9b12c353ca071"
+      },
+      {
+        "bytes": 843,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/probes-and-proofs/openui-native-resolved-raster-trial-reaped-v3849.json.gz",
+        "raw_bytes": 1839,
+        "raw_sha256": "42a68c46b0250eed2d1fdc10996292ed6dc592d9b57589e241cd6ec1b23517b8",
+        "sha256": "d5555b89f1d704828207a75994e8f81e46918bc23c9cb54ffc025a1ed7c6d781"
+      },
+      {
+        "bytes": 4268,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/probes-and-proofs/openui-native-resolved-raster-matrices-v3850.py.gz",
+        "raw_bytes": 13176,
+        "raw_sha256": "5c617ea2173e0f8eb3df4fc1de31544b434f8fe8106deb939284bbf28f2c58c1",
+        "sha256": "80b03cdaca82618efbf3d378068ee7eaf332fad1324a25c0b4de325dc5939432"
+      },
+      {
+        "bytes": 2416,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/probes-and-proofs/openui-native-resolved-raster-matrices-audit-v3851.py.gz",
+        "raw_bytes": 6975,
+        "raw_sha256": "83944cfa3f130402ef01338ca833af22c17bb3e69e20039167cbb67506357c74",
+        "sha256": "f012406dc9e047a81e55d81df504cf4b0eba79d347dc68e8661e5f46716fe390"
+      },
+      {
+        "bytes": 933,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/probes-and-proofs/openui-native-resolved-raster-matrices-audit-v3851.json.gz",
+        "raw_bytes": 2455,
+        "raw_sha256": "791ca62adde9a515f8fb96ecca050de63eb3ee4d1c0525decefe3fb9782501e0",
+        "sha256": "0c8062a3bb76b00161c54654104c365144e4ae82c63a7d719eb45f1d10e89ed8"
+      },
+      {
+        "bytes": 1029,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/probes-and-proofs/openui-native-resolved-raster-matrices-reaping-v3852.py.gz",
+        "raw_bytes": 2545,
+        "raw_sha256": "b1bf694b40b24ddb43393dbc8dc661361aa509f5d77eb104bfad006e44dbdbba",
+        "sha256": "6f343dc1ee0a0adae4127b08b4e0039ab93a19808bce5be8851d858329e6362b"
+      },
+      {
+        "bytes": 771,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/probes-and-proofs/openui-native-resolved-raster-matrices-reaped-v3852.json.gz",
+        "raw_bytes": 1844,
+        "raw_sha256": "6c61cbe9934af116178601e6e2d4ca1d1cb22af1e115e2befa35037f941273e2",
+        "sha256": "89c2fad5cc06a5c638132e01d652518cf0934961919cf535a47dae3d8c1dcfba"
+      },
+      {
+        "bytes": 838,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/probes-and-proofs/openui_parallel_source_identity_v3060.py.gz",
+        "raw_bytes": 2012,
+        "raw_sha256": "d034540153e35cad3cbfc63a13e0bcfb17df4cbdb89a6d22e1439f7bc39435ec",
+        "sha256": "2190c64b756a252ac1285172b7514f8b0eebc9e986327c867c764fea0a269a0b"
+      },
+      {
+        "bytes": 402,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/pinned-chromium-source/chromium-font-source-v3853/receipt.json.gz",
+        "raw_bytes": 1201,
+        "raw_sha256": "d20cdc0ae243e7b2318581ca68a0b1a0d63b20f98e6a316f980043a02a5c1843",
+        "sha256": "b8d4e647ac263631988ba2e298bf68d6197cea9da41beb71e9eed17ee494683f"
+      },
+      {
+        "bytes": 2027,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/pinned-chromium-source/chromium-font-source-v3853/third_party/blink/renderer/platform/fonts/skia/skia_text_metrics.cc.gz",
+        "raw_bytes": 6526,
+        "raw_sha256": "376a90b1af745815356bffb02cd3cd16e28c24ecc3daad274715d8578a93ee19",
+        "sha256": "45eee779fdb418aef11f95aef922d4f5fa9b478d1dfd405be18b23d10bbdac1b"
+      },
+      {
+        "bytes": 500,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/pinned-chromium-source/chromium-font-source-v3854/receipt.json.gz",
+        "raw_bytes": 1730,
+        "raw_sha256": "63d86a9d6e880db91995a86a59f259366052a420d2bab220b5536bbca1ca01f9",
+        "sha256": "449294d76d0171b872f287491f8e36deb52f83b56992677d033e6766d5284169"
+      },
+      {
+        "bytes": 4437,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/pinned-chromium-source/chromium-font-source-v3854/third_party/blink/renderer/platform/fonts/font_cache.cc.gz",
+        "raw_bytes": 14410,
+        "raw_sha256": "33f66f904bb100bda27dc5ed952db2a54f381b40c19746116ab743f53451d9b2",
+        "sha256": "bc31bfe175187a48f0bf4a96706746bd5855041f5aac2b433ff38f982a89a058"
+      },
+      {
+        "bytes": 3369,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/pinned-chromium-source/chromium-font-source-v3854/third_party/blink/renderer/platform/fonts/font_platform_data.cc.gz",
+        "raw_bytes": 10874,
+        "raw_sha256": "f3905ac7d26d5653b1f7d79a4efb5155ccb6a4ffe553789aecd91c96431c46e1",
+        "sha256": "eb807c216ed2831fdefc3f72a6c449df1d3712270fd08b3b16f03fd9fd56fd1a"
+      },
+      {
+        "bytes": 2484,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/pinned-chromium-source/chromium-font-source-v3854/third_party/blink/renderer/platform/fonts/font_platform_data.h.gz",
+        "raw_bytes": 7351,
+        "raw_sha256": "7a33d64cb27c20a5937737edefad564cf8c254c44af71f6689199d8b87353fd4",
+        "sha256": "3707da6b98f7a80579dd694fd0961bb989714bdf20fb120a369ad8e147cf8e67"
+      },
+      {
+        "bytes": 7135,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/pinned-chromium-source/chromium-font-source-v3854/third_party/blink/renderer/platform/fonts/shaping/harfbuzz_face.cc.gz",
+        "raw_bytes": 27418,
+        "raw_sha256": "3fda0277ebddca6cc3f20bf40b0b1e875fe6b469182d0689a2bcd3710fc3eca0",
+        "sha256": "387e2a73181bc20816ec580d7b205dd2a86bb28a858bcdbee12f3e7371225f25"
+      },
+      {
+        "bytes": 517,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/pinned-chromium-source/chromium-font-source-v3855/receipt.json.gz",
+        "raw_bytes": 1736,
+        "raw_sha256": "a56d24161895e9a68522cb84940f9ce2714329a142dbe3cd4b7613993fc06f20",
+        "sha256": "6ae0bd6a7707b938c0eecb7ac5249c208e7ddbf129f7e2da65aac2984551045b"
+      },
+      {
+        "bytes": 1684,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/pinned-chromium-source/chromium-font-source-v3855/third_party/blink/public/platform/web_font_render_style.h.gz",
+        "raw_bytes": 4025,
+        "raw_sha256": "ab2c6f5f279acee4d1322956d5f4e1786a693f61dff9e6926f744abdf38fea59",
+        "sha256": "3f24f4fb6f23fca690606df1c9761424f535dce2ae0b6a3fd9adc2fb441bac06"
+      },
+      {
+        "bytes": 4503,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/pinned-chromium-source/chromium-font-source-v3855/third_party/blink/renderer/platform/fonts/font_custom_platform_data.cc.gz",
+        "raw_bytes": 14821,
+        "raw_sha256": "3e67e8fe3f8bdc181d002ca7e2826006d8916cb29001dec9aa06a7c97c85afbc",
+        "sha256": "0c438f2d5dd3ca8e684b5db2556b75992c097df6645afba9f78f897688f4adda"
+      },
+      {
+        "bytes": 3185,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/pinned-chromium-source/chromium-font-source-v3855/third_party/blink/renderer/platform/fonts/font_metrics.cc.gz",
+        "raw_bytes": 8900,
+        "raw_sha256": "814bbbd68b88860d0f47efa133dd4cb05fb22ed040e19288784dc0e954b15bdc",
+        "sha256": "487bf58d7b83bd4eafdf4fce204b336c4e10c039ee2ffc649fd9596c49f2eb33"
+      },
+      {
+        "bytes": 1045,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/pinned-chromium-source/chromium-font-source-v3855/third_party/blink/renderer/platform/fonts/web_font_render_style.cc.gz",
+        "raw_bytes": 3894,
+        "raw_sha256": "e33fefd03429d5a8bda033a3b9ad559ee51cfa1084e42aadfbd11015ea784bf5",
+        "sha256": "2268376cfe7e08ea1423d3259a16a9e916e674c9c3c73e53f523dd69f783bd6e"
+      },
+      {
+        "bytes": 2288,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/pinned-chromium-source/review.json.gz",
+        "raw_bytes": 8358,
+        "raw_sha256": "ffcea80f13dc1cee36a7edf87f4d4baffaab64a73465e0fc03df083bf2955666",
+        "sha256": "b515b96f1c43415bd2152fa9ecfea2ba453b48663acb349a7861cdf4aa21f63f"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/prior-checkpoint-hosted/38098208037.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 483,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/prior-checkpoint-hosted/38098208037.stdout.json.gz",
+        "raw_bytes": 2651,
+        "raw_sha256": "4a43e3afb11e5eb94cf1780d36c6c62bfcc07334922f86336f5ed8a5d56fea27",
+        "sha256": "467cb354fa3740e3974e27bc6df4c80fbc55daac9b2eb1eb30025b1f04341ad0"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/prior-checkpoint-hosted/38098208044.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 950,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/prior-checkpoint-hosted/38098208044.stdout.json.gz",
+        "raw_bytes": 6022,
+        "raw_sha256": "ee6488695b32f1daa5492166f5b7e425d64ebfb20375176359b377e115756312",
+        "sha256": "172cc21723502f9d074cc143f5639c9365fac78546daa0f50707fe95d4d6a337"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/prior-checkpoint-hosted/38098208081.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 833,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/prior-checkpoint-hosted/38098208081.stdout.json.gz",
+        "raw_bytes": 4393,
+        "raw_sha256": "f471dd968fbcbc8250dbff1e6a5fd52b0c76865f8633c7fd53f4c8f0b2490ca5",
+        "sha256": "44d587bc72a06d583fc6c1962dc17a460cf1473fb54989fd64b27a50255ef97c"
+      },
+      {
+        "bytes": 659,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/prior-checkpoint-hosted/receipt.json.gz",
+        "raw_bytes": 2816,
+        "raw_sha256": "4687a1ea3e2da24f1babe7b4fd4d4922c80cdb1bc6faa670134599d6330e52bd",
+        "sha256": "8c408d59bfc6a5e746cfef111cef173dfb21ea112733bac85631e1c2782e0eb8"
+      },
+      {
+        "bytes": 2969,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/archive-writer/driver.py.gz",
+        "raw_bytes": 8733,
+        "raw_sha256": "90d8b45b99e62bde3f197a02b9591a40a51c17758071eb6009975f7f9e18dede",
+        "sha256": "bbd061b111aad836d471530bedaf5e945490fdcfdf951b1a9adacc4b0a6d0e0c"
+      },
+      {
+        "bytes": 557,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/archive-writer/terminal.json.gz",
+        "raw_bytes": 933,
+        "raw_sha256": "da6f2f6c96b8e12c8a5e6eb577ee052944b4bdab5a1f5a6418769193bc1a8e8c",
+        "sha256": "78093e1caca10c119192b0afbf6021c27122484f98705b83f4126d5eab652711"
+      },
+      {
+        "bytes": 127,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/ffi.json.gz",
+        "raw_bytes": 125,
+        "raw_sha256": "7e985ca035f62b3dc0ac5c87bb3c63cdb5f9be320fd22ab2baf07ae765834f2e",
+        "sha256": "f9570ecdf074710b67542dc2edb6d0f3e5894c1749c27ec594f9c9bd30590971"
+      },
+      {
+        "bytes": 52,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/ffi.stdout.gz",
+        "raw_bytes": 32,
+        "raw_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+        "sha256": "55406c87d9571bf98d31b05240f488bb4ab3c159f8a3c2f654148ee72b439592"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/ffi.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 131,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/style.json.gz",
+        "raw_bytes": 136,
+        "raw_sha256": "7d5fe61e80dc5f1fbd599cc7256b0e938f5aec12701d28c0c0b8ce46799a34a2",
+        "sha256": "e9b66100067b7ec8af0c385d2c672690ab5ef150a9eee050c5fa3373e21db7a1"
+      },
+      {
+        "bytes": 57,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/style.stdout.gz",
+        "raw_bytes": 37,
+        "raw_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+        "sha256": "1b70c8a7ba0f84375105255b165129e2f427ca1072a832c28efb9f840d539b10"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/style.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 142,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/renderer.json.gz",
+        "raw_bytes": 154,
+        "raw_sha256": "836e4c7b3316ed096f1dfccf80228ca2c0b6b03469a898dadcb39e2c6f678a59",
+        "sha256": "ef95e8189be0f41843486e7e176b5a6755c49ece3e908f392e3a3bb70ab32e5f"
+      },
+      {
+        "bytes": 95,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/renderer.stdout.gz",
+        "raw_bytes": 81,
+        "raw_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+        "sha256": "d2b79cb72721d10fece4b15d0f646423937282376e09b24612cf252d1dfa8316"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/renderer.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 134,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/release.json.gz",
+        "raw_bytes": 142,
+        "raw_sha256": "6bd35083421dc3b167ec6a7b8bb438167a042a33da6f18208e76777af8784121",
+        "sha256": "0022add8a23c1126437b4a13bbe5a3c5ae0743cb6f4c5a0caac567b233438580"
+      },
+      {
+        "bytes": 80,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/release.stdout.gz",
+        "raw_bytes": 63,
+        "raw_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+        "sha256": "ec1277c807103cfdee77b77954961b24a58ce62612d9dbf58594043db7efc478"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/release.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 135,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/accountability.json.gz",
+        "raw_bytes": 150,
+        "raw_sha256": "1ad84cdaa1ed0572bcd91d1cdc264cc23b2dcfd3e0dca4496158064d36393a4f",
+        "sha256": "eaa9ef8bc062c8c60257a2d7d9c97a95a53170b28df301fb5b2d9ae034418f33"
+      },
+      {
+        "bytes": 1055,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/accountability.stdout.gz",
+        "raw_bytes": 2867,
+        "raw_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+        "sha256": "a7ddfb15636772a7ed177d92cd310c67cc38a082a9aae491e62d04518aa2f463"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/accountability.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 108,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/whitespace.json.gz",
+        "raw_bytes": 101,
+        "raw_sha256": "11f87ab1d080d3e6e4c2ca10931e1df347e7ac0f5c5e7dccf823850cf1310a43",
+        "sha256": "1278d1d537e6dc1f58bf3774e444853e3eb9c8f75f909c4cd720111b3a0774d5"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/whitespace.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/whitespace.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 1975,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/openui-native-resolved-raster-docs-v3858.py.gz",
+        "raw_bytes": 4749,
+        "raw_sha256": "b667f5c7d0e80319744092567c5b720180d839f91ff72e82ef8289986cc5046a",
+        "sha256": "70c51ae2d3e6e1176fdfb7ddfd7c4ec279f9b50cd08293fef03724c8263df3fe"
+      },
+      {
+        "bytes": 585,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/openui-native-resolved-raster-docs-v3858.json.gz",
+        "raw_bytes": 1107,
+        "raw_sha256": "8de1d91f6d602d8adb2363bd1e7b2bbc26692ca390480a3790338ff095582f92",
+        "sha256": "b0c2abb46aad1058bb1416ac71c75bcbbb760344047b011f4ca8cf5116781fd6"
+      },
+      {
+        "bytes": 1343,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/openui-native-resolved-raster-archive-terminal-v3859.py.gz",
+        "raw_bytes": 3640,
+        "raw_sha256": "41a59604fb690126065167b4619cb82e03ab02deb381309c25e979d4a383db91",
+        "sha256": "f7eb8512863336cf9a428d59f95822ade6c5878209baedb65808fd9998e95f87"
+      },
+      {
+        "bytes": 1325,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v2/checkpoint-checks/evidence-writer.py.gz",
+        "raw_bytes": 3331,
+        "raw_sha256": "671aaebfefb4d57670f87d0adeb428cb66ebc58029ba86d0f9542154ac599acc",
+        "sha256": "ff64255666980d6dfe39b7e0817cd5f4736e0466670568d2d57758b5160820bb"
+      }
+    ]
+  },
+  "archive_writer_terminal": {
+    "actual_archive_writer_initial_result": {
+      "bytes": 78531401,
+      "files": 136
+    },
+    "actual_exit_code": 0,
+    "all_existing_stored_and_raw_hashes_verified": true,
+    "archive_writer_sha256": "90d8b45b99e62bde3f197a02b9591a40a51c17758071eb6009975f7f9e18dede",
+    "index_before_terminal_sha256": "eea8fb5d3d962c7249c72854272fc7e32188f927fb5cc86b62b9f41b07f57e3c",
+    "reaped": true,
+    "schema_version": 1,
+    "session": 31700,
+    "verification_driver_sha256": "41a59604fb690126065167b4619cb82e03ab02deb381309c25e979d4a383db91",
+    "verified_duplicate_owned_executable_omitted": {
+      "bytes": 77050211,
+      "compression": "gzip",
+      "path": "docs/renderer/evidence/native-font-families-v2/matrices/guarded-build/pixel_compare.gz",
+      "raw_bytes": 233949016,
+      "raw_sha256": "05b1611e3210386e00398ea26dea1c0a23606e544cd39629a17a024555856cad",
+      "sha256": "bc6e53fbc3c87f654f21cb6e42d41a0c9cfd4744e75a8218b8161b19439090a2"
+    }
+  },
+  "candidate_executed_and_audited": true,
+  "checkpoint_read_only_checks": {
+    "accountability_session": 23440,
+    "all_actual_exit_codes_zero": true,
+    "all_children_reaped": true,
+    "archive_terminal_writer_session": 62275,
+    "archive_writer_session": 31700,
+    "scope": "read-only generators, repository accountability and whitespace; not full workspace/ABI/hosted qualification",
+    "steps": [
+      {
+        "actual_exit_code": 0,
+        "command": [
+          "python3",
+          "-B",
+          "tools/ffi/generate_ffi.py",
+          "--check"
+        ],
+        "json_sha256": "7e985ca035f62b3dc0ac5c87bb3c63cdb5f9be320fd22ab2baf07ae765834f2e",
+        "name": "ffi",
+        "reaped": true,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+      },
+      {
+        "actual_exit_code": 0,
+        "command": [
+          "python3",
+          "-B",
+          "tools/style/generate_properties.py",
+          "--check"
+        ],
+        "json_sha256": "7d5fe61e80dc5f1fbd599cc7256b0e938f5aec12701d28c0c0b8ce46799a34a2",
+        "name": "style",
+        "reaped": true,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+      },
+      {
+        "actual_exit_code": 0,
+        "command": [
+          "python3",
+          "-B",
+          "tools/qualification/generate_renderer_contract.py",
+          "--check"
+        ],
+        "json_sha256": "836e4c7b3316ed096f1dfccf80228ca2c0b6b03469a898dadcb39e2c6f678a59",
+        "name": "renderer",
+        "reaped": true,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+      },
+      {
+        "actual_exit_code": 0,
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/generate_v02_contract.py",
+          "--check"
+        ],
+        "json_sha256": "6bd35083421dc3b167ec6a7b8bb438167a042a33da6f18208e76777af8784121",
+        "name": "release",
+        "reaped": true,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+      },
+      {
+        "actual_exit_code": 0,
+        "command": [
+          "python3",
+          "-B",
+          "tools/accountability/audit.py",
+          "--repository-only"
+        ],
+        "json_sha256": "1ad84cdaa1ed0572bcd91d1cdc264cc23b2dcfd3e0dca4496158064d36393a4f",
+        "name": "accountability",
+        "reaped": true,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+      },
+      {
+        "actual_exit_code": 0,
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "json_sha256": "11f87ab1d080d3e6e4c2ca10931e1df347e7ac0f5c5e7dccf823850cf1310a43",
+        "name": "whitespace",
+        "reaped": true,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  "diagnostic_only": true,
+  "full_renderer_contract_qualified": false,
+  "historical_openui_archive_is_a_pixel_target": false,
+  "intrinsic_or_shaping_changes_applied": false,
+  "javascript_executed_by_openui": false,
+  "legacy_baseline_before_generic_fixes_field_is_not_a_source_scope_claim": true,
+  "matrices": {
+    "actual_combined_umbrella_source_measured": true,
+    "actual_whole_exit_code": 0,
+    "all_native_apis_qualified": false,
+    "audit_driver_sha256": "83944cfa3f130402ef01338ca833af22c17bb3e69e20039167cbb67506357c74",
+    "build_receipt_sha256": "ae969cd31666dcafa3a8294983d3bd6691c3f6ee605ad05367f8a2112a09b1ed",
+    "candidate_nonregression": true,
+    "compiled_paths_verified": 26,
+    "compiler_artifact_records": 14,
+    "complete": true,
+    "diagnostic_only": true,
+    "historical_openui_archive_is_a_pixel_target": false,
+    "implementation_integrated": false,
+    "javascript_executed_by_openui": false,
+    "linked_local_libraries_fresh": true,
+    "matrix_rows_verified": 1600,
+    "native_diagnostic_proof_sha256": "42a68c46b0250eed2d1fdc10996292ed6dc592d9b57589e241cd6ec1b23517b8",
+    "owner_absent": true,
+    "owner_terminal": true,
+    "pixel_target": "pinned Chromium",
+    "pixel_tolerance": 0,
+    "private_candidate_source_measured": false,
+    "public_source": {
+      "clean": false,
+      "commit": "07c6ffe00a43dfa5105270041570c9307fdb6a98",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "f06b63fe2bc95791715ca5508c6643ccfbea5fcd711858fc4ae95221c3491f68",
+      "status_sha256": "f86ed3e98986788612c10abd2ef3bddc27b9588d09186e2e2c585c699e70a282"
+    },
+    "receipt_sha256": "2dde152c7e8af05f603b55e84b1ceed282c869067ce5a13360f9f4c9bfecac97",
+    "release_qualified": false,
+    "renderer_qualified": false,
+    "results": {
+      "focused": {
+        "actual_exit_code": 0,
+        "changed_rows": 0,
+        "chromium_reference_changed_rows": 0,
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "gains": 0,
+        "losses": 0,
+        "total": 640,
+        "worsened": 0
+      },
+      "primitive": {
+        "actual_exit_code": 0,
+        "changed_rows": 0,
+        "chromium_reference_changed_rows": 0,
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "gains": 0,
+        "losses": 0,
+        "total": 960,
+        "worsened": 0
+      }
+    },
+    "retired_for_reexecution_after_source_or_target_mutation": true,
+    "schema_version": 1,
+    "source": {
+      "clean": false,
+      "commit": "07c6ffe00a43dfa5105270041570c9307fdb6a98",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "f06b63fe2bc95791715ca5508c6643ccfbea5fcd711858fc4ae95221c3491f68",
+      "status_sha256": "f86ed3e98986788612c10abd2ef3bddc27b9588d09186e2e2c585c699e70a282"
+    }
+  },
+  "native": {
+    "actual_owner_exit_code": 1,
+    "all_native_apis_qualified": false,
+    "audit_driver_sha256": "0fad7e920b0ff03b781ddbe2816bc45bd1a925163f7ba04975ed2668ca8b5bd1",
+    "baseline_before_generic_fixes": false,
+    "baseline_comparison": {
+      "alias_bounds_equal_all_profiles": true,
+      "alias_pixels_equal_all_profiles": true,
+      "baseline_receipt_sha256": "509a91392f9ba48247cc2d0dddce1f925082fd5cecec45e95eca2fbc9202df3e",
+      "before_images_unchanged_from_baseline": false,
+      "bounds_exact_gains": 0,
+      "bounds_exact_losses": 0,
+      "chromium_references_unchanged": true,
+      "different_face_changes_pixels_all_profiles": true,
+      "worsened_images": 4
+    },
+    "compiled_paths_verified": 29,
+    "complete": true,
+    "diagnostic_only": true,
+    "driver_sha256": "cb143fd385849f136ea7dcefef7f411dd9933da0efc4a1c3e5b13c01dbd1ef54",
+    "fresh_local_compiler_records": 16,
+    "guard_results": {
+      "actual_exit_code": 0,
+      "failed": 0,
+      "ignored": 0,
+      "passed": 1181
+    },
+    "javascript_executed_by_openui": false,
+    "native_binary_sha256": "9a39d4751a16dd4fcfc0c7e59ea4afab69b35da3943fda1bb32654b1ad199075",
+    "owner_absent": true,
+    "process_repeats": true,
+    "receipt_sha256": "fa60009e4de8a91fedbd6ef044c534b534fa9f7d750a7d1373f697a87e21ab7e",
+    "release_qualified": false,
+    "renderer_qualified": false,
+    "retired_for_reexecution_after_source_or_target_mutation": true,
+    "rust_callback_count": 2,
+    "schema_version": 1,
+    "source": {
+      "clean": false,
+      "commit": "07c6ffe00a43dfa5105270041570c9307fdb6a98",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "f06b63fe2bc95791715ca5508c6643ccfbea5fcd711858fc4ae95221c3491f68",
+      "status_sha256": "f86ed3e98986788612c10abd2ef3bddc27b9588d09186e2e2c585c699e70a282"
+    },
+    "totals": {
+      "bounds": 210,
+      "exact_bounds": 165,
+      "exact_images": 0,
+      "images": 15
+    },
+    "unchanged_frames": true,
+    "weak_teardown": true
+  },
+  "native_callback_count": 2,
+  "pending": [
+    "clean original and expanded censuses with no exact losses or worsened differences",
+    "clean native application, complete workspace, ABI and hosted checks on the new checkpoint",
+    "all 15 native font-family images remain different; four worsen against baseline",
+    "shared intrinsic text widths, consecutive floats and fallback line height",
+    "replace remaining named-family, size, phase and hinting exceptions with shared behavior",
+    "every remaining native API, physical lab and release qualification"
+  ],
+  "pinned_chromium_source_review": {
+    "all_native_apis_qualified": false,
+    "chromium_internal_strike_preferences_captured": false,
+    "current_local_sources": [
+      {
+        "path": "bindings/rust/openui-text/src/font/platform.rs",
+        "sha256": "ab24f453cab49fd92e2fd881849a496ba69e61ff3cc826c3aca0286b21cbe18c"
+      },
+      {
+        "path": "bindings/rust/openui-text/src/font/metrics.rs",
+        "sha256": "e7da5b03d0ecd473b6a8979d39ab3dfeee4cf8e40c1b3fc82906911a59ca28bf"
+      },
+      {
+        "path": "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "sha256": "731b7b5186e40da7d25bbb9432c0619b81ee5f2e3b35cb050be0d532df44f460"
+      }
+    ],
+    "javascript_executed_by_openui": false,
+    "observations": [
+      {
+        "conclusion": "Need measure resolved advances and HarfBuzz conversion; no blanket rounding or epsilon correction is established.",
+        "fact": "Skia glyph advances are rounded before HarfBuzz only when the font disables subpixel positioning; subpixel fonts preserve the advance.",
+        "source": "fonts/skia/skia_text_metrics.cc"
+      },
+      {
+        "conclusion": "Native source sets both flags from one configuration value; actual strike preferences and application measurements must establish the required change.",
+        "fact": "Outside web tests, Chromium enables subpixel positioning unless full hinting is selected. Linear metrics follows the render-style preference separately.",
+        "source": "fonts/web_font_render_style.cc"
+      },
+      {
+        "conclusion": "The reference command uses no-sandbox; host fc-match output alone does not prove the internal rendering preferences.",
+        "fact": "Font rendering preferences are queried by family, size, style and device scale. Missing family or absent sandbox support uses defaults.",
+        "source": "fonts/font_platform_data.cc"
+      },
+      {
+        "conclusion": "Authored aliases should not select a different raster policy; measured alias evidence already confirms that invariant.",
+        "fact": "Decoded custom font data constructs platform data with an empty family string.",
+        "source": "fonts/font_custom_platform_data.cc"
+      },
+      {
+        "conclusion": "Native exposes raw metrics and later rounding. Measure fallback runs and line boxes before identifying a root cause.",
+        "fact": "Chromium rounds ordinary ascent and descent and may transfer one unit from ascent to descent for subpixel positioning on Linux; normal/full bytecode hinting can use VDMX.",
+        "source": "fonts/font_metrics.cc"
+      }
+    ],
+    "official_sources": [
+      {
+        "directory": "/mnt/d/openui-v02-qualification-d174ea0b/chromium-font-source-v3853",
+        "receipt_sha256": "d20cdc0ae243e7b2318581ca68a0b1a0d63b20f98e6a316f980043a02a5c1843",
+        "sources": [
+          {
+            "error": "<HTTPError 404: 'Not Found'>",
+            "path": "third_party/blink/renderer/platform/fonts/harfbuzz/harfbuzz_face.cc",
+            "success": false,
+            "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/fonts/harfbuzz/harfbuzz_face.cc?format=TEXT"
+          },
+          {
+            "bytes": 6526,
+            "http_status": 200,
+            "path": "third_party/blink/renderer/platform/fonts/skia/skia_text_metrics.cc",
+            "sha256": "376a90b1af745815356bffb02cd3cd16e28c24ecc3daad274715d8578a93ee19",
+            "success": true,
+            "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/fonts/skia/skia_text_metrics.cc?format=TEXT"
+          },
+          {
+            "error": "<HTTPError 404: 'Not Found'>",
+            "path": "third_party/blink/renderer/platform/fonts/linux/font_platform_data_linux.cc",
+            "success": false,
+            "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/fonts/linux/font_platform_data_linux.cc?format=TEXT"
+          }
+        ]
+      },
+      {
+        "directory": "/mnt/d/openui-v02-qualification-d174ea0b/chromium-font-source-v3854",
+        "receipt_sha256": "63d86a9d6e880db91995a86a59f259366052a420d2bab220b5536bbca1ca01f9",
+        "sources": [
+          {
+            "bytes": 27418,
+            "http_status": 200,
+            "path": "third_party/blink/renderer/platform/fonts/shaping/harfbuzz_face.cc",
+            "sha256": "3fda0277ebddca6cc3f20bf40b0b1e875fe6b469182d0689a2bcd3710fc3eca0",
+            "success": true,
+            "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/fonts/shaping/harfbuzz_face.cc?format=TEXT"
+          },
+          {
+            "bytes": 10874,
+            "http_status": 200,
+            "path": "third_party/blink/renderer/platform/fonts/font_platform_data.cc",
+            "sha256": "f3905ac7d26d5653b1f7d79a4efb5155ccb6a4ffe553789aecd91c96431c46e1",
+            "success": true,
+            "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/fonts/font_platform_data.cc?format=TEXT"
+          },
+          {
+            "bytes": 7351,
+            "http_status": 200,
+            "path": "third_party/blink/renderer/platform/fonts/font_platform_data.h",
+            "sha256": "7a33d64cb27c20a5937737edefad564cf8c254c44af71f6689199d8b87353fd4",
+            "success": true,
+            "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/fonts/font_platform_data.h?format=TEXT"
+          },
+          {
+            "bytes": 14410,
+            "http_status": 200,
+            "path": "third_party/blink/renderer/platform/fonts/font_cache.cc",
+            "sha256": "33f66f904bb100bda27dc5ed952db2a54f381b40c19746116ab743f53451d9b2",
+            "success": true,
+            "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/fonts/font_cache.cc?format=TEXT"
+          }
+        ]
+      },
+      {
+        "directory": "/mnt/d/openui-v02-qualification-d174ea0b/chromium-font-source-v3855",
+        "receipt_sha256": "a56d24161895e9a68522cb84940f9ce2714329a142dbe3cd4b7613993fc06f20",
+        "sources": [
+          {
+            "bytes": 3894,
+            "http_status": 200,
+            "path": "third_party/blink/renderer/platform/fonts/web_font_render_style.cc",
+            "sha256": "e33fefd03429d5a8bda033a3b9ad559ee51cfa1084e42aadfbd11015ea784bf5",
+            "success": true,
+            "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/fonts/web_font_render_style.cc?format=TEXT"
+          },
+          {
+            "bytes": 4025,
+            "http_status": 200,
+            "path": "third_party/blink/public/platform/web_font_render_style.h",
+            "sha256": "ab2c6f5f279acee4d1322956d5f4e1786a693f61dff9e6926f744abdf38fea59",
+            "success": true,
+            "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/public/platform/web_font_render_style.h?format=TEXT"
+          },
+          {
+            "bytes": 8900,
+            "http_status": 200,
+            "path": "third_party/blink/renderer/platform/fonts/font_metrics.cc",
+            "sha256": "814bbbd68b88860d0f47efa133dd4cb05fb22ed040e19288784dc0e954b15bdc",
+            "success": true,
+            "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/fonts/font_metrics.cc?format=TEXT"
+          },
+          {
+            "bytes": 14821,
+            "http_status": 200,
+            "path": "third_party/blink/renderer/platform/fonts/font_custom_platform_data.cc",
+            "sha256": "3e67e8fe3f8bdc181d002ca7e2826006d8916cb29001dec9aa06a7c97c85afbc",
+            "success": true,
+            "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/147.0.7727.50/third_party/blink/renderer/platform/fonts/font_custom_platform_data.cc?format=TEXT"
+          }
+        ]
+      }
+    ],
+    "pinned_chromium_version": "147.0.7727.50",
+    "pixel_target": "pinned Chromium",
+    "release_qualified": false,
+    "renderer_qualified": false,
+    "residual_owners_assigned": 0,
+    "runtime_changes_applied_from_this_review": false,
+    "schema_version": 1,
+    "source_fetch_sessions": [
+      {
+        "actual_exit_code": 0,
+        "reaped": true,
+        "session": 42419
+      },
+      {
+        "actual_exit_code": 0,
+        "reaped": true,
+        "session": 97824
+      }
+    ]
+  },
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "previous_evidence": {
+    "path": "docs/renderer/generated/native-font-families-v1.json",
+    "sha256": "efeb68a04270620c5d67917f8477f8d5b47153d1f6db928fd55b0001dc742724"
+  },
+  "prior_checkpoint_hosted": {
+    "all_readers_terminal": true,
+    "current_dirty_candidate_qualified": false,
+    "previous_clean_checkpoint_only": true,
+    "runs": [
+      {
+        "actual_exit_code": 0,
+        "conclusion": "success",
+        "event": "pull_request",
+        "head": "07c6ffe00a43dfa5105270041570c9307fdb6a98",
+        "jobs": [
+          {
+            "conclusion": "success",
+            "name": "gn-format",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "clang-format",
+            "status": "completed"
+          }
+        ],
+        "raw_sha256": "4a43e3afb11e5eb94cf1780d36c6c62bfcc07334922f86336f5ed8a5d56fea27",
+        "reaped": true,
+        "run": 38098208037,
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/38098208037"
+      },
+      {
+        "actual_exit_code": 0,
+        "conclusion": "success",
+        "event": "pull_request",
+        "head": "07c6ffe00a43dfa5105270041570c9307fdb6a98",
+        "jobs": [
+          {
+            "conclusion": "success",
+            "name": "historical-pixel-audit",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "rust-parity",
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "name": "python-accountability",
+            "status": "completed"
+          }
+        ],
+        "raw_sha256": "ee6488695b32f1daa5492166f5b7e425d64ebfb20375176359b377e115756312",
+        "reaped": true,
+        "run": 38098208044,
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/38098208044"
+      },
+      {
+        "actual_exit_code": 0,
+        "conclusion": "success",
+        "event": "pull_request",
+        "head": "07c6ffe00a43dfa5105270041570c9307fdb6a98",
+        "jobs": [
+          {
+            "conclusion": "success",
+            "name": "conformance-and-platform",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "msrv",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "fuzz-smoke",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "miri-handles",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "native-sanitizers",
+            "status": "completed"
+          },
+          {
+            "conclusion": "skipped",
+            "name": "c-undefined-sanitizer",
+            "status": "completed"
+          }
+        ],
+        "raw_sha256": "f471dd968fbcbc8250dbff1e6a5fd52b0c76865f8633c7fd53f4c8f0b2490ca5",
+        "reaped": true,
+        "run": 38098208081,
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/38098208081"
+      }
+    ],
+    "schema_version": 1
+  },
+  "process_repeats": true,
+  "public_native_rust_consumer": "bindings/rust/openui/examples/native_font_family_probe.rs",
+  "release_qualified": false,
+  "schema_version": 1,
+  "scripts_run_only_in_separate_chromium_reference_process": true,
+  "source_preparation": {
+    "applied": true,
+    "base_commit": "07c6ffe00a43dfa5105270041570c9307fdb6a98",
+    "files": [
+      {
+        "after": "/mnt/d/openui-v02-qualification-d174ea0b/native-resolved-raster-source-v3846/after/bindings/rust/openui-paint/src/text_painter.rs",
+        "after_sha256": "393639a5e1993c11731941c6891f68d38b44716929a205afda3d339cab79f568",
+        "before": "/mnt/d/openui-v02-qualification-d174ea0b/native-resolved-raster-source-v3846/before/bindings/rust/openui-paint/src/text_painter.rs",
+        "before_sha256": "d81b807c4adec45597c8e84f1dd8c4587fba102af4b0e23ce44550bb221aa7de",
+        "path": "bindings/rust/openui-paint/src/text_painter.rs",
+        "stdin_rustfmt_actual_exit_code": 0
+      },
+      {
+        "after": "/mnt/d/openui-v02-qualification-d174ea0b/native-resolved-raster-source-v3846/after/bindings/rust/openui-text/src/shaping/shape_result.rs",
+        "after_sha256": "8e251b4e16c6d93941acdfc733821c217b79890bed2eafee92fc356f664c73bc",
+        "before": "/mnt/d/openui-v02-qualification-d174ea0b/native-resolved-raster-source-v3846/before/bindings/rust/openui-text/src/shaping/shape_result.rs",
+        "before_sha256": "8ff93c6b12a74a1a861f7b037d4b10e46f8a41a010147abc31588be0054784b5",
+        "path": "bindings/rust/openui-text/src/shaping/shape_result.rs",
+        "stdin_rustfmt_actual_exit_code": 0
+      }
+    ],
+    "new_font_name_size_scale_test_id_conditions": false,
+    "qualified": false,
+    "schema_version": 1,
+    "shared_resolved_font_raster_selection": true,
+    "tested": false
+  },
+  "source_preparation_is_pretest_receipt": true,
+  "status": "resolved-font-raster-candidate-awaits-clean-complete-qualification",
+  "unchanged_frame_repeats": true,
+  "weak_teardown": true
+}

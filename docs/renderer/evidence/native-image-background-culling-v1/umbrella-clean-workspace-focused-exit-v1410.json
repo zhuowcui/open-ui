@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "/dev/shm/openui-umbrella-clean-workspace-2e443f49/tools/qualification/run_renderer_matrix.py",
+    "--suite",
+    "focused",
+    "--results-dir",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/umbrella-clean-workspace-clean-focused-v1410",
+    "--cache-dir",
+    "/mnt/e/openui-v02-qualification-d174ea0b/renderer-cache",
+    "--oracle-cache-dir",
+    "/home/nero/code/open-ui/out/renderer-qualification-cache/chromium-oracle",
+    "--pixel-compare",
+    "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/umbrella-clean-workspace-clean-v1410/pixel_compare",
+    "--chrome",
+    "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+    "--raster-backend",
+    "cpu-skia",
+    "--jobs",
+    "2"
+  ],
+  "log_sha256": "7fc8378077b319bf67858fb1cef375da3c4067438a8df34782a01b350aff442a",
+  "observed_exit_code": 0,
+  "release_qualification": false,
+  "schema_version": 1,
+  "suite": "focused"
+}

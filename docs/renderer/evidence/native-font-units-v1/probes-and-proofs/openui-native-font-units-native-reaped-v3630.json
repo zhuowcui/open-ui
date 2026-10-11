@@ -1,0 +1,30 @@
+{
+  "actual_chromium_audit_exit_code": 0,
+  "actual_chromium_audit_session": 91804,
+  "actual_chromium_owner_exit_code": 0,
+  "actual_chromium_owner_session": 79325,
+  "actual_native_audit_exit_code": 0,
+  "actual_native_audit_session": 50459,
+  "actual_native_owner_exit_code": 0,
+  "actual_native_owner_session": 55766,
+  "all_local_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "audit_sha256": {
+    "openui-native-font-units-checks-terminal-v3627.json": "ee17e6c083fabf96e3b81712880dae296886bbd01ec7b9b1046496b6521eae38",
+    "openui-native-font-units-chromium-terminal-v3629.json": "899f9ed04753c5b6d2434b049a33d3156672a41e6d16486316e9512272384475"
+  },
+  "exact_bounds": 32,
+  "exact_images": 8,
+  "full_renderer_contract_qualified": false,
+  "owners_absent": true,
+  "release_qualified": false,
+  "retired_for_reexecution_after_source_or_target_mutation": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "45d2164801a94995bac4927fab2aa517b1364e6c",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "b3c3887214d9b5c9bb15eebaed8626e10d5611f0f6c046405f3db09b82751f59",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

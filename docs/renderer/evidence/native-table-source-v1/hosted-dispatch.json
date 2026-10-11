@@ -1,0 +1,9 @@
+{
+  "branch": "agent/native-table-source-v1597",
+  "dispatched_at_utc": "2026-10-05T16:54:21.891731+00:00",
+  "native_pixel_qualification": false,
+  "observed_exit_code": 0,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": "e389b26ab28f259544e43c3052c895501e4c8686"
+}

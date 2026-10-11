@@ -1,0 +1,78 @@
+{
+  "all_prior_local_native_owners_terminal": true,
+  "artifact_bytes": 52800,
+  "artifact_count": 8,
+  "artifacts": [
+    {
+      "bytes": 2502,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v3/full-prepared.json",
+      "sha256": "5ce60d8837ec162cbbc2917888788a62223ed7353666f42b0668a54590772f04",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-intrinsic-snap-full-prepared-v1716.json"
+    },
+    {
+      "bytes": 6103,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v3/full-prepare.py",
+      "sha256": "56aa442731f063858d11a59be990ff7c7d3f86e5717cdd2114710632e010f9bd",
+      "source_path": "/tmp/openui-native-intrinsic-snap-full-prepare-v1716.py"
+    },
+    {
+      "bytes": 9118,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v3/openui-native-intrinsic-snap-build-v1716.py",
+      "sha256": "a7f43ba1ddece13f1ffaa5acb29326950b4a8ff7afabc2ef506731a7456be893",
+      "source_path": "/tmp/openui-native-intrinsic-snap-build-v1716.py"
+    },
+    {
+      "bytes": 20159,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v3/openui-native-intrinsic-snap-consumer-v1716.py",
+      "sha256": "500b5af7dd6a088703a229300411321d18bd768c729dd075a80d0407495b58dc",
+      "source_path": "/tmp/openui-native-intrinsic-snap-consumer-v1716.py"
+    },
+    {
+      "bytes": 1140,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v3/openui-native-intrinsic-snap-guard-reuse-v1716.py",
+      "sha256": "020810ec5d070ac8bb318e2853005ca9b6cd339666c1f9b63619ff0eafa401c2",
+      "source_path": "/tmp/openui-native-intrinsic-snap-guard-reuse-v1716.py"
+    },
+    {
+      "bytes": 2093,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v3/openui-native-intrinsic-snap-matrices-v1716.py",
+      "sha256": "3cc6d9637461956c2a24bf018f177c9067e936f4d25527e2ffef0cc34f080cd9",
+      "source_path": "/tmp/openui-native-intrinsic-snap-matrices-v1716.py"
+    },
+    {
+      "bytes": 9202,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v3/openui-native-intrinsic-snap-pipeline-v1717.py",
+      "sha256": "a6af386e748c2627a49e0a7b152d6365e8427e9ef10fb081d9e71b1b652d520c",
+      "source_path": "/tmp/openui-native-intrinsic-snap-pipeline-v1717.py"
+    },
+    {
+      "bytes": 2483,
+      "path": "docs/renderer/evidence/native-intrinsic-snap-v3/preserver.py",
+      "sha256": "3f26f7a4a23270ff2ec3cbe36f5c20b6e24a31a8194728b5b3130aecef851697",
+      "source_path": "/tmp/openui-native-intrinsic-snap-full-preserve-v1718.py"
+    }
+  ],
+  "candidate_applied_to_umbrella": false,
+  "chromium_reference_inputs_unchanged": true,
+  "fresh_full_owner_prepared_but_not_executed": true,
+  "immutable_actual_source_identical_guards_reused": true,
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "pixel_tolerance": 0,
+  "prior_whole_owners": 42,
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "required_geometry_states": 38400,
+  "required_native_images": 600,
+  "required_renderer_matrices": 4,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "727da10e580c9439f5db83d36bfc3e2340168207",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "7a65e6a0ddd0eb28f3b8a542418b1aab409f4c4d88a6b00efaf2aece46a22ccd",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true,
+  "whole_owner_lock_preserves_gaps": true
+}

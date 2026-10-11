@@ -1,0 +1,61 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 81fd7abf..4b2448b5 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -3472,6 +3472,56 @@ mod tests {
+         assert_eq!(generation.0, before_accessibility.scenes);
+     }
+ 
++    #[test]
++    fn compositor_distinguishes_owned_recordings_with_equal_document_generations() {
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            let mut scenes = Vec::new();
++            for color in [Color::RED, Color::BLUE] {
++                let mut engine =
++                    Engine::new(ViewportMetrics::from_logical_size(64.0, 48.0, scale).unwrap())
++                        .unwrap();
++                let element = engine.create_element(ElementTag::Div).unwrap();
++                engine.append_child(engine.root(), element).unwrap();
++                engine
++                    .set_property(element, StyleProperty::Display, Display::Block.into())
++                    .unwrap();
++                engine
++                    .set_property(element, StyleProperty::Width, LengthValue::px(32.0).into())
++                    .unwrap();
++                engine
++                    .set_property(element, StyleProperty::Height, LengthValue::px(24.0).into())
++                    .unwrap();
++                engine
++                    .set_property(element, StyleProperty::BackgroundColor, color.into())
++                    .unwrap();
++                scenes.push(engine.scene().unwrap());
++                // Rendering below uses owned scenes after both documents die.
++            }
++            assert_eq!(scenes[0].generation(), scenes[1].generation());
++            let first = SoftwareCompositor::default().render(&scenes[0]).unwrap();
++            let second = SoftwareCompositor::default().render(&scenes[1]).unwrap();
++            assert_ne!(first.pixels, second.pixels);
++
++            let mut compositor = SoftwareCompositor::default();
++            assert_eq!(compositor.render(&scenes[0]).unwrap(), first);
++            assert_eq!(compositor.render(&scenes[0].clone()).unwrap(), first);
++            assert_eq!(compositor.stats().rasterized, 1);
++            assert_eq!(compositor.stats().reused, 1);
++            assert_eq!(
++                compositor.render(&scenes[1]).unwrap(),
++                second,
++                "scale={scale}"
++            );
++            assert_eq!(compositor.stats().rasterized, 2);
++            assert_eq!(compositor.stats().reused, 1);
++            assert_eq!(compositor.render(&scenes[1].clone()).unwrap(), second);
++            assert_eq!(compositor.stats().rasterized, 2);
++            assert_eq!(compositor.stats().reused, 2);
++            assert_eq!(compositor.render(&scenes[0]).unwrap(), first);
++            assert_eq!(compositor.stats().rasterized, 3);
++        }
++    }
++
+     #[test]
+     fn typed_tree_renders_through_scene_compositor() {
+         let mut engine =

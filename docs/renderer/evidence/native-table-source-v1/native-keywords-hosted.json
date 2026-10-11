@@ -1,0 +1,60 @@
+{
+  "actual_exit": 0,
+  "all_commands_terminal": true,
+  "all_seven_jobs_passed": true,
+  "conclusion": "success",
+  "detail_sha256": "0911b5fffa420482b0abf941de4ff6cda047e4412209d13f917a8627113e438e",
+  "job_conclusions": {
+    "success": 7
+  },
+  "jobs": [
+    {
+      "conclusion": "success",
+      "name": "fuzz-smoke",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "miri-handles",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "c-undefined-sanitizer",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "msrv",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "native-sanitizers (address)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "native-sanitizers (leak)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "conformance-and-platform",
+      "status": "completed"
+    }
+  ],
+  "log_sha256": "70190d60f6ed3f111129a64657886bdea23caf7110a6ef6b02f3e27693890f93",
+  "native_pixel_qualification": false,
+  "owner_pid": 3746709,
+  "probe_sha256": "b6ab4f7ce631a8875f9f7efcf6b28be47aea63d066b2b87f0175a0cfd2fc57d3",
+  "release_qualification": false,
+  "run_id": 37340082754,
+  "run_url": "https://github.com/zhuowcui/open-ui/actions/runs/37340082754",
+  "schema_version": 1,
+  "skipped_jobs": 0,
+  "source": "06e1f89a4a2e7a53465bceb780675383d9748464",
+  "state": "terminal-results-recorded",
+  "status": "completed",
+  "successful_jobs": 7
+}

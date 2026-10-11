@@ -1,0 +1,56 @@
+{
+  "all_commands_terminal": true,
+  "build_receipt_sha256": "66cfd334ee426be802ebe4476655ff1259832be5adc8ef80faf04a3928399d44",
+  "cargo_commands_run": 0,
+  "new_release_states_admitted": 0,
+  "original_and_expanded_matrices_require_separate_terminal_evidence": true,
+  "owner_receipt_sha256_at_observation": "1c6fa361e271df5c95a0056ebc9f9b157d42139ba4de318a4acc6a6dec5e49cb",
+  "probe_sha256": "04e64573efab876c0313ca95fa54b97ef53718263d16f98f64a29c32443e9bf4",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f9a60849daecfc54884266c3fdedca48d0de32d02066ae7c9b72881d1eef9a3e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f9a60849daecfc54884266c3fdedca48d0de32d02066ae7c9b72881d1eef9a3e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "suites": {
+    "focused": {
+      "actual_exit": 0,
+      "all_nine_comparison_invariants_unchanged": 640,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "exit_receipt_sha256": "80236996228c1d01bd24ce33fc3c70fa99ddaa6532086e135461c870404c6397",
+      "prior_summary_sha256": "a7a4e655cdcaab3adb653430ec7245a43de033c51be93474f2a9a886c7ac16fe",
+      "profiles": 40,
+      "summary_sha256": "6523450639e285a7c26331944c2921fd803a7612f842fd47160ccb934dc80080",
+      "total": 640
+    },
+    "primitive": {
+      "actual_exit": 0,
+      "all_nine_comparison_invariants_unchanged": 960,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "exit_receipt_sha256": "a93118aacf0f8f84bf0fd454307f58500c62eed8e9b2c1a713aa39c12a60313a",
+      "prior_summary_sha256": "ee4b449fc89de738401138aa1128eaeadcce541ed435fbcca3bed2115d99853b",
+      "profiles": 40,
+      "summary_sha256": "220101ae01aa264e7b99ae68a0fdd2de39f4b65bd05fdddea76103f79bd6f02d",
+      "total": 960
+    }
+  },
+  "whole_candidate_qualified": false,
+  "whole_pipeline_state_at_audit": "running-full",
+  "whole_pipeline_terminal_at_audit": false
+}

@@ -1,0 +1,35 @@
+{
+  "all_commands_terminal": true,
+  "capture_harness_excerpt": "            if use_real_font or use_freetype_backend:\n                # Pin Chromium's supported FreeType path for matching faces.\n                cmd.insert(\n                    5,\n                    \"--enable-features=FontDataServiceLinux:typeface/Freetype\",\n                )\n",
+  "capture_harness_sha256": "ad37344879ddda41e6570ea41c142103e58f5db05fb9c96c27c1ac62b67f92ea",
+  "earlier_routing_observation_sha256": "a5f67d4d227a76b9b274484ddd61e6fda4d4278f9496f41be6854c51eb0d91fe",
+  "every_pixel_root_cause_proved": false,
+  "javascript_executed_by_openui": false,
+  "native_reference_font_engine": "Fontations",
+  "native_reference_observations": 400,
+  "native_reference_receipt_sha256": "e05ea78e7ed8b270c5c1f31a82f3df50c41442633368890a86985637fa64524c",
+  "new_formal_wpt_owners_assigned": 0,
+  "new_release_states_admitted": 0,
+  "no_new_captures": true,
+  "no_reference_bytes_changed": true,
+  "original_real_font_reference_engine": "Freetype",
+  "pixel_tolerance": 0,
+  "probe_sha256": "86af451aa76c54472f48fe1b86718b49ec7a118bd6491c666d5d057e4502b689",
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "runtime_dispatch_trace_captured": false,
+  "schema_version": 1,
+  "source_inference": "Authored LCD text remains on FreeType with chromium_linux_lcd. This matches the original real-font capture conditions, but not the saved native Fontations references. The missing explicit Fontations choice must be implemented and measured through public native Rust apps; switching all existing captures to another engine is not a fix.",
+  "sources": {
+    "baseline": {
+      "commit": "db03c8facca7502d42f327bae4833acac7379946",
+      "configuration_source_sha256": "14e6cc34171242ac95d286fdd2eb887ac7a6d8048b9f1a6fb8e0373dbaed7651",
+      "explicit_fontations_constructor_available": false
+    },
+    "candidate": {
+      "commit": "c68d946c18ecd1bb6d2f3f84accecaa84cba3651",
+      "configuration_source_sha256": "14e6cc34171242ac95d286fdd2eb887ac7a6d8048b9f1a6fb8e0373dbaed7651",
+      "explicit_fontations_constructor_available": false
+    }
+  }
+}

@@ -51,8 +51,8 @@ def compilers() -> tuple[str | None, str | None, list[str], list[str], list[str]
     cc = system_cc if use_system else configured.get("CC", system_cc)
     cxx = system_cxx if use_system else configured.get("CXX", system_cxx or cc)
     configured_flags = [] if use_system else shlex.split(configured.get("CXXFLAGS", ""))
-    c_flags = configured_flags + shlex.split(os.environ.get("CFLAGS", ""))
-    cxx_flags = configured_flags + shlex.split(os.environ.get("CXXFLAGS", ""))
+    c_flags = ["-pthread", *configured_flags, *shlex.split(os.environ.get("CFLAGS", ""))]
+    cxx_flags = ["-pthread", *configured_flags, *shlex.split(os.environ.get("CXXFLAGS", ""))]
     link_flags: list[str] = shlex.split(os.environ.get("LDFLAGS", ""))
     sysroot = None if use_system else configured.get("PKG_CONFIG_SYSROOT_DIR")
     if sysroot:
@@ -90,62 +90,51 @@ def main() -> None:
         temporary = Path(temporary)
         runnable_library = temporary / "libopenui.so.0"
         shutil.copy2(library, runnable_library)
-        cpp = temporary / "header_smoke.o"
-        run(
-            [
-                cxx,
-                "-x",
-                "c++",
-                "-std=c++17",
-                "-Wall",
-                "-Wextra",
-                "-Werror",
-                *cxx_flags,
-                f"-I{INCLUDE}",
-                str(EXAMPLES / "header_smoke.cc"),
-                "-c",
-                "-o",
-                str(cpp),
-            ]
-        )
-        binaries = []
-        for source in sorted(EXAMPLES.glob("*.c")):
-            object_file = temporary / f"{source.stem}.o"
-            output = temporary / source.stem
-            run(
-                [
-                    cc,
-                    "-std=c11",
-                    "-Wall",
-                    "-Wextra",
-                    "-Werror",
-                    *c_flags,
-                    f"-I{INCLUDE}",
-                    str(source),
-                    "-c",
-                    "-o",
-                    str(object_file),
-                ]
-            )
-            run(
-                [
-                    cxx,
-                    *cxx_flags,
-                    *link_flags,
-                    "-fuse-ld=lld",
-                    str(object_file),
-                    str(runnable_library),
-                    f"-Wl,-rpath,{temporary}",
-                    "-o",
-                    str(output),
-                ]
-            )
-            binaries.append(output)
+        binaries: dict[str, list[Path]] = {"C": [], "C++": []}
+        for language, pattern, compiler, standard, flags in (
+            ("C", "*.c", cc, "c11", c_flags),
+            ("C++", "*.cc", cxx, "c++17", cxx_flags),
+        ):
+            for source in sorted(EXAMPLES.glob(pattern)):
+                # C and C++ consumers may share a stem; keep their outputs apart.
+                object_file = temporary / f"{source.name}.o"
+                output = temporary / f"{source.name}.bin"
+                run(
+                    [
+                        compiler,
+                        f"-std={standard}",
+                        "-Wall",
+                        "-Wextra",
+                        "-Werror",
+                        *flags,
+                        f"-I{INCLUDE}",
+                        str(source),
+                        "-c",
+                        "-o",
+                        str(object_file),
+                    ]
+                )
+                run(
+                    [
+                        cxx,
+                        *cxx_flags,
+                        *link_flags,
+                        "-fuse-ld=lld",
+                        str(object_file),
+                        str(runnable_library),
+                        f"-Wl,-rpath,{temporary}",
+                        "-o",
+                        str(output),
+                    ]
+                )
+                binaries[language].append(output)
         if not args.skip_run:
-            for binary in binaries:
-                run([str(binary)])
+            for consumers in binaries.values():
+                for binary in consumers:
+                    run([str(binary)])
     print(
-        f"C ABI verified: symbols={len(expected)} C_examples=4 C++=1 "
+        f"C ABI verified: symbols={len(expected)} C_examples={len(binaries['C'])} "
+        f"C++={len(binaries['C++'])} ran={not args.skip_run} "
         f"library={library.name}"
     )
 

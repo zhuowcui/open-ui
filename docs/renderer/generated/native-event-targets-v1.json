@@ -1,0 +1,884 @@
+{
+  "addition_cases": 201,
+  "addition_cases_four_profile_exact": 200,
+  "all_comparison_invariants_unchanged": 48252,
+  "applied_to_umbrella": true,
+  "artifact_bytes": 3019144,
+  "artifact_count": 153,
+  "artifacts": {
+    "docs/renderer/evidence/native-event-targets-v1/expanded-exit.json": {
+      "bytes": 1002,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-expanded-exit-v1456.json",
+      "sha256": "f23e817550814a79f2ed520d64a0ec0d9ec7b2381dfbaf9aaf6586cf8b1513d8"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/expanded-exit.log": {
+      "bytes": 7471,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-expanded-v1456.log",
+      "sha256": "2aef4287028d8768aa1d2dc1786e66cae7308edeff9db992e690149838b2f7ef"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/expanded-summary-metadata.json": {
+      "bytes": 9860,
+      "kind": "metadata-only",
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-expanded-v1456/expanded-summary.json",
+      "sha256": "c4682ea95905beab1445f09455a4522d934a246cf860923aef693bc93fefefde"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/focused-exit.json": {
+      "bytes": 999,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-focused-exit-v1456.json",
+      "sha256": "80236996228c1d01bd24ce33fc3c70fa99ddaa6532086e135461c870404c6397"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/focused-exit.log": {
+      "bytes": 1260,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-focused-v1456.log",
+      "sha256": "3afdacc20c0542c08ad17aba0af10493b1bd87b8b46c8ebcc32aa11c74351a24"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/focused-summary-metadata.json": {
+      "bytes": 26155,
+      "kind": "metadata-only",
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-focused-v1456/focused-summary.json",
+      "sha256": "a2e8eb4304144c600cd0dcefd3c596d3b139f0f04ae638a3fcc84e20ebf30bf2"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/full-exit.json": {
+      "bytes": 990,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-full-exit-v1456.json",
+      "sha256": "c1692a2f85a0f32b8d567e9d861dfef5cd8231a88c0a6006eec07931b2e93d58"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/full-exit.log": {
+      "bytes": 7219,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-full-v1456.log",
+      "sha256": "ed084a6c607c3b63a3a141a23a98c581da486b95ca1f12754a7f3e24de200909"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/full-summary-metadata.json": {
+      "bytes": 9853,
+      "kind": "metadata-only",
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-full-v1456/full-summary.json",
+      "sha256": "3ab47e2a07936328fe1cf4425475724427cc93310ffb3cc08307f17cb63ac428"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-complete-audit-v1492.json": {
+      "bytes": 4407,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-complete-audit-v1492.json",
+      "sha256": "4d2d3778840d8ddd95e0815f065e344f947e6d438d1e7f8529b3244f6b01be9e"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-original-matrix-audit-v1489.json": {
+      "bytes": 1992,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-original-matrix-audit-v1489.json",
+      "sha256": "6bb1727841dfd4aa83be79131c5e89260d8846fa184ae62a8c24a58d6088efae"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-small-matrices-audit-v1474.json": {
+      "bytes": 2462,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-small-matrices-audit-v1474.json",
+      "sha256": "11ddb19cd37014ac528620dd3222fa929ec3de5694fa24341fa62fbcb002d582"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-audit-v1472.json": {
+      "bytes": 25159,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-audit-v1472.json",
+      "sha256": "13897a3278029b0609fedf9b2568f1a0cda5e192ef6401a0114f9d7361c5e99e"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-clean-v1456/build.json": {
+      "bytes": 6360,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/build.json",
+      "sha256": "66cfd334ee426be802ebe4476655ff1259832be5adc8ef80faf04a3928399d44"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-clean-v1456/clean-workspace.log": {
+      "bytes": 38,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/clean-workspace.log",
+      "sha256": "ae8ad87ab9dd8807a3bfdce728bf044dbd4e152513cddb34d07db5b820cd927f"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-clean-v1456/event-build.log": {
+      "bytes": 9764,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/event-build.log",
+      "sha256": "5079f7c6c0e85260749d2cf6cf64364b2a96db6e11882f905692256b4d314899"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-clean-v1456/ffi-build.log": {
+      "bytes": 9102,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/ffi-build.log",
+      "sha256": "39fefab20abf1049700b51da020036aec3c23d63afe184a323a8b50dfd94c32e"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-clean-v1456/ffi-consumers.log": {
+      "bytes": 2875,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/ffi-consumers.log",
+      "sha256": "ddaa80f951dcac73fbd6e4b31520363fc6018e7190431acb89c643f9940fb2c1"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-clean-v1456/float-build.log": {
+      "bytes": 8997,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/float-build.log",
+      "sha256": "7a769a483bb8e081cc3b8e4514e0ed9929c5fc2d6d36d7744e445d6db5f28811"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-clean-v1456/pixel-build.log": {
+      "bytes": 11804,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/pixel-build.log",
+      "sha256": "07ae303ced1e8069b014b9a761fbb0ead4802cdf540984d6fb3a0021afbbaa0b"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-clean-v1456/workspace.log": {
+      "bytes": 487280,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-v1456/workspace.log",
+      "sha256": "a4b610021164da5eb1097665573192b1fa67f62f32cba1a42d9ef886ee571729"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/after-chromium-1-first-capture.png": {
+      "bytes": 346,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/after-chromium-1-first-capture.png",
+      "sha256": "bdeb647b1d6ed8d79f06ae696a54fb73240e5330d6ef07f37c8f1d7d541e561c"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/after-chromium-1-second-capture.png": {
+      "bytes": 346,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/after-chromium-1-second-capture.png",
+      "sha256": "bdeb647b1d6ed8d79f06ae696a54fb73240e5330d6ef07f37c8f1d7d541e561c"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/after-chromium-1.png": {
+      "bytes": 346,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/after-chromium-1.png",
+      "sha256": "bdeb647b1d6ed8d79f06ae696a54fb73240e5330d6ef07f37c8f1d7d541e561c"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/after-chromium-2-first-capture.png": {
+      "bytes": 346,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/after-chromium-2-first-capture.png",
+      "sha256": "bdeb647b1d6ed8d79f06ae696a54fb73240e5330d6ef07f37c8f1d7d541e561c"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/after-chromium-2-second-capture.png": {
+      "bytes": 346,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/after-chromium-2-second-capture.png",
+      "sha256": "bdeb647b1d6ed8d79f06ae696a54fb73240e5330d6ef07f37c8f1d7d541e561c"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/after-chromium-2.png": {
+      "bytes": 346,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/after-chromium-2.png",
+      "sha256": "bdeb647b1d6ed8d79f06ae696a54fb73240e5330d6ef07f37c8f1d7d541e561c"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/before-chromium-1-first-capture.png": {
+      "bytes": 346,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/before-chromium-1-first-capture.png",
+      "sha256": "52d7ca8ec736b02c84efd12534d19489c45b72130fc5144b6b025f1f65dd6692"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/before-chromium-1-second-capture.png": {
+      "bytes": 346,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/before-chromium-1-second-capture.png",
+      "sha256": "52d7ca8ec736b02c84efd12534d19489c45b72130fc5144b6b025f1f65dd6692"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/before-chromium-1.png": {
+      "bytes": 346,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/before-chromium-1.png",
+      "sha256": "52d7ca8ec736b02c84efd12534d19489c45b72130fc5144b6b025f1f65dd6692"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/before-chromium-2-first-capture.png": {
+      "bytes": 346,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/before-chromium-2-first-capture.png",
+      "sha256": "52d7ca8ec736b02c84efd12534d19489c45b72130fc5144b6b025f1f65dd6692"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/before-chromium-2-second-capture.png": {
+      "bytes": 346,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/before-chromium-2-second-capture.png",
+      "sha256": "52d7ca8ec736b02c84efd12534d19489c45b72130fc5144b6b025f1f65dd6692"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/before-chromium-2.png": {
+      "bytes": 346,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/before-chromium-2.png",
+      "sha256": "52d7ca8ec736b02c84efd12534d19489c45b72130fc5144b6b025f1f65dd6692"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/native-1.log": {
+      "bytes": 79,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/native-1.log",
+      "sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/native-1/after.png": {
+      "bytes": 388,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/native-1/after.png",
+      "sha256": "7a248cbd2353312930e1cdeca41f1c7ff94e76a19167930640831419479d9370"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/native-1/before.png": {
+      "bytes": 388,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/native-1/before.png",
+      "sha256": "de884633c8f4de3382208ded7d5e83bd7638deca73a009e8ec809236557496e7"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/native-1/events.json": {
+      "bytes": 163,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/native-1/events.json",
+      "sha256": "c49fdbad054a68c8ded93b48b4c2ddcbc352a6ba567583ce763ec07a15c7a0ed"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/native-2.log": {
+      "bytes": 79,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/native-2.log",
+      "sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/native-2/after.png": {
+      "bytes": 388,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/native-2/after.png",
+      "sha256": "7a248cbd2353312930e1cdeca41f1c7ff94e76a19167930640831419479d9370"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/native-2/before.png": {
+      "bytes": 388,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/native-2/before.png",
+      "sha256": "de884633c8f4de3382208ded7d5e83bd7638deca73a009e8ec809236557496e7"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.0/native-2/events.json": {
+      "bytes": 163,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.0/native-2/events.json",
+      "sha256": "c49fdbad054a68c8ded93b48b4c2ddcbc352a6ba567583ce763ec07a15c7a0ed"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/after-chromium-1-first-capture.png": {
+      "bytes": 433,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/after-chromium-1-first-capture.png",
+      "sha256": "5eef3d1da02172ff99eef8b124f9c6b979d6feadc5c17e2edf33af63141d2f1a"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/after-chromium-1-second-capture.png": {
+      "bytes": 433,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/after-chromium-1-second-capture.png",
+      "sha256": "5eef3d1da02172ff99eef8b124f9c6b979d6feadc5c17e2edf33af63141d2f1a"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/after-chromium-1.png": {
+      "bytes": 433,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/after-chromium-1.png",
+      "sha256": "5eef3d1da02172ff99eef8b124f9c6b979d6feadc5c17e2edf33af63141d2f1a"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/after-chromium-2-first-capture.png": {
+      "bytes": 433,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/after-chromium-2-first-capture.png",
+      "sha256": "5eef3d1da02172ff99eef8b124f9c6b979d6feadc5c17e2edf33af63141d2f1a"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/after-chromium-2-second-capture.png": {
+      "bytes": 433,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/after-chromium-2-second-capture.png",
+      "sha256": "5eef3d1da02172ff99eef8b124f9c6b979d6feadc5c17e2edf33af63141d2f1a"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/after-chromium-2.png": {
+      "bytes": 433,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/after-chromium-2.png",
+      "sha256": "5eef3d1da02172ff99eef8b124f9c6b979d6feadc5c17e2edf33af63141d2f1a"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/before-chromium-1-first-capture.png": {
+      "bytes": 433,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/before-chromium-1-first-capture.png",
+      "sha256": "10c4ef0ba7d2b6a2dabc5e3210a40ab75d0f3d8656b1abb768c8cdc9a6aa4211"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/before-chromium-1-second-capture.png": {
+      "bytes": 433,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/before-chromium-1-second-capture.png",
+      "sha256": "10c4ef0ba7d2b6a2dabc5e3210a40ab75d0f3d8656b1abb768c8cdc9a6aa4211"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/before-chromium-1.png": {
+      "bytes": 433,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/before-chromium-1.png",
+      "sha256": "10c4ef0ba7d2b6a2dabc5e3210a40ab75d0f3d8656b1abb768c8cdc9a6aa4211"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/before-chromium-2-first-capture.png": {
+      "bytes": 433,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/before-chromium-2-first-capture.png",
+      "sha256": "10c4ef0ba7d2b6a2dabc5e3210a40ab75d0f3d8656b1abb768c8cdc9a6aa4211"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/before-chromium-2-second-capture.png": {
+      "bytes": 433,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/before-chromium-2-second-capture.png",
+      "sha256": "10c4ef0ba7d2b6a2dabc5e3210a40ab75d0f3d8656b1abb768c8cdc9a6aa4211"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/before-chromium-2.png": {
+      "bytes": 433,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/before-chromium-2.png",
+      "sha256": "10c4ef0ba7d2b6a2dabc5e3210a40ab75d0f3d8656b1abb768c8cdc9a6aa4211"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/native-1.log": {
+      "bytes": 79,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/native-1.log",
+      "sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/native-1/after.png": {
+      "bytes": 454,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/native-1/after.png",
+      "sha256": "6e50a143fa314a25745f7c291e2eb9ed39c57d3dca9274b188c19ddf45a8ba56"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/native-1/before.png": {
+      "bytes": 454,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/native-1/before.png",
+      "sha256": "ffe710cc05adc55e1b11e7d5082f713f61dd2de95e8f324354ba3fb490f1858d"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/native-1/events.json": {
+      "bytes": 166,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/native-1/events.json",
+      "sha256": "e1da5d002324d36fe9f7b9bf00bea8610ed9b074ac66c0656f586419502fe81d"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/native-2.log": {
+      "bytes": 79,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/native-2.log",
+      "sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/native-2/after.png": {
+      "bytes": 454,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/native-2/after.png",
+      "sha256": "6e50a143fa314a25745f7c291e2eb9ed39c57d3dca9274b188c19ddf45a8ba56"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/native-2/before.png": {
+      "bytes": 454,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/native-2/before.png",
+      "sha256": "ffe710cc05adc55e1b11e7d5082f713f61dd2de95e8f324354ba3fb490f1858d"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.25/native-2/events.json": {
+      "bytes": 166,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.25/native-2/events.json",
+      "sha256": "e1da5d002324d36fe9f7b9bf00bea8610ed9b074ac66c0656f586419502fe81d"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/after-chromium-1-first-capture.png": {
+      "bytes": 511,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/after-chromium-1-first-capture.png",
+      "sha256": "f88d9a7bbddcfb7b8df5f9b11f13c7ae5fabf8ec1005184246782f391adea559"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/after-chromium-1-second-capture.png": {
+      "bytes": 511,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/after-chromium-1-second-capture.png",
+      "sha256": "f88d9a7bbddcfb7b8df5f9b11f13c7ae5fabf8ec1005184246782f391adea559"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/after-chromium-1.png": {
+      "bytes": 511,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/after-chromium-1.png",
+      "sha256": "f88d9a7bbddcfb7b8df5f9b11f13c7ae5fabf8ec1005184246782f391adea559"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/after-chromium-2-first-capture.png": {
+      "bytes": 511,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/after-chromium-2-first-capture.png",
+      "sha256": "f88d9a7bbddcfb7b8df5f9b11f13c7ae5fabf8ec1005184246782f391adea559"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/after-chromium-2-second-capture.png": {
+      "bytes": 511,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/after-chromium-2-second-capture.png",
+      "sha256": "f88d9a7bbddcfb7b8df5f9b11f13c7ae5fabf8ec1005184246782f391adea559"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/after-chromium-2.png": {
+      "bytes": 511,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/after-chromium-2.png",
+      "sha256": "f88d9a7bbddcfb7b8df5f9b11f13c7ae5fabf8ec1005184246782f391adea559"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/before-chromium-1-first-capture.png": {
+      "bytes": 511,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/before-chromium-1-first-capture.png",
+      "sha256": "6f2a087d82d0bce528c0b805bb815c525c2e6f9483e9b7e89812794c7c9068c9"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/before-chromium-1-second-capture.png": {
+      "bytes": 511,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/before-chromium-1-second-capture.png",
+      "sha256": "6f2a087d82d0bce528c0b805bb815c525c2e6f9483e9b7e89812794c7c9068c9"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/before-chromium-1.png": {
+      "bytes": 511,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/before-chromium-1.png",
+      "sha256": "6f2a087d82d0bce528c0b805bb815c525c2e6f9483e9b7e89812794c7c9068c9"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/before-chromium-2-first-capture.png": {
+      "bytes": 511,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/before-chromium-2-first-capture.png",
+      "sha256": "6f2a087d82d0bce528c0b805bb815c525c2e6f9483e9b7e89812794c7c9068c9"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/before-chromium-2-second-capture.png": {
+      "bytes": 511,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/before-chromium-2-second-capture.png",
+      "sha256": "6f2a087d82d0bce528c0b805bb815c525c2e6f9483e9b7e89812794c7c9068c9"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/before-chromium-2.png": {
+      "bytes": 511,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/before-chromium-2.png",
+      "sha256": "6f2a087d82d0bce528c0b805bb815c525c2e6f9483e9b7e89812794c7c9068c9"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/native-1.log": {
+      "bytes": 79,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/native-1.log",
+      "sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/native-1/after.png": {
+      "bytes": 568,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/native-1/after.png",
+      "sha256": "79ed7b61d3c08216e14c1e300f0593b95b693ece84e05254d64947d079a7b243"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/native-1/before.png": {
+      "bytes": 568,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/native-1/before.png",
+      "sha256": "f081bf9b9c36e521de042bbfe475d6ebe2cfb2604cfbfea57fc5b95ab7fc67d9"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/native-1/events.json": {
+      "bytes": 165,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/native-1/events.json",
+      "sha256": "64a490de5f15447d8f43042d98671a9d3d3a49e79495e681d621aba66769c2cd"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/native-2.log": {
+      "bytes": 79,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/native-2.log",
+      "sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/native-2/after.png": {
+      "bytes": 568,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/native-2/after.png",
+      "sha256": "79ed7b61d3c08216e14c1e300f0593b95b693ece84e05254d64947d079a7b243"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/native-2/before.png": {
+      "bytes": 568,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/native-2/before.png",
+      "sha256": "f081bf9b9c36e521de042bbfe475d6ebe2cfb2604cfbfea57fc5b95ab7fc67d9"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/1.5/native-2/events.json": {
+      "bytes": 165,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/1.5/native-2/events.json",
+      "sha256": "64a490de5f15447d8f43042d98671a9d3d3a49e79495e681d621aba66769c2cd"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/after-chromium-1-first-capture.png": {
+      "bytes": 691,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/after-chromium-1-first-capture.png",
+      "sha256": "f85cdb3428750409b00c3d3e89f3c1fd9dba4e763227b9b0d8d302b0dc1bd677"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/after-chromium-1-second-capture.png": {
+      "bytes": 691,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/after-chromium-1-second-capture.png",
+      "sha256": "f85cdb3428750409b00c3d3e89f3c1fd9dba4e763227b9b0d8d302b0dc1bd677"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/after-chromium-1.png": {
+      "bytes": 691,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/after-chromium-1.png",
+      "sha256": "f85cdb3428750409b00c3d3e89f3c1fd9dba4e763227b9b0d8d302b0dc1bd677"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/after-chromium-2-first-capture.png": {
+      "bytes": 691,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/after-chromium-2-first-capture.png",
+      "sha256": "f85cdb3428750409b00c3d3e89f3c1fd9dba4e763227b9b0d8d302b0dc1bd677"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/after-chromium-2-second-capture.png": {
+      "bytes": 691,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/after-chromium-2-second-capture.png",
+      "sha256": "f85cdb3428750409b00c3d3e89f3c1fd9dba4e763227b9b0d8d302b0dc1bd677"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/after-chromium-2.png": {
+      "bytes": 691,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/after-chromium-2.png",
+      "sha256": "f85cdb3428750409b00c3d3e89f3c1fd9dba4e763227b9b0d8d302b0dc1bd677"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/before-chromium-1-first-capture.png": {
+      "bytes": 691,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/before-chromium-1-first-capture.png",
+      "sha256": "f7d60fdc6743f72ced4717cb231456127bc7862c96a7ad05d9c9543fcd961070"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/before-chromium-1-second-capture.png": {
+      "bytes": 691,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/before-chromium-1-second-capture.png",
+      "sha256": "f7d60fdc6743f72ced4717cb231456127bc7862c96a7ad05d9c9543fcd961070"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/before-chromium-1.png": {
+      "bytes": 691,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/before-chromium-1.png",
+      "sha256": "f7d60fdc6743f72ced4717cb231456127bc7862c96a7ad05d9c9543fcd961070"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/before-chromium-2-first-capture.png": {
+      "bytes": 691,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/before-chromium-2-first-capture.png",
+      "sha256": "f7d60fdc6743f72ced4717cb231456127bc7862c96a7ad05d9c9543fcd961070"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/before-chromium-2-second-capture.png": {
+      "bytes": 691,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/before-chromium-2-second-capture.png",
+      "sha256": "f7d60fdc6743f72ced4717cb231456127bc7862c96a7ad05d9c9543fcd961070"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/before-chromium-2.png": {
+      "bytes": 691,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/before-chromium-2.png",
+      "sha256": "f7d60fdc6743f72ced4717cb231456127bc7862c96a7ad05d9c9543fcd961070"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/native-1.log": {
+      "bytes": 79,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/native-1.log",
+      "sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/native-1/after.png": {
+      "bytes": 788,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/native-1/after.png",
+      "sha256": "22df0586e74895a49e4a2fe9e97fe9f10f3d68b4689f4e455e4ca4b90889a601"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/native-1/before.png": {
+      "bytes": 788,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/native-1/before.png",
+      "sha256": "3a8dd305f691444a7ef3d8d935d36702ea2f7ea31fefd7fcc8c69a9e31bca1c9"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/native-1/events.json": {
+      "bytes": 163,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/native-1/events.json",
+      "sha256": "ad7080eb72053a93a5e717f431b8b578fade3ff352c16b29abbca44dd0788236"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/native-2.log": {
+      "bytes": 79,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/native-2.log",
+      "sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/native-2/after.png": {
+      "bytes": 788,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/native-2/after.png",
+      "sha256": "22df0586e74895a49e4a2fe9e97fe9f10f3d68b4689f4e455e4ca4b90889a601"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/native-2/before.png": {
+      "bytes": 788,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/native-2/before.png",
+      "sha256": "3a8dd305f691444a7ef3d8d935d36702ea2f7ea31fefd7fcc8c69a9e31bca1c9"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/2.0/native-2/events.json": {
+      "bytes": 163,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/2.0/native-2/events.json",
+      "sha256": "ad7080eb72053a93a5e717f431b8b578fade3ff352c16b29abbca44dd0788236"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/after-chromium-1-first-capture.png": {
+      "bytes": 1165,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/after-chromium-1-first-capture.png",
+      "sha256": "24276df289936bf2da3b21640116fb1477b063f8a9eb8f91e4202c8a20a47a1a"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/after-chromium-1-second-capture.png": {
+      "bytes": 1165,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/after-chromium-1-second-capture.png",
+      "sha256": "24276df289936bf2da3b21640116fb1477b063f8a9eb8f91e4202c8a20a47a1a"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/after-chromium-1.png": {
+      "bytes": 1165,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/after-chromium-1.png",
+      "sha256": "24276df289936bf2da3b21640116fb1477b063f8a9eb8f91e4202c8a20a47a1a"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/after-chromium-2-first-capture.png": {
+      "bytes": 1165,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/after-chromium-2-first-capture.png",
+      "sha256": "24276df289936bf2da3b21640116fb1477b063f8a9eb8f91e4202c8a20a47a1a"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/after-chromium-2-second-capture.png": {
+      "bytes": 1165,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/after-chromium-2-second-capture.png",
+      "sha256": "24276df289936bf2da3b21640116fb1477b063f8a9eb8f91e4202c8a20a47a1a"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/after-chromium-2.png": {
+      "bytes": 1165,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/after-chromium-2.png",
+      "sha256": "24276df289936bf2da3b21640116fb1477b063f8a9eb8f91e4202c8a20a47a1a"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/before-chromium-1-first-capture.png": {
+      "bytes": 1165,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/before-chromium-1-first-capture.png",
+      "sha256": "ba53be57b641fff63824b1419e2acb9005a8468b72637c9b2c33b7c8b5aa9388"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/before-chromium-1-second-capture.png": {
+      "bytes": 1165,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/before-chromium-1-second-capture.png",
+      "sha256": "ba53be57b641fff63824b1419e2acb9005a8468b72637c9b2c33b7c8b5aa9388"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/before-chromium-1.png": {
+      "bytes": 1165,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/before-chromium-1.png",
+      "sha256": "ba53be57b641fff63824b1419e2acb9005a8468b72637c9b2c33b7c8b5aa9388"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/before-chromium-2-first-capture.png": {
+      "bytes": 1165,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/before-chromium-2-first-capture.png",
+      "sha256": "ba53be57b641fff63824b1419e2acb9005a8468b72637c9b2c33b7c8b5aa9388"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/before-chromium-2-second-capture.png": {
+      "bytes": 1165,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/before-chromium-2-second-capture.png",
+      "sha256": "ba53be57b641fff63824b1419e2acb9005a8468b72637c9b2c33b7c8b5aa9388"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/before-chromium-2.png": {
+      "bytes": 1165,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/before-chromium-2.png",
+      "sha256": "ba53be57b641fff63824b1419e2acb9005a8468b72637c9b2c33b7c8b5aa9388"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/native-1.log": {
+      "bytes": 79,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/native-1.log",
+      "sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/native-1/after.png": {
+      "bytes": 1297,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/native-1/after.png",
+      "sha256": "cc6e0be428b46390551c1f0ea2780ba1e2c616ef92844c4594f74d09cd4b741d"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/native-1/before.png": {
+      "bytes": 1297,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/native-1/before.png",
+      "sha256": "abdc0517e011caef80d959844a9a078c445d46a7c0c0055deeb73a64de09184b"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/native-1/events.json": {
+      "bytes": 163,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/native-1/events.json",
+      "sha256": "b0eaac7876852a6abf65370c2349a1f14296b1aff47a77d8b31e70e5ff92a509"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/native-2.log": {
+      "bytes": 79,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/native-2.log",
+      "sha256": "2162f5149f8deb9fa6fefb8b7862d16a7f6dcb3055a59825f885534fb4586711"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/native-2/after.png": {
+      "bytes": 1297,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/native-2/after.png",
+      "sha256": "cc6e0be428b46390551c1f0ea2780ba1e2c616ef92844c4594f74d09cd4b741d"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/native-2/before.png": {
+      "bytes": 1297,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/native-2/before.png",
+      "sha256": "abdc0517e011caef80d959844a9a078c445d46a7c0c0055deeb73a64de09184b"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/3.0/native-2/events.json": {
+      "bytes": 163,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/3.0/native-2/events.json",
+      "sha256": "b0eaac7876852a6abf65370c2349a1f14296b1aff47a77d8b31e70e5ff92a509"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/after.html": {
+      "bytes": 1003,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/after.html",
+      "sha256": "81946c9836059c3c930cd4bf4cf2d4da5ee94d99d9033af901481a15fc370bbb"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/before.html": {
+      "bytes": 988,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/before.html",
+      "sha256": "625e8594b5a3288ae421c04a9dec50a79d9ff2627e6921febe93891faa3db710"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-consumer-v1456/receipt.json": {
+      "bytes": 44259,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-consumer-v1456/receipt.json",
+      "sha256": "3c78984f6be2a5d2822a40368cabd5833a8de713f795fb55b1469ba44cae53af"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-guards-v1456/baseline-event-phase-guard.log": {
+      "bytes": 10867,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-guards-v1456/baseline-event-phase-guard.log",
+      "sha256": "03d60ad6201d0e8a24052bef520c972e1935ce2c215b55d1ac4c9ee68e1b63d4"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-guards-v1456/clean-baseline.log": {
+      "bytes": 37,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-guards-v1456/clean-baseline.log",
+      "sha256": "573d4c2639f8cbb0272ef240c61484f8e57e802068559b50afad142b4083a7e2"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-guards-v1456/clean-fixed.log": {
+      "bytes": 38,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-guards-v1456/clean-fixed.log",
+      "sha256": "bccd3041954deb19595cea0bd687a1ab2846a71e9767674115891356fa3a0e99"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-guards-v1456/fixed-event-target-and-lifetime-guards.log": {
+      "bytes": 10668,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-guards-v1456/fixed-event-target-and-lifetime-guards.log",
+      "sha256": "e0764695a33d176dfd681d42c07c6d5322febdeefff4f1efe3147d17c310ef49"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-guards-v1456/receipt.json": {
+      "bytes": 8443,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-guards-v1456/receipt.json",
+      "sha256": "2d9436495ff12c31bcb6261700098b4af25759577d23df1286b9d864beb9d465"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-hosted-v1463/37277487481.json": {
+      "bytes": 16071,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-hosted-v1463/37277487481.json",
+      "sha256": "bd3c9ce1183bf3c7b6a1265dc81ace136085d868ccf357ea347a78ed5366bf38"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-hosted-v1463/37277487481.log": {
+      "bytes": 2121043,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-hosted-v1463/37277487481.log",
+      "sha256": "53db322b3819840f202ae589a2d0fd6fdd13f32d8d81cdb0bdba980d46ce6bc8"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-hosted-v1463/receipt.json": {
+      "bytes": 1550,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-hosted-v1463/receipt.json",
+      "sha256": "ec06aef54931fb38b750cd9a4d7292bd9c9f01ff2f7ee55d489fcb057917fc9d"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-pipeline-v1457/expanded.log": {
+      "bytes": 912,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-pipeline-v1457/expanded.log",
+      "sha256": "6639a8c531002741b405c411c42b24598119e774d88c6474430ee1c354ef86f3"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-pipeline-v1457/focused.log": {
+      "bytes": 909,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-pipeline-v1457/focused.log",
+      "sha256": "a1cb001e2ecaa08c0845d8219f5a1ea7e4c8de91b9fb0150af2fdd6190128742"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-pipeline-v1457/full.log": {
+      "bytes": 900,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-pipeline-v1457/full.log",
+      "sha256": "8c58932afa3decf8b1b4fbc8034ce912d5cf9dea37a0af68ce4f5fdf8738835a"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-pipeline-v1457/guards.log": {
+      "bytes": 4772,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-pipeline-v1457/guards.log",
+      "sha256": "c7713a18bc8dced07ce4ed1571468797cd6f72e7109bcdc35c427e6311cd7106"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-pipeline-v1457/native-application.log": {
+      "bytes": 336,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-pipeline-v1457/native-application.log",
+      "sha256": "aedfa7f782f4e2d2e306be5783863efa07428b5aa5e569b870a258ec8655e26e"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-pipeline-v1457/native-build.log": {
+      "bytes": 3460,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-pipeline-v1457/native-build.log",
+      "sha256": "701ff001db5421bbd1ba0b1ab296c92c46283092c8370c911baabeb122e64e00"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-pipeline-v1457/primitive.log": {
+      "bytes": 915,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-pipeline-v1457/primitive.log",
+      "sha256": "85492df7121a33887a2f20ea3c4c2d7e3b0b46f8464608ac7da02b02a7020d9c"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/native-event-targets-pipeline-v1457/receipt.json": {
+      "bytes": 10598,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-pipeline-v1457/receipt.json",
+      "sha256": "40dd438ec4e5e86cb36d09680c776c2852573278af5a7e0da0093f80da8baa8e"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/openui-native-event-complete-audit-v1492.py": {
+      "bytes": 8033,
+      "original": "/tmp/openui-native-event-complete-audit-v1492.py",
+      "sha256": "ffe01471be309869803373bd9c382ee3dcdad7aef11b880b4a2f59fa9a8f08e8"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/openui-native-event-original-matrix-audit-v1489.py": {
+      "bytes": 4594,
+      "original": "/tmp/openui-native-event-original-matrix-audit-v1489.py",
+      "sha256": "46fddcba11653bc2285556ece09e015cfe4cbb0531190cd50c9a8ad945e6bd76"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/openui-native-event-preserve-v1493.py": {
+      "bytes": 5152,
+      "original": "/tmp/openui-native-event-preserve-v1493.py",
+      "sha256": "bf091b69b60f381120e0f3d9ef4291ab49048ad9a873553957dd4635065c1e35"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/openui-native-event-small-matrices-audit-v1474.py": {
+      "bytes": 4392,
+      "original": "/tmp/openui-native-event-small-matrices-audit-v1474.py",
+      "sha256": "04e64573efab876c0313ca95fa54b97ef53718263d16f98f64a29c32443e9bf4"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/openui-native-event-targets-audit-v1472.py": {
+      "bytes": 10067,
+      "original": "/tmp/openui-native-event-targets-audit-v1472.py",
+      "sha256": "167351c16f21b8cd7726a84619ad3b9ef5a6f82d2e0409b81d711e6b4ad5a179"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/openui-native-event-targets-build-v1456.py": {
+      "bytes": 6002,
+      "original": "/tmp/openui-native-event-targets-build-v1456.py",
+      "sha256": "6f4397ecad6065fa68c0fbf7436c13974975a5ce085da282fc4fbbd8fda4197f"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/openui-native-event-targets-consumer-v1456.py": {
+      "bytes": 9145,
+      "original": "/tmp/openui-native-event-targets-consumer-v1456.py",
+      "sha256": "3bd0088590c430facba8e31e975609ea56b157e6bc3784c261c141c0eda6abd6"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/openui-native-event-targets-guards-v1456.py": {
+      "bytes": 7172,
+      "original": "/tmp/openui-native-event-targets-guards-v1456.py",
+      "sha256": "f58cf625e28d2136f11872275a1bbc1b175f419adbd3c107c205f715c5e11a2e"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/openui-native-event-targets-matrices-v1456.py": {
+      "bytes": 2083,
+      "original": "/tmp/openui-native-event-targets-matrices-v1456.py",
+      "sha256": "1e97a8c2136685da200deef18ff140d204de717ff85667f73dce4582f1943a3e"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/openui-native-event-targets-pipeline-v1457.py": {
+      "bytes": 7094,
+      "original": "/tmp/openui-native-event-targets-pipeline-v1457.py",
+      "sha256": "32faa76889c5f0ecb5f749325de80ad5917e365a2dc7874822c5dfd2365d28c0"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/primitive-exit.json": {
+      "bytes": 1005,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-primitive-exit-v1456.json",
+      "sha256": "a93118aacf0f8f84bf0fd454307f58500c62eed8e9b2c1a713aa39c12a60313a"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/primitive-exit.log": {
+      "bytes": 1264,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-primitive-v1456.log",
+      "sha256": "a7c27ec4abd33a1bf928dcff9dfc87899eb5f65b1813dc487dfad3fc8a440725"
+    },
+    "docs/renderer/evidence/native-event-targets-v1/primitive-summary-metadata.json": {
+      "bytes": 26161,
+      "kind": "metadata-only",
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-event-targets-clean-primitive-v1456/primitive-summary.json",
+      "sha256": "81a253611dae1899c3d81062cb057099e82ffc3dfac5478fe3a39fdbf7616528"
+    }
+  },
+  "c_abi": {
+    "c_examples": 11,
+    "cpp_examples": 5,
+    "exports": 113,
+    "ran": true
+  },
+  "cargo_commands_run": 0,
+  "full_renderer_gate_passed": false,
+  "hosted": {
+    "run_url": "https://github.com/zhuowcui/open-ui/actions/runs/37277487481",
+    "skipped_jobs": 0,
+    "successful_jobs": 7
+  },
+  "javascript_executed_by_openui": false,
+  "native_app": {
+    "consecutive_chromium_captures": 40,
+    "deterministic_native_pairs": 5,
+    "geometry_exact": 10,
+    "images": 10,
+    "independent_chromium_capture_processes": 20,
+    "native_runs": 10,
+    "pixel_exact": 10
+  },
+  "new_release_states_admitted": 0,
+  "original_rows_identical_in_expanded": 22924,
+  "pixel_target": "pinned-chromium-only",
+  "pixel_tolerance": 0,
+  "probe_sha256": "bf091b69b60f381120e0f3d9ef4291ab49048ad9a873553957dd4635065c1e35",
+  "public_rust_api": [
+    "Event::target()",
+    "Event::current_target()"
+  ],
+  "release_qualification": false,
+  "schema_version": 1,
+  "scoped_native_event_behavior_verified": true,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f9a60849daecfc54884266c3fdedca48d0de32d02066ae7c9b72881d1eef9a3e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "1c8540e9f8c6eeb8fce10a76cb9a32c2f42f01fd",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "f9a60849daecfc54884266c3fdedca48d0de32d02066ae7c9b72881d1eef9a3e",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "suites": {
+    "expanded": {
+      "actual_exit": 1,
+      "all_nine_comparison_invariants_unchanged": 23728,
+      "different": 1591,
+      "errors": 0,
+      "exact": 22137,
+      "exit_receipt_sha256": "f23e817550814a79f2ed520d64a0ec0d9ec7b2381dfbaf9aaf6586cf8b1513d8",
+      "prior_summary_sha256": "b29e4560fabc65d9f2206fdc131d0c3757cfa934a3fc11bf0e25f557bda8bc56",
+      "profiles": 4,
+      "summary_sha256": "f97df7d44847097030e747e78e4d7439222c74ae2fafe8224497ddcf7e539b11",
+      "total": 23728
+    },
+    "focused": {
+      "actual_exit": 0,
+      "all_nine_comparison_invariants_unchanged": 640,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "exit_receipt_sha256": "80236996228c1d01bd24ce33fc3c70fa99ddaa6532086e135461c870404c6397",
+      "prior_summary_sha256": "a7a4e655cdcaab3adb653430ec7245a43de033c51be93474f2a9a886c7ac16fe",
+      "profiles": 40,
+      "summary_sha256": "6523450639e285a7c26331944c2921fd803a7612f842fd47160ccb934dc80080",
+      "total": 640
+    },
+    "full": {
+      "actual_exit": 1,
+      "all_nine_comparison_invariants_unchanged": 22924,
+      "different": 1590,
+      "errors": 0,
+      "exact": 21334,
+      "exit_receipt_sha256": "c1692a2f85a0f32b8d567e9d861dfef5cd8231a88c0a6006eec07931b2e93d58",
+      "prior_summary_sha256": "86a6ef3e692d6aefa7ab459720329ab9455c9d1626011a1b2ef6fbb13f07ecf6",
+      "profiles": 4,
+      "summary_sha256": "dd2f5ce9377812818c9a1d393f1d98beb5da918737bfbecca4d78d888f476316",
+      "total": 22924
+    },
+    "primitive": {
+      "actual_exit": 0,
+      "all_nine_comparison_invariants_unchanged": 960,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "exit_receipt_sha256": "a93118aacf0f8f84bf0fd454307f58500c62eed8e9b2c1a713aa39c12a60313a",
+      "prior_summary_sha256": "ee4b449fc89de738401138aa1128eaeadcce541ed435fbcca3bed2115d99853b",
+      "profiles": 40,
+      "summary_sha256": "220101ae01aa264e7b99ae68a0fdd2de39f4b65bd05fdddea76103f79bd6f02d",
+      "total": 960
+    }
+  },
+  "workspace": {
+    "failed": 0,
+    "ignored": 13,
+    "passed": 8536
+  }
+}

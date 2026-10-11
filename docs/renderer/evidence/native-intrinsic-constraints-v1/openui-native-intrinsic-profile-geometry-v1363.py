@@ -1,0 +1,15 @@
+import hashlib,json,subprocess
+from pathlib import Path
+ROOT=Path('/home/nero/code/open-ui');RAW=ROOT/'out/renderer-evidence/native-viewport-scroll-v1';OUT=RAW/'native-intrinsic-profile-geometry-v1363';STORE=Path('/mnt/e/openui-v02-qualification-d174ea0b')/OUT.name
+assert not OUT.exists() and not STORE.exists();STORE.mkdir();OUT.symlink_to(STORE,target_is_directory=True)
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest();prior=RAW/'native-intrinsic-geometry-review-v1359/receipt.json';ids=sorted({r['id'] for r in json.loads(prior.read_bytes())['runs']});matrixpath=RAW/'native-fieldset-retry-clean-selection-v1310/full-summary.json';matrix=json.loads(matrixpath.read_bytes());assert sum(p['total'] for p in matrix['profiles'])==280
+r={'schema_version':1,'all_commands_terminal':False,'queries_only':True,'screenshots_generated':0,'cargo_commands_run':0,'javascript_executed_by_openui':False,'release_qualification':False,'reference_inputs_changed':False,'runs':[],'prior_default_profile_geometry_receipt_sha256':sha(prior),'census_profile_source_sha256':sha(matrixpath),'probe_sha256':sha(Path(__file__))};receipt=OUT/'receipt.json';save=lambda:receipt.write_text(json.dumps(r,sort_keys=True,indent=2)+'\n');save()
+for role,name,commit in [('prior-style','native-resolved-clean-v1122','5cc75147b89e74198102314657689ab6bec1f77c'),('fieldset-candidate','native-fieldset-retry-clean-v1310','abed078ddb2c8c2442155d14571cbadcb3b94758')]:
+ buildpath=RAW/name/'build.json';build=json.loads(buildpath.read_bytes());binary=buildpath.parent/'pixel_compare';expected=next(x['binary_sha256'] for x in build['steps'] if x['name']=='pixel-build');assert sha(binary)==expected and build['source']['commit']==commit==build['source_after']['commit'];ident=subprocess.run([str(binary),'build-source-identity'],capture_output=True);assert ident.returncode==0 and json.loads(ident.stdout)['source']==build['source']
+ for profile in matrix['profiles']:
+  width,height=profile['logical_size_css_px'];scale=profile['device_scale']
+  for tid in ids:
+   config=next(t for t in profile['tests'] if t['id']==tid)['raster_configuration'];assert config.startswith('cpu-skia:');textprofile=config.split(':',1)[1];command=[str(binary),'debug',tid,'--viewport',f'{width}x{height}','--scale',str(scale),'--raster-config',textprofile];log=OUT/(role+'-'+profile['profile']+'-'+tid.replace('/','__')+'.log');p=subprocess.run(command,cwd=ROOT,capture_output=True,timeout=30);log.write_bytes(p.stdout+p.stderr);assert p.returncode==0 and b'Fragment size:' in p.stdout;r['runs'].append({'role':role,'source':commit,'id':tid,'profile':profile['profile'],'raster_configuration':config,'command':command,'observed_exit_code':p.returncode,'binary_sha256':expected,'build_receipt_sha256':sha(buildpath),'log_sha256':sha(log),'log_path':str(log)});save()
+  print(role,profile['profile'],'six Engine geometry queries complete; no raster',flush=True)
+ assert sha(binary)==expected
+r['all_commands_terminal']=True;save();print('48 own-profile native geometry queries complete',flush=True)

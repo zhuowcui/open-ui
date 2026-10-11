@@ -1,0 +1,890 @@
+{
+  "accepted_expanded_exact": 22137,
+  "accepted_original_exact": 21334,
+  "accepted_renderer_unchanged": true,
+  "all_113_c_exports_and_30_layouts_preserved": true,
+  "all_nine_named_style_guards_passed": true,
+  "artifact_bytes": 1785629,
+  "artifact_count": 110,
+  "artifacts": [
+    {
+      "bytes": 2882,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/owner-interruption-witness.json",
+      "sha256": "e3b0b081e43fdb29917909d2d8f03a643430bf17d971f1a3219211be612d29e2",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/owner-interruption-witness-v1664.json"
+    },
+    {
+      "bytes": 2932,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/owner-interruption-witness.py",
+      "sha256": "0011a4d2bfc8aa06715226050b84b7254e8d44f1e0267fbcf30a1de867fd9f78",
+      "source_path": "/tmp/openui-owner-interruption-witness-v1664.py"
+    },
+    {
+      "bytes": 15724,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-loader-retry-pipeline-v1656-interrupted.json",
+      "sha256": "3f7bbf0ea1ca33f17f8ac8926c08458a4432a3a9ab37031dbab926bec9960c2b",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-pipeline-v1656/receipt.json"
+    },
+    {
+      "bytes": 6895,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-glyph-guard-pipeline-v1658-interrupted.json",
+      "sha256": "f04549c079a8e10f6720c9d54befd12c433edf67d40f48c79439bcf4ef6b31b4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-guard-pipeline-v1658/receipt.json"
+    },
+    {
+      "bytes": 862435,
+      "decompressed_bytes": 23647352,
+      "decompressed_sha256": "86f903953229323bee500d54cd4eea082154808460005f5a09bc7a8b73418e3d",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-text-consumer-interrupted.json.gz",
+      "sha256": "2c5981cb83ad65f89a05bf473c31eec228773eef2fa16772ed4cae5a3ab92b88",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-consumer-v1655/receipt.json"
+    },
+    {
+      "bytes": 7027,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-text-consumer-interrupted.log",
+      "sha256": "54470098b71cd9bb8d323cef6cd86e935a2c7a73ec8a3afd96df9db0369cc7b4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-pipeline-v1656/native-application.log"
+    },
+    {
+      "bytes": 11381,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-text-build-terminal.json",
+      "sha256": "284546c171f220416ef128be635e1d00e7ea9c9dcf730c3c2e5a04def6cf84b6",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-clean-v1655/build.json"
+    },
+    {
+      "bytes": 57,
+      "decompressed_bytes": 39,
+      "decompressed_sha256": "d3cff4c5e56d16a5f898228fe845108ea99bfe0621bfd2e2163c116a2960e1df",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-build-clean-workspace.log.gz",
+      "sha256": "3f856a17325bd5cf16ff1a174ddb47acc69799385ac90a8af1d4113bcf56304e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-clean-v1655/clean-workspace.log"
+    },
+    {
+      "bytes": 86403,
+      "decompressed_bytes": 487605,
+      "decompressed_sha256": "c9880ef4806fc8598ef04bfbe6465673cdfc408f4cb0f940346527dc2c7b0e2a",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-build-workspace.log.gz",
+      "sha256": "268f1af7f86a078310c62eb60b18d74df57f89972da93a06088b8260804d9963",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-clean-v1655/workspace.log"
+    },
+    {
+      "bytes": 1786,
+      "decompressed_bytes": 9796,
+      "decompressed_sha256": "2c098275d59faa5e07dd682ca2d986592752b6527c184f3fbdc2f9f006e053c2",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-build-text-build.log.gz",
+      "sha256": "4342b3aa94ca86f2efa1aae860bdf8b4776cd8f6bebf864c9b5cd9464bb3e18e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-clean-v1655/text-build.log"
+    },
+    {
+      "bytes": 1747,
+      "decompressed_bytes": 9342,
+      "decompressed_sha256": "1ec7905ed9b6423388451781550a258ef682e23cc3da3b17ee4b2eef36dd6081",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-build-ffi-build.log.gz",
+      "sha256": "8c43ca019d67b4be6910a7f4f6826a985cd7b3d9ad0adf40e338c1fbb248b578",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-clean-v1655/ffi-build.log"
+    },
+    {
+      "bytes": 1919,
+      "decompressed_bytes": 11808,
+      "decompressed_sha256": "b0e44aaee3d84508289c086d133e29ddafb08d3dda7d37226686872d25abf129",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-build-pixel-build.log.gz",
+      "sha256": "3f24622d1364fcf4eb7d245b4a19cb1f6a4fa578501d8755caf093c0811abcac",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-clean-v1655/pixel-build.log"
+    },
+    {
+      "bytes": 514,
+      "decompressed_bytes": 3015,
+      "decompressed_sha256": "aeed41971bd3a3abfaef68bc56757bd788be2235ee308b15fb5a92e50a064d4c",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-build-ffi-consumers.log.gz",
+      "sha256": "46038109abebec4cc0722a37a0b1acba35608e6b6ce5adb0cee54ef18a795e4a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-clean-v1655/ffi-consumers.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-build-compile-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-clean-v1655/compile-c.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-build-link-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-clean-v1655/link-c.log"
+    },
+    {
+      "bytes": 83,
+      "decompressed_bytes": 70,
+      "decompressed_sha256": "89ddc80f173d322bac9cc2ce250cf89057f076b0242f6baaa77c24fd8c4195a4",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-build-run-c.log.gz",
+      "sha256": "872665dc19bf7b6c9d7b66c06613d2b783673f15f42d18825f87441943a48f11",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-clean-v1655/run-c.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-build-compile-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-clean-v1655/compile-cpp.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-build-link-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-clean-v1655/link-cpp.log"
+    },
+    {
+      "bytes": 83,
+      "decompressed_bytes": 70,
+      "decompressed_sha256": "89ddc80f173d322bac9cc2ce250cf89057f076b0242f6baaa77c24fd8c4195a4",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/old-build-run-cpp.log.gz",
+      "sha256": "872665dc19bf7b6c9d7b66c06613d2b783673f15f42d18825f87441943a48f11",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-loader-retry-clean-v1655/run-cpp.log"
+    },
+    {
+      "bytes": 979,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/shared-native-source.json",
+      "sha256": "f7d8eec2a2a6fc507e7192ffcc168c868dd2096e19b0942762559c87604c8389",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-source-v1668.json"
+    },
+    {
+      "bytes": 6004,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/shared-native-source.py",
+      "sha256": "918f474d3e8cf8b4ef16f32408b5e8b357ca1fbc50f741458efb5096af732ee7",
+      "source_path": "/tmp/openui-native-text-inheritance-source-v1668.py"
+    },
+    {
+      "bytes": 2799,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/public-native-regression.patch",
+      "sha256": "6078d46965fd6f11973dc7bd9bc63d0e78ee927c071d8c047ef8f92b400ff1c5"
+    },
+    {
+      "bytes": 101421,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/shared-native-inheritance.patch",
+      "sha256": "a99260384c7ea51207a28508cffc055095b2f2565d00636b675644bbfe2941af"
+    },
+    {
+      "bytes": 9009,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-glyph-guard-v1666.json",
+      "sha256": "68a1d693f17c70cfdebc1dd98177e3bd5386e4ff6bf76c07e85784bc15dc60e3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-guard-v1666/receipt.json"
+    },
+    {
+      "bytes": 56,
+      "decompressed_bytes": 38,
+      "decompressed_sha256": "f289b494b52e00ce71e8984be1b61acdfb2d00b620c9b9c31070341e9eae0283",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-glyph-guard-v1666-clean-baseline.log.gz",
+      "sha256": "245da60e437aafcc7aa7611638424e43bf1c9c134b5146fedd74ffaa4f40e24b",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-guard-v1666/clean-baseline.log"
+    },
+    {
+      "bytes": 756,
+      "decompressed_bytes": 2096,
+      "decompressed_sha256": "b3d837734e054efdee5a19fad4070294d365591e76689101727a1c9fc747b28a",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-glyph-guard-v1666-baseline-authored-glyph-precision.log.gz",
+      "sha256": "96dc1d24f61d091e6019cf3db7599a3c05d482c1c4519ac6db6162f2ced1dee3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-guard-v1666/baseline-authored-glyph-precision.log"
+    },
+    {
+      "bytes": 55,
+      "decompressed_bytes": 37,
+      "decompressed_sha256": "19a09816d74e4ad70e3881280fccbb1a08d0232019567a4f0be5060feef87cb7",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-glyph-guard-v1666-clean-fixed.log.gz",
+      "sha256": "e0841395194edc2bc98972761ce764191d1a75ca4af9f1abec289dffd84f1709",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-guard-v1666/clean-fixed.log"
+    },
+    {
+      "bytes": 371,
+      "decompressed_bytes": 726,
+      "decompressed_sha256": "74f0aeb54c60e14af6bd518fa1d6f7556453e4bc1a8c4c41a0b110ce22f4ac20",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-glyph-guard-v1666-fixed-authored-glyph-precision.log.gz",
+      "sha256": "6d88da707a6482a0dde248cbaa5c058de957f7dbb39dbe89560211e063ce130d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-guard-v1666/fixed-authored-glyph-precision.log"
+    },
+    {
+      "bytes": 4023,
+      "decompressed_bytes": 20770,
+      "decompressed_sha256": "6b5ff2a83de137ba00ee5e94c1d6c1f13d247a1012a14c3bc0355123c7edb633",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-glyph-guard-v1666-fixed-text-suite.log.gz",
+      "sha256": "99a7aec1c33ab98e51c0d26b81b1e11a8c49907194c0888023e86b53febb7baa",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-guard-v1666/fixed-text-suite.log"
+    },
+    {
+      "bytes": 14214,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-qualification-guards-v1675.json",
+      "sha256": "f32050fea37b3a4dc8d0e6628cc25bcfd114c8d0b23b4f104c2bc27139f25fb8",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-qualification-guards-v1675/receipt.json"
+    },
+    {
+      "bytes": 56,
+      "decompressed_bytes": 38,
+      "decompressed_sha256": "0f1f88541d8167b7835e5a90705245ae5382b473fef4edc0a67263cd03617be9",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-qualification-guards-v1675-clean-baseline.log.gz",
+      "sha256": "76b556baefa429b94138988da8da186a525696c32a4f2d6a531d9c33c89d0f50",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-qualification-guards-v1675/clean-baseline.log"
+    },
+    {
+      "bytes": 2319,
+      "decompressed_bytes": 11683,
+      "decompressed_sha256": "20a7bee400772a7e953e369b4c9e991a7c97f0fe54e557a26d6c8d6672f08fbc",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-qualification-guards-v1675-baseline-public-native-text-inheritance.log.gz",
+      "sha256": "bbe13b3afa7f0a7bae74115da05bfaa5376cdcb331c7b3cca7fd89e055bc8c2f",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-qualification-guards-v1675/baseline-public-native-text-inheritance.log"
+    },
+    {
+      "bytes": 56,
+      "decompressed_bytes": 38,
+      "decompressed_sha256": "aa25246cfd989462be81dae9bfb007572bebab34cf28ead50d87558932d04d60",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-qualification-guards-v1675-clean-fixed.log.gz",
+      "sha256": "f57a252ff424fc00548459d1412e6f7d4296df2c7a5bb07dd9052459d59f9eba",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-qualification-guards-v1675/clean-fixed.log"
+    },
+    {
+      "bytes": 2147,
+      "decompressed_bytes": 11320,
+      "decompressed_sha256": "e81f5cbb4b4f4beedc076cf1eb9c3af8f6e1e7835bc87b295c3864dc72f3d9ef",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-qualification-guards-v1675-fixed-native-text-style-qualification-guard.log.gz",
+      "sha256": "4ea9354c366b241d10fb517dec74d9c56fe65ec0003975cb93fe7766e053a4a6",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-qualification-guards-v1675/fixed-native-text-style-qualification-guard.log"
+    },
+    {
+      "bytes": 1948,
+      "decompressed_bytes": 9908,
+      "decompressed_sha256": "73469280bd3b05a334ba63331b44293a003d66b05a75ee128cda89534edf8ea0",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-qualification-guards-v1675-fixed-text-content-storage.log.gz",
+      "sha256": "a6bde253323da6a706850b33285951a8f2e962d76340c095d20517216faa1dc1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-qualification-guards-v1675/fixed-text-content-storage.log"
+    },
+    {
+      "bytes": 1918,
+      "decompressed_bytes": 9583,
+      "decompressed_sha256": "78fb6d6c0342981fc477464dd4d7febf5466d120fc2c91943abf8641f348e0e0",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-qualification-guards-v1675-fixed-public-native-text-inheritance.log.gz",
+      "sha256": "2813b64812e23c21444c548e4be9a980d2ee81f7ffc192699555b6e56262bf2b",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-qualification-guards-v1675/fixed-public-native-text-inheritance.log"
+    },
+    {
+      "bytes": 3072,
+      "decompressed_bytes": 12536,
+      "decompressed_sha256": "a784bec383f927948fb6e0b61b19de925b9816bd5ceee373458d9c855c0241be",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-qualification-guards-v1675-fixed-public-native-conformance.log.gz",
+      "sha256": "6fa8f327478545a9bf08549acb0a36b42d339aabdcfa348da9bc101e9afb6771",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-qualification-guards-v1675/fixed-public-native-conformance.log"
+    },
+    {
+      "bytes": 2036,
+      "decompressed_bytes": 9925,
+      "decompressed_sha256": "d13f613ea1466b6a24e8bc291f250e34d27ca1cec1b90457726b0d856bac3e7b",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-qualification-guards-v1675-fixed-native-inheritance-inventory.log.gz",
+      "sha256": "93b6da08dc4e0516a64031b32c103c87b82b335bdcba4588908447c082d43670",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-qualification-guards-v1675/fixed-native-inheritance-inventory.log"
+    },
+    {
+      "bytes": 5748,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-checks-v1673.json",
+      "sha256": "23a9636dcd40aa0eb4d0a91f6306b76b29df9a26c0750713fee63b110c919143",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-checks-v1673/receipt.json"
+    },
+    {
+      "bytes": 95,
+      "decompressed_bytes": 81,
+      "decompressed_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-checks-v1673-renderer.log.gz",
+      "sha256": "d2b79cb72721d10fece4b15d0f646423937282376e09b24612cf252d1dfa8316",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-checks-v1673/renderer.log"
+    },
+    {
+      "bytes": 79,
+      "decompressed_bytes": 59,
+      "decompressed_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-checks-v1673-multicol.log.gz",
+      "sha256": "fd7419d14ad0bcdcbbacbaf00c01710e85416d2018b9addb2b26f3cff95775e1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-checks-v1673/multicol.log"
+    },
+    {
+      "bytes": 102,
+      "decompressed_bytes": 86,
+      "decompressed_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-checks-v1673-sp17.log.gz",
+      "sha256": "3f7d3c871f9e93684439793e60873829691e5dee51d51b30ab55fa940ef55df4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-checks-v1673/sp17.log"
+    },
+    {
+      "bytes": 123,
+      "decompressed_bytes": 121,
+      "decompressed_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-checks-v1673-sp18.log.gz",
+      "sha256": "50c99e0d37a26a36c607fd5e7dbf96f4aedf46d045824ff09490252f4c3a35ee",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-checks-v1673/sp18.log"
+    },
+    {
+      "bytes": 143,
+      "decompressed_bytes": 142,
+      "decompressed_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-checks-v1673-sp20.log.gz",
+      "sha256": "3705c08adcf75d9113bbf4ee522c73c0bbcdb1f0e9e50947c0a4eb54e214d64e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-checks-v1673/sp20.log"
+    },
+    {
+      "bytes": 80,
+      "decompressed_bytes": 63,
+      "decompressed_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-checks-v1673-v02.log.gz",
+      "sha256": "ec1277c807103cfdee77b77954961b24a58ce62612d9dbf58594043db7efc478",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-checks-v1673/v02.log"
+    },
+    {
+      "bytes": 57,
+      "decompressed_bytes": 37,
+      "decompressed_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-checks-v1673-style.log.gz",
+      "sha256": "1b70c8a7ba0f84375105255b165129e2f427ca1072a832c28efb9f840d539b10",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-checks-v1673/style.log"
+    },
+    {
+      "bytes": 52,
+      "decompressed_bytes": 32,
+      "decompressed_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-checks-v1673-ffi.log.gz",
+      "sha256": "55406c87d9571bf98d31b05240f488bb4ab3c159f8a3c2f654148ee72b439592",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-checks-v1673/ffi.log"
+    },
+    {
+      "bytes": 65,
+      "decompressed_bytes": 45,
+      "decompressed_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-checks-v1673-archive.log.gz",
+      "sha256": "d9ac32c4015a03a8f742aaef97d2271555824a1bc37f48615bc942ea11dc71d8",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-checks-v1673/archive.log"
+    },
+    {
+      "bytes": 1055,
+      "decompressed_bytes": 2867,
+      "decompressed_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-checks-v1673-accountability.log.gz",
+      "sha256": "a7ddfb15636772a7ed177d92cd310c67cc38a082a9aae491e62d04518aa2f463",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-checks-v1673/accountability.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-checks-v1673-rust-format.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-checks-v1673/rust-format.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-checks-v1673-syntax-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-checks-v1673/syntax-c.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-checks-v1673-syntax-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-checks-v1673/syntax-cpp.log"
+    },
+    {
+      "bytes": 14837,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-glyph-retry-pipeline-v1667.json",
+      "sha256": "f57b04cfbd431611d67452c22652ee4a30e4e9c5472c10c5f2e6dccb2ec9b27b",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-retry-pipeline-v1667/receipt.json"
+    },
+    {
+      "bytes": 575,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-glyph-retry-pipeline-v1667-guards.log",
+      "sha256": "7bf6b8980b0c4decd063605ce3913260343429b9f572a982f395d32088d9f653",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-retry-pipeline-v1667/guards.log"
+    },
+    {
+      "bytes": 16628,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-qualification-pipeline-v1676.json",
+      "sha256": "0ba93c01744477e8dfb63e1eb5d2a71fa20ea42d9778890f3fcb23e1d1b342ed",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-qualification-pipeline-v1676/receipt.json"
+    },
+    {
+      "bytes": 9029,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-qualification-pipeline-v1676-guards.log",
+      "sha256": "adbe1f13df727eac7b1dd9f4ba4f9a5a36ae4c3f62b3e4ce7f7421d9e80631df",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-qualification-pipeline-v1676/guards.log"
+    },
+    {
+      "bytes": 255,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-qualification-pipeline-v1676-native-build.log",
+      "sha256": "ed34934f35534a334251ef060e54c935a938776219f0d8a3c3fb285e286db1a1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-qualification-pipeline-v1676/native-build.log"
+    },
+    {
+      "bytes": 723,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-glyph-retry-prepared-v1666.json",
+      "sha256": "68c7e5b37956865437b730eef74804b5e2fddfef24308fa1a3384295c0992356",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-glyph-retry-prepared-v1666.json"
+    },
+    {
+      "bytes": 7707,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-glyph-guard-v1666.py",
+      "sha256": "f630c9ef2d86f380964f6a193120c593b427f65f2968cb55079320398af79146",
+      "source_path": "/tmp/openui-native-glyph-guard-v1666.py"
+    },
+    {
+      "bytes": 6968,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-glyph-retry-pipeline-v1667.py",
+      "sha256": "2edf3400d647985940aacd3eaac6bc1b8b81c43d517cf2a94e643ca469258dae",
+      "source_path": "/tmp/openui-native-glyph-retry-pipeline-v1667.py"
+    },
+    {
+      "bytes": 2132,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-inheritance-prepared-v1669.json",
+      "sha256": "252a7adb339c513f23ddc87807da79c782d045345fefbbd02146ac8ec1753a02",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-inheritance-prepared-v1669.json"
+    },
+    {
+      "bytes": 8927,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-inheritance-build-v1669.py",
+      "sha256": "6418f756d96f4e59ba6520dc5a64147defa27709345ba7dd5846f73285644b7a",
+      "source_path": "/tmp/openui-native-text-inheritance-build-v1669.py"
+    },
+    {
+      "bytes": 20166,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-inheritance-consumer-v1669.py",
+      "sha256": "134f3f2ebd6090dafb3c8663d32d08dc9e67744ceb9ff5096fc665b6a23616de",
+      "source_path": "/tmp/openui-native-text-inheritance-consumer-v1669.py"
+    },
+    {
+      "bytes": 10564,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-inheritance-guards-v1669.py",
+      "sha256": "9a0f5cb625f56aabb45c85691c3190c11f6a127acba2549f5d2c3d5f327439b6",
+      "source_path": "/tmp/openui-native-text-inheritance-guards-v1669.py"
+    },
+    {
+      "bytes": 2104,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-inheritance-matrices-v1669.py",
+      "sha256": "62fb6e1e73b4d9f7b3242a783b3bd5ff717caec670d17703820847890cdd0f6b",
+      "source_path": "/tmp/openui-native-text-inheritance-matrices-v1669.py"
+    },
+    {
+      "bytes": 8796,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-inheritance-pipeline-v1670.py",
+      "sha256": "edb5f2ca4c0435e1776a7bbaa35e61ff0579ced723564ba4f45a8f84a367fe77",
+      "source_path": "/tmp/openui-native-text-inheritance-pipeline-v1670.py"
+    },
+    {
+      "bytes": 3077,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-qualification-prepared-v1675.json",
+      "sha256": "7da6118bd958a49afb4b5e8e4d6cb98d79b6760a6889ddb757db3cec429210b7",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-qualification-prepared-v1675.json"
+    },
+    {
+      "bytes": 8932,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-style-qualification-build-v1675.py",
+      "sha256": "5c935ee166a3e955c4d7ae13c1db957d29095cc7bef4c88922e87af29b8b7e70",
+      "source_path": "/tmp/openui-native-text-style-qualification-build-v1675.py"
+    },
+    {
+      "bytes": 20179,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-style-qualification-consumer-v1675.py",
+      "sha256": "96552ce3ef9b9c9ada8c6b00d5211bd7f4294d07304d1d4fdc9f457ad40e5460",
+      "source_path": "/tmp/openui-native-text-style-qualification-consumer-v1675.py"
+    },
+    {
+      "bytes": 10760,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-style-qualification-guards-v1675.py",
+      "sha256": "96610103dfdd0416e71d632b0c95fde6b7a13e433feb42d3cfefac7899022b3e",
+      "source_path": "/tmp/openui-native-text-style-qualification-guards-v1675.py"
+    },
+    {
+      "bytes": 2133,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-style-qualification-matrices-v1675.py",
+      "sha256": "8ba22c587c67a4e8d63acda7c3620a1a82a5ed3bf4a40f717f4f73e335fba7bb",
+      "source_path": "/tmp/openui-native-text-style-qualification-matrices-v1675.py"
+    },
+    {
+      "bytes": 8945,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-style-qualification-pipeline-v1676.py",
+      "sha256": "5cd7ac90b5cfef46fa37a47e91cb979ff5659f5bb7ef0e00905f2f0d58b49084",
+      "source_path": "/tmp/openui-native-text-style-qualification-pipeline-v1676.py"
+    },
+    {
+      "bytes": 2226,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-runtime-prepared-v1677.json",
+      "sha256": "4dda0d49261bc4bbfbded5d0c38e16c3d1963af7e535fabd1930e2f4b8984fe9",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-prepared-v1677.json"
+    },
+    {
+      "bytes": 8983,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-style-runtime-build-v1677.py",
+      "sha256": "573f0950318a6c2ffb41c6635fce2c9d09e7efbfe27b8f4367a9e94ea625a6bd",
+      "source_path": "/tmp/openui-native-text-style-runtime-build-v1677.py"
+    },
+    {
+      "bytes": 20166,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-style-runtime-consumer-v1677.py",
+      "sha256": "c126d6071a0eb1c77362bb86b4df4e24e5e6bb8e5dc4fc7cf46f8cd554c0c6da",
+      "source_path": "/tmp/openui-native-text-style-runtime-consumer-v1677.py"
+    },
+    {
+      "bytes": 1070,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-style-runtime-guard-reuse-v1677.py",
+      "sha256": "e7e5850bc16cf16180d5e3c5cebfd46a5c2fe5bf5e7fc8f03ad6a407f0337dd8",
+      "source_path": "/tmp/openui-native-text-style-runtime-guard-reuse-v1677.py"
+    },
+    {
+      "bytes": 2108,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-style-runtime-matrices-v1677.py",
+      "sha256": "20bc2bc9e237c1681133f3594a832058f45bac642aaa7f870b29d19412aaf0e6",
+      "source_path": "/tmp/openui-native-text-style-runtime-matrices-v1677.py"
+    },
+    {
+      "bytes": 9010,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-style-runtime-pipeline-v1678.py",
+      "sha256": "d1f038ab2bb63db8dd94948f7f192688f2b4727ba998111614b31e2c1964d4ce",
+      "source_path": "/tmp/openui-native-text-style-runtime-pipeline-v1678.py"
+    },
+    {
+      "bytes": 3508,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-glyph-retry-prepare-v1666.py",
+      "sha256": "fb890f1082180598a02753509a37425a20a6d27d7b05b6e4e885e74fa09af8a9",
+      "source_path": "/tmp/openui-native-glyph-retry-prepare-v1666.py"
+    },
+    {
+      "bytes": 8135,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-inheritance-prepare-v1669.py",
+      "sha256": "b10822e77644f9c3937eff3250f78056bb1dc04aa4748993f5844f85b3d69614",
+      "source_path": "/tmp/openui-native-text-inheritance-prepare-v1669.py"
+    },
+    {
+      "bytes": 4302,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-style-qualification-prepare-v1671.py",
+      "sha256": "817ce5db1f77c03cd04fd699cf419e8632af5b12db6d9c974c5e8188e9122403",
+      "source_path": "/tmp/openui-native-text-style-qualification-prepare-v1671.py"
+    },
+    {
+      "bytes": 4538,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-style-complete-prepare-v1675.py",
+      "sha256": "fcd5347fbf811b915c50ac7626bc63440ba72c4263e6c27c51c5b95dba189167",
+      "source_path": "/tmp/openui-native-text-style-complete-prepare-v1675.py"
+    },
+    {
+      "bytes": 6202,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-style-runtime-prepare-v1677.py",
+      "sha256": "063fdcf1d1e1deee1c816e9b12a5e6643d5e1613f6ee1a5ab8aee98ae2138e72",
+      "source_path": "/tmp/openui-native-text-style-runtime-prepare-v1677.py"
+    },
+    {
+      "bytes": 220,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/unlaunched-preflight-note.json",
+      "sha256": "8454f32aa7631b1e70d37abd37147a69e5efe13d8aa1ccce43d7126fe8cf6bf7"
+    },
+    {
+      "bytes": 12078,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/new-text-build-terminal.json",
+      "sha256": "8f643148517e876caa5045d5cb25dee48f73e2c478a059558e6d6ad1223414b2",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-clean-v1677/build.json"
+    },
+    {
+      "bytes": 57,
+      "decompressed_bytes": 39,
+      "decompressed_sha256": "67c1e5a4937c17245ea09271ea7028e30f6a8231312bcc3dcc37f158523feee0",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/new-build-clean-workspace.log.gz",
+      "sha256": "d2fbe717e35ea1666dec0455c100b94821709b27a66c6f382b892ebd00c814e9",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-clean-v1677/clean-workspace.log"
+    },
+    {
+      "bytes": 86818,
+      "decompressed_bytes": 489660,
+      "decompressed_sha256": "240ba43824c74ed23b7ec5bd73d5fdb431a9ed64fb7e4476efb0e693d166992f",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/new-build-workspace.log.gz",
+      "sha256": "3ac804804b57607902cc65ce19a797a1a804059aa69c1a6d5ad43158f72cdcc9",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-clean-v1677/workspace.log"
+    },
+    {
+      "bytes": 1891,
+      "decompressed_bytes": 10411,
+      "decompressed_sha256": "a9f8148a7b4ffa8657db31ed3412c7dc396f55ee529fa78935685dc00635f424",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/new-build-text-build.log.gz",
+      "sha256": "4696bc098909262a273d9d59e9b7f59550d5da3e535bb74336816d9a9a65a938",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-clean-v1677/text-build.log"
+    },
+    {
+      "bytes": 1714,
+      "decompressed_bytes": 9002,
+      "decompressed_sha256": "43917e2a1ac133db7842c068b040b7d2c440664e32006a7fda8208596afdf536",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/new-build-inherited-build.log.gz",
+      "sha256": "3a0299d226e26231c8001aa66a3958325618b48b2235725bb37be6afc3aa39e3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-clean-v1677/inherited-build.log"
+    },
+    {
+      "bytes": 1789,
+      "decompressed_bytes": 9444,
+      "decompressed_sha256": "7d5ff4172bfb94d5135cabc75bd80a7f8603104138b6b6579f45fc94a86c9be0",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/new-build-ffi-build.log.gz",
+      "sha256": "350efa3f2619ba3e4b0983a949e7af431eaca73914d20dc55b24d19afee3eaf8",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-clean-v1677/ffi-build.log"
+    },
+    {
+      "bytes": 1926,
+      "decompressed_bytes": 11809,
+      "decompressed_sha256": "b89548be3af8292ca5bf91891aac7cbcfdcc3f1dd483e9ca92a3c84c3258b3fe",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/new-build-pixel-build.log.gz",
+      "sha256": "be50641b693b61eb33d932fa3633d40fabd9ee51ef4429e0a65f8e4ad196765f",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-clean-v1677/pixel-build.log"
+    },
+    {
+      "bytes": 514,
+      "decompressed_bytes": 3015,
+      "decompressed_sha256": "aeed41971bd3a3abfaef68bc56757bd788be2235ee308b15fb5a92e50a064d4c",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/new-build-ffi-consumers.log.gz",
+      "sha256": "46038109abebec4cc0722a37a0b1acba35608e6b6ce5adb0cee54ef18a795e4a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-clean-v1677/ffi-consumers.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/new-build-compile-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-clean-v1677/compile-c.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/new-build-link-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-clean-v1677/link-c.log"
+    },
+    {
+      "bytes": 83,
+      "decompressed_bytes": 70,
+      "decompressed_sha256": "89ddc80f173d322bac9cc2ce250cf89057f076b0242f6baaa77c24fd8c4195a4",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/new-build-run-c.log.gz",
+      "sha256": "872665dc19bf7b6c9d7b66c06613d2b783673f15f42d18825f87441943a48f11",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-clean-v1677/run-c.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/new-build-compile-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-clean-v1677/compile-cpp.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/new-build-link-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-clean-v1677/link-cpp.log"
+    },
+    {
+      "bytes": 83,
+      "decompressed_bytes": 70,
+      "decompressed_sha256": "89ddc80f173d322bac9cc2ce250cf89057f076b0242f6baaa77c24fd8c4195a4",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/new-build-run-cpp.log.gz",
+      "sha256": "872665dc19bf7b6c9d7b66c06613d2b783673f15f42d18825f87441943a48f11",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-clean-v1677/run-cpp.log"
+    },
+    {
+      "bytes": 17439,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-text-style-runtime-pipeline-v1678-at-observation.json",
+      "sha256": "130d4c68c3dc244ed31bf096b76b4687922ba1f24e417975724f04ec743a02f3",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-text-style-runtime-pipeline-v1678/receipt.json"
+    },
+    {
+      "bytes": 21047,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/native-umbrella-terminal-ci-v1674-at-observation.json",
+      "sha256": "c5e82a844354483c0e983d70dac1432efc985b2f3a6aaafa2dc19fa4c288436b",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-umbrella-terminal-ci-v1674/receipt.json"
+    },
+    {
+      "bytes": 7481,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/ci-37362608916.json",
+      "sha256": "8db0adc2f37d45116cb757b4d180a648cbfec8be8c19fb1e3a9b6b883f1e9a74",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-umbrella-terminal-ci-v1674/37362608916.json"
+    },
+    {
+      "bytes": 161107,
+      "decompressed_bytes": 1297858,
+      "decompressed_sha256": "f2ed8538aec6057899695c8f3ba3f2ccee0fee7e3aaf4ed2121f3bbc5d50db83",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/ci-37362608916.log.gz",
+      "sha256": "e0a8af1392f7123d590a1977d56f3ff158cf1ca49cc28bfc80b3fc1ba89b3596",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-umbrella-terminal-ci-v1674/37362608916.log"
+    },
+    {
+      "bytes": 3952,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/ci-37362608937.json",
+      "sha256": "b20ceeeb91a1c8e892fdb954504709282eece6c5111b634bf00d8d4b44215a54",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-umbrella-terminal-ci-v1674/37362608937.json"
+    },
+    {
+      "bytes": 7690,
+      "decompressed_bytes": 56662,
+      "decompressed_sha256": "55d30866787ba2637d181f7ae741faf99af0786da51a075c5de92f3af251a104",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/ci-37362608937.log.gz",
+      "sha256": "ee5aa63fbaec24d2b84cf291dfec36342af6da809c6aa5e5ee9f5bd04f508c08",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-umbrella-terminal-ci-v1674/37362608937.log"
+    },
+    {
+      "bytes": 6255,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/ci-37362608859.json",
+      "sha256": "9d43d480877e6a2ac546784ba7f7380a2f31b82f2e2bec621cab02f889010eb5",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-umbrella-terminal-ci-v1674/37362608859.json"
+    },
+    {
+      "bytes": 39722,
+      "decompressed_bytes": 343695,
+      "decompressed_sha256": "5595af3ae46247475b01992e26d0a2b59a88ec553369990dfa13abfcbbc6532f",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/ci-37362608859.log.gz",
+      "sha256": "139a2a3f3cb3c4bf80f76ffc74507349718db34023b2a419da5c6b291be6a1bd",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-umbrella-terminal-ci-v1674/37362608859.log"
+    },
+    {
+      "bytes": 2551,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/terminal-ci.py",
+      "sha256": "9ec19dddd153ee8384be8e76d9e0e52ba97d221f49e0bc4f69d54345c46eca98",
+      "source_path": "/tmp/openui-native-umbrella-terminal-ci-v1674.py"
+    },
+    {
+      "bytes": 2619,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/inactive-executable-relocation.json",
+      "sha256": "6384f2dda9edaaf14ec4e332966cb9a373aa27e2c0d437d3d79bc4b266adf5fc",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/retired-artifact-relocation-v1681.json"
+    },
+    {
+      "bytes": 3666,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/inactive-executable-relocation.py",
+      "sha256": "f77f25642a4509f7b0f317f69359fc93e6ddac191cf9279c62c1f9076f9e97c2",
+      "source_path": "/tmp/openui-retired-artifact-relocation-v1681.py"
+    },
+    {
+      "bytes": 8316,
+      "path": "docs/renderer/evidence/native-text-inheritance-v1/openui-native-text-inheritance-preserve-v1682.py",
+      "sha256": "61d478bfc31c800d7c6ef537ec7bf44e87350675e609864f63aa501a7c9480b7",
+      "source_path": "/tmp/openui-native-text-inheritance-preserve-v1682.py"
+    }
+  ],
+  "baseline": "25322be849f1f0523a6e66291a567d0758931160",
+  "c_text_guard_and_10000_update_storage_passed": true,
+  "clean_workspace": {
+    "failed": 0,
+    "ignored": 13,
+    "passed": 8551
+  },
+  "fresh_runtime_owner": "native-text-style-runtime-pipeline-v1678",
+  "glyph_app_and_pixels_not_yet_verified": true,
+  "glyph_guard_baseline_failed_and_fixed_passed": true,
+  "glyph_parent_has_83_exact_losses": true,
+  "glyph_source": "3b2e0d1f60b90813859c4c24325c7b0061dea29c",
+  "glyph_text_tests_passed": 342,
+  "inactive_executable_bytes_preserved": 912641544,
+  "interrupted_owners_not_relabelled_as_passes": true,
+  "javascript_executed_by_openui": false,
+  "native_callback_scales": 5,
+  "native_conformance_passed": 58,
+  "native_public_font_regression_baseline_failed": true,
+  "native_public_font_regression_fixed_passed": true,
+  "new_clean_build_all_13_stages_passed": true,
+  "new_release_states_admitted": 0,
+  "old_actual_c_cpp_images": 204,
+  "old_actual_c_cpp_images_matching_rust": 204,
+  "old_consumer_root_cause_owner": "openui-engine authored style inheritance",
+  "old_native_consumer_exact_geometry": 0,
+  "old_native_consumer_exact_images": 0,
+  "old_native_consumer_partial_images": 306,
+  "pixel_tolerance": 0,
+  "private_own_source_hosted_qualification_pending": true,
+  "private_own_source_hosted_run": 37366409715,
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "required_geometry_states": 38400,
+  "required_matrices": 4,
+  "required_native_images": 600,
+  "rust_self_rows_not_parity_passes": true,
+  "schema_version": 1,
+  "shared_native_source_unapplied": true,
+  "shared_text_and_native_inheritance_combined": true,
+  "source": {
+    "clean": true,
+    "commit": "41b616c3be5224b074e9d06ba6aa963731a1b265",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "2f5e480b3a582fbc34561d02b44cabaeb658d11f8a247381c8f5e56cae253c59",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_read_only_checks_passed": 13,
+  "style_properties_regenerated": true,
+  "umbrella_954_ci_attempt1": {
+    "cancelled_jobs": 1,
+    "historical_audit_has_no_steps": true,
+    "skipped_jobs": 5,
+    "successful_jobs": 5,
+    "workflow_failures": 1
+  },
+  "umbrella_ci_failed_jobs_rerun_requested": true
+}

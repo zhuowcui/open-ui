@@ -1,0 +1,822 @@
+{
+  "cases": [
+    {
+      "name": "remove-form-id",
+      "pre": [],
+      "steps": [
+        {
+          "name": "id",
+          "op": "remove_attribute",
+          "target": "fa"
+        }
+      ]
+    },
+    {
+      "name": "rename-form-id",
+      "pre": [],
+      "steps": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "fa",
+          "value": "other"
+        }
+      ]
+    },
+    {
+      "name": "rename-to-other-form-id",
+      "pre": [],
+      "steps": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "fa",
+          "value": "fb"
+        }
+      ]
+    },
+    {
+      "name": "rename-other-to-first-id",
+      "pre": [],
+      "steps": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "fb",
+          "value": "fa"
+        }
+      ]
+    },
+    {
+      "name": "swap-form-ids",
+      "pre": [],
+      "steps": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "fa",
+          "value": "fb"
+        },
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "fb",
+          "value": "fa"
+        }
+      ]
+    },
+    {
+      "name": "empty-form-id",
+      "pre": [],
+      "steps": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "fa",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "empty-control-form-id",
+      "pre": [],
+      "steps": [
+        {
+          "name": "form",
+          "op": "attribute",
+          "target": "a",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "empty-id-and-association",
+      "pre": [],
+      "steps": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "fa",
+          "value": ""
+        },
+        {
+          "name": "form",
+          "op": "attribute",
+          "target": "a",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "remove-control-form",
+      "pre": [],
+      "steps": [
+        {
+          "name": "form",
+          "op": "remove_attribute",
+          "target": "a"
+        }
+      ]
+    },
+    {
+      "name": "control-form-other",
+      "pre": [],
+      "steps": [
+        {
+          "name": "form",
+          "op": "attribute",
+          "target": "a",
+          "value": "fb"
+        }
+      ]
+    },
+    {
+      "name": "missing-form-created",
+      "pre": [
+        {
+          "name": "form",
+          "op": "attribute",
+          "target": "a",
+          "value": "new"
+        }
+      ],
+      "steps": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "newform",
+          "value": "new"
+        },
+        {
+          "op": "append",
+          "parent": "body",
+          "target": "newform"
+        }
+      ]
+    },
+    {
+      "name": "detach-form",
+      "pre": [],
+      "steps": [
+        {
+          "op": "detach",
+          "target": "fa"
+        }
+      ]
+    },
+    {
+      "name": "detach-reinsert-form",
+      "pre": [],
+      "steps": [
+        {
+          "op": "detach",
+          "target": "fa"
+        },
+        {
+          "op": "append",
+          "parent": "body",
+          "target": "fa"
+        }
+      ]
+    },
+    {
+      "name": "move-form-connected",
+      "pre": [],
+      "steps": [
+        {
+          "op": "append",
+          "parent": "parking",
+          "target": "fa"
+        }
+      ]
+    },
+    {
+      "name": "append-form-same-parent",
+      "pre": [],
+      "steps": [
+        {
+          "op": "append",
+          "parent": "body",
+          "target": "fa"
+        }
+      ]
+    },
+    {
+      "name": "insert-form-before-sibling",
+      "pre": [],
+      "steps": [
+        {
+          "before": "fb",
+          "op": "insert",
+          "parent": "body",
+          "target": "fa"
+        }
+      ]
+    },
+    {
+      "name": "insert-form-before-self",
+      "pre": [],
+      "steps": [
+        {
+          "before": "fa",
+          "op": "insert",
+          "parent": "body",
+          "target": "fa"
+        }
+      ]
+    },
+    {
+      "name": "move-control-connected",
+      "pre": [],
+      "steps": [
+        {
+          "op": "append",
+          "parent": "parking",
+          "target": "a"
+        }
+      ]
+    },
+    {
+      "name": "move-controls-connected",
+      "pre": [],
+      "steps": [
+        {
+          "op": "append",
+          "parent": "parking",
+          "target": "wrap"
+        }
+      ]
+    },
+    {
+      "name": "detach-controls",
+      "pre": [],
+      "steps": [
+        {
+          "op": "detach",
+          "target": "wrap"
+        }
+      ]
+    },
+    {
+      "name": "detach-controls-toggle",
+      "pre": [],
+      "steps": [
+        {
+          "op": "detach",
+          "target": "wrap"
+        },
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        },
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "detach-controls-remove-form",
+      "pre": [],
+      "steps": [
+        {
+          "op": "detach",
+          "target": "wrap"
+        },
+        {
+          "name": "form",
+          "op": "remove_attribute",
+          "target": "a"
+        },
+        {
+          "name": "form",
+          "op": "remove_attribute",
+          "target": "b"
+        }
+      ]
+    },
+    {
+      "name": "reinsert-controls",
+      "pre": [],
+      "steps": [
+        {
+          "op": "detach",
+          "target": "wrap"
+        },
+        {
+          "op": "append",
+          "parent": "body",
+          "target": "wrap"
+        }
+      ]
+    },
+    {
+      "name": "move-controls-into-form",
+      "pre": [],
+      "steps": [
+        {
+          "op": "append",
+          "parent": "fa",
+          "target": "wrap"
+        }
+      ]
+    },
+    {
+      "name": "detached-controls-into-form",
+      "pre": [
+        {
+          "op": "detach",
+          "target": "wrap"
+        },
+        {
+          "name": "form",
+          "op": "remove_attribute",
+          "target": "a"
+        },
+        {
+          "name": "form",
+          "op": "remove_attribute",
+          "target": "b"
+        }
+      ],
+      "steps": [
+        {
+          "op": "append",
+          "parent": "fa",
+          "target": "wrap"
+        }
+      ]
+    },
+    {
+      "name": "shadow-with-non-form",
+      "pre": [],
+      "steps": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "blocker",
+          "value": "fa"
+        },
+        {
+          "before": "fa",
+          "op": "insert",
+          "parent": "body",
+          "target": "blocker"
+        }
+      ]
+    },
+    {
+      "name": "shadow-remove-id",
+      "pre": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "blocker",
+          "value": "fa"
+        },
+        {
+          "before": "fa",
+          "op": "insert",
+          "parent": "body",
+          "target": "blocker"
+        },
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "name": "id",
+          "op": "remove_attribute",
+          "target": "blocker"
+        }
+      ]
+    },
+    {
+      "name": "shadow-detach",
+      "pre": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "blocker",
+          "value": "fa"
+        },
+        {
+          "before": "fa",
+          "op": "insert",
+          "parent": "body",
+          "target": "blocker"
+        },
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "op": "detach",
+          "target": "blocker"
+        }
+      ]
+    },
+    {
+      "name": "shadow-reorder",
+      "pre": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "blocker",
+          "value": "fa"
+        },
+        {
+          "before": "fa",
+          "op": "insert",
+          "parent": "body",
+          "target": "blocker"
+        },
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "before": "blocker",
+          "op": "insert",
+          "parent": "body",
+          "target": "fa"
+        }
+      ]
+    },
+    {
+      "name": "duplicate-form-id",
+      "pre": [],
+      "steps": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "fb",
+          "value": "fa"
+        }
+      ]
+    },
+    {
+      "name": "duplicate-form-reorder",
+      "pre": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "fb",
+          "value": "fa"
+        },
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        },
+        {
+          "op": "checked",
+          "target": "b",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "before": "fa",
+          "op": "insert",
+          "parent": "body",
+          "target": "fb"
+        }
+      ]
+    },
+    {
+      "name": "new-form-shadow",
+      "pre": [],
+      "steps": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "newform",
+          "value": "fa"
+        },
+        {
+          "before": "fa",
+          "op": "insert",
+          "parent": "body",
+          "target": "newform"
+        }
+      ]
+    },
+    {
+      "name": "ancestor-form-id-change",
+      "pre": [
+        {
+          "op": "append",
+          "parent": "fa",
+          "target": "wrap"
+        },
+        {
+          "name": "form",
+          "op": "remove_attribute",
+          "target": "a"
+        },
+        {
+          "name": "form",
+          "op": "remove_attribute",
+          "target": "b"
+        },
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        },
+        {
+          "op": "checked",
+          "target": "e",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "fa",
+          "value": "other"
+        }
+      ]
+    },
+    {
+      "name": "nested-connected-move",
+      "pre": [],
+      "steps": [
+        {
+          "op": "append",
+          "parent": "fa",
+          "target": "wrap"
+        },
+        {
+          "op": "append",
+          "parent": "parking",
+          "target": "wrap"
+        }
+      ]
+    },
+    {
+      "name": "non-form-id-move",
+      "pre": [],
+      "steps": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "blocker",
+          "value": "fa"
+        },
+        {
+          "op": "append",
+          "parent": "parking",
+          "target": "blocker"
+        }
+      ]
+    },
+    {
+      "name": "unrelated-id-change",
+      "pre": [],
+      "steps": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "parking",
+          "value": "other"
+        }
+      ]
+    },
+    {
+      "name": "detach-three-radios",
+      "pre": [
+        {
+          "op": "append",
+          "parent": "wrap",
+          "target": "e"
+        }
+      ],
+      "steps": [
+        {
+          "op": "detach",
+          "target": "wrap"
+        }
+      ]
+    },
+    {
+      "name": "detached-three-toggle",
+      "pre": [
+        {
+          "op": "append",
+          "parent": "wrap",
+          "target": "e"
+        },
+        {
+          "op": "detach",
+          "target": "wrap"
+        }
+      ],
+      "steps": [
+        {
+          "op": "checked",
+          "target": "a",
+          "value": false
+        },
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "detached-three-connect",
+      "pre": [
+        {
+          "op": "append",
+          "parent": "wrap",
+          "target": "e"
+        },
+        {
+          "op": "detach",
+          "target": "wrap"
+        },
+        {
+          "name": "form",
+          "op": "remove_attribute",
+          "target": "a"
+        },
+        {
+          "name": "form",
+          "op": "remove_attribute",
+          "target": "b"
+        }
+      ],
+      "steps": [
+        {
+          "op": "append",
+          "parent": "body",
+          "target": "wrap"
+        }
+      ]
+    },
+    {
+      "name": "detached-three-form-connect",
+      "pre": [
+        {
+          "op": "append",
+          "parent": "wrap",
+          "target": "e"
+        },
+        {
+          "op": "detach",
+          "target": "wrap"
+        },
+        {
+          "name": "form",
+          "op": "remove_attribute",
+          "target": "a"
+        },
+        {
+          "name": "form",
+          "op": "remove_attribute",
+          "target": "b"
+        }
+      ],
+      "steps": [
+        {
+          "op": "append",
+          "parent": "fa",
+          "target": "wrap"
+        }
+      ]
+    },
+    {
+      "name": "detached-name-merge",
+      "pre": [
+        {
+          "op": "detach",
+          "target": "wrap"
+        },
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "b",
+          "value": "other"
+        }
+      ],
+      "steps": [
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "b",
+          "value": "g"
+        }
+      ]
+    },
+    {
+      "name": "detached-ancestor-form",
+      "pre": [
+        {
+          "op": "append",
+          "parent": "fa",
+          "target": "wrap"
+        },
+        {
+          "name": "form",
+          "op": "remove_attribute",
+          "target": "a"
+        },
+        {
+          "name": "form",
+          "op": "remove_attribute",
+          "target": "b"
+        },
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "op": "detach",
+          "target": "fa"
+        }
+      ]
+    },
+    {
+      "name": "managed-empty-name",
+      "pre": [
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "a",
+          "value": ""
+        },
+        {
+          "name": "name",
+          "op": "attribute",
+          "target": "b",
+          "value": ""
+        },
+        {
+          "op": "checked",
+          "target": "a",
+          "value": true
+        },
+        {
+          "op": "checked",
+          "target": "b",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "name": "id",
+          "op": "attribute",
+          "target": "fa",
+          "value": "other"
+        }
+      ]
+    },
+    {
+      "name": "same-form-attribute",
+      "pre": [
+        {
+          "op": "checked",
+          "target": "e",
+          "value": true
+        }
+      ],
+      "steps": [
+        {
+          "name": "form",
+          "op": "attribute",
+          "target": "a",
+          "value": "fa"
+        }
+      ]
+    }
+  ],
+  "controls": [
+    "radio",
+    "checkbox"
+  ],
+  "initial_checked": [
+    "a",
+    "b",
+    "e"
+  ],
+  "prior_immutable_fixture_sha256": "b513d83cd089ccbc301c51d5fe43387e900db9335377c16be00a15e529b9039c",
+  "schema_version": 1
+}

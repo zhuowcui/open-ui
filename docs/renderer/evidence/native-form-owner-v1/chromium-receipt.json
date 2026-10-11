@@ -1,0 +1,46 @@
+{
+  "all_commands_terminal": true,
+  "chrome_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "diagnostic_only": true,
+  "fixture_sha256": "6054a691e11f318cb95e447862a3f4d8a478660eac578156eff64664daa361ff",
+  "harness_sha256": "97444384d43fd032a13f71c2b5c8330b6bc7533157f5af17ffc93488a341e321",
+  "javascript_executed_by_openui": false,
+  "native_api_behavior_measured": false,
+  "observed_exit_code": 0,
+  "owner_pid": 4125584,
+  "probe_sha256": "27ab0b7d03f35fcbb8313d0a1a4bb768ea6e54964d9ddde24b8a38b7065feb4e",
+  "release_qualified": false,
+  "repeated_observations_identical": true,
+  "runs": [
+    {
+      "callback_rows": 0,
+      "observations_sha256": "0114ce7ddb8018bf239d0f3002f5f63292cc47f02165417ef45e027c45291ded",
+      "repeat": 1,
+      "scenarios": 88
+    },
+    {
+      "callback_rows": 0,
+      "observations_sha256": "0114ce7ddb8018bf239d0f3002f5f63292cc47f02165417ef45e027c45291ded",
+      "repeat": 2,
+      "scenarios": 88
+    }
+  ],
+  "schema_version": 1,
+  "scope": "ordered native form association, tree mutations and radio checked-state transitions",
+  "script_runs_only_in_offline_chromium": true,
+  "source": {
+    "clean": true,
+    "commit": "783e11f44b0e1cd0023018d24e667d27f0b91bb8",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "09626c257b1039fb97272f3c71a24ebf3e36fb40df431fa3f3998f02c7933e43",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "783e11f44b0e1cd0023018d24e667d27f0b91bb8",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "09626c257b1039fb97272f3c71a24ebf3e36fb40df431fa3f3998f02c7933e43",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true
+}

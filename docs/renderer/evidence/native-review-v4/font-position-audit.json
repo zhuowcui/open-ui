@@ -1,0 +1,452 @@
+{
+  "accepted_renderer_unchanged": true,
+  "all_commands_terminal": true,
+  "all_model_predictions_match_observed_phases": true,
+  "all_other_scales_families_policies_still_require_review": true,
+  "cargo_commands_run": 0,
+  "chromium_binary_identity": {
+    "binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "path": "/home/nero/code/open-ui/chrome/linux-147.0.7727.50/chrome-linux64/chrome",
+    "version": "Google Chrome for Testing 147.0.7727.50"
+  },
+  "consumer_receipt_sha256": "ecb34ab56ddccba385965a38001f2df1cc834d427961dd14a53b38e9bd4333fe",
+  "edge_checks_exact": 12,
+  "formal_wpt_residual_ownership_unchanged": true,
+  "input_file_sha256": {
+    "/dev/shm/openui-native-raster-fields-retry-e0dc491e/bindings/rust/openui-text/fonts/Ahem.ttf": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+    "/dev/shm/openui-native-raster-fields-retry-e0dc491e/bindings/rust/openui-text/src/shaping/shape_result.rs": "330ef025a7f6cbf5702df1b5f1792c0d0aa3e0c1e80d0f2fb43abdd31d09261f",
+    "/dev/shm/openui-native-raster-fields-retry-e0dc491e/bindings/rust/vendor/font-types-v0_11/src/fixed.rs": "8d6c6489c5cab10cf9eb9ec3e6cebb6ad63fc37b4b322135e2902c8b8b7bdea7",
+    "/dev/shm/openui-native-raster-fields-retry-e0dc491e/bindings/rust/vendor/skrifa-v0_40/src/instance.rs": "e2091616d08f42057fb01fedffb53cb80367418bb6b64e704e620a4f3d5b3e0d",
+    "/dev/shm/openui-native-raster-fields-retry-e0dc491e/bindings/rust/vendor/skrifa-v0_40/src/metrics.rs": "81623be46fe3406785a30780f9f4745caeb8d64492aa28952b35176373ea249f",
+    "/home/nero/chromium/src/chrome/VERSION": "19c61b438190d8bc21c82e7c6de61ba51d288db1341553e1aa69c06566107c42",
+    "/home/nero/chromium/src/third_party/blink/renderer/platform/fonts/shaping/harfbuzz_shaper.cc": "5cd571e2c7f8c7cfd1860ae92d276fad9126a69e69556b57b4c64d4631c073ae",
+    "/home/nero/chromium/src/third_party/blink/renderer/platform/fonts/skia/skia_text_metrics.cc": "376a90b1af745815356bffb02cd3cd16e28c24ecc3daad274715d8578a93ee19",
+    "/home/nero/chromium/src/third_party/rust/chromium_crates_io/vendor/skrifa-v0_40/src/instance.rs": "e2091616d08f42057fb01fedffb53cb80367418bb6b64e704e620a4f3d5b3e0d",
+    "/home/nero/chromium/src/third_party/rust/chromium_crates_io/vendor/skrifa-v0_40/src/metrics.rs": "81623be46fe3406785a30780f9f4745caeb8d64492aa28952b35176373ea249f",
+    "/home/nero/chromium/src/third_party/skia/src/core/SkGlyph.h": "802e7787862184685be89e2aa56e9cb5a9d6b7fdf44b5d6c3ad8f9ad2233eae9",
+    "/home/nero/chromium/src/third_party/skia/src/core/SkGlyphRunPainter.cpp": "8ec0b1398b7c119dfb6b3aa2843b05f4d23e86c0b5f2588f50e13b3959541898",
+    "/home/nero/chromium/src/third_party/skia/src/ports/SkTypeface_fontations.cpp": "0507775ddd5047dd51ea2f8317f1161541fa54c61ea72d066172c47bf109789e",
+    "/home/nero/chromium/src/third_party/skia/src/ports/fontations/src/base.rs": "d81ffd8fa6099642980aa19188b9e727c6d4fee529884162613c568e73b2a43c"
+  },
+  "javascript_executed_by_openui": false,
+  "local_chromium_source_patch": 24,
+  "local_source_is_supporting_evidence_not_binary_provenance": true,
+  "modeled_geometry_states": 640,
+  "modeled_images": 10,
+  "new_release_states_admitted": 0,
+  "observations": [
+    {
+      "advance_bits_16_16": 655359,
+      "after_mismatched_pixels": 140,
+      "before_exact": true,
+      "channel_deltas": {
+        "alpha": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "blue": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "green": {
+          "changed_pixels": 120,
+          "maximum_absolute_delta": 64,
+          "maximum_signed_delta": 34,
+          "minimum_signed_delta": -64,
+          "signed_delta_sum": -1620
+        },
+        "red": {
+          "changed_pixels": 120,
+          "maximum_absolute_delta": 72,
+          "maximum_signed_delta": 32,
+          "minimum_signed_delta": -72,
+          "signed_delta_sum": -1620
+        }
+      },
+      "chromium_png_sha256": "83e6b5eff7955c6fe3d6aae1755aa940c782eb500d32e6f80355586af21942c5",
+      "edge_checks": [
+        {
+          "diagnostic_translation_only": true,
+          "first_glyph_left_pixels_exact": true,
+          "no_original_pixel_bytes_changed": true,
+          "phase": 8,
+          "second_glyph_right_pixels_match_prior_native_phase": true
+        },
+        {
+          "diagnostic_translation_only": true,
+          "first_glyph_left_pixels_exact": true,
+          "no_original_pixel_bytes_changed": true,
+          "phase": 24,
+          "second_glyph_right_pixels_match_prior_native_phase": true
+        },
+        {
+          "diagnostic_translation_only": true,
+          "first_glyph_left_pixels_exact": true,
+          "no_original_pixel_bytes_changed": true,
+          "phase": 40,
+          "second_glyph_right_pixels_match_prior_native_phase": true
+        },
+        {
+          "diagnostic_translation_only": true,
+          "first_glyph_left_pixels_exact": true,
+          "no_original_pixel_bytes_changed": true,
+          "phase": 56,
+          "second_glyph_right_pixels_match_prior_native_phase": true
+        }
+      ],
+      "family": "Ahem",
+      "measured_runtime_advance_not_available": true,
+      "mismatch_bounds": {
+        "height": 370,
+        "width": 12,
+        "x": 30,
+        "y": 80
+      },
+      "native_png_sha256": "e3e3879540732519709e2c71d4c00da079da4c40b08ff833ce68b2afd4eb1d85",
+      "observed_different_phases": [
+        8,
+        24,
+        40,
+        56
+      ],
+      "policy": "fontations",
+      "predicted_different_phases": [
+        8,
+        24,
+        40,
+        56
+      ],
+      "proposed_fix_not_executed": true,
+      "raw_advance": 9.999984741210938,
+      "reviewed_source_cause": "1/64 rounding discards fractional font advance before Skia LCD phase selection",
+      "reviewed_source_owner": "openui-text authored glyph position precision",
+      "scale": 1,
+      "scaled_metric_bits": 41943,
+      "size": 10
+    },
+    {
+      "advance_bits_16_16": 786438,
+      "after_mismatched_pixels": 0,
+      "before_exact": true,
+      "channel_deltas": {
+        "alpha": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "blue": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "green": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "red": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        }
+      },
+      "chromium_png_sha256": "f26a9ab8ed441864d6c1a16ec0a4eceb41bd950b82d5ebe030705128d01442ca",
+      "edge_checks": [],
+      "family": "Ahem",
+      "measured_runtime_advance_not_available": true,
+      "mismatch_bounds": null,
+      "native_png_sha256": "a6333790b63147d9003c49f7c65f103128c5be52affb3a09888ac9b19bcabc03",
+      "observed_different_phases": [],
+      "policy": "fontations",
+      "predicted_different_phases": [],
+      "proposed_fix_not_executed": true,
+      "raw_advance": 12.000091552734375,
+      "reviewed_source_cause": "1/64 rounding discards fractional font advance before Skia LCD phase selection",
+      "reviewed_source_owner": "openui-text authored glyph position precision",
+      "scale": 1,
+      "scaled_metric_bits": 50332,
+      "size": 12
+    },
+    {
+      "advance_bits_16_16": 1048578,
+      "after_mismatched_pixels": 0,
+      "before_exact": true,
+      "channel_deltas": {
+        "alpha": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "blue": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "green": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "red": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        }
+      },
+      "chromium_png_sha256": "e56cd556c8d55765199d655945f7d58bbe9fd447b36da77adce94e072661a5c7",
+      "edge_checks": [],
+      "family": "Ahem",
+      "measured_runtime_advance_not_available": true,
+      "mismatch_bounds": null,
+      "native_png_sha256": "1e6ae23efaced02bcec8f5c63ee80900ec2602c8d60e1881c670f2873b654951",
+      "observed_different_phases": [],
+      "policy": "fontations",
+      "predicted_different_phases": [],
+      "proposed_fix_not_executed": true,
+      "raw_advance": 16.000030517578125,
+      "reviewed_source_cause": "1/64 rounding discards fractional font advance before Skia LCD phase selection",
+      "reviewed_source_owner": "openui-text authored glyph position precision",
+      "scale": 1,
+      "scaled_metric_bits": 67109,
+      "size": 16
+    },
+    {
+      "advance_bits_16_16": 1310719,
+      "after_mismatched_pixels": 280,
+      "before_exact": true,
+      "channel_deltas": {
+        "alpha": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "blue": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "green": {
+          "changed_pixels": 240,
+          "maximum_absolute_delta": 64,
+          "maximum_signed_delta": 34,
+          "minimum_signed_delta": -64,
+          "signed_delta_sum": -3240
+        },
+        "red": {
+          "changed_pixels": 240,
+          "maximum_absolute_delta": 72,
+          "maximum_signed_delta": 32,
+          "minimum_signed_delta": -72,
+          "signed_delta_sum": -3240
+        }
+      },
+      "chromium_png_sha256": "2ae19517ee5d5a35705dd6296095fa76c8c28ea12257346e858b8df8a9026d33",
+      "edge_checks": [
+        {
+          "diagnostic_translation_only": true,
+          "first_glyph_left_pixels_exact": true,
+          "no_original_pixel_bytes_changed": true,
+          "phase": 8,
+          "second_glyph_right_pixels_match_prior_native_phase": true
+        },
+        {
+          "diagnostic_translation_only": true,
+          "first_glyph_left_pixels_exact": true,
+          "no_original_pixel_bytes_changed": true,
+          "phase": 24,
+          "second_glyph_right_pixels_match_prior_native_phase": true
+        },
+        {
+          "diagnostic_translation_only": true,
+          "first_glyph_left_pixels_exact": true,
+          "no_original_pixel_bytes_changed": true,
+          "phase": 40,
+          "second_glyph_right_pixels_match_prior_native_phase": true
+        },
+        {
+          "diagnostic_translation_only": true,
+          "first_glyph_left_pixels_exact": true,
+          "no_original_pixel_bytes_changed": true,
+          "phase": 56,
+          "second_glyph_right_pixels_match_prior_native_phase": true
+        }
+      ],
+      "family": "Ahem",
+      "measured_runtime_advance_not_available": true,
+      "mismatch_bounds": {
+        "height": 380,
+        "width": 22,
+        "x": 40,
+        "y": 80
+      },
+      "native_png_sha256": "fbf866176446d348e4192a475fda2c1bf0c7bc00364d363fc6b247d729b40810",
+      "observed_different_phases": [
+        8,
+        24,
+        40,
+        56
+      ],
+      "policy": "fontations",
+      "predicted_different_phases": [
+        8,
+        24,
+        40,
+        56
+      ],
+      "proposed_fix_not_executed": true,
+      "raw_advance": 19.999984741210938,
+      "reviewed_source_cause": "1/64 rounding discards fractional font advance before Skia LCD phase selection",
+      "reviewed_source_owner": "openui-text authored glyph position precision",
+      "scale": 1,
+      "scaled_metric_bits": 83886,
+      "size": 20
+    },
+    {
+      "advance_bits_16_16": 1572859,
+      "after_mismatched_pixels": 336,
+      "before_exact": true,
+      "channel_deltas": {
+        "alpha": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "blue": {
+          "changed_pixels": 0,
+          "maximum_absolute_delta": 0,
+          "maximum_signed_delta": 0,
+          "minimum_signed_delta": 0,
+          "signed_delta_sum": 0
+        },
+        "green": {
+          "changed_pixels": 288,
+          "maximum_absolute_delta": 64,
+          "maximum_signed_delta": 34,
+          "minimum_signed_delta": -64,
+          "signed_delta_sum": -3888
+        },
+        "red": {
+          "changed_pixels": 288,
+          "maximum_absolute_delta": 72,
+          "maximum_signed_delta": 32,
+          "minimum_signed_delta": -72,
+          "signed_delta_sum": -3888
+        }
+      },
+      "chromium_png_sha256": "837431b35e874856021fb089d3ce2c2e48d8236e9c651dc16a856e8651d7f651",
+      "edge_checks": [
+        {
+          "diagnostic_translation_only": true,
+          "first_glyph_left_pixels_exact": true,
+          "no_original_pixel_bytes_changed": true,
+          "phase": 8,
+          "second_glyph_right_pixels_match_prior_native_phase": true
+        },
+        {
+          "diagnostic_translation_only": true,
+          "first_glyph_left_pixels_exact": true,
+          "no_original_pixel_bytes_changed": true,
+          "phase": 24,
+          "second_glyph_right_pixels_match_prior_native_phase": true
+        },
+        {
+          "diagnostic_translation_only": true,
+          "first_glyph_left_pixels_exact": true,
+          "no_original_pixel_bytes_changed": true,
+          "phase": 40,
+          "second_glyph_right_pixels_match_prior_native_phase": true
+        },
+        {
+          "diagnostic_translation_only": true,
+          "first_glyph_left_pixels_exact": true,
+          "no_original_pixel_bytes_changed": true,
+          "phase": 56,
+          "second_glyph_right_pixels_match_prior_native_phase": true
+        }
+      ],
+      "family": "Ahem",
+      "measured_runtime_advance_not_available": true,
+      "mismatch_bounds": {
+        "height": 384,
+        "width": 26,
+        "x": 44,
+        "y": 80
+      },
+      "native_png_sha256": "64f00700846fcb9df08496789db7105432fb367b054dfedd0125ea8fa79b95f6",
+      "observed_different_phases": [
+        8,
+        24,
+        40,
+        56
+      ],
+      "policy": "fontations",
+      "predicted_different_phases": [
+        8,
+        24,
+        40,
+        56
+      ],
+      "proposed_fix_not_executed": true,
+      "raw_advance": 23.999923706054688,
+      "reviewed_source_cause": "1/64 rounding discards fractional font advance before Skia LCD phase selection",
+      "reviewed_source_owner": "openui-text authored glyph position precision",
+      "scale": 1,
+      "scaled_metric_bits": 100663,
+      "size": 24
+    }
+  ],
+  "observed_at_utc": "2026-10-05T18:49:44.996968+00:00",
+  "observed_exit_code": 0,
+  "original_images_reference_bytes_and_receipts_unchanged": true,
+  "pinned_chromium_binary_patch": 50,
+  "pixel_tolerance": 0,
+  "probe_sha256": "018d416eed14e2433143189cf82cb40c81cd0721fc3e31fb6c29ad8ee3979e96",
+  "raster_commands_run": 0,
+  "release_qualification": false,
+  "remaining_rust_pixel_failures_still_unqualified": 327,
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_supported_different_images": 3
+}

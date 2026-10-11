@@ -1,0 +1,72 @@
+{
+  "all_native_apis_qualified": false,
+  "finished_utc": "2026-10-10T02:07:41.232258+00:00",
+  "finite_qualification_run": true,
+  "launcher_success_is_not_owner_success": true,
+  "matrices": {
+    "trial-expanded": {
+      "different": 1587,
+      "errors": 0,
+      "exact": 22141,
+      "profile_result_sha256": "83981af0e60e54a235609e33e6bc93fdafdb9ec603ebfc07928c40b01bfaa4fe",
+      "total": 23728
+    },
+    "trial-focused": {
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "profile_result_sha256": "7b7ba7540bb7fba9b8b01fc8108fd52cfc15d67aab0526451b4e5379164d44ed",
+      "total": 640
+    },
+    "trial-full": {
+      "different": 1586,
+      "errors": 0,
+      "exact": 21338,
+      "profile_result_sha256": "d82bfa8e5e0d9e46cf37c7050dae8dd90be890632670aa417334d80a811b3a44",
+      "total": 22924
+    },
+    "trial-primitive": {
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "profile_result_sha256": "d5a9f5a93096ca44e3f509ba13ad370f106fb36c1ec553b6d9f7c5d6682f2a81",
+      "total": 960
+    }
+  },
+  "owner_actual_exit_code": 1,
+  "owner_pid": 41848,
+  "owner_process_reaped": true,
+  "owner_receipt_sha256": "009a090f8c41959077446af29f6a4a996891315ef0786746388e0b8753409ae5",
+  "owner_receipt_terminal": true,
+  "owner_reported_exit_code": 1,
+  "parent_script": "/tmp/openui-private-native-form-owner-renderer-continuation-v3478.py",
+  "parent_script_sha256": "c6b227aec78f38fc2b5b9959a5e158c8618d1992e6c535790741da65fff88372",
+  "preparation_sha256": "53c760c4165971170aaec6eb424fd228e67d17c6a3cc057915065e56263dcc6a",
+  "public_source": {
+    "clean": true,
+    "commit": "783e11f44b0e1cd0023018d24e667d27f0b91bb8",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "09626c257b1039fb97272f3c71a24ebf3e36fb40df431fa3f3998f02c7933e43",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "reported_exit_matches_actual": true,
+  "required_matrix_totals": {
+    "expanded": 23728,
+    "focused": 640,
+    "full": 22924,
+    "primitive": 960
+  },
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "a401a8ac8c33cc5e24ed9bb19934061716cd84dd",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "ebebbc58bd6f89eb5f03af1e3eae9cb961463a3f1be749c23315206c03c735f9",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "started_utc": "2026-10-10T00:05:58.666950+00:00",
+  "supervisor_pid": 41846,
+  "supervisor_terminal": true
+}

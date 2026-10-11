@@ -1,0 +1,20 @@
+{
+  "actual_owner_exit_code": 101,
+  "actual_unified_session": 63092,
+  "all_local_commands_terminal": true,
+  "binary_sha256": "77e4961999530621918f63067bdc9cea277dd37f93ba6ae71ae8e90ff5e426f3",
+  "dirty_diagnostic": true,
+  "failed": 3,
+  "full_renderer_contract_qualified": false,
+  "log_sha256": "38c5266e273a6a18553e303ef056b0d9c5ea81eda95448ebf20704455c1be89c",
+  "passed": 1,
+  "receipt_sha256": "b210a30cc884cfd6320acdf9cce69546f9b43f0f12dc8f7d8bb28f2c05a92a3d",
+  "release_qualified": false,
+  "source": {
+    "clean": false,
+    "commit": "f688913e642338a793dc3331117e6d4bd84508d3",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "998cfedccb941d2e770f167599aa541edd82f4d07cb5c08198034c0fb4e624f3",
+    "status_sha256": "6be182948d5c8a3c05cad082d8b82f152c6c566f7855a75c6a0b40183db2f6ec"
+  }
+}

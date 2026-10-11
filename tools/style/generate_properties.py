@@ -170,6 +170,130 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
         f"            StyleProperty::{row['rust_name']} => Some(Self::{row['rust_name']}(style.fields.{field_names(row)[0]}.clone())),"
         for row in renderer_rows
     )
+    # Copy computed values, without resolving inherited lengths again.
+    inherited_fields = sorted({field for row in schema if row["inherited"] == "true" for field in field_names(row)})
+    inherited_copy = "\n".join(f"        self.fields.{field} = parent.fields.{field}.clone();" for field in inherited_fields)
+    # Shorthands and normalization write more than their canonical inventory
+    # field. Use those write sets when deciding whether a repeated declaration
+    # is still effective after later declarations.
+    mutation_overrides = {
+        "Font": "font_style font_variant_caps font_weight font_stretch font_size line_height font_family font_variant_ligatures font_variant_numeric font_variant_east_asian font_variant_alternates font_variant_position font_variant_emoji font_optical_sizing font_size_adjust font_kerning font_feature_settings font_variation_settings font_language_override",
+        "FontVariant": "font_variant_ligatures font_variant_caps font_variant_alternates font_variant_numeric font_variant_east_asian font_variant_position font_variant_emoji",
+        "FontSynthesis": "font_synthesis_weight font_synthesis_style font_synthesis_small_caps font_synthesis_position",
+        "WordWrap": "overflow_wrap",
+        "TextEmphasisStyle": "text_emphasis_mark text_emphasis_fill",
+        "TextEmphasis": "text_emphasis_mark text_emphasis_fill text_emphasis_color",
+        "TextDecoration": "text_decoration_line text_decoration_style text_decoration_color text_decoration_thickness",
+        "TextBox": "text_box_trim text_box_edge",
+        "WhiteSpace": "white_space_collapse text_wrap_mode white_space text_wrap",
+        "TextWrap": "text_wrap_mode text_wrap_style text_wrap white_space",
+        "WhiteSpaceCollapse": "white_space_collapse white_space",
+        "TextWrapMode": "text_wrap_mode white_space text_wrap",
+        "TextWrapStyle": "text_wrap_style text_wrap",
+    }
+    assert set(mutation_overrides) <= {row["rust_name"] for row in schema}
+    mutation_cases = []
+    for row in schema:
+        names = mutation_overrides.get(row["rust_name"], " ".join(field_names(row))).split()
+        assert set(names) <= set(fields), row["rust_name"]
+        values = ", ".join(f'"{name}"' for name in names)
+        mutation_cases.append(f"            Self::{row['rust_name']} => &[{values}],")
+    mutation_match = "\n".join(mutation_cases)
+
+    # Author values keep relative lengths until the engine resolves them. This
+    # bridge also serves C's scalar transport; computed renderer values remain
+    # a separate, lossless path through the same fields.
+    primitive_shapes = {
+        ("length", "Length"): ("Length", "resolve_length(*value)", "length(input).map(StyleValue::Length)"),
+        ("length", "Option<Length>"): (
+            "Length", "{ let value = resolve_length(*value); (!value.is_auto()).then_some(value) }",
+            "length(input).map(StyleValue::Length)",
+        ),
+        ("number", "f32"): ("Number", "*value", "input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number)"),
+        ("integer", "i32"): ("Integer", "*value", "input.parse::<i32>().ok().map(StyleValue::Integer)"),
+        ("integer", "u32"): ("Integer", "u32::try_from(*value).ok()?", None),
+        ("color", "StyleColor"): ("Color", "StyleColor::Resolved(*value)", None),
+        ("color", "Option<Color>"): ("Color", "Some(*value)", None),
+        ("overflow", "Overflow"): ("Overflow", "*value", "overflow_literal(input).map(StyleValue::Overflow)"),
+        ("item-alignment", "ItemAlignment"): ("ItemAlignment", "*value", "item_alignment_literal(input).map(StyleValue::ItemAlignment)"),
+        ("content-alignment", "ContentAlignment"): ("ContentAlignment", "*value", "content_alignment_literal(input).map(StyleValue::ContentAlignment)"),
+    }
+    # These native value constructors are property-bound, owned renderer
+    # values. Keep every variant of each supported enum available through the
+    # same path that C uses, rather than interpreting an untyped enum number.
+    enum_keywords = {
+        "BorderStyle": {
+            "none": "None", "hidden": "Hidden", "dotted": "Dotted",
+            "dashed": "Dashed", "solid": "Solid", "double": "Double",
+            "groove": "Groove", "ridge": "Ridge", "inset": "Inset",
+            "outset": "Outset",
+        },
+        "BoxDecorationBreak": {"slice": "Slice", "clone": "Clone"},
+        "BreakValue": {
+            "auto": "Auto", "avoid": "Avoid", "avoid-page": "AvoidPage",
+            "avoid-column": "AvoidColumn", "page": "Page", "column": "Column",
+            "left": "Left", "right": "Right", "always": "Always",
+        },
+        "BreakInside": {
+            "auto": "Auto", "avoid": "Avoid", "avoid-page": "AvoidPage",
+            "avoid-column": "AvoidColumn",
+        },
+        "ColumnFill": {
+            "balance": "Balance", "balance-all": "BalanceAll", "auto": "Auto",
+        },
+        "ColumnSpan": {"none": "None", "all": "All"},
+        "ColumnWrap": {"auto": "Auto", "wrap": "Wrap", "nowrap": "NoWrap"},
+    }
+    enum_source = (ROOT / "bindings/rust/openui-style/src/enums.rs").read_text()
+    for enum_type, keywords in enum_keywords.items():
+        declaration = re.search(
+            rf"pub enum {re.escape(enum_type)} \{{(.*?)\n\}}", enum_source, re.S
+        )
+        if declaration is None:
+            raise SystemExit(f"missing native enum declaration: {enum_type}")
+        declared_variants = set(re.findall(
+            r"^\s*(\w+)\s*(?:=\s*\d+)?\s*,?\s*$", declaration[1], re.M
+        ))
+        if declared_variants != set(keywords.values()):
+            raise SystemExit(f"native keyword constructors do not cover {enum_type}")
+    primitive_apply_cases = []
+    primitive_parse_cases = []
+    for row in renderer_rows:
+        if int(row["id"]) <= 125 or row["rust_name"] == "ColumnCount":
+            continue
+        shape = primitive_shapes.get((row["value_kind"], fields[field_names(row)[0]]))
+        if shape is None:
+            enum_type = fields[field_names(row)[0]]
+            if enum_type in enum_keywords:
+                name = row["rust_name"]
+                cases = "\n".join(
+                    f'            "{keyword}" => Some({enum_type}::{variant}),'
+                    for keyword, variant in enum_keywords[enum_type].items()
+                )
+                primitive_parse_cases.append(
+                    f"        StyleProperty::{name} => (match input.trim() {{\n"
+                    f"{cases}\n            _ => None,\n"
+                    f"        }}).map(|value| StyleValue::Renderer(RendererStyleValue::{name}(value))),"
+                )
+                continue
+            if row["value_kind"] in {key[0] for key in primitive_shapes}:
+                raise SystemExit(f"missing author-value bridge for {row['css_name']}: {row['rust_type']}")
+            continue
+        variant, value, parse = shape
+        name = row["rust_name"]
+        primitive_apply_cases.append(
+            f"            (StyleProperty::{name}, StyleValue::{variant}(value)) => Some(Self::{name}({value})),"
+        )
+        if parse is None:
+            if row["rust_type"] == "u32":
+                parse = f"input.parse::<u32>().ok().map(|value| StyleValue::Renderer(RendererStyleValue::{name}(value)))"
+            elif row["rust_type"] == "StyleColor":
+                parse = f'if input.eq_ignore_ascii_case("currentcolor") {{ Some(StyleValue::Renderer(RendererStyleValue::{name}(StyleColor::CurrentColor))) }} else {{ color(input).map(StyleValue::Color) }}'
+            elif row["rust_type"] == "Option<Color>":
+                parse = f'if input == "auto" {{ Some(StyleValue::Renderer(RendererStyleValue::{name}(None))) }} else {{ color(input).map(StyleValue::Color) }}'
+        primitive_parse_cases.append(f"        StyleProperty::{name} => {parse},")
+    primitive_apply = "\n".join(primitive_apply_cases)
+    primitive_parse = "\n".join(primitive_parse_cases)
     internal = internal_rows()
     internal_variants = "\n".join(
         f"    {title(row['field'].replace('_', '-'))}({fields[row['field']]}),"
@@ -241,6 +365,17 @@ impl RendererStyleValue {{
         }}
     }}
 
+    pub(crate) fn from_author_value(
+        property: StyleProperty,
+        value: &StyleValue,
+        resolve_length: impl Fn(LengthValue) -> Length,
+    ) -> Option<Self> {{
+        match (property, value) {{
+{primitive_apply}
+            _ => None,
+        }}
+    }}
+
     pub(crate) fn from_computed(
         style: &ComputedStyle,
         property: StyleProperty,
@@ -249,6 +384,13 @@ impl RendererStyleValue {{
 {renderer_read}
             _ => None,
         }}
+    }}
+}}
+
+fn parse_renderer_author_literal(property: StyleProperty, input: &str) -> Option<StyleValue> {{
+    match property {{
+{primitive_parse}
+        _ => None,
     }}
 }}
 
@@ -269,7 +411,27 @@ impl RendererInternalStyleValue {{
     }}
 }}
 
+impl ComputedStyle {{
+    /// Copy modeled inherited computed fields from a parent snapshot.
+    /// Authored values are reapplied by the retained engine afterwards.
+    #[doc(hidden)]
+    pub fn inherit_properties_from(&mut self, parent: &Self) {{
+{inherited_copy}
+    }}
+}}
+
 impl StyleProperty {{
+    #[doc(hidden)]
+    pub fn affects_same_fields_as(self, other: Self) -> bool {{
+        self == other || self.mutation_fields().iter().any(|field| other.mutation_fields().contains(field))
+    }}
+
+    fn mutation_fields(self) -> &'static [&'static str] {{
+        match self {{
+{mutation_match}
+        }}
+    }}
+
     pub fn from_u16(value: u16) -> Option<Self> {{
         PROPERTY_METADATA
             .get(value.checked_sub(1)? as usize)

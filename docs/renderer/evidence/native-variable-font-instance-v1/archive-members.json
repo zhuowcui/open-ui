@@ -1,0 +1,2367 @@
+[
+  {
+    "bytes": 4301,
+    "path": "baseline-source/bindings/rust/openui-text/fonts/LICENSE-OFL-1.1.txt",
+    "sha256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2"
+  },
+  {
+    "bytes": 42054,
+    "path": "baseline-source/bindings/rust/openui-text/src/shaping/shape_result.rs",
+    "sha256": "2d146825b7b2f31f5830002bc52878d7f12c3049800d35a0d8cf545962d1aceb"
+  },
+  {
+    "bytes": 797,
+    "path": "baseline-source/bindings/rust/openui-text/tests/data/VARIABLE-BOX.md",
+    "sha256": "610e5c1a9915944cacf295f619ede1335f6be4edbcfea01a496699e1f11acb99"
+  },
+  {
+    "bytes": 4032,
+    "path": "baseline-source/bindings/rust/openui-text/tests/data/variabletest_box.ttf",
+    "sha256": "9270b7f6b2b8b34215a80c63a9c1348e704a0e3803ee49f2531bd62fdb5139c4"
+  },
+  {
+    "bytes": 3866,
+    "path": "baseline-source/bindings/rust/openui/examples/native_font_variation.rs",
+    "sha256": "bccb91b9f8e89a2b71102040d2018ef8aa195fc346c24840d38a0ba59d04c90f"
+  },
+  {
+    "bytes": 4301,
+    "path": "candidate-source/bindings/rust/openui-text/fonts/LICENSE-OFL-1.1.txt",
+    "sha256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2"
+  },
+  {
+    "bytes": 42631,
+    "path": "candidate-source/bindings/rust/openui-text/src/shaping/shape_result.rs",
+    "sha256": "a0288a42ae4e56c94e2ebd0b5d8e6fb4a556bb6744bbb3224f3da40c83919a9e"
+  },
+  {
+    "bytes": 797,
+    "path": "candidate-source/bindings/rust/openui-text/tests/data/VARIABLE-BOX.md",
+    "sha256": "610e5c1a9915944cacf295f619ede1335f6be4edbcfea01a496699e1f11acb99"
+  },
+  {
+    "bytes": 4032,
+    "path": "candidate-source/bindings/rust/openui-text/tests/data/variabletest_box.ttf",
+    "sha256": "9270b7f6b2b8b34215a80c63a9c1348e704a0e3803ee49f2531bd62fdb5139c4"
+  },
+  {
+    "bytes": 3866,
+    "path": "candidate-source/bindings/rust/openui/examples/native_font_variation.rs",
+    "sha256": "bccb91b9f8e89a2b71102040d2018ef8aa195fc346c24840d38a0ba59d04c90f"
+  },
+  {
+    "bytes": 1662,
+    "path": "native-font-variation-baseline-build-v1859/build.json",
+    "sha256": "64bca84feed8a8f940c1b13ab830ea39eb30d51a216613d506aa55d4932c8112"
+  },
+  {
+    "bytes": 38,
+    "path": "native-font-variation-baseline-build-v1859/clean-workspace.log",
+    "sha256": "f5790eee8637e28dc03f97287c78c061b8a4980078e549c6b768bf8e180f5047"
+  },
+  {
+    "bytes": 2159,
+    "path": "native-font-variation-baseline-build-v1859/variation-instance-guard.log",
+    "sha256": "1252d3797779399ad814b895202aa9b699b0a3de72bbd44b14d97cc48088dd39"
+  },
+  {
+    "bytes": 1662,
+    "path": "native-font-variation-baseline-build-v1863/build.json",
+    "sha256": "f813a6e056504f8f85af22adfcbfb595b39e251c1a0928ff1476a5f68634c461"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-baseline-build-v1863/clean-workspace.log",
+    "sha256": "2238c34d6eec659337b198a3fa74db371e8f3dccef395046636cc6292bb07857"
+  },
+  {
+    "bytes": 1977,
+    "path": "native-font-variation-baseline-build-v1863/variation-instance-guard.log",
+    "sha256": "f6228373c5e75ec7f76436cdea91883dd76943020511c74aacd6a3922cf74ed5"
+  },
+  {
+    "bytes": 2167,
+    "path": "native-font-variation-baseline-build-v1866/build.json",
+    "sha256": "c5247cc77f069c0e06b58a33b92e5fb47afad628a20a5e5ec9a62a61de4476bb"
+  },
+  {
+    "bytes": 36,
+    "path": "native-font-variation-baseline-build-v1866/clean-workspace.log",
+    "sha256": "31db1ba59b46d3b16df1e703a3d30afe9eac074f4c1017a68f4fdf5c6442591f"
+  },
+  {
+    "bytes": 9852,
+    "path": "native-font-variation-baseline-build-v1866/variation-build.log",
+    "sha256": "880391b74f323994a69ecfa9c425fbd0ccaa09982e55b0de44b6a36661b663e7"
+  },
+  {
+    "bytes": 1986,
+    "path": "native-font-variation-baseline-build-v1866/variation-instance-guard.log",
+    "sha256": "d19156d366c7148c640b40ba69ca158c5399e4276ecbcba3581772183e5e0428"
+  },
+  {
+    "bytes": 2167,
+    "path": "native-font-variation-baseline-build-v1879/build.json",
+    "sha256": "a2c8e24ced7e99565e2bf183ae39f5b6af1080832cd4c9cb82f51c45e38c03e0"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-baseline-build-v1879/clean-workspace.log",
+    "sha256": "0501a924a2cf8c0db1fb27da2fe9c199a637a6dabfa90510870a544fe64ad0c4"
+  },
+  {
+    "bytes": 9892,
+    "path": "native-font-variation-baseline-build-v1879/variation-build.log",
+    "sha256": "1e89e485779467ad75e3c8a70112b3a6c392fc40a8ebdb9c5e532f46dbf3df2f"
+  },
+  {
+    "bytes": 1363,
+    "path": "native-font-variation-baseline-build-v1879/variation-instance-guard.log",
+    "sha256": "6e0cd30edf9f6a92915df50817d00e1e4b0e26cbbc60d73d385a0c0a8086f924"
+  },
+  {
+    "bytes": 2867,
+    "path": "native-font-variation-baseline-checks-v1852/accountability.log",
+    "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+  },
+  {
+    "bytes": 45,
+    "path": "native-font-variation-baseline-checks-v1852/archive.log",
+    "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1852/clang-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 32,
+    "path": "native-font-variation-baseline-checks-v1852/ffi.log",
+    "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+  },
+  {
+    "bytes": 59,
+    "path": "native-font-variation-baseline-checks-v1852/multicol.log",
+    "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+  },
+  {
+    "bytes": 84,
+    "path": "native-font-variation-baseline-checks-v1852/native-options-rust-format.log",
+    "sha256": "8d8247a0fff54f58c83c74856d6872691fa0ece9a6f5063126329268187adf03"
+  },
+  {
+    "bytes": 9449,
+    "path": "native-font-variation-baseline-checks-v1852/receipt.json",
+    "sha256": "668833d8d73001f64dd788fbb1855574d63a52d5e9f7666cfb4c054f27f9bec9"
+  },
+  {
+    "bytes": 80,
+    "path": "native-font-variation-baseline-checks-v1852/renderer.log",
+    "sha256": "f8ddd7b601e66c8b33b103ef591964c029b40b3829825f452db65ca4f259c2ed"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1852/rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 86,
+    "path": "native-font-variation-baseline-checks-v1852/sp17.log",
+    "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+  },
+  {
+    "bytes": 121,
+    "path": "native-font-variation-baseline-checks-v1852/sp18.log",
+    "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+  },
+  {
+    "bytes": 142,
+    "path": "native-font-variation-baseline-checks-v1852/sp20.log",
+    "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-baseline-checks-v1852/style.log",
+    "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1852/syntax-c.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1852/syntax-cpp.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 63,
+    "path": "native-font-variation-baseline-checks-v1852/v02.log",
+    "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+  },
+  {
+    "bytes": 2867,
+    "path": "native-font-variation-baseline-checks-v1855/accountability.log",
+    "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+  },
+  {
+    "bytes": 45,
+    "path": "native-font-variation-baseline-checks-v1855/archive.log",
+    "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1855/clang-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 32,
+    "path": "native-font-variation-baseline-checks-v1855/ffi.log",
+    "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+  },
+  {
+    "bytes": 59,
+    "path": "native-font-variation-baseline-checks-v1855/multicol.log",
+    "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1855/native-options-rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 9382,
+    "path": "native-font-variation-baseline-checks-v1855/receipt.json",
+    "sha256": "0e191febdaf8942c86466724692938d79f3f35d9ee8572dbde119284a6ea7779"
+  },
+  {
+    "bytes": 81,
+    "path": "native-font-variation-baseline-checks-v1855/renderer.log",
+    "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1855/rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 86,
+    "path": "native-font-variation-baseline-checks-v1855/sp17.log",
+    "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+  },
+  {
+    "bytes": 121,
+    "path": "native-font-variation-baseline-checks-v1855/sp18.log",
+    "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+  },
+  {
+    "bytes": 142,
+    "path": "native-font-variation-baseline-checks-v1855/sp20.log",
+    "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-baseline-checks-v1855/style.log",
+    "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1855/syntax-c.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1855/syntax-cpp.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 63,
+    "path": "native-font-variation-baseline-checks-v1855/v02.log",
+    "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+  },
+  {
+    "bytes": 2867,
+    "path": "native-font-variation-baseline-checks-v1859/accountability.log",
+    "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+  },
+  {
+    "bytes": 45,
+    "path": "native-font-variation-baseline-checks-v1859/archive.log",
+    "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1859/clang-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 32,
+    "path": "native-font-variation-baseline-checks-v1859/ffi.log",
+    "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+  },
+  {
+    "bytes": 59,
+    "path": "native-font-variation-baseline-checks-v1859/multicol.log",
+    "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1859/native-options-rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 9390,
+    "path": "native-font-variation-baseline-checks-v1859/receipt.json",
+    "sha256": "97d53d81f80adb064e9d4a296c4e830a60e1cc0028dd87cf28d3fa7597695799"
+  },
+  {
+    "bytes": 81,
+    "path": "native-font-variation-baseline-checks-v1859/renderer.log",
+    "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1859/rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 86,
+    "path": "native-font-variation-baseline-checks-v1859/sp17.log",
+    "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+  },
+  {
+    "bytes": 121,
+    "path": "native-font-variation-baseline-checks-v1859/sp18.log",
+    "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+  },
+  {
+    "bytes": 142,
+    "path": "native-font-variation-baseline-checks-v1859/sp20.log",
+    "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-baseline-checks-v1859/style.log",
+    "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1859/syntax-c.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1859/syntax-cpp.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 63,
+    "path": "native-font-variation-baseline-checks-v1859/v02.log",
+    "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+  },
+  {
+    "bytes": 2867,
+    "path": "native-font-variation-baseline-checks-v1863/accountability.log",
+    "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+  },
+  {
+    "bytes": 45,
+    "path": "native-font-variation-baseline-checks-v1863/archive.log",
+    "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1863/clang-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 32,
+    "path": "native-font-variation-baseline-checks-v1863/ffi.log",
+    "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+  },
+  {
+    "bytes": 59,
+    "path": "native-font-variation-baseline-checks-v1863/multicol.log",
+    "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1863/native-options-rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 9374,
+    "path": "native-font-variation-baseline-checks-v1863/receipt.json",
+    "sha256": "6e5390b8a823d6965776567115b4ddc9b74621c9d2836e1a33a1545e4094aba4"
+  },
+  {
+    "bytes": 81,
+    "path": "native-font-variation-baseline-checks-v1863/renderer.log",
+    "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1863/rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 86,
+    "path": "native-font-variation-baseline-checks-v1863/sp17.log",
+    "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+  },
+  {
+    "bytes": 121,
+    "path": "native-font-variation-baseline-checks-v1863/sp18.log",
+    "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+  },
+  {
+    "bytes": 142,
+    "path": "native-font-variation-baseline-checks-v1863/sp20.log",
+    "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-baseline-checks-v1863/style.log",
+    "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1863/syntax-c.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1863/syntax-cpp.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 63,
+    "path": "native-font-variation-baseline-checks-v1863/v02.log",
+    "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+  },
+  {
+    "bytes": 2867,
+    "path": "native-font-variation-baseline-checks-v1866/accountability.log",
+    "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+  },
+  {
+    "bytes": 45,
+    "path": "native-font-variation-baseline-checks-v1866/archive.log",
+    "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1866/clang-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 32,
+    "path": "native-font-variation-baseline-checks-v1866/ffi.log",
+    "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+  },
+  {
+    "bytes": 59,
+    "path": "native-font-variation-baseline-checks-v1866/multicol.log",
+    "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1866/native-options-rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 9374,
+    "path": "native-font-variation-baseline-checks-v1866/receipt.json",
+    "sha256": "83cd5e4d34d010f629dd80a605efc4a02bcb2543aec221749868413863cdecd0"
+  },
+  {
+    "bytes": 81,
+    "path": "native-font-variation-baseline-checks-v1866/renderer.log",
+    "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1866/rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 86,
+    "path": "native-font-variation-baseline-checks-v1866/sp17.log",
+    "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+  },
+  {
+    "bytes": 121,
+    "path": "native-font-variation-baseline-checks-v1866/sp18.log",
+    "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+  },
+  {
+    "bytes": 142,
+    "path": "native-font-variation-baseline-checks-v1866/sp20.log",
+    "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-baseline-checks-v1866/style.log",
+    "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1866/syntax-c.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1866/syntax-cpp.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 63,
+    "path": "native-font-variation-baseline-checks-v1866/v02.log",
+    "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+  },
+  {
+    "bytes": 2867,
+    "path": "native-font-variation-baseline-checks-v1878/accountability.log",
+    "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+  },
+  {
+    "bytes": 45,
+    "path": "native-font-variation-baseline-checks-v1878/archive.log",
+    "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1878/clang-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 32,
+    "path": "native-font-variation-baseline-checks-v1878/ffi.log",
+    "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+  },
+  {
+    "bytes": 59,
+    "path": "native-font-variation-baseline-checks-v1878/multicol.log",
+    "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1878/native-options-rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 9394,
+    "path": "native-font-variation-baseline-checks-v1878/receipt.json",
+    "sha256": "6ff71d06ad0ff2f3db9d104865282245fc09614849867cdd90b93a7b72762f75"
+  },
+  {
+    "bytes": 81,
+    "path": "native-font-variation-baseline-checks-v1878/renderer.log",
+    "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1878/rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 86,
+    "path": "native-font-variation-baseline-checks-v1878/sp17.log",
+    "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+  },
+  {
+    "bytes": 121,
+    "path": "native-font-variation-baseline-checks-v1878/sp18.log",
+    "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+  },
+  {
+    "bytes": 142,
+    "path": "native-font-variation-baseline-checks-v1878/sp20.log",
+    "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-baseline-checks-v1878/style.log",
+    "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1878/syntax-c.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-baseline-checks-v1878/syntax-cpp.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 63,
+    "path": "native-font-variation-baseline-checks-v1878/v02.log",
+    "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1866/1.0/native-1.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 570,
+    "path": "native-font-variation-baseline-consumer-v1866/1.0/native-1/after.png",
+    "sha256": "209d7855489693cdcac387384b35423e3da533ac889c4b083b35d553a2278e5f"
+  },
+  {
+    "bytes": 570,
+    "path": "native-font-variation-baseline-consumer-v1866/1.0/native-1/before.png",
+    "sha256": "209d7855489693cdcac387384b35423e3da533ac889c4b083b35d553a2278e5f"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1866/1.0/native-1/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 565,
+    "path": "native-font-variation-baseline-consumer-v1866/1.0/native-1/upper-block-reference.png",
+    "sha256": "d818ccdd0d378aa13c5087ad5585ef0d1ce229251d388d73436eb63263cdff38"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1866/1.0/native-2.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 570,
+    "path": "native-font-variation-baseline-consumer-v1866/1.0/native-2/after.png",
+    "sha256": "209d7855489693cdcac387384b35423e3da533ac889c4b083b35d553a2278e5f"
+  },
+  {
+    "bytes": 570,
+    "path": "native-font-variation-baseline-consumer-v1866/1.0/native-2/before.png",
+    "sha256": "209d7855489693cdcac387384b35423e3da533ac889c4b083b35d553a2278e5f"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1866/1.0/native-2/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 565,
+    "path": "native-font-variation-baseline-consumer-v1866/1.0/native-2/upper-block-reference.png",
+    "sha256": "d818ccdd0d378aa13c5087ad5585ef0d1ce229251d388d73436eb63263cdff38"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1866/1.25/native-1.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 780,
+    "path": "native-font-variation-baseline-consumer-v1866/1.25/native-1/after.png",
+    "sha256": "c32de5f809771d14064c6e9a557c643411e157397e6507956e55e18624c940b4"
+  },
+  {
+    "bytes": 780,
+    "path": "native-font-variation-baseline-consumer-v1866/1.25/native-1/before.png",
+    "sha256": "c32de5f809771d14064c6e9a557c643411e157397e6507956e55e18624c940b4"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1866/1.25/native-1/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 761,
+    "path": "native-font-variation-baseline-consumer-v1866/1.25/native-1/upper-block-reference.png",
+    "sha256": "b0162441ee5486ea527a9613edb6628f16e3f43f5bb355a0e8380b7c4e97fb4c"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1866/1.25/native-2.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 780,
+    "path": "native-font-variation-baseline-consumer-v1866/1.25/native-2/after.png",
+    "sha256": "c32de5f809771d14064c6e9a557c643411e157397e6507956e55e18624c940b4"
+  },
+  {
+    "bytes": 780,
+    "path": "native-font-variation-baseline-consumer-v1866/1.25/native-2/before.png",
+    "sha256": "c32de5f809771d14064c6e9a557c643411e157397e6507956e55e18624c940b4"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1866/1.25/native-2/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 761,
+    "path": "native-font-variation-baseline-consumer-v1866/1.25/native-2/upper-block-reference.png",
+    "sha256": "b0162441ee5486ea527a9613edb6628f16e3f43f5bb355a0e8380b7c4e97fb4c"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1866/1.5/native-1.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 886,
+    "path": "native-font-variation-baseline-consumer-v1866/1.5/native-1/after.png",
+    "sha256": "ca3e515a5e93bf2a38167eb3f2be620a084c8879743bb1ab83a21787bf7753ed"
+  },
+  {
+    "bytes": 886,
+    "path": "native-font-variation-baseline-consumer-v1866/1.5/native-1/before.png",
+    "sha256": "ca3e515a5e93bf2a38167eb3f2be620a084c8879743bb1ab83a21787bf7753ed"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1866/1.5/native-1/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 909,
+    "path": "native-font-variation-baseline-consumer-v1866/1.5/native-1/upper-block-reference.png",
+    "sha256": "098d701ced22f3945d59b1634ad32a3b6dc6d8ee85022b2376f3be15880108e7"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1866/1.5/native-2.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 886,
+    "path": "native-font-variation-baseline-consumer-v1866/1.5/native-2/after.png",
+    "sha256": "ca3e515a5e93bf2a38167eb3f2be620a084c8879743bb1ab83a21787bf7753ed"
+  },
+  {
+    "bytes": 886,
+    "path": "native-font-variation-baseline-consumer-v1866/1.5/native-2/before.png",
+    "sha256": "ca3e515a5e93bf2a38167eb3f2be620a084c8879743bb1ab83a21787bf7753ed"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1866/1.5/native-2/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 909,
+    "path": "native-font-variation-baseline-consumer-v1866/1.5/native-2/upper-block-reference.png",
+    "sha256": "098d701ced22f3945d59b1634ad32a3b6dc6d8ee85022b2376f3be15880108e7"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1866/2.0/native-1.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-baseline-consumer-v1866/2.0/native-1/after.png",
+    "sha256": "cfea5dba30d5a1468c36e77a4491aaddc3e06e700e2d75441e3b5333cb1ec793"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-baseline-consumer-v1866/2.0/native-1/before.png",
+    "sha256": "cfea5dba30d5a1468c36e77a4491aaddc3e06e700e2d75441e3b5333cb1ec793"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1866/2.0/native-1/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-baseline-consumer-v1866/2.0/native-1/upper-block-reference.png",
+    "sha256": "5587d8e370fa3e4e62675ffd94868b2151e95df9fba079a3be85c64ff70ef013"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1866/2.0/native-2.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-baseline-consumer-v1866/2.0/native-2/after.png",
+    "sha256": "cfea5dba30d5a1468c36e77a4491aaddc3e06e700e2d75441e3b5333cb1ec793"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-baseline-consumer-v1866/2.0/native-2/before.png",
+    "sha256": "cfea5dba30d5a1468c36e77a4491aaddc3e06e700e2d75441e3b5333cb1ec793"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1866/2.0/native-2/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-baseline-consumer-v1866/2.0/native-2/upper-block-reference.png",
+    "sha256": "5587d8e370fa3e4e62675ffd94868b2151e95df9fba079a3be85c64ff70ef013"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1866/3.0/native-1.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 2028,
+    "path": "native-font-variation-baseline-consumer-v1866/3.0/native-1/after.png",
+    "sha256": "d9e4db17b87b08bdbd59b842d832c08cb50c7a2bc92caf1ef0e2535e359d67a3"
+  },
+  {
+    "bytes": 2028,
+    "path": "native-font-variation-baseline-consumer-v1866/3.0/native-1/before.png",
+    "sha256": "d9e4db17b87b08bdbd59b842d832c08cb50c7a2bc92caf1ef0e2535e359d67a3"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1866/3.0/native-1/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 2044,
+    "path": "native-font-variation-baseline-consumer-v1866/3.0/native-1/upper-block-reference.png",
+    "sha256": "63ae41ed0948eac9b569c5badd0419a69f142be58f730a9e37b912ea31afae1c"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1866/3.0/native-2.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 2028,
+    "path": "native-font-variation-baseline-consumer-v1866/3.0/native-2/after.png",
+    "sha256": "d9e4db17b87b08bdbd59b842d832c08cb50c7a2bc92caf1ef0e2535e359d67a3"
+  },
+  {
+    "bytes": 2028,
+    "path": "native-font-variation-baseline-consumer-v1866/3.0/native-2/before.png",
+    "sha256": "d9e4db17b87b08bdbd59b842d832c08cb50c7a2bc92caf1ef0e2535e359d67a3"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1866/3.0/native-2/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 2044,
+    "path": "native-font-variation-baseline-consumer-v1866/3.0/native-2/upper-block-reference.png",
+    "sha256": "63ae41ed0948eac9b569c5badd0419a69f142be58f730a9e37b912ea31afae1c"
+  },
+  {
+    "bytes": 21846,
+    "path": "native-font-variation-baseline-consumer-v1866/receipt.json",
+    "sha256": "17a7eea72201e6f050fc09d3bdf742b06d1c24daefba2b48c417215e66075d46"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1879/1.0/native-1.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 570,
+    "path": "native-font-variation-baseline-consumer-v1879/1.0/native-1/after.png",
+    "sha256": "209d7855489693cdcac387384b35423e3da533ac889c4b083b35d553a2278e5f"
+  },
+  {
+    "bytes": 570,
+    "path": "native-font-variation-baseline-consumer-v1879/1.0/native-1/before.png",
+    "sha256": "209d7855489693cdcac387384b35423e3da533ac889c4b083b35d553a2278e5f"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1879/1.0/native-1/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 565,
+    "path": "native-font-variation-baseline-consumer-v1879/1.0/native-1/upper-block-reference.png",
+    "sha256": "d818ccdd0d378aa13c5087ad5585ef0d1ce229251d388d73436eb63263cdff38"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1879/1.0/native-2.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 570,
+    "path": "native-font-variation-baseline-consumer-v1879/1.0/native-2/after.png",
+    "sha256": "209d7855489693cdcac387384b35423e3da533ac889c4b083b35d553a2278e5f"
+  },
+  {
+    "bytes": 570,
+    "path": "native-font-variation-baseline-consumer-v1879/1.0/native-2/before.png",
+    "sha256": "209d7855489693cdcac387384b35423e3da533ac889c4b083b35d553a2278e5f"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1879/1.0/native-2/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 565,
+    "path": "native-font-variation-baseline-consumer-v1879/1.0/native-2/upper-block-reference.png",
+    "sha256": "d818ccdd0d378aa13c5087ad5585ef0d1ce229251d388d73436eb63263cdff38"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1879/1.25/native-1.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 780,
+    "path": "native-font-variation-baseline-consumer-v1879/1.25/native-1/after.png",
+    "sha256": "c32de5f809771d14064c6e9a557c643411e157397e6507956e55e18624c940b4"
+  },
+  {
+    "bytes": 780,
+    "path": "native-font-variation-baseline-consumer-v1879/1.25/native-1/before.png",
+    "sha256": "c32de5f809771d14064c6e9a557c643411e157397e6507956e55e18624c940b4"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1879/1.25/native-1/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 761,
+    "path": "native-font-variation-baseline-consumer-v1879/1.25/native-1/upper-block-reference.png",
+    "sha256": "b0162441ee5486ea527a9613edb6628f16e3f43f5bb355a0e8380b7c4e97fb4c"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1879/1.25/native-2.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 780,
+    "path": "native-font-variation-baseline-consumer-v1879/1.25/native-2/after.png",
+    "sha256": "c32de5f809771d14064c6e9a557c643411e157397e6507956e55e18624c940b4"
+  },
+  {
+    "bytes": 780,
+    "path": "native-font-variation-baseline-consumer-v1879/1.25/native-2/before.png",
+    "sha256": "c32de5f809771d14064c6e9a557c643411e157397e6507956e55e18624c940b4"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1879/1.25/native-2/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 761,
+    "path": "native-font-variation-baseline-consumer-v1879/1.25/native-2/upper-block-reference.png",
+    "sha256": "b0162441ee5486ea527a9613edb6628f16e3f43f5bb355a0e8380b7c4e97fb4c"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1879/1.5/native-1.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 886,
+    "path": "native-font-variation-baseline-consumer-v1879/1.5/native-1/after.png",
+    "sha256": "ca3e515a5e93bf2a38167eb3f2be620a084c8879743bb1ab83a21787bf7753ed"
+  },
+  {
+    "bytes": 886,
+    "path": "native-font-variation-baseline-consumer-v1879/1.5/native-1/before.png",
+    "sha256": "ca3e515a5e93bf2a38167eb3f2be620a084c8879743bb1ab83a21787bf7753ed"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1879/1.5/native-1/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 909,
+    "path": "native-font-variation-baseline-consumer-v1879/1.5/native-1/upper-block-reference.png",
+    "sha256": "098d701ced22f3945d59b1634ad32a3b6dc6d8ee85022b2376f3be15880108e7"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1879/1.5/native-2.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 886,
+    "path": "native-font-variation-baseline-consumer-v1879/1.5/native-2/after.png",
+    "sha256": "ca3e515a5e93bf2a38167eb3f2be620a084c8879743bb1ab83a21787bf7753ed"
+  },
+  {
+    "bytes": 886,
+    "path": "native-font-variation-baseline-consumer-v1879/1.5/native-2/before.png",
+    "sha256": "ca3e515a5e93bf2a38167eb3f2be620a084c8879743bb1ab83a21787bf7753ed"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1879/1.5/native-2/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 909,
+    "path": "native-font-variation-baseline-consumer-v1879/1.5/native-2/upper-block-reference.png",
+    "sha256": "098d701ced22f3945d59b1634ad32a3b6dc6d8ee85022b2376f3be15880108e7"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1879/2.0/native-1.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-baseline-consumer-v1879/2.0/native-1/after.png",
+    "sha256": "cfea5dba30d5a1468c36e77a4491aaddc3e06e700e2d75441e3b5333cb1ec793"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-baseline-consumer-v1879/2.0/native-1/before.png",
+    "sha256": "cfea5dba30d5a1468c36e77a4491aaddc3e06e700e2d75441e3b5333cb1ec793"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1879/2.0/native-1/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-baseline-consumer-v1879/2.0/native-1/upper-block-reference.png",
+    "sha256": "5587d8e370fa3e4e62675ffd94868b2151e95df9fba079a3be85c64ff70ef013"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1879/2.0/native-2.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-baseline-consumer-v1879/2.0/native-2/after.png",
+    "sha256": "cfea5dba30d5a1468c36e77a4491aaddc3e06e700e2d75441e3b5333cb1ec793"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-baseline-consumer-v1879/2.0/native-2/before.png",
+    "sha256": "cfea5dba30d5a1468c36e77a4491aaddc3e06e700e2d75441e3b5333cb1ec793"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1879/2.0/native-2/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-baseline-consumer-v1879/2.0/native-2/upper-block-reference.png",
+    "sha256": "5587d8e370fa3e4e62675ffd94868b2151e95df9fba079a3be85c64ff70ef013"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1879/3.0/native-1.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 2028,
+    "path": "native-font-variation-baseline-consumer-v1879/3.0/native-1/after.png",
+    "sha256": "d9e4db17b87b08bdbd59b842d832c08cb50c7a2bc92caf1ef0e2535e359d67a3"
+  },
+  {
+    "bytes": 2028,
+    "path": "native-font-variation-baseline-consumer-v1879/3.0/native-1/before.png",
+    "sha256": "d9e4db17b87b08bdbd59b842d832c08cb50c7a2bc92caf1ef0e2535e359d67a3"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1879/3.0/native-1/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 2044,
+    "path": "native-font-variation-baseline-consumer-v1879/3.0/native-1/upper-block-reference.png",
+    "sha256": "63ae41ed0948eac9b569c5badd0419a69f142be58f730a9e37b912ea31afae1c"
+  },
+  {
+    "bytes": 76,
+    "path": "native-font-variation-baseline-consumer-v1879/3.0/native-2.log",
+    "sha256": "951ae662d103db1c15acc4058aec548d0d7bf63a6a83bf29d1ce34d21b9fdc0d"
+  },
+  {
+    "bytes": 2028,
+    "path": "native-font-variation-baseline-consumer-v1879/3.0/native-2/after.png",
+    "sha256": "d9e4db17b87b08bdbd59b842d832c08cb50c7a2bc92caf1ef0e2535e359d67a3"
+  },
+  {
+    "bytes": 2028,
+    "path": "native-font-variation-baseline-consumer-v1879/3.0/native-2/before.png",
+    "sha256": "d9e4db17b87b08bdbd59b842d832c08cb50c7a2bc92caf1ef0e2535e359d67a3"
+  },
+  {
+    "bytes": 172,
+    "path": "native-font-variation-baseline-consumer-v1879/3.0/native-2/geometry.json",
+    "sha256": "3e772a98b7a04be9ceffc872c8ee2a577126e188a7a8c614c1c058a9405449ae"
+  },
+  {
+    "bytes": 2044,
+    "path": "native-font-variation-baseline-consumer-v1879/3.0/native-2/upper-block-reference.png",
+    "sha256": "63ae41ed0948eac9b569c5badd0419a69f142be58f730a9e37b912ea31afae1c"
+  },
+  {
+    "bytes": 21846,
+    "path": "native-font-variation-baseline-consumer-v1879/receipt.json",
+    "sha256": "dd14f46b432e2fa64516521f5c660b00cfb5e8df787ce4171387790f85143fd7"
+  },
+  {
+    "bytes": 1663,
+    "path": "native-font-variation-candidate-build-v1866/build.json",
+    "sha256": "5d6ca1bc711a6226518c338423b72d6dbfe718af29ed0b13b709adf8613c6433"
+  },
+  {
+    "bytes": 38,
+    "path": "native-font-variation-candidate-build-v1866/clean-workspace.log",
+    "sha256": "c42e0e256ac48ac4fbb278ed186e94dd3650f07ae2bf5b0ccb1c29facfe93b23"
+  },
+  {
+    "bytes": 829,
+    "path": "native-font-variation-candidate-build-v1866/variation-instance-guard.log",
+    "sha256": "891bc1bc687b6c8a345d1294c4941f77c12cf6fe4f4576c28b5fb8a9cff77a20"
+  },
+  {
+    "bytes": 1663,
+    "path": "native-font-variation-candidate-build-v1874/build.json",
+    "sha256": "60b889dcb1cce73e2fb98dfa73113f9c876bd650d38bf70411a2dd81064437c7"
+  },
+  {
+    "bytes": 36,
+    "path": "native-font-variation-candidate-build-v1874/clean-workspace.log",
+    "sha256": "31db1ba59b46d3b16df1e703a3d30afe9eac074f4c1017a68f4fdf5c6442591f"
+  },
+  {
+    "bytes": 2011,
+    "path": "native-font-variation-candidate-build-v1874/variation-instance-guard.log",
+    "sha256": "904908004a697c452fb158eec0672c79245fe157de0916516681613f8a22e738"
+  },
+  {
+    "bytes": 20793,
+    "path": "native-font-variation-candidate-build-v1879/all-text-tests.log",
+    "sha256": "7dd854f6998bdd7434ec396ca4ececa9e177123a5c7cf31ecadf707dc96201ab"
+  },
+  {
+    "bytes": 4691,
+    "path": "native-font-variation-candidate-build-v1879/build.json",
+    "sha256": "1acb85b01ebc985f83ff6b25d0967705194a2b7a3ad7af79f4bcfa2c39236cf2"
+  },
+  {
+    "bytes": 38,
+    "path": "native-font-variation-candidate-build-v1879/clean-workspace.log",
+    "sha256": "c42e0e256ac48ac4fbb278ed186e94dd3650f07ae2bf5b0ccb1c29facfe93b23"
+  },
+  {
+    "bytes": 9492,
+    "path": "native-font-variation-candidate-build-v1879/ffi-build.log",
+    "sha256": "7038bef12dc1dc3e723a67e7944a0e7598369ddefa5754b99af401f47fbc65d7"
+  },
+  {
+    "bytes": 3775,
+    "path": "native-font-variation-candidate-build-v1879/ffi-consumers.log",
+    "sha256": "c264daf858d185eaf307e79a882afa780b170b395932b1ebcf03d478c0ecec6a"
+  },
+  {
+    "bytes": 74736,
+    "path": "native-font-variation-candidate-build-v1879/generated-diagnostic-openui.png",
+    "sha256": "23b3d97436ebb63a32051c3f17a8e5e50ebc136fd8b4b2b86a64d7a84bfa3b13"
+  },
+  {
+    "bytes": 11821,
+    "path": "native-font-variation-candidate-build-v1879/pixel-build.log",
+    "sha256": "433b725848a7848478481b112bc5eaa0574e4660dbc49821431fcfa3b48c72ac"
+  },
+  {
+    "bytes": 9900,
+    "path": "native-font-variation-candidate-build-v1879/variation-build.log",
+    "sha256": "e1a8b695d7679d818c5c494b2cc6a1ae8aadaf39671b68dfa191e7603640c38d"
+  },
+  {
+    "bytes": 765,
+    "path": "native-font-variation-candidate-build-v1879/variation-instance-guard.log",
+    "sha256": "31ce6dc5d110a1d08d11ae1f4d4591b4f2420ce48385333c27de8738ae6af482"
+  },
+  {
+    "bytes": 490826,
+    "path": "native-font-variation-candidate-build-v1879/workspace.log",
+    "sha256": "af8339db7b05fae3f338359d0d111267da6267ba5b277e0405a8d0824ec2cbf1"
+  },
+  {
+    "bytes": 2867,
+    "path": "native-font-variation-candidate-checks-v1852/accountability.log",
+    "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+  },
+  {
+    "bytes": 45,
+    "path": "native-font-variation-candidate-checks-v1852/archive.log",
+    "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1852/clang-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 32,
+    "path": "native-font-variation-candidate-checks-v1852/ffi.log",
+    "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+  },
+  {
+    "bytes": 59,
+    "path": "native-font-variation-candidate-checks-v1852/multicol.log",
+    "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+  },
+  {
+    "bytes": 84,
+    "path": "native-font-variation-candidate-checks-v1852/native-options-rust-format.log",
+    "sha256": "8d8247a0fff54f58c83c74856d6872691fa0ece9a6f5063126329268187adf03"
+  },
+  {
+    "bytes": 9453,
+    "path": "native-font-variation-candidate-checks-v1852/receipt.json",
+    "sha256": "e212f2c3fe9cc920c0520d6b094e82972906f912a5186ca8bf82f61b10901181"
+  },
+  {
+    "bytes": 80,
+    "path": "native-font-variation-candidate-checks-v1852/renderer.log",
+    "sha256": "f8ddd7b601e66c8b33b103ef591964c029b40b3829825f452db65ca4f259c2ed"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1852/rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 86,
+    "path": "native-font-variation-candidate-checks-v1852/sp17.log",
+    "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+  },
+  {
+    "bytes": 121,
+    "path": "native-font-variation-candidate-checks-v1852/sp18.log",
+    "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+  },
+  {
+    "bytes": 142,
+    "path": "native-font-variation-candidate-checks-v1852/sp20.log",
+    "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-candidate-checks-v1852/style.log",
+    "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1852/syntax-c.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1852/syntax-cpp.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 63,
+    "path": "native-font-variation-candidate-checks-v1852/v02.log",
+    "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+  },
+  {
+    "bytes": 2867,
+    "path": "native-font-variation-candidate-checks-v1855/accountability.log",
+    "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+  },
+  {
+    "bytes": 45,
+    "path": "native-font-variation-candidate-checks-v1855/archive.log",
+    "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1855/clang-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 32,
+    "path": "native-font-variation-candidate-checks-v1855/ffi.log",
+    "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+  },
+  {
+    "bytes": 59,
+    "path": "native-font-variation-candidate-checks-v1855/multicol.log",
+    "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1855/native-options-rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 9386,
+    "path": "native-font-variation-candidate-checks-v1855/receipt.json",
+    "sha256": "db3860cf44b7a7df3371d32977d8c47bebb2dcca78f5221c6cf4efc5b1a411b6"
+  },
+  {
+    "bytes": 81,
+    "path": "native-font-variation-candidate-checks-v1855/renderer.log",
+    "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1855/rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 86,
+    "path": "native-font-variation-candidate-checks-v1855/sp17.log",
+    "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+  },
+  {
+    "bytes": 121,
+    "path": "native-font-variation-candidate-checks-v1855/sp18.log",
+    "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+  },
+  {
+    "bytes": 142,
+    "path": "native-font-variation-candidate-checks-v1855/sp20.log",
+    "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-candidate-checks-v1855/style.log",
+    "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1855/syntax-c.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1855/syntax-cpp.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 63,
+    "path": "native-font-variation-candidate-checks-v1855/v02.log",
+    "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+  },
+  {
+    "bytes": 2867,
+    "path": "native-font-variation-candidate-checks-v1859/accountability.log",
+    "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+  },
+  {
+    "bytes": 45,
+    "path": "native-font-variation-candidate-checks-v1859/archive.log",
+    "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1859/clang-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 32,
+    "path": "native-font-variation-candidate-checks-v1859/ffi.log",
+    "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+  },
+  {
+    "bytes": 59,
+    "path": "native-font-variation-candidate-checks-v1859/multicol.log",
+    "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1859/native-options-rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 9394,
+    "path": "native-font-variation-candidate-checks-v1859/receipt.json",
+    "sha256": "228a2eaf513ec5f35b223783b932b5ff476daf765b75c8fcd8522392fb42c840"
+  },
+  {
+    "bytes": 81,
+    "path": "native-font-variation-candidate-checks-v1859/renderer.log",
+    "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1859/rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 86,
+    "path": "native-font-variation-candidate-checks-v1859/sp17.log",
+    "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+  },
+  {
+    "bytes": 121,
+    "path": "native-font-variation-candidate-checks-v1859/sp18.log",
+    "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+  },
+  {
+    "bytes": 142,
+    "path": "native-font-variation-candidate-checks-v1859/sp20.log",
+    "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-candidate-checks-v1859/style.log",
+    "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1859/syntax-c.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1859/syntax-cpp.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 63,
+    "path": "native-font-variation-candidate-checks-v1859/v02.log",
+    "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+  },
+  {
+    "bytes": 2867,
+    "path": "native-font-variation-candidate-checks-v1863/accountability.log",
+    "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+  },
+  {
+    "bytes": 45,
+    "path": "native-font-variation-candidate-checks-v1863/archive.log",
+    "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1863/clang-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 32,
+    "path": "native-font-variation-candidate-checks-v1863/ffi.log",
+    "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+  },
+  {
+    "bytes": 59,
+    "path": "native-font-variation-candidate-checks-v1863/multicol.log",
+    "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1863/native-options-rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 9378,
+    "path": "native-font-variation-candidate-checks-v1863/receipt.json",
+    "sha256": "fc9e4aecc972cd100260bfc0410d5b32a70dceaa002a5bc25399eca210ff9e44"
+  },
+  {
+    "bytes": 81,
+    "path": "native-font-variation-candidate-checks-v1863/renderer.log",
+    "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1863/rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 86,
+    "path": "native-font-variation-candidate-checks-v1863/sp17.log",
+    "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+  },
+  {
+    "bytes": 121,
+    "path": "native-font-variation-candidate-checks-v1863/sp18.log",
+    "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+  },
+  {
+    "bytes": 142,
+    "path": "native-font-variation-candidate-checks-v1863/sp20.log",
+    "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-candidate-checks-v1863/style.log",
+    "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1863/syntax-c.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1863/syntax-cpp.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 63,
+    "path": "native-font-variation-candidate-checks-v1863/v02.log",
+    "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+  },
+  {
+    "bytes": 2867,
+    "path": "native-font-variation-candidate-checks-v1866/accountability.log",
+    "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+  },
+  {
+    "bytes": 45,
+    "path": "native-font-variation-candidate-checks-v1866/archive.log",
+    "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1866/clang-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 32,
+    "path": "native-font-variation-candidate-checks-v1866/ffi.log",
+    "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+  },
+  {
+    "bytes": 59,
+    "path": "native-font-variation-candidate-checks-v1866/multicol.log",
+    "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1866/native-options-rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 9378,
+    "path": "native-font-variation-candidate-checks-v1866/receipt.json",
+    "sha256": "942944ea55bfa387f90f5c1a4053ef103ab9c5bb35118ac5b41cdba4d2101d9b"
+  },
+  {
+    "bytes": 81,
+    "path": "native-font-variation-candidate-checks-v1866/renderer.log",
+    "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1866/rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 86,
+    "path": "native-font-variation-candidate-checks-v1866/sp17.log",
+    "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+  },
+  {
+    "bytes": 121,
+    "path": "native-font-variation-candidate-checks-v1866/sp18.log",
+    "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+  },
+  {
+    "bytes": 142,
+    "path": "native-font-variation-candidate-checks-v1866/sp20.log",
+    "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-candidate-checks-v1866/style.log",
+    "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1866/syntax-c.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1866/syntax-cpp.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 63,
+    "path": "native-font-variation-candidate-checks-v1866/v02.log",
+    "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+  },
+  {
+    "bytes": 2867,
+    "path": "native-font-variation-candidate-checks-v1876/accountability.log",
+    "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+  },
+  {
+    "bytes": 45,
+    "path": "native-font-variation-candidate-checks-v1876/archive.log",
+    "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1876/clang-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 32,
+    "path": "native-font-variation-candidate-checks-v1876/ffi.log",
+    "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+  },
+  {
+    "bytes": 59,
+    "path": "native-font-variation-candidate-checks-v1876/multicol.log",
+    "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1876/native-options-rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 9386,
+    "path": "native-font-variation-candidate-checks-v1876/receipt.json",
+    "sha256": "a7c3889bb0ffc32d65a83c927a6d528790bc5efb61d0af6f8d0c74cae13a55da"
+  },
+  {
+    "bytes": 81,
+    "path": "native-font-variation-candidate-checks-v1876/renderer.log",
+    "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1876/rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 86,
+    "path": "native-font-variation-candidate-checks-v1876/sp17.log",
+    "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+  },
+  {
+    "bytes": 121,
+    "path": "native-font-variation-candidate-checks-v1876/sp18.log",
+    "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+  },
+  {
+    "bytes": 142,
+    "path": "native-font-variation-candidate-checks-v1876/sp20.log",
+    "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-candidate-checks-v1876/style.log",
+    "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1876/syntax-c.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1876/syntax-cpp.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 63,
+    "path": "native-font-variation-candidate-checks-v1876/v02.log",
+    "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+  },
+  {
+    "bytes": 2867,
+    "path": "native-font-variation-candidate-checks-v1878/accountability.log",
+    "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+  },
+  {
+    "bytes": 45,
+    "path": "native-font-variation-candidate-checks-v1878/archive.log",
+    "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1878/clang-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 32,
+    "path": "native-font-variation-candidate-checks-v1878/ffi.log",
+    "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+  },
+  {
+    "bytes": 59,
+    "path": "native-font-variation-candidate-checks-v1878/multicol.log",
+    "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1878/native-options-rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 9398,
+    "path": "native-font-variation-candidate-checks-v1878/receipt.json",
+    "sha256": "97c57289e6666e741db5e6fc4f46cec7a0fc9b642699b28eeb1d0d3d17efc8cf"
+  },
+  {
+    "bytes": 81,
+    "path": "native-font-variation-candidate-checks-v1878/renderer.log",
+    "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1878/rust-format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 86,
+    "path": "native-font-variation-candidate-checks-v1878/sp17.log",
+    "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+  },
+  {
+    "bytes": 121,
+    "path": "native-font-variation-candidate-checks-v1878/sp18.log",
+    "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+  },
+  {
+    "bytes": 142,
+    "path": "native-font-variation-candidate-checks-v1878/sp20.log",
+    "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+  },
+  {
+    "bytes": 37,
+    "path": "native-font-variation-candidate-checks-v1878/style.log",
+    "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1878/syntax-c.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-checks-v1878/syntax-cpp.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 63,
+    "path": "native-font-variation-candidate-checks-v1878/v02.log",
+    "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-consumer-v1879/1.0/native-1.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 565,
+    "path": "native-font-variation-candidate-consumer-v1879/1.0/native-1/after.png",
+    "sha256": "d818ccdd0d378aa13c5087ad5585ef0d1ce229251d388d73436eb63263cdff38"
+  },
+  {
+    "bytes": 570,
+    "path": "native-font-variation-candidate-consumer-v1879/1.0/native-1/before.png",
+    "sha256": "209d7855489693cdcac387384b35423e3da533ac889c4b083b35d553a2278e5f"
+  },
+  {
+    "bytes": 170,
+    "path": "native-font-variation-candidate-consumer-v1879/1.0/native-1/geometry.json",
+    "sha256": "ed5f2d6662b378e31ff68f8eb987f4624d628ce69bbf0eba059eaf25f2fadc23"
+  },
+  {
+    "bytes": 565,
+    "path": "native-font-variation-candidate-consumer-v1879/1.0/native-1/upper-block-reference.png",
+    "sha256": "d818ccdd0d378aa13c5087ad5585ef0d1ce229251d388d73436eb63263cdff38"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-consumer-v1879/1.0/native-2.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 565,
+    "path": "native-font-variation-candidate-consumer-v1879/1.0/native-2/after.png",
+    "sha256": "d818ccdd0d378aa13c5087ad5585ef0d1ce229251d388d73436eb63263cdff38"
+  },
+  {
+    "bytes": 570,
+    "path": "native-font-variation-candidate-consumer-v1879/1.0/native-2/before.png",
+    "sha256": "209d7855489693cdcac387384b35423e3da533ac889c4b083b35d553a2278e5f"
+  },
+  {
+    "bytes": 170,
+    "path": "native-font-variation-candidate-consumer-v1879/1.0/native-2/geometry.json",
+    "sha256": "ed5f2d6662b378e31ff68f8eb987f4624d628ce69bbf0eba059eaf25f2fadc23"
+  },
+  {
+    "bytes": 565,
+    "path": "native-font-variation-candidate-consumer-v1879/1.0/native-2/upper-block-reference.png",
+    "sha256": "d818ccdd0d378aa13c5087ad5585ef0d1ce229251d388d73436eb63263cdff38"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-consumer-v1879/1.25/native-1.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 761,
+    "path": "native-font-variation-candidate-consumer-v1879/1.25/native-1/after.png",
+    "sha256": "b0162441ee5486ea527a9613edb6628f16e3f43f5bb355a0e8380b7c4e97fb4c"
+  },
+  {
+    "bytes": 780,
+    "path": "native-font-variation-candidate-consumer-v1879/1.25/native-1/before.png",
+    "sha256": "c32de5f809771d14064c6e9a557c643411e157397e6507956e55e18624c940b4"
+  },
+  {
+    "bytes": 170,
+    "path": "native-font-variation-candidate-consumer-v1879/1.25/native-1/geometry.json",
+    "sha256": "ed5f2d6662b378e31ff68f8eb987f4624d628ce69bbf0eba059eaf25f2fadc23"
+  },
+  {
+    "bytes": 761,
+    "path": "native-font-variation-candidate-consumer-v1879/1.25/native-1/upper-block-reference.png",
+    "sha256": "b0162441ee5486ea527a9613edb6628f16e3f43f5bb355a0e8380b7c4e97fb4c"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-consumer-v1879/1.25/native-2.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 761,
+    "path": "native-font-variation-candidate-consumer-v1879/1.25/native-2/after.png",
+    "sha256": "b0162441ee5486ea527a9613edb6628f16e3f43f5bb355a0e8380b7c4e97fb4c"
+  },
+  {
+    "bytes": 780,
+    "path": "native-font-variation-candidate-consumer-v1879/1.25/native-2/before.png",
+    "sha256": "c32de5f809771d14064c6e9a557c643411e157397e6507956e55e18624c940b4"
+  },
+  {
+    "bytes": 170,
+    "path": "native-font-variation-candidate-consumer-v1879/1.25/native-2/geometry.json",
+    "sha256": "ed5f2d6662b378e31ff68f8eb987f4624d628ce69bbf0eba059eaf25f2fadc23"
+  },
+  {
+    "bytes": 761,
+    "path": "native-font-variation-candidate-consumer-v1879/1.25/native-2/upper-block-reference.png",
+    "sha256": "b0162441ee5486ea527a9613edb6628f16e3f43f5bb355a0e8380b7c4e97fb4c"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-consumer-v1879/1.5/native-1.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 909,
+    "path": "native-font-variation-candidate-consumer-v1879/1.5/native-1/after.png",
+    "sha256": "098d701ced22f3945d59b1634ad32a3b6dc6d8ee85022b2376f3be15880108e7"
+  },
+  {
+    "bytes": 886,
+    "path": "native-font-variation-candidate-consumer-v1879/1.5/native-1/before.png",
+    "sha256": "ca3e515a5e93bf2a38167eb3f2be620a084c8879743bb1ab83a21787bf7753ed"
+  },
+  {
+    "bytes": 170,
+    "path": "native-font-variation-candidate-consumer-v1879/1.5/native-1/geometry.json",
+    "sha256": "ed5f2d6662b378e31ff68f8eb987f4624d628ce69bbf0eba059eaf25f2fadc23"
+  },
+  {
+    "bytes": 909,
+    "path": "native-font-variation-candidate-consumer-v1879/1.5/native-1/upper-block-reference.png",
+    "sha256": "098d701ced22f3945d59b1634ad32a3b6dc6d8ee85022b2376f3be15880108e7"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-consumer-v1879/1.5/native-2.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 909,
+    "path": "native-font-variation-candidate-consumer-v1879/1.5/native-2/after.png",
+    "sha256": "098d701ced22f3945d59b1634ad32a3b6dc6d8ee85022b2376f3be15880108e7"
+  },
+  {
+    "bytes": 886,
+    "path": "native-font-variation-candidate-consumer-v1879/1.5/native-2/before.png",
+    "sha256": "ca3e515a5e93bf2a38167eb3f2be620a084c8879743bb1ab83a21787bf7753ed"
+  },
+  {
+    "bytes": 170,
+    "path": "native-font-variation-candidate-consumer-v1879/1.5/native-2/geometry.json",
+    "sha256": "ed5f2d6662b378e31ff68f8eb987f4624d628ce69bbf0eba059eaf25f2fadc23"
+  },
+  {
+    "bytes": 909,
+    "path": "native-font-variation-candidate-consumer-v1879/1.5/native-2/upper-block-reference.png",
+    "sha256": "098d701ced22f3945d59b1634ad32a3b6dc6d8ee85022b2376f3be15880108e7"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-consumer-v1879/2.0/native-1.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-candidate-consumer-v1879/2.0/native-1/after.png",
+    "sha256": "5587d8e370fa3e4e62675ffd94868b2151e95df9fba079a3be85c64ff70ef013"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-candidate-consumer-v1879/2.0/native-1/before.png",
+    "sha256": "cfea5dba30d5a1468c36e77a4491aaddc3e06e700e2d75441e3b5333cb1ec793"
+  },
+  {
+    "bytes": 170,
+    "path": "native-font-variation-candidate-consumer-v1879/2.0/native-1/geometry.json",
+    "sha256": "ed5f2d6662b378e31ff68f8eb987f4624d628ce69bbf0eba059eaf25f2fadc23"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-candidate-consumer-v1879/2.0/native-1/upper-block-reference.png",
+    "sha256": "5587d8e370fa3e4e62675ffd94868b2151e95df9fba079a3be85c64ff70ef013"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-consumer-v1879/2.0/native-2.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-candidate-consumer-v1879/2.0/native-2/after.png",
+    "sha256": "5587d8e370fa3e4e62675ffd94868b2151e95df9fba079a3be85c64ff70ef013"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-candidate-consumer-v1879/2.0/native-2/before.png",
+    "sha256": "cfea5dba30d5a1468c36e77a4491aaddc3e06e700e2d75441e3b5333cb1ec793"
+  },
+  {
+    "bytes": 170,
+    "path": "native-font-variation-candidate-consumer-v1879/2.0/native-2/geometry.json",
+    "sha256": "ed5f2d6662b378e31ff68f8eb987f4624d628ce69bbf0eba059eaf25f2fadc23"
+  },
+  {
+    "bytes": 1213,
+    "path": "native-font-variation-candidate-consumer-v1879/2.0/native-2/upper-block-reference.png",
+    "sha256": "5587d8e370fa3e4e62675ffd94868b2151e95df9fba079a3be85c64ff70ef013"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-consumer-v1879/3.0/native-1.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 2044,
+    "path": "native-font-variation-candidate-consumer-v1879/3.0/native-1/after.png",
+    "sha256": "63ae41ed0948eac9b569c5badd0419a69f142be58f730a9e37b912ea31afae1c"
+  },
+  {
+    "bytes": 2028,
+    "path": "native-font-variation-candidate-consumer-v1879/3.0/native-1/before.png",
+    "sha256": "d9e4db17b87b08bdbd59b842d832c08cb50c7a2bc92caf1ef0e2535e359d67a3"
+  },
+  {
+    "bytes": 170,
+    "path": "native-font-variation-candidate-consumer-v1879/3.0/native-1/geometry.json",
+    "sha256": "ed5f2d6662b378e31ff68f8eb987f4624d628ce69bbf0eba059eaf25f2fadc23"
+  },
+  {
+    "bytes": 2044,
+    "path": "native-font-variation-candidate-consumer-v1879/3.0/native-1/upper-block-reference.png",
+    "sha256": "63ae41ed0948eac9b569c5badd0419a69f142be58f730a9e37b912ea31afae1c"
+  },
+  {
+    "bytes": 0,
+    "path": "native-font-variation-candidate-consumer-v1879/3.0/native-2.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "bytes": 2044,
+    "path": "native-font-variation-candidate-consumer-v1879/3.0/native-2/after.png",
+    "sha256": "63ae41ed0948eac9b569c5badd0419a69f142be58f730a9e37b912ea31afae1c"
+  },
+  {
+    "bytes": 2028,
+    "path": "native-font-variation-candidate-consumer-v1879/3.0/native-2/before.png",
+    "sha256": "d9e4db17b87b08bdbd59b842d832c08cb50c7a2bc92caf1ef0e2535e359d67a3"
+  },
+  {
+    "bytes": 170,
+    "path": "native-font-variation-candidate-consumer-v1879/3.0/native-2/geometry.json",
+    "sha256": "ed5f2d6662b378e31ff68f8eb987f4624d628ce69bbf0eba059eaf25f2fadc23"
+  },
+  {
+    "bytes": 2044,
+    "path": "native-font-variation-candidate-consumer-v1879/3.0/native-2/upper-block-reference.png",
+    "sha256": "63ae41ed0948eac9b569c5badd0419a69f142be58f730a9e37b912ea31afae1c"
+  },
+  {
+    "bytes": 21840,
+    "path": "native-font-variation-candidate-consumer-v1879/receipt.json",
+    "sha256": "13e5c8404395ec46321c0808ab72d129b0bed593b167af1412a1df0ec3dcc1c7"
+  },
+  {
+    "bytes": 1261,
+    "path": "native-font-variation-clean-focused-v1879.log",
+    "sha256": "57b1c956f2151fd8ef965bb46976bd7d533ccadae5d41d01f321ef9d723847ba"
+  },
+  {
+    "bytes": 1646470,
+    "path": "native-font-variation-clean-focused-v1879/focused-summary.json",
+    "sha256": "a610ee00684fa52f1b2dbc1d3a4860b42c211175adc9e429f1745cfc220be235"
+  },
+  {
+    "bytes": 1265,
+    "path": "native-font-variation-clean-primitive-v1879.log",
+    "sha256": "e86a8fbe9235b00cb231cce020ce0f297a85753115a8106fa60385953433932e"
+  },
+  {
+    "bytes": 2455676,
+    "path": "native-font-variation-clean-primitive-v1879/primitive-summary.json",
+    "sha256": "7e8633d89eefa91ecb79b72bfb5e41a0293d4edca9443c0bf8b391146ae0c9d5"
+  },
+  {
+    "bytes": 1028,
+    "path": "native-font-variation-focused-exit-v1879.json",
+    "sha256": "5e6797c9b6d90c338ab1f325e852a592ec512eac11fea7a2f9ae48f1a8759d40"
+  },
+  {
+    "bytes": 757,
+    "path": "native-font-variation-pipeline-v1860/baseline-build.log",
+    "sha256": "e5b1e8f31bc3caf0333d1bd3c3b986cbce047e64a69e412c17860d28109d51f7"
+  },
+  {
+    "bytes": 2715,
+    "path": "native-font-variation-pipeline-v1860/receipt.json",
+    "sha256": "06fedbeaed65bc00b9d074648bcf33e4ce3439db2eb092d8e64b9638c2ef0f02"
+  },
+  {
+    "bytes": 757,
+    "path": "native-font-variation-pipeline-v1864/baseline-build.log",
+    "sha256": "3a8db570e1b002614d5b37b1226cc633efcc4e2b25eec5445fa190475dec3d9a"
+  },
+  {
+    "bytes": 2715,
+    "path": "native-font-variation-pipeline-v1864/receipt.json",
+    "sha256": "b475ee7f4417f913febf6530d6b8ccde09d2c7f152c5655cf67c759441fd6048"
+  },
+  {
+    "bytes": 290,
+    "path": "native-font-variation-pipeline-v1867/baseline-build.log",
+    "sha256": "adf36f3e69ad0bf6327ce042cf4eb6e57080bf0b880ce46d3be3840ad3478740"
+  },
+  {
+    "bytes": 428,
+    "path": "native-font-variation-pipeline-v1867/baseline-native-callback.log",
+    "sha256": "311fd0e237506961342bcdf3ac3b2ba87485aaafa23835ab82b2a5066492e5de"
+  },
+  {
+    "bytes": 350,
+    "path": "native-font-variation-pipeline-v1867/candidate-build.log",
+    "sha256": "93b0bed912932d253984b17e8ba97bdd90d1be1199c2a6996f2ae04edb90cfeb"
+  },
+  {
+    "bytes": 3052,
+    "path": "native-font-variation-pipeline-v1867/receipt.json",
+    "sha256": "981342713445b15f6b339959f65b47bda483b90b255ea1319328bb376325ba4e"
+  },
+  {
+    "bytes": 350,
+    "path": "native-font-variation-pipeline-v1875/candidate-build.log",
+    "sha256": "833e4884df0fd4c2139e2c4a3146281565bb381795a07148b23e003213c28330"
+  },
+  {
+    "bytes": 2882,
+    "path": "native-font-variation-pipeline-v1875/receipt.json",
+    "sha256": "43c0a98aafda17927272bcee5962dd998698c6b76d1c27d8ce95abb651d167e9"
+  },
+  {
+    "bytes": 290,
+    "path": "native-font-variation-pipeline-v1880/baseline-build.log",
+    "sha256": "adf36f3e69ad0bf6327ce042cf4eb6e57080bf0b880ce46d3be3840ad3478740"
+  },
+  {
+    "bytes": 428,
+    "path": "native-font-variation-pipeline-v1880/baseline-native-callback.log",
+    "sha256": "311fd0e237506961342bcdf3ac3b2ba87485aaafa23835ab82b2a5066492e5de"
+  },
+  {
+    "bytes": 740,
+    "path": "native-font-variation-pipeline-v1880/candidate-build.log",
+    "sha256": "0e74a8c8a12456b052b6fe627dd82684407ea59275fe1f2ab54fb29a1a8c751d"
+  },
+  {
+    "bytes": 416,
+    "path": "native-font-variation-pipeline-v1880/candidate-native-callback.log",
+    "sha256": "d2049540460f264809955459f9a452d00d9fcf2c1e6c0db52a5a3fad12bee4db"
+  },
+  {
+    "bytes": 46,
+    "path": "native-font-variation-pipeline-v1880/focused.log",
+    "sha256": "4d5d27f47141da4a2ba94d9b4ba599bc6cfbff10184dd8813515396191d0c06f"
+  },
+  {
+    "bytes": 48,
+    "path": "native-font-variation-pipeline-v1880/primitive.log",
+    "sha256": "c8ff259e92802eae86439802da4104746cf6157a4c4533dfb2b816a16bc48dd5"
+  },
+  {
+    "bytes": 3551,
+    "path": "native-font-variation-pipeline-v1880/receipt.json",
+    "sha256": "0cad14c2de96d54c47e73967cb79588084034d00600a6f8608d3beed0dca0ed8"
+  },
+  {
+    "bytes": 1034,
+    "path": "native-font-variation-primitive-exit-v1879.json",
+    "sha256": "2745a951a58bbf0d79d7dfb59a533782871e8594159a4b32a027a4bb16916188"
+  },
+  {
+    "bytes": 1393332,
+    "path": "preparation/openui-native-font-variation-data-preflight-failure-v1881.json",
+    "sha256": "80336f58a11d2154db0560dfc2885a7b232905f88224f40fb9bc72645a5b76b7"
+  },
+  {
+    "bytes": 431,
+    "path": "preparation/openui-native-font-variation-roots-v1877.json",
+    "sha256": "d408f196ce346da97de7bf375a86ac37cf13bb77369de444cf4d4ee78eaf9ebb"
+  },
+  {
+    "bytes": 3890,
+    "path": "probes/openui-native-font-variation-baseline-checks-v1852.py",
+    "sha256": "a3ef56013e6e4f9f9646fa648bb16b7b96f22e6965d3eb29774ea071fb44543d"
+  },
+  {
+    "bytes": 3832,
+    "path": "probes/openui-native-font-variation-baseline-checks-v1855.py",
+    "sha256": "febb9c9ca5eda6e7bb927ec2974580ee423a23824edb6d41bfce564c588c43aa"
+  },
+  {
+    "bytes": 3834,
+    "path": "probes/openui-native-font-variation-baseline-checks-v1859.py",
+    "sha256": "0e45db0fb77c8ed062609db8f9226b363c3672e39e2caea9782d0b3637e260d9"
+  },
+  {
+    "bytes": 3830,
+    "path": "probes/openui-native-font-variation-baseline-checks-v1863.py",
+    "sha256": "9a06b142a1c7acd21873189cbb3b5c1f6641a4339db3940c46df4b356ada48b4"
+  },
+  {
+    "bytes": 3830,
+    "path": "probes/openui-native-font-variation-baseline-checks-v1866.py",
+    "sha256": "2564ada9df19e297fb3545f065358ab424755822ebe03a5e340794ee040527f0"
+  },
+  {
+    "bytes": 3835,
+    "path": "probes/openui-native-font-variation-baseline-checks-v1878.py",
+    "sha256": "1fb03044306db74066d52093b5fbe6b5ad18298634784fd5b5912f72b5205653"
+  },
+  {
+    "bytes": 5806,
+    "path": "probes/openui-native-font-variation-build-v1856.py",
+    "sha256": "08fdc3def81b40f601492b565f722381e241e7fe1b812c62d4bfa9e521cec1b8"
+  },
+  {
+    "bytes": 5808,
+    "path": "probes/openui-native-font-variation-build-v1859.py",
+    "sha256": "d9831bae860f1e7de52cd22cfc0ca1c63fb3d1a6d34e64f2cb500864391142de"
+  },
+  {
+    "bytes": 5804,
+    "path": "probes/openui-native-font-variation-build-v1863.py",
+    "sha256": "34aa257012f5196356c85a7de8b0d86974ea5528e69d82fa9dd19446d36685bb"
+  },
+  {
+    "bytes": 5804,
+    "path": "probes/openui-native-font-variation-build-v1866.py",
+    "sha256": "038bee76c094214f5a77d3eefc6ae6cd5156baf35c912132b5f4058d4df185d8"
+  },
+  {
+    "bytes": 5803,
+    "path": "probes/openui-native-font-variation-build-v1871.py",
+    "sha256": "742094293abd2e63e1e69ea393039142bb7b7e43515b7002c80e1e386258fe1a"
+  },
+  {
+    "bytes": 5778,
+    "path": "probes/openui-native-font-variation-build-v1874.py",
+    "sha256": "73f137fb0bbb8b9015c48d57125ecfddce1cc47ddf6c12363c75fd67cc3100fc"
+  },
+  {
+    "bytes": 5809,
+    "path": "probes/openui-native-font-variation-build-v1879.py",
+    "sha256": "23beea59aebdd0f63d129722f0aee68cd536a28a417bc80311074df7b1545a7d"
+  },
+  {
+    "bytes": 3892,
+    "path": "probes/openui-native-font-variation-candidate-checks-v1852.py",
+    "sha256": "3a5d60594744bb3cc6b55f6e0b78ec2b45a5d679d23c43490d14bf170216391f"
+  },
+  {
+    "bytes": 3834,
+    "path": "probes/openui-native-font-variation-candidate-checks-v1855.py",
+    "sha256": "1d22ce66b340d9fe667525478efab1e91134c41c8e1ec6f81875d277655d47ef"
+  },
+  {
+    "bytes": 3836,
+    "path": "probes/openui-native-font-variation-candidate-checks-v1859.py",
+    "sha256": "2458a135ff255381adb7593cdeba80f9f649655edec99de82adbd75d76681a47"
+  },
+  {
+    "bytes": 3832,
+    "path": "probes/openui-native-font-variation-candidate-checks-v1863.py",
+    "sha256": "2f36e5ff19b4627c9266c2cbf0f03c012e3799030a0a52aedd2221402b2a7a91"
+  },
+  {
+    "bytes": 3832,
+    "path": "probes/openui-native-font-variation-candidate-checks-v1866.py",
+    "sha256": "038092e8d034c65bd2dd842cf3d18245543457d98b10c665678cda40b9dbcaa9"
+  },
+  {
+    "bytes": 3859,
+    "path": "probes/openui-native-font-variation-candidate-checks-v1869.py",
+    "sha256": "0320a378e7234244154e1789ba21d9bcd10681da2d727e5d2e3e732cf1bfc808"
+  },
+  {
+    "bytes": 3834,
+    "path": "probes/openui-native-font-variation-candidate-checks-v1876.py",
+    "sha256": "15c0679afba8182d8dcd35a81c4925a32884e307102387af83245a4a047acc9a"
+  },
+  {
+    "bytes": 3837,
+    "path": "probes/openui-native-font-variation-candidate-checks-v1878.py",
+    "sha256": "f3f6410ed445d922b6f335e6169cf406e6102eb75cec84fa4414357fea6071ea"
+  },
+  {
+    "bytes": 5643,
+    "path": "probes/openui-native-font-variation-census-pipeline-v1883.py",
+    "sha256": "b9932b4ec306997720ef6aa226641bcab3a468a9ee37c43171c5cd9a762c7ec4"
+  },
+  {
+    "bytes": 5657,
+    "path": "probes/openui-native-font-variation-consumer-v1856.py",
+    "sha256": "25f8f63d8a4d6ba55a282672c52cd7f84097ce3b71846a3c34e51e842edf6a44"
+  },
+  {
+    "bytes": 5796,
+    "path": "probes/openui-native-font-variation-consumer-v1859.py",
+    "sha256": "52d52b503b3ba9d456796a12feebb156f0664ea5767977d9563325306df77c62"
+  },
+  {
+    "bytes": 5792,
+    "path": "probes/openui-native-font-variation-consumer-v1863.py",
+    "sha256": "4ad910d08cd25f20d41bcfd9c789dcc8b6fa4512134973bb8a018504bc7fa4ab"
+  },
+  {
+    "bytes": 5792,
+    "path": "probes/openui-native-font-variation-consumer-v1866.py",
+    "sha256": "c7e11e7171f674ac8f50aec55dfc5b208f90dd2bba992884c4a7e32d125210b1"
+  },
+  {
+    "bytes": 5843,
+    "path": "probes/openui-native-font-variation-consumer-v1871.py",
+    "sha256": "b0cea0be129efd0b5467af3ced97ac29ece8bf95bf3c1574803b184590a913b6"
+  },
+  {
+    "bytes": 5818,
+    "path": "probes/openui-native-font-variation-consumer-v1874.py",
+    "sha256": "64ca83708374cd05121a1887bdedb00f2b40a20e1140ac9823a49deadd1abb11"
+  },
+  {
+    "bytes": 5797,
+    "path": "probes/openui-native-font-variation-consumer-v1879.py",
+    "sha256": "09836b63b5b648d770d1bfd55842de89c6b4284b0668eb03444de66eb1013f4f"
+  },
+  {
+    "bytes": 2187,
+    "path": "probes/openui-native-font-variation-matrices-v1856.py",
+    "sha256": "95b632b0bc878aa62ec871104fe58a34cb8320bd02c993e82ac15d92dad0be0d"
+  },
+  {
+    "bytes": 2189,
+    "path": "probes/openui-native-font-variation-matrices-v1859.py",
+    "sha256": "ecbada6d9e5ff7cc3ff2834bd486643c9efcc3c31b4f2a38c84000bba052370d"
+  },
+  {
+    "bytes": 2185,
+    "path": "probes/openui-native-font-variation-matrices-v1863.py",
+    "sha256": "4c41a88e8a6870af2a501759eed802045fa27ec00bf13b922472beef7e312e97"
+  },
+  {
+    "bytes": 2185,
+    "path": "probes/openui-native-font-variation-matrices-v1866.py",
+    "sha256": "9925398a114d7780e314a39945330f045d164d9cd4dcb202ac0c974df5dc213d"
+  },
+  {
+    "bytes": 2305,
+    "path": "probes/openui-native-font-variation-matrices-v1871.py",
+    "sha256": "d9c25b38f8d60216dfd93525f99aec7199b6e180a01de62ebc54f7a6823f2aed"
+  },
+  {
+    "bytes": 2280,
+    "path": "probes/openui-native-font-variation-matrices-v1874.py",
+    "sha256": "6ed1b5a1f22ecf03bb00f6b223f82f12af645976978735a02c5f5f034f429cc7"
+  },
+  {
+    "bytes": 2283,
+    "path": "probes/openui-native-font-variation-matrices-v1879.py",
+    "sha256": "b760595eab90c79f47ddc2dea24d85b20d4646eb3c04370a9976f2fb08aa091a"
+  },
+  {
+    "bytes": 2290,
+    "path": "probes/openui-native-font-variation-matrices-v1882.py",
+    "sha256": "53fa1e6df9e0ea1ae689daff3457406c8f2cb6755ebcd8ede0ae65463574c609"
+  },
+  {
+    "bytes": 4902,
+    "path": "probes/openui-native-font-variation-matrix-audit-v1884.py",
+    "sha256": "35d3cbd2f344742434a19ad20d0d803c768d17f9a5ce930f561c18fdf5744058"
+  },
+  {
+    "bytes": 5459,
+    "path": "probes/openui-native-font-variation-pipeline-v1857.py",
+    "sha256": "958ff2a50538d41ab07724ed228b7bcffe07afafd7c13086a2b74cf9bc7af627"
+  },
+  {
+    "bytes": 5461,
+    "path": "probes/openui-native-font-variation-pipeline-v1860.py",
+    "sha256": "0e82a6f5e13f41c71099066e3330f0c55b79365c7fba3d93a4a7b00ee727a511"
+  },
+  {
+    "bytes": 5457,
+    "path": "probes/openui-native-font-variation-pipeline-v1864.py",
+    "sha256": "27ed90da473ab8aa8b14b1760d49484f05f1166314de0acb286f11bbaf5a58f2"
+  },
+  {
+    "bytes": 5457,
+    "path": "probes/openui-native-font-variation-pipeline-v1867.py",
+    "sha256": "f1861dedbe77d9a3e5f7e7ded70cd48b54c8f265ac793a17dfa5b4f15543d2e8"
+  },
+  {
+    "bytes": 6083,
+    "path": "probes/openui-native-font-variation-pipeline-v1872.py",
+    "sha256": "7820f8ae7778590b96279c9bce09a3d06a1d4390fb9c5d73ae0ef9297ba82cad"
+  },
+  {
+    "bytes": 6058,
+    "path": "probes/openui-native-font-variation-pipeline-v1875.py",
+    "sha256": "b663a593ffb07fd7328c42c6f97e95886fc8fdb8e1983574abe0000b5054f306"
+  },
+  {
+    "bytes": 5465,
+    "path": "probes/openui-native-font-variation-pipeline-v1880.py",
+    "sha256": "ee2ce27a47362d9cc4cde65a87d1d065c85f404519e2db715bd25fde65e7c56d"
+  },
+  {
+    "bytes": 9394,
+    "path": "probes/openui-native-font-variation-preserve-v1885.py",
+    "sha256": "454fbd2adf6064f12aa486926d355b6ae122347f5b30f7e1f8f924a42ea0667c"
+  },
+  {
+    "bytes": 1593,
+    "path": "review/resolved-instance.patch",
+    "sha256": "393e13d25bf55fed7ed0978bfb659107599ade33aab1ed005237d9ca23e2b055"
+  }
+]

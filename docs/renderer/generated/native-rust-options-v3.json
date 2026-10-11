@@ -1,0 +1,444 @@
+{
+  "all_15_read_only_checks_passed": true,
+  "all_commands_terminal": true,
+  "all_configuration_field_rendering_effects_unqualified": true,
+  "all_four_hosted_workflows_complete": true,
+  "all_six_native_api_and_ffi_guards_executed_and_passed_in_hosted_parity": true,
+  "artifact_bytes": 603541,
+  "artifact_count": 52,
+  "artifacts": [
+    {
+      "bytes": 8908,
+      "path": "docs/renderer/evidence/native-rust-options-v3/checks.json",
+      "sha256": "0b999e920e0d07df50b72b413818485908f2ac6ee5846f0af53be7123814fe3c",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/receipt.json"
+    },
+    {
+      "bytes": 95,
+      "decompressed_bytes": 81,
+      "decompressed_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-renderer.log.gz",
+      "sha256": "d2b79cb72721d10fece4b15d0f646423937282376e09b24612cf252d1dfa8316",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/renderer.log"
+    },
+    {
+      "bytes": 79,
+      "decompressed_bytes": 59,
+      "decompressed_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-multicol.log.gz",
+      "sha256": "fd7419d14ad0bcdcbbacbaf00c01710e85416d2018b9addb2b26f3cff95775e1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/multicol.log"
+    },
+    {
+      "bytes": 102,
+      "decompressed_bytes": 86,
+      "decompressed_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-sp17.log.gz",
+      "sha256": "3f7d3c871f9e93684439793e60873829691e5dee51d51b30ab55fa940ef55df4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/sp17.log"
+    },
+    {
+      "bytes": 123,
+      "decompressed_bytes": 121,
+      "decompressed_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-sp18.log.gz",
+      "sha256": "50c99e0d37a26a36c607fd5e7dbf96f4aedf46d045824ff09490252f4c3a35ee",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/sp18.log"
+    },
+    {
+      "bytes": 143,
+      "decompressed_bytes": 142,
+      "decompressed_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-sp20.log.gz",
+      "sha256": "3705c08adcf75d9113bbf4ee522c73c0bbcdb1f0e9e50947c0a4eb54e214d64e",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/sp20.log"
+    },
+    {
+      "bytes": 80,
+      "decompressed_bytes": 63,
+      "decompressed_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-v02.log.gz",
+      "sha256": "ec1277c807103cfdee77b77954961b24a58ce62612d9dbf58594043db7efc478",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/v02.log"
+    },
+    {
+      "bytes": 57,
+      "decompressed_bytes": 37,
+      "decompressed_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-style.log.gz",
+      "sha256": "1b70c8a7ba0f84375105255b165129e2f427ca1072a832c28efb9f840d539b10",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/style.log"
+    },
+    {
+      "bytes": 52,
+      "decompressed_bytes": 32,
+      "decompressed_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-ffi.log.gz",
+      "sha256": "55406c87d9571bf98d31b05240f488bb4ab3c159f8a3c2f654148ee72b439592",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/ffi.log"
+    },
+    {
+      "bytes": 65,
+      "decompressed_bytes": 45,
+      "decompressed_sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-archive.log.gz",
+      "sha256": "d9ac32c4015a03a8f742aaef97d2271555824a1bc37f48615bc942ea11dc71d8",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/archive.log"
+    },
+    {
+      "bytes": 1055,
+      "decompressed_bytes": 2867,
+      "decompressed_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-accountability.log.gz",
+      "sha256": "a7ddfb15636772a7ed177d92cd310c67cc38a082a9aae491e62d04518aa2f463",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/accountability.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-rust-format.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/rust-format.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-syntax-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/syntax-c.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-syntax-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/syntax-cpp.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-clang-format.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/clang-format.log"
+    },
+    {
+      "bytes": 20,
+      "decompressed_bytes": 0,
+      "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/check-native-options-rust-format.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-current-checks-v1818/native-options-rust-format.log"
+    },
+    {
+      "bytes": 8576,
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted.json",
+      "sha256": "bb7840eac8c458ceb02f5792dc1365154deede8073e39e9cbc3f7b1d5612f3e1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/receipt.json"
+    },
+    {
+      "bytes": 2571,
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-37407697770.json",
+      "sha256": "6ff994f9669df6c43e13501c6010b70f7fc727b80eae88cad83881db33ceff46",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/37407697770.json"
+    },
+    {
+      "bytes": 5942,
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-37407697750.json",
+      "sha256": "324534d5f1543c33601fc913f2fe74983f063ca829c6f5ab07a94047b4612fc4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/37407697750.json"
+    },
+    {
+      "bytes": 4313,
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-37407697920.json",
+      "sha256": "4f19915440fcf36c46614d264434dc19d1d33baa7829783c85da63518100fa95",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/37407697920.json"
+    },
+    {
+      "bytes": 10671,
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-37407693299.json",
+      "sha256": "592696bee98a5a047b7041b392f992e9edbc9c3094afbd68948bd0bc480df21a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/37407693299.json"
+    },
+    {
+      "bytes": 5440,
+      "decompressed_bytes": 31913,
+      "decompressed_sha256": "c969a2db210594323580c7f89de9734bc461f8a3acd93e58382a2dd8b459ed1c",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-112088836889.log.gz",
+      "sha256": "c6a0a3b179a2a7bb0129dcbe7663760715eadd586f1035a108429ec28148734d",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088836889.log"
+    },
+    {
+      "bytes": 5553,
+      "decompressed_bytes": 31052,
+      "decompressed_sha256": "452b61dc6c2953b872c4e341527a4d4ed81711fee81427f9033fbcdbb40e67d3",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-112088837124.log.gz",
+      "sha256": "08083099022c19ca4e3988f713321bf68357e936b3f45bf394659f6f5939f208",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088837124.log"
+    },
+    {
+      "bytes": 165723,
+      "decompressed_bytes": 1324490,
+      "decompressed_sha256": "bae0e7a4904556394cda4ee44828b77a6ce7df5d49874436af82d3d7cf5b29da",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-112088836811.log.gz",
+      "sha256": "12c5c135f27a3424b72d04914519944ec7260e7c2988830a87f3474f2be0c1f5",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088836811.log"
+    },
+    {
+      "bytes": 5435,
+      "decompressed_bytes": 31591,
+      "decompressed_sha256": "3846eb7c7e61be670521088260b24cf0de94c8bbc92fd3c276af780455324e14",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-112088836916.log.gz",
+      "sha256": "0a96c6d4fc8fcc9e3dd41e08f9fb2dfca014d2d0d35f42c35e5c7b78ca15ae2a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088836916.log"
+    },
+    {
+      "bytes": 10111,
+      "decompressed_bytes": 64927,
+      "decompressed_sha256": "cd18a5bb7e0634ebdc723722f818a41d813a98af337e7772ee417f8cc1939794",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-112088836992.log.gz",
+      "sha256": "e5aa8dd890ce5b81c43a9232633129f5f13a2e46d9ab146debe62767a0e3738a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088836992.log"
+    },
+    {
+      "bytes": 39779,
+      "decompressed_bytes": 345231,
+      "decompressed_sha256": "64305af0db7a94a3608a1ff1b1043963f7134b23d2a43c026ab1c14651573dc4",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-112088837213.log.gz",
+      "sha256": "9ca5abff7556173621b587969b99003d439d77f6d1c1478f3379f81142322870",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088837213.log"
+    },
+    {
+      "bytes": 17435,
+      "decompressed_bytes": 140122,
+      "decompressed_sha256": "b2d5ebf99a9e449bc0c02f1b3957ec727ad8febdc41b9656bc6199cebe181d8c",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-112088828295.log.gz",
+      "sha256": "efff57d3a19e4be52c55ab1de623d7bfa9611f1d298354f0e195b7bdcaee461f",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088828295.log"
+    },
+    {
+      "bytes": 20994,
+      "decompressed_bytes": 192214,
+      "decompressed_sha256": "8744b124938b0a430f041ad1566b8c737d9820a5eac04fdddd1c88b75038fba2",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-112088828421.log.gz",
+      "sha256": "41735f84ccbc7f05dd42aa227aa4eef196ef9873f7008ee2781c32dc16f52583",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088828421.log"
+    },
+    {
+      "bytes": 20536,
+      "decompressed_bytes": 185689,
+      "decompressed_sha256": "3899e6a572e0b906e7765abbf5b7a2ce53378db26d048b122968a3d977acbd2f",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-112088828422.log.gz",
+      "sha256": "8a853b879ff32c20fdd79ff232f4d4d0472b5b0da47c7e82d545efb0e1d2a5eb",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088828422.log"
+    },
+    {
+      "bytes": 94384,
+      "decompressed_bytes": 901390,
+      "decompressed_sha256": "6577b5675316f349aa428dc8762f421cbaa52e6d1707dcacdc4072bc03007b27",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-112088828431.log.gz",
+      "sha256": "998c2c231c78f74d492e9d0088b096a85cd15b43008a11035ca6ed2dea88abf1",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088828431.log"
+    },
+    {
+      "bytes": 45768,
+      "decompressed_bytes": 392646,
+      "decompressed_sha256": "c34d17d4043134b79c5739eece9c00391d4fb71c862b28d124a98f314beb96c5",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-112088828474.log.gz",
+      "sha256": "01150481ed4a10e3db466ce4ca0a4230abc2005cf167a5a65a887fe3ef636cdd",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088828474.log"
+    },
+    {
+      "bytes": 16738,
+      "decompressed_bytes": 139690,
+      "decompressed_sha256": "1957d3814c8074b8fa1493326500acc5b43fcb84eda3a626a9d58a7fe33fe715",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-112088828545.log.gz",
+      "sha256": "ceb9a9d3b0c21e0920b2d3bf96de644ac51ed48e1235499dbeacb9dd3a36ad69",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088828545.log"
+    },
+    {
+      "bytes": 23896,
+      "decompressed_bytes": 201351,
+      "decompressed_sha256": "b0951b5a1671904ce0a5b9d2bbb5d0000c3dd341153387bbf8d8abb62028e982",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/hosted-112088828573.log.gz",
+      "sha256": "7fda786027bf0efbb8b4f543a6f9af103cedce0b3801919b90bdf38acf330a5a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-v1819/112088828573.log"
+    },
+    {
+      "bytes": 3463,
+      "path": "docs/renderer/evidence/native-rust-options-v3/probes/checks.py",
+      "sha256": "6160915bb5ecfbcdb51c93e50119e51193f93574ceb68f7a8ff3b8db28ab1e9e",
+      "source_path": "/tmp/openui-native-rust-integrated-current-checks-v1818.py"
+    },
+    {
+      "bytes": 3817,
+      "path": "docs/renderer/evidence/native-rust-options-v3/probes/collector.py",
+      "sha256": "c8cba26b535dfe54193b0b14bcb2adc9f1ee22239e8d12661da8dc1fd89e28d1",
+      "source_path": "/tmp/openui-native-rust-integrated-hosted-collect-v1819.py"
+    },
+    {
+      "bytes": 4656,
+      "path": "docs/renderer/evidence/native-rust-options-v3/watch-terminal.json",
+      "sha256": "013be0556247886a8a3e137856a9abadcc2f368e80391bdb6a4bf8b6abf505f6",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/receipt.json"
+    },
+    {
+      "bytes": 2571,
+      "path": "docs/renderer/evidence/native-rust-options-v3/watch/0-37407697770.json",
+      "sha256": "6ff994f9669df6c43e13501c6010b70f7fc727b80eae88cad83881db33ceff46",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/00-37407697770.json"
+    },
+    {
+      "bytes": 5942,
+      "path": "docs/renderer/evidence/native-rust-options-v3/watch/0-37407697750.json",
+      "sha256": "324534d5f1543c33601fc913f2fe74983f063ca829c6f5ab07a94047b4612fc4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/00-37407697750.json"
+    },
+    {
+      "bytes": 4313,
+      "path": "docs/renderer/evidence/native-rust-options-v3/watch/0-37407697920.json",
+      "sha256": "4f19915440fcf36c46614d264434dc19d1d33baa7829783c85da63518100fa95",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/00-37407697920.json"
+    },
+    {
+      "bytes": 10496,
+      "path": "docs/renderer/evidence/native-rust-options-v3/watch/0-37407693299.json",
+      "sha256": "eaed2d586d6ddb3415551a3e6c5a5adaf5a76d793361385ad464ce95211ca5ed",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/00-37407693299.json"
+    },
+    {
+      "bytes": 2571,
+      "path": "docs/renderer/evidence/native-rust-options-v3/watch/1-37407697770.json",
+      "sha256": "6ff994f9669df6c43e13501c6010b70f7fc727b80eae88cad83881db33ceff46",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/01-37407697770.json"
+    },
+    {
+      "bytes": 5942,
+      "path": "docs/renderer/evidence/native-rust-options-v3/watch/1-37407697750.json",
+      "sha256": "324534d5f1543c33601fc913f2fe74983f063ca829c6f5ab07a94047b4612fc4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/01-37407697750.json"
+    },
+    {
+      "bytes": 4313,
+      "path": "docs/renderer/evidence/native-rust-options-v3/watch/1-37407697920.json",
+      "sha256": "4f19915440fcf36c46614d264434dc19d1d33baa7829783c85da63518100fa95",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/01-37407697920.json"
+    },
+    {
+      "bytes": 10496,
+      "path": "docs/renderer/evidence/native-rust-options-v3/watch/1-37407693299.json",
+      "sha256": "eaed2d586d6ddb3415551a3e6c5a5adaf5a76d793361385ad464ce95211ca5ed",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/01-37407693299.json"
+    },
+    {
+      "bytes": 2571,
+      "path": "docs/renderer/evidence/native-rust-options-v3/watch/2-37407697770.json",
+      "sha256": "6ff994f9669df6c43e13501c6010b70f7fc727b80eae88cad83881db33ceff46",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/02-37407697770.json"
+    },
+    {
+      "bytes": 5942,
+      "path": "docs/renderer/evidence/native-rust-options-v3/watch/2-37407697750.json",
+      "sha256": "324534d5f1543c33601fc913f2fe74983f063ca829c6f5ab07a94047b4612fc4",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/02-37407697750.json"
+    },
+    {
+      "bytes": 4313,
+      "path": "docs/renderer/evidence/native-rust-options-v3/watch/2-37407697920.json",
+      "sha256": "4f19915440fcf36c46614d264434dc19d1d33baa7829783c85da63518100fa95",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/02-37407697920.json"
+    },
+    {
+      "bytes": 10671,
+      "path": "docs/renderer/evidence/native-rust-options-v3/watch/2-37407693299.json",
+      "sha256": "592696bee98a5a047b7041b392f992e9edbc9c3094afbd68948bd0bc480df21a",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/02-37407693299.json"
+    },
+    {
+      "bytes": 2338,
+      "path": "docs/renderer/evidence/native-rust-options-v3/probes/watch.py",
+      "sha256": "3b2726b98b5c0c6ebcec2d8a907673c071e8e849f10e49f92fa01538ea3f5834",
+      "source_path": "/tmp/openui-native-rust-integrated-hosted-watch-v1823.py"
+    },
+    {
+      "bytes": 214,
+      "decompressed_bytes": 274,
+      "decompressed_sha256": "eb740a9c567b0f1edf3662e5f9a7c6c762082c3c865b10c297ecf2825602ae0b",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-rust-options-v3/collector.log.gz",
+      "sha256": "05c66521c6e7201f5c2b9eb9ff4a6a2f8dc8f952b652071b6762d20d3b189312",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-rust-integrated-hosted-watch-v1823/collector.log"
+    },
+    {
+      "bytes": 4188,
+      "path": "docs/renderer/evidence/native-rust-options-v3/preserver.py",
+      "sha256": "0d47d53d070421349bf42b20375671c38fdf5410516b92096d7b57bb56955081",
+      "source_path": "/tmp/openui-native-rust-options-hosted-preserve-v1833.py"
+    }
+  ],
+  "failed_hosted_jobs": 0,
+  "full_hardening_passed": 7,
+  "javascript_executed_by_openui": false,
+  "native_guard_names": [
+    "default_native_constructors_preserve_rendering_and_configuration",
+    "native_raster_selection_survives_callbacks_cloning_and_resize",
+    "property::tests::native_fragment_keyword_values_cover_declared_enum_variants",
+    "selecting_ganesh_does_not_fall_back_to_cpu_raster",
+    "tests::native_fragment_keywords_reach_engine_and_keep_owned_property_identity",
+    "window_and_headless_apps_keep_explicit_native_raster_selection"
+  ],
+  "new_release_states_admitted": 0,
+  "own_complete_renderer_matrices_unexecuted": true,
+  "pixel_tolerance": 0,
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "skipped_hosted_jobs": 5,
+  "skips_are_not_release_passes": true,
+  "source": {
+    "clean": true,
+    "commit": "16187f4f54e1b62ea317a155f620c42f91a38c72",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "841f7495d51a6d7381a38479f663c3b644a7c4b0452605fe1911445189474ba1",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "16187f4f54e1b62ea317a155f620c42f91a38c72",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "841f7495d51a6d7381a38479f663c3b644a7c4b0452605fe1911445189474ba1",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "successful_hosted_jobs": 13
+}

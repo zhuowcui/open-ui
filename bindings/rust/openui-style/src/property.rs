@@ -16,18 +16,18 @@ use crate::{
     GridTrackSize, HangingPunctuation, HyphenateCharacter, HyphenationLimits, Hyphens,
     InitialLetter, InitialLetterValue, ItemAlignment, ItemPosition, LineBreak, LineClamp,
     LineHeight, LinearGradient, ListStylePosition, ListStyleType, MarginTrim, ObjectFit,
-    ObjectPosition, OpenTypeFeatureList, Overflow, OverflowClipBox, OverflowWrap, Position,
-    PositionArea, QuotePair, Resize, RubyAlign, RubyOverhang, RubyPosition, ScrollMarkerGroup,
-    ScrollSnapAlign, ScrollSnapAxis, ScrollTargetGroup, ScrollbarGutter, ScrollbarWidth,
-    ShapeOutside, StyleColor, TabSize, TableLayout, TextAlign, TextAlignLast, TextAutospace,
-    TextBoxEdge, TextBoxShorthand, TextBoxTrim, TextCombineUpright, TextDecorationLine,
-    TextDecorationShorthand, TextDecorationSkipInk, TextDecorationStyle, TextDecorationThickness,
-    TextEmphasisFill, TextEmphasisMark, TextEmphasisPosition, TextEmphasisShorthand,
-    TextEmphasisStyle, TextJustify, TextOrientation, TextOverflow, TextRendering, TextShadow,
-    TextShadowList, TextSizeAdjust, TextSpacingTrim, TextTransform, TextUnderlinePosition,
-    TextWrap, TextWrapMode, TextWrapShorthand, TextWrapStyle, Transform2D, TypographyValue,
-    UnicodeBidi, VerticalAlign, Visibility, WebkitBoxOrient, WhiteSpace, WhiteSpaceCollapse,
-    WhiteSpaceShorthand, WordBreak, WritingMode,
+    ObjectPosition, OpenTypeFeatureList, Overflow, OverflowAlignment, OverflowClipBox,
+    OverflowWrap, Position, PositionArea, QuotePair, Resize, RubyAlign, RubyOverhang, RubyPosition,
+    ScrollMarkerGroup, ScrollSnapAlign, ScrollSnapAxis, ScrollTargetGroup, ScrollbarGutter,
+    ScrollbarWidth, ShapeOutside, StyleColor, TabSize, TableLayout, TextAlign, TextAlignLast,
+    TextAutospace, TextBoxEdge, TextBoxShorthand, TextBoxTrim, TextCombineUpright,
+    TextDecorationLine, TextDecorationShorthand, TextDecorationSkipInk, TextDecorationStyle,
+    TextDecorationThickness, TextEmphasisFill, TextEmphasisMark, TextEmphasisPosition,
+    TextEmphasisShorthand, TextEmphasisStyle, TextJustify, TextOrientation, TextOverflow,
+    TextRendering, TextShadow, TextShadowList, TextSizeAdjust, TextSpacingTrim, TextTransform,
+    TextUnderlinePosition, TextWrap, TextWrapMode, TextWrapShorthand, TextWrapStyle, Transform2D,
+    TypographyValue, UnicodeBidi, VerticalAlign, Visibility, WebkitBoxOrient, WhiteSpace,
+    WhiteSpaceCollapse, WhiteSpaceShorthand, WordBreak, WritingMode,
 };
 use openui_geometry::{Length, LengthType, RasterConfiguration};
 
@@ -109,6 +109,20 @@ pub enum LengthValue {
     ViewportHeight(f32),
     ViewportMin(f32),
     ViewportMax(f32),
+    /// Advance measure of the selected font's zero glyph.
+    Ch(f32),
+    /// X-height of the selected font.
+    Ex(f32),
+    /// Used line height of the element.
+    Lh(f32),
+}
+
+/// Owned reference lengths supplied by the selected font and computed style.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct FontRelativeLengthMetrics {
+    pub ch: f32,
+    pub ex: f32,
+    pub lh: f32,
 }
 
 impl LengthValue {
@@ -120,6 +134,12 @@ impl LengthValue {
         Self::Computed(Length::percent(value))
     }
 
+    /// A native length containing a percentage and a fixed pixel offset.
+    /// For example, `calc_percent_px(150.0, -2.0)` means 150% minus 2px.
+    pub const fn calc_percent_px(percent: f32, px_offset: f32) -> Self {
+        Self::Computed(Length::calc_percent_px(percent, px_offset))
+    }
+
     pub const fn auto() -> Self {
         Self::Computed(Length::auto())
     }
@@ -128,7 +148,28 @@ impl LengthValue {
         Self::Computed(Length::none())
     }
 
+    /// Resolve without a selected font. Metric units use missing-font fallback
+    /// values; retained Engine declarations resolve with the actual font instead.
     pub fn resolve(self, viewport: (f32, f32), font_size: f32, root_font_size: f32) -> Length {
+        self.resolve_with_font_metrics(
+            viewport,
+            font_size,
+            root_font_size,
+            FontRelativeLengthMetrics {
+                ch: font_size * 0.5,
+                ex: font_size * 0.5,
+                lh: font_size * 1.2,
+            },
+        )
+    }
+
+    pub fn resolve_with_font_metrics(
+        self,
+        viewport: (f32, f32),
+        font_size: f32,
+        root_font_size: f32,
+        metrics: FontRelativeLengthMetrics,
+    ) -> Length {
         match self {
             Self::Computed(value) => value,
             Self::Em(value) => Length::px(value * font_size),
@@ -137,7 +178,39 @@ impl LengthValue {
             Self::ViewportHeight(value) => Length::px(viewport.1 * value / 100.0),
             Self::ViewportMin(value) => Length::px(viewport.0.min(viewport.1) * value / 100.0),
             Self::ViewportMax(value) => Length::px(viewport.0.max(viewport.1) * value / 100.0),
+            Self::Ch(value) => Length::px(value * metrics.ch),
+            Self::Ex(value) => Length::px(value * metrics.ex),
+            Self::Lh(value) => Length::px(value * metrics.lh),
         }
+    }
+
+    /// Whether this authored length is allowed as a line-height declaration.
+    /// Calculated values are range-checked after their font basis is known.
+    pub fn is_valid_for_line_height(self) -> bool {
+        match self {
+            Self::Computed(length) => match length.length_type() {
+                LengthType::Fixed | LengthType::Percent => {
+                    length.value().is_finite() && length.value() >= 0.0
+                }
+                LengthType::Calculated => {
+                    length.value().is_finite() && length.calc_offset().is_finite()
+                }
+                _ => false,
+            },
+            Self::Em(value)
+            | Self::Rem(value)
+            | Self::ViewportWidth(value)
+            | Self::ViewportHeight(value)
+            | Self::ViewportMin(value)
+            | Self::ViewportMax(value)
+            | Self::Ch(value)
+            | Self::Ex(value)
+            | Self::Lh(value) => value.is_finite() && value >= 0.0,
+        }
+    }
+
+    pub fn depends_on_font_metrics(self) -> bool {
+        matches!(self, Self::Ch(_) | Self::Ex(_) | Self::Lh(_))
     }
 }
 
@@ -283,6 +356,35 @@ pub enum StyleValue {
     Renderer(RendererStyleValue),
 }
 
+impl StyleValue {
+    pub fn depends_on_font_metrics(&self) -> bool {
+        let edges = |value: &Edges<LengthValue>| {
+            [value.top, value.right, value.bottom, value.left]
+                .into_iter()
+                .any(LengthValue::depends_on_font_metrics)
+        };
+        match self {
+            Self::Length(value) => value.depends_on_font_metrics(),
+            Self::Edges(value) => edges(value),
+            Self::Gap(value) => {
+                value.row.depends_on_font_metrics() || value.column.depends_on_font_metrics()
+            }
+            Self::CornerRadii(value) => edges(&value.0),
+            Self::Transform(value) => value.0.iter().any(|operation| match operation {
+                TransformOperation::Translate(x, y) => {
+                    x.depends_on_font_metrics() || y.depends_on_font_metrics()
+                }
+                TransformOperation::Translate3d(x, y, z) => [*x, *y, *z]
+                    .into_iter()
+                    .any(LengthValue::depends_on_font_metrics),
+                TransformOperation::Perspective(value) => value.depends_on_font_metrics(),
+                _ => false,
+            }),
+            _ => false,
+        }
+    }
+}
+
 macro_rules! impl_style_value {
     ($ty:ty, $variant:ident) => {
         impl From<$ty> for StyleValue {
@@ -412,6 +514,11 @@ impl Style {
         &self.declarations
     }
 
+    /// Retain a length-valued line-height in native style and pseudo declarations.
+    pub fn line_height_length(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::LineHeight, value)
+    }
+
     fn with(mut self, property: StyleProperty, value: impl Into<StyleValue>) -> Self {
         self.declarations.push(Declaration {
             property,
@@ -464,10 +571,14 @@ fn length(input: &str) -> Option<LengthValue> {
                 ("vh", LengthValue::ViewportHeight),
                 ("vmin", LengthValue::ViewportMin),
                 ("vmax", LengthValue::ViewportMax),
+                ("ch", LengthValue::Ch),
+                ("ex", LengthValue::Ex),
+                ("lh", LengthValue::Lh),
             ] {
                 if let Some(number) = input
                     .strip_suffix(suffix)
-                    .and_then(|v| v.trim().parse().ok())
+                    .and_then(|v| v.trim().parse::<f32>().ok())
+                    .filter(|value| value.is_finite())
                 {
                     return Some(make(number));
                 }
@@ -506,20 +617,121 @@ fn edges(input: &str) -> Option<Edges<LengthValue>> {
     }
 }
 
-fn color(input: &str) -> Option<Color> {
-    match input.trim().to_ascii_lowercase().as_str() {
-        "transparent" => Some(Color::TRANSPARENT),
-        "black" => Some(Color::BLACK),
-        "white" => Some(Color::WHITE),
-        "red" => Some(Color::RED),
-        "green" => Some(Color::GREEN),
-        "blue" => Some(Color::BLUE),
-        value if value.starts_with('#') && (value.len() == 7 || value.len() == 9) => {
-            u32::from_str_radix(&value[1..], 16)
-                .ok()
-                .map(|hex| Color::from_hex(hex, value.len() == 9))
-        }
+fn overflow_literal(input: &str) -> Option<Overflow> {
+    match input {
+        "visible" => Some(Overflow::Visible),
+        "hidden" => Some(Overflow::Hidden),
+        "scroll" => Some(Overflow::Scroll),
+        "auto" => Some(Overflow::Auto),
+        "clip" => Some(Overflow::Clip),
         _ => None,
+    }
+}
+
+fn alignment_words(input: &str) -> (OverflowAlignment, Vec<&str>) {
+    let mut words = input.split_whitespace();
+    let mut tokens = Vec::new();
+    let overflow = match words.next() {
+        Some("safe") => OverflowAlignment::Safe,
+        Some("unsafe") => OverflowAlignment::Unsafe,
+        Some(word) => {
+            tokens.push(word);
+            OverflowAlignment::Default
+        }
+        None => OverflowAlignment::Default,
+    };
+    tokens.extend(words);
+    (overflow, tokens)
+}
+
+fn item_alignment_literal(input: &str) -> Option<ItemAlignment> {
+    let (overflow, words) = alignment_words(input);
+    let position = match words.as_slice() {
+        ["auto"] => ItemPosition::Auto,
+        ["normal"] => ItemPosition::Normal,
+        ["stretch"] => ItemPosition::Stretch,
+        ["baseline"] | ["first", "baseline"] => ItemPosition::Baseline,
+        ["last", "baseline"] => ItemPosition::LastBaseline,
+        ["center"] => ItemPosition::Center,
+        ["start"] => ItemPosition::Start,
+        ["end"] => ItemPosition::End,
+        ["self-start"] => ItemPosition::SelfStart,
+        ["self-end"] => ItemPosition::SelfEnd,
+        ["flex-start"] => ItemPosition::FlexStart,
+        ["flex-end"] => ItemPosition::FlexEnd,
+        ["left"] => ItemPosition::Left,
+        ["right"] => ItemPosition::Right,
+        ["legacy"] => ItemPosition::Legacy,
+        _ => return None,
+    };
+    if overflow != OverflowAlignment::Default
+        && matches!(
+            position,
+            ItemPosition::Auto
+                | ItemPosition::Normal
+                | ItemPosition::Stretch
+                | ItemPosition::Baseline
+                | ItemPosition::LastBaseline
+                | ItemPosition::Legacy
+        )
+    {
+        return None;
+    }
+    Some(ItemAlignment::with_overflow(position, overflow))
+}
+
+fn content_alignment_literal(input: &str) -> Option<ContentAlignment> {
+    let (overflow, words) = alignment_words(input);
+    let mut value = match words.as_slice() {
+        ["normal"] => ContentAlignment::default(),
+        ["center"] => ContentAlignment::new(ContentPosition::Center),
+        ["start"] => ContentAlignment::new(ContentPosition::Start),
+        ["end"] => ContentAlignment::new(ContentPosition::End),
+        ["flex-start"] => ContentAlignment::new(ContentPosition::FlexStart),
+        ["flex-end"] => ContentAlignment::new(ContentPosition::FlexEnd),
+        ["left"] => ContentAlignment::new(ContentPosition::Left),
+        ["right"] => ContentAlignment::new(ContentPosition::Right),
+        ["baseline"] | ["first", "baseline"] => ContentAlignment::new(ContentPosition::Baseline),
+        ["last", "baseline"] => ContentAlignment::new(ContentPosition::LastBaseline),
+        ["space-between"] => ContentAlignment::with_distribution(ContentDistribution::SpaceBetween),
+        ["space-around"] => ContentAlignment::with_distribution(ContentDistribution::SpaceAround),
+        ["space-evenly"] => ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly),
+        ["stretch"] => ContentAlignment::with_distribution(ContentDistribution::Stretch),
+        _ => return None,
+    };
+    if overflow != OverflowAlignment::Default
+        && (value.distribution != ContentDistribution::Default
+            || matches!(
+                value.position,
+                ContentPosition::Normal | ContentPosition::Baseline | ContentPosition::LastBaseline
+            ))
+    {
+        return None;
+    }
+    value.overflow = overflow;
+    Some(value)
+}
+
+fn color(input: &str) -> Option<Color> {
+    let input = input.trim();
+    if let Some(hex) = input.strip_prefix('#') {
+        if !hex.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+            return None;
+        }
+        let (value, alpha) = match hex.len() {
+            3 | 4 => {
+                let value = hex
+                    .chars()
+                    .flat_map(|digit| [digit, digit])
+                    .collect::<String>();
+                (u32::from_str_radix(&value, 16).ok()?, hex.len() == 4)
+            }
+            6 | 8 => (u32::from_str_radix(hex, 16).ok()?, hex.len() == 8),
+            _ => return None,
+        };
+        Some(Color::from_hex(value, alpha))
+    } else {
+        Color::from_named(input)
     }
 }
 
@@ -1005,6 +1217,13 @@ fn parse_typography_literal(property: StyleProperty, input: &str) -> Option<Styl
                 }
                 LengthValue::Computed(value) if value.length_type() == LengthType::Fixed => {
                     LineHeight::Length(value.value())
+                }
+                value if !matches!(value, LengthValue::Computed(_)) => {
+                    let resolved = value.resolve((100.0, 100.0), 16.0, 16.0);
+                    if !resolved.value().is_finite() || resolved.value() < 0.0 {
+                        return None;
+                    }
+                    return Some(StyleValue::Length(value));
                 }
                 _ => return None,
             }
@@ -1553,6 +1772,15 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             "table" => Some(Display::Table),
             "list-item" => Some(Display::ListItem),
             "contents" => Some(Display::Contents),
+            "inline-table" => Some(Display::InlineTable),
+            "table-row-group" => Some(Display::TableRowGroup),
+            "table-header-group" => Some(Display::TableHeaderGroup),
+            "table-footer-group" => Some(Display::TableFooterGroup),
+            "table-row" => Some(Display::TableRow),
+            "table-cell" => Some(Display::TableCell),
+            "table-column-group" => Some(Display::TableColumnGroup),
+            "table-column" => Some(Display::TableColumn),
+            "table-caption" => Some(Display::TableCaption),
             _ => None,
         }
         .map(StyleValue::Display),
@@ -1565,21 +1793,33 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(StyleValue::Position),
-        P::Overflow => match input {
-            "visible" => Some(Overflow::Visible),
-            "hidden" => Some(Overflow::Hidden),
-            "scroll" => Some(Overflow::Scroll),
-            "auto" => Some(Overflow::Auto),
-            "clip" => Some(Overflow::Clip),
+        P::Overflow => overflow_literal(input).map(StyleValue::Overflow),
+        P::ScrollbarWidth => match input.trim() {
+            "auto" => Some(ScrollbarWidth::Auto),
+            "thin" => Some(ScrollbarWidth::Thin),
+            "none" => Some(ScrollbarWidth::None),
             _ => None,
         }
-        .map(StyleValue::Overflow),
+        .map(|value| StyleValue::Renderer(RendererStyleValue::ScrollbarWidth(value))),
+        P::ScrollbarGutter => match input.split_whitespace().collect::<Vec<_>>().as_slice() {
+            ["auto"] => Some(ScrollbarGutter::Auto),
+            ["stable"] => Some(ScrollbarGutter::Stable),
+            ["stable", "both-edges"] | ["both-edges", "stable"] => {
+                Some(ScrollbarGutter::StableBothEdges)
+            }
+            _ => None,
+        }
+        .map(|value| StyleValue::Renderer(RendererStyleValue::ScrollbarGutter(value))),
         P::Width
         | P::Height
         | P::MinWidth
         | P::MinHeight
         | P::MaxWidth
         | P::MaxHeight
+        | P::Left
+        | P::Top
+        | P::Right
+        | P::Bottom
         | P::MarginTop
         | P::MarginRight
         | P::MarginBottom
@@ -1626,37 +1866,8 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(StyleValue::FlexWrap),
-        P::AlignItems => match input {
-            "normal" => Some(ItemPosition::Normal),
-            "stretch" => Some(ItemPosition::Stretch),
-            "center" => Some(ItemPosition::Center),
-            "start" => Some(ItemPosition::Start),
-            "end" => Some(ItemPosition::End),
-            "flex-start" => Some(ItemPosition::FlexStart),
-            "flex-end" => Some(ItemPosition::FlexEnd),
-            "baseline" => Some(ItemPosition::Baseline),
-            _ => None,
-        }
-        .map(|v| StyleValue::ItemAlignment(ItemAlignment::new(v))),
-        P::JustifyContent => match input {
-            "normal" => Some(ContentAlignment::default()),
-            "center" => Some(ContentAlignment::new(ContentPosition::Center)),
-            "start" => Some(ContentAlignment::new(ContentPosition::Start)),
-            "end" => Some(ContentAlignment::new(ContentPosition::End)),
-            "flex-start" => Some(ContentAlignment::new(ContentPosition::FlexStart)),
-            "flex-end" => Some(ContentAlignment::new(ContentPosition::FlexEnd)),
-            "space-between" => Some(ContentAlignment::with_distribution(
-                ContentDistribution::SpaceBetween,
-            )),
-            "space-around" => Some(ContentAlignment::with_distribution(
-                ContentDistribution::SpaceAround,
-            )),
-            "space-evenly" => Some(ContentAlignment::with_distribution(
-                ContentDistribution::SpaceEvenly,
-            )),
-            _ => None,
-        }
-        .map(StyleValue::ContentAlignment),
+        P::AlignItems => item_alignment_literal(input).map(StyleValue::ItemAlignment),
+        P::JustifyContent => content_alignment_literal(input).map(StyleValue::ContentAlignment),
         P::Gap => {
             let v: Vec<_> = input
                 .split_whitespace()
@@ -1719,9 +1930,36 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(StyleValue::PointerEvents),
-        _ => parse_typography_literal(property, input),
+        P::BoxSizing => match input {
+            "content-box" => Some(BoxSizing::ContentBox),
+            "border-box" => Some(BoxSizing::BorderBox),
+            _ => None,
+        }
+        .map(|value| StyleValue::Renderer(RendererStyleValue::BoxSizing(value))),
+        P::ColumnCount => {
+            if input == "auto" {
+                Some(StyleValue::Renderer(RendererStyleValue::ColumnCount(None)))
+            } else {
+                input
+                    .parse::<u32>()
+                    .ok()
+                    .filter(|count| *count > 0)
+                    .map(|count| StyleValue::Renderer(RendererStyleValue::ColumnCount(Some(count))))
+            }
+        }
+        P::Visibility => match input {
+            "visible" => Some(Visibility::Visible),
+            "hidden" => Some(Visibility::Hidden),
+            "collapse" => Some(Visibility::Collapse),
+            _ => None,
+        }
+        .map(|value| StyleValue::Renderer(RendererStyleValue::Visibility(value))),
+        _ => parse_typography_literal(property, input)
+            .or_else(|| parse_renderer_author_literal(property, input)),
     };
-    result.ok_or_else(|| invalid(property, input))
+    result
+        .filter(|value| !matches!(value, StyleValue::Number(value) if !value.is_finite()))
+        .ok_or_else(|| invalid(property, input))
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -2020,6 +2258,12 @@ pub fn apply_to_computed(
             .then_some(property.metadata().invalidation)
             .ok_or_else(mismatch);
     }
+    if let Some(value) = RendererStyleValue::from_author_value(property, value, resolve) {
+        return value
+            .apply(style, property)
+            .then_some(property.metadata().invalidation)
+            .ok_or_else(mismatch);
+    }
     match (property, value) {
         (P::Display, StyleValue::Display(v)) => style.fields.display = *v,
         (P::Position, StyleValue::Position(v)) => style.fields.position = *v,
@@ -2071,6 +2315,31 @@ pub fn apply_to_computed(
         (P::RowGap, StyleValue::Length(v)) => style.fields.row_gap = Some(resolve(*v)),
         (P::ColumnGap, StyleValue::Length(v)) => style.fields.column_gap = Some(resolve(*v)),
         (P::FontFamily, StyleValue::FontFamily(v)) => style.fields.font_family = v.clone(),
+        (P::LineHeight, StyleValue::Length(v)) => {
+            if !v.is_valid_for_line_height() {
+                return Err(mismatch());
+            }
+            let length = resolve(*v);
+            let pixels = match length.length_type() {
+                LengthType::Fixed => length.value(),
+                LengthType::Percent => {
+                    style.fields.font_size * (length.value() as i32) as f32 / 100.0
+                }
+                LengthType::Calculated => {
+                    let font =
+                        openui_geometry::LayoutUnit::from_f32(style.fields.font_size).to_f32();
+                    openui_geometry::LayoutUnit::from_f32(
+                        font * length.value() / 100.0 + length.calc_offset(),
+                    )
+                    .to_f32()
+                }
+                _ => return Err(mismatch()),
+            };
+            if !length.value().is_finite() || !pixels.is_finite() || pixels < 0.0 {
+                return Err(mismatch());
+            }
+            style.fields.line_height = LineHeight::Length(pixels);
+        }
         (P::FontSize, StyleValue::Length(v)) => style.fields.font_size = resolve(*v).value(),
         (P::FontWeight, StyleValue::FontWeight(v)) => style.fields.font_weight = *v,
         (P::LetterSpacing, StyleValue::Number(v)) => style.fields.letter_spacing = *v,
@@ -2507,6 +2776,121 @@ mod tests {
         assert_eq!(
             StyleProperty::Opacity.metadata().invalidation,
             InvalidationClass::Composite
+        );
+    }
+
+    #[test]
+    fn native_fragment_keyword_values_cover_declared_enum_variants() {
+        fn check(property: StyleProperty, literal: &str, expected: RendererStyleValue) {
+            let value = parse_literal(property, literal).unwrap();
+            let mut style = ComputedStyle::initial();
+            apply_to_computed(&mut style, property, &value, (320.0, 240.0)).unwrap();
+            assert_eq!(
+                value_from_computed(&style, property),
+                StyleValue::Renderer(expected)
+            );
+            assert!(parse_literal(property, "invalid-keyword").is_err());
+            assert!(parse_literal(property, "auto; display: none").is_err());
+        }
+        use RendererStyleValue as R;
+        for (literal, variant) in [
+            ("none", BorderStyle::None),
+            ("hidden", BorderStyle::Hidden),
+            ("dotted", BorderStyle::Dotted),
+            ("dashed", BorderStyle::Dashed),
+            ("solid", BorderStyle::Solid),
+            ("double", BorderStyle::Double),
+            ("groove", BorderStyle::Groove),
+            ("ridge", BorderStyle::Ridge),
+            ("inset", BorderStyle::Inset),
+            ("outset", BorderStyle::Outset),
+        ] {
+            check(
+                StyleProperty::BorderTopStyle,
+                literal,
+                R::BorderTopStyle(variant),
+            );
+            check(
+                StyleProperty::BorderRightStyle,
+                literal,
+                R::BorderRightStyle(variant),
+            );
+            check(
+                StyleProperty::BorderBottomStyle,
+                literal,
+                R::BorderBottomStyle(variant),
+            );
+            check(
+                StyleProperty::BorderLeftStyle,
+                literal,
+                R::BorderLeftStyle(variant),
+            );
+            check(
+                StyleProperty::OutlineStyle,
+                literal,
+                R::OutlineStyle(variant),
+            );
+            check(
+                StyleProperty::ColumnRuleStyle,
+                literal,
+                R::ColumnRuleStyle(variant),
+            );
+        }
+        for (literal, variant) in [
+            ("auto", BreakValue::Auto),
+            ("avoid", BreakValue::Avoid),
+            ("avoid-page", BreakValue::AvoidPage),
+            ("avoid-column", BreakValue::AvoidColumn),
+            ("page", BreakValue::Page),
+            ("column", BreakValue::Column),
+            ("left", BreakValue::Left),
+            ("right", BreakValue::Right),
+            ("always", BreakValue::Always),
+        ] {
+            check(StyleProperty::BreakBefore, literal, R::BreakBefore(variant));
+            check(StyleProperty::BreakAfter, literal, R::BreakAfter(variant));
+        }
+        for (literal, variant) in [
+            ("auto", BreakInside::Auto),
+            ("avoid", BreakInside::Avoid),
+            ("avoid-page", BreakInside::AvoidPage),
+            ("avoid-column", BreakInside::AvoidColumn),
+        ] {
+            check(StyleProperty::BreakInside, literal, R::BreakInside(variant));
+        }
+        for (literal, variant) in [
+            ("auto", ColumnFill::Auto),
+            ("balance", ColumnFill::Balance),
+            ("balance-all", ColumnFill::BalanceAll),
+        ] {
+            check(StyleProperty::ColumnFill, literal, R::ColumnFill(variant));
+        }
+        for (literal, variant) in [
+            ("auto", ColumnWrap::Auto),
+            ("wrap", ColumnWrap::Wrap),
+            ("nowrap", ColumnWrap::NoWrap),
+        ] {
+            check(StyleProperty::ColumnWrap, literal, R::ColumnWrap(variant));
+        }
+        check(
+            StyleProperty::ColumnSpan,
+            "none",
+            R::ColumnSpan(ColumnSpan::None),
+        );
+        check(
+            StyleProperty::ColumnSpan,
+            "all",
+            R::ColumnSpan(ColumnSpan::All),
+        );
+        check(
+            StyleProperty::BoxDecorationBreak,
+            "slice",
+            R::BoxDecorationBreak(BoxDecorationBreak::Slice),
+        );
+        check(
+            StyleProperty::BoxDecorationBreak,
+            "clone",
+            R::BoxDecorationBreak(BoxDecorationBreak::Clone),
         );
     }
 

@@ -1,0 +1,82 @@
+{
+  "actual_combined_umbrella_source_measured": true,
+  "actual_whole_exit_code": 1,
+  "all_native_apis_qualified": false,
+  "build_receipt_sha256": "b0aeefa215a778c32300ab239887be7eff77b9f1c0f424e800e82d350c240ef3",
+  "candidate_nonregression": true,
+  "compiled_paths_verified": 26,
+  "compiler_artifact_records": 14,
+  "complete": true,
+  "historical_openui_archive_is_a_pixel_target": false,
+  "implementation_integrated": true,
+  "javascript_executed_by_openui": false,
+  "linked_local_libraries_fresh": true,
+  "matrix_rows_verified": 48252,
+  "native_behavior_proof_sha256": "039bd70215e95336f6617e72537abd07f5c7b648480b32f43e6ee107efd19681",
+  "owner_absent": true,
+  "owner_terminal": true,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "receipt_sha256": "ff472eccd004218f30a94fa06667f41833968d3f6064e2a0475db20395826ce1",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "results": {
+    "expanded": {
+      "actual_exit_code": 1,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 1587,
+      "errors": 0,
+      "exact": 22141,
+      "gains": 0,
+      "losses": 0,
+      "total": 23728,
+      "worsened": 0
+    },
+    "focused": {
+      "actual_exit_code": 0,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "gains": 0,
+      "losses": 0,
+      "total": 640,
+      "worsened": 0
+    },
+    "full": {
+      "actual_exit_code": 1,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 1586,
+      "errors": 0,
+      "exact": 21338,
+      "gains": 0,
+      "losses": 0,
+      "total": 22924,
+      "worsened": 0
+    },
+    "primitive": {
+      "actual_exit_code": 0,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "gains": 0,
+      "losses": 0,
+      "total": 960,
+      "worsened": 0
+    }
+  },
+  "retired_for_reexecution_after_source_or_target_mutation": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "72f5b41e5c2d795d95ad0a198be2332f70c317d0",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "7c6711dea547053cbe16427e25fc8ad2b80385b034834c4702e99d1576d3ebb6",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

@@ -24,7 +24,7 @@ use skia_safe::{
 
 use openui_geometry::{PhysicalSnap, RasterBackend, RasterSnapping, TextEdging};
 use openui_layout::inline::text_combine::TextCombineLayout;
-use openui_style::{Color, ComputedStyle, FontFamily, GenericFontFamily};
+use openui_style::{Color, ComputedStyle, FontFamily};
 use openui_text::font::FontMetrics;
 use openui_text::shaping::{ShapeResult, TextRasterPolicy};
 
@@ -52,13 +52,19 @@ pub fn paint_text(
     origin: (f32, f32),
     style: &ComputedStyle,
 ) {
-    let author_lcd = uses_chromium_author_lcd(style);
+    let author_lcd = uses_chromium_author_lcd(style, shape_result);
     let raster_policy = if style.native_control_text {
         TextRasterPolicy::ChromiumNativeControl
     } else if style.embedded_document_text {
         TextRasterPolicy::ChromiumEmbeddedDocument
     } else if author_lcd {
         TextRasterPolicy::ChromiumAuthorLcd
+    } else if style.raster_configuration.backend == RasterBackend::ChromiumLinux
+        && style.raster_configuration.author_text.edging == TextEdging::Alias
+    {
+        // Fit hinted monochrome strikes with Fontations. The resolved font's
+        // hinting setting preserves the original outline for unhinted strikes.
+        TextRasterPolicy::ChromiumAuthorAliased
     } else {
         TextRasterPolicy::Skia
     };
@@ -172,32 +178,13 @@ pub fn paint_text_with_raster_policy(
     }
 }
 
-fn uses_chromium_author_lcd(style: &ComputedStyle) -> bool {
-    if style.native_control_text
-        || style.embedded_document_text
-        || style.raster_configuration.author_text.edging != TextEdging::Alias
-    {
-        return false;
-    }
-    match style.font_family.families.first() {
-        Some(FontFamily::Named(name)) => ![
-            "Ahem",
-            "Droid Sans Fallback",
-            "Noto Sans Devanagari",
-            "Noto Color Emoji",
-            "DejaVu Sans",
-        ]
-        .iter()
-        .any(|family| name.eq_ignore_ascii_case(family)),
-        Some(FontFamily::Generic(family)) => !matches!(
-            family,
-            GenericFontFamily::None
-                | GenericFontFamily::SansSerif
-                | GenericFontFamily::Emoji
-                | GenericFontFamily::UiSansSerif
-        ),
-        None => false,
-    }
+fn uses_chromium_author_lcd(style: &ComputedStyle, shape_result: &ShapeResult) -> bool {
+    !style.native_control_text
+        && !style.embedded_document_text
+        && style.raster_configuration.author_text.edging == TextEdging::Alias
+        && shape_result.runs.iter().any(|run| {
+            run.font_data.sk_font().edging() == skia_safe::font::Edging::SubpixelAntiAlias
+        })
 }
 
 /// Paint an upright run in a vertical line.

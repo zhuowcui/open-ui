@@ -1,0 +1,36 @@
+{
+  "ahem_sha256": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+  "all_commands_terminal": true,
+  "capture_harness_sha256": "97444384d43fd032a13f71c2b5c8330b6bc7533157f5af17ffc93488a341e321",
+  "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+  "chromium_version": "Google Chrome for Testing 147.0.7727.50",
+  "driver_sha256": "7e83e448904f71d3a09fe0166b1e2b522597166bf0a341daca09935d2ceb6428",
+  "failure": "RuntimeError('Chromium exited before exposing its DevTools endpoint')",
+  "fontconfig_sha256": "99fd54cf2f3875bba44a2272b3dfe5adc7c08263ca0511ec2473ec5e59c09195",
+  "input_sha256": "e6f0fb566e6949189a425d48047d3da7718616bb94c9de9a06465f5ba57a4088",
+  "javascript_executed_by_openui": false,
+  "native_api_qualification": false,
+  "native_application_executed": false,
+  "native_pixel_qualification": false,
+  "observed_exit_code": 1,
+  "owner_pid": 297931,
+  "reference_only": true,
+  "samples": [],
+  "schema_version": 1,
+  "scripts_run_only_in_separate_chromium_reference_process": true,
+  "source": {
+    "clean": true,
+    "commit": "e98a5a17b6c9700a641079f3137572e0dfc85dd7",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c1ad161332023bb4c144d499f97c0c0fc0379f8577c791408bcf47d1bcd4e961",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "e98a5a17b6c9700a641079f3137572e0dfc85dd7",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c1ad161332023bb4c144d499f97c0c0fc0379f8577c791408bcf47d1bcd4e961",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true
+}

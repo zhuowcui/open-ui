@@ -1,0 +1,17 @@
+{
+  "example_header_updated_and_rustfmt_applied": true,
+  "fresh_combined_umbrella_qualification_pending": true,
+  "initial_check_changed_no_files": true,
+  "initial_check_reason": "rustfmt also removes the single-expression closure block braces; exact formatted replacement now verified",
+  "initial_whitespace_only_check_actual_exit_code": 1,
+  "measured_painter_sha256": "e40e9121ea5e04370384a3fdf5f47d7e0721fb2d196d209f2a8117b6e14a912f",
+  "private_candidate": "0a5f558733b94f7d0d7dfb06a01454913015e77d",
+  "production_example_sha256": "691590b93b48a3547c1fbc98a2050368d360f6a747f03e81a6756c8a1bd9fc55",
+  "production_painter_diff_is_only_rustfmt_closure_block_collapse": true,
+  "production_painter_rustfmt_applied": true,
+  "production_painter_sha256": "623b95a7626e3237c4f4c6bbbac1dcb42fdd1bb09974e29dc932e1789ce5808b",
+  "public_parent": "6e301f588d4064bdffbe170bd6b521564b1f760c",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "schema_version": 1
+}

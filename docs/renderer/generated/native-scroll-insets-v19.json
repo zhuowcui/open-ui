@@ -1,0 +1,248 @@
+{
+  "contract": "Open UI executes no JavaScript in any version. Apps call public native Rust methods and Rust callbacks over the shared Engine. Needed browser element behavior must be implemented in Rust and verified from a consuming native app. Pinned Chromium is the sole pixel target with zero tolerance; old Open UI bytes are immutable provenance.",
+  "new_release_states_admitted": 0,
+  "prior_snapshot": {
+    "path": "docs/renderer/generated/native-scroll-insets-v18.json",
+    "sha256": "034f96e129b1859e26c9589ab432a11c904fea04713a9f09d08e9d2e45f94d2a"
+  },
+  "prior_umbrella_documentation_verification": {
+    "checks": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-checks-v1101/receipt.json",
+      "sha256": "a49f6f713b3d5657c4b7cbd74685ff2a1ad19472d2dc9a366a9b0e7c75085a6e"
+    },
+    "ci": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-scroll-docs-ci-v1102/receipt.json",
+      "sha256": "bea43f2ba61dd7f0a49eb42d91f333979c97b0ff6c5ab79106d83a4384ddb60a"
+    },
+    "commit": "27e848d53c9d5cf317daf573a88e8f407551ecde",
+    "hosted_workflows_success": 3,
+    "private_runtime_qualification": false,
+    "read_only_checks_passed": 10,
+    "skipped_jobs": 5,
+    "skips_are_not_passes": true,
+    "successful_jobs": 6
+  },
+  "private_inheritance_candidate": {
+    "addition_cases_exact_all_four_profiles": 200,
+    "addition_cases_total": 201,
+    "all_22924_original_and_23728_expanded_chromium_invariants_unchanged": true,
+    "all_804_addition_invariants_unchanged": true,
+    "applied": false,
+    "changed_comparisons": 48,
+    "changed_test_ids": [
+      "wpt/css_position/static-position_htb-ltr-ltr",
+      "wpt/css_position/static-position_htb-ltr-rtl.tentative",
+      "wpt/css_position/static-position_htb-rtl-ltr.tentative",
+      "wpt/css_position/static-position_htb-rtl-rtl",
+      "wpt/css_position/static-position_vlr-ltr-ltr",
+      "wpt/css_position/static-position_vlr-ltr-rtl.tentative",
+      "wpt/css_position/static-position_vlr-rtl-ltr.tentative",
+      "wpt/css_position/static-position_vlr-rtl-rtl",
+      "wpt/css_position/static-position_vrl-ltr-ltr",
+      "wpt/css_position/static-position_vrl-ltr-rtl.tentative",
+      "wpt/css_position/static-position_vrl-rtl-ltr.tentative",
+      "wpt/css_position/static-position_vrl-rtl-rtl"
+    ],
+    "chromium_fonts_resources_unchanged": true,
+    "complete_expanded_results": {
+      "different": 1613,
+      "errors": 0,
+      "exact": 22115,
+      "profile_result_sha256": "e1843f1a2e8a91e2be7cb67223d1a84a3ac5f997f474d3f2984aeada7f40735b",
+      "total": 23728
+    },
+    "complete_original_results": {
+      "different": 1612,
+      "errors": 0,
+      "exact": 21312,
+      "profile_result_sha256": "88c2b01efcc0e4355c3de6badc85c56b698e49cd1c1c38d77ae8650fe791f4a4",
+      "total": 22924
+    },
+    "exact_gains": 0,
+    "exact_losses": 22,
+    "expanded_audit": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-inherited-expanded-audit-v1106.json",
+      "sha256": "45e32f128220a5aedc0204ce9a04d8c8183dd0bd88c960ee62a6bcaeb03896e6"
+    },
+    "expanded_observed_exit_code": 1,
+    "failing_additions": {
+      "wpt/css_display/display-contents-dynamic-fieldset-legend-001": [
+        {
+          "mismatched_pixels": 0,
+          "profile": "legacy-800x600@1",
+          "status": "exact"
+        },
+        {
+          "mismatched_pixels": 0,
+          "profile": "mobile-375x667@2",
+          "status": "exact"
+        },
+        {
+          "mismatched_pixels": 1315,
+          "profile": "desktop-1280x720@1.25",
+          "status": "different"
+        },
+        {
+          "mismatched_pixels": 0,
+          "profile": "desktop-1920x1080@1.5",
+          "status": "exact"
+        }
+      ]
+    },
+    "mismatched_pixel_count_worsens": 48,
+    "original_audit": {
+      "path": "out/renderer-evidence/native-viewport-scroll-v1/native-inherited-full-audit-v1104.json",
+      "sha256": "4c399b80553c4526c7264233e416619f7d60529a2ec2df30509982a42f3579a1"
+    },
+    "original_observed_exit_code": 1,
+    "owner": "openui-engine",
+    "qualification": "Fails strict original and expanded Chromium gates and regresses 22 previously exact comparisons. Do not promote.",
+    "root_cause_review": "pending",
+    "separate_original_census_agrees_all_22924": true,
+    "source": {
+      "clean": true,
+      "commit": "f328ed62bcae1d3368cd930c7e4130d265ca0883",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "fa885a341ff0ff2ecb64c133dbfa4ebced6929692660889e926df931ec274893",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "private_native_relative_candidate": {
+    "applied": false,
+    "base": "f328ed62bcae1d3368cd930c7e4130d265ca0883",
+    "baseline": {
+      "consumer_build_failure": "unresolved import openui_geometry; this crate is not a direct dependency of openui",
+      "consumer_build_observed_exit_code": 101,
+      "consumer_executed": false,
+      "engine_observed_exit_code": 101,
+      "engine_tests_failed": 4,
+      "engine_tests_passed": 3,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-diagnostic-v1093/receipt.json",
+        "sha256": "12d35f272ddb0fe8c19e9c911c1f5237b51f1a44c7eebf813bf2a67fa0f46c62"
+      },
+      "source": {
+        "clean": true,
+        "commit": "9840f4c274f322007dc9836e08c9935ed52ee8f9",
+        "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+        "source_tree_sha256": "6215115d13e20a6aafbc919507a2bf6448387cae10f813d6930e288c481b8317",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "clean_build": {
+      "abi_exports": 113,
+      "c_consumers_passed": 11,
+      "cpp_consumers_passed": 5,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-clean-v1095/build.json",
+        "sha256": "c367edbdbd333846dd7b479b109c9757038d3b9867d3f1647ecdea40fd79263b"
+      },
+      "steps_passed": 7,
+      "workspace_failed": 0,
+      "workspace_ignored": 13,
+      "workspace_passed": 8535
+    },
+    "failed_matrix_wrapper": {
+      "cause": "The wrapper selected a nonexistent worktree directory; subprocess failed before the renderer matrix started.",
+      "corrected_results_version": "v1105",
+      "pixel_result_available": false,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-matrix-harness-failure-v1108.json",
+        "sha256": "3fd6a1bbbb74fb66772f500a7369fdd24b7ec4042836a9349dad8bfa98a7208c"
+      },
+      "renderer_matrix_started": false
+    },
+    "fixed_targeted": {
+      "consumer_observed_exit_code": 0,
+      "engine_tests_failed": 0,
+      "engine_tests_passed": 7,
+      "observed_exit_code": 0,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-fixed-v1094/receipt.json",
+        "sha256": "b6c05ce32e52c98fa0e59a391bfe8e00e53c1cb13ed72580e2a478620eae6989"
+      }
+    },
+    "native_c": {
+      "gains_against_baseline": 4,
+      "immutable_chromium_reference_runs": 2,
+      "queries_exact": 8,
+      "queries_total": 8,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-c-v1098/receipt.json",
+        "sha256": "4dcd761c1dec0d6fafa06260eb723c7727625073597a67d12c52c057547c1e16"
+      }
+    },
+    "native_rust": {
+      "consumer_runs_passed": 5,
+      "device_scales": [
+        1,
+        1.25,
+        1.5,
+        2,
+        3
+      ],
+      "independent_chromium_captures_per_state": 2,
+      "javascript_executed_by_openui": false,
+      "pixel_comparisons_exact": 50,
+      "pixel_comparisons_total": 50,
+      "pixel_tolerance": 0,
+      "pseudo_and_line_height_checks": "owned computed style assertions; no pseudo glyph pixel qualification claimed",
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-oracle-v1096/receipt.json",
+        "sha256": "a592e1985087acb31b979e2596a78b7fbe1a58c74d390c2c2abc4193f992f6ed"
+      }
+    },
+    "new_regression_tests": 5,
+    "own_full_and_expanded_censuses_started": false,
+    "patch": {
+      "path": "docs/renderer/evidence/native-inherited-styles-v1/native-relative-styles-v1.patch",
+      "sha256": "09a5eb549b56be4c1afa687e922e0c4b4d374d4857b5d831f7815f88388538b6"
+    },
+    "public_native_rust_consumer": "bindings/rust/openui/examples/native_relative_styles.rs",
+    "public_typed_constructor": "LengthValue::calc_percent_px",
+    "qualification": "Native guards and both raster matrices pass. The inherited base has 22 strict census regressions; full combined-source qualification and source review remain open. Unapplied.",
+    "raster": {
+      "all_1600_comparison_invariants_unchanged": true,
+      "focused_exact": 640,
+      "focused_total": 640,
+      "primitive_exact": 960,
+      "primitive_total": 960,
+      "profiles_per_matrix": 40,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-raster-audit-v1107.json",
+        "sha256": "a0a3b25b6c4b6dace2b3769ee68ddc9d149447e841cb062541c568f68690201b"
+      }
+    },
+    "read_only_checks": {
+      "passed": 10,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-checks-v1091/receipt.json",
+        "sha256": "ea5ca1fbf3585a01fad97932b24ddcd388c6ab32225d91484861a48e51c2af03"
+      }
+    },
+    "source": {
+      "clean": true,
+      "commit": "3f1d296f4ecb4ff4b895b3755d1fd7b3472c7b42",
+      "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+      "source_tree_sha256": "1f50134db36acad5d6d430694b8b0ab43c0dd1a6f558f70fbaeb77450ca6e1d5",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace_rust_format": {
+      "observed_exit_code": 0,
+      "receipt": {
+        "path": "out/renderer-evidence/native-viewport-scroll-v1/native-relative-after-census-v1092/receipt.json",
+        "sha256": "42ee3b0a11e14354fcee54cf58ed2d98c603d8d6b0d49cc2b55629f7f57bb965"
+      }
+    }
+  },
+  "probe_sha256": "8b680ee4408fa616e6e55627ba5b2b0dc26c5542912bdf954a6361a7b2c35ace",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "required_work_still_open": [
+    "Repair and review static-position regressions through shared Engine/layout code and minimized native oracles.",
+    "Complete original and expanded Chromium equality and reviewed ownership of all residuals.",
+    "Complete needed public Rust APIs; an internal fixture or a Chromium script exclusion does not waive missing native behavior.",
+    "Compositor, 3D, hardening, platform/accessibility, performance, reproducible packaging, provenance and protected release publication."
+  ],
+  "schema_version": 1
+}

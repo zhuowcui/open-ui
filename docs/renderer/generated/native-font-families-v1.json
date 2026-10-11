@@ -1,0 +1,2746 @@
+{
+  "all_local_commands_terminal": true,
+  "all_members_hash_verified": true,
+  "all_native_apis_qualified": false,
+  "archive": {
+    "bytes": 26044658,
+    "excluded": [
+      {
+        "bytes": 58294504,
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-general-font-baseline-v3833/native_font_family_probe",
+        "reason": "owned executable; exact fresh compiler provenance and hash archived",
+        "sha256": "c233826280b30819cb0633b1999739490eb4ddc077bcbcdf06ca261ddac85fdc"
+      },
+      {
+        "bytes": 58289056,
+        "path": "/mnt/d/openui-v02-qualification-d174ea0b/native-general-font-candidate-v3836/native_font_family_probe",
+        "reason": "owned executable; exact fresh compiler provenance and hash archived",
+        "sha256": "abad7233616f641db2699399f999fec9fc3cc31caae614f495a2dd8060749016"
+      }
+    ],
+    "files": 305,
+    "members": [
+      {
+        "bytes": 2138,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/archive-writer/driver.py.gz",
+        "raw_bytes": 6229,
+        "raw_sha256": "ca1a5a8d184bf3bd4c6db6d47836a60f205ae9d4d27037a382906f4ac5c35765",
+        "sha256": "360c8ebebb6c7c5dd0523413bbe7183b613cda9bd4c68f75aa8765e44a7bdac6"
+      },
+      {
+        "bytes": 261,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/archive-writer/terminal-v3842.json.gz",
+        "raw_bytes": 1146,
+        "raw_sha256": "c916e3efbe1792c2873330bd6af5f62b7678946f0ecaa0838a0fdcf2fbfa6083",
+        "sha256": "12300109099cf6dc6193f18797d758f0e9d7d11ac54d3dc8302ab3f3dc501b7b"
+      },
+      {
+        "bytes": 636,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/clean-local-packages.log.gz",
+        "raw_bytes": 7544,
+        "raw_sha256": "69a668054bf13b311d1292139b323169a848ef40d1cd1294ec87a1d3e555926e",
+        "sha256": "abc8f4560c8bec912ec7112a6ac11cb7f993f7e37aa0f7224cec50a79676caf5"
+      },
+      {
+        "bytes": 66733,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/metadata.log.gz",
+        "raw_bytes": 700510,
+        "raw_sha256": "636559a528f7c5f5833381e73f3f0027c51e5588801a78aa4b174ac3610b1971",
+        "sha256": "c231a23c8043a166cfdc004d614f15c7262e5e2cfb5572a8466642a2a1214f17"
+      },
+      {
+        "bytes": 7697,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/native-build.log.gz",
+        "raw_bytes": 85189,
+        "raw_sha256": "891e11eb8b04656d07305c443fbb0a5b9923f5e89eeb074c567753605bb63deb",
+        "sha256": "b22fbeafdf2d83943d3cf957ad2581154bb79444ba0e747ba9bcb8bce64905c4"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0/native-1/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 16159,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0/native-1/after.png",
+        "raw_bytes": 16159,
+        "raw_sha256": "dd2ca28ab3f42803c23e0b4436c58cca6e7c72ac468d6b3e64ab2fec52a2a228",
+        "sha256": "dd2ca28ab3f42803c23e0b4436c58cca6e7c72ac468d6b3e64ab2fec52a2a228"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0/native-1/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 15148,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0/native-1/alias.png",
+        "raw_bytes": 15148,
+        "raw_sha256": "7d635600006c9fc5ce92ccad49c800ce78636e882a85a4472be99b7f2438e84a",
+        "sha256": "7d635600006c9fc5ce92ccad49c800ce78636e882a85a4472be99b7f2438e84a"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0/native-1/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 11047,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0/native-1/before.png",
+        "raw_bytes": 11047,
+        "raw_sha256": "44ac68e54362903370b4b766edcb8b842f62646a5fec11a6cf32fce5135c879e",
+        "sha256": "44ac68e54362903370b4b766edcb8b842f62646a5fec11a6cf32fce5135c879e"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0/native-2/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 16159,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0/native-2/after.png",
+        "raw_bytes": 16159,
+        "raw_sha256": "dd2ca28ab3f42803c23e0b4436c58cca6e7c72ac468d6b3e64ab2fec52a2a228",
+        "sha256": "dd2ca28ab3f42803c23e0b4436c58cca6e7c72ac468d6b3e64ab2fec52a2a228"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0/native-2/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 15148,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0/native-2/alias.png",
+        "raw_bytes": 15148,
+        "raw_sha256": "7d635600006c9fc5ce92ccad49c800ce78636e882a85a4472be99b7f2438e84a",
+        "sha256": "7d635600006c9fc5ce92ccad49c800ce78636e882a85a4472be99b7f2438e84a"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0/native-2/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 11047,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0/native-2/before.png",
+        "raw_bytes": 11047,
+        "raw_sha256": "44ac68e54362903370b4b766edcb8b842f62646a5fec11a6cf32fce5135c879e",
+        "sha256": "44ac68e54362903370b4b766edcb8b842f62646a5fec11a6cf32fce5135c879e"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-0/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1/native-1/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 30182,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1/native-1/after.png",
+        "raw_bytes": 30182,
+        "raw_sha256": "697131655de9b9176e6f8be043171beb190744ae2eb96a123530acb729ef780a",
+        "sha256": "697131655de9b9176e6f8be043171beb190744ae2eb96a123530acb729ef780a"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1/native-1/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 27998,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1/native-1/alias.png",
+        "raw_bytes": 27998,
+        "raw_sha256": "51ba4c2550412aebfe39babec7369d4cc7773538011caa46539ae2943ecc42dc",
+        "sha256": "51ba4c2550412aebfe39babec7369d4cc7773538011caa46539ae2943ecc42dc"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1/native-1/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 23525,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1/native-1/before.png",
+        "raw_bytes": 23525,
+        "raw_sha256": "e2db2d395d79fdb46480c6a2fdd04615b99a5474a3367e25b911e8341f216263",
+        "sha256": "e2db2d395d79fdb46480c6a2fdd04615b99a5474a3367e25b911e8341f216263"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1/native-2/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 30182,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1/native-2/after.png",
+        "raw_bytes": 30182,
+        "raw_sha256": "697131655de9b9176e6f8be043171beb190744ae2eb96a123530acb729ef780a",
+        "sha256": "697131655de9b9176e6f8be043171beb190744ae2eb96a123530acb729ef780a"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1/native-2/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 27998,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1/native-2/alias.png",
+        "raw_bytes": 27998,
+        "raw_sha256": "51ba4c2550412aebfe39babec7369d4cc7773538011caa46539ae2943ecc42dc",
+        "sha256": "51ba4c2550412aebfe39babec7369d4cc7773538011caa46539ae2943ecc42dc"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1/native-2/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 23525,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1/native-2/before.png",
+        "raw_bytes": 23525,
+        "raw_sha256": "e2db2d395d79fdb46480c6a2fdd04615b99a5474a3367e25b911e8341f216263",
+        "sha256": "e2db2d395d79fdb46480c6a2fdd04615b99a5474a3367e25b911e8341f216263"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-1/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2/native-1/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 27017,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2/native-1/after.png",
+        "raw_bytes": 27017,
+        "raw_sha256": "8dcc92d0fca466f072a3ddc36884a6d9200f8c7b924e147ceac596bf942c66f8",
+        "sha256": "8dcc92d0fca466f072a3ddc36884a6d9200f8c7b924e147ceac596bf942c66f8"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2/native-1/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 25869,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2/native-1/alias.png",
+        "raw_bytes": 25869,
+        "raw_sha256": "fbb6fe515e34f036f0bf9d6b5d867ab95ad9b57d9d080872f0c0926991338d99",
+        "sha256": "fbb6fe515e34f036f0bf9d6b5d867ab95ad9b57d9d080872f0c0926991338d99"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2/native-1/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 18510,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2/native-1/before.png",
+        "raw_bytes": 18510,
+        "raw_sha256": "877877c3e3508a98f9c6be0718514318612f8fe71e53c3c1754cdafd20f1f5f0",
+        "sha256": "877877c3e3508a98f9c6be0718514318612f8fe71e53c3c1754cdafd20f1f5f0"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2/native-2/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 27017,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2/native-2/after.png",
+        "raw_bytes": 27017,
+        "raw_sha256": "8dcc92d0fca466f072a3ddc36884a6d9200f8c7b924e147ceac596bf942c66f8",
+        "sha256": "8dcc92d0fca466f072a3ddc36884a6d9200f8c7b924e147ceac596bf942c66f8"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2/native-2/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 25869,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2/native-2/alias.png",
+        "raw_bytes": 25869,
+        "raw_sha256": "fbb6fe515e34f036f0bf9d6b5d867ab95ad9b57d9d080872f0c0926991338d99",
+        "sha256": "fbb6fe515e34f036f0bf9d6b5d867ab95ad9b57d9d080872f0c0926991338d99"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2/native-2/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 18510,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2/native-2/before.png",
+        "raw_bytes": 18510,
+        "raw_sha256": "877877c3e3508a98f9c6be0718514318612f8fe71e53c3c1754cdafd20f1f5f0",
+        "sha256": "877877c3e3508a98f9c6be0718514318612f8fe71e53c3c1754cdafd20f1f5f0"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-2/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3/native-1/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 44752,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3/native-1/after.png",
+        "raw_bytes": 44752,
+        "raw_sha256": "3b3957e83bb27f856d9c82db3763a0be13edec5bf47af77d2cb930048e8aa0bf",
+        "sha256": "3b3957e83bb27f856d9c82db3763a0be13edec5bf47af77d2cb930048e8aa0bf"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3/native-1/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 43332,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3/native-1/alias.png",
+        "raw_bytes": 43332,
+        "raw_sha256": "f480db18af6e0a55168d90a06e763a906adc1b9554788db11ef1ced1da54aeec",
+        "sha256": "f480db18af6e0a55168d90a06e763a906adc1b9554788db11ef1ced1da54aeec"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3/native-1/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 36089,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3/native-1/before.png",
+        "raw_bytes": 36089,
+        "raw_sha256": "f789b3cce483bca862fc429eb2f0fe6d44bd169ff72dda10856adb33f8a30e23",
+        "sha256": "f789b3cce483bca862fc429eb2f0fe6d44bd169ff72dda10856adb33f8a30e23"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3/native-2/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 44752,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3/native-2/after.png",
+        "raw_bytes": 44752,
+        "raw_sha256": "3b3957e83bb27f856d9c82db3763a0be13edec5bf47af77d2cb930048e8aa0bf",
+        "sha256": "3b3957e83bb27f856d9c82db3763a0be13edec5bf47af77d2cb930048e8aa0bf"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3/native-2/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 43332,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3/native-2/alias.png",
+        "raw_bytes": 43332,
+        "raw_sha256": "f480db18af6e0a55168d90a06e763a906adc1b9554788db11ef1ced1da54aeec",
+        "sha256": "f480db18af6e0a55168d90a06e763a906adc1b9554788db11ef1ced1da54aeec"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3/native-2/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 36089,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3/native-2/before.png",
+        "raw_bytes": 36089,
+        "raw_sha256": "f789b3cce483bca862fc429eb2f0fe6d44bd169ff72dda10856adb33f8a30e23",
+        "sha256": "f789b3cce483bca862fc429eb2f0fe6d44bd169ff72dda10856adb33f8a30e23"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-3/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4/native-1/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 60497,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4/native-1/after.png",
+        "raw_bytes": 60497,
+        "raw_sha256": "68b7fc9ae5966744df740b7723885f70a7893a68fe24ceb3335adb761981ad73",
+        "sha256": "68b7fc9ae5966744df740b7723885f70a7893a68fe24ceb3335adb761981ad73"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4/native-1/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 57550,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4/native-1/alias.png",
+        "raw_bytes": 57550,
+        "raw_sha256": "4956116b639b5f5d82541c4571db6b5156c95f836b33007c0409acfb9decea94",
+        "sha256": "4956116b639b5f5d82541c4571db6b5156c95f836b33007c0409acfb9decea94"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4/native-1/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 48076,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4/native-1/before.png",
+        "raw_bytes": 48076,
+        "raw_sha256": "54f35e9f2ec410f73478286c85c07a8cbc34fab89393c163c01f56e7dfc9239e",
+        "sha256": "54f35e9f2ec410f73478286c85c07a8cbc34fab89393c163c01f56e7dfc9239e"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4/native-2/after.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "aa8b79f24f59d8f440f20f0b7edf9531079ea9878f780b4ce376434455c2da7e",
+        "sha256": "9c595266591106296a60063c53e5220b3fe4577529f9a6a65f078dbdb9b95af9"
+      },
+      {
+        "bytes": 60497,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4/native-2/after.png",
+        "raw_bytes": 60497,
+        "raw_sha256": "68b7fc9ae5966744df740b7723885f70a7893a68fe24ceb3335adb761981ad73",
+        "sha256": "68b7fc9ae5966744df740b7723885f70a7893a68fe24ceb3335adb761981ad73"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4/native-2/alias.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 57550,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4/native-2/alias.png",
+        "raw_bytes": 57550,
+        "raw_sha256": "4956116b639b5f5d82541c4571db6b5156c95f836b33007c0409acfb9decea94",
+        "sha256": "4956116b639b5f5d82541c4571db6b5156c95f836b33007c0409acfb9decea94"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4/native-2/before.json.gz",
+        "raw_bytes": 1899,
+        "raw_sha256": "bd6783be56010220a7a2085a19c5979b9924eec5f0f643a0fdd39e0225e0a4fa",
+        "sha256": "73e6e0e04f57738253c5164f4f2ce0214eba886bf5f459747c0949fdcd8acac5"
+      },
+      {
+        "bytes": 48076,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4/native-2/before.png",
+        "raw_bytes": 48076,
+        "raw_sha256": "54f35e9f2ec410f73478286c85c07a8cbc34fab89393c163c01f56e7dfc9239e",
+        "sha256": "54f35e9f2ec410f73478286c85c07a8cbc34fab89393c163c01f56e7dfc9239e"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/profile-4/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 31956,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/baseline/receipt.json.gz",
+        "raw_bytes": 569504,
+        "raw_sha256": "509a91392f9ba48247cc2d0dddce1f925082fd5cecec45e95eca2fbc9202df3e",
+        "sha256": "5844a69c0881daf131a14d535f080435fd23a7fee429ca5c37edfe64173f3d50"
+      },
+      {
+        "bytes": 637,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/clean-local-packages.log.gz",
+        "raw_bytes": 7544,
+        "raw_sha256": "c35d48e97cea239cf8c468b32ed05a1866428ef1b8cf8041d7e06568bb9fe806",
+        "sha256": "f1bd5b99cb172577b2597def2b4f3893d8cc80dbc7fb964032bf0af12831eb7b"
+      },
+      {
+        "bytes": 66733,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/metadata.log.gz",
+        "raw_bytes": 700510,
+        "raw_sha256": "636559a528f7c5f5833381e73f3f0027c51e5588801a78aa4b174ac3610b1971",
+        "sha256": "c231a23c8043a166cfdc004d614f15c7262e5e2cfb5572a8466642a2a1214f17"
+      },
+      {
+        "bytes": 7683,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/native-build.log.gz",
+        "raw_bytes": 85189,
+        "raw_sha256": "5dd6be885649a2519a3ad86356c31a8e854116f356c28bc9047f82e77f5a52f2",
+        "sha256": "6b7d41be2cfb581d803791b270470b4bb68bdbb49f4edc401e3f2ac7b1c0f770"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 251,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0/native-1/after.json.gz",
+        "raw_bytes": 1900,
+        "raw_sha256": "a66b2b97d462415be05c648c7a71333d84ecf022154df0b1a412fab8a2a0e02d",
+        "sha256": "8d223095654ffeceba3b9a060c7b2cccebb6886b3a57fcccc6c162559ccec556"
+      },
+      {
+        "bytes": 16170,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0/native-1/after.png",
+        "raw_bytes": 16170,
+        "raw_sha256": "061d5fb576b37604dbbb0e6557bf3a2fbc3a9677c32f6c6575bbb8df9bc8d7a5",
+        "sha256": "061d5fb576b37604dbbb0e6557bf3a2fbc3a9677c32f6c6575bbb8df9bc8d7a5"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0/native-1/alias.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 15201,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0/native-1/alias.png",
+        "raw_bytes": 15201,
+        "raw_sha256": "e4569b91478921e3d61ff90d7ca73da98382f311474618033bc96483ff1d2072",
+        "sha256": "e4569b91478921e3d61ff90d7ca73da98382f311474618033bc96483ff1d2072"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0/native-1/before.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 11043,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0/native-1/before.png",
+        "raw_bytes": 11043,
+        "raw_sha256": "b43cf5a5dd91e0e6f36c161109ce50123db48a50f602dca08abadde96d9226a4",
+        "sha256": "b43cf5a5dd91e0e6f36c161109ce50123db48a50f602dca08abadde96d9226a4"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 251,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0/native-2/after.json.gz",
+        "raw_bytes": 1900,
+        "raw_sha256": "a66b2b97d462415be05c648c7a71333d84ecf022154df0b1a412fab8a2a0e02d",
+        "sha256": "8d223095654ffeceba3b9a060c7b2cccebb6886b3a57fcccc6c162559ccec556"
+      },
+      {
+        "bytes": 16170,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0/native-2/after.png",
+        "raw_bytes": 16170,
+        "raw_sha256": "061d5fb576b37604dbbb0e6557bf3a2fbc3a9677c32f6c6575bbb8df9bc8d7a5",
+        "sha256": "061d5fb576b37604dbbb0e6557bf3a2fbc3a9677c32f6c6575bbb8df9bc8d7a5"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0/native-2/alias.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 15201,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0/native-2/alias.png",
+        "raw_bytes": 15201,
+        "raw_sha256": "e4569b91478921e3d61ff90d7ca73da98382f311474618033bc96483ff1d2072",
+        "sha256": "e4569b91478921e3d61ff90d7ca73da98382f311474618033bc96483ff1d2072"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0/native-2/before.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 11043,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0/native-2/before.png",
+        "raw_bytes": 11043,
+        "raw_sha256": "b43cf5a5dd91e0e6f36c161109ce50123db48a50f602dca08abadde96d9226a4",
+        "sha256": "b43cf5a5dd91e0e6f36c161109ce50123db48a50f602dca08abadde96d9226a4"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-0/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 251,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1/native-1/after.json.gz",
+        "raw_bytes": 1900,
+        "raw_sha256": "a66b2b97d462415be05c648c7a71333d84ecf022154df0b1a412fab8a2a0e02d",
+        "sha256": "8d223095654ffeceba3b9a060c7b2cccebb6886b3a57fcccc6c162559ccec556"
+      },
+      {
+        "bytes": 32524,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1/native-1/after.png",
+        "raw_bytes": 32524,
+        "raw_sha256": "d83626a792a7faf83cf20a11eaf57999f6a20f2677388fd1abdab9b65532b677",
+        "sha256": "d83626a792a7faf83cf20a11eaf57999f6a20f2677388fd1abdab9b65532b677"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1/native-1/alias.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 30492,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1/native-1/alias.png",
+        "raw_bytes": 30492,
+        "raw_sha256": "59bcd284b249118ffb93831071e848cc67f65c32dc0e6839eaf30b70f63634e7",
+        "sha256": "59bcd284b249118ffb93831071e848cc67f65c32dc0e6839eaf30b70f63634e7"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1/native-1/before.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 23530,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1/native-1/before.png",
+        "raw_bytes": 23530,
+        "raw_sha256": "dbf2e969f7e12ebfe9597844e0e6f293f52c8b8b3359bc60c8bf530f410e73b0",
+        "sha256": "dbf2e969f7e12ebfe9597844e0e6f293f52c8b8b3359bc60c8bf530f410e73b0"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 251,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1/native-2/after.json.gz",
+        "raw_bytes": 1900,
+        "raw_sha256": "a66b2b97d462415be05c648c7a71333d84ecf022154df0b1a412fab8a2a0e02d",
+        "sha256": "8d223095654ffeceba3b9a060c7b2cccebb6886b3a57fcccc6c162559ccec556"
+      },
+      {
+        "bytes": 32524,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1/native-2/after.png",
+        "raw_bytes": 32524,
+        "raw_sha256": "d83626a792a7faf83cf20a11eaf57999f6a20f2677388fd1abdab9b65532b677",
+        "sha256": "d83626a792a7faf83cf20a11eaf57999f6a20f2677388fd1abdab9b65532b677"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1/native-2/alias.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 30492,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1/native-2/alias.png",
+        "raw_bytes": 30492,
+        "raw_sha256": "59bcd284b249118ffb93831071e848cc67f65c32dc0e6839eaf30b70f63634e7",
+        "sha256": "59bcd284b249118ffb93831071e848cc67f65c32dc0e6839eaf30b70f63634e7"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1/native-2/before.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 23530,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1/native-2/before.png",
+        "raw_bytes": 23530,
+        "raw_sha256": "dbf2e969f7e12ebfe9597844e0e6f293f52c8b8b3359bc60c8bf530f410e73b0",
+        "sha256": "dbf2e969f7e12ebfe9597844e0e6f293f52c8b8b3359bc60c8bf530f410e73b0"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-1/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 251,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2/native-1/after.json.gz",
+        "raw_bytes": 1900,
+        "raw_sha256": "a66b2b97d462415be05c648c7a71333d84ecf022154df0b1a412fab8a2a0e02d",
+        "sha256": "8d223095654ffeceba3b9a060c7b2cccebb6886b3a57fcccc6c162559ccec556"
+      },
+      {
+        "bytes": 28683,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2/native-1/after.png",
+        "raw_bytes": 28683,
+        "raw_sha256": "44f3442d8636d33d6bf0527bd7b994a2e22977c83c4cc2ff3e70ff9f61dc4490",
+        "sha256": "44f3442d8636d33d6bf0527bd7b994a2e22977c83c4cc2ff3e70ff9f61dc4490"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2/native-1/alias.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 27522,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2/native-1/alias.png",
+        "raw_bytes": 27522,
+        "raw_sha256": "40178f65c924e622b6d633701f24c98b5ffae77f19745f0c35d4b35165b8a688",
+        "sha256": "40178f65c924e622b6d633701f24c98b5ffae77f19745f0c35d4b35165b8a688"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2/native-1/before.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 18549,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2/native-1/before.png",
+        "raw_bytes": 18549,
+        "raw_sha256": "e1b186cebd343da1cbf9e683438e241413a3cca4c113d97276480b3da6e36d25",
+        "sha256": "e1b186cebd343da1cbf9e683438e241413a3cca4c113d97276480b3da6e36d25"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 251,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2/native-2/after.json.gz",
+        "raw_bytes": 1900,
+        "raw_sha256": "a66b2b97d462415be05c648c7a71333d84ecf022154df0b1a412fab8a2a0e02d",
+        "sha256": "8d223095654ffeceba3b9a060c7b2cccebb6886b3a57fcccc6c162559ccec556"
+      },
+      {
+        "bytes": 28683,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2/native-2/after.png",
+        "raw_bytes": 28683,
+        "raw_sha256": "44f3442d8636d33d6bf0527bd7b994a2e22977c83c4cc2ff3e70ff9f61dc4490",
+        "sha256": "44f3442d8636d33d6bf0527bd7b994a2e22977c83c4cc2ff3e70ff9f61dc4490"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2/native-2/alias.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 27522,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2/native-2/alias.png",
+        "raw_bytes": 27522,
+        "raw_sha256": "40178f65c924e622b6d633701f24c98b5ffae77f19745f0c35d4b35165b8a688",
+        "sha256": "40178f65c924e622b6d633701f24c98b5ffae77f19745f0c35d4b35165b8a688"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2/native-2/before.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 18549,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2/native-2/before.png",
+        "raw_bytes": 18549,
+        "raw_sha256": "e1b186cebd343da1cbf9e683438e241413a3cca4c113d97276480b3da6e36d25",
+        "sha256": "e1b186cebd343da1cbf9e683438e241413a3cca4c113d97276480b3da6e36d25"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-2/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 251,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3/native-1/after.json.gz",
+        "raw_bytes": 1900,
+        "raw_sha256": "a66b2b97d462415be05c648c7a71333d84ecf022154df0b1a412fab8a2a0e02d",
+        "sha256": "8d223095654ffeceba3b9a060c7b2cccebb6886b3a57fcccc6c162559ccec556"
+      },
+      {
+        "bytes": 46620,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3/native-1/after.png",
+        "raw_bytes": 46620,
+        "raw_sha256": "03966b9551ac3fb0b7ed5f75ac170e8dea221b5869d760304c490cfe5b68924f",
+        "sha256": "03966b9551ac3fb0b7ed5f75ac170e8dea221b5869d760304c490cfe5b68924f"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3/native-1/alias.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 45258,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3/native-1/alias.png",
+        "raw_bytes": 45258,
+        "raw_sha256": "58feb9abbf6b2ff0e537ca330275665da45491c38183c7f93280c885b2bbb734",
+        "sha256": "58feb9abbf6b2ff0e537ca330275665da45491c38183c7f93280c885b2bbb734"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3/native-1/before.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 36076,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3/native-1/before.png",
+        "raw_bytes": 36076,
+        "raw_sha256": "956042390409ec74b8c4849768c2022679c9dd5eef2f473b7aa568cb89ffe7aa",
+        "sha256": "956042390409ec74b8c4849768c2022679c9dd5eef2f473b7aa568cb89ffe7aa"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 251,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3/native-2/after.json.gz",
+        "raw_bytes": 1900,
+        "raw_sha256": "a66b2b97d462415be05c648c7a71333d84ecf022154df0b1a412fab8a2a0e02d",
+        "sha256": "8d223095654ffeceba3b9a060c7b2cccebb6886b3a57fcccc6c162559ccec556"
+      },
+      {
+        "bytes": 46620,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3/native-2/after.png",
+        "raw_bytes": 46620,
+        "raw_sha256": "03966b9551ac3fb0b7ed5f75ac170e8dea221b5869d760304c490cfe5b68924f",
+        "sha256": "03966b9551ac3fb0b7ed5f75ac170e8dea221b5869d760304c490cfe5b68924f"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3/native-2/alias.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 45258,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3/native-2/alias.png",
+        "raw_bytes": 45258,
+        "raw_sha256": "58feb9abbf6b2ff0e537ca330275665da45491c38183c7f93280c885b2bbb734",
+        "sha256": "58feb9abbf6b2ff0e537ca330275665da45491c38183c7f93280c885b2bbb734"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3/native-2/before.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 36076,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3/native-2/before.png",
+        "raw_bytes": 36076,
+        "raw_sha256": "956042390409ec74b8c4849768c2022679c9dd5eef2f473b7aa568cb89ffe7aa",
+        "sha256": "956042390409ec74b8c4849768c2022679c9dd5eef2f473b7aa568cb89ffe7aa"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-3/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4-native-1.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4-native-2.log.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      {
+        "bytes": 251,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4/native-1/after.json.gz",
+        "raw_bytes": 1900,
+        "raw_sha256": "a66b2b97d462415be05c648c7a71333d84ecf022154df0b1a412fab8a2a0e02d",
+        "sha256": "8d223095654ffeceba3b9a060c7b2cccebb6886b3a57fcccc6c162559ccec556"
+      },
+      {
+        "bytes": 65058,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4/native-1/after.png",
+        "raw_bytes": 65058,
+        "raw_sha256": "43fa08bde4641b411b90d66b8d5cc5657cb9d9fe634c0c49d1a92ed9fb55e001",
+        "sha256": "43fa08bde4641b411b90d66b8d5cc5657cb9d9fe634c0c49d1a92ed9fb55e001"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4/native-1/alias.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 62342,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4/native-1/alias.png",
+        "raw_bytes": 62342,
+        "raw_sha256": "29f928e99a49b0603e9bfc1f0c9ff94ca8106a0160d0709c985b69502f4fbca5",
+        "sha256": "29f928e99a49b0603e9bfc1f0c9ff94ca8106a0160d0709c985b69502f4fbca5"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4/native-1/before.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 48110,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4/native-1/before.png",
+        "raw_bytes": 48110,
+        "raw_sha256": "58056633981ad514d1f7759520bc489a0b90aafa82101aa5f0ec778803026476",
+        "sha256": "58056633981ad514d1f7759520bc489a0b90aafa82101aa5f0ec778803026476"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4/native-1/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 251,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4/native-2/after.json.gz",
+        "raw_bytes": 1900,
+        "raw_sha256": "a66b2b97d462415be05c648c7a71333d84ecf022154df0b1a412fab8a2a0e02d",
+        "sha256": "8d223095654ffeceba3b9a060c7b2cccebb6886b3a57fcccc6c162559ccec556"
+      },
+      {
+        "bytes": 65058,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4/native-2/after.png",
+        "raw_bytes": 65058,
+        "raw_sha256": "43fa08bde4641b411b90d66b8d5cc5657cb9d9fe634c0c49d1a92ed9fb55e001",
+        "sha256": "43fa08bde4641b411b90d66b8d5cc5657cb9d9fe634c0c49d1a92ed9fb55e001"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4/native-2/alias.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 62342,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4/native-2/alias.png",
+        "raw_bytes": 62342,
+        "raw_sha256": "29f928e99a49b0603e9bfc1f0c9ff94ca8106a0160d0709c985b69502f4fbca5",
+        "sha256": "29f928e99a49b0603e9bfc1f0c9ff94ca8106a0160d0709c985b69502f4fbca5"
+      },
+      {
+        "bytes": 256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4/native-2/before.json.gz",
+        "raw_bytes": 1901,
+        "raw_sha256": "a31438d4cff47b8b63c514b67e81efd6c7ee3ead993056041a61ad8d14c2f231",
+        "sha256": "761f696b9b0f1cba38323d6576f30ca72d0accb7cd07da83dfe48df08925d8f0"
+      },
+      {
+        "bytes": 48110,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4/native-2/before.png",
+        "raw_bytes": 48110,
+        "raw_sha256": "58056633981ad514d1f7759520bc489a0b90aafa82101aa5f0ec778803026476",
+        "sha256": "58056633981ad514d1f7759520bc489a0b90aafa82101aa5f0ec778803026476"
+      },
+      {
+        "bytes": 102,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/profile-4/native-2/lifecycle.json.gz",
+        "raw_bytes": 94,
+        "raw_sha256": "3b5d74c10569e77278b682661ada58a44ae7d4e1d65c90868e86ed0af6a406fe",
+        "sha256": "903a8e010f5d0117b7d973c7911388e309205be5e555eb64c5636714a092c136"
+      },
+      {
+        "bytes": 32086,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/receipt.json.gz",
+        "raw_bytes": 568345,
+        "raw_sha256": "5195a77f6134e1ff9ea08e11f928b76b08cc47866f2011a5b417b1de3c78ea08",
+        "sha256": "069080508831e8457e28652e1cc1f598a55b911538b6bca1c25940db32ad0d5c"
+      },
+      {
+        "bytes": 17599,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/candidate/text-layout-paint-guards.log.gz",
+        "raw_bytes": 95242,
+        "raw_sha256": "f9b269fa0c8de4c29bb67c0d2f99a0652cecfd67d00c1555f5760213236bcbe1",
+        "sha256": "87f69ac4e153445891aae20a4a17dfbcf2dad066bd7402d6eb254ad859d2ff56"
+      },
+      {
+        "bytes": 15075,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-1-after-capture-1.png",
+        "raw_bytes": 15075,
+        "raw_sha256": "720ac9b239ba708d1cc8caca6d002bddcb36717f99af749f39911470d877e544",
+        "sha256": "720ac9b239ba708d1cc8caca6d002bddcb36717f99af749f39911470d877e544"
+      },
+      {
+        "bytes": 15075,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-1-after-capture-2.png",
+        "raw_bytes": 15075,
+        "raw_sha256": "720ac9b239ba708d1cc8caca6d002bddcb36717f99af749f39911470d877e544",
+        "sha256": "720ac9b239ba708d1cc8caca6d002bddcb36717f99af749f39911470d877e544"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-1-after.json.gz",
+        "raw_bytes": 1820,
+        "raw_sha256": "a4e4e32c88045e6c7771ed764bf4f6dd48719de7d438b56d777ba8c85fb53e61",
+        "sha256": "ce076b4f0793675c15184ff49d3950069c670757c0592a2fa4fe67eef3954477"
+      },
+      {
+        "bytes": 14226,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-1-alias-capture-1.png",
+        "raw_bytes": 14226,
+        "raw_sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1",
+        "sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1"
+      },
+      {
+        "bytes": 14226,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-1-alias-capture-2.png",
+        "raw_bytes": 14226,
+        "raw_sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1",
+        "sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-1-alias.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 14226,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-1-before-capture-1.png",
+        "raw_bytes": 14226,
+        "raw_sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1",
+        "sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1"
+      },
+      {
+        "bytes": 14226,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-1-before-capture-2.png",
+        "raw_bytes": 14226,
+        "raw_sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1",
+        "sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-1-before.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 15075,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-2-after-capture-1.png",
+        "raw_bytes": 15075,
+        "raw_sha256": "720ac9b239ba708d1cc8caca6d002bddcb36717f99af749f39911470d877e544",
+        "sha256": "720ac9b239ba708d1cc8caca6d002bddcb36717f99af749f39911470d877e544"
+      },
+      {
+        "bytes": 15075,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-2-after-capture-2.png",
+        "raw_bytes": 15075,
+        "raw_sha256": "720ac9b239ba708d1cc8caca6d002bddcb36717f99af749f39911470d877e544",
+        "sha256": "720ac9b239ba708d1cc8caca6d002bddcb36717f99af749f39911470d877e544"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-2-after.json.gz",
+        "raw_bytes": 1820,
+        "raw_sha256": "a4e4e32c88045e6c7771ed764bf4f6dd48719de7d438b56d777ba8c85fb53e61",
+        "sha256": "ce076b4f0793675c15184ff49d3950069c670757c0592a2fa4fe67eef3954477"
+      },
+      {
+        "bytes": 14226,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-2-alias-capture-1.png",
+        "raw_bytes": 14226,
+        "raw_sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1",
+        "sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1"
+      },
+      {
+        "bytes": 14226,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-2-alias-capture-2.png",
+        "raw_bytes": 14226,
+        "raw_sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1",
+        "sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-2-alias.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 14226,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-2-before-capture-1.png",
+        "raw_bytes": 14226,
+        "raw_sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1",
+        "sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1"
+      },
+      {
+        "bytes": 14226,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-2-before-capture-2.png",
+        "raw_bytes": 14226,
+        "raw_sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1",
+        "sha256": "79d8d27c71036545fce2b35b1d3cb104e18ef66edd9e0db0d4bd2c905ee49cb1"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/chromium-2-before.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 1446984,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/oracle-after.html.gz",
+        "raw_bytes": 3002487,
+        "raw_sha256": "cda088cc42f0f644f6130dd40747aa5c110d8ebc624637bf473eaa1c350b3186",
+        "sha256": "f3b1070076ba764cc54070ad7cb3ef7e100a7cd94b830db78b16cb6293863d40"
+      },
+      {
+        "bytes": 1446985,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/oracle-alias.html.gz",
+        "raw_bytes": 3002487,
+        "raw_sha256": "a6515a24666f45b951b3c5459c19255850b466209bfebd518bfcb65e61f52b25",
+        "sha256": "0f9e6cfd2ba819287cec8695e1b0c90e91e7741e995e3ad9e78c1779e0d61c8f"
+      },
+      {
+        "bytes": 1446974,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-0/oracle-before.html.gz",
+        "raw_bytes": 3002381,
+        "raw_sha256": "33189a56e94a018e46fe1549b26bc0ed8b93a4501b4fba8baf2d0e1aa6d3fc2d",
+        "sha256": "0165b625dbc0b4b0af79a55eca6697e395dd205ec00a23e618cc02cecaf5003d"
+      },
+      {
+        "bytes": 32380,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-1-after-capture-1.png",
+        "raw_bytes": 32380,
+        "raw_sha256": "bf7a1cf9a7de02f9de842048148bed812296edb2d0d20ea2744da5c7a0779955",
+        "sha256": "bf7a1cf9a7de02f9de842048148bed812296edb2d0d20ea2744da5c7a0779955"
+      },
+      {
+        "bytes": 32380,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-1-after-capture-2.png",
+        "raw_bytes": 32380,
+        "raw_sha256": "bf7a1cf9a7de02f9de842048148bed812296edb2d0d20ea2744da5c7a0779955",
+        "sha256": "bf7a1cf9a7de02f9de842048148bed812296edb2d0d20ea2744da5c7a0779955"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-1-after.json.gz",
+        "raw_bytes": 1820,
+        "raw_sha256": "a4e4e32c88045e6c7771ed764bf4f6dd48719de7d438b56d777ba8c85fb53e61",
+        "sha256": "ce076b4f0793675c15184ff49d3950069c670757c0592a2fa4fe67eef3954477"
+      },
+      {
+        "bytes": 30732,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-1-alias-capture-1.png",
+        "raw_bytes": 30732,
+        "raw_sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9",
+        "sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9"
+      },
+      {
+        "bytes": 30732,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-1-alias-capture-2.png",
+        "raw_bytes": 30732,
+        "raw_sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9",
+        "sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-1-alias.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 30732,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-1-before-capture-1.png",
+        "raw_bytes": 30732,
+        "raw_sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9",
+        "sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9"
+      },
+      {
+        "bytes": 30732,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-1-before-capture-2.png",
+        "raw_bytes": 30732,
+        "raw_sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9",
+        "sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-1-before.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 32380,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-2-after-capture-1.png",
+        "raw_bytes": 32380,
+        "raw_sha256": "bf7a1cf9a7de02f9de842048148bed812296edb2d0d20ea2744da5c7a0779955",
+        "sha256": "bf7a1cf9a7de02f9de842048148bed812296edb2d0d20ea2744da5c7a0779955"
+      },
+      {
+        "bytes": 32380,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-2-after-capture-2.png",
+        "raw_bytes": 32380,
+        "raw_sha256": "bf7a1cf9a7de02f9de842048148bed812296edb2d0d20ea2744da5c7a0779955",
+        "sha256": "bf7a1cf9a7de02f9de842048148bed812296edb2d0d20ea2744da5c7a0779955"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-2-after.json.gz",
+        "raw_bytes": 1820,
+        "raw_sha256": "a4e4e32c88045e6c7771ed764bf4f6dd48719de7d438b56d777ba8c85fb53e61",
+        "sha256": "ce076b4f0793675c15184ff49d3950069c670757c0592a2fa4fe67eef3954477"
+      },
+      {
+        "bytes": 30732,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-2-alias-capture-1.png",
+        "raw_bytes": 30732,
+        "raw_sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9",
+        "sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9"
+      },
+      {
+        "bytes": 30732,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-2-alias-capture-2.png",
+        "raw_bytes": 30732,
+        "raw_sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9",
+        "sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-2-alias.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 30732,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-2-before-capture-1.png",
+        "raw_bytes": 30732,
+        "raw_sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9",
+        "sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9"
+      },
+      {
+        "bytes": 30732,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-2-before-capture-2.png",
+        "raw_bytes": 30732,
+        "raw_sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9",
+        "sha256": "1b504120ae1a1b2bf33834e51e5b7d3dbbe5e148809c5e8b718d4bec57278eb9"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/chromium-2-before.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 1446984,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/oracle-after.html.gz",
+        "raw_bytes": 3002487,
+        "raw_sha256": "cda088cc42f0f644f6130dd40747aa5c110d8ebc624637bf473eaa1c350b3186",
+        "sha256": "f3b1070076ba764cc54070ad7cb3ef7e100a7cd94b830db78b16cb6293863d40"
+      },
+      {
+        "bytes": 1446985,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/oracle-alias.html.gz",
+        "raw_bytes": 3002487,
+        "raw_sha256": "a6515a24666f45b951b3c5459c19255850b466209bfebd518bfcb65e61f52b25",
+        "sha256": "0f9e6cfd2ba819287cec8695e1b0c90e91e7741e995e3ad9e78c1779e0d61c8f"
+      },
+      {
+        "bytes": 1446974,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-1/oracle-before.html.gz",
+        "raw_bytes": 3002381,
+        "raw_sha256": "33189a56e94a018e46fe1549b26bc0ed8b93a4501b4fba8baf2d0e1aa6d3fc2d",
+        "sha256": "0165b625dbc0b4b0af79a55eca6697e395dd205ec00a23e618cc02cecaf5003d"
+      },
+      {
+        "bytes": 22589,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-1-after-capture-1.png",
+        "raw_bytes": 22589,
+        "raw_sha256": "f1479cdcb050d0032ef9e0e85aaf97a02adc6cc18569c75db1af6e1b76584191",
+        "sha256": "f1479cdcb050d0032ef9e0e85aaf97a02adc6cc18569c75db1af6e1b76584191"
+      },
+      {
+        "bytes": 22589,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-1-after-capture-2.png",
+        "raw_bytes": 22589,
+        "raw_sha256": "f1479cdcb050d0032ef9e0e85aaf97a02adc6cc18569c75db1af6e1b76584191",
+        "sha256": "f1479cdcb050d0032ef9e0e85aaf97a02adc6cc18569c75db1af6e1b76584191"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-1-after.json.gz",
+        "raw_bytes": 1820,
+        "raw_sha256": "a4e4e32c88045e6c7771ed764bf4f6dd48719de7d438b56d777ba8c85fb53e61",
+        "sha256": "ce076b4f0793675c15184ff49d3950069c670757c0592a2fa4fe67eef3954477"
+      },
+      {
+        "bytes": 21502,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-1-alias-capture-1.png",
+        "raw_bytes": 21502,
+        "raw_sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22",
+        "sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22"
+      },
+      {
+        "bytes": 21502,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-1-alias-capture-2.png",
+        "raw_bytes": 21502,
+        "raw_sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22",
+        "sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-1-alias.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 21502,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-1-before-capture-1.png",
+        "raw_bytes": 21502,
+        "raw_sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22",
+        "sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22"
+      },
+      {
+        "bytes": 21502,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-1-before-capture-2.png",
+        "raw_bytes": 21502,
+        "raw_sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22",
+        "sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-1-before.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 22589,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-2-after-capture-1.png",
+        "raw_bytes": 22589,
+        "raw_sha256": "f1479cdcb050d0032ef9e0e85aaf97a02adc6cc18569c75db1af6e1b76584191",
+        "sha256": "f1479cdcb050d0032ef9e0e85aaf97a02adc6cc18569c75db1af6e1b76584191"
+      },
+      {
+        "bytes": 22589,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-2-after-capture-2.png",
+        "raw_bytes": 22589,
+        "raw_sha256": "f1479cdcb050d0032ef9e0e85aaf97a02adc6cc18569c75db1af6e1b76584191",
+        "sha256": "f1479cdcb050d0032ef9e0e85aaf97a02adc6cc18569c75db1af6e1b76584191"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-2-after.json.gz",
+        "raw_bytes": 1820,
+        "raw_sha256": "a4e4e32c88045e6c7771ed764bf4f6dd48719de7d438b56d777ba8c85fb53e61",
+        "sha256": "ce076b4f0793675c15184ff49d3950069c670757c0592a2fa4fe67eef3954477"
+      },
+      {
+        "bytes": 21502,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-2-alias-capture-1.png",
+        "raw_bytes": 21502,
+        "raw_sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22",
+        "sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22"
+      },
+      {
+        "bytes": 21502,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-2-alias-capture-2.png",
+        "raw_bytes": 21502,
+        "raw_sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22",
+        "sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-2-alias.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 21502,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-2-before-capture-1.png",
+        "raw_bytes": 21502,
+        "raw_sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22",
+        "sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22"
+      },
+      {
+        "bytes": 21502,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-2-before-capture-2.png",
+        "raw_bytes": 21502,
+        "raw_sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22",
+        "sha256": "6460ff7e66364b7f3c90719685b86b63efa4677311d99d4bcb5dfa384e2bcb22"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/chromium-2-before.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 1446984,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/oracle-after.html.gz",
+        "raw_bytes": 3002487,
+        "raw_sha256": "cda088cc42f0f644f6130dd40747aa5c110d8ebc624637bf473eaa1c350b3186",
+        "sha256": "f3b1070076ba764cc54070ad7cb3ef7e100a7cd94b830db78b16cb6293863d40"
+      },
+      {
+        "bytes": 1446985,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/oracle-alias.html.gz",
+        "raw_bytes": 3002487,
+        "raw_sha256": "a6515a24666f45b951b3c5459c19255850b466209bfebd518bfcb65e61f52b25",
+        "sha256": "0f9e6cfd2ba819287cec8695e1b0c90e91e7741e995e3ad9e78c1779e0d61c8f"
+      },
+      {
+        "bytes": 1446974,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-2/oracle-before.html.gz",
+        "raw_bytes": 3002381,
+        "raw_sha256": "33189a56e94a018e46fe1549b26bc0ed8b93a4501b4fba8baf2d0e1aa6d3fc2d",
+        "sha256": "0165b625dbc0b4b0af79a55eca6697e395dd205ec00a23e618cc02cecaf5003d"
+      },
+      {
+        "bytes": 39158,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-1-after-capture-1.png",
+        "raw_bytes": 39158,
+        "raw_sha256": "f22870c75e632b3035482219612d3464fa8002eda553b78a8f813bdc2574443b",
+        "sha256": "f22870c75e632b3035482219612d3464fa8002eda553b78a8f813bdc2574443b"
+      },
+      {
+        "bytes": 39158,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-1-after-capture-2.png",
+        "raw_bytes": 39158,
+        "raw_sha256": "f22870c75e632b3035482219612d3464fa8002eda553b78a8f813bdc2574443b",
+        "sha256": "f22870c75e632b3035482219612d3464fa8002eda553b78a8f813bdc2574443b"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-1-after.json.gz",
+        "raw_bytes": 1820,
+        "raw_sha256": "a4e4e32c88045e6c7771ed764bf4f6dd48719de7d438b56d777ba8c85fb53e61",
+        "sha256": "ce076b4f0793675c15184ff49d3950069c670757c0592a2fa4fe67eef3954477"
+      },
+      {
+        "bytes": 37821,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-1-alias-capture-1.png",
+        "raw_bytes": 37821,
+        "raw_sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9",
+        "sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9"
+      },
+      {
+        "bytes": 37821,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-1-alias-capture-2.png",
+        "raw_bytes": 37821,
+        "raw_sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9",
+        "sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-1-alias.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 37821,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-1-before-capture-1.png",
+        "raw_bytes": 37821,
+        "raw_sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9",
+        "sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9"
+      },
+      {
+        "bytes": 37821,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-1-before-capture-2.png",
+        "raw_bytes": 37821,
+        "raw_sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9",
+        "sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-1-before.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 39158,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-2-after-capture-1.png",
+        "raw_bytes": 39158,
+        "raw_sha256": "f22870c75e632b3035482219612d3464fa8002eda553b78a8f813bdc2574443b",
+        "sha256": "f22870c75e632b3035482219612d3464fa8002eda553b78a8f813bdc2574443b"
+      },
+      {
+        "bytes": 39158,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-2-after-capture-2.png",
+        "raw_bytes": 39158,
+        "raw_sha256": "f22870c75e632b3035482219612d3464fa8002eda553b78a8f813bdc2574443b",
+        "sha256": "f22870c75e632b3035482219612d3464fa8002eda553b78a8f813bdc2574443b"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-2-after.json.gz",
+        "raw_bytes": 1820,
+        "raw_sha256": "a4e4e32c88045e6c7771ed764bf4f6dd48719de7d438b56d777ba8c85fb53e61",
+        "sha256": "ce076b4f0793675c15184ff49d3950069c670757c0592a2fa4fe67eef3954477"
+      },
+      {
+        "bytes": 37821,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-2-alias-capture-1.png",
+        "raw_bytes": 37821,
+        "raw_sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9",
+        "sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9"
+      },
+      {
+        "bytes": 37821,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-2-alias-capture-2.png",
+        "raw_bytes": 37821,
+        "raw_sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9",
+        "sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-2-alias.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 37821,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-2-before-capture-1.png",
+        "raw_bytes": 37821,
+        "raw_sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9",
+        "sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9"
+      },
+      {
+        "bytes": 37821,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-2-before-capture-2.png",
+        "raw_bytes": 37821,
+        "raw_sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9",
+        "sha256": "ba4bb33f8dad040bd748d9be42850be158983489f252486227051d33a98e71b9"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/chromium-2-before.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 1446984,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/oracle-after.html.gz",
+        "raw_bytes": 3002487,
+        "raw_sha256": "cda088cc42f0f644f6130dd40747aa5c110d8ebc624637bf473eaa1c350b3186",
+        "sha256": "f3b1070076ba764cc54070ad7cb3ef7e100a7cd94b830db78b16cb6293863d40"
+      },
+      {
+        "bytes": 1446985,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/oracle-alias.html.gz",
+        "raw_bytes": 3002487,
+        "raw_sha256": "a6515a24666f45b951b3c5459c19255850b466209bfebd518bfcb65e61f52b25",
+        "sha256": "0f9e6cfd2ba819287cec8695e1b0c90e91e7741e995e3ad9e78c1779e0d61c8f"
+      },
+      {
+        "bytes": 1446974,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-3/oracle-before.html.gz",
+        "raw_bytes": 3002381,
+        "raw_sha256": "33189a56e94a018e46fe1549b26bc0ed8b93a4501b4fba8baf2d0e1aa6d3fc2d",
+        "sha256": "0165b625dbc0b4b0af79a55eca6697e395dd205ec00a23e618cc02cecaf5003d"
+      },
+      {
+        "bytes": 60469,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-1-after-capture-1.png",
+        "raw_bytes": 60469,
+        "raw_sha256": "7efdf9acc1832a08a151a61173fb180739d5575369a5191cc70dbe77079c1194",
+        "sha256": "7efdf9acc1832a08a151a61173fb180739d5575369a5191cc70dbe77079c1194"
+      },
+      {
+        "bytes": 60469,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-1-after-capture-2.png",
+        "raw_bytes": 60469,
+        "raw_sha256": "7efdf9acc1832a08a151a61173fb180739d5575369a5191cc70dbe77079c1194",
+        "sha256": "7efdf9acc1832a08a151a61173fb180739d5575369a5191cc70dbe77079c1194"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-1-after.json.gz",
+        "raw_bytes": 1820,
+        "raw_sha256": "a4e4e32c88045e6c7771ed764bf4f6dd48719de7d438b56d777ba8c85fb53e61",
+        "sha256": "ce076b4f0793675c15184ff49d3950069c670757c0592a2fa4fe67eef3954477"
+      },
+      {
+        "bytes": 57802,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-1-alias-capture-1.png",
+        "raw_bytes": 57802,
+        "raw_sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805",
+        "sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805"
+      },
+      {
+        "bytes": 57802,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-1-alias-capture-2.png",
+        "raw_bytes": 57802,
+        "raw_sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805",
+        "sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-1-alias.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 57802,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-1-before-capture-1.png",
+        "raw_bytes": 57802,
+        "raw_sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805",
+        "sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805"
+      },
+      {
+        "bytes": 57802,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-1-before-capture-2.png",
+        "raw_bytes": 57802,
+        "raw_sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805",
+        "sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-1-before.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 60469,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-2-after-capture-1.png",
+        "raw_bytes": 60469,
+        "raw_sha256": "7efdf9acc1832a08a151a61173fb180739d5575369a5191cc70dbe77079c1194",
+        "sha256": "7efdf9acc1832a08a151a61173fb180739d5575369a5191cc70dbe77079c1194"
+      },
+      {
+        "bytes": 60469,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-2-after-capture-2.png",
+        "raw_bytes": 60469,
+        "raw_sha256": "7efdf9acc1832a08a151a61173fb180739d5575369a5191cc70dbe77079c1194",
+        "sha256": "7efdf9acc1832a08a151a61173fb180739d5575369a5191cc70dbe77079c1194"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-2-after.json.gz",
+        "raw_bytes": 1820,
+        "raw_sha256": "a4e4e32c88045e6c7771ed764bf4f6dd48719de7d438b56d777ba8c85fb53e61",
+        "sha256": "ce076b4f0793675c15184ff49d3950069c670757c0592a2fa4fe67eef3954477"
+      },
+      {
+        "bytes": 57802,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-2-alias-capture-1.png",
+        "raw_bytes": 57802,
+        "raw_sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805",
+        "sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805"
+      },
+      {
+        "bytes": 57802,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-2-alias-capture-2.png",
+        "raw_bytes": 57802,
+        "raw_sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805",
+        "sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-2-alias.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 57802,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-2-before-capture-1.png",
+        "raw_bytes": 57802,
+        "raw_sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805",
+        "sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805"
+      },
+      {
+        "bytes": 57802,
+        "compression": "none",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-2-before-capture-2.png",
+        "raw_bytes": 57802,
+        "raw_sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805",
+        "sha256": "078e0479fc987012086bfc3d714efc2d18fcd90c2fb7e0acc64b4805402e8805"
+      },
+      {
+        "bytes": 258,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/chromium-2-before.json.gz",
+        "raw_bytes": 1822,
+        "raw_sha256": "4811afa4122a3f6cd7f8cf7fc3213b35e9655b606663dd013b5e9c3eaf43904f",
+        "sha256": "c6a405c9b23997a3c38d0cff022a5429b4ae70c5a4b2f04d35f27bf38dc21585"
+      },
+      {
+        "bytes": 1446984,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/oracle-after.html.gz",
+        "raw_bytes": 3002487,
+        "raw_sha256": "cda088cc42f0f644f6130dd40747aa5c110d8ebc624637bf473eaa1c350b3186",
+        "sha256": "f3b1070076ba764cc54070ad7cb3ef7e100a7cd94b830db78b16cb6293863d40"
+      },
+      {
+        "bytes": 1446985,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/oracle-alias.html.gz",
+        "raw_bytes": 3002487,
+        "raw_sha256": "a6515a24666f45b951b3c5459c19255850b466209bfebd518bfcb65e61f52b25",
+        "sha256": "0f9e6cfd2ba819287cec8695e1b0c90e91e7741e995e3ad9e78c1779e0d61c8f"
+      },
+      {
+        "bytes": 1446974,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/profile-4/oracle-before.html.gz",
+        "raw_bytes": 3002381,
+        "raw_sha256": "33189a56e94a018e46fe1549b26bc0ed8b93a4501b4fba8baf2d0e1aa6d3fc2d",
+        "sha256": "0165b625dbc0b4b0af79a55eca6697e395dd205ec00a23e618cc02cecaf5003d"
+      },
+      {
+        "bytes": 2551,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/chromium/receipt.json.gz",
+        "raw_bytes": 49286,
+        "raw_sha256": "bd132f93e6ad1b96ac77a4ded1662452911a5142a1672202ba02b042a23a95c2",
+        "sha256": "4aee60fc55734dcff06d0a7e5045267e95881fe08cca6ab3bdddbce0d4701af8"
+      },
+      {
+        "bytes": 376,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/inputs/native-probe-draft.json.gz",
+        "raw_bytes": 641,
+        "raw_sha256": "c4c79b12d9610473977bd9a1640635ebdf3e35bb22acce344076aefb94080836",
+        "sha256": "b4f433ce7738c2fc1ace20a5b7018345c35d278a949a18c969f1540fb0d20b0b"
+      },
+      {
+        "bytes": 719,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/inputs/oracle-plan.json.gz",
+        "raw_bytes": 1474,
+        "raw_sha256": "04fc63401e7b9656d1b5c8e8ce718c66b278f90aeae7a4fb8489d94d9a6c5059",
+        "sha256": "e061a392172717a2d57c7b37d8c63aa7494186e396351365d2b5a45e5cad2c0e"
+      },
+      {
+        "bytes": 2540,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/inputs/shared-candidate/candidate.patch.gz",
+        "raw_bytes": 7763,
+        "raw_sha256": "e63c447c8c59cae4adc5f6b437fe7a4a72a5e0e1d70ba7dec6029f59632e2098",
+        "sha256": "08e2a29af38ddb8a65d2f4dbd4efcb1016e807292a6304933090176dd984fabd"
+      },
+      {
+        "bytes": 637,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/inputs/shared-candidate/draft.json.gz",
+        "raw_bytes": 1388,
+        "raw_sha256": "0b50a407a42756e0e3cf2ff05aad83e9c98836e332bda3ea6a74cc83af2ed6ab",
+        "sha256": "0d0327e25ef9a77994a805d42da66aec7e97f91bd005e3169dc850e4975f49c9"
+      },
+      {
+        "bytes": 24023,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/measured-source/baseline/bindings/rust/openui-layout/src/inline/items_builder.rs.gz",
+        "raw_bytes": 139252,
+        "raw_sha256": "53ac8cb96009b319f85365485568125a0e2333901835afdc68dfea82771be93e",
+        "sha256": "c7947c98eba94047ffdf630c5b5b78cdc1e944951284dfa8089a6081c4f7482f"
+      },
+      {
+        "bytes": 18537,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/measured-source/baseline/bindings/rust/openui-text/src/shaping/shaper.rs.gz",
+        "raw_bytes": 87543,
+        "raw_sha256": "c06c10982f24ab58ef758d68605f5afc1927e5d60a194bc4efe7b9752d78a535",
+        "sha256": "1add4f34a1ac2fa878acd54b4c08cfa5f849f3f74895fa2be4154112492b9cd9"
+      },
+      {
+        "bytes": 2073,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/measured-source/baseline/native_font_family_probe.rs.gz",
+        "raw_bytes": 6401,
+        "raw_sha256": "3fc794ab963f5be84961e45b1e61f5c702832bfe34a90f032a06ff4297ab433b",
+        "sha256": "46c7efcc99517a1bebd7686247435bd5e9a90f237bc5eb59b03ce3ded86b442e"
+      },
+      {
+        "bytes": 23451,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/measured-source/candidate/bindings/rust/openui-layout/src/inline/items_builder.rs.gz",
+        "raw_bytes": 137224,
+        "raw_sha256": "b2bb00a07b4d70b19cd15e932a7bd03653cb2dfdbac93706c4a8452a7ffcb069",
+        "sha256": "51cf524587e07cbcd7ee46830ee494809b2f8d74158b5ba43f13f2e4a0b7196b"
+      },
+      {
+        "bytes": 18410,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/measured-source/candidate/bindings/rust/openui-text/src/shaping/shaper.rs.gz",
+        "raw_bytes": 87211,
+        "raw_sha256": "c94da4d07f3f0b2d2d873ec1ffb80b7e771cbad3f81a21b2458586c2114aacae",
+        "sha256": "65705d1037d3ce7cd1da1a9d6d052616233286f558aca6f3c157154db3cba859"
+      },
+      {
+        "bytes": 2073,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/measured-source/candidate/native_font_family_probe.rs.gz",
+        "raw_bytes": 6401,
+        "raw_sha256": "3fc794ab963f5be84961e45b1e61f5c702832bfe34a90f032a06ff4297ab433b",
+        "sha256": "46c7efcc99517a1bebd7686247435bd5e9a90f237bc5eb59b03ce3ded86b442e"
+      },
+      {
+        "bytes": 490,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-applied-v3836.json.gz",
+        "raw_bytes": 1039,
+        "raw_sha256": "463c6660e807f72972ae5c874a67d0c78ee96526001564834a14d2d2226b8a0c",
+        "sha256": "28d70bdc879b9a7077b4b9cbbf19c11ce794c2be03c2880efc48a04cdd509e2d"
+      },
+      {
+        "bytes": 750,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-baseline-audit-v3834.json.gz",
+        "raw_bytes": 1390,
+        "raw_sha256": "654a0ee908fbde86cf0f5d3292ca68f5d52c6318910b89c9818103a2e9171834",
+        "sha256": "ed81b479be0822ee6c2f30c48d8ea56ce13bf2f5c111b900d8bed9a9b262f337"
+      },
+      {
+        "bytes": 1817,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-baseline-audit-v3834.py.gz",
+        "raw_bytes": 4579,
+        "raw_sha256": "d8cb8bf8bd4f4b685ee8cc960055bd7e866b38323cfa6547358238a4bbad4d7b",
+        "sha256": "8d7ae9e1a3bc82133e692cbe29be72075483d26bf58dd9117f8cac9e15263ab7"
+      },
+      {
+        "bytes": 642,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-baseline-reaped-v3835.json.gz",
+        "raw_bytes": 1275,
+        "raw_sha256": "39ddd1d3b34e8fc352163b36c872221617aa55ed3441ee39b1c20baafec0bd31",
+        "sha256": "ef23f24c68b4c3f6a045c4b561044f8e1b56b9705b3d3fd63909a70a0599840b"
+      },
+      {
+        "bytes": 914,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-baseline-reaping-v3835.py.gz",
+        "raw_bytes": 2018,
+        "raw_sha256": "0227a2653964833ea27a5853c19e9c5861cd3deb307d686aedb28f4b449a2b93",
+        "sha256": "2a8698abbecb83c02cf9917c8a910f8f0c4550048d27738d010e56e200b68671"
+      },
+      {
+        "bytes": 3073,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-baseline-v3833.py.gz",
+        "raw_bytes": 7587,
+        "raw_sha256": "bd1de33cd6fac35ac5b21c6b722127c9f6a668fb3be5d390696f15930b859514",
+        "sha256": "d07af95a27e5fdac2c02b40e2d5e996f28b7c1cf1ab397b0a15e2a3dddd3fe63"
+      },
+      {
+        "bytes": 888,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-candidate-audit-v3837.json.gz",
+        "raw_bytes": 1758,
+        "raw_sha256": "b29375ec18fb88bf6acc93875923646560eed5f954f09768abf505616bdababd",
+        "sha256": "b44104261c4efc8a0362a6be060a2cb3d4d6fa989bed0010b1913849490d0b7e"
+      },
+      {
+        "bytes": 2159,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-candidate-audit-v3837.py.gz",
+        "raw_bytes": 5945,
+        "raw_sha256": "20f496b9783aab47cfad6150804ececf7c98b954d128e8f079eb4136e8505591",
+        "sha256": "d7066260c43e5dc61630c7e0a54da5e0f6831e6e488aaa48f9138e1896da2d35"
+      },
+      {
+        "bytes": 782,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-candidate-reaped-v3838.json.gz",
+        "raw_bytes": 1643,
+        "raw_sha256": "71fd42465e6dea0fcab1728103e173f1cebf5eed437d4e5820d22571d2ed50a6",
+        "sha256": "a06a1f251cb7843beb0a0be51d64b9a9cc35eb79eaeadac4bb037a5d835adc93"
+      },
+      {
+        "bytes": 944,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-candidate-reaping-v3838.py.gz",
+        "raw_bytes": 2100,
+        "raw_sha256": "a07e9ab7f2cdd4de6188a52781d1d28b9fd2c8197933ad91c73bd6a3b6c256b6",
+        "sha256": "31592007ead091570864cebb009db5f471378d1a129273df7042ec97e6b4ee6b"
+      },
+      {
+        "bytes": 3267,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-candidate-v3836.py.gz",
+        "raw_bytes": 8253,
+        "raw_sha256": "1bef7b35c3b64a03d333a7b6acc9fab07780d20cba90bef80a43442bee39b73a",
+        "sha256": "0d76de8526eeca6a586974e7b46151fdb251783035466a8dae8f53d5dd4054dd"
+      },
+      {
+        "bytes": 827,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-chromium-audit-v3831.json.gz",
+        "raw_bytes": 2561,
+        "raw_sha256": "ef097cc19851885879676c7684478d4a855a9edc9a6542f44bd8f00a271b8b30",
+        "sha256": "8a062eddcd34a9ef3ec5e0aed9374a01ea250dea96efde46efe896a2f3686d51"
+      },
+      {
+        "bytes": 1517,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-chromium-audit-v3831.py.gz",
+        "raw_bytes": 3536,
+        "raw_sha256": "adbd64cf42f2cf2ab6db3cbcb82fb9479e74d01879a35149f755c3e85c9a5e13",
+        "sha256": "8ee8c53f51565c58c0aab3e74d74d43734493f7635ca315830351b130a269707"
+      },
+      {
+        "bytes": 554,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-chromium-reaped-v3832.json.gz",
+        "raw_bytes": 1093,
+        "raw_sha256": "a6ceb873933dba24ace051ae91bb20b14705243d078b7c539c7edf629c477a07",
+        "sha256": "bcbc149968d094b8efe8d1ff19b10f6e25219532f10fd4e2dea7109ce2a3a55c"
+      },
+      {
+        "bytes": 868,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-chromium-reaping-v3832.py.gz",
+        "raw_bytes": 1877,
+        "raw_sha256": "3119a318605c066243af5b002869aaddbc792a00b7e73b222dbc69b896a4d124",
+        "sha256": "7b91090c15dba00f1e70fa5b8b091830ca752952598afdda7bfaa0ea3b74a8c5"
+      },
+      {
+        "bytes": 3005,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-chromium-v3824.py.gz",
+        "raw_bytes": 7044,
+        "raw_sha256": "d40b7cb9b80f578a07b94d00f1859b7dc65a6505366922df79b4f8df9f7d2cc2",
+        "sha256": "9fdc69bbd87d6f12be66578943f439aa994436a9e6fba9e47ce2d4ec7f2f4f9c"
+      },
+      {
+        "bytes": 503,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui-native-general-font-restored-v3840.json.gz",
+        "raw_bytes": 963,
+        "raw_sha256": "ba32f859b90c7c5e73732bb931ff8f27f7825dfb8678dffa54aa01b3166707c9",
+        "sha256": "4f1c855dcc64b6159fc6eede8f2be5dc0e414916ce0f6ff5777c15d05828b79b"
+      },
+      {
+        "bytes": 838,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-font-families-v1/probes-and-proofs/openui_parallel_source_identity_v3060.py.gz",
+        "raw_bytes": 2012,
+        "raw_sha256": "d034540153e35cad3cbfc63a13e0bcfb17df4cbdb89a6d22e1439f7bc39435ec",
+        "sha256": "2190c64b756a252ac1285172b7514f8b0eebc9e986327c867c764fea0a269a0b"
+      }
+    ]
+  },
+  "archive_writer_terminal": {
+    "actual_archive_writer_session": 29908,
+    "actual_exit_code": 0,
+    "actual_sessions": [
+      {
+        "actual_exit_code": 0,
+        "reaped": true,
+        "session": 60891
+      },
+      {
+        "actual_exit_code": 0,
+        "reaped": true,
+        "session": 13894
+      },
+      {
+        "actual_exit_code": 0,
+        "reaped": true,
+        "session": 73570
+      },
+      {
+        "actual_exit_code": 1,
+        "reaped": true,
+        "session": 69169
+      },
+      {
+        "actual_exit_code": 0,
+        "reaped": true,
+        "session": 28478
+      },
+      {
+        "actual_exit_code": 0,
+        "reaped": true,
+        "session": 44026
+      },
+      {
+        "actual_exit_code": 1,
+        "reaped": true,
+        "session": 79171
+      },
+      {
+        "actual_exit_code": 0,
+        "reaped": true,
+        "session": 66465
+      },
+      {
+        "actual_exit_code": 0,
+        "reaped": true,
+        "session": 15031
+      },
+      {
+        "actual_exit_code": 0,
+        "reaped": true,
+        "session": 29908
+      }
+    ],
+    "all_local_commands_terminal": true,
+    "all_native_apis_qualified": false,
+    "reaped": true,
+    "release_qualified": false,
+    "renderer_qualified": false,
+    "schema_version": 1
+  },
+  "baseline": {
+    "actual_owner_exit_code": 1,
+    "all_native_apis_qualified": false,
+    "audit_driver_sha256": "d8cb8bf8bd4f4b685ee8cc960055bd7e866b38323cfa6547358238a4bbad4d7b",
+    "baseline_before_generic_fixes": true,
+    "compiled_paths_verified": 29,
+    "complete": true,
+    "diagnostic_only": true,
+    "driver_sha256": "bd1de33cd6fac35ac5b21c6b722127c9f6a668fb3be5d390696f15930b859514",
+    "fresh_local_compiler_records": 16,
+    "javascript_executed_by_openui": false,
+    "native_binary_sha256": "c233826280b30819cb0633b1999739490eb4ddc077bcbcdf06ca261ddac85fdc",
+    "owner_absent": true,
+    "process_repeats": true,
+    "receipt_sha256": "509a91392f9ba48247cc2d0dddce1f925082fd5cecec45e95eca2fbc9202df3e",
+    "release_qualified": false,
+    "renderer_qualified": false,
+    "retired_for_reexecution_after_source_or_target_mutation": true,
+    "rust_callback_count": 2,
+    "schema_version": 1,
+    "source": {
+      "clean": false,
+      "commit": "e8ad89a915e97183fb27ea0f14293ca14bf53a82",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "4ab5989ceca451f45e948b624527c8d99c07c3da87845c9859a419e525566c0b",
+      "status_sha256": "51233f703dc2761106c797881d8649b6032f5646a171766099217ce00178dcdc"
+    },
+    "totals": {
+      "bounds": 210,
+      "exact_bounds": 165,
+      "exact_images": 0,
+      "images": 15
+    },
+    "unchanged_frames": true,
+    "weak_teardown": true
+  },
+  "candidate": {
+    "actual_owner_exit_code": 1,
+    "all_native_apis_qualified": false,
+    "audit_driver_sha256": "20f496b9783aab47cfad6150804ececf7c98b954d128e8f079eb4136e8505591",
+    "baseline_before_generic_fixes": false,
+    "baseline_comparison": {
+      "baseline_receipt_sha256": "509a91392f9ba48247cc2d0dddce1f925082fd5cecec45e95eca2fbc9202df3e",
+      "bounds_exact_gains": 15,
+      "bounds_exact_losses": 0,
+      "chromium_references_unchanged": true,
+      "worsened_images": 15
+    },
+    "compiled_paths_verified": 29,
+    "complete": true,
+    "diagnostic_only": true,
+    "driver_sha256": "1bef7b35c3b64a03d333a7b6acc9fab07780d20cba90bef80a43442bee39b73a",
+    "fresh_local_compiler_records": 16,
+    "guard_results": {
+      "actual_exit_code": 0,
+      "failed": 0,
+      "ignored": 0,
+      "passed": 1181
+    },
+    "javascript_executed_by_openui": false,
+    "native_binary_sha256": "abad7233616f641db2699399f999fec9fc3cc31caae614f495a2dd8060749016",
+    "owner_absent": true,
+    "process_repeats": true,
+    "receipt_sha256": "5195a77f6134e1ff9ea08e11f928b76b08cc47866f2011a5b417b1de3c78ea08",
+    "release_qualified": false,
+    "renderer_qualified": false,
+    "retired_for_reexecution_after_source_or_target_mutation": true,
+    "rust_callback_count": 2,
+    "schema_version": 1,
+    "source": {
+      "clean": false,
+      "commit": "e8ad89a915e97183fb27ea0f14293ca14bf53a82",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "1d33ea477ea93f0840d038875a7a3c4e67bb26b2327d2c4b5efe6d535ca975c3",
+      "status_sha256": "64c6eee887de0101a1426b5cfe56cea843847ac0e949a8bb49e66eaf6e415229"
+    },
+    "totals": {
+      "bounds": 210,
+      "exact_bounds": 180,
+      "exact_images": 0,
+      "images": 15
+    },
+    "unchanged_frames": true,
+    "weak_teardown": true
+  },
+  "chromium": {
+    "actual_owner_exit_code": 0,
+    "all_native_apis_qualified": false,
+    "audit_driver_sha256": "adbd64cf42f2cf2ab6db3cbcb82fb9479e74d01879a35149f755c3e85c9a5e13",
+    "bounds_records": 210,
+    "cases": [
+      {
+        "alias_bounds_equal": true,
+        "alias_pixels_equal": true,
+        "different_face_changes_bounds": true,
+        "different_face_changes_pixels": true,
+        "profile": {
+          "height": 600,
+          "scale": 1,
+          "width": 800
+        }
+      },
+      {
+        "alias_bounds_equal": true,
+        "alias_pixels_equal": true,
+        "different_face_changes_bounds": true,
+        "different_face_changes_pixels": true,
+        "profile": {
+          "height": 667,
+          "scale": 2,
+          "width": 375
+        }
+      },
+      {
+        "alias_bounds_equal": true,
+        "alias_pixels_equal": true,
+        "different_face_changes_bounds": true,
+        "different_face_changes_pixels": true,
+        "profile": {
+          "height": 720,
+          "scale": 1.25,
+          "width": 1280
+        }
+      },
+      {
+        "alias_bounds_equal": true,
+        "alias_pixels_equal": true,
+        "different_face_changes_bounds": true,
+        "different_face_changes_pixels": true,
+        "profile": {
+          "height": 1080,
+          "scale": 1.5,
+          "width": 1920
+        }
+      },
+      {
+        "alias_bounds_equal": true,
+        "alias_pixels_equal": true,
+        "different_face_changes_bounds": true,
+        "different_face_changes_pixels": true,
+        "profile": {
+          "height": 600,
+          "scale": 3,
+          "width": 800
+        }
+      }
+    ],
+    "complete": true,
+    "driver_sha256": "d40b7cb9b80f578a07b94d00f1859b7dc65a6505366922df79b4f8df9f7d2cc2",
+    "independent_chromium_processes": 10,
+    "javascript_executed_by_openui": false,
+    "owner_absent": true,
+    "pixel_target": "pinned Chromium",
+    "pixel_tolerance": 0,
+    "receipt_sha256": "bd132f93e6ad1b96ac77a4ded1662452911a5142a1672202ba02b042a23a95c2",
+    "release_qualified": false,
+    "renderer_qualified": false,
+    "repeated_chromium_screenshots": 60,
+    "retired_for_reexecution_after_source_mutation": true,
+    "schema_version": 1,
+    "scripts_run_only_in_separate_chromium_reference_process": true,
+    "source": {
+      "clean": true,
+      "commit": "e8ad89a915e97183fb27ea0f14293ca14bf53a82",
+      "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+      "source_tree_sha256": "147c12561470adb0705b0c9e0617e0cdc7426f6a7d405f37b5fd95858bcd7569",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_unchanged": true,
+    "whole_chromium_images": 15
+  },
+  "diagnostic_only": true,
+  "full_renderer_contract_qualified": false,
+  "historical_openui_archive_is_a_pixel_target": false,
+  "javascript_executed_by_openui": false,
+  "native_callback_count": 2,
+  "pending": [
+    "same-byte font aliases must preserve pixels",
+    "shared intrinsic text width and fallback line metrics",
+    "remove named-family raster selection using resolved font data",
+    "replace existing size/phase/hinting exceptions with shared behavior",
+    "new clean full matrices and every remaining native API",
+    "physical lab and release qualification"
+  ],
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "process_repeats": true,
+  "public_native_rust_consumer": "bindings/rust/openui/examples/native_font_family_probe.rs",
+  "release_qualified": false,
+  "runtime_restore": {
+    "all_local_commands_terminal": true,
+    "all_native_apis_qualified": false,
+    "candidate_applied": false,
+    "candidate_rejected": true,
+    "files": [
+      {
+        "path": "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "rejected_candidate_sha256": "b2bb00a07b4d70b19cd15e932a7bd03653cb2dfdbac93706c4a8452a7ffcb069",
+        "restored_sha256": "53ac8cb96009b319f85365485568125a0e2333901835afdc68dfea82771be93e"
+      },
+      {
+        "path": "bindings/rust/openui-text/src/shaping/shaper.rs",
+        "rejected_candidate_sha256": "c94da4d07f3f0b2d2d873ec1ffb80b7e771cbad3f81a21b2458586c2114aacae",
+        "restored_sha256": "c06c10982f24ab58ef758d68605f5afc1927e5d60a194bc4efe7b9752d78a535"
+      }
+    ],
+    "head": "e8ad89a915e97183fb27ea0f14293ca14bf53a82",
+    "original_full_counts_requalified": false,
+    "public_probe_retained": true,
+    "release_qualified": false,
+    "renderer_qualified": false,
+    "runtime_restored_to_head": true,
+    "schema_version": 1
+  },
+  "schema_version": 1,
+  "scripts_run_only_in_separate_chromium_reference_process": true,
+  "status": "native-font-api-baseline-fails-shared-candidate-rejected",
+  "unchanged_frame_repeats": true,
+  "weak_teardown": true
+}

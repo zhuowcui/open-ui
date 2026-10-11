@@ -1,0 +1,50 @@
+{
+  "all_commands_terminal": true,
+  "build_receipt_sha256": "4083c7a346b88fab318cfd5e32421ee249a5c329a0eb678a0b6caf05dbc70787",
+  "capture_visual_conditions_unchanged": true,
+  "complete_clean_build_reused": true,
+  "full_pixel_censuses_and_configuration_field_behavior_unqualified": true,
+  "immutable_probe_hashes": {
+    "/tmp/openui-native-rust-integrated-retry-keywords-consumer-v1814.py": "bd5596c11b3f28e552764151a45a87806e98a022b30c08241f50c6870a949dfb",
+    "/tmp/openui-native-rust-integrated-retry-options-consumer-v1814.py": "653a11dd61bd1095c47c838f5312c93dde7aa2d79ad3559da1657d2975d00825"
+  },
+  "javascript_executed_by_openui": false,
+  "new_release_states_admitted": 0,
+  "owner_pid": 4160330,
+  "pixel_tolerance": 0,
+  "prior_terminal_pipeline_sha256": "123d9a47ca9b3f0d8b474ff66f9b91b65ab7e8162eeb8eb944e4c19b6c0138b4",
+  "probe_sha256": "97e22fcb7d8a7f2c4adb2a17b518afc1a8b36333c5334cde28f43fa75cdd141f",
+  "promotion_allowed": false,
+  "public_native_rust_apis_required": true,
+  "release_qualification": false,
+  "schema_version": 1,
+  "short_chromium_temporary_storage": "/dev/shm/oui1814",
+  "source": {
+    "clean": true,
+    "commit": "2d338d6cf8334bae0d7893315d85633d2d586aad",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "cfbb9630870e1733b5ba0d622c7aba70dbe27f64bc2dbbf793d0336ffcaefa04",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "2d338d6cf8334bae0d7893315d85633d2d586aad",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "cfbb9630870e1733b5ba0d622c7aba70dbe27f64bc2dbbf793d0336ffcaefa04",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "complete-requires-results-review",
+  "steps": [
+    {
+      "log_sha256": "f68bdcc6ef50d88492b2b12f025a60ac8f91d018a97dbb9a347ed9e305872d4f",
+      "name": "native-keywords-chromium-images",
+      "observed_exit_code": 0
+    },
+    {
+      "log_sha256": "f68bdcc6ef50d88492b2b12f025a60ac8f91d018a97dbb9a347ed9e305872d4f",
+      "name": "native-options-chromium-images",
+      "observed_exit_code": 0
+    }
+  ],
+  "whole_pipeline_lock_covers_all_stages_and_gaps": true
+}

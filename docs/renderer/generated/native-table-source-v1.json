@@ -1,0 +1,464 @@
+{
+  "accepted_renderer_unchanged": true,
+  "applied_to_umbrella": false,
+  "artifact_bytes": 1059505,
+  "artifact_count": 70,
+  "artifacts": [
+    {
+      "bytes": 5138,
+      "path": "docs/renderer/evidence/native-table-source-v1/queue-prepared.json",
+      "sha256": "37e5b50266e834f403d09cc09d113770accd4dd450804a97ca66ba19eabf986d"
+    },
+    {
+      "bytes": 6469,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-table-source-build-v1600.py",
+      "sha256": "b9b1c8b52ea2adf99b2ab5aae50b5b5328aa1db70ba0522c54281253cf8534cc"
+    },
+    {
+      "bytes": 8241,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-table-source-consumer-v1600.py",
+      "sha256": "1438fe855f1b1eb281b368813c19ad8f648b78ec227acfe31b89d8fe0f1fe3bc"
+    },
+    {
+      "bytes": 7995,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-table-source-guards-v1600.py",
+      "sha256": "c671c39d4ea6920c77cf48e0e048f353b1d948f0b1bbfb3f3bbb0eb0a55c97a3"
+    },
+    {
+      "bytes": 2078,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-table-source-matrices-v1600.py",
+      "sha256": "d3a42e87ec64926862a43757ed5729c86127376f5f33e6bc9d2e0503b20ffc02"
+    },
+    {
+      "bytes": 8060,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-table-source-pipeline-v1601.py",
+      "sha256": "2ca3c2208e67a14992a92f3198b20efbd14c6084847ba6a88f64264508feb5f3"
+    },
+    {
+      "bytes": 2230,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-table-source-checks-v1598.py",
+      "sha256": "58e2785b4fe1990637fce1bf292141f00d72a568ae31a7073ad16a718e21959b"
+    },
+    {
+      "bytes": 7097,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-table-source-prepare-v1600.py",
+      "sha256": "7f40d35d9652315e86e48666b9d7063f923cfbb606c9d1d57d807a0724059d45"
+    },
+    {
+      "bytes": 1538,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-table-source-dispatch-v1602.py",
+      "sha256": "af339b4855bdbc8fda5606862218281a10f185d6f6e23ff1d7ab6aba5226b4e6"
+    },
+    {
+      "bytes": 2655,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-table-source-hosted-v1603.py",
+      "sha256": "52eeed2e7cfb45d4c92a3835952b59672351b93ac3972360605354a8450f0339"
+    },
+    {
+      "bytes": 288,
+      "path": "docs/renderer/evidence/native-table-source-v1/hosted-dispatch.json",
+      "sha256": "d008a0b3a438644b847441710adb486660b5da0776c4706ca4c48ec8ae45e9cb"
+    },
+    {
+      "bytes": 4242,
+      "path": "docs/renderer/evidence/native-table-source-v1/read-only-checks.json",
+      "sha256": "d6afeb7f507dead6a897f957c2d33ca047afc4dc296ded0f15bbc02f25bca2bd"
+    },
+    {
+      "bytes": 81,
+      "path": "docs/renderer/evidence/native-table-source-v1/check-renderer.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    {
+      "bytes": 59,
+      "path": "docs/renderer/evidence/native-table-source-v1/check-multicol.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    {
+      "bytes": 86,
+      "path": "docs/renderer/evidence/native-table-source-v1/check-sp17.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    {
+      "bytes": 121,
+      "path": "docs/renderer/evidence/native-table-source-v1/check-sp18.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    {
+      "bytes": 142,
+      "path": "docs/renderer/evidence/native-table-source-v1/check-sp20.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    {
+      "bytes": 63,
+      "path": "docs/renderer/evidence/native-table-source-v1/check-v02.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    {
+      "bytes": 37,
+      "path": "docs/renderer/evidence/native-table-source-v1/check-style.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    {
+      "bytes": 32,
+      "path": "docs/renderer/evidence/native-table-source-v1/check-ffi.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    {
+      "bytes": 45,
+      "path": "docs/renderer/evidence/native-table-source-v1/check-archive.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    {
+      "bytes": 2867,
+      "path": "docs/renderer/evidence/native-table-source-v1/check-accountability.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/renderer/evidence/native-table-source-v1/check-rust-format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 24670,
+      "path": "docs/renderer/evidence/native-table-source-v1/prior-progress-and-guards.patch",
+      "sha256": "4000a3f3a501198ea4fab374e12e14a9b548c81e81dd93e79499e3fdd6a44d8f"
+    },
+    {
+      "bytes": 9088,
+      "path": "docs/renderer/evidence/native-table-source-v1/canonical-table-source.patch",
+      "sha256": "fdb82fc89b85d71b54e6dcea82e8a2a6af9081d6670c5bda59674ae047f7bf3b"
+    },
+    {
+      "bytes": 6925,
+      "path": "docs/renderer/evidence/native-table-source-v1/native_table_progress.rs",
+      "sha256": "4f250cb249ea5da452152b3ea760a64adbc6ce8a95d4661e087fd45057642863"
+    },
+    {
+      "bytes": 2108,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-ffi-layout.json",
+      "sha256": "b1d214225748db72f52e63de0376f4d5654af70ee81be85a66ee94d6d6ca851d"
+    },
+    {
+      "bytes": 4469,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-table-fragment-debug-v1595.py",
+      "sha256": "f059ed8db5245475820c146ac2d33bfe8e586ce8d6994bb37831151b35d5dc0e"
+    },
+    {
+      "bytes": 1575,
+      "path": "docs/renderer/evidence/native-table-source-v1/debug-v1595.json",
+      "sha256": "40fc569407b221e378f3f387b20afd182017c7bf0827f050562419d0e5061a05"
+    },
+    {
+      "bytes": 64,
+      "path": "docs/renderer/evidence/native-table-source-v1/failed-debug-cli.log",
+      "sha256": "77fb07a1a1866758159f474689109c3e32a568144fbadb0e397442c03a7f0692"
+    },
+    {
+      "bytes": 4932,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-table-fragment-debug-v1596.py",
+      "sha256": "19d725898beba4119f272a5002934268146032e111dea51cd4d7aade493c3633"
+    },
+    {
+      "bytes": 9199,
+      "path": "docs/renderer/evidence/native-table-source-v1/debug-v1596.json",
+      "sha256": "99875e691e37958f9254a937aeca22921c4fc9206538effd1f19ec7030036f23"
+    },
+    {
+      "bytes": 47235,
+      "path": "docs/renderer/evidence/native-table-source-v1/debug-legacy-1.log",
+      "sha256": "d55c2ff6b5a03eb109d0b6675bd98f6c48a6a8bcc312348f4f063c107cbde627"
+    },
+    {
+      "bytes": 46748,
+      "path": "docs/renderer/evidence/native-table-source-v1/debug-mobile-1.log",
+      "sha256": "7cfa52f1fd6425c49c46cd13ecb218fba48a60abab6498fdbafb4a37488dfc11"
+    },
+    {
+      "bytes": 47265,
+      "path": "docs/renderer/evidence/native-table-source-v1/debug-desktop125-1.log",
+      "sha256": "4e78bdaac2592cb2324666ab93f9cdf86fb614a8bee8f1ff7facae1398d3bec9"
+    },
+    {
+      "bytes": 47277,
+      "path": "docs/renderer/evidence/native-table-source-v1/debug-desktop150-1.log",
+      "sha256": "df6a9ed36a22db4ddecd5e9a9b1edac0c0288ee53ddd1cfcf222ba0dcef421c3"
+    },
+    {
+      "bytes": 47235,
+      "path": "docs/renderer/evidence/native-table-source-v1/debug-legacy-2.log",
+      "sha256": "d55c2ff6b5a03eb109d0b6675bd98f6c48a6a8bcc312348f4f063c107cbde627"
+    },
+    {
+      "bytes": 46748,
+      "path": "docs/renderer/evidence/native-table-source-v1/debug-mobile-2.log",
+      "sha256": "7cfa52f1fd6425c49c46cd13ecb218fba48a60abab6498fdbafb4a37488dfc11"
+    },
+    {
+      "bytes": 47265,
+      "path": "docs/renderer/evidence/native-table-source-v1/debug-desktop125-2.log",
+      "sha256": "4e78bdaac2592cb2324666ab93f9cdf86fb614a8bee8f1ff7facae1398d3bec9"
+    },
+    {
+      "bytes": 47277,
+      "path": "docs/renderer/evidence/native-table-source-v1/debug-desktop150-2.log",
+      "sha256": "df6a9ed36a22db4ddecd5e9a9b1edac0c0288ee53ddd1cfcf222ba0dcef421c3"
+    },
+    {
+      "bytes": 3445,
+      "path": "docs/renderer/evidence/native-table-source-v1/data-flow-projection.json",
+      "sha256": "d66a688cd82db8fd6ce529d08224b53b6747a7e261a6fb84d76ebda8df72a96d"
+    },
+    {
+      "bytes": 597,
+      "path": "docs/renderer/evidence/native-table-source-v1/data-flow-audit.json",
+      "sha256": "dd58172af4daf948fd35191a8ff2af8658b77af258a0357f11f994b038e9c621"
+    },
+    {
+      "bytes": 3247,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-table-source-data-flow-audit-v1604.py",
+      "sha256": "815c0a50f1d4ca8ae42159fff10bebad526d272d6914c02ca3c8ba698b933bf9"
+    },
+    {
+      "bytes": 7476,
+      "path": "docs/renderer/evidence/native-table-source-v1/owner-at-observation.json",
+      "sha256": "8179a49252ef0cd355b69be0d3475f236d199de9aa3411dadf619223a979bca9"
+    },
+    {
+      "bytes": 1337,
+      "path": "docs/renderer/evidence/native-table-source-v1/hosted-at-observation.json",
+      "sha256": "f019045e66a7d3cbf87e70ef1bd2bc63330196313e4b61fd9108723d1221a583"
+    },
+    {
+      "bytes": 22330,
+      "path": "docs/renderer/evidence/native-table-source-v1/umbrella-hosted.json",
+      "sha256": "3ae817588c2784e54e2f9b85da32f8fd7d6cc9f682a8e92336d46711ac72b8cb"
+    },
+    {
+      "bytes": 8994,
+      "path": "docs/renderer/evidence/native-table-source-v1/umbrella-37340932121.json",
+      "sha256": "a624ba7ea046440860aa6a2bdcfbbc4802d40488086f90d2538a095dd58620f5"
+    },
+    {
+      "bytes": 175205,
+      "decompressed_bytes": 1406500,
+      "decompressed_sha256": "e7153cd03e888429240812bc8a526aa467c9ab39e99ba86106f5879e0b22f87d",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-table-source-v1/umbrella-37340932121.log.gz",
+      "sha256": "ad0fa0e20a9dfcdd1c32b57bf335b5ec04d36fbe5c4d31ee13823299b6b0677f",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-umbrella-ci-v1593/37340932121.log"
+    },
+    {
+      "bytes": 3932,
+      "path": "docs/renderer/evidence/native-table-source-v1/umbrella-37340932235.json",
+      "sha256": "0cdc2b1dec12a14fd8c22c28189693642d3b2e97c097dfa529350fc7a6190c5c"
+    },
+    {
+      "bytes": 7888,
+      "decompressed_bytes": 57912,
+      "decompressed_sha256": "32b5800b89b6cb46a23e701cd32949004c632f2d9417dcfe02ddf241abe9dd41",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-table-source-v1/umbrella-37340932235.log.gz",
+      "sha256": "b3d62962b7db556504433a37fa916409813eb367318eb7f37b0bf11c10dc25a8",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-umbrella-ci-v1593/37340932235.log"
+    },
+    {
+      "bytes": 6235,
+      "path": "docs/renderer/evidence/native-table-source-v1/umbrella-37340932114.json",
+      "sha256": "dd413e96a9c8b4419825da5617fda0faf414d0efb9e20bf67e4bcdcadb38036a"
+    },
+    {
+      "bytes": 39520,
+      "decompressed_bytes": 342444,
+      "decompressed_sha256": "f0e64bbfb92a6a811df4bcdd1b1fcb0409a85b12d421e634f0436ba06cb895ed",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-table-source-v1/umbrella-37340932114.log.gz",
+      "sha256": "6d1fbe8137ed05aa6da221105c938af20f635a9079b35ceb77a723f714ee1488",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-umbrella-ci-v1593/37340932114.log"
+    },
+    {
+      "bytes": 2962,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-keywords-umbrella-ci-v1593.py",
+      "sha256": "cdd372eb5e0d5827b793ec76094c34224e1a2694312f9738bbfa83d8ce04ec16"
+    },
+    {
+      "bytes": 1574,
+      "path": "docs/renderer/evidence/native-table-source-v1/native-keywords-hosted.json",
+      "sha256": "ea128fac41eac44d2e6bc18776cfd64f6a29a2cb3fd581f7d590c1da448e9b37"
+    },
+    {
+      "bytes": 16071,
+      "path": "docs/renderer/evidence/native-table-source-v1/native-keywords-37340082754.json",
+      "sha256": "0911b5fffa420482b0abf941de4ff6cda047e4412209d13f917a8627113e438e"
+    },
+    {
+      "bytes": 236040,
+      "decompressed_bytes": 2149612,
+      "decompressed_sha256": "70190d60f6ed3f111129a64657886bdea23caf7110a6ef6b02f3e27693890f93",
+      "encoding": "gzip",
+      "path": "docs/renderer/evidence/native-table-source-v1/native-keywords-37340082754.log.gz",
+      "sha256": "ac656aed684e24a308cc384e6f831cba34fb146440bc1f6f796be57cd10a23fd",
+      "source_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-keywords-hosted-v1590/37340082754.log"
+    },
+    {
+      "bytes": 2651,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-keywords-hosted-v1590.py",
+      "sha256": "b6ab4f7ce631a8875f9f7efcf6b28be47aea63d066b2b87f0175a0cfd2fc57d3"
+    },
+    {
+      "bytes": 3700,
+      "path": "docs/renderer/evidence/native-table-source-v1/prior-umbrella-read-only-checks.json",
+      "sha256": "5ef1120c1547336a06b3ddced9e15801f63d396fd4b60bb9aa2938e87a39dd8d"
+    },
+    {
+      "bytes": 81,
+      "path": "docs/renderer/evidence/native-table-source-v1/prior-umbrella-check-renderer.log",
+      "sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691"
+    },
+    {
+      "bytes": 59,
+      "path": "docs/renderer/evidence/native-table-source-v1/prior-umbrella-check-multicol.log",
+      "sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222"
+    },
+    {
+      "bytes": 86,
+      "path": "docs/renderer/evidence/native-table-source-v1/prior-umbrella-check-sp17.log",
+      "sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a"
+    },
+    {
+      "bytes": 121,
+      "path": "docs/renderer/evidence/native-table-source-v1/prior-umbrella-check-sp18.log",
+      "sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763"
+    },
+    {
+      "bytes": 142,
+      "path": "docs/renderer/evidence/native-table-source-v1/prior-umbrella-check-sp20.log",
+      "sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d"
+    },
+    {
+      "bytes": 63,
+      "path": "docs/renderer/evidence/native-table-source-v1/prior-umbrella-check-v02.log",
+      "sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd"
+    },
+    {
+      "bytes": 37,
+      "path": "docs/renderer/evidence/native-table-source-v1/prior-umbrella-check-style.log",
+      "sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1"
+    },
+    {
+      "bytes": 32,
+      "path": "docs/renderer/evidence/native-table-source-v1/prior-umbrella-check-ffi.log",
+      "sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821"
+    },
+    {
+      "bytes": 45,
+      "path": "docs/renderer/evidence/native-table-source-v1/prior-umbrella-check-archive.log",
+      "sha256": "2b92fdb123e307724ae37ad9283b48f15a98d5cd7ccde00efcb27f47df819d32"
+    },
+    {
+      "bytes": 2867,
+      "path": "docs/renderer/evidence/native-table-source-v1/prior-umbrella-check-accountability.log",
+      "sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1"
+    },
+    {
+      "bytes": 1972,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-keywords-umbrella-checks-v1592.py",
+      "sha256": "34a7a5b30049db716f39eea766aa49840ece5cfd0c5a5e0d1042c8f517409e39"
+    },
+    {
+      "bytes": 11152,
+      "path": "docs/renderer/evidence/native-table-source-v1/openui-native-table-source-preserve-v1605.py",
+      "sha256": "4e2d8b49d9ed31714e0f7953e06127e7259a7f3acb3321f897b755931bc098cd"
+    }
+  ],
+  "baseline_commit": "cd6d80be4be16151a607cddcbad94e2f73a79e62",
+  "branch": "agent/native-table-source-v1597",
+  "decompressed_hosted_log_bytes": 3956468,
+  "hosted_log_storage": {
+    "all_captured_bytes_preserved": true,
+    "all_decompressed_sha256_verified": true,
+    "compressed_logs": 4,
+    "encoding": "gzip",
+    "source_logs_unmodified": true
+  },
+  "javascript_executed_by_openui": false,
+  "keyword_hosted": {
+    "actual_exit": 0,
+    "local_native_and_pixel_stages_still_required": true,
+    "skipped_jobs": 0,
+    "source": "06e1f89a4a2e7a53465bceb780675383d9748464",
+    "successful_jobs": 7
+  },
+  "measured_data_flow": {
+    "cropped_first_body_row_height_css_px": 60,
+    "debug_fixture_table_fragments": 5,
+    "debug_source": {
+      "clean": true,
+      "commit": "e0dc491e61e17ce4407ff2dd30289e741690572b",
+      "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+      "source_tree_sha256": "18cd988c9dc2442057ee7e17a5e15fef3e56b00c6e34c2caa08749a35e84aef3",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "different_sources_and_fixtures_not_substituted": true,
+    "header_and_footer_height_css_px": 40,
+    "independent_debug_runs": 2,
+    "observations": 8,
+    "original_required_chromium_count": 41,
+    "profiles": 4,
+    "retained_body_height_css_px": 100,
+    "screenshots_generated": 0,
+    "separate_failed_native_guard_table_fragments": 4,
+    "source_projection_recomputed_identically": true,
+    "source_table_height_css_px": 140,
+    "unrepresented_remaining_body_css_px": 40
+  },
+  "needed_native_operations_not_waived_by_pixel_exclusion": true,
+  "new_release_states_admitted": 0,
+  "observed_at_utc": "2026-10-05T17:06:34.465794+00:00",
+  "old_openui_pixels_are_provenance_only": true,
+  "pixel_tolerance": 0,
+  "prepared_source": {
+    "all_30_c_layouts_unchanged": true,
+    "current_exports": 113,
+    "existing_expected_geometry_unchanged": true,
+    "native_geometry_and_pixel_stages_not_started": true,
+    "observed_state": "awaiting-all-31-prior-whole-pipelines",
+    "one_source_per_table_required": true,
+    "prior_whole_owners": 31,
+    "public_rust_callback_application_preserved": true,
+    "read_only_checks_passed": 11,
+    "required_consecutive_chromium_captures": 240,
+    "required_independent_chromium_processes": 120,
+    "required_native_images": 60,
+    "required_stages": 7,
+    "shared_immutable_full_table_subtree": true,
+    "source_release_after_teardown_required": true,
+    "whole_owner": "native-table-source-pipeline-v1601"
+  },
+  "private_hosted_at_observation": {
+    "native_pixel_qualification": false,
+    "run_id": 37344385577,
+    "source": "e389b26ab28f259544e43c3052c895501e4c8686",
+    "state": "awaiting-own-source-manual-hardening",
+    "terminal": false
+  },
+  "promotion_allowed": false,
+  "public_native_rust_api_required": true,
+  "release_qualification": false,
+  "root_cause_owner": "openui-layout canonical repeated table source and ancestor continuation geometry",
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "e389b26ab28f259544e43c3052c895501e4c8686",
+    "harness_sha256": "ac7d020662395a08bd6496cd1100c24029505b8cbfac6bb1f4a3f5f06b2837af",
+    "source_tree_sha256": "2d023f9958aa427be4203b16a15c326ee7c20ae9844e6b1548e754ac4bd577c6",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "umbrella_hosted": {
+    "skipped_jobs": 5,
+    "skips_are_not_passes": true,
+    "source": "1d846e68b2b31b4091824b07ce3b54377f0409ca",
+    "successful_jobs": 6,
+    "successful_workflows": 3
+  }
+}

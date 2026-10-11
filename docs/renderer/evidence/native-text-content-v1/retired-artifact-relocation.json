@@ -1,0 +1,37 @@
+{
+  "active_sources_or_probes_changed": false,
+  "all_commands_terminal": true,
+  "artifacts": [
+    {
+      "active_executable_pids": [],
+      "all_six_build_steps_passed": true,
+      "build_receipt_sha256": "f3472f8357c1ab9ff55317d5bb5d13f42fdbff73b77741f836e0d4717790a0fb",
+      "bytes": 339778440,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-box-clean-v293/pixel_compare",
+      "original_path_preserved_as_symlink": true,
+      "sha256": "8d6d1b40e8dbaf361e782bff0acb522af548931249045f09d5d555d51517487f",
+      "source": "8d5a58a1f4a954997e0301506347c96708d84860",
+      "stored_path": "/mnt/e/openui-v02-qualification-d174ea0b/retired-artifact-relocation-v1614/svg-rebase-box-clean-v293-pixel_compare"
+    },
+    {
+      "active_executable_pids": [],
+      "all_six_build_steps_passed": true,
+      "build_receipt_sha256": "b33310487e5f0d818b2e2899e2d322296d0a2c74cde7a3f09e7eb98fafb27553",
+      "bytes": 339777600,
+      "original": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/svg-rebase-clean-v277/pixel_compare",
+      "original_path_preserved_as_symlink": true,
+      "sha256": "a99d31b1e22c686e81352516bebd5e691d22ea51457c5054d8683664a479f540",
+      "source": "d6819668771c3b3296d6fd6a5a5a8a024489609e",
+      "stored_path": "/mnt/e/openui-v02-qualification-d174ea0b/retired-artifact-relocation-v1614/svg-rebase-clean-v277-pixel_compare"
+    }
+  ],
+  "cargo_or_raster_commands_run": 0,
+  "old_executable_bytes_preserved": true,
+  "oracle_or_reference_images_changed": false,
+  "probe_sha256": "aca353a88616ecba774b8a3b665242d7b33d02c52c79b9c25abad79dc59065e4",
+  "release_qualification": false,
+  "root_free_bytes_after": 912044032,
+  "root_free_bytes_before": 232497152,
+  "schema_version": 1,
+  "source_files_changed": false
+}

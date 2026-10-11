@@ -1,0 +1,24 @@
+diff --git a/bindings/rust/openui-paint/src/painter.rs b/bindings/rust/openui-paint/src/painter.rs
+index e7344f10..7c130396 100644
+--- a/bindings/rust/openui-paint/src/painter.rs
++++ b/bindings/rust/openui-paint/src/painter.rs
+@@ -13365,8 +13365,17 @@ fn paint_css_image_tile(
+         // period alternate colors.
+         let phase_x = generated_image_raster_phase(physical_left, uses_repeated_shader);
+         let phase_y = generated_image_raster_phase(physical_top, uses_repeated_shader);
+-        let Some(mut surface) = surfaces::raster_n32_premul((width + phase_x, height + phase_y))
+-        else {
++        // SkPictureShader caches an eight-bit generated tile in RGBA8888,
++        // tagged with the destination color space (sRGB for an untagged
++        // canvas). Retain that representation for the concrete-tile path;
++        // native N32 would select a different legacy image sampler.
++        let tile_info = ImageInfo::new(
++            (width + phase_x, height + phase_y),
++            ColorType::RGBA8888,
++            AlphaType::Premul,
++            ColorSpace::new_srgb(),
++        );
++        let Some(mut surface) = surfaces::raster(&tile_info, None, None) else {
+             return;
+         };
+         surface.canvas().clear(skia_safe::Color::TRANSPARENT);

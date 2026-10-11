@@ -1,0 +1,1736 @@
+{
+  "all_20_local_stages_passed": true,
+  "all_native_apis_qualified": false,
+  "archived_openui_images_are_history_only": true,
+  "c_consumers": 22,
+  "c_exact_scenarios": 109,
+  "c_exports": 125,
+  "c_layouts": 34,
+  "c_range_projection_and_unicode_position_normalization_explicit": true,
+  "chromium_reference_fields_unchanged": true,
+  "completed_renderer_audit": {
+    "actual_whole_exit_code": 1,
+    "all_native_apis_qualified": false,
+    "all_source_bytes_unchanged": true,
+    "chromium_reference_fields_unchanged": true,
+    "compiled_artifacts_verified": 53,
+    "extra_executor_inputs_verified": true,
+    "fresh_local_packages": 14,
+    "implementation_integrated": true,
+    "javascript_executed_by_openui": false,
+    "logs_verified": 13,
+    "matrix_rows_verified": 48252,
+    "native_border_exact": 35,
+    "native_border_repeated_commands": 70,
+    "owner_terminal": true,
+    "pixel_tolerance": 0,
+    "public_combined_source_nonregression": true,
+    "receipt_sha256": "3cea305f8322c1c882d97488ad9354cb04d9eaf3758e0e5dec11703fa08b5863",
+    "release_qualified": false,
+    "results": {
+      "expanded": {
+        "actual_exit_code": 1,
+        "different": 1587,
+        "errors": 0,
+        "exact": 22141,
+        "gains": 0,
+        "losses": 0,
+        "total": 23728,
+        "worsened": 0
+      },
+      "focused": {
+        "actual_exit_code": 0,
+        "different": 0,
+        "errors": 0,
+        "exact": 640,
+        "gains": 0,
+        "losses": 0,
+        "total": 640,
+        "worsened": 0
+      },
+      "full": {
+        "actual_exit_code": 1,
+        "different": 1586,
+        "errors": 0,
+        "exact": 21338,
+        "gains": 0,
+        "losses": 0,
+        "total": 22924,
+        "worsened": 0
+      },
+      "primitive": {
+        "actual_exit_code": 0,
+        "different": 0,
+        "errors": 0,
+        "exact": 960,
+        "gains": 0,
+        "losses": 0,
+        "total": 960,
+        "worsened": 0
+      }
+    },
+    "schema_version": 1
+  },
+  "composition_qualified": false,
+  "cpp_consumers": 16,
+  "cpp_exact_scenarios": 109,
+  "disabled_state_reference_scenarios": 24,
+  "evidence": [
+    {
+      "decoded_sha256": "a3c002f03447915f28297e47f8da236b04829ca0d75d76c3702f648f27533e46",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-receipt.json.gz",
+      "sha256": "2c0c0b32c788133920c3f72dd0a1262fe31e907e08ddf2a5aced321ac4c075eb"
+    },
+    {
+      "decoded_sha256": "03076286a29150abc968e44c4bd6b762ba25e0593622fdcff5c532c045bf9e0d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/locked-metadata.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-locked-metadata.log.gz",
+      "sha256": "5098d034fb4d068945c692834e551504f278917ca50587564bef720112e5ef4c"
+    },
+    {
+      "decoded_sha256": "875857e1577a89f11d71d94661f8cbcf318f28b17e58be1858de781523916cbb",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/clean-local-packages.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-clean-local-packages.log.gz",
+      "sha256": "7d989b97f8830c321c000ca407baa04e7a1d1975c0274576401ffed9fb6cf9ab"
+    },
+    {
+      "decoded_sha256": "33d6311a41d128bf234f36272f5580bfe5741d729b5b45d3c7459e803d4552db",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/control-tests.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-control-tests.log.gz",
+      "sha256": "18b871662942f39f63887f70dccf3b12146da40266d50e5ce0b2256e7d9b5dee"
+    },
+    {
+      "decoded_sha256": "e5823d784556a8292dfd1388a2631fde0417b1776594047497c05bfb3de507fc",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/native-focus-integration-guards.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-native-focus-integration-guards.log.gz",
+      "sha256": "b5b65a94bb9bad42855190e3e28a226eb0ecf40fa5686f950fc149d0ea2bb6ed"
+    },
+    {
+      "decoded_sha256": "c36237dafa6ee17ad08162a17b70b0c237849828b7fd785821d1c183b39ced86",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/native-app-build.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-native-app-build.log.gz",
+      "sha256": "d31358ca35e80cfe82c16b7afdeb7799833dffc761dcb4e4bf6fd5db210434dc"
+    },
+    {
+      "decoded_sha256": "71c1dd2ff2cc4ced3a5423830f2a6dd07342f36b6a97b58653894477dac27043",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/native_input_metadata-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-native_input_metadata-1.log.gz",
+      "sha256": "4320f4c3496ee350d973ed07ec93e172facad742209eaf4cb6ad72b4f42057ab"
+    },
+    {
+      "decoded_sha256": "71c1dd2ff2cc4ced3a5423830f2a6dd07342f36b6a97b58653894477dac27043",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/native_input_metadata-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-native_input_metadata-2.log.gz",
+      "sha256": "4320f4c3496ee350d973ed07ec93e172facad742209eaf4cb6ad72b4f42057ab"
+    },
+    {
+      "decoded_sha256": "a4a9005ddfacac54cb2fd5c1d42869db51d0bbe6dbe4af0969ff24fba81815be",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/native_selection_phases-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-native_selection_phases-1.log.gz",
+      "sha256": "f5a190077c061219be185a7dc0641ad5d64e50a7c8c0c6a6baf91de8c3ecdeb5"
+    },
+    {
+      "decoded_sha256": "a4a9005ddfacac54cb2fd5c1d42869db51d0bbe6dbe4af0969ff24fba81815be",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/native_selection_phases-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-native_selection_phases-2.log.gz",
+      "sha256": "f5a190077c061219be185a7dc0641ad5d64e50a7c8c0c6a6baf91de8c3ecdeb5"
+    },
+    {
+      "decoded_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/native_selection_values-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-native_selection_values-1.log.gz",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf"
+    },
+    {
+      "decoded_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/native_selection_values-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-native_selection_values-2.log.gz",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf"
+    },
+    {
+      "decoded_sha256": "18bb54137a280720ea60a8420ee7765a693d08eaaa8ccb28f03a1b771f235eb7",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/native_range_scalar-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-native_range_scalar-1.log.gz",
+      "sha256": "94e5a041768fd52e36a63ce500e24e38f8c82a7f716b5123c94f6d35e74c4ddb"
+    },
+    {
+      "decoded_sha256": "18bb54137a280720ea60a8420ee7765a693d08eaaa8ccb28f03a1b771f235eb7",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/native_range_scalar-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-native_range_scalar-2.log.gz",
+      "sha256": "94e5a041768fd52e36a63ce500e24e38f8c82a7f716b5123c94f6d35e74c4ddb"
+    },
+    {
+      "decoded_sha256": "db653e9a8a700bd81cc40e70e8375f8d04558875877ee50c7dd9b87b1c753640",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/native_range_modes-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-native_range_modes-1.log.gz",
+      "sha256": "daee7d6bf7f3e167ed2b7dbd4ca3599a54e650c172aa767e3a31f9520b077bd5"
+    },
+    {
+      "decoded_sha256": "db653e9a8a700bd81cc40e70e8375f8d04558875877ee50c7dd9b87b1c753640",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/native_range_modes-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-native_range_modes-2.log.gz",
+      "sha256": "daee7d6bf7f3e167ed2b7dbd4ca3599a54e650c172aa767e3a31f9520b077bd5"
+    },
+    {
+      "decoded_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/native_disabled_focus-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-native_disabled_focus-1.log.gz",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3"
+    },
+    {
+      "decoded_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/native_disabled_focus-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-native_disabled_focus-2.log.gz",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3"
+    },
+    {
+      "decoded_sha256": "77c50da9b52d8286e6b258ec0f0b26ca199a75e025b6e159e89b49a3b4e2b651",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/ffi-library-build.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-ffi-library-build.log.gz",
+      "sha256": "c32a645b7292c608345913473213b0035fd159a6d43cd3b6002c79c625694108"
+    },
+    {
+      "decoded_sha256": "3148aa8d4a1e4dcbbd0294f172b3d6686790ee19357a96de2c1597cbaba12c16",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3167/all-existing-c-cpp-consumers.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3167-all-existing-c-cpp-consumers.log.gz",
+      "sha256": "1c460abe9fb8ea26572d7e14a520b821b2318199f6c91bf0567d6651a985f0a4"
+    },
+    {
+      "decoded_sha256": "484b4f4a787e7332bd9db8958096e2a139a4b87adaa35785d0046df9a6328374",
+      "original_path": "/tmp/openui-public-native-selection-failed-audit-v3181.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-public-native-selection-failed-audit-v3181.json.gz",
+      "sha256": "2e38c431038b9ed3557a41a285bccd1d4dd3b96372a5cc35f1cc49ef4cde2a09"
+    },
+    {
+      "decoded_sha256": "48b6151883cf8dc05d17a6885f108a57319efd8181afa6578a83b6776b8c4cd7",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-receipt.json.gz",
+      "sha256": "7b9eb9a7882b104cc6da11b04e9a03beca6a40f9dcac9a7d5c9006af96ec4d3b"
+    },
+    {
+      "decoded_sha256": "03076286a29150abc968e44c4bd6b762ba25e0593622fdcff5c532c045bf9e0d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/locked-metadata.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-locked-metadata.log.gz",
+      "sha256": "5098d034fb4d068945c692834e551504f278917ca50587564bef720112e5ef4c"
+    },
+    {
+      "decoded_sha256": "7bc14a761baf69e9698989709184b66cb945a5cd525ec6eab31333d298e79859",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/clean-local-packages.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-clean-local-packages.log.gz",
+      "sha256": "e4315d17ebfca16ed1d73b49cf1f2e277c699b0ccbf4c273ea77a66f739b6b05"
+    },
+    {
+      "decoded_sha256": "cade83f520435035c3b918a2e2e7efb7ddb8201dc367bab5464c8e27a58bcf19",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/control-tests.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-control-tests.log.gz",
+      "sha256": "690838d7d6f9bf9d5261befcd8fab533e29aa7ac2636105c425ce85817da5ba0"
+    },
+    {
+      "decoded_sha256": "bfbd2ae81bbb9682951889b73bafc64998d1f07779b7de5e74b8bc1f3c67923d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/native-focus-integration-guards.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-native-focus-integration-guards.log.gz",
+      "sha256": "d101328ae3b5329a97324c8de997fbc021b475d1953a1a384f3fa9bcda0586dc"
+    },
+    {
+      "decoded_sha256": "4bcc8ef123b694301d02b0923001ead3571bb94819f16e178408e603032c73b9",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/native-app-build.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-native-app-build.log.gz",
+      "sha256": "f901346763f82c7eec0c5f89089e9cf196003431e31b47e1566f5354324d0a74"
+    },
+    {
+      "decoded_sha256": "71c1dd2ff2cc4ced3a5423830f2a6dd07342f36b6a97b58653894477dac27043",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/native_input_metadata-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-native_input_metadata-1.log.gz",
+      "sha256": "4320f4c3496ee350d973ed07ec93e172facad742209eaf4cb6ad72b4f42057ab"
+    },
+    {
+      "decoded_sha256": "71c1dd2ff2cc4ced3a5423830f2a6dd07342f36b6a97b58653894477dac27043",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/native_input_metadata-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-native_input_metadata-2.log.gz",
+      "sha256": "4320f4c3496ee350d973ed07ec93e172facad742209eaf4cb6ad72b4f42057ab"
+    },
+    {
+      "decoded_sha256": "a4a9005ddfacac54cb2fd5c1d42869db51d0bbe6dbe4af0969ff24fba81815be",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/native_selection_phases-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-native_selection_phases-1.log.gz",
+      "sha256": "f5a190077c061219be185a7dc0641ad5d64e50a7c8c0c6a6baf91de8c3ecdeb5"
+    },
+    {
+      "decoded_sha256": "a4a9005ddfacac54cb2fd5c1d42869db51d0bbe6dbe4af0969ff24fba81815be",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/native_selection_phases-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-native_selection_phases-2.log.gz",
+      "sha256": "f5a190077c061219be185a7dc0641ad5d64e50a7c8c0c6a6baf91de8c3ecdeb5"
+    },
+    {
+      "decoded_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/native_selection_values-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-native_selection_values-1.log.gz",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf"
+    },
+    {
+      "decoded_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/native_selection_values-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-native_selection_values-2.log.gz",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf"
+    },
+    {
+      "decoded_sha256": "18bb54137a280720ea60a8420ee7765a693d08eaaa8ccb28f03a1b771f235eb7",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/native_range_scalar-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-native_range_scalar-1.log.gz",
+      "sha256": "94e5a041768fd52e36a63ce500e24e38f8c82a7f716b5123c94f6d35e74c4ddb"
+    },
+    {
+      "decoded_sha256": "18bb54137a280720ea60a8420ee7765a693d08eaaa8ccb28f03a1b771f235eb7",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/native_range_scalar-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-native_range_scalar-2.log.gz",
+      "sha256": "94e5a041768fd52e36a63ce500e24e38f8c82a7f716b5123c94f6d35e74c4ddb"
+    },
+    {
+      "decoded_sha256": "db653e9a8a700bd81cc40e70e8375f8d04558875877ee50c7dd9b87b1c753640",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/native_range_modes-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-native_range_modes-1.log.gz",
+      "sha256": "daee7d6bf7f3e167ed2b7dbd4ca3599a54e650c172aa767e3a31f9520b077bd5"
+    },
+    {
+      "decoded_sha256": "db653e9a8a700bd81cc40e70e8375f8d04558875877ee50c7dd9b87b1c753640",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/native_range_modes-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-native_range_modes-2.log.gz",
+      "sha256": "daee7d6bf7f3e167ed2b7dbd4ca3599a54e650c172aa767e3a31f9520b077bd5"
+    },
+    {
+      "decoded_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/native_disabled_focus-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-native_disabled_focus-1.log.gz",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3"
+    },
+    {
+      "decoded_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/native_disabled_focus-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-native_disabled_focus-2.log.gz",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3"
+    },
+    {
+      "decoded_sha256": "5c81d8e270eb02e072ba50343bbe4a15b99471bf0d0e144d32fd9378582f0c67",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/ffi-library-build.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-ffi-library-build.log.gz",
+      "sha256": "025992a0433933dc26b0d4a13068d71ccc2cfa42c225e8dacc3e4a0cf06be07a"
+    },
+    {
+      "decoded_sha256": "12de15202367ea1775776143375710b0ac2ec76c73252cdce9570c59a9a15893",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/all-existing-c-cpp-consumers.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-all-existing-c-cpp-consumers.log.gz",
+      "sha256": "5e927a79ba48d3dd717b9c058c6d9be2f96cfab090546456f046be9ffa9f2a2f"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/compile-selection_tasks-c.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-compile-selection_tasks-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/link-selection_tasks-c.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-link-selection_tasks-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/selection_tasks-c-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-selection_tasks-c-1.log.gz",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8"
+    },
+    {
+      "decoded_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/selection_tasks-c-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-selection_tasks-c-2.log.gz",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/compile-disabled_focus-c.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-compile-disabled_focus-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/link-disabled_focus-c.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-link-disabled_focus-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/disabled_focus-c-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-disabled_focus-c-1.log.gz",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c"
+    },
+    {
+      "decoded_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/disabled_focus-c-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-disabled_focus-c-2.log.gz",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/compile-input_metadata-c.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-compile-input_metadata-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/link-input_metadata-c.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-link-input_metadata-c.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/input_metadata-c-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-input_metadata-c-1.log.gz",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86"
+    },
+    {
+      "decoded_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/input_metadata-c-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-input_metadata-c-2.log.gz",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/compile-selection_tasks-cpp.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-compile-selection_tasks-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/link-selection_tasks-cpp.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-link-selection_tasks-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/selection_tasks-cpp-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-selection_tasks-cpp-1.log.gz",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8"
+    },
+    {
+      "decoded_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/selection_tasks-cpp-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-selection_tasks-cpp-2.log.gz",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/compile-disabled_focus-cpp.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-compile-disabled_focus-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/link-disabled_focus-cpp.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-link-disabled_focus-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/disabled_focus-cpp-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-disabled_focus-cpp-1.log.gz",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c"
+    },
+    {
+      "decoded_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/disabled_focus-cpp-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-disabled_focus-cpp-2.log.gz",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/compile-input_metadata-cpp.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-compile-input_metadata-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/link-input_metadata-cpp.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-link-input_metadata-cpp.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/input_metadata-cpp-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-input_metadata-cpp-1.log.gz",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86"
+    },
+    {
+      "decoded_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-selection-v3182/input_metadata-cpp-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-selection-v3182-input_metadata-cpp-2.log.gz",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86"
+    },
+    {
+      "decoded_sha256": "0da2dd91e1dd098c75495061b46fc2e27ff0cf02a5dbe9aae1c8629f9f03d223",
+      "original_path": "/tmp/openui-public-native-selection-completed-audit-v3184.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-public-native-selection-completed-audit-v3184.json.gz",
+      "sha256": "aaa036b0552b20b20cb47cfa487856b06c79162cd1682614d249b1a9ecf3dfbe"
+    },
+    {
+      "decoded_sha256": "35da08d2553306c745bf0d691a833e2eddff3650a881de7f9b46d13ac3c8cdad",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3185/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3185-receipt.json.gz",
+      "sha256": "2bc45f93b2380b0ebb8f55f76d9d8daf8054e528b448e7a17ed5302536f2e796"
+    },
+    {
+      "decoded_sha256": "03076286a29150abc968e44c4bd6b762ba25e0593622fdcff5c532c045bf9e0d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3185/locked-metadata.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3185-locked-metadata.log.gz",
+      "sha256": "5098d034fb4d068945c692834e551504f278917ca50587564bef720112e5ef4c"
+    },
+    {
+      "decoded_sha256": "7bc14a761baf69e9698989709184b66cb945a5cd525ec6eab31333d298e79859",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3185/clean-local-packages.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3185-clean-local-packages.log.gz",
+      "sha256": "e4315d17ebfca16ed1d73b49cf1f2e277c699b0ccbf4c273ea77a66f739b6b05"
+    },
+    {
+      "decoded_sha256": "1ef819fbb9394d24a6e75d592dd4d0f27917fc7f7eff8372b9365d6fe9370933",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3185/locked-workspace-tests.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3185-locked-workspace-tests.log.gz",
+      "sha256": "194f0f635760f47c2f0d8c22af550df912f1c77bae63165471c93fd624202b82"
+    },
+    {
+      "decoded_sha256": "103752e965de3350e555f0b3b485c6ea584701902add48bbe34de61a11959eea",
+      "original_path": "/tmp/openui-public-native-api-stopped-audit-v3186.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-public-native-api-stopped-audit-v3186.json.gz",
+      "sha256": "d403da10558954d44f485d4678e6156ffe5c3b6e207b05b9ac4a1a333375443c"
+    },
+    {
+      "decoded_sha256": "73a8673a76b4dd4239a6c3d05cf1449ca59b9f295760d9c9362d90744dc6bad7",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-receipt.json.gz",
+      "sha256": "27d4351de171b5a6448787478653c7ee7fc1600047d878da6deeb4016f138cb6"
+    },
+    {
+      "decoded_sha256": "03076286a29150abc968e44c4bd6b762ba25e0593622fdcff5c532c045bf9e0d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/locked-metadata.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-locked-metadata.log.gz",
+      "sha256": "5098d034fb4d068945c692834e551504f278917ca50587564bef720112e5ef4c"
+    },
+    {
+      "decoded_sha256": "557c1f5aa4a6f616432e79c7c03e0dcaec89929052c66f4f9b26612e402ec5ae",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/clean-local-packages.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-clean-local-packages.log.gz",
+      "sha256": "32e0419eb3389d8127c2c4625e5e844642aa890dde5738a0ebc5c68018c015f4"
+    },
+    {
+      "decoded_sha256": "c676c743104ef7d93bcf9bd4eb7699cfe3c1cc4f875a9826ad9a454ee8c6351b",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/locked-workspace-tests.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-locked-workspace-tests.log.gz",
+      "sha256": "2342b02b654f637d509b9033b10d4358d761fd0efde30bfd21b2e65f99436cab"
+    },
+    {
+      "decoded_sha256": "e7eb5afd3ba084b67e01fe618977a62c7a927fd9f0e5448a70038df71ca3e66c",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/build-linux-c-abi.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-build-linux-c-abi.log.gz",
+      "sha256": "f1a78ea56650b517c0908239f2527e2e44196e6cea65a17d1bb30b07e117a91d"
+    },
+    {
+      "decoded_sha256": "12de15202367ea1775776143375710b0ac2ec76c73252cdce9570c59a9a15893",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/all-c-cpp-consumers.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-all-c-cpp-consumers.log.gz",
+      "sha256": "5e927a79ba48d3dd717b9c058c6d9be2f96cfab090546456f046be9ffa9f2a2f"
+    },
+    {
+      "decoded_sha256": "a8d24b5342b413ce109e36bc7fbd6cd7ed821fcbd8cccb67f8d5d31634d464b6",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/headless-c-abi-tests.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-headless-c-abi-tests.log.gz",
+      "sha256": "d1a054c01c76977e66670352fc524b0cef800fe82fb6d9f8df3ef011513ba81c"
+    },
+    {
+      "decoded_sha256": "d08a8af21975df89969d24c7409f282fb7fc1571df563105f44315da749acbb1",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/release-source.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-release-source.log.gz",
+      "sha256": "0475d3641782b78902817343a08350e62eb2e4a1f3c2757ad292706c93ea68bb"
+    },
+    {
+      "decoded_sha256": "a996b9a02cb50ef0f51a218458c3fd19d38d8dd8cb546424e8dcbf949e051f3f",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/conformance.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-conformance.log.gz",
+      "sha256": "1525fa3fc5f93742cb4395355a6b9be4aaa60e8321d7ecddb27315ba07524598"
+    },
+    {
+      "decoded_sha256": "31fafaa2779d95f8168ecf220b0bd06071a32df5e56de235ac65a3c2541317fc",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/performance-contract.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-performance-contract.log.gz",
+      "sha256": "8d5bd71703bafedf440266c4f6d301f6ea2e6d7e803a35d200094044be62d4b3"
+    },
+    {
+      "decoded_sha256": "cd884c172bce6bd13d6418c9e406767889f8cc64a335d2749118e6e78e37e2ce",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/porter-controls.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-porter-controls.log.gz",
+      "sha256": "d14340d0770dab6db374bcb8bc17ae68fbf24f4fd2e8152e01c780cef84998e7"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/rust-format.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-rust-format.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/c-abi-generator.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-c-abi-generator.log.gz",
+      "sha256": "55406c87d9571bf98d31b05240f488bb4ab3c159f8a3c2f654148ee72b439592"
+    },
+    {
+      "decoded_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/generator-generate_v02_contract.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-generator-generate_v02_contract.log.gz",
+      "sha256": "ec1277c807103cfdee77b77954961b24a58ce62612d9dbf58594043db7efc478"
+    },
+    {
+      "decoded_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/generator-generate_properties.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-generator-generate_properties.log.gz",
+      "sha256": "1b70c8a7ba0f84375105255b165129e2f427ca1072a832c28efb9f840d539b10"
+    },
+    {
+      "decoded_sha256": "a80e3cd254655505baa155c7c8b490e363c5183572ec526c222fac376470f222",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/generator-generate_sp13r_multicol_closure.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-generator-generate_sp13r_multicol_closure.log.gz",
+      "sha256": "fd7419d14ad0bcdcbbacbaf00c01710e85416d2018b9addb2b26f3cff95775e1"
+    },
+    {
+      "decoded_sha256": "116e866e69f24d0501d0b96e69f3d7ac4dfc08114fd64bcf53f5ff5d915f997a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/generator-generate_sp17_closure.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-generator-generate_sp17_closure.log.gz",
+      "sha256": "3f7d3c871f9e93684439793e60873829691e5dee51d51b30ab55fa940ef55df4"
+    },
+    {
+      "decoded_sha256": "82109c59a98b1730e8f7d07f0a31aa5d37bf318ff44248c3a7dd3a701f61d763",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/generator-generate_sp18_closure.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-generator-generate_sp18_closure.log.gz",
+      "sha256": "50c99e0d37a26a36c607fd5e7dbf96f4aedf46d045824ff09490252f4c3a35ee"
+    },
+    {
+      "decoded_sha256": "bd0f49de1f775e61207b494a7bfcfa81f6f0de16318c02538a1571abe996411d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/generator-generate_sp20_closure.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-generator-generate_sp20_closure.log.gz",
+      "sha256": "3705c08adcf75d9113bbf4ee522c73c0bbcdb1f0e9e50947c0a4eb54e214d64e"
+    },
+    {
+      "decoded_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/renderer-contract.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-renderer-contract.log.gz",
+      "sha256": "d2b79cb72721d10fece4b15d0f646423937282376e09b24612cf252d1dfa8316"
+    },
+    {
+      "decoded_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-checks-v3188/accountability.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/public-native-api-checks-v3188-accountability.log.gz",
+      "sha256": "a7ddfb15636772a7ed177d92cd310c67cc38a082a9aae491e62d04518aa2f463"
+    },
+    {
+      "decoded_sha256": "10a24ba78c40019fd14289d825ef4a1c7d17b75e452fd8e1ed39e1e30673b0f9",
+      "original_path": "/tmp/openui-public-native-api-completed-audit-v3191.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-public-native-api-completed-audit-v3191.json.gz",
+      "sha256": "4a4a00b6648b3a9053a425e71b41ce3422f2ab6e4b555b477f685633d0c1be5f"
+    },
+    {
+      "decoded_sha256": "3cea305f8322c1c882d97488ad9354cb04d9eaf3758e0e5dec11703fa08b5863",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/renderer-receipt.json.gz",
+      "sha256": "1974cd0d5c7b262ad15692742cafadea1c58fcb04a7f3f2c7fe7619dc7324403"
+    },
+    {
+      "decoded_sha256": "5f2f08b7539d6b7791816c13e22cc89a59f27592ba82709c2e415df8fde1c5d5",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial-build.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/renderer-trial-build.log.gz",
+      "sha256": "c7a45fe8b2d971109f6b26f73f7173d49f417939b81d86fc36159b99d44285e7"
+    },
+    {
+      "decoded_sha256": "e39533280681d3d5eb587b0fad55a883905a4208ba7d1518f275080c6300ff55",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-build.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/renderer-native-border-app-build.log.gz",
+      "sha256": "deea0c13048e48e1514ed19cc29986aba290782443a0dc0657f2ff171e51bac9"
+    },
+    {
+      "decoded_sha256": "435111d2e3a16f311a2c715b1a1f1b2cd5602b6ecbadda4c04e452844be9c7cb",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/renderer-native-border-app-matrix.log.gz",
+      "sha256": "e48834aa9bdad105ebce1ab273f5eaf594e6fb70e9c3fd670c5a72ab64065aaa"
+    },
+    {
+      "decoded_sha256": "668ea4e0b9c0bbef9c375cf3d1fcfcd43a2c3028794f1ad03f982757481dcf39",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial-focused.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/renderer-trial-focused.log.gz",
+      "sha256": "a418516c1685402945d3a8bc40837d8027da28f187055782cbf9d71c82f48fee"
+    },
+    {
+      "decoded_sha256": "fee7cbbbeb152a8e72d2c7a8fe643e104e6efbfabee90611c0e6ac6058b92290",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial-primitive.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/renderer-trial-primitive.log.gz",
+      "sha256": "ce983d4c6289553f688f0f1cab14c17db49f7a312d7f5e06b73a447a422115ae"
+    },
+    {
+      "decoded_sha256": "2b32198e8b3d55bce0ac8364118dab626aa37c92fab4897ac02e8b45a4cc7ea8",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial-full.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/renderer-trial-full.log.gz",
+      "sha256": "f81258dc3a4934f95ef822a4317de51091ab740284ba7512ee78ae74001240b4"
+    },
+    {
+      "decoded_sha256": "b271ee11f57bc1377ee36c1aec79614527a086b526dd3e638df790bfce43d493",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial-expanded.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/renderer-trial-expanded.log.gz",
+      "sha256": "d64f5e51d8708bc9332c80d62364aceea04087877a438ac5fbe81afaf803b1b9"
+    },
+    {
+      "decoded_sha256": "15ad6ba8ff2e9cedd9161becd33d18bee3703224544bb2bc18079f7b19fd2c6d",
+      "original_path": "/tmp/openui-public-native-api-renderer-completed-audit-v3204.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-public-native-api-renderer-completed-audit-v3204.json.gz",
+      "sha256": "bb34e7b3d1d88f53626a2ae82590740e02f28945d69e3857b80da1d53b59a2ab"
+    },
+    {
+      "decoded_sha256": "886ebaf5ab74bcba3a877993b99a79655b7882ffa6042d1ec1d74394f2651ea4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial/focused-matrix/focused-summary.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/focused-summary.json.gz",
+      "sha256": "bd935ab00de51de0d6f8c47befb94106e640923467c24073ceb7b80580d72a7f"
+    },
+    {
+      "decoded_sha256": "d9efea09b7e13588497bd0d794fb000a59bf6989517934544654a00327cbb8c6",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial/primitive-matrix/primitive-summary.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/primitive-summary.json.gz",
+      "sha256": "55c4a18be5bd9df8a12a22a0428561158e853f3d38d661ea1b8318b9e69f21a8"
+    },
+    {
+      "decoded_sha256": "c562c35d4362ed8bc26dc65b9d5b796d48fb14acb143dd312c4d92b4581c5c1e",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial/full-matrix/full-summary.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/full-summary.json.gz",
+      "sha256": "d8e33179e76141bcaa589c122e05847ad1b4f8632a11ffab5ae66d14dbeb7d9e"
+    },
+    {
+      "decoded_sha256": "bc3e1c378170fa0825748242c719abd5b15bc7879659107e5057b246aa763d10",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial/expanded-matrix/expanded-summary.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/expanded-summary.json.gz",
+      "sha256": "f04263a769ee1c8ba289c81957d92b97ee10c0576636f418cd594b7041a9439c"
+    },
+    {
+      "decoded_sha256": "c89ab8362282ecfa5794a8c58e75bc1da25904821abb6d0d275324a4e145697f",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial/guarded-build/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/guarded-build-receipt.json.gz",
+      "sha256": "9d3e5f37bfda9398afce4b68a518bae78d27d061367c005d0bbf8beb46fcef23"
+    },
+    {
+      "decoded_sha256": "03076286a29150abc968e44c4bd6b762ba25e0593622fdcff5c532c045bf9e0d",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial/guarded-build/metadata.stdout",
+      "path": "docs/renderer/evidence/native-selection-public-v1/guarded-build-metadata.stdout.gz",
+      "sha256": "5098d034fb4d068945c692834e551504f278917ca50587564bef720112e5ef4c"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial/guarded-build/metadata.stderr",
+      "path": "docs/renderer/evidence/native-selection-public-v1/guarded-build-metadata.stderr.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial/guarded-build/clean-local-packages.stdout",
+      "path": "docs/renderer/evidence/native-selection-public-v1/guarded-build-clean-local-packages.stdout.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "8d1821a14fec5382b961f246e9a82c0a2f8e9ca7f44ac8cadf866be2a5f8744b",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial/guarded-build/clean-local-packages.stderr",
+      "path": "docs/renderer/evidence/native-selection-public-v1/guarded-build-clean-local-packages.stderr.gz",
+      "sha256": "50ded572b4ef1a11cc619999029130ab3564252e402f90e0d1bb5353c5a9dc00"
+    },
+    {
+      "decoded_sha256": "6d7a8ec73c3df4a10b909c0cef80d2975419019e2a81ee59acfb5babce81c8a2",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial/guarded-build/build.stdout",
+      "path": "docs/renderer/evidence/native-selection-public-v1/guarded-build-build.stdout.gz",
+      "sha256": "13ff31e68fec6fb3f1eb9963f70318b6ec623045535c0ca3a4888c007ce001be"
+    },
+    {
+      "decoded_sha256": "35aebbcdc64dbe6206ed687c8a85b6fabd67c1cb9629629fc07d8c77ceb2cd64",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/trial/guarded-build/build.stderr",
+      "path": "docs/renderer/evidence/native-selection-public-v1/guarded-build-build.stderr.gz",
+      "sha256": "6eebb7de89eb35fbf9d549f9a6c16ff704e5fc3d9d408e2847842d587d21704c"
+    },
+    {
+      "decoded_sha256": "ebeb36a1a46143f8ba89afa31227ceb4e7e63e4aec9b50cdb304d8eee055bac8",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-receipt.json.gz",
+      "sha256": "f4a30f31b798142583d8f69ab20097ff1b077e2860eda1aad5be8fdc707b6501"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-0-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-0-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-0-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-0-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-1-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-1-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-1-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-1-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-2-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-2-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-2-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-2-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-3-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-3-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-3-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-3-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-4-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-4-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-4-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-4-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-5-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-5-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-5-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-5-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-6-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-6-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-6-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-6-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-7-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-7-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-7-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-7-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-8-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-8-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-8-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-8-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-9-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-9-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-9-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-9-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-10-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-10-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-10-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-10-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-11-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-11-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-11-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-11-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-12-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-12-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-12-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-12-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-13-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-13-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-13-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-13-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-14-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-14-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-14-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-14-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-15-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-15-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-15-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-15-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-16-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-16-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-16-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-16-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-17-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-17-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-17-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-17-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-18-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-18-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-18-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-18-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-19-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-19-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-19-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-19-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-20-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-20-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-20-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-20-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-21-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-21-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-21-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-21-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-22-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-22-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-22-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-22-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-23-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-23-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-23-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-23-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-24-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-24-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-24-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-24-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-25-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-25-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-25-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-25-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-26-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-26-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-26-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-26-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-27-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-27-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-27-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-27-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-28-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-28-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-28-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-28-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-29-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-29-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-29-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-29-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-30-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-30-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-30-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-30-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-31-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-31-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-31-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-31-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-32-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-32-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-32-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-32-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-33-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-33-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-33-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-33-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-34-1.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-34-1.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/public-native-api-renderer-v3190/native-border-app-matrix/border-34-2.log",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-border-border-34-2.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "decoded_sha256": "af5d20ef562449e89da7af720e018bdb6b1d9c98c7bf1e9fdc5564537ebd0dc4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-selection-reentry-oracle-v3062/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-selection-reentry-oracle-v3062-receipt.json.gz",
+      "sha256": "af20b9762da9821f3a582c0b11af5fa26aa77aa081bd9a85969629d6e0031cb0"
+    },
+    {
+      "decoded_sha256": "3de3fa59ae761225c625d89d02111e43dc13848da2bf1965b09b059986c55865",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-selection-reentry-oracle-v3062/observations-1.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-selection-reentry-oracle-v3062-observations-1.json.gz",
+      "sha256": "50ed64d426393aef9734bfec97bda665b893510c0c01b2ec0804ebdb76525d6a"
+    },
+    {
+      "decoded_sha256": "3de3fa59ae761225c625d89d02111e43dc13848da2bf1965b09b059986c55865",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-selection-reentry-oracle-v3062/observations-2.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-selection-reentry-oracle-v3062-observations-2.json.gz",
+      "sha256": "50ed64d426393aef9734bfec97bda665b893510c0c01b2ec0804ebdb76525d6a"
+    },
+    {
+      "decoded_sha256": "41af67f8f798538488bdba646971cd9458292fc6e7655b6f23ba1b62a4158fc5",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-selection-frame-reentry-oracle-v3084/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-selection-frame-reentry-oracle-v3084-receipt.json.gz",
+      "sha256": "49966ea173b65bbea1a7220b1883fceffcc8fb8abb674ba952a72050b6f62218"
+    },
+    {
+      "decoded_sha256": "857034e9d1f6eb18ebf2ad417a787365ba7e4ae237205be5c23be031e0c8cc63",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-selection-frame-reentry-oracle-v3084/observations-1.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-selection-frame-reentry-oracle-v3084-observations-1.json.gz",
+      "sha256": "3cd28e06ad9b8fed194a51e6c51f6abeff889e09bb8f4fc8fb3f692d07c65106"
+    },
+    {
+      "decoded_sha256": "857034e9d1f6eb18ebf2ad417a787365ba7e4ae237205be5c23be031e0c8cc63",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-selection-frame-reentry-oracle-v3084/observations-2.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-selection-frame-reentry-oracle-v3084-observations-2.json.gz",
+      "sha256": "3cd28e06ad9b8fed194a51e6c51f6abeff889e09bb8f4fc8fb3f692d07c65106"
+    },
+    {
+      "decoded_sha256": "63adca4ba011d83abf9780148ece2fe06b85ed26b55bff9aa5c46ee9e0036ea4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-selection-value-oracle-v3111/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-selection-value-oracle-v3111-receipt.json.gz",
+      "sha256": "d651951f562016def0c4322ed783e378b154ec930e4e40c94f6695d33ca9ae0d"
+    },
+    {
+      "decoded_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-selection-value-oracle-v3111/observations-1.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-selection-value-oracle-v3111-observations-1.json.gz",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf"
+    },
+    {
+      "decoded_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-selection-value-oracle-v3111/observations-2.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-selection-value-oracle-v3111-observations-2.json.gz",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf"
+    },
+    {
+      "decoded_sha256": "976726754e6a46c18c0e6e86fc3c04b45b63f30d74f759bc05735e6954c36567",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-range-scalar-replacement-oracle-v2995/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-range-scalar-replacement-oracle-v2995-receipt.json.gz",
+      "sha256": "f50daed9f495e3434bbbdc707c4f230a59f6a1b75c747184c6f3f431223f11da"
+    },
+    {
+      "decoded_sha256": "975da433559db95621b88856c6a43a50db5651608b1e772011a5fe91eb636308",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-range-scalar-replacement-oracle-v2995/observations-1.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-range-scalar-replacement-oracle-v2995-observations-1.json.gz",
+      "sha256": "4a6e305e2c921cb4badbd82715f4f87d815ddc8e0a86423b08404b07dfb0ac6e"
+    },
+    {
+      "decoded_sha256": "975da433559db95621b88856c6a43a50db5651608b1e772011a5fe91eb636308",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-range-scalar-replacement-oracle-v2995/observations-2.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-range-scalar-replacement-oracle-v2995-observations-2.json.gz",
+      "sha256": "4a6e305e2c921cb4badbd82715f4f87d815ddc8e0a86423b08404b07dfb0ac6e"
+    },
+    {
+      "decoded_sha256": "95e012ea45987806d70d0c7c727898afded94f2fd55d26d360190305a87f62d8",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-range-replacement-oracle-v2897/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-range-replacement-oracle-v2897-receipt.json.gz",
+      "sha256": "1f1e92ef300ac7709769c6bafdd07e3121910908ccbbe0ed4755af505a71514a"
+    },
+    {
+      "decoded_sha256": "7132b6d4fc45391c8c572679994fd04bfbe0bc72639018b00fc5ec082a36a8f4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-range-replacement-oracle-v2897/observations-1.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-range-replacement-oracle-v2897-observations-1.json.gz",
+      "sha256": "069cb24ef9f4b3d2ecd711d5c76d1da95a4aff8814433ee1502ef2b379b2bce8"
+    },
+    {
+      "decoded_sha256": "7132b6d4fc45391c8c572679994fd04bfbe0bc72639018b00fc5ec082a36a8f4",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-range-replacement-oracle-v2897/observations-2.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-range-replacement-oracle-v2897-observations-2.json.gz",
+      "sha256": "069cb24ef9f4b3d2ecd711d5c76d1da95a4aff8814433ee1502ef2b379b2bce8"
+    },
+    {
+      "decoded_sha256": "ca1f75935f981e56c1fcc5bf7e1a0be07bbe272fbb7c3d40fddbd70179483e8e",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-disabled-focus-oracle-v3135/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-disabled-focus-oracle-v3135-receipt.json.gz",
+      "sha256": "644873490857edf87880fc055f86fcd693c35666ee3a61ca9ce1dd11e1172b0f"
+    },
+    {
+      "decoded_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-disabled-focus-oracle-v3135/observations-1.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-disabled-focus-oracle-v3135-observations-1.json.gz",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3"
+    },
+    {
+      "decoded_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-disabled-focus-oracle-v3135/observations-2.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-disabled-focus-oracle-v3135-observations-2.json.gz",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3"
+    },
+    {
+      "decoded_sha256": "919eaf7029a6b2c7b86939d4c3accdfd9fa2399f06601931b29bae2c9f3ddba0",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-editing-metadata-oracle-v2697/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-editing-metadata-oracle-v2697-receipt.json.gz",
+      "sha256": "67180fabe44f2f2e1f02c2659e25eb58f73f56978bd4f735be0550b322857823"
+    },
+    {
+      "decoded_sha256": "8ee53d647b4861b398c5a259e15ec9a8bf46170404a88cb5f2b499c132303193",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-editing-metadata-oracle-v2697/observations-1.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-editing-metadata-oracle-v2697-observations-1.json.gz",
+      "sha256": "e08b4c56e4e818d1df1f59820955c8cdb5dc544c1ca59edc93c57888b8c53bb5"
+    },
+    {
+      "decoded_sha256": "8ee53d647b4861b398c5a259e15ec9a8bf46170404a88cb5f2b499c132303193",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-editing-metadata-oracle-v2697/observations-2.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-editing-metadata-oracle-v2697-observations-2.json.gz",
+      "sha256": "e08b4c56e4e818d1df1f59820955c8cdb5dc544c1ca59edc93c57888b8c53bb5"
+    },
+    {
+      "decoded_sha256": "f24999835a3e3ec07ca4657446c0a8197ee10a7f6428d998c76667bbbdb808dc",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-editing-extra-metadata-oracle-v2720/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-editing-extra-metadata-oracle-v2720-receipt.json.gz",
+      "sha256": "732afe562796a129ef0ecdb4113afda2f3290f3a7bec4bea54b6af60ab466672"
+    },
+    {
+      "decoded_sha256": "4e2077fc0e3217d1a7737b310c2515384399c8befce808df09d662155bcf5712",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-editing-extra-metadata-oracle-v2720/observations-1.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-editing-extra-metadata-oracle-v2720-observations-1.json.gz",
+      "sha256": "b9bce934f1bc3569c6f919b343746ccdad27d256498c44f8b343101d26457093"
+    },
+    {
+      "decoded_sha256": "4e2077fc0e3217d1a7737b310c2515384399c8befce808df09d662155bcf5712",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-editing-extra-metadata-oracle-v2720/observations-2.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-editing-extra-metadata-oracle-v2720-observations-2.json.gz",
+      "sha256": "b9bce934f1bc3569c6f919b343746ccdad27d256498c44f8b343101d26457093"
+    },
+    {
+      "decoded_sha256": "7e8241f7028a02bd5d6765ca04888947a7311a64f5e7c002cb09ac23bdce5c18",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-reference-v3192/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-fieldset-reference-v3192-receipt.json.gz",
+      "sha256": "317391e60e6c6d194af5d6119521810cc8233ec231af4d6a00720a2683cb3971"
+    },
+    {
+      "decoded_sha256": "5e8930e3d833336820919c055d4f40041b888cd0dce6d9f22b4e3cddf1336a97",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-reference-v3192/observations-1.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-fieldset-reference-v3192-observations-1.json.gz",
+      "sha256": "651bc8b33cfee4ed8e244cf03db5eb04f35e63105690ddaafead94dd31719f8b"
+    },
+    {
+      "decoded_sha256": "5e8930e3d833336820919c055d4f40041b888cd0dce6d9f22b4e3cddf1336a97",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-reference-v3192/observations-2.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-fieldset-reference-v3192-observations-2.json.gz",
+      "sha256": "651bc8b33cfee4ed8e244cf03db5eb04f35e63105690ddaafead94dd31719f8b"
+    },
+    {
+      "decoded_sha256": "c6dda33614a46351a38f3b2a0e627629751517b320a8571cf03a3e3002cdc4ab",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-neighbors-reference-v3211/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-fieldset-neighbors-reference-v3211-receipt.json.gz",
+      "sha256": "5480d041bd5aa2073ac7547e98700c4f2ff68060fe0f01e6f027a4c50e18be99"
+    },
+    {
+      "decoded_sha256": "64c77292ea6926dea429605bd4ed72cb4cc7bbe7b9c98f62b583e9d35b26210a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-neighbors-reference-v3211/observations-1.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-fieldset-neighbors-reference-v3211-observations-1.json.gz",
+      "sha256": "1a08df2121e756c7c98de6adf7798c2b2ff395add6075e9de987b6c3aaff21b8"
+    },
+    {
+      "decoded_sha256": "64c77292ea6926dea429605bd4ed72cb4cc7bbe7b9c98f62b583e9d35b26210a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-neighbors-reference-v3211/observations-2.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-fieldset-neighbors-reference-v3211-observations-2.json.gz",
+      "sha256": "1a08df2121e756c7c98de6adf7798c2b2ff395add6075e9de987b6c3aaff21b8"
+    },
+    {
+      "decoded_sha256": "ab8e2418753b9970188fbab9ba84162d79312ea0d076d05f700bb35461af9318",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-disabled-state-reference-v3212/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-disabled-state-reference-v3212-receipt.json.gz",
+      "sha256": "a915ebad578b5aafcb52c3c1469b19625da0c3de928af48c2ba2d851e65239b7"
+    },
+    {
+      "decoded_sha256": "d075decaff9c3393fc00a256f81d8c2035b48c8269ae9c4d49aff9ade6714cea",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-disabled-state-reference-v3212/observations-1.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-disabled-state-reference-v3212-observations-1.json.gz",
+      "sha256": "0d2dc938c85a4fa2fe9fd79ba6aa9a6ea47c340b214d879361909a2cc4761911"
+    },
+    {
+      "decoded_sha256": "d075decaff9c3393fc00a256f81d8c2035b48c8269ae9c4d49aff9ade6714cea",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-disabled-state-reference-v3212/observations-2.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-disabled-state-reference-v3212-observations-2.json.gz",
+      "sha256": "0d2dc938c85a4fa2fe9fd79ba6aa9a6ea47c340b214d879361909a2cc4761911"
+    },
+    {
+      "decoded_sha256": "76c57605c385018ebb2c3ebb7fa6ad766adf4dea6e776fa9e6970b2bc34a318a",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-c-probe-v3205/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-fieldset-c-probe-v3205-receipt.json.gz",
+      "sha256": "2183b04d3f482187c18f61f8d57661448f24c79c2cf4ab1ee560394cfaa745f6"
+    },
+    {
+      "decoded_sha256": "a21a397063783be338fd35db6696a096b956a3593dd11237b831506ea0b750c8",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-c-probe-v3206/receipt.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-fieldset-c-probe-v3206-receipt.json.gz",
+      "sha256": "2aca18d049f530add137f2471deeafbfa4326e067d77b25a95a1bfb37e545e15"
+    },
+    {
+      "decoded_sha256": "d5292c6d0b4876647495f4fbcb1858f5e121c72a8b5572d483b2c16722186b26",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-c-probe-v3206/observations-1.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-fieldset-c-probe-v3206-observations-1.json.gz",
+      "sha256": "5c8b519e02b7a6b0b874391ebbde69de7669d56ce0c3ed05b073e9faf084dccd"
+    },
+    {
+      "decoded_sha256": "d5292c6d0b4876647495f4fbcb1858f5e121c72a8b5572d483b2c16722186b26",
+      "original_path": "/home/nero/code/open-ui/out/renderer-evidence/native-viewport-scroll-v1/native-fieldset-c-probe-v3206/observations-2.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-fieldset-c-probe-v3206-observations-2.json.gz",
+      "sha256": "5c8b519e02b7a6b0b874391ebbde69de7669d56ce0c3ed05b073e9faf084dccd"
+    },
+    {
+      "decoded_sha256": "85bfe4cb4235c97dd20fb0907f461b49a1f12f801d077234e5bec26075d71ff9",
+      "original_path": "/tmp/openui-native-api-fieldset-investigation-v3189/native-focus-gap.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/native-fieldset-focus-gap.json.gz",
+      "sha256": "5bc6c8ecf0c66db540cd57cfd4632760e1509c6d9a233046215fda6a21259f00"
+    },
+    {
+      "decoded_sha256": "69f39a4667d16e34d769e9065d45a7e3d58ed7f57a198148f4d97030e82e00e1",
+      "original_path": "/tmp/openui-hardening-fcabea38-completed-v3201.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-hardening-fcabea38-completed-v3201.json.gz",
+      "sha256": "43e68f6f6d72888f3833093689a9978833b388ecd87e26b09ff30dd8401931ed"
+    },
+    {
+      "decoded_sha256": "dd5ae8c69ba89db5e3e22aef2b6ea749865d5ca8e42e2e7e8985acb07d3364d6",
+      "original_path": "/tmp/openui-pr3-checks-fcabea38-v3197.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-pr3-checks-fcabea38-v3197.json.gz",
+      "sha256": "adebaa9d360a678bde4f6bf99fafe5bdc1e4473f5ecf732c0e9bdad85125d117"
+    },
+    {
+      "decoded_sha256": "6619e13aaec36886b31e369dafee8c10379383171af69379af89ea347909afd0",
+      "original_path": "/tmp/openui-hosted-window-reports-audit-v3200.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-hosted-window-reports-audit-v3200.json.gz",
+      "sha256": "061b19c0def06799cae1a83bd9775ca275f0bec3af869cf484efb02d4fa37acb"
+    },
+    {
+      "decoded_sha256": "591b19e17bd9199ea323b9c99e28db01d3e611f74909fdf296d75f635eec7727",
+      "original_path": "/tmp/openui-retired-build-cache-cleanup-v3187.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-retired-build-cache-cleanup-v3187.json.gz",
+      "sha256": "bc63e37110c104926c750c2eb131c1cae7d1e6c39378515cc5dc142558fe48d2"
+    },
+    {
+      "decoded_sha256": "6e69ad85203cd264acf257d61080ae5f5c0d18c3bfd61bea8a2de18469ef630d",
+      "original_path": "/tmp/openui-fcabea38-ordinary-ci-v3203.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-fcabea38-ordinary-ci-v3203.json.gz",
+      "sha256": "a79660ac86a930f2607799e9c46c2b53b7e420639b451ee1475f1e360cbc9593"
+    },
+    {
+      "decoded_sha256": "38ef26c491da729ff301072ba7c569929d9a52a101df8673eff620654365aed7",
+      "original_path": "/tmp/openui-fcabea38-ordinary-format-v3203.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-fcabea38-ordinary-format-v3203.json.gz",
+      "sha256": "9dc145bbcc8df0ba4c36249e2ca94ea1dd8f2602a260c4270e3292c7f96c6998"
+    },
+    {
+      "decoded_sha256": "2d2debf0fc8e118dc79f1ccef9e68bb649535b9946e65a6935a8cad33c016180",
+      "original_path": "/tmp/openui-fcabea38-ordinary-hardening-v3203.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-fcabea38-ordinary-hardening-v3203.json.gz",
+      "sha256": "ad384f66c3b3ac2c70f6d901a8cb20281f58f1b744c99b6c561ba2adcda1a14b"
+    },
+    {
+      "decoded_sha256": "f769aed93422dd686b0d9ee62d603c811246267cefeefc384f12efc6db10be4f",
+      "original_path": "/mnt/e/openui-v02-qualification-d174ea0b/hosted-hardening-fcabea38-v3195/native-wayland-software.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/hosted-native-wayland-software.json.gz",
+      "sha256": "7e58427a51c0246a805099b255e1ebad78a60011ae82985888e26139fcdd2177"
+    },
+    {
+      "decoded_sha256": "0fa889a6e4d6190c77dd32a8b620f586941ddc01485bc35578374d46ee1dd46c",
+      "original_path": "/mnt/e/openui-v02-qualification-d174ea0b/hosted-hardening-fcabea38-v3195/native-x11-opengl.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/hosted-native-x11-opengl.json.gz",
+      "sha256": "e7d4018d788680d1aa7b68083d76fdd9ce1d86ab8d923b66a40666e03234875b"
+    },
+    {
+      "decoded_sha256": "2f2d2749830eda6ab154ffef7eea491a9ab83fb9d2e50909723cf2ccb98bd19e",
+      "original_path": "/mnt/e/openui-v02-qualification-d174ea0b/hosted-hardening-fcabea38-v3195/native-x11-software.json",
+      "path": "docs/renderer/evidence/native-selection-public-v1/hosted-native-x11-software.json.gz",
+      "sha256": "ad4c1d0216b9fa3f334bf5480df07d2c5aee5fa4847d328d743fb8909632ebcf"
+    },
+    {
+      "decoded_sha256": "696207ea1e3883c9ab2ae16e9c6e32c8b0594d9e9219d2cbdea2dd49062ac538",
+      "original_path": "/tmp/openui-public-native-selection-owner-v3182.py",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-public-native-selection-owner-v3182.py.gz",
+      "sha256": "60360bde95f58b5b0591f24a54b5ef2829604a26e466671524a496fb809e6934"
+    },
+    {
+      "decoded_sha256": "f009bd340b7257eeac9fe3d7975abfcb4c0cefd3190476c37454d538e5dd623e",
+      "original_path": "/tmp/openui-public-native-api-checks-v3188.py",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-public-native-api-checks-v3188.py.gz",
+      "sha256": "75b640de5919b5d9fcbdfdf5a2a1bdb74593439d0e936a3285d61513b1b76bf8"
+    },
+    {
+      "decoded_sha256": "eb019e9c25ca0787f14d97a774c90d9a68a55a49f3c4095d8a163024312b129b",
+      "original_path": "/tmp/openui-public-native-api-renderer-v3190.py",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-public-native-api-renderer-v3190.py.gz",
+      "sha256": "319f51183fb5bc8f2a4e4cdd9980e05cc58f54f598c8078eead1c3e17a625df3"
+    },
+    {
+      "decoded_sha256": "1fa235b41a0c8c00731bc7051498ccf11d9b2c40c56728d9bc5102710f4c8e87",
+      "original_path": "/tmp/openui-public-native-rounded-batch-v3196.py",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-public-native-rounded-batch-v3196.py.gz",
+      "sha256": "fc974ee73e2422c7e62e6a2df7edb64a8852c17631556afd1793b41290fb694c"
+    },
+    {
+      "decoded_sha256": "4097bcc0dc73deff2024bd304fb616e4e975bcfe75c1f168d27af8fb8befbfd2",
+      "original_path": "/tmp/openui-public-native-api-renderer-completed-audit-v3204.py",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-public-native-api-renderer-completed-audit-v3204.py.gz",
+      "sha256": "1e5fd6a8c86b3c2a092e555cf7b435ee7de9ddaed1807ffbe15c2742f4aafd90"
+    },
+    {
+      "decoded_sha256": "c151ecd295edcfc5b2f5eb70c728ef8ebd14779bce6ada2dce8f75613858bf47",
+      "original_path": "/tmp/openui-native-fieldset-reference-v3192.py",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-native-fieldset-reference-v3192.py.gz",
+      "sha256": "57d07ae28514108becd1b710f76c4dda545aa70b6ff6d4c9a592732a22b3c1b2"
+    },
+    {
+      "decoded_sha256": "5367433a2efd37cd42a1eaed196fba7a7ce30ddd3149cad319559bbf7bd43355",
+      "original_path": "/tmp/openui-native-fieldset-neighbors-reference-v3211.py",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-native-fieldset-neighbors-reference-v3211.py.gz",
+      "sha256": "01fbdb652fbaf7882557b2f58f011fd4be3fb18384f761a03ac2deb738027995"
+    },
+    {
+      "decoded_sha256": "06c8c91dcb16f36198f37e7df827457a481460a0161168e7e7377fe71d34afd6",
+      "original_path": "/tmp/openui-native-disabled-state-reference-v3212.py",
+      "path": "docs/renderer/evidence/native-selection-public-v1/openui-native-disabled-state-reference-v3212.py.gz",
+      "sha256": "76646c814ce00db26d0517a338a900c36eedcfacc84de1f29d8ecf01f9fb7115"
+    }
+  ],
+  "fieldset_native_focus_differences": 10,
+  "fieldset_native_focus_matches": 6,
+  "fieldset_native_probe_actual_whole_exit_code": 1,
+  "fieldset_native_qualified": false,
+  "fieldset_neighbor_reference_scenarios": 28,
+  "fieldset_reference_scenarios": 36,
+  "hardware_and_release_lab_qualification": false,
+  "headless_c_tests": 50,
+  "hosted_hardening_successes": 7,
+  "hosted_ordinary_optional_skips": 5,
+  "hosted_ordinary_successes": 6,
+  "implementation_integrated": true,
+  "javascript_executed_by_openui": false,
+  "measured_public_source": {
+    "clean": true,
+    "commit": "fcabea38ac537bca58cb1f6653199ee3bbd42097",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "69993935e7951e06a0c4ad00de4502f761de7f4d84b23ac09d4ace030fb14b8a",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "measured_renderer_results": {
+    "expanded": {
+      "actual_exit_code": 1,
+      "different": 1587,
+      "errors": 0,
+      "exact": 22141,
+      "gains": 0,
+      "losses": 0,
+      "total": 23728,
+      "worsened": 0
+    },
+    "focused": {
+      "actual_exit_code": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "gains": 0,
+      "losses": 0,
+      "total": 640,
+      "worsened": 0
+    },
+    "full": {
+      "actual_exit_code": 1,
+      "different": 1586,
+      "errors": 0,
+      "exact": 21338,
+      "gains": 0,
+      "losses": 0,
+      "total": 22924,
+      "worsened": 0
+    },
+    "primitive": {
+      "actual_exit_code": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "gains": 0,
+      "losses": 0,
+      "total": 960,
+      "worsened": 0
+    }
+  },
+  "native_c_properties_focus_attributes_and_identity_observed": true,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "previous_116_exports_and_32_layouts_preserved": true,
+  "prior_failed_attempts": [
+    {
+      "actual_command_exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "actual_whole_exit_code": 1,
+      "name": "public-native-selection-v3167",
+      "source": {
+        "clean": true,
+        "commit": "6565488e4c75ece4b0f95fd9006e5bce65c4aa1e",
+        "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+        "source_tree_sha256": "758c44c74e81290bbfb760c811c96eb33ff849d76d2bf1f362f35d115db05889",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "actual_command_exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "actual_whole_exit_code": 0,
+      "name": "public-native-selection-v3182",
+      "source": {
+        "clean": true,
+        "commit": "fcabea38ac537bca58cb1f6653199ee3bbd42097",
+        "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+        "source_tree_sha256": "69993935e7951e06a0c4ad00de4502f761de7f4d84b23ac09d4ace030fb14b8a",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "actual_command_exit_codes": [
+        0,
+        0,
+        -15
+      ],
+      "actual_whole_exit_code": 1,
+      "name": "public-native-api-checks-v3185",
+      "source": {
+        "clean": true,
+        "commit": "fcabea38ac537bca58cb1f6653199ee3bbd42097",
+        "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+        "source_tree_sha256": "69993935e7951e06a0c4ad00de4502f761de7f4d84b23ac09d4ace030fb14b8a",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "actual_command_exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "actual_whole_exit_code": 0,
+      "name": "public-native-api-checks-v3188",
+      "source": {
+        "clean": true,
+        "commit": "fcabea38ac537bca58cb1f6653199ee3bbd42097",
+        "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+        "source_tree_sha256": "69993935e7951e06a0c4ad00de4502f761de7f4d84b23ac09d4ace030fb14b8a",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "public_native_whole_actual_exit_code": 0,
+  "release_qualified": false,
+  "repeated_native_processes": 24,
+  "rust_exact_scenarios": 109,
+  "schema_version": 1,
+  "workspace_actual_exit_code": 0,
+  "workspace_tests": {
+    "failed": 0,
+    "ignored": 13,
+    "passed": 8607
+  }
+}

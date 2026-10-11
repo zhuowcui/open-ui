@@ -1,0 +1,3198 @@
+{
+  "all_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "behavior_exact": true,
+  "behavior_results": {
+    "c": {
+      "different": 0,
+      "exact": 99,
+      "total": 99
+    },
+    "cpp": {
+      "different": 0,
+      "exact": 99,
+      "total": 99
+    },
+    "rust": {
+      "different": 0,
+      "exact": 99,
+      "total": 99
+    }
+  },
+  "consumers": {
+    "control_keyboard-c": {
+      "binary_sha256": "800451925c82e00c3ad9d8e9a38979f79a57a82cc27f3063da7930bbb926d18c",
+      "object_sha256": "f3723bec9ea2760612c8200a43e2974962f0069666f343c841308670486c019a"
+    },
+    "control_keyboard-cpp": {
+      "binary_sha256": "c607198c7e3d93bcd91bde75e7b9eab3d1c2c3a2b34119c3cbd38d3cd83cd631",
+      "object_sha256": "767cf497cfc6b460b7f1917162f71560de5af03e5728958ec07d8eb19623c338"
+    },
+    "control_keyboard_guards-c": {
+      "binary_sha256": "89573acdb70763209f6693011e81112449cec37fab10bb1f83424b80e0066de4",
+      "object_sha256": "288e20e991f67c80c5d3a241f3daa879424f472d32dbc3054e7ee74f29ffd767"
+    },
+    "control_keyboard_guards-cpp": {
+      "binary_sha256": "795d37ff0ffba3d5dc189586fd826ade89d35ecb3d0c41a9243237f0f486f8ab",
+      "object_sha256": "a86d2097c73c7a68b5a0ae1a0f9c51a580e8c483a00bfc850cb0997ac71d31d8"
+    }
+  },
+  "driver_sha256": "acc890155733cceca12639b55c78aeaafa93554403954742172649387c21a2a6",
+  "implementation_integrated": false,
+  "javascript_executed_by_openui": false,
+  "library_sha256": "091fbdedf435170864d64889be304b8d0401edc3fab9c6f153f3374edb6594e7",
+  "local_artifacts": {
+    "ffi-active-borrow-unit": [
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-d2c4909f4f7b4c5f.so"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck_derive-v1/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "bytemuck_derive",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck_derive-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-d2c4909f4f7b4c5f.so": "bd8422204b6890a8a35ee80adffcb2b9fd49b162c2c421e135e765590084b511"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck_derive",
+            "derive",
+            "min_const_generics"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck-v1/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "lib"
+            ],
+            "name": "bytemuck",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rlib": "2066f483e6c2c28accd3a138c5c5518b8bd71c90d155be4b286f854caf0c17a2",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rmeta": "862ccabdca88b318a137831fbdeeb9c917454da796ad842db8f8d0e753bc622f"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-geometry/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-geometry#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_geometry",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-geometry/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib": "a9d522b328a3fcbb008c69979219a31627dae489ecb5525554fe2a9b84608de6",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta": "e4733592eb2f8936492db61bb0181078088aa08ac0d844c865d2ae6dd01e5bd9"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/font-types-v0_11/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "font_types",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/font-types-v0_11/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rlib": "72c70a130d30c33b295a70ac0088749becbfb47c3b46be5e558448a64ce1ee8c",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rmeta": "7facc50340a050aa5b92d71f618b40b3099e862e10289b762c360ce769f130fd"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/read-fonts-v0_37/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "read_fonts",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/read-fonts-v0_37/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rlib": "9adc968e4c6ea46fd091000c7c36b9dd207ba6af705c728dbec038ad5ca4df5b",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rmeta": "9595108d969a8841e9da78c19b21e64af33ed109b038e53005fd8471651e1fae"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-style/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-style#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_style",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-style/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib": "6d90392bfd28d786e39ba39b050ca19184823e5e82730af9d525f770b717a01f",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta": "d8ca0001044d0e39ff355e6075d3261d8dea5724dc0d540076874f26e27f6aa3"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "autohint_shaping",
+            "default",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/skrifa-v0_40/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "skrifa",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/skrifa-v0_40/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rlib": "15a36652622c6ebe05b98cb4c597a93ceb16fbdacec4644007f2eaf14dd21164",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rmeta": "b0cbc43c716574eda8f6723bee83c1a3438d3f8613d9bb2d5019d83750d376c8"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-text/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-text#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_text",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-text/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rlib": "76cc388437f6c878aee252a5be7cb05bcbd24dd2daf10c519fde8fb91b6c7173",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rmeta": "eb1288c45af9a22add9dca7106b9d5b4c806cf3b0f4655feff5dd5c7b2c97ef0"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-dom/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-dom#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_dom",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-dom/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rlib": "29cc50d2404a4a18ab986d2d7785aada97e3c1942e75640b71c30681879d7558",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rmeta": "d1cd1402901f1e9509e238fe4ea67e2154e81773cfc2a56840e1f4c70e53b389"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-layout/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-layout#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_layout",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-layout/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rlib": "7b4c69c2a083309ecbecefa52ca9334641ba8f2e59d6944450b0699cf7375ab6",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rmeta": "551a3b9043a7d8e597b3f82bee61b658c07e98964609688abbfd588ede4ffb86"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-paint/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-paint#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_paint",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-paint/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rlib": "c02805614e0849152189074a23e0f4e980d67a2a5aa79f5e2b9150c4f881fa84",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rmeta": "bef8ec1835cf4d42285745b1bdbcd9a85a00d54a0fa53d9f824564eb98e71f50"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-compositor/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-compositor#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_compositor",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-compositor/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rlib": "2d4946179d112886ad780718dc3cd12657584fb925cd16ed192858dce9eed51b",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rmeta": "2b437fc5226bfece0aafee7adeaf6b9b2679ff4cac2509c9d42d4d3344168cf3"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-engine/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-engine#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_engine",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-engine/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rlib": "82c73600f528a5b1d6f939adfb1fbc8413bc81353a37fae8958200dbbb74b2c4",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rmeta": "5f3ec692d0ddef9b872bee9d58c01ba6191cb441b0fc42a425c2d1f0465d7792"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default",
+            "linux"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-platform/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-platform#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_platform",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-platform/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rlib": "571ed1849671a877ba5b71ee3c1ec791ed9b0757c17c13f335ae716e1b8f0f1b",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rmeta": "5dd1cde97f3c25089e46b979f96eadc3e46a0490bd6e96551c1b9417bb18f61b"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-6c3f19c750600aae.so"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-macros/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-macros#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "openui_macros",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-macros/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-6c3f19c750600aae.so": "50e447b18c563f5be1ff012b5dd68d52d11b9a1cca17523a86936d6fdb7513a5"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default",
+            "ffi-integration",
+            "linux"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1a11703d58ff8f02.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1a11703d58ff8f02.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1a11703d58ff8f02.rlib": "eaf2c0a0886be0ebc276ceb89848c7749e7a404c8be42783352da94c6c0dd025",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1a11703d58ff8f02.rmeta": "f6cb0a5b34f0f9aafa91d2a611ee00bf93663d8fd264debed98bfee0d1c072bc"
+        }
+      },
+      {
+        "record": {
+          "executable": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui_ffi-080f1f9ebd6b8552",
+          "features": [
+            "default",
+            "linux"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui_ffi-080f1f9ebd6b8552"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-ffi/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-ffi#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": true
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "rlib",
+              "staticlib",
+              "cdylib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "rlib",
+              "staticlib",
+              "cdylib"
+            ],
+            "name": "openui_ffi",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-ffi/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui_ffi-080f1f9ebd6b8552": "20043c25320bcf6ec914bd9b394fc5023f9db72c068cb3397b8174735c1ed74f"
+        }
+      }
+    ],
+    "ffi-library-build": [
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-d2c4909f4f7b4c5f.so"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck_derive-v1/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "bytemuck_derive",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck_derive-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-d2c4909f4f7b4c5f.so": "bd8422204b6890a8a35ee80adffcb2b9fd49b162c2c421e135e765590084b511"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck_derive",
+            "derive",
+            "min_const_generics"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck-v1/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "lib"
+            ],
+            "name": "bytemuck",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rlib": "2066f483e6c2c28accd3a138c5c5518b8bd71c90d155be4b286f854caf0c17a2",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rmeta": "862ccabdca88b318a137831fbdeeb9c917454da796ad842db8f8d0e753bc622f"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-geometry/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-geometry#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_geometry",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-geometry/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib": "a9d522b328a3fcbb008c69979219a31627dae489ecb5525554fe2a9b84608de6",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta": "e4733592eb2f8936492db61bb0181078088aa08ac0d844c865d2ae6dd01e5bd9"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/font-types-v0_11/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "font_types",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/font-types-v0_11/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rlib": "72c70a130d30c33b295a70ac0088749becbfb47c3b46be5e558448a64ce1ee8c",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rmeta": "7facc50340a050aa5b92d71f618b40b3099e862e10289b762c360ce769f130fd"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/read-fonts-v0_37/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "read_fonts",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/read-fonts-v0_37/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rlib": "9adc968e4c6ea46fd091000c7c36b9dd207ba6af705c728dbec038ad5ca4df5b",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rmeta": "9595108d969a8841e9da78c19b21e64af33ed109b038e53005fd8471651e1fae"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-style/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-style#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_style",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-style/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib": "6d90392bfd28d786e39ba39b050ca19184823e5e82730af9d525f770b717a01f",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta": "d8ca0001044d0e39ff355e6075d3261d8dea5724dc0d540076874f26e27f6aa3"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "autohint_shaping",
+            "default",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/skrifa-v0_40/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "skrifa",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/skrifa-v0_40/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rlib": "15a36652622c6ebe05b98cb4c597a93ceb16fbdacec4644007f2eaf14dd21164",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rmeta": "b0cbc43c716574eda8f6723bee83c1a3438d3f8613d9bb2d5019d83750d376c8"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-text/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-text#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_text",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-text/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rlib": "76cc388437f6c878aee252a5be7cb05bcbd24dd2daf10c519fde8fb91b6c7173",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rmeta": "eb1288c45af9a22add9dca7106b9d5b4c806cf3b0f4655feff5dd5c7b2c97ef0"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-dom/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-dom#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_dom",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-dom/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rlib": "29cc50d2404a4a18ab986d2d7785aada97e3c1942e75640b71c30681879d7558",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rmeta": "d1cd1402901f1e9509e238fe4ea67e2154e81773cfc2a56840e1f4c70e53b389"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-layout/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-layout#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_layout",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-layout/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rlib": "7b4c69c2a083309ecbecefa52ca9334641ba8f2e59d6944450b0699cf7375ab6",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rmeta": "551a3b9043a7d8e597b3f82bee61b658c07e98964609688abbfd588ede4ffb86"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-paint/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-paint#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_paint",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-paint/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rlib": "c02805614e0849152189074a23e0f4e980d67a2a5aa79f5e2b9150c4f881fa84",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rmeta": "bef8ec1835cf4d42285745b1bdbcd9a85a00d54a0fa53d9f824564eb98e71f50"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-compositor/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-compositor#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_compositor",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-compositor/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rlib": "2d4946179d112886ad780718dc3cd12657584fb925cd16ed192858dce9eed51b",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rmeta": "2b437fc5226bfece0aafee7adeaf6b9b2679ff4cac2509c9d42d4d3344168cf3"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-engine/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-engine#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_engine",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-engine/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rlib": "82c73600f528a5b1d6f939adfb1fbc8413bc81353a37fae8958200dbbb74b2c4",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rmeta": "5f3ec692d0ddef9b872bee9d58c01ba6191cb441b0fc42a425c2d1f0465d7792"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default",
+            "linux"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-platform/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-platform#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_platform",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-platform/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rlib": "571ed1849671a877ba5b71ee3c1ec791ed9b0757c17c13f335ae716e1b8f0f1b",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rmeta": "5dd1cde97f3c25089e46b979f96eadc3e46a0490bd6e96551c1b9417bb18f61b"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-6c3f19c750600aae.so"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-macros/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-macros#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "openui_macros",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-macros/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-6c3f19c750600aae.so": "50e447b18c563f5be1ff012b5dd68d52d11b9a1cca17523a86936d6fdb7513a5"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default",
+            "ffi-integration",
+            "linux"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1a11703d58ff8f02.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1a11703d58ff8f02.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1a11703d58ff8f02.rlib": "eaf2c0a0886be0ebc276ceb89848c7749e7a404c8be42783352da94c6c0dd025",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1a11703d58ff8f02.rmeta": "f6cb0a5b34f0f9aafa91d2a611ee00bf93663d8fd264debed98bfee0d1c072bc"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default",
+            "linux"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.a",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.so"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-ffi/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-ffi#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "rlib",
+              "staticlib",
+              "cdylib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "rlib",
+              "staticlib",
+              "cdylib"
+            ],
+            "name": "openui_ffi",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-ffi/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.a": "e559e36bb05a50536f3917d0f7835668c5041a46bb6325f1cabea214ca98393d",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.rlib": "958f1f35831d649470d4670464695d30030949088ecfd4045220dcac862368aa",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/libopenui_ffi.so": "091fbdedf435170864d64889be304b8d0401edc3fab9c6f153f3374edb6594e7"
+        }
+      }
+    ],
+    "native-keyboard-release-guards": [
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-d2c4909f4f7b4c5f.so"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck_derive-v1/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "bytemuck_derive",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck_derive-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-d2c4909f4f7b4c5f.so": "bd8422204b6890a8a35ee80adffcb2b9fd49b162c2c421e135e765590084b511"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck_derive",
+            "derive",
+            "min_const_generics"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck-v1/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "lib"
+            ],
+            "name": "bytemuck",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rlib": "2066f483e6c2c28accd3a138c5c5518b8bd71c90d155be4b286f854caf0c17a2",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rmeta": "862ccabdca88b318a137831fbdeeb9c917454da796ad842db8f8d0e753bc622f"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-geometry/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-geometry#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_geometry",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-geometry/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib": "a9d522b328a3fcbb008c69979219a31627dae489ecb5525554fe2a9b84608de6",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta": "e4733592eb2f8936492db61bb0181078088aa08ac0d844c865d2ae6dd01e5bd9"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/font-types-v0_11/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "font_types",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/font-types-v0_11/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rlib": "72c70a130d30c33b295a70ac0088749becbfb47c3b46be5e558448a64ce1ee8c",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rmeta": "7facc50340a050aa5b92d71f618b40b3099e862e10289b762c360ce769f130fd"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/read-fonts-v0_37/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "read_fonts",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/read-fonts-v0_37/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rlib": "9adc968e4c6ea46fd091000c7c36b9dd207ba6af705c728dbec038ad5ca4df5b",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rmeta": "9595108d969a8841e9da78c19b21e64af33ed109b038e53005fd8471651e1fae"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-style/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-style#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_style",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-style/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib": "6d90392bfd28d786e39ba39b050ca19184823e5e82730af9d525f770b717a01f",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta": "d8ca0001044d0e39ff355e6075d3261d8dea5724dc0d540076874f26e27f6aa3"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "autohint_shaping",
+            "default",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/skrifa-v0_40/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "skrifa",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/skrifa-v0_40/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rlib": "15a36652622c6ebe05b98cb4c597a93ceb16fbdacec4644007f2eaf14dd21164",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rmeta": "b0cbc43c716574eda8f6723bee83c1a3438d3f8613d9bb2d5019d83750d376c8"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-text/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-text#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_text",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-text/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rlib": "76cc388437f6c878aee252a5be7cb05bcbd24dd2daf10c519fde8fb91b6c7173",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rmeta": "eb1288c45af9a22add9dca7106b9d5b4c806cf3b0f4655feff5dd5c7b2c97ef0"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-dom/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-dom#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_dom",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-dom/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rlib": "29cc50d2404a4a18ab986d2d7785aada97e3c1942e75640b71c30681879d7558",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rmeta": "d1cd1402901f1e9509e238fe4ea67e2154e81773cfc2a56840e1f4c70e53b389"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-layout/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-layout#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_layout",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-layout/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rlib": "7b4c69c2a083309ecbecefa52ca9334641ba8f2e59d6944450b0699cf7375ab6",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rmeta": "551a3b9043a7d8e597b3f82bee61b658c07e98964609688abbfd588ede4ffb86"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-paint/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-paint#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_paint",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-paint/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rlib": "c02805614e0849152189074a23e0f4e980d67a2a5aa79f5e2b9150c4f881fa84",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rmeta": "bef8ec1835cf4d42285745b1bdbcd9a85a00d54a0fa53d9f824564eb98e71f50"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-compositor/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-compositor#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_compositor",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-compositor/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rlib": "2d4946179d112886ad780718dc3cd12657584fb925cd16ed192858dce9eed51b",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rmeta": "2b437fc5226bfece0aafee7adeaf6b9b2679ff4cac2509c9d42d4d3344168cf3"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-engine/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-engine#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_engine",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-engine/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rlib": "82c73600f528a5b1d6f939adfb1fbc8413bc81353a37fae8958200dbbb74b2c4",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rmeta": "5f3ec692d0ddef9b872bee9d58c01ba6191cb441b0fc42a425c2d1f0465d7792"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default",
+            "linux"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rmeta"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-platform/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-platform#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_platform",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-platform/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rlib": "571ed1849671a877ba5b71ee3c1ec791ed9b0757c17c13f335ae716e1b8f0f1b",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rmeta": "5dd1cde97f3c25089e46b979f96eadc3e46a0490bd6e96551c1b9417bb18f61b"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-6c3f19c750600aae.so"
+          ],
+          "fresh": true,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-macros/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-macros#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "openui_macros",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-macros/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-6c3f19c750600aae.so": "50e447b18c563f5be1ff012b5dd68d52d11b9a1cca17523a86936d6fdb7513a5"
+        }
+      },
+      {
+        "record": {
+          "executable": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui-81cf27434511593b",
+          "features": [
+            "default",
+            "ffi-integration",
+            "linux"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui-81cf27434511593b"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": true
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/openui-81cf27434511593b": "a68679e09fa179dfb9eb7c924ee3d7371e841b10f8290fde42fbaa720d94deb8"
+        }
+      }
+    ],
+    "native-rust-build": [
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-geometry/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-geometry#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_geometry",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-geometry/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rlib": "a9d522b328a3fcbb008c69979219a31627dae489ecb5525554fe2a9b84608de6",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_geometry-efd9b399590a9cc0.rmeta": "e4733592eb2f8936492db61bb0181078088aa08ac0d844c865d2ae6dd01e5bd9"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-d2c4909f4f7b4c5f.so"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck_derive-v1/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck_derive-v1#bytemuck_derive@1.10.2",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "bytemuck_derive",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck_derive-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck_derive-d2c4909f4f7b4c5f.so": "bd8422204b6890a8a35ee80adffcb2b9fd49b162c2c421e135e765590084b511"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck_derive",
+            "derive",
+            "min_const_generics"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck-v1/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck-v1#bytemuck@1.25.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2018",
+            "kind": [
+              "lib"
+            ],
+            "name": "bytemuck",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/bytemuck-v1/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rlib": "2066f483e6c2c28accd3a138c5c5518b8bd71c90d155be4b286f854caf0c17a2",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libbytemuck-5e35ad4991a39713.rmeta": "862ccabdca88b318a137831fbdeeb9c917454da796ad842db8f8d0e753bc622f"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-style/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-style#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_style",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-style/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rlib": "6d90392bfd28d786e39ba39b050ca19184823e5e82730af9d525f770b717a01f",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_style-834764aabb68552d.rmeta": "d8ca0001044d0e39ff355e6075d3261d8dea5724dc0d540076874f26e27f6aa3"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "bytemuck",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/font-types-v0_11/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/font-types-v0_11#font-types@0.11.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "font_types",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/font-types-v0_11/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rlib": "72c70a130d30c33b295a70ac0088749becbfb47c3b46be5e558448a64ce1ee8c",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libfont_types-e31a9b5567690db6.rmeta": "7facc50340a050aa5b92d71f618b40b3099e862e10289b762c360ce769f130fd"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-6c3f19c750600aae.so"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-macros/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-macros#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "proc-macro"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "proc-macro"
+            ],
+            "name": "openui_macros",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-macros/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_macros-6c3f19c750600aae.so": "50e447b18c563f5be1ff012b5dd68d52d11b9a1cca17523a86936d6fdb7513a5"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default",
+            "linux"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-platform/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-platform#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_platform",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-platform/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rlib": "571ed1849671a877ba5b71ee3c1ec791ed9b0757c17c13f335ae716e1b8f0f1b",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_platform-fd379025019492d1.rmeta": "5dd1cde97f3c25089e46b979f96eadc3e46a0490bd6e96551c1b9417bb18f61b"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/read-fonts-v0_37/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/read-fonts-v0_37#read-fonts@0.37.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "read_fonts",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/read-fonts-v0_37/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rlib": "9adc968e4c6ea46fd091000c7c36b9dd207ba6af705c728dbec038ad5ca4df5b",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libread_fonts-64a3508cb3b27b41.rmeta": "9595108d969a8841e9da78c19b21e64af33ed109b038e53005fd8471651e1fae"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "autohint_shaping",
+            "default",
+            "std"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/skrifa-v0_40/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/skrifa-v0_40#skrifa@0.40.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "skrifa",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/vendor/skrifa-v0_40/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rlib": "15a36652622c6ebe05b98cb4c597a93ceb16fbdacec4644007f2eaf14dd21164",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libskrifa-b08e30f1bc9bb678.rmeta": "b0cbc43c716574eda8f6723bee83c1a3438d3f8613d9bb2d5019d83750d376c8"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-dom/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-dom#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_dom",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-dom/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rlib": "29cc50d2404a4a18ab986d2d7785aada97e3c1942e75640b71c30681879d7558",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_dom-619910724e63ce23.rmeta": "d1cd1402901f1e9509e238fe4ea67e2154e81773cfc2a56840e1f4c70e53b389"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-text/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-text#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_text",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-text/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rlib": "76cc388437f6c878aee252a5be7cb05bcbd24dd2daf10c519fde8fb91b6c7173",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_text-16ea0fa52a7f98c4.rmeta": "eb1288c45af9a22add9dca7106b9d5b4c806cf3b0f4655feff5dd5c7b2c97ef0"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-layout/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-layout#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_layout",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-layout/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rlib": "7b4c69c2a083309ecbecefa52ca9334641ba8f2e59d6944450b0699cf7375ab6",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_layout-dadef194dc04ab5b.rmeta": "551a3b9043a7d8e597b3f82bee61b658c07e98964609688abbfd588ede4ffb86"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-compositor/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-compositor#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_compositor",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-compositor/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rlib": "2d4946179d112886ad780718dc3cd12657584fb925cd16ed192858dce9eed51b",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_compositor-810ffa0bc50eaefe.rmeta": "2b437fc5226bfece0aafee7adeaf6b9b2679ff4cac2509c9d42d4d3344168cf3"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-paint/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-paint#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_paint",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-paint/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rlib": "c02805614e0849152189074a23e0f4e980d67a2a5aa79f5e2b9150c4f881fa84",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_paint-fc139b9c509c9b03.rmeta": "bef8ec1835cf4d42285745b1bdbcd9a85a00d54a0fa53d9f824564eb98e71f50"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-engine/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-engine#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui_engine",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui-engine/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rlib": "82c73600f528a5b1d6f939adfb1fbc8413bc81353a37fae8958200dbbb74b2c4",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui_engine-2524448616eb08bb.rmeta": "5f3ec692d0ddef9b872bee9d58c01ba6191cb441b0fc42a425c2d1f0465d7792"
+        }
+      },
+      {
+        "record": {
+          "executable": null,
+          "features": [
+            "default",
+            "ffi-integration",
+            "linux"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1a11703d58ff8f02.rlib",
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1a11703d58ff8f02.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "openui",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui/src/lib.rs",
+            "test": true
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1a11703d58ff8f02.rlib": "eaf2c0a0886be0ebc276ceb89848c7749e7a404c8be42783352da94c6c0dd025",
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/deps/libopenui-1a11703d58ff8f02.rmeta": "f6cb0a5b34f0f9aafa91d2a611ee00bf93663d8fd264debed98bfee0d1c072bc"
+        }
+      },
+      {
+        "record": {
+          "executable": "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_control_keyboard",
+          "features": [
+            "default",
+            "ffi-integration",
+            "linux"
+          ],
+          "filenames": [
+            "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_control_keyboard"
+          ],
+          "fresh": false,
+          "manifest_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui/Cargo.toml",
+          "package_id": "path+file:///mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui#0.2.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 0,
+            "opt_level": "0",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "example"
+            ],
+            "name": "native_control_keyboard",
+            "src_path": "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/openui/examples/native_control_keyboard.rs",
+            "test": false
+          }
+        },
+        "sha256": {
+          "/mnt/e/openui-v02-cargo-c73754e2/target/debug/examples/native_control_keyboard": "7999cf8a44901f6c7eec14b62be1435865e58f6f02f05cbd90e2f600c2a27719"
+        }
+      }
+    ],
+    "retire-audited-local-cargo-cache": []
+  },
+  "main_source": {
+    "clean": true,
+    "commit": "635619da2000ef5db258f97623689cd474084fdb",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "e71e3cab5b633e4989ae69097d7d3984894635b1beef0169b068362061c78773",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "main_source_after": {
+    "clean": true,
+    "commit": "635619da2000ef5db258f97623689cd474084fdb",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "e71e3cab5b633e4989ae69097d7d3984894635b1beef0169b068362061c78773",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native_keyboard_behavior_only": true,
+  "observed_exit_code": 0,
+  "owner_pid": 108959,
+  "pixel_tolerance": 0,
+  "reference_inputs": {
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-reference-v3506/cases.json": "286ee2fcf41814345fb48d5bbd0dc54088c88c6484c99f3f602c944bc117e095",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-reference-v3506/observations-1.json": "799f7f66b86996af673421593c48e9abfba6e2790f595ea1e1d6de7d0fca338c",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-reference-v3506/observations-2.json": "799f7f66b86996af673421593c48e9abfba6e2790f595ea1e1d6de7d0fca338c",
+    "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-reference-v3506/receipt.json": "f0bf627debcd645c36cb7d3717d492b9633aa7a68fac3a6ae01c66d97f4f7cae"
+  },
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "retired_failed_c_compile_terminal_proof_sha256": "af29c0527139236bc068f6f3537f8968cda9e8eb052f329c2d98859e43051567",
+  "rust_binary_sha256": "7999cf8a44901f6c7eec14b62be1435865e58f6f02f05cbd90e2f600c2a27719",
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "a0841c9e6cdb4c2ab6fa55efa5ad4cf68e7353f6",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "824bc8e32392e40ba61d829890cded549f010d6c80f265ee26bf0724c73ab0ed",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "a0841c9e6cdb4c2ab6fa55efa5ad4cf68e7353f6",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "824bc8e32392e40ba61d829890cded549f010d6c80f265ee26bf0724c73ab0ed",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_unchanged": true,
+  "steps": [
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "cargo",
+        "--config",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/.cargo/config.chromium.toml",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "log_sha256": "cc74a14270acff36c5dbf218ecb4bc2dd1c7315cd3153631528a9db4571ee4d2",
+      "name": "locked-metadata"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "cargo",
+        "--config",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/.cargo/config.chromium.toml",
+        "clean",
+        "-p",
+        "bytemuck",
+        "-p",
+        "bytemuck_derive",
+        "-p",
+        "counter",
+        "-p",
+        "dashboard",
+        "-p",
+        "font-types",
+        "-p",
+        "framework-test",
+        "-p",
+        "hello",
+        "-p",
+        "openui",
+        "-p",
+        "openui-compositor",
+        "-p",
+        "openui-dom",
+        "-p",
+        "openui-engine",
+        "-p",
+        "openui-ffi",
+        "-p",
+        "openui-geometry",
+        "-p",
+        "openui-layout",
+        "-p",
+        "openui-macros",
+        "-p",
+        "openui-paint",
+        "-p",
+        "openui-platform",
+        "-p",
+        "openui-style",
+        "-p",
+        "openui-text",
+        "-p",
+        "pixel-compare",
+        "-p",
+        "read-fonts",
+        "-p",
+        "skrifa",
+        "-p",
+        "todo"
+      ],
+      "log_sha256": "f36015248b143f1753494cf9748457f06cf2eecb7354e0849865cc6b37517e10",
+      "name": "retire-audited-local-cargo-cache"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "cargo",
+        "--config",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/.cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui",
+        "--features",
+        "linux,ffi-integration",
+        "--example",
+        "native_control_keyboard",
+        "--message-format=json"
+      ],
+      "log_sha256": "7b5984655a6ad23268e645a8c34edb56dfaa9bed1f2938157b340606d028612c",
+      "name": "native-rust-build"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "cargo",
+        "--config",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui",
+        "--features",
+        "linux,ffi-integration",
+        "--lib",
+        "keyboard_activation_guards",
+        "--message-format=json"
+      ],
+      "log_sha256": "01b36d1ff7843689630914656f6941f96f67db4a6ec1abeb2a43cbb1927cbd3f",
+      "name": "native-keyboard-release-guards"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "cargo",
+        "--config",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/.cargo/config.chromium.toml",
+        "build",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-ffi",
+        "--features",
+        "linux",
+        "--message-format=json"
+      ],
+      "log_sha256": "90d23c34501a084881b64c6710f956d2700e7ec3b0793c10025d2c02bb1d5955",
+      "name": "ffi-library-build"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "cargo",
+        "--config",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "openui-ffi",
+        "--all-features",
+        "--lib",
+        "c_active_query_rejects_reentrant_borrow_without_writing_output",
+        "--message-format=json"
+      ],
+      "log_sha256": "978edc43e59f2d934d09568f3e68697b90a54e1b6e0f0c355830cbf42f10332e",
+      "name": "ffi-active-borrow-unit"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/usr/bin/python3",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/tools/ffi/generate_ffi.py",
+        "--check"
+      ],
+      "log_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+      "name": "ffi-generator-check"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/usr/bin/python3",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/tools/ffi/generate_control_keyboard_cases.py",
+        "--check"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "native-keyboard-generator-check"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pthread",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-I/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/include",
+        "-c",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/examples/c_v02/control_keyboard.c",
+        "-o",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard-c.o"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "compile-control_keyboard-c"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+        "-pthread",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/x86_64-linux-gnu",
+        "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+        "-B/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+        "-fuse-ld=lld",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard-c.o",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/libopenui.so.0",
+        "-Wl,-rpath,/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528",
+        "-o",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard-c"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "link-control_keyboard-c"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pthread",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-I/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/include",
+        "-c",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/examples/c_v02/control_keyboard_guards.c",
+        "-o",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard_guards-c.o"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "compile-control_keyboard_guards-c"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+        "-pthread",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/x86_64-linux-gnu",
+        "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+        "-B/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+        "-fuse-ld=lld",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard_guards-c.o",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/libopenui.so.0",
+        "-Wl,-rpath,/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528",
+        "-o",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard_guards-c"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "link-control_keyboard_guards-c"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard_guards-c"
+      ],
+      "log_sha256": "cdc7043859aa8e3c252f89776311526e50efdb747eb8d2daf6c9bd85b96cdf93",
+      "name": "run-control_keyboard_guards-c"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pthread",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-I/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/include",
+        "-c",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/examples/c_v02/control_keyboard.cc",
+        "-o",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard-cpp.o"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "compile-control_keyboard-cpp"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+        "-pthread",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/x86_64-linux-gnu",
+        "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+        "-B/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+        "-fuse-ld=lld",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard-cpp.o",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/libopenui.so.0",
+        "-Wl,-rpath,/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528",
+        "-o",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard-cpp"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "link-control_keyboard-cpp"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pthread",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-I/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/include",
+        "-c",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/examples/c_v02/control_keyboard_guards.cc",
+        "-o",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard_guards-cpp.o"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "compile-control_keyboard_guards-cpp"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/home/nero/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++",
+        "-pthread",
+        "--sysroot=/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot",
+        "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/x86_64-linux-gnu",
+        "-L/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+        "-B/home/nero/chromium/src/build/linux/debian_bullseye_amd64-sysroot/usr/lib/gcc/x86_64-linux-gnu/10",
+        "-fuse-ld=lld",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard_guards-cpp.o",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/libopenui.so.0",
+        "-Wl,-rpath,/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528",
+        "-o",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard_guards-cpp"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "link-control_keyboard_guards-cpp"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard_guards-cpp"
+      ],
+      "log_sha256": "cdc7043859aa8e3c252f89776311526e50efdb747eb8d2daf6c9bd85b96cdf93",
+      "name": "run-control_keyboard_guards-cpp"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/native_control_keyboard",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/tools/qualification/reproducers/native-control-keyboard-cases.json"
+      ],
+      "log_sha256": "799f7f66b86996af673421593c48e9abfba6e2790f595ea1e1d6de7d0fca338c",
+      "name": "observations-rust-1"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/native_control_keyboard",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/tools/qualification/reproducers/native-control-keyboard-cases.json"
+      ],
+      "log_sha256": "799f7f66b86996af673421593c48e9abfba6e2790f595ea1e1d6de7d0fca338c",
+      "name": "observations-rust-2"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard-c"
+      ],
+      "log_sha256": "5bb1d3e4d1855cb4d04f42ff6267c1d135a810aff055a41a2722ae1cf61b63c6",
+      "name": "observations-c-1"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard-c"
+      ],
+      "log_sha256": "5bb1d3e4d1855cb4d04f42ff6267c1d135a810aff055a41a2722ae1cf61b63c6",
+      "name": "observations-c-2"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard-cpp"
+      ],
+      "log_sha256": "5bb1d3e4d1855cb4d04f42ff6267c1d135a810aff055a41a2722ae1cf61b63c6",
+      "name": "observations-cpp-1"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/control_keyboard-cpp"
+      ],
+      "log_sha256": "5bb1d3e4d1855cb4d04f42ff6267c1d135a810aff055a41a2722ae1cf61b63c6",
+      "name": "observations-cpp-2"
+    },
+    {
+      "actual_exit_code": 0,
+      "command": [
+        "/usr/bin/python3",
+        "/mnt/e/openui-v02-qualification-d174ea0b/private-native-keyboard-source-v3505/tools/ffi/verify_abi.py",
+        "--library",
+        "/mnt/d/openui-v02-qualification-d174ea0b/native-keyboard-c-qualification-v3528/libopenui.so.0"
+      ],
+      "log_sha256": "260dbd7934920729dda585de36e7638ab08cb64ada9549a32e3edee2f551d4ce",
+      "name": "all-c-cpp-abi-consumers"
+    }
+  ]
+}

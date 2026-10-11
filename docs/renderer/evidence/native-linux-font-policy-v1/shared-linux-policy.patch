@@ -1,0 +1,250 @@
+diff --git a/bindings/rust/openui-geometry/src/raster.rs b/bindings/rust/openui-geometry/src/raster.rs
+index 8cd592e1..9d32dc4d 100644
+--- a/bindings/rust/openui-geometry/src/raster.rs
++++ b/bindings/rust/openui-geometry/src/raster.rs
+@@ -30,6 +30,9 @@ pub enum TextHinting {
+     Slight,
+     Normal,
+     Full,
++    /// Resolve Chromium's Linux scale policy. Fixed hinting variants always
++    /// retain their requested fitting mode at every device scale.
++    ChromiumLinux,
+ }
+ 
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+@@ -62,6 +65,25 @@ impl TextRasterConfiguration {
+         }
+     }
+ 
++    /// Explicit platform policy, retained before document construction.
++    pub const fn chromium_linux_platform() -> Self {
++        let mut settings = Self::chromium_lcd();
++        settings.hinting = TextHinting::ChromiumLinux;
++        settings
++    }
++
++    /// Resolve fitting without changing the retained application settings.
++    pub const fn resolved_hinting(self, device_scale: f64) -> TextHinting {
++        match self.hinting {
++            TextHinting::ChromiumLinux => match self.edging {
++                TextEdging::Alias => TextHinting::Full,
++                _ if self.subpixel_positioning && device_scale > 1.0 => TextHinting::None,
++                _ => TextHinting::Slight,
++            },
++            fixed => fixed,
++        }
++    }
++
+     pub const fn chromium_lcd() -> Self {
+         Self {
+             edging: TextEdging::SubpixelAntiAlias,
+@@ -123,6 +145,9 @@ impl RasterConfiguration {
+     pub const fn chromium_linux_fontations_lcd() -> Self {
+         let mut configuration = Self::chromium_linux_lcd();
+         configuration.backend = RasterBackend::ChromiumLinuxFontations;
++        configuration.author_text = TextRasterConfiguration::chromium_linux_platform();
++        configuration.native_text = TextRasterConfiguration::chromium_linux_platform();
++        configuration.embedded_text = TextRasterConfiguration::chromium_linux_platform();
+         configuration
+     }
+ 
+diff --git a/bindings/rust/openui-paint/src/emphasis_painter.rs b/bindings/rust/openui-paint/src/emphasis_painter.rs
+index 07eccef5..26161984 100644
+--- a/bindings/rust/openui-paint/src/emphasis_painter.rs
++++ b/bindings/rust/openui-paint/src/emphasis_painter.rs
+@@ -190,11 +190,12 @@ fn create_emphasis_font(
+     let mut font = SkFont::from_typeface(typeface, size);
+     let settings = style.raster_configuration.author_text;
+     font.set_subpixel(settings.subpixel_positioning);
+-    font.set_hinting(match settings.hinting {
++    font.set_hinting(match settings.resolved_hinting(style.device_scale_factor) {
+         TextHinting::None => skia_safe::FontHinting::None,
+         TextHinting::Slight => skia_safe::FontHinting::Slight,
+         TextHinting::Normal => skia_safe::FontHinting::Normal,
+         TextHinting::Full => skia_safe::FontHinting::Full,
++        TextHinting::ChromiumLinux => unreachable!("resolved platform hinting"),
+     });
+     font.set_edging(match settings.edging {
+         TextEdging::Alias => skia_safe::font::Edging::Alias,
+diff --git a/bindings/rust/openui-text/src/font/platform.rs b/bindings/rust/openui-text/src/font/platform.rs
+index 1ff51afc..e1aaa5ea 100644
+--- a/bindings/rust/openui-text/src/font/platform.rs
++++ b/bindings/rust/openui-text/src/font/platform.rs
+@@ -176,6 +176,7 @@ fn resolve_hinting(
+         TextHinting::Slight => FontHinting::Slight,
+         TextHinting::Normal => FontHinting::Normal,
+         TextHinting::Full => FontHinting::Full,
++        TextHinting::ChromiumLinux => unreachable!("platform hinting must be resolved first"),
+     }
+ }
+ 
+@@ -301,14 +302,24 @@ impl FontPlatformData {
+         } else {
+             raster_configuration.author_text
+         };
+-        let subpixel = settings.subpixel_positioning && !native_button_text_metrics;
+-        sk_font.set_subpixel(subpixel);
+-        let hinting = if raster_configuration.backend == RasterBackend::ChromiumLinuxFontations {
+-            match settings.hinting {
++        // Linux's platform subpixel positioning is separate from Skia's
++        // forced positioning flag. Chromium enables linear metrics above
++        // scale 1 and disables fitting there. Explicit normal/full fitting
++        // and a disabled positioning setting retain the caller's request.
++        let fontations_linux =
++            raster_configuration.backend == RasterBackend::ChromiumLinuxFontations;
++        let platform_subpixel = settings.subpixel_positioning
++            && settings.edging != TextEdging::Alias
++            && device_scale_factor > 1.0
++            && settings.hinting == TextHinting::ChromiumLinux;
++        let resolved_hinting = settings.resolved_hinting(device_scale_factor);
++        let hinting = if fontations_linux || settings.hinting == TextHinting::ChromiumLinux {
++            match resolved_hinting {
+                 TextHinting::None => FontHinting::None,
+                 TextHinting::Slight => FontHinting::Slight,
+                 TextHinting::Normal => FontHinting::Normal,
+                 TextHinting::Full => FontHinting::Full,
++                TextHinting::ChromiumLinux => unreachable!("resolved platform hinting"),
+             }
+         } else {
+             resolve_hinting(
+@@ -319,8 +330,16 @@ impl FontPlatformData {
+                 device_scale_factor,
+             )
+         };
++        let subpixel = settings.subpixel_positioning
++            && !native_button_text_metrics
++            && (settings.hinting != TextHinting::ChromiumLinux || hinting != FontHinting::Full);
++        sk_font.set_subpixel(subpixel);
+         sk_font.set_hinting(hinting);
+-        sk_font.set_linear_metrics(subpixel);
++        sk_font.set_linear_metrics(if settings.hinting == TextHinting::ChromiumLinux {
++            platform_subpixel
++        } else {
++            subpixel
++        });
+         sk_font.set_embedded_bitmaps(true);
+         match settings.edging {
+             TextEdging::Alias => {
+@@ -351,6 +370,18 @@ impl FontPlatformData {
+         if let Some(value) = configuration.metric_overrides.line_gap {
+             metrics.line_gap = value * size;
+         }
++        if fontations_linux && metrics.ascent >= 3.0 && metrics.ascent + metrics.descent >= 2.0 {
++            let raw_descent = metrics.descent;
++            metrics.ascent = metrics.ascent.round();
++            metrics.descent = metrics.descent.round();
++            // A rounded-down descent can clip an unfitted glyph in overflow
++            // containers. Blink borrows from the ascent without changing the
++            // total line height. Apply this after authored metric overrides.
++            if platform_subpixel && metrics.descent < raw_descent && metrics.ascent >= 1.0 {
++                metrics.ascent -= 1.0;
++                metrics.descent += 1.0;
++            }
++        }
+         metrics.line_spacing = metrics.ascent + metrics.descent + metrics.line_gap;
+         let vertical_metrics = VerticalMetrics::from_typeface(&typeface);
+ 
+@@ -535,6 +566,103 @@ impl std::fmt::Debug for FontPlatformData {
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn fontations_explicit_hinting_remains_fixed_across_scales() {
++        use crate::font::{Font, FontCollection, FontDescription};
++        use openui_style::FontFamilyList;
++        let collection = FontCollection::deterministic_test();
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            for (requested, expected) in [
++                (TextHinting::None, FontHinting::None),
++                (TextHinting::Slight, FontHinting::Slight),
++                (TextHinting::Normal, FontHinting::Normal),
++                (TextHinting::Full, FontHinting::Full),
++            ] {
++                let mut raster = RasterConfiguration::chromium_linux_fontations_lcd();
++                raster.author_text.hinting = requested;
++                let font = Font::new_in_collection(
++                    FontDescription {
++                        family: FontFamilyList::single("DejaVu Sans"),
++                        size: 12.0,
++                        specified_size: 12.0,
++                        device_scale_factor: scale,
++                        raster_configuration: raster,
++                        ..FontDescription::default()
++                    },
++                    std::sync::Arc::clone(&collection),
++                );
++                assert_eq!(font.primary_font().unwrap().sk_font().hinting(), expected,
++                    "explicit native hinting must remain fixed across device scales: {requested:?}, {scale}");
++            }
++        }
++    }
++
++    #[test]
++    fn fontations_linux_metrics_match_repeated_chromium_scale_queries() {
++        use crate::font::{Font, FontCollection, FontDescription};
++        use openui_style::FontFamilyList;
++        let collection = FontCollection::deterministic_test();
++        // Independent Chromium queries from native-font-scale-query-v1861.
++        // The same immutable font bytes, authored size and device scale are
++        // used; expected metrics are observations, not special-case rules.
++        let observations = [
++            ("Ahem", 10.0, 1.00, 8.0, 2.0),
++            ("Ahem", 12.0, 1.00, 10.0, 2.0),
++            ("Ahem", 16.0, 1.00, 13.0, 3.0),
++            ("DejaVu Sans", 10.0, 1.00, 9.0, 2.0),
++            ("DejaVu Sans", 12.0, 1.00, 11.0, 3.0),
++            ("DejaVu Sans", 16.0, 1.00, 15.0, 4.0),
++            ("Ahem", 10.0, 1.25, 8.0, 2.0),
++            ("Ahem", 12.0, 1.25, 9.0, 3.0),
++            ("Ahem", 16.0, 1.25, 12.0, 4.0),
++            ("DejaVu Sans", 10.0, 1.25, 8.0, 3.0),
++            ("DejaVu Sans", 12.0, 1.25, 11.0, 3.0),
++            ("DejaVu Sans", 16.0, 1.25, 15.0, 4.0),
++            ("Ahem", 10.0, 1.50, 8.0, 2.0),
++            ("Ahem", 12.0, 1.50, 9.0, 3.0),
++            ("Ahem", 16.0, 1.50, 12.0, 4.0),
++            ("DejaVu Sans", 10.0, 1.50, 8.0, 3.0),
++            ("DejaVu Sans", 12.0, 1.50, 11.0, 3.0),
++            ("DejaVu Sans", 16.0, 1.50, 15.0, 4.0),
++            ("Ahem", 10.0, 2.00, 8.0, 2.0),
++            ("Ahem", 12.0, 2.00, 9.0, 3.0),
++            ("Ahem", 16.0, 2.00, 12.0, 4.0),
++            ("DejaVu Sans", 10.0, 2.00, 8.0, 3.0),
++            ("DejaVu Sans", 12.0, 2.00, 11.0, 3.0),
++            ("DejaVu Sans", 16.0, 2.00, 15.0, 4.0),
++            ("Ahem", 10.0, 3.00, 8.0, 2.0),
++            ("Ahem", 12.0, 3.00, 9.0, 3.0),
++            ("Ahem", 16.0, 3.00, 12.0, 4.0),
++            ("DejaVu Sans", 10.0, 3.00, 8.0, 3.0),
++            ("DejaVu Sans", 12.0, 3.00, 11.0, 3.0),
++            ("DejaVu Sans", 16.0, 3.00, 15.0, 4.0),
++        ];
++        let mut mismatches = 0;
++        for (family, size, scale, ascent, descent) in observations {
++            let font = Font::new_in_collection(
++                FontDescription {
++                    family: FontFamilyList::single(family),
++                    size,
++                    specified_size: size,
++                    device_scale_factor: scale,
++                    raster_configuration: RasterConfiguration::chromium_linux_fontations_lcd(),
++                    ..FontDescription::default()
++                },
++                std::sync::Arc::clone(&collection),
++            );
++            let metrics = font.font_metrics().expect("resolved independent font");
++            let actual = (metrics.int_ascent(), metrics.int_descent());
++            if actual != (ascent, descent) {
++                mismatches += 1;
++                eprintln!("{family}, {size}, {scale}: {actual:?}, expected {ascent}/{descent}");
++            }
++        }
++        assert_eq!(
++            mismatches, 0,
++            "Linux font metrics must match the repeated Chromium scale observations"
++        );
++    }
++
+     #[test]
+     fn aliased_ahem_hinting_tracks_computed_font_size() {
+         assert_eq!(

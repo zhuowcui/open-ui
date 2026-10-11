@@ -1,0 +1,65 @@
+{
+  "all_commands_terminal": true,
+  "baseline": "d01f9a17b139d5f87e7645c2b7ecac201762ed99",
+  "baseline_regressions_reproduced": [
+    false
+  ],
+  "probe_sha256": "de971804723e43571572d4d2b43a20c562aa3bcd3db61e992ebba48df432166b",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "5ef50aacaf98f5877b76ead68c2606c006103f48",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "36571d27dba156ede2457a2d4fcc1b52f579b66a5084dc6aa5ea487d34152348",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "5ef50aacaf98f5877b76ead68c2606c006103f48",
+    "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+    "source_tree_sha256": "36571d27dba156ede2457a2d4fcc1b52f579b66a5084dc6aa5ea487d34152348",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "state": "baseline-proof-failed",
+  "steps": [
+    {
+      "command": [
+        "cargo",
+        "--config",
+        ".cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "-p",
+        "openui-paint",
+        "--test",
+        "text_raster_configuration_tests",
+        "native_outlines_fit_at_physical_size_with_default_and_explicit_backends",
+        "--",
+        "--exact"
+      ],
+      "disk_guard_triggered": false,
+      "log_sha256": "dfd15cd812fa0c87e38eab616cfed48a5bdf6de8aa1ac7e9cc63b88e885ca7db",
+      "name": "baseline-default-native-strike",
+      "named_test_failed": false,
+      "named_test_passed": false,
+      "observed_exit_code": 101,
+      "source": {
+        "clean": true,
+        "commit": "d01f9a17b139d5f87e7645c2b7ecac201762ed99",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "a1d9f02aa205dfeb91d1d7c27d368bd9552f190a0291f3fe089a9d1e312fdb79",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "source_after": {
+        "clean": true,
+        "commit": "d01f9a17b139d5f87e7645c2b7ecac201762ed99",
+        "harness_sha256": "d1ee55cbb6d4385328d586354a8adde2c01da9ead329917641d9fc5ee02fbd8e",
+        "source_tree_sha256": "a1d9f02aa205dfeb91d1d7c27d368bd9552f190a0291f3fe089a9d1e312fdb79",
+        "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "test": "native_outlines_fit_at_physical_size_with_default_and_explicit_backends"
+    }
+  ]
+}

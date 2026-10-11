@@ -1,0 +1,2410 @@
+{
+  "all_commands_terminal": true,
+  "background_culling_source_review": "Pinned Blink tests opaque image foreground and skips obscured backgrounds; Open UI only tested child background color.",
+  "candidate_unverified": true,
+  "cargo_commands_run": 0,
+  "chromium_tag": "147.0.7727.50",
+  "color_rounding_source_review": "Native edge color differs by +1 green; source packs coverage into premultiplied image before destination blending. A complete matching Chromium blending algorithm is not yet established.",
+  "groups": {
+    "image coverage color rounding": 16,
+    "parent background behind opaque image": 8
+  },
+  "new_release_states_admitted": 0,
+  "primary_source_receipt_sha256": "8d6758f7e117df73cf792b624408fb55d8122a9261f1f8a9bc3fc1b4417932fa",
+  "promotion_allowed": false,
+  "release_qualification": false,
+  "residuals": [
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 375,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -63,
+            "signed_delta_sum": -23610
+          },
+          "green": {
+            "changed_pixels": 375,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -63,
+            "signed_delta_sum": -23610
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 188,
+              "width": 188,
+              "x": 25,
+              "y": 25
+            },
+            "mismatched_pixels": 375
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 188,
+          "width": 188,
+          "x": 25,
+          "y": 25
+        },
+        "mismatched_pixels": 375
+      },
+      "case": "div-padding-0-content-box",
+      "chromium_png_sha256": "0f7602fcef8b040643645b6cb5377831b6deb3b4d53d4ca1eb0ec4ec397fe62f",
+      "group": "parent background behind opaque image",
+      "native_png_sha256": "e96745360b7e93da55d0dea9c648c41057a7b21cab25a0dff0879f01c0684042",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            191,
+            126,
+            255
+          ],
+          "delta": [
+            0,
+            -63,
+            -63,
+            0
+          ],
+          "native": [
+            126,
+            128,
+            63,
+            255
+          ],
+          "pixels": 374
+        },
+        {
+          "chromium": [
+            190,
+            222,
+            190,
+            255
+          ],
+          "delta": [
+            0,
+            -48,
+            -48,
+            0
+          ],
+          "native": [
+            190,
+            174,
+            142,
+            255
+          ],
+          "pixels": 1
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        800,
+        600
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 375,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -63,
+            "signed_delta_sum": -23610
+          },
+          "green": {
+            "changed_pixels": 375,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -63,
+            "signed_delta_sum": -23610
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 188,
+              "width": 188,
+              "x": 25,
+              "y": 25
+            },
+            "mismatched_pixels": 375
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 188,
+          "width": 188,
+          "x": 25,
+          "y": 25
+        },
+        "mismatched_pixels": 375
+      },
+      "case": "div-padding-0-content-box",
+      "chromium_png_sha256": "ac89c8719b6ec6bbf4c16e5d14358e17ed75f350b8c2ca98f455eb2502992267",
+      "group": "parent background behind opaque image",
+      "native_png_sha256": "dd0c74826f173c1da469a6c4876ea167120fc5af86291c5c38542c738b3ec3a5",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            191,
+            126,
+            255
+          ],
+          "delta": [
+            0,
+            -63,
+            -63,
+            0
+          ],
+          "native": [
+            126,
+            128,
+            63,
+            255
+          ],
+          "pixels": 374
+        },
+        {
+          "chromium": [
+            190,
+            222,
+            190,
+            255
+          ],
+          "delta": [
+            0,
+            -48,
+            -48,
+            0
+          ],
+          "native": [
+            190,
+            174,
+            142,
+            255
+          ],
+          "pixels": 1
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        1280,
+        720
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 375,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -63,
+            "signed_delta_sum": -23610
+          },
+          "green": {
+            "changed_pixels": 375,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -63,
+            "signed_delta_sum": -23610
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 188,
+              "width": 188,
+              "x": 25,
+              "y": 25
+            },
+            "mismatched_pixels": 375
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 188,
+          "width": 188,
+          "x": 25,
+          "y": 25
+        },
+        "mismatched_pixels": 375
+      },
+      "case": "div-padding-0-border-box",
+      "chromium_png_sha256": "0f7602fcef8b040643645b6cb5377831b6deb3b4d53d4ca1eb0ec4ec397fe62f",
+      "group": "parent background behind opaque image",
+      "native_png_sha256": "e96745360b7e93da55d0dea9c648c41057a7b21cab25a0dff0879f01c0684042",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            191,
+            126,
+            255
+          ],
+          "delta": [
+            0,
+            -63,
+            -63,
+            0
+          ],
+          "native": [
+            126,
+            128,
+            63,
+            255
+          ],
+          "pixels": 374
+        },
+        {
+          "chromium": [
+            190,
+            222,
+            190,
+            255
+          ],
+          "delta": [
+            0,
+            -48,
+            -48,
+            0
+          ],
+          "native": [
+            190,
+            174,
+            142,
+            255
+          ],
+          "pixels": 1
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        800,
+        600
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 375,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -63,
+            "signed_delta_sum": -23610
+          },
+          "green": {
+            "changed_pixels": 375,
+            "maximum_absolute_delta": 63,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": -63,
+            "signed_delta_sum": -23610
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 188,
+              "width": 188,
+              "x": 25,
+              "y": 25
+            },
+            "mismatched_pixels": 375
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 188,
+          "width": 188,
+          "x": 25,
+          "y": 25
+        },
+        "mismatched_pixels": 375
+      },
+      "case": "div-padding-0-border-box",
+      "chromium_png_sha256": "ac89c8719b6ec6bbf4c16e5d14358e17ed75f350b8c2ca98f455eb2502992267",
+      "group": "parent background behind opaque image",
+      "native_png_sha256": "dd0c74826f173c1da469a6c4876ea167120fc5af86291c5c38542c738b3ec3a5",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            191,
+            126,
+            255
+          ],
+          "delta": [
+            0,
+            -63,
+            -63,
+            0
+          ],
+          "native": [
+            126,
+            128,
+            63,
+            255
+          ],
+          "pixels": 374
+        },
+        {
+          "chromium": [
+            190,
+            222,
+            190,
+            255
+          ],
+          "delta": [
+            0,
+            -48,
+            -48,
+            0
+          ],
+          "native": [
+            190,
+            174,
+            142,
+            255
+          ],
+          "pixels": 1
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        1280,
+        720
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 496,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 496
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 126,
+              "width": 126,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 496
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 126,
+          "width": 126,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 496
+      },
+      "case": "div-padding-10-content-box",
+      "chromium_png_sha256": "9f4e6c896766f45a3edb60b302139d5815d298223a8fc3810ce83510aadd32bc",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "673e5c4159ab4fadf41da754da30029f20184025d8839f9e369c82b72907bf86",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 496
+        }
+      ],
+      "state": "before",
+      "viewport": [
+        800,
+        600
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 374,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 374
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 188,
+              "width": 188,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 374
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 188,
+          "width": 188,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 374
+      },
+      "case": "div-padding-10-content-box",
+      "chromium_png_sha256": "93c0ec85bc39c951aac7999d9b835aa8e087c7f589e9ca43bc96071e78516f9e",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "521edad121daad28c07368b6c9871e9165c222b1782e48717003035528ee4219",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 374
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        800,
+        600
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 496,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 496
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 126,
+              "width": 126,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 496
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 126,
+          "width": 126,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 496
+      },
+      "case": "div-padding-10-content-box",
+      "chromium_png_sha256": "293fc43172a994d7a39f462d6f2ab1d8d03e4146fab20a6d7aac6484753a7da6",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "28d312cb08ae0a694d42e0561a292ba2c055ff5fc3195d6ca62c014275afaae5",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 496
+        }
+      ],
+      "state": "before",
+      "viewport": [
+        1280,
+        720
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 374,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 374
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 188,
+              "width": 188,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 374
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 188,
+          "width": 188,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 374
+      },
+      "case": "div-padding-10-content-box",
+      "chromium_png_sha256": "b5657fcecb4bc27baf9df193cc0cbb41cfa7a1ba9a215b7c861f9507a1a06fd6",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "c5e1008e7f70281b291ecfb919e0e1b755eaab9514fba5ec69fe1427ea7e6058",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 374
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        1280,
+        720
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 396,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 396
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 101,
+              "width": 101,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 396
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 101,
+          "width": 101,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 396
+      },
+      "case": "div-padding-10-border-box",
+      "chromium_png_sha256": "b5b9aa85a1dc3f969825497837d45944d74575a83ea0d43fd9f8dbaf006f7443",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "f14dbcfd89bec2a7bf8c6cdb72ea0290d2a00aa174d177297af8d140a908589d",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 396
+        }
+      ],
+      "state": "before",
+      "viewport": [
+        800,
+        600
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 324,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 324
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 163,
+              "width": 163,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 324
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 163,
+          "width": 163,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 324
+      },
+      "case": "div-padding-10-border-box",
+      "chromium_png_sha256": "fa5238c1f6683d8347b09ff1e40e6a51de7f5ead9647aeeb3a9db222dbdd420c",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "d4345c02e16078c383df321bba3389d6675579a175d63e33b668921e6f6c2426",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 324
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        800,
+        600
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 396,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 396
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 101,
+              "width": 101,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 396
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 101,
+          "width": 101,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 396
+      },
+      "case": "div-padding-10-border-box",
+      "chromium_png_sha256": "4217511be7d6c2ed45c2775340f7753cacca05d5669e5abc1d7081659f5ca288",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "a0c0bf042aecc19372808a31e35dfd0d48ef03384655e9919dbdc7ca22b89fec",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 396
+        }
+      ],
+      "state": "before",
+      "viewport": [
+        1280,
+        720
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 324,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 324
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 163,
+              "width": 163,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 324
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 163,
+          "width": 163,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 324
+      },
+      "case": "div-padding-10-border-box",
+      "chromium_png_sha256": "b1ece1996c7ebeec09f0fe859bbb03c82f4af2273003c95cdfe76037ffb10e8d",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "a696bab071a7aed49fce7d515c09188823f43f897bcb5974c0a53c0cd141a22d",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 324
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        1280,
+        720
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 375,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": 373
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 188,
+              "width": 188,
+              "x": 25,
+              "y": 25
+            },
+            "mismatched_pixels": 375
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 188,
+          "width": 188,
+          "x": 25,
+          "y": 25
+        },
+        "mismatched_pixels": 375
+      },
+      "case": "fieldset-padding-0-content-box",
+      "chromium_png_sha256": "16707afd42e763d25cd1a7b0f019f984356d1d28e79c59e921a32c6c83490f49",
+      "group": "parent background behind opaque image",
+      "native_png_sha256": "b242587da56566fae6f1958e6a68e70c2f43742a77ccfc8d82970cb557dabd46",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 187
+        },
+        {
+          "chromium": [
+            126,
+            127,
+            63,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            128,
+            63,
+            255
+          ],
+          "pixels": 187
+        },
+        {
+          "chromium": [
+            190,
+            127,
+            94,
+            255
+          ],
+          "delta": [
+            0,
+            -1,
+            0,
+            0
+          ],
+          "native": [
+            190,
+            126,
+            94,
+            255
+          ],
+          "pixels": 1
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        800,
+        600
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 375,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": 373
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 188,
+              "width": 188,
+              "x": 25,
+              "y": 25
+            },
+            "mismatched_pixels": 375
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 188,
+          "width": 188,
+          "x": 25,
+          "y": 25
+        },
+        "mismatched_pixels": 375
+      },
+      "case": "fieldset-padding-0-content-box",
+      "chromium_png_sha256": "14de2d3f6a3788167ebb83cb646a3f33787206e812429c3858b29928a9c5683b",
+      "group": "parent background behind opaque image",
+      "native_png_sha256": "dedbed6d133e5a2701f323668dd4bd7c01d1844ef149cd51786fd5384784bd9b",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 187
+        },
+        {
+          "chromium": [
+            126,
+            127,
+            63,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            128,
+            63,
+            255
+          ],
+          "pixels": 187
+        },
+        {
+          "chromium": [
+            190,
+            127,
+            94,
+            255
+          ],
+          "delta": [
+            0,
+            -1,
+            0,
+            0
+          ],
+          "native": [
+            190,
+            126,
+            94,
+            255
+          ],
+          "pixels": 1
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        1280,
+        720
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 375,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": 373
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 188,
+              "width": 188,
+              "x": 25,
+              "y": 25
+            },
+            "mismatched_pixels": 375
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 188,
+          "width": 188,
+          "x": 25,
+          "y": 25
+        },
+        "mismatched_pixels": 375
+      },
+      "case": "fieldset-padding-0-border-box",
+      "chromium_png_sha256": "16707afd42e763d25cd1a7b0f019f984356d1d28e79c59e921a32c6c83490f49",
+      "group": "parent background behind opaque image",
+      "native_png_sha256": "b242587da56566fae6f1958e6a68e70c2f43742a77ccfc8d82970cb557dabd46",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 187
+        },
+        {
+          "chromium": [
+            126,
+            127,
+            63,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            128,
+            63,
+            255
+          ],
+          "pixels": 187
+        },
+        {
+          "chromium": [
+            190,
+            127,
+            94,
+            255
+          ],
+          "delta": [
+            0,
+            -1,
+            0,
+            0
+          ],
+          "native": [
+            190,
+            126,
+            94,
+            255
+          ],
+          "pixels": 1
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        800,
+        600
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 375,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": -1,
+            "signed_delta_sum": 373
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 188,
+              "width": 188,
+              "x": 25,
+              "y": 25
+            },
+            "mismatched_pixels": 375
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 188,
+          "width": 188,
+          "x": 25,
+          "y": 25
+        },
+        "mismatched_pixels": 375
+      },
+      "case": "fieldset-padding-0-border-box",
+      "chromium_png_sha256": "14de2d3f6a3788167ebb83cb646a3f33787206e812429c3858b29928a9c5683b",
+      "group": "parent background behind opaque image",
+      "native_png_sha256": "dedbed6d133e5a2701f323668dd4bd7c01d1844ef149cd51786fd5384784bd9b",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 187
+        },
+        {
+          "chromium": [
+            126,
+            127,
+            63,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            128,
+            63,
+            255
+          ],
+          "pixels": 187
+        },
+        {
+          "chromium": [
+            190,
+            127,
+            94,
+            255
+          ],
+          "delta": [
+            0,
+            -1,
+            0,
+            0
+          ],
+          "native": [
+            190,
+            126,
+            94,
+            255
+          ],
+          "pixels": 1
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        1280,
+        720
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 496,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 496
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 126,
+              "width": 126,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 496
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 126,
+          "width": 126,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 496
+      },
+      "case": "fieldset-padding-10-content-box",
+      "chromium_png_sha256": "623dd8021d0e35d1433bc10728bffb25555b69a8c480a14d4349487fd2fa2867",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "c5d53891cf4b26ce8f06fd57c5598dc66e365e8192fdff70b0e8bee83d61b43a",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 496
+        }
+      ],
+      "state": "before",
+      "viewport": [
+        800,
+        600
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 374,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 374
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 188,
+              "width": 188,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 374
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 188,
+          "width": 188,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 374
+      },
+      "case": "fieldset-padding-10-content-box",
+      "chromium_png_sha256": "7e521ea661381ced30d2975b2ed13bd68fe3e7a7731a42ace3eaed7b62d3ff97",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "7f6d841a6ba24564a4d1f0a1e50bbe89e8b8743a4982bb71f10755bd8ba7e9f5",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 374
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        800,
+        600
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 496,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 496
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 126,
+              "width": 126,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 496
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 126,
+          "width": 126,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 496
+      },
+      "case": "fieldset-padding-10-content-box",
+      "chromium_png_sha256": "392fed55361963e6a301277bbf2112cb8a2db5cfb6d6b24c14961b2235e9ca07",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "e79b6a97e1d9b3bcf8a1dadb7e933fb3c3b56915e53368dd99d694bcce1ee661",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 496
+        }
+      ],
+      "state": "before",
+      "viewport": [
+        1280,
+        720
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 374,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 374
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 188,
+              "width": 188,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 374
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 188,
+          "width": 188,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 374
+      },
+      "case": "fieldset-padding-10-content-box",
+      "chromium_png_sha256": "877e384c9aae56f2f433be2c5e72adb9e4d55fd76f4e36525b4e030cac4367e4",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "42a8028fc02068d1eada4fb0b646c0b0c6227a26a2b4e0994bdbf378ab0d2913",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 374
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        1280,
+        720
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 396,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 396
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 101,
+              "width": 101,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 396
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 101,
+          "width": 101,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 396
+      },
+      "case": "fieldset-padding-10-border-box",
+      "chromium_png_sha256": "9743d25a367d42226b3cf80dec3adb6e3ba85225f435fe06527529935ed213ca",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "a8d08d14453e4929c4cb9fa0a70be001102c94145f4c10ed8dedcf14432d002f",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 396
+        }
+      ],
+      "state": "before",
+      "viewport": [
+        800,
+        600
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 324,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 324
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 163,
+              "width": 163,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 324
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 163,
+          "width": 163,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 324
+      },
+      "case": "fieldset-padding-10-border-box",
+      "chromium_png_sha256": "7a031dd30bbf55adbaba5d3bc296a7efd0564a23f6e0cef488cb2be149bba780",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "1c74146c29d8f640e507dccc9b17b3fe86d5e7cb84bab2cc2e9aed772badd60b",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 324
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        800,
+        600
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 396,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 396
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 101,
+              "width": 101,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 396
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 101,
+          "width": 101,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 396
+      },
+      "case": "fieldset-padding-10-border-box",
+      "chromium_png_sha256": "406bb195b99ee46179ba00db5f90a686783497b7f52a6e9c4afdd4e01cd2922f",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "c1bad2683c5897fef2b6775b9dbab354226cf9a6699f4dc2fda7b52756aee99d",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 396
+        }
+      ],
+      "state": "before",
+      "viewport": [
+        1280,
+        720
+      ]
+    },
+    {
+      "analysis": {
+        "channel_deltas": {
+          "alpha": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "blue": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          },
+          "green": {
+            "changed_pixels": 324,
+            "maximum_absolute_delta": 1,
+            "maximum_signed_delta": 1,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 324
+          },
+          "red": {
+            "changed_pixels": 0,
+            "maximum_absolute_delta": 0,
+            "maximum_signed_delta": 0,
+            "minimum_signed_delta": 0,
+            "signed_delta_sum": 0
+          }
+        },
+        "comparable": true,
+        "connected_region_count": 1,
+        "connected_regions": [
+          {
+            "bounds": {
+              "height": 163,
+              "width": 163,
+              "x": 37,
+              "y": 37
+            },
+            "mismatched_pixels": 324
+          }
+        ],
+        "mismatch_bounds": {
+          "height": 163,
+          "width": 163,
+          "x": 37,
+          "y": 37
+        },
+        "mismatched_pixels": 324
+      },
+      "case": "fieldset-padding-10-border-box",
+      "chromium_png_sha256": "9bfd9d297bd86430e2239327588c2d873ef07c94cb95030a16ee8c9f9b76f2c1",
+      "group": "image coverage color rounding",
+      "native_png_sha256": "5c64cb8ca77a7498e00895782ce50704bb62c5eceb49c3f06d23a926b4a756a3",
+      "owner": "openui-paint",
+      "root_cause_confirmation": "candidate queued; full native and pixel proof pending",
+      "scale": 1.25,
+      "signatures": [
+        {
+          "chromium": [
+            126,
+            64,
+            0,
+            255
+          ],
+          "delta": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "native": [
+            126,
+            65,
+            0,
+            255
+          ],
+          "pixels": 324
+        }
+      ],
+      "state": "after",
+      "viewport": [
+        1280,
+        720
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "screenshots_generated": 0,
+  "source_fix_candidate": "d913041dba9b36987ce83a1b3ed85dc6b4bf93e4",
+  "source_forensics_sha256": "d5a9cdea72752c11b3e6222043ccdf47a0a4bff76f5d4d240709cbfdd2e24991"
+}

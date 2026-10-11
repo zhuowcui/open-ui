@@ -1,0 +1,48 @@
+{
+  "all_commands_terminal": false,
+  "branch": "agent/native-intrinsic-constraints-v1361",
+  "commit": "7d723caa7541882da6f403152b1432f0d45c50a8",
+  "direct_cache_regression_qualification": false,
+  "last_observed_jobs": [
+    {
+      "conclusion": "success",
+      "name": "conformance-and-platform",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "native-sanitizers (address)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "",
+      "name": "msrv",
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "success",
+      "name": "native-sanitizers (leak)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "c-undefined-sanitizer",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "miri-handles",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "fuzz-smoke",
+      "status": "completed"
+    }
+  ],
+  "probe_sha256": "3fc6a6eb5688487cdf63a2a86ddb2b0705dbaa19aa3fda68cf1ade5d6df94d1b",
+  "release_qualification": false,
+  "run_id": 37250061570,
+  "schema_version": 1,
+  "state": "running-own-source-manual-hardening"
+}

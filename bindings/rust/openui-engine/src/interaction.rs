@@ -51,6 +51,7 @@ pub struct PointerUpdate {
 pub enum FocusOrigin {
     Pointer,
     Keyboard,
+    /// Legacy name for focus requested by native code. No script is executed.
     Script,
     Accessibility,
 }
@@ -59,6 +60,40 @@ pub enum FocusOrigin {
 pub enum TextDirection {
     Backward,
     Forward,
+}
+
+/// Direction of a retained text-control selection.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum SelectionDirection {
+    None,
+    Forward,
+    Backward,
+}
+impl SelectionDirection {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::None => "none",
+            Self::Forward => "forward",
+            Self::Backward => "backward",
+        }
+    }
+    fn normalized(self) -> Self {
+        // The declared Linux/headless contract uses directional selections.
+        match self {
+            Self::None => Self::Forward,
+            other => other,
+        }
+    }
+}
+/// Selection after replacing a native text-control range.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum RangeSelectionMode {
+    Preserve,
+    Select,
+    Start,
+    End,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -100,6 +135,7 @@ pub struct ControlState {
     pub role: FormControlRole,
     pub disabled: bool,
     pub checked: bool,
+    checked_dirty: bool,
     pub selected: bool,
     pub open: bool,
     pub indeterminate: bool,
@@ -107,13 +143,18 @@ pub struct ControlState {
     pub placeholder: String,
     pub selection_anchor: usize,
     pub selection_focus: usize,
+    selection_direction: SelectionDirection,
     pub composition: Option<(usize, usize)>,
     pub min: f64,
     pub max: f64,
     pub step: f64,
     pub password: bool,
+    pub(crate) native_intrinsic_sizing: bool,
+    composition_original: Option<(String, usize, usize, SelectionDirection)>,
     history: Vec<String>,
     future: Vec<String>,
+    last_committed_value: String,
+    pending_user_edit: bool,
 }
 
 impl ControlState {
@@ -133,6 +174,7 @@ impl ControlState {
             role,
             disabled: false,
             checked: false,
+            checked_dirty: false,
             selected: false,
             open: false,
             indeterminate: false,
@@ -140,18 +182,30 @@ impl ControlState {
             placeholder: String::new(),
             selection_anchor: 0,
             selection_focus: 0,
+            selection_direction: SelectionDirection::Forward,
             composition: None,
             min: 0.0,
             max: 100.0,
             step: 1.0,
             password: false,
+            native_intrinsic_sizing: matches!(
+                role,
+                FormControlRole::TextInput | FormControlRole::TextArea
+            ),
+            composition_original: None,
             history: Vec::new(),
             future: Vec::new(),
+            last_committed_value: String::new(),
+            pending_user_edit: false,
         })
     }
 
     pub fn selection(&self) -> (usize, usize) {
         ordered(self.selection_anchor, self.selection_focus)
+    }
+
+    pub fn selection_direction(&self) -> SelectionDirection {
+        self.selection_direction
     }
 
     pub fn display_value(&self) -> String {
@@ -167,6 +221,18 @@ impl ControlState {
         self.selection_focus = previous_boundary(&self.value, self.selection_focus);
     }
 
+    fn note_user_edit(&mut self, before: &str) {
+        if before != self.value {
+            self.pending_user_edit = true;
+        }
+    }
+
+    fn note_programmatic_value(&mut self) {
+        if !self.pending_user_edit {
+            self.last_committed_value = self.value.clone();
+        }
+    }
+
     fn checkpoint(&mut self) {
         if self.history.last() != Some(&self.value) {
             self.history.push(self.value.clone());
@@ -175,16 +241,64 @@ impl ControlState {
     }
 
     fn replace_selection(&mut self, replacement: &str) {
+        self.finish_composition();
         let (start, end) = self.selection();
         self.checkpoint();
         self.value.replace_range(start..end, replacement);
         let caret = start + replacement.len();
         self.selection_anchor = caret;
         self.selection_focus = caret;
+        self.selection_direction = SelectionDirection::Forward;
         self.composition = None;
     }
 
+    fn update_composition(&mut self, replacement: &str) {
+        if self.composition_original.is_none() {
+            self.composition_original = Some((
+                self.value.clone(),
+                self.selection_anchor,
+                self.selection_focus,
+                self.selection_direction,
+            ));
+        }
+        let (start, end) = self.composition.unwrap_or_else(|| self.selection());
+        self.value.replace_range(start..end, replacement);
+        let caret = start + replacement.len();
+        self.selection_anchor = caret;
+        self.selection_focus = caret;
+        self.selection_direction = SelectionDirection::Forward;
+        self.composition = Some((start, caret));
+    }
+
+    pub(crate) fn finish_composition(&mut self) {
+        if let Some((original, _, _, _)) = self.composition_original.take() {
+            if original != self.value {
+                if self.history.last() != Some(&original) {
+                    self.history.push(original);
+                }
+                self.future.clear();
+            }
+        }
+        self.composition = None;
+    }
+
+    fn cancel_composition(&mut self) {
+        if let Some((value, anchor, focus, direction)) = self.composition_original.take() {
+            self.value = value;
+            self.selection_anchor = anchor;
+            self.selection_focus = focus;
+            self.selection_direction = direction;
+        }
+        self.composition = None;
+    }
+
+    pub(crate) fn clear_composition(&mut self) {
+        self.composition = None;
+        self.composition_original = None;
+    }
+
     fn move_selection(&mut self, direction: TextDirection, unit: TextUnit, extend: bool) {
+        self.finish_composition();
         let (_, end) = self.selection();
         let caret = if !extend && self.selection_anchor != self.selection_focus {
             match direction {
@@ -198,6 +312,11 @@ impl ControlState {
             self.selection_anchor = caret;
         }
         self.selection_focus = caret;
+        self.selection_direction = if self.selection_anchor > caret {
+            SelectionDirection::Backward
+        } else {
+            SelectionDirection::Forward
+        };
     }
 
     fn delete(&mut self, direction: TextDirection, unit: TextUnit) {
@@ -215,6 +334,7 @@ impl ControlState {
     }
 
     fn undo(&mut self) {
+        self.finish_composition();
         let Some(previous) = self.history.pop() else {
             return;
         };
@@ -222,16 +342,19 @@ impl ControlState {
             .push(std::mem::replace(&mut self.value, previous));
         self.selection_anchor = self.value.len();
         self.selection_focus = self.value.len();
+        self.selection_direction = SelectionDirection::Forward;
         self.composition = None;
     }
 
     fn redo(&mut self) {
+        self.finish_composition();
         let Some(next) = self.future.pop() else {
             return;
         };
         self.history.push(std::mem::replace(&mut self.value, next));
         self.selection_anchor = self.value.len();
         self.selection_focus = self.value.len();
+        self.selection_direction = SelectionDirection::Forward;
         self.composition = None;
     }
 }
@@ -239,6 +362,17 @@ impl ControlState {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ActivationResult {
     pub changed: Vec<NodeHandle>,
+}
+
+/// Owned state saved before a native checkable click. No document borrow
+/// survives into application callbacks.
+#[derive(Debug)]
+pub struct CheckableActivation {
+    target: NodeHandle,
+    role: FormControlRole,
+    checked: bool,
+    indeterminate: bool,
+    checked_radio: Option<NodeHandle>,
 }
 
 impl Engine {
@@ -317,7 +451,8 @@ impl Engine {
             let is_range = self
                 .controls
                 .get(&range.index)
-                .is_some_and(|control| control.role == FormControlRole::Range && !control.disabled);
+                .is_some_and(|control| control.role == FormControlRole::Range)
+                && !self.is_disabled(range);
             let bounds = is_range.then(|| self.bounds(range)).transpose()?.flatten();
             bounds
                 .filter(|bounds| bounds.width > 0.0)
@@ -352,13 +487,18 @@ impl Engine {
         })
     }
 
+    /// Validate whether native focus can be requested without changing state.
+    pub fn can_focus(&self, handle: NodeHandle) -> Result<bool, EngineError> {
+        self.resolve(handle)?;
+        Ok(self.is_focusable(handle))
+    }
+
     pub fn focus_with_origin(
         &mut self,
         handle: NodeHandle,
         origin: FocusOrigin,
     ) -> Result<Option<NodeHandle>, EngineError> {
-        self.resolve(handle)?;
-        if !self.is_focusable(handle) {
+        if !self.can_focus(handle)? {
             return Err(EngineError::NotFocusable);
         }
         let previous = self.focused;
@@ -387,6 +527,16 @@ impl Engine {
     }
 
     pub fn advance_focus(&mut self, direction: i32) -> Result<Option<NodeHandle>, EngineError> {
+        let next = self.next_focus_target(direction)?;
+        if let Some(next) = next {
+            self.focus_with_origin(next, FocusOrigin::Keyboard)?;
+        }
+        Ok(next)
+    }
+
+    /// Choose a sequential focus target without mutating focus. Native frontends
+    /// release their engine borrow before delivering the intervening blur event.
+    pub fn next_focus_target(&self, direction: i32) -> Result<Option<NodeHandle>, EngineError> {
         if direction != -1 && direction != 1 {
             return Err(EngineError::InvalidInput("focus direction must be -1 or 1"));
         }
@@ -397,6 +547,31 @@ impl Engine {
         let current = self
             .focused
             .and_then(|focused| candidates.iter().position(|node| *node == focused));
+        if current.is_none() {
+            if let Some(focused) = self.focused {
+                let eligible: std::collections::HashSet<_> = candidates.iter().copied().collect();
+                let mut document_order = Vec::new();
+                self.collect_focus_document_order(
+                    self.modal_root.unwrap_or_else(|| self.root()),
+                    &mut document_order,
+                )?;
+                if let Some(anchor) = document_order.iter().position(|node| *node == focused) {
+                    let next = if direction == 1 {
+                        document_order[anchor + 1..]
+                            .iter()
+                            .find(|node| eligible.contains(*node))
+                    } else {
+                        document_order[..anchor]
+                            .iter()
+                            .rev()
+                            .find(|node| eligible.contains(*node))
+                    };
+                    if let Some(next) = next {
+                        return Ok(Some(*next));
+                    }
+                }
+            }
+        }
         let index = match (current, direction) {
             (Some(index), 1) => (index + 1) % candidates.len(),
             (Some(index), -1) => (index + candidates.len() - 1) % candidates.len(),
@@ -405,15 +580,39 @@ impl Engine {
             _ => unreachable!(),
         };
         let next = candidates[index];
-        self.focus_with_origin(next, FocusOrigin::Keyboard)?;
         Ok(Some(next))
     }
 
     pub fn set_modal_root(&mut self, root: Option<NodeHandle>) -> Result<(), EngineError> {
+        let next = self.prepare_modal_focus(root)?;
+        if self.focused != next {
+            if let Some(previous) = self.focused {
+                self.blur(previous)?;
+            }
+            if let Some(next) = next {
+                self.focus_with_origin(next, FocusOrigin::Keyboard)?;
+            }
+        }
+        Ok(())
+    }
+
+    pub fn modal_root(&self) -> Option<NodeHandle> {
+        self.modal_root
+    }
+
+    /// Change modal containment and choose its focus target without moving
+    /// focus. Frontends deliver composition/blur callbacks before that move.
+    pub fn prepare_modal_focus(
+        &mut self,
+        root: Option<NodeHandle>,
+    ) -> Result<Option<NodeHandle>, EngineError> {
         if let Some(root) = root {
             self.resolve(root)?;
         }
-        match root {
+        if self.modal_root != root {
+            self.mark_dirty(openui_style::InvalidationClass::Accessibility);
+        }
+        let next = match root {
             Some(root) => {
                 if self.modal_root != Some(root) {
                     self.focus_before_modal = self.focused;
@@ -423,42 +622,22 @@ impl Engine {
                     .focused
                     .is_none_or(|focused| !self.is_inside_modal(focused))
                 {
-                    if let Some(previous) = self.focused.take() {
-                        if let Ok(node) = self.resolve(previous) {
-                            self.document
-                                .node_mut(node)
-                                .attributes
-                                .remove("data-oui-focused");
-                        }
-                    }
-                    if let Some(next) = self.focus_candidates()?.into_iter().next() {
-                        self.focus_with_origin(next, FocusOrigin::Keyboard)?;
-                    }
+                    self.focus_candidates()?.into_iter().next()
+                } else {
+                    self.focused
                 }
             }
             None => {
-                if let Some(previous) = self.focused.take() {
-                    if let Ok(node) = self.resolve(previous) {
-                        self.document
-                            .node_mut(node)
-                            .attributes
-                            .remove("data-oui-focused");
-                    }
+                if self.modal_root.is_none() {
+                    return Ok(self.focused);
                 }
                 self.modal_root = None;
-                if let Some(restore) = self
-                    .focus_before_modal
+                self.focus_before_modal
                     .take()
                     .filter(|node| self.is_focusable(*node))
-                {
-                    self.focus_with_origin(restore, FocusOrigin::Keyboard)?;
-                } else {
-                    self.focus_visible = false;
-                }
             }
-        }
-        self.mark_dirty(openui_style::InvalidationClass::Accessibility);
-        Ok(())
+        };
+        Ok(next)
     }
 
     pub fn control_state(&self, handle: NodeHandle) -> Result<Option<&ControlState>, EngineError> {
@@ -477,16 +656,38 @@ impl Engine {
             .controls
             .get_mut(&handle.index)
             .ok_or(EngineError::NotAControl)?;
+        if control.value == value {
+            control.note_programmatic_value();
+            return Ok(());
+        }
         control.value = value.clone();
+        control.note_programmatic_value();
         control.selection_anchor = value.len();
         control.selection_focus = value.len();
-        control.composition = None;
+        control.selection_direction = SelectionDirection::Forward;
+        control.clear_composition();
         control.history.clear();
         control.future.clear();
         self.document.set_attribute(node, "value", value);
         self.sync_selection_attributes(handle);
         self.mark_dirty(openui_style::InvalidationClass::Intrinsic);
         Ok(())
+    }
+
+    /// Commit user text edits before the frontend delivers a native `change`
+    /// notification. Reset first so callbacks cannot commit the same edit twice.
+    pub fn commit_text_edit(&mut self, handle: NodeHandle) -> Result<bool, EngineError> {
+        self.resolve(handle)?;
+        let Some(control) = self.controls.get_mut(&handle.index) else {
+            return Ok(false);
+        };
+        if !is_editable_role(control.role) {
+            return Ok(false);
+        }
+        let changed = control.pending_user_edit && control.value != control.last_committed_value;
+        control.last_committed_value = control.value.clone();
+        control.pending_user_edit = false;
+        Ok(changed)
     }
 
     pub fn set_selection(
@@ -506,25 +707,79 @@ impl Engine {
         if anchor > control.value.len() || focus > control.value.len() {
             return Err(EngineError::InvalidSelection);
         }
+        control.finish_composition();
         control.selection_anchor = anchor;
         control.selection_focus = focus;
+        control.selection_direction = if anchor > focus {
+            SelectionDirection::Backward
+        } else {
+            SelectionDirection::Forward
+        };
         control.clamp_selection();
         self.sync_selection_attributes(handle);
         self.mark_dirty(openui_style::InvalidationClass::Paint);
         Ok(())
     }
 
-    pub fn insert_text(&mut self, handle: NodeHandle, text: &str) -> Result<(), EngineError> {
+    /// Set a selection with UTF-8 byte offsets and explicit direction.
+    /// The end is clamped to the value; a start beyond it collapses at the end.
+    /// Code-point splits are errors; grapheme-internal scalar boundaries remain valid.
+    pub fn set_selection_range(
+        &mut self,
+        handle: NodeHandle,
+        start: usize,
+        end: usize,
+        direction: SelectionDirection,
+    ) -> Result<(), EngineError> {
         self.resolve(handle)?;
+        let control = self
+            .controls
+            .get_mut(&handle.index)
+            .ok_or(EngineError::NotEditable)?;
+        if !is_editable_role(control.role) {
+            return Err(EngineError::NotEditable);
+        }
+        let end = end.min(control.value.len());
+        let start = start.min(end);
+        if !control.value.is_char_boundary(start) || !control.value.is_char_boundary(end) {
+            return Err(EngineError::InvalidSelection);
+        }
+        control.finish_composition();
+        control.selection_direction = direction.normalized();
+        (control.selection_anchor, control.selection_focus) =
+            if control.selection_direction == SelectionDirection::Backward {
+                (end, start)
+            } else {
+                (start, end)
+            };
+        self.sync_selection_attributes(handle);
+        self.mark_dirty(openui_style::InvalidationClass::Paint);
+        Ok(())
+    }
+
+    /// Whether user text input may modify this control. Native application
+    /// value setters and selection queries remain available for read-only controls.
+    pub fn can_edit_text(&self, handle: NodeHandle) -> Result<bool, EngineError> {
+        let node = self.resolve(handle)?;
+        Ok(self.controls.get(&handle.index).is_some_and(|control| {
+            !self.is_disabled(handle)
+                && is_editable_role(control.role)
+                && self.document.attribute(node, "readonly").is_none()
+        }))
+    }
+
+    pub fn insert_text(&mut self, handle: NodeHandle, text: &str) -> Result<(), EngineError> {
+        if !self.can_edit_text(handle)? {
+            return Err(EngineError::NotEditable);
+        }
         let value = {
             let control = self
                 .controls
                 .get_mut(&handle.index)
                 .ok_or(EngineError::NotEditable)?;
-            if control.disabled || !is_editable_role(control.role) {
-                return Err(EngineError::NotEditable);
-            }
+            let before = control.value.clone();
             control.replace_selection(text);
+            control.note_user_edit(&before);
             control.value.clone()
         };
         let node = self.resolve(handle)?;
@@ -540,14 +795,23 @@ impl Engine {
         command: EditCommand,
     ) -> Result<(), EngineError> {
         self.resolve(handle)?;
+        if !matches!(command, EditCommand::Move { .. } | EditCommand::SelectAll)
+            && !self.can_edit_text(handle)?
+        {
+            return Err(EngineError::NotEditable);
+        }
+        if self.is_disabled(handle) {
+            return Err(EngineError::NotEditable);
+        }
         let (value, changed) = {
             let control = self
                 .controls
                 .get_mut(&handle.index)
                 .ok_or(EngineError::NotEditable)?;
-            if control.disabled || !is_editable_role(control.role) {
+            if !is_editable_role(control.role) {
                 return Err(EngineError::NotEditable);
             }
+            control.finish_composition();
             let before = control.value.clone();
             match command {
                 EditCommand::Move {
@@ -559,10 +823,12 @@ impl Engine {
                 EditCommand::SelectAll => {
                     control.selection_anchor = 0;
                     control.selection_focus = control.value.len();
+                    control.selection_direction = SelectionDirection::Forward;
                 }
                 EditCommand::Undo => control.undo(),
                 EditCommand::Redo => control.redo(),
             }
+            control.note_user_edit(&before);
             (control.value.clone(), before != control.value)
         };
         if changed {
@@ -581,22 +847,15 @@ impl Engine {
         handle: NodeHandle,
         text: &str,
     ) -> Result<(), EngineError> {
-        self.resolve(handle)?;
+        if !self.can_edit_text(handle)? {
+            return Err(EngineError::NotEditable);
+        }
         let value = {
             let control = self
                 .controls
                 .get_mut(&handle.index)
                 .ok_or(EngineError::NotEditable)?;
-            if control.disabled || !is_editable_role(control.role) {
-                return Err(EngineError::NotEditable);
-            }
-            if let Some((start, end)) = control.composition.take() {
-                control.selection_anchor = start;
-                control.selection_focus = end;
-            }
-            let start = control.selection().0;
-            control.replace_selection(text);
-            control.composition = Some((start, start + text.len()));
+            control.update_composition(text);
             control.value.clone()
         };
         let node = self.resolve(handle)?;
@@ -612,9 +871,146 @@ impl Engine {
             .controls
             .get_mut(&handle.index)
             .ok_or(EngineError::NotEditable)?;
-        control.composition = None;
+        control.finish_composition();
         self.sync_selection_attributes(handle);
+        self.mark_dirty(openui_style::InvalidationClass::Paint);
         Ok(())
+    }
+
+    /// Replace the preedit range with the final text as one undoable edit.
+    pub fn commit_composition(
+        &mut self,
+        handle: NodeHandle,
+        text: &str,
+    ) -> Result<(), EngineError> {
+        let before = self
+            .control_state(handle)?
+            .ok_or(EngineError::NotEditable)?
+            .composition_original
+            .as_ref()
+            .map(|(value, _, _, _)| value.clone())
+            .unwrap_or_else(|| self.controls[&handle.index].value.clone());
+        self.update_composition(handle, text)?;
+        self.finish_composition(handle)?;
+        self.controls
+            .get_mut(&handle.index)
+            .ok_or(EngineError::NotEditable)?
+            .note_user_edit(&before);
+        Ok(())
+    }
+
+    /// Restore the value and selection from before the first preedit update.
+    pub fn cancel_composition(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
+        let control = self
+            .controls
+            .get_mut(&handle.index)
+            .ok_or(EngineError::NotEditable)?;
+        let before = control.value.clone();
+        control.cancel_composition();
+        let changed = before != control.value;
+        let value = control.value.clone();
+        self.document.set_attribute(node, "value", value);
+        self.sync_selection_attributes(handle);
+        self.mark_dirty(if changed {
+            openui_style::InvalidationClass::Intrinsic
+        } else {
+            openui_style::InvalidationClass::Paint
+        });
+        Ok(())
+    }
+
+    #[doc(hidden)]
+    pub fn begin_checkable_activation(
+        &mut self,
+        target: NodeHandle,
+    ) -> Result<Option<CheckableActivation>, EngineError> {
+        self.resolve(target)?;
+        let Some(control) = self.controls.get(&target.index) else {
+            return Ok(None);
+        };
+        if !matches!(
+            control.role,
+            FormControlRole::Checkbox | FormControlRole::Radio
+        ) {
+            return Ok(None);
+        }
+        let role = control.role;
+        let checked = control.checked;
+        let indeterminate = control.indeterminate;
+        let checked_radio = if role == FormControlRole::Radio {
+            self.radio_group_members(target)?
+                .into_iter()
+                .find(|peer| self.controls[&peer.index].checked)
+        } else {
+            None
+        };
+        self.change_checked_state(
+            target,
+            if role == FormControlRole::Checkbox {
+                !checked
+            } else {
+                true
+            },
+            true,
+        )?;
+        if role == FormControlRole::Checkbox {
+            self.set_indeterminate(target, false)?;
+        }
+        Ok(Some(CheckableActivation {
+            target,
+            role,
+            checked,
+            indeterminate,
+            checked_radio,
+        }))
+    }
+
+    #[doc(hidden)]
+    pub fn finish_checkable_activation(
+        &mut self,
+        state: CheckableActivation,
+        canceled: bool,
+    ) -> Result<bool, EngineError> {
+        match self.resolve(state.target) {
+            Err(EngineError::StaleHandle) => return Ok(false),
+            Err(error) => return Err(error),
+            Ok(_) => {}
+        }
+        if canceled {
+            if state.role == FormControlRole::Checkbox {
+                self.set_indeterminate(state.target, state.indeterminate)?;
+                self.change_checked_state(state.target, state.checked, true)?;
+            } else if let Some(previous) = state.checked_radio {
+                // Restoration follows the previous radio's current group.
+                // A detached target can therefore remain checked independently.
+                if self.resolve(previous).is_ok()
+                    && self
+                        .controls
+                        .get(&previous.index)
+                        .is_some_and(|c| c.role == FormControlRole::Radio)
+                    && self.form_owner(previous)? == self.form_owner(state.target)?
+                    && self.attribute(previous, "name")?.unwrap_or_default()
+                        == self.attribute(state.target, "name")?.unwrap_or_default()
+                {
+                    self.change_checked_state(previous, true, true)?;
+                }
+            } else {
+                self.change_checked_state(state.target, false, true)?;
+            }
+            return Ok(false);
+        }
+        if !self.is_connected(state.target)? {
+            return Ok(false);
+        }
+        let Some(control) = self.controls.get(&state.target.index) else {
+            return Ok(false);
+        };
+        Ok(match state.role {
+            FormControlRole::Checkbox => true,
+            FormControlRole::Radio => control.checked != state.checked && control.checked,
+            _ => false,
+        })
     }
 
     pub fn activate(&mut self, handle: NodeHandle) -> Result<ActivationResult, EngineError> {
@@ -646,41 +1042,11 @@ impl Engine {
             FormControlRole::Checkbox => {
                 let checked = !self.controls[&handle.index].checked;
                 self.set_checked_internal(handle, checked);
+                self.set_indeterminate(handle, false)?;
                 changed.push(handle);
             }
             FormControlRole::Radio => {
-                let name = self
-                    .attribute(handle, "name")?
-                    .unwrap_or_default()
-                    .to_owned();
-                let handles: Vec<_> = self
-                    .slots
-                    .iter()
-                    .enumerate()
-                    .filter_map(|(index, slot)| {
-                        slot.node.map(|_| self.handle_for_slot(index as u32))
-                    })
-                    .filter(|other| {
-                        self.controls
-                            .get(&other.index)
-                            .is_some_and(|state| state.role == FormControlRole::Radio)
-                            && (name.is_empty() && *other == handle
-                                || !name.is_empty()
-                                    && self
-                                        .attribute(*other, "name")
-                                        .ok()
-                                        .flatten()
-                                        .unwrap_or_default()
-                                        == name)
-                    })
-                    .collect();
-                for other in handles {
-                    let checked = other == handle;
-                    if self.controls[&other.index].checked != checked {
-                        self.set_checked_internal(other, checked);
-                        changed.push(other);
-                    }
-                }
+                changed.extend(self.change_checked_state(handle, true, true)?);
             }
             FormControlRole::Select => {
                 let open = {
@@ -722,6 +1088,57 @@ impl Engine {
         Ok(ActivationResult { changed })
     }
 
+    /// Return the next focusable radio for native keyboard navigation.
+    /// Navigation includes unnamed radios, whose checked states remain independent.
+    /// This query changes no selection, focus, layout or event state.
+    pub fn radio_keyboard_target(
+        &self,
+        handle: NodeHandle,
+        forward: bool,
+    ) -> Result<Option<NodeHandle>, EngineError> {
+        self.resolve(handle)?;
+        if !self
+            .controls
+            .get(&handle.index)
+            .is_some_and(|state| state.role == FormControlRole::Radio)
+        {
+            return Err(EngineError::NotAControl);
+        }
+        if !self.is_focusable(handle) {
+            return Ok(None);
+        }
+        let name = self.attribute(handle, "name")?.unwrap_or_default();
+        let owner = self.form_owner(handle)?;
+        let mut peers = Vec::new();
+        let mut stack = vec![self.tree_root(handle)?];
+        while let Some(node) = stack.pop() {
+            if self
+                .controls
+                .get(&node.index)
+                .is_some_and(|state| state.role == FormControlRole::Radio)
+                && self.attribute(node, "name")?.unwrap_or_default() == name
+                && self.form_owner(node)? == owner
+                && self.is_focusable(node)
+            {
+                peers.push(node);
+            }
+            stack.extend(self.children(node)?.into_iter().rev());
+        }
+        let Some(index) = peers.iter().position(|node| *node == handle) else {
+            return Ok(None);
+        };
+        if peers.len() < 2 {
+            return Ok(None);
+        }
+        Ok(Some(
+            peers[if forward {
+                (index + 1) % peers.len()
+            } else {
+                (index + peers.len() - 1) % peers.len()
+            }],
+        ))
+    }
+
     pub fn adjust_control(
         &mut self,
         handle: NodeHandle,
@@ -733,7 +1150,7 @@ impl Engine {
             .get(&handle.index)
             .cloned()
             .ok_or(EngineError::NotAControl)?;
-        if state.disabled {
+        if self.is_disabled(handle) {
             return Ok(ActivationResult { changed: vec![] });
         }
         match state.role {
@@ -766,17 +1183,9 @@ impl Engine {
                     return Ok(ActivationResult { changed: vec![] });
                 }
                 let radios: Vec<_> = self
-                    .slots
-                    .iter()
-                    .enumerate()
-                    .filter_map(|(index, slot)| {
-                        slot.node.map(|_| self.handle_for_slot(index as u32))
-                    })
-                    .filter(|node| {
-                        self.controls.get(&node.index).is_some_and(|control| {
-                            control.role == FormControlRole::Radio && !control.disabled
-                        }) && self.attribute(*node, "name").ok().flatten() == Some(name.as_str())
-                    })
+                    .radio_group_members(handle)?
+                    .into_iter()
+                    .filter(|node| !self.is_disabled(*node))
                     .collect();
                 let Some(index) = radios.iter().position(|node| *node == handle) else {
                     return Ok(ActivationResult { changed: vec![] });
@@ -854,7 +1263,7 @@ impl Engine {
             .get(&handle.index)
             .cloned()
             .ok_or(EngineError::NotAControl)?;
-        if state.role != FormControlRole::Range || state.disabled {
+        if state.role != FormControlRole::Range || self.is_disabled(handle) {
             return Ok(false);
         }
         let low = state.min.min(state.max);
@@ -873,22 +1282,14 @@ impl Engine {
         Ok(true)
     }
 
+    /// Assign live input state independently of activation eligibility.
+    /// Authored attributes remain defaults and no input/change events fire.
     pub fn set_checked(&mut self, handle: NodeHandle, checked: bool) -> Result<(), EngineError> {
-        self.resolve(handle)?;
-        let role = self
-            .controls
-            .get(&handle.index)
-            .map(|control| control.role)
-            .ok_or(EngineError::NotAControl)?;
-        if !matches!(role, FormControlRole::Checkbox | FormControlRole::Radio) {
+        let node = self.resolve(handle)?;
+        if self.document.node(node).tag != ElementTag::Input {
             return Err(EngineError::NotAControl);
         }
-        if role == FormControlRole::Radio && checked {
-            self.activate(handle)?;
-        } else {
-            self.set_checked_internal(handle, checked);
-            self.mark_dirty(openui_style::InvalidationClass::Paint);
-        }
+        self.change_checked_state(handle, checked, true)?;
         Ok(())
     }
 
@@ -897,15 +1298,19 @@ impl Engine {
         handle: NodeHandle,
         indeterminate: bool,
     ) -> Result<(), EngineError> {
-        self.resolve(handle)?;
+        let node = self.resolve(handle)?;
+        if self.document.node(node).tag != ElementTag::Input {
+            return Err(EngineError::NotAControl);
+        }
         let control = self
             .controls
             .get_mut(&handle.index)
-            .filter(|control| control.role == FormControlRole::Checkbox)
             .ok_or(EngineError::NotAControl)?;
-        control.indeterminate = indeterminate;
-        self.sync_bool_attribute(handle, "indeterminate", indeterminate);
-        self.mark_dirty(openui_style::InvalidationClass::Paint);
+        if control.indeterminate != indeterminate {
+            control.indeterminate = indeterminate;
+            self.document.node_mut(node).form_control_indeterminate = Some(indeterminate);
+            self.mark_dirty(openui_style::InvalidationClass::Paint);
+        }
         Ok(())
     }
 
@@ -939,14 +1344,17 @@ impl Engine {
         };
         match name {
             "disabled" => control.disabled = true,
-            "checked" => control.checked = true,
+            "checked" => {}
             "selected" => control.selected = true,
             "open" => control.open = true,
-            "indeterminate" => control.indeterminate = true,
+
             "value" => {
+                control.clear_composition();
                 control.value = value.to_owned();
+                control.note_programmatic_value();
                 control.selection_anchor = value.len();
                 control.selection_focus = value.len();
+                control.selection_direction = SelectionDirection::Forward;
             }
             "placeholder" => control.placeholder = value.to_owned(),
             "min" => control.min = finite_number(value).unwrap_or(control.min),
@@ -981,6 +1389,16 @@ impl Engine {
         if let Some(node) = self.slots[handle.index as usize].node {
             self.document.node_mut(node).form_control_disabled = control.disabled;
         }
+        let clean_checked = name == "checked" && !control.checked_dirty;
+        self.sync_live_checkable_paint_state(handle);
+        if clean_checked {
+            self.change_checked_state(handle, true, false)
+                .expect("validated control handle");
+        }
+        if matches!(name, "type" | "name" | "form") {
+            self.reset_radio_association(handle)
+                .expect("validated control handle");
+        }
     }
 
     pub(crate) fn remove_control_attribute(&mut self, handle: NodeHandle, name: &str) {
@@ -990,10 +1408,10 @@ impl Engine {
         };
         match name {
             "disabled" => control.disabled = false,
-            "checked" => control.checked = false,
+            "checked" => {}
             "selected" => control.selected = false,
             "open" => control.open = false,
-            "indeterminate" => control.indeterminate = false,
+
             "placeholder" => control.placeholder.clear(),
             "type" if is_input => {
                 control.role = FormControlRole::TextInput;
@@ -1004,6 +1422,16 @@ impl Engine {
         if let Some(node) = self.slots[handle.index as usize].node {
             self.document.node_mut(node).form_control = Some(control.role);
             self.document.node_mut(node).form_control_disabled = control.disabled;
+        }
+        let clean_checked = name == "checked" && !control.checked_dirty;
+        self.sync_live_checkable_paint_state(handle);
+        if clean_checked {
+            self.change_checked_state(handle, false, false)
+                .expect("validated control handle");
+        }
+        if matches!(name, "type" | "name" | "form") {
+            self.reset_radio_association(handle)
+                .expect("validated control handle");
         }
     }
 
@@ -1017,27 +1445,50 @@ impl Engine {
         Ok(result)
     }
 
+    /// Query the control's own disabled state, without group inheritance.
+    pub fn is_own_disabled(&self, handle: NodeHandle) -> Result<bool, EngineError> {
+        let node = self.resolve(handle)?;
+        Ok(self.document.own_form_control_disabled(node))
+    }
+
+    /// Query own or inherited disabled state without layout or mutation.
+    /// Invalid and foreign handles fail before the retained tree is accessed.
+    pub fn is_effectively_disabled(&self, handle: NodeHandle) -> Result<bool, EngineError> {
+        let node = self.resolve(handle)?;
+        Ok(self.document.effective_form_control_disabled(node))
+    }
+
     fn is_disabled(&self, handle: NodeHandle) -> bool {
-        self.controls
-            .get(&handle.index)
-            .is_some_and(|control| control.disabled)
+        self.is_effectively_disabled(handle).unwrap_or(false)
     }
 
     pub(crate) fn is_focusable(&self, handle: NodeHandle) -> bool {
-        if self.resolve(handle).is_err()
+        let Ok(node) = self.resolve(handle) else {
+            return false;
+        };
+        if !self.node_is_connected(node)
             || self.is_disabled(handle)
+            || self.document.node(node).style.visibility != openui_style::Visibility::Visible
             || !self.is_inside_modal(handle)
         {
             return false;
+        }
+        // A hidden ancestor suppresses the native focus target even when its
+        // descendants have retained control state. This reads style only and
+        // does not force layout before synchronous focus callbacks.
+        let mut ancestor = node;
+        while !ancestor.is_none() {
+            let data = self.document.node(ancestor);
+            if data.style.display == openui_style::Display::None {
+                return false;
+            }
+            ancestor = data.parent;
         }
         let tabindex = self
             .attribute(handle, "tabindex")
             .ok()
             .flatten()
             .and_then(|value| value.parse::<i32>().ok());
-        if tabindex.is_some_and(|value| value < 0) {
-            return false;
-        }
         tabindex.is_some()
             || self.controls.contains_key(&handle.index)
             || self.element_tag(handle) == Ok(ElementTag::Summary)
@@ -1081,7 +1532,9 @@ impl Engine {
             let tabindex = self
                 .attribute(node, "tabindex")?
                 .and_then(|value| value.parse::<i32>().ok());
-            result.push((tabindex, *order, node));
+            if !tabindex.is_some_and(|value| value < 0) {
+                result.push((tabindex, *order, node));
+            }
         }
         *order += 1;
         for child in self.children(node)? {
@@ -1090,11 +1543,111 @@ impl Engine {
         Ok(())
     }
 
-    fn set_checked_internal(&mut self, handle: NodeHandle, checked: bool) {
-        if let Some(control) = self.controls.get_mut(&handle.index) {
-            control.checked = checked;
+    fn collect_focus_document_order(
+        &self,
+        node: NodeHandle,
+        result: &mut Vec<NodeHandle>,
+    ) -> Result<(), EngineError> {
+        result.push(node);
+        for child in self.children(node)? {
+            self.collect_focus_document_order(child, result)?;
         }
-        self.sync_bool_attribute(handle, "checked", checked);
+        Ok(())
+    }
+
+    fn sync_live_checkable_paint_state(&mut self, handle: NodeHandle) {
+        if let (Some(control), Some(node)) = (
+            self.controls.get(&handle.index),
+            self.slots[handle.index as usize].node,
+        ) {
+            let data = self.document.node_mut(node);
+            data.form_control_checked = Some(control.checked);
+            data.form_control_indeterminate = Some(control.indeterminate);
+        }
+    }
+
+    pub(crate) fn set_checked_internal(&mut self, handle: NodeHandle, checked: bool) {
+        let control = self
+            .controls
+            .get_mut(&handle.index)
+            .expect("validated input control");
+        control.checked = checked;
+        control.checked_dirty = true;
+        self.sync_live_checkable_paint_state(handle);
+    }
+
+    fn change_checked_state(
+        &mut self,
+        handle: NodeHandle,
+        checked: bool,
+        dirty: bool,
+    ) -> Result<Vec<NodeHandle>, EngineError> {
+        self.resolve(handle)?;
+        let control = self
+            .controls
+            .get_mut(&handle.index)
+            .ok_or(EngineError::NotAControl)?;
+        if dirty {
+            control.checked_dirty = true;
+        }
+        if control.checked == checked {
+            return Ok(Vec::new());
+        }
+        let radio = control.role == FormControlRole::Radio;
+        let mut changed = Vec::new();
+        if radio && checked {
+            for peer in self.radio_peers_to_uncheck(handle)? {
+                if peer != handle && self.controls[&peer.index].checked {
+                    self.set_checked_internal(peer, false);
+                    changed.push(peer);
+                }
+            }
+        }
+        let control = self
+            .controls
+            .get_mut(&handle.index)
+            .expect("validated control");
+        control.checked = checked;
+        self.sync_live_checkable_paint_state(handle);
+        changed.push(handle);
+        self.mark_dirty(openui_style::InvalidationClass::Paint);
+        Ok(changed)
+    }
+
+    fn tree_root(&self, handle: NodeHandle) -> Result<NodeHandle, EngineError> {
+        self.resolve(handle)?;
+        let mut root = handle;
+        while let Some(parent) = self.parent(root)? {
+            root = parent;
+        }
+        Ok(root)
+    }
+
+    pub(crate) fn radio_group_members(
+        &self,
+        handle: NodeHandle,
+    ) -> Result<Vec<NodeHandle>, EngineError> {
+        self.resolve(handle)?;
+        let name = self.attribute(handle, "name")?.unwrap_or_default();
+        if name.is_empty() {
+            return Ok(vec![handle]);
+        }
+        let owner = self.form_owner(handle)?;
+        let mut members = Vec::new();
+        let mut stack = vec![self.tree_root(handle)?];
+        while let Some(node) = stack.pop() {
+            if self
+                .controls
+                .get(&node.index)
+                .is_some_and(|control| control.role == FormControlRole::Radio)
+                && self.attribute(node, "name")? == Some(name)
+                && self.form_owner(node)? == owner
+            {
+                members.push(node);
+            }
+            stack.extend(self.children(node)?.into_iter().rev());
+        }
+        Ok(members)
     }
 
     fn collect_options(
@@ -1381,5 +1934,99 @@ mod tests {
                 FormControlRole::Button
             );
         }
+    }
+}
+
+fn scalar_boundary(value: &str, offset: usize) -> usize {
+    let mut offset = offset.min(value.len());
+    while !value.is_char_boundary(offset) {
+        offset -= 1;
+    }
+    offset
+}
+
+impl Engine {
+    /// Replace an input/textarea range without input/change events.
+    /// Document supplies deferred selection notifications after releasing borrows.
+    /// Offsets are UTF-8 bytes. Reversed ranges and code-point splits are errors.
+    pub fn replace_control_range(
+        &mut self,
+        handle: NodeHandle,
+        replacement: &str,
+        start: usize,
+        end: usize,
+        mode: RangeSelectionMode,
+    ) -> Result<(), EngineError> {
+        self.resolve(handle)?;
+        if start > end {
+            return Err(EngineError::InvalidSelection);
+        }
+        let (value, anchor, focus) = {
+            let control = self
+                .controls
+                .get(&handle.index)
+                .ok_or(EngineError::NotEditable)?;
+            if !is_editable_role(control.role) {
+                return Err(EngineError::NotEditable);
+            }
+            let start = start.min(control.value.len());
+            let end = end.min(control.value.len());
+            if !control.value.is_char_boundary(start) || !control.value.is_char_boundary(end) {
+                return Err(EngineError::InvalidSelection);
+            }
+            let (old_start, old_end) = control.selection();
+            let inserted_end = start
+                .checked_add(replacement.len())
+                .ok_or(EngineError::InvalidSelection)?;
+            // The checked final length bounds every adjusted selection.
+            control
+                .value
+                .len()
+                .checked_sub(end - start)
+                .and_then(|length| length.checked_add(replacement.len()))
+                .ok_or(EngineError::InvalidSelection)?;
+            let shifted = |offset: usize| offset - (end - start) + replacement.len();
+            let (new_start, new_end) = match mode {
+                RangeSelectionMode::Select => (start, inserted_end),
+                RangeSelectionMode::Start => (start, start),
+                RangeSelectionMode::End => (inserted_end, inserted_end),
+                RangeSelectionMode::Preserve => (
+                    if old_start > end {
+                        shifted(old_start)
+                    } else if old_start > start {
+                        start
+                    } else {
+                        old_start
+                    },
+                    if old_end > end {
+                        shifted(old_end)
+                    } else if old_end > start {
+                        inserted_end
+                    } else {
+                        old_end
+                    },
+                ),
+            };
+            let mut value = control.value.clone();
+            value.replace_range(start..end, replacement);
+            // Match programmatic value sanitization for the retained control.
+            // Selection calculations above use authored replacement bytes;
+            // clamp after sanitization, preserving the existing native units.
+            let value: String = if control.role == FormControlRole::TextArea {
+                value.replace("\r\n", "\n").replace('\r', "\n")
+            } else {
+                value
+                    .chars()
+                    .filter(|character| !matches!(character, '\r' | '\n'))
+                    .collect()
+            };
+            // setRangeText resets selection direction; native anchor/focus follows
+            // ordered positions. Verify this choice against Unicode references.
+            let new_start = scalar_boundary(&value, new_start.min(value.len()));
+            let new_end = scalar_boundary(&value, new_end.min(value.len()));
+            (value, new_start, new_end)
+        };
+        self.set_control_value(handle, value)?;
+        self.set_selection_range(handle, anchor, focus, SelectionDirection::None)
     }
 }

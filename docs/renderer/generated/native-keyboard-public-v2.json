@@ -1,0 +1,1508 @@
+{
+  "all_local_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "all_targets_tests": {
+    "actual_exit_code": 0,
+    "failed": 0,
+    "ignored": 0,
+    "passed": 8631
+  },
+  "c_consumers": 29,
+  "c_disabled_focus_comparison_scope": "Rust-only tree/root observation fields are projected out; all common measured Chromium state and callback fields are compared.",
+  "compositor_qualified": false,
+  "cpp_consumers": 23,
+  "expanded_candidates": 201,
+  "expanded_candidates_exact_at_all_four_profiles": 200,
+  "exports": 131,
+  "files": {
+    "evidence-builder.py": {
+      "bytes": 7415,
+      "origin": "/tmp/openui-native-keyboard-public-evidence-v3561.py",
+      "sha256": "c42089734d38493b71ab31f9e2ae68f37de349eff7f1afabb862964cb110160d",
+      "uncompressed_sha256": "c42089734d38493b71ab31f9e2ae68f37de349eff7f1afabb862964cb110160d"
+    },
+    "expanded-summary.json.gz": {
+      "bytes": 4425179,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/expanded-matrix/expanded-summary.json",
+      "sha256": "f2f95f5ec70309b25dd49948fd3eb3144f0c5c4a6db5a5a094410cb59c438e92",
+      "uncompressed_sha256": "6f4aa74c4ff613d3825fb78feea8d59a4ec1bcdd16b2912b1b63f8cc1fa66c6e"
+    },
+    "focused-summary.json.gz": {
+      "bytes": 160519,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/focused-matrix/focused-summary.json",
+      "sha256": "834d89fc54a0cf3e7860318bd49b04524a252471d958f3aa80f3dfdb1c15be2c",
+      "uncompressed_sha256": "0a14e11364b446636a06930c53fc6bb3aa092ba8d739db11abc9a65e200446da"
+    },
+    "full-summary.json.gz": {
+      "bytes": 4315729,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/full-matrix/full-summary.json",
+      "sha256": "e435b26824b73fc2f426fa4d932ac6ebdbea1f2d6a755d5fb709c398958371dc",
+      "uncompressed_sha256": "6f2a93574ca8d417fd84d1da6dd96375927b2db7b0c1994650f2bdbb8663033d"
+    },
+    "hosted-hardening.json": {
+      "bytes": 1290,
+      "origin": "/tmp/openui-native-keyboard-current-hardening-v3557.json",
+      "sha256": "f601832f34dd25f1f050671e394d2df6411daeef015c2df2451add4928d5e6b9",
+      "uncompressed_sha256": "f601832f34dd25f1f050671e394d2df6411daeef015c2df2451add4928d5e6b9"
+    },
+    "hosted-ordinary.json": {
+      "bytes": 2203,
+      "origin": "/tmp/openui-native-keyboard-current-pr-status-v3554.json",
+      "sha256": "346c3000e32fb03df9f46d499c1c0f1b683702c893e7f6d706aa902ae171e654",
+      "uncompressed_sha256": "346c3000e32fb03df9f46d499c1c0f1b683702c893e7f6d706aa902ae171e654"
+    },
+    "native-all-c-cpp-consumers.log.gz": {
+      "bytes": 55840,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/all-c-cpp-consumers.log",
+      "sha256": "fc70b5c6830b20bc4881295bc63a368152e01e7ea9a7c88c28f8ea5ba2419dce",
+      "uncompressed_sha256": "27b997da6790fda8a9cbde740a701bfea6ca2436dfc9e89da8179c297e42d53d"
+    },
+    "native-audit-driver.py": {
+      "bytes": 4816,
+      "origin": "/tmp/openui-native-keyboard-regressions-completed-audit-v3551.py",
+      "sha256": "c0bf446049c4c35a10715b0efc6fab46723554b67f98e503987130d69bfbafab",
+      "uncompressed_sha256": "c0bf446049c4c35a10715b0efc6fab46723554b67f98e503987130d69bfbafab"
+    },
+    "native-checkable-c-accessibility-1.json.gz": {
+      "bytes": 4498,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-c-accessibility-1.json",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4",
+      "uncompressed_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593"
+    },
+    "native-checkable-c-accessibility-1.log.gz": {
+      "bytes": 4498,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-c-accessibility-1.log",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4",
+      "uncompressed_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593"
+    },
+    "native-checkable-c-accessibility-2.json.gz": {
+      "bytes": 4498,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-c-accessibility-2.json",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4",
+      "uncompressed_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593"
+    },
+    "native-checkable-c-accessibility-2.log.gz": {
+      "bytes": 4498,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-c-accessibility-2.log",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4",
+      "uncompressed_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593"
+    },
+    "native-checkable-c-dispatch-1.json.gz": {
+      "bytes": 4833,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-c-dispatch-1.json",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39",
+      "uncompressed_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4"
+    },
+    "native-checkable-c-dispatch-1.log.gz": {
+      "bytes": 4833,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-c-dispatch-1.log",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39",
+      "uncompressed_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4"
+    },
+    "native-checkable-c-dispatch-2.json.gz": {
+      "bytes": 4833,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-c-dispatch-2.json",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39",
+      "uncompressed_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4"
+    },
+    "native-checkable-c-dispatch-2.log.gz": {
+      "bytes": 4833,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-c-dispatch-2.log",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39",
+      "uncompressed_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4"
+    },
+    "native-checkable-cpp-accessibility-1.json.gz": {
+      "bytes": 4498,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-cpp-accessibility-1.json",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4",
+      "uncompressed_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593"
+    },
+    "native-checkable-cpp-accessibility-1.log.gz": {
+      "bytes": 4498,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-cpp-accessibility-1.log",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4",
+      "uncompressed_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593"
+    },
+    "native-checkable-cpp-accessibility-2.json.gz": {
+      "bytes": 4498,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-cpp-accessibility-2.json",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4",
+      "uncompressed_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593"
+    },
+    "native-checkable-cpp-accessibility-2.log.gz": {
+      "bytes": 4498,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-cpp-accessibility-2.log",
+      "sha256": "31c7032cf332f579b3511c2a587e95f3c005a87746c3e031f46dfc721e38bcd4",
+      "uncompressed_sha256": "c44d180a17003ab4bc04627333b36be7b37134f2872d948a2c6d3811a3a68593"
+    },
+    "native-checkable-cpp-dispatch-1.json.gz": {
+      "bytes": 4833,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-cpp-dispatch-1.json",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39",
+      "uncompressed_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4"
+    },
+    "native-checkable-cpp-dispatch-1.log.gz": {
+      "bytes": 4833,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-cpp-dispatch-1.log",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39",
+      "uncompressed_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4"
+    },
+    "native-checkable-cpp-dispatch-2.json.gz": {
+      "bytes": 4833,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-cpp-dispatch-2.json",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39",
+      "uncompressed_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4"
+    },
+    "native-checkable-cpp-dispatch-2.log.gz": {
+      "bytes": 4833,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/checkable-cpp-dispatch-2.log",
+      "sha256": "062b1a87833b049a72ad9c434c006d5db8fab2594bbb580a6a4ff177cc087d39",
+      "uncompressed_sha256": "87d3990a710bcaacd35976c948bbac8bb4aeb1749921d2097c7cb6174b287fa4"
+    },
+    "native-clean-audited-local-packages.log.gz": {
+      "bytes": 647,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/clean-audited-local-packages.log",
+      "sha256": "a9b13fe053eb38c58bc4eddee9eeb1f2472f614ef2598274550a8f0801bf822e",
+      "uncompressed_sha256": "26f9a118b5557a90f6869d2fd8a4437c6511c0a556f30982a79b8b601eb12168"
+    },
+    "native-compile-checkable-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-checkable-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-checkable-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-checkable-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-control_keyboard-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-control_keyboard-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-control_keyboard-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-control_keyboard-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-disabled_focus-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-disabled_focus-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-disabled_focus-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-disabled_focus-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-fieldset-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-fieldset-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-fieldset-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-fieldset-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-fieldset_state-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-fieldset_state-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-fieldset_state-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-fieldset_state-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-form_owner-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-form_owner-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-form_owner-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-form_owner-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-input_metadata-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-input_metadata-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-input_metadata-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-input_metadata-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-selection_tasks-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-selection_tasks-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-compile-selection_tasks-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/compile-selection_tasks-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-completed-audit.json": {
+      "bytes": 33284,
+      "origin": "/tmp/openui-native-keyboard-regressions-completed-audit-v3551.json",
+      "sha256": "039bd70215e95336f6617e72537abd07f5c7b648480b32f43e6ee107efd19681",
+      "uncompressed_sha256": "039bd70215e95336f6617e72537abd07f5c7b648480b32f43e6ee107efd19681"
+    },
+    "native-control_keyboard-c-regression-1.json.gz": {
+      "bytes": 10223,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/control_keyboard-c-regression-1.json",
+      "sha256": "3ace929624ab295ccb4a7ade9cec6968af46da0105bef570303199896a11d277",
+      "uncompressed_sha256": "5bb1d3e4d1855cb4d04f42ff6267c1d135a810aff055a41a2722ae1cf61b63c6"
+    },
+    "native-control_keyboard-c-regression-1.log.gz": {
+      "bytes": 10223,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/control_keyboard-c-regression-1.log",
+      "sha256": "3ace929624ab295ccb4a7ade9cec6968af46da0105bef570303199896a11d277",
+      "uncompressed_sha256": "5bb1d3e4d1855cb4d04f42ff6267c1d135a810aff055a41a2722ae1cf61b63c6"
+    },
+    "native-control_keyboard-c-regression-2.json.gz": {
+      "bytes": 10223,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/control_keyboard-c-regression-2.json",
+      "sha256": "3ace929624ab295ccb4a7ade9cec6968af46da0105bef570303199896a11d277",
+      "uncompressed_sha256": "5bb1d3e4d1855cb4d04f42ff6267c1d135a810aff055a41a2722ae1cf61b63c6"
+    },
+    "native-control_keyboard-c-regression-2.log.gz": {
+      "bytes": 10223,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/control_keyboard-c-regression-2.log",
+      "sha256": "3ace929624ab295ccb4a7ade9cec6968af46da0105bef570303199896a11d277",
+      "uncompressed_sha256": "5bb1d3e4d1855cb4d04f42ff6267c1d135a810aff055a41a2722ae1cf61b63c6"
+    },
+    "native-control_keyboard-cpp-regression-1.json.gz": {
+      "bytes": 10223,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/control_keyboard-cpp-regression-1.json",
+      "sha256": "3ace929624ab295ccb4a7ade9cec6968af46da0105bef570303199896a11d277",
+      "uncompressed_sha256": "5bb1d3e4d1855cb4d04f42ff6267c1d135a810aff055a41a2722ae1cf61b63c6"
+    },
+    "native-control_keyboard-cpp-regression-1.log.gz": {
+      "bytes": 10223,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/control_keyboard-cpp-regression-1.log",
+      "sha256": "3ace929624ab295ccb4a7ade9cec6968af46da0105bef570303199896a11d277",
+      "uncompressed_sha256": "5bb1d3e4d1855cb4d04f42ff6267c1d135a810aff055a41a2722ae1cf61b63c6"
+    },
+    "native-control_keyboard-cpp-regression-2.json.gz": {
+      "bytes": 10223,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/control_keyboard-cpp-regression-2.json",
+      "sha256": "3ace929624ab295ccb4a7ade9cec6968af46da0105bef570303199896a11d277",
+      "uncompressed_sha256": "5bb1d3e4d1855cb4d04f42ff6267c1d135a810aff055a41a2722ae1cf61b63c6"
+    },
+    "native-control_keyboard-cpp-regression-2.log.gz": {
+      "bytes": 10223,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/control_keyboard-cpp-regression-2.log",
+      "sha256": "3ace929624ab295ccb4a7ade9cec6968af46da0105bef570303199896a11d277",
+      "uncompressed_sha256": "5bb1d3e4d1855cb4d04f42ff6267c1d135a810aff055a41a2722ae1cf61b63c6"
+    },
+    "native-disabled_focus-c-regression-1.json.gz": {
+      "bytes": 948,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/disabled_focus-c-regression-1.json",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c",
+      "uncompressed_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0"
+    },
+    "native-disabled_focus-c-regression-1.log.gz": {
+      "bytes": 948,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/disabled_focus-c-regression-1.log",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c",
+      "uncompressed_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0"
+    },
+    "native-disabled_focus-c-regression-2.json.gz": {
+      "bytes": 948,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/disabled_focus-c-regression-2.json",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c",
+      "uncompressed_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0"
+    },
+    "native-disabled_focus-c-regression-2.log.gz": {
+      "bytes": 948,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/disabled_focus-c-regression-2.log",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c",
+      "uncompressed_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0"
+    },
+    "native-disabled_focus-cpp-regression-1.json.gz": {
+      "bytes": 948,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/disabled_focus-cpp-regression-1.json",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c",
+      "uncompressed_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0"
+    },
+    "native-disabled_focus-cpp-regression-1.log.gz": {
+      "bytes": 948,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/disabled_focus-cpp-regression-1.log",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c",
+      "uncompressed_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0"
+    },
+    "native-disabled_focus-cpp-regression-2.json.gz": {
+      "bytes": 948,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/disabled_focus-cpp-regression-2.json",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c",
+      "uncompressed_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0"
+    },
+    "native-disabled_focus-cpp-regression-2.log.gz": {
+      "bytes": 948,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/disabled_focus-cpp-regression-2.log",
+      "sha256": "d68c91c86fba45fc2fd9a09e3c574816a004b740a4103f1121237dedb3f1bb7c",
+      "uncompressed_sha256": "55e0f88638b460d8bffb830dc5b188a40f864ae0aeabdb2a537b7394faea3bd0"
+    },
+    "native-driver.py": {
+      "bytes": 19389,
+      "origin": "/tmp/openui-native-keyboard-regressions-v3547.py",
+      "sha256": "dfbb3ceaa9cd7beb6d46122658320a1f87432cecbad36c23902793251fbf8c16",
+      "uncompressed_sha256": "dfbb3ceaa9cd7beb6d46122658320a1f87432cecbad36c23902793251fbf8c16"
+    },
+    "native-ffi-library-build.log.gz": {
+      "bytes": 19760,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/ffi-library-build.log",
+      "sha256": "b292350285b462ccee67355a569a13ec48a1f9d7361ae07afbad4b94970c515c",
+      "uncompressed_sha256": "2b051a29e44a945f590525fbd6c6ca204ee03983b2e355e32e82f23a561ed5f6"
+    },
+    "native-fieldset-c-focus-1.json.gz": {
+      "bytes": 3286,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-c-focus-1.json",
+      "sha256": "6039a738c5cc7b54c952b64ec45e8acd13deefd4697690353f06b6861d29780a",
+      "uncompressed_sha256": "07e69b12746b4c4f81f82dd9f8a79ada9b4dc924d13521b471f378430548bb48"
+    },
+    "native-fieldset-c-focus-1.log.gz": {
+      "bytes": 3286,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-c-focus-1.log",
+      "sha256": "6039a738c5cc7b54c952b64ec45e8acd13deefd4697690353f06b6861d29780a",
+      "uncompressed_sha256": "07e69b12746b4c4f81f82dd9f8a79ada9b4dc924d13521b471f378430548bb48"
+    },
+    "native-fieldset-c-focus-2.json.gz": {
+      "bytes": 3286,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-c-focus-2.json",
+      "sha256": "6039a738c5cc7b54c952b64ec45e8acd13deefd4697690353f06b6861d29780a",
+      "uncompressed_sha256": "07e69b12746b4c4f81f82dd9f8a79ada9b4dc924d13521b471f378430548bb48"
+    },
+    "native-fieldset-c-focus-2.log.gz": {
+      "bytes": 3286,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-c-focus-2.log",
+      "sha256": "6039a738c5cc7b54c952b64ec45e8acd13deefd4697690353f06b6861d29780a",
+      "uncompressed_sha256": "07e69b12746b4c4f81f82dd9f8a79ada9b4dc924d13521b471f378430548bb48"
+    },
+    "native-fieldset-c-neighbors-1.json.gz": {
+      "bytes": 2457,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-c-neighbors-1.json",
+      "sha256": "53ea03deaba7786996bfd7ff75539ce5b92d0c953e492dc7fcfed188c631d44f",
+      "uncompressed_sha256": "8fbd60991f0c2eb01d194ced970ed0bc4315103a3f178ddfd585bc1e74db1a0b"
+    },
+    "native-fieldset-c-neighbors-1.log.gz": {
+      "bytes": 2457,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-c-neighbors-1.log",
+      "sha256": "53ea03deaba7786996bfd7ff75539ce5b92d0c953e492dc7fcfed188c631d44f",
+      "uncompressed_sha256": "8fbd60991f0c2eb01d194ced970ed0bc4315103a3f178ddfd585bc1e74db1a0b"
+    },
+    "native-fieldset-c-neighbors-2.json.gz": {
+      "bytes": 2457,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-c-neighbors-2.json",
+      "sha256": "53ea03deaba7786996bfd7ff75539ce5b92d0c953e492dc7fcfed188c631d44f",
+      "uncompressed_sha256": "8fbd60991f0c2eb01d194ced970ed0bc4315103a3f178ddfd585bc1e74db1a0b"
+    },
+    "native-fieldset-c-neighbors-2.log.gz": {
+      "bytes": 2457,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-c-neighbors-2.log",
+      "sha256": "53ea03deaba7786996bfd7ff75539ce5b92d0c953e492dc7fcfed188c631d44f",
+      "uncompressed_sha256": "8fbd60991f0c2eb01d194ced970ed0bc4315103a3f178ddfd585bc1e74db1a0b"
+    },
+    "native-fieldset-cpp-focus-1.json.gz": {
+      "bytes": 3286,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-cpp-focus-1.json",
+      "sha256": "6039a738c5cc7b54c952b64ec45e8acd13deefd4697690353f06b6861d29780a",
+      "uncompressed_sha256": "07e69b12746b4c4f81f82dd9f8a79ada9b4dc924d13521b471f378430548bb48"
+    },
+    "native-fieldset-cpp-focus-1.log.gz": {
+      "bytes": 3286,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-cpp-focus-1.log",
+      "sha256": "6039a738c5cc7b54c952b64ec45e8acd13deefd4697690353f06b6861d29780a",
+      "uncompressed_sha256": "07e69b12746b4c4f81f82dd9f8a79ada9b4dc924d13521b471f378430548bb48"
+    },
+    "native-fieldset-cpp-focus-2.json.gz": {
+      "bytes": 3286,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-cpp-focus-2.json",
+      "sha256": "6039a738c5cc7b54c952b64ec45e8acd13deefd4697690353f06b6861d29780a",
+      "uncompressed_sha256": "07e69b12746b4c4f81f82dd9f8a79ada9b4dc924d13521b471f378430548bb48"
+    },
+    "native-fieldset-cpp-focus-2.log.gz": {
+      "bytes": 3286,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-cpp-focus-2.log",
+      "sha256": "6039a738c5cc7b54c952b64ec45e8acd13deefd4697690353f06b6861d29780a",
+      "uncompressed_sha256": "07e69b12746b4c4f81f82dd9f8a79ada9b4dc924d13521b471f378430548bb48"
+    },
+    "native-fieldset-cpp-neighbors-1.json.gz": {
+      "bytes": 2457,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-cpp-neighbors-1.json",
+      "sha256": "53ea03deaba7786996bfd7ff75539ce5b92d0c953e492dc7fcfed188c631d44f",
+      "uncompressed_sha256": "8fbd60991f0c2eb01d194ced970ed0bc4315103a3f178ddfd585bc1e74db1a0b"
+    },
+    "native-fieldset-cpp-neighbors-1.log.gz": {
+      "bytes": 2457,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-cpp-neighbors-1.log",
+      "sha256": "53ea03deaba7786996bfd7ff75539ce5b92d0c953e492dc7fcfed188c631d44f",
+      "uncompressed_sha256": "8fbd60991f0c2eb01d194ced970ed0bc4315103a3f178ddfd585bc1e74db1a0b"
+    },
+    "native-fieldset-cpp-neighbors-2.json.gz": {
+      "bytes": 2457,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-cpp-neighbors-2.json",
+      "sha256": "53ea03deaba7786996bfd7ff75539ce5b92d0c953e492dc7fcfed188c631d44f",
+      "uncompressed_sha256": "8fbd60991f0c2eb01d194ced970ed0bc4315103a3f178ddfd585bc1e74db1a0b"
+    },
+    "native-fieldset-cpp-neighbors-2.log.gz": {
+      "bytes": 2457,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset-cpp-neighbors-2.log",
+      "sha256": "53ea03deaba7786996bfd7ff75539ce5b92d0c953e492dc7fcfed188c631d44f",
+      "uncompressed_sha256": "8fbd60991f0c2eb01d194ced970ed0bc4315103a3f178ddfd585bc1e74db1a0b"
+    },
+    "native-fieldset_state-c-state-1.json.gz": {
+      "bytes": 1209,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset_state-c-state-1.json",
+      "sha256": "369d71f35c341165f530befe7878cc55e608336840900033022ec13b72d5f06d",
+      "uncompressed_sha256": "4ef6b2d57f1d82fd4f022f6191d4861412134cb638278c44c6db9e207a96be70"
+    },
+    "native-fieldset_state-c-state-1.log.gz": {
+      "bytes": 1209,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset_state-c-state-1.log",
+      "sha256": "369d71f35c341165f530befe7878cc55e608336840900033022ec13b72d5f06d",
+      "uncompressed_sha256": "4ef6b2d57f1d82fd4f022f6191d4861412134cb638278c44c6db9e207a96be70"
+    },
+    "native-fieldset_state-c-state-2.json.gz": {
+      "bytes": 1209,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset_state-c-state-2.json",
+      "sha256": "369d71f35c341165f530befe7878cc55e608336840900033022ec13b72d5f06d",
+      "uncompressed_sha256": "4ef6b2d57f1d82fd4f022f6191d4861412134cb638278c44c6db9e207a96be70"
+    },
+    "native-fieldset_state-c-state-2.log.gz": {
+      "bytes": 1209,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset_state-c-state-2.log",
+      "sha256": "369d71f35c341165f530befe7878cc55e608336840900033022ec13b72d5f06d",
+      "uncompressed_sha256": "4ef6b2d57f1d82fd4f022f6191d4861412134cb638278c44c6db9e207a96be70"
+    },
+    "native-fieldset_state-cpp-state-1.json.gz": {
+      "bytes": 1209,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset_state-cpp-state-1.json",
+      "sha256": "369d71f35c341165f530befe7878cc55e608336840900033022ec13b72d5f06d",
+      "uncompressed_sha256": "4ef6b2d57f1d82fd4f022f6191d4861412134cb638278c44c6db9e207a96be70"
+    },
+    "native-fieldset_state-cpp-state-1.log.gz": {
+      "bytes": 1209,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset_state-cpp-state-1.log",
+      "sha256": "369d71f35c341165f530befe7878cc55e608336840900033022ec13b72d5f06d",
+      "uncompressed_sha256": "4ef6b2d57f1d82fd4f022f6191d4861412134cb638278c44c6db9e207a96be70"
+    },
+    "native-fieldset_state-cpp-state-2.json.gz": {
+      "bytes": 1209,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset_state-cpp-state-2.json",
+      "sha256": "369d71f35c341165f530befe7878cc55e608336840900033022ec13b72d5f06d",
+      "uncompressed_sha256": "4ef6b2d57f1d82fd4f022f6191d4861412134cb638278c44c6db9e207a96be70"
+    },
+    "native-fieldset_state-cpp-state-2.log.gz": {
+      "bytes": 1209,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/fieldset_state-cpp-state-2.log",
+      "sha256": "369d71f35c341165f530befe7878cc55e608336840900033022ec13b72d5f06d",
+      "uncompressed_sha256": "4ef6b2d57f1d82fd4f022f6191d4861412134cb638278c44c6db9e207a96be70"
+    },
+    "native-form_owner-c-form-owner-1.json.gz": {
+      "bytes": 3952,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/form_owner-c-form-owner-1.json",
+      "sha256": "fbe6cbc6f8fc303fd3bfae95b1803f971aa23e1f9b7b65c554d7bd24ef75663d",
+      "uncompressed_sha256": "5af14300bc9f92ab9667516fc6e708831ed28ab0cef3aefca63d5a8fb57b95c6"
+    },
+    "native-form_owner-c-form-owner-1.log.gz": {
+      "bytes": 3952,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/form_owner-c-form-owner-1.log",
+      "sha256": "fbe6cbc6f8fc303fd3bfae95b1803f971aa23e1f9b7b65c554d7bd24ef75663d",
+      "uncompressed_sha256": "5af14300bc9f92ab9667516fc6e708831ed28ab0cef3aefca63d5a8fb57b95c6"
+    },
+    "native-form_owner-c-form-owner-2.json.gz": {
+      "bytes": 3952,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/form_owner-c-form-owner-2.json",
+      "sha256": "fbe6cbc6f8fc303fd3bfae95b1803f971aa23e1f9b7b65c554d7bd24ef75663d",
+      "uncompressed_sha256": "5af14300bc9f92ab9667516fc6e708831ed28ab0cef3aefca63d5a8fb57b95c6"
+    },
+    "native-form_owner-c-form-owner-2.log.gz": {
+      "bytes": 3952,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/form_owner-c-form-owner-2.log",
+      "sha256": "fbe6cbc6f8fc303fd3bfae95b1803f971aa23e1f9b7b65c554d7bd24ef75663d",
+      "uncompressed_sha256": "5af14300bc9f92ab9667516fc6e708831ed28ab0cef3aefca63d5a8fb57b95c6"
+    },
+    "native-form_owner-cpp-form-owner-1.json.gz": {
+      "bytes": 3952,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/form_owner-cpp-form-owner-1.json",
+      "sha256": "fbe6cbc6f8fc303fd3bfae95b1803f971aa23e1f9b7b65c554d7bd24ef75663d",
+      "uncompressed_sha256": "5af14300bc9f92ab9667516fc6e708831ed28ab0cef3aefca63d5a8fb57b95c6"
+    },
+    "native-form_owner-cpp-form-owner-1.log.gz": {
+      "bytes": 3952,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/form_owner-cpp-form-owner-1.log",
+      "sha256": "fbe6cbc6f8fc303fd3bfae95b1803f971aa23e1f9b7b65c554d7bd24ef75663d",
+      "uncompressed_sha256": "5af14300bc9f92ab9667516fc6e708831ed28ab0cef3aefca63d5a8fb57b95c6"
+    },
+    "native-form_owner-cpp-form-owner-2.json.gz": {
+      "bytes": 3952,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/form_owner-cpp-form-owner-2.json",
+      "sha256": "fbe6cbc6f8fc303fd3bfae95b1803f971aa23e1f9b7b65c554d7bd24ef75663d",
+      "uncompressed_sha256": "5af14300bc9f92ab9667516fc6e708831ed28ab0cef3aefca63d5a8fb57b95c6"
+    },
+    "native-form_owner-cpp-form-owner-2.log.gz": {
+      "bytes": 3952,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/form_owner-cpp-form-owner-2.log",
+      "sha256": "fbe6cbc6f8fc303fd3bfae95b1803f971aa23e1f9b7b65c554d7bd24ef75663d",
+      "uncompressed_sha256": "5af14300bc9f92ab9667516fc6e708831ed28ab0cef3aefca63d5a8fb57b95c6"
+    },
+    "native-headless-c-abi-tests.log.gz": {
+      "bytes": 11064,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/headless-c-abi-tests.log",
+      "sha256": "20f4450ac438b0a0544257d9e26a8b79e154d32fa37da2c24ad0e2f0a1b03418",
+      "uncompressed_sha256": "24c91ef656622ae91ff6bdf3c51b7e74a3c69b365cfdb0c59c0054014889280d"
+    },
+    "native-input_metadata-c-regression-1.json.gz": {
+      "bytes": 620,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/input_metadata-c-regression-1.json",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86",
+      "uncompressed_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d"
+    },
+    "native-input_metadata-c-regression-1.log.gz": {
+      "bytes": 620,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/input_metadata-c-regression-1.log",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86",
+      "uncompressed_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d"
+    },
+    "native-input_metadata-c-regression-2.json.gz": {
+      "bytes": 620,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/input_metadata-c-regression-2.json",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86",
+      "uncompressed_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d"
+    },
+    "native-input_metadata-c-regression-2.log.gz": {
+      "bytes": 620,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/input_metadata-c-regression-2.log",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86",
+      "uncompressed_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d"
+    },
+    "native-input_metadata-cpp-regression-1.json.gz": {
+      "bytes": 620,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/input_metadata-cpp-regression-1.json",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86",
+      "uncompressed_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d"
+    },
+    "native-input_metadata-cpp-regression-1.log.gz": {
+      "bytes": 620,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/input_metadata-cpp-regression-1.log",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86",
+      "uncompressed_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d"
+    },
+    "native-input_metadata-cpp-regression-2.json.gz": {
+      "bytes": 620,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/input_metadata-cpp-regression-2.json",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86",
+      "uncompressed_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d"
+    },
+    "native-input_metadata-cpp-regression-2.log.gz": {
+      "bytes": 620,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/input_metadata-cpp-regression-2.log",
+      "sha256": "29b51fdf81ac827f1c1bf907b6162dd94cacd314e7369ddeec5820cbe433bd86",
+      "uncompressed_sha256": "b14735c6a539f55f02491c47ca96a8fae8a8e3231d0fd7a45c096f7f1fc82c3d"
+    },
+    "native-link-checkable-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-checkable-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-checkable-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-checkable-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-control_keyboard-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-control_keyboard-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-control_keyboard-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-control_keyboard-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-disabled_focus-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-disabled_focus-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-disabled_focus-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-disabled_focus-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-fieldset-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-fieldset-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-fieldset-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-fieldset-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-fieldset_state-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-fieldset_state-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-fieldset_state-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-fieldset_state-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-form_owner-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-form_owner-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-form_owner-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-form_owner-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-input_metadata-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-input_metadata-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-input_metadata-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-input_metadata-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-selection_tasks-c.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-selection_tasks-c.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-link-selection_tasks-cpp.log.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/link-selection_tasks-cpp.log",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-locked-all-targets-tests.log.gz": {
+      "bytes": 126607,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/locked-all-targets-tests.log",
+      "sha256": "4fad8500c8988de1540f2c9fd73cfa5483a7f877f25baabdc4369459125117b3",
+      "uncompressed_sha256": "1e0c3513b19c9ca3ce3ce1d6002605faa4c810935c3cde373778519bb4f6b786"
+    },
+    "native-locked-metadata.log.gz": {
+      "bytes": 66647,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/locked-metadata.log",
+      "sha256": "ef72cb349262952c044d0801a643e442a54b0c54cfcf045e6b1de39160be8a7f",
+      "uncompressed_sha256": "5def49a333e05c259e699ec5db690e6766d2250997c94b7b489c14fd1da3eb2c"
+    },
+    "native-locked-workspace-tests.log.gz": {
+      "bytes": 125322,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/locked-workspace-tests.log",
+      "sha256": "7821c4a22f825e21c93debbe55192d56505f09aaba115e34c962ec0dcba04fe4",
+      "uncompressed_sha256": "cb787e285558eede190b76ffcc55253b41b7dfd72622f6e4cbabff597de7989a"
+    },
+    "native-native-app-build.log.gz": {
+      "bytes": 20765,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native-app-build.log",
+      "sha256": "4ee310134309c89790c22095d525b712a3bbad38e7d84908f73aabcf4e07dfa1",
+      "uncompressed_sha256": "c81aced60f0e4ff20a9957fd0394cba19587657fb1fd34bb2792a8f77fad8d0e"
+    },
+    "native-native-keyboard-rust-1.json.gz": {
+      "bytes": 23779,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native-keyboard-rust-1.json",
+      "sha256": "bc5c22472498e289c7e761993ca3e76fc5807bea54eb6e1c6c22fcc8d2f7bc2e",
+      "uncompressed_sha256": "799f7f66b86996af673421593c48e9abfba6e2790f595ea1e1d6de7d0fca338c"
+    },
+    "native-native-keyboard-rust-1.log.gz": {
+      "bytes": 23779,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native-keyboard-rust-1.log",
+      "sha256": "bc5c22472498e289c7e761993ca3e76fc5807bea54eb6e1c6c22fcc8d2f7bc2e",
+      "uncompressed_sha256": "799f7f66b86996af673421593c48e9abfba6e2790f595ea1e1d6de7d0fca338c"
+    },
+    "native-native-keyboard-rust-2.json.gz": {
+      "bytes": 23779,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native-keyboard-rust-2.json",
+      "sha256": "bc5c22472498e289c7e761993ca3e76fc5807bea54eb6e1c6c22fcc8d2f7bc2e",
+      "uncompressed_sha256": "799f7f66b86996af673421593c48e9abfba6e2790f595ea1e1d6de7d0fca338c"
+    },
+    "native-native-keyboard-rust-2.log.gz": {
+      "bytes": 23779,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native-keyboard-rust-2.log",
+      "sha256": "bc5c22472498e289c7e761993ca3e76fc5807bea54eb6e1c6c22fcc8d2f7bc2e",
+      "uncompressed_sha256": "799f7f66b86996af673421593c48e9abfba6e2790f595ea1e1d6de7d0fca338c"
+    },
+    "native-native_checkable-dispatch-1.json.gz": {
+      "bytes": 9025,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_checkable-dispatch-1.json",
+      "sha256": "a28bb9b7dc3d43f9da94945c7f0b77b47d81bad098deb6a590436911f9abe2d3",
+      "uncompressed_sha256": "3ef4f3fa9b8fdb5f257ca78a51b7da32c5889e0a54607773db7b0953bfe6e8ac"
+    },
+    "native-native_checkable-dispatch-1.log.gz": {
+      "bytes": 9025,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_checkable-dispatch-1.log",
+      "sha256": "a28bb9b7dc3d43f9da94945c7f0b77b47d81bad098deb6a590436911f9abe2d3",
+      "uncompressed_sha256": "3ef4f3fa9b8fdb5f257ca78a51b7da32c5889e0a54607773db7b0953bfe6e8ac"
+    },
+    "native-native_checkable-dispatch-2.json.gz": {
+      "bytes": 9025,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_checkable-dispatch-2.json",
+      "sha256": "a28bb9b7dc3d43f9da94945c7f0b77b47d81bad098deb6a590436911f9abe2d3",
+      "uncompressed_sha256": "3ef4f3fa9b8fdb5f257ca78a51b7da32c5889e0a54607773db7b0953bfe6e8ac"
+    },
+    "native-native_checkable-dispatch-2.log.gz": {
+      "bytes": 9025,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_checkable-dispatch-2.log",
+      "sha256": "a28bb9b7dc3d43f9da94945c7f0b77b47d81bad098deb6a590436911f9abe2d3",
+      "uncompressed_sha256": "3ef4f3fa9b8fdb5f257ca78a51b7da32c5889e0a54607773db7b0953bfe6e8ac"
+    },
+    "native-native_checkable-reference-1.json.gz": {
+      "bytes": 8587,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_checkable-reference-1.json",
+      "sha256": "c8671cb9c214efac3b8469f312fea5c4dd1c07b843287371886260b7226a24a1",
+      "uncompressed_sha256": "388b2fc160f262d1bedc122e60ee2284a57c935489ff1fa0351a6d8dc47204b5"
+    },
+    "native-native_checkable-reference-1.log.gz": {
+      "bytes": 8587,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_checkable-reference-1.log",
+      "sha256": "c8671cb9c214efac3b8469f312fea5c4dd1c07b843287371886260b7226a24a1",
+      "uncompressed_sha256": "388b2fc160f262d1bedc122e60ee2284a57c935489ff1fa0351a6d8dc47204b5"
+    },
+    "native-native_checkable-reference-2.json.gz": {
+      "bytes": 8587,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_checkable-reference-2.json",
+      "sha256": "c8671cb9c214efac3b8469f312fea5c4dd1c07b843287371886260b7226a24a1",
+      "uncompressed_sha256": "388b2fc160f262d1bedc122e60ee2284a57c935489ff1fa0351a6d8dc47204b5"
+    },
+    "native-native_checkable-reference-2.log.gz": {
+      "bytes": 8587,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_checkable-reference-2.log",
+      "sha256": "c8671cb9c214efac3b8469f312fea5c4dd1c07b843287371886260b7226a24a1",
+      "uncompressed_sha256": "388b2fc160f262d1bedc122e60ee2284a57c935489ff1fa0351a6d8dc47204b5"
+    },
+    "native-native_disabled_focus-regression-1.json.gz": {
+      "bytes": 1465,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_disabled_focus-regression-1.json",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3",
+      "uncompressed_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731"
+    },
+    "native-native_disabled_focus-regression-1.log.gz": {
+      "bytes": 1465,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_disabled_focus-regression-1.log",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3",
+      "uncompressed_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731"
+    },
+    "native-native_disabled_focus-regression-2.json.gz": {
+      "bytes": 1465,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_disabled_focus-regression-2.json",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3",
+      "uncompressed_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731"
+    },
+    "native-native_disabled_focus-regression-2.log.gz": {
+      "bytes": 1465,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_disabled_focus-regression-2.log",
+      "sha256": "ea1f9b2200b459ba0e8c653d311de5059ebc96ef7e098103264574fa319959c3",
+      "uncompressed_sha256": "1b50c76174e789b8f692e4657a57595ca88c997b79245314fe179d153d3ae731"
+    },
+    "native-native_fieldset-focus-1.json.gz": {
+      "bytes": 5954,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_fieldset-focus-1.json",
+      "sha256": "651bc8b33cfee4ed8e244cf03db5eb04f35e63105690ddaafead94dd31719f8b",
+      "uncompressed_sha256": "5e8930e3d833336820919c055d4f40041b888cd0dce6d9f22b4e3cddf1336a97"
+    },
+    "native-native_fieldset-focus-1.log.gz": {
+      "bytes": 5954,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_fieldset-focus-1.log",
+      "sha256": "651bc8b33cfee4ed8e244cf03db5eb04f35e63105690ddaafead94dd31719f8b",
+      "uncompressed_sha256": "5e8930e3d833336820919c055d4f40041b888cd0dce6d9f22b4e3cddf1336a97"
+    },
+    "native-native_fieldset-focus-2.json.gz": {
+      "bytes": 5954,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_fieldset-focus-2.json",
+      "sha256": "651bc8b33cfee4ed8e244cf03db5eb04f35e63105690ddaafead94dd31719f8b",
+      "uncompressed_sha256": "5e8930e3d833336820919c055d4f40041b888cd0dce6d9f22b4e3cddf1336a97"
+    },
+    "native-native_fieldset-focus-2.log.gz": {
+      "bytes": 5954,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_fieldset-focus-2.log",
+      "sha256": "651bc8b33cfee4ed8e244cf03db5eb04f35e63105690ddaafead94dd31719f8b",
+      "uncompressed_sha256": "5e8930e3d833336820919c055d4f40041b888cd0dce6d9f22b4e3cddf1336a97"
+    },
+    "native-native_fieldset-neighbors-1.json.gz": {
+      "bytes": 4347,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_fieldset-neighbors-1.json",
+      "sha256": "1a08df2121e756c7c98de6adf7798c2b2ff395add6075e9de987b6c3aaff21b8",
+      "uncompressed_sha256": "64c77292ea6926dea429605bd4ed72cb4cc7bbe7b9c98f62b583e9d35b26210a"
+    },
+    "native-native_fieldset-neighbors-1.log.gz": {
+      "bytes": 4347,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_fieldset-neighbors-1.log",
+      "sha256": "1a08df2121e756c7c98de6adf7798c2b2ff395add6075e9de987b6c3aaff21b8",
+      "uncompressed_sha256": "64c77292ea6926dea429605bd4ed72cb4cc7bbe7b9c98f62b583e9d35b26210a"
+    },
+    "native-native_fieldset-neighbors-2.json.gz": {
+      "bytes": 4347,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_fieldset-neighbors-2.json",
+      "sha256": "1a08df2121e756c7c98de6adf7798c2b2ff395add6075e9de987b6c3aaff21b8",
+      "uncompressed_sha256": "64c77292ea6926dea429605bd4ed72cb4cc7bbe7b9c98f62b583e9d35b26210a"
+    },
+    "native-native_fieldset-neighbors-2.log.gz": {
+      "bytes": 4347,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_fieldset-neighbors-2.log",
+      "sha256": "1a08df2121e756c7c98de6adf7798c2b2ff395add6075e9de987b6c3aaff21b8",
+      "uncompressed_sha256": "64c77292ea6926dea429605bd4ed72cb4cc7bbe7b9c98f62b583e9d35b26210a"
+    },
+    "native-native_fieldset-state-1.json.gz": {
+      "bytes": 2169,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_fieldset-state-1.json",
+      "sha256": "0d2dc938c85a4fa2fe9fd79ba6aa9a6ea47c340b214d879361909a2cc4761911",
+      "uncompressed_sha256": "d075decaff9c3393fc00a256f81d8c2035b48c8269ae9c4d49aff9ade6714cea"
+    },
+    "native-native_fieldset-state-1.log.gz": {
+      "bytes": 2169,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_fieldset-state-1.log",
+      "sha256": "0d2dc938c85a4fa2fe9fd79ba6aa9a6ea47c340b214d879361909a2cc4761911",
+      "uncompressed_sha256": "d075decaff9c3393fc00a256f81d8c2035b48c8269ae9c4d49aff9ade6714cea"
+    },
+    "native-native_fieldset-state-2.json.gz": {
+      "bytes": 2169,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_fieldset-state-2.json",
+      "sha256": "0d2dc938c85a4fa2fe9fd79ba6aa9a6ea47c340b214d879361909a2cc4761911",
+      "uncompressed_sha256": "d075decaff9c3393fc00a256f81d8c2035b48c8269ae9c4d49aff9ade6714cea"
+    },
+    "native-native_fieldset-state-2.log.gz": {
+      "bytes": 2169,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_fieldset-state-2.log",
+      "sha256": "0d2dc938c85a4fa2fe9fd79ba6aa9a6ea47c340b214d879361909a2cc4761911",
+      "uncompressed_sha256": "d075decaff9c3393fc00a256f81d8c2035b48c8269ae9c4d49aff9ade6714cea"
+    },
+    "native-native_form_owner-form-owner-1.json.gz": {
+      "bytes": 3903,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_form_owner-form-owner-1.json",
+      "sha256": "cca8e5987414892abf97c3b0068b7e20e9c7000b8e0cbfb8e52a136ca0e8ab29",
+      "uncompressed_sha256": "54b4ff1db144d7735cff623651edc194efe52316ab31dbe65da2aec3f0d14aba"
+    },
+    "native-native_form_owner-form-owner-1.log.gz": {
+      "bytes": 3903,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_form_owner-form-owner-1.log",
+      "sha256": "cca8e5987414892abf97c3b0068b7e20e9c7000b8e0cbfb8e52a136ca0e8ab29",
+      "uncompressed_sha256": "54b4ff1db144d7735cff623651edc194efe52316ab31dbe65da2aec3f0d14aba"
+    },
+    "native-native_form_owner-form-owner-2.json.gz": {
+      "bytes": 3903,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_form_owner-form-owner-2.json",
+      "sha256": "cca8e5987414892abf97c3b0068b7e20e9c7000b8e0cbfb8e52a136ca0e8ab29",
+      "uncompressed_sha256": "54b4ff1db144d7735cff623651edc194efe52316ab31dbe65da2aec3f0d14aba"
+    },
+    "native-native_form_owner-form-owner-2.log.gz": {
+      "bytes": 3903,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_form_owner-form-owner-2.log",
+      "sha256": "cca8e5987414892abf97c3b0068b7e20e9c7000b8e0cbfb8e52a136ca0e8ab29",
+      "uncompressed_sha256": "54b4ff1db144d7735cff623651edc194efe52316ab31dbe65da2aec3f0d14aba"
+    },
+    "native-native_input_metadata-regression-1.json.gz": {
+      "bytes": 610,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_input_metadata-regression-1.json",
+      "sha256": "4320f4c3496ee350d973ed07ec93e172facad742209eaf4cb6ad72b4f42057ab",
+      "uncompressed_sha256": "71c1dd2ff2cc4ced3a5423830f2a6dd07342f36b6a97b58653894477dac27043"
+    },
+    "native-native_input_metadata-regression-1.log.gz": {
+      "bytes": 610,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_input_metadata-regression-1.log",
+      "sha256": "4320f4c3496ee350d973ed07ec93e172facad742209eaf4cb6ad72b4f42057ab",
+      "uncompressed_sha256": "71c1dd2ff2cc4ced3a5423830f2a6dd07342f36b6a97b58653894477dac27043"
+    },
+    "native-native_input_metadata-regression-2.json.gz": {
+      "bytes": 610,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_input_metadata-regression-2.json",
+      "sha256": "4320f4c3496ee350d973ed07ec93e172facad742209eaf4cb6ad72b4f42057ab",
+      "uncompressed_sha256": "71c1dd2ff2cc4ced3a5423830f2a6dd07342f36b6a97b58653894477dac27043"
+    },
+    "native-native_input_metadata-regression-2.log.gz": {
+      "bytes": 610,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_input_metadata-regression-2.log",
+      "sha256": "4320f4c3496ee350d973ed07ec93e172facad742209eaf4cb6ad72b4f42057ab",
+      "uncompressed_sha256": "71c1dd2ff2cc4ced3a5423830f2a6dd07342f36b6a97b58653894477dac27043"
+    },
+    "native-native_range_modes-regression-1.json.gz": {
+      "bytes": 624,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_range_modes-regression-1.json",
+      "sha256": "daee7d6bf7f3e167ed2b7dbd4ca3599a54e650c172aa767e3a31f9520b077bd5",
+      "uncompressed_sha256": "db653e9a8a700bd81cc40e70e8375f8d04558875877ee50c7dd9b87b1c753640"
+    },
+    "native-native_range_modes-regression-1.log.gz": {
+      "bytes": 624,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_range_modes-regression-1.log",
+      "sha256": "daee7d6bf7f3e167ed2b7dbd4ca3599a54e650c172aa767e3a31f9520b077bd5",
+      "uncompressed_sha256": "db653e9a8a700bd81cc40e70e8375f8d04558875877ee50c7dd9b87b1c753640"
+    },
+    "native-native_range_modes-regression-2.json.gz": {
+      "bytes": 624,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_range_modes-regression-2.json",
+      "sha256": "daee7d6bf7f3e167ed2b7dbd4ca3599a54e650c172aa767e3a31f9520b077bd5",
+      "uncompressed_sha256": "db653e9a8a700bd81cc40e70e8375f8d04558875877ee50c7dd9b87b1c753640"
+    },
+    "native-native_range_modes-regression-2.log.gz": {
+      "bytes": 624,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_range_modes-regression-2.log",
+      "sha256": "daee7d6bf7f3e167ed2b7dbd4ca3599a54e650c172aa767e3a31f9520b077bd5",
+      "uncompressed_sha256": "db653e9a8a700bd81cc40e70e8375f8d04558875877ee50c7dd9b87b1c753640"
+    },
+    "native-native_range_scalar-regression-1.json.gz": {
+      "bytes": 399,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_range_scalar-regression-1.json",
+      "sha256": "94e5a041768fd52e36a63ce500e24e38f8c82a7f716b5123c94f6d35e74c4ddb",
+      "uncompressed_sha256": "18bb54137a280720ea60a8420ee7765a693d08eaaa8ccb28f03a1b771f235eb7"
+    },
+    "native-native_range_scalar-regression-1.log.gz": {
+      "bytes": 399,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_range_scalar-regression-1.log",
+      "sha256": "94e5a041768fd52e36a63ce500e24e38f8c82a7f716b5123c94f6d35e74c4ddb",
+      "uncompressed_sha256": "18bb54137a280720ea60a8420ee7765a693d08eaaa8ccb28f03a1b771f235eb7"
+    },
+    "native-native_range_scalar-regression-2.json.gz": {
+      "bytes": 399,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_range_scalar-regression-2.json",
+      "sha256": "94e5a041768fd52e36a63ce500e24e38f8c82a7f716b5123c94f6d35e74c4ddb",
+      "uncompressed_sha256": "18bb54137a280720ea60a8420ee7765a693d08eaaa8ccb28f03a1b771f235eb7"
+    },
+    "native-native_range_scalar-regression-2.log.gz": {
+      "bytes": 399,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_range_scalar-regression-2.log",
+      "sha256": "94e5a041768fd52e36a63ce500e24e38f8c82a7f716b5123c94f6d35e74c4ddb",
+      "uncompressed_sha256": "18bb54137a280720ea60a8420ee7765a693d08eaaa8ccb28f03a1b771f235eb7"
+    },
+    "native-native_selection_phases-regression-1.json.gz": {
+      "bytes": 1280,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_selection_phases-regression-1.json",
+      "sha256": "f5a190077c061219be185a7dc0641ad5d64e50a7c8c0c6a6baf91de8c3ecdeb5",
+      "uncompressed_sha256": "a4a9005ddfacac54cb2fd5c1d42869db51d0bbe6dbe4af0969ff24fba81815be"
+    },
+    "native-native_selection_phases-regression-1.log.gz": {
+      "bytes": 1280,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_selection_phases-regression-1.log",
+      "sha256": "f5a190077c061219be185a7dc0641ad5d64e50a7c8c0c6a6baf91de8c3ecdeb5",
+      "uncompressed_sha256": "a4a9005ddfacac54cb2fd5c1d42869db51d0bbe6dbe4af0969ff24fba81815be"
+    },
+    "native-native_selection_phases-regression-2.json.gz": {
+      "bytes": 1280,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_selection_phases-regression-2.json",
+      "sha256": "f5a190077c061219be185a7dc0641ad5d64e50a7c8c0c6a6baf91de8c3ecdeb5",
+      "uncompressed_sha256": "a4a9005ddfacac54cb2fd5c1d42869db51d0bbe6dbe4af0969ff24fba81815be"
+    },
+    "native-native_selection_phases-regression-2.log.gz": {
+      "bytes": 1280,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_selection_phases-regression-2.log",
+      "sha256": "f5a190077c061219be185a7dc0641ad5d64e50a7c8c0c6a6baf91de8c3ecdeb5",
+      "uncompressed_sha256": "a4a9005ddfacac54cb2fd5c1d42869db51d0bbe6dbe4af0969ff24fba81815be"
+    },
+    "native-native_selection_values-regression-1.json.gz": {
+      "bytes": 916,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_selection_values-regression-1.json",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf",
+      "uncompressed_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148"
+    },
+    "native-native_selection_values-regression-1.log.gz": {
+      "bytes": 916,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_selection_values-regression-1.log",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf",
+      "uncompressed_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148"
+    },
+    "native-native_selection_values-regression-2.json.gz": {
+      "bytes": 916,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_selection_values-regression-2.json",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf",
+      "uncompressed_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148"
+    },
+    "native-native_selection_values-regression-2.log.gz": {
+      "bytes": 916,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/native_selection_values-regression-2.log",
+      "sha256": "13c640324021041215108d9909ef8ffab50b21ab705e0e63e3103b7c6778cdbf",
+      "uncompressed_sha256": "54544780982c67d3d6f6c27bcbf126769cf86a4748ee3f4e5b1253fbdc25a148"
+    },
+    "native-prior-failed-audit-driver.py": {
+      "bytes": 3928,
+      "origin": "/tmp/openui-native-keyboard-regressions-completed-audit-failed-v3558.py",
+      "sha256": "8ba139776d2c8cbdcc69faf8d6de0627bab280068c568b4ec83071ef7e8a4adb",
+      "uncompressed_sha256": "8ba139776d2c8cbdcc69faf8d6de0627bab280068c568b4ec83071ef7e8a4adb"
+    },
+    "native-prior-failed-audit.json": {
+      "bytes": 623,
+      "origin": "/tmp/openui-native-keyboard-regressions-completed-audit-failed-v3558.json",
+      "sha256": "91f5806f56b4d861135f35eeb6ddb9b6620ba71bf2b14c6691fa2e476a43f67e",
+      "uncompressed_sha256": "91f5806f56b4d861135f35eeb6ddb9b6620ba71bf2b14c6691fa2e476a43f67e"
+    },
+    "native-receipt.json.gz": {
+      "bytes": 393854,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/receipt.json",
+      "sha256": "7abd55891efb64cce8a1c5943f89fec513d832a74bb72944f942ef6964ea4629",
+      "uncompressed_sha256": "8d82ce60a5da83f2fbb07cd5cd88e0893ae713023b606f998be4fa6e645e598b"
+    },
+    "native-selection_tasks-c-regression-1.json.gz": {
+      "bytes": 1853,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/selection_tasks-c-regression-1.json",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8",
+      "uncompressed_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2"
+    },
+    "native-selection_tasks-c-regression-1.log.gz": {
+      "bytes": 1853,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/selection_tasks-c-regression-1.log",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8",
+      "uncompressed_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2"
+    },
+    "native-selection_tasks-c-regression-2.json.gz": {
+      "bytes": 1853,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/selection_tasks-c-regression-2.json",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8",
+      "uncompressed_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2"
+    },
+    "native-selection_tasks-c-regression-2.log.gz": {
+      "bytes": 1853,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/selection_tasks-c-regression-2.log",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8",
+      "uncompressed_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2"
+    },
+    "native-selection_tasks-cpp-regression-1.json.gz": {
+      "bytes": 1853,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/selection_tasks-cpp-regression-1.json",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8",
+      "uncompressed_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2"
+    },
+    "native-selection_tasks-cpp-regression-1.log.gz": {
+      "bytes": 1853,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/selection_tasks-cpp-regression-1.log",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8",
+      "uncompressed_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2"
+    },
+    "native-selection_tasks-cpp-regression-2.json.gz": {
+      "bytes": 1853,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/selection_tasks-cpp-regression-2.json",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8",
+      "uncompressed_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2"
+    },
+    "native-selection_tasks-cpp-regression-2.log.gz": {
+      "bytes": 1853,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-regressions-v3547/selection_tasks-cpp-regression-2.log",
+      "sha256": "c13ddd352b5f52778bd471d6032b27345e52b9ff1a47d4d25c3f353b59cf81c8",
+      "uncompressed_sha256": "9cf2da926fe08d46fc85c85336691d22f37c0b71789ac8a31b9666afdf02d4e2"
+    },
+    "native-terminal-driver.py": {
+      "bytes": 2609,
+      "origin": "/tmp/openui-native-keyboard-regressions-terminal-v3553.py",
+      "sha256": "f002cb15933598d02b51b877e44c6e86bbbac5f7c71ed85246e0b2faa86ce5aa",
+      "uncompressed_sha256": "f002cb15933598d02b51b877e44c6e86bbbac5f7c71ed85246e0b2faa86ce5aa"
+    },
+    "native-terminal.json": {
+      "bytes": 1224,
+      "origin": "/tmp/openui-native-keyboard-regressions-terminal-v3553.json",
+      "sha256": "ba50c33ac071e5c6aef9b8f0e2bd095faa8407428e6b4a5e1b420a449de925d8",
+      "uncompressed_sha256": "ba50c33ac071e5c6aef9b8f0e2bd095faa8407428e6b4a5e1b420a449de925d8"
+    },
+    "primitive-summary.json.gz": {
+      "bytes": 222668,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/primitive-matrix/primitive-summary.json",
+      "sha256": "76edd3d04dd074ac7d0428eb6fd703f3289f7b575e5951878054ad7e81f5586d",
+      "uncompressed_sha256": "ad60cbf6baee9d27978c5479d9c8a9b37e26c6a05c42ce8fda66ccdcc770f784"
+    },
+    "renderer-audit-driver.py": {
+      "bytes": 6479,
+      "origin": "/tmp/openui-public-native-keyboard-renderer-audit-v3555.py",
+      "sha256": "4adab8f845cce7fa30a29ee7ef6379bb0dbc9227f826694665f54450534db650",
+      "uncompressed_sha256": "4adab8f845cce7fa30a29ee7ef6379bb0dbc9227f826694665f54450534db650"
+    },
+    "renderer-build-build.stderr.gz": {
+      "bytes": 326,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/build.stderr",
+      "sha256": "8c21b026f336527f509b80b6baaa9c47402135970428a144bfdfb4fc7f206f7a",
+      "uncompressed_sha256": "c5dd87ef7f8d90f32577a4b5a637629144aa47483c7ae0ba8a858fa23c067b78"
+    },
+    "renderer-build-build.stdout.gz": {
+      "bytes": 9859,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/build.stdout",
+      "sha256": "37c8a984e83ad5d104c6718f35ea2b58fe33f4e0c5430ab4ee91c2662783c3c2",
+      "uncompressed_sha256": "f57ebb25dfb626c0a3903ac44a57a6d914aff6591c03d9dcb794f6dffb0fb8a7"
+    },
+    "renderer-build-clean-local-packages.stderr.gz": {
+      "bytes": 637,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/clean-local-packages.stderr",
+      "sha256": "c1d6cfebbd7ff5a57b8f426288f59d8e9ad136f5bb9687acdd72706025730659",
+      "uncompressed_sha256": "2b345ee2fe98fc0c20c679b7ad65905eb3a76332feaae0419021fb86d43fc6a1"
+    },
+    "renderer-build-clean-local-packages.stdout.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/clean-local-packages.stdout",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "renderer-build-metadata.stderr.gz": {
+      "bytes": 20,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/metadata.stderr",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "renderer-build-metadata.stdout.gz": {
+      "bytes": 66647,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/metadata.stdout",
+      "sha256": "ef72cb349262952c044d0801a643e442a54b0c54cfcf045e6b1de39160be8a7f",
+      "uncompressed_sha256": "5def49a333e05c259e699ec5db690e6766d2250997c94b7b489c14fd1da3eb2c"
+    },
+    "renderer-build-receipt.json": {
+      "bytes": 27344,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build/receipt.json",
+      "sha256": "b0aeefa215a778c32300ab239887be7eff77b9f1c0f424e800e82d350c240ef3",
+      "uncompressed_sha256": "b0aeefa215a778c32300ab239887be7eff77b9f1c0f424e800e82d350c240ef3"
+    },
+    "renderer-completed-audit.json": {
+      "bytes": 2442,
+      "origin": "/tmp/openui-public-native-keyboard-renderer-completed-audit-v3555.json",
+      "sha256": "6e3dc9d896760725a0f32f4d8e16064c22b706fd2fab8992d366e1e1ba590137",
+      "uncompressed_sha256": "6e3dc9d896760725a0f32f4d8e16064c22b706fd2fab8992d366e1e1ba590137"
+    },
+    "renderer-driver.py": {
+      "bytes": 12055,
+      "origin": "/tmp/openui-public-native-keyboard-renderer-v3552.py",
+      "sha256": "9e902c514b0536906d93d5cc8cc3725487ac9a7eff15d08f6e5ad9a875968fda",
+      "uncompressed_sha256": "9e902c514b0536906d93d5cc8cc3725487ac9a7eff15d08f6e5ad9a875968fda"
+    },
+    "renderer-expanded.log.gz": {
+      "bytes": 776,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/expanded.log",
+      "sha256": "71dc90b1283b747db8e24bb56185c1873308ea2688f6910299df28631dcf8acb",
+      "uncompressed_sha256": "38cfedd2037fe5bcec3e35c1545e69d6d059db9ff63acd9e6f00e00aa5d98259"
+    },
+    "renderer-focused.log.gz": {
+      "bytes": 298,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/focused.log",
+      "sha256": "2e78ab258df8ca9e05a7a1425737b2aca8856089111a8545b5e45b38262ce5b8",
+      "uncompressed_sha256": "8c33aa96feb12a8830c387b4090ab13be85160bf5adb8a424c4c44a6c20ca190"
+    },
+    "renderer-full.log.gz": {
+      "bytes": 759,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/full.log",
+      "sha256": "4ab31d7bde4350460cbeda3e1c8cde3e63b4e5393f1d0414f94a384b1d92f08c",
+      "uncompressed_sha256": "58068a818d1d38186d8a4841a1ec31b98057560165351794693f6c38a9cc03fd"
+    },
+    "renderer-guarded-build.log.gz": {
+      "bytes": 399,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/guarded-build.log",
+      "sha256": "23bc2ba266d3ae2f36ee37f25ee8527f034bc5c6ad8ee7c53ee830398a304b64",
+      "uncompressed_sha256": "07843ffa9754b668a168801d444babdd2f6e40e6c6404bd77d423128bf39c186"
+    },
+    "renderer-primitive.log.gz": {
+      "bytes": 300,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/primitive.log",
+      "sha256": "0f9e186604bfceacee7c98bfe9563d19d4bdb3f7515673d98d0dae2798d3f9f8",
+      "uncompressed_sha256": "9c56c23f5270b13703a7e6bd25b70be530a82f60aa8d4fa46a404fba6ef18064"
+    },
+    "renderer-receipt.json": {
+      "bytes": 11537,
+      "origin": "/mnt/d/openui-v02-qualification-d174ea0b/public-native-keyboard-renderer-v3552/receipt.json",
+      "sha256": "ff472eccd004218f30a94fa06667f41833968d3f6064e2a0475db20395826ce1",
+      "uncompressed_sha256": "ff472eccd004218f30a94fa06667f41833968d3f6064e2a0475db20395826ce1"
+    },
+    "renderer-terminal-driver.py": {
+      "bytes": 2070,
+      "origin": "/tmp/openui-public-native-keyboard-renderer-terminal-v3556.py",
+      "sha256": "e2c6be8d7a7a15267c77f43c884fde139291007f6a7c996bfdf40337d54751c0",
+      "uncompressed_sha256": "e2c6be8d7a7a15267c77f43c884fde139291007f6a7c996bfdf40337d54751c0"
+    },
+    "renderer-terminal.json": {
+      "bytes": 2110,
+      "origin": "/tmp/openui-public-native-keyboard-renderer-terminal-v3556.json",
+      "sha256": "eb154cbb97766193ae2bfd44df92bbfc50ebaefdc06c68f1a1a5dd9f9eb28cf8",
+      "uncompressed_sha256": "eb154cbb97766193ae2bfd44df92bbfc50ebaefdc06c68f1a1a5dd9f9eb28cf8"
+    }
+  },
+  "hardware_qualified": false,
+  "headless_tests": [
+    [
+      54,
+      0,
+      0
+    ]
+  ],
+  "historical_openui_archive_is_a_pixel_target": false,
+  "hosted_hardening": {
+    "conclusion": "success",
+    "head": "72f5b41e5c2d795d95ad0a198be2332f70c317d0",
+    "jobs": [
+      {
+        "conclusion": "success",
+        "name": "miri-handles",
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/38026664671/job/114138842401"
+      },
+      {
+        "conclusion": "success",
+        "name": "conformance-and-platform",
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/38026664671/job/114138842473"
+      },
+      {
+        "conclusion": "success",
+        "name": "c-undefined-sanitizer",
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/38026664671/job/114138842493"
+      },
+      {
+        "conclusion": "success",
+        "name": "native-sanitizers (address)",
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/38026664671/job/114138842516"
+      },
+      {
+        "conclusion": "success",
+        "name": "native-sanitizers (leak)",
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/38026664671/job/114138842519"
+      },
+      {
+        "conclusion": "success",
+        "name": "fuzz-smoke",
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/38026664671/job/114138842579"
+      },
+      {
+        "conclusion": "success",
+        "name": "msrv",
+        "status": "completed",
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/38026664671/job/114138842633"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/zhuowcui/open-ui/actions/runs/38026664671"
+  },
+  "hosted_ordinary": {
+    "draft": true,
+    "head": "72f5b41e5c2d795d95ad0a198be2332f70c317d0",
+    "jobs": [
+      {
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/zhuowcui/open-ui/actions/runs/38026587567/job/114138611704",
+        "name": "msrv",
+        "status": "COMPLETED",
+        "workflowName": "v0.2 Hardening"
+      },
+      {
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/zhuowcui/open-ui/actions/runs/38026587572/job/114138610171",
+        "name": "rust-parity",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/zhuowcui/open-ui/actions/runs/38026587571/job/114138610279",
+        "name": "clang-format",
+        "status": "COMPLETED",
+        "workflowName": "Format Check"
+      },
+      {
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/zhuowcui/open-ui/actions/runs/38026587572/job/114138610362",
+        "name": "historical-pixel-audit",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/zhuowcui/open-ui/actions/runs/38026587571/job/114138610524",
+        "name": "gn-format",
+        "status": "COMPLETED",
+        "workflowName": "Format Check"
+      },
+      {
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/zhuowcui/open-ui/actions/runs/38026587567/job/114138610711",
+        "name": "conformance-and-platform",
+        "status": "COMPLETED",
+        "workflowName": "v0.2 Hardening"
+      },
+      {
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/zhuowcui/open-ui/actions/runs/38026587567/job/114138611327",
+        "name": "miri-handles",
+        "status": "COMPLETED",
+        "workflowName": "v0.2 Hardening"
+      },
+      {
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/zhuowcui/open-ui/actions/runs/38026587572/job/114138610445",
+        "name": "python-accountability",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/zhuowcui/open-ui/actions/runs/38026587567/job/114138611836",
+        "name": "native-sanitizers",
+        "status": "COMPLETED",
+        "workflowName": "v0.2 Hardening"
+      },
+      {
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/zhuowcui/open-ui/actions/runs/38026587567/job/114138629740",
+        "name": "c-undefined-sanitizer",
+        "status": "COMPLETED",
+        "workflowName": "v0.2 Hardening"
+      },
+      {
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/zhuowcui/open-ui/actions/runs/38026587567/job/114138636562",
+        "name": "fuzz-smoke",
+        "status": "COMPLETED",
+        "workflowName": "v0.2 Hardening"
+      }
+    ],
+    "state": "OPEN"
+  },
+  "implementation_integrated": true,
+  "javascript_executed_by_openui": false,
+  "keyboard_pixels_qualified": false,
+  "keypress_api_qualified": false,
+  "layouts": 34,
+  "measured_source": {
+    "clean": true,
+    "commit": "72f5b41e5c2d795d95ad0a198be2332f70c317d0",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "7c6711dea547053cbe16427e25fc8ad2b80385b034834c4702e99d1576d3ebb6",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "measurement_checkout": "canonical umbrella checkout",
+  "native_actual_exit_code": 0,
+  "native_behavior_by_language": {
+    "c": {
+      "different": 0,
+      "exact": 495,
+      "total": 495
+    },
+    "cpp": {
+      "different": 0,
+      "exact": 495,
+      "total": 495
+    },
+    "rust": {
+      "different": 0,
+      "exact": 495,
+      "total": 495
+    }
+  },
+  "native_behavior_comparisons": 1485,
+  "new_public_qualification_commands_executed": true,
+  "offline_chromium_reference_scripts_only": true,
+  "original_main_stack_bytes": 8388608,
+  "original_residual_ownership_qualified": false,
+  "original_residual_test_ids": 884,
+  "pixel_target": "pinned Chromium",
+  "pixel_tolerance": 0,
+  "previous_keyboard_v1_evidence_unchanged": true,
+  "regression_groups": 12,
+  "release_qualified": false,
+  "remaining": [
+    "Broader keyboard, RTL, keypress, composition and remaining native APIs",
+    "Keyboard appearance",
+    "1,586 original and 1,587 expanded Chromium pixel differences",
+    "Reviewed root causes and ownership for all residuals",
+    "Remaining AST-derived native final-state cases",
+    "Required complete Chromium pixel CI gate",
+    "Retained compositor, 3D, physical lab, performance, packaging and release qualification"
+  ],
+  "renderer_actual_exit_code": 1,
+  "renderer_compiled_paths_verified": 26,
+  "renderer_linked_libraries_fresh": true,
+  "renderer_matrix_results": {
+    "expanded": {
+      "actual_exit_code": 1,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 1587,
+      "errors": 0,
+      "exact": 22141,
+      "gains": 0,
+      "losses": 0,
+      "total": 23728,
+      "worsened": 0
+    },
+    "focused": {
+      "actual_exit_code": 0,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 640,
+      "gains": 0,
+      "losses": 0,
+      "total": 640,
+      "worsened": 0
+    },
+    "full": {
+      "actual_exit_code": 1,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 1586,
+      "errors": 0,
+      "exact": 21338,
+      "gains": 0,
+      "losses": 0,
+      "total": 22924,
+      "worsened": 0
+    },
+    "primitive": {
+      "actual_exit_code": 0,
+      "changed_rows": 0,
+      "chromium_reference_changed_rows": 0,
+      "different": 0,
+      "errors": 0,
+      "exact": 960,
+      "gains": 0,
+      "losses": 0,
+      "total": 960,
+      "worsened": 0
+    }
+  },
+  "renderer_matrix_rows_verified": 48252,
+  "renderer_qualified": false,
+  "repeated_processes_identical": true,
+  "rtl_keyboard_qualified": false,
+  "saved_audits_are_chronological_and_retired_for_reexecution": true,
+  "schema_version": 1,
+  "scope": "Canonical umbrella native keyboard/control regressions and complete CPU renderer matrices",
+  "workspace_tests": {
+    "failed": 0,
+    "ignored": 13,
+    "passed": 8633
+  }
+}

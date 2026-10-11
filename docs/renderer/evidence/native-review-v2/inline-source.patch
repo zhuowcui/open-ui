@@ -1,0 +1,451 @@
+diff --git a/bindings/rust/openui-engine/src/lib.rs b/bindings/rust/openui-engine/src/lib.rs
+index 6c14aebb..9719f56a 100644
+--- a/bindings/rust/openui-engine/src/lib.rs
++++ b/bindings/rust/openui-engine/src/lib.rs
+@@ -2205,6 +2205,111 @@ mod tests {
+         TransformOperation,
+     };
+ 
++    #[test]
++    fn native_inline_replaced_boxes_preserve_size_through_retained_mutations() {
++        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++            for tag in [ElementTag::Image, ElementTag::Canvas, ElementTag::Svg] {
++                let mut engine =
++                    Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, scale).unwrap())
++                        .unwrap();
++                let parent = engine.create_native_element(ElementTag::Div).unwrap();
++                for (property, value) in [
++                    (
++                        StyleProperty::Position,
++                        openui_style::Position::Absolute.into(),
++                    ),
++                    (StyleProperty::Left, LengthValue::px(20.0).into()),
++                    (StyleProperty::Top, LengthValue::px(20.0).into()),
++                    (StyleProperty::Width, LengthValue::px(150.0).into()),
++                    (StyleProperty::Height, LengthValue::px(150.0).into()),
++                ] {
++                    engine.set_property(parent, property, value).unwrap();
++                }
++                engine.append_child(engine.root(), parent).unwrap();
++                let element = engine.create_native_element(tag).unwrap();
++                for (property, value) in [
++                    (StyleProperty::Display, Display::Inline.into()),
++                    (StyleProperty::Width, LengthValue::px(150.0).into()),
++                    (StyleProperty::Height, LengthValue::px(150.0).into()),
++                ] {
++                    engine.set_property(element, property, value).unwrap();
++                }
++                if tag == ElementTag::Image {
++                    let resource = engine.register_image_resource(
++                        "memory:native-inline-green",
++                        "image/png",
++                        "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
++                        include_bytes!("../../openui/tests/assets/green-200.png").to_vec(),
++                    );
++                    engine
++                        .set_image_resource(element, resource, Some((200.0, 200.0)))
++                        .unwrap();
++                }
++                engine.append_child(parent, element).unwrap();
++                let owned = engine.bounds(element).unwrap().unwrap();
++                assert_eq!(
++                    owned,
++                    engine.bounds(parent).unwrap().unwrap(),
++                    "native inline replaced content must keep its authored box: {tag:?} at {scale}"
++                );
++                engine
++                    .set_property(element, StyleProperty::Width, LengthValue::px(100.0).into())
++                    .unwrap();
++                let changed = engine.bounds(element).unwrap().unwrap();
++                assert_eq!(
++                    changed,
++                    SceneRect {
++                        width: 100.0,
++                        ..owned
++                    }
++                );
++                assert_eq!(owned.width, 150.0, "returned geometry is an owned snapshot");
++                engine
++                    .set_property(element, StyleProperty::Display, Display::None.into())
++                    .unwrap();
++                assert!(engine.client_rects(element).unwrap().is_empty());
++                engine
++                    .set_property(element, StyleProperty::Display, Display::Inline.into())
++                    .unwrap();
++                assert_eq!(engine.bounds(element).unwrap(), Some(changed));
++                engine.detach(element).unwrap();
++                assert!(engine.client_rects(element).unwrap().is_empty());
++                engine.append_child(parent, element).unwrap();
++                assert_eq!(engine.bounds(element).unwrap(), Some(changed));
++            }
++        }
++    }
++
++    #[test]
++    fn ordinary_inline_container_still_measures_its_atomic_child() {
++        let mut engine =
++            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.25).unwrap()).unwrap();
++        let span = engine.create_native_element(ElementTag::Span).unwrap();
++        engine
++            .set_property(span, StyleProperty::Width, LengthValue::px(999.0).into())
++            .unwrap();
++        engine
++            .set_property(span, StyleProperty::Height, LengthValue::px(999.0).into())
++            .unwrap();
++        engine.append_child(engine.root(), span).unwrap();
++        let child = engine.create_native_element(ElementTag::Div).unwrap();
++        engine
++            .set_property(child, StyleProperty::Display, Display::InlineBlock.into())
++            .unwrap();
++        engine
++            .set_property(child, StyleProperty::Width, LengthValue::px(60.0).into())
++            .unwrap();
++        engine
++            .set_property(child, StyleProperty::Height, LengthValue::px(40.0).into())
++            .unwrap();
++        engine.append_child(span, child).unwrap();
++        let bounds = engine.bounds(span).unwrap().unwrap();
++        assert_eq!(bounds.width, 60.0);
++        assert!(bounds.height < 999.0);
++        let child_bounds = engine.bounds(child).unwrap().unwrap();
++        assert_eq!((child_bounds.width, child_bounds.height), (60.0, 40.0));
++    }
++
+     #[test]
+     fn stale_and_cross_document_handles_are_rejected() {
+         let mut a =
+diff --git a/bindings/rust/openui-layout/src/inline/items_builder.rs b/bindings/rust/openui-layout/src/inline/items_builder.rs
+index 924c6262..5bb23949 100644
+--- a/bindings/rust/openui-layout/src/inline/items_builder.rs
++++ b/bindings/rust/openui-layout/src/inline/items_builder.rs
+@@ -986,6 +986,17 @@ impl<'a> InlineItemsBuilder<'a> {
+             return;
+         }
+ 
++        // Replaced inline content contributes one atomic box, including its
++        // authored dimensions and resource's intrinsic size. Collecting its
++        // children as ordinary inline text drops that box entirely.
++        if node.style.display == Display::Inline
++            && (node.replaced.is_some() || crate::intrinsic_sizing::is_replaced_element(node.tag))
++        {
++            let style = node.style.clone();
++            self.append_atomic_inline(child_id, &style);
++            return;
++        }
++
+         match node.tag {
+             ElementTag::Text => {
+                 if let Some(ref text) = node.text {
+diff --git a/bindings/rust/openui-layout/src/intrinsic_sizing.rs b/bindings/rust/openui-layout/src/intrinsic_sizing.rs
+index 46fe3d8c..24e983a3 100644
+--- a/bindings/rust/openui-layout/src/intrinsic_sizing.rs
++++ b/bindings/rust/openui-layout/src/intrinsic_sizing.rs
+@@ -3529,12 +3529,9 @@ fn compute_replaced_intrinsic_sizes_with_natural(
+ 
+ /// True if this element tag represents a replaced element.
+ ///
+-/// In the current DOM model, only `Viewport` and `Text` are special;
+-/// all others are generic containers. We treat none as replaced for now,
+-/// but this function provides the extension point. The caller can mark
+-/// elements as replaced through the style (e.g., explicit width+height
+-/// on an img-like element).
+-fn is_replaced_element(tag: ElementTag) -> bool {
++/// These tags use replaced sizing even before a resource is assigned. Other
++/// tags may carry explicit `ReplacedContent` on their retained DOM node.
++pub(crate) fn is_replaced_element(tag: ElementTag) -> bool {
+     matches!(
+         tag,
+         ElementTag::Image
+diff --git a/bindings/rust/openui/examples/native_inline_replaced.rs b/bindings/rust/openui/examples/native_inline_replaced.rs
+new file mode 100644
+index 00000000..bfc3d4fe
+--- /dev/null
++++ b/bindings/rust/openui/examples/native_inline_replaced.rs
+@@ -0,0 +1,96 @@
++//! Inline image mutation through public Rust methods and callbacks.
++use openui::prelude::*;
++use std::{cell::Cell, path::PathBuf, rc::Rc};
++
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let output = std::env::args().nth(1).map(PathBuf::from);
++    for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
++        for phase in [0.0, 0.25, 0.5] {
++            let document = Document::with_viewport_metrics(ViewportMetrics::from_logical_size(
++                320.0, 240.0, scale,
++            )?)?;
++            let root = document.body();
++            root.set_background_color(Color::WHITE)?;
++            let parent = Element::create(&document, "div")?;
++            parent.set_display(Display::Block)?;
++            parent.set_position(Position::Absolute)?;
++            parent.set_left(Length::px(20.0 + phase))?;
++            parent.set_top(Length::px(20.0 + phase))?;
++            parent.set_width(LengthValue::px(150.0))?;
++            parent.set_height(LengthValue::px(150.0))?;
++            root.append_child(&parent)?;
++            let image = Element::create(&document, "img")?;
++            let resource = document.register_image_resource(
++                "memory:native-inline-green",
++                "image/png",
++                "d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe",
++                include_bytes!("../tests/assets/green-200.png").to_vec(),
++            )?;
++            image.set_image_resource(resource, Some((200.0, 200.0)))?;
++            image.set_display(Display::Inline)?;
++            image.set_width(LengthValue::px(150.0))?;
++            image.set_height(LengthValue::px(150.0))?;
++            parent.append_child(&image)?;
++            let before = image
++                .bounding_rect()?
++                .ok_or("inline image bounds required")?;
++            assert_eq!(Some(before), parent.bounding_rect()?);
++            let directory = output
++                .as_ref()
++                .map(|p| p.join(format!("scale-{scale}/phase-{phase}")));
++            let save = |state: &str| -> Result<(), Box<dyn std::error::Error>> {
++                if let Some(path) = &directory {
++                    std::fs::create_dir_all(path)?;
++                    std::fs::write(
++                        path.join(format!("{state}.png")),
++                        document.render_to_png_buffer()?,
++                    )?;
++                }
++                Ok(())
++            };
++            save("before")?;
++            let calls = Rc::new(Cell::new(0));
++            let callback_calls = calls.clone();
++            let weak = image.downgrade();
++            let callback_image = weak.clone();
++            image.on("click", move |_| {
++                let image = callback_image
++                    .upgrade()
++                    .expect("native image remains attached");
++                image.set_width(LengthValue::px(100.0)).unwrap();
++                callback_calls.set(callback_calls.get() + 1);
++            })?;
++            image.click()?;
++            assert_eq!(calls.get(), 1);
++            let after = image
++                .bounding_rect()?
++                .ok_or("mutated image bounds required")?;
++            assert_eq!(
++                (after.x, after.y, after.width, after.height),
++                (before.x, before.y, 100.0, 150.0)
++            );
++            assert_eq!(before.width, 150.0);
++            save("after")?;
++            image.set_display(Display::None)?;
++            assert!(image.client_rects()?.is_empty());
++            save("hidden")?;
++            image.set_display(Display::Inline)?;
++            assert_eq!(image.bounding_rect()?, Some(after));
++            image.detach()?;
++            assert!(image.client_rects()?.is_empty());
++            parent.append_child(&image)?;
++            assert_eq!(image.bounding_rect()?, Some(after));
++            save("reattached")?;
++            drop(image);
++            drop(parent);
++            drop(root);
++            drop(document);
++            assert!(
++                weak.upgrade().is_none(),
++                "callbacks must not retain the document"
++            );
++            println!("scale={scale} phase={phase} callback=1 owned-bounds/detach/teardown passed");
++        }
++    }
++    Ok(())
++}
+diff --git a/bindings/rust/openui/tests/assets/green-200.png b/bindings/rust/openui/tests/assets/green-200.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..1dcc392a6ef71e55302c40d41a547cf3f75a8f24
+GIT binary patch
+literal 275
+zcmeAS@N?(olHy`uVBq!ia0vp^CqS5y8Awi_W^)%vF$egBxH2>_%=x)=B9O~j;1OBO
+zz`!jG!i)^F=12eq*-JcqUD@xmi}ET8|5~)86DTC(>Eaj?;r{kuBap*zc)`!$_=gOk
+zj37=8n@9iy<Np^D)<BMAiEBiObAE1aYF-J0b5UwyNotBhd1gt5g1e`0KzJjcI8c!)
+zNKpz<$|@PGg2BkZ&{WsJT-U%b#L&pf$jr*XMBBi~%D_PR;Nfp58glbfGSez?YY3WC
+R?FH1p;OXk;vd$@?2>=uoN8A7a
+
+literal 0
+HcmV?d00001
+
+diff --git a/examples/c_v02/CMakeLists.txt b/examples/c_v02/CMakeLists.txt
+index 223b00f4..bd88441f 100644
+--- a/examples/c_v02/CMakeLists.txt
++++ b/examples/c_v02/CMakeLists.txt
+@@ -3,7 +3,7 @@ project(OpenUIV02Examples LANGUAGES C CXX)
+ 
+ find_package(OpenUI 0.2 CONFIG REQUIRED)
+ 
+-foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics scroll_into_view primitive_styles svg_viewport float_colors)
++foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics scroll_into_view primitive_styles svg_viewport float_colors inline_replaced)
+   add_executable(openui_${example} ${example}.c)
+   target_link_libraries(openui_${example} PRIVATE OpenUI::OpenUI)
+ endforeach()
+@@ -27,6 +27,10 @@ add_executable(openui_float_colors_cpp float_colors.cc)
+ target_link_libraries(openui_float_colors_cpp PRIVATE OpenUI::OpenUI)
+ set_target_properties(openui_float_colors_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
+ 
++add_executable(openui_inline_replaced_cpp inline_replaced.cc)
++target_link_libraries(openui_inline_replaced_cpp PRIVATE OpenUI::OpenUI)
++set_target_properties(openui_inline_replaced_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
++
+ add_executable(openui_native_c native/window.c)
+ target_link_libraries(openui_native_c PRIVATE OpenUI::OpenUI)
+ add_executable(openui_native_cpp native/window.cc)
+diff --git a/examples/c_v02/inline_green_image.h b/examples/c_v02/inline_green_image.h
+new file mode 100644
+index 00000000..9e8b07b2
+--- /dev/null
++++ b/examples/c_v02/inline_green_image.h
+@@ -0,0 +1,26 @@
++/* Exact immutable green-200.png bytes; SHA-256 d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe. */
++static const uint8_t inline_green_image[] = {
++  0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
++  0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0xc8, 0x00, 0x00, 0x00, 0xc8,
++  0x01, 0x03, 0x00, 0x00, 0x00, 0x97, 0x96, 0x3c, 0xdd, 0x00, 0x00, 0x00,
++  0x03, 0x50, 0x4c, 0x54, 0x45, 0x00, 0x80, 0x00, 0x9c, 0xf9, 0xa5, 0x91,
++  0x00, 0x00, 0x00, 0x09, 0x70, 0x48, 0x59, 0x73, 0x00, 0x00, 0x0b, 0x13,
++  0x00, 0x00, 0x0b, 0x13, 0x01, 0x00, 0x9a, 0x9c, 0x18, 0x00, 0x00, 0x00,
++  0x07, 0x74, 0x49, 0x4d, 0x45, 0x07, 0xdf, 0x07, 0x15, 0x0d, 0x21, 0x13,
++  0xfa, 0xa2, 0xb8, 0x89, 0x00, 0x00, 0x00, 0x1c, 0x49, 0x44, 0x41, 0x54,
++  0x58, 0x47, 0xed, 0xc1, 0x81, 0x00, 0x00, 0x00, 0x00, 0xc3, 0xa0, 0xf9,
++  0x53, 0x5f, 0xe1, 0x00, 0x55, 0x01, 0x00, 0x00, 0x00, 0x00, 0x7c, 0x06,
++  0x14, 0x50, 0x00, 0x01, 0xff, 0xe8, 0x18, 0x3b, 0x00, 0x00, 0x00, 0x19,
++  0x74, 0x45, 0x58, 0x74, 0x43, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x00,
++  0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x20, 0x77, 0x69, 0x74, 0x68,
++  0x20, 0x47, 0x49, 0x4d, 0x50, 0x57, 0x81, 0x0e, 0x17, 0x00, 0x00, 0x00,
++  0x25, 0x74, 0x45, 0x58, 0x74, 0x64, 0x61, 0x74, 0x65, 0x3a, 0x63, 0x72,
++  0x65, 0x61, 0x74, 0x65, 0x00, 0x32, 0x30, 0x31, 0x35, 0x2d, 0x30, 0x37,
++  0x2d, 0x30, 0x31, 0x54, 0x31, 0x32, 0x3a, 0x32, 0x36, 0x3a, 0x30, 0x34,
++  0x2b, 0x30, 0x32, 0x3a, 0x30, 0x30, 0x23, 0xc1, 0xc3, 0xf6, 0x00, 0x00,
++  0x00, 0x25, 0x74, 0x45, 0x58, 0x74, 0x64, 0x61, 0x74, 0x65, 0x3a, 0x6d,
++  0x6f, 0x64, 0x69, 0x66, 0x79, 0x00, 0x32, 0x30, 0x31, 0x35, 0x2d, 0x30,
++  0x37, 0x2d, 0x30, 0x31, 0x54, 0x31, 0x32, 0x3a, 0x32, 0x36, 0x3a, 0x30,
++  0x34, 0x2b, 0x30, 0x32, 0x3a, 0x30, 0x30, 0x52, 0x9c, 0x7b, 0x4a, 0x00,
++  0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82,
++};
+diff --git a/examples/c_v02/inline_replaced.c b/examples/c_v02/inline_replaced.c
+new file mode 100644
+index 00000000..1f0de8d9
+--- /dev/null
++++ b/examples/c_v02/inline_replaced.c
+@@ -0,0 +1,107 @@
++/* Retained inline image mutation over the same native Rust Engine. */
++#ifdef NDEBUG
++#undef NDEBUG
++#endif
++#include <assert.h>
++#include <stdio.h>
++#include <string.h>
++#include "openui.h"
++#include "inline_green_image.h"
++
++static OuiUtf8 inline_utf8(const char* text) {
++  OuiUtf8 value = {(const uint8_t*)text, strlen(text)};
++  return value;
++}
++
++static void inline_property(OuiElement* element, OuiStyleProperty property, const char* literal) {
++  OuiStyleValue value;
++  assert(oui_style_value_parse(property, inline_utf8(literal), &value) == OUI_OK);
++  assert(oui_element_set_property(element, property, &value) == OUI_OK);
++  if (value.tag == OUI_STYLE_VALUE_COMPOUND)
++    assert(oui_style_compound_destroy((OuiStyleCompound*)value.data.compound) == OUI_OK);
++}
++
++typedef struct InlineCallbackState {
++  OuiElement* image;
++  unsigned calls;
++} InlineCallbackState;
++
++static void inline_clicked(OuiEvent* event, void* data) {
++  InlineCallbackState* state = (InlineCallbackState*)data;
++  assert(event->event_type == OUI_EVENT_CLICK);
++  inline_property(state->image, OUI_STYLE_PROPERTY_WIDTH, "100px");
++  OuiRect rect;
++  assert(oui_element_get_bounds(state->image, &rect) == OUI_OK);
++  assert(rect.x == 20 && rect.y == 20 && rect.width == 100 && rect.height == 150);
++  ++state->calls;
++}
++
++static void inline_image(double scale) {
++  OuiDocumentConfig config = {sizeof(config), OUI_ABI_VERSION,
++      {320, 240, (uint32_t)(320 * scale), (uint32_t)(240 * scale),
++       scale, OUI_VIEWPORT_LOGICAL, 0}};
++  OuiDocument* document = NULL;
++  OuiElement* root = NULL;
++  OuiElement* parent = NULL;
++  OuiElement* image = NULL;
++  OuiResource* resource = NULL;
++  assert(oui_document_create(&config, &document) == OUI_OK);
++  assert(oui_document_root(document, &root) == OUI_OK);
++  assert(oui_element_create(document, OUI_ELEMENT_DIV, &parent) == OUI_OK);
++  assert(oui_element_create(document, OUI_ELEMENT_IMAGE, &image) == OUI_OK);
++  inline_property(parent, OUI_STYLE_PROPERTY_DISPLAY, "block");
++  inline_property(parent, OUI_STYLE_PROPERTY_POSITION, "absolute");
++  inline_property(parent, OUI_STYLE_PROPERTY_LEFT, "20px");
++  inline_property(parent, OUI_STYLE_PROPERTY_TOP, "20px");
++  inline_property(parent, OUI_STYLE_PROPERTY_WIDTH, "150px");
++  inline_property(parent, OUI_STYLE_PROPERTY_HEIGHT, "150px");
++  assert(oui_element_append_child(root, parent) == OUI_OK);
++  assert(oui_document_register_image(document, inline_utf8("memory:native-inline-green"),
++      inline_utf8("image/png"),
++      inline_utf8("d49ce16b513fa1b4fcf1431bc2915799ee8effb452820f35e9e6fba251e8cafe"),
++      inline_green_image, sizeof(inline_green_image), &resource) == OUI_OK);
++  assert(oui_element_set_image(image, resource, 200, 200) == OUI_OK);
++  assert(oui_resource_destroy(resource) == OUI_OK);
++  inline_property(image, OUI_STYLE_PROPERTY_DISPLAY, "inline");
++  inline_property(image, OUI_STYLE_PROPERTY_WIDTH, "150px");
++  inline_property(image, OUI_STYLE_PROPERTY_HEIGHT, "150px");
++  assert(oui_element_append_child(parent, image) == OUI_OK);
++  OuiRect before;
++  assert(oui_element_get_bounds(image, &before) == OUI_OK);
++  assert(before.x == 20 && before.y == 20 && before.width == 150 && before.height == 150);
++  InlineCallbackState state = {image, 0};
++  OuiListener* listener = NULL;
++  assert(oui_element_add_event_listener(image, OUI_EVENT_CLICK, 0,
++      inline_clicked, &state, &listener) == OUI_OK);
++  OuiEvent event;
++  memset(&event, 0, sizeof(event));
++  event.struct_size = sizeof(event);
++  event.abi_version = OUI_ABI_VERSION;
++  event.event_type = OUI_EVENT_CLICK;
++  assert(oui_document_dispatch_event(document, image, &event) == OUI_OK);
++  assert(state.calls == 1 && before.width == 150);
++  inline_property(image, OUI_STYLE_PROPERTY_DISPLAY, "none");
++  size_t count = 1;
++  assert(oui_element_get_client_rects_v1(image, NULL, 0, &count) == OUI_OK && count == 0);
++  inline_property(image, OUI_STYLE_PROPERTY_DISPLAY, "inline");
++  assert(oui_element_detach(image) == OUI_OK);
++  count = 1;
++  assert(oui_element_get_client_rects_v1(image, NULL, 0, &count) == OUI_OK && count == 0);
++  assert(oui_element_append_child(parent, image) == OUI_OK);
++  OuiRect after;
++  assert(oui_element_get_bounds(image, &after) == OUI_OK);
++  assert(after.x == 20 && after.y == 20 && after.width == 100 && after.height == 150);
++  assert(oui_listener_destroy(listener) == OUI_OK);
++  assert(oui_element_destroy(image) == OUI_OK);
++  assert(oui_element_destroy(parent) == OUI_OK);
++  assert(oui_element_destroy(root) == OUI_OK);
++  assert(oui_document_destroy(document) == OUI_OK);
++  printf("native inline image C: scale=%g callback=1 owned-bounds/detach/teardown passed\n", scale);
++}
++
++int main(void) {
++  const double scales[] = {1, 1.25, 1.5, 2, 3};
++  for (size_t index = 0; index < sizeof(scales) / sizeof(scales[0]); ++index)
++    inline_image(scales[index]);
++  return 0;
++}
+diff --git a/examples/c_v02/inline_replaced.cc b/examples/c_v02/inline_replaced.cc
+new file mode 100644
+index 00000000..4d6e9d8f
+--- /dev/null
++++ b/examples/c_v02/inline_replaced.cc
+@@ -0,0 +1,2 @@
++// Compile and operate the same versioned native API from C++.
++#include "inline_replaced.c"

@@ -1,0 +1,58 @@
+{
+  "checkpoint": "547c708181a3426c86022ea69b02f36b2d089fd0",
+  "expanded": {
+    "after_report": "out/renderer-evidence/native-constrained-box-547c7081/expanded/expanded-summary.json",
+    "after_report_sha256": "f1ea4e361677b3a9430c36cf89cf45b7ef296c08bc9e86ff5b14a2a7a17a0408",
+    "before_report": "out/renderer-evidence/native-input-spanner-822e0462/expanded/expanded-summary.json",
+    "before_report_sha256": "d54c7b60304e1951d8f49de2e283a26ff68a949ae2472c13a33e84655855655c",
+    "changed_openui_rgba": 0,
+    "chromium_rgba_and_oracle_identity_unchanged": 23728,
+    "exact_regressions": 0,
+    "newly_exact": 0,
+    "openui_rgba_unchanged": 23728,
+    "results": {
+      "different": 1634,
+      "errors": 0,
+      "exact": 22094,
+      "profile_result_sha256": "9659bee4037b7bbb96a0988aa66d16a17cffd26dcfc05c91381074570b98f8df",
+      "total": 23728
+    },
+    "source": {
+      "clean": true,
+      "commit": "547c708181a3426c86022ea69b02f36b2d089fd0",
+      "harness_sha256": "7e12afd1dbb867f13f5a82f9bb25efac2bd5c8d4af0ae199efe858723dd57b6a",
+      "source_tree_sha256": "951e8e2dc4e26565d67ee7b6d3392b493d9871a390231c5c2d7e014a8f49379b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "original": {
+    "after_report": "out/renderer-evidence/native-constrained-box-547c7081/original/full-summary.json",
+    "after_report_sha256": "c1b664eb0f03928d463f952dd51fc7ce42133dc218792e039fc74d34bdd16ab6",
+    "before_report": "out/renderer-evidence/native-input-spanner-822e0462/original/full-summary.json",
+    "before_report_sha256": "a972ba35a88417bedc756cdf09751beb8edea87e1407a22a06813f1d37fdefc9",
+    "changed_openui_rgba": 0,
+    "chromium_rgba_and_oracle_identity_unchanged": 22924,
+    "exact_regressions": 0,
+    "newly_exact": 0,
+    "openui_rgba_unchanged": 22924,
+    "results": {
+      "different": 1633,
+      "errors": 0,
+      "exact": 21291,
+      "profile_result_sha256": "68ec79967f8a88be95507b8ef42b0e14fec6a7115ec5f84f81cadc7b37677c26",
+      "total": 22924
+    },
+    "source": {
+      "clean": true,
+      "commit": "547c708181a3426c86022ea69b02f36b2d089fd0",
+      "harness_sha256": "7e12afd1dbb867f13f5a82f9bb25efac2bd5c8d4af0ae199efe858723dd57b6a",
+      "source_tree_sha256": "951e8e2dc4e26565d67ee7b6d3392b493d9871a390231c5c2d7e014a8f49379b",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "original_rows_equal_expanded_rows": true,
+  "policy": "Chromium is the pixel reference; preceding Open UI output is only a change audit.",
+  "preceding_checkpoint": "822e0462505ada4cc71429a5c56716ff93062c19",
+  "release_qualification": false,
+  "schema_version": 1
+}

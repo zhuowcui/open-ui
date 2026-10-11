@@ -1951,6 +1951,17 @@ fn compute_flex_intrinsic_sizes(
         // CSS Flexbox §9.9.1: Clamp item contributions by main-axis min/max constraints.
         let min_main_prop = axes.min_main_size(child_style, is_column);
         let max_main_prop = axes.max_main_size(child_style, is_column);
+        let logical_margin = child_margin.to_logical(writing_direction);
+        let main_margin = if is_column {
+            logical_margin.block_sum()
+        } else {
+            logical_margin.inline_sum()
+        };
+        // Contributions are outer margin-box sizes. The border box cannot
+        // become negative, but its margin-box contribution can when an item
+        // has a negative main-axis margin.
+        let clamp_border_box =
+            |outer: LayoutUnit| (outer - main_margin).clamp_negative_to_zero() + main_margin;
         let clamped_min_val = if !min_main_prop.is_auto() && min_main_prop.is_fixed() {
             resolve_length(
                 min_main_prop,
@@ -1971,12 +1982,12 @@ fn compute_flex_intrinsic_sizes(
                 } else {
                     content_sizes.min_content_inline_size + logical_margin.inline_sum()
                 };
-                main_min.min_of(content_main).clamp_negative_to_zero()
+                clamp_border_box(main_min.min_of(content_main))
             } else {
-                main_min.clamp_negative_to_zero()
+                clamp_border_box(main_min)
             }
         } else {
-            LayoutUnit::zero()
+            main_margin
         };
         let clamped_max_val = if !max_main_prop.is_none() && max_main_prop.is_fixed() {
             resolve_length(
@@ -2025,6 +2036,10 @@ fn compute_flex_intrinsic_sizes(
     } else {
         (sum_main_min + total_main_gap, sum_main_max + total_main_gap)
     };
+    // Negative item margins may pull the summed max-content contribution
+    // below the min-content contribution. Intrinsic max-content still cannot
+    // be smaller than min-content (as in Blink's flex intrinsic sizing).
+    let max_main = max_main.max_of(min_main);
 
     // For column+wrap, the cross-axis (inline) size depends on wrapping.
     // When the container has a definite main-axis constraint (height/max-height),
@@ -3957,6 +3972,52 @@ fn apply_min_max_block(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
 }
 mod tests {
     use super::*;
+
+    #[test]
+    fn inline_flex_intrinsic_size_includes_negative_item_margin() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(container, |style| {
+            style.display = openui_style::Display::InlineFlex;
+        });
+        doc.append_child(doc.root(), container);
+
+        for (width, margin_left) in [(40.0, 0.0), (20.0, -40.0), (20.0, 0.0)] {
+            let item = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(item, |style| {
+                style.width = Length::px(width);
+                style.margin_left = Length::px(margin_left);
+            });
+            doc.append_child(container, item);
+        }
+
+        let sizes = compute_logical_intrinsic_inline_sizes(&doc, container);
+        assert_eq!(sizes.max, LayoutUnit::from_i32(40));
+    }
+
+    #[test]
+    fn wrapped_flex_max_content_cannot_shrink_below_min_content() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(container, |style| {
+            style.display = openui_style::Display::Flex;
+            style.flex_wrap = openui_style::FlexWrap::Wrap;
+        });
+        doc.append_child(doc.root(), container);
+
+        for (width, margin_left) in [(100.0, 0.0), (0.0, -10.0)] {
+            let item = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(item, |style| {
+                style.width = Length::px(width);
+                style.margin_left = Length::px(margin_left);
+            });
+            doc.append_child(container, item);
+        }
+
+        let sizes = compute_logical_intrinsic_inline_sizes(&doc, container);
+        assert_eq!(sizes.min, LayoutUnit::from_i32(100));
+        assert_eq!(sizes.max, sizes.min);
+    }
 
     #[test]
     fn intrinsic_text_width_normalizes_backend_roundoff_at_layout_unit_boundaries() {

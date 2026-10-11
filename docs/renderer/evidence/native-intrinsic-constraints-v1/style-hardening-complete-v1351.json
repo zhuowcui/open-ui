@@ -1,0 +1,560 @@
+{
+  "all_commands_terminal": true,
+  "all_observed_jobs_passed": true,
+  "branch": "agent/native-style-integration-v1349",
+  "commit": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+  "direct_cache_regression_qualification": false,
+  "job_conclusions": {
+    "success": 7
+  },
+  "last_observed_jobs": [
+    {
+      "conclusion": "success",
+      "name": "miri-handles",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "native-sanitizers (address)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "msrv",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "native-sanitizers (leak)",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "fuzz-smoke",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "c-undefined-sanitizer",
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "conformance-and-platform",
+      "status": "completed"
+    }
+  ],
+  "probe_sha256": "e9055a0ad0af90d673a17c7d0d5aa3e54f8a35687a557ff602b25b0e12177138",
+  "release_qualification": false,
+  "run_id": 37245581100,
+  "schema_version": 1,
+  "skipped_jobs": 0,
+  "skipped_jobs_are_not_passes": true,
+  "state": "complete-requires-results-review",
+  "successful_jobs": 7,
+  "workflow": {
+    "conclusion": "success",
+    "databaseId": 37245581100,
+    "headSha": "0ccc37da4a0def755d5b7f25bb93e92b789787ce",
+    "jobs": [
+      {
+        "completedAt": "2026-10-05T00:09:54Z",
+        "conclusion": "success",
+        "databaseId": 111562710951,
+        "name": "miri-handles",
+        "startedAt": "2026-10-04T23:57:03Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T23:57:04Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T23:57:03Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:08Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v6",
+            "number": 2,
+            "startedAt": "2026-10-04T23:57:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:26Z",
+            "conclusion": "success",
+            "name": "Install native build dependencies",
+            "number": 3,
+            "startedAt": "2026-10-04T23:57:08Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:35Z",
+            "conclusion": "success",
+            "name": "Install pinned nightly Miri",
+            "number": 4,
+            "startedAt": "2026-10-04T23:57:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:09:52Z",
+            "conclusion": "success",
+            "name": "Exercise opaque handle ownership under Miri",
+            "number": 5,
+            "startedAt": "2026-10-04T23:57:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:09:53Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v6",
+            "number": 10,
+            "startedAt": "2026-10-05T00:09:52Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:09:53Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "startedAt": "2026-10-05T00:09:53Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37245581100/job/111562710951"
+      },
+      {
+        "completedAt": "2026-10-05T00:09:52Z",
+        "conclusion": "success",
+        "databaseId": 111562711104,
+        "name": "native-sanitizers (address)",
+        "startedAt": "2026-10-04T23:57:03Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T23:57:04Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T23:57:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:08Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v6",
+            "number": 2,
+            "startedAt": "2026-10-04T23:57:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:36Z",
+            "conclusion": "success",
+            "name": "Install native build dependencies",
+            "number": 3,
+            "startedAt": "2026-10-04T23:57:08Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:09:50Z",
+            "conclusion": "success",
+            "name": "Run C ABI negative tests under sanitizer",
+            "number": 4,
+            "startedAt": "2026-10-04T23:57:36Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:09:50Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v6",
+            "number": 8,
+            "startedAt": "2026-10-05T00:09:50Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:09:50Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 9,
+            "startedAt": "2026-10-05T00:09:50Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37245581100/job/111562711104"
+      },
+      {
+        "completedAt": "2026-10-05T00:18:58Z",
+        "conclusion": "success",
+        "databaseId": 111562711129,
+        "name": "msrv",
+        "startedAt": "2026-10-04T23:57:03Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T23:57:04Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T23:57:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:08Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v6",
+            "number": 2,
+            "startedAt": "2026-10-04T23:57:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:33Z",
+            "conclusion": "success",
+            "name": "Install MSRV and native dependencies",
+            "number": 3,
+            "startedAt": "2026-10-04T23:57:08Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:18:56Z",
+            "conclusion": "success",
+            "name": "Check the public headless and Linux framework at the MSRV",
+            "number": 4,
+            "startedAt": "2026-10-04T23:57:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:18:56Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v6",
+            "number": 8,
+            "startedAt": "2026-10-05T00:18:56Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:18:57Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 9,
+            "startedAt": "2026-10-05T00:18:56Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37245581100/job/111562711129"
+      },
+      {
+        "completedAt": "2026-10-05T00:06:04Z",
+        "conclusion": "success",
+        "databaseId": 111562711130,
+        "name": "native-sanitizers (leak)",
+        "startedAt": "2026-10-04T23:57:03Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T23:57:04Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T23:57:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:09Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v6",
+            "number": 2,
+            "startedAt": "2026-10-04T23:57:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:46Z",
+            "conclusion": "success",
+            "name": "Install native build dependencies",
+            "number": 3,
+            "startedAt": "2026-10-04T23:57:09Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:06:02Z",
+            "conclusion": "success",
+            "name": "Run C ABI negative tests under sanitizer",
+            "number": 4,
+            "startedAt": "2026-10-04T23:57:46Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:06:02Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v6",
+            "number": 8,
+            "startedAt": "2026-10-05T00:06:02Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:06:02Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 9,
+            "startedAt": "2026-10-05T00:06:02Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37245581100/job/111562711130"
+      },
+      {
+        "completedAt": "2026-10-05T00:17:00Z",
+        "conclusion": "success",
+        "databaseId": 111562711152,
+        "name": "fuzz-smoke",
+        "startedAt": "2026-10-04T23:57:03Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T23:57:04Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T23:57:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:08Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v6",
+            "number": 2,
+            "startedAt": "2026-10-04T23:57:05Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:50Z",
+            "conclusion": "success",
+            "name": "Install fuzz toolchain and native dependencies",
+            "number": 3,
+            "startedAt": "2026-10-04T23:57:08Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:16:58Z",
+            "conclusion": "success",
+            "name": "Run each fuzz target",
+            "number": 4,
+            "startedAt": "2026-10-04T23:57:50Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:16:59Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v6",
+            "number": 8,
+            "startedAt": "2026-10-05T00:16:58Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:16:59Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 9,
+            "startedAt": "2026-10-05T00:16:59Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37245581100/job/111562711152"
+      },
+      {
+        "completedAt": "2026-10-05T00:09:27Z",
+        "conclusion": "success",
+        "databaseId": 111562711153,
+        "name": "c-undefined-sanitizer",
+        "startedAt": "2026-10-04T23:57:03Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T23:57:04Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T23:57:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:08Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v6",
+            "number": 2,
+            "startedAt": "2026-10-04T23:57:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:33Z",
+            "conclusion": "success",
+            "name": "Install native build dependencies",
+            "number": 3,
+            "startedAt": "2026-10-04T23:57:08Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:09:26Z",
+            "conclusion": "success",
+            "name": "Build Rust library and exercise C consumers under UBSan",
+            "number": 4,
+            "startedAt": "2026-10-04T23:57:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:09:26Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v6",
+            "number": 8,
+            "startedAt": "2026-10-05T00:09:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:09:26Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 9,
+            "startedAt": "2026-10-05T00:09:26Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37245581100/job/111562711153"
+      },
+      {
+        "completedAt": "2026-10-05T00:13:42Z",
+        "conclusion": "success",
+        "databaseId": 111562711182,
+        "name": "conformance-and-platform",
+        "startedAt": "2026-10-04T23:57:03Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-04T23:57:05Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-04T23:57:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:08Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v6",
+            "number": 2,
+            "startedAt": "2026-10-04T23:57:05Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:53Z",
+            "conclusion": "success",
+            "name": "Install toolchain and Linux runtime dependencies",
+            "number": 3,
+            "startedAt": "2026-10-04T23:57:08Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:53Z",
+            "conclusion": "success",
+            "name": "Run actions/cache@v5",
+            "number": 4,
+            "startedAt": "2026-10-04T23:57:53Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-04T23:57:54Z",
+            "conclusion": "success",
+            "name": "Verify scenario and performance schemas",
+            "number": 5,
+            "startedAt": "2026-10-04T23:57:53Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:06:09Z",
+            "conclusion": "success",
+            "name": "Run application conformance suite",
+            "number": 6,
+            "startedAt": "2026-10-04T23:57:54Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:13:06Z",
+            "conclusion": "success",
+            "name": "Build Linux example",
+            "number": 7,
+            "startedAt": "2026-10-05T00:06:09Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:13:12Z",
+            "conclusion": "success",
+            "name": "Build and test the C Linux application surface",
+            "number": 8,
+            "startedAt": "2026-10-05T00:13:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:13:18Z",
+            "conclusion": "success",
+            "name": "Exercise native C and C++ windows on X11 with software and Mesa OpenGL",
+            "number": 9,
+            "startedAt": "2026-10-05T00:13:12Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:13:18Z",
+            "conclusion": "success",
+            "name": "Smoke-test X11 with Mesa OpenGL",
+            "number": 10,
+            "startedAt": "2026-10-05T00:13:18Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:13:20Z",
+            "conclusion": "success",
+            "name": "Smoke-test pure Wayland software presentation",
+            "number": 11,
+            "startedAt": "2026-10-05T00:13:18Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:13:20Z",
+            "conclusion": "success",
+            "name": "Preserve native C/C++ smoke reports",
+            "number": 12,
+            "startedAt": "2026-10-05T00:13:20Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:13:41Z",
+            "conclusion": "success",
+            "name": "Post Run actions/cache@v5",
+            "number": 23,
+            "startedAt": "2026-10-05T00:13:20Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:13:41Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v6",
+            "number": 24,
+            "startedAt": "2026-10-05T00:13:41Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-05T00:13:41Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 25,
+            "startedAt": "2026-10-05T00:13:41Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/zhuowcui/open-ui/actions/runs/37245581100/job/111562711182"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/zhuowcui/open-ui/actions/runs/37245581100",
+    "workflowName": "v0.2 Hardening"
+  },
+  "workflow_capture_sha256": "30eb675b502ff1be563ab7d45eb0cee5540fedd477f59d4d87d6db12fb4f12a1",
+  "workflow_log_sha256": "67b0c8d506f0f0bdf6925c9cea2217465e93acf768f3290c54ff2be1128d6c98"
+}

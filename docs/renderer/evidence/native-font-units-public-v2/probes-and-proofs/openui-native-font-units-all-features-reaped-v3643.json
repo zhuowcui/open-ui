@@ -1,0 +1,58 @@
+{
+  "actual_audit_exit_code": 0,
+  "actual_audit_session": 79398,
+  "actual_owner_exit_code": 0,
+  "actual_owner_session": 26611,
+  "all_local_commands_terminal": true,
+  "all_native_apis_qualified": false,
+  "completed_audit_sha256": "29033158aacb525f976075e9cd5779ee503d272cd3f244087f442ee41fe6e0a1",
+  "full_renderer_contract_qualified": false,
+  "receipt_sha256": "16e30f04453ab30235320847a0b09fef13086c035bb48fa08412b6e44a673d2c",
+  "release_qualified": false,
+  "results": {
+    "workspace-all-targets-all-features": {
+      "command": [
+        "cargo",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--message-format=json-render-diagnostics"
+      ],
+      "failed": 0,
+      "groups": 192,
+      "ignored": 0,
+      "passed": 8637
+    },
+    "workspace-and-docs-all-features": {
+      "command": [
+        "cargo",
+        "--config",
+        "/home/nero/code/open-ui/bindings/rust/.cargo/config.chromium.toml",
+        "test",
+        "--locked",
+        "--offline",
+        "--workspace",
+        "--all-features",
+        "--message-format=json-render-diagnostics"
+      ],
+      "failed": 0,
+      "groups": 160,
+      "ignored": 13,
+      "passed": 8639
+    }
+  },
+  "retired_for_reexecution_after_source_or_target_mutation": true,
+  "schema_version": 1,
+  "source": {
+    "clean": true,
+    "commit": "e98a5a17b6c9700a641079f3137572e0dfc85dd7",
+    "harness_sha256": "bbd8dfeb064185187799be683de02b7f753dcb515f4effc4b6df54f86ec9e368",
+    "source_tree_sha256": "c1ad161332023bb4c144d499f97c0c0fc0379f8577c791408bcf47d1bcd4e961",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

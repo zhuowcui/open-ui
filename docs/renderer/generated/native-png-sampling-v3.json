@@ -1,0 +1,581 @@
+{
+  "additional_rejected_trials": [
+    {
+      "accepted": false,
+      "applied": false,
+      "suites": [
+        {
+          "artifact": {
+            "path": "out/renderer-evidence/native-resolved-image-patches-v1/root-rgba-png-delta-v8.json",
+            "sha256": "7f6e784b6b83d7657355799cafc5c84fa65266a3a654c464ae91d715e00da104"
+          },
+          "process_exit_code": 0,
+          "suite": "png",
+          "summary": {
+            "after_exact": 71,
+            "before_exact": 148,
+            "changed": 320,
+            "exact_regressions": 77,
+            "improved": 0,
+            "new_exact": 0,
+            "total": 540,
+            "worsened": 299
+          }
+        },
+        {
+          "artifact": {
+            "path": "out/renderer-evidence/native-resolved-image-patches-v1/root-rgba-image-opacity-delta-v8.json",
+            "sha256": "56d11fc26d7ae8161f840db72a944b4f3e59751a5ac04fe6711c0bc010393ad5"
+          },
+          "process_exit_code": 0,
+          "suite": "image-opacity",
+          "summary": {
+            "after_exact": 0,
+            "before_exact": 109,
+            "changed": 160,
+            "exact_regressions": 109,
+            "improved": 0,
+            "new_exact": 0,
+            "total": 160,
+            "worsened": 160
+          }
+        },
+        {
+          "artifact": {
+            "path": "out/renderer-evidence/native-resolved-image-patches-v1/root-rgba-clip-delta-v8.json",
+            "sha256": "2ec74ba4f06aa0d6f398b7580b365a3b96fcb4d9cabf6d178e8ce57c2eb8a14a"
+          },
+          "process_exit_code": 0,
+          "suite": "clip",
+          "summary": {
+            "after_exact": 114,
+            "before_exact": 143,
+            "changed": 47,
+            "exact_regressions": 29,
+            "improved": 0,
+            "new_exact": 0,
+            "total": 180,
+            "worsened": 42
+          }
+        }
+      ],
+      "trial": "root-rgba"
+    },
+    {
+      "accepted": false,
+      "applied": false,
+      "suites": [
+        {
+          "artifact": {
+            "path": "out/renderer-evidence/native-resolved-image-patches-v1/bounded-png-delta-v9.json",
+            "sha256": "82052b0f79f1f2113bdb35240e5d1c895711957d0dd3f314d2c5001e78b97dc6"
+          },
+          "process_exit_code": 0,
+          "suite": "png",
+          "summary": {
+            "accepted": false,
+            "all_native_pngs_and_differences_unchanged": true,
+            "owned_bounds_exact": 540,
+            "process_exit_code": 0,
+            "reason": "No pixel benefit; the prototype paint-bound collection is not complete for every effect and text ink.",
+            "total": 540
+          }
+        },
+        {
+          "artifact": {
+            "path": "out/renderer-evidence/native-resolved-image-patches-v1/bounded-image-opacity-delta-v9.json",
+            "sha256": "2ebe67ffb33f37cf55ae1d23f81de518413d81bbbccec6904fb7426918facff4"
+          },
+          "process_exit_code": 0,
+          "suite": "image-opacity",
+          "summary": {
+            "accepted": false,
+            "all_native_pngs_and_differences_unchanged": true,
+            "owned_bounds_exact": 160,
+            "process_exit_code": 0,
+            "reason": "No pixel benefit; the prototype paint-bound collection is not complete for every effect and text ink.",
+            "total": 160
+          }
+        },
+        {
+          "artifact": {
+            "path": "out/renderer-evidence/native-resolved-image-patches-v1/bounded-clip-delta-v9.json",
+            "sha256": "30c406d6e7886d3ec30255ebdbb851c65f8228a3076a036a53aa544c720f6952"
+          },
+          "process_exit_code": 0,
+          "suite": "clip",
+          "summary": {
+            "accepted": false,
+            "all_native_pngs_and_differences_unchanged": true,
+            "owned_bounds_exact": 180,
+            "process_exit_code": 0,
+            "reason": "No pixel benefit; the prototype paint-bound collection is not complete for every effect and text ink.",
+            "total": 180
+          }
+        }
+      ],
+      "trial": "bounded-group"
+    },
+    {
+      "accepted": false,
+      "applied": false,
+      "suites": [
+        {
+          "artifact": {
+            "path": "out/renderer-evidence/native-resolved-image-patches-v1/frame-color-image-opacity-delta-v10.json",
+            "sha256": "0bbd9bd22bc46318e6360fbd19dfde0e5c0e04767ba03ceace7838e7766d3727"
+          },
+          "process_exit_code": 0,
+          "suite": "image-opacity",
+          "summary": {
+            "changed": 0,
+            "exact_regressions": 0,
+            "improved": 0,
+            "pixel_exact": 109,
+            "process_exit_code": 0,
+            "release_qualification": false,
+            "suite": "image-opacity",
+            "total": 160,
+            "worsened": 0
+          }
+        },
+        {
+          "artifact": {
+            "path": "out/renderer-evidence/native-resolved-image-patches-v1/frame-color-clip-delta-v10.json",
+            "sha256": "43665bf59b0e7a72f4dd9098da347c9ad3a23476728b29c172005e7ce098dbf5"
+          },
+          "process_exit_code": 0,
+          "suite": "clip",
+          "summary": {
+            "changed": 0,
+            "exact_regressions": 0,
+            "improved": 0,
+            "pixel_exact": 143,
+            "process_exit_code": 0,
+            "release_qualification": false,
+            "suite": "clip",
+            "total": 180,
+            "worsened": 0
+          }
+        }
+      ],
+      "trial": "ua-frame-color"
+    }
+  ],
+  "applied_checkpoint": "42cce619e01f73eb91af7b2df816b451a16d3869",
+  "clean_matrix_source": {
+    "clean": true,
+    "commit": "fccbcccb0d6e055654a259f93529a051c0e81f90",
+    "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+    "source_tree_sha256": "604aea212c11b09731ba05fe4e4b51b7197fb92fe98f7bb12351d457ed927873",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "clip_source_audit": {
+    "conclusion": "The four audited Skia clip/canvas/blitter source files are byte-identical at the Chromium pin and installed rust-skia revision. A version difference in these files cannot explain the remaining edge. Other pipeline differences remain under investigation.",
+    "download_process_exit_code": 0,
+    "sources": [
+      {
+        "bytes_identical": true,
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/clip-primary-v11/SkAAClip.cpp",
+        "rust_skia_sha256": "06cb41aa21403067f6512396472a60579c7011055cdd7e5f71d46f62dc04434d",
+        "sha256": "06cb41aa21403067f6512396472a60579c7011055cdd7e5f71d46f62dc04434d",
+        "url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/core/SkAAClip.cpp?format=TEXT"
+      },
+      {
+        "bytes_identical": true,
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/clip-primary-v11/SkRasterClip.cpp",
+        "rust_skia_sha256": "5815bc30793e29986d842f57b1371d0f07ea85bfddb362c4a17934453ac51018",
+        "sha256": "5815bc30793e29986d842f57b1371d0f07ea85bfddb362c4a17934453ac51018",
+        "url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/core/SkRasterClip.cpp?format=TEXT"
+      },
+      {
+        "bytes_identical": true,
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/clip-primary-v11/SkCanvas.cpp",
+        "rust_skia_sha256": "4bb08b43c9b027c64098b414986a7cde97748e0e7ef1b93083c4553e1a02bf6f",
+        "sha256": "4bb08b43c9b027c64098b414986a7cde97748e0e7ef1b93083c4553e1a02bf6f",
+        "url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/core/SkCanvas.cpp?format=TEXT"
+      },
+      {
+        "bytes_identical": true,
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/clip-primary-v11/SkRasterPipelineBlitter.cpp",
+        "rust_skia_sha256": "29908a9956d23feb0d5029ad8c8b5c4823ab8f60701f7febdd24a5a0f2805703",
+        "sha256": "29908a9956d23feb0d5029ad8c8b5c4823ab8f60701f7febdd24a5a0f2805703",
+        "url": "https://skia.googlesource.com/skia/+/abbe599fb3c0ef2fa82bfadbb0ddcd321f22faf0/src/core/SkRasterPipelineBlitter.cpp?format=TEXT"
+      }
+    ]
+  },
+  "completed_clean_matrices": [
+    {
+      "complete": true,
+      "delta": {
+        "all_chromium_pixels_and_identities_unchanged": true,
+        "baseline_report_sha256": "d74a544b679a8b46d7d88ffa937113a2aa4937da25e604576503164d3a6f8877",
+        "changed_images": 0,
+        "changes": [],
+        "comparison_count": 22924,
+        "evidence": {
+          "binary_unchanged": true,
+          "kind": "diagnostic-census",
+          "qualification_backend_match": true,
+          "qualified": false,
+          "source_unchanged": true,
+          "tolerance_pixels": 0
+        },
+        "exact_regressions": [],
+        "improved": 0,
+        "new_exact": 0,
+        "process_exit_code": 1,
+        "report_sha256": "4a74133bb1d53c466a9c17821db88925951bec79e5853f42221c519d764814d7",
+        "results": {
+          "different": 1616,
+          "errors": 0,
+          "exact": 21308,
+          "profile_result_sha256": "9de74aaad4529e4ecde587b525e6d70856d471d961df87246d1e48f1d7767592",
+          "total": 22924
+        },
+        "source": {
+          "clean": true,
+          "commit": "fccbcccb0d6e055654a259f93529a051c0e81f90",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "604aea212c11b09731ba05fe4e4b51b7197fb92fe98f7bb12351d457ed927873",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "worsened": 0
+      },
+      "delta_artifact": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-original-delta-v6.json",
+        "sha256": "da5c0ac1e7716e55a8977cf778f3627867a6594fa2e203d712d98300184b2688"
+      },
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-original-v6/full-summary.json",
+        "sha256": "4a74133bb1d53c466a9c17821db88925951bec79e5853f42221c519d764814d7"
+      },
+      "suite": "original"
+    },
+    {
+      "complete": true,
+      "delta": {
+        "all_chromium_pixels_and_identities_unchanged": true,
+        "baseline_report_sha256": "301b7ab0d3920b49d06c24c05fc5b44136ddbbc6e89b644430ca7d1f89a3899e",
+        "changed_images": 0,
+        "changes": [],
+        "comparison_count": 23728,
+        "evidence": {
+          "binary_unchanged": true,
+          "kind": "diagnostic-census",
+          "qualification_backend_match": true,
+          "qualified": false,
+          "source_unchanged": true,
+          "tolerance_pixels": 0
+        },
+        "exact_regressions": [],
+        "improved": 0,
+        "new_exact": 0,
+        "process_exit_code": 1,
+        "report_sha256": "fa43c841f7fc8ea0056bdf1828fbb983996812cb7673d1ba5dde7cebc6721475",
+        "results": {
+          "different": 1617,
+          "errors": 0,
+          "exact": 22111,
+          "profile_result_sha256": "0fd9dd0e92bf9af44f6946f71c505dbcb0ad08fe5277c3ea674afd38d1de0430",
+          "total": 23728
+        },
+        "source": {
+          "clean": true,
+          "commit": "fccbcccb0d6e055654a259f93529a051c0e81f90",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "604aea212c11b09731ba05fe4e4b51b7197fb92fe98f7bb12351d457ed927873",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "worsened": 0
+      },
+      "delta_artifact": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-expanded-delta-v6.json",
+        "sha256": "87222d2f8abbcfab09278b963c37267d8569561bc507278de0e7834ebb1bc6b5"
+      },
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-expanded-v6/expanded-summary.json",
+        "sha256": "fa43c841f7fc8ea0056bdf1828fbb983996812cb7673d1ba5dde7cebc6721475"
+      },
+      "suite": "expanded"
+    },
+    {
+      "complete": true,
+      "delta": {
+        "all_chromium_pixels_and_identities_unchanged": true,
+        "baseline_report_sha256": "c6d09c78793c77620780b47f254b80368af35153ec4afe8d41239d6888e60bc0",
+        "changed_images": 0,
+        "changes": [],
+        "comparison_count": 640,
+        "evidence": {
+          "binary_unchanged": true,
+          "kind": "qualification",
+          "qualification_backend_match": true,
+          "qualified": true,
+          "source_unchanged": true,
+          "tolerance_pixels": 0
+        },
+        "exact_regressions": [],
+        "improved": 0,
+        "new_exact": 0,
+        "process_exit_code": 0,
+        "report_sha256": "2f9263c9bf136d984a6d61db3785373bfd869b9ee20dc653bd65abc2437999f3",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 640,
+          "profile_result_sha256": "9225cea2f8554f113646c961dc472bf2fe02ff6b901c6aedcd30372c63851d0e",
+          "total": 640
+        },
+        "source": {
+          "clean": true,
+          "commit": "fccbcccb0d6e055654a259f93529a051c0e81f90",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "604aea212c11b09731ba05fe4e4b51b7197fb92fe98f7bb12351d457ed927873",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "worsened": 0
+      },
+      "delta_artifact": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-focused-delta-v6.json",
+        "sha256": "3901ab1f531cf98556eb836a0e43fa447658d794a5fc62616a47640e4bf1785c"
+      },
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-focused-v6/focused-summary.json",
+        "sha256": "2f9263c9bf136d984a6d61db3785373bfd869b9ee20dc653bd65abc2437999f3"
+      },
+      "suite": "focused"
+    },
+    {
+      "complete": true,
+      "delta": {
+        "all_chromium_pixels_and_identities_unchanged": true,
+        "baseline_report_sha256": "e8b68b1620756643797ee5d2f96bbaeb85c96b96ceaca9b1acc583e69b2186d0",
+        "changed_images": 0,
+        "changes": [],
+        "comparison_count": 960,
+        "evidence": {
+          "binary_unchanged": true,
+          "kind": "qualification",
+          "qualification_backend_match": true,
+          "qualified": true,
+          "source_unchanged": true,
+          "tolerance_pixels": 0
+        },
+        "exact_regressions": [],
+        "improved": 0,
+        "new_exact": 0,
+        "process_exit_code": 0,
+        "report_sha256": "9c47edbee95d0c316eb8e961abbb3baa14a58981f5f4aa714c4c7236380b9935",
+        "results": {
+          "different": 0,
+          "errors": 0,
+          "exact": 960,
+          "profile_result_sha256": "16c4015d56314124257b043fcc2e6782b0e87d8dbb80b0162f772ee99bdf2f19",
+          "total": 960
+        },
+        "source": {
+          "clean": true,
+          "commit": "fccbcccb0d6e055654a259f93529a051c0e81f90",
+          "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+          "source_tree_sha256": "604aea212c11b09731ba05fe4e4b51b7197fb92fe98f7bb12351d457ed927873",
+          "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "worsened": 0
+      },
+      "delta_artifact": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-primitive-delta-v6.json",
+        "sha256": "3bad85bb3de6bd73b77d5d59810c8aafe6cbbdb06c4616e7a36090971a0a7530"
+      },
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-primitive-v6/primitive-summary.json",
+        "sha256": "9c47edbee95d0c316eb8e961abbb3baa14a58981f5f4aa714c4c7236380b9935"
+      },
+      "suite": "primitive"
+    }
+  ],
+  "expanded_additions": {
+    "comparisons": 804,
+    "exact_at_all_four_profiles": 200,
+    "failing_admitted_case_retained_in_contract": true,
+    "failures": [
+      {
+        "mismatched_pixels": 1315,
+        "profile": "desktop-1280x720@1.25",
+        "test_id": "wpt/css_display/display-contents-dynamic-fieldset-legend-001"
+      }
+    ],
+    "pending_ast_lowered_cases": 35,
+    "total_cases": 201
+  },
+  "javascript_executed_by_openui": false,
+  "known_worsened_native_failure": {
+    "after_mismatched_pixels": 105,
+    "before_mismatched_pixels": 83,
+    "case": "empty-parent-self50-0",
+    "maximum_channel_delta": 1,
+    "owned_bounds_exact": true,
+    "owner": "openui-paint failed-image clipping and coverage",
+    "scale": 1.25,
+    "status": "open; no tolerance or qualification waiver"
+  },
+  "main_native_identity": {
+    "code_and_build_inputs_identical_to_qualification_source": true,
+    "fresh_build_exit_code": 0,
+    "fresh_build_log": "out/renderer-evidence/native-resolved-image-patches-v1/main-c10-native-build-v11.log",
+    "pinned_binaries": {
+      "native_image_opacity": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/main-c10-native-v11/native_image_opacity",
+        "sha256": "260167af485c20ec6bfc0691d3edb25e77287b54414a62da7a72c8edcc066f8d"
+      },
+      "native_opacity_clip": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/main-c10-native-v11/native_opacity_clip",
+        "sha256": "36ca87778e0a0f3f586f08ac178be404e6c4e001ed2f45c940815b2170f5f084"
+      },
+      "native_png_sampling": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/main-c10-native-v11/native_png_sampling",
+        "sha256": "ad2c94a5858f0ce07b3d37871fdbda3b4e6aa97417df0b0ee75e9035edf8aba1"
+      }
+    },
+    "qualification_source": "fccbcccb0d6e055654a259f93529a051c0e81f90",
+    "release_qualification": false,
+    "source": {
+      "clean": true,
+      "commit": "42cce619e01f73eb91af7b2df816b451a16d3869",
+      "harness_sha256": "29f05af12796150f9153f90a51e299b079429dec236ead63978524e7d6705406",
+      "source_tree_sha256": "3241bb2e378c0e4722dee3588b8c134205fe4fb2604c3a4db63608d9ac070122",
+      "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "whole_source_differences": [
+      "docs/renderer/evidence/native-png-sampling-v1/raster-image-opacity-standalone-v6.patch",
+      "docs/renderer/generated/native-png-sampling-v2.json",
+      "docs/renderer/native-png-sampling.md"
+    ]
+  },
+  "native_measurements": [
+    {
+      "delta_against_c9": {
+        "after_exact": 148,
+        "before_exact": 74,
+        "before_total": 540,
+        "changed": 270,
+        "exact_regressions": 0,
+        "improved": 270,
+        "new_exact": 74,
+        "worsened": 0
+      },
+      "delta_artifact": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/native-standalone-delta-v6.json",
+        "sha256": "da6f9d66f1b8be063b7886d23dcd22444a357b1ccd5aa05d79e8c7e4645645e0"
+      },
+      "owned_bounds_exact": 540,
+      "pixel_exact": 148,
+      "process_exit_code": 0,
+      "report": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/main-c10-v11-comparison-v1.json",
+        "sha256": "da0aa5ac2230f0f8bcaf0a77aa5b265e09bcb53589125f6bd74892f8a07fb246"
+      },
+      "same_pixels_as_clean_qualification_source": true,
+      "suite": "png",
+      "total": 540
+    },
+    {
+      "delta_against_c9": {
+        "after_exact": 109,
+        "before_exact": 0,
+        "before_total": 160,
+        "changed": 160,
+        "exact_regressions": 0,
+        "improved": 160,
+        "new_exact": 109,
+        "worsened": 0
+      },
+      "delta_artifact": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/native-image-opacity-v1-standalone-delta-v6.json",
+        "sha256": "c20368d7358edc421217c2fa36f026fd1f32ccbcca31a2ff1022e5a331ab930a"
+      },
+      "owned_bounds_exact": 160,
+      "pixel_exact": 109,
+      "process_exit_code": 0,
+      "report": {
+        "path": "out/renderer-evidence/native-image-opacity-v1/main-c10-v11-comparison-v1.json",
+        "sha256": "d57183d87570fb16a64855bc246624adac3d38c62754e56669ccf0c128e3ea6d"
+      },
+      "same_pixels_as_clean_qualification_source": true,
+      "suite": "image-opacity",
+      "total": 160
+    },
+    {
+      "delta_against_c9": {
+        "after_exact": 143,
+        "before_exact": 116,
+        "before_total": 180,
+        "changed": 56,
+        "exact_regressions": 0,
+        "improved": 55,
+        "new_exact": 27,
+        "worsened": 1
+      },
+      "delta_artifact": {
+        "path": "out/renderer-evidence/native-resolved-image-patches-v1/native-opacity-clip-v1-standalone-delta-v6.json",
+        "sha256": "2f0ad37cc7a178d6eba5bdb7bd30fb728902186670f360dd49ab01983634a3b4"
+      },
+      "owned_bounds_exact": 180,
+      "pixel_exact": 143,
+      "process_exit_code": 0,
+      "report": {
+        "path": "out/renderer-evidence/native-opacity-clip-v1/main-c10-v11-comparison-v1.json",
+        "sha256": "0308930e4be4fa4d6399ea3d35c28f9a4be4eeb5fadb219d741e1764c7fd54fd"
+      },
+      "same_pixels_as_clean_qualification_source": true,
+      "suite": "opacity-clip",
+      "total": 180
+    }
+  ],
+  "original_rows_identical_between_full_suites": true,
+  "owner": "openui-paint opacity compositing and raster image coverage",
+  "pixel_tolerance": 0,
+  "policy": "Chromium is the sole pixel target. Application interactions use public native Rust methods and callbacks. Historical Open UI images are provenance only.",
+  "previous_evidence": {
+    "path": "docs/renderer/generated/native-png-sampling-v2.json",
+    "sha256": "718506889214515128d66ad26fd8243e705cc6fa29145b7f62e8bd78da029776"
+  },
+  "qualification_attribution": "The full matrices ran on clean fccbcccb. All code and build inputs match umbrella checkpoint 42cce619; only three documentation files differ. Fresh clean umbrella application builds reproduce all 880 native images and owned bounds. This does not claim a full matrix executed on the umbrella whole-source identity.",
+  "regression_test": {
+    "log": {
+      "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-opacity-tests-v6.log",
+      "sha256": "9553a64b5ed86b21e83085c916a3d97de1efdf9680dc79b605ddfd7b3cb9c822"
+    },
+    "passed": 1,
+    "process_exit_code": 0,
+    "scales": [
+      1,
+      1.25,
+      1.5,
+      2,
+      3
+    ]
+  },
+  "release_qualification": false,
+  "remaining_work": [
+    "392 native PNG comparisons still differ",
+    "51 native image-opacity comparisons still differ",
+    "37 native failed-image and clipping comparisons still differ, including one worsened failure",
+    "1616 original comparisons and one admitted addition still differ; residual ownership review remains open",
+    "qualify the separate neutral PNG gamma rule without other renderer or build experiments",
+    "complete native API, compositor, platform, hardening, packaging and release gates"
+  ],
+  "reviewed_root_cause": "Raster backgrounds and border images were omitted from the sampled-image opacity-group classification. F16 groups alter fully covered image colors compared with the packed N32 intermediate.",
+  "schema_version": 3,
+  "whole_source_main_matrix_run": false,
+  "workspace_tests": {
+    "failed": 0,
+    "ignored": 13,
+    "log": {
+      "path": "out/renderer-evidence/native-resolved-image-patches-v1/standalone-workspace-tests-v6.log",
+      "sha256": "08db7205bd32cec9547327f32a7e994f347cb05e2cb4a4e628b4a5b91556e41f"
+    },
+    "passed": 8492,
+    "process_exit_code": 0
+  }
+}
