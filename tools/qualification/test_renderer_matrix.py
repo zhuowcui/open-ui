@@ -389,6 +389,104 @@ class RendererMatrixTests(unittest.TestCase):
             "ganesh-gl:deterministic-alias",
         )
 
+    def test_monochrome_candidate_is_cache_separate_and_cannot_qualify(self):
+        legacy = MATRIX.raster_configuration_name(True, False, False)
+        fitted = MATRIX.raster_configuration_name(
+            True, False, False, "cpu-skia", "chromium-linux-monochrome"
+        )
+        self.assertEqual(fitted, "cpu-skia:chromium-linux-monochrome")
+        self.assertNotEqual(legacy, fitted)
+        with tempfile.TemporaryDirectory() as directory:
+            cache = pathlib.Path(directory)
+            MATRIX.store_cached_result(cache, {"raster_configuration": legacy}, {"id": "case"})
+            self.assertIsNone(MATRIX.cached_result(cache, {"raster_configuration": fitted}))
+        self.assertTrue(MATRIX.qualification_policy_matches(None))
+        self.assertFalse(MATRIX.qualification_policy_matches("chromium-linux-monochrome"))
+        self.assertFalse(MATRIX.qualification_policy_matches("deterministic-alias"))
+
+    def test_monochrome_candidate_preserves_other_font_policies(self):
+        for use_real in (False, True):
+            self.assertEqual(
+                MATRIX.raster_configuration_name(
+                    False, use_real, False, "cpu-skia", "chromium-linux-monochrome"
+                ),
+                MATRIX.raster_configuration_name(False, use_real, False),
+            )
+        self.assertEqual(
+            MATRIX.raster_configuration_name(True, False, True),
+            "cpu-skia:deterministic-alias-subpixel",
+        )
+
+    def test_explicit_monochrome_policy_reaches_native_renderer(self):
+        profile = MATRIX.Profile("diagnostic", 800, 600, 2400, 1800, 3.0)
+        with tempfile.TemporaryDirectory() as directory:
+            output = pathlib.Path(directory) / "native.png"
+            output.touch()
+            with patch.object(MATRIX.subprocess, "run", return_value=subprocess.CompletedProcess([], 0)) as run:
+                self.assertTrue(MATRIX.render_openui_with_configuration(
+                    "native-case", output, "cpu-skia:chromium-linux-monochrome", profile
+                ))
+            self.assertEqual(run.call_args.args[0][4:], [
+                "--raster-config", "chromium-linux-monochrome", "--backend", "cpu-skia",
+                "--viewport", "800x600", "--scale", "3.0",
+            ])
+            self.assertEqual(run.call_args.kwargs["timeout"], MATRIX.pixel_runner.RASTER_TIMEOUT_SECONDS)
+        with patch.object(MATRIX.subprocess, "run", side_effect=subprocess.TimeoutExpired("runner", 1)):
+            self.assertFalse(MATRIX.render_openui_with_configuration(
+                "native-case", pathlib.Path("missing.png"),
+                "cpu-skia:chromium-linux-monochrome", profile
+            ))
+
+    def test_candidate_routing_preserves_chromium_inputs_and_other_fonts(self):
+        base = {
+            "chromium_binary_sha256": "browser",
+            "chromium_build_identity": "147.0.7727.50",
+            "chromium_capture_harness_sha256": "capture",
+            "contract_sha256": "contract", "resource_hashes": {}, "font_byte_hashes": {},
+        }
+        profile = MATRIX.Profile("routing", 4, 3, 4, 3, 1.0)
+        for ahem, real, range_control in [(True, False, False), (True, False, True),
+                                         (False, True, False), (False, False, False)]:
+            with self.subTest(ahem=ahem, real=real, range_control=range_control):
+                template = '<input type="range">' if range_control else '<div>text</div>'
+                def regular(test_id, output, **kwargs):
+                    Image.new("RGBA", (4, 3), "white").save(output)
+                    return True
+                def explicit(test_id, output, configuration, selected_profile):
+                    self.assertEqual(configuration, "cpu-skia:chromium-linux-monochrome")
+                    self.assertEqual(selected_profile, profile)
+                    return regular(test_id, output)
+                def chrome(html, output, binary, directory, **kwargs):
+                    return regular("case", output)
+                with tempfile.TemporaryDirectory() as directory:
+                    root = pathlib.Path(directory)
+                    rows = []
+                    with patch.object(MATRIX.pixel_runner, "render_openui", side_effect=regular) as native, \
+                         patch.object(MATRIX, "render_openui_with_configuration", side_effect=explicit) as fitted, \
+                         patch.object(MATRIX.pixel_runner, "render_chrome", side_effect=chrome) as browser:
+                        for index, candidate in enumerate([None, "chromium-linux-monochrome"]):
+                            rows.append(MATRIX.render_one(
+                                "case", profile, root / str(index), {"case": template},
+                                pathlib.Path("chrome"), pathlib.Path("chrome-dir"),
+                                {"case"} if ahem else set(), {"case"} if real else set(),
+                                {"case"}, set(), root / f"cache-{index}",
+                                root / f"oracle-{index}", base, "cpu-skia", candidate,
+                            ))
+                        self.assertEqual(fitted.call_count, int(ahem and not real))
+                        self.assertEqual(native.call_count, 2 - fitted.call_count)
+                        self.assertEqual(browser.call_count, 2)
+                        self.assertEqual(browser.call_args_list[0].kwargs,
+                                         browser.call_args_list[1].kwargs)
+                    self.assertEqual(rows[0]["status"], "exact")
+                    self.assertEqual(rows[1]["status"], "exact")
+                    self.assertEqual(rows[0]["chromium_oracle_identity_sha256"],
+                                     rows[1]["chromium_oracle_identity_sha256"])
+                    self.assertEqual((root / "0/case/test.html").read_bytes(),
+                                     (root / "1/case/test.html").read_bytes())
+                    if not ahem or real:
+                        self.assertEqual(rows[0]["raster_configuration"],
+                                         rows[1]["raster_configuration"])
+
     def test_chromium_capture_requires_exact_device_metrics(self):
         matches = MATRIX.pixel_runner._device_metrics_match
         self.assertTrue(matches({"width": 375, "height": 667, "dpr": 2}, 375, 667, 2))

@@ -175,14 +175,48 @@ def renderer_build_source_identity(
 def raster_configuration_name(
     use_ahem: bool, use_real_font: bool, preserve_subpixel: bool,
     raster_backend: str = "cpu-skia",
+    monochrome_raster_config: str | None = None,
 ) -> str:
     if use_real_font:
         text = "chromium-linux-lcd"
     elif use_ahem:
-        text = "deterministic-alias-subpixel" if preserve_subpixel else "deterministic-alias"
+        text = monochrome_raster_config or (
+            "deterministic-alias-subpixel" if preserve_subpixel else "deterministic-alias"
+        )
     else:
         text = "default"
     return f"{raster_backend}:{text}"
+
+
+def render_openui_with_configuration(
+    test_id: str,
+    output_png: Path,
+    raster_configuration: str,
+    profile: Profile,
+) -> bool:
+    """Run the explicitly selected native policy without changing browser inputs."""
+    backend, text = raster_configuration.split(":", 1)
+    command = [
+        pixel_runner.PIXEL_COMPARE, "render", test_id, str(output_png),
+        "--raster-config", text, "--backend", backend,
+        "--viewport", f"{profile.logical_width}x{profile.logical_height}",
+        "--scale", str(profile.scale),
+    ]
+    try:
+        result = subprocess.run(
+            command,
+            env=pixel_runner.openui_environment(False),
+            capture_output=True,
+            timeout=pixel_runner.RASTER_TIMEOUT_SECONDS,
+        )
+        return result.returncode == 0 and output_png.is_file()
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
+def qualification_policy_matches(monochrome_raster_config: str | None) -> bool:
+    """An explicit candidate policy cannot satisfy the existing release policy."""
+    return monochrome_raster_config is None
 
 
 def cached_result(cache_dir: Path, identity: dict[str, object]) -> dict[str, object] | None:
@@ -542,6 +576,7 @@ def render_one(
     oracle_cache_dir: Path,
     cache_base: dict[str, object],
     raster_backend: str,
+    monochrome_raster_config: str | None = None,
 ) -> dict[str, object]:
     test_dir = profile_dir / test_id
     test_dir.mkdir(parents=True, exist_ok=True)
@@ -562,7 +597,8 @@ def render_one(
         )
     )
     raster_configuration = raster_configuration_name(
-        use_ahem, use_real_font, preserve_subpixel, raster_backend
+        use_ahem, use_real_font, preserve_subpixel, raster_backend,
+        monochrome_raster_config,
     )
     fixture_sha256 = bytes_sha256(html_document.encode("utf-8"))
     font_profile = "registered-real-font" if use_real_font else (
@@ -605,15 +641,21 @@ def render_one(
         "logical_height": profile.logical_height,
         "device_scale": profile.scale,
     }
-    if not pixel_runner.render_openui(
-        test_id,
-        str(openui_path),
-        use_ahem_noaa=use_ahem,
-        use_real_font=use_real_font,
-        preserve_subpixel_positioning=preserve_subpixel,
-        raster_backend=raster_backend,
-        **common,
-    ):
+    if monochrome_raster_config is not None and use_ahem:
+        openui_rendered = render_openui_with_configuration(
+            test_id, openui_path, raster_configuration, profile
+        )
+    else:
+        openui_rendered = pixel_runner.render_openui(
+            test_id,
+            str(openui_path),
+            use_ahem_noaa=use_ahem,
+            use_real_font=use_real_font,
+            preserve_subpixel_positioning=preserve_subpixel,
+            raster_backend=raster_backend,
+            **common,
+        )
+    if not openui_rendered:
         return {"id": test_id, "status": "error", "error": "Open UI render failed"}
     oracle_result = cached_chromium_oracle(
         oracle_cache_dir, cache_dir, oracle_identity, chromium_path
@@ -698,6 +740,7 @@ def run_profile(
     oracle_cache_dir: Path,
     cache_base: dict[str, object],
     raster_backend: str,
+    monochrome_raster_config: str | None = None,
 ) -> dict[str, object]:
     profile_dir = results_dir / profile.name
     profile_dir.mkdir(parents=True, exist_ok=True)
@@ -713,7 +756,7 @@ def run_profile(
         return render_one(
             test_id, profile, profile_dir, templates, chrome_binary, chrome_dir,
             text_ids, real_font_ids, freetype_ids, sp18_ids, cache_dir,
-            oracle_cache_dir, cache_base, raster_backend,
+            oracle_cache_dir, cache_base, raster_backend, monochrome_raster_config,
         )
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as executor:
@@ -766,6 +809,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--build-receipt", type=Path, help="linked-library receipt from build_renderer.py")
     parser.add_argument("--chrome", type=Path)
     parser.add_argument("--raster-backend", choices=("cpu-skia", "ganesh-gl"), default="cpu-skia")
+    parser.add_argument(
+        "--monochrome-raster-config",
+        choices=("deterministic-alias", "chromium-linux-monochrome"),
+        help=(
+            "explicit aliased author-text policy for diagnostic comparison; "
+            "Chromium captures and the declared qualification policy stay unchanged"
+        ),
+    )
     parser.add_argument("--allow-dirty-diagnostics", action="store_true")
     parser.add_argument("--jobs", type=int, default=4)
     parser.add_argument("--shard-index", type=int, default=0)
@@ -815,6 +866,10 @@ def main() -> None:
             contract, args.suite, args.ids_file, manifest_ids, ids
         ),
         "raster_backend": args.raster_backend,
+        "monochrome_raster_config": args.monochrome_raster_config,
+        "qualification_policy_match": qualification_policy_matches(
+            args.monochrome_raster_config
+        ),
         "source": source_identity,
     }
     if args.plan:
@@ -898,7 +953,7 @@ def main() -> None:
         run_profile(
             profile, ids, args.results_dir, templates, chrome_binary,
             chrome_directory, args.jobs, args.cache_dir, oracle_cache_dir,
-            cache_base, args.raster_backend,
+            cache_base, args.raster_backend, args.monochrome_raster_config,
         )
         for profile in profiles
     ]
@@ -910,7 +965,10 @@ def main() -> None:
     binary_unchanged = sha256(args.pixel_compare) == openui_binary_sha256
     if sha256(args.build_receipt) != library_receipt_sha256:
         raise SystemExit("renderer library build receipt changed during matrix run")
-    complete = plan["complete_profile_set"] and plan["complete_id_set"]
+    complete = (
+        plan["complete_profile_set"] and plan["complete_id_set"]
+        and plan["qualification_policy_match"]
+    )
     qualified = (
         bool(source_identity["clean"])
         and source_unchanged
@@ -926,12 +984,18 @@ def main() -> None:
         "commit": commit,
         "suite": args.suite,
         "complete_contract_scope": complete,
+        "selection": {
+            "complete_profile_set": plan["complete_profile_set"],
+            "complete_id_set": plan["complete_id_set"],
+            "monochrome_raster_config": args.monochrome_raster_config,
+        },
         "evidence": {
             "kind": "qualification" if qualified else "diagnostic-census",
             "qualified": qualified,
             "source_unchanged": source_unchanged,
             "binary_unchanged": binary_unchanged,
             "tolerance_pixels": 0,
+            "qualification_policy_match": plan["qualification_policy_match"],
             "qualification_backend_match": (
                 args.raster_backend == contract["raster"]["qualification_backend"]
             ),

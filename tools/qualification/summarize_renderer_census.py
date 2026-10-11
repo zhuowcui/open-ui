@@ -40,6 +40,24 @@ def _require(condition: bool, message: str) -> None:
         raise ValueError(message)
 
 
+def normalized_raster_policy(report: dict[str, object]) -> dict[str, object]:
+    """Keep historical automatic policies distinct from explicit candidates."""
+    selection = report.get("selection", {})
+    evidence = report.get("evidence", {})
+    _require(isinstance(selection, dict) and isinstance(evidence, dict),
+             "invalid raster policy metadata")
+    override = selection.get("monochrome_raster_config")
+    match = evidence.get("qualification_policy_match", True)
+    _require(override in (None, "deterministic-alias", "chromium-linux-monochrome"),
+             "unsupported monochrome raster configuration")
+    _require(isinstance(match, bool) and match == (override is None),
+             "inconsistent qualification_policy_match")
+    return {
+        "monochrome_raster_config": override,
+        "qualification_policy_match": match,
+    }
+
+
 def summarize(
     paths: list[Path], *, contract_path: Path = CONTRACT,
     manifest_path: Path = MANIFEST, ownership_path: Path = OWNERSHIP,
@@ -73,6 +91,7 @@ def summarize(
 
     reports.sort(key=lambda item: item[0])
     first = reports[0][1]
+    raster_policy = normalized_raster_policy(first)
     shard_count = first["shard"]["count"]
     _require(shard_count > 0 and [item[0] for item in reports] == list(range(shard_count)),
              "shard indices must be complete and unique")
@@ -86,6 +105,8 @@ def summarize(
                  f"inconsistent shard metadata: {path}")
         for key in SHARED_KEYS:
             _require(report[key] == first[key], f"mixed {key} identity: {path}")
+        _require(normalized_raster_policy(report) == raster_policy,
+                 f"mixed raster policy identity: {path}")
         expected_ids = manifest[index::shard_count]
         _require(report["id_manifest"]["count"] == len(expected_ids),
                  f"wrong shard manifest count: {path}")
@@ -194,6 +215,7 @@ def summarize(
         "schema_version": 1,
         "qualifying": False,
         "policy": "diagnostic evidence only; no tolerance, allowlist, or baseline change",
+        "raster_policy": raster_policy,
         "contract_sha256": first["contract_sha256"],
         "manifest_sha256": expected_manifest["sha256"],
         "manifest_count": len(manifest),

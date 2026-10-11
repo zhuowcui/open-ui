@@ -88,6 +88,22 @@ fontations file and vendored Skrifa hint file match the pinned primary source
 byte for byte. The preserved Skia Cargo lockfile is not Chromium's GN
 dependency selection; pinned Chromium's Rust directories use Skrifa v0_40.
 
+## Explicit matrix diagnostics
+
+The matrix runner accepts
+`--monochrome-raster-config chromium-linux-monochrome` to measure the fitted
+policy for the existing aliased author-text cohort. Real-font and other font
+profiles retain their existing configuration. The default matrix selection
+is unchanged. This option changes no Chromium fixture, font, capture argument,
+or oracle identity; each native result records the configuration actually
+passed to the executable, with a separate renderer-cache identity.
+
+An explicit candidate run reports complete ID/profile selections separately
+from the declared qualification policy. Even when every selected image is
+exact, it remains a diagnostic and cannot satisfy the current release gate.
+A matching full census and reviewed font-origin/settings behavior are needed
+before changing the declared policy.
+
 ## Remaining work
 
 Verify the complete 40-profile focused and primitive matrices, and run the
