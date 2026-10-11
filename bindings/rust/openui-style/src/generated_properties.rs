@@ -241,12 +241,26 @@ pub enum StyleProperty {
     ShapeImageThreshold = 235,
     ShapeMargin = 236,
     ShapeOutside = 237,
+    ScrollPaddingTop = 238,
+    ScrollPaddingRight = 239,
+    ScrollPaddingBottom = 240,
+    ScrollPaddingLeft = 241,
+    ScrollMarginTop = 242,
+    ScrollMarginRight = 243,
+    ScrollMarginBottom = 244,
+    ScrollMarginLeft = 245,
+    ScrollSnapStrictness = 246,
+    ScrollSnapStop = 247,
+    ScrollSnapAlignBlock = 248,
+    ScrollSnapAlignInline = 249,
 }
 
 /// Schema-generated values for renderer longhands appended after the stable
-/// v0.2 property surface. Each variant is tied to exactly one computed field.
+/// v0.2 property surface. Variants are property-bound; the paired snap value
+/// writes both logical alignments through the existing align property.
 #[derive(Debug, Clone)]
 pub enum RendererStyleValue {
+    ScrollSnapAlignPair([ScrollSnapAlign; 2]),
     Display(Display),
     Position(Position),
     Width(Length),
@@ -465,6 +479,18 @@ pub enum RendererStyleValue {
     ShapeImageThreshold(f32),
     ShapeMargin(Length),
     ShapeOutside(ShapeOutside),
+    ScrollPaddingTop(Length),
+    ScrollPaddingRight(Length),
+    ScrollPaddingBottom(Length),
+    ScrollPaddingLeft(Length),
+    ScrollMarginTop(Length),
+    ScrollMarginRight(Length),
+    ScrollMarginBottom(Length),
+    ScrollMarginLeft(Length),
+    ScrollSnapStrictness(ScrollSnapStrictness),
+    ScrollSnapStop(ScrollSnapStop),
+    ScrollSnapAlignBlock(Option<ScrollSnapAlign>),
+    ScrollSnapAlignInline(Option<ScrollSnapAlign>),
 }
 
 impl PartialEq for RendererStyleValue {
@@ -480,6 +506,7 @@ impl PartialEq for RendererStyleValue {
 impl RendererStyleValue {
     pub fn property(&self) -> StyleProperty {
         match self {
+            Self::ScrollSnapAlignPair(..) => StyleProperty::ScrollSnapAlign,
             Self::Display(..) => StyleProperty::Display,
             Self::Position(..) => StyleProperty::Position,
             Self::Width(..) => StyleProperty::Width,
@@ -698,11 +725,24 @@ impl RendererStyleValue {
             Self::ShapeImageThreshold(..) => StyleProperty::ShapeImageThreshold,
             Self::ShapeMargin(..) => StyleProperty::ShapeMargin,
             Self::ShapeOutside(..) => StyleProperty::ShapeOutside,
+            Self::ScrollPaddingTop(..) => StyleProperty::ScrollPaddingTop,
+            Self::ScrollPaddingRight(..) => StyleProperty::ScrollPaddingRight,
+            Self::ScrollPaddingBottom(..) => StyleProperty::ScrollPaddingBottom,
+            Self::ScrollPaddingLeft(..) => StyleProperty::ScrollPaddingLeft,
+            Self::ScrollMarginTop(..) => StyleProperty::ScrollMarginTop,
+            Self::ScrollMarginRight(..) => StyleProperty::ScrollMarginRight,
+            Self::ScrollMarginBottom(..) => StyleProperty::ScrollMarginBottom,
+            Self::ScrollMarginLeft(..) => StyleProperty::ScrollMarginLeft,
+            Self::ScrollSnapStrictness(..) => StyleProperty::ScrollSnapStrictness,
+            Self::ScrollSnapStop(..) => StyleProperty::ScrollSnapStop,
+            Self::ScrollSnapAlignBlock(..) => StyleProperty::ScrollSnapAlignBlock,
+            Self::ScrollSnapAlignInline(..) => StyleProperty::ScrollSnapAlignInline,
         }
     }
 
     pub(crate) fn apply(&self, style: &mut ComputedStyle, property: StyleProperty) -> bool {
         match (property, self) {
+            (StyleProperty::ScrollSnapAlign, Self::ScrollSnapAlignPair(value)) => { style.fields.scroll_snap_align = ScrollSnapAlign::None; style.fields.scroll_snap_align_block = Some(value[0]); style.fields.scroll_snap_align_inline = Some(value[1]); true },
             (StyleProperty::Display, Self::Display(value)) => { style.fields.display = value.clone(); true },
             (StyleProperty::Position, Self::Position(value)) => { style.fields.position = value.clone(); true },
             (StyleProperty::Width, Self::Width(value)) => { style.fields.width = value.clone(); true },
@@ -894,7 +934,7 @@ impl RendererStyleValue {
             (StyleProperty::Resize, Self::Resize(value)) => { style.fields.resize = value.clone(); true },
             (StyleProperty::Right, Self::Right(value)) => { style.fields.right = value.clone(); true },
             (StyleProperty::ScrollMarkerGroup, Self::ScrollMarkerGroup(value)) => { style.fields.scroll_marker_group = value.clone(); true },
-            (StyleProperty::ScrollSnapAlign, Self::ScrollSnapAlign(value)) => { style.fields.scroll_snap_align = value.clone(); true },
+            (StyleProperty::ScrollSnapAlign, Self::ScrollSnapAlign(value)) => { style.fields.scroll_snap_align = value.clone(); style.fields.scroll_snap_align_block = None; style.fields.scroll_snap_align_inline = None; true },
             (StyleProperty::ScrollSnapAxis, Self::ScrollSnapAxis(value)) => { style.fields.scroll_snap_axis = value.clone(); true },
             (StyleProperty::ScrollbarGutter, Self::ScrollbarGutter(value)) => { style.fields.scrollbar_gutter = value.clone(); true },
             (StyleProperty::ScrollbarTrackColor, Self::ScrollbarTrackColor(value)) => { style.fields.scrollbar_track_color = value.clone(); true },
@@ -921,6 +961,18 @@ impl RendererStyleValue {
             (StyleProperty::ShapeImageThreshold, Self::ShapeImageThreshold(value)) => { style.fields.shape_image_threshold = value.clone(); true },
             (StyleProperty::ShapeMargin, Self::ShapeMargin(value)) => { style.fields.shape_margin = value.clone(); true },
             (StyleProperty::ShapeOutside, Self::ShapeOutside(value)) => { style.fields.shape_outside = value.clone(); true },
+            (StyleProperty::ScrollPaddingTop, Self::ScrollPaddingTop(value)) => { style.fields.scroll_padding_top = value.clone(); true },
+            (StyleProperty::ScrollPaddingRight, Self::ScrollPaddingRight(value)) => { style.fields.scroll_padding_right = value.clone(); true },
+            (StyleProperty::ScrollPaddingBottom, Self::ScrollPaddingBottom(value)) => { style.fields.scroll_padding_bottom = value.clone(); true },
+            (StyleProperty::ScrollPaddingLeft, Self::ScrollPaddingLeft(value)) => { style.fields.scroll_padding_left = value.clone(); true },
+            (StyleProperty::ScrollMarginTop, Self::ScrollMarginTop(value)) => { style.fields.scroll_margin_top = value.clone(); true },
+            (StyleProperty::ScrollMarginRight, Self::ScrollMarginRight(value)) => { style.fields.scroll_margin_right = value.clone(); true },
+            (StyleProperty::ScrollMarginBottom, Self::ScrollMarginBottom(value)) => { style.fields.scroll_margin_bottom = value.clone(); true },
+            (StyleProperty::ScrollMarginLeft, Self::ScrollMarginLeft(value)) => { style.fields.scroll_margin_left = value.clone(); true },
+            (StyleProperty::ScrollSnapStrictness, Self::ScrollSnapStrictness(value)) => { style.fields.scroll_snap_strictness = value.clone(); true },
+            (StyleProperty::ScrollSnapStop, Self::ScrollSnapStop(value)) => { style.fields.scroll_snap_stop = value.clone(); true },
+            (StyleProperty::ScrollSnapAlignBlock, Self::ScrollSnapAlignBlock(value)) => { style.fields.scroll_snap_align_block = value.clone(); true },
+            (StyleProperty::ScrollSnapAlignInline, Self::ScrollSnapAlignInline(value)) => { style.fields.scroll_snap_align_inline = value.clone(); true },
             _ => false,
         }
     }
@@ -966,6 +1018,14 @@ impl RendererStyleValue {
             (StyleProperty::ScrollbarThumbColor, StyleValue::Color(value)) => Some(Self::ScrollbarThumbColor(Some(*value))),
             (StyleProperty::ShapeImageThreshold, StyleValue::Number(value)) => Some(Self::ShapeImageThreshold(*value)),
             (StyleProperty::ShapeMargin, StyleValue::Length(value)) => Some(Self::ShapeMargin(resolve_length(*value))),
+            (StyleProperty::ScrollPaddingTop, StyleValue::Length(value)) => Some(Self::ScrollPaddingTop(resolve_length(*value))),
+            (StyleProperty::ScrollPaddingRight, StyleValue::Length(value)) => Some(Self::ScrollPaddingRight(resolve_length(*value))),
+            (StyleProperty::ScrollPaddingBottom, StyleValue::Length(value)) => Some(Self::ScrollPaddingBottom(resolve_length(*value))),
+            (StyleProperty::ScrollPaddingLeft, StyleValue::Length(value)) => Some(Self::ScrollPaddingLeft(resolve_length(*value))),
+            (StyleProperty::ScrollMarginTop, StyleValue::Length(value)) => Some(Self::ScrollMarginTop(resolve_length(*value))),
+            (StyleProperty::ScrollMarginRight, StyleValue::Length(value)) => Some(Self::ScrollMarginRight(resolve_length(*value))),
+            (StyleProperty::ScrollMarginBottom, StyleValue::Length(value)) => Some(Self::ScrollMarginBottom(resolve_length(*value))),
+            (StyleProperty::ScrollMarginLeft, StyleValue::Length(value)) => Some(Self::ScrollMarginLeft(resolve_length(*value))),
             _ => None,
         }
     }
@@ -1166,7 +1226,7 @@ impl RendererStyleValue {
             StyleProperty::Resize => Some(Self::Resize(style.fields.resize.clone())),
             StyleProperty::Right => Some(Self::Right(style.fields.right.clone())),
             StyleProperty::ScrollMarkerGroup => Some(Self::ScrollMarkerGroup(style.fields.scroll_marker_group.clone())),
-            StyleProperty::ScrollSnapAlign => Some(Self::ScrollSnapAlign(style.fields.scroll_snap_align.clone())),
+            StyleProperty::ScrollSnapAlign => Some(if style.fields.scroll_snap_align_block.is_some() || style.fields.scroll_snap_align_inline.is_some() { Self::ScrollSnapAlignPair([style.fields.scroll_snap_align_block.unwrap_or(style.fields.scroll_snap_align), style.fields.scroll_snap_align_inline.unwrap_or(style.fields.scroll_snap_align)]) } else { Self::ScrollSnapAlign(style.fields.scroll_snap_align) }),
             StyleProperty::ScrollSnapAxis => Some(Self::ScrollSnapAxis(style.fields.scroll_snap_axis.clone())),
             StyleProperty::ScrollbarGutter => Some(Self::ScrollbarGutter(style.fields.scrollbar_gutter.clone())),
             StyleProperty::ScrollbarTrackColor => Some(Self::ScrollbarTrackColor(style.fields.scrollbar_track_color.clone())),
@@ -1193,6 +1253,18 @@ impl RendererStyleValue {
             StyleProperty::ShapeImageThreshold => Some(Self::ShapeImageThreshold(style.fields.shape_image_threshold.clone())),
             StyleProperty::ShapeMargin => Some(Self::ShapeMargin(style.fields.shape_margin.clone())),
             StyleProperty::ShapeOutside => Some(Self::ShapeOutside(style.fields.shape_outside.clone())),
+            StyleProperty::ScrollPaddingTop => Some(Self::ScrollPaddingTop(style.fields.scroll_padding_top.clone())),
+            StyleProperty::ScrollPaddingRight => Some(Self::ScrollPaddingRight(style.fields.scroll_padding_right.clone())),
+            StyleProperty::ScrollPaddingBottom => Some(Self::ScrollPaddingBottom(style.fields.scroll_padding_bottom.clone())),
+            StyleProperty::ScrollPaddingLeft => Some(Self::ScrollPaddingLeft(style.fields.scroll_padding_left.clone())),
+            StyleProperty::ScrollMarginTop => Some(Self::ScrollMarginTop(style.fields.scroll_margin_top.clone())),
+            StyleProperty::ScrollMarginRight => Some(Self::ScrollMarginRight(style.fields.scroll_margin_right.clone())),
+            StyleProperty::ScrollMarginBottom => Some(Self::ScrollMarginBottom(style.fields.scroll_margin_bottom.clone())),
+            StyleProperty::ScrollMarginLeft => Some(Self::ScrollMarginLeft(style.fields.scroll_margin_left.clone())),
+            StyleProperty::ScrollSnapStrictness => Some(Self::ScrollSnapStrictness(style.fields.scroll_snap_strictness.clone())),
+            StyleProperty::ScrollSnapStop => Some(Self::ScrollSnapStop(style.fields.scroll_snap_stop.clone())),
+            StyleProperty::ScrollSnapAlignBlock => Some(Self::ScrollSnapAlignBlock(style.fields.scroll_snap_align_block.clone())),
+            StyleProperty::ScrollSnapAlignInline => Some(Self::ScrollSnapAlignInline(style.fields.scroll_snap_align_inline.clone())),
             _ => None,
         }
     }
@@ -1359,6 +1431,26 @@ fn parse_renderer_author_literal(property: StyleProperty, input: &str) -> Option
         StyleProperty::OverflowX => overflow_literal(input).map(StyleValue::Overflow),
         StyleProperty::OverflowY => overflow_literal(input).map(StyleValue::Overflow),
         StyleProperty::Right => length(input).map(StyleValue::Length),
+        StyleProperty::ScrollSnapAlign => {
+            let align = |value| match value {
+                "none" => Some(ScrollSnapAlign::None), "start" => Some(ScrollSnapAlign::Start),
+                "center" => Some(ScrollSnapAlign::Center), "end" => Some(ScrollSnapAlign::End), _ => None,
+            };
+            match input.split_whitespace().collect::<Vec<_>>().as_slice() {
+                [value] => align(value).map(|value| StyleValue::Renderer(RendererStyleValue::ScrollSnapAlign(value))),
+                [block, inline] => Some(StyleValue::Renderer(RendererStyleValue::ScrollSnapAlignPair([align(block)?, align(inline)?]))),
+                _ => None,
+            }
+        },
+        StyleProperty::ScrollSnapAxis => (match input.trim() {
+            "none" => Some(ScrollSnapAxis::None),
+            "x" => Some(ScrollSnapAxis::X),
+            "y" => Some(ScrollSnapAxis::Y),
+            "both" => Some(ScrollSnapAxis::Both),
+            "inline" => Some(ScrollSnapAxis::Inline),
+            "block" => Some(ScrollSnapAxis::Block),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::ScrollSnapAxis(value))),
         StyleProperty::ScrollbarTrackColor => if input == "auto" { Some(StyleValue::Renderer(RendererStyleValue::ScrollbarTrackColor(None))) } else { color(input).map(StyleValue::Color) },
         StyleProperty::Top => length(input).map(StyleValue::Length),
         StyleProperty::Widows => input.parse::<u32>().ok().map(|value| StyleValue::Renderer(RendererStyleValue::Widows(value))),
@@ -1366,6 +1458,40 @@ fn parse_renderer_author_literal(property: StyleProperty, input: &str) -> Option
         StyleProperty::ScrollbarThumbColor => if input == "auto" { Some(StyleValue::Renderer(RendererStyleValue::ScrollbarThumbColor(None))) } else { color(input).map(StyleValue::Color) },
         StyleProperty::ShapeImageThreshold => input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number),
         StyleProperty::ShapeMargin => length(input).map(StyleValue::Length),
+        StyleProperty::ScrollPaddingTop => length(input).map(StyleValue::Length),
+        StyleProperty::ScrollPaddingRight => length(input).map(StyleValue::Length),
+        StyleProperty::ScrollPaddingBottom => length(input).map(StyleValue::Length),
+        StyleProperty::ScrollPaddingLeft => length(input).map(StyleValue::Length),
+        StyleProperty::ScrollMarginTop => length(input).map(StyleValue::Length),
+        StyleProperty::ScrollMarginRight => length(input).map(StyleValue::Length),
+        StyleProperty::ScrollMarginBottom => length(input).map(StyleValue::Length),
+        StyleProperty::ScrollMarginLeft => length(input).map(StyleValue::Length),
+        StyleProperty::ScrollSnapStrictness => (match input.trim() {
+            "mandatory" => Some(ScrollSnapStrictness::Mandatory),
+            "proximity" => Some(ScrollSnapStrictness::Proximity),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::ScrollSnapStrictness(value))),
+        StyleProperty::ScrollSnapStop => (match input.trim() {
+            "normal" => Some(ScrollSnapStop::Normal),
+            "always" => Some(ScrollSnapStop::Always),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::ScrollSnapStop(value))),
+        StyleProperty::ScrollSnapAlignBlock => (match input.trim() {
+            "none" => Some(Some(ScrollSnapAlign::None)),
+            "start" => Some(Some(ScrollSnapAlign::Start)),
+            "center" => Some(Some(ScrollSnapAlign::Center)),
+            "end" => Some(Some(ScrollSnapAlign::End)),
+            "auto" => Some(None),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::ScrollSnapAlignBlock(value))),
+        StyleProperty::ScrollSnapAlignInline => (match input.trim() {
+            "none" => Some(Some(ScrollSnapAlign::None)),
+            "start" => Some(Some(ScrollSnapAlign::Start)),
+            "center" => Some(Some(ScrollSnapAlign::Center)),
+            "end" => Some(Some(ScrollSnapAlign::End)),
+            "auto" => Some(None),
+            _ => None,
+        }).map(|value| StyleValue::Renderer(RendererStyleValue::ScrollSnapAlignInline(value))),
         _ => None,
     }
 }
@@ -1715,7 +1841,7 @@ impl StyleProperty {
             Self::Resize => &["resize"],
             Self::Right => &["right"],
             Self::ScrollMarkerGroup => &["scroll_marker_group"],
-            Self::ScrollSnapAlign => &["scroll_snap_align"],
+            Self::ScrollSnapAlign => &["scroll_snap_align", "scroll_snap_align_block", "scroll_snap_align_inline"],
             Self::ScrollSnapAxis => &["scroll_snap_axis"],
             Self::ScrollbarGutter => &["scrollbar_gutter"],
             Self::ScrollbarTrackColor => &["scrollbar_track_color"],
@@ -1742,6 +1868,18 @@ impl StyleProperty {
             Self::ShapeImageThreshold => &["shape_image_threshold"],
             Self::ShapeMargin => &["shape_margin"],
             Self::ShapeOutside => &["shape_outside"],
+            Self::ScrollPaddingTop => &["scroll_padding_top"],
+            Self::ScrollPaddingRight => &["scroll_padding_right"],
+            Self::ScrollPaddingBottom => &["scroll_padding_bottom"],
+            Self::ScrollPaddingLeft => &["scroll_padding_left"],
+            Self::ScrollMarginTop => &["scroll_margin_top"],
+            Self::ScrollMarginRight => &["scroll_margin_right"],
+            Self::ScrollMarginBottom => &["scroll_margin_bottom"],
+            Self::ScrollMarginLeft => &["scroll_margin_left"],
+            Self::ScrollSnapStrictness => &["scroll_snap_strictness"],
+            Self::ScrollSnapStop => &["scroll_snap_stop"],
+            Self::ScrollSnapAlignBlock => &["scroll_snap_align_block"],
+            Self::ScrollSnapAlignInline => &["scroll_snap_align_inline"],
         }
     }
 
@@ -1992,6 +2130,18 @@ impl StyleProperty {
             "shape-image-threshold" => Some(Self::ShapeImageThreshold),
             "shape-margin" => Some(Self::ShapeMargin),
             "shape-outside" => Some(Self::ShapeOutside),
+            "scroll-padding-top" => Some(Self::ScrollPaddingTop),
+            "scroll-padding-right" => Some(Self::ScrollPaddingRight),
+            "scroll-padding-bottom" => Some(Self::ScrollPaddingBottom),
+            "scroll-padding-left" => Some(Self::ScrollPaddingLeft),
+            "scroll-margin-top" => Some(Self::ScrollMarginTop),
+            "scroll-margin-right" => Some(Self::ScrollMarginRight),
+            "scroll-margin-bottom" => Some(Self::ScrollMarginBottom),
+            "scroll-margin-left" => Some(Self::ScrollMarginLeft),
+            "scroll-snap-strictness" => Some(Self::ScrollSnapStrictness),
+            "scroll-snap-stop" => Some(Self::ScrollSnapStop),
+            "scroll-snap-align-block" => Some(Self::ScrollSnapAlignBlock),
+            "scroll-snap-align-inline" => Some(Self::ScrollSnapAlignInline),
             _ => None,
         }
     }
@@ -4372,6 +4522,126 @@ pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
         invalidation: InvalidationClass::Layout,
         interpolation: InterpolationKind::Discrete,
     },
+    PropertyMetadata {
+        property: StyleProperty::ScrollPaddingTop,
+        css_name: "scroll-padding-top",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "renderer-initial",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::ScrollPaddingRight,
+        css_name: "scroll-padding-right",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "renderer-initial",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::ScrollPaddingBottom,
+        css_name: "scroll-padding-bottom",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "renderer-initial",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::ScrollPaddingLeft,
+        css_name: "scroll-padding-left",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "renderer-initial",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::ScrollMarginTop,
+        css_name: "scroll-margin-top",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "renderer-initial",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::ScrollMarginRight,
+        css_name: "scroll-margin-right",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "renderer-initial",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::ScrollMarginBottom,
+        css_name: "scroll-margin-bottom",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "renderer-initial",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::ScrollMarginLeft,
+        css_name: "scroll-margin-left",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "renderer-initial",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::ScrollSnapStrictness,
+        css_name: "scroll-snap-strictness",
+        rust_type: "ScrollSnapStrictness",
+        value_kind: ValueKind::Compound,
+        initial: "renderer-initial",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::ScrollSnapStop,
+        css_name: "scroll-snap-stop",
+        rust_type: "ScrollSnapStop",
+        value_kind: ValueKind::Compound,
+        initial: "renderer-initial",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::ScrollSnapAlignBlock,
+        css_name: "scroll-snap-align-block",
+        rust_type: "Option<ScrollSnapAlign>",
+        value_kind: ValueKind::Compound,
+        initial: "renderer-initial",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::ScrollSnapAlignInline,
+        css_name: "scroll-snap-align-inline",
+        rust_type: "Option<ScrollSnapAlign>",
+        value_kind: ValueKind::Compound,
+        initial: "renderer-initial",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
 ];
 
 /// Compile contract for every schema-generated Rust property builder.
@@ -4616,6 +4886,18 @@ pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
 ///     let _ = Style::default().shape_image_threshold(());
 ///     let _ = Style::default().shape_margin(());
 ///     let _ = Style::default().shape_outside(());
+///     let _ = Style::default().scroll_padding_top(());
+///     let _ = Style::default().scroll_padding_right(());
+///     let _ = Style::default().scroll_padding_bottom(());
+///     let _ = Style::default().scroll_padding_left(());
+///     let _ = Style::default().scroll_margin_top(());
+///     let _ = Style::default().scroll_margin_right(());
+///     let _ = Style::default().scroll_margin_bottom(());
+///     let _ = Style::default().scroll_margin_left(());
+///     let _ = Style::default().scroll_snap_strictness(());
+///     let _ = Style::default().scroll_snap_stop(());
+///     let _ = Style::default().scroll_snap_align_block(());
+///     let _ = Style::default().scroll_snap_align_inline(());
 /// }
 /// ```
 #[doc(hidden)]
@@ -4864,6 +5146,18 @@ mod generated_property_compile_pass {
         let _ = Style::default().shape_image_threshold(unimplemented!());
         let _ = Style::default().shape_margin(unimplemented!());
         let _ = Style::default().shape_outside(unimplemented!());
+        let _ = Style::default().scroll_padding_top(unimplemented!());
+        let _ = Style::default().scroll_padding_right(unimplemented!());
+        let _ = Style::default().scroll_padding_bottom(unimplemented!());
+        let _ = Style::default().scroll_padding_left(unimplemented!());
+        let _ = Style::default().scroll_margin_top(unimplemented!());
+        let _ = Style::default().scroll_margin_right(unimplemented!());
+        let _ = Style::default().scroll_margin_bottom(unimplemented!());
+        let _ = Style::default().scroll_margin_left(unimplemented!());
+        let _ = Style::default().scroll_snap_strictness(unimplemented!());
+        let _ = Style::default().scroll_snap_stop(unimplemented!());
+        let _ = Style::default().scroll_snap_align_block(unimplemented!());
+        let _ = Style::default().scroll_snap_align_inline(unimplemented!());
     }
 }
 
@@ -5579,5 +5873,41 @@ impl Style {
     }
     pub fn shape_outside(self, value: ShapeOutside) -> Self {
         self.with_renderer(StyleProperty::ShapeOutside, RendererStyleValue::ShapeOutside(value))
+    }
+    pub fn scroll_padding_top(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::ScrollPaddingTop, value)
+    }
+    pub fn scroll_padding_right(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::ScrollPaddingRight, value)
+    }
+    pub fn scroll_padding_bottom(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::ScrollPaddingBottom, value)
+    }
+    pub fn scroll_padding_left(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::ScrollPaddingLeft, value)
+    }
+    pub fn scroll_margin_top(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::ScrollMarginTop, value)
+    }
+    pub fn scroll_margin_right(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::ScrollMarginRight, value)
+    }
+    pub fn scroll_margin_bottom(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::ScrollMarginBottom, value)
+    }
+    pub fn scroll_margin_left(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::ScrollMarginLeft, value)
+    }
+    pub fn scroll_snap_strictness(self, value: ScrollSnapStrictness) -> Self {
+        self.with_renderer(StyleProperty::ScrollSnapStrictness, RendererStyleValue::ScrollSnapStrictness(value))
+    }
+    pub fn scroll_snap_stop(self, value: ScrollSnapStop) -> Self {
+        self.with_renderer(StyleProperty::ScrollSnapStop, RendererStyleValue::ScrollSnapStop(value))
+    }
+    pub fn scroll_snap_align_block(self, value: Option<ScrollSnapAlign>) -> Self {
+        self.with_renderer(StyleProperty::ScrollSnapAlignBlock, RendererStyleValue::ScrollSnapAlignBlock(value))
+    }
+    pub fn scroll_snap_align_inline(self, value: Option<ScrollSnapAlign>) -> Self {
+        self.with_renderer(StyleProperty::ScrollSnapAlignInline, RendererStyleValue::ScrollSnapAlignInline(value))
     }
 }

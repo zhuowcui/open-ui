@@ -18,16 +18,17 @@ use crate::{
     LineHeight, LinearGradient, ListStylePosition, ListStyleType, MarginTrim, ObjectFit,
     ObjectPosition, OpenTypeFeatureList, Overflow, OverflowAlignment, OverflowClipBox,
     OverflowWrap, Position, PositionArea, QuotePair, Resize, RubyAlign, RubyOverhang, RubyPosition,
-    ScrollMarkerGroup, ScrollSnapAlign, ScrollSnapAxis, ScrollTargetGroup, ScrollbarGutter,
-    ScrollbarWidth, ShapeOutside, StyleColor, TabSize, TableLayout, TextAlign, TextAlignLast,
-    TextAutospace, TextBoxEdge, TextBoxShorthand, TextBoxTrim, TextCombineUpright,
-    TextDecorationLine, TextDecorationShorthand, TextDecorationSkipInk, TextDecorationStyle,
-    TextDecorationThickness, TextEmphasisFill, TextEmphasisMark, TextEmphasisPosition,
-    TextEmphasisShorthand, TextEmphasisStyle, TextJustify, TextOrientation, TextOverflow,
-    TextRendering, TextShadow, TextShadowList, TextSizeAdjust, TextSpacingTrim, TextTransform,
-    TextUnderlinePosition, TextWrap, TextWrapMode, TextWrapShorthand, TextWrapStyle, Transform2D,
-    TypographyValue, UnicodeBidi, VerticalAlign, Visibility, WebkitBoxOrient, WhiteSpace,
-    WhiteSpaceCollapse, WhiteSpaceShorthand, WordBreak, WritingMode,
+    ScrollMarkerGroup, ScrollSnapAlign, ScrollSnapAxis, ScrollSnapStop, ScrollSnapStrictness,
+    ScrollTargetGroup, ScrollbarGutter, ScrollbarWidth, ShapeOutside, StyleColor, TabSize,
+    TableLayout, TextAlign, TextAlignLast, TextAutospace, TextBoxEdge, TextBoxShorthand,
+    TextBoxTrim, TextCombineUpright, TextDecorationLine, TextDecorationShorthand,
+    TextDecorationSkipInk, TextDecorationStyle, TextDecorationThickness, TextEmphasisFill,
+    TextEmphasisMark, TextEmphasisPosition, TextEmphasisShorthand, TextEmphasisStyle, TextJustify,
+    TextOrientation, TextOverflow, TextRendering, TextShadow, TextShadowList, TextSizeAdjust,
+    TextSpacingTrim, TextTransform, TextUnderlinePosition, TextWrap, TextWrapMode,
+    TextWrapShorthand, TextWrapStyle, Transform2D, TypographyValue, UnicodeBidi, VerticalAlign,
+    Visibility, WebkitBoxOrient, WhiteSpace, WhiteSpaceCollapse, WhiteSpaceShorthand, WordBreak,
+    WritingMode,
 };
 use openui_geometry::{Length, LengthType, RasterConfiguration};
 
@@ -525,6 +526,14 @@ impl Style {
             value: value.into(),
         });
         self
+    }
+
+    /// Native two-value `scroll-snap-align`, in block then inline order.
+    pub fn scroll_snap_alignment(self, block: ScrollSnapAlign, inline: ScrollSnapAlign) -> Self {
+        self.with_renderer(
+            StyleProperty::ScrollSnapAlign,
+            RendererStyleValue::ScrollSnapAlignPair([block, inline]),
+        )
     }
 
     fn with_renderer(mut self, property: StyleProperty, value: RendererStyleValue) -> Self {
@@ -2247,6 +2256,42 @@ pub fn apply_to_computed(
         property,
         expected: property.metadata().value_kind,
     };
+    let scroll_padding = matches!(
+        property,
+        P::ScrollPaddingTop | P::ScrollPaddingRight | P::ScrollPaddingBottom | P::ScrollPaddingLeft
+    );
+    let scroll_margin = matches!(
+        property,
+        P::ScrollMarginTop | P::ScrollMarginRight | P::ScrollMarginBottom | P::ScrollMarginLeft
+    );
+    if scroll_padding || scroll_margin {
+        let length = match value {
+            StyleValue::Length(value) => resolve(*value),
+            StyleValue::Renderer(
+                RendererStyleValue::ScrollPaddingTop(value)
+                | RendererStyleValue::ScrollPaddingRight(value)
+                | RendererStyleValue::ScrollPaddingBottom(value)
+                | RendererStyleValue::ScrollPaddingLeft(value)
+                | RendererStyleValue::ScrollMarginTop(value)
+                | RendererStyleValue::ScrollMarginRight(value)
+                | RendererStyleValue::ScrollMarginBottom(value)
+                | RendererStyleValue::ScrollMarginLeft(value),
+            ) => *value,
+            _ => return Err(mismatch()),
+        };
+        let allowed = if scroll_margin {
+            length.is_fixed() || (length.is_calculated() && length.value() == 0.0)
+        } else {
+            length.is_auto() || length.is_fixed() || length.is_percent() || length.is_calculated()
+        };
+        if !allowed
+            || !length.value().is_finite()
+            || !length.calc_offset().is_finite()
+            || (scroll_padding && !length.is_calculated() && length.value() < 0.0)
+        {
+            return Err(mismatch());
+        }
+    }
     if let StyleValue::Renderer(value) = value {
         return value
             .apply(style, property)
@@ -2751,6 +2796,77 @@ mod tests {
     use super::*;
 
     #[test]
+    fn native_snap_values_round_trip_and_preserve_declaration_order() {
+        let mut style = ComputedStyle::initial();
+        let pair = parse_literal(StyleProperty::ScrollSnapAlign, "end start").unwrap();
+        assert_eq!(
+            pair,
+            StyleValue::Renderer(RendererStyleValue::ScrollSnapAlignPair([
+                ScrollSnapAlign::End,
+                ScrollSnapAlign::Start
+            ]))
+        );
+        apply_to_computed(
+            &mut style,
+            StyleProperty::ScrollSnapAlign,
+            &pair,
+            (320.0, 240.0),
+        )
+        .unwrap();
+        assert_eq!(
+            value_from_computed(&style, StyleProperty::ScrollSnapAlign),
+            pair
+        );
+        let scalar = parse_literal(StyleProperty::ScrollSnapAlign, "center").unwrap();
+        apply_to_computed(
+            &mut style,
+            StyleProperty::ScrollSnapAlign,
+            &scalar,
+            (320.0, 240.0),
+        )
+        .unwrap();
+        assert_eq!(style.scroll_snap_align, ScrollSnapAlign::Center);
+        assert_eq!(style.scroll_snap_align_block, None);
+        assert_eq!(style.scroll_snap_align_inline, None);
+        assert_eq!(
+            value_from_computed(&style, StyleProperty::ScrollSnapAlign),
+            scalar
+        );
+        assert!(StyleProperty::ScrollSnapAlign
+            .affects_same_fields_as(StyleProperty::ScrollSnapAlignBlock));
+        assert!(StyleProperty::ScrollSnapAlignInline
+            .affects_same_fields_as(StyleProperty::ScrollSnapAlign));
+        for (property, literal) in [
+            (StyleProperty::ScrollSnapAxis, "block"),
+            (StyleProperty::ScrollSnapStop, "always"),
+            (StyleProperty::ScrollSnapStrictness, "proximity"),
+            (StyleProperty::ScrollSnapAlignBlock, "none"),
+            (StyleProperty::ScrollSnapAlignInline, "end"),
+        ] {
+            let value = parse_literal(property, literal).unwrap();
+            apply_to_computed(&mut style, property, &value, (320.0, 240.0)).unwrap();
+            assert_eq!(value_from_computed(&style, property), value);
+        }
+        assert!(parse_literal(StyleProperty::ScrollSnapAlign, "end start center").is_err());
+        let snapshot = style.scroll_padding_left;
+        assert!(apply_to_computed(
+            &mut style,
+            StyleProperty::ScrollPaddingLeft,
+            &LengthValue::px(-1.0).into(),
+            (320.0, 240.0)
+        )
+        .is_err());
+        assert_eq!(style.scroll_padding_left, snapshot);
+        assert!(apply_to_computed(
+            &mut style,
+            StyleProperty::ScrollMarginLeft,
+            &LengthValue::percent(5.0).into(),
+            (320.0, 240.0)
+        )
+        .is_err());
+    }
+
+    #[test]
     fn schema_lookup_and_metadata_are_stable() {
         assert_eq!(
             StyleProperty::from_css_name("padding"),
@@ -2761,7 +2877,9 @@ mod tests {
         assert_eq!(StyleProperty::TextEmphasis as u16, 124);
         assert_eq!(StyleProperty::TextBox as u16, 125);
         assert_eq!(StyleProperty::ShapeOutside as u16, 237);
-        assert_eq!(PROPERTY_METADATA.len(), 237);
+        assert_eq!(StyleProperty::ScrollPaddingTop as u16, 238);
+        assert_eq!(StyleProperty::ScrollSnapAlignInline as u16, 249);
+        assert_eq!(PROPERTY_METADATA.len(), 249);
         for (index, metadata) in PROPERTY_METADATA.iter().enumerate() {
             let id = u16::try_from(index + 1).unwrap();
             assert_eq!(StyleProperty::from_u16(id), Some(metadata.property));
@@ -2772,7 +2890,7 @@ mod tests {
             assert_eq!(metadata.property.metadata(), metadata);
         }
         assert_eq!(StyleProperty::from_u16(0), None);
-        assert_eq!(StyleProperty::from_u16(238), None);
+        assert_eq!(StyleProperty::from_u16(250), None);
         assert_eq!(
             StyleProperty::Opacity.metadata().invalidation,
             InvalidationClass::Composite

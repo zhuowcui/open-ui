@@ -44,14 +44,38 @@ impl Element {
         }))
     }
 
-    /// Native snap strictness supplements the shared axis/align style API.
-    /// Unsupported selection remains explicit in a button's state snapshot.
-    pub fn set_scroll_snap_strictness(
+    /// Set the logical block and inline snap alignment through retained
+    /// declarations; the compatibility single value still sets both axes.
+    pub fn set_scroll_snap_alignment(
         &self,
-        strictness: ScrollSnapStrictness,
+        block: crate::typed_style::ScrollSnapAlign,
+        inline: crate::typed_style::ScrollSnapAlign,
     ) -> Result<(), Error> {
+        self.set_property(
+            StyleProperty::ScrollSnapAlign,
+            StyleValue::Renderer(crate::typed_style::RendererStyleValue::ScrollSnapAlignPair(
+                [block, inline],
+            )),
+        )
+    }
+
+    /// Select a native targeted area for the shared snap tie-breaking rules.
+    pub fn set_scroll_snap_target(&self, target: Option<&Element>) -> Result<(), Error> {
+        if target.is_some_and(|target| {
+            !std::rc::Rc::ptr_eq(&self.document.inner, &target.document.inner)
+        }) {
+            return Err(openui_engine::EngineError::WrongDocument.into());
+        }
+        self.document.with_engine_mut(|engine| {
+            engine.set_scroll_snap_target(self.handle, target.map(|target| target.handle))
+        })
+    }
+
+    /// Settle at the end of a native scroll gesture using authored snap areas.
+    /// Layout changes also preserve the current snapped target automatically.
+    pub fn settle_native_scroll_snap(&self) -> Result<bool, Error> {
         self.document
-            .with_engine_mut(|engine| engine.set_scroll_snap_strictness(self.handle, strictness))
+            .with_engine_mut(|engine| engine.settle_native_scroll_snap(self.handle))
     }
 }
 

@@ -236,3 +236,15 @@ id,rust_name,css_name,rust_type,value_kind,initial,inherited,invalidation,interp
 235,ShapeImageThreshold,shape-image-threshold,f32,number,renderer-initial,false,layout,number,shape_image_threshold
 236,ShapeMargin,shape-margin,Length,length,renderer-initial,false,layout,length,shape_margin
 237,ShapeOutside,shape-outside,ShapeOutside,compound,renderer-initial,false,layout,discrete,shape_outside
+238,ScrollPaddingTop,scroll-padding-top,LengthValue,length,renderer-initial,false,layout,length,scroll_padding_top
+239,ScrollPaddingRight,scroll-padding-right,LengthValue,length,renderer-initial,false,layout,length,scroll_padding_right
+240,ScrollPaddingBottom,scroll-padding-bottom,LengthValue,length,renderer-initial,false,layout,length,scroll_padding_bottom
+241,ScrollPaddingLeft,scroll-padding-left,LengthValue,length,renderer-initial,false,layout,length,scroll_padding_left
+242,ScrollMarginTop,scroll-margin-top,LengthValue,length,renderer-initial,false,layout,length,scroll_margin_top
+243,ScrollMarginRight,scroll-margin-right,LengthValue,length,renderer-initial,false,layout,length,scroll_margin_right
+244,ScrollMarginBottom,scroll-margin-bottom,LengthValue,length,renderer-initial,false,layout,length,scroll_margin_bottom
+245,ScrollMarginLeft,scroll-margin-left,LengthValue,length,renderer-initial,false,layout,length,scroll_margin_left
+246,ScrollSnapStrictness,scroll-snap-strictness,ScrollSnapStrictness,compound,renderer-initial,false,layout,discrete,scroll_snap_strictness
+247,ScrollSnapStop,scroll-snap-stop,ScrollSnapStop,compound,renderer-initial,false,layout,discrete,scroll_snap_stop
+248,ScrollSnapAlignBlock,scroll-snap-align-block,Option<ScrollSnapAlign>,compound,renderer-initial,false,layout,discrete,scroll_snap_align_block
+249,ScrollSnapAlignInline,scroll-snap-align-inline,Option<ScrollSnapAlign>,compound,renderer-initial,false,layout,discrete,scroll_snap_align_inline

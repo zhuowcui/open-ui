@@ -1004,7 +1004,9 @@ impl Engine {
             data.pseudo_origin = NodeId::NONE;
             data.scroll_left = 0.0;
             data.scroll_top = 0.0;
-            data.native_scroll_snap_managed = false;
+            // Snap mode follows the copied native authored style. Target IDs,
+            // controls and offsets remain fresh on the cloned document nodes;
+            // reverting to static child translation would lose native offsets.
             data.attributes.remove("data-oui-focused");
             data.attributes.remove("data-oui-composition-start");
             data.attributes.remove("data-oui-composition-end");
@@ -1408,6 +1410,17 @@ impl Engine {
         order.push(property as u16);
         if property.metadata().inherited || value.depends_on_font_metrics() {
             self.refresh_inherited_styles(node)?;
+        }
+        if matches!(
+            property,
+            StyleProperty::ScrollSnapAxis
+                | StyleProperty::ScrollSnapStrictness
+                | StyleProperty::ScrollPaddingTop
+                | StyleProperty::ScrollPaddingRight
+                | StyleProperty::ScrollPaddingBottom
+                | StyleProperty::ScrollPaddingLeft
+        ) {
+            self.document.node_mut(node).native_scroll_snap_managed = true;
         }
         let mut has_animation = false;
         for animation in self.animations.values_mut().filter(|animation| {
@@ -2200,8 +2213,19 @@ impl Engine {
         if !x.is_finite() || !y.is_finite() {
             return Err(EngineError::Render("scroll offsets must be finite".into()));
         }
-        let node = self.resolve(handle)?;
+        self.resolve(handle)?;
         let (x, y) = self.clamp_scroll_offset(handle, x, y)?;
+        let (x, y) = self.resolve_native_scroll_endpoint(handle, x, y)?;
+        self.scroll_to_resolved(handle, x, y)
+    }
+
+    pub(crate) fn scroll_to_resolved(
+        &mut self,
+        handle: NodeHandle,
+        x: f32,
+        y: f32,
+    ) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
         self.scroll_animations
             .retain(|_, animation| animation.target != handle);
         if (
@@ -2400,6 +2424,7 @@ impl Engine {
         let width = self.viewport.logical_width();
         let height = self.viewport.logical_height();
         if self.dirty.layout || self.latest_fragment.is_none() {
+            self.relocate_owned_scroll_buttons()?;
             self.refresh_native_control_geometry();
             let root_style = &self.document.node(self.document.root()).style;
             let direction = root_style
@@ -2446,6 +2471,12 @@ impl Engine {
                     node.scroll_top = y;
                 }
                 // Sticky descendants also consume the retained offsets.
+                fragment =
+                    openui_layout::block_layout(&self.document, self.document.root(), &space);
+            }
+            if self.settle_native_snap_after_layout(&fragment) {
+                // Retained snap offsets and sticky descendants are recorded
+                // from the same final-state layout, without shifting fixtures.
                 fragment =
                     openui_layout::block_layout(&self.document, self.document.root(), &space);
             }

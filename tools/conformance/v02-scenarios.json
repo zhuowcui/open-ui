@@ -15,6 +15,11 @@
     "text"
   ],
   "scenarios": [
+    {"id": "native_scroll_snap_initial_and_resnap_follow_retained_area_identity", "domains": ["scrolling", "layout", "lifecycle", "controls"]},
+    {"id": "native_scroll_padding_and_margin_affect_pages_and_snap_geometry", "domains": ["scrolling", "layout", "lifecycle", "controls"]},
+    {"id": "native_scroll_snap_stop_and_proximity_share_page_selection", "domains": ["scrolling", "layout", "lifecycle", "controls"]},
+    {"id": "native_scroll_snap_uses_split_alignment_and_transformed_area_bounds", "domains": ["scrolling", "layout", "lifecycle", "controls"]},
+    {"id": "native_scroll_button_hidden_origin_suppresses_box_and_snap_aliases", "domains": ["scrolling", "layout", "lifecycle", "controls"]},
     { "id": "static_headless_scene", "domains": ["lifecycle"] },
     { "id": "batched_tree_transaction", "domains": ["lifecycle"] },
     { "id": "native_id_lookup_follows_attached_document_order", "domains": ["lifecycle"] },

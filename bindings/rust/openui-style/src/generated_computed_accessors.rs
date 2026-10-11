@@ -706,16 +706,64 @@ impl ComputedStyle {
         &self.fields.ruby_position
     }
     #[inline]
+    pub fn scroll_margin_bottom(&self) -> &Length {
+        &self.fields.scroll_margin_bottom
+    }
+    #[inline]
+    pub fn scroll_margin_left(&self) -> &Length {
+        &self.fields.scroll_margin_left
+    }
+    #[inline]
+    pub fn scroll_margin_right(&self) -> &Length {
+        &self.fields.scroll_margin_right
+    }
+    #[inline]
+    pub fn scroll_margin_top(&self) -> &Length {
+        &self.fields.scroll_margin_top
+    }
+    #[inline]
     pub fn scroll_marker_group(&self) -> &ScrollMarkerGroup {
         &self.fields.scroll_marker_group
+    }
+    #[inline]
+    pub fn scroll_padding_bottom(&self) -> &Length {
+        &self.fields.scroll_padding_bottom
+    }
+    #[inline]
+    pub fn scroll_padding_left(&self) -> &Length {
+        &self.fields.scroll_padding_left
+    }
+    #[inline]
+    pub fn scroll_padding_right(&self) -> &Length {
+        &self.fields.scroll_padding_right
+    }
+    #[inline]
+    pub fn scroll_padding_top(&self) -> &Length {
+        &self.fields.scroll_padding_top
     }
     #[inline]
     pub fn scroll_snap_align(&self) -> &ScrollSnapAlign {
         &self.fields.scroll_snap_align
     }
     #[inline]
+    pub fn scroll_snap_align_block(&self) -> &Option<ScrollSnapAlign> {
+        &self.fields.scroll_snap_align_block
+    }
+    #[inline]
+    pub fn scroll_snap_align_inline(&self) -> &Option<ScrollSnapAlign> {
+        &self.fields.scroll_snap_align_inline
+    }
+    #[inline]
     pub fn scroll_snap_axis(&self) -> &ScrollSnapAxis {
         &self.fields.scroll_snap_axis
+    }
+    #[inline]
+    pub fn scroll_snap_stop(&self) -> &ScrollSnapStop {
+        &self.fields.scroll_snap_stop
+    }
+    #[inline]
+    pub fn scroll_snap_strictness(&self) -> &ScrollSnapStrictness {
+        &self.fields.scroll_snap_strictness
     }
     #[inline]
     pub fn scroll_target_group(&self) -> &ScrollTargetGroup {

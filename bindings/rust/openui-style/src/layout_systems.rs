@@ -284,6 +284,23 @@ pub enum ScrollSnapAlign {
     End,
 }
 
+/// Snap selection outside a directional gesture. The compatibility axis API
+/// establishes mandatory snapping unless proximity is explicitly selected.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum ScrollSnapStrictness {
+    #[default]
+    Mandatory,
+    Proximity,
+}
+
+/// Whether a directional scroll may pass this snap area.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum ScrollSnapStop {
+    #[default]
+    Normal,
+    Always,
+}
+
 /// Axis on which a scroll container establishes snap positions.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ScrollSnapAxis {

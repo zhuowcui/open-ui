@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import csv
 import io
+import os
 import re
 from collections import Counter
 from pathlib import Path
@@ -159,14 +160,18 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
     # this list owns exactly one field by schema construction.
     fields = computed_fields()
     renderer_rows = [row for row in schema if len(field_names(row)) == 1]
-    renderer_variants = "\n".join(
+    renderer_variants = "    ScrollSnapAlignPair([ScrollSnapAlign; 2]),\n" + "\n".join(
         f"    {row['rust_name']}({fields[field_names(row)[0]]})," for row in renderer_rows
     )
-    renderer_apply = "\n".join(
-        f"            (StyleProperty::{row['rust_name']}, Self::{row['rust_name']}(value)) => {{ style.fields.{field_names(row)[0]} = value.clone(); true }},"
+    renderer_apply = "            (StyleProperty::ScrollSnapAlign, Self::ScrollSnapAlignPair(value)) => { style.fields.scroll_snap_align = ScrollSnapAlign::None; style.fields.scroll_snap_align_block = Some(value[0]); style.fields.scroll_snap_align_inline = Some(value[1]); true },\n" + "\n".join(
+        f"            (StyleProperty::{row['rust_name']}, Self::{row['rust_name']}(value)) => {{ style.fields.{field_names(row)[0]} = value.clone();"
+        + (" style.fields.scroll_snap_align_block = None; style.fields.scroll_snap_align_inline = None;" if row['rust_name'] == 'ScrollSnapAlign' else "")
+        + " true },"
         for row in renderer_rows
     )
     renderer_read = "\n".join(
+        "            StyleProperty::ScrollSnapAlign => Some(if style.fields.scroll_snap_align_block.is_some() || style.fields.scroll_snap_align_inline.is_some() { Self::ScrollSnapAlignPair([style.fields.scroll_snap_align_block.unwrap_or(style.fields.scroll_snap_align), style.fields.scroll_snap_align_inline.unwrap_or(style.fields.scroll_snap_align)]) } else { Self::ScrollSnapAlign(style.fields.scroll_snap_align) }),"
+        if row['rust_name'] == 'ScrollSnapAlign' else
         f"            StyleProperty::{row['rust_name']} => Some(Self::{row['rust_name']}(style.fields.{field_names(row)[0]}.clone())),"
         for row in renderer_rows
     )
@@ -190,6 +195,7 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
         "WhiteSpaceCollapse": "white_space_collapse white_space",
         "TextWrapMode": "text_wrap_mode white_space text_wrap",
         "TextWrapStyle": "text_wrap_style text_wrap",
+        "ScrollSnapAlign": "scroll_snap_align scroll_snap_align_block scroll_snap_align_inline",
     }
     assert set(mutation_overrides) <= {row["rust_name"] for row in schema}
     mutation_cases = []
@@ -243,8 +249,12 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
         },
         "ColumnSpan": {"none": "None", "all": "All"},
         "ColumnWrap": {"auto": "Auto", "wrap": "Wrap", "nowrap": "NoWrap"},
+        "ScrollSnapStrictness": {"mandatory": "Mandatory", "proximity": "Proximity"},
+        "ScrollSnapStop": {"normal": "Normal", "always": "Always"},
+        "ScrollSnapAlign": {"none": "None", "start": "Start", "center": "Center", "end": "End"},
+        "ScrollSnapAxis": {"none": "None", "x": "X", "y": "Y", "both": "Both", "inline": "Inline", "block": "Block"},
     }
-    enum_source = (ROOT / "bindings/rust/openui-style/src/enums.rs").read_text()
+    enum_source = (ROOT / "bindings/rust/openui-style/src/enums.rs").read_text() + (ROOT / "bindings/rust/openui-style/src/layout_systems.rs").read_text()
     for enum_type, keywords in enum_keywords.items():
         declaration = re.search(
             rf"pub enum {re.escape(enum_type)} \{{(.*?)\n\}}", enum_source, re.S
@@ -264,6 +274,25 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
         shape = primitive_shapes.get((row["value_kind"], fields[field_names(row)[0]]))
         if shape is None:
             enum_type = fields[field_names(row)[0]]
+            if enum_type == "Option<ScrollSnapAlign>":
+                name = row["rust_name"]
+                cases = "\n".join(f'            "{keyword}" => Some(Some(ScrollSnapAlign::{variant})),' for keyword, variant in enum_keywords["ScrollSnapAlign"].items())
+                primitive_parse_cases.append(
+                    f"        StyleProperty::{name} => (match input.trim() {{\n{cases}\n            \"auto\" => Some(None),\n            _ => None,\n        }}).map(|value| StyleValue::Renderer(RendererStyleValue::{name}(value))),")
+                continue
+            if row["rust_name"] == "ScrollSnapAlign":
+                primitive_parse_cases.append("""        StyleProperty::ScrollSnapAlign => {
+            let align = |value| match value {
+                "none" => Some(ScrollSnapAlign::None), "start" => Some(ScrollSnapAlign::Start),
+                "center" => Some(ScrollSnapAlign::Center), "end" => Some(ScrollSnapAlign::End), _ => None,
+            };
+            match input.split_whitespace().collect::<Vec<_>>().as_slice() {
+                [value] => align(value).map(|value| StyleValue::Renderer(RendererStyleValue::ScrollSnapAlign(value))),
+                [block, inline] => Some(StyleValue::Renderer(RendererStyleValue::ScrollSnapAlignPair([align(block)?, align(inline)?]))),
+                _ => None,
+            }
+        },""")
+                continue
             if enum_type in enum_keywords:
                 name = row["rust_name"]
                 cases = "\n".join(
@@ -309,7 +338,7 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
                 f"    pub fn {rust_method(row['css_name'])}(self, value: {row['rust_type']}) -> Self {{",
                 (
                     f"        self.with(StyleProperty::{row['rust_name']}, value)"
-                    if int(row["id"]) <= 125
+                    if int(row["id"]) <= 125 or row["rust_type"] == "LengthValue"
                     else f"        self.with_renderer(StyleProperty::{row['rust_name']}, RendererStyleValue::{row['rust_name']}(value))"
                 ),
                 "    }",
@@ -335,7 +364,8 @@ pub enum StyleProperty {{
 }}
 
 /// Schema-generated values for renderer longhands appended after the stable
-/// v0.2 property surface. Each variant is tied to exactly one computed field.
+/// v0.2 property surface. Variants are property-bound; the paired snap value
+/// writes both logical alignments through the existing align property.
 #[derive(Debug, Clone)]
 pub enum RendererStyleValue {{
 {renderer_variants}
@@ -354,6 +384,7 @@ impl PartialEq for RendererStyleValue {{
 impl RendererStyleValue {{
     pub fn property(&self) -> StyleProperty {{
         match self {{
+            Self::ScrollSnapAlignPair(..) => StyleProperty::ScrollSnapAlign,
 {chr(10).join(f"            Self::{row['rust_name']}(..) => StyleProperty::{row['rust_name']}," for row in renderer_rows)}
         }}
     }}
@@ -522,7 +553,7 @@ def framework_output(schema: list[dict[str, str]]) -> bytes:
                 f"    pub fn set_{rust_method(row['css_name'])}(&self, value: {row['rust_type']}) -> Result<(), Error> {{",
                 (
                     f"        self.set_property(StyleProperty::{row['rust_name']}, value.into())"
-                    if int(row["id"]) <= 125
+                    if int(row["id"]) <= 125 or row["rust_type"] == "LengthValue"
                     else f"        self.set_property(StyleProperty::{row['rust_name']}, StyleValue::Renderer(RendererStyleValue::{row['rust_name']}(value)))"
                 ),
                 "    }",
@@ -606,7 +637,11 @@ def main() -> None:
         return
     for path, data in generated.items():
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(data)
+        mode = path.stat().st_mode if path.exists() else 0o644
+        temporary = path.with_name(path.name + ".generated-new")
+        temporary.write_bytes(data)
+        os.chmod(temporary, mode)
+        temporary.replace(path)
     print(f"style schema: wrote={len(generated)} properties={len(rows())}")
 
 

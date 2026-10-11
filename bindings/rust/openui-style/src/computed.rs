@@ -687,6 +687,20 @@ pub struct ComputedStyleFields {
     pub scroll_target_group: ScrollTargetGroup,
     pub scroll_snap_align: ScrollSnapAlign,
     pub scroll_snap_axis: ScrollSnapAxis,
+    pub scroll_snap_strictness: ScrollSnapStrictness,
+    pub scroll_snap_stop: ScrollSnapStop,
+    /// Optional logical overrides; the compatibility align value applies to
+    /// both axes when the corresponding override is absent.
+    pub scroll_snap_align_block: Option<ScrollSnapAlign>,
+    pub scroll_snap_align_inline: Option<ScrollSnapAlign>,
+    pub scroll_padding_top: Length,
+    pub scroll_padding_right: Length,
+    pub scroll_padding_bottom: Length,
+    pub scroll_padding_left: Length,
+    pub scroll_margin_top: Length,
+    pub scroll_margin_right: Length,
+    pub scroll_margin_bottom: Length,
+    pub scroll_margin_left: Length,
 
     // ── Replaced content and deterministic effects ───────────────────
     pub object_fit: ObjectFit,
@@ -1297,6 +1311,18 @@ impl ComputedStyle {
                 scroll_target_group: ScrollTargetGroup::None,
                 scroll_snap_align: ScrollSnapAlign::None,
                 scroll_snap_axis: ScrollSnapAxis::None,
+                scroll_snap_strictness: ScrollSnapStrictness::Mandatory,
+                scroll_snap_stop: ScrollSnapStop::Normal,
+                scroll_snap_align_block: None,
+                scroll_snap_align_inline: None,
+                scroll_padding_top: Length::auto(),
+                scroll_padding_right: Length::auto(),
+                scroll_padding_bottom: Length::auto(),
+                scroll_padding_left: Length::auto(),
+                scroll_margin_top: Length::px(0.0),
+                scroll_margin_right: Length::px(0.0),
+                scroll_margin_bottom: Length::px(0.0),
+                scroll_margin_left: Length::px(0.0),
 
                 // Replaced content and deterministic effects
                 object_fit: ObjectFit::Fill,

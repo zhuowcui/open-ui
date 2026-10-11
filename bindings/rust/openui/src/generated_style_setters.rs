@@ -717,4 +717,40 @@ impl Element {
     pub fn set_shape_outside(&self, value: ShapeOutside) -> Result<(), Error> {
         self.set_property(StyleProperty::ShapeOutside, StyleValue::Renderer(RendererStyleValue::ShapeOutside(value)))
     }
+    pub fn set_scroll_padding_top(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollPaddingTop, value.into())
+    }
+    pub fn set_scroll_padding_right(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollPaddingRight, value.into())
+    }
+    pub fn set_scroll_padding_bottom(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollPaddingBottom, value.into())
+    }
+    pub fn set_scroll_padding_left(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollPaddingLeft, value.into())
+    }
+    pub fn set_scroll_margin_top(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollMarginTop, value.into())
+    }
+    pub fn set_scroll_margin_right(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollMarginRight, value.into())
+    }
+    pub fn set_scroll_margin_bottom(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollMarginBottom, value.into())
+    }
+    pub fn set_scroll_margin_left(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollMarginLeft, value.into())
+    }
+    pub fn set_scroll_snap_strictness(&self, value: ScrollSnapStrictness) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollSnapStrictness, StyleValue::Renderer(RendererStyleValue::ScrollSnapStrictness(value)))
+    }
+    pub fn set_scroll_snap_stop(&self, value: ScrollSnapStop) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollSnapStop, StyleValue::Renderer(RendererStyleValue::ScrollSnapStop(value)))
+    }
+    pub fn set_scroll_snap_align_block(&self, value: Option<ScrollSnapAlign>) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollSnapAlignBlock, StyleValue::Renderer(RendererStyleValue::ScrollSnapAlignBlock(value)))
+    }
+    pub fn set_scroll_snap_align_inline(&self, value: Option<ScrollSnapAlign>) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollSnapAlignInline, StyleValue::Renderer(RendererStyleValue::ScrollSnapAlignInline(value)))
+    }
 }

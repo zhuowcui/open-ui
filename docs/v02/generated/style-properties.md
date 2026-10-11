@@ -240,3 +240,15 @@
 | 235 | `shape-image-threshold` | `shape_image_threshold` | `f32` | `renderer-initial` | false | layout | number |
 | 236 | `shape-margin` | `shape_margin` | `Length` | `renderer-initial` | false | layout | length |
 | 237 | `shape-outside` | `shape_outside` | `ShapeOutside` | `renderer-initial` | false | layout | discrete |
+| 238 | `scroll-padding-top` | `scroll_padding_top` | `LengthValue` | `renderer-initial` | false | layout | length |
+| 239 | `scroll-padding-right` | `scroll_padding_right` | `LengthValue` | `renderer-initial` | false | layout | length |
+| 240 | `scroll-padding-bottom` | `scroll_padding_bottom` | `LengthValue` | `renderer-initial` | false | layout | length |
+| 241 | `scroll-padding-left` | `scroll_padding_left` | `LengthValue` | `renderer-initial` | false | layout | length |
+| 242 | `scroll-margin-top` | `scroll_margin_top` | `LengthValue` | `renderer-initial` | false | layout | length |
+| 243 | `scroll-margin-right` | `scroll_margin_right` | `LengthValue` | `renderer-initial` | false | layout | length |
+| 244 | `scroll-margin-bottom` | `scroll_margin_bottom` | `LengthValue` | `renderer-initial` | false | layout | length |
+| 245 | `scroll-margin-left` | `scroll_margin_left` | `LengthValue` | `renderer-initial` | false | layout | length |
+| 246 | `scroll-snap-strictness` | `scroll_snap_strictness` | `ScrollSnapStrictness` | `renderer-initial` | false | layout | discrete |
+| 247 | `scroll-snap-stop` | `scroll_snap_stop` | `ScrollSnapStop` | `renderer-initial` | false | layout | discrete |
+| 248 | `scroll-snap-align-block` | `scroll_snap_align_block` | `Option<ScrollSnapAlign>` | `renderer-initial` | false | layout | discrete |
+| 249 | `scroll-snap-align-inline` | `scroll_snap_align_inline` | `Option<ScrollSnapAlign>` | `renderer-initial` | false | layout | discrete |

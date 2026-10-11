@@ -100,6 +100,7 @@ impl Engine {
         }
         let node = self.resolve(target)?;
         let clamped = self.clamp_scroll_offset(target, x, y)?;
+        let clamped = self.resolve_native_scroll_endpoint(target, clamped.0, clamped.1)?;
         let source = self.document.node(node);
         let from = (source.scroll_left as f64, source.scroll_top as f64);
         let to = (clamped.0 as f64, clamped.1 as f64);

@@ -4,24 +4,18 @@
 //! Page arithmetic and directional selection follow Chromium 147.0.7727.50
 //! scroll_button_pseudo_element.cc, scroll_utils.cc and scroll_snap_data.cc.
 
-use crate::{ActivationResult, Engine, EngineError, FocusOrigin, NodeHandle};
+use crate::{ActivationResult, Affine, Engine, EngineError, FocusOrigin, NodeHandle};
 pub use openui_dom::ScrollButtonDirection;
 use openui_dom::{ElementTag, NodeId, PseudoElementKind};
-use openui_geometry::{LayoutUnit, PhysicalOffset, WritingDirectionMode};
+use openui_geometry::{LayoutUnit, Length, LengthType, WritingDirectionMode};
 use openui_layout::Fragment;
 use openui_style::{
-    Display, InvalidationClass, ScrollSnapAlign, ScrollSnapAxis, StyleProperty, Transform2D,
+    ComputedStyle, Display, InvalidationClass, RendererStyleValue, ScrollSnapAlign, ScrollSnapAxis,
+    ScrollSnapStop, StyleProperty, StyleValue, TransformOperation,
 };
 use std::collections::{HashMap, HashSet};
 
-/// The current native axis/align style API defaults to mandatory snapping.
-/// Proximity is explicit and never silently substituted for mandatory.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum ScrollSnapStrictness {
-    #[default]
-    Mandatory,
-    Proximity,
-}
+pub use openui_style::ScrollSnapStrictness;
 
 /// Why a native scroll button can or cannot activate at this layout barrier.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -44,7 +38,7 @@ pub struct ScrollButtonState {
     pub availability: ScrollButtonAvailability,
     pub current_offset: (f64, f64),
     pub target_offset: Option<(f64, f64)>,
-    /// Identities committed by the last native page activation.
+    /// Identities committed by native scrolling or the latest layout resnap.
     pub current_snap_targets: [Option<NodeHandle>; 2],
     /// Preview identities for this button's next page activation.
     pub snap_targets: [Option<NodeHandle>; 2],
@@ -64,7 +58,7 @@ pub(crate) struct ScrollButtons {
     pub bindings: HashMap<NodeHandle, Binding>,
     pub directions: HashMap<(NodeHandle, ScrollButtonDirection), NodeHandle>,
     pub snap_targets: HashMap<NodeHandle, [Option<NodeHandle>; 2]>,
-    pub strictness: HashMap<NodeHandle, ScrollSnapStrictness>,
+    pub targeted_areas: HashMap<NodeHandle, NodeHandle>,
     pub next_order: u64,
     pub dirty: bool,
 }
@@ -178,8 +172,9 @@ fn pixel_snapped_size(size: LayoutUnit, location: LayoutUnit) -> i32 {
 struct SnapArea {
     handle: NodeHandle,
     rect: [f32; 4],
-    align: ScrollSnapAlign,
+    align: [ScrollSnapAlign; 2],
     focus: bool,
+    must_stop: bool,
 }
 
 #[derive(Clone, Copy)]
@@ -187,6 +182,7 @@ struct Candidate {
     offset: f32,
     area: SnapArea,
     covering: bool,
+    alternative: Option<SnapArea>,
 }
 
 fn contains(outer: [f32; 4], inner: [f32; 4]) -> bool {
@@ -196,18 +192,132 @@ fn contains(outer: [f32; 4], inner: [f32; 4]) -> bool {
         && outer[1] + outer[3] >= inner[1] + inner[3]
 }
 
-fn aligned_offset(area: SnapArea, axis: usize, port: [f32; 2], maximum: f32, reverse: bool) -> f32 {
-    let start = area.rect[axis];
+fn aligned_offset(area: SnapArea, axis: usize, port: [f32; 4], maximum: f32) -> f32 {
+    let start = area.rect[axis] - port[axis];
     let size = area.rect[axis + 2];
-    let offset = match area.align {
-        ScrollSnapAlign::Start if reverse => start + size - port[axis],
-        ScrollSnapAlign::End if reverse => start,
+    let offset = match area.align[axis] {
         ScrollSnapAlign::Start => start,
-        ScrollSnapAlign::Center => start + (size - port[axis]) * 0.5,
-        ScrollSnapAlign::End => start + size - port[axis],
-        ScrollSnapAlign::None => unreachable!("collected snap area has alignment"),
+        ScrollSnapAlign::Center => start + (size - port[axis + 2]) * 0.5,
+        ScrollSnapAlign::End => start + size - port[axis + 2],
+        ScrollSnapAlign::None => unreachable!("snap area does not align on this axis"),
     };
     offset.clamp(0.0, maximum)
+}
+
+fn snap_axes(style: &ComputedStyle) -> [bool; 2] {
+    match style.scroll_snap_axis {
+        ScrollSnapAxis::None => [false, false],
+        ScrollSnapAxis::X => [true, false],
+        ScrollSnapAxis::Y => [false, true],
+        ScrollSnapAxis::Both => [true, true],
+        ScrollSnapAxis::Inline => [
+            style.writing_mode.is_horizontal(),
+            !style.writing_mode.is_horizontal(),
+        ],
+        ScrollSnapAxis::Block => [
+            !style.writing_mode.is_horizontal(),
+            style.writing_mode.is_horizontal(),
+        ],
+    }
+}
+
+fn length_pixels(length: Length, reference: f32) -> f32 {
+    let value = match length.length_type() {
+        LengthType::Fixed => length.value(),
+        LengthType::Percent => length.value() * reference / 100.0,
+        LengthType::Calculated => length.calc_offset() + length.value() * reference / 100.0,
+        _ => 0.0,
+    };
+    value
+}
+
+fn layout_length_pixels(length: Length, reference: f32) -> f32 {
+    // MinimumValueForLength and ScrollMarginStrut use truncating LayoutUnit conversion.
+    LayoutUnit::from_f32(length_pixels(length, reference)).to_f32()
+}
+
+fn scroll_snapport(style: &ComputedStyle, area: openui_layout::ScrollArea) -> [f32; 4] {
+    let width = area.client_rect.width().to_f32();
+    let height = area.client_rect.height().to_f32();
+    let top = layout_length_pixels(style.scroll_padding_top, height).max(0.0);
+    let right = layout_length_pixels(style.scroll_padding_right, width).max(0.0);
+    let bottom = layout_length_pixels(style.scroll_padding_bottom, height).max(0.0);
+    let left = layout_length_pixels(style.scroll_padding_left, width).max(0.0);
+    // The geometry remains relative to the authored container border box.
+    [
+        area.client_rect.x().to_f32() + left,
+        area.client_rect.y().to_f32() + top,
+        (width - left - right).max(0.0),
+        (height - top - bottom).max(0.0),
+    ]
+}
+
+fn normalized_alignment(
+    style: &ComputedStyle,
+    container: &ComputedStyle,
+    rect: [f32; 4],
+    size: [f32; 2],
+) -> [ScrollSnapAlign; 2] {
+    let block = style
+        .scroll_snap_align_block
+        .unwrap_or(style.scroll_snap_align);
+    let inline = style
+        .scroll_snap_align_inline
+        .unwrap_or(style.scroll_snap_align);
+    let own = style.direction.writing_direction(style.writing_mode);
+    let mut writing = container
+        .direction
+        .writing_direction(container.writing_mode);
+    if (own.is_horizontal() && rect[2] > size[0]) || (!own.is_horizontal() && rect[3] > size[1]) {
+        writing = own;
+    }
+    let flip = |align| match align {
+        ScrollSnapAlign::Start => ScrollSnapAlign::End,
+        ScrollSnapAlign::End => ScrollSnapAlign::Start,
+        value => value,
+    };
+    if writing.is_horizontal() {
+        [
+            if writing.is_rtl() {
+                flip(inline)
+            } else {
+                inline
+            },
+            block,
+        ]
+    } else {
+        [
+            if writing.is_flipped_blocks() {
+                flip(block)
+            } else {
+                block
+            },
+            if writing.is_rtl() {
+                flip(inline)
+            } else {
+                inline
+            },
+        ]
+    }
+}
+
+fn visible(
+    candidate: Candidate,
+    axis: usize,
+    cross_offset: f32,
+    port: [f32; 4],
+    maximum: [f32; 2],
+) -> bool {
+    let cross = 1 - axis;
+    let lo =
+        (candidate.area.rect[cross] - port[cross] - port[cross + 2]).clamp(0.0, maximum[cross]);
+    let hi = (candidate.area.rect[cross] + candidate.area.rect[cross + 2] - port[cross])
+        .clamp(0.0, maximum[cross]);
+    cross_offset >= lo && cross_offset <= hi
+}
+
+fn mutual_visible(x: Candidate, y: Candidate, port: [f32; 4], maximum: [f32; 2]) -> bool {
+    visible(x, 0, y.offset, port, maximum) && visible(y, 1, x.offset, port, maximum)
 }
 
 fn dodging_offset(
@@ -216,25 +326,23 @@ fn dodging_offset(
     range: [f32; 2],
     preferred: f32,
     port: f32,
-    reverse: bool,
+    padding: f32,
 ) -> Option<(f32, bool)> {
     if range[1] <= range[0] {
         return None;
     }
-    let minimum = range[0];
-    let maximum = range[1] - port;
+    let minimum = range[0] - padding;
+    let maximum = range[1] - padding - port;
     if maximum > minimum {
         return Some((preferred.clamp(minimum, maximum), true));
     }
-    let aligned = match area.align {
-        ScrollSnapAlign::Start if reverse => maximum,
-        ScrollSnapAlign::End if reverse => minimum,
+    let aligned = match area.align[axis] {
         ScrollSnapAlign::Start => minimum,
         ScrollSnapAlign::Center => (minimum + maximum) * 0.5,
         ScrollSnapAlign::End => maximum,
         ScrollSnapAlign::None => return None,
     };
-    let lo = area.rect[axis];
+    let lo = area.rect[axis] - padding;
     let hi = lo + area.rect[axis + 2] - port;
     (hi >= lo).then(|| (aligned.clamp(lo, hi), false))
 }
@@ -245,7 +353,7 @@ fn covering_candidate(
     axis: usize,
     preferred: f32,
     port: f32,
-    reverse: bool,
+    padding: f32,
 ) -> Option<Candidate> {
     if area.rect[axis + 2] < port {
         return None;
@@ -255,6 +363,7 @@ fn covering_candidate(
     let mut backward = [lo, hi];
     let mut middle = [lo, hi];
     let mut forward = [lo, hi];
+    let preferred = preferred + padding;
     let preferred_end = preferred + port;
     for intruder in areas {
         let start = intruder.rect[axis];
@@ -286,15 +395,16 @@ fn covering_candidate(
         offset,
         area,
         covering,
+        alternative: None,
     };
-    if let Some(value) = dodging_offset(area, axis, middle, preferred, port, reverse) {
+    if let Some(value) = dodging_offset(area, axis, middle, preferred - padding, port, padding) {
         return Some(wrap(value));
     }
-    let back = dodging_offset(area, axis, backward, preferred, port, reverse).map(wrap);
-    let front = dodging_offset(area, axis, forward, preferred, port, reverse).map(wrap);
+    let back = dodging_offset(area, axis, backward, preferred - padding, port, padding).map(wrap);
+    let front = dodging_offset(area, axis, forward, preferred - padding, port, padding).map(wrap);
     match (back, front) {
         (Some(b), Some(f)) => Some(
-            if (b.offset - preferred).abs() < (f.offset - preferred).abs() {
+            if (b.offset - (preferred - padding)).abs() < (f.offset - (preferred - padding)).abs() {
                 b
             } else {
                 f
@@ -304,96 +414,351 @@ fn covering_candidate(
     }
 }
 
-/// One-axis page strategy. Page keys/buttons request one physical axis, so the
-/// cross axis stays at its current clamped position. Unlike nearest-point snap,
-/// preferred displacement, focus, nested ties and covering intervals matter.
-fn select_snap(
+/// Shared axis search for page activation and end-position/layout settling.
+/// The selected identity is retained separately from the preview landing point.
+fn search_axis(
     areas: &[SnapArea],
-    direction: Direction,
+    axis: usize,
     current: [f32; 2],
-    port: [f32; 2],
+    port: [f32; 4],
     maximum: [f32; 2],
-    page: i32,
-    fractional: bool,
-    reverse: bool,
+    cross_offset: f32,
+    page: Option<(Direction, i32, bool)>,
     strictness: ScrollSnapStrictness,
+    targeted: Option<NodeHandle>,
+    active_range: Option<[f32; 2]>,
 ) -> Option<Candidate> {
-    let axis = direction.axis();
-    let cross = 1 - axis;
-    let intended = current[axis] + direction.sign() * page_step(page);
-    let minimum_preferred = ((page as f32 * 0.4_f32) as i32).max(1) as f32;
-    let maximum_preferred = page.max(1) as f32;
-    let visible = |candidate: Candidate| {
-        let lo = (candidate.area.rect[cross] - port[cross]).clamp(0.0, maximum[cross]);
-        let hi = (candidate.area.rect[cross] + candidate.area.rect[cross + 2])
-            .clamp(0.0, maximum[cross]);
-        current[cross].clamp(0.0, maximum[cross]) >= lo
-            && current[cross].clamp(0.0, maximum[cross]) <= hi
+    let base = page.map_or(current[axis], |(direction, size, _)| {
+        current[axis] + direction.sign() * page_step(size)
+    });
+    let proximity = if strictness == ScrollSnapStrictness::Proximity {
+        LayoutUnit::from_f32(port[axis + 2] * (1.0_f32 / 3.0_f32)).to_f32()
+    } else {
+        f32::MAX
     };
-    let preferred = |offset: f32| {
-        let d = (offset - current[axis]).abs();
-        d >= minimum_preferred && d <= maximum_preferred
-    };
-    let valid = |offset: f32| {
-        let d = offset - current[axis];
-        (if fractional { d } else { d.trunc() }) * direction.sign() > 0.0
-    };
-    let search = |relaxed: bool| {
-        let base = if relaxed { current[axis] } else { intended };
-        let mut best: Option<Candidate> = None;
-        let mut covering: Option<Candidate> = None;
-        let mut best_preferred = false;
-        let mut distance = f32::MAX;
-        for area in areas {
-            let aligned = Candidate {
-                offset: aligned_offset(*area, axis, port, maximum[axis], reverse),
-                area: *area,
-                covering: false,
-            };
-            let covered = covering_candidate(*area, areas, axis, base, port[axis], reverse);
-            for candidate in [Some(aligned), covered].into_iter().flatten() {
-                if !visible(candidate) {
-                    continue;
-                }
-                if candidate.covering && candidate.offset == base {
-                    if covering.is_none() || candidate.area.focus {
-                        covering = Some(candidate);
+    let mut closest: Option<Candidate> = None;
+    let mut covering: Option<Candidate> = None;
+    let mut best_preferred = false;
+    let mut distance = proximity;
+    for area in areas
+        .iter()
+        .copied()
+        .filter(|area| area.align[axis] != ScrollSnapAlign::None)
+    {
+        if active_range.is_some_and(|range| {
+            area.rect[axis] > range[1] || area.rect[axis] + area.rect[axis + 2] < range[0]
+        }) {
+            continue;
+        }
+        let aligned = Candidate {
+            offset: aligned_offset(area, axis, port, maximum[axis]),
+            area,
+            covering: false,
+            alternative: None,
+        };
+        let covered = covering_candidate(area, areas, axis, base, port[axis + 2], port[axis]);
+        for candidate in [Some(aligned), covered].into_iter().flatten() {
+            if candidate.covering && candidate.offset == base {
+                // Chromium preserves an intended covered position and combines
+                // equivalent covering identities, favoring focused content.
+                if let Some(previous) = covering.as_mut() {
+                    let l = previous.area.rect[0].min(candidate.area.rect[0]);
+                    let t = previous.area.rect[1].min(candidate.area.rect[1]);
+                    let r = (previous.area.rect[0] + previous.area.rect[2])
+                        .max(candidate.area.rect[0] + candidate.area.rect[2]);
+                    let b = (previous.area.rect[1] + previous.area.rect[3])
+                        .max(candidate.area.rect[1] + candidate.area.rect[3]);
+                    previous.area.rect = [l, t, r - l, b - t];
+                    if candidate.area.focus {
+                        previous.area.handle = candidate.area.handle;
+                        previous.area.focus = true;
                     }
+                } else {
+                    covering = Some(candidate);
+                }
+                continue;
+            }
+            if !visible(candidate, axis, cross_offset, port, maximum) {
+                continue;
+            }
+            let delta = candidate.offset - current[axis];
+            if page.is_some_and(|(direction, _, fractional)| {
+                (if fractional { delta } else { delta.trunc() }) * direction.sign() <= 0.0
+            }) {
+                continue;
+            }
+            let d = (candidate.offset - base).abs();
+            if d > proximity {
+                continue;
+            }
+            let preferred = page.is_none_or(|(_, size, _)| {
+                delta.abs() >= ((size as f32 * 0.4) as i32).max(1) as f32
+                    && delta.abs() <= size.max(1) as f32
+            });
+            if (best_preferred && !preferred) || (d > distance && (best_preferred || !preferred)) {
+                continue;
+            }
+            if d < distance || (preferred && (!best_preferred || candidate.area.focus)) {
+                distance = d;
+                closest = Some(candidate);
+                best_preferred = preferred;
+            } else if let Some(old) = closest.as_mut().filter(|old| !old.area.focus) {
+                if targeted == Some(old.area.handle) {
                     continue;
                 }
-                if !relaxed && !valid(candidate.offset) {
-                    continue;
-                }
-                let is_preferred = !relaxed && preferred(candidate.offset);
-                let d = (candidate.offset - base).abs();
-                if best_preferred && !is_preferred {
-                    continue;
-                }
-                if d > distance && (best_preferred || !is_preferred) {
-                    continue;
-                }
-                let wins_tie = best.is_some_and(|old| {
-                    !old.area.focus
-                        && contains(old.area.rect, candidate.area.rect)
-                        && old.area.rect != candidate.area.rect
-                });
-                if d < distance
-                    || (is_preferred && (!best_preferred || candidate.area.focus))
-                    || wins_tie
+                if targeted == Some(candidate.area.handle)
+                    || (contains(old.area.rect, candidate.area.rect)
+                        && old.area.rect != candidate.area.rect)
                 {
-                    distance = d;
-                    best = Some(candidate);
-                    best_preferred = is_preferred;
+                    *old = candidate;
+                    best_preferred = preferred;
+                } else if candidate.area.align[1 - axis] != ScrollSnapAlign::None
+                    && preferred == best_preferred
+                    && !contains(candidate.area.rect, old.area.rect)
+                {
+                    let next_distance =
+                        (aligned_offset(candidate.area, 1 - axis, port, maximum[1 - axis])
+                            - current[1 - axis])
+                            .abs();
+                    let replace = old.alternative.is_none_or(|previous| {
+                        let old_distance =
+                            (aligned_offset(previous, 1 - axis, port, maximum[1 - axis])
+                                - current[1 - axis])
+                                .abs();
+                        next_distance < old_distance
+                            || (next_distance == old_distance
+                                && contains(previous.rect, candidate.area.rect)
+                                && previous.rect != candidate.area.rect)
+                    });
+                    if replace {
+                        old.alternative = Some(candidate.area);
+                    }
                 }
             }
         }
-        covering.or(best)
-    };
-    search(false).or_else(|| {
-        (strictness == ScrollSnapStrictness::Mandatory)
-            .then(|| search(true))
-            .flatten()
-    })
+    }
+    // EndPosition and page-distance strategies prefer the intended covering result.
+    let mut result = covering.or(closest);
+    if let (Some(selected), Some((direction, _, fractional))) = (result, page) {
+        // DirectionStrategy always respects snap-stop. Its second search has
+        // direction preference and includes only stop-always areas.
+        let first_stop = areas
+            .iter()
+            .copied()
+            .filter(|area| area.must_stop && area.align[axis] != ScrollSnapAlign::None)
+            .filter_map(|area| {
+                let candidate = Candidate {
+                    offset: aligned_offset(area, axis, port, maximum[axis]),
+                    area,
+                    covering: false,
+                    alternative: None,
+                };
+                let d = candidate.offset - current[axis];
+                let valid = (if fractional { d } else { d.trunc() }) * direction.sign() > 0.0;
+                (valid
+                    && visible(candidate, axis, cross_offset, port, maximum)
+                    && d.abs() <= proximity)
+                    .then_some(candidate)
+            })
+            .min_by(|a, b| {
+                (a.offset - current[axis])
+                    .abs()
+                    .total_cmp(&(b.offset - current[axis]).abs())
+            });
+        if let Some(stop) = first_stop {
+            if (stop.offset - current[axis]).abs() <= (selected.offset - current[axis]).abs() {
+                result = Some(stop);
+            }
+        }
+    }
+    if result.is_none() && page.is_some() && strictness == ScrollSnapStrictness::Mandatory {
+        return search_axis(
+            areas,
+            axis,
+            current,
+            port,
+            maximum,
+            cross_offset,
+            None,
+            strictness,
+            targeted,
+            active_range,
+        );
+    }
+    result
+}
+
+fn select_end_position(
+    areas: &[SnapArea],
+    current: [f32; 2],
+    port: [f32; 4],
+    maximum: [f32; 2],
+    axes: [bool; 2],
+    strictness: ScrollSnapStrictness,
+    old_targets: [Option<NodeHandle>; 2],
+    prioritize: bool,
+    targeted: Option<NodeHandle>,
+    horizontal: bool,
+) -> ([f32; 2], [Option<NodeHandle>; 2]) {
+    let mut selected: [Option<Candidate>; 2] = [None, None];
+    let mut targets = old_targets
+        .map(|target| target.filter(|target| areas.iter().any(|area| area.handle == *target)));
+    for axis in 0..2 {
+        if !axes[axis] {
+            continue;
+        }
+        if prioritize {
+            if let Some(area) = areas.iter().copied().find(|area| {
+                Some(area.handle) == targets[axis] && area.align[axis] != ScrollSnapAlign::None
+            }) {
+                let aligned = Candidate {
+                    offset: aligned_offset(area, axis, port, maximum[axis]),
+                    area,
+                    covering: false,
+                    alternative: None,
+                };
+                selected[axis] = if area.rect[axis + 2] >= port[axis + 2] {
+                    search_axis(
+                        areas,
+                        axis,
+                        current,
+                        port,
+                        maximum,
+                        current[1 - axis].clamp(0.0, maximum[1 - axis]),
+                        None,
+                        strictness,
+                        targeted,
+                        Some([area.rect[axis], area.rect[axis] + area.rect[axis + 2]]),
+                    )
+                    .or(Some(aligned))
+                } else {
+                    Some(aligned)
+                };
+            }
+        }
+        if selected[axis].is_none() {
+            selected[axis] = search_axis(
+                areas,
+                axis,
+                current,
+                port,
+                maximum,
+                current[1 - axis].clamp(0.0, maximum[1 - axis]),
+                None,
+                strictness,
+                targeted,
+                None,
+            );
+        }
+    }
+    if let (Some(x), Some(y)) = (selected[0], selected[1]) {
+        if !mutual_visible(x, y, port, maximum) {
+            let follow_x = if prioritize {
+                if targets[0].is_none() {
+                    false
+                } else if targets[1].is_none() || x.area.focus {
+                    true
+                } else if y.area.focus {
+                    false
+                } else if Some(x.area.handle) == targeted {
+                    true
+                } else if Some(y.area.handle) == targeted {
+                    false
+                } else {
+                    !horizontal
+                }
+            } else {
+                (x.offset - current[0]).abs() <= (y.offset - current[1]).abs()
+            };
+            let axis = if follow_x { 1 } else { 0 };
+            selected[axis] = search_axis(
+                areas,
+                axis,
+                current,
+                port,
+                maximum,
+                selected[1 - axis].unwrap().offset,
+                None,
+                strictness,
+                targeted,
+                None,
+            );
+        }
+    }
+    if axes == [true, true] && selected.iter().all(Option::is_none) {
+        // Both corridors can miss a diagonal area. Prefer minimum block
+        // distance from the snapport corridor, then inline distance.
+        let distance = |delta: f32, size: f32| {
+            if delta < 0.0 {
+                -delta
+            } else {
+                (delta - size).max(0.0)
+            }
+        };
+        let proximity = |axis: usize| {
+            if strictness == ScrollSnapStrictness::Proximity {
+                LayoutUnit::from_f32(port[axis + 2] * (1.0_f32 / 3.0_f32)).to_f32()
+            } else {
+                f32::MAX
+            }
+        };
+        let winner = areas
+            .iter()
+            .copied()
+            .filter(|area| {
+                area.align
+                    .iter()
+                    .all(|align| *align != ScrollSnapAlign::None)
+            })
+            .filter_map(|area| {
+                let offset = [
+                    aligned_offset(area, 0, port, maximum[0]),
+                    aligned_offset(area, 1, port, maximum[1]),
+                ];
+                let dx = offset[0] - current[0];
+                let dy = offset[1] - current[1];
+                (dx.abs() <= proximity(0) && dy.abs() <= proximity(1)).then_some((
+                    area,
+                    offset,
+                    [distance(dx, port[2]), distance(dy, port[3])],
+                ))
+            })
+            .min_by(|a, b| a.2[1].total_cmp(&b.2[1]).then(a.2[0].total_cmp(&b.2[0])));
+        if let Some((_area, offset, _)) = winner {
+            // Pinned fallback returns an aligned position with no target IDs.
+            return (offset, [None, None]);
+        }
+    }
+    let mut position = current;
+    for axis in 0..2 {
+        if let Some(mut result) = selected[axis] {
+            if let Some(alternative) = result.alternative {
+                let cross = selected[1 - axis]
+                    .map_or(current[1 - axis].clamp(0.0, maximum[1 - axis]), |value| {
+                        value.offset
+                    });
+                if (aligned_offset(alternative, 1 - axis, port, maximum[1 - axis]) - cross).abs()
+                    <= 1.0
+                {
+                    result.area = alternative;
+                }
+            }
+            position[axis] = result.offset;
+            targets[axis] = Some(result.area.handle);
+        }
+    }
+    (position, targets)
+}
+
+struct SnapGeometry {
+    area: openui_layout::ScrollArea,
+    minimum: [f32; 2],
+    maximum: [f32; 2],
+    port: [f32; 4],
+    areas: Vec<SnapArea>,
+    axes: [bool; 2],
+    strictness: ScrollSnapStrictness,
+    horizontal: bool,
 }
 
 impl Engine {
@@ -535,15 +900,34 @@ impl Engine {
         origin: NodeHandle,
         strictness: ScrollSnapStrictness,
     ) -> Result<(), EngineError> {
-        let node = self.resolve(origin)?;
-        if !self.is_authored_element(origin)? {
-            return Err(EngineError::InvalidInput(
-                "scroll-snap origin must be authored",
-            ));
+        self.resolve(origin)?;
+        self.set_property(
+            origin,
+            StyleProperty::ScrollSnapStrictness,
+            StyleValue::Renderer(RendererStyleValue::ScrollSnapStrictness(strictness)),
+        )
+    }
+
+    /// Native equivalent of selecting a targeted snap area for tie-breaking.
+    /// It changes the shared target preference without starting a scroll.
+    pub fn set_scroll_snap_target(
+        &mut self,
+        origin: NodeHandle,
+        target: Option<NodeHandle>,
+    ) -> Result<(), EngineError> {
+        self.resolve(origin)?;
+        if let Some(target) = target {
+            self.resolve(target)?;
+            if !self.is_authored_element(target)? || !self.has_focus_within(origin, target) {
+                return Err(EngineError::InvalidInput(
+                    "snap target must be an authored descendant of its scroll origin",
+                ));
+            }
+            self.scroll_buttons.targeted_areas.insert(origin, target);
+        } else {
+            self.scroll_buttons.targeted_areas.remove(&origin);
         }
-        self.scroll_buttons.strictness.insert(origin, strictness);
-        self.document.node_mut(node).native_scroll_snap_managed = true;
-        self.mark_dirty(InvalidationClass::Layout);
+        self.scroll_buttons.dirty = true;
         Ok(())
     }
 
@@ -657,6 +1041,19 @@ impl Engine {
             if parent.is_none() && node != self.document.root() {
                 continue;
             }
+            let mut current = Some(node);
+            let mut hidden = false;
+            while let Some(ancestor) = current {
+                let data = self.document.node(ancestor);
+                if data.style.display == Display::None {
+                    hidden = true;
+                    break;
+                }
+                current = (!data.parent.is_none()).then_some(data.parent);
+            }
+            if hidden {
+                continue;
+            }
             let next = self.document.node(node).next_sibling;
             for button in buttons {
                 if node == self.document.root() {
@@ -681,8 +1078,8 @@ impl Engine {
             .directions
             .retain(|(origin, _), button| !removed.contains(origin) && !removed.contains(button));
         self.scroll_buttons
-            .strictness
-            .retain(|origin, _| !removed.contains(origin));
+            .targeted_areas
+            .retain(|origin, target| !removed.contains(origin) && !removed.contains(target));
         self.scroll_buttons.snap_targets.retain(|origin, targets| {
             for target in targets {
                 if target.is_some_and(|target| removed.contains(&target)) {
@@ -743,83 +1140,53 @@ impl Engine {
             state.current_offset.0 as f32 - minimum[0],
             state.current_offset.1 as f32 - minimum[1],
         ];
-        let port = [
-            area.client_rect.width().to_f32(),
-            area.client_rect.height().to_f32(),
-        ];
-        let size = [area.client_rect.width(), area.client_rect.height()];
-        let offset = [state.current_offset.0 as f32, state.current_offset.1 as f32];
-        let page = pixel_snapped_size(size[axis], LayoutUnit::from_f32_round(offset[axis])).max(0);
+        let port = scroll_snapport(style, area);
+        let size = LayoutUnit::from_f32_round(port[axis + 2]);
+        // VisibleScrollSnapportRect uses the layout-quantized scroll position
+        // minus scroll origin, then the padding inset (not the box border).
+        let location = LayoutUnit::from_f32_round(
+            current[axis] + minimum[axis] + port[axis]
+                - [area.client_rect.x().to_f32(), area.client_rect.y().to_f32()][axis],
+        );
+        let page = pixel_snapped_size(size, location).max(0);
         let mut position = current;
         position[axis] += direction.sign() * page_step(page);
-        let writing = style.direction.writing_direction(style.writing_mode);
-        let snap_axis = match style.scroll_snap_axis {
-            ScrollSnapAxis::None => false,
-            ScrollSnapAxis::X => axis == 0,
-            ScrollSnapAxis::Y => axis == 1,
-            ScrollSnapAxis::Both => true,
-            ScrollSnapAxis::Inline => axis == usize::from(!writing.is_horizontal()),
-            ScrollSnapAxis::Block => axis == usize::from(writing.is_horizontal()),
-        };
         if style.scroll_snap_axis == ScrollSnapAxis::None {
             state.snap_targets = [None, None];
         }
-        if snap_axis {
-            let Some(fragment) = self
-                .latest_fragment
-                .as_ref()
-                .and_then(|root| find_fragment(root, node))
-            else {
+        if snap_axes(style)[axis] {
+            let Some(root) = self.latest_fragment.as_ref() else {
                 return state;
             };
-            let mut areas = Vec::new();
-            let mut seen = HashSet::new();
-            if let Err(reason) = self.collect_snap_areas(
-                fragment,
-                PhysicalOffset::default(),
-                area,
-                minimum,
-                false,
-                &mut seen,
-                &mut areas,
-            ) {
-                state.availability = A::Unsupported(reason);
-                return state;
-            }
+            let geometry = match self.snap_geometry(root, binding.origin) {
+                Ok(Some(value)) => value,
+                Ok(None) => return state,
+                Err(reason) => {
+                    state.availability = A::Unsupported(reason);
+                    return state;
+                }
+            };
             for target in &mut state.snap_targets {
-                if target.is_some_and(|target| !areas.iter().any(|area| area.handle == target)) {
+                if target
+                    .is_some_and(|target| !geometry.areas.iter().any(|area| area.handle == target))
+                {
                     *target = None;
                 }
             }
-            let reverse = if axis == 0 {
-                if writing.is_horizontal() {
-                    writing.is_rtl()
-                } else {
-                    writing.is_flipped_blocks()
-                }
-            } else {
-                !writing.is_horizontal() && (writing.is_rtl() != writing.is_flipped_lines())
-            };
-            let strictness = self
-                .scroll_buttons
-                .strictness
-                .get(&binding.origin)
-                .copied()
-                .unwrap_or_default();
-            if strictness == ScrollSnapStrictness::Proximity {
-                state.availability = A::Unsupported("proximity snap range is not implemented");
-                return state;
-            }
-            if let Some(target) = select_snap(
-                &areas,
-                direction,
+            if let Some(target) = search_axis(
+                &geometry.areas,
+                axis,
                 current,
                 port,
                 maximum,
-                page,
-                !area.integer_offsets,
-                reverse,
-                strictness,
+                current[1 - axis].clamp(0.0, maximum[1 - axis]),
+                Some((direction, page, !area.integer_offsets)),
+                style.scroll_snap_strictness,
+                self.scroll_buttons
+                    .targeted_areas
+                    .get(&binding.origin)
+                    .copied(),
+                None,
             ) {
                 position[axis] = target.offset;
                 state.snap_targets[axis] = Some(target.area.handle);
@@ -851,26 +1218,119 @@ impl Engine {
         state
     }
 
+    fn snap_geometry(
+        &self,
+        root: &Fragment,
+        origin: NodeHandle,
+    ) -> Result<Option<SnapGeometry>, &'static str> {
+        let node = self
+            .resolve(origin)
+            .map_err(|_| "snap origin has no retained identity")?;
+        let Some(fragment) = find_fragment(root, node) else {
+            return Ok(None);
+        };
+        let Some(area) = fragment.scroll_area else {
+            return Ok(None);
+        };
+        let style = &self.document.node(node).style;
+        if !style.is_scroll_container() && node != self.document.root() {
+            return Ok(None);
+        }
+        let limits = area.limits();
+        let minimum = [limits.0 .0 as f32, limits.1 .0 as f32];
+        let maximum = [
+            (limits.0 .1 - limits.0 .0) as f32,
+            (limits.1 .1 - limits.1 .0) as f32,
+        ];
+        let mut areas = Vec::new();
+        if snap_axes(style) != [false, false] {
+            self.collect_snap_areas(
+                fragment,
+                Affine::IDENTITY,
+                minimum,
+                None,
+                &mut HashSet::new(),
+                &mut areas,
+            )?;
+            for candidate in &mut areas {
+                let data = self.document.node(
+                    self.resolve(candidate.handle)
+                        .map_err(|_| "snap area has no retained identity")?,
+                );
+                let margin = [
+                    layout_length_pixels(data.style.scroll_margin_left, 0.0),
+                    layout_length_pixels(data.style.scroll_margin_top, 0.0),
+                    layout_length_pixels(data.style.scroll_margin_right, 0.0),
+                    layout_length_pixels(data.style.scroll_margin_bottom, 0.0),
+                ];
+                candidate.rect[0] -= margin[0];
+                candidate.rect[1] -= margin[1];
+                candidate.rect[2] += margin[0] + margin[2];
+                candidate.rect[3] += margin[1] + margin[3];
+                candidate.align = normalized_alignment(
+                    &data.style,
+                    style,
+                    candidate.rect,
+                    [fragment.size.width.to_f32(), fragment.size.height.to_f32()],
+                );
+            }
+        }
+        Ok(Some(SnapGeometry {
+            area,
+            minimum,
+            maximum,
+            port: scroll_snapport(style, area),
+            areas,
+            axes: snap_axes(style),
+            strictness: style.scroll_snap_strictness,
+            horizontal: style.writing_mode.is_horizontal(),
+        }))
+    }
+
     fn collect_snap_areas(
         &self,
         fragment: &Fragment,
-        offset: PhysicalOffset,
-        port: openui_layout::ScrollArea,
+        parent: Affine,
         minimum: [f32; 2],
-        unsupported_ancestor: bool,
+        unsupported_ancestor: Option<&'static str>,
         seen: &mut HashSet<NodeId>,
         out: &mut Vec<SnapArea>,
     ) -> Result<(), &'static str> {
         for child in &fragment.children {
-            let offset = PhysicalOffset::new(
-                offset.left + child.offset.left,
-                offset.top + child.offset.top,
-            );
+            let mut inherited = parent;
+            for ancestor in &child.promoted_transform_ancestors {
+                let style = &self.document.node(ancestor.node_id).style;
+                let t = style.transform;
+                let ox = length_pixels(
+                    style.transform_origin.0,
+                    ancestor.fragment_size.width.to_f32(),
+                );
+                let oy = length_pixels(
+                    style.transform_origin.1,
+                    ancestor.fragment_size.height.to_f32(),
+                );
+                let px = ancestor.fragment_offset.left.to_f32() + ox;
+                let py = ancestor.fragment_offset.top.to_f32() + oy;
+                inherited = inherited
+                    .then(Affine::translate(px, py))
+                    .then(Affine {
+                        a: t.a,
+                        b: t.b,
+                        c: t.c,
+                        d: t.d,
+                        e: t.e,
+                        f: t.f,
+                    })
+                    .then(Affine::translate(-px, -py));
+            }
+            let translated = inherited.then(Affine::translate(
+                child.offset.left.to_f32(),
+                child.offset.top.to_f32(),
+            ));
             if child.node_id.is_none() {
                 self.collect_snap_areas(
                     child,
-                    offset,
-                    port,
+                    translated,
                     minimum,
                     unsupported_ancestor,
                     seen,
@@ -879,59 +1339,358 @@ impl Engine {
                 continue;
             }
             let data = self.document.node(child.node_id);
-            let unsupported = unsupported_ancestor
-                || (child.owns_element_box()
-                    && (data.style.transform != Transform2D::IDENTITY
-                        || data.style.position == openui_style::Position::Sticky));
-            if child.owns_element_box() && data.style.scroll_snap_align != ScrollSnapAlign::None {
-                if unsupported {
-                    return Err("transformed or sticky snap-area geometry is not implemented");
+            let owns = child.owns_element_box();
+            // kIgnoreScrollOffset does not imply kIgnoreStickyOffset: pinned
+            // LayoutBoxModelObject keeps the current sticky translation.
+            let unsupported = unsupported_ancestor.or_else(|| {
+                let index = self.node_slots.get(&child.node_id)?;
+                let authored = &self.slots[*index as usize].authored;
+                let StyleValue::Transform(list) =
+                    authored.get(&(StyleProperty::Transform as u16))?
+                else {
+                    return None;
+                };
+                list.0
+                    .iter()
+                    .any(|operation| {
+                        matches!(
+                            operation,
+                            TransformOperation::Perspective(_)
+                                | TransformOperation::Matrix3d(_)
+                                | TransformOperation::Rotate3d { .. }
+                                | TransformOperation::Translate3d(..)
+                                | TransformOperation::Scale3d(..)
+                        )
+                    })
+                    .then_some("three-dimensional snap quads require retained 3D scene geometry")
+            });
+            let world = if owns {
+                let transform = data.style.transform;
+                let ox = if data.style.transform_origin.0.is_auto() {
+                    child.size.width.to_f32() * 0.5
+                } else {
+                    length_pixels(data.style.transform_origin.0, child.size.width.to_f32())
+                };
+                let oy = if data.style.transform_origin.1.is_auto() {
+                    child.size.height.to_f32() * 0.5
+                } else {
+                    length_pixels(data.style.transform_origin.1, child.size.height.to_f32())
+                };
+                translated
+                    .then(Affine::translate(ox, oy))
+                    .then(Affine {
+                        a: transform.a,
+                        b: transform.b,
+                        c: transform.c,
+                        d: transform.d,
+                        e: transform.e,
+                        f: transform.f,
+                    })
+                    .then(Affine::translate(-ox, -oy))
+            } else {
+                translated
+            };
+            let has_alignment = data
+                .style
+                .scroll_snap_align_block
+                .unwrap_or(data.style.scroll_snap_align)
+                != ScrollSnapAlign::None
+                || data
+                    .style
+                    .scroll_snap_align_inline
+                    .unwrap_or(data.style.scroll_snap_align)
+                    != ScrollSnapAlign::None;
+            if owns && has_alignment {
+                if let Some(reason) = unsupported {
+                    return Err(reason);
                 }
                 let Some(index) = self.node_slots.get(&child.node_id) else {
                     return Err("snap area has no retained identity");
                 };
                 let handle = self.handle_for_slot(*index);
                 let border = child.border_box_rect();
-                let candidate = SnapArea {
-                    handle,
-                    rect: [
-                        (offset.left + border.offset.left - port.client_rect.x()).to_f32()
-                            - minimum[0],
-                        (offset.top + border.offset.top - port.client_rect.y()).to_f32()
-                            - minimum[1],
-                        border.size.width.to_f32(),
-                        border.size.height.to_f32(),
-                    ],
-                    align: data.style.scroll_snap_align,
-                    focus: self
-                        .focused
-                        .is_some_and(|focus| self.has_focus_within(handle, focus)),
-                };
-                if seen.insert(child.node_id) {
-                    out.push(candidate);
-                } else if let Some(area) = out.iter_mut().find(|area| area.handle == handle) {
-                    let left = area.rect[0].min(candidate.rect[0]);
-                    let top = area.rect[1].min(candidate.rect[1]);
-                    let right =
-                        (area.rect[0] + area.rect[2]).max(candidate.rect[0] + candidate.rect[2]);
-                    let bottom =
-                        (area.rect[1] + area.rect[3]).max(candidate.rect[1] + candidate.rect[3]);
-                    area.rect = [left, top, right - left, bottom - top];
+                let mapped = world
+                    .then(Affine::translate(
+                        border.offset.left.to_f32(),
+                        border.offset.top.to_f32(),
+                    ))
+                    .map_rect(border.size.width.to_f32(), border.size.height.to_f32());
+                // Pinned QuadsInAncestor ignores retained scroll offsets;
+                // enclosing physical rectangles quantize all four quad edges.
+                let left = LayoutUnit::from_f32_floor(mapped.x).to_f32() - minimum[0];
+                let top = LayoutUnit::from_f32_floor(mapped.y).to_f32() - minimum[1];
+                let right =
+                    LayoutUnit::from_f32_ceil(mapped.x + mapped.width).to_f32() - minimum[0];
+                let bottom =
+                    LayoutUnit::from_f32_ceil(mapped.y + mapped.height).to_f32() - minimum[1];
+                if right > left && bottom > top {
+                    let candidate = SnapArea {
+                        handle,
+                        rect: [left, top, right - left, bottom - top],
+                        align: [ScrollSnapAlign::None; 2],
+                        focus: self
+                            .focused
+                            .is_some_and(|focus| self.has_focus_within(handle, focus)),
+                        must_stop: data.style.scroll_snap_stop == ScrollSnapStop::Always,
+                    };
+                    if seen.insert(child.node_id) {
+                        out.push(candidate);
+                    } else if let Some(area) = out.iter_mut().find(|area| area.handle == handle) {
+                        let l = area.rect[0].min(left);
+                        let t = area.rect[1].min(top);
+                        let r = (area.rect[0] + area.rect[2]).max(right);
+                        let b = (area.rect[1] + area.rect[3]).max(bottom);
+                        area.rect = [l, t, r - l, b - t];
+                    }
                 }
             }
-            // A nested scroll container owns its own descendant snap areas.
-            if child.owns_element_box() && data.style.is_scroll_container() {
+            // Each nested scrollport owns its descendant areas; helper table
+            // boxes do not acquire transforms or scroller ownership again.
+            if owns && data.style.is_scroll_container() {
                 continue;
             }
-            self.collect_snap_areas(child, offset, port, minimum, unsupported, seen, out)?;
+            self.collect_snap_areas(child, world, minimum, unsupported, seen, out)?;
         }
         Ok(())
+    }
+
+    /// Settle all native authored snap containers against the new layout,
+    /// retaining still-present target identities before distance selection.
+    /// Called within the existing layout barrier, never recursively via update.
+    pub(crate) fn settle_native_snap_after_layout(&mut self, root: &Fragment) -> bool {
+        fn collect(
+            fragment: &Fragment,
+            document: &openui_dom::Document,
+            out: &mut HashSet<NodeId>,
+        ) {
+            if fragment.owns_element_box()
+                && !fragment.node_id.is_none()
+                && document.node(fragment.node_id).native_scroll_snap_managed
+            {
+                out.insert(fragment.node_id);
+            }
+            for child in &fragment.children {
+                collect(child, document, out);
+            }
+        }
+        let mut origins = HashSet::new();
+        collect(root, &self.document, &mut origins);
+        let mut ordered: Vec<_> = origins.into_iter().collect();
+        ordered.sort_by_key(|node| self.node_slots.get(node).copied().unwrap_or(u32::MAX));
+        let mut changed = false;
+        for node in ordered {
+            let Some(index) = self.node_slots.get(&node) else {
+                continue;
+            };
+            let origin = self.handle_for_slot(*index);
+            let geometry = match self.snap_geometry(root, origin) {
+                Ok(Some(value)) => value,
+                _ => continue,
+            };
+            if geometry.axes == [false, false] {
+                self.scroll_buttons.snap_targets.remove(&origin);
+                continue;
+            }
+            if self
+                .scroll_animations
+                .values()
+                .any(|animation| animation.target == origin)
+            {
+                continue;
+            }
+            let data = self.document.node(node);
+            let current = [
+                data.scroll_left - geometry.minimum[0],
+                data.scroll_top - geometry.minimum[1],
+            ];
+            let old = self
+                .scroll_buttons
+                .snap_targets
+                .get(&origin)
+                .copied()
+                .unwrap_or([None, None]);
+            let (position, targets) = select_end_position(
+                &geometry.areas,
+                current,
+                geometry.port,
+                geometry.maximum,
+                geometry.axes,
+                geometry.strictness,
+                old,
+                true,
+                self.scroll_buttons.targeted_areas.get(&origin).copied(),
+                geometry.horizontal,
+            );
+            self.scroll_buttons.snap_targets.insert(origin, targets);
+            let next = geometry.area.clamp_offset(
+                (position[0] + geometry.minimum[0]) as f64,
+                (position[1] + geometry.minimum[1]) as f64,
+            );
+            if next != (data.scroll_left, data.scroll_top) {
+                let data = self.document.node_mut(node);
+                data.scroll_left = next.0;
+                data.scroll_top = next.1;
+                changed = true;
+            }
+        }
+        changed
+    }
+
+    /// Resolve an authored endpoint through the same retained snap data used
+    /// by buttons and layout resnapping. Axes that did not move keep their IDs.
+    pub(crate) fn resolve_native_scroll_endpoint(
+        &mut self,
+        origin: NodeHandle,
+        x: f32,
+        y: f32,
+    ) -> Result<(f32, f32), EngineError> {
+        let node = self.resolve(origin)?;
+        if !self.document.node(node).native_scroll_snap_managed {
+            return Ok((x, y));
+        }
+        let Some(root) = self.latest_fragment.as_ref() else {
+            return Ok((x, y));
+        };
+        let geometry = self
+            .snap_geometry(root, origin)
+            .map_err(EngineError::InvalidInput)?;
+        let Some(geometry) = geometry else {
+            return Ok((x, y));
+        };
+        let old_offset = self.scroll_offset(origin)?;
+        let axes = [
+            geometry.axes[0] && x as f64 != old_offset.0,
+            geometry.axes[1] && y as f64 != old_offset.1,
+        ];
+        let current = [x - geometry.minimum[0], y - geometry.minimum[1]];
+        let old = self
+            .scroll_buttons
+            .snap_targets
+            .get(&origin)
+            .copied()
+            .unwrap_or([None, None]);
+        let (position, targets) = select_end_position(
+            &geometry.areas,
+            current,
+            geometry.port,
+            geometry.maximum,
+            axes,
+            geometry.strictness,
+            old,
+            false,
+            self.scroll_buttons.targeted_areas.get(&origin).copied(),
+            geometry.horizontal,
+        );
+        self.scroll_buttons.snap_targets.insert(origin, targets);
+        Ok(geometry.area.clamp_offset(
+            (position[0] + geometry.minimum[0]) as f64,
+            (position[1] + geometry.minimum[1]) as f64,
+        ))
+    }
+
+    /// End a native scrolling operation at the nearest authored snap state.
+    /// This consumes retained layout data, not application-provided point lists.
+    pub fn settle_native_scroll_snap(&mut self, origin: NodeHandle) -> Result<bool, EngineError> {
+        self.resolve(origin)?;
+        self.update()?;
+        let Some(root) = self.latest_fragment.as_ref() else {
+            return Ok(false);
+        };
+        let Some(geometry) = self
+            .snap_geometry(root, origin)
+            .map_err(EngineError::InvalidInput)?
+        else {
+            return Ok(false);
+        };
+        if geometry.axes == [false, false] {
+            return Ok(false);
+        }
+        let before = self.scroll_offset(origin)?;
+        let current = [
+            before.0 as f32 - geometry.minimum[0],
+            before.1 as f32 - geometry.minimum[1],
+        ];
+        let old = self
+            .scroll_buttons
+            .snap_targets
+            .get(&origin)
+            .copied()
+            .unwrap_or([None, None]);
+        let (position, targets) = select_end_position(
+            &geometry.areas,
+            current,
+            geometry.port,
+            geometry.maximum,
+            geometry.axes,
+            geometry.strictness,
+            old,
+            false,
+            self.scroll_buttons.targeted_areas.get(&origin).copied(),
+            geometry.horizontal,
+        );
+        let next = geometry.area.clamp_offset(
+            (position[0] + geometry.minimum[0]) as f64,
+            (position[1] + geometry.minimum[1]) as f64,
+        );
+        self.scroll_buttons.snap_targets.insert(origin, targets);
+        self.scroll_to_resolved(origin, next.0, next.1)?;
+        Ok(before != (next.0 as f64, next.1 as f64))
+    }
+
+    fn prune_native_snap_identities(&mut self) {
+        let origins: HashSet<_> = self
+            .scroll_buttons
+            .snap_targets
+            .keys()
+            .chain(self.scroll_buttons.targeted_areas.keys())
+            .copied()
+            .chain(
+                self.scroll_buttons
+                    .bindings
+                    .values()
+                    .map(|binding| binding.origin),
+            )
+            .collect();
+        for origin in origins {
+            let geometry = self
+                .latest_fragment
+                .as_ref()
+                .and_then(|root| self.snap_geometry(root, origin).ok().flatten());
+            let targets = self
+                .scroll_buttons
+                .snap_targets
+                .entry(origin)
+                .or_insert([None, None]);
+            for axis in 0..2 {
+                targets[axis] = targets[axis].filter(|target| {
+                    geometry.as_ref().is_some_and(|geometry| {
+                        geometry.axes[axis]
+                            && geometry.areas.iter().any(|area| {
+                                area.handle == *target && area.align[axis] != ScrollSnapAlign::None
+                            })
+                    })
+                });
+            }
+            if self
+                .scroll_buttons
+                .targeted_areas
+                .get(&origin)
+                .is_some_and(|target| {
+                    !geometry.as_ref().is_some_and(|geometry| {
+                        geometry.areas.iter().any(|area| area.handle == *target)
+                    })
+                })
+            {
+                self.scroll_buttons.targeted_areas.remove(&origin);
+            }
+        }
     }
 
     pub(crate) fn refresh_scroll_button_states(&mut self) {
         if !self.scroll_buttons.dirty {
             return;
         }
+        self.prune_native_snap_identities();
         let bindings: Vec<_> = self.scroll_buttons.bindings.values().copied().collect();
         for binding in bindings {
             let state = self.resolve_scroll_button(binding);
@@ -978,7 +1737,7 @@ impl Engine {
         // Focus while the activation-time eligibility snapshot remains valid;
         // the subsequent post-layout snapshot may disable the endpoint button.
         self.focus_with_origin(button, FocusOrigin::Script)?;
-        self.scroll_to(state.origin, x, y)?;
+        self.scroll_to_resolved(state.origin, x as f32, y as f32)?;
         self.scroll_buttons
             .snap_targets
             .insert(state.origin, state.snap_targets);

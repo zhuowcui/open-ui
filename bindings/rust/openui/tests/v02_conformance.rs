@@ -288,6 +288,200 @@ fn native_scroll_button_logical_direction_and_scrollbar_page_geometry() {
     assert_eq!(down.state().unwrap().target_offset.unwrap().1, 56.0);
 }
 
+fn native_snap_fixture(document: &Document) -> (Element, Element) {
+    let scroller = child(document, "div");
+    sized(&scroller, 100.0, 80.0);
+    scroller.set_overflow(Overflow::Scroll).unwrap();
+    scroller.set_scrollbar_width(ScrollbarWidth::None).unwrap();
+    let content = Element::create(document, "div").unwrap();
+    sized(&content, 400.0, 300.0);
+    content.set_position(Position::Relative).unwrap();
+    scroller.append_child(&content).unwrap();
+    (scroller, content)
+}
+
+fn native_snap_area(document: &Document, content: &Element, x: f32, y: f32) -> Element {
+    let area = Element::create(document, "div").unwrap();
+    sized(&area, 20.0, 20.0);
+    area.set_position(Position::Absolute).unwrap();
+    area.set_left(Length::px(x)).unwrap();
+    area.set_top(Length::px(y)).unwrap();
+    area.set_scroll_snap_align(ScrollSnapAlign::Start).unwrap();
+    content.append_child(&area).unwrap();
+    area
+}
+
+#[test]
+fn native_scroll_snap_initial_and_resnap_follow_retained_area_identity() {
+    let document = document();
+    let (scroller, content) = native_snap_fixture(&document);
+    scroller.set_scroll_snap_axis(ScrollSnapAxis::X).unwrap();
+    let first = native_snap_area(&document, &content, 40.0, 0.0);
+    let second = native_snap_area(&document, &content, 200.0, 0.0);
+    let next = styled_scroll_button(&scroller, ScrollButtonDirection::Right);
+    // Initial mandatory snapping moves the actual retained offset; it is not
+    // a paint-only translation or a value supplied by the application.
+    assert_eq!(scroller.scroll_left().unwrap(), 40.0);
+    let initial = next.state().unwrap().current_snap_targets[0].unwrap();
+    let clone = scroller.clone_subtree().unwrap();
+    document.body().append_child(&clone).unwrap();
+    assert!(clone
+        .scroll_button(ScrollButtonDirection::Right)
+        .unwrap()
+        .is_none());
+    assert_eq!(clone.scroll_left().unwrap(), 40.0);
+    next.activate().unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 200.0);
+    let selected = next.state().unwrap().current_snap_targets[0].unwrap();
+    assert_ne!(selected, initial);
+    second.set_left(Length::px(250.0)).unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 250.0);
+    assert_eq!(
+        next.state().unwrap().current_snap_targets[0],
+        Some(selected)
+    );
+    second.set_display(Display::None).unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 40.0);
+    assert_eq!(next.state().unwrap().current_snap_targets[0], Some(initial));
+    // Moving a live node out of the scroller clears both committed and preview
+    // identities instead of returning an alias to an unrelated retained box.
+    document.body().append_child(&first).unwrap();
+    assert_eq!(next.state().unwrap().current_snap_targets, [None, None]);
+    scroller.set_scroll_snap_axis(ScrollSnapAxis::None).unwrap();
+    assert_eq!(next.state().unwrap().snap_targets, [None, None]);
+}
+
+#[test]
+fn native_scroll_padding_and_margin_affect_pages_and_snap_geometry() {
+    let document = document();
+    let (scroller, content) = native_snap_fixture(&document);
+    scroller
+        .set_scroll_padding_left(LengthValue::percent(10.0))
+        .unwrap();
+    scroller
+        .set_scroll_padding_right(LengthValue::px(10.0))
+        .unwrap();
+    let next = styled_scroll_button(&scroller, ScrollButtonDirection::Right);
+    assert_eq!(next.state().unwrap().target_offset.unwrap().0, 70.0);
+    scroller.set_width(LengthValue::px(150.0)).unwrap();
+    assert_eq!(next.state().unwrap().target_offset.unwrap().0, 109.0);
+    assert!(scroller
+        .set_scroll_padding_right(LengthValue::px(-1.0))
+        .is_err());
+    scroller.set_width(LengthValue::px(100.0)).unwrap();
+    let area = native_snap_area(&document, &content, 80.0, 0.0);
+    area.set_scroll_margin_left(LengthValue::px(5.0)).unwrap();
+    assert!(area
+        .set_scroll_margin_left(LengthValue::percent(5.0))
+        .is_err());
+    scroller.set_scroll_snap_axis(ScrollSnapAxis::X).unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 65.0);
+    assert!(next.state().unwrap().current_snap_targets[0].is_some());
+    area.set_scroll_margin_left(LengthValue::px(10.0)).unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 60.0);
+}
+
+#[test]
+fn native_scroll_snap_stop_and_proximity_share_page_selection() {
+    let document = document();
+    let (scroller, content) = native_snap_fixture(&document);
+    scroller.set_scroll_snap_axis(ScrollSnapAxis::X).unwrap();
+    let start = native_snap_area(&document, &content, 0.0, 0.0);
+    let stop = native_snap_area(&document, &content, 40.0, 0.0);
+    stop.set_scroll_snap_stop(ScrollSnapStop::Always).unwrap();
+    let ordinary = native_snap_area(&document, &content, 90.0, 0.0);
+    let next = styled_scroll_button(&scroller, ScrollButtonDirection::Right);
+    assert_eq!(next.state().unwrap().target_offset.unwrap().0, 40.0);
+    next.activate().unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 40.0);
+    stop.remove().unwrap();
+    ordinary.remove().unwrap();
+    let far = native_snap_area(&document, &content, 180.0, 0.0);
+    scroller
+        .set_scroll_snap_strictness(ScrollSnapStrictness::Proximity)
+        .unwrap();
+    scroller.scroll_to(0.0, 0.0).unwrap();
+    assert_eq!(next.state().unwrap().target_offset.unwrap().0, 87.0);
+    assert_eq!(next.state().unwrap().snap_targets[0], None);
+    next.activate().unwrap();
+    assert_eq!(scroller.scroll_left().unwrap(), 87.0);
+    // A native explicit end barrier does not invent a proximity match.
+    assert!(!scroller.settle_native_scroll_snap().unwrap());
+    assert_eq!(scroller.scroll_left().unwrap(), 87.0);
+    far.remove().unwrap();
+    start.remove().unwrap();
+}
+
+#[test]
+fn native_scroll_snap_uses_split_alignment_and_transformed_area_bounds() {
+    let document = document();
+    let (scroller, content) = native_snap_fixture(&document);
+    let area = native_snap_area(&document, &content, 40.0, 20.0);
+    area.set_scroll_snap_alignment(ScrollSnapAlign::End, ScrollSnapAlign::Start)
+        .unwrap();
+    area.set_transform(TransformList(vec![TransformOperation::Translate(
+        LengthValue::px(15.5),
+        LengthValue::px(7.5),
+    )]))
+    .unwrap();
+    scroller.set_scroll_snap_axis(ScrollSnapAxis::Both).unwrap();
+    let next = styled_scroll_button(&scroller, ScrollButtonDirection::Right);
+    assert_eq!(scroller.scroll_left().unwrap(), 56.0);
+    assert_eq!(scroller.scroll_top().unwrap(), 0.0);
+    // Repeating the single align declaration must override both logical
+    // fields, even after the same value appeared earlier in authored order.
+    area.set_scroll_snap_align(ScrollSnapAlign::Start).unwrap();
+    assert_eq!(scroller.scroll_top().unwrap(), 28.0);
+    let snapshot = next.state().unwrap();
+    assert_eq!(
+        snapshot.current_snap_targets[0],
+        snapshot.current_snap_targets[1]
+    );
+    assert!(snapshot.current_snap_targets[0].is_some());
+    area.set_transform(TransformList(vec![TransformOperation::Perspective(
+        LengthValue::px(100.0),
+    )]))
+    .unwrap();
+    assert!(matches!(
+        next.state().unwrap().availability,
+        ScrollButtonAvailability::Unsupported(_)
+    ));
+    assert_eq!(next.state().unwrap().current_snap_targets, [None, None]);
+    assert!(next.activate().is_err());
+}
+
+#[test]
+fn native_scroll_button_hidden_origin_suppresses_box_and_snap_aliases() {
+    let document = document();
+    let (scroller, content) = native_snap_fixture(&document);
+    native_snap_area(&document, &content, 40.0, 0.0);
+    scroller.set_scroll_snap_axis(ScrollSnapAxis::X).unwrap();
+    let next = styled_scroll_button(&scroller, ScrollButtonDirection::Right);
+    let identity = next.state().unwrap().current_snap_targets[0].unwrap();
+    assert!(next.bounding_rect().unwrap().is_some());
+    scroller.set_display(Display::None).unwrap();
+    assert!(next.bounding_rect().unwrap().is_none());
+    assert_eq!(next.state().unwrap().current_snap_targets, [None, None]);
+    assert_eq!(
+        next.state().unwrap().availability,
+        ScrollButtonAvailability::NoScrollport
+    );
+    scroller.set_display(Display::Block).unwrap();
+    assert!(next.bounding_rect().unwrap().is_some());
+    assert_eq!(
+        next.state().unwrap().current_snap_targets[0],
+        Some(identity)
+    );
+    let foreign_document = Document::new(320, 240).unwrap();
+    let foreign = child(&foreign_document, "div");
+    assert!(scroller.set_scroll_snap_target(Some(&foreign)).is_err());
+    // Rejecting a foreign target leaves the retained selected identity intact.
+    assert_eq!(
+        next.state().unwrap().current_snap_targets[0],
+        Some(identity)
+    );
+}
+
 fn animation_options(duration_ms: f64) -> AnimationOptions {
     AnimationOptions {
         duration_ms,
