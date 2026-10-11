@@ -182,6 +182,10 @@ pub struct ConstraintSpace {
     /// Scrollbar geometry for this principal box. The owner prevents cloned
     /// child constraint spaces from inheriting an ancestor's gutters.
     pub element_scrollbars: Option<(openui_dom::NodeId, crate::ElementScrollbars)>,
+    /// Physical used borders for one originating element box. Collapsed table
+    /// cells receive resolved winning half widths before sizing. The owner
+    /// prevents cloned constraints from overriding ordinary descendant boxes.
+    pub element_used_border: Option<(openui_dom::NodeId, openui_geometry::BoxStrut)>,
     // ── Coordinate system ───────────────────────────────────────────
     /// Writing direction that defines the inline/block axes of every logical
     /// size and offset stored in this space.
@@ -270,6 +274,15 @@ pub struct ConstraintSpace {
 }
 
 impl ConstraintSpace {
+    pub(crate) fn used_border_for(
+        &self,
+        node: openui_dom::NodeId,
+    ) -> Option<openui_geometry::BoxStrut> {
+        self.element_used_border
+            .filter(|(owner, _)| *owner == node)
+            .map(|(_, border)| border)
+    }
+
     /// Create a constraint space for the root viewport.
     pub fn for_root(width: LayoutUnit, height: LayoutUnit) -> Self {
         Self::for_root_with_writing_direction(width, height, WritingDirectionMode::horizontal_ltr())
@@ -293,6 +306,7 @@ impl ConstraintSpace {
         Self {
             writing_direction,
             element_scrollbars: None,
+            element_used_border: None,
             available_inline_size: inline_size,
             available_block_size: block_size,
             percentage_resolution_inline_size: inline_size,
@@ -348,6 +362,7 @@ impl ConstraintSpace {
         Self {
             writing_direction,
             element_scrollbars: None,
+            element_used_border: None,
             available_inline_size,
             available_block_size,
             percentage_resolution_inline_size: percentage_inline,
@@ -440,6 +455,7 @@ impl ConstraintSpace {
         Self {
             writing_direction,
             element_scrollbars: None,
+            element_used_border: None,
             available_inline_size,
             available_block_size,
             percentage_resolution_inline_size: percentage_inline,
@@ -698,6 +714,35 @@ mod tests {
 
     fn vertical_rl_ltr() -> WritingDirectionMode {
         WritingDirectionMode::new(false, true, false, false)
+    }
+
+    #[test]
+    fn used_border_override_is_scoped_to_its_originating_element() {
+        let mut doc = openui_dom::Document::new();
+        let owner = doc.create_node(openui_dom::ElementTag::TableCell);
+        let child = doc.create_node(openui_dom::ElementTag::Div);
+        let used = openui_geometry::BoxStrut::new(
+            LayoutUnit::from_f32(0.5),
+            LayoutUnit::from_f32(3.5),
+            LayoutUnit::from_f32(1.5),
+            LayoutUnit::from_f32(0.5),
+        );
+        let mut space =
+            ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100));
+        space.element_used_border = Some((owner, used));
+        let continuation_space = space.clone();
+        assert_eq!(continuation_space.used_border_for(owner), Some(used));
+        assert_eq!(continuation_space.used_border_for(child), None);
+        let child_space = ConstraintSpace::for_block_child_from_parent(
+            &space,
+            LayoutUnit::from_i32(100),
+            openui_geometry::INDEFINITE_SIZE,
+            LayoutUnit::from_i32(100),
+            openui_geometry::INDEFINITE_SIZE,
+            false,
+            WritingDirectionMode::horizontal_ltr(),
+        );
+        assert!(child_space.element_used_border.is_none());
     }
 
     #[test]

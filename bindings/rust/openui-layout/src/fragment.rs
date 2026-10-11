@@ -388,6 +388,15 @@ pub struct Fragment {
     /// Independently sized collapsed-table border pieces painted above cell
     /// backgrounds. Empty means `border` uses the fragment's full border box.
     pub collapsed_border_segments: Vec<CollapsedBorderSegment>,
+    /// Resolved full-width table paint sources, owned once by the table.
+    /// Geometry clients use each cell's already-resolved Fragment::border.
+    pub collapsed_table_border_data: Option<std::sync::Arc<crate::CollapsedTableBorderData>>,
+    /// This grid participant's authored border is painted by the table's
+    /// resolved graph, independently of its used layout border strut.
+    pub collapsed_table_border_participant: bool,
+    /// A cell originating in a collapsed row or spanning only collapsed
+    /// columns is retained for geometry but contributes no painted subtree.
+    pub is_hidden_for_paint: bool,
 
     /// Optional local rectangles that clip this fragment's table-structural
     /// decoration while retaining the fragment border box as the background
@@ -580,6 +589,9 @@ impl Fragment {
             ignore_border_radius: false,
             paint_border_after_children: false,
             collapsed_border_segments: Vec::new(),
+            collapsed_table_border_data: None,
+            collapsed_table_border_participant: false,
+            is_hidden_for_paint: false,
             decoration_clip_rects: Vec::new(),
             table_row_span: 1,
             decoration_slice: None,
@@ -650,6 +662,9 @@ impl Fragment {
             ignore_border_radius: false,
             paint_border_after_children: false,
             collapsed_border_segments: Vec::new(),
+            collapsed_table_border_data: None,
+            collapsed_table_border_participant: false,
+            is_hidden_for_paint: false,
             decoration_clip_rects: Vec::new(),
             table_row_span: 1,
             decoration_slice: None,

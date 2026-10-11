@@ -163,7 +163,9 @@ fn replaced_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     let node = doc.node(node_id);
     let style = &node.style;
     let replaced = node.replaced.expect("replaced layout requires metadata");
-    let border = resolve_border(style);
+    let border = space
+        .used_border_for(node_id)
+        .unwrap_or_else(|| resolve_border(style));
     let padding = resolve_padding(style, space.percentage_resolution_inline_size);
     let inline_edges = border.inline_sum() + padding.inline_sum();
     let block_edges = border.block_sum() + padding.block_sum();
@@ -633,7 +635,9 @@ fn missing_image_layout(
     }
 
     let style = &node.style;
-    let border = resolve_border(style);
+    let border = space
+        .used_border_for(node_id)
+        .unwrap_or_else(|| resolve_border(style));
     let padding = resolve_padding(style, space.percentage_resolution_inline_size);
     let inline_edges = border.inline_sum() + padding.inline_sum();
     let block_edges = border.block_sum() + padding.block_sum();
@@ -1664,7 +1668,9 @@ pub(crate) fn block_layout_contents(
     // Blink: uses pre-resolved border widths (integers) and resolves padding
     // against percentage_resolution_inline_size.
 
-    let physical_border = resolve_border(physical_style);
+    let physical_border = space
+        .used_border_for(node_id)
+        .unwrap_or_else(|| resolve_border(physical_style));
     let physical_padding = resolve_padding(physical_style, space.percentage_resolution_inline_size);
     // Horizontal block layout stores physical x coordinates even when inline
     // progression is RTL. Preserve authored left/right edges in that path;

@@ -14,7 +14,7 @@
 
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{
-    LayoutUnit, Length, LengthType, MinMaxSizes, PhysicalSize, WritingDirectionMode,
+    BoxStrut, LayoutUnit, Length, LengthType, MinMaxSizes, PhysicalSize, WritingDirectionMode,
     WritingModeConverter,
 };
 use openui_style::{
@@ -717,42 +717,64 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
 ///
 /// Border and padding of the container are added to the result.
 pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> IntrinsicSizes {
+    compute_intrinsic_block_sizes_impl(doc, node_id, None)
+}
+
+/// Resolve the originating cell's border before preferred size, containment
+/// and replaced-element constraints. Recursive child calls remain ordinary.
+pub(crate) fn compute_intrinsic_block_sizes_with_used_border(
+    doc: &Document,
+    node_id: NodeId,
+    used_border: BoxStrut,
+) -> IntrinsicSizes {
+    compute_intrinsic_block_sizes_impl(doc, node_id, Some(used_border))
+}
+
+fn compute_intrinsic_block_sizes_impl(
+    doc: &Document,
+    node_id: NodeId,
+    used_border: Option<BoxStrut>,
+) -> IntrinsicSizes {
     let node = doc.node(node_id);
     let style = &node.style;
     let tag = node.tag;
 
     // Replaced elements use their own intrinsic dimensions.
     if node.replaced.is_some() || is_replaced_element(tag) {
-        return apply_size_containment(
+        return apply_size_containment_with_border(
             style,
-            compute_replaced_intrinsic_sizes_for_node(doc, node_id),
+            used_border,
+            compute_replaced_intrinsic_sizes_for_node_impl(doc, node_id, used_border),
         );
     }
 
     // Flex containers have their own intrinsic sizing algorithm.
     // CSS Flexbox §9.9: Flex container intrinsic sizes.
     if style.display.is_flex() {
-        return apply_size_containment(
+        return apply_size_containment_with_border(
             style,
+            used_border,
             compute_flex_intrinsic_sizes(doc, node_id, style, None),
         );
     }
 
     if style.display.is_grid() {
-        return apply_size_containment(
+        return apply_size_containment_with_border(
             style,
+            used_border,
             crate::grid::compute_grid_intrinsic_sizes(doc, node_id),
         );
     }
 
     if style.display.is_table_wrapper() {
-        return apply_size_containment(
+        return apply_size_containment_with_border(
             style,
+            used_border,
             crate::table::compute_table_intrinsic_sizes(doc, node_id),
         );
     }
 
-    let border = resolve_border(style);
+    let border = used_border.unwrap_or_else(|| resolve_border(style));
     let padding = resolve_padding(style, LayoutUnit::zero());
     let bp_inline = border.inline_sum() + padding.inline_sum();
     let bp_block = border.block_sum() + padding.block_sum();
@@ -1209,8 +1231,9 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         max_inline = max_inline.max_of(min_inline);
     }
 
-    apply_size_containment(
+    apply_size_containment_with_border(
         style,
+        used_border,
         IntrinsicSizes {
             min_content_inline_size: min_inline + bp_inline,
             max_content_inline_size: max_inline + bp_inline,
@@ -1220,8 +1243,12 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     )
 }
 
-fn apply_size_containment(style: &ComputedStyle, mut sizes: IntrinsicSizes) -> IntrinsicSizes {
-    let border = resolve_border(style);
+fn apply_size_containment_with_border(
+    style: &ComputedStyle,
+    used_border: Option<BoxStrut>,
+    mut sizes: IntrinsicSizes,
+) -> IntrinsicSizes {
+    let border = used_border.unwrap_or_else(|| resolve_border(style));
     let padding = resolve_padding(style, LayoutUnit::zero());
     if crate::containment::physical_width_is_contained(style) {
         let width = crate::containment::physical_width_fallback(style)
@@ -3219,6 +3246,14 @@ pub fn compute_replaced_intrinsic_sizes_for_node(
     doc: &Document,
     node_id: NodeId,
 ) -> IntrinsicSizes {
+    compute_replaced_intrinsic_sizes_for_node_impl(doc, node_id, None)
+}
+
+fn compute_replaced_intrinsic_sizes_for_node_impl(
+    doc: &Document,
+    node_id: NodeId,
+    used_border: Option<BoxStrut>,
+) -> IntrinsicSizes {
     let node = doc.node(node_id);
     let replaced = node.replaced;
     let missing_image = node.tag == ElementTag::Image && replaced.is_none();
@@ -3258,14 +3293,15 @@ pub fn compute_replaced_intrinsic_sizes_for_node(
                     .aspect_ratio
                     .as_ref()
                     .is_some_and(|ratio| ratio.ratio.0 > 0.0 && ratio.ratio.1 > 0.0)));
-    let mut sizes = compute_replaced_intrinsic_sizes_with_natural(
+    let mut sizes = compute_replaced_intrinsic_sizes_with_natural_and_border(
         &node.style,
+        used_border,
         if svg_ratio_only { 0.0 } else { natural_width },
         if svg_ratio_only { 0.0 } else { natural_height },
         natural_ratio,
     );
     let style = &node.style;
-    let border = resolve_border(style);
+    let border = used_border.unwrap_or_else(|| resolve_border(style));
     let padding = resolve_padding(style, LayoutUnit::zero());
     let inline_edges = border.inline_sum() + padding.inline_sum();
     let block_edges = border.block_sum() + padding.block_sum();
@@ -3430,6 +3466,22 @@ fn compute_replaced_intrinsic_sizes_with_natural(
     natural_height: f32,
     natural_ratio: Option<(f32, f32)>,
 ) -> IntrinsicSizes {
+    compute_replaced_intrinsic_sizes_with_natural_and_border(
+        style,
+        None,
+        natural_width,
+        natural_height,
+        natural_ratio,
+    )
+}
+
+fn compute_replaced_intrinsic_sizes_with_natural_and_border(
+    style: &ComputedStyle,
+    used_border: Option<BoxStrut>,
+    natural_width: f32,
+    natural_height: f32,
+    natural_ratio: Option<(f32, f32)>,
+) -> IntrinsicSizes {
     // Default replaced element size (CSS 2.1 §10.3.2).
     let default_width = LayoutUnit::from_f32(natural_width);
     let default_height = LayoutUnit::from_f32(natural_height);
@@ -3499,7 +3551,7 @@ fn compute_replaced_intrinsic_sizes_with_natural(
     };
 
     // Add border + padding.
-    let border = resolve_border(style);
+    let border = used_border.unwrap_or_else(|| resolve_border(style));
     let padding = resolve_padding(style, LayoutUnit::zero());
     let bp_inline = border.inline_sum() + padding.inline_sum();
     let bp_block = border.block_sum() + padding.block_sum();
