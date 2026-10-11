@@ -313,13 +313,17 @@ font-family shaping and every remaining needed
 native API remain implementation work.
 [Completed failed census and clean checks](../renderer/generated/native-monochrome-strikes-v2.json).
 
-The corrected ordinary-author raster policy keeps all ten native images and
-70 bounds exact in dirty-source diagnostics. In all 160 affected original
-comparisons it restores the 16 lost exact results, retains all seven gains and
-repairs all 34 worsened differences. Focused 640/640, primitive 960/960 and 510
-shared text/paint tests pass. The 39 existing affected mismatches still fail;
-fresh clean complete qualification remains required.
-[Correction diagnostics](../renderer/generated/native-monochrome-strikes-v3.json).
+The corrected ordinary-author raster policy is verified on clean `ccb2dfa9`:
+all ten native images and 70 bounds are exact at the four required profiles
+and a 3× neighbor, with stable process and unchanged-frame repeats. Complete
+original **21,350/22,924** and expanded **22,153/23,728**
+comparisons remain failed, with zero errors. Focused 640/640 and primitive
+960/960 are exact; workspace, C/C++ consumers and all seven hosted hardening
+jobs pass on this source. Complete independent comparisons restore all 16
+lost exact results, retain all seven gains and repair all 34 worsened
+differences from the rejected source. Full rendering equality, generic font
+shaping and every remaining needed native API remain required work.
+[Complete corrected-source evidence](../renderer/generated/native-monochrome-strikes-v4.json).
 
 ## No JavaScript runtime
 

@@ -22,41 +22,45 @@ remain open.
 
 ## Current implementation checkpoint
 
-### Ordinary text raster policy correction
+### Corrected text raster policy (clean verification)
 
-The shared raster path now selects a separate policy for ordinary author
-monochrome text. It respects the resolved font hinting setting and integer
-glyph positions. Rotated and ruby text retain their physical strike and
-fractional local positions. This fixes the coupling that caused the rejected
-full-census regression below, without a test ID, font name, scale or output
-exception.
+Fresh CPU verification at clean `ccb2dfa9` measures **21,350/22,924
+original** and **22,153/23,728 expanded** exact comparisons,
+with **1,574 / 1,575 differences**, zero errors and
+actual exits **1**. Focused **640/640** and primitive **960/960** are exact.
+All **48,252 rows** and fresh linked artifacts are audited; every Chromium
+reference field is unchanged. Against the earlier accepted source, each full
+census gains **7 exact comparisons**, with no exact losses or worsened
+differences. The full Chromium pixel gates remain failed.
 
-Fresh dirty-source diagnostics match **10/10 native images and 70/70 bounds**
-against unchanged, independently repeated Chromium captures. Process repeats,
-unchanged-frame repeats, the Rust click callback and teardown pass at the four
-required profiles and a 3× neighbor.
+The raster policy for ordinary author text respects the resolved hinting
+setting and integer glyph positions; rotated and ruby text retain their
+physical strike and fractional local positions. Complete independent
+comparisons with the rejected source confirm all **16 lost exact results
+restored**, all **7 gains retained** and all **34 worsened differences repaired**
+in each census. There is no test ID, font name, scale or output exception in
+this correction.
 
-All 40 affected original test IDs run at all four profiles: **121/160 exact,
-39 different, zero errors**. Every one of the **16 lost exact comparisons is
-restored**, all **7 exact gains are retained**, and all **34 worsened
-comparisons are repaired**. Compared with the earlier accepted source, this
-partial scope has 7 gains, no exact losses and no worsened differences. The
-39 existing mismatches remain failures.
+The clean native Rust consumer matches **10/10 whole images and 70/70
+bounds** against unchanged, independently repeated pinned Chromium captures
+at the four required profiles and a 3× neighbor. Process and unchanged-frame
+repeats, the Rust callback count and weak teardown pass. All **8,642 all-targets**
+and **8,644 workspace/documentation tests** pass with all features enabled,
+zero failures and 13 existing workspace ignores. All **30 C and 24 C++
+consumers** pass, preserving **131 exports and 34 layouts**. Format checks,
+ordinary CI and all **seven explicitly dispatched hardening jobs** pass on
+this source, with zero skipped jobs:
+[hardening run 38091227950](https://github.com/zhuowcui/open-ui/actions/runs/38091227950).
 
-Focused **640/640** and primitive **960/960** are exact, with every native
-image and Chromium reference unchanged. All **1,760 diagnostic rows** and
-fresh compiled artifacts are audited. All **510 shared text and paint tests**
-pass with zero failures or ignored tests. The initial wrapper failure on a
-wrong report filename is preserved; the continuation uses the same verified
-binary and frozen source.
-
-These are candidate diagnostics. Fresh clean complete original/expanded
-censuses, workspace, ABI and hosted checks on the committed correction remain
-pending. Full renderer equality, general font-family shaping, reviewed
-residual ownership, remaining native APIs, compositor, physical lab and
-release qualification remain open. Open UI never runs JavaScript; consuming
-apps use public Rust methods and Rust callbacks.
-[Corrected policy evidence](../renderer/generated/native-monochrome-strikes-v3.json).
+There are **875 residual original test IDs**, including
+**875 without a reviewed ownership entry**.
+The existing 10px LCD origin/phase exceptions, named-family shaping/paint gates,
+font-size/family hinting branches and fixed native-button width ratio still
+require shared fixes and verification of the render parameters Chromium
+resolves. Full rendering equality, remaining native APIs, compositor, physical lab and release qualification remain open. Open UI
+never executes JavaScript; native apps use public Rust APIs and Rust callbacks.
+Earlier rejected and dirty diagnostics stay unchanged in their versioned
+archives. [Complete corrected-source evidence](../renderer/generated/native-monochrome-strikes-v4.json).
 
 ### Monochrome text regression (rejected)
 
@@ -1379,19 +1383,19 @@ private runtime is promoted or admitted by this documentation checkpoint.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean umbrella census | [Completed rejected font checkpoint](../renderer/generated/native-monochrome-strikes-v2.json) at `40ff6178`: 21,334/22,924 exact, 1,590 different, 0 errors; expanded 22,137/23,728 exact, 1,591 different; both actual exits 1; 888 residual original IDs |
+| Latest complete clean umbrella census | [Complete corrected font checkpoint](../renderer/generated/native-monochrome-strikes-v4.json) at `ccb2dfa9`: 21,350/22,924 exact, 1,574 different, 0 errors; expanded 22,153/23,728 exact, 1,575 different; both actual exits 1; 875 residual original IDs |
 | Previous native event census | `1c8540e9`: 21,334/22,924 exact, 1,590 different, 0 errors; expanded 22,137/23,728 exact, 1,591 different, 0 errors. Historical measurement; both pixel gates failed |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
-| Focused / primitive 40-profile matrices | 640/640 / 960/960 exact at clean `40ff6178`; all 1,600 native images and Chromium reference fields unchanged from the previous matrices. [Completed rejected font checkpoint](../renderer/generated/native-monochrome-strikes-v2.json) |
-| Expanded native final-state additions | 200/201 additional cases exact at all four profiles in the clean `40ff6178` run |
-| Pending native final-state candidates | 35 AST-lowered cases remain outside this clean manifest; [earlier pending recheck](../renderer/generated/pending-mutation-candidates-v7.json) does not qualify them on `40ff6178` |
+| Focused / primitive 40-profile matrices | 640/640 / 960/960 exact at clean `ccb2dfa9`; all 1,600 native images and Chromium reference fields unchanged. [Complete corrected font checkpoint](../renderer/generated/native-monochrome-strikes-v4.json) |
+| Expanded native final-state additions | 200/201 additional cases exact at all four profiles in the clean `ccb2dfa9` run |
+| Pending native final-state candidates | 35 AST-lowered cases remain outside this clean manifest; earlier pending evidence does not qualify them on `ccb2dfa9` |
 | Full inventory | 7,673 |
-| Explicitly unported | 1,942 |
+| Explicitly unported | 1,706; the 236 AST-audited candidates are tracked separately from admitted pixel cases |
 | Accountability audit | 7/7 |
 | Application conformance scenarios | 58 across 10 domains |
-| Frozen / current C exports | 84 / 131; 34 current ABI layouts; clean `40ff6178` source preserves existing symbols and layouts. [Completed rejected font checkpoint](../renderer/generated/native-monochrome-strikes-v2.json) |
-| C / C++ consumers | 30 / 24 pass on clean `40ff6178`; hosted X11/Wayland conformance passes on the same source. Physical release lab remains open. [Completed rejected font checkpoint](../renderer/generated/native-monochrome-strikes-v2.json) |
-| Workspace tests | 8,642 all-targets and 8,644 workspace/documentation pass with all features at clean `40ff6178`; 0 failed, 13 existing workspace ignores. [Completed rejected font checkpoint](../renderer/generated/native-monochrome-strikes-v2.json) |
+| Frozen / current C exports | 84 / 131; 34 current ABI layouts; clean `ccb2dfa9` preserves existing symbols and layouts. [Complete corrected font checkpoint](../renderer/generated/native-monochrome-strikes-v4.json) |
+| C / C++ consumers | 30 / 24 pass on clean `ccb2dfa9`; hosted X11/Wayland conformance passes on this source. Physical release lab remains open. [Complete corrected font checkpoint](../renderer/generated/native-monochrome-strikes-v4.json) |
+| Workspace tests | 8,642 all-targets and 8,644 workspace/documentation pass with all features at clean `ccb2dfa9`; 0 failed, 13 existing workspace ignores. [Complete corrected font checkpoint](../renderer/generated/native-monochrome-strikes-v4.json) |
 | Python closure, qualification, accountability and packaging tests | 249 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |

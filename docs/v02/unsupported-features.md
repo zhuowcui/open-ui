@@ -58,17 +58,13 @@ These are implementation gaps, not accepted final-v0.2 omissions:
   and 60/60 bounds exact in the measured rectangle cases. Mixed-unit animation,
   complete adjusted-font/root/orientation contexts and text line-box/glyph
   qualification remain native API work;
-- clean `40ff6178` matches all ten measured native shaping images and 70
-  bounds. Focused/primitive pixels, workspace, ABI consumers and all seven
-  hosted hardening jobs pass, but the complete Chromium gates lose 16 exact
-  comparisons and worsen 34 differences. The font candidate is rejected
-  pending repair of its effect on rotated and ruby text.
-  [Failed full census and clean checks](../renderer/generated/native-monochrome-strikes-v2.json).
-  The subsequent shared policy correction restores all 16 lost exact
-  comparisons and retains the seven gains in 160 dirty-source diagnostics.
-  All ten native images, focused/primitive suites and 510 shared tests pass;
-  fresh clean complete qualification remains pending.
-  [Correction diagnostics](../renderer/generated/native-monochrome-strikes-v3.json).
+- clean `ccb2dfa9` matches all ten measured native shaping images and 70
+  bounds. Complete comparison restores all 16 lost exact results, retains the
+  seven gains and repairs all 34 worsened differences from rejected `40ff6178`.
+  Focused/primitive pixels, workspace, ABI consumers and all seven hosted jobs
+  pass on the corrected source. Original 21,350/22,924 and expanded
+  22,153/23,728 remain failed, with zero errors.
+  [Complete corrected-source evidence](../renderer/generated/native-monochrome-strikes-v4.json).
   Homogeneous shaping remains restricted to the deterministic fallback-family
   profile; complete support for other native family lists is required work.
   Old Open UI screenshots do not constrain that work. See the
