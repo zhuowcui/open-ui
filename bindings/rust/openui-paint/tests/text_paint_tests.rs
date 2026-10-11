@@ -1106,6 +1106,7 @@ fn paint_text_fragment_no_shape_result() {
     let frag = Fragment {
         node_id: text_node,
         kind: FragmentKind::Text,
+        box_ownership: openui_layout::FragmentBoxOwnership::LayoutHelper,
         offset: PhysicalOffset::zero(),
         size: PhysicalSize::new(LayoutUnit::from_f32(100.0), LayoutUnit::from_f32(20.0)),
         padding: openui_geometry::BoxStrut::zero(),
@@ -1495,6 +1496,7 @@ fn paint_ellipsis_hidden_visibility_no_output() {
     let frag = Fragment {
         node_id: openui_dom::NodeId::NONE,
         kind: FragmentKind::Text,
+        box_ownership: openui_layout::FragmentBoxOwnership::LayoutHelper,
         offset: PhysicalOffset::new(LayoutUnit::from_f32(10.0), LayoutUnit::from_f32(20.0)),
         size: PhysicalSize::new(LayoutUnit::from_f32(width), LayoutUnit::from_f32(height)),
         padding: openui_geometry::BoxStrut::zero(),
