@@ -1039,6 +1039,19 @@ OuiStatus oui_element_get_client_rects_v1(OuiElement* element, OuiRect* rects, s
  * error. No handle or buffer needs releasing; copies survive later mutations
  * and document destruction. Must be called on the document's owning thread. */
 OuiStatus oui_element_get_scroll_metrics_v1(OuiElement* element, OuiScrollMetricsV1* out_metrics, uint8_t* out_has_metrics);
+/* Integer client/scroll dimensions through the same retained Engine getters
+ * used by native Rust applications. Resolve pending layout; round fractional
+ * LayoutUnit sizes to the nearest integer. Client dimensions exclude classic
+ * gutters, ignore this element's visual transform and include table wrapper
+ * borders/captions. Scroll dimensions retain layout overflow. Non-atomic inline
+ * and valid detached/display:none/no-box elements return OUI_OK with zero.
+ * out_value is nonnull, aligned writable int32_t storage; no version prefix is
+ * read and no ownership is transferred. Owning-thread/stale/invalid/reentrant
+ * errors leave it unchanged. OuiScrollMetricsV1 remains the fractional API. */
+OuiStatus oui_element_get_client_width_v1(OuiElement* element, int32_t* out_value);
+OuiStatus oui_element_get_client_height_v1(OuiElement* element, int32_t* out_value);
+OuiStatus oui_element_get_scroll_width_v1(OuiElement* element, int32_t* out_value);
+OuiStatus oui_element_get_scroll_height_v1(OuiElement* element, int32_t* out_value);
 OuiStatus oui_element_scroll_to(OuiElement* element, double x, double y);
 /* Reveal through the same retained Engine operation used by Rust and
  * accessibility. Detached/unboxed elements are no-ops. Values must be the

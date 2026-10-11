@@ -72,11 +72,15 @@ OPENUI_0.2 {
     oui_element_get_accessibility_id;
     oui_element_get_attribute_v1;
     oui_element_get_bounds;
+    oui_element_get_client_height_v1;
     oui_element_get_client_rects_v1;
+    oui_element_get_client_width_v1;
     oui_element_get_control_flags;
     oui_element_get_scroll_button_v1;
+    oui_element_get_scroll_height_v1;
     oui_element_get_scroll_metrics_v1;
     oui_element_get_scroll_offset;
+    oui_element_get_scroll_width_v1;
     oui_element_get_selection;
     oui_element_get_selection_direction_v1;
     oui_element_insert_before;

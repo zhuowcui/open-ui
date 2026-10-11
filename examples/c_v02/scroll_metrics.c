@@ -212,11 +212,179 @@ static void viewport(double scale) {
   printf("native C scroll metrics: scale=%g passed\n", scale);
 }
 
+typedef OuiStatus (*DimensionQuery)(OuiElement*, int32_t*);
+
+static void integer_dimensions(OuiElement* element, int32_t width, int32_t height,
+                               int32_t scroll_width, int32_t scroll_height) {
+  const DimensionQuery queries[] = {oui_element_get_client_width_v1,
+                                   oui_element_get_client_height_v1,
+                                   oui_element_get_scroll_width_v1,
+                                   oui_element_get_scroll_height_v1};
+  const int32_t expected[] = {width, height, scroll_width, scroll_height};
+  for (size_t i = 0; i < sizeof(queries) / sizeof(queries[0]); ++i) {
+    /* A scalar output has no version prefix. Only these four bytes may change. */
+    struct Output { int32_t value; uint8_t tail[12]; } output;
+    output.value = INT32_MIN;
+    memset(output.tail, 0x6d, sizeof(output.tail));
+    assert(queries[i](element, NULL) == OUI_ERROR_INVALID_ARGUMENT);
+    assert(queries[i](element, &output.value) == OUI_OK);
+    assert(output.value == expected[i]);
+    for (size_t j = 0; j < sizeof(output.tail); ++j)
+      assert(output.tail[j] == 0x6d);
+  }
+}
+
+static void integer_api(double scale) {
+  OuiDocumentConfig config = {sizeof(config), OUI_ABI_VERSION,
+                              {320.0, 240.0, (uint32_t)(320.0 * scale),
+                               (uint32_t)(240.0 * scale), scale, OUI_VIEWPORT_LOGICAL, 0}};
+  OuiDocument* document = NULL;
+  OuiDocument* other_document = NULL;
+  OuiElement* root = NULL;
+  OuiElement* other_root = NULL;
+  OuiElement* scroller = NULL;
+  OuiElement* content = NULL;
+  OuiElement* inline_element = NULL;
+  assert(oui_document_create(&config, &document) == OUI_OK);
+  assert(oui_document_root(document, &root) == OUI_OK);
+  integer_dimensions(root, 320, 240, 320, 240);
+  assert(oui_element_create(document, OUI_ELEMENT_DIV, &scroller) == OUI_OK);
+  assert(oui_element_create(document, OUI_ELEMENT_DIV, &content) == OUI_OK);
+  assert(oui_element_append_child(root, scroller) == OUI_OK);
+  assert(oui_element_append_child(scroller, content) == OUI_OK);
+  property(scroller, OUI_STYLE_PROPERTY_WIDTH, "100.5px");
+  property(scroller, OUI_STYLE_PROPERTY_HEIGHT, "80.5px");
+  property(scroller, OUI_STYLE_PROPERTY_BORDER, "2px solid black");
+  property(scroller, OUI_STYLE_PROPERTY_OVERFLOW, "scroll");
+  property(scroller, OUI_STYLE_PROPERTY_SCROLLBAR_WIDTH, "auto");
+  property(content, OUI_STYLE_PROPERTY_WIDTH, "200.5px");
+  property(content, OUI_STYLE_PROPERTY_HEIGHT, "160.5px");
+  integer_dimensions(scroller, 86, 66, 201, 161);
+  OuiScrollMetricsV1 raw = metrics(scroller);
+  assert(raw.client_width == 85.5 && raw.client_height == 65.5);
+  assert(raw.scroll_width == 200.5 && raw.scroll_height == 160.5);
+  property(scroller, OUI_STYLE_PROPERTY_TRANSFORM, "scale(2,3)");
+  integer_dimensions(scroller, 86, 66, 201, 161);
+  OuiScrollMetricsV1 transformed = metrics(scroller);
+  assert(transformed.client_width == raw.client_width);
+  assert(transformed.client_height == raw.client_height);
+  assert(transformed.scroll_width == raw.scroll_width);
+  assert(transformed.scroll_height == raw.scroll_height);
+  OuiRect bounds;
+  assert(oui_element_get_bounds(scroller, &bounds) == OUI_OK);
+  assert(bounds.width == 209.0f && bounds.height == 253.5f);
+  property(scroller, OUI_STYLE_PROPERTY_OVERFLOW, "hidden");
+  integer_dimensions(scroller, 101, 81, 201, 161);
+  raw = metrics(scroller);
+  assert(raw.client_width == 100.5 && raw.client_height == 80.5);
+  assert(raw.scroll_width == 200.5 && raw.scroll_height == 160.5);
+
+  assert(oui_element_create(document, OUI_ELEMENT_SPAN, &inline_element) == OUI_OK);
+  assert(oui_element_append_child(root, inline_element) == OUI_OK);
+  assert(oui_element_set_text(inline_element, utf8("native inline")) == OUI_OK);
+  integer_dimensions(inline_element, 0, 0, 0, 0);
+  property(inline_element, OUI_STYLE_PROPERTY_DISPLAY, "inline-block");
+  assert(oui_element_set_text(inline_element, utf8("")) == OUI_OK);
+  property(inline_element, OUI_STYLE_PROPERTY_WIDTH, "40.5px");
+  property(inline_element, OUI_STYLE_PROPERTY_HEIGHT, "20.5px");
+  integer_dimensions(inline_element, 41, 21, 41, 21);
+  assert(oui_element_detach(inline_element) == OUI_OK);
+  integer_dimensions(inline_element, 0, 0, 0, 0);
+
+  config.viewport.logical_width = 96.0;
+  config.viewport.logical_height = 48.0;
+  config.viewport.physical_width = (uint32_t)(96.0 * scale);
+  config.viewport.physical_height = (uint32_t)(48.0 * scale);
+  assert(oui_document_create(&config, &other_document) == OUI_OK);
+  assert(oui_document_root(other_document, &other_root) == OUI_OK);
+  integer_dimensions(other_root, 96, 48, 96, 48);
+  assert(oui_element_append_child(other_root, inline_element) == OUI_ERROR_WRONG_DOCUMENT);
+  integer_dimensions(inline_element, 0, 0, 0, 0);
+  integer_dimensions(other_root, 96, 48, 96, 48);
+  assert(oui_element_append_child(root, inline_element) == OUI_OK);
+  integer_dimensions(inline_element, 41, 21, 41, 21);
+  property(inline_element, OUI_STYLE_PROPERTY_DISPLAY, "contents");
+  integer_dimensions(inline_element, 0, 0, 0, 0);
+  property(inline_element, OUI_STYLE_PROPERTY_DISPLAY, "none");
+  integer_dimensions(inline_element, 0, 0, 0, 0);
+  assert(oui_element_remove(inline_element) == OUI_OK);
+  const DimensionQuery queries[] = {oui_element_get_client_width_v1,
+                                   oui_element_get_client_height_v1,
+                                   oui_element_get_scroll_width_v1,
+                                   oui_element_get_scroll_height_v1};
+  for (size_t i = 0; i < sizeof(queries) / sizeof(queries[0]); ++i) {
+    int32_t unchanged = -113;
+    assert(queries[i](inline_element, &unchanged) == OUI_ERROR_STALE_HANDLE);
+    assert(unchanged == -113);
+  }
+  assert(oui_element_destroy(inline_element) == OUI_OK);
+  assert(oui_element_destroy(content) == OUI_OK);
+  assert(oui_element_destroy(scroller) == OUI_OK);
+  assert(oui_element_destroy(root) == OUI_OK);
+  assert(oui_document_destroy(document) == OUI_OK);
+  assert(oui_element_destroy(other_root) == OUI_OK);
+  assert(oui_document_destroy(other_document) == OUI_OK);
+  printf("native C integer dimensions: scale=%g passed\n", scale);
+}
+
+static void integer_table_api(void) {
+  OuiDocumentConfig config = {sizeof(config), OUI_ABI_VERSION,
+                              {320.0, 240.0, 320, 240, 1.0, OUI_VIEWPORT_LOGICAL, 0}};
+  OuiDocument* document = NULL;
+  OuiElement* root = NULL;
+  OuiElement* table = NULL;
+  OuiElement* caption = NULL;
+  OuiElement* group = NULL;
+  OuiElement* row = NULL;
+  OuiElement* cell = NULL;
+  assert(oui_document_create(&config, &document) == OUI_OK);
+  assert(oui_document_root(document, &root) == OUI_OK);
+  assert(oui_element_create(document, OUI_ELEMENT_TABLE, &table) == OUI_OK);
+  assert(oui_element_create(document, OUI_ELEMENT_TABLE_CAPTION, &caption) == OUI_OK);
+  assert(oui_element_create(document, OUI_ELEMENT_TABLE_BODY, &group) == OUI_OK);
+  assert(oui_element_create(document, OUI_ELEMENT_TABLE_ROW, &row) == OUI_OK);
+  assert(oui_element_create(document, OUI_ELEMENT_TABLE_CELL, &cell) == OUI_OK);
+  assert(oui_element_append_child(root, table) == OUI_OK);
+  assert(oui_element_append_child(table, caption) == OUI_OK);
+  assert(oui_element_append_child(table, group) == OUI_OK);
+  assert(oui_element_append_child(group, row) == OUI_OK);
+  assert(oui_element_append_child(row, cell) == OUI_OK);
+  property(table, OUI_STYLE_PROPERTY_WIDTH, "120px");
+  property(table, OUI_STYLE_PROPERTY_BOX_SIZING, "border-box");
+  property(table, OUI_STYLE_PROPERTY_BORDER_SPACING, "0px");
+  property(table, OUI_STYLE_PROPERTY_BORDER, "2px solid black");
+  property(caption, OUI_STYLE_PROPERTY_HEIGHT, "12px");
+  property(cell, OUI_STYLE_PROPERTY_HEIGHT, "20px");
+  integer_dimensions(table, 120, 36, 118, 32);
+  integer_dimensions(caption, 120, 12, 120, 12);
+  integer_dimensions(group, 116, 20, 116, 20);
+  integer_dimensions(row, 116, 20, 116, 20);
+  integer_dimensions(cell, 116, 20, 116, 20);
+  property(table, OUI_STYLE_PROPERTY_TRANSFORM, "translate(20px,7px)");
+  integer_dimensions(table, 120, 36, 118, 32);
+  assert(oui_element_remove(caption) == OUI_OK);
+  integer_dimensions(table, 120, 24, 116, 20);
+  property(table, OUI_STYLE_PROPERTY_BORDER_COLLAPSE, "collapse");
+  int32_t width = 0;
+  int32_t height = 0;
+  assert(oui_element_get_client_width_v1(table, &width) == OUI_OK && width == 120);
+  assert(oui_element_get_client_height_v1(cell, &height) == OUI_OK && height == 20);
+  assert(oui_element_destroy(cell) == OUI_OK);
+  assert(oui_element_destroy(row) == OUI_OK);
+  assert(oui_element_destroy(group) == OUI_OK);
+  assert(oui_element_destroy(caption) == OUI_OK);
+  assert(oui_element_destroy(table) == OUI_OK);
+  assert(oui_element_destroy(root) == OUI_OK);
+  assert(oui_document_destroy(document) == OUI_OK);
+}
+
 int main(void) {
   const double scales[] = {1.0, 1.25, 1.5, 2.0, 3.0};
   for (size_t i = 0; i < sizeof(scales) / sizeof(scales[0]); ++i) {
     viewport(scales[i]);
     nested(scales[i]);
+    integer_api(scales[i]);
   }
+  integer_table_api();
   return 0;
 }
