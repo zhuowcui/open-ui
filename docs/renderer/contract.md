@@ -24,37 +24,53 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
-## Cleared empty boxes (native repair; clean full verification pending)
+## Cleared empty boxes (clean verification; pixel gate still failed)
 
-The shared block layout now calculates clearance using the complete collapsed
-margin group of an empty cleared box. Previously it placed the box before the
-descendant bottom margin was known, then counted that margin again. The repair
-retains the shared float width calculation and adds no font-name, size, scale,
-test-ID or output-pixel correction.
+The shared block layout calculates clearance using the complete collapsed
+margin group of an empty cleared box. The native repair is now verified at
+clean `81381713`: **8/8 images and 320/320 bounds exact** against pinned
+Chromium across all four required profiles. The consuming Rust app creates
+eight reduced cases and removes margins through a Rust click callback.
+Independent process and unchanged-frame repeats, callback counts and weak
+teardown pass. All **1,182 layout/text/paint tests** pass, with zero failures
+or ignores. This verifies these eight pictures and bounds; other native APIs
+remain unqualified.
 
-A consuming Rust app creates eight reduced cases, including four nonempty
-neighbors, and removes margins through a Rust click callback. The dirty-source
-repair matches pinned Chromium in **8/8 images and 320/320 bounds** across all
-four required profiles. Its clean prior baseline was **4/8 images and 256/320
-bounds exact**. Independent process and unchanged-frame repeats, callback
-counts and weak teardown pass. All **1,182 layout/text/paint tests** pass, with
-zero failures or ignores, including eight oracle-derived Engine scenarios.
+Fresh complete CPU verification at that same clean source measures
+**21,350/22,924 original** and **22,153/23,728 expanded** exact comparisons,
+with **1,574 / 1,575 differences**, zero errors and actual exits **1 / 1**.
+Focused **640/640** and primitive **960/960** are exact and unchanged. All
+**48,252 rows**, 14 fresh compiler records, 26 compiled paths and unchanged
+Chromium reference fields are independently audited. Owners and audits are
+terminal and reaped before later source or build changes.
 
-A selected sweep restores **all 16 exact comparisons** lost by the preceding
-atomic sizing change. Its **17/20 exact** comparisons have zero errors and no
-exact losses against the earlier clean renderer. Three existing scroll-button
-appearance differences remain, including the earlier worsened comparison.
-Focused **640/640** and primitive **960/960** are exact and unchanged; all
-**1,620 selected/focused/primitive rows**, fresh linked artifacts and unchanged
-Chromium reference fields are audited.
+Against rejected `b21ece15`, each complete census restores **all 16 lost exact
+comparisons**, with zero losses or worsened differences. Against accepted
+`98d18982`, each census has zero exact gains or losses, but **one existing
+scroll-button comparison still worsens**. Three scroll-button images change;
+their other two differing profiles improve. The strict nonregression gate
+therefore still fails. The shared float width calculation remains in place.
 
-These are dirty-source diagnostic results. Clean native execution, complete
-original and expanded censuses, full workspace/ABI and current checkpoint
-hosted checks remain pending. This repair does not establish full renderer,
-complete native API or release qualification. Open UI never executes
-JavaScript; applications use public Rust operations and callbacks. Chromium
-alone defines expected pixels.
-[Immutable repair evidence](generated/native-float-clearance-v1.json).
+All **12 hosted jobs** pass on measured `81381713`, with zero skips: format,
+ordinary CI and all seven explicitly dispatched hardening jobs, including
+hosted X11/Mesa and pure Wayland native consumers.
+[Hardening run 38125591990](https://github.com/zhuowcui/open-ui/actions/runs/38125591990).
+Later checkpoints need their own hosted results; physical lab checks remain
+open.
+
+There are **875 residual original test IDs**, all without a reviewed ownership
+entry. **200/201** added cases are exact at all four profiles; the dynamic
+fieldset/legend case still differs at scale 1.25. The other **35** AST-lowered
+cases remain outside the current manifest and unqualified. Full local
+workspace/ABI, shared font/control behavior, every needed native API,
+compositor/3D, hardware and release qualification remain open.
+
+Open UI never executes JavaScript. Applications use public Rust operations and
+Rust callbacks over the shared Engine. Chromium alone defines expected pixels;
+old Open UI images preserve history. No full renderer, complete native API or
+release pass is claimed.
+[Immutable clean evidence](generated/native-float-clearance-v2.json). Earlier dirty repair evidence remains
+unchanged in its versioned archive.
 
 ## Shared atomic sizing (clean measurement; regression gate failed)
 

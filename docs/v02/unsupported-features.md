@@ -47,13 +47,18 @@ experiment exists in the repository.
 
 These are implementation gaps, not accepted final-v0.2 omissions:
 
-- the cleared-empty-box repair has scoped dirty-source evidence: 8/8 native
-  images and 320/320 bounds exact, all 1,182 layout/text/paint tests passing,
-  and all 16 lost float-clearance comparisons restored. Focused 640/640 and
-  primitive 960/960 remain exact. Three selected scroll-button differences
-  remain; one still worsens against the earlier clean renderer. Clean native,
-  complete original/expanded censuses, workspace/ABI and current hosted checks
-  remain pending. [Evidence](../renderer/generated/native-float-clearance-v1.json);
+- clean `81381713` verifies the cleared-empty-box repair: 8/8 native images,
+  320/320 bounds and all 1,182 layout/text/paint tests pass. Original
+  21,350/22,924 and expanded 22,153/23,728 still fail with 1,574/1,575
+  differences and zero errors; focused 640/640 and primitive 960/960 are exact.
+  All 48,252 rows and unchanged Chromium references are audited. All 16 lost
+  exact comparisons are restored against rejected `b21ece15`; one existing
+  scroll-button difference still worsens against accepted `98d18982`, so the
+  strict regression gate fails. All 12 hosted jobs pass, with zero skips.
+  There are 875 residual original IDs, all lacking reviewed ownership entries;
+  200/201 additions are exact at all four profiles. Full workspace/ABI,
+  remaining native APIs, compositor/3D, physical lab and release checks remain
+  open. [Clean evidence](../renderer/generated/native-float-clearance-v2.json);
 - shared atomic sizing has a failed clean full-census regression gate at
   `b21ece15`: 180/210 bounds and 0/15 images are exact. All 1,181
   layout/text/paint tests pass; focused 640/640 and primitive 960/960 are

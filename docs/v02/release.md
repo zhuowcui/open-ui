@@ -4,37 +4,53 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
-## Cleared empty boxes (native repair; clean full verification pending)
+## Cleared empty boxes (clean verification; pixel gate still failed)
 
-The shared block layout now calculates clearance using the complete collapsed
-margin group of an empty cleared box. Previously it placed the box before the
-descendant bottom margin was known, then counted that margin again. The repair
-retains the shared float width calculation and adds no font-name, size, scale,
-test-ID or output-pixel correction.
+The shared block layout calculates clearance using the complete collapsed
+margin group of an empty cleared box. The native repair is now verified at
+clean `81381713`: **8/8 images and 320/320 bounds exact** against pinned
+Chromium across all four required profiles. The consuming Rust app creates
+eight reduced cases and removes margins through a Rust click callback.
+Independent process and unchanged-frame repeats, callback counts and weak
+teardown pass. All **1,182 layout/text/paint tests** pass, with zero failures
+or ignores. This verifies these eight pictures and bounds; other native APIs
+remain unqualified.
 
-A consuming Rust app creates eight reduced cases, including four nonempty
-neighbors, and removes margins through a Rust click callback. The dirty-source
-repair matches pinned Chromium in **8/8 images and 320/320 bounds** across all
-four required profiles. Its clean prior baseline was **4/8 images and 256/320
-bounds exact**. Independent process and unchanged-frame repeats, callback
-counts and weak teardown pass. All **1,182 layout/text/paint tests** pass, with
-zero failures or ignores, including eight oracle-derived Engine scenarios.
+Fresh complete CPU verification at that same clean source measures
+**21,350/22,924 original** and **22,153/23,728 expanded** exact comparisons,
+with **1,574 / 1,575 differences**, zero errors and actual exits **1 / 1**.
+Focused **640/640** and primitive **960/960** are exact and unchanged. All
+**48,252 rows**, 14 fresh compiler records, 26 compiled paths and unchanged
+Chromium reference fields are independently audited. Owners and audits are
+terminal and reaped before later source or build changes.
 
-A selected sweep restores **all 16 exact comparisons** lost by the preceding
-atomic sizing change. Its **17/20 exact** comparisons have zero errors and no
-exact losses against the earlier clean renderer. Three existing scroll-button
-appearance differences remain, including the earlier worsened comparison.
-Focused **640/640** and primitive **960/960** are exact and unchanged; all
-**1,620 selected/focused/primitive rows**, fresh linked artifacts and unchanged
-Chromium reference fields are audited.
+Against rejected `b21ece15`, each complete census restores **all 16 lost exact
+comparisons**, with zero losses or worsened differences. Against accepted
+`98d18982`, each census has zero exact gains or losses, but **one existing
+scroll-button comparison still worsens**. Three scroll-button images change;
+their other two differing profiles improve. The strict nonregression gate
+therefore still fails. The shared float width calculation remains in place.
 
-These are dirty-source diagnostic results. Clean native execution, complete
-original and expanded censuses, full workspace/ABI and current checkpoint
-hosted checks remain pending. This repair does not establish full renderer,
-complete native API or release qualification. Open UI never executes
-JavaScript; applications use public Rust operations and callbacks. Chromium
-alone defines expected pixels.
-[Immutable repair evidence](../renderer/generated/native-float-clearance-v1.json).
+All **12 hosted jobs** pass on measured `81381713`, with zero skips: format,
+ordinary CI and all seven explicitly dispatched hardening jobs, including
+hosted X11/Mesa and pure Wayland native consumers.
+[Hardening run 38125591990](https://github.com/zhuowcui/open-ui/actions/runs/38125591990).
+Later checkpoints need their own hosted results; physical lab checks remain
+open.
+
+There are **875 residual original test IDs**, all without a reviewed ownership
+entry. **200/201** added cases are exact at all four profiles; the dynamic
+fieldset/legend case still differs at scale 1.25. The other **35** AST-lowered
+cases remain outside the current manifest and unqualified. Full local
+workspace/ABI, shared font/control behavior, every needed native API,
+compositor/3D, hardware and release qualification remain open.
+
+Open UI never executes JavaScript. Applications use public Rust operations and
+Rust callbacks over the shared Engine. Chromium alone defines expected pixels;
+old Open UI images preserve history. No full renderer, complete native API or
+release pass is claimed.
+[Immutable clean evidence](../renderer/generated/native-float-clearance-v2.json). Earlier dirty repair evidence remains
+unchanged in its versioned archive.
 
 ## Shared atomic sizing (clean measurement; regression gate failed)
 
@@ -542,13 +558,13 @@ six successful jobs and five skips. Skips do not satisfy required release gates.
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Chromium oracle consistency | [Audit](../renderer/generated/chromium-font-oracle-audit-v1.json) found one older cached image that differs from six fresh captures under the same recorded identity; both variants are preserved | reconciliation open |
-| Four-profile renderer matrix | [Clean resolved-font census](../renderer/generated/native-font-families-v3.json) at clean `98d18982`: 21,350/22,924 exact, 1,574 different, zero errors; actual exit 1. Chromium references are unchanged; 875 residual original IDs need closure | fail |
-| Focused and primitive raster | [Clean resolved-font census](../renderer/generated/native-font-families-v3.json) at clean `98d18982`: 640/640 focused and 960/960 primitive exact; all 1,600 native images and Chromium reference fields remain unchanged | source-attributed scoped pass |
+| Four-profile renderer matrix | [Clean clearance census](../renderer/generated/native-float-clearance-v2.json) at clean `81381713`: 21,350/22,924 exact, 1,574 different, zero errors; actual exit 1. No exact losses against accepted `98d18982`, but one scroll-button difference worsens; 875 residual IDs still need reviewed ownership and closure | fail |
+| Focused and primitive raster | [Clean clearance census](../renderer/generated/native-float-clearance-v2.json) at clean `81381713`: 640/640 focused and 960/960 primitive exact; all 1,600 native images and Chromium references remain unchanged | source-attributed scoped pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | [Clean resolved-font census](../renderer/generated/native-font-families-v3.json) at clean `98d18982`: 22,153/23,728 exact, 1,575 different, zero errors; actual exit 1. 200/201 additions exact at all four profiles; 35 AST-lowered cases remain outside the current manifest and unqualified on this source. Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | [Clean clearance census](../renderer/generated/native-float-clearance-v2.json) at clean `81381713`: 22,153/23,728 exact, 1,575 different, zero errors; actual exit 1. 200/201 additions exact at all four profiles; 35 AST-lowered cases remain outside the current manifest and unqualified. Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | [Complete corrected font checkpoint](../renderer/generated/native-monochrome-strikes-v4.json) at clean `ccb2dfa9`: 8,642 all-targets and 8,644 workspace/documentation tests pass, zero failed, 13 existing workspace ignores; 30 C and 24 C++ consumers pass, with 131 exports and 34 layouts | scoped verification pass; full pixel gates fail |
-| Rust 1.85 MSRV | [Same-source explicit hardening](https://github.com/zhuowcui/open-ui/actions/runs/38091227950): MSRV passes at `ccb2dfa9`; all seven jobs succeed, zero skips | pass |
+| Rust 1.85 MSRV | [Same-source explicit hardening](https://github.com/zhuowcui/open-ui/actions/runs/38125591990): MSRV passes at `81381713`; all seven jobs succeed, zero skips | source-attributed pass |
 | Rust/C application contract | 58 conformance scenarios; 131 current exports and 34 layouts, preserving preceding symbols and layouts. Clean `ccb2dfa9` and 30 C/24 C++ consumers pass; same-source hosted conformance passes | scoped verification pass; remaining API review and physical lab open |
 | Native element interaction | Public Rust `Document`, `Element`, and `TextNode` APIs cover ID/class/native-kind lookup, class-token updates, retained detach/reattach, mutation, callbacks, activation, focus, scrolling, and controls; browser-style operations needed by applications must be exposed through native APIs | core implemented; remaining API coverage review open |
 | C-owned X11/Wayland application loop | `oui_app_run` and `oui_app_request_exit` use Rust `App` and the same retained document; versioned platform callbacks and [clean native C/C++ window runs](native-c-lifecycle-evidence.md) cover X11 software/GL and Wayland software | implemented; release-lab qualification open |
@@ -564,10 +580,10 @@ six successful jobs and five skips. Skips do not satisfy required release gates.
 | Image-edge coverage | [v42](../renderer/generated/native-scroll-insets-v42.json): private `2eacae2c` keeps sampled colors intact, preserves opaque metadata, and applies coverage during Skia blending. Five reviewed Skia files match the existing pin. Ten read-only checks pass; baseline/fixed Engine assertions, 128 fieldset images, 720 public Rust callback images and all four matrices are queued | unapplied and unqualified; no pixel gain claimed |
 | Mutation ownership | 10,000-iteration soak, no owned-object leak | pass |
 | Local performance smoke | 0.108 ms p95, 308 UI-thread animation fps, 1.389% RSS growth | non-qualifying pass |
-| X11/Wayland software and Mesa GL | [Same-source hardening](https://github.com/zhuowcui/open-ui/actions/runs/38091227950) passes native C/C++ X11 software/Mesa windows and pure Wayland presentation at `ccb2dfa9`; physical release lab remains open | provisional pass |
-| Miri C handle ownership | [Same-source hardening](https://github.com/zhuowcui/open-ui/actions/runs/38091227950): opaque-handle ownership passes pinned Miri at `ccb2dfa9` | pass |
-| ASan/LSan/fuzz | [Same-source explicit hardening](https://github.com/zhuowcui/open-ui/actions/runs/38091227950) at `ccb2dfa9` passes address/leak sanitizers, C UBSan and all fuzz targets; all seven jobs succeed with zero skips | pass for this checkpoint |
-| Native C UBSan | [Same-source explicit hardening](https://github.com/zhuowcui/open-ui/actions/runs/38091227950): ABI consumers pass at `ccb2dfa9` | pass for this checkpoint |
+| X11/Wayland software and Mesa GL | [Same-source hardening](https://github.com/zhuowcui/open-ui/actions/runs/38125591990) passes native C/C++ X11 software/Mesa windows and pure Wayland presentation at `81381713`; physical release lab remains open | provisional pass |
+| Miri C handle ownership | [Same-source hardening](https://github.com/zhuowcui/open-ui/actions/runs/38125591990): opaque-handle ownership passes pinned Miri at `81381713` | source-attributed pass |
+| ASan/LSan/fuzz | [Same-source explicit hardening](https://github.com/zhuowcui/open-ui/actions/runs/38125591990) at `81381713` passes address/leak sanitizers, C UBSan and all fuzz targets; all seven jobs succeed with zero skips | source-attributed pass |
+| Native C UBSan | [Same-source explicit hardening](https://github.com/zhuowcui/open-ui/actions/runs/38125591990): ABI consumers pass at `81381713` | source-attributed pass |
 | x86-64/AArch64 SDK, deb, rpm | deterministic source pipeline and tag matrix | pending tag build |
 | Clean Ubuntu/Fedora install | release workflow consumer jobs | pending tag build |
 | Physical GPU/context loss | release-lab profile | open |
@@ -576,8 +592,9 @@ six successful jobs and five skips. Skips do not satisfy required release gates.
 | Two signed reproducible builds | tag workflow, keyless signatures/attestations | open |
 | crates.io publication | credentials and final release approval | open |
 
-The current umbrella applies the reviewed shared SVG and scrolling repairs and
-native Rust/C/accessibility reveal operations. Its own clean workspace and
+The earlier SVG/scrolling checkpoint applied the reviewed shared repairs and
+native Rust/C/accessibility reveal operations. The following paragraph records
+that historical checkpoint, not the current clean clearance measurement. Its own clean workspace and
 consumers pass. Its complete original and expanded pixel runs fail, at
 21,334/22,924 and 22,137/23,728 exact, zero errors. All original rows agree;
 all 804 additions stay unchanged, with 200/201 exact at every required profile.
