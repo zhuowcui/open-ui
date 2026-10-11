@@ -27,6 +27,23 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
+### Reduced table geometry findings (diagnostic; repair open)
+
+A clean public Rust table consumer at `c6a0b92e` exposes a shared native API
+gap: `client_rects()` returns three table boxes where Chromium returns one.
+Synthetic table boxes reuse the authored node identity, and source inspection
+shows repeated transform, clip, hit and scroll handling. The collapsed cell
+also reports paint extent instead of its used border box. These require
+layout-owned authored/helper identity and resolved cell geometry.
+
+Across five scales and both explicit text policies, **8/20 pictures** and
+**75/170 complete geometry records** agree exactly. Baseline markers preserve
+all pixels and common geometry. The reduced sample does not reproduce the
+four original table regressions; default policy and full-census totals are
+unchanged. Forty native processes, 16 fresh compiler records, 29 compiled
+paths and 80 original PNG files are independently verified.
+[Measured findings and required repair](docs/renderer/native-table-origin.md).
+
 ### Explicit monochrome matrices (diagnostic; policy not promoted)
 
 At clean `f6d318e6`, explicit fitted monochrome text restores
@@ -43,8 +60,8 @@ table comparisons worsen, so strict nonregression still fails. These are
 All six matrix reports have zero render errors. Fresh local libraries,
 **3,368 comparison rows**, saved PNG bytes, decoded pixels and full difference
 signatures are independently audited. Chromium fixture/capture/font inputs
-and reference pixels stay unchanged. Source and target remain frozen until
-actual owner completion, a new completed audit and saved reaping proof.
+and reference pixels stay unchanged. The measured source and target were kept
+frozen through owner completion, independent audit and saved reaping proof.
 
 `--monochrome-raster-config chromium-linux-monochrome` is an explicit diagnostic
 choice. It selects the existing aliased author-text cohort and preserves other
@@ -54,8 +71,8 @@ unchanged. Exact candidate matrices do not establish full renderer qualification
 
 The worsened `display-contents-table-002`/reference pictures have a one-column
 caption shift at 1.25× and narrow glyph-column changes at 1.5×. Their root cause
-and reviewed ownership remain open; a reduced public Rust table consumer is
-needed. The last complete original census remains **21,329/22,924 exact**,
+and reviewed ownership remain open. The reduced public Rust consumer above
+exposes geometry gaps but does not reproduce these original regressions. The last complete original census remains **21,329/22,924 exact**,
 with **1,595 differences**, zero errors. No new complete original or expanded
 census is claimed. Every needed native Rust API remains required; Open UI
 never executes JavaScript.
