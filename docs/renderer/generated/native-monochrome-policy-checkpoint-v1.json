@@ -1,0 +1,374 @@
+{
+  "all_archive_hashes_verified": true,
+  "all_native_apis_qualified": false,
+  "archive": {
+    "bytes": 304092,
+    "files": 38,
+    "members": [
+      {
+        "bytes": 264,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/accountability.json.gz",
+        "raw_bytes": 378,
+        "raw_sha256": "506918e1b8c98cab1097daed714dcfd44154687d248ed4cbe41068e9864ad485",
+        "sha256": "f906959ecda7afbc4cdf80edec42c85da97de269a18f89dd67a5c8c100581429",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/accountability.json"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/accountability.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/accountability.stderr"
+      },
+      {
+        "bytes": 1055,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/accountability.stdout.gz",
+        "raw_bytes": 2867,
+        "raw_sha256": "0ad48657cda05622ff7a90f2f313a6bee8060bc85390e7794bbe5e2b7eed13a1",
+        "sha256": "a7ddfb15636772a7ed177d92cd310c67cc38a082a9aae491e62d04518aa2f463",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/accountability.stdout"
+      },
+      {
+        "bytes": 250,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/ffi.json.gz",
+        "raw_bytes": 353,
+        "raw_sha256": "b3df3b91b400eaa11396a2c9c029a5c910dae60b269adbd7c52cfa6003db3e54",
+        "sha256": "e153f96ac437e0403b95395b2e574b8788a88a32c7d63e7337e8e76465ee726f",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/ffi.json"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/ffi.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/ffi.stderr"
+      },
+      {
+        "bytes": 52,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/ffi.stdout.gz",
+        "raw_bytes": 32,
+        "raw_sha256": "04e0226070321c3ea113328d99056d61d47c71a0cc5e2f0d5e2818a46b7d9821",
+        "sha256": "55406c87d9571bf98d31b05240f488bb4ab3c159f8a3c2f654148ee72b439592",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/ffi.stdout"
+      },
+      {
+        "bytes": 270,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/format-example.json.gz",
+        "raw_bytes": 405,
+        "raw_sha256": "d79fc5dd0f20c27c3a462bb3cea30e948ed0e22387ecc1eef56513f4e75954f2",
+        "sha256": "fe274c5911d54a8814aceb8c8b9e60d7a3f950fd394fb7e8a0a28d581f01d734",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/format-example.json"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/format-example.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/format-example.stderr"
+      },
+      {
+        "bytes": 2457,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/format-example.stdout.gz",
+        "raw_bytes": 7502,
+        "raw_sha256": "fda802f77502253b654b9dc611c049e5e6b6b6665a5b6ac5754308850f1e5a1b",
+        "sha256": "da681560223e1385b53d9f2b95f668496f21ff84ed0f5671776e3b14cba49a37",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/format-example.stdout"
+      },
+      {
+        "bytes": 268,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/format-paint.json.gz",
+        "raw_bytes": 403,
+        "raw_sha256": "4650b7b8de27fc5d7aede39a2b7554af59701c53b303c062dcab609c153c9bd5",
+        "sha256": "824450cf49fd0fabcd719126df590332bbfa5cb00ce936fdbaeec3dea0609ca5",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/format-paint.json"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/format-paint.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/format-paint.stderr"
+      },
+      {
+        "bytes": 178590,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/format-paint.stdout.gz",
+        "raw_bytes": 951186,
+        "raw_sha256": "66d27f2215289b892547c79edf197a4611d282401cf7c0b55bab954d0f1e0ba5",
+        "sha256": "2fb0e204ca6d02a6b43ddbab0931f0bcfb9992071494368af3f46b77d1a18e64",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/format-paint.stdout"
+      },
+      {
+        "bytes": 285,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/matrix-tests.json.gz",
+        "raw_bytes": 446,
+        "raw_sha256": "5c162d90d854ddfce6d0270c62675b4be17ffd08427857f6a3838ec7052163d2",
+        "sha256": "1c0c66cbc10189c4ff1328bf1d9eea8c3845a64319c6aae1ef494f58c4f7052a",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/matrix-tests.json"
+      },
+      {
+        "bytes": 56,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/matrix-tests.stderr.gz",
+        "raw_bytes": 140,
+        "raw_sha256": "528281067bd6b6046d8d9d52bf327e00d80aea4dc6392142a107d500b502434d",
+        "sha256": "05952f128f922fb409563fd8363deb6aaf0bc0a4f33b5014f83e8d2bfa0cc9c8",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/matrix-tests.stderr"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/matrix-tests.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/matrix-tests.stdout"
+      },
+      {
+        "bytes": 1119,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/receipt.json.gz",
+        "raw_bytes": 4950,
+        "raw_sha256": "a54348032236af14677bd4af58b91e08e17e36ffdf6ac5350cda042f7a452e6b",
+        "sha256": "3f661023bc4b3668104ed809e36ccb2b57ddff8d561853108105a4cab78e2a51",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/receipt.json"
+      },
+      {
+        "bytes": 257,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/release.json.gz",
+        "raw_bytes": 370,
+        "raw_sha256": "bc36995de3d91b49a47b727e810c9cdadd226eff2f610c56bf52fb33cdf83135",
+        "sha256": "8f6d45ac2cbe2e4eaa1b6fbedf814438aacd63fa8afe187d7880d6186910481e",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/release.json"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/release.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/release.stderr"
+      },
+      {
+        "bytes": 80,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/release.stdout.gz",
+        "raw_bytes": 63,
+        "raw_sha256": "5a98285278ef9cd712b09c79b66a67ba5b24d8848a268e2160e7c2b8d1f4efcd",
+        "sha256": "ec1277c807103cfdee77b77954961b24a58ce62612d9dbf58594043db7efc478",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/release.stdout"
+      },
+      {
+        "bytes": 266,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/renderer.json.gz",
+        "raw_bytes": 382,
+        "raw_sha256": "686b0e0e5ed8e196c5783ee96d4d276556e9bd11f6217d2beb4202103e00bd29",
+        "sha256": "9e5a84913f61815ca4c41d20f41d065f3ac17dbafef754ec8ccaf32eb207fde2",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/renderer.json"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/renderer.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/renderer.stderr"
+      },
+      {
+        "bytes": 95,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/renderer.stdout.gz",
+        "raw_bytes": 81,
+        "raw_sha256": "5f8c2047f6dd1c50a6badc24f6770898e1b9d03758e6cb07c7f7f320bd5f7691",
+        "sha256": "d2b79cb72721d10fece4b15d0f646423937282376e09b24612cf252d1dfa8316",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/renderer.stdout"
+      },
+      {
+        "bytes": 254,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/style.json.gz",
+        "raw_bytes": 364,
+        "raw_sha256": "616c23f51aeab31e1cc540beca725147b9b37faa61a3320886c5f3da8c001249",
+        "sha256": "62e3a9042074b93fab998524d9044c081e2d1ee0ceddbdd559d52923afcf04ec",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/style.json"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/style.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/style.stderr"
+      },
+      {
+        "bytes": 57,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/style.stdout.gz",
+        "raw_bytes": 37,
+        "raw_sha256": "57239c3948268157444aa0eec903c10ebe201a4999a14d79919614c0cbea2da1",
+        "sha256": "1b70c8a7ba0f84375105255b165129e2f427ca1072a832c28efb9f840d539b10",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/style.stdout"
+      },
+      {
+        "bytes": 190,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/whitespace.json.gz",
+        "raw_bytes": 325,
+        "raw_sha256": "2a2be882f1e6bf22683bff2143d56e435eecd03646b87b0119b5ce65df849e95",
+        "sha256": "47c91735fd96dd73d703a95dbf6d11c6f2f965ec56ad0f764533b461f51baf31",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/whitespace.json"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/whitespace.stderr.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/whitespace.stderr"
+      },
+      {
+        "bytes": 20,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/checks/whitespace.stdout.gz",
+        "raw_bytes": 0,
+        "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checks-v4136/whitespace.stdout"
+      },
+      {
+        "bytes": 1044,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/receipts/openui-monochrome-policy-checkpoint-v4137.py.gz",
+        "raw_bytes": 2427,
+        "raw_sha256": "d3cc63060f898234937a43233d50b0e1ebb113fcebba5f44d7285b380d00ddff",
+        "sha256": "19d00389c0c481c334343077d5c40782e41bb12c641434ca96ea4f9bcfe5b21c",
+        "source": "/tmp/openui-monochrome-policy-checkpoint-v4137.py"
+      },
+      {
+        "bytes": 1274,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/receipts/openui-monochrome-policy-checks-v4136.py.gz",
+        "raw_bytes": 2863,
+        "raw_sha256": "18162b37996c52488b48fc4636397b0c3788ad5d4b9e81914344387b7b45ac94",
+        "sha256": "be04967b2411a1c4b36505f541870d39bd1592a0bc76a91ee51989466d6d9139",
+        "source": "/tmp/openui-monochrome-policy-checks-v4136.py"
+      },
+      {
+        "bytes": 1971,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/receipts/openui-monochrome-policy-archive-v4144.py.gz",
+        "raw_bytes": 5318,
+        "raw_sha256": "6d813da85533b95da32627938f9fb9016b543a06a72ba6d8567b0f9514b21089",
+        "sha256": "8885d198c1ce3acebf22bc2e27ee67fba56a0a4dc2bdb1b27fc9e01993735c9f",
+        "source": "/tmp/openui-monochrome-policy-archive-v4144.py"
+      },
+      {
+        "bytes": 705,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/receipts/native-monochrome-policy-checkpoint-v4137.json.gz",
+        "raw_bytes": 1464,
+        "raw_sha256": "5d3fb8e12eae96bd37e4d024f92d33ff4a04bc6dc43e0777618b1c82744abe54",
+        "sha256": "61ab4feee936ab70e3f6e17dcabbf4e6e24cae54e0ab00d71c895d2323ae1d51",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-checkpoint-v4137.json"
+      },
+      {
+        "bytes": 214,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/receipts/native-monochrome-policy-storage-proof-v4145.json.gz",
+        "raw_bytes": 283,
+        "raw_sha256": "592cedb888cbcddd6a60d96853a3d9d60ae174f2ca555022acab448010a65f60",
+        "sha256": "4f24d2998d0e3e4e4342b4f0ede1916ed47db221e07525b696f4b390b35f70a3",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-monochrome-policy-storage-proof-v4145.json"
+      },
+      {
+        "bytes": 490,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/receipts/native-owned-binary-storage-v4146.json.gz",
+        "raw_bytes": 825,
+        "raw_sha256": "bc684f00104a93aa726f75206f160634e2efa678ba1441d6514bc9681c19aeec",
+        "sha256": "4d85ec9e1bf021fec72f36cd6f4db2d26d4e434d86080a029bec91025b5189e8",
+        "source": "/mnt/d/openui-v02-qualification-d174ea0b/native-owned-binary-storage-v4146.json"
+      },
+      {
+        "bytes": 26085,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/documents/README.md.gz",
+        "raw_bytes": 85726,
+        "raw_sha256": "54bec13907495c096dabf27c01fa8602fef9ed45f268329164be748b577c60ef",
+        "sha256": "58419c2f5e12fe6793de4dd910cf3d38e503d578c44e0234486f605cd588b76a",
+        "source": "/home/nero/code/open-ui/README.md"
+      },
+      {
+        "bytes": 57380,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/documents/docs/progress/current-status.md.gz",
+        "raw_bytes": 204016,
+        "raw_sha256": "d957237b1ac98b4a465a43bd65d2cbb74a15ae0ff5034c0e31e491019084040a",
+        "sha256": "b6556ae4c21b1b0d686bbff96303c98470a646d3a36c7128bbd31c76dfd065fa",
+        "source": "/home/nero/code/open-ui/docs/progress/current-status.md"
+      },
+      {
+        "bytes": 25256,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/documents/docs/renderer/contract.md.gz",
+        "raw_bytes": 98135,
+        "raw_sha256": "76967676eb5abc695b8570907f1bc87bd1a94e066fcf32773ffa1093b4fce3dc",
+        "sha256": "dad1a4e1c441e7710373d5fa8258ecc187ad9175960ce0606f3238f47e31df23",
+        "source": "/home/nero/code/open-ui/docs/renderer/contract.md"
+      },
+      {
+        "bytes": 3608,
+        "compression": "gzip",
+        "path": "docs/renderer/evidence/native-monochrome-policy-checkpoint-v1/documents/docs/renderer/native-monochrome-font-policy.md.gz",
+        "raw_bytes": 8473,
+        "raw_sha256": "1ded9c98861d35b5b8223fbe4987b5cf5ca28573aabd9c3e46e1aaa371d7acdd",
+        "sha256": "f7b10a66101c588c83d387e932e83348e3f6d3d83ba520b351a86f5df4e7e9de",
+        "source": "/home/nero/code/open-ui/docs/renderer/native-monochrome-font-policy.md"
+      }
+    ]
+  },
+  "current_document_checks": {
+    "comparison_pass_percentage": 93.04222648752399,
+    "latest_complete_original_exact": 21329,
+    "latest_complete_original_total": 22924,
+    "whitespace": true,
+    "whole_goal_completion_percentage": null
+  },
+  "final_checks": {
+    "all_commands_terminal": true,
+    "failed": 0,
+    "passed": 9,
+    "scope": "runtime/tooling and generators; current-status prose corrected afterward"
+  },
+  "measured_renderer_evidence": {
+    "path": "docs/renderer/generated/native-monochrome-policy-matrices-v1.json",
+    "sha256": "2a35e6a112ba8a457e1913047c9c33bc6d7398bf9daf0efbfa4267e50c822588"
+  },
+  "measured_source": "f6d318e6786ec78a4a3299b7aea21d8dfa3af728",
+  "release_qualified": false,
+  "renderer_qualified": false,
+  "runtime_and_tooling_unchanged": true,
+  "schema_version": 1
+}

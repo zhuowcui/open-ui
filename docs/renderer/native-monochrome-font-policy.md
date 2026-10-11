@@ -33,8 +33,8 @@ row over already fitted monochrome glyphs. The shared paint policy now respects
 the selected hint configuration. No font/test-ID/size/scale patch or reference
 change is added.
 
-This verifies the reduced native application. The explicit monochrome profile
-still needs the complete focused, primitive, original and expanded gates.
+This verifies the reduced native application. Complete focused and primitive
+diagnostics are recorded here; original and expanded qualification remain open.
 Every remaining rendering gap and needed public native Rust API remains open.
 Open UI executes no JavaScript; pinned Chromium supplies expected pixels.
 
@@ -104,10 +104,45 @@ exact, it remains a diagnostic and cannot satisfy the current release gate.
 A matching full census and reviewed font-origin/settings behavior are needed
 before changing the declared policy.
 
+## Explicit monochrome matrices (diagnostic; policy not promoted)
+
+At clean `f6d318e6`, explicit fitted monochrome text restores
+**21 exact comparisons** in the selected strict-ceil regression cohort:
+**48/84 → 69/84 exact**, with zero new exact losses. Four already failing
+table comparisons worsen, so strict nonregression still fails. These are
+21 selected original cases across four profiles, not a complete census.
+
+| Matrix, complete 40-profile selection | Automatic policy | Fitted candidate |
+|---|---:|---:|
+| Focused | 640/640 | 640/640 |
+| Primitive | 960/960 | 960/960 |
+
+All six matrix reports have zero render errors. Fresh local libraries,
+**3,368 comparison rows**, saved PNG bytes, decoded pixels and full difference
+signatures are independently audited. Chromium fixture/capture/font inputs
+and reference pixels stay unchanged. Source and target remain frozen until
+actual owner completion, a new completed audit and saved reaping proof.
+
+`--monochrome-raster-config chromium-linux-monochrome` is an explicit diagnostic
+choice. It selects the existing aliased author-text cohort and preserves other
+font profiles. Native cache identities record the selected policy; sharded
+summaries reject mixed policies. The default selection and release gate remain
+unchanged. Exact candidate matrices do not establish full renderer qualification.
+
+The worsened `display-contents-table-002`/reference pictures have a one-column
+caption shift at 1.25× and narrow glyph-column changes at 1.5×. Their root cause
+and reviewed ownership remain open; a reduced public Rust table consumer is
+needed. The last complete original census remains **21,329/22,924 exact**,
+with **1,595 differences**, zero errors. No new complete original or expanded
+census is claimed. Every needed native Rust API remains required; Open UI
+never executes JavaScript.
+
+[Immutable matrix and table evidence](generated/native-monochrome-policy-matrices-v1.json).
+
 ## Remaining work
 
-Verify the complete 40-profile focused and primitive matrices, and run the
-original and expanded census with matched
-font policies. The last complete original result remains 21,329/22,924 exact,
+The focused and primitive candidate diagnostics are exact. Run the original
+and expanded census with matched font policies, repair the worsened table
+comparisons, and qualify the complete declared policy. The last complete original result remains 21,329/22,924 exact,
 with 1,595 differences and no errors. Every remaining needed native Rust API,
 compositor, hardware and release gate remains required.

@@ -20,6 +20,41 @@ product. Waves W0 through W10 are locally committed. W11 source packaging and
 documentation are implemented, but final external and hardware qualifications
 remain open.
 
+## Explicit monochrome matrices (diagnostic; policy not promoted)
+
+At clean `f6d318e6`, explicit fitted monochrome text restores
+**21 exact comparisons** in the selected strict-ceil regression cohort:
+**48/84 → 69/84 exact**, with zero new exact losses. Four already failing
+table comparisons worsen, so strict nonregression still fails. These are
+21 selected original cases across four profiles, not a complete census.
+
+| Matrix, complete 40-profile selection | Automatic policy | Fitted candidate |
+|---|---:|---:|
+| Focused | 640/640 | 640/640 |
+| Primitive | 960/960 | 960/960 |
+
+All six matrix reports have zero render errors. Fresh local libraries,
+**3,368 comparison rows**, saved PNG bytes, decoded pixels and full difference
+signatures are independently audited. Chromium fixture/capture/font inputs
+and reference pixels stay unchanged. Source and target remain frozen until
+actual owner completion, a new completed audit and saved reaping proof.
+
+`--monochrome-raster-config chromium-linux-monochrome` is an explicit diagnostic
+choice. It selects the existing aliased author-text cohort and preserves other
+font profiles. Native cache identities record the selected policy; sharded
+summaries reject mixed policies. The default selection and release gate remain
+unchanged. Exact candidate matrices do not establish full renderer qualification.
+
+The worsened `display-contents-table-002`/reference pictures have a one-column
+caption shift at 1.25× and narrow glyph-column changes at 1.5×. Their root cause
+and reviewed ownership remain open; a reduced public Rust table consumer is
+needed. The last complete original census remains **21,329/22,924 exact**,
+with **1,595 differences**, zero errors. No new complete original or expanded
+census is claimed. Every needed native Rust API remains required; Open UI
+never executes JavaScript.
+
+[Immutable matrix and table evidence](../renderer/generated/native-monochrome-policy-matrices-v1.json).
+
 ## Fitted monochrome text repair (native app exact; census open)
 
 The native Rust application at clean `1576f01a` now matches **40/40
@@ -30,8 +65,8 @@ row over already fitted monochrome glyphs. The shared paint policy now respects
 the selected hint configuration. No font/test-ID/size/scale patch or reference
 change is added.
 
-This verifies the reduced native application. The explicit monochrome profile
-still needs the complete focused, primitive, original and expanded gates.
+This verifies the reduced native application. Complete focused and primitive
+diagnostics are recorded here; original and expanded qualification remain open.
 Every remaining rendering gap and needed public native Rust API remains open.
 Open UI executes no JavaScript; pinned Chromium supplies expected pixels.
 [Native app and evidence](../renderer/native-monochrome-font-policy.md).
@@ -1640,7 +1675,8 @@ private runtime is promoted or admitted by this documentation checkpoint.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Latest complete clean umbrella census | [Clean resolved-font census](../renderer/generated/native-font-families-v3.json) at `98d18982`: 21,350/22,924 exact, 1,574 different, 0 errors; expanded 22,153/23,728 exact, 1,575 different; both actual exits 1; 875 residual original IDs |
+| Latest complete clean umbrella census | [Clean strict-intrinsic census](../renderer/generated/native-strict-intrinsic-ceil-v2.json) at `d6d9dfe9`: 21,329/22,924 exact (93.04%), 1,595 different, 0 errors; expanded 22,132/23,728 exact (93.27%), 1,596 different; both actual exits 1; 890 residual original IDs. These are comparison pass rates; whole-goal completion is not measured |
+| Earlier accepted renderer census | [Clean resolved-font census](../renderer/generated/native-font-families-v3.json) at `98d18982`: 21,350/22,924 exact, 1,574 different, 0 errors; expanded 22,153/23,728 exact, 1,575 different; both actual exits 1; 875 residual original IDs. Historical measurement; the later strict-intrinsic candidate fails nonregression |
 | Previous native event census | `1c8540e9`: 21,334/22,924 exact, 1,590 different, 0 errors; expanded 22,137/23,728 exact, 1,591 different, 0 errors. Historical measurement; both pixel gates failed |
 | Chromium oracle consistency audit | One older cached capture differs from six fresh captures under the same recorded identity; reconciliation open |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact at clean `98d18982`; all 1,600 native images and Chromium reference fields unchanged. [Clean resolved-font census](../renderer/generated/native-font-families-v3.json) |
@@ -2823,11 +2859,14 @@ load it.
   it reached 408/640 focused and 624/960 primitive exact, below CPU Skia's
   640/640 and 960/960. It remains unpromoted; OpenGL presentation still uploads
   a CPU-rasterized frame.
-- The four-profile Chromium census fails exactness at clean `98d18982`;
-  875 residual test IDs have no reviewed owner.
-  Both 40-profile CPU raster matrices are exact. All 12 hosted jobs, including
-  all seven explicitly dispatched hardening jobs, pass with zero skips.
-  [Same-source hardening](https://github.com/zhuowcui/open-ui/actions/runs/38100438813).
+- The latest complete four-profile Chromium census fails exactness at clean
+  `d6d9dfe9`; 890 residual test IDs have no reviewed owner.
+  [Clean strict-intrinsic census](../renderer/generated/native-strict-intrinsic-ceil-v2.json).
+  Both 40-profile CPU raster matrices remain exact in the newer `f6d318e6`
+  diagnostic measurements. All 12 hosted jobs, including all seven explicitly
+  dispatched hardening jobs, pass with zero skips on the preceding `9949c65d`
+  checkpoint. Each later checkpoint needs its own hosted results.
+  [Preceding-checkpoint hardening](https://github.com/zhuowcui/open-ui/actions/runs/38164856537).
 - The C ABI covers the retained engine, headless renderer, owned full
   accessibility-tree snapshots, and the shared Rust Linux event loop;
   release-lab AT-SPI and packaged native C/C++ application qualification remain open.
