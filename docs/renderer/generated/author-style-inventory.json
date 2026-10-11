@@ -938,6 +938,7 @@
       "canonical_schema_entry": false,
       "classification": "internal",
       "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/text_painter.rs"
       ],
       "css_name": null,

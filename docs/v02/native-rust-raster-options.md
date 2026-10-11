@@ -51,8 +51,9 @@ and public element methods. Open UI never runs JavaScript.
 
 At clean `85f87e2b`, the public native app matches **16/16 pictures and
 768/768 bounds** at the four required profiles, before and after a Rust text
-callback, through both font collections. The extra 3× check has **192/192 exact
-bounds but 0/4 exact pictures**, with 6,672/6,720 differing pixels before/after.
+callback, through both font collections. That preceding 3× check failed. At clean `1576f01a`,
+the fitted-mask replay repair now matches **40/40 pictures and 1,920/1,920
+bounds** at five scales, both font collections and both explicit CPU paths.
 The three existing fractional-font API tests pass. This profile remains
 unqualified for release and requires the complete renderer matrices. The
 renderer diagnostic accepts `--raster-config chromium-linux-monochrome`.

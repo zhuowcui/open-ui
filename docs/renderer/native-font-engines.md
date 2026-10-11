@@ -29,18 +29,23 @@ altering their decompressed bytes:
 [expanded](evidence/native-font-engines-v1/lcd-expanded-audit-v1.json.gz).
 This source is unapplied and unqualified.
 
-## Shared font selection discrepancy
+## Capture harness backend request
 
 The [capture harness](../../tools/accountability/run_all_pixel_comparisons.py)
-explicitly selects `FontDataServiceLinux:typeface/Freetype` for real-font
-fixtures. Every one of the 493 newly lost exact comparisons uses that profile
+requests `FontDataServiceLinux:typeface/Freetype` for real-font fixtures.
+Every one of the 493 newly lost exact comparisons uses that requested profile
 and `cpu-skia:chromium-linux-lcd`.
 
-The trial changed authored LCD text to custom Fontations outlines. That selected
-a different typeface engine from the captured reference. The earlier native
-static oracle uses a registered Ahem webfont and does not select the FreeType
-feature. Its results therefore cannot justify switching every authored run
-to Fontations.
+The earlier conclusion that this flag proved the reference's FreeType
+selection was too strong. Pinned 147.0.7727.50 installs the service's
+FontDataManager only when the sandbox is enabled; this harness uses
+`--no-sandbox`. Its default Linux FCI manager uses a Fontations scanner in the
+pinned source. The flag alone cannot establish the capture binary's actual
+typeface engine. The 493 losses are measured; their claimed backend cause
+remains unproven. The
+[later source and native investigation](native-monochrome-font-policy.md#chromium-font-backend-evidence)
+preserves the exact primary inputs. Neither the old trial nor its isolated
+native results justify a global font-engine switch.
 
 There is also a physical-size discrepancy: LCD outlines are fitted at logical
 font size and then stretched during scaled replay. Chromium's Fontations

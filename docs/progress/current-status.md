@@ -20,17 +20,20 @@ product. Waves W0 through W10 are locally committed. W11 source packaging and
 documentation are implemented, but final external and hardware qualifications
 remain open.
 
-## Explicit native monochrome profile (scoped exact; 3× raster open)
+## Fitted monochrome text repair (native app exact; census open)
 
-The public Rust `RasterConfiguration::chromium_linux_monochrome()` matches
-Chromium's installed-font advance in the reduced application. At clean
-`85f87e2b`, its four required profiles match **16/16 pictures and 768/768
-bounds**, through registered and system fonts, before and after a Rust text
-callback. The extra 3× check has correct bounds but **0/4 exact pictures**;
-6,672/6,720 pixels differ before/after. The three existing fractional-font API
-tests pass. This explicit profile remains unqualified for release; the complete
-original/expanded, focused and primitive gates remain open. Open UI runs no
-JavaScript; applications use native Rust APIs and callbacks.
+The native Rust application at clean `1576f01a` now matches **40/40
+pictures and 1,920/1,920 bounds** across five scales, both font collections and
+both explicit CPU paths, before and after a Rust text callback. The 3× glyph
+difference is repaired: an old unhinted-mask workaround had drawn a second
+row over already fitted monochrome glyphs. The shared paint policy now respects
+the selected hint configuration. No font/test-ID/size/scale patch or reference
+change is added.
+
+This verifies the reduced native application. The explicit monochrome profile
+still needs the complete focused, primitive, original and expanded gates.
+Every remaining rendering gap and needed public native Rust API remains open.
+Open UI executes no JavaScript; pinned Chromium supplies expected pixels.
 [Native app and evidence](../renderer/native-monochrome-font-policy.md).
 
 ## Installed and loaded font measurements (reproduced; repair open)
@@ -42,7 +45,7 @@ contradiction for this regression.
 The reduced app uses the same Ahem bytes through installed and loaded font
 paths. At 16px, Chromium gives an installed space **16px** and a loaded space
 **16.015625px**; the nine-character word is **144px / 144.015625px**.
-Its platform-font API confirms the two paths. The native app currently returns
+Its platform-font API confirms the two paths. With the original no-hint profile, the native app returns
 the wider intrinsic advance through both collections. The first fixed-width
 flex child is at **5.9375px**, where installed-font Chromium places it at
 **6px**. The difference becomes visible at 1.25× scale.
