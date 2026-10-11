@@ -4,12 +4,12 @@
 //! adds child overflow, then includes padding around in-flow bounds. The
 //! border box used for painting is not the native scroll content size.
 
-use crate::{Fragment, FragmentKind};
+use crate::{Fragment, FragmentKind, FragmentTablePart};
 use openui_dom::Document;
 use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize};
 use openui_style::{
-    ComputedStyle, ContainerType, Containment, Display, FlexDirection, FlexWrap, Overflow,
-    OverflowClipBox, WritingMode,
+    BorderCollapse, ComputedStyle, ContainerType, Containment, Display, FlexDirection, FlexWrap,
+    Overflow, OverflowClipBox, WritingMode,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -26,6 +26,28 @@ pub struct ScrollArea {
 }
 
 impl ScrollArea {
+    /// Layout-owned used borders of the principal scrolling box. A captioned
+    /// table places decoration on a grid helper while its wrapper owns the
+    /// scrolling box; that separation must not discard the table's used edges.
+    pub fn used_border(fragment: &Fragment) -> BoxStrut {
+        if fragment.owns_element_box() {
+            if let Some(data) = &fragment.collapsed_table_border_data {
+                return data
+                    .borders
+                    .used_table_border()
+                    .to_physical(data.writing_direction);
+            }
+            if let Some(grid) = fragment
+                .children
+                .iter()
+                .find(|child| matches!(child.table_part, Some(FragmentTablePart::GridDecoration)))
+            {
+                return grid.border;
+            }
+        }
+        fragment.border
+    }
+
     pub fn clamp_offset(self, x: f64, y: f64) -> (f32, f32) {
         let (x_range, y_range) = self.limits();
         let x = x.clamp(x_range.0, x_range.1);
@@ -165,7 +187,7 @@ fn reachable(rect: PhysicalRect, client: PhysicalRect, x: bool, y: bool) -> Phys
 }
 
 fn propagated(doc: &Document, child: &Fragment) -> PhysicalRect {
-    let border = PhysicalRect::new(PhysicalOffset::zero(), child.size);
+    let border = child.border_box_rect();
     let Some(area) = child.scroll_area else {
         let mut rect = child.scrollable_overflow();
         if child.node_id.is_none() {
@@ -187,13 +209,16 @@ fn propagated(doc: &Document, child: &Fragment) -> PhysicalRect {
     // Paint containment establishes a formatting context, but its clipped
     // descendants still contribute to ancestor scrolling through clip margins.
     // Only actual layout containment suppresses their overflow propagation.
-    let layout_contained = style.contain.contains(Containment::LAYOUT)
-        || style.container_type != ContainerType::Normal;
+    let owned = child.owns_element_box();
+    let paint_contained = owned && style.has_paint_containment();
+    let layout_contained = owned
+        && (style.contain.contains(Containment::LAYOUT)
+            || style.container_type != ContainerType::Normal);
     if !layout_contained && style.display != Display::Inline {
         let mut content = area.content_rect;
-        let applies_clip_margin = (area.overflow_x == Overflow::Clip
-            && area.overflow_y == Overflow::Clip)
-            || (style.has_paint_containment() && !style.is_scroll_container());
+        let applies_clip_margin = owned
+            && ((area.overflow_x == Overflow::Clip && area.overflow_y == Overflow::Clip)
+                || (paint_contained && !style.is_scroll_container()));
         if applies_clip_margin {
             // A clip margin exposes child overflow to enclosing scrollports.
             // Preserve the actual child extent, intersect it with the authored
@@ -251,20 +276,18 @@ fn propagated(doc: &Document, child: &Fragment) -> PhysicalRect {
                 (right - left).clamp_negative_to_zero(),
                 (bottom - top).clamp_negative_to_zero(),
             );
-        } else if area.overflow_x != Overflow::Visible || style.has_paint_containment() {
+        } else if area.overflow_x != Overflow::Visible || paint_contained {
             content.offset.left = LayoutUnit::zero();
             content.size.width = child.size.width;
         }
-        if (area.overflow_y != Overflow::Visible || style.has_paint_containment())
-            && !applies_clip_margin
-        {
+        if (area.overflow_y != Overflow::Visible || paint_contained) && !applies_clip_margin {
             content.offset.top = LayoutUnit::zero();
             content.size.height = child.size.height;
         }
         rect = union(rect, content);
     }
     let transform = style.transform;
-    if transform != openui_style::Transform2D::IDENTITY {
+    if owned && transform != openui_style::Transform2D::IDENTITY {
         let origin_x = crate::resolve_length(
             &style.transform_origin.0,
             child.size.width,
@@ -329,28 +352,40 @@ pub(crate) fn populate(doc: &Document, fragment: &mut Fragment) {
     }
     if fragment.node_id.is_none()
         || fragment.kind != FragmentKind::Box
-        || fragment.skip_box_decoration
+        || matches!(fragment.table_part, Some(FragmentTablePart::GridDecoration))
     {
+        fragment.scroll_area = None;
         return;
     }
     let style = &doc.node(fragment.node_id).style;
     let (overflow_x, overflow_y) = overflow_pair(style);
     let (negative_x, negative_y) = directions(style);
-    let client = fragment.element_scrollbars.map_or_else(
-        || {
-            PhysicalRect::new(
-                PhysicalOffset::new(fragment.border.left, fragment.border.top),
-                PhysicalSize::new(
-                    fragment.padding_box_size().width.clamp_negative_to_zero(),
-                    fragment.padding_box_size().height.clamp_negative_to_zero(),
-                ),
-            )
-        },
-        |scrollbars| scrollbars.client_rect(fragment),
+    let border_box = fragment.border_box_rect();
+    let border = ScrollArea::used_border(fragment);
+    let gutters = fragment
+        .element_scrollbars
+        .map_or(BoxStrut::zero(), |scrollbars| scrollbars.insets);
+    let client = PhysicalRect::new(
+        PhysicalOffset::new(
+            border_box.x() + border.left + gutters.left,
+            border_box.y() + border.top + gutters.top,
+        ),
+        PhysicalSize::new(
+            (border_box.width() - border.inline_sum() - gutters.inline_sum())
+                .clamp_negative_to_zero(),
+            (border_box.height() - border.block_sum() - gutters.block_sum())
+                .clamp_negative_to_zero(),
+        ),
     );
     let mut content = client;
     let mut inflow: Option<PhysicalRect> = None;
     for child in &fragment.children {
+        // This empty native paint helper has no counterpart among Chromium's
+        // CSS table children. The wrapper, captions, rows and cells own the
+        // real extents; the grid border contributes separately when collapsed.
+        if matches!(child.table_part, Some(FragmentTablePart::GridDecoration)) {
+            continue;
+        }
         let mut child_rect = propagated(doc, child);
         child_rect.offset.left = child_rect.offset.left + child.offset.left;
         child_rect.offset.top = child_rect.offset.top + child.offset.top;
@@ -379,6 +414,17 @@ pub(crate) fn populate(doc: &Document, fragment: &mut Fragment) {
             );
             content = union(content, reachable(padding, client, negative_x, negative_y));
         }
+    }
+    // ScrollableOverflowCalculator::AddTableSelfRect includes the table's
+    // own box when its borders are collapsed. Separated borders are excluded.
+    if fragment.owns_element_box()
+        && matches!(style.display, Display::Table | Display::InlineTable)
+        && style.border_collapse == BorderCollapse::Collapse
+    {
+        content = union(
+            content,
+            reachable(border_box, client, negative_x, negative_y),
+        );
     }
     fragment.scroll_area = Some(ScrollArea {
         client_rect: client,

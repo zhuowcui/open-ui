@@ -3,6 +3,7 @@
 mod accessibility;
 mod animation;
 mod control_geometry;
+mod element_dimensions;
 mod forms;
 mod interaction;
 mod scroll_button;

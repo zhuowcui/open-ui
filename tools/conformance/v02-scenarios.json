@@ -15,6 +15,9 @@
     "text"
   ],
   "scenarios": [
+    {"id": "native_integer_dimensions_round_layout_and_preserve_fractional_scroll_metrics", "domains": ["scrolling", "layout", "lifecycle"]},
+    {"id": "native_integer_dimensions_distinguish_inline_no_box_and_owned_lifecycle", "domains": ["scrolling", "layout", "lifecycle"]},
+    {"id": "native_integer_dimensions_use_captioned_table_grid_borders_and_real_parts", "domains": ["scrolling", "layout", "lifecycle"]},
     {"id": "native_scroll_snap_initial_and_resnap_follow_retained_area_identity", "domains": ["scrolling", "layout", "lifecycle", "controls"]},
     {"id": "native_scroll_padding_and_margin_affect_pages_and_snap_geometry", "domains": ["scrolling", "layout", "lifecycle", "controls"]},
     {"id": "native_scroll_snap_stop_and_proximity_share_page_selection", "domains": ["scrolling", "layout", "lifecycle", "controls"]},

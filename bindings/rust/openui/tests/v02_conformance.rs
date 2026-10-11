@@ -2467,3 +2467,158 @@ fn native_table_span_attributes_share_typed_reflection_and_callback_layout() {
     assert_eq!(cell.row_span().unwrap(), 1);
     assert_eq!(cell.client_rects().unwrap(), before);
 }
+
+fn integer_dimensions(element: &Element) -> (i32, i32, i32, i32) {
+    (
+        element.client_width().unwrap(),
+        element.client_height().unwrap(),
+        element.scroll_width().unwrap(),
+        element.scroll_height().unwrap(),
+    )
+}
+
+#[test]
+fn native_integer_dimensions_round_layout_and_preserve_fractional_scroll_metrics() {
+    for scale in [1.0, 1.25, 1.5, 2.0] {
+        let document = Document::with_viewport_metrics(
+            ViewportMetrics::from_logical_size(320.0, 240.0, scale).unwrap(),
+        )
+        .unwrap();
+        let scroller = child(&document, "div");
+        sized(&scroller, 100.5, 80.5);
+        scroller
+            .set_border(Border {
+                width: 2.0,
+                style: BorderStyle::Solid,
+                color: Color::BLACK,
+            })
+            .unwrap();
+        scroller.set_overflow(Overflow::Scroll).unwrap();
+        scroller.set_scrollbar_width(ScrollbarWidth::Auto).unwrap();
+        let content = Element::create(&document, "div").unwrap();
+        sized(&content, 200.5, 160.5);
+        scroller.append_child(&content).unwrap();
+        assert_eq!(integer_dimensions(&scroller), (86, 66, 201, 161));
+        let raw = scroller.scroll_metrics().unwrap().unwrap();
+        assert_eq!(
+            (
+                raw.client_width,
+                raw.client_height,
+                raw.scroll_width,
+                raw.scroll_height
+            ),
+            (85.5, 65.5, 200.5, 160.5)
+        );
+        assert_eq!(
+            (scroller.width().unwrap(), scroller.height().unwrap()),
+            (104.5, 84.5)
+        );
+        scroller
+            .set_transform(TransformList(vec![TransformOperation::Scale(2.0, 3.0)]))
+            .unwrap();
+        assert_eq!(
+            (scroller.width().unwrap(), scroller.height().unwrap()),
+            (209.0, 253.5)
+        );
+        assert_eq!(integer_dimensions(&scroller), (86, 66, 201, 161));
+        assert_eq!(scroller.scroll_metrics().unwrap().unwrap(), raw);
+        scroller.set_overflow(Overflow::Hidden).unwrap();
+        assert_eq!(integer_dimensions(&scroller), (101, 81, 201, 161));
+        assert_eq!(
+            scroller.scroll_metrics().unwrap().unwrap().client_width,
+            100.5
+        );
+    }
+}
+
+#[test]
+fn native_integer_dimensions_distinguish_inline_no_box_and_owned_lifecycle() {
+    let document = document();
+    assert_eq!(integer_dimensions(&document.body()), (320, 240, 320, 240));
+    let inline = child(&document, "span");
+    inline.set_text("inline").unwrap();
+    inline.set_padding_top(LengthValue::px(4.0)).unwrap();
+    inline.set_padding_bottom(LengthValue::px(4.0)).unwrap();
+    assert!(!inline.client_rects().unwrap().is_empty());
+    assert_eq!(integer_dimensions(&inline), (0, 0, 0, 0));
+    inline.set_display(Display::InlineBlock).unwrap();
+    inline.set_text("").unwrap();
+    inline.set_width(LengthValue::px(40.5)).unwrap();
+    inline.set_height(LengthValue::px(10.5)).unwrap();
+    assert_eq!(integer_dimensions(&inline), (41, 19, 41, 19));
+    let contents = child(&document, "div");
+    contents.set_display(Display::Contents).unwrap();
+    let visible = Element::create(&document, "div").unwrap();
+    sized(&visible, 60.0, 20.0);
+    contents.append_child(&visible).unwrap();
+    assert_eq!(integer_dimensions(&contents), (0, 0, 0, 0));
+    assert_eq!(integer_dimensions(&visible), (60, 20, 60, 20));
+    visible.detach().unwrap();
+    assert_eq!(integer_dimensions(&visible), (0, 0, 0, 0));
+    assert!(visible.scroll_metrics().unwrap().is_none());
+    document.body().append_child(&visible).unwrap();
+    assert_eq!(integer_dimensions(&visible), (60, 20, 60, 20));
+    visible.set_display(Display::None).unwrap();
+    assert_eq!(integer_dimensions(&visible), (0, 0, 0, 0));
+    visible.remove().unwrap();
+    assert!(visible.client_width().is_err());
+    assert!(visible.client_height().is_err());
+    assert!(visible.scroll_width().is_err());
+    assert!(visible.scroll_height().is_err());
+}
+
+#[test]
+fn native_integer_dimensions_use_captioned_table_grid_borders_and_real_parts() {
+    let document = document();
+    let table = child(&document, "table");
+    table.set_width(LengthValue::px(120.0)).unwrap();
+    table.set_box_sizing(BoxSizing::BorderBox).unwrap();
+    table
+        .set_border_spacing((Length::px(0.0), Length::px(0.0)))
+        .unwrap();
+    table
+        .set_border(Border {
+            width: 2.0,
+            style: BorderStyle::Solid,
+            color: Color::BLACK,
+        })
+        .unwrap();
+    let caption = Element::create(&document, "caption").unwrap();
+    caption.set_height(LengthValue::px(12.0)).unwrap();
+    table.append_child(&caption).unwrap();
+    let group = Element::create(&document, "tbody").unwrap();
+    let row = Element::create(&document, "tr").unwrap();
+    let cell = Element::create(&document, "td").unwrap();
+    cell.set_height(LengthValue::px(20.0)).unwrap();
+    table.append_child(&group).unwrap();
+    group.append_child(&row).unwrap();
+    row.append_child(&cell).unwrap();
+    assert_eq!(integer_dimensions(&table), (120, 36, 118, 32));
+    assert_eq!(integer_dimensions(&caption), (120, 12, 120, 12));
+    for part in [&group, &row, &cell] {
+        assert_eq!(integer_dimensions(part), (116, 20, 116, 20));
+    }
+    let raw = table.scroll_metrics().unwrap().unwrap();
+    assert_eq!(
+        (
+            raw.client_width,
+            raw.client_height,
+            raw.scroll_width,
+            raw.scroll_height
+        ),
+        (116.0, 32.0, 118.0, 32.0)
+    );
+    table
+        .set_transform(TransformList(vec![TransformOperation::Translate(
+            LengthValue::px(20.0),
+            LengthValue::px(7.0),
+        )]))
+        .unwrap();
+    assert_eq!(integer_dimensions(&table), (120, 36, 118, 32));
+    assert_eq!(table.scroll_metrics().unwrap().unwrap(), raw);
+    caption.remove().unwrap();
+    assert_eq!(integer_dimensions(&table), (120, 24, 116, 20));
+    table.set_border_collapse(BorderCollapse::Collapse).unwrap();
+    assert_eq!(table.client_width().unwrap(), 120);
+    assert_eq!(cell.client_height().unwrap(), 20);
+}

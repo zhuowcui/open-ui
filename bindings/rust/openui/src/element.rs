@@ -670,6 +670,37 @@ impl Element {
             .with_engine_mut(|engine| engine.scroll_metrics(self.handle))
     }
 
+    /// Integer width of the layout padding box, excluding classic scrollbar
+    /// gutters. Inline text boxes and elements without a layout box return
+    /// zero. Tables include their grid borders and captions. Transforms do not
+    /// change this dimension; use `bounding_rect` for visual geometry.
+    pub fn client_width(&self) -> Result<i32, Error> {
+        self.document
+            .with_engine_mut(|engine| engine.client_width(self.handle))
+    }
+
+    /// Integer height of the layout padding box, with the same ownership and
+    /// rounding rules as `client_width`. Reading flushes pending layout.
+    pub fn client_height(&self) -> Result<i32, Error> {
+        self.document
+            .with_engine_mut(|engine| engine.client_height(self.handle))
+    }
+
+    /// Integer width of the reachable layout overflow, including padding.
+    /// Descendant transforms can enlarge that overflow;
+    /// this element's own visual transform does not change the result.
+    pub fn scroll_width(&self) -> Result<i32, Error> {
+        self.document
+            .with_engine_mut(|engine| engine.scroll_width(self.handle))
+    }
+
+    /// Integer height of layout overflow. The raw, fractional scrolling-area
+    /// snapshot remains available through `scroll_metrics`.
+    pub fn scroll_height(&self) -> Result<i32, Error> {
+        self.document
+            .with_engine_mut(|engine| engine.scroll_height(self.handle))
+    }
+
     pub fn scroll_top(&self) -> Result<f64, Error> {
         Ok(self
             .document
