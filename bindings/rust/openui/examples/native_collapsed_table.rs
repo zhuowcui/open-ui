@@ -187,11 +187,27 @@ fn snapshot(
     document: &Document,
     nodes: &[(String, String, Element)],
     points: &Value,
-) -> ProbeResult<Value> {
+) -> ProbeResult<(Value, Value)> {
     let rectangle = |r: openui::Rect| json!({"x":r.x,"y":r.y,"width":r.width,"height":r.height});
     let mut records = Vec::new();
+    let mut raw_scroll_metrics = Vec::new();
     for (name, tag, element) in nodes {
-        let metrics=element.scroll_metrics()?.map(|m|json!({"client_width":m.client_width,"client_height":m.client_height,"scroll_width":m.scroll_width,"scroll_height":m.scroll_height}));
+        // The comparison uses native integer CSSOM dimensions. Retain the
+        // lower-level unrounded ScrollMetrics separately, without replacing
+        // native API results with consumer rounding or truncation.
+        let metrics = json!({
+            "client_width": element.client_width()?,
+            "client_height": element.client_height()?,
+            "scroll_width": element.scroll_width()?,
+            "scroll_height": element.scroll_height()?,
+        });
+        let raw_metrics = element.scroll_metrics()?.map(|m| {
+            json!({
+                "client_width":m.client_width, "client_height":m.client_height,
+                "scroll_width":m.scroll_width, "scroll_height":m.scroll_height,
+            })
+        });
+        raw_scroll_metrics.push(json!({"name": name, "scroll_metrics": raw_metrics}));
         let column_span = if matches!(tag.as_str(), "td" | "th" | "col" | "colgroup") {
             Some(element.column_span()?)
         } else {
@@ -214,7 +230,10 @@ fn snapshot(
         let y = point[1].as_f64().ok_or("hit y required")?;
         hits.push(json!({"x":x,"y":y,"id":document.hit_test(x as f32,y as f32)?.map(|node|node.get_attribute("id")).transpose()?.flatten()}));
     }
-    Ok(json!({"nodes":records,"hits":hits}))
+    Ok((
+        json!({"nodes":records,"hits":hits}),
+        json!({"nodes":raw_scroll_metrics}),
+    ))
 }
 fn write_json(path: PathBuf, value: &Value) -> ProbeResult<()> {
     std::fs::write(path, serde_json::to_vec_pretty(value)?)?;
@@ -301,12 +320,13 @@ fn main() -> ProbeResult<()> {
             }
         }
         document.update_all()?;
-        let initial = snapshot(&document, &nodes, &fixture["hit_points"])?;
+        let (initial, initial_raw_metrics) = snapshot(&document, &nodes, &fixture["hit_points"])?;
         let frame = document.render_to_png_buffer()?;
         let repeat = document.render_to_png_buffer()?;
         std::fs::write(out.join("frame.png"), &frame)?;
         std::fs::write(out.join("unchanged-frame.png"), &repeat)?;
         write_json(out.join("bounds.json"), &initial)?;
+        write_json(out.join("raw-scroll-metrics.json"), &initial_raw_metrics)?;
         if frame != repeat {
             failures.push("unchanged frame differs".into());
         }
@@ -368,15 +388,25 @@ fn main() -> ProbeResult<()> {
         target.dispatch_click_event()?;
         document.update_all()?;
         let callback_frame = document.render_to_png_buffer()?;
-        let callback_snapshot = snapshot(&document, &nodes, &fixture["hit_points"])?;
+        let (callback_snapshot, callback_raw_metrics) =
+            snapshot(&document, &nodes, &fixture["hit_points"])?;
         std::fs::write(out.join("callback-frame.png"), &callback_frame)?;
         write_json(out.join("callback-bounds.json"), &callback_snapshot)?;
+        write_json(
+            out.join("callback-raw-scroll-metrics.json"),
+            &callback_raw_metrics,
+        )?;
         target.dispatch_click_event()?;
         document.update_all()?;
         let restored = document.render_to_png_buffer()?;
-        let restored_snapshot = snapshot(&document, &nodes, &fixture["hit_points"])?;
+        let (restored_snapshot, restored_raw_metrics) =
+            snapshot(&document, &nodes, &fixture["hit_points"])?;
         std::fs::write(out.join("restored-frame.png"), &restored)?;
         write_json(out.join("restored-bounds.json"), &restored_snapshot)?;
+        write_json(
+            out.join("restored-raw-scroll-metrics.json"),
+            &restored_raw_metrics,
+        )?;
         if callbacks.get() != 2 || !callback_errors.borrow().is_empty() || !callback_thread_ok.get()
         {
             failures.push("native callback lifecycle failed".into());
@@ -388,12 +418,15 @@ fn main() -> ProbeResult<()> {
         if callback_frame == frame {
             failures.push("native callback opacity mutation produced no visible change".into());
         }
-        if restored != frame || restored_snapshot != initial {
+        if restored != frame
+            || restored_snapshot != initial
+            || restored_raw_metrics != initial_raw_metrics
+        {
             failures.push("native callback restoration changed pixels or geometry".into());
         }
         write_json(
             out.join("lifecycle.json"),
-            &json!({"case":name,"policy":policy,"native_click_callbacks":callbacks.get(),"native_callback_target_ids":callback_target_ids.borrow().clone(),"native_callback_errors":callback_errors.borrow().clone(),"callbacks_on_ui_thread":callback_thread_ok.get(),"unchanged_frame_byte_repeat":frame==repeat,"callback_mutated_pixels":callback_frame!=frame,"callback_restored_pixels":restored==frame,"callback_restored_geometry":restored_snapshot==initial,"continuation_nodes":continuation_nodes,"required_continuations":fixture["requires_continuations"],"javascript_executed_by_openui":false,"private_engine_access":false,"runtime_html_css_parser":false,"failures":failures,"weak_teardown_passed":false}),
+            &json!({"case":name,"policy":policy,"native_click_callbacks":callbacks.get(),"native_callback_target_ids":callback_target_ids.borrow().clone(),"native_callback_errors":callback_errors.borrow().clone(),"callbacks_on_ui_thread":callback_thread_ok.get(),"unchanged_frame_byte_repeat":frame==repeat,"callback_mutated_pixels":callback_frame!=frame,"callback_restored_pixels":restored==frame,"callback_restored_geometry":restored_snapshot==initial,"callback_restored_raw_scroll_metrics":restored_raw_metrics==initial_raw_metrics,"continuation_nodes":continuation_nodes,"required_continuations":fixture["requires_continuations"],"javascript_executed_by_openui":false,"private_engine_access":false,"runtime_html_css_parser":false,"failures":failures,"weak_teardown_passed":false}),
         )?;
         nodes
             .iter()
