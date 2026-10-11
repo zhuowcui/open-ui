@@ -20,6 +20,19 @@ product. Waves W0 through W10 are locally committed. W11 source packaging and
 documentation are implemented, but final external and hardware qualifications
 remain open.
 
+## Explicit native monochrome profile (scoped exact; 3× raster open)
+
+The public Rust `RasterConfiguration::chromium_linux_monochrome()` matches
+Chromium's installed-font advance in the reduced application. At clean
+`85f87e2b`, its four required profiles match **16/16 pictures and 768/768
+bounds**, through registered and system fonts, before and after a Rust text
+callback. The extra 3× check has correct bounds but **0/4 exact pictures**;
+6,672/6,720 pixels differ before/after. The three existing fractional-font API
+tests pass. This explicit profile remains unqualified for release; the complete
+original/expanded, focused and primitive gates remain open. Open UI runs no
+JavaScript; applications use native Rust APIs and callbacks.
+[Native app and evidence](../renderer/native-monochrome-font-policy.md).
+
 ## Installed and loaded font measurements (reproduced; repair open)
 
 Fresh pinned Chromium captures of the failing flex fixture match its cached

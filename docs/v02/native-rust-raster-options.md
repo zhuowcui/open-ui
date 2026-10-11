@@ -49,10 +49,14 @@ so a consuming Rust app can express its raster settings directly. These are
 native Rust options; application interaction continues to use Rust callbacks
 and public element methods. Open UI never runs JavaScript.
 
-This profile is under pixel verification. It is not the default, and it has
-not passed the full renderer or release gates. Existing no-hint profiles keep
-their original settings. The renderer diagnostic accepts the explicit
-`--raster-config chromium-linux-monochrome` selection.
+At clean `85f87e2b`, the public native app matches **16/16 pictures and
+768/768 bounds** at the four required profiles, before and after a Rust text
+callback, through both font collections. The extra 3× check has **192/192 exact
+bounds but 0/4 exact pictures**, with 6,672/6,720 differing pixels before/after.
+The three existing fractional-font API tests pass. This profile remains
+unqualified for release and requires the complete renderer matrices. The
+renderer diagnostic accepts `--raster-config chromium-linux-monochrome`.
+See the [measured font policy](../renderer/native-monochrome-font-policy.md).
 
 ## Executed verification
 
