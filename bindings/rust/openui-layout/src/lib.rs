@@ -69,7 +69,8 @@ pub use out_of_flow::{layout_out_of_flow_children, OutOfFlowCandidate, StaticPos
 pub use relative::apply_relative_offset;
 pub use resolved_table_borders::{
     BorderCandidate, BorderSourceKind, CanonicalColumnLocation, CanonicalRowSize,
-    CollapsedTableBorderData, PhysicalBorderSide, ResolvedCollapsedBorders, ResolvedEdge,
+    CollapsedTableBorderData, CollapsedTableSectionData, PhysicalBorderSide,
+    ResolvedCollapsedBorders, ResolvedEdge,
 };
 pub use ruby::{clamp_overhang, compute_ruby_layout, max_ruby_overhang, RubyInfo, RubyLayout};
 pub use scroll_area::ScrollArea;

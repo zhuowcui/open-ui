@@ -6,6 +6,7 @@
 //! This renders layout fragments to a Skia canvas using the exact same
 //! draw calls, paint flags, and coordinate handling as Blink.
 
+mod collapsed_table_painter;
 mod content_layer;
 pub mod decoration_painter;
 pub mod emphasis_painter;

@@ -144,6 +144,7 @@ fn resolved_gradient_positions(
 thread_local! {
     static HOIST_SKIP: RefCell<HashSet<usize>> = RefCell::new(HashSet::new());
     static PREPAINTED_BOX_DECORATIONS: RefCell<HashSet<usize>> = RefCell::new(HashSet::new());
+    static PREPAINTED_COLLAPSED_TABLE_BORDERS: RefCell<HashSet<usize>> = RefCell::new(HashSet::new());
     static PREPAINTED_COLUMN_RULES: RefCell<HashSet<usize>> = RefCell::new(HashSet::new());
     static FRAGMENTED_OOF_HOIST_ACTIVE: RefCell<bool> = const { RefCell::new(false) };
     static FRAGMENTED_INLINE_SKIP_AFTER: RefCell<Option<usize>> = const { RefCell::new(None) };
@@ -771,6 +772,9 @@ fn paint_fragment_tracked(
     doc: &Document,
     offset: PhysicalOffset,
 ) {
+    if fragment.is_hidden_for_paint {
+        return;
+    }
     // A box that crosses a fractional viewport edge is cut by the physical
     // viewport scissor before its overflowing ink reaches the terminal cell.
     // A box ending at that edge keeps its own snapped edge coverage, so clip
@@ -1127,6 +1131,7 @@ fn paint_fragment_contents(
                     abs_offset,
                     false,
                     false,
+                    Some(fragment),
                 );
                 paint_fragmented_descendant_outlines(
                     canvas,
@@ -1170,6 +1175,7 @@ fn paint_fragment_contents(
                     abs_offset,
                     false,
                     false,
+                    Some(fragment),
                 );
                 canvas.restore();
 
@@ -1223,6 +1229,7 @@ fn paint_fragment_contents(
                 abs_offset,
                 false,
                 false,
+                Some(fragment),
             );
         }
         return;
@@ -1231,8 +1238,21 @@ fn paint_fragment_contents(
     // Line box fragments (from inline layout) have NodeId::NONE — they are
     // anonymous boxes with no DOM node. Just recurse into children.
     if fragment.node_id.is_none() {
+        let clips_section =
+            fragment.collapsed_table_section.is_some() && fragment.has_overflow_clip;
+        if clips_section {
+            canvas.save();
+            canvas.clip_rect(
+                column_block_only_clip_rect(fragment, abs_offset, doc.device_scale_factor()),
+                ClipOp::Intersect,
+                false,
+            );
+        }
         for child in &fragment.children {
             paint_fragment_tracked(canvas, child, doc, abs_offset);
+        }
+        if clips_section {
+            canvas.restore();
         }
         return;
     }
@@ -1642,6 +1662,7 @@ fn paint_fragment_contents(
             abs_offset,
             true,
             style.display.is_flex() && fragmented_flex_has_internal_four_way_junction(fragment),
+            Some(fragment),
         );
         let annotations = background_recording.annotations();
         let paint_record = paint_recording.snapshot();
@@ -1683,6 +1704,7 @@ fn paint_fragment_contents(
             abs_offset,
             is_sc,
             style.display.is_flex() && fragmented_flex_has_internal_four_way_junction(fragment),
+            Some(fragment),
         );
     }
     if deferred_outline_cover.is_some() {
@@ -1691,7 +1713,10 @@ fn paint_fragment_contents(
         });
     }
 
-    if fragment.paint_border_after_children && style.visibility == Visibility::Visible {
+    if fragment.paint_border_after_children
+        && !fragment.collapsed_table_border_participant
+        && style.visibility == Visibility::Visible
+    {
         if fragment.collapsed_border_segments.is_empty() {
             let x = abs_offset.left.round().to_f32();
             let y = abs_offset.top.round().to_f32();
@@ -5993,6 +6018,7 @@ fn paint_children_with_stacking_order(
     offset: PhysicalOffset,
     is_stacking_context: bool,
     fragmented_flex_items: bool,
+    table_owner: Option<&Fragment>,
 ) {
     use openui_style::Position;
 
@@ -6157,6 +6183,25 @@ fn paint_children_with_stacking_order(
             }
         });
     }
+
+    // .50 BoxFragmentPainter paints a table's collapsed graph in descendant
+    // block backgrounds, before foreground/text. Negative stacking entries
+    // keep their phase above; self-painting parts remain atomic below.
+    let _table_background_phase = table_owner.and_then(|table| {
+        if table.collapsed_table_border_data.is_none()
+            || doc.node(table.node_id).style.visibility != Visibility::Visible
+            || PREPAINTED_COLLAPSED_TABLE_BORDERS
+                .with(|set| set.borrow().contains(&(table as *const Fragment as usize)))
+        {
+            return None;
+        }
+        let mut phase = CollapsedTableBackgroundPhase::default();
+        for child in children {
+            prepaint_collapsed_table_backgrounds(canvas, child, doc, offset, &mut phase);
+        }
+        crate::collapsed_table_painter::paint(canvas, table, doc, offset);
+        Some(phase)
+    });
 
     // Column rules paint behind column contents; overflowing descendants may
     // cover them in the gap.
@@ -6616,6 +6661,184 @@ fn paint_children_with_stacking_order(
                 set.remove(&p);
             }
         });
+    }
+}
+
+#[derive(Default)]
+struct CollapsedTableBackgroundPhase {
+    decorations: Vec<usize>,
+    borders: Vec<usize>,
+}
+
+impl Drop for CollapsedTableBackgroundPhase {
+    fn drop(&mut self) {
+        PREPAINTED_BOX_DECORATIONS.with(|set| {
+            let mut set = set.borrow_mut();
+            for pointer in &self.decorations {
+                set.remove(pointer);
+            }
+        });
+        PREPAINTED_COLLAPSED_TABLE_BORDERS.with(|set| {
+            let mut set = set.borrow_mut();
+            for pointer in &self.borders {
+                set.remove(pointer);
+            }
+        });
+    }
+}
+
+/// A table part with a layer paints its own background in the layer's atomic
+/// traversal. Do not hoist that decoration out of a transform/opacity/filter
+/// group. Position:relative also has a layer, even with z-index:auto.
+fn table_part_has_layer(fragment: &Fragment, doc: &Document) -> bool {
+    if !fragment.owns_element_box() || fragment.node_id.is_none() {
+        return false;
+    }
+    let style = &doc.node(fragment.node_id).style;
+    // LayoutTableColumn::LayerTypeRequired always returns kNoPaintLayer.
+    if matches!(
+        style.display,
+        Display::TableColumn | Display::TableColumnGroup
+    ) {
+        return false;
+    }
+    style.position != Position::Static
+        || is_fragment_stacking_context(fragment, doc)
+        || style.has_layout_containment()
+        || style.will_change_transform
+        || style.transform != openui_style::Transform2D::IDENTITY
+        || style.filter_blur > 0.0
+        || style.filter_grayscale > 0.0
+        || style.clip_path_inset.is_some()
+        || !style.mask_layers.is_empty()
+}
+
+fn prepaint_collapsed_table_backgrounds(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    parent_offset: PhysicalOffset,
+    phase: &mut CollapsedTableBackgroundPhase,
+) {
+    let pointer = fragment as *const Fragment as usize;
+    if fragment.is_hidden_for_paint
+        || fragment.kind == FragmentKind::Text
+        || fragment.kind == FragmentKind::ColumnRule
+        || HOIST_SKIP.with(|set| set.borrow().contains(&pointer))
+        || table_part_has_layer(fragment, doc)
+    {
+        return;
+    }
+    let offset = PhysicalOffset::new(
+        parent_offset.left + fragment.offset.left,
+        parent_offset.top + fragment.offset.top,
+    );
+    if fragment.node_id.is_none() {
+        let clips_section =
+            fragment.collapsed_table_section.is_some() && fragment.has_overflow_clip;
+        if clips_section {
+            canvas.save();
+            canvas.clip_rect(
+                column_block_only_clip_rect(fragment, offset, doc.device_scale_factor()),
+                ClipOp::Intersect,
+                false,
+            );
+        }
+        for child in &fragment.children {
+            prepaint_collapsed_table_backgrounds(canvas, child, doc, offset, phase);
+        }
+        if clips_section {
+            canvas.restore();
+        }
+        return;
+    }
+    let original_style = &doc.node(fragment.node_id).style;
+    // Floats and inline boxes keep their own foreground paint phase. Table
+    // structural helpers may borrow an inline table owner's style without
+    // becoming independently authored inline boxes.
+    if fragment.owns_element_box()
+        && (original_style.float != openui_style::Float::None
+            || (original_style.display.is_inline_level()
+                && !original_style.display.is_table_wrapper()))
+    {
+        return;
+    }
+    let adjusted_style = fragment
+        .paint_background_color_override
+        .map(|color| original_style.derive(|style| style.background_color = color));
+    let style = adjusted_style.as_ref().unwrap_or(original_style);
+    if fragment.kind == FragmentKind::Box
+        && style.visibility == Visibility::Visible
+        && !fragment.skip_box_decoration
+        && !PREPAINTED_BOX_DECORATIONS.with(|set| set.borrow().contains(&pointer))
+    {
+        paint_fragment_box_decoration(canvas, fragment, doc, style, offset, 1.0);
+        PREPAINTED_BOX_DECORATIONS.with(|set| {
+            set.borrow_mut().insert(pointer);
+        });
+        phase.decorations.push(pointer);
+    }
+
+    // Descendant backgrounds obey the same authored overflow coordinate
+    // space. The part's own decoration and collapsed graph are outside its
+    // content clip, just as in ordinary box painting.
+    let clips = needs_overflow_clip(fragment, style, doc);
+    if clips {
+        canvas.save();
+        let (x, y, width, height) = compute_overflow_clip_reference_rect(fragment, offset, style);
+        let big = 100_000.0;
+        let clip = Rect::from_ltrb(
+            if style.overflow_x == Overflow::Visible {
+                -big
+            } else {
+                x
+            },
+            if style.overflow_y == Overflow::Visible {
+                -big
+            } else {
+                y
+            },
+            if style.overflow_x == Overflow::Visible {
+                big
+            } else {
+                x + width
+            },
+            if style.overflow_y == Overflow::Visible {
+                big
+            } else {
+                y + height
+            },
+        );
+        canvas.clip_rect(
+            outward_snap_rect_to_physical(clip, doc.device_scale_factor()),
+            ClipOp::Intersect,
+            false,
+        );
+        if fragment.owns_element_box() {
+            let node = doc.node(fragment.node_id);
+            canvas.translate(element_scroll_paint_translation(
+                fragment,
+                doc,
+                node.scroll_left,
+                node.scroll_top,
+            ));
+        }
+    }
+    for child in &fragment.children {
+        prepaint_collapsed_table_backgrounds(canvas, child, doc, offset, phase);
+    }
+    if clips {
+        canvas.restore();
+    }
+    if fragment.collapsed_table_border_data.is_some()
+        && style.visibility == Visibility::Visible
+        && !PREPAINTED_COLLAPSED_TABLE_BORDERS.with(|set| set.borrow().contains(&pointer))
+    {
+        crate::collapsed_table_painter::paint(canvas, fragment, doc, offset);
+        PREPAINTED_COLLAPSED_TABLE_BORDERS.with(|set| {
+            set.borrow_mut().insert(pointer);
+        });
+        phase.borders.push(pointer);
     }
 }
 
@@ -9502,6 +9725,7 @@ fn paint_composited_scroll_contents(
         offset,
         is_stacking_context,
         style.display.is_flex() && fragmented_flex_has_internal_four_way_junction(fragment),
+        Some(fragment),
     );
     surface.canvas().restore();
 
@@ -9979,6 +10203,7 @@ fn paint_with_overflow_clip(
             offset,
             is_sc,
             style.display.is_flex() && fragmented_flex_has_internal_four_way_junction(fragment),
+            Some(fragment),
         );
         canvas.restore();
     }
@@ -10015,6 +10240,7 @@ fn paint_with_overflow_clip(
                 offset,
                 is_sc,
                 style.display.is_flex() && fragmented_flex_has_internal_four_way_junction(fragment),
+                Some(fragment),
             );
             canvas.restore();
             canvas.restore();
@@ -16241,16 +16467,79 @@ fn paint_box_shadows(
     }
 }
 
-/// Paint background + border for a single box fragment.
-///
-/// Extracted from Blink's `BoxFragmentPainter::PaintBoxDecorationBackgroundWithRectImpl()`
-/// (box_fragment_painter.cc:1550).
-///
-/// Order:
-/// 1. Box shadows (outset)
-/// 2. Background color (fill the border-box rect)
-/// 3. Box shadows (inset)
-/// 4. Border (stroke the border-box rect)
+struct CollapsedCellBackgroundClip<'a>(&'a Canvas);
+
+impl Drop for CollapsedCellBackgroundClip<'_> {
+    fn drop(&mut self) {
+        self.0.restore();
+    }
+}
+
+fn collapsed_cell_background_clip<'a>(
+    canvas: &'a Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+) -> Option<CollapsedCellBackgroundClip<'a>> {
+    if !fragment.collapsed_table_border_participant
+        || fragment.node_id.is_none()
+        || doc.node(fragment.node_id).style.display != Display::TableCell
+    {
+        return None;
+    }
+    // .50 TableCellBackgroundClipper checks the cell, row and section. A
+    // layer on the table itself does not move cell backgrounds after its
+    // graph and therefore does not require this additional content clip.
+    let mut source = fragment.node_id;
+    let mut needs_clip = false;
+    for _ in 0..3 {
+        if source.is_none() {
+            break;
+        }
+        let style = &doc.node(source).style;
+        if style.display.is_table_wrapper() {
+            break;
+        }
+        needs_clip |= style.position != Position::Static
+            || style.opacity < 1.0
+            || style.establishes_transform_containing_block
+            || style.transform != openui_style::Transform2D::IDENTITY
+            || style.has_layout_containment()
+            || style.has_paint_containment()
+            || style.will_change_transform
+            || style.filter_blur > 0.0
+            || style.filter_grayscale > 0.0
+            || style.clip_path_inset.is_some()
+            || !style.mask_layers.is_empty()
+            || style.overflow_x != Overflow::Visible
+            || style.overflow_y != Overflow::Visible;
+        source = doc.node(source).parent;
+    }
+    if !needs_clip {
+        return None;
+    }
+    let rect = openui_geometry::PhysicalRect::new(
+        PhysicalOffset::new(
+            offset.left + fragment.border.left,
+            offset.top + fragment.border.top,
+        ),
+        openui_geometry::PhysicalSize::new(
+            fragment.size.width - fragment.border.left - fragment.border.right,
+            fragment.size.height - fragment.border.top - fragment.border.bottom,
+        ),
+    );
+    canvas.save();
+    canvas.clip_rect(
+        crate::collapsed_table_painter::pixel_snapped_rect(rect),
+        ClipOp::Intersect,
+        false,
+    );
+    Some(CollapsedCellBackgroundClip(canvas))
+}
+
+/// Paint one box's outset shadow, background, inset shadow and border.
+/// Collapsed participants retain their used strut for background geometry;
+/// their full-width borders are painted by the table's retained graph.
 fn paint_fragment_box_decoration(
     canvas: &Canvas,
     fragment: &Fragment,
@@ -16259,6 +16548,8 @@ fn paint_fragment_box_decoration(
     mut abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
+    let _collapsed_cell_background_clip =
+        collapsed_cell_background_clip(canvas, fragment, doc, abs_offset);
     let mut fieldset_decoration_fragment = None;
     if fragment.is_first_for_node
         && !fragment.node_id.is_none()
@@ -17742,7 +18033,8 @@ fn paint_box_decoration_background(
     canvas.restore();
 
     // ── 4. Borders ───────────────────────────────────────────────────
-    if !fragment.paint_border_after_children
+    if !fragment.collapsed_table_border_participant
+        && !fragment.paint_border_after_children
         && !paint_border_image(canvas, doc, style, border_box_rect, opacity_multiplier)
     {
         let suppress_collapsed_table_corner_pixels = style.display.is_table_wrapper()
