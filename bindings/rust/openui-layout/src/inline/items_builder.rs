@@ -165,6 +165,55 @@ pub struct FloatPlaceholder {
 }
 
 impl InlineItemsData {
+    /// Shape an immutable text stream whose CSS transformations, whitespace
+    /// processing and tab expansion have already been applied. Intrinsic
+    /// sizing uses this entry point without creating or changing DOM nodes.
+    pub(crate) fn shape_preprocessed_text(
+        text: &str,
+        style: &ComputedStyle,
+        font_collection: Arc<openui_text::FontCollection>,
+    ) -> Self {
+        let mut data = Self {
+            font_collection,
+            text: text.to_owned(),
+            items: if text.is_empty() {
+                Vec::new()
+            } else {
+                vec![InlineItem {
+                    item_type: InlineItemType::Text,
+                    text_range: 0..text.len(),
+                    node_id: NodeId::NONE,
+                    shape_result: None,
+                    style_index: 0,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                }]
+            },
+            styles: vec![style.clone()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
+        };
+        data.shape_for_base_style(style);
+        data
+    }
+
+    /// Apply the same paragraph direction and shaping stages to collected
+    /// inline content and already processed, text-only intrinsic content.
+    pub(crate) fn shape_for_base_style(&mut self, style: &ComputedStyle) {
+        let base_direction = if style.unicode_bidi == UnicodeBidi::Plaintext {
+            None
+        } else if style.direction == Direction::Rtl {
+            Some(TextDirection::Rtl)
+        } else {
+            Some(TextDirection::Ltr)
+        };
+        self.apply_bidi(base_direction);
+        self.split_shaping_runs();
+        self.shape_text();
+    }
+
     /// Apply the originating block's computed `::first-line` style to a clone
     /// of this item stream. The clone is shaped and broken only for line one;
     /// subsequent lines continue with the ordinary stream.
