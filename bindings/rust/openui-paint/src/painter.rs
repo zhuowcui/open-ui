@@ -1489,26 +1489,11 @@ fn paint_fragment_contents(
     let flattens_opacity = can_flatten_box_opacity(fragment, style);
     let needs_layer = style.opacity < 1.0 && !flattens_opacity;
     if needs_layer {
-        if fragment_subtree_has_text(fragment) || fragment_subtree_has_images(fragment, doc) {
-            // Text and sampled-image opacity groups use Chromium's ordinary N32
-            // intermediate. Its packed alpha is observably different from
-            // an F16 layer for fully covered glyph and image cells. Raster
-            // backgrounds and border images require the same intermediate
-            // as replaced images, including under an ancestor's opacity.
-            canvas.save_layer_alpha_f(None, style.opacity);
-        } else {
-            // Solid/vector-only groups retain float color until the final
-            // composite. This prevents an intermediate 8-bit premultiply
-            // from dropping a channel when a translucent primary color is
-            // blended over another saturated fill.
-            let mut opacity_paint = Paint::default();
-            opacity_paint.set_alpha_f(style.opacity);
-            canvas.save_layer(
-                &SaveLayerRec::default()
-                    .paint(&opacity_paint)
-                    .flags(SaveLayerFlags::F16_COLOR_TYPE),
-            );
-        }
+        // Chromium's SaveLayerAlphaOp uses the destination's ordinary layer
+        // format. Subtree contents do not select an F16 opacity intermediate:
+        // that changes packed premultiply/composite rounding for vector groups.
+        // Keep opacity on the whole subtree, including overlapping descendants.
+        canvas.save_layer_alpha_f(None, style.opacity);
     }
 
     if style.visibility == Visibility::Visible && style.display.is_flex() {
@@ -8603,27 +8588,6 @@ fn can_flatten_box_opacity(fragment: &Fragment, style: &ComputedStyle) -> bool {
 
 fn fragment_subtree_has_text(fragment: &Fragment) -> bool {
     fragment.kind == FragmentKind::Text || fragment.children.iter().any(fragment_subtree_has_text)
-}
-
-fn fragment_subtree_has_images(fragment: &Fragment, doc: &Document) -> bool {
-    (!fragment.node_id.is_none() && {
-        let node = doc.node(fragment.node_id);
-        node.tag == ElementTag::Image
-            || node.replaced.is_some()
-            || node
-                .style
-                .background_layers
-                .iter()
-                .any(|layer| matches!(layer.image, CssImage::Raster(_)))
-            || node
-                .style
-                .border_image
-                .as_ref()
-                .is_some_and(|border| matches!(border.source, CssImage::Raster(_)))
-    }) || fragment
-        .children
-        .iter()
-        .any(|child| fragment_subtree_has_images(child, doc))
 }
 
 fn paint_list_marker(
