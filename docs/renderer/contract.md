@@ -24,42 +24,53 @@ implementing the operation and its public Rust API, with application-level
 verification; adding JavaScript or a script binding is never the solution.
 Scripts may run only in the separate offline Chromium reference tooling.
 
-## Shared atomic sizing (scoped trial; full verification pending)
+## Shared atomic sizing (clean measurement; regression gate failed)
 
-Atomic elements now use the shared minimum and maximum content calculations
-across font families. Consecutive floats retain their measured minimum width.
-This removes font-name and zero-minimum branches from atomic shrink-to-fit;
-global shaping, hinting and rasterization are unchanged.
+The integrated sizing change fails the full-census regression gate and requires
+repair before acceptance. Atomic elements use the shared minimum and maximum
+content calculations across font families. Consecutive floats retain their measured minimum width. This
+removes the font-name and zero-minimum branches from atomic shrink-to-fit.
 
-A separate Rust app at clean `fd478bef` measures **0/15 whole images and
-165/210 bounds exact** against unchanged pinned Chromium. Its two Rust
-callbacks, independent process repeats, unchanged-frame repeats and weak
-teardown pass. The probe records **1,470 direct shaping samples** from retained
-computed styles and the shared font collection. These samples are diagnostics,
-not a claim about the Engine's inline segmentation or Chromium's internal
-strike settings.
+A separate Rust app at clean `b21ece15` measures **0/15 whole images and
+180/210 bounds exact** against unchanged pinned Chromium. Its pixels and bounds
+reproduce the earlier sizing trial byte for byte. Same-byte font aliases retain
+pixels and bounds at all five profiles; different font bytes change pixels.
+Both Rust callbacks, independent process repeats, unchanged-frame repeats and
+weak teardown pass. All **1,181 layout/text/paint tests** pass, with zero failures
+or ignores. The **1,470 direct shaping samples** describe retained styles and
+the shared font collection; they do not establish the Engine's inline
+segmentation or Chromium's internal strike settings.
 
-The isolated one-file sizing trial measures **0/15 whole images and
-180/210 bounds exact** at five profiles: **15 bounds gained, none lost**,
-**nine images improved, none worsened**. Consecutive-float width is now 90px,
-matching Chromium, instead of zero. Long-word width precision and fallback
-line height still differ. All **1,181 layout/text/paint tests** pass with zero
-failures or ignores. Focused **640/640** and primitive **960/960** are exact,
-with all **1,600 rows** independently audited and Chromium inputs unchanged.
-The trial source was dirty and is explicitly unqualified.
+Fresh CPU verification at the same clean source measures
+**21,334/22,924 original** and
+**22,137/23,728 expanded** exact comparisons, with
+**1,590 / 1,591 differences**, zero errors and
+actual exits **1 / 1**.
+Focused **640/640** and primitive **960/960** are exact. All **48,252 rows**,
+fresh linked artifacts and unchanged Chromium reference fields are audited.
+Against earlier clean `98d18982`, the original census gains **0**
+exact comparisons, loses **16**, and worsens **17** differences;
+the expanded census gains **0**, loses **16**, and worsens **17**.
 
-Clean verification of this integrated sizing change, complete original and
-expanded census nonregression, workspace/ABI and hosted hardening remain
-pending. Prior clean `fd478bef` hosted workflows complete, but five hardening
-jobs are skipped; that is not a complete hardening pass. The latest complete
-original and expanded pixel counts remain attributed to earlier clean
-`98d18982`: **21,350/22,924** and **22,153/23,728**, both failed with zero
-errors. No renderer, complete native API or release qualification is claimed.
+All **12 hosted jobs** pass on measured `b21ece15`, with zero skips: format,
+ordinary CI and all seven explicitly dispatched hardening jobs, including the
+hosted X11/Mesa and pure Wayland native consumers.
+[Hardening run 38113517188](https://github.com/zhuowcui/open-ui/actions/runs/38113517188).
+These results are attributed to the measured source; a later checkpoint needs
+its own hosted results.
+
+There are **879 residual original test IDs**, including
+**879 without a reviewed ownership entry**.
+Long-word advance precision, fallback line height and broader font/raster
+behavior remain open. Existing font-name, size, scale and phase exceptions in
+text rendering still require shared fixes; this sizing change does not remove
+them. Full local workspace/ABI, complete native API, compositor, physical lab
+and release qualification remain open. No renderer or release pass is claimed.
 
 Open UI never runs JavaScript. Applications use public native Rust APIs and
 Rust callbacks; every needed element operation remains framework work.
 Chromium alone defines expected pixels.
-[Immutable native measurements and sizing trial](generated/native-font-families-v4.json).
+[Immutable clean native and renderer evidence](generated/native-font-families-v5.json).
 
 ## Resolved font raster selection (clean census; remaining gates open)
 
