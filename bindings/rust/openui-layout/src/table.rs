@@ -672,8 +672,11 @@ fn resolve_collapsed_grid(
             BorderSourceKind::ColumnGroup,
             order,
         ));
-        order += 1;
     }
+    // Pinned table_borders.cc:234-244 shares one marker order across every
+    // column group, then advances once for the table. Per-group increments
+    // would change equal-width/style perpendicular-joint paint precedence.
+    order += 1;
     let table = source(
         table_id,
         GridRegion {
@@ -2745,6 +2748,95 @@ mod tests {
         assert_eq!(model.column_group_sources.len(), 1);
         assert_eq!(model.column_group_sources[0].node_id, group);
         assert_eq!(model.column_group_sources[0].span, 3);
+    }
+
+    #[test]
+    fn collapsed_column_groups_share_marker_order_before_the_table() {
+        use crate::resolved_table_borders::ResolvedEdge;
+
+        let mut doc = Document::new();
+        let table = doc.create_node(ElementTag::Table);
+        doc.append_child(doc.root(), table);
+        doc.update_resolved_style(table, |style| {
+            style.display = Display::Table;
+            style.border_collapse = BorderCollapse::Collapse;
+            style.border_bottom_style = BorderStyle::Solid;
+            style.border_bottom_width = 4;
+        });
+        let mut groups = Vec::new();
+        let mut columns = Vec::new();
+        for _ in 0..2 {
+            let group = doc.create_node(ElementTag::TableColumnGroup);
+            let column = doc.create_node(ElementTag::TableColumn);
+            doc.append_child(table, group);
+            doc.append_child(group, column);
+            doc.update_resolved_style(group, |style| {
+                style.display = Display::TableColumnGroup;
+                style.border_top_style = BorderStyle::Solid;
+                style.border_right_style = BorderStyle::Solid;
+                style.border_bottom_style = BorderStyle::Solid;
+                style.border_left_style = BorderStyle::Solid;
+                style.border_top_width = 2;
+                style.border_right_width = 2;
+                style.border_bottom_width = 2;
+                style.border_left_width = 2;
+            });
+            doc.update_resolved_style(column, |style| {
+                style.display = Display::TableColumn;
+                style.border_left_style = BorderStyle::Solid;
+                style.border_left_width = 3;
+            });
+            groups.push(group);
+            columns.push(column);
+        }
+        let row = doc.create_node(ElementTag::TableRow);
+        doc.append_child(table, row);
+        doc.update_resolved_style(row, |style| style.display = Display::TableRow);
+        for _ in 0..2 {
+            let cell = doc.create_node(ElementTag::TableCell);
+            doc.append_child(row, cell);
+            doc.update_resolved_style(cell, |style| style.display = Display::TableCell);
+        }
+        let model = collect_table_model(&doc, table);
+        let (slots, column_count) = place_cells(&doc, &model.rows);
+        let grid = resolve_collapsed_grid(
+            &doc,
+            table,
+            &model,
+            &slots,
+            column_count,
+            WritingDirectionMode::horizontal_ltr(),
+        )
+        .expect("collapsed borders");
+        let winner = |edge| {
+            let ResolvedEdge::Winner(candidate) = edge else {
+                panic!("expected authored structural border winner");
+            };
+            candidate
+        };
+        let first_group = winner(grid.block_edge(0, 0));
+        let second_group = winner(grid.block_edge(0, 1));
+        assert_eq!(first_group.node_id, groups[0]);
+        assert_eq!(second_group.node_id, groups[1]);
+        assert_eq!(first_group.source_kind, BorderSourceKind::ColumnGroup);
+        assert_eq!(second_group.source_kind, BorderSourceKind::ColumnGroup);
+        assert_eq!(first_group.width, second_group.width);
+        assert_eq!(first_group.style, second_group.style);
+        assert_eq!(first_group.box_order, second_group.box_order);
+
+        let first_column = winner(grid.inline_edge(0, 0));
+        let second_column = winner(grid.inline_edge(0, 1));
+        assert_eq!(first_column.node_id, columns[0]);
+        assert_eq!(second_column.node_id, columns[1]);
+        assert_eq!(first_column.source_kind, BorderSourceKind::Column);
+        assert_eq!(second_column.source_kind, BorderSourceKind::Column);
+        assert_eq!(first_column.box_order, second_column.box_order);
+        assert_eq!(first_column.box_order + 1, first_group.box_order);
+
+        let table_edge = winner(grid.block_edge(1, 0));
+        assert_eq!(table_edge.node_id, table);
+        assert_eq!(table_edge.source_kind, BorderSourceKind::Table);
+        assert_eq!(table_edge.box_order, first_group.box_order + 1);
     }
 
     #[test]
