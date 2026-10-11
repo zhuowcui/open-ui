@@ -189,9 +189,9 @@ fn main() -> ProbeResult<()> {
                 &serde_json::json!({"native_click_callbacks":callbacks.get(),"unchanged_frame_byte_repeat":true,"count_only_callback_preserved_pixels":true,"all_single_owned_box":all_single_owned_box,"javascript_executed_by_openui":false}),
             )?,
         )?;
-        document.downgrade()
+        table.downgrade()
     };
-    if weak.is_alive() {
+    if weak.upgrade().is_some() {
         return Err("native document leaked".into());
     }
     let path = out.join("lifecycle.json");
