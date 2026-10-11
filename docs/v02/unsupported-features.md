@@ -47,6 +47,15 @@ experiment exists in the repository.
 
 These are implementation gaps, not accepted final-v0.2 omissions:
 
+- shared atomic sizing is integrated from a dirty diagnostic trial: 180/210
+  bounds and 0/15 whole images are exact, with 15 bounds gained, no losses,
+  nine images improved and none worsened. All 1,181 layout/text/paint tests
+  pass; focused 640/640 and primitive 960/960 are exact with unchanged Chromium
+  inputs. Clean current-source native/full-census/workspace/ABI/hardening
+  verification remains pending. Long-word precision and fallback line height
+  still differ. The clean `fd478bef` native baseline is 165/210 bounds and
+  0/15 images exact. No renderer, complete API or release qualification is
+  claimed. [Measured evidence](../renderer/generated/native-font-families-v4.json);
 - direct Skia Ganesh raster builds behind an explicit selection but remains
   unqualified; OpenGL presentation currently uploads the CPU Skia frame;
 - the current four-profile Chromium census does not meet its exact gate; the

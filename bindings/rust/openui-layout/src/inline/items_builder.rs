@@ -1336,9 +1336,6 @@ impl<'a> InlineItemsBuilder<'a> {
         let child_direction = style.direction.writing_direction(style.writing_mode);
         let is_orthogonal =
             child_direction.is_horizontal() != self.inline_writing_direction.is_horizontal();
-        let deterministic_text_profile = style.font_family.families.iter().any(|family| {
-            matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
-        });
         let own_inline_edges = if child_direction.is_horizontal() {
             style.effective_border_left() as f32
                 + style.effective_border_right() as f32
@@ -1518,14 +1515,6 @@ impl<'a> InlineItemsBuilder<'a> {
             )
         })
         .flatten();
-        let has_consecutive_floats = deterministic_text_profile
-            && self
-                .doc
-                .children(node_id)
-                .filter(|child_id| self.doc.node(*child_id).style.float != Float::None)
-                .take(2)
-                .count()
-                >= 2;
         let mut flex_intrinsic_min = None;
         let intrinsic_max = if specified_intrinsic.is_some() {
             specified_intrinsic
@@ -1594,22 +1583,15 @@ impl<'a> InlineItemsBuilder<'a> {
             .to_f32();
             (size > 0.0).then_some(size)
         } else {
-            // Generated builders use the complete flattened intrinsic stream
-            // for atomic shrink-to-fit sizing. Besides accounting for floats,
-            // this trims collapsible leading/trailing indentation whitespace
-            // around inline children instead of treating it as authored width.
-            if deterministic_text_profile {
-                let sizes = crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(
-                    self.doc, node_id,
-                );
-                // InlineItem::intrinsic_inline_size is a content-box measure;
-                // block_layout applies this atomic element's own edges.
-                let max = (sizes.max.to_f32() - own_inline_edges).max(0.0);
-                if max > 0.0 {
-                    Some(max)
-                } else {
-                    self.compute_intrinsic_inline_size(node_id)
-                }
+            // Atomic shrink-to-fit uses the shared flattened intrinsic stream,
+            // including float contributions and collapsed edge whitespace.
+            let sizes =
+                crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(self.doc, node_id);
+            // InlineItem::intrinsic_inline_size measures content-box width;
+            // block_layout applies this atomic element's own edges.
+            let max = (sizes.max.to_f32() - own_inline_edges).max(0.0);
+            if max > 0.0 {
+                Some(max)
             } else {
                 self.compute_intrinsic_inline_size(node_id)
             }
@@ -1625,15 +1607,7 @@ impl<'a> InlineItemsBuilder<'a> {
                 // from its items. A zero endpoint lets an unwrapped inline
                 // flex row shrink below the sum of its definite item widths.
                 flex_intrinsic_min.unwrap_or(0.0)
-            } else if !deterministic_text_profile {
-                // Builders outside the pinned fallback profile retain the
-                // legacy single intrinsic measure, which was capped directly
-                // by the available size. A zero min-content endpoint makes the
-                // tuple-based shrink-to-fit equation reproduce that behavior,
-                // while regenerated builders opt into the complete min/max
-                // algorithm below.
-                0.0
-            } else if is_orthogonal || has_consecutive_floats {
+            } else if is_orthogonal {
                 // Preserve orthogonal atomic paths' established completed-
                 // fragment measure and zero min-content fallback.
                 0.0

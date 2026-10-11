@@ -27,6 +27,43 @@ right picture or the Chromium test uses a script. See the
 
 ## Verified status
 
+### Shared atomic sizing (scoped trial; full verification pending)
+
+Atomic elements now use the shared minimum and maximum content calculations
+across font families. Consecutive floats retain their measured minimum width.
+This removes font-name and zero-minimum branches from atomic shrink-to-fit;
+global shaping, hinting and rasterization are unchanged.
+
+A separate Rust app at clean `fd478bef` measures **0/15 whole images and
+165/210 bounds exact** against unchanged pinned Chromium. Its two Rust
+callbacks, independent process repeats, unchanged-frame repeats and weak
+teardown pass. The probe records **1,470 direct shaping samples** from retained
+computed styles and the shared font collection. These samples are diagnostics,
+not a claim about the Engine's inline segmentation or Chromium's internal
+strike settings.
+
+The isolated one-file sizing trial measures **0/15 whole images and
+180/210 bounds exact** at five profiles: **15 bounds gained, none lost**,
+**nine images improved, none worsened**. Consecutive-float width is now 90px,
+matching Chromium, instead of zero. Long-word width precision and fallback
+line height still differ. All **1,181 layout/text/paint tests** pass with zero
+failures or ignores. Focused **640/640** and primitive **960/960** are exact,
+with all **1,600 rows** independently audited and Chromium inputs unchanged.
+The trial source was dirty and is explicitly unqualified.
+
+Clean verification of this integrated sizing change, complete original and
+expanded census nonregression, workspace/ABI and hosted hardening remain
+pending. Prior clean `fd478bef` hosted workflows complete, but five hardening
+jobs are skipped; that is not a complete hardening pass. The latest complete
+original and expanded pixel counts remain attributed to earlier clean
+`98d18982`: **21,350/22,924** and **22,153/23,728**, both failed with zero
+errors. No renderer, complete native API or release qualification is claimed.
+
+Open UI never runs JavaScript. Applications use public native Rust APIs and
+Rust callbacks; every needed element operation remains framework work.
+Chromium alone defines expected pixels.
+[Immutable native measurements and sizing trial](docs/renderer/generated/native-font-families-v4.json).
+
 ### Resolved font raster selection (clean census; remaining gates open)
 
 Ordinary author text now selects its raster policy from each resolved font
