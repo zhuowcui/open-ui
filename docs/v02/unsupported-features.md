@@ -47,6 +47,13 @@ experiment exists in the repository.
 
 These are implementation gaps, not accepted final-v0.2 omissions:
 
+- a reduced native font-origin app reproduces the installed-font width gap:
+  loaded-font bounds are 480/480 exact but pictures 0/10; installed-font bounds
+  are 140/480 exact and pictures 8/10. The original flex fixture's cached
+  Chromium reference matches fresh captures in all four required profiles.
+  Backend/strike verification and a shared repair remain open. Rust callbacks,
+  process/frame repeats and weak teardown pass; no native API requirement is
+  waived. [Evidence](../renderer/generated/native-font-origin-v1.json);
 - the strict-ceil candidate is rejected: at clean `d6d9dfe9`, original and
   expanded each lose 21 exact comparisons and gain none. Each worsens 23
   comparisons against the preceding renderer, or 24 against accepted `98d18982`.

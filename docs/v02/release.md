@@ -4,6 +4,39 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
+## Installed and loaded font measurements (reproduced; repair open)
+
+Fresh pinned Chromium captures of the failing flex fixture match its cached
+reference exactly at all four required profiles. There is no oracle
+contradiction for this regression.
+
+The reduced app uses the same Ahem bytes through installed and loaded font
+paths. At 16px, Chromium gives an installed space **16px** and a loaded space
+**16.015625px**; the nine-character word is **144px / 144.015625px**.
+Its platform-font API confirms the two paths. The native app currently returns
+the wider intrinsic advance through both collections. The first fixed-width
+flex child is at **5.9375px**, where installed-font Chromium places it at
+**6px**. The difference becomes visible at 1.25× scale.
+
+| Reduced native comparison | Exact pictures | Exact bounds |
+|---|---:|---:|
+| Loaded fonts, five scales and Rust mutation | 0/10 | 480/480 |
+| Installed fonts, five scales and Rust mutation | 8/10 | 140/480 |
+
+The installed-font pictures still differ by **520 / 560 pixels** at 1.25×.
+Independent processes, unchanged-frame repeats, the Rust text callback and
+weak teardown pass. The first diagnostic's empty CSS font shorthand made its
+canvas advances invalid; corrected, explicitly sized probes and all element
+and Range bounds are preserved in the new evidence.
+
+This reproduces the wrong installed-font advance and its layout effect.
+The backend and Chromium strike settings still need verification before a
+shared repair. The full strict-ceil candidate remains rejected, with 21 exact
+losses in each complete census. Every needed native API and the remaining
+renderer and release gates remain open. Open UI never runs JavaScript; apps
+use public Rust APIs and callbacks over the shared Engine.
+[Native Rust reproducer](../../bindings/rust/openui/examples/native_font_origin.rs) · [Immutable evidence](../renderer/generated/native-font-origin-v1.json).
+
 ## Fractional intrinsic text widths (rejected after full verification)
 
 The strict-ceil conversion is rejected in its current form. The complete
@@ -11,7 +44,8 @@ original and expanded censuses each lose **21 exact comparisons**, gain none,
 and worsen **23 comparisons** against the preceding applied renderer. Against
 accepted `98d18982`, each has **24 worsened comparisons**. The repair must
 preserve the required native fractional-width behavior and fix the regressions.
-The cause has not yet been established by a reduced geometry comparison.
+A reduced comparison now reproduces the installed-font advance mismatch and
+its layout effect; the underlying backend and strike mechanism remains open.
 
 At clean `d6d9dfe9`,
 the consuming Rust app verifies **190/210 bounds**, reproducing the dirty
