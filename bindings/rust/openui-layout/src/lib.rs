@@ -73,7 +73,7 @@ pub use resolved_table_borders::{
     ResolvedCollapsedBorders, ResolvedEdge,
 };
 pub use ruby::{clamp_overhang, compute_ruby_layout, max_ruby_overhang, RubyInfo, RubyLayout};
-pub use scroll_area::ScrollArea;
+pub use scroll_area::{overflow_pair as computed_overflow_pair, used_overflow_pair, ScrollArea};
 pub use scrollbars::ElementScrollbars;
 pub use size_constraints::{
     apply_box_sizing_adjustment, constrain_block_size, constrain_inline_size, resolve_block_size,

@@ -2003,12 +2003,19 @@ fn overflow_from_children(fragment: &mut Fragment, style: &openui_style::Compute
     if overflow != border_box {
         fragment.overflow_rect = Some(overflow);
     }
-    fragment.has_overflow_clip =
-        style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible;
+    fragment.has_overflow_clip = crate::scroll_area::has_overflow_clip(doc, fragment.node_id);
 }
 
 /// Lay out one Grid container.
 pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
+    crate::scrollbars::layout(doc, node_id, space)
+}
+
+pub(crate) fn grid_layout_contents(
+    doc: &Document,
+    node_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
     let style = &doc.node(node_id).style;
     let logical_box = crate::ResolvedLogicalBox::from_style(style);
     let writing_direction = logical_box.writing_direction;

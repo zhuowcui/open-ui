@@ -573,6 +573,8 @@ fn replaced_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     fragment.border = border;
     fragment.padding = padding;
     fragment.margin = margin;
+    fragment.element_scrollbars = crate::scrollbars::for_node(space, node_id);
+    fragment.has_overflow_clip = crate::scroll_area::has_overflow_clip(doc, node_id);
     let baseline = match node.form_control {
         Some(openui_dom::FormControlRole::Range) => {
             // A native range is an atomic replaced control. Its synthesized
@@ -1609,15 +1611,15 @@ pub(crate) fn block_layout_contents(
             && (physical_style.webkit_box_orient == WebkitBoxOrient::Vertical
                 || !physical_style.writing_mode.is_horizontal()));
     if physical_style.display.is_flex() || active_legacy_flex {
-        return crate::flex::flex_layout(doc, node_id, space);
+        return crate::flex::flex_layout_contents(doc, node_id, space);
     }
 
     if physical_style.display.is_grid() {
-        return crate::grid::grid_layout(doc, node_id, space);
+        return crate::grid::grid_layout_contents(doc, node_id, space);
     }
 
     if physical_style.display.is_table_wrapper() {
-        return crate::table::table_layout(doc, node_id, space);
+        return crate::table::table_layout_contents(doc, node_id, space);
     }
 
     // The established block algorithm stores its working pair as
@@ -2780,7 +2782,7 @@ pub(crate) fn block_layout_contents(
                     let child_is_self_collapsing = block_child_frag.size.height
                         == LayoutUnit::zero()
                         && child_border_padding == LayoutUnit::zero()
-                        && !establishes_new_fc(block_child_style);
+                        && !establishes_new_fc_for_node(doc, block_child_id);
                     let advance_before = current_block_offset;
                     if !child_is_self_collapsing {
                         current_block_offset += interrupted_margin_strut.sum();
@@ -3919,8 +3921,8 @@ pub(crate) fn block_layout_contents(
                     // CSS 2.1 §9.5: Only new-FC children must NOT overlap float margin boxes.
                     // Regular (non-FC) block children overlap floats — only their line
                     // boxes avoid floats (handled in inline layout).
-                    let child_is_new_fc_caller =
-                        establishes_new_fc(child_style) || doc.node(child_id).replaced.is_some();
+                    let child_is_new_fc_caller = establishes_new_fc_for_node(doc, child_id)
+                        || doc.node(child_id).replaced.is_some();
                     let (float_inline_offset, adjusted_available) = if exclusion_space_mixed
                         .has_floats()
                         && child_is_new_fc_caller
@@ -4445,7 +4447,7 @@ pub(crate) fn block_layout_contents(
                 .writing_direction(child_style.writing_mode);
             let child_is_orthogonal =
                 child_direction.is_horizontal() != space.writing_direction.is_horizontal();
-            let child_is_new_fc_caller = establishes_new_fc(child_style)
+            let child_is_new_fc_caller = establishes_new_fc_for_node(doc, child_id)
                 || child_is_orthogonal
                 || doc.node(child_id).replaced.is_some();
             let child_margin_for_fc = if child_is_new_fc_caller {
@@ -5434,16 +5436,7 @@ pub(crate) fn block_layout_contents(
     // not merely left at their normal-flow position.  At this point the
     // scrollport and every descendant containing block have final physical
     // geometry, so the offset can be applied without disturbing sibling flow.
-    if is_viewport
-        || matches!(
-            physical_style.overflow_x,
-            Overflow::Hidden | Overflow::Scroll | Overflow::Auto
-        )
-        || matches!(
-            physical_style.overflow_y,
-            Overflow::Hidden | Overflow::Scroll | Overflow::Auto
-        )
-    {
+    if is_viewport || crate::scroll_area::is_scroll_container(doc, node_id) {
         apply_sticky_descendants_in_scrollport(doc, &mut fragment);
     }
 
@@ -5476,8 +5469,7 @@ pub(crate) fn block_layout_contents(
     }
 
     // Set the overflow clip flag from style.
-    fragment.has_overflow_clip =
-        style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible;
+    fragment.has_overflow_clip = crate::scroll_area::has_overflow_clip(doc, node_id);
     if doc.node(node_id).tag == openui_dom::ElementTag::Body && doc.body_overflow_is_propagated() {
         fragment.has_overflow_clip = false;
     } else if doc.node(node_id).tag == openui_dom::ElementTag::Viewport
@@ -5700,13 +5692,7 @@ pub(crate) fn apply_sticky_descendants_in_scrollport(
             // Descendants of this nested scrollport were resolved when its
             // own block layout completed; an ancestor scrollport (especially
             // the viewport) must not apply their constraints a second time.
-            if matches!(
-                style.overflow_x,
-                Overflow::Hidden | Overflow::Scroll | Overflow::Auto
-            ) || matches!(
-                style.overflow_y,
-                Overflow::Hidden | Overflow::Scroll | Overflow::Auto
-            ) {
+            if crate::scroll_area::is_scroll_container(doc, fragment.node_id) {
                 return;
             }
         }
@@ -6789,7 +6775,7 @@ fn layout_block_child(
     let child_direction = child_style
         .direction
         .writing_direction(child_style.writing_mode);
-    let child_is_new_fc = establishes_new_fc(child_style)
+    let child_is_new_fc = establishes_new_fc_for_node(doc, child_id)
         // The HTML fieldset's anonymous content box establishes an
         // independent formatting context. In particular, legacy WebKit line
         // clamping skips its internal line boxes and resumes after it.
@@ -7315,6 +7301,16 @@ pub fn establishes_new_fc(style: &ComputedStyle) -> bool {
     style.creates_new_formatting_context()
 }
 
+fn establishes_new_fc_for_node(doc: &Document, node: NodeId) -> bool {
+    let style = &doc.node(node).style;
+    style.display.is_new_formatting_context()
+        || (style.display == Display::ListItem && style.list_item_is_flow_root)
+        || style.has_layout_containment()
+        || style.position.is_absolutely_positioned()
+        || style.float != Float::None
+        || crate::scroll_area::is_scroll_container(doc, node)
+}
+
 /// Inline-axis static position of an out-of-flow inline-level child in a
 /// block formatting context. Its zero-width hypothetical inline box obeys the
 /// parent's text alignment before positioned layout resolves the child's
@@ -7386,16 +7382,19 @@ fn is_monolithic_for_fragmentation(style: &ComputedStyle) -> bool {
             | Display::TableHeaderGroup
             | Display::TableFooterGroup
     );
+    let (x, y) = crate::scroll_area::overflow_pair(style);
     style.has_block_size_containment()
         || (overflow_applies
-            && ((style.overflow_x != Overflow::Visible && style.overflow_x != Overflow::Clip)
-                || (style.overflow_y != Overflow::Visible && style.overflow_y != Overflow::Clip)))
+            && (!matches!(x, Overflow::Visible | Overflow::Clip)
+                || !matches!(y, Overflow::Visible | Overflow::Clip)))
 }
 
 fn node_is_monolithic_for_fragmentation(doc: &Document, node_id: NodeId) -> bool {
     let node = doc.node(node_id);
-    is_monolithic_for_fragmentation(&node.style)
-        || node.replaced.is_some()
+    (is_monolithic_for_fragmentation(&node.style)
+        && Some(node_id) != crate::scroll_area::viewport_defining_element(doc))
+        || node.style.has_block_size_containment()
+        || crate::scroll_area::is_replaced_layout_box(doc, node_id)
         || matches!(
             node.form_control,
             Some(
@@ -8946,7 +8945,7 @@ fn leading_descendant_clear(doc: &Document, node_id: NodeId) -> Clear {
         if child_style.clear != Clear::None {
             return child_style.clear;
         }
-        if establishes_new_fc(child_style) {
+        if establishes_new_fc_for_node(doc, child_id) {
             return Clear::None;
         }
         return leading_descendant_clear(doc, child_id);
@@ -13894,7 +13893,7 @@ fn assign_split_portion_containing_block_geometry(
         openui_geometry::INDEFINITE_SIZE,
         available_inline_size,
         percentage_block_size,
-        establishes_new_fc(container_style),
+        establishes_new_fc_for_node(doc, container_id),
     );
     let mut probe = block_layout(doc, container_id, &probe_space);
     normalize_multicol_child_outer_box(doc, &mut probe, parent_space.writing_direction);
@@ -14143,7 +14142,7 @@ fn split_multicol_child_at_nested_spanners(
                     container_height,
                     child_available_inline,
                     container_height,
-                    establishes_new_fc(grandchild_style),
+                    establishes_new_fc_for_node(doc, grandchild_id),
                 );
                 let mut grandchild = block_layout(doc, grandchild_id, &grandchild_space);
                 normalize_multicol_child_outer_box(
@@ -20088,7 +20087,7 @@ fn layout_multicol(
                             LayoutUnit::zero(),
                         )
                     } else {
-                        let gc_is_new_fc = establishes_new_fc(&doc.node(gc_id).style);
+                        let gc_is_new_fc = establishes_new_fc_for_node(doc, gc_id);
                         let gc_space = crate::logical_geometry::block_child_constraint_space(
                             space,
                             gc_style,
@@ -20693,7 +20692,7 @@ fn layout_multicol(
                             continue;
                         }
                         let gc_style = &doc.node(gc_id).style;
-                        let gc_is_new_fc = establishes_new_fc(gc_style);
+                        let gc_is_new_fc = establishes_new_fc_for_node(doc, gc_id);
                         let gc_space = crate::logical_geometry::block_child_constraint_space(
                             space,
                             gc_style,
@@ -20922,7 +20921,7 @@ fn layout_multicol(
                     );
                     let child_margin_top = child_margin.top;
                     let child_margin_bottom = child_margin.bottom;
-                    let child_is_new_fc = establishes_new_fc(child_style);
+                    let child_is_new_fc = establishes_new_fc_for_node(doc, info.id);
                     let child_auto_float = child_style.float != Float::None
                         && inline_size_in_parent_axes(child_style, space.writing_direction)
                             .is_auto();
@@ -21717,7 +21716,7 @@ fn layout_multicol(
                         return false;
                     }
                     let child_style = &doc.node(info.id).style;
-                    !establishes_new_fc(child_style)
+                    !establishes_new_fc_for_node(doc, info.id)
                         && crate::multicol::ColumnLayoutAlgorithm::from_style(child_style).is_none()
                         && child_style.display != Display::ListItem
                         && child_style.float == Float::None
@@ -23121,7 +23120,7 @@ fn layout_multicol(
                                 continue;
                             }
                             let gc_style = &doc.node(gc_id).style;
-                            let gc_is_new_fc = establishes_new_fc(gc_style);
+                            let gc_is_new_fc = establishes_new_fc_for_node(doc, gc_id);
                             let gc_space = crate::logical_geometry::block_child_constraint_space(
                                 space,
                                 gc_style,
@@ -23243,7 +23242,7 @@ fn layout_multicol(
                         );
                         let child_margin_top = child_margin.top;
                         let child_margin_bottom = child_margin.bottom;
-                        let child_is_new_fc = establishes_new_fc(child_style);
+                        let child_is_new_fc = establishes_new_fc_for_node(doc, info.id);
                         let child_auto_float = child_style.float != Float::None
                             && inline_size_in_parent_axes(child_style, space.writing_direction)
                                 .is_auto();
@@ -24094,7 +24093,7 @@ fn layout_multicol(
                         }
                     }
                 } else if child_style.float == Float::None {
-                    if !establishes_new_fc(child_style) {
+                    if !establishes_new_fc_for_node(doc, child_node_id) {
                         if let Some(pending_float_flow) = pending_direct_float_inline_flow.take() {
                             col_idx = pending_float_flow.normal_col_idx;
                             col_block_offset = pending_float_flow.normal_block_offset;
@@ -24383,7 +24382,7 @@ fn layout_multicol(
                         col_remaining,
                         column_width,
                         first_pass_pct_basis,
-                        establishes_new_fc(child_style),
+                        establishes_new_fc_for_node(doc, child_node_id),
                     );
                     let child_parallel_to_multicol = nested_space.writing_direction.is_horizontal()
                         == space.writing_direction.is_horizontal();
@@ -24421,7 +24420,7 @@ fn layout_multicol(
                 // it runs before column distribution has resolved the float's
                 // linear fragmentainer position.
                 let leading_clear = if child_style.clear == Clear::None
-                    && !establishes_new_fc(child_style)
+                    && !establishes_new_fc_for_node(doc, child_node_id)
                     && !child_is_inline_run
                 {
                     leading_descendant_clear(doc, child_node_id)
@@ -27481,7 +27480,7 @@ fn layout_multicol(
                             };
                         let truncated_block_end_margin = if algo.column_fill == ColumnFill::Auto
                             && child_style.height.is_auto()
-                            && establishes_new_fc(child_style)
+                            && establishes_new_fc_for_node(doc, child_node_id)
                             && i + 1 < group_end - group_start
                             && {
                                 let next_id = children_info[group_start + i + 1].id;
@@ -27511,7 +27510,7 @@ fn layout_multicol(
                             && has_explicit_height
                             && !wraps_rows
                             && child_style.height.is_auto()
-                            && establishes_new_fc(child_style)
+                            && establishes_new_fc_for_node(doc, child_node_id)
                             && !subtree_has_forced_break_descendant(doc, child_node_id)
                         {
                             let declared_row_remaining = col_remaining
@@ -30047,7 +30046,7 @@ fn layout_multicol(
                             };
                             let fragmented_float_insets = if content_consumed > LayoutUnit::zero()
                                 && child_style.clear != Clear::None
-                                && establishes_new_fc(child_style)
+                                && establishes_new_fc_for_node(doc, child_node_id)
                             {
                                 per_col_children.get(part_col_idx).map(|column_children| {
                                     let column_left =
@@ -31630,7 +31629,10 @@ fn layout_multicol(
                     && (children_info[group_start + i + 1].inline_run.is_some() || {
                         let next_style = &doc.node(children_info[group_start + i + 1].id).style;
                         next_style.float != Float::None
-                            || establishes_new_fc(next_style)
+                            || establishes_new_fc_for_node(
+                                doc,
+                                children_info[group_start + i + 1].id,
+                            )
                             || !next_style.position.is_positioned()
                     })
                 {

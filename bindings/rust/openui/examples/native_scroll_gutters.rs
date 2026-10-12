@@ -280,6 +280,202 @@ fn consumer(output: &Path, display: Display, scale: f64) -> Result<()> {
     Ok(())
 }
 
+// Exercise the class/viewport rules through public application-owned APIs.
+// Captures are diagnostic until independently paired with immutable Chromium.
+fn class_policy_consumer(output: &Path, scale: f64) -> Result<()> {
+    std::fs::create_dir_all(output)?;
+    let document =
+        Document::with_viewport_metrics(ViewportMetrics::from_logical_size(320.0, 240.0, scale)?)?;
+    let root = document.body();
+    root.set_background_color(Color::WHITE)?;
+    let table = Element::create(&document, "table")?;
+    root.append_child(&table)?;
+    table.set_width(LengthValue::px(100.0))?;
+    table.set_height(LengthValue::px(80.0))?;
+    table.set_border_spacing((Length::px(0.0), Length::px(0.0)))?;
+    table.set_scrollbar_gutter(ScrollbarGutter::Stable)?;
+    let group = Element::create(&document, "tbody")?;
+    let row = Element::create(&document, "tr")?;
+    let cell = Element::create(&document, "td")?;
+    table.append_child(&group)?;
+    group.append_child(&row)?;
+    row.append_child(&cell)?;
+    cell.set_height(LengthValue::px(80.0))?;
+    cell.set_background_color(Color::from_rgba8(0, 128, 0, 255))?;
+    let mut states = Vec::new();
+    for (name, overflow) in [
+        ("table-auto", Overflow::Auto),
+        ("table-scroll", Overflow::Scroll),
+    ] {
+        table.set_overflow(overflow)?;
+        states.push(snapshot(
+            &document,
+            &table,
+            &cell,
+            output,
+            name,
+            [100, 80, 100, 80],
+            0,
+        )?);
+        table.scroll_to(1000.0, 1000.0)?;
+        assert_eq!((table.scroll_left()?, table.scroll_top()?), (0.0, 0.0));
+    }
+    table.set_overflow(Overflow::Hidden)?;
+    states.push(snapshot(
+        &document,
+        &table,
+        &cell,
+        output,
+        "table-hidden-stable",
+        [85, 80, 100, 80],
+        0,
+    )?);
+    let table_rect = table.bounding_rect()?.ok_or("table bounds missing")?;
+    let row_rect = row.bounding_rect()?.ok_or("row bounds missing")?;
+    let cell_rect = cell.bounding_rect()?.ok_or("cell bounds missing")?;
+    assert_eq!((row_rect.width, cell_rect.width), (85.0, 100.0));
+    assert_eq!(cell_rect.x - table_rect.x, 0.0);
+    table.scroll_to(1000.0, 1000.0)?;
+    assert_eq!((table.scroll_left()?, table.scroll_top()?), (15.0, 0.0));
+    table.scroll_to(0.0, 0.0)?;
+    table.set_direction(Direction::Rtl)?;
+    states.push(snapshot(
+        &document,
+        &table,
+        &cell,
+        output,
+        "table-rtl-stable",
+        [85, 80, 100, 80],
+        0,
+    )?);
+    let table_rect = table.bounding_rect()?.ok_or("table bounds missing")?;
+    let row_rect = row.bounding_rect()?.ok_or("row bounds missing")?;
+    let cell_rect = cell.bounding_rect()?.ok_or("cell bounds missing")?;
+    assert_eq!(row_rect.x - table_rect.x, 15.0);
+    assert_eq!(cell_rect.x - table_rect.x, 0.0);
+    table.set_direction(Direction::Ltr)?;
+    let caption = Element::create(&document, "caption")?;
+    caption.set_height(LengthValue::px(20.0))?;
+    table.append_child(&caption)?;
+    states.push(snapshot(
+        &document,
+        &table,
+        &cell,
+        output,
+        "captioned-table-stable",
+        [85, 100, 100, 100],
+        0,
+    )?);
+    table.set_overflow_y(Overflow::Auto)?;
+    states.push(snapshot(
+        &document,
+        &table,
+        &cell,
+        output,
+        "captioned-table-mixed",
+        [100, 100, 100, 100],
+        0,
+    )?);
+    table.remove()?;
+
+    let image = Element::create(&document, "img")?;
+    root.append_child(&image)?;
+    let resource = document.register_image_resource("native-gutter.svg", "image/svg+xml",
+        "567d510cd044916f0d5ee55b185054feedfe5caeece0bbda2203ef7b628bc000", br##"<svg xmlns="http://www.w3.org/2000/svg" width="100" height="80"><rect width="100" height="80" fill="#008000"/></svg>"##.to_vec())?;
+    image.set_image_resource(resource, Some((100.0, 80.0)))?;
+    image.set_width(LengthValue::px(100.0))?;
+    image.set_height(LengthValue::px(80.0))?;
+    image.set_overflow(Overflow::Scroll)?;
+    states.push(snapshot(
+        &document,
+        &image,
+        &image,
+        output,
+        "image-scroll-no-gutter",
+        [100, 80, 100, 80],
+        0,
+    )?);
+    image.set_scrollbar_gutter(ScrollbarGutter::Stable)?;
+    states.push(snapshot(
+        &document,
+        &image,
+        &image,
+        output,
+        "image-scroll-stable",
+        [85, 80, 85, 80],
+        0,
+    )?);
+    image.set_overflow(Overflow::Hidden)?;
+    image.set_writing_mode(WritingMode::VerticalRl)?;
+    image.set_scrollbar_gutter(ScrollbarGutter::StableBothEdges)?;
+    states.push(snapshot(
+        &document,
+        &image,
+        &image,
+        output,
+        "image-vertical-both",
+        [100, 50, 100, 50],
+        0,
+    )?);
+    image.scroll_to(-1000.0, 1000.0)?;
+    assert_eq!((image.scroll_left()?, image.scroll_top()?), (0.0, 0.0));
+    image.remove()?;
+
+    let html = Element::create(&document, "html")?;
+    let body = Element::create(&document, "body")?;
+    let content = Element::create(&document, "div")?;
+    root.append_child(&html)?;
+    html.append_child(&body)?;
+    body.append_child(&content)?;
+    body.set_width(LengthValue::px(100.0))?;
+    body.set_height(LengthValue::px(80.0))?;
+    content.set_width(LengthValue::px(150.0))?;
+    content.set_height(LengthValue::px(120.0))?;
+    content.set_background_color(Color::from_rgba8(0, 128, 0, 255))?;
+    body.set_overflow(Overflow::Scroll)?;
+    states.push(snapshot(
+        &document,
+        &body,
+        &content,
+        output,
+        "body-propagated",
+        [100, 80, 150, 120],
+        0,
+    )?);
+    assert_eq!(dimensions(&root)?, [305, 225, 305, 225]);
+    assert_eq!(dimensions(&html)?, dimensions(&root)?);
+    body.scroll_to(1000.0, 1000.0)?;
+    assert_eq!((body.scroll_left()?, body.scroll_top()?), (0.0, 0.0));
+    html.set_overflow(Overflow::Hidden)?;
+    states.push(snapshot(
+        &document,
+        &body,
+        &content,
+        output,
+        "body-local",
+        [85, 65, 150, 120],
+        0,
+    )?);
+    body.scroll_to(1000.0, 1000.0)?;
+    assert_eq!((body.scroll_left()?, body.scroll_top()?), (65.0, 55.0));
+    html.set_overflow(Overflow::Visible)?;
+    states.push(snapshot(
+        &document,
+        &body,
+        &content,
+        output,
+        "body-restored",
+        [100, 80, 150, 120],
+        0,
+    )?);
+    assert_eq!((body.scroll_left()?, body.scroll_top()?), (0.0, 0.0));
+    std::fs::write(
+        output.join("geometry.json"),
+        serde_json::to_vec_pretty(&states)?,
+    )?;
+    Ok(())
+}
+
 fn main() -> Result<()> {
     let mut args = std::env::args().skip(1);
     let output = PathBuf::from(args.next().ok_or("output directory required")?);
@@ -287,6 +483,7 @@ fn main() -> Result<()> {
         for (name, display) in [("flex", Display::Flex), ("grid", Display::Grid)] {
             consumer(&output.join(format!("{name}@{scale}")), display, scale)?;
         }
+        class_policy_consumer(&output.join(format!("class-policy@{scale}")), scale)?;
     }
     Ok(())
 }

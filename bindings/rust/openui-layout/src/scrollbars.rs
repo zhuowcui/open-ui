@@ -2,7 +2,7 @@
 
 use crate::{block::block_layout_contents, ConstraintSpace, Fragment};
 use openui_dom::{Document, NodeId};
-use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize};
+use openui_geometry::{BoxStrut, LayoutUnit, PhysicalRect};
 use openui_style::{ComputedStyle, Display, Overflow, ScrollbarWidth};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -15,18 +15,7 @@ pub struct ElementScrollbars {
 
 impl ElementScrollbars {
     pub fn client_rect(self, fragment: &Fragment) -> PhysicalRect {
-        PhysicalRect::new(
-            PhysicalOffset::new(
-                fragment.border.left + self.insets.left,
-                fragment.border.top + self.insets.top,
-            ),
-            PhysicalSize::new(
-                (fragment.padding_box_size().width - self.insets.inline_sum())
-                    .clamp_negative_to_zero(),
-                (fragment.padding_box_size().height - self.insets.block_sum())
-                    .clamp_negative_to_zero(),
-            ),
-        )
+        crate::scroll_area::client_rect(fragment, self.insets)
     }
 }
 
@@ -87,12 +76,10 @@ pub(crate) fn for_node(space: &ConstraintSpace, node: NodeId) -> Option<ElementS
 pub(crate) fn intrinsic_insets(doc: &Document, node: NodeId) -> BoxStrut {
     let item = doc.node(node);
     let style = &item.style;
-    let viewport_source = if doc.body_overflow_is_propagated() {
-        doc.body_element()
-    } else {
-        doc.document_element()
-    };
-    if item.replaced.is_some() || !style.is_scroll_container() || Some(node) == viewport_source {
+    if crate::scroll_area::is_replaced_layout_box(doc, node)
+        || style.display.is_table_wrapper()
+        || !crate::scroll_area::is_scroll_container(doc, node)
+    {
         return BoxStrut::zero();
     }
     let (overflow_x, overflow_y) = crate::scroll_area::overflow_pair(style);
@@ -135,14 +122,11 @@ pub(crate) fn intrinsic_sizes_for_layout(
 pub(crate) fn layout(doc: &Document, node: NodeId, space: &ConstraintSpace) -> Fragment {
     let item = doc.node(node);
     let style = &item.style;
-    let viewport_source = if doc.body_overflow_is_propagated() {
-        doc.body_element()
-    } else {
-        doc.document_element()
-    };
-    // Each admitted formatting context consumes independent scrollbar space.
-    // Table overflow has class-specific used values; replaced elements do not
-    // establish scroll containers. Their stable-gutter paths are separate.
+    let viewport_source = crate::scroll_area::viewport_defining_element(doc);
+    let replaced = crate::scroll_area::is_replaced_layout_box(doc, node);
+    // Stable gutters are available on replaced boxes too, although those
+    // boxes never own actual scrollbars. Table boxes use adjusted overflow;
+    // their track sizing and fragment placement consume different edge struts.
     if !matches!(
         style.display,
         Display::Block
@@ -153,14 +137,18 @@ pub(crate) fn layout(doc: &Document, node: NodeId, space: &ConstraintSpace) -> F
             | Display::InlineFlex
             | Display::Grid
             | Display::InlineGrid
-    ) || !style.is_scroll_container()
-        || item.replaced.is_some()
+            | Display::Table
+            | Display::InlineTable
+            | Display::TableCell
+            | Display::TableCaption
+    ) && !replaced
         || Some(node) == viewport_source
+        || (!crate::scroll_area::is_scroll_container(doc, node) && !replaced)
     {
         return block_layout_contents(doc, node, space);
     }
     let (overflow_x, overflow_y) = crate::scroll_area::overflow_pair(style);
-    let enabled = style.scrollbar_width != ScrollbarWidth::None;
+    let enabled = style.scrollbar_width != ScrollbarWidth::None && !replaced;
     let mut horizontal = enabled && overflow_x == Overflow::Scroll;
     let mut vertical = enabled && overflow_y == Overflow::Scroll;
     let mut scrollbars = geometry(style, horizontal, vertical);
@@ -172,8 +160,9 @@ pub(crate) fn layout(doc: &Document, node: NodeId, space: &ConstraintSpace) -> F
         // LayoutBox clamps a left gutter to the physical content width. The
         // right gutter remains its theme thickness, even in a narrow box.
         let left = scrollbars.insets.left.min_of(
-            (fragment.padding_box_size().width - fragment.padding.inline_sum())
-                .clamp_negative_to_zero(),
+            (crate::scroll_area::client_rect(&fragment, BoxStrut::zero()).width()
+                - crate::ScrollArea::used_padding(&fragment).inline_sum())
+            .clamp_negative_to_zero(),
         );
         if left != scrollbars.insets.left {
             scrollbars.insets.left = left;
@@ -190,5 +179,73 @@ pub(crate) fn layout(doc: &Document, node: NodeId, space: &ConstraintSpace) -> F
         horizontal = next_horizontal;
         vertical = next_vertical;
         scrollbars = geometry(style, horizontal, vertical);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use openui_dom::ElementTag;
+    use openui_geometry::{Length, PhysicalSize};
+    use openui_style::{
+        FlexDirection, GridTrackBreadth, GridTrackComponent, GridTrackList, GridTrackSize,
+    };
+
+    // Public algorithm consumers must get the same actual percentage basis as
+    // the retained-document entry point, rather than bypassing gutter layout.
+    #[test]
+    fn public_flex_and_grid_entries_reserve_classic_gutters_once() {
+        for display in [Display::Flex, Display::Grid] {
+            let mut doc = Document::new();
+            let container = doc.create_node(ElementTag::Div);
+            let child = doc.create_node(ElementTag::Div);
+            let track = GridTrackList::Tracks(vec![GridTrackComponent::Track(
+                GridTrackSize::Breadth(GridTrackBreadth::Length(Length::percent(100.0))),
+            )]);
+            doc.node_mut(container).style.update_derived(|style| {
+                style.display = display;
+                style.width = Length::px(100.0);
+                style.height = Length::px(80.0);
+                style.overflow_x = Overflow::Scroll;
+                style.overflow_y = Overflow::Scroll;
+                style.flex_direction = FlexDirection::Column;
+                style.grid_template_columns = track.clone();
+                style.grid_template_rows = track.clone();
+            });
+            doc.node_mut(child).style.update_derived(|style| {
+                style.display = Display::Block;
+                style.width = Length::percent(100.0);
+                style.height = Length::percent(100.0);
+                style.min_width = Length::px(0.0);
+                style.min_height = Length::px(0.0);
+                style.flex_shrink = 0.0;
+            });
+            doc.append_child(container, child);
+            let space =
+                ConstraintSpace::for_root(LayoutUnit::from_i32(320), LayoutUnit::from_i32(240));
+            let direct = if display == Display::Flex {
+                crate::flex::flex_layout(&doc, container, &space)
+            } else {
+                crate::grid::grid_layout(&doc, container, &space)
+            };
+            let retained = crate::block::block_layout(&doc, container, &space);
+            for fragment in [&direct, &retained] {
+                assert_eq!(
+                    fragment.size,
+                    PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(80))
+                );
+                assert_eq!(
+                    fragment.content_size(),
+                    PhysicalSize::new(LayoutUnit::from_i32(85), LayoutUnit::from_i32(65))
+                );
+                let actual = fragment
+                    .children
+                    .iter()
+                    .find(|fragment| fragment.node_id == child)
+                    .unwrap();
+                assert_eq!(actual.size, fragment.content_size());
+                assert_eq!(fragment.padding, BoxStrut::zero());
+            }
+        }
     }
 }

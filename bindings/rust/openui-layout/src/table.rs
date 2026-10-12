@@ -1570,9 +1570,18 @@ fn resolve_table_box_oof(doc: &Document, fragment: &mut Fragment) {
         || style.establishes_transform_containing_block
         || style.opacity < 1.0;
     let captures_fixed = style.establishes_transform_containing_block;
+    let direction = style.direction.writing_direction(style.writing_mode);
+    let gutters = logical_box_strut(
+        fragment
+            .element_scrollbars
+            .map_or(BoxStrut::zero(), |bars| bars.insets),
+        direction,
+    );
     let cb_size = PhysicalSize::new(
-        (fragment.size.width - fragment.border.inline_sum()).clamp_negative_to_zero(),
-        (fragment.size.height - fragment.border.block_sum()).clamp_negative_to_zero(),
+        (fragment.size.width - fragment.border.inline_sum() - gutters.inline_sum())
+            .clamp_negative_to_zero(),
+        (fragment.size.height - fragment.border.block_sum() - gutters.block_sum())
+            .clamp_negative_to_zero(),
     );
     let mut pending = Vec::new();
     let mut deferred = Vec::new();
@@ -1587,6 +1596,7 @@ fn resolve_table_box_oof(doc: &Document, fragment: &mut Fragment) {
             if !candidate.has_inline_containing_block {
                 candidate.containing_block_size = cb_size;
                 candidate.containing_block_border = fragment.border;
+                candidate.containing_block_offset = PhysicalOffset::new(gutters.left, gutters.top);
                 candidate.containing_block_direction = style.direction;
                 candidate.containing_block_node = node_id;
             }
@@ -1614,6 +1624,8 @@ fn resolve_table_box_oof(doc: &Document, fragment: &mut Fragment) {
                     if !nested.has_inline_containing_block {
                         nested.containing_block_size = cb_size;
                         nested.containing_block_border = fragment.border;
+                        nested.containing_block_offset =
+                            PhysicalOffset::new(gutters.left, gutters.top);
                         nested.containing_block_direction = style.direction;
                         nested.containing_block_node = node_id;
                     }
@@ -1630,6 +1642,14 @@ fn resolve_table_box_oof(doc: &Document, fragment: &mut Fragment) {
 
 /// Lay out a table wrapper and its caption/table-grid contents.
 pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -> Fragment {
+    crate::scrollbars::layout(doc, table_id, space)
+}
+
+pub(crate) fn table_layout_contents(
+    doc: &Document,
+    table_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
     let style = &doc.node(table_id).style;
     let writing_direction = space.writing_direction;
     let model = collect_table_model(doc, table_id);
@@ -1834,6 +1854,9 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
 
     let border = used_table_border.unwrap_or_else(|| logical_border(style, writing_direction));
     let geometry_border = border;
+    let element_scrollbars = crate::scrollbars::for_node(space, table_id);
+    let physical_gutters = element_scrollbars.map_or(BoxStrut::zero(), |bars| bars.insets);
+    let gutters = logical_box_strut(physical_gutters, writing_direction);
     let padding = logical_padding(
         style,
         space.percentage_resolution_inline_size,
@@ -2168,15 +2191,16 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             border
         };
         grid_decoration.padding = padding;
+        grid_decoration.element_scrollbars = element_scrollbars;
         children.push(grid_decoration);
     }
     // Horizontal border/padding fields remain physical; vertical fields are
     // already algorithm logical struts. Select the real logical inline start
     // before converting each section/column box to its stored coordinates.
     let table_inline_start = if writing_direction.is_horizontal() && writing_direction.is_rtl() {
-        geometry_border.right + padding.right
+        geometry_border.right + padding.right + gutters.right
     } else {
-        geometry_border.left + padding.left
+        geometry_border.left + padding.left + gutters.left
     };
     // Blink's ColumnGeometriesBuilder retains one full-span positioning box
     // per authored column/group, with the group preceding its child columns.
@@ -2238,8 +2262,14 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
     // Sections exclude the two exterior spacing strips. The first cell's
     // canonical offset already excludes one spacing; both authored row bounds
     // and background positioning must use this same inner track extent.
-    let section_inline_size = actual_grid_width
-        + inline_spacing * LayoutUnit::from_i32(column_count.saturating_sub(1) as i32);
+    // Blink TableLayoutAlgorithm uses BorderPadding for column constraints,
+    // ComputeRows and intrinsic sizing, then BorderScrollbarPadding for section
+    // available size and placement. Preserve the assigned cell/column tracks;
+    // the section/row box alone consumes the reserved inline gutter.
+    let section_inline_size = (actual_grid_width
+        + inline_spacing * LayoutUnit::from_i32(column_count.saturating_sub(1) as i32)
+        - gutters.inline_sum())
+    .clamp_negative_to_zero();
     let table_content_left = table_part_inline_offset(
         table_inline_start + inline_spacing,
         section_inline_size,
@@ -2550,7 +2580,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
             // group, so border painting and fragmentation consume real rows.
             let mut section = Fragment::new_box(
                 NodeId::NONE,
-                PhysicalSize::new(actual_grid_width, group_bottom - group_top),
+                PhysicalSize::new(section_inline_size, group_bottom - group_top),
             );
             section.box_ownership = FragmentBoxOwnership::LayoutHelper;
             section.table_part = Some(FragmentTablePart::Section);
@@ -2608,6 +2638,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         BoxStrut::zero()
     };
     table.margin = margin;
+    table.element_scrollbars = element_scrollbars;
     table.table_part = Some(FragmentTablePart::Table);
     table.children = children;
     table.skip_box_decoration = !model.captions.is_empty();
@@ -2634,8 +2665,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         .copied()
         .filter(|baseline| *baseline > LayoutUnit::zero())
         .map(|baseline| row_starts.last().copied().unwrap_or(grid_top) + baseline);
-    table.has_overflow_clip = style.overflow_x != openui_style::Overflow::Visible
-        || style.overflow_y != openui_style::Overflow::Visible;
+    table.has_overflow_clip = crate::scroll_area::has_overflow_clip(doc, table_id);
     if style.border_collapse == BorderCollapse::Collapse {
         fn suppress_collapsed_table_radii(doc: &Document, fragment: &mut Fragment) {
             if fragment.node_id != NodeId::NONE

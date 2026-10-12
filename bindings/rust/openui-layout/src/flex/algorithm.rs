@@ -183,6 +183,14 @@ impl FlexItemAxisMapping {
 ///
 /// Takes a flex container node and its constraint space, returns a positioned Fragment.
 pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
+    crate::scrollbars::layout(doc, node_id, space)
+}
+
+pub(crate) fn flex_layout_contents(
+    doc: &Document,
+    node_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
     let style = &doc.node(node_id).style;
 
     // ── Axis orientation (Blink constructor, line 170-191) ───────────
@@ -926,9 +934,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     }
     fragment.oof_candidates = bubbled_oof_candidates;
     finalize_flex_fragment(doc, &mut fragment, style, is_column);
-    if style.overflow_x != openui_style::Overflow::Visible
-        || style.overflow_y != openui_style::Overflow::Visible
-    {
+    if crate::scroll_area::is_scroll_container(doc, node_id) {
         crate::block::apply_sticky_descendants_in_scrollport(doc, &mut fragment);
     }
     // Override baselines with values computed from the baseline alignment group.
@@ -5084,8 +5090,7 @@ fn finalize_flex_fragment(
     if overflow != border_box_rect {
         fragment.overflow_rect = Some(overflow);
     }
-    fragment.has_overflow_clip = style.overflow_x != openui_style::Overflow::Visible
-        || style.overflow_y != openui_style::Overflow::Visible;
+    fragment.has_overflow_clip = crate::scroll_area::has_overflow_clip(doc, fragment.node_id);
 
     fragment.first_baseline = flex_baseline_from_child(doc, fragment, style, is_column, true);
     fragment.last_baseline = flex_baseline_from_child(doc, fragment, style, is_column, false);

@@ -5,7 +5,7 @@
 //! border box used for painting is not the native scroll content size.
 
 use crate::{Fragment, FragmentKind, FragmentTablePart};
-use openui_dom::Document;
+use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize};
 use openui_style::{
     BorderCollapse, ComputedStyle, ContainerType, Containment, Display, FlexDirection, FlexWrap,
@@ -26,6 +26,12 @@ pub struct ScrollArea {
 }
 
 impl ScrollArea {
+    /// Whether this retained box owns element scrolling. Viewport propagation,
+    /// table adjustment, and replaced-box clipping are resolved during layout.
+    pub fn is_scroll_container(self) -> bool {
+        is_scrollable_pair((self.overflow_x, self.overflow_y))
+    }
+
     /// Layout-owned used borders of the principal scrolling box. A captioned
     /// table places decoration on a grid helper while its wrapper owns the
     /// scrolling box; that separation must not discard the table's used edges.
@@ -46,6 +52,21 @@ impl ScrollArea {
             }
         }
         fragment.border
+    }
+
+    /// Actual CSS padding delegated to a captioned table's grid decoration.
+    /// The wrapper retains ownership of the layout client/content rectangles.
+    pub fn used_padding(fragment: &Fragment) -> BoxStrut {
+        if fragment.owns_element_box() {
+            if let Some(grid) = fragment
+                .children
+                .iter()
+                .find(|child| matches!(child.table_part, Some(FragmentTablePart::GridDecoration)))
+            {
+                return grid.padding;
+            }
+        }
+        fragment.padding
     }
 
     pub fn clamp_offset(self, x: f64, y: f64) -> (f32, f32) {
@@ -145,12 +166,22 @@ fn directions(style: &ComputedStyle) -> (bool, bool) {
     (x, y)
 }
 
-pub(crate) fn overflow_pair(style: &ComputedStyle) -> (Overflow, Overflow) {
+pub fn overflow_pair(style: &ComputedStyle) -> (Overflow, Overflow) {
     let mut x = style.overflow_x;
     let mut y = style.overflow_y;
     if !matches!(x, Overflow::Visible | Overflow::Clip)
         || !matches!(y, Overflow::Visible | Overflow::Clip)
     {
+        // Blink StyleAdjuster::AdjustOverflow: table boxes retain only a
+        // matching hidden pair; other non-visible/non-clip pairs become visible.
+        // Internal cells/captions remain block containers and use normal rules.
+        if style.display.is_table_wrapper() {
+            return if x == Overflow::Hidden && y == Overflow::Hidden {
+                (Overflow::Hidden, Overflow::Hidden)
+            } else {
+                (Overflow::Visible, Overflow::Visible)
+            };
+        }
         let computed = |value| match value {
             Overflow::Visible => Overflow::Auto,
             Overflow::Clip => Overflow::Hidden,
@@ -160,6 +191,76 @@ pub(crate) fn overflow_pair(style: &ComputedStyle) -> (Overflow, Overflow) {
         y = computed(y);
     }
     (x, y)
+}
+
+fn is_scrollable_pair((x, y): (Overflow, Overflow)) -> bool {
+    [x, y]
+        .iter()
+        .any(|value| matches!(value, Overflow::Hidden | Overflow::Auto | Overflow::Scroll))
+}
+
+/// Resource metadata marks decoded images and embedded resource boxes. Native
+/// passive media and canvas retain their replaced layout class even before a
+/// resource is installed. A failed image instead uses its block-flow fallback
+/// class, as HTMLImageElement::CreateLayoutObject does in the pinned source.
+pub(crate) fn is_replaced_layout_box(doc: &Document, node: NodeId) -> bool {
+    let item = doc.node(node);
+    item.replaced.is_some()
+        || matches!(
+            item.tag,
+            ElementTag::Video | ElementTag::Audio | ElementTag::Canvas
+        )
+}
+
+pub(crate) fn viewport_defining_element(doc: &Document) -> Option<NodeId> {
+    if doc.body_overflow_is_propagated() {
+        doc.body_element()
+    } else {
+        doc.document_element()
+    }
+}
+
+/// Used overflow belongs to the retained layout box, not the specified style.
+/// LayoutBlock ignores local overflow on the viewport-defining HTML/body box;
+/// LayoutReplaced clips non-visible overflow without creating a scrollport.
+pub fn used_overflow_pair(doc: &Document, node: NodeId) -> (Overflow, Overflow) {
+    let item = doc.node(node);
+    if Some(node) == viewport_defining_element(doc)
+        || matches!(
+            item.style.display,
+            Display::Inline
+                | Display::TableRow
+                | Display::TableRowGroup
+                | Display::TableHeaderGroup
+                | Display::TableFooterGroup
+                | Display::TableColumn
+                | Display::TableColumnGroup
+        ) && !is_replaced_layout_box(doc, node)
+    {
+        return (Overflow::Visible, Overflow::Visible);
+    }
+    let pair = overflow_pair(&item.style);
+    if is_replaced_layout_box(doc, node) {
+        let clip = |value| {
+            if value == Overflow::Visible {
+                value
+            } else {
+                Overflow::Clip
+            }
+        };
+        (clip(pair.0), clip(pair.1))
+    } else {
+        pair
+    }
+}
+
+pub(crate) fn is_scroll_container(doc: &Document, node: NodeId) -> bool {
+    is_scrollable_pair(used_overflow_pair(doc, node))
+}
+
+pub(crate) fn has_overflow_clip(doc: &Document, node: NodeId) -> bool {
+    let (x, y) = used_overflow_pair(doc, node);
+    x != Overflow::Visible || y != Overflow::Visible
 }
 
 fn reachable(rect: PhysicalRect, client: PhysicalRect, x: bool, y: bool) -> PhysicalRect {
@@ -334,6 +435,25 @@ fn propagated(doc: &Document, child: &Fragment) -> PhysicalRect {
     rect
 }
 
+/// One physical client rectangle for retained scrolling and public scrollbar
+/// geometry, including captioned-table used borders and owned continuations.
+pub(crate) fn client_rect(fragment: &Fragment, gutters: BoxStrut) -> PhysicalRect {
+    let border_box = fragment.border_box_rect();
+    let border = ScrollArea::used_border(fragment);
+    PhysicalRect::new(
+        PhysicalOffset::new(
+            border_box.x() + border.left + gutters.left,
+            border_box.y() + border.top + gutters.top,
+        ),
+        PhysicalSize::new(
+            (border_box.width() - border.inline_sum() - gutters.inline_sum())
+                .clamp_negative_to_zero(),
+            (border_box.height() - border.block_sum() - gutters.block_sum())
+                .clamp_negative_to_zero(),
+        ),
+    )
+}
+
 pub(crate) fn populate(doc: &Document, fragment: &mut Fragment) {
     for child in &mut fragment.children {
         populate(doc, child);
@@ -350,7 +470,7 @@ pub(crate) fn populate(doc: &Document, fragment: &mut Fragment) {
         });
         return;
     }
-    if fragment.node_id.is_none()
+    if !fragment.owns_element_box()
         || fragment.kind != FragmentKind::Box
         || matches!(fragment.table_part, Some(FragmentTablePart::GridDecoration))
     {
@@ -358,28 +478,20 @@ pub(crate) fn populate(doc: &Document, fragment: &mut Fragment) {
         return;
     }
     let style = &doc.node(fragment.node_id).style;
-    let (overflow_x, overflow_y) = overflow_pair(style);
+    let (overflow_x, overflow_y) = used_overflow_pair(doc, fragment.node_id);
     let (negative_x, negative_y) = directions(style);
     let border_box = fragment.border_box_rect();
-    let border = ScrollArea::used_border(fragment);
     let gutters = fragment
         .element_scrollbars
-        .map_or(BoxStrut::zero(), |scrollbars| scrollbars.insets);
-    let client = PhysicalRect::new(
-        PhysicalOffset::new(
-            border_box.x() + border.left + gutters.left,
-            border_box.y() + border.top + gutters.top,
-        ),
-        PhysicalSize::new(
-            (border_box.width() - border.inline_sum() - gutters.inline_sum())
-                .clamp_negative_to_zero(),
-            (border_box.height() - border.block_sum() - gutters.block_sum())
-                .clamp_negative_to_zero(),
-        ),
-    );
+        .map_or(BoxStrut::zero(), |bars| bars.insets);
+    let client = client_rect(fragment, gutters);
     let mut content = client;
     let mut inflow: Option<PhysicalRect> = None;
-    for child in &fragment.children {
+    for child in fragment
+        .children
+        .iter()
+        .filter(|_| !is_replaced_layout_box(doc, fragment.node_id))
+    {
         // This empty native paint helper has no counterpart among Chromium's
         // CSS table children. The wrapper, captions, rows and cells own the
         // real extents; the grid border contributes separately when collapsed.
@@ -404,7 +516,7 @@ pub(crate) fn populate(doc: &Document, fragment: &mut Fragment) {
             inflow = Some(inflow.map_or(bounds, |current| union(current, bounds)));
         }
     }
-    if style.is_scroll_container() {
+    if is_scrollable_pair((overflow_x, overflow_y)) {
         if let Some(inflow) = inflow {
             let padding = PhysicalRect::from_xywh(
                 inflow.x() - fragment.padding.left,
@@ -435,4 +547,40 @@ pub(crate) fn populate(doc: &Document, fragment: &mut Fragment) {
         negative_y,
         integer_offsets: true,
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::FragmentBoxOwnership;
+
+    #[test]
+    fn borrowed_style_helper_does_not_hide_native_ancestor_scroll_extent() {
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(owner, |style| {
+            style.display = Display::Block;
+            style.overflow_x = Overflow::Hidden;
+            style.overflow_y = Overflow::Hidden;
+        });
+        let mut parent = Fragment::new_box(
+            owner,
+            PhysicalSize::new(LayoutUnit::from_i32(30), LayoutUnit::from_i32(10)),
+        );
+        let mut helper = Fragment::new_box(
+            owner,
+            PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(10)),
+        );
+        helper.box_ownership = FragmentBoxOwnership::LayoutHelper;
+        helper.children.push(Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(10)),
+        ));
+        parent.children.push(helper);
+        populate(&doc, &mut parent);
+        assert!(parent.children[0].scroll_area.is_none());
+        let area = parent.scroll_area.unwrap();
+        assert_eq!(area.content_rect.width(), LayoutUnit::from_i32(100));
+        assert_eq!(area.limits(), ((0.0, 70.0), (0.0, 0.0)));
+    }
 }

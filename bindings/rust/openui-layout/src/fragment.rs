@@ -758,27 +758,32 @@ impl Fragment {
         }
     }
 
-    /// The content box rect (border-box minus border minus padding).
+    /// Physical content origin, excluding actual border, padding and gutters.
     pub fn content_offset(&self) -> PhysicalOffset {
+        let border = crate::ScrollArea::used_border(self);
+        let padding = crate::ScrollArea::used_padding(self);
+        let gutters = self
+            .element_scrollbars
+            .map_or(BoxStrut::zero(), |bars| bars.insets);
         PhysicalOffset::new(
-            self.border.left + self.padding.left,
-            self.border.top + self.padding.top,
+            border.left + padding.left + gutters.left,
+            border.top + padding.top + gutters.top,
         )
     }
 
-    /// The content box size.
+    /// Physical content size. Gutters consume inner space without changing
+    /// the authored border or padding or the resource's outer replaced size.
     pub fn content_size(&self) -> PhysicalSize {
+        let border = crate::ScrollArea::used_border(self);
+        let padding = crate::ScrollArea::used_padding(self);
+        let gutters = self
+            .element_scrollbars
+            .map_or(BoxStrut::zero(), |bars| bars.insets);
         PhysicalSize::new(
-            self.size.width
-                - self.border.left
-                - self.border.right
-                - self.padding.left
-                - self.padding.right,
-            self.size.height
-                - self.border.top
-                - self.border.bottom
-                - self.padding.top
-                - self.padding.bottom,
+            (self.size.width - border.inline_sum() - padding.inline_sum() - gutters.inline_sum())
+                .clamp_negative_to_zero(),
+            (self.size.height - border.block_sum() - padding.block_sum() - gutters.block_sum())
+                .clamp_negative_to_zero(),
         )
     }
 
