@@ -36,6 +36,8 @@ mod scroll_button_tests;
 mod types;
 mod value;
 #[cfg(test)]
+mod versioned_input_tests;
+#[cfg(test)]
 mod versioned_output_tests;
 
 pub use editing_command::oui_element_edit_text_v1;
@@ -123,6 +125,15 @@ unsafe fn versioned_output_header<T>(output: *mut T) -> Result<(u32, u32), ApiEr
     let abi_version = unsafe { ptr::read_unaligned(output.cast::<u32>().add(1)) };
     check_header(struct_size, abi_version, size_of::<T>())?;
     Ok((struct_size, abi_version))
+}
+
+// SAFETY CONTRACT: the initialized header is readable. Once its size and ABI
+// are accepted, the caller provides aligned, readable, initialized T fields
+// for the call. Copying the legacy value ignores a caller's future tail.
+unsafe fn versioned_input<T: Copy>(input: *const T) -> Result<T, ApiError> {
+    // Header validation only reads memory; the cast does not permit writes.
+    unsafe { versioned_output_header(input.cast_mut()) }?;
+    Ok(unsafe { ptr::read(input) })
 }
 
 fn write_handle<T>(out: *mut *mut T, handle: LocalHandle) -> Result<(), ApiError> {
@@ -317,13 +328,9 @@ fn font_descriptor(raw: *const OuiFontFaceDescriptor) -> Result<FontFaceDescript
     if raw.is_null() {
         return Err(invalid("font descriptor is null"));
     }
-    // SAFETY: the C contract requires a readable descriptor structure.
-    let raw = unsafe { &*raw };
-    check_header(
-        raw.struct_size,
-        raw.abi_version,
-        size_of::<OuiFontFaceDescriptor>(),
-    )?;
+    // SAFETY: the caller supplies initialized readable descriptor storage;
+    // validate its prefix before copying the full legacy value.
+    let raw = unsafe { versioned_input(raw) }?;
     let known_flags = OUI_FONT_FACE_HAS_SIZE_ADJUST
         | OUI_FONT_FACE_HAS_ASCENT_OVERRIDE
         | OUI_FONT_FACE_HAS_DESCENT_OVERRIDE
@@ -498,13 +505,9 @@ fn animation_options(value: *const OuiAnimationOptions) -> Result<AnimationOptio
     if value.is_null() {
         return Err(invalid("animation options are null"));
     }
-    // SAFETY: the C contract requires a readable options structure.
-    let value = unsafe { &*value };
-    check_header(
-        value.struct_size,
-        value.abi_version,
-        size_of::<OuiAnimationOptions>(),
-    )?;
+    // SAFETY: the caller supplies initialized readable options storage;
+    // validate its prefix before copying the full legacy value.
+    let value = unsafe { versioned_input(value) }?;
     let iterations = if value.iterations == -1.0 {
         IterationCount::Infinite
     } else {
@@ -559,13 +562,9 @@ fn animation_timeline(
     if value.is_null() {
         return Ok(AnimationTimeline::Document);
     }
-    // SAFETY: the C contract requires a readable timeline structure.
-    let value = unsafe { &*value };
-    check_header(
-        value.struct_size,
-        value.abi_version,
-        size_of::<OuiAnimationTimeline>(),
-    )?;
+    // SAFETY: the caller supplies initialized readable timeline storage;
+    // validate its prefix before copying the full legacy value.
+    let value = unsafe { versioned_input(value) }?;
     if value.kind == 0 {
         if !value.source.is_null() {
             return Err(invalid("document timelines must not specify a source"));
@@ -709,13 +708,9 @@ pub extern "C" fn oui_app_create(
         if config.is_null() {
             return Err(invalid("config is null"));
         }
-        // SAFETY: the caller guarantees a readable `OuiAppConfig`.
-        let config = unsafe { &*config };
-        check_header(
-            config.struct_size,
-            config.abi_version,
-            size_of::<OuiAppConfig>(),
-        )?;
+        // SAFETY: validate the initialized header before reading the full
+        // caller-owned configuration and its initialized legacy fields.
+        let config = unsafe { versioned_input(config) }?;
         if config.reserved != 0 {
             return Err(invalid("reserved app configuration fields must be zero"));
         }
@@ -792,9 +787,10 @@ pub extern "C" fn oui_document_create(
         if config.is_null() {
             return Err(invalid("config is null"));
         }
-        // SAFETY: the caller guarantees a readable `OuiDocumentConfig`.
-        let config = unsafe { &*config };
-        write_handle(out_document, LocalHandle::Document(new_document(config)?))
+        // SAFETY: validate the initialized header before reading the full
+        // caller-owned configuration and its initialized legacy fields.
+        let config = unsafe { versioned_input(config) }?;
+        write_handle(out_document, LocalHandle::Document(new_document(&config)?))
     })
 }
 
@@ -858,13 +854,9 @@ pub extern "C" fn oui_document_set_viewport(
         if viewport.is_null() {
             return Err(invalid("viewport is null"));
         }
-        // SAFETY: the caller guarantees a readable `OuiDocumentConfig`.
-        let config = unsafe { &*viewport };
-        check_header(
-            config.struct_size,
-            config.abi_version,
-            size_of::<OuiDocumentConfig>(),
-        )?;
+        // SAFETY: validate the initialized header before reading the full
+        // caller-owned configuration and its initialized legacy fields.
+        let config = unsafe { versioned_input(viewport) }?;
         let viewport = viewport_metrics(&config.viewport)?;
         let state = document(document_handle as usize)?;
         borrow_engine_mut(&state)?.set_viewport(viewport)?;
