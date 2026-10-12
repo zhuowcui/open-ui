@@ -992,3 +992,42 @@ fn shared_animation_allocation_error_preserves_out_of_memory_status() {
     let malformed = animation_error(openui_style::AnimationError::InvalidEasing("bad stops"));
     assert_eq!(malformed.status, OuiStatus::InvalidArgument);
 }
+
+#[test]
+fn shared_engine_allocation_error_preserves_transition_ffi_status() {
+    let allocation = ApiError::from(openui_engine::EngineError::AllocationFailure);
+    assert_eq!(allocation.status, OuiStatus::OutOfMemory);
+    let render = ApiError::from(openui_engine::EngineError::Render("invalid target".into()));
+    assert_eq!(render.status, OuiStatus::InvalidState);
+}
+
+#[test]
+fn new_scroll_timing_validation_preserves_state_and_legacy_error_policy() {
+    let mut context = Context::new();
+    let node = context.node(context.root);
+    let mut output = u64::MAX;
+    for (x, y, duration) in [
+        (f64::NAN, 0.0, 100.0),
+        (0.0, f64::INFINITY, 100.0),
+        (0.0, 0.0, -1.0),
+        (0.0, 0.0, f64::NAN),
+    ] {
+        assert_eq!(
+            oui_element_smooth_scroll_to_v1(node, x, y, duration, ptr::null(), &mut output),
+            OuiStatus::InvalidArgument
+        );
+        assert_eq!(output, u64::MAX);
+    }
+    for duration in [-1.0, f64::NAN, f64::INFINITY] {
+        assert_eq!(
+            oui_element_smooth_scroll_into_view_v2(node, 0, 0, 0, duration, ptr::null()),
+            OuiStatus::InvalidArgument
+        );
+    }
+    assert!(
+        !borrow_engine(&document(context.document as usize).unwrap())
+            .unwrap()
+            .is_animating()
+    );
+    assert_eq!(offset(node), (0.0, 0.0));
+}

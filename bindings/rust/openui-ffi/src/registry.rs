@@ -170,6 +170,7 @@ impl ApiError {
 impl From<EngineError> for ApiError {
     fn from(value: EngineError) -> Self {
         let status = match value {
+            EngineError::AllocationFailure => OuiStatus::OutOfMemory,
             EngineError::WrongDocument => OuiStatus::WrongDocument,
             EngineError::StaleHandle => OuiStatus::StaleHandle,
             EngineError::PropertyType { .. } => OuiStatus::WrongValueType,

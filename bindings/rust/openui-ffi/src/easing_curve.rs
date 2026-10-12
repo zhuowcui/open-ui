@@ -277,6 +277,11 @@ pub extern "C" fn oui_element_smooth_scroll_to_v1(
         let element = element(element_handle as usize)?;
         let state = element_document(&element)?;
         id_output(output)?;
+        if !x.is_finite() || !y.is_finite() || !duration_ms.is_finite() || duration_ms < 0.0 {
+            return Err(invalid(
+                "scroll coordinates must be finite and duration non-negative",
+            ));
+        }
         let easing = curve(easing)?;
         let id =
             borrow_engine_mut(&state)?.smooth_scroll_to(element.node, x, y, duration_ms, easing)?;
@@ -301,6 +306,9 @@ pub extern "C" fn oui_element_smooth_scroll_into_view_v2(
         let element = element(element_handle as usize)?;
         let state = element_document(&element)?;
         let options = scroll_into_view_options(block, inline, container)?;
+        if !duration_ms.is_finite() || duration_ms < 0.0 {
+            return Err(invalid("scroll duration must be finite and non-negative"));
+        }
         let easing = curve(easing)?;
         borrow_engine_mut(&state)?.smooth_scroll_into_view_with_easing(
             element.node,
