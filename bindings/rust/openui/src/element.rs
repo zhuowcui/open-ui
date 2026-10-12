@@ -6,11 +6,12 @@ use crate::style::{Error, Rect};
 use openui_dom::ElementTag;
 use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole, AnimationId,
-    AnimationTimeline, NodeHandle, ScrollAnimationId, WeakNode,
+    AnimationTimeline, AnimationTimelineSource, NodeHandle, ScrollAnimationId, WeakNode,
 };
 use openui_style::{
-    AnimationOptions, ComputedStyle, Display, Keyframes, PropertyKeyframes, Style, StyleProperty,
-    StyleValue, TimelineAxis, TimelineRange,
+    AnimationAttachmentRange, AnimationOptions, ComputedStyle, Display, Keyframes,
+    PropertyKeyframes, Style, StyleProperty, StyleValue, TimelineAxis, TimelineRange,
+    ViewTimelineInset,
 };
 use std::rc::{Rc, Weak};
 
@@ -339,6 +340,118 @@ impl Element {
         let keyframes = PropertyKeyframes::typed(property, keyframes)?;
         self.document.with_engine_mut(|engine| {
             engine.animate(self.handle, keyframes, options, AnimationTimeline::Document)
+        })
+    }
+
+    /// Retain browser attachment endpoints on a document animation. The range
+    /// is inert on this source, as in Chromium, and is returned as owned data.
+    pub fn animate_with_attachment_range<T>(
+        &self,
+        property: StyleProperty,
+        keyframes: Keyframes<T>,
+        options: AnimationOptions,
+        range: AnimationAttachmentRange,
+    ) -> Result<AnimationId, Error>
+    where
+        T: Into<StyleValue>,
+    {
+        let keyframes = PropertyKeyframes::typed(property, keyframes)?;
+        self.document.with_engine_mut(|engine| {
+            engine.animate_with_attachment_range(
+                self.handle,
+                keyframes,
+                options,
+                AnimationTimelineSource::Document,
+                range,
+            )
+        })
+    }
+
+    /// Native browser-style scroll attachment, including named and relative offsets.
+    pub fn animate_on_scroll_range<T>(
+        &self,
+        property: StyleProperty,
+        keyframes: Keyframes<T>,
+        options: AnimationOptions,
+        source: &Element,
+        axis: TimelineAxis,
+        range: AnimationAttachmentRange,
+    ) -> Result<AnimationId, Error>
+    where
+        T: Into<StyleValue>,
+    {
+        self.ensure_same_document(source)?;
+        let keyframes = PropertyKeyframes::typed(property, keyframes)?;
+        self.document.with_engine_mut(|engine| {
+            engine.animate_with_attachment_range(
+                self.handle,
+                keyframes,
+                options,
+                AnimationTimelineSource::Scroll {
+                    source: source.handle,
+                    axis,
+                },
+                range,
+            )
+        })
+    }
+
+    /// Native browser-style view attachment resolved from the nearest owned scrollport.
+    pub fn animate_on_view_range<T>(
+        &self,
+        property: StyleProperty,
+        keyframes: Keyframes<T>,
+        options: AnimationOptions,
+        subject: &Element,
+        axis: TimelineAxis,
+        range: AnimationAttachmentRange,
+    ) -> Result<AnimationId, Error>
+    where
+        T: Into<StyleValue>,
+    {
+        self.ensure_same_document(subject)?;
+        let keyframes = PropertyKeyframes::typed(property, keyframes)?;
+        self.document.with_engine_mut(|engine| {
+            engine.animate_with_attachment_range(
+                self.handle,
+                keyframes,
+                options,
+                AnimationTimelineSource::View {
+                    subject: subject.handle,
+                    axis,
+                },
+                range,
+            )
+        })
+    }
+
+    pub fn animate_on_view_range_with_inset<T>(
+        &self,
+        property: StyleProperty,
+        keyframes: Keyframes<T>,
+        options: AnimationOptions,
+        subject: &Element,
+        axis: TimelineAxis,
+        inset: ViewTimelineInset,
+        range: AnimationAttachmentRange,
+    ) -> Result<AnimationId, Error>
+    where
+        T: Into<StyleValue>,
+    {
+        self.ensure_same_document(subject)?;
+        let keyframes = PropertyKeyframes::typed(property, keyframes)?;
+        self.document.with_engine_mut(|engine| {
+            engine.animate_with_attachment_range(
+                self.handle,
+                keyframes,
+                options,
+                AnimationTimelineSource::ViewWithInset {
+                    subject: subject.handle,
+                    axis,
+                    inset,
+                },
+                range,
+            )
         })
     }
 

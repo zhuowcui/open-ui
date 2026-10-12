@@ -1,9 +1,13 @@
 //! Retained, untransformed scroll/view timeline geometry.
 //! Pinned Blink 147.0.7727.50 uses 16 microseconds per CSS pixel.
-use crate::{AnimationTimeline, Engine, NodeHandle};
+use crate::{animation::RetainedAnimationTimeline, AnimationTimelineSource, Engine, NodeHandle};
 use openui_dom::NodeId;
+use openui_geometry::LayoutUnit;
 use openui_layout::{Fragment, ScrollArea};
-use openui_style::{AnimationOptions, IterationCount, Overflow, TimelineAxis, TimelineRange};
+use openui_style::{
+    AnimationAttachmentRange, AnimationOptions, IterationCount, LengthValue, NamedTimelineRanges,
+    Overflow, TimelineAxis, TimelineRangeBounds, TimelineRangeOffset, ViewTimelineInset,
+};
 use std::collections::HashMap;
 
 const TIMELINE_MICROSECONDS_PER_CSS_PIXEL: f64 = 16.0;
@@ -23,6 +27,24 @@ pub struct AnimationTimelineSnapshot {
     pub current_time_percentage: Option<f64>,
 }
 
+/// An immutable copy of authored browser attachment endpoints and their
+/// currently resolved geometry. Inactive sources keep the descriptor and no bounds.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct AnimationAttachmentSnapshot {
+    pub range: AnimationAttachmentRange,
+    pub resolved: Option<AnimationResolvedTimelineRanges>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct AnimationResolvedTimelineRanges {
+    pub source: NodeHandle,
+    /// Every range uses absolute CSS pixel scroll positions along the chosen axis.
+    pub named: NamedTimelineRanges,
+    pub attachment: TimelineRangeBounds,
+    pub entry_crossing_distance: f64,
+    pub exit_crossing_distance: f64,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) struct ProgressTimelineSnapshot {
     pub source: NodeHandle,
@@ -30,7 +52,14 @@ pub(crate) struct ProgressTimelineSnapshot {
     pub scroll_offset: f64,
     pub cover_start: f64,
     pub cover_end: f64,
-    pub range: TimelineRange,
+    pub range: TimelineRangeBounds,
+    pub legacy_oriented: bool,
+    pub attachment_start_fraction: f64,
+    pub attachment_end_fraction: f64,
+    pub attachment_bounds: TimelineRangeBounds,
+    pub named_ranges: NamedTimelineRanges,
+    pub entry_crossing_distance: f64,
+    pub exit_crossing_distance: f64,
     pub time_ms: f64,
     pub duration_ms: f64,
     pub range_duration_ms: f64,
@@ -59,6 +88,16 @@ impl ProgressTimelineSnapshot {
         }
     }
 
+    pub fn attachment_reflection(self) -> AnimationResolvedTimelineRanges {
+        AnimationResolvedTimelineRanges {
+            source: self.source,
+            named: self.named_ranges,
+            attachment: self.attachment_bounds,
+            entry_crossing_distance: self.entry_crossing_distance,
+            exit_crossing_distance: self.exit_crossing_distance,
+        }
+    }
+
     pub fn time_from_percentage(self, percentage: f64) -> f64 {
         (percentage / 100.0 * self.duration_seconds) * 1000.0
     }
@@ -69,9 +108,8 @@ impl ProgressTimelineSnapshot {
         }
         // animation.cc:2979-3036. This is timeline phase policy, independent
         // of the renderer's strict pixel comparison gate.
-        let size = self.cover_end - self.cover_start;
-        let mut start = self.range.start / size;
-        let end = self.range.end / size;
+        let mut start = self.attachment_start_fraction;
+        let end = self.attachment_end_fraction;
         if self.duration_seconds > 0.0 {
             start += (timing.delay_ms / 1000.0) / self.duration_seconds;
         }
@@ -107,12 +145,11 @@ impl ProgressTimelineSnapshot {
             // with reciprocal multiplication, including infinite iterations.
             (0.0, (1.0 / count) * self.duration_seconds)
         } else {
-            let size = self.cover_end - self.cover_start;
             let mut interval = 1.0;
-            interval -= self.range.start / size;
-            interval -= 1.0 - self.range.end / size;
+            interval -= self.attachment_start_fraction;
+            interval -= 1.0 - self.attachment_end_fraction;
             // The native API also preserves its pre-existing reversed ranges.
-            if self.range.end < self.range.start {
+            if self.legacy_oriented && self.range.end < self.range.start {
                 interval = -interval;
             }
             interval = interval.max(0.0);
@@ -204,16 +241,20 @@ fn scroll_container(area: ScrollArea) -> bool {
         .any(|value| matches!(value, Overflow::Hidden | Overflow::Auto | Overflow::Scroll))
 }
 
-fn length(length: &openui_geometry::Length, extent: f64) -> f64 {
-    if length.is_fixed() {
-        length.value() as f64
+// Pinned MinimumValueForLength: the percentage basis and returned offset are
+// LayoutUnits, with distinct f32 multiplication order for percent and calc.
+fn minimum_length(length: &openui_geometry::Length, extent: f64) -> f64 {
+    let basis = LayoutUnit::from_f64(extent).to_f32();
+    let value = if length.is_fixed() {
+        length.value()
     } else if length.is_percent() {
-        extent * length.value() as f64 / 100.0
+        basis * length.value() / 100.0
     } else if length.is_calculated() {
-        length.calc_offset() as f64 + extent * length.value() as f64 / 100.0
+        length.calc_offset() + length.value() / 100.0 * basis
     } else {
         0.0
-    }
+    };
+    LayoutUnit::from_f32(value).to_f64()
 }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -243,30 +284,48 @@ fn stickiness(stuck: f64, sticky: f64, viewport: f64, size: f64, target: f64) ->
 }
 
 impl Engine {
+    fn resolve_timeline_length(
+        &self,
+        reference: NodeId,
+        value: LengthValue,
+    ) -> openui_geometry::Length {
+        let style = &self.document.node(reference).style;
+        let root_style = &self.document.node(self.document.root()).style;
+        let viewport = (
+            self.viewport.logical_width() as f32,
+            self.viewport.logical_height() as f32,
+        );
+        if value.depends_on_font_metrics() {
+            value.resolve_with_font_metrics(
+                viewport,
+                style.font_size,
+                root_style.font_size,
+                self.native_font_length_metrics(style),
+            )
+        } else {
+            value.resolve(viewport, style.font_size, root_style.font_size)
+        }
+    }
+
     pub(crate) fn progress_timeline_snapshot(
         &self,
-        timeline: AnimationTimeline,
+        timeline: RetainedAnimationTimeline,
     ) -> Option<ProgressTimelineSnapshot> {
         let root = self.latest_fragment.as_ref()?;
         let geometry = boxes(root);
-        let (source_node, subject, axis, range) = match timeline {
-            AnimationTimeline::Document => return None,
-            AnimationTimeline::Scroll {
-                source,
-                axis,
-                range,
-            } => {
+        let legacy_range = timeline.legacy_range();
+        let browser_range = timeline.attachment();
+        let (source_node, subject, axis) = match timeline.source() {
+            AnimationTimelineSource::Document => return None,
+            AnimationTimelineSource::Scroll { source, axis } => {
                 let source = self.resolve(source).ok()?;
                 if !self.node_is_connected(source) {
                     return None;
                 }
-                (source, None, axis, range)
+                (source, None, axis)
             }
-            AnimationTimeline::View {
-                subject,
-                axis,
-                range,
-            } => {
+            AnimationTimelineSource::View { subject, axis }
+            | AnimationTimelineSource::ViewWithInset { subject, axis, .. } => {
                 let subject = self.resolve(subject).ok()?;
                 if !self.node_is_connected(subject) || !geometry.contains_key(&subject) {
                     return None;
@@ -285,7 +344,7 @@ impl Engine {
                     }
                     ancestor = self.document.node(ancestor).parent;
                 }
-                (source?, Some(subject), axis, range)
+                (source?, Some(subject), axis)
             }
         };
         let source_box = geometry.get(&source_node)?;
@@ -318,6 +377,8 @@ impl Engine {
             limits.1 .1 - limits.1 .0
         };
         let (mut start, mut end) = (0.0, maximum);
+        let mut entry_crossing_distance = 0.0;
+        let mut exit_crossing_distance = 0.0;
         if let Some(subject) = subject {
             let target = geometry.get(&subject)?;
             let client_offset = if axis == 0 {
@@ -334,6 +395,8 @@ impl Engine {
             .to_f64();
             let position = target.rect[axis] - source_box.origin[axis] - client_offset;
             let size = target.rect[axis + 2];
+            entry_crossing_distance = size;
+            exit_crossing_distance = size;
             let writing = style.direction.writing_direction(style.writing_mode);
             let reversed = if axis == 0 {
                 if writing.is_horizontal() {
@@ -352,8 +415,20 @@ impl Engine {
                 (&style.scroll_padding_top, &style.scroll_padding_bottom)
             };
             let (start_inset, end_inset) = if reversed { (high, low) } else { (low, high) };
-            start = position - viewport + length(end_inset, viewport);
-            end = position + size - length(start_inset, viewport);
+            let inset = match timeline.source() {
+                AnimationTimelineSource::ViewWithInset { inset, .. } => inset,
+                _ => ViewTimelineInset::default(),
+            };
+            let start_inset = inset
+                .start
+                .map(|value| self.resolve_timeline_length(subject, value))
+                .unwrap_or_else(|| start_inset.clone());
+            let end_inset = inset
+                .end
+                .map(|value| self.resolve_timeline_length(subject, value))
+                .unwrap_or_else(|| end_inset.clone());
+            start = position - viewport + minimum_length(&end_inset, viewport);
+            end = position + size - minimum_length(&start_inset, viewport);
             let mut sticky_node = subject;
             while sticky_node != source_node && !sticky_node.is_none() {
                 if let Some(sticky_box) = geometry.get(&sticky_node) {
@@ -418,6 +493,32 @@ impl Engine {
                         if backward != StickinessRange::BeforeEntry {
                             start += backward_adjust;
                         }
+                        // Retain the independent crossing distances. Cover
+                        // endpoints alone cannot resolve entry/exit named ranges.
+                        if matches!(
+                            forward,
+                            StickinessRange::DuringEntry | StickinessRange::Covering
+                        ) {
+                            entry_crossing_distance += forward_adjust;
+                        }
+                        if matches!(
+                            backward,
+                            StickinessRange::DuringEntry | StickinessRange::Covering
+                        ) {
+                            entry_crossing_distance -= backward_adjust;
+                        }
+                        if matches!(
+                            forward,
+                            StickinessRange::DuringExit | StickinessRange::Covering
+                        ) {
+                            exit_crossing_distance += forward_adjust;
+                        }
+                        if matches!(
+                            backward,
+                            StickinessRange::DuringExit | StickinessRange::Covering
+                        ) {
+                            exit_crossing_distance -= backward_adjust;
+                        }
                         if forward != StickinessRange::AfterExit {
                             end += forward_adjust;
                         }
@@ -433,11 +534,106 @@ impl Engine {
         if end <= start {
             return None;
         }
-        let polarity = if range.end > range.start { 1.0 } else { -1.0 };
+        let cover = TimelineRangeBounds { start, end };
+        // ToFractionalOffset bypasses named conversion when ViewOffsets==(0,0),
+        // including an ordinary Scroll timeline and a zero-size View subject.
+        let named_ranges = if entry_crossing_distance == 0.0 && exit_crossing_distance == 0.0 {
+            NamedTimelineRanges {
+                cover,
+                contain: cover,
+                entry: cover,
+                entry_crossing: cover,
+                exit: cover,
+                exit_crossing: cover,
+                scroll: cover,
+            }
+        } else {
+            let subject_start_view_start = end - exit_crossing_distance;
+            let subject_end_view_end = start + entry_crossing_distance;
+            let contain_start = subject_start_view_start.min(subject_end_view_end);
+            let contain_end = subject_start_view_start.max(subject_end_view_end);
+            NamedTimelineRanges {
+                cover,
+                contain: TimelineRangeBounds {
+                    start: contain_start,
+                    end: contain_end,
+                },
+                entry: TimelineRangeBounds {
+                    start,
+                    end: contain_start,
+                },
+                entry_crossing: TimelineRangeBounds {
+                    start,
+                    end: subject_end_view_end,
+                },
+                exit: TimelineRangeBounds {
+                    start: contain_end,
+                    end,
+                },
+                exit_crossing: TimelineRangeBounds {
+                    start: subject_start_view_start,
+                    end,
+                },
+                scroll: TimelineRangeBounds {
+                    start: 0.0,
+                    end: maximum,
+                },
+            }
+        };
+        let legacy_oriented = legacy_range.is_some();
+        let (range, attachment_bounds, attachment_start_fraction, attachment_end_fraction) =
+            if let Some(range) = legacy_range {
+                (
+                    TimelineRangeBounds {
+                        start: range.start,
+                        end: range.end,
+                    },
+                    TimelineRangeBounds {
+                        start: start + range.start,
+                        end: start + range.end,
+                    },
+                    range.start / (end - start),
+                    range.end / (end - start),
+                )
+            } else {
+                let (range, reference) = browser_range?;
+                let reference = self.resolve(reference).ok()?;
+                let resolve = |endpoint: TimelineRangeOffset| {
+                    let bounds = named_ranges.get(endpoint.name);
+                    let value = self.resolve_timeline_length(reference, endpoint.offset);
+                    let offset = minimum_length(&value, bounds.end - bounds.start);
+                    let absolute = bounds.start + offset;
+                    let relative = absolute - start;
+                    // Retain this first division; a multiply/divide round trip through
+                    // reflected CSS pixels must not change timing or phase flags.
+                    (absolute, relative, relative / (end - start))
+                };
+                let (absolute_start, relative_start, start_fraction) =
+                    range.start.map_or((start, 0.0, 0.0), resolve);
+                let (absolute_end, relative_end, end_fraction) =
+                    range.end.map_or((end, end - start, 1.0), resolve);
+                (
+                    TimelineRangeBounds {
+                        start: relative_start,
+                        end: relative_end,
+                    },
+                    TimelineRangeBounds {
+                        start: absolute_start,
+                        end: absolute_end,
+                    },
+                    start_fraction,
+                    end_fraction,
+                )
+            };
+        let polarity = if legacy_oriented && range.end < range.start {
+            -1.0
+        } else {
+            1.0
+        };
         let duration_seconds =
             ((end - start) * TIMELINE_MICROSECONDS_PER_CSS_PIXEL / 1000.0) / 1000.0;
-        let attachment_start_seconds = (range.start / (end - start)) * duration_seconds;
-        let attachment_end_seconds = (range.end / (end - start)) * duration_seconds;
+        let attachment_start_seconds = attachment_start_fraction * duration_seconds;
+        let attachment_end_seconds = attachment_end_fraction * duration_seconds;
         // ComputeTimelineState converts cover-relative time to integer
         // microseconds *before* animation attachment/start alignment. Rust's
         // float-to-i64 conversion has the same finite truncation/saturation.
@@ -451,9 +647,22 @@ impl Engine {
             cover_start: start,
             cover_end: end,
             range,
+            legacy_oriented,
+            attachment_start_fraction,
+            attachment_end_fraction,
+            attachment_bounds,
+            named_ranges,
+            entry_crossing_distance,
+            exit_crossing_distance,
             time_ms: ((timeline_seconds - attachment_start_seconds) * polarity) * 1000.0,
             duration_ms: duration_seconds * 1000.0,
-            range_duration_ms: (attachment_end_seconds - attachment_start_seconds).abs() * 1000.0,
+            range_duration_ms: if legacy_oriented {
+                (attachment_end_seconds - attachment_start_seconds).abs() * 1000.0
+            } else {
+                // AutoAlignedStartTime uses the actual end attachment, even
+                // when intrinsic active duration clamps a reversed range to zero.
+                (attachment_end_seconds - attachment_start_seconds) * 1000.0
+            },
             scroll_maximum: maximum,
             duration_seconds,
         })

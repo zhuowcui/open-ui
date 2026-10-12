@@ -108,8 +108,8 @@ range includes the source's scroll-padding and retained sticky constraints.
 attachments measure them from the scroll origin; view attachments measure them
 from the cover-range start. Reversed endpoints retain their oriented native
 range behavior; this older oriented native interface is not the complete browser
-attachment-range interface. The required additive named attachment interface must
-retain Chromium's clamped intrinsic fraction for reversed browser endpoints.
+attachment-range interface. The additive typed interface described below retains
+Chromium's clamped intrinsic fraction for reversed browser endpoints.
 The internal progress clock follows the pinned Chromium scale
 of 16 microseconds per CSS pixel. Cover-relative current time converts to integer
 microseconds before attachment alignment; duration retains the pinned double
@@ -137,8 +137,9 @@ they request no document-clock animation ticks. Pause holds percentage time,
 play re-aligns to the attachment range, and rate changes use Blink's separate
 nonmonotonic start-time rules. A finished effect can re-enter when its scroll
 position reverses. These source changes and native guards are uncompiled and
-unqualified. Named view ranges, complete continuation geometry, nested sticky
-relationships and their Chromium measurements still require completion. The
+unqualified. The named range interface is now implemented in source; complete
+continuation geometry, nested sticky relationships and Chromium measurements
+still require completion. The
 new typed progress operations also require additive C transport and consumers.
 
 Overlapping effects and cancellation also need qualification: each animation
@@ -166,7 +167,7 @@ Depth preservation, `preserve-3d`, backface visibility, and perspective-origin
 remain gated on a real 3D layer tree rather than being approximated in paint.
 
 
-### Phase boundary timing
+## Phase boundary timing
 
 The source implementation follows pinned Chromium 147.0.7727.50 timing arithmetic:
 local time is represented as seconds, snapped to the before boundary within one
@@ -175,3 +176,46 @@ the before phase. The same adjusted time supplies active time and progress.
 This also governs fill and tiny-duration effects; the unchanged pixel gates have
 zero tolerance. Native boundary, tiny-effect, and inactive-source guards are
 written but have not been compiled or executed in this source checkpoint.
+
+
+## Browser attachment and named ranges
+
+`Element::animate_on_scroll_range` and `animate_on_view_range` use
+`AnimationAttachmentRange`, with optional normal endpoints or typed
+`TimelineRangeOffset` values. Names cover `Cover`, `Contain`, `Entry`,
+`EntryCrossing`, `Exit`, `ExitCrossing`, and `Scroll`. Offsets use the existing
+native `LengthValue` API, including pixels, percentages, a percentage plus pixel
+calculation, and selected-font or viewport units. They resolve against the
+animation target's current style and the retained scroll/view geometry. Explicit
+view visibility insets use `animate_on_view_range_with_inset` and `ViewTimelineInset`;
+relative lengths use the subject's style, while an absent side uses the source's
+logical scroll padding. Insets and offsets use Chromium's LayoutUnit and float
+arithmetic. No JavaScript executes.
+
+`Document::animation_attachment_snapshot` returns an owned descriptor and optional
+resolved named ranges and absolute CSS pixel attachment bounds. Inactive geometry
+keeps the descriptor and leaves its bounds unresolved. The original timeline
+snapshot remains available; its range values are cover-relative pixel offsets
+when active. For an inactive browser attachment those two scalar fields are zero
+and must be read together with `active`; the additive snapshot carries optional
+bounds explicitly. `set_animation_attachment_range` changes endpoints on the
+same retained animation. Paused effects keep their hold time; running effects
+resume automatic attachment alignment. Invalid offsets leave the descriptor and
+animation unchanged.
+
+The original `TimelineRange` API retains oriented numeric endpoints. The new
+browser interface uses Chromium's nonnegative intrinsic active fraction for
+reversed/equal endpoints and preserves independent entry/exit crossing distances
+for sticky subjects. It does not reinterpret an existing numeric range. The
+`Scroll` name corresponds to pinned Chromium's
+`ScrollTimelineNamedRangeScrollEnabled` feature; its browser capture flag remains
+part of qualification evidence.
+
+These additions are source work, not a native API qualification result. C
+transport, complete fragmented subject/source geometry, nested sticky cases,
+underlying effect-stack integration, compilation and exact Chromium/native
+measurements remain required until their evidence is recorded.
+
+### Ordering controls on inactive progress sources
+
+The retained native API stores an explicit percentage seek while source geometry is inactive. A later successful millisecond seek, play, finish or running attachment-range alignment replaces that deferred request. Pause and playback-rate changes preserve the requested held percentage; rejected nonfinite controls leave it intact. Native Engine and Rust application guards cover activation after each order. These guards remain uncompiled and unexecuted; the independent v1 source review identified the stale-request defect and v2 corrects it.

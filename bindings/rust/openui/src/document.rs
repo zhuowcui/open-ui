@@ -899,6 +899,26 @@ impl Document {
         Ok(snapshot)
     }
 
+    /// Copy authored browser endpoints and optional currently resolved named ranges.
+    pub fn animation_attachment_snapshot(
+        &self,
+        animation: AnimationId,
+    ) -> Result<Option<crate::AnimationAttachmentSnapshot>, Error> {
+        let snapshot =
+            self.with_engine_mut(|engine| engine.animation_attachment_snapshot(animation))?;
+        self.dispatch_animation_events()?;
+        Ok(snapshot)
+    }
+
+    pub fn set_animation_attachment_range(
+        &self,
+        animation: AnimationId,
+        range: openui_style::AnimationAttachmentRange,
+    ) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.set_animation_attachment_range(animation, range))?;
+        self.dispatch_animation_events()
+    }
+
     pub fn seek_animation_progress(
         &self,
         animation: AnimationId,

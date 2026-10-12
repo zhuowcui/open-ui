@@ -1,8 +1,8 @@
 use crate::{Engine, EngineError, NodeHandle};
 use openui_style::{
-    value_from_computed, AnimationOptions, AnimationPhase, CompositedStyleValue, Keyframes,
-    LengthValue, PlayState, PropertyKeyframes, StyleProperty, StyleValue, TimelineAxis,
-    TimelineRange,
+    value_from_computed, AnimationAttachmentRange, AnimationOptions, AnimationPhase,
+    CompositedStyleValue, Keyframes, LengthValue, PlayState, PropertyKeyframes, StyleProperty,
+    StyleValue, TimelineAxis, TimelineRange, ViewTimelineInset,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
@@ -45,6 +45,76 @@ pub enum AnimationTimeline {
     },
 }
 
+/// An additive timeline source independent of attachment range semantics.
+/// This preserves the existing `AnimationTimeline` variants and matches.
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub enum AnimationTimelineSource {
+    #[default]
+    Document,
+    Scroll {
+        source: NodeHandle,
+        axis: TimelineAxis,
+    },
+    View {
+        subject: NodeHandle,
+        axis: TimelineAxis,
+    },
+    ViewWithInset {
+        subject: NodeHandle,
+        axis: TimelineAxis,
+        inset: ViewTimelineInset,
+    },
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub(crate) enum RetainedAnimationTimeline {
+    Legacy(AnimationTimeline),
+    Attachment {
+        source: AnimationTimelineSource,
+        range: AnimationAttachmentRange,
+        offset_reference: NodeHandle,
+    },
+}
+
+impl RetainedAnimationTimeline {
+    pub(crate) fn source(self) -> AnimationTimelineSource {
+        match self {
+            Self::Legacy(AnimationTimeline::Document) => AnimationTimelineSource::Document,
+            Self::Legacy(AnimationTimeline::Scroll { source, axis, .. }) => {
+                AnimationTimelineSource::Scroll { source, axis }
+            }
+            Self::Legacy(AnimationTimeline::View { subject, axis, .. }) => {
+                AnimationTimelineSource::View { subject, axis }
+            }
+            Self::Attachment { source, .. } => source,
+        }
+    }
+
+    pub(crate) fn is_document(self) -> bool {
+        matches!(self.source(), AnimationTimelineSource::Document)
+    }
+
+    pub(crate) fn legacy_range(self) -> Option<TimelineRange> {
+        match self {
+            Self::Legacy(
+                AnimationTimeline::Scroll { range, .. } | AnimationTimeline::View { range, .. },
+            ) => Some(range),
+            _ => None,
+        }
+    }
+
+    pub(crate) fn attachment(self) -> Option<(AnimationAttachmentRange, NodeHandle)> {
+        match self {
+            Self::Attachment {
+                range,
+                offset_reference,
+                ..
+            } => Some((range, offset_reference)),
+            _ => None,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct AnimationState {
     pub id: AnimationId,
@@ -63,7 +133,7 @@ pub(crate) struct AnimationInstance {
     pub keyframes: PropertyKeyframes,
     pub options: AnimationOptions,
     pub timing_options: AnimationOptions,
-    pub timeline: AnimationTimeline,
+    pub timeline: RetainedAnimationTimeline,
     pub timeline_snapshot: Option<crate::animation_timeline::ProgressTimelineSnapshot>,
     pub auto_align_start_time: bool,
     pub pending_progress_seek: Option<f64>,
@@ -130,8 +200,7 @@ impl AnimationInstance {
         self.offset_ms = local_time_ms;
         self.hold_time_ms = (self.options.play_state == PlayState::Paused
             || self.options.playback_rate == 0.0
-            || (matches!(self.timeline, AnimationTimeline::Document)
-                && self.reached_endpoint(local_time_ms)))
+            || (self.timeline.is_document() && self.reached_endpoint(local_time_ms)))
         .then_some(local_time_ms);
     }
 }
@@ -247,7 +316,34 @@ impl Engine {
         options: AnimationOptions,
         timeline: AnimationTimeline,
     ) -> Result<AnimationId, EngineError> {
-        self.start_animation(target, keyframes, options, timeline)
+        self.start_animation(
+            target,
+            keyframes,
+            options,
+            RetainedAnimationTimeline::Legacy(timeline),
+        )
+    }
+
+    /// Animate on a typed source with browser attachment/named-range semantics.
+    /// The retained Engine owns geometry, controls, events and style sampling.
+    pub fn animate_with_attachment_range(
+        &mut self,
+        target: NodeHandle,
+        keyframes: PropertyKeyframes,
+        options: AnimationOptions,
+        source: AnimationTimelineSource,
+        range: AnimationAttachmentRange,
+    ) -> Result<AnimationId, EngineError> {
+        self.start_animation(
+            target,
+            keyframes,
+            options,
+            RetainedAnimationTimeline::Attachment {
+                source,
+                range,
+                offset_reference: target,
+            },
+        )
     }
 
     pub fn transition<T>(
@@ -277,7 +373,12 @@ impl Engine {
         let order = &mut self.slots[target.index as usize].authored_order;
         order.retain(|id| *id != property as u16);
         order.push(property as u16);
-        self.start_animation(target, keyframes, options, AnimationTimeline::Document)
+        self.start_animation(
+            target,
+            keyframes,
+            options,
+            RetainedAnimationTimeline::Legacy(AnimationTimeline::Document),
+        )
     }
 
     fn start_animation(
@@ -285,25 +386,25 @@ impl Engine {
         target: NodeHandle,
         keyframes: PropertyKeyframes,
         options: AnimationOptions,
-        timeline: AnimationTimeline,
+        timeline: RetainedAnimationTimeline,
     ) -> Result<AnimationId, EngineError> {
         let node = self.resolve(target)?;
         options.validate().map_err(EngineError::from)?;
         self.validate_timeline(timeline)?;
-        if !matches!(timeline, AnimationTimeline::Document) {
+        if !timeline.is_document() {
             self.update()?;
         }
         let timeline_snapshot = self.progress_timeline_snapshot(timeline);
         let timing_options = timeline_snapshot
             .map_or_else(|| options.clone(), |snapshot| snapshot.normalize(&options));
-        let initial_time = if matches!(timeline, AnimationTimeline::Document) {
+        let initial_time = if timeline.is_document() {
             initial_local_time(&options)?
         } else {
             0.0
         };
         let property = keyframes.property();
         let timeline_now = self.timeline_time(timeline, &options)?;
-        let start_time_ms = if matches!(timeline, AnimationTimeline::Document) {
+        let start_time_ms = if timeline.is_document() {
             timeline_now
         } else if options.playback_rate < 0.0 {
             timeline_snapshot.map_or(0.0, |snapshot| snapshot.range_duration_ms)
@@ -311,8 +412,8 @@ impl Engine {
             0.0
         };
         let held = options.play_state == PlayState::Paused
-            || (matches!(timeline, AnimationTimeline::Document) && options.playback_rate == 0.0);
-        let initial_hold = if matches!(timeline, AnimationTimeline::Document) {
+            || (timeline.is_document() && options.playback_rate == 0.0);
+        let initial_hold = if timeline.is_document() {
             initial_time
         } else {
             (timeline_now - start_time_ms) * options.playback_rate
@@ -371,7 +472,7 @@ impl Engine {
         let instance = self.animations.get_mut(&id).expect("live animation");
         instance.options.play_state = PlayState::Paused;
         instance.timing_options.play_state = PlayState::Paused;
-        if matches!(instance.timeline, AnimationTimeline::Document) {
+        if instance.timeline.is_document() {
             instance.reanchor(now, current);
         } else {
             instance.auto_align_start_time = false;
@@ -385,11 +486,14 @@ impl Engine {
         let snapshot = self.animation_instance(id)?.clone();
         let now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
         let mut current = snapshot.current_time(now);
-        if !matches!(snapshot.timeline, AnimationTimeline::Document) {
+        if !snapshot.timeline.is_document() {
             let instance = self.animations.get_mut(&id).expect("live animation");
             instance.options.play_state = PlayState::Running;
             instance.timing_options.play_state = PlayState::Running;
             instance.auto_align_start_time = true;
+            // A newer play request supersedes an unresolved percentage seek.
+            // Its time will come from the retained range's automatic alignment.
+            instance.pending_progress_seek = None;
             instance.start_time_ms = if instance.options.playback_rate < 0.0 {
                 instance
                     .timeline_snapshot
@@ -401,7 +505,7 @@ impl Engine {
             instance.hold_time_ms = None;
             return self.sample_animations();
         }
-        if matches!(snapshot.timeline, AnimationTimeline::Document) {
+        if snapshot.timeline.is_document() {
             let end = snapshot.timing_options.effect_end_ms();
             let rate = snapshot.options.playback_rate;
             if rate > 0.0 && (current < 0.0 || current >= end) {
@@ -442,7 +546,9 @@ impl Engine {
         let snapshot = self.animation_instance(id)?.clone();
         let now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
         let instance = self.animations.get_mut(&id).expect("live animation");
-        if matches!(instance.timeline, AnimationTimeline::Document) {
+        // Explicit native local time replaces any earlier unresolved percentage.
+        instance.pending_progress_seek = None;
+        if instance.timeline.is_document() {
             instance.reanchor(now, current_time_ms);
         } else {
             instance.auto_align_start_time = false;
@@ -468,7 +574,7 @@ impl Engine {
         let instance = self.animations.get_mut(&id).expect("live animation");
         instance.options.playback_rate = playback_rate;
         instance.timing_options.playback_rate = playback_rate;
-        if matches!(instance.timeline, AnimationTimeline::Document) {
+        if instance.timeline.is_document() {
             instance.reanchor(now, current);
         } else if (snapshot.options.playback_rate < 0.0) != (playback_rate < 0.0) {
             instance.start_time_ms = if instance.auto_align_start_time {
@@ -508,9 +614,11 @@ impl Engine {
         let now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
         let instance = self.animations.get_mut(&id).expect("live animation");
         // Finishing a paused animation resolves its start time and finished state.
+        // The validated endpoint replaces any unresolved percentage seek.
+        instance.pending_progress_seek = None;
         instance.options.play_state = PlayState::Running;
         instance.timing_options.play_state = PlayState::Running;
-        if matches!(instance.timeline, AnimationTimeline::Document) {
+        if instance.timeline.is_document() {
             instance.reanchor(now, endpoint);
         } else {
             instance.auto_align_start_time = false;
@@ -550,7 +658,7 @@ impl Engine {
         self.animation_instance(id)?;
         self.update()?;
         let instance = self.animation_instance(id)?;
-        if matches!(instance.timeline, AnimationTimeline::Document) {
+        if instance.timeline.is_document() {
             return Ok(None);
         }
         if let Some(snapshot) = instance.timeline_snapshot {
@@ -558,12 +666,12 @@ impl Engine {
                 snapshot.reflection(Some(instance.current_time(snapshot.time_ms))),
             ));
         }
-        let range = match instance.timeline {
-            AnimationTimeline::Scroll { range, .. } | AnimationTimeline::View { range, .. } => {
-                range
-            }
-            AnimationTimeline::Document => unreachable!(),
-        };
+        // Browser endpoints cannot be resolved while geometry is inactive.
+        // Its additive attachment snapshot carries explicit optional bounds.
+        let range = instance.timeline.legacy_range().unwrap_or(TimelineRange {
+            start: 0.0,
+            end: 0.0,
+        });
         Ok(Some(crate::AnimationTimelineSnapshot {
             source: None,
             active: false,
@@ -577,6 +685,61 @@ impl Engine {
             current_time_ms: None,
             current_time_percentage: None,
         }))
+    }
+
+    /// Owned attachment/range data. `None` denotes the legacy numeric route.
+    pub fn animation_attachment_snapshot(
+        &mut self,
+        id: AnimationId,
+    ) -> Result<Option<crate::AnimationAttachmentSnapshot>, EngineError> {
+        self.animation_instance(id)?;
+        self.update()?;
+        let instance = self.animation_instance(id)?;
+        Ok(instance
+            .timeline
+            .attachment()
+            .map(|(range, _)| crate::AnimationAttachmentSnapshot {
+                range,
+                resolved: instance
+                    .timeline_snapshot
+                    .map(|snapshot| snapshot.attachment_reflection()),
+            }))
+    }
+
+    /// Set browser-style endpoints on an existing animation, retaining its source
+    /// and identity. Document timelines retain the descriptor without changing time.
+    pub fn set_animation_attachment_range(
+        &mut self,
+        id: AnimationId,
+        range: AnimationAttachmentRange,
+    ) -> Result<(), EngineError> {
+        range.validate().map_err(EngineError::from)?;
+        self.animation_instance(id)?;
+        self.update()?;
+        let snapshot = self.animation_instance(id)?.clone();
+        let changed = snapshot.timeline.attachment().map(|(previous, _)| previous) != Some(range);
+        let instance = self.animations.get_mut(&id).expect("live animation");
+        instance.timeline = RetainedAnimationTimeline::Attachment {
+            source: snapshot.timeline.source(),
+            range,
+            offset_reference: snapshot.target,
+        };
+        instance.auto_align_start_time = true;
+        if !instance.timeline.is_document() && instance.options.play_state == PlayState::Running {
+            // Setting the range resumes automatic running alignment, including
+            // an unchanged descriptor. Paused time requests remain held.
+            instance.pending_progress_seek = None;
+        }
+        if changed
+            && !instance.timeline.is_document()
+            && instance.options.play_state == PlayState::Running
+        {
+            // Pinned OnRangeUpdate invokes nonmonotonic PlayInternal for running
+            // or finished animations; paused effects preserve their hold time.
+            instance.hold_time_ms = None;
+            instance.offset_ms = 0.0;
+        }
+        self.sample_animations()
     }
 
     /// Set a scroll/view animation's current time as a percentage of its
@@ -593,7 +756,7 @@ impl Engine {
             ));
         }
         let instance = self.animation_instance(id)?;
-        if matches!(instance.timeline, AnimationTimeline::Document) {
+        if instance.timeline.is_document() {
             return Err(EngineError::InvalidInput(
                 "percentage time requires a scroll or view timeline",
             ));
@@ -631,7 +794,7 @@ impl Engine {
     pub fn is_animating(&self) -> bool {
         !self.reduced_motion
             && (self.animations.values().any(|animation| {
-                matches!(animation.timeline, AnimationTimeline::Document)
+                animation.timeline.is_document()
                     && animation.options.play_state == PlayState::Running
                     && animation.options.playback_rate != 0.0
                     && !animation.ended
@@ -677,7 +840,7 @@ impl Engine {
         if self
             .animations
             .values()
-            .any(|instance| !matches!(instance.timeline, AnimationTimeline::Document))
+            .any(|instance| !instance.timeline.is_document())
         {
             self.update_once()?;
         }
@@ -693,8 +856,7 @@ impl Engine {
             .animations
             .iter()
             .filter_map(|(id, instance)| {
-                (!progress_only || !matches!(instance.timeline, AnimationTimeline::Document))
-                    .then_some(*id)
+                (!progress_only || !instance.timeline.is_document()).then_some(*id)
             })
             .collect::<Vec<_>>();
         let mut changed = false;
@@ -707,9 +869,7 @@ impl Engine {
                 self.animations.remove(&id);
                 continue;
             }
-            if !matches!(snapshot.timeline, AnimationTimeline::Document)
-                && snapshot.timeline_snapshot.is_none()
-            {
+            if !snapshot.timeline.is_document() && snapshot.timeline_snapshot.is_none() {
                 if snapshot.last_sample.is_some() {
                     self.animations
                         .get_mut(&id)
@@ -739,7 +899,7 @@ impl Engine {
             let timeline_now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
             let raw_time = snapshot.current_time(timeline_now);
             let current_time = if snapshot.hold_time_ms.is_none()
-                && matches!(snapshot.timeline, AnimationTimeline::Document)
+                && snapshot.timeline.is_document()
                 && snapshot.reached_endpoint(raw_time)
             {
                 if snapshot.options.playback_rate < 0.0 {
@@ -827,7 +987,7 @@ impl Engine {
             }
 
             if let Some(instance) = self.animations.get_mut(&id) {
-                if matches!(snapshot.timeline, AnimationTimeline::Document) && finished {
+                if snapshot.timeline.is_document() && finished {
                     if self.reduced_motion && effective.is_finite() {
                         instance.hold_time_ms = Some(effective);
                     } else if snapshot.hold_time_ms.is_none() {
@@ -891,9 +1051,7 @@ impl Engine {
     }
 
     fn cancel_elapsed_time(&self, instance: &AnimationInstance) -> f64 {
-        let current = if !matches!(instance.timeline, AnimationTimeline::Document)
-            && instance.timeline_snapshot.is_none()
-        {
+        let current = if !instance.timeline.is_document() && instance.timeline_snapshot.is_none() {
             instance
                 .hold_time_ms
                 .unwrap_or(instance.last_current_time_ms)
@@ -1007,7 +1165,7 @@ impl Engine {
         let Some(previous) = self.animations.get(&id).cloned() else {
             return;
         };
-        if matches!(previous.timeline, AnimationTimeline::Document) {
+        if previous.timeline.is_document() {
             return;
         }
         let next = self.progress_timeline_snapshot(previous.timeline);
@@ -1052,31 +1210,41 @@ impl Engine {
             .ok_or(EngineError::InvalidInput("unknown animation"))
     }
 
-    fn validate_timeline(&self, timeline: AnimationTimeline) -> Result<(), EngineError> {
-        match timeline {
-            AnimationTimeline::Document => Ok(()),
-            AnimationTimeline::Scroll { source, range, .. } => {
+    fn validate_timeline(&self, timeline: RetainedAnimationTimeline) -> Result<(), EngineError> {
+        match timeline.source() {
+            AnimationTimelineSource::Document => {}
+            AnimationTimelineSource::Scroll { source, .. } => {
                 self.resolve(source)?;
-                range.validate().map_err(EngineError::from)
             }
-            AnimationTimeline::View { subject, range, .. } => {
+            AnimationTimelineSource::View { subject, .. }
+            | AnimationTimelineSource::ViewWithInset { subject, .. } => {
                 self.resolve(subject)?;
-                range.validate().map_err(EngineError::from)
             }
         }
+        if let AnimationTimelineSource::ViewWithInset { inset, .. } = timeline.source() {
+            inset.validate().map_err(EngineError::from)?;
+        }
+        if let Some(range) = timeline.legacy_range() {
+            range.validate().map_err(EngineError::from)?;
+        }
+        if let Some((range, reference)) = timeline.attachment() {
+            self.resolve(reference)?;
+            range.validate().map_err(EngineError::from)?;
+        }
+        Ok(())
     }
 
     fn timeline_time(
         &self,
-        timeline: AnimationTimeline,
+        timeline: RetainedAnimationTimeline,
         options: &AnimationOptions,
     ) -> Result<f64, EngineError> {
         let _ = options;
-        Ok(match timeline {
-            AnimationTimeline::Document => self.animation_time_ms,
-            _ => self
-                .progress_timeline_snapshot(timeline)
-                .map_or(0.0, |snapshot| snapshot.time_ms),
+        Ok(if timeline.is_document() {
+            self.animation_time_ms
+        } else {
+            self.progress_timeline_snapshot(timeline)
+                .map_or(0.0, |snapshot| snapshot.time_ms)
         })
     }
 }

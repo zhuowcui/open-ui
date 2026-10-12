@@ -23,11 +23,13 @@ pub use accessibility::{
     AccessibilityRole, AccessibilityToggled, AccessibilityTreeUpdate,
 };
 
-pub use animation_timeline::AnimationTimelineSnapshot;
+pub use animation_timeline::{
+    AnimationAttachmentSnapshot, AnimationResolvedTimelineRanges, AnimationTimelineSnapshot,
+};
 
 pub use animation::{
     AnimationEvent, AnimationEventKind, AnimationId, AnimationState, AnimationTimeline,
-    ScrollAnimationId,
+    AnimationTimelineSource, ScrollAnimationId,
 };
 
 pub use interaction::{
@@ -2596,7 +2598,7 @@ impl Engine {
         if self
             .animations
             .values()
-            .any(|instance| !matches!(instance.timeline, AnimationTimeline::Document))
+            .any(|instance| !instance.timeline.is_document())
         {
             self.update_once()?;
             self.sample_progress_animations_after_layout()?;

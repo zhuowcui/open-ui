@@ -1327,6 +1327,172 @@ pub enum TimelineAxis {
     Y,
 }
 
+/// A named portion of a progress timeline. `Scroll` is the full scrollport
+/// range, including for a view timeline; pinned Blink gates that name behind
+/// ScrollTimelineNamedRangeScrollEnabled. Native applications can use it directly.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TimelineNamedRange {
+    Cover,
+    Contain,
+    Entry,
+    EntryCrossing,
+    Exit,
+    ExitCrossing,
+    Scroll,
+}
+
+/// An authored attachment endpoint. Relative lengths use the animation target's
+/// selected font and native style, percentages use the selected named range.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct TimelineRangeOffset {
+    pub name: TimelineNamedRange,
+    pub offset: LengthValue,
+}
+
+impl TimelineRangeOffset {
+    pub fn new(name: TimelineNamedRange, offset: LengthValue) -> Result<Self, AnimationError> {
+        let endpoint = Self { name, offset };
+        endpoint.validate()?;
+        Ok(endpoint)
+    }
+
+    pub fn validate(self) -> Result<(), AnimationError> {
+        let finite = match self.offset {
+            LengthValue::Computed(length) => match length.length_type() {
+                LengthType::Fixed | LengthType::Percent => length.value().is_finite(),
+                LengthType::Calculated => {
+                    length.value().is_finite() && length.calc_offset().is_finite()
+                }
+                _ => false,
+            },
+            LengthValue::Em(value)
+            | LengthValue::Rem(value)
+            | LengthValue::ViewportWidth(value)
+            | LengthValue::ViewportHeight(value)
+            | LengthValue::ViewportMin(value)
+            | LengthValue::ViewportMax(value)
+            | LengthValue::Ch(value)
+            | LengthValue::Ex(value)
+            | LengthValue::Lh(value) => value.is_finite(),
+        };
+        if finite {
+            Ok(())
+        } else {
+            Err(AnimationError::InvalidTiming(
+                "attachment offset must be a finite length or percentage",
+            ))
+        }
+    }
+}
+
+/// Logical start/end view visibility insets. An absent side uses the source's
+/// logical scroll padding; explicit relative lengths use the subject's style.
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub struct ViewTimelineInset {
+    pub start: Option<LengthValue>,
+    pub end: Option<LengthValue>,
+}
+
+impl ViewTimelineInset {
+    pub fn new(
+        start: Option<LengthValue>,
+        end: Option<LengthValue>,
+    ) -> Result<Self, AnimationError> {
+        let inset = Self { start, end };
+        inset.validate()?;
+        Ok(inset)
+    }
+
+    pub fn validate(self) -> Result<(), AnimationError> {
+        for offset in [self.start, self.end].into_iter().flatten() {
+            TimelineRangeOffset {
+                name: TimelineNamedRange::Cover,
+                offset,
+            }
+            .validate()?;
+        }
+        Ok(())
+    }
+}
+
+/// Browser-style attachment ranges. `None` is the normal endpoint: cover start
+/// for `start` and cover end for `end`. Reversed/equal endpoints are legal and
+/// have zero finite intrinsic active duration; they are not oriented numeric ranges.
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub struct AnimationAttachmentRange {
+    pub start: Option<TimelineRangeOffset>,
+    pub end: Option<TimelineRangeOffset>,
+}
+
+impl AnimationAttachmentRange {
+    pub fn new(
+        start: TimelineRangeOffset,
+        end: TimelineRangeOffset,
+    ) -> Result<Self, AnimationError> {
+        let range = Self {
+            start: Some(start),
+            end: Some(end),
+        };
+        range.validate()?;
+        Ok(range)
+    }
+
+    pub fn named(name: TimelineNamedRange) -> Self {
+        Self {
+            start: Some(TimelineRangeOffset {
+                name,
+                offset: LengthValue::percent(0.0),
+            }),
+            end: Some(TimelineRangeOffset {
+                name,
+                offset: LengthValue::percent(100.0),
+            }),
+        }
+    }
+
+    pub fn validate(self) -> Result<(), AnimationError> {
+        if let Some(start) = self.start {
+            start.validate()?;
+        }
+        if let Some(end) = self.end {
+            end.validate()?;
+        }
+        Ok(())
+    }
+}
+
+/// Owned resolved bounds; equal endpoints are meaningful for contain ranges.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct TimelineRangeBounds {
+    pub start: f64,
+    pub end: f64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct NamedTimelineRanges {
+    pub cover: TimelineRangeBounds,
+    pub contain: TimelineRangeBounds,
+    pub entry: TimelineRangeBounds,
+    pub entry_crossing: TimelineRangeBounds,
+    pub exit: TimelineRangeBounds,
+    pub exit_crossing: TimelineRangeBounds,
+    pub scroll: TimelineRangeBounds,
+}
+
+impl NamedTimelineRanges {
+    pub fn get(self, name: TimelineNamedRange) -> TimelineRangeBounds {
+        match name {
+            TimelineNamedRange::Cover => self.cover,
+            TimelineNamedRange::Contain => self.contain,
+            TimelineNamedRange::Entry => self.entry,
+            TimelineNamedRange::EntryCrossing => self.entry_crossing,
+            TimelineNamedRange::Exit => self.exit,
+            TimelineNamedRange::ExitCrossing => self.exit_crossing,
+            TimelineNamedRange::Scroll => self.scroll,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct TimelineRange {
     pub start: f64,
