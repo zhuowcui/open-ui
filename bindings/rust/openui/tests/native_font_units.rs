@@ -157,6 +157,11 @@ fn atomic_intrinsic_text_keeps_chromium_fraction_after_native_font_alias_change(
             .unwrap();
         word.set_text("ABCDEFGHI").unwrap();
         let owned = word.bounding_rect().unwrap().unwrap();
+        let raster_policy = RasterConfiguration::deterministic_aliased(false);
+        assert_eq!(
+            word.computed_style().unwrap().raster_configuration,
+            raster_policy
+        );
         assert_eq!(
             (owned.x, owned.y, owned.width, owned.height),
             (10.0, 487.0, 144.015625, 16.0),
@@ -184,6 +189,7 @@ fn atomic_intrinsic_text_keeps_chromium_fraction_after_native_font_alias_change(
             (170.0, 485.0, 90.0, 40.0),
             "floats at {scale}"
         );
+        let before_alias_pixels = document.render_to_png_buffer().unwrap();
         let target = word.downgrade();
         let calls = Rc::new(Cell::new(0));
         let called = calls.clone();
@@ -199,6 +205,16 @@ fn atomic_intrinsic_text_keeps_chromium_fraction_after_native_font_alias_change(
         root.click().unwrap();
         assert_eq!(calls.get(), 1);
         assert_eq!(word.bounding_rect().unwrap().unwrap(), owned);
+        assert_eq!(
+            word.computed_style().unwrap().raster_configuration,
+            raster_policy
+        );
         assert_eq!(atomic.bounding_rect().unwrap().unwrap(), floats);
+        // A different native family alias for the same owned face changes
+        // neither the explicitly selected raster policy nor its actual pixels.
+        // Capture after adding the unchanged neighboring float geometry.
+        let after_alias_pixels = document.render_to_png_buffer().unwrap();
+        assert_eq!(after_alias_pixels, before_alias_pixels);
+        assert_eq!(after_alias_pixels, document.render_to_png_buffer().unwrap());
     }
 }

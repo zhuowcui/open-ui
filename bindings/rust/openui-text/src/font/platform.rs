@@ -5,7 +5,8 @@
 //! `FontMetrics` for the resolved size.
 
 use openui_geometry::{
-    physical_font_size, RasterConfiguration, TextEdging, TextHinting, TextRasterConfiguration,
+    physical_font_size, RasterBackend, RasterConfiguration, TextEdging, TextHinting,
+    TextRasterConfiguration,
 };
 use skia_safe::{
     font_style::Slant as SkSlant, Font as SkFont, FontHinting, FontMetrics as SkFontMetrics,
@@ -33,6 +34,7 @@ pub(crate) struct ResolvedFontConfiguration {
 pub struct FontPlatformData {
     typeface: Typeface,
     sk_font: SkFont,
+    shaping_font: SkFont,
     size: f32,
     metrics: FontMetrics,
     vertical_metrics: Option<VerticalMetrics>,
@@ -328,6 +330,21 @@ impl FontPlatformData {
             sk_font.set_skew_x(-oblique_angle.to_radians().tan());
         }
 
+        // Blink's WebFontRenderStyle::ApplyToSkFont force-enables subpixel
+        // metrics outside web-test mode unless the resolved hinting is Full.
+        // Its linear-metrics flag still follows the requested positioning
+        // preference. Keep that metric font separate from the application's
+        // explicit raster positioning policy: changing advances must not
+        // silently change the owned font used to build paint strikes.
+        let mut shaping_font = sk_font.clone();
+        if matches!(
+            raster_configuration.backend,
+            RasterBackend::ChromiumLinux | RasterBackend::GaneshGl
+        ) {
+            shaping_font.set_subpixel(hinting != FontHinting::Full || subpixel);
+            shaping_font.set_linear_metrics(subpixel);
+        }
+
         let (_, sk_metrics) = sk_font.metrics();
         let mut metrics = Self::convert_metrics(&sk_metrics, &typeface, &sk_font);
         if let Some(value) = configuration.metric_overrides.ascent {
@@ -345,6 +362,7 @@ impl FontPlatformData {
         Self {
             typeface,
             sk_font,
+            shaping_font,
             size,
             metrics,
             vertical_metrics,
@@ -365,6 +383,12 @@ impl FontPlatformData {
     #[inline]
     pub fn sk_font(&self) -> &SkFont {
         &self.sk_font
+    }
+
+    /// Resolved font for shared shaping metrics, independent of paint strikes.
+    #[inline]
+    pub(crate) fn shaping_font(&self) -> &SkFont {
+        &self.shaping_font
     }
 
     /// The resolved font size in CSS pixels.
@@ -543,6 +567,49 @@ impl std::fmt::Debug for FontPlatformData {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn chromium_metric_subpixel_force_is_separate_from_raster_and_linear_flags() {
+        let face = skia_safe::FontMgr::default()
+            .new_from_data(include_bytes!("../../fonts/Ahem.ttf"), None)
+            .unwrap();
+        for backend in [
+            RasterBackend::ChromiumLinux,
+            RasterBackend::GaneshGl,
+            RasterBackend::Skia,
+        ] {
+            for hinting in [TextHinting::None, TextHinting::Normal, TextHinting::Full] {
+                for requested_subpixel in [false, true] {
+                    let mut configuration =
+                        RasterConfiguration::deterministic_aliased(requested_subpixel);
+                    configuration.backend = backend;
+                    configuration.author_text.hinting = hinting;
+                    let data = FontPlatformData::with_resolved_configuration(
+                        face.clone(),
+                        16.0,
+                        0.0,
+                        skia_safe::font_style::Weight::NORMAL,
+                        false,
+                        false,
+                        false,
+                        configuration,
+                        1.0,
+                        ResolvedFontConfiguration::default(),
+                    );
+                    assert_eq!(data.sk_font().is_subpixel(), requested_subpixel);
+                    assert_eq!(data.sk_font().is_linear_metrics(), requested_subpixel);
+                    assert_eq!(data.shaping_font().is_linear_metrics(), requested_subpixel);
+                    let force = backend != RasterBackend::Skia && hinting != TextHinting::Full;
+                    assert_eq!(
+                        data.shaping_font().is_subpixel(),
+                        force || requested_subpixel
+                    );
+                    assert_eq!(data.shaping_font().hinting(), data.sk_font().hinting());
+                    assert_eq!(data.shaping_font().edging(), data.sk_font().edging());
+                }
+            }
+        }
+    }
 
     #[test]
     fn aliased_ahem_hinting_tracks_computed_font_size() {

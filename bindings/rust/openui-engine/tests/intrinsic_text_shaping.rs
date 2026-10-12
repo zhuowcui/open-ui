@@ -4,12 +4,13 @@
 
 use openui_dom::ElementTag;
 use openui_engine::{Engine, FontCollection, NodeHandle, ViewportMetrics};
-use openui_geometry::Length;
+use openui_geometry::{LayoutUnit, Length};
 use openui_style::{
     Direction, Display, FontFamily, FontFamilyList, FontVariantLigatures, LengthValue, LineBreak,
     OverflowWrap, RendererStyleValue, StyleProperty, StyleValue, TextTransform, TextWrapMode,
     UnicodeBidi, WhiteSpaceCollapse, WhiteSpaceShorthand, WordBreak,
 };
+use openui_text::{Font, FontDescription, TextDirection, TextShaper};
 
 struct TextContainers {
     boxes: [NodeHandle; 3],
@@ -121,6 +122,17 @@ fn shared_width(engine: &mut Engine, nodes: &TextContainers) -> f32 {
     widths[0]
 }
 
+// Independent whole-run shaping supplies the source SnappedWidth contract.
+// These are strict native data-flow guards, not new Chromium observations;
+// the repeated .50 atomic-word geometry is retained in native_font_units.
+fn shaped_snapped_width(engine: &Engine, text: &str) -> f32 {
+    let description =
+        FontDescription::from_computed_style(engine.computed_style(engine.root()).unwrap());
+    let font = Font::new_in_collection(description, engine.font_collection().clone());
+    let shape = TextShaper::new().shape(text, &font, TextDirection::Ltr);
+    LayoutUnit::from_f32_ceil(shape.width).to_f32()
+}
+
 #[test]
 fn ahem_anonymous_flex_inline_and_table_size_from_shaped_advances() {
     for size in [10.0, 12.0, 16.0, 23.0] {
@@ -133,9 +145,10 @@ fn ahem_anonymous_flex_inline_and_table_size_from_shaped_advances() {
             )
             .unwrap();
         let nodes = text_containers(&mut engine, "XX");
-        assert_eq!(shared_width(&mut engine, &nodes), size * 2.0);
+        let expected = shaped_snapped_width(&engine, "XX");
+        assert_eq!(shared_width(&mut engine, &nodes), expected);
         let stats = engine.stats();
-        assert_eq!(shared_width(&mut engine, &nodes), size * 2.0);
+        assert_eq!(shared_width(&mut engine, &nodes), expected);
         assert_eq!(
             engine.stats(),
             stats,
@@ -165,15 +178,21 @@ fn native_spacing_and_text_mutations_recompute_each_text_entry_point() {
         )
         .unwrap();
     let nodes = text_containers(&mut engine, "X X");
-    assert_eq!(shared_width(&mut engine, &nodes), 61.0);
+    let spaced = shaped_snapped_width(&engine, "X X");
+    assert!(
+        spaced > 61.0,
+        "the guard must retain a fractional shaped advance"
+    );
+    assert_eq!(shared_width(&mut engine, &nodes), spaced);
     for node in nodes.texts {
         engine.set_text(node, "XX").unwrap();
     }
-    assert_eq!(shared_width(&mut engine, &nodes), 36.0);
+    let unspaced = shaped_snapped_width(&engine, "XX");
+    assert_eq!(shared_width(&mut engine, &nodes), unspaced);
     for node in nodes.texts {
         engine.set_text(node, "X X").unwrap();
     }
-    assert_eq!(shared_width(&mut engine, &nodes), 61.0);
+    assert_eq!(shared_width(&mut engine, &nodes), spaced);
 }
 
 #[test]
@@ -250,7 +269,8 @@ fn native_min_content_uses_shaped_soft_wrap_segments() {
         )
         .unwrap();
     let nodes = text_containers(&mut engine, "XX XXX");
-    assert_eq!(shared_width(&mut engine, &nodes), 96.0);
+    let maximum = shaped_snapped_width(&engine, "XX XXX");
+    assert_eq!(shared_width(&mut engine, &nodes), maximum);
     for node in nodes.boxes {
         engine
             .set_property(
@@ -260,7 +280,8 @@ fn native_min_content_uses_shaped_soft_wrap_segments() {
             )
             .unwrap();
     }
-    assert_eq!(shared_width(&mut engine, &nodes), 48.0);
+    let minimum = shaped_snapped_width(&engine, "XXX");
+    assert_eq!(shared_width(&mut engine, &nodes), minimum);
 }
 
 #[test]
@@ -286,7 +307,8 @@ fn native_transform_and_forced_lines_leave_owned_text_unchanged() {
         .unwrap();
     let nodes = text_containers(&mut engine, "x\nxx");
     for _ in 0..2 {
-        assert_eq!(shared_width(&mut engine, &nodes), 32.0);
+        let expected = shaped_snapped_width(&engine, "XX");
+        assert_eq!(shared_width(&mut engine, &nodes), expected);
         for node in nodes.texts {
             assert_eq!(engine.text_data(node).unwrap(), "x\nxx");
         }
@@ -406,14 +428,23 @@ fn native_hyphen_nbsp_and_emergency_wrap_neighbors_preserve_css_min_content_rule
     let mut engine = engine_with_families(&["Ahem"]);
     permit_native_wrap(&mut engine);
     let nodes = text_containers(&mut engine, "XX-XXX");
-    assert_eq!(shared_width(&mut engine, &nodes), 96.0);
-    assert_eq!(set_intrinsic_width(&mut engine, &nodes, true), 48.0);
-    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), 96.0);
+    let hyphen_maximum = shaped_snapped_width(&engine, "XX-XXX");
+    let hyphen_minimum = shaped_snapped_width(&engine, "XXX");
+    assert_eq!(shared_width(&mut engine, &nodes), hyphen_maximum);
+    assert_eq!(
+        set_intrinsic_width(&mut engine, &nodes, true),
+        hyphen_minimum
+    );
+    assert_eq!(
+        set_intrinsic_width(&mut engine, &nodes, false),
+        hyphen_maximum
+    );
     for text in nodes.texts {
         engine.set_text(text, "X\u{00a0}X").unwrap();
     }
-    assert_eq!(shared_width(&mut engine, &nodes), 48.0);
-    assert_eq!(set_intrinsic_width(&mut engine, &nodes, true), 48.0);
+    let nbsp = shaped_snapped_width(&engine, "X\u{00a0}X");
+    assert_eq!(shared_width(&mut engine, &nodes), nbsp);
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, true), nbsp);
     for text in nodes.texts {
         engine.set_text(text, "XXXX").unwrap();
     }
@@ -424,9 +455,11 @@ fn native_hyphen_nbsp_and_emergency_wrap_neighbors_preserve_css_min_content_rule
             OverflowWrap::BreakWord.into(),
         )
         .unwrap();
+    let maximum = shaped_snapped_width(&engine, "XXXX");
+    let character = shaped_snapped_width(&engine, "X");
     assert_eq!(
         shared_width(&mut engine, &nodes),
-        64.0,
+        maximum,
         "break-word emergency wraps do not lower min-content"
     );
     engine
@@ -436,8 +469,8 @@ fn native_hyphen_nbsp_and_emergency_wrap_neighbors_preserve_css_min_content_rule
             OverflowWrap::Anywhere.into(),
         )
         .unwrap();
-    assert_eq!(shared_width(&mut engine, &nodes), 16.0);
-    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), 64.0);
+    assert_eq!(shared_width(&mut engine, &nodes), character);
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), maximum);
     engine
         .set_property(
             engine.root(),
@@ -454,10 +487,10 @@ fn native_hyphen_nbsp_and_emergency_wrap_neighbors_preserve_css_min_content_rule
         .unwrap();
     assert_eq!(
         set_intrinsic_width(&mut engine, &nodes, true),
-        16.0,
+        character,
         "the legacy word-break alias contributes character opportunities to min-content"
     );
-    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), 64.0);
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), maximum);
 }
 
 #[test]
@@ -475,13 +508,16 @@ fn native_break_spaces_retains_space_units_and_bidi_fallback_boundaries_do_not_h
         )
         .unwrap();
     let nodes = text_containers(&mut engine, "X  X");
-    assert_eq!(shared_width(&mut engine, &nodes), 64.0);
-    assert_eq!(set_intrinsic_width(&mut engine, &nodes, true), 32.0);
+    let maximum = shaped_snapped_width(&engine, "X  X");
+    let minimum = shaped_snapped_width(&engine, "X ");
+    assert_eq!(shared_width(&mut engine, &nodes), maximum);
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, true), minimum);
     for text in nodes.texts {
         engine.set_text(text, " ").unwrap();
     }
-    assert_eq!(shared_width(&mut engine, &nodes), 16.0);
-    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), 16.0);
+    let space = shaped_snapped_width(&engine, " ");
+    assert_eq!(shared_width(&mut engine, &nodes), space);
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), space);
 
     for direction in [Direction::Ltr, Direction::Rtl] {
         let mut engine = engine_with_families(&["Ahem", "Droid Sans Fallback", "DejaVu Sans"]);

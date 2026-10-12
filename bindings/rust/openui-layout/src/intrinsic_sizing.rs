@@ -574,6 +574,11 @@ fn compute_inline_items_intrinsic_sizes(
                     &break_offsets[&(style.word_break, style.overflow_wrap, style.line_break)];
                 let mut run_start = 0usize;
                 let mut run_start_char = 0usize;
+                // Each actual min-content break range is snapped once. A
+                // preserved space may complete the preceding range; visiting
+                // that space must not independently ceil its shaped width.
+                let mut min_range_start_char = 0usize;
+                let mut max_line_start_char = 0usize;
                 let chars: Vec<(usize, char)> = text.char_indices().collect();
                 for (index, &(byte_index, ch)) in chars.iter().enumerate() {
                     let char_end = index + 1;
@@ -589,10 +594,11 @@ fn compute_inline_items_intrinsic_sizes(
                     }
 
                     if byte_index > run_start {
-                        let width =
-                            intrinsic_text_width(shape.width_for_range(run_start_char, index));
-                        let max_width = intrinsic_text_width(shape.width_for_range(0, index))
-                            - intrinsic_text_width(shape.width_for_range(0, run_start_char));
+                        let max_width =
+                            intrinsic_text_width(shape.width_for_range(max_line_start_char, index))
+                                - intrinsic_text_width(
+                                    shape.width_for_range(max_line_start_char, run_start_char),
+                                );
                         min_segment = min_segment + pending_min_collapsible_space;
                         pending_min_collapsible_space = LayoutUnit::zero();
                         if soft_break_pending {
@@ -609,6 +615,7 @@ fn compute_inline_items_intrinsic_sizes(
                                 &mut pending_open_edges,
                                 &mut stack,
                             );
+                            min_range_start_char = run_start_char;
                         } else {
                             min_segment = min_segment + pending_open_edges;
                             pending_open_edges = LayoutUnit::zero();
@@ -619,6 +626,14 @@ fn compute_inline_items_intrinsic_sizes(
                         soft_break_pending = false;
                         soft_break_after_pending_edges = false;
                         last_content_was_text = true;
+                        let width = if wraps {
+                            intrinsic_text_width(shape.width_for_range(min_range_start_char, index))
+                                - intrinsic_text_width(
+                                    shape.width_for_range(min_range_start_char, run_start_char),
+                                )
+                        } else {
+                            max_width
+                        };
                         min_segment = min_segment + width;
                         max_line = max_line + pending_collapsible_space + max_width;
                         pending_collapsible_space = LayoutUnit::zero();
@@ -637,6 +652,11 @@ fn compute_inline_items_intrinsic_sizes(
                             &mut max_content,
                             &mut pending_collapsible_space,
                         );
+                        min_range_start_char = char_end;
+                        // A forced newline starts a new maximum-width shaped
+                        // range as well; its prior line's fractional ceiling
+                        // must not be subtracted from the following line.
+                        max_line_start_char = char_end;
                     } else if !is_space {
                         // This boundary precedes the current grapheme. Leave
                         // it in the next contextual range; do not slice it as
@@ -648,8 +668,12 @@ fn compute_inline_items_intrinsic_sizes(
                         continue;
                     } else {
                         let width = intrinsic_text_width(shape.width_for_range(index, char_end));
-                        let max_width = intrinsic_text_width(shape.width_for_range(0, char_end))
-                            - intrinsic_text_width(shape.width_for_range(0, index));
+                        let max_width = intrinsic_text_width(
+                            shape.width_for_range(max_line_start_char, char_end),
+                        ) - intrinsic_text_width(
+                            shape.width_for_range(max_line_start_char, index),
+                        );
+                        let width = if wraps { width } else { max_width };
                         if collapses {
                             pending_collapsible_space = max_width;
                         } else {
@@ -667,8 +691,14 @@ fn compute_inline_items_intrinsic_sizes(
                                     &mut pending_open_edges,
                                     &mut stack,
                                 );
+                                min_range_start_char = index;
                             }
-                            min_segment = min_segment + pending_open_edges + width;
+                            let range_width = intrinsic_text_width(
+                                shape.width_for_range(min_range_start_char, char_end),
+                            ) - intrinsic_text_width(
+                                shape.width_for_range(min_range_start_char, index),
+                            );
+                            min_segment = min_segment + pending_open_edges + range_width;
                             pending_open_edges = LayoutUnit::zero();
                             for entry in &mut stack {
                                 entry.active_on_segment = true;
@@ -699,12 +729,11 @@ fn compute_inline_items_intrinsic_sizes(
                 }
 
                 if run_start < text.len() {
-                    let width = intrinsic_text_width(
-                        shape.width_for_range(run_start_char, shape.num_characters),
+                    let max_width = intrinsic_text_width(
+                        shape.width_for_range(max_line_start_char, shape.num_characters),
+                    ) - intrinsic_text_width(
+                        shape.width_for_range(max_line_start_char, run_start_char),
                     );
-                    let max_width =
-                        intrinsic_text_width(shape.width_for_range(0, shape.num_characters))
-                            - intrinsic_text_width(shape.width_for_range(0, run_start_char));
                     min_segment = min_segment + pending_min_collapsible_space;
                     pending_min_collapsible_space = LayoutUnit::zero();
                     if soft_break_pending {
@@ -721,6 +750,7 @@ fn compute_inline_items_intrinsic_sizes(
                             &mut pending_open_edges,
                             &mut stack,
                         );
+                        min_range_start_char = run_start_char;
                     } else {
                         min_segment = min_segment + pending_open_edges;
                         pending_open_edges = LayoutUnit::zero();
@@ -731,6 +761,18 @@ fn compute_inline_items_intrinsic_sizes(
                     soft_break_pending = false;
                     soft_break_after_pending_edges = false;
                     last_content_was_text = true;
+                    // No-wrap items and preserved-space break ranges both use
+                    // differences of snapped prefixes, rather than snapping
+                    // the bookkeeping chunks independently.
+                    let width = if wraps {
+                        intrinsic_text_width(
+                            shape.width_for_range(min_range_start_char, shape.num_characters),
+                        ) - intrinsic_text_width(
+                            shape.width_for_range(min_range_start_char, run_start_char),
+                        )
+                    } else {
+                        max_width
+                    };
                     min_segment = min_segment + width;
                     max_line = max_line + pending_collapsible_space + max_width;
                     pending_collapsible_space = LayoutUnit::zero();
@@ -747,7 +789,9 @@ fn compute_inline_items_intrinsic_sizes(
     min_segment = min_segment + pending_open_edges;
     min_content = min_content.max_of(min_segment + active_clone_end_edges(&stack));
     max_content = max_content.max_of(max_line);
-    MinMaxSizes::new(min_content, max_content)
+    // InlineNode::ComputeMinMaxSizes also keeps max-content at least as large
+    // as min-content, including decoration and indentation contributions.
+    MinMaxSizes::new(min_content, max_content.max_of(min_content))
 }
 
 // ── Block container intrinsic sizing ─────────────────────────────────────
@@ -4242,18 +4286,27 @@ mod tests {
         })
     }
 
+    // Whole-run shaping is independent of the intrinsic scanner's whitespace
+    // and min/max bookkeeping. Expectations below check that data flow and
+    // strict source SnappedWidth; only separately saved Chromium captures are
+    // oracle evidence.
+    fn shaped_intrinsic_width(doc: &Document, text: &str, style: &ComputedStyle) -> LayoutUnit {
+        let font = doc.resolve_font(style_to_font_description(style));
+        let shape =
+            openui_text::TextShaper::new().shape(text, &font, openui_text::TextDirection::Ltr);
+        intrinsic_text_width(shape.width)
+    }
+
     #[test]
     fn text_intrinsic_uses_shaped_ahem_advance_before_strict_ceiling() {
-        // Ahem's shaped X advance is exactly one em. Raw SkFont measurement
-        // can lie above that boundary, which must not size anonymous flex
-        // text differently from the same text in an ordinary inline stream.
+        // The real shaped advance can lie above an em boundary. Retain it
+        // through strict ceiling and require anonymous flex and ordinary
+        // inline text to consume the same shaped item.
         for size in [10.0, 12.0, 16.0, 23.0] {
             let style = ahem_intrinsic_style().derive(|style| style.font_size = size);
             let (doc, container, text_node) = text_shaping_document("XX", &style);
-            let expected = MinMaxSizes::new(
-                LayoutUnit::from_f32(size * 2.0),
-                LayoutUnit::from_f32(size * 2.0),
-            );
+            let width = shaped_intrinsic_width(&doc, "XX", &style);
+            let expected = MinMaxSizes::new(width, width);
             assert_eq!(
                 compute_intrinsic_inline_sizes_with_layout(&doc, text_node),
                 expected
@@ -4277,7 +4330,9 @@ mod tests {
             style.word_spacing = 7.0;
         });
         let (doc, container, text_node) = text_shaping_document("X X", &style);
-        let expected = MinMaxSizes::new(LayoutUnit::from_i32(61), LayoutUnit::from_i32(61));
+        let width = shaped_intrinsic_width(&doc, "X X", &style);
+        assert!(width > LayoutUnit::from_i32(61));
+        let expected = MinMaxSizes::new(width, width);
         assert_eq!(
             compute_intrinsic_inline_sizes_with_layout(&doc, text_node),
             expected
@@ -4286,6 +4341,32 @@ mod tests {
             compute_inline_sequence_intrinsic_sizes(&doc, container),
             expected
         );
+    }
+
+    #[test]
+    fn chromium_atomic_word_fraction_survives_an_integer_raster_font_policy() {
+        // native-general-font-chromium-v3824 records 144.015625 at all five
+        // required measurement scales, before and after native Ahem aliasing.
+        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+            let style = ahem_intrinsic_style().derive(|style| {
+                style.raster_configuration =
+                    openui_geometry::RasterConfiguration::deterministic_aliased(false);
+                style.device_scale_factor = scale;
+            });
+            let (doc, container, text_node) = text_shaping_document("ABCDEFGHI", &style);
+            let expected = MinMaxSizes::new(
+                LayoutUnit::from_f32(144.015625),
+                LayoutUnit::from_f32(144.015625),
+            );
+            assert_eq!(
+                compute_intrinsic_inline_sizes_with_layout(&doc, text_node),
+                expected
+            );
+            assert_eq!(
+                compute_inline_sequence_intrinsic_sizes(&doc, container),
+                expected
+            );
+        }
     }
 
     #[test]
@@ -4372,7 +4453,8 @@ mod tests {
             style.text_transform = openui_style::TextTransform::Uppercase;
         });
         let (doc, container, text_node) = text_shaping_document("x\nxx", &style);
-        let expected = MinMaxSizes::new(LayoutUnit::from_i32(32), LayoutUnit::from_i32(32));
+        let width = shaped_intrinsic_width(&doc, "XX", &style);
+        let expected = MinMaxSizes::new(width, width);
         for _ in 0..2 {
             assert_eq!(
                 compute_intrinsic_inline_sizes_with_layout(&doc, text_node),
@@ -4486,15 +4568,22 @@ mod tests {
 
     #[test]
     fn intrinsic_preserved_space_and_grapheme_neighbors_share_the_item_scanner() {
-        for (text, white_space, word_break, expected) in [
-            ("X  X", WhiteSpace::BreakSpaces, WordBreak::Normal, (32, 64)),
-            (" ", WhiteSpace::BreakSpaces, WordBreak::Normal, (16, 16)),
-            (" X ", WhiteSpace::Normal, WordBreak::Normal, (16, 16)),
+        for (text, white_space, word_break, min_text, max_text) in [
+            (
+                "X  X",
+                WhiteSpace::BreakSpaces,
+                WordBreak::Normal,
+                "X ",
+                "X  X",
+            ),
+            (" ", WhiteSpace::BreakSpaces, WordBreak::Normal, " ", " "),
+            (" X ", WhiteSpace::Normal, WordBreak::Normal, "X", "X"),
             (
                 "X\u{00a0}X",
                 WhiteSpace::Normal,
                 WordBreak::Normal,
-                (48, 48),
+                "X\u{00a0}X",
+                "X\u{00a0}X",
             ),
         ] {
             let style = ahem_intrinsic_style().derive(|style| {
@@ -4503,8 +4592,8 @@ mod tests {
             });
             let (doc, container, text_node) = text_shaping_document(text, &style);
             let wanted = MinMaxSizes::new(
-                LayoutUnit::from_i32(expected.0),
-                LayoutUnit::from_i32(expected.1),
+                shaped_intrinsic_width(&doc, min_text, &style),
+                shaped_intrinsic_width(&doc, max_text, &style),
             );
             assert_eq!(
                 compute_intrinsic_inline_sizes_with_layout(&doc, text_node),
