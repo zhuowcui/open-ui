@@ -43,7 +43,7 @@ fn sticky(engine: &mut Engine, node: NodeHandle, top: f32) {
     set(engine, node, StyleProperty::Top, LengthValue::px(top));
 }
 fn y(engine: &mut Engine, node: NodeHandle) -> f32 {
-    engine.bounding_rect(node).unwrap().unwrap().y
+    engine.bounds(node).unwrap().unwrap().y
 }
 #[test]
 fn bordered_padded_scrollport_keeps_its_origin_and_real_block_end_after_native_mutation() {
@@ -220,7 +220,7 @@ fn no_inset_sticky_queries_preserve_pixels_hits_and_the_unchanged_frame_path() {
         );
         let mut compositor = SoftwareCompositor::default();
         let before = compositor.render(&engine.scene().unwrap()).unwrap();
-        let rect = engine.bounding_rect(subject).unwrap().unwrap();
+        let rect = engine.bounds(subject).unwrap().unwrap();
         let hit = engine.hit_test(5.0, 5.0).unwrap();
         set(
             &mut engine,
@@ -230,7 +230,7 @@ fn no_inset_sticky_queries_preserve_pixels_hits_and_the_unchanged_frame_path() {
         );
         let after = compositor.render(&engine.scene().unwrap()).unwrap();
         assert_eq!(before.pixels, after.pixels);
-        assert_eq!(engine.bounding_rect(subject).unwrap().unwrap(), rect);
+        assert_eq!(engine.bounds(subject).unwrap().unwrap(), rect);
         assert_eq!(engine.hit_test(5.0, 5.0).unwrap(), hit);
         let stats = engine.stats();
         compositor.render(&engine.scene().unwrap()).unwrap();
@@ -273,7 +273,7 @@ fn nested_sticky_view_snapshot_uses_pinned_first_sticky_constraints_and_normal_g
             .unwrap();
         for scroll in [0.0, 100.0, 0.0] {
             engine.scroll_to(source, 0.0, scroll).unwrap();
-            let before = engine.bounding_rect(subject).unwrap().unwrap();
+            let before = engine.bounds(subject).unwrap().unwrap();
             let named = engine
                 .animation_attachment_snapshot(id)
                 .unwrap()
@@ -283,7 +283,7 @@ fn nested_sticky_view_snapshot_uses_pinned_first_sticky_constraints_and_normal_g
                 .named;
             assert_eq!(named.cover.start, -20.0);
             assert_eq!(named.cover.end, 140.0);
-            assert_eq!(engine.bounding_rect(subject).unwrap().unwrap(), before);
+            assert_eq!(engine.bounds(subject).unwrap().unwrap(), before);
         }
     }
 }

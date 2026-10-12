@@ -20,8 +20,8 @@ use openui_dom::{
     Document, ElementTag, FormControlRole, NodeId, PseudoElementKind, ReplacedResourceKind,
 };
 use openui_geometry::{
-    BoxStrut, LayoutUnit, PhysicalOffset, PhysicalSnap, RasterBackend, RasterSnapping, TextEdging,
-    TextHinting,
+    BoxStrut, LayoutUnit, PhysicalOffset, PhysicalSize, PhysicalSnap, RasterBackend,
+    RasterSnapping, TextEdging, TextHinting,
 };
 use openui_layout::{Fragment, FragmentKind, FragmentTablePart};
 use openui_style::{
