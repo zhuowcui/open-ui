@@ -128,38 +128,61 @@ fn native_cell_span_callback_reflows_owned_boxes_and_removal_restores_pixels() {
 
 #[test]
 fn native_zero_and_positive_rowspans_stop_at_the_containing_section() {
-    for span in [0, 9] {
-        let document = Document::new(320, 240).unwrap();
-        let table = append(&document, &document.body(), "table");
-        table.set_border_collapse(BorderCollapse::Collapse).unwrap();
-        table
-            .set_border_spacing((Length::px(0.0), Length::px(0.0)))
-            .unwrap();
-        let mut first = None;
-        let mut last = None;
-        for count in [2, 1] {
-            let group = append(&document, &table, "tbody");
-            for _ in 0..count {
-                let row = append(&document, &group, "tr");
-                let cell = append(&document, &row, "td");
-                cell.set_width(LengthValue::px(10.0)).unwrap();
-                cell.set_height(LengthValue::px(10.0)).unwrap();
-                if first.is_none() {
-                    first = Some(cell.clone());
+    for authored_row_height in [false, true] {
+        for span in [0, 9] {
+            for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+                let document = Document::with_viewport_metrics(
+                    ViewportMetrics::from_logical_size(320.0, 240.0, scale).unwrap(),
+                )
+                .unwrap();
+                let table = append(&document, &document.body(), "table");
+                table.set_border_collapse(BorderCollapse::Collapse).unwrap();
+                table
+                    .set_border_spacing((Length::px(0.0), Length::px(0.0)))
+                    .unwrap();
+                let mut first = None;
+                let mut last = None;
+                for count in [2, 1] {
+                    let group = append(&document, &table, "tbody");
+                    for _ in 0..count {
+                        let row = append(&document, &group, "tr");
+                        if authored_row_height {
+                            row.set_height(LengthValue::px(10.0)).unwrap();
+                        }
+                        let cell = append(&document, &row, "td");
+                        cell.set_width(LengthValue::px(10.0)).unwrap();
+                        cell.set_height(LengthValue::px(10.0)).unwrap();
+                        if first.is_none() {
+                            first = Some(cell.clone());
+                        }
+                        last = Some(cell);
+                    }
                 }
-                last = Some(cell);
+                let first = first.unwrap();
+                let last = last.unwrap();
+                let before = first.bounding_rect().unwrap().unwrap();
+                let last_before = last.bounding_rect().unwrap().unwrap();
+                let pixels_before = document.render_to_png_buffer().unwrap();
+                assert_eq!(before.height, 10.0);
+                first.set_row_span(span).unwrap();
+                let after = first.bounding_rect().unwrap().unwrap();
+                // A cell's authored height is a minimum for its whole span.
+                // Independent row minima require two10px rows; cell-only
+                // minima need only10px in total after the first cell spans.
+                let expected = if authored_row_height { 20.0 } else { 10.0 };
+                assert_eq!(
+                    after.height, expected,
+                    "span={span}, rows={authored_row_height}, scale={scale}"
+                );
+                let last_after = last.bounding_rect().unwrap().unwrap();
+                assert_eq!(last_after.x, after.x);
+                assert_eq!(last_after.y, after.y + after.height);
+                first.remove_attribute("rowspan").unwrap();
+                assert_eq!(first.bounding_rect().unwrap().unwrap(), before);
+                assert_eq!(last.bounding_rect().unwrap().unwrap(), last_before);
+                assert_eq!(document.render_to_png_buffer().unwrap(), pixels_before);
             }
         }
-        let first = first.unwrap();
-        let before = first.bounding_rect().unwrap().unwrap();
-        first.set_row_span(span).unwrap();
-        let after = first.bounding_rect().unwrap().unwrap();
-        assert_eq!(after.height, before.height * 2.0);
-        let last = last.unwrap().bounding_rect().unwrap().unwrap();
-        assert_eq!(last.x, after.x);
-        assert_eq!(last.y, after.y + after.height);
-        first.remove_attribute("rowspan").unwrap();
-        assert_eq!(first.bounding_rect().unwrap().unwrap(), before);
     }
 }
 
