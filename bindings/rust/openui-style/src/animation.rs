@@ -1,9 +1,9 @@
 //! Deterministic typed animation timing and property interpolation.
 
 use crate::{
-    apply_to_computed, Color, ComputedStyle, Edges, FontSizeAdjust, FontStretch, FontWeight, Gap,
-    InitialLetterValue, InterpolationKind, LengthValue, LineHeight, StyleColor, StyleProperty,
-    StyleValue, TextDecorationThickness, TextSizeAdjust, TransformList, TransformOperation,
+    apply_to_computed, Color, CompositedStyleValue, ComputedStyle, Edges, FontSizeAdjust,
+    FontStretch, FontWeight, Gap, InitialLetterValue, InterpolationKind, LengthValue, LineHeight,
+    StyleColor, StyleProperty, StyleValue, TextDecorationThickness, TextSizeAdjust, TransformList,
     TypographyValue, VerticalAlign,
 };
 use openui_geometry::{Length, LengthType};
@@ -849,6 +849,81 @@ impl PropertyKeyframes {
         &self.frames
     }
 
+    /// Native length shorthands participate in the same atomic component stacks
+    /// as their longhands. Lifecycle events still name the original property.
+    #[doc(hidden)]
+    pub fn effect_properties(&self) -> &[StyleProperty] {
+        use StyleProperty as P;
+        match self.property {
+            P::Margin => &[P::MarginTop, P::MarginRight, P::MarginBottom, P::MarginLeft],
+            P::Padding => &[
+                P::PaddingTop,
+                P::PaddingRight,
+                P::PaddingBottom,
+                P::PaddingLeft,
+            ],
+            P::Gap => &[P::RowGap, P::ColumnGap],
+            _ => std::slice::from_ref(&self.property),
+        }
+    }
+
+    fn component_value(&self, property: StyleProperty, value: &StyleValue) -> Option<StyleValue> {
+        if property == self.property {
+            return Some(value.clone());
+        }
+        use StyleProperty as P;
+        match (self.property, property, value) {
+            (P::Margin | P::Padding, P::MarginTop | P::PaddingTop, StyleValue::Edges(v)) => {
+                Some(v.top.into())
+            }
+            (P::Margin | P::Padding, P::MarginRight | P::PaddingRight, StyleValue::Edges(v)) => {
+                Some(v.right.into())
+            }
+            (P::Margin | P::Padding, P::MarginBottom | P::PaddingBottom, StyleValue::Edges(v)) => {
+                Some(v.bottom.into())
+            }
+            (P::Margin | P::Padding, P::MarginLeft | P::PaddingLeft, StyleValue::Edges(v)) => {
+                Some(v.left.into())
+            }
+            (P::Gap, P::RowGap, StyleValue::Gap(v)) => Some(v.row.into()),
+            (P::Gap, P::ColumnGap, StyleValue::Gap(v)) => Some(v.column.into()),
+            _ => None,
+        }
+    }
+
+    #[doc(hidden)]
+    pub fn sample_component_resolved_composited_value_with_before(
+        &self,
+        property: StyleProperty,
+        progress: f64,
+        default_easing: &Easing,
+        before: bool,
+        underlying: &CompositedStyleValue,
+        composite: CompositeOperation,
+        resolve: impl Fn(&StyleValue) -> StyleValue,
+    ) -> Option<CompositedStyleValue> {
+        if !self.effect_properties().contains(&property) {
+            return None;
+        }
+        Some(
+            self.sample_resolved_composited_value_for_property_with_before(
+                property,
+                progress,
+                default_easing,
+                before,
+                underlying,
+                composite,
+                |value| {
+                    resolve(
+                        &self
+                            .component_value(property, value)
+                            .expect("validated native effect component"),
+                    )
+                },
+            ),
+        )
+    }
+
     pub fn sample(&self, progress: f64, default_easing: &Easing) -> StyleValue {
         self.sample_with_before(progress, default_easing, false)
     }
@@ -861,32 +936,146 @@ impl PropertyKeyframes {
         default_easing: &Easing,
         before: bool,
     ) -> StyleValue {
-        if progress < 0.0 && self.frames[1].offset == 0.0 {
-            return self.frames[0].value.clone();
-        }
-        if progress >= 1.0 && self.frames[self.frames.len() - 2].offset == 1.0 {
-            return self.frames[self.frames.len() - 1].value.clone();
-        }
-        let upper = self
-            .frames
-            .partition_point(|frame| frame.offset <= progress);
-        let from_index = upper.saturating_sub(1).min(self.frames.len() - 2);
-        let from = &self.frames[from_index];
-        let to = &self.frames[from_index + 1];
-        let interval = (progress - from.offset) / (to.offset - from.offset);
-        let eased = from
-            .easing
-            .as_ref()
-            .unwrap_or(default_easing)
-            .sample_with_before(interval, before);
-        interpolate(self.property, &from.value, &to.value, eased).unwrap_or_else(|| {
-            if eased < 0.5 {
-                from.value.clone()
-            } else {
-                to.value.clone()
-            }
-        })
+        self.sample_resolved_composited_value_with_before(
+            progress,
+            default_easing,
+            before,
+            &CompositedStyleValue::from_style_value(self.frames[0].value.clone()),
+            CompositeOperation::Replace,
+            Clone::clone,
+        )
+        .into_style_value(self.property)
     }
+
+    /// Resolve endpoint units against the current native computed environment,
+    /// then combine this effect with the current lower effect stack.
+    /// Transform composition precedes interpolation at both endpoints, as in
+    /// Blink's CSSTransformInterpolationType. Effect accumulation is independent
+    /// of iteration accumulation; this method never repeats the sampled value.
+    pub fn sample_resolved_composited_with_before(
+        &self,
+        progress: f64,
+        default_easing: &Easing,
+        before: bool,
+        underlying: &StyleValue,
+        composite: CompositeOperation,
+        resolve: impl Fn(&StyleValue) -> StyleValue,
+    ) -> StyleValue {
+        self.sample_resolved_composited_value_with_before(
+            progress,
+            default_easing,
+            before,
+            &CompositedStyleValue::from_style_value(underlying.clone()),
+            composite,
+            resolve,
+        )
+        .into_style_value(self.property)
+    }
+
+    /// Keep typed floating intermediates across the complete ordered stack.
+    /// The Engine converts the final property value only once, at publication.
+    pub fn sample_resolved_composited_value_with_before(
+        &self,
+        progress: f64,
+        default_easing: &Easing,
+        before: bool,
+        underlying: &CompositedStyleValue,
+        composite: CompositeOperation,
+        resolve: impl Fn(&StyleValue) -> StyleValue,
+    ) -> CompositedStyleValue {
+        self.sample_resolved_composited_value_for_property_with_before(
+            self.property,
+            progress,
+            default_easing,
+            before,
+            underlying,
+            composite,
+            resolve,
+        )
+    }
+
+    fn sample_resolved_composited_value_for_property_with_before(
+        &self,
+        property: StyleProperty,
+        progress: f64,
+        default_easing: &Easing,
+        before: bool,
+        underlying: &CompositedStyleValue,
+        composite: CompositeOperation,
+        resolve: impl Fn(&StyleValue) -> StyleValue,
+    ) -> CompositedStyleValue {
+        let endpoint = |value: &StyleValue| {
+            let value = CompositedStyleValue::from_style_value(resolve(value));
+            if property == StyleProperty::Transform {
+                value.compose(property, underlying, composite)
+            } else {
+                value
+            }
+        };
+        let sampled = if progress < 0.0 && self.frames[1].offset == 0.0 {
+            endpoint(&self.frames[0].value)
+        } else if progress >= 1.0 && self.frames[self.frames.len() - 2].offset == 1.0 {
+            endpoint(&self.frames[self.frames.len() - 1].value)
+        } else {
+            let upper = self
+                .frames
+                .partition_point(|frame| frame.offset <= progress);
+            let index = upper.saturating_sub(1).min(self.frames.len() - 2);
+            let from = &self.frames[index];
+            let to = &self.frames[index + 1];
+            let interval = (progress - from.offset) / (to.offset - from.offset);
+            let eased = from
+                .easing
+                .as_ref()
+                .unwrap_or(default_easing)
+                .sample_with_before(interval, before);
+            let from = endpoint(&from.value);
+            let to = endpoint(&to.value);
+            if property.metadata().interpolation != InterpolationKind::Discrete {
+                from.interpolate(&to, eased).unwrap_or_else(|| {
+                    let from = from.into_style_value(property);
+                    let to = to.into_style_value(property);
+                    CompositedStyleValue::from_style_value(
+                        interpolate(property, &from, &to, eased).unwrap_or_else(|| {
+                            if eased < 0.5 {
+                                from
+                            } else {
+                                to
+                            }
+                        }),
+                    )
+                })
+            } else if eased < 0.5 {
+                from
+            } else {
+                to
+            }
+        };
+        if property == StyleProperty::Transform {
+            sampled
+        } else {
+            sampled.compose(property, underlying, composite)
+        }
+    }
+}
+
+/// Combine a typed effect with the current lower stack without applying the
+/// property's computed-value clamp between effects. Discrete values replace.
+/// Add and Accumulate coincide for ordinary numeric/length components; transform
+/// accumulation uses the identity-relative primitive rules instead of appending.
+pub fn compose_property_value(
+    property: StyleProperty,
+    underlying: &StyleValue,
+    sampled: StyleValue,
+    composite: CompositeOperation,
+) -> StyleValue {
+    CompositedStyleValue::from_style_value(sampled)
+        .compose(
+            property,
+            &CompositedStyleValue::from_style_value(underlying.clone()),
+            composite,
+        )
+        .into_style_value(property)
 }
 
 pub fn value_matches_property(property: StyleProperty, value: &StyleValue) -> bool {
@@ -905,7 +1094,6 @@ pub fn interpolate(
     to: &StyleValue,
     progress: f64,
 ) -> Option<StyleValue> {
-    let progress = progress as f32;
     if property.metadata().interpolation == InterpolationKind::Discrete {
         return Some(if progress < 0.5 {
             from.clone()
@@ -913,6 +1101,18 @@ pub fn interpolate(
             to.clone()
         });
     }
+    if let Some(value) = CompositedStyleValue::from_style_value(from.clone()).interpolate(
+        &CompositedStyleValue::from_style_value(to.clone()),
+        progress,
+    ) {
+        return Some(value.into_style_value(property));
+    }
+    if let (StyleValue::Transform(from), StyleValue::Transform(to)) = (from, to) {
+        return Some(StyleValue::Transform(crate::interpolate_transform_lists(
+            from, to, progress,
+        )));
+    }
+    let progress = progress as f32;
     match (from, to) {
         (StyleValue::Number(from), StyleValue::Number(to)) => {
             Some(StyleValue::Number(lerp(*from, *to, progress)))
@@ -948,9 +1148,6 @@ pub fn interpolate(
                 bottom: interpolate_length(from.bottom, to.bottom, progress)?,
                 left: interpolate_length(from.left, to.left, progress)?,
             })))
-        }
-        (StyleValue::Transform(from), StyleValue::Transform(to)) => {
-            interpolate_transform(from, to, progress).map(StyleValue::Transform)
         }
         (StyleValue::Typography(from), StyleValue::Typography(to)) => {
             interpolate_typography(from, to, progress).map(StyleValue::Typography)
@@ -1059,6 +1256,22 @@ fn interpolate_color(from: Color, to: Color, progress: f32) -> Color {
 }
 
 fn interpolate_length(from: LengthValue, to: LengthValue, progress: f32) -> Option<LengthValue> {
+    if let (LengthValue::Computed(a), LengthValue::Computed(b)) = (from, to) {
+        let components = |v: Length| match v.length_type() {
+            LengthType::Fixed => Some((0.0, v.value())),
+            LengthType::Percent => Some((v.value(), 0.0)),
+            LengthType::Calculated => Some((v.value(), v.calc_offset())),
+            _ => None,
+        };
+        if a.length_type() != b.length_type() {
+            if let Some(((ap, ax), (bp, bx))) = components(a).zip(components(b)) {
+                return Some(LengthValue::Computed(Length::calc_percent_px(
+                    lerp(ap, bp, progress),
+                    lerp(ax, bx, progress),
+                )));
+            }
+        }
+    }
     match (from, to) {
         (LengthValue::Computed(from), LengthValue::Computed(to))
             if from.length_type() == to.length_type() =>
@@ -1106,96 +1319,6 @@ fn interpolate_length(from: LengthValue, to: LengthValue, progress: f32) -> Opti
     }
 }
 
-fn interpolate_transform(
-    from: &TransformList,
-    to: &TransformList,
-    progress: f32,
-) -> Option<TransformList> {
-    if from.0.len() != to.0.len() {
-        return None;
-    }
-    let operations = from
-        .0
-        .iter()
-        .zip(&to.0)
-        .map(|(from, to)| match (from, to) {
-            (
-                TransformOperation::Translate(from_x, from_y),
-                TransformOperation::Translate(to_x, to_y),
-            ) => Some(TransformOperation::Translate(
-                interpolate_length(*from_x, *to_x, progress)?,
-                interpolate_length(*from_y, *to_y, progress)?,
-            )),
-            (
-                TransformOperation::Translate3d(from_x, from_y, from_z),
-                TransformOperation::Translate3d(to_x, to_y, to_z),
-            ) => Some(TransformOperation::Translate3d(
-                interpolate_length(*from_x, *to_x, progress)?,
-                interpolate_length(*from_y, *to_y, progress)?,
-                interpolate_length(*from_z, *to_z, progress)?,
-            )),
-            (TransformOperation::Scale(from_x, from_y), TransformOperation::Scale(to_x, to_y)) => {
-                Some(TransformOperation::Scale(
-                    lerp(*from_x, *to_x, progress),
-                    lerp(*from_y, *to_y, progress),
-                ))
-            }
-            (
-                TransformOperation::Scale3d(from_x, from_y, from_z),
-                TransformOperation::Scale3d(to_x, to_y, to_z),
-            ) => Some(TransformOperation::Scale3d(
-                lerp(*from_x, *to_x, progress),
-                lerp(*from_y, *to_y, progress),
-                lerp(*from_z, *to_z, progress),
-            )),
-            (TransformOperation::Rotate(from), TransformOperation::Rotate(to)) => {
-                Some(TransformOperation::Rotate(lerp(*from, *to, progress)))
-            }
-            (
-                TransformOperation::Rotate3d {
-                    x: from_x,
-                    y: from_y,
-                    z: from_z,
-                    degrees: from_degrees,
-                },
-                TransformOperation::Rotate3d {
-                    x: to_x,
-                    y: to_y,
-                    z: to_z,
-                    degrees: to_degrees,
-                },
-            ) => Some(TransformOperation::Rotate3d {
-                x: lerp(*from_x, *to_x, progress),
-                y: lerp(*from_y, *to_y, progress),
-                z: lerp(*from_z, *to_z, progress),
-                degrees: lerp(*from_degrees, *to_degrees, progress),
-            }),
-            (TransformOperation::Perspective(from), TransformOperation::Perspective(to)) => Some(
-                TransformOperation::Perspective(interpolate_length(*from, *to, progress)?),
-            ),
-            (TransformOperation::Matrix(from), TransformOperation::Matrix(to)) => {
-                Some(TransformOperation::Matrix(crate::Transform2D {
-                    a: lerp(from.a, to.a, progress),
-                    b: lerp(from.b, to.b, progress),
-                    c: lerp(from.c, to.c, progress),
-                    d: lerp(from.d, to.d, progress),
-                    e: lerp(from.e, to.e, progress),
-                    f: lerp(from.f, to.f, progress),
-                }))
-            }
-            (TransformOperation::Matrix3d(from), TransformOperation::Matrix3d(to)) => {
-                let mut values = [0.0; 16];
-                for (index, value) in values.iter_mut().enumerate() {
-                    *value = lerp(from.0[index], to.0[index], progress);
-                }
-                Some(TransformOperation::Matrix3d(crate::Transform3D(values)))
-            }
-            _ => None,
-        })
-        .collect::<Option<Vec<_>>>()?;
-    Some(TransformList(operations))
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TimelineAxis {
     Block,
@@ -1239,6 +1362,7 @@ impl TimelineRange {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::TransformOperation;
 
     fn options() -> AnimationOptions {
         AnimationOptions {

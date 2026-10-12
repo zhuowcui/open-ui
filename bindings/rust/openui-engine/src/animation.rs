@@ -1,8 +1,8 @@
 use crate::{Engine, EngineError, NodeHandle};
 use openui_style::{
-    value_from_computed, AnimationOptions, AnimationPhase, CompositeOperation, Keyframes,
+    value_from_computed, AnimationOptions, AnimationPhase, CompositedStyleValue, Keyframes,
     LengthValue, PlayState, PropertyKeyframes, StyleProperty, StyleValue, TimelineAxis,
-    TimelineRange, TransformList,
+    TimelineRange,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
@@ -67,15 +67,20 @@ pub(crate) struct AnimationInstance {
     pub timeline_snapshot: Option<crate::animation_timeline::ProgressTimelineSnapshot>,
     pub auto_align_start_time: bool,
     pub pending_progress_seek: Option<f64>,
-    pub underlying: StyleValue,
     pub start_time_ms: f64,
     pub offset_ms: f64,
     pub hold_time_ms: Option<f64>,
-    pub last_applied: Option<StyleValue>,
+    pub last_sample: Option<EffectSample>,
     pub last_phase: Option<AnimationPhase>,
     pub last_iteration: u64,
     pub last_current_time_ms: f64,
     pub ended: bool,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub(crate) struct EffectSample {
+    progress: f64,
+    before: bool,
 }
 
 impl AnimationInstance {
@@ -242,7 +247,7 @@ impl Engine {
         options: AnimationOptions,
         timeline: AnimationTimeline,
     ) -> Result<AnimationId, EngineError> {
-        self.start_animation(target, keyframes, options, timeline, None)
+        self.start_animation(target, keyframes, options, timeline)
     }
 
     pub fn transition<T>(
@@ -272,13 +277,7 @@ impl Engine {
         let order = &mut self.slots[target.index as usize].authored_order;
         order.retain(|id| *id != property as u16);
         order.push(property as u16);
-        self.start_animation(
-            target,
-            keyframes,
-            options,
-            AnimationTimeline::Document,
-            Some(to),
-        )
+        self.start_animation(target, keyframes, options, AnimationTimeline::Document)
     }
 
     fn start_animation(
@@ -287,7 +286,6 @@ impl Engine {
         keyframes: PropertyKeyframes,
         options: AnimationOptions,
         timeline: AnimationTimeline,
-        underlying_override: Option<StyleValue>,
     ) -> Result<AnimationId, EngineError> {
         let node = self.resolve(target)?;
         options.validate().map_err(EngineError::from)?;
@@ -304,16 +302,6 @@ impl Engine {
             0.0
         };
         let property = keyframes.property();
-        let underlying = underlying_override
-            .or_else(|| {
-                self.slots[target.index as usize]
-                    .authored
-                    .get(&(property as u16))
-                    .cloned()
-            })
-            .unwrap_or_else(|| value_from_computed(&self.document.node(node).style, property));
-        let id = AnimationId(self.next_animation_id);
-        self.next_animation_id = self.next_animation_id.wrapping_add(1).max(1);
         let timeline_now = self.timeline_time(timeline, &options)?;
         let start_time_ms = if matches!(timeline, AnimationTimeline::Document) {
             timeline_now
@@ -329,6 +317,23 @@ impl Engine {
         } else {
             (timeline_now - start_time_ms) * options.playback_rate
         };
+        if self.slots[target.index as usize]
+            .animation_base_style
+            .is_none()
+        {
+            self.slots[target.index as usize].animation_base_style =
+                Some(self.document.node(node).style.clone());
+        }
+        self.slots[target.index as usize]
+            .animation_properties
+            .extend(
+                keyframes
+                    .effect_properties()
+                    .iter()
+                    .map(|property| *property as u16),
+            );
+        let id = AnimationId(self.next_animation_id);
+        self.next_animation_id = self.next_animation_id.wrapping_add(1).max(1);
         self.animations.insert(
             id,
             AnimationInstance {
@@ -340,11 +345,10 @@ impl Engine {
                 timeline_snapshot,
                 auto_align_start_time: true,
                 pending_progress_seek: None,
-                underlying,
                 start_time_ms,
                 offset_ms: initial_time,
                 hold_time_ms: held.then_some(initial_hold),
-                last_applied: None,
+                last_sample: None,
                 last_phase: None,
                 last_iteration: 0,
                 last_current_time_ms: initial_time,
@@ -352,6 +356,7 @@ impl Engine {
             },
         );
         self.sample_animations()?;
+        self.refresh_inherited_styles(node)?;
         Ok(id)
     }
 
@@ -518,11 +523,8 @@ impl Engine {
         let snapshot = self.animation_instance(id)?.clone();
         let elapsed_time_ms = self.cancel_elapsed_time(&snapshot);
         self.animations.remove(&id);
-        if let Err(error) = self.apply_animation_value(
-            snapshot.target,
-            snapshot.keyframes.property(),
-            &snapshot.underlying,
-        ) {
+        let node = self.resolve(snapshot.target)?;
+        if let Err(error) = self.refresh_inherited_styles(node) {
             self.animations.insert(id, snapshot);
             return Err(error);
         }
@@ -695,6 +697,7 @@ impl Engine {
                     .then_some(*id)
             })
             .collect::<Vec<_>>();
+        let mut changed = false;
         for id in ids {
             self.refresh_progress_timeline_snapshot(id);
             let Some(snapshot) = self.animations.get(&id).cloned() else {
@@ -707,16 +710,12 @@ impl Engine {
             if !matches!(snapshot.timeline, AnimationTimeline::Document)
                 && snapshot.timeline_snapshot.is_none()
             {
-                if snapshot.last_applied.is_some() {
+                if snapshot.last_sample.is_some() {
                     self.animations
                         .get_mut(&id)
                         .expect("live animation")
-                        .last_applied = None;
-                    self.apply_animation_value(
-                        snapshot.target,
-                        snapshot.keyframes.property(),
-                        &snapshot.underlying,
-                    )?;
+                        .last_sample = None;
+                    changed = true;
                 }
                 if snapshot.last_phase.is_some()
                     && snapshot.last_phase != Some(AnimationPhase::After)
@@ -757,42 +756,11 @@ impl Engine {
             let finished = self.reduced_motion || snapshot.reached_endpoint(current_time);
             let sampled = sample
                 .eased_progress(&snapshot.options.easing, current_direction_is_reversed)
-                .map(|progress| {
-                    let value = snapshot.keyframes.sample_with_before(
-                        progress,
-                        &openui_style::Easing::Linear,
-                        // Pinned .50 KeyframeEffect uses Before directly here;
-                        // its reverse-after limit differs from effect easing.
-                        sample.phase == AnimationPhase::Before,
-                    );
-                    compose_value(
-                        &snapshot.underlying,
-                        value,
-                        snapshot.options.composite,
-                        sample.iteration,
-                    )
+                .map(|progress| EffectSample {
+                    progress,
+                    before: sample.phase == AnimationPhase::Before,
                 });
-            let next_value = sampled.as_ref().unwrap_or(&snapshot.underlying);
-            if snapshot.last_applied.as_ref() != sampled.as_ref() {
-                // Inherited values recompute this node and its descendants.
-                // Publish this sample before rebuilding the computed style so
-                // the rebuild sees the new frame rather than the previous one.
-                self.animations
-                    .get_mut(&id)
-                    .expect("live animation")
-                    .last_applied = sampled.clone();
-                if let Err(error) = self.apply_animation_value(
-                    snapshot.target,
-                    snapshot.keyframes.property(),
-                    next_value,
-                ) {
-                    self.animations
-                        .get_mut(&id)
-                        .expect("live animation")
-                        .last_applied = snapshot.last_applied;
-                    return Err(error);
-                }
-            }
+            changed |= snapshot.last_sample != sampled;
 
             let phase_changed = snapshot.last_phase != Some(sample.phase);
             let was_before = snapshot.last_phase.is_none()
@@ -866,12 +834,15 @@ impl Engine {
                         instance.hold_time_ms = Some(current_time);
                     }
                 }
-                instance.last_applied = sampled;
+                instance.last_sample = sampled;
                 instance.last_phase = Some(sample.phase);
                 instance.last_iteration = sample.iteration;
                 instance.last_current_time_ms = current_time;
                 instance.ended = finished;
             }
+        }
+        if changed {
+            self.recompute_authored_styles()?;
         }
         Ok(())
     }
@@ -936,68 +907,100 @@ impl Engine {
             .max(0.0)
     }
 
-    fn apply_animation_value(
-        &mut self,
-        target: NodeHandle,
-        property: StyleProperty,
-        value: &StyleValue,
-    ) -> Result<(), EngineError> {
-        let node = self.resolve(target)?;
-        let viewport = (
-            self.viewport.logical_width() as f32,
-            self.viewport.logical_height() as f32,
-        );
-        let font = if property == StyleProperty::FontSize {
-            let parent = self.document.node(node).parent;
-            if parent.is_none() {
-                openui_style::ComputedStyle::initial().font_size
-            } else {
-                self.document.node(parent).style.font_size
+    /// Fold active effects in creation order against the current unanimated
+    /// computed environment. Values remain unclamped until the entire property
+    /// stack is published, and no application callbacks occur in this method.
+    pub(crate) fn animation_values_for_node(
+        &self,
+        index: u32,
+        style: &openui_style::ComputedStyle,
+        parent: &openui_style::ComputedStyle,
+        root_font: f32,
+        viewport: (f32, f32),
+        font_properties: bool,
+    ) -> Vec<(StyleProperty, StyleValue)> {
+        let mut values = std::collections::BTreeMap::new();
+        for (id, instance) in &self.animations {
+            if instance.target != self.handle_for_slot(index) {
+                continue;
             }
-        } else {
-            self.document.node(node).style.font_size
-        };
-        let root_font = if node == self.document.root() && property == StyleProperty::FontSize {
-            openui_style::ComputedStyle::initial().font_size
-        } else {
-            self.document.node(self.document.root()).style.font_size
-        };
-        let metrics = value.depends_on_font_metrics().then(|| {
-            let style = if property == StyleProperty::FontSize {
-                let parent = self.document.node(node).parent;
-                if parent.is_none() {
-                    openui_style::ComputedStyle::initial()
-                } else {
-                    self.document.node(parent).style.clone()
-                }
-            } else {
-                self.document.node(node).style.clone()
+            let Some(sample) = instance.last_sample else {
+                continue;
             };
-            let mut metrics = self.native_font_length_metrics(&style);
-            if property == StyleProperty::LineHeight {
-                let parent = self.document.node(node).parent;
-                let parent_style = if parent.is_none() {
-                    openui_style::ComputedStyle::initial()
-                } else {
-                    self.document.node(parent).style.clone()
-                };
-                metrics.lh = self.native_font_length_metrics(&parent_style).lh;
+            for &property in instance.keyframes.effect_properties() {
+                let font_property = property.metadata().css_name.starts_with("font")
+                    || property == StyleProperty::LineHeight;
+                if font_property != font_properties {
+                    continue;
+                }
+                let underlying = values
+                    .get(&(property as u16))
+                    .map(|(_, value): &(AnimationId, CompositedStyleValue)| value.clone())
+                    .unwrap_or_else(|| {
+                        CompositedStyleValue::from_style_value(value_from_computed(style, property))
+                    });
+                let value = instance
+                    .keyframes
+                    .sample_component_resolved_composited_value_with_before(
+                        property,
+                        sample.progress,
+                        &openui_style::Easing::Linear,
+                        sample.before,
+                        &underlying,
+                        instance.options.composite,
+                        |value| {
+                            let metrics = value.depends_on_font_metrics().then(|| {
+                                let mut metrics = self.native_font_length_metrics(
+                                    if property == StyleProperty::FontSize {
+                                        parent
+                                    } else {
+                                        style
+                                    },
+                                );
+                                if property == StyleProperty::LineHeight {
+                                    metrics.lh = self.native_font_length_metrics(parent).lh;
+                                }
+                                metrics
+                            });
+                            Self::resolve_native_lengths(
+                                property,
+                                value,
+                                if property == StyleProperty::FontSize {
+                                    parent.font_size
+                                } else {
+                                    style.font_size
+                                },
+                                if self.slots[index as usize].node == Some(self.document.root())
+                                    && property != StyleProperty::FontSize
+                                {
+                                    style.font_size
+                                } else {
+                                    root_font
+                                },
+                                viewport,
+                                metrics,
+                            )
+                        },
+                    )
+                    .expect("owned typed animation component");
+                values.insert(property as u16, (*id, value));
             }
-            metrics
-        });
-        let resolved =
-            Self::resolve_native_lengths(property, value, font, root_font, viewport, metrics);
-        // Publish to resolved targets as well as authored targets. The shared
-        // refresh then updates relative lengths and native descendants.
-        self.document
-            .apply_style_property(node, property, &resolved, viewport)
-            .map_err(|_| EngineError::PropertyType { property })?;
-        if property.metadata().inherited || value.depends_on_font_metrics() {
-            self.refresh_inherited_styles(node)?;
         }
-        self.dirty.hit_test = true;
-        self.mark_dirty(property.metadata().invalidation);
-        Ok(())
+        let mut ordered = values
+            .into_iter()
+            .map(|(property, (id, value))| {
+                (
+                    id,
+                    StyleProperty::from_u16(property).expect("animated property"),
+                    value,
+                )
+            })
+            .collect::<Vec<_>>();
+        ordered.sort_by_key(|(id, _, _)| *id);
+        ordered
+            .into_iter()
+            .map(|(_, property, value)| (property, value.into_style_value(property)))
+            .collect()
     }
 
     fn refresh_progress_timeline_snapshot(&mut self, id: AnimationId) {
@@ -1102,44 +1105,6 @@ fn validate_scroll_animation_timing(
         ));
     }
     easing.validate().map_err(EngineError::from)
-}
-
-fn compose_value(
-    underlying: &StyleValue,
-    sampled: StyleValue,
-    operation: CompositeOperation,
-    iteration: u64,
-) -> StyleValue {
-    if operation == CompositeOperation::Replace {
-        return sampled;
-    }
-    let factor = if operation == CompositeOperation::Accumulate {
-        iteration.saturating_add(1) as f32
-    } else {
-        1.0
-    };
-    match (underlying, sampled) {
-        (StyleValue::Number(base), StyleValue::Number(value)) => {
-            StyleValue::Number(*base + value * factor)
-        }
-        (StyleValue::Integer(base), StyleValue::Integer(value)) => {
-            StyleValue::Integer(base.saturating_add((value as f32 * factor).round() as i32))
-        }
-        (
-            StyleValue::Length(LengthValue::Computed(base)),
-            StyleValue::Length(LengthValue::Computed(value)),
-        ) if base.length_type() == value.length_type() && base.is_fixed() => {
-            StyleValue::Length(LengthValue::px(base.value() + value.value() * factor))
-        }
-        (StyleValue::Transform(base), StyleValue::Transform(value)) => {
-            let mut operations = base.0.clone();
-            for _ in 0..factor.max(1.0).round() as usize {
-                operations.extend(value.0.clone());
-            }
-            StyleValue::Transform(TransformList(operations))
-        }
-        (_, value) => value,
-    }
 }
 
 #[cfg(test)]

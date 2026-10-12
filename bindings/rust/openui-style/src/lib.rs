@@ -5,6 +5,7 @@
 //! from Blink's generated `computed_style_base.h` and `computed_style_constants.h`.
 
 mod animation;
+mod animation_value;
 mod color;
 mod computed;
 mod enums;
@@ -15,6 +16,7 @@ mod transform_composition;
 mod typography;
 
 pub use animation::*;
+pub use animation_value::*;
 pub use color::{Color, StyleColor};
 pub use computed::{
     AspectRatio, BackgroundLayer, BackgroundPosition, BackgroundRepeat, BackgroundSize,

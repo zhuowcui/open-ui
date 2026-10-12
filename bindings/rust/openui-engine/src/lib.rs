@@ -59,7 +59,7 @@ pub use openui_text::{
     FontStyleRange, FontUnicodeRange, HyphenationDictionaryHandle, HyphenationRegistry,
     HyphenationRegistryError,
 };
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::marker::PhantomData;
 use std::rc::Rc;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -259,6 +259,10 @@ struct Slot {
     authored_order: Vec<u16>,
     authored_pseudo: [Option<Style>; 4],
     resolved_style_snapshot: bool,
+    // The current unanimated computed source is distinct from presentation.
+    // It survives inactive/forwards-filled effects until the final owner leaves.
+    animation_base_style: Option<ComputedStyle>,
+    animation_properties: BTreeSet<u16>,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -485,6 +489,8 @@ impl Engine {
             authored_order: Vec::new(),
             authored_pseudo: Default::default(),
             resolved_style_snapshot: false,
+            animation_base_style: None,
+            animation_properties: BTreeSet::new(),
         };
         Ok(Self {
             id: NEXT_DOCUMENT_ID.fetch_add(1, Ordering::Relaxed),
@@ -837,6 +843,8 @@ impl Engine {
             slot.authored_order.clear();
             slot.authored_pseudo = Default::default();
             slot.resolved_style_snapshot = false;
+            slot.animation_base_style = None;
+            slot.animation_properties.clear();
             index
         } else {
             let index = self.slots.len() as u32;
@@ -847,6 +855,8 @@ impl Engine {
                 authored_order: Vec::new(),
                 authored_pseudo: Default::default(),
                 resolved_style_snapshot: false,
+                animation_base_style: None,
+                animation_properties: BTreeSet::new(),
             });
             index
         };
@@ -1015,6 +1025,9 @@ impl Engine {
         while let Some((original, parent)) = pending.pop() {
             let node = self.resolve(original)?;
             let mut data = self.document.node(node).clone();
+            if let Some(base) = &self.slots[original.index as usize].animation_base_style {
+                data.style = base.clone();
+            }
             if data.pseudo_kind.is_some() {
                 continue;
             }
@@ -1191,6 +1204,8 @@ impl Engine {
                 slot.authored_order.clear();
                 slot.authored_pseudo = Default::default();
                 slot.resolved_style_snapshot = false;
+                slot.animation_base_style = None;
+                slot.animation_properties.clear();
                 slot.generation = slot.generation.wrapping_add(1).max(1);
                 self.free_slots.push(index);
             }
@@ -1428,6 +1443,10 @@ impl Engine {
         });
         let resolved =
             Self::resolve_native_lengths(property, &value, font, root_font, viewport, metrics);
+        if let Some(base) = &mut self.slots[handle.index as usize].animation_base_style {
+            apply_to_computed(base, property, &resolved, viewport)
+                .map_err(|_| EngineError::PropertyType { property })?;
+        }
         self.document
             .apply_style_property(node, property, &resolved, viewport)
             .map_err(|_| EngineError::PropertyType { property })?;
@@ -1437,22 +1456,16 @@ impl Engine {
         let order = &mut self.slots[handle.index as usize].authored_order;
         order.retain(|id| *id != property as u16);
         order.push(property as u16);
-        if property.metadata().inherited || value.depends_on_font_metrics() {
+        if self.slots[handle.index as usize]
+            .animation_base_style
+            .is_some()
+            || property.metadata().inherited
+            || value.depends_on_font_metrics()
+        {
             self.refresh_inherited_styles(node)?;
-        }
-        let mut has_animation = false;
-        for animation in self.animations.values_mut().filter(|animation| {
-            animation.target == handle && animation.keyframes.property() == property
-        }) {
-            animation.underlying = value.clone();
-            animation.last_applied = None;
-            has_animation = true;
         }
         self.dirty.hit_test = true;
         self.mark_dirty(property.metadata().invalidation);
-        if has_animation {
-            self.sample_animations()?;
-        }
         Ok(())
     }
 
@@ -1488,27 +1501,23 @@ impl Engine {
             self.viewport.logical_width() as f32,
             self.viewport.logical_height() as f32,
         );
-        self.document
-            .apply_style_property(node, property, &value, viewport)
+        let mut source = self.slots[handle.index as usize]
+            .animation_base_style
+            .clone()
+            .unwrap_or_else(|| self.document.node(node).style.clone());
+        apply_to_computed(&mut source, property, &value, viewport)
             .map_err(|_| EngineError::PropertyType { property })?;
         let slot = &mut self.slots[handle.index as usize];
+        if slot.animation_base_style.is_some() {
+            slot.animation_base_style = Some(source.clone());
+        }
         slot.authored.clear();
         slot.authored_order.clear();
         slot.resolved_style_snapshot = true;
+        self.document.install_resolved_style(node, source);
         self.refresh_inherited_styles(node)?;
-        let mut has_animation = false;
-        for animation in self.animations.values_mut().filter(|animation| {
-            animation.target == handle && animation.keyframes.property() == property
-        }) {
-            animation.underlying = value.clone();
-            animation.last_applied = None;
-            has_animation = true;
-        }
         self.dirty.hit_test = true;
         self.mark_dirty(property.metadata().invalidation);
-        if has_animation {
-            self.sample_animations()?;
-        }
         Ok(())
     }
 
@@ -1521,6 +1530,9 @@ impl Engine {
         value: RendererInternalStyleValue,
     ) -> Result<(), EngineError> {
         let node = self.resolve(handle)?;
+        if let Some(base) = &mut self.slots[handle.index as usize].animation_base_style {
+            value.clone().apply_to(base);
+        }
         self.document.apply_internal_style(node, value);
         self.dirty.hit_test = true;
         self.mark_dirty(InvalidationClass::Subtree);
@@ -1535,13 +1547,23 @@ impl Engine {
         style: ComputedStyle,
     ) -> Result<(), EngineError> {
         let node = self.resolve(handle)?;
+        let owns_animation_source = self.slots[handle.index as usize]
+            .animation_base_style
+            .is_some();
+        if owns_animation_source {
+            self.slots[handle.index as usize].animation_base_style = Some(style.clone());
+        }
         self.document.install_resolved_style(node, style);
         let slot = &mut self.slots[handle.index as usize];
         slot.authored.clear();
         slot.authored_order.clear();
         slot.authored_pseudo = std::array::from_fn(|_| None);
         slot.resolved_style_snapshot = true;
-        self.refresh_inherited_descendants(node)?;
+        if owns_animation_source {
+            self.refresh_inherited_styles(node)?;
+        } else {
+            self.refresh_inherited_descendants(node)?;
+        }
         self.dirty.hit_test = true;
         self.mark_dirty(InvalidationClass::Subtree);
         Ok(())
@@ -1561,9 +1583,7 @@ impl Engine {
                 let slot = &self.slots[index as usize];
                 if !slot.resolved_style_snapshot
                     || !slot.authored.is_empty()
-                    || self.animations.values().any(|animation| {
-                        animation.target.index == index && animation.last_applied.is_some()
-                    })
+                    || slot.animation_base_style.is_some()
                 {
                     let declarations: Vec<_> = slot
                         .authored_order
@@ -1575,26 +1595,6 @@ impl Engine {
                             )
                         })
                         .collect();
-                    let mut animated: Vec<_> = self
-                        .animations
-                        .iter()
-                        .filter_map(|(id, animation)| {
-                            (animation.target.index == index)
-                                .then(|| {
-                                    animation.last_applied.as_ref().map(|value| {
-                                        (*id, animation.keyframes.property(), value.clone())
-                                    })
-                                })
-                                .flatten()
-                        })
-                        .collect();
-                    animated.sort_by_key(|(id, _, _)| *id);
-                    let mut declarations = declarations;
-                    declarations.extend(
-                        animated
-                            .into_iter()
-                            .map(|(_, property, value)| (property, value)),
-                    );
                     let parent_node = self
                         .scroll_buttons
                         .bindings
@@ -1611,11 +1611,19 @@ impl Engine {
                     } else {
                         self.document.node(self.document.root()).style.font_size
                     };
-                    let mut style = self.document.node(node).style.clone();
+                    let old_style = self.document.node(node).style.clone();
+                    let mut style = slot
+                        .animation_base_style
+                        .clone()
+                        .unwrap_or_else(|| old_style.clone());
+                    style.set_raster_context(
+                        self.raster_configuration,
+                        self.viewport.device_scale_factor(),
+                    );
                     if !slot.resolved_style_snapshot {
                         style.inherit_properties_from(&parent);
                     }
-                    let mut style = self.resolve_native_declarations(
+                    let base = self.resolve_native_declarations(
                         style,
                         &declarations,
                         &parent,
@@ -1623,7 +1631,54 @@ impl Engine {
                         viewport,
                         node == self.document.root(),
                     )?;
+                    let owns_source = slot.animation_base_style.is_some();
+                    let changed_properties = slot.animation_properties.clone();
+                    let font_effects = self.animation_values_for_node(
+                        index, &base, &parent, root_font, viewport, true,
+                    );
+                    let mut style = if font_effects.is_empty() {
+                        base.clone()
+                    } else {
+                        // Font effects cascade before author metric-dependent
+                        // lengths and before other effect endpoints are computed.
+                        let mut final_declarations = declarations;
+                        final_declarations.extend(font_effects);
+                        self.resolve_native_declarations(
+                            base.clone(),
+                            &final_declarations,
+                            &parent,
+                            root_font,
+                            viewport,
+                            node == self.document.root(),
+                        )?
+                    };
+                    for (property, value) in self.animation_values_for_node(
+                        index, &style, &parent, root_font, viewport, false,
+                    ) {
+                        apply_to_computed(&mut style, property, &value, viewport)
+                            .map_err(|_| EngineError::PropertyType { property })?;
+                    }
                     self.adjust_native_control_style(index, node, &mut style);
+                    for id in changed_properties {
+                        let property = StyleProperty::from_u16(id).expect("animated property");
+                        if openui_style::value_from_computed(&old_style, property)
+                            != openui_style::value_from_computed(&style, property)
+                        {
+                            self.dirty.hit_test = true;
+                            self.mark_dirty(property.metadata().invalidation);
+                        }
+                    }
+                    let has_effect_owner = self
+                        .animations
+                        .values()
+                        .any(|effect| effect.target == self.handle_for_slot(index));
+                    let slot = &mut self.slots[index as usize];
+                    if owns_source {
+                        slot.animation_base_style = has_effect_owner.then_some(base);
+                        if !has_effect_owner {
+                            slot.animation_properties.clear();
+                        }
+                    }
                     self.document.install_resolved_style(node, style);
                 }
                 self.refresh_authored_pseudo_styles(node, index)?;
