@@ -3,7 +3,7 @@ project(OpenUIV02Examples LANGUAGES C CXX)
 
 find_package(OpenUI 0.2 CONFIG REQUIRED)
 
-foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics scroll_into_view primitive_styles svg_viewport float_colors fragment_keywords font_units text_content edit_commands focus_notifications form_owner form_owner_guards control_keyboard control_keyboard_guards)
+foreach(example IN ITEMS hello counter todo dashboard accessibility geometry scroll_metrics native_scroll_gutters scroll_into_view primitive_styles svg_viewport float_colors fragment_keywords font_units text_content edit_commands focus_notifications form_owner form_owner_guards control_keyboard control_keyboard_guards)
   add_executable(openui_${example} ${example}.c)
   target_link_libraries(openui_${example} PRIVATE OpenUI::OpenUI)
 endforeach()
@@ -54,3 +54,7 @@ foreach(example IN ITEMS form_owner form_owner_guards control_keyboard control_k
   target_link_libraries(openui_${example}_cpp PRIVATE OpenUI::OpenUI)
   set_target_properties(openui_${example}_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
 endforeach()
+
+add_executable(openui_native_scroll_gutters_cpp native_scroll_gutters.cc)
+target_link_libraries(openui_native_scroll_gutters_cpp PRIVATE OpenUI::OpenUI)
+set_target_properties(openui_native_scroll_gutters_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
