@@ -582,6 +582,10 @@ impl ComputedStyle {
         &self.fields.native_control_text
     }
     #[inline]
+    pub fn native_transform(&self) -> &Option<crate::TransformList> {
+        &self.fields.native_transform
+    }
+    #[inline]
     pub fn object_fit(&self) -> &ObjectFit {
         &self.fields.object_fit
     }
@@ -928,6 +932,10 @@ impl ComputedStyle {
     #[inline]
     pub fn transform(&self) -> &Transform2D {
         &self.fields.transform
+    }
+    #[inline]
+    pub fn transform_matrix(&self) -> &Option<crate::TransformMatrix> {
+        &self.fields.transform_matrix
     }
     #[inline]
     pub fn transform_origin(&self) -> &(Length, Length) {

@@ -1667,6 +1667,8 @@ pub enum RendererInternalStyleValue {
     RasterConfiguration(RasterConfiguration),
     DeviceScaleFactor(f64),
     WillChangeTransform(bool),
+    NativeTransform(Option<crate::TransformList>),
+    TransformMatrix(Option<crate::TransformMatrix>),
 }
 
 impl RendererInternalStyleValue {
@@ -1689,6 +1691,8 @@ impl RendererInternalStyleValue {
             Self::RasterConfiguration(value) => style.raster_configuration = value,
             Self::DeviceScaleFactor(value) => style.device_scale_factor = value,
             Self::WillChangeTransform(value) => style.will_change_transform = value,
+            Self::NativeTransform(value) => style.native_transform = value,
+            Self::TransformMatrix(value) => style.transform_matrix = value,
         });
     }
 }
