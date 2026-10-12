@@ -200,16 +200,11 @@ pub(crate) fn take_viewport_content_layer() -> Option<crate::RecordedContentLaye
 struct BackgroundEffectScope((f32, bool));
 
 impl BackgroundEffectScope {
-    fn new(fragment: &Fragment, style: &ComputedStyle) -> Self {
+    fn new(style: &ComputedStyle) -> Self {
         Self(CONTENT_BACKGROUND_EFFECT.with(|effect| {
             let previous = effect.get();
             effect.set((
-                previous.0
-                    * if can_flatten_box_opacity(fragment, style) {
-                        1.0
-                    } else {
-                        style.opacity
-                    },
+                previous.0 * style.opacity,
                 previous.1
                     && style.filter_blur == 0.0
                     && style.filter_grayscale == 0.0
@@ -811,6 +806,7 @@ fn paint_fragment_tracked(
     doc: &Document,
     offset: PhysicalOffset,
 ) {
+    let _opacity_scope = canvas.opacity_scope();
     if fragment.is_hidden_for_paint
         || fragment
             .table_part
@@ -1348,7 +1344,7 @@ fn paint_fragment_contents(
     let source_style = helper_style.as_ref().unwrap_or(source_style);
     let used_style = paint_style_with_used_overflow(fragment, source_style, doc);
     let style = used_style.as_ref().unwrap_or(source_style);
-    let _background_effect = BackgroundEffectScope::new(fragment, style);
+    let _background_effect = BackgroundEffectScope::new(style);
     let promoted_transform_parent_offset = PhysicalOffset::new(
         abs_offset.left - fragment.offset.left,
         abs_offset.top - fragment.offset.top,
@@ -1586,11 +1582,10 @@ fn paint_fragment_contents(
         canvas.save_layer_alpha_f(None, 1.0);
     }
 
-    // CSS opacity creates a stacking context and composites the entire
-    // subtree at the given opacity. Blink implements this via
-    // PaintLayerPainter::PaintLayerWithAdjustedRoot() using saveLayerAlphaf().
-    let flattens_opacity = can_flatten_box_opacity(fragment, style);
-    let needs_layer = style.opacity < 1.0 && !flattens_opacity;
+    // CSS opacity owns the subtree group. The canvas operation facade folds
+    // only SaveLayerAlpha -> one eligible DrawRect -> Restore, using the pinned
+    // cc float-alpha rule. Layout/DOM shape does not decide fold eligibility.
+    let needs_layer = style.opacity < 1.0;
     if needs_layer {
         // Chromium's SaveLayerAlphaOp uses the destination's ordinary layer
         // format. Subtree contents do not select an F16 opacity intermediate:
@@ -1629,7 +1624,7 @@ fn paint_fragment_contents(
                 paint_text_fragment(canvas, fragment, style, abs_offset, doc);
             }
             FragmentKind::Box | FragmentKind::Viewport => {
-                let paint_opacity = if flattens_opacity { style.opacity } else { 1.0 };
+                let paint_opacity = 1.0;
                 let decoration_prepainted = PREPAINTED_BOX_DECORATIONS.with(|fragments| {
                     fragments
                         .borrow()
@@ -8913,26 +8908,6 @@ fn paint_touching_unfragmented_descendant_outlines(
             owned_outlines,
         );
     }
-}
-
-fn can_flatten_box_opacity(fragment: &Fragment, style: &ComputedStyle) -> bool {
-    // A background-only leaf box can fold opacity into its fill paint without
-    // changing CSS compositing; this avoids an extra saveLayer AA quantization.
-    //
-    // Keep this disabled for now: rounded overflow clips depend on the child
-    // opacity being composited through the same clip mask as Chromium. Folding
-    // the opacity into the fill changes the AA edge for `overflow-clip-margin`.
-    false
-        && style.opacity < 1.0
-        && matches!(fragment.kind, FragmentKind::Box)
-        && fragment.children.is_empty()
-        && !style.background_color.is_transparent()
-        && style.box_shadow.is_empty()
-        && !style.has_outline()
-        && style.effective_border_top() == 0
-        && style.effective_border_right() == 0
-        && style.effective_border_bottom() == 0
-        && style.effective_border_left() == 0
 }
 
 fn fragment_subtree_has_text(fragment: &Fragment) -> bool {

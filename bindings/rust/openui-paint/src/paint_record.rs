@@ -1,7 +1,8 @@
 //! Paint operations retained with a content picture for analytic tile decisions.
 //!
 //! Unsupported operations keep ordinary picture raster. No output pixels are
-//! inspected to choose a color, and all calls reach the original Skia canvas.
+//! inspected to choose a color. Eligible single-draw alpha groups are folded
+//! before picture recording using Chromium's float-alpha operation rule.
 
 use skia_safe::{
     surfaces, BlendMode, Canvas as SkiaCanvas, ClipOp, Color4f, Contains, Matrix, Paint,
@@ -34,6 +35,132 @@ struct Recording {
 
 thread_local! {
     static RECORDING: RefCell<Option<Recording>> = const { RefCell::new(None) };
+    static OPACITY_SCOPES: RefCell<Vec<OpacityState>> = const { RefCell::new(Vec::new()) };
+}
+
+struct PendingOpacity {
+    bounds: Option<Rect>,
+    alpha: f32,
+    base_save_count: usize,
+    draw: Option<(Rect, Paint)>,
+}
+
+struct OpacityState {
+    canvas: usize,
+    pending: Option<PendingOpacity>,
+}
+
+/// A pending operation must not outlive the canvas. Nested fragment traversal
+/// on the same canvas shares its outer scope; another recording owns its own.
+pub(crate) struct OpacityScope<'a> {
+    canvas: &'a SkiaCanvas,
+    owner: bool,
+}
+
+impl<'a> OpacityScope<'a> {
+    fn new(canvas: &'a SkiaCanvas) -> Self {
+        let id = canvas_id(canvas);
+        let owner = OPACITY_SCOPES.with(|scopes| {
+            let mut scopes = scopes.borrow_mut();
+            if scopes.iter().any(|scope| scope.canvas == id) {
+                false
+            } else {
+                scopes.push(OpacityState {
+                    canvas: id,
+                    pending: None,
+                });
+                true
+            }
+        });
+        Self { canvas, owner }
+    }
+}
+
+impl Drop for OpacityScope<'_> {
+    fn drop(&mut self) {
+        if self.owner {
+            // An unfinished group keeps its original saveLayer and save count.
+            // This also applies during unwinding. Never retain a canvas pointer
+            // for later dereferencing after this borrowed lifetime ends.
+            materialize_opacity(self.canvas);
+            OPACITY_SCOPES.with(|scopes| {
+                let mut scopes = scopes.borrow_mut();
+                let index = scopes
+                    .iter()
+                    .position(|scope| scope.canvas == canvas_id(self.canvas))
+                    .expect("owned opacity scope");
+                scopes.remove(index);
+            });
+        }
+    }
+}
+
+fn canvas_id(canvas: &SkiaCanvas) -> usize {
+    canvas as *const SkiaCanvas as usize
+}
+
+fn take_pending_opacity(canvas: &SkiaCanvas) -> Option<PendingOpacity> {
+    OPACITY_SCOPES.with(|scopes| {
+        scopes
+            .borrow_mut()
+            .iter_mut()
+            .find(|scope| scope.canvas == canvas_id(canvas))
+            .and_then(|scope| scope.pending.take())
+    })
+}
+
+fn materialize_opacity(canvas: &SkiaCanvas) {
+    if let Some(pending) = take_pending_opacity(canvas) {
+        // No state operation has occurred since the provisional Save. Replace
+        // it with the original ordinary-format layer before the first operation
+        // that disqualifies SaveLayerAlpha -> Draw -> Restore folding.
+        debug_assert_eq!(canvas.save_count(), pending.base_save_count + 1);
+        canvas.restore();
+        canvas.save_layer_alpha_f(pending.bounds, pending.alpha);
+        if let Some((rect, paint)) = pending.draw {
+            canvas.draw_rect(rect, &paint);
+        }
+    }
+}
+
+fn restore_pending_opacity(canvas: &SkiaCanvas) -> bool {
+    let Some(pending) = take_pending_opacity(canvas) else {
+        return false;
+    };
+    debug_assert_eq!(canvas.save_count(), pending.base_save_count + 1);
+    if let Some((rect, mut paint)) = pending.draw {
+        // cc::ScopedRasterFlags multiplies the original float alpha. Do this
+        // before recording the picture, avoiding SkRecord's packed-alpha fold.
+        paint.set_alpha_f(paint.alpha_f() * pending.alpha);
+        canvas.draw_rect(rect, &paint);
+    }
+    canvas.restore();
+    true
+}
+
+fn supports_folding_alpha(paint: &Paint) -> bool {
+    // Exact cc::PaintFlags::SupportsFoldingAlpha predicate. SkPaint has no
+    // PaintFlags looper; that operation is untracked and cannot reach this path.
+    paint.as_blend_mode() == Some(BlendMode::SrcOver)
+        && paint.color_filter().is_none()
+        && paint.image_filter().is_none()
+}
+
+fn defer_opacity_rect(canvas: &SkiaCanvas, rect: Rect, paint: &Paint) -> bool {
+    OPACITY_SCOPES.with(|scopes| {
+        let mut scopes = scopes.borrow_mut();
+        let pending = scopes
+            .iter_mut()
+            .find(|scope| scope.canvas == canvas_id(canvas))
+            .and_then(|scope| scope.pending.as_mut());
+        if let Some(pending) = pending {
+            if pending.draw.is_none() && supports_folding_alpha(paint) {
+                pending.draw = Some((rect, paint.clone()));
+                return true;
+            }
+        }
+        false
+    })
 }
 
 pub(crate) struct RecordingScope {
@@ -98,11 +225,17 @@ fn unsupported(canvas: &SkiaCanvas) {
 /// Internal canvas facade. Untracked Skia operations conservatively disable
 /// analytic color selection for this recording rather than guessing their effect.
 pub(crate) trait PaintCanvas {
+    /// Used only by the tracking facade. Escaping to Skia must flush first.
+    fn raw_tracking_target(&self) -> &SkiaCanvas;
     fn raw_untracked(&self) -> &SkiaCanvas;
 }
 
 impl PaintCanvas for SkiaCanvas {
+    fn raw_tracking_target(&self) -> &SkiaCanvas {
+        self
+    }
     fn raw_untracked(&self) -> &SkiaCanvas {
+        materialize_opacity(self);
         self
     }
 }
@@ -117,25 +250,82 @@ impl Deref for dyn PaintCanvas + '_ {
 }
 
 impl dyn PaintCanvas + '_ {
+    fn query_target(&self) -> &SkiaCanvas {
+        let canvas = self.raw_tracking_target();
+        let bounded_layer = OPACITY_SCOPES.with(|scopes| {
+            scopes.borrow().iter().any(|scope| {
+                scope.canvas == canvas_id(canvas)
+                    && scope
+                        .pending
+                        .as_ref()
+                        .is_some_and(|pending| pending.bounds.is_some())
+            })
+        });
+        // A bounded Skia layer may narrow its device bounds. Preserve its
+        // original answers if a draw algorithm asks for those bounds.
+        if bounded_layer {
+            materialize_opacity(canvas);
+        }
+        canvas
+    }
+    pub(crate) fn opacity_scope(&self) -> OpacityScope<'_> {
+        OpacityScope::new(self.raw_tracking_target())
+    }
+    pub(crate) fn save_layer_alpha_f(&self, bounds: impl Into<Option<Rect>>, alpha: f32) -> usize {
+        let c = self.raw_tracking_target();
+        materialize_opacity(c);
+        let bounds = bounds.into();
+        // The original record still contains a layer: CompositeIterator's
+        // solid-color analyzer rejects it even if raster playback can fold it.
+        unsupported(c);
+        // SkCanvas handles alpha >= 1 before multiplying a draw's alpha, and
+        // SkPaint pins negative/NaN alpha. Preserve those original semantics
+        // for inputs outside Chromium's normalized opacity operation contract.
+        if !alpha.is_finite() || !(0.0..=1.0).contains(&alpha) {
+            return c.save_layer_alpha_f(bounds, alpha);
+        }
+        let deferred = OPACITY_SCOPES.with(|scopes| {
+            let mut scopes = scopes.borrow_mut();
+            if let Some(scope) = scopes.iter_mut().find(|scope| scope.canvas == canvas_id(c)) {
+                let base_save_count = c.save();
+                scope.pending = Some(PendingOpacity {
+                    bounds,
+                    alpha,
+                    base_save_count,
+                    draw: None,
+                });
+                Some(base_save_count)
+            } else {
+                None
+            }
+        });
+        deferred.unwrap_or_else(|| c.save_layer_alpha_f(bounds, alpha))
+    }
     pub(crate) fn save(&self) -> usize {
         let c = self.raw_untracked();
         capture(c, || Operation::Save);
         c.save()
     }
     pub(crate) fn restore(&self) -> &Self {
-        let c = self.raw_untracked();
+        let c = self.raw_tracking_target();
+        if restore_pending_opacity(c) {
+            return self;
+        }
         capture(c, || Operation::Restore);
         c.restore();
         self
     }
     pub(crate) fn restore_to_count(&self, count: usize) -> &Self {
-        let c = self.raw_untracked();
+        let c = self.raw_tracking_target();
+        if count < c.save_count() {
+            restore_pending_opacity(c);
+        }
         capture(c, || Operation::RestoreTo(count));
         c.restore_to_count(count);
         self
     }
     pub(crate) fn save_count(&self) -> usize {
-        self.raw_untracked().save_count()
+        self.raw_tracking_target().save_count()
     }
     pub(crate) fn translate(&self, offset: impl Into<Vector>) -> &Self {
         let offset = offset.into();
@@ -172,22 +362,26 @@ impl dyn PaintCanvas + '_ {
     }
     pub(crate) fn draw_rect(&self, rect: impl AsRef<Rect>, paint: &Paint) -> &Self {
         let rect = *rect.as_ref();
-        let c = self.raw_untracked();
+        let c = self.raw_tracking_target();
+        if defer_opacity_rect(c, rect, paint) {
+            return self;
+        }
+        materialize_opacity(c);
         capture(c, || Operation::Rect(rect, paint.clone()));
         c.draw_rect(rect, paint);
         self
     }
     pub(crate) fn local_clip_bounds(&self) -> Option<Rect> {
-        self.raw_untracked().local_clip_bounds()
+        self.query_target().local_clip_bounds()
     }
     pub(crate) fn local_to_device_as_3x3(&self) -> Matrix {
-        self.raw_untracked().local_to_device_as_3x3()
+        self.query_target().local_to_device_as_3x3()
     }
     pub(crate) fn is_clip_rect(&self) -> bool {
-        self.raw_untracked().is_clip_rect()
+        self.query_target().is_clip_rect()
     }
     pub(crate) fn device_clip_bounds(&self) -> Option<skia_safe::IRect> {
-        self.raw_untracked().device_clip_bounds()
+        self.query_target().device_clip_bounds()
     }
 }
 
@@ -312,5 +506,312 @@ impl LayerPaintRecord {
             }
         }
         solid.then_some(color)
+    }
+}
+
+#[cfg(test)]
+mod opacity_tests {
+    use super::*;
+    use skia_safe::{Color, ImageInfo};
+
+    fn red(alpha: f32) -> Paint {
+        let mut paint = Paint::default();
+        paint.set_color4f(Color4f::new(1.0, 0.0, 0.0, alpha), None);
+        paint
+    }
+
+    fn render(draw: impl FnOnce(&SkiaCanvas)) -> Vec<u8> {
+        let mut surface = surfaces::raster_n32_premul((8, 8)).unwrap();
+        surface.canvas().clear(Color::from_rgb(0, 128, 0));
+        draw(surface.canvas());
+        surface
+            .image_snapshot()
+            .peek_pixels()
+            .unwrap()
+            .bytes()
+            .unwrap()
+            .to_vec()
+    }
+
+    fn tracked(draw: impl FnOnce(&dyn PaintCanvas)) -> Vec<u8> {
+        render(|canvas| {
+            let tracked: &dyn PaintCanvas = canvas;
+            let _scope = tracked.opacity_scope();
+            draw(tracked);
+        })
+    }
+
+    #[test]
+    fn one_src_over_rect_multiplies_float_alpha_before_raster() {
+        let rect = Rect::from_xywh(0.0, 0.0, 8.0, 8.0);
+        for (paint_alpha, layer_alpha) in [(1.0, 0.1), (0.7, 0.3), (0.0, 0.2)] {
+            let expected = render(|canvas| {
+                canvas.draw_rect(rect, &red(paint_alpha * layer_alpha));
+            });
+            let actual = tracked(|canvas| {
+                let count = canvas.save_layer_alpha_f(None, layer_alpha);
+                assert_eq!(canvas.save_count(), count + 1);
+                canvas.draw_rect(rect, &red(paint_alpha));
+                // State queries do not insert a paint operation.
+                assert!(canvas.local_clip_bounds().is_some());
+                assert_eq!(canvas.local_to_device_as_3x3(), Matrix::new_identity());
+                canvas.restore();
+                assert_eq!(canvas.save_count(), count);
+            });
+            assert_eq!(actual, expected);
+            if paint_alpha == 1.0 {
+                // Native N32 bytes are BGRA: this is the direct-paint value
+                // observed in every required Chromium rectangle profile.
+                assert_eq!(&actual[..4], &[0, 115, 26, 255]);
+            }
+        }
+    }
+
+    #[test]
+    fn non_normalized_alpha_uses_original_skia_clamp_and_layer_semantics() {
+        let rect = Rect::from_xywh(0.0, 0.0, 8.0, 8.0);
+        for alpha in [-1.0, 2.0, f32::NAN, f32::INFINITY, f32::NEG_INFINITY] {
+            let expected = render(|canvas| {
+                canvas.save_layer_alpha_f(None, alpha);
+                canvas.draw_rect(rect, &red(0.5));
+                canvas.restore();
+            });
+            let actual = tracked(|canvas| {
+                let count = canvas.save_layer_alpha_f(None, alpha);
+                assert_eq!(canvas.save_count(), count + 1);
+                canvas.draw_rect(rect, &red(0.5));
+                canvas.restore();
+                assert_eq!(canvas.save_count(), count);
+            });
+            assert_eq!(actual, expected, "ordinary alpha fallback: {alpha}");
+        }
+    }
+
+    #[test]
+    fn second_draw_and_ineligible_blend_keep_the_original_layer() {
+        let rect = Rect::from_xywh(0.0, 0.0, 8.0, 8.0);
+        for mode in [BlendMode::SrcOver, BlendMode::Src, BlendMode::Multiply] {
+            let mut second = red(0.6);
+            second.set_blend_mode(mode);
+            let expected = render(|canvas| {
+                canvas.save_layer_alpha_f(None, 0.2);
+                canvas.draw_rect(rect, &red(1.0));
+                canvas.draw_rect(Rect::from_xywh(2.0, 1.0, 4.0, 5.0), &second);
+                canvas.restore();
+            });
+            let actual = tracked(|canvas| {
+                canvas.save_layer_alpha_f(None, 0.2);
+                canvas.draw_rect(rect, &red(1.0));
+                canvas.draw_rect(Rect::from_xywh(2.0, 1.0, 4.0, 5.0), &second);
+                canvas.restore();
+            });
+            assert_eq!(actual, expected);
+        }
+        let mut source = red(1.0);
+        source.set_blend_mode(BlendMode::Src);
+        assert_eq!(
+            tracked(|canvas| {
+                canvas.save_layer_alpha_f(None, 0.2);
+                canvas.draw_rect(rect, &source);
+                canvas.restore();
+            }),
+            render(|canvas| {
+                canvas.save_layer_alpha_f(None, 0.2);
+                canvas.draw_rect(rect, &source);
+                canvas.restore();
+            })
+        );
+    }
+
+    #[test]
+    fn state_operations_and_unknown_draws_materialize_before_observation() {
+        let rect = Rect::from_xywh(0.0, 0.0, 8.0, 8.0);
+        for operation in 0..4 {
+            let expected = render(|canvas| {
+                canvas.save_layer_alpha_f(None, 0.2);
+                canvas.draw_rect(rect, &red(1.0));
+                match operation {
+                    0 => {
+                        canvas.save();
+                        canvas.restore();
+                    }
+                    1 => {
+                        canvas.clip_rect(
+                            Rect::from_xywh(0.0, 0.0, 4.0, 8.0),
+                            ClipOp::Intersect,
+                            true,
+                        );
+                    }
+                    2 => {
+                        canvas.translate((1.0, 0.5));
+                    }
+                    _ => {
+                        canvas.draw_oval(Rect::from_xywh(1.0, 1.0, 4.0, 4.0), &red(0.5));
+                    }
+                }
+                canvas.restore();
+            });
+            assert_eq!(
+                tracked(|canvas| {
+                    canvas.save_layer_alpha_f(None, 0.2);
+                    canvas.draw_rect(rect, &red(1.0));
+                    match operation {
+                        0 => {
+                            canvas.save();
+                            canvas.restore();
+                        }
+                        1 => {
+                            canvas.clip_rect(
+                                Rect::from_xywh(0.0, 0.0, 4.0, 8.0),
+                                ClipOp::Intersect,
+                                true,
+                            );
+                        }
+                        2 => {
+                            canvas.translate((1.0, 0.5));
+                        }
+                        _ => {
+                            canvas.draw_oval(Rect::from_xywh(1.0, 1.0, 4.0, 4.0), &red(0.5));
+                        }
+                    }
+                    canvas.restore();
+                }),
+                expected
+            );
+        }
+        let info = ImageInfo::new_n32_premul((8, 8), None);
+        let mut expected_readback = vec![0; 8 * 8 * 4];
+        let expected = render(|canvas| {
+            canvas.save_layer_alpha_f(None, 0.2);
+            canvas.draw_rect(rect, &red(1.0));
+            assert!(canvas.read_pixels(&info, &mut expected_readback, 8 * 4, (0, 0)));
+            canvas.restore();
+        });
+        let mut actual_readback = vec![0; 8 * 8 * 4];
+        let actual = tracked(|canvas| {
+            canvas.save_layer_alpha_f(None, 0.2);
+            canvas.draw_rect(rect, &red(1.0));
+            // Deref flushes the original group before exposing a Skia readback.
+            assert!(canvas.read_pixels(&info, &mut actual_readback, 8 * 4, (0, 0)));
+            canvas.restore();
+        });
+        assert_eq!(actual_readback, expected_readback);
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn nested_scopes_restore_to_count_and_empty_groups_preserve_stack_state() {
+        assert_eq!(
+            tracked(|canvas| {
+                let base = canvas.save_count();
+                let count = canvas.save_layer_alpha_f(None, 0.1);
+                canvas.restore_to_count(count + 1); // No-op does not consume a draw.
+                {
+                    let _nested = canvas.opacity_scope();
+                    canvas.draw_rect(Rect::from_xywh(0.0, 0.0, 8.0, 8.0), &red(1.0));
+                }
+                assert_eq!(canvas.save_count(), base + 1);
+                canvas.restore_to_count(base);
+                canvas.save_layer_alpha_f(None, 0.3);
+                canvas.restore_to_count(0); // Skia clamps the target to the root save.
+                assert_eq!(canvas.save_count(), base);
+            }),
+            render(|canvas| {
+                canvas.draw_rect(Rect::from_xywh(0.0, 0.0, 8.0, 8.0), &red(0.1));
+            })
+        );
+    }
+
+    #[test]
+    fn unfinished_scope_flushes_without_closing_the_callers_layer() {
+        assert_eq!(
+            render(|canvas| {
+                let base = canvas.save_count();
+                {
+                    let facade: &dyn PaintCanvas = canvas;
+                    let _scope = facade.opacity_scope();
+                    facade.save_layer_alpha_f(None, 0.2);
+                    facade.draw_rect(Rect::from_xywh(0.0, 0.0, 8.0, 8.0), &red(1.0));
+                }
+                assert_eq!(canvas.save_count(), base + 1);
+                canvas.restore();
+            }),
+            render(|canvas| {
+                canvas.save_layer_alpha_f(None, 0.2);
+                canvas.draw_rect(Rect::from_xywh(0.0, 0.0, 8.0, 8.0), &red(1.0));
+                canvas.restore();
+            })
+        );
+    }
+
+    #[test]
+    fn another_canvas_and_unwinding_do_not_steal_or_leak_pending_operations() {
+        let rect = Rect::from_xywh(0.0, 0.0, 8.0, 8.0);
+        let expected = render(|canvas| {
+            canvas.draw_rect(rect, &red(0.1));
+        });
+        assert_eq!(
+            tracked(|canvas| {
+                canvas.save_layer_alpha_f(None, 0.1);
+                canvas.draw_rect(rect, &red(1.0));
+                let inner = tracked(|other| {
+                    other.save_layer_alpha_f(None, 0.2);
+                    other.draw_rect(rect, &red(1.0));
+                    other.restore();
+                });
+                assert_eq!(
+                    inner,
+                    render(|other| {
+                        other.draw_rect(rect, &red(0.2));
+                    })
+                );
+                canvas.restore();
+            }),
+            expected
+        );
+
+        assert_eq!(
+            render(|canvas| {
+                let base = canvas.save_count();
+                let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                    let facade: &dyn PaintCanvas = canvas;
+                    let _scope = facade.opacity_scope();
+                    facade.save_layer_alpha_f(None, 0.2);
+                    facade.draw_rect(rect, &red(1.0));
+                    panic!("unwind with an unfinished opacity group");
+                }));
+                assert!(result.is_err());
+                assert_eq!(canvas.save_count(), base + 1);
+                canvas.restore();
+                // A new scope on this canvas must find no leaked predecessor.
+                let facade: &dyn PaintCanvas = canvas;
+                let _scope = facade.opacity_scope();
+                assert!(OPACITY_SCOPES.with(|scopes| scopes
+                    .borrow()
+                    .iter()
+                    .find(|scope| scope.canvas == canvas_id(canvas))
+                    .unwrap()
+                    .pending
+                    .is_none()));
+            }),
+            render(|canvas| {
+                canvas.save_layer_alpha_f(None, 0.2);
+                canvas.draw_rect(rect, &red(1.0));
+                canvas.restore();
+            })
+        );
+    }
+
+    #[test]
+    fn raster_folding_does_not_admit_a_layer_to_solid_color_analysis() {
+        render(|canvas| {
+            let facade: &dyn PaintCanvas = canvas;
+            let _scope = facade.opacity_scope();
+            let recording = RecordingScope::new(canvas);
+            facade.save_layer_alpha_f(None, 0.2);
+            facade.draw_rect(Rect::from_xywh(0.0, 0.0, 8.0, 8.0), &red(1.0));
+            facade.restore();
+            assert!(!recording.snapshot().supports_analysis());
+        });
     }
 }
