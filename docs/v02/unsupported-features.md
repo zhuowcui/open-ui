@@ -14,7 +14,7 @@ experiment exists in the repository.
 
 ## Browser services
 
-- HTML loading, CSS text parsing, CSS selector parsing, stylesheet injection,
+- HTML loading, stylesheet parsing, CSS selector parsing, stylesheet injection,
   and a web cascade exposed as application APIs. Native element lookup and
   traversal remain part of the public Rust interaction contract.
 - Open UI never executes JavaScript or provides script bindings. This holds
@@ -47,6 +47,15 @@ experiment exists in the repository.
 
 These are implementation gaps, not accepted final-v0.2 omissions:
 
+- the latest completed original Chromium census is 21,317/22,924 exact at
+  clean `fe51eab9`, with 1,607 differences and zero errors. Fresh matrices are
+  running on `c48ff96c`; later source checkpoints remain unqualified. C/C++
+  consumers compile and link but fail their vertical scroll-gutter runtime
+  guard. The production dependency audit fails on two locked packages;
+  remediation, Rust 1.85 and published-consumer verification are pending.
+  Native API, compositor/3D, accessibility, hardware, package and publication
+  gates remain open. Entries below preserve earlier checkpoint measurements.
+  [Current evidence](../renderer/generated/native-final-closure-status-v1.json);
 - a reduced native font-origin app reproduces the installed-font width gap:
   loaded-font bounds are 480/480 exact but pictures 0/10; installed-font bounds
   are 140/480 exact and pictures 8/10. The original flex fixture's cached

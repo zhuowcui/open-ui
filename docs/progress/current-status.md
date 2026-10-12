@@ -20,6 +20,31 @@ product. Waves W0 through W10 are locally committed. W11 source packaging and
 documentation are implemented, but final external and hardware qualifications
 remain open.
 
+## Current closure work (12 October 2026)
+
+The latest completed original Chromium census is **21,317/22,924 exact
+(93.0%)**, with **1,607 differences and zero render errors**, at clean
+`fe51eab9`. This is a rendering measurement. Whole-project completion has no
+measured percentage. Fresh focused, primitive, original and expanded matrices
+are running on immutable `c48ff96c`, with a newly built runner and fresh
+pinned Chromium captures. Later source checkpoints require their own builds
+and qualification.
+
+The grid literal guards, 39 flex guards, borrowed-helper scroll guard and two
+C reveal guards pass. C11 and C++17 consumers compile and link against the
+156-export ABI. Running them still exposes the shared vertical scroll-gutter
+geometry failure. The strict dependency audit reports three advisories in
+two production-lock packages; the fuzz lock passes that audit. Patched
+dependency work is underway, with Rust 1.85 and publication compatibility
+still required.
+
+New font, scroll-button and retained-helper source repairs are reviewed;
+their compilation, native runtime and pixel results are pending. Compositor,
+3D, accessibility, hardware, reproducible package installation and protected
+publication gates remain open. Earlier sections below retain historical
+checkpoint measurements; they do not qualify current source.
+[Saved evidence](../renderer/generated/native-final-closure-status-v1.json).
+
 ## Table ownership and opacity repair (full renderer gate open)
 
 A clean public Rust table consumer at `c4e8a809` matches pinned Chromium in
@@ -46,7 +71,7 @@ assertions are unchanged. Paint **170/170** passes at `0d178e2c`, whose
 production painter is identical to the measured `c4e8a809` code. The first
 failed paint run remains preserved alongside the corrected result.
 
-The last complete original census remains **21,329/22,924 exact (93.04%)**,
+The original census recorded for that earlier checkpoint was **21,329/22,924 exact (93.04%)**,
 with 1,595 differences and zero render errors. Focused, primitive and complete
 censuses must be rerun on the changed renderer. Whole-project completion has
 no measured percentage; remaining native APIs, compositor and release gates

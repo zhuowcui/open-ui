@@ -13,7 +13,7 @@ headless clock ─────────────────────�
 ```
 
 The supported application path has no Blink/Chromium runtime, resource pack,
-HTML loader, CSS text parser, JavaScript engine, or network stack. Chromium 147
+HTML loader, stylesheet parser, JavaScript engine, or network stack. Chromium 147
 is the pinned rendering reference used to prove renderer compatibility.
 Open UI runs no JavaScript, in any version. Apps implement interaction in
 native Rust through public `Document` and `Element` methods, signals and Rust
@@ -26,6 +26,27 @@ right picture or the Chromium test uses a script. See the
 [native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
 
 ## Verified status
+
+### Current closure work (12 October 2026)
+
+The last completed original Chromium census is **21,317/22,924 exact (93.0%)**
+at clean `fe51eab9`: **1,607 differences, zero render errors**. This measures
+pixel compatibility; it is not a whole-project completion percentage.
+Fresh focused, primitive, original and expanded comparisons are running against
+the clean `c48ff96c` snapshot with freshly built libraries and new Chromium
+captures. Results from that snapshot do not qualify later source changes.
+
+The checked native grid values, 39 flex guards, borrowed-helper scroll guard
+and two C reveal guards pass. The 156-export C ABI and the C11/C++17 examples
+compile and link; example execution still fails on vertical scroll-gutter
+geometry. The dependency audit fails on the locked crossbeam-epoch and
+quick-xml versions. Font, scroll-button and retained-helper repairs have
+reviewed source checkpoints; their new runtime and pixel gates remain open.
+
+Native API, compositor/3D, accessibility, hardware, packaging and publication
+gates remain required. No final v0.2 qualification is claimed. The sections
+below preserve measurements from their stated earlier checkpoints.
+[Current closure evidence](docs/renderer/generated/native-final-closure-status-v1.json).
 
 ### Table ownership and opacity repair (full renderer gate open)
 
@@ -53,7 +74,7 @@ assertions are unchanged. Paint **170/170** passes at `0d178e2c`, whose
 production painter is identical to the measured `c4e8a809` code. The first
 failed paint run remains preserved alongside the corrected result.
 
-The last complete original census remains **21,329/22,924 exact (93.04%)**,
+The original census recorded for that earlier checkpoint was **21,329/22,924 exact (93.04%)**,
 with 1,595 differences and zero render errors. Focused, primitive and complete
 censuses must be rerun on the changed renderer. Whole-project completion has
 no measured percentage; remaining native APIs, compositor and release gates

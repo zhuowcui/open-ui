@@ -4,6 +4,25 @@ The v0.2 source contract and artifact pipeline are checked in. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
+## Current qualification status (12 October 2026)
+
+The latest complete original gate is failed: clean `fe51eab9` measures
+**21,317/22,924 exact**, **1,607 differences**, **zero errors** against pinned
+Chromium. A fresh four-suite CPU run is in progress on clean `c48ff96c`;
+later source changes are not qualified by that run. The C and C++ consumers
+compile and link, but their execution still fails on vertical gutter sizing.
+The production dependency audit reports three advisories across two locked
+packages. The fuzz-lock audit passes; dependency remediation and Rust 1.85
+verification remain required.
+
+Native APIs, retained compositor/3D, real Linux window and accessibility
+operation, hardware performance, reproducible packages, signing and
+publication remain open. Old Open UI image replay preserves history and does
+not define rendering correctness. Open UI executes no JavaScript; applications
+use native Rust operations and callbacks. Earlier sections preserve their
+stated checkpoint evidence.
+[Closure evidence](../renderer/generated/native-final-closure-status-v1.json).
+
 ## Installed and loaded font measurements (reproduced; repair open)
 
 Fresh pinned Chromium captures of the failing flex fixture match its cached
