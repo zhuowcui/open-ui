@@ -124,7 +124,15 @@ mod tests {
         engine.set_animation_time(50.0).unwrap();
         for (node, destination) in [outer, inner].into_iter().zip(destinations) {
             let halfway = engine.scroll_offset(node).unwrap();
-            assert_eq!(halfway, (destination.0 * 0.25, destination.1 * 0.25));
+            // Chromium exposes integer scroll offsets after sampling the curve
+            // (ScrollableArea::GetWebExposedScrollOffset).
+            assert_eq!(
+                halfway,
+                (
+                    (destination.0 * 0.25).round(),
+                    (destination.1 * 0.25).round()
+                )
+            );
         }
         engine.set_animation_time(100.0).unwrap();
         for (node, destination) in [outer, inner].into_iter().zip(destinations) {
@@ -692,7 +700,7 @@ mod tests {
         for position in [Position::Fixed, Position::Absolute] {
             for captures in [false, true] {
                 let (mut engine, outer, _, target) = nested();
-                engine.append_child(outer, target).unwrap();
+                engine.append_or_move_child(outer, target).unwrap();
                 engine
                     .set_property(target, StyleProperty::Position, position.into())
                     .unwrap();
@@ -783,7 +791,7 @@ mod tests {
             .set_property(cell, StyleProperty::Display, Display::TableCell.into())
             .unwrap();
         engine.append_child(row, cell).unwrap();
-        engine.append_child(cell, port).unwrap();
+        engine.append_or_move_child(cell, port).unwrap();
         let options = ScrollIntoViewOptions {
             block: ScrollAlignment::Start,
             inline: ScrollAlignment::Start,

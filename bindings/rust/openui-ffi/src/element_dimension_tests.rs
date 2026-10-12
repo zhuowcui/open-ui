@@ -201,7 +201,40 @@ fn scalar_dimensions_keep_fractional_metrics_and_native_mutations_in_the_same_do
         assert_eq!(dimensions(scroller), [86, 66, 201, 161]);
         let raw = metrics(scroller);
         assert_eq!(raw, [85.5, 65.5, 200.5, 160.5]);
-        property(scroller, StyleProperty::Transform, "scale(2,3)");
+        let operation = OuiTransformOperation {
+            kind: 2,
+            reserved: 0,
+            x: OuiLength {
+                value: 0.0,
+                unit: 0,
+            },
+            y: OuiLength {
+                value: 0.0,
+                unit: 0,
+            },
+            values: [2.0, 3.0, 0.0, 0.0, 0.0, 0.0],
+        };
+        let mut transform = ptr::null_mut();
+        assert_eq!(
+            oui_transform_create(&operation, 1, &mut transform),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            oui_element_set_property(
+                scroller,
+                StyleProperty::Transform as i32,
+                &OuiStyleValue {
+                    tag: 6,
+                    reserved: 0,
+                    data: OuiStylePayload {
+                        compound: transform,
+                    },
+                },
+            ),
+            OuiStatus::Ok
+        );
+        // The document owns the copied transform after the input is released.
+        assert_eq!(oui_style_compound_destroy(transform), OuiStatus::Ok);
         assert_eq!(dimensions(scroller), [86, 66, 201, 161]);
         assert_eq!(metrics(scroller), raw);
         let state = document_state(document);

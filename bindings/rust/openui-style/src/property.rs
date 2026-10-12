@@ -2984,7 +2984,12 @@ mod tests {
         assert_eq!(StyleProperty::ShapeOutside as u16, 237);
         assert_eq!(StyleProperty::ScrollPaddingTop as u16, 238);
         assert_eq!(StyleProperty::ScrollSnapAlignInline as u16, 249);
-        assert_eq!(PROPERTY_METADATA.len(), 249);
+        assert_eq!(StyleProperty::WebkitTextFillColor as u16, 250);
+        assert_eq!(PROPERTY_METADATA.len(), 250);
+        assert_eq!(
+            PROPERTY_METADATA.last().unwrap().property,
+            StyleProperty::WebkitTextFillColor
+        );
         for (index, metadata) in PROPERTY_METADATA.iter().enumerate() {
             let id = u16::try_from(index + 1).unwrap();
             assert_eq!(StyleProperty::from_u16(id), Some(metadata.property));
@@ -2995,7 +3000,7 @@ mod tests {
             assert_eq!(metadata.property.metadata(), metadata);
         }
         assert_eq!(StyleProperty::from_u16(0), None);
-        assert_eq!(StyleProperty::from_u16(250), None);
+        assert_eq!(StyleProperty::from_u16(251), None);
         assert_eq!(
             StyleProperty::Opacity.metadata().invalidation,
             InvalidationClass::Composite

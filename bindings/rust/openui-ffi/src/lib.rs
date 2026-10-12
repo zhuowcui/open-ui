@@ -4778,6 +4778,19 @@ mod tests {
             oui_document_animation_get_state(document, animation_id, &mut state),
             OuiStatus::Ok
         );
+        // Seeking a paused animation to its endpoint keeps it paused. Explicit
+        // finish resumes its directional endpoint, as in Chromium Animation.
+        assert_eq!(state.current_time_ms, 100.0);
+        assert_eq!(state.play_state, 1);
+        assert_eq!(state.finished, 0);
+        assert_eq!(
+            oui_document_animation_finish(document, animation_id),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            oui_document_animation_get_state(document, animation_id, &mut state),
+            OuiStatus::Ok
+        );
         assert_eq!(state.finished, 1);
         let mut output_event = OuiAnimationEvent {
             struct_size: size_of::<OuiAnimationEvent>() as u32,
