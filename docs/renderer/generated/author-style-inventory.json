@@ -5,9 +5,9 @@
     "bindings/rust/openui-engine/src"
   ],
   "counts": {
-    "consumed": 233,
+    "consumed": 234,
     "internal": 17,
-    "public_typed": 216,
+    "public_typed": 217,
     "unclassified": 0
   },
   "fields": [
@@ -669,11 +669,11 @@
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs",
         "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
-        "bindings/rust/openui-paint/src/decoration_painter.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/text_painter.rs",
+        "bindings/rust/openui-engine/src/animation.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "color",
@@ -2142,7 +2142,9 @@
       "classification": "internal",
       "consumers": [
         "bindings/rust/openui-layout/src/transform.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs",
+        "bindings/rust/openui-engine/src/snapshot_scroll_snap_tests.rs"
       ],
       "css_name": null,
       "field": "native_transform",
@@ -3108,6 +3110,18 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "-webkit-text-fill-color",
+      "field": "text_fill_color",
+      "internal_rationale": null,
+      "property_id": 250,
+      "rust_type": "StyleColor"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
@@ -3341,7 +3355,8 @@
       "canonical_schema_entry": false,
       "classification": "internal",
       "consumers": [
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/scroll_button.rs"
       ],
       "css_name": null,
       "field": "transform_matrix",

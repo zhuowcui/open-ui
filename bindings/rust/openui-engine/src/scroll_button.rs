@@ -11,7 +11,7 @@ use openui_geometry::{LayoutUnit, Length, LengthType, WritingDirectionMode};
 use openui_layout::{Fragment, ScrollArea};
 use openui_style::{
     ComputedStyle, Display, InvalidationClass, Overflow, RendererStyleValue, ScrollSnapAlign,
-    ScrollSnapAxis, ScrollSnapStop, StyleProperty, StyleValue, TransformOperation,
+    ScrollSnapAxis, ScrollSnapStop, StyleProperty, StyleValue,
 };
 use std::collections::{HashMap, HashSet};
 
@@ -1313,7 +1313,11 @@ impl Engine {
     ) -> Result<(), &'static str> {
         for child in &fragment.children {
             let mut inherited = parent;
+            let mut unsupported = unsupported_ancestor;
             for ancestor in &child.promoted_transform_ancestors {
+                unsupported = unsupported.or_else(|| {
+                    unsupported_snap_transform(&self.document.node(ancestor.node_id).style)
+                });
                 inherited = inherited.then(WorldTransform(
                     openui_layout::promoted_ancestor_applied_transform(&self.document, ancestor),
                 ));
@@ -1323,41 +1327,16 @@ impl Engine {
                 child.offset.top.to_f64(),
             ));
             if child.node_id.is_none() {
-                self.collect_snap_areas(
-                    child,
-                    translated,
-                    minimum,
-                    unsupported_ancestor,
-                    seen,
-                    out,
-                )?;
+                self.collect_snap_areas(child, translated, minimum, unsupported, seen, out)?;
                 continue;
             }
             let data = self.document.node(child.node_id);
             let owns = child.owns_element_box();
             // kIgnoreScrollOffset does not imply kIgnoreStickyOffset: pinned
             // LayoutBoxModelObject keeps the current sticky translation.
-            let unsupported = unsupported_ancestor.or_else(|| {
-                let index = self.node_slots.get(&child.node_id)?;
-                let authored = &self.slots[*index as usize].authored;
-                let StyleValue::Transform(list) =
-                    authored.get(&(StyleProperty::Transform as u16))?
-                else {
-                    return None;
-                };
-                list.0
-                    .iter()
-                    .any(|operation| {
-                        matches!(
-                            operation,
-                            TransformOperation::Perspective(_)
-                                | TransformOperation::Matrix3d(_)
-                                | TransformOperation::Rotate3d { .. }
-                                | TransformOperation::Translate3d(..)
-                                | TransformOperation::Scale3d(..)
-                        )
-                    })
-                    .then_some("three-dimensional snap quads require retained 3D scene geometry")
+            let unsupported = unsupported.or_else(|| {
+                owns.then(|| unsupported_snap_transform(&data.style))
+                    .flatten()
             });
             let world = if owns && data.style.has_transform() {
                 let resolved = child.resolved_transform.unwrap_or_else(|| {
@@ -1766,6 +1745,18 @@ impl Engine {
         self.refresh_scroll_button_states();
         Ok(ActivationResult { changed: vec![] })
     }
+}
+
+fn unsupported_snap_transform(style: &ComputedStyle) -> Option<&'static str> {
+    // Read the effective retained operations, including sampled/deferred
+    // animation values and removed ancestors. Until the 3D flattening policy
+    // is shared here, those quads must remain an explicit unsupported result.
+    (style
+        .native_transform
+        .as_ref()
+        .is_some_and(openui_style::transform_contains_3d)
+        || style.transform_matrix.is_some_and(|matrix| !matrix.is_2d()))
+    .then_some("three-dimensional snap quads require retained 3D scene geometry")
 }
 
 /// Actual nested scrolling ownership follows retained layout. A table,

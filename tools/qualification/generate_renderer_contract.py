@@ -422,9 +422,10 @@ def style_inventory() -> dict[str, object]:
     # The shared Engine owns native hit testing, scroll snap and scroll reveal.
     # Include those consumers after moving snap resolution out of block layout;
     # every previously inventoried author field remains consumed, with thirteen
-    # additional native interaction fields now covered by the same strict gate.
-    if public_count != 216:
-        raise ValueError(f"expected 216 consumed author fields, found {public_count}")
+    # additional native interaction fields and typed text fill color now
+    # covered by the same strict gate.
+    if public_count != 217:
+        raise ValueError(f"expected 217 consumed author fields, found {public_count}")
     return {
         "schema_version": 1,
         "source": str(COMPUTED.relative_to(ROOT)),

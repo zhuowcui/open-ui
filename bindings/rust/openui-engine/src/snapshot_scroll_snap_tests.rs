@@ -6,7 +6,8 @@ use crate::{EngineOptions, FontCollection, RendererNodeState, ViewportMetrics};
 use openui_compositor::SoftwareCompositor;
 use openui_style::{
     apply_to_computed, Color, Direction, Display, Overflow, Position, RendererStyleValue,
-    ScrollSnapAlign, ScrollSnapAxis, ScrollSnapStop, ScrollbarWidth, Transform2D, WritingMode,
+    ScrollSnapAlign, ScrollSnapAxis, ScrollSnapStop, ScrollbarWidth, Transform2D,
+    TransformOperation, WritingMode,
 };
 
 #[derive(Clone, Copy)]
@@ -344,6 +345,35 @@ fn native_percentage_transform_snap_area_tracks_its_owned_reference_box() {
             assert_eq!(area.rect, [expected_x, 20.0, width, 20.0], "scale={scale}");
         }
     }
+}
+
+#[test]
+fn derived_deferred_3d_snap_ancestry_stays_explicitly_unsupported() {
+    let (mut engine, origin, content) = fixture(Input::Derived, 1.25);
+    area(&mut engine, Input::Derived, content, 40.0, 20.0);
+    let mut computed = engine.computed_style(content).unwrap().clone();
+    computed.update_derived(|style| {
+        style.native_transform = Some(openui_style::TransformList(vec![
+            TransformOperation::PendingInterpolation {
+                from: Box::new(openui_style::TransformList::default()),
+                to: Box::new(openui_style::TransformList(vec![
+                    TransformOperation::Rotate3d {
+                        x: 0.0,
+                        y: 1.0,
+                        z: 0.0,
+                        degrees: 45.0,
+                    },
+                ])),
+                progress: 0.5,
+            },
+        ]));
+    });
+    engine.install_derived_style(content, computed).unwrap();
+    engine.update().unwrap();
+    assert!(matches!(
+        engine.snap_geometry(engine.latest_fragment.as_ref().unwrap(), origin),
+        Err("three-dimensional snap quads require retained 3D scene geometry")
+    ));
 }
 
 #[test]
