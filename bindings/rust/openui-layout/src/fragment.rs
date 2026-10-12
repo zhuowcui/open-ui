@@ -295,6 +295,9 @@ pub struct MulticolFragmentationData {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct FragmentBoxGeometry {
     pub source_size: PhysicalSize,
+    /// Unsliced used edges captured before continuation decoration removal.
+    pub source_border: BoxStrut,
+    pub source_padding: BoxStrut,
     pub stitched_size: PhysicalSize,
     pub writing_direction: WritingDirectionMode,
     pub inline_size: LayoutUnit,
@@ -315,6 +318,15 @@ pub struct StickyTimelineGeometry {
     pub scroll_container_relative_normal_offset: PhysicalOffset,
     pub containing_block_rect: PhysicalRect,
     pub insets: crate::sticky::StickyConstraintRect,
+    /// Stitched/line-union authored box before sticky and scroll movement.
+    pub sticky_box_rect: PhysicalRect,
+    pub containing_block: NodeId,
+    pub nearest_sticky_box: Option<NodeId>,
+    pub nearest_sticky_containing_block: Option<NodeId>,
+    /// Box-only and box-plus-containing-block channels remain independent.
+    pub total_sticky_box_offset: PhysicalOffset,
+    pub total_containing_block_offset: PhysicalOffset,
+    pub is_fixed_to_view: bool,
 }
 
 /// A positioned layout fragment, ready for painting.

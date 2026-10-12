@@ -8,7 +8,8 @@
 use crate::{Fragment, FragmentBoxGeometry};
 use openui_dom::NodeId;
 use openui_geometry::{
-    LayoutUnit, LogicalSize, PhysicalSize, WritingDirectionMode, WritingModeConverter,
+    BoxStrut, LayoutUnit, LogicalBoxStrut, LogicalSize, PhysicalSize, WritingDirectionMode,
+    WritingModeConverter,
 };
 use std::collections::HashMap;
 
@@ -23,8 +24,22 @@ pub(crate) fn capture_source(fragment: &mut Fragment, direction: WritingDirectio
         let rect = fragment.border_box_rect();
         let source_size = WritingModeConverter::new(direction, PhysicalSize::zero())
             .to_physical_size(LogicalSize::new(rect.width(), rect.height()));
+        let physical_edges = |edges: BoxStrut| {
+            LogicalBoxStrut::new(edges.left, edges.right, edges.top, edges.bottom)
+                .to_physical(direction)
+        };
+        // Collapsed borders are already retained in their real physical table
+        // writing direction; ordinary block/multicol working edges are logical.
+        let source_border = if fragment.collapsed_table_border_data.is_some() {
+            crate::ScrollArea::used_border(fragment)
+        } else {
+            physical_edges(crate::ScrollArea::used_border(fragment))
+        };
+        let source_padding = physical_edges(crate::ScrollArea::used_padding(fragment));
         fragment.box_geometry = Some(FragmentBoxGeometry {
             source_size,
+            source_border,
+            source_padding,
             stitched_size: source_size,
             writing_direction: direction,
             inline_size: rect.width(),
@@ -137,4 +152,35 @@ pub(crate) fn populate(root: &mut Fragment) {
         }
     }
     publish(root, &sizes);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use openui_dom::{Document, ElementTag};
+    #[test]
+    fn unsliced_edges_keep_their_source_writing_direction_after_decoration_removal() {
+        let mut doc = Document::new();
+        let node = doc.create_node(ElementTag::Div);
+        let lu = LayoutUnit::from_i32;
+        let mut fragment = Fragment::new_box(node, PhysicalSize::new(lu(100), lu(200)));
+        fragment.border = BoxStrut::new(lu(2), lu(7), lu(4), lu(3));
+        fragment.padding = BoxStrut::new(lu(6), lu(9), lu(8), lu(5));
+        capture_source(
+            &mut fragment,
+            WritingDirectionMode::new(false, false, false, false),
+        );
+        fragment.border.bottom = lu(0);
+        fragment.padding.bottom = lu(0);
+        let data = fragment.box_geometry.unwrap();
+        assert_eq!(data.source_size, PhysicalSize::new(lu(200), lu(100)));
+        assert_eq!(
+            data.source_border,
+            BoxStrut::new(lu(3), lu(4), lu(7), lu(2))
+        );
+        assert_eq!(
+            data.source_padding,
+            BoxStrut::new(lu(5), lu(8), lu(9), lu(6))
+        );
+    }
 }

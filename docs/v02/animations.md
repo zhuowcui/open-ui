@@ -251,3 +251,38 @@ consumption, repeated table sections, promoted positioned descendants, variable
 fragmentainer inline sizes and nested sticky/fragmentation combinations remain
 required source and native/Chromium measurement work. Static paint and input
 still consume the actual fragment boxes; metadata does not change those boxes.
+
+
+### Shared retained sticky constraints (source checkpoint)
+
+Sticky positioning now resolves one authored element from its retained stitched
+box (or inline line union). Anonymous line, column and table helpers retain
+traversal and physical placement without becoming the sticky containing block.
+Unsliced used border and padding are retained before continuation decoration
+removal, so the principal padding rectangle does not inherit a missing last
+edge from the first piece. The real block's padding rectangle supplies that
+boundary; its padding and the
+target's computed margins are excluded as in pinned Chromium 147. Insets use
+the scrollport's content rectangle, with the actual scroll origin and floored
+scroll position kept in their source operation order. Oversized boxes reduce
+the end inset using the containing block's writing direction.
+
+Nested constraints retain independent box-only and containing-block ancestor
+channels. Each real continuation receives the same authored sticky translation,
+while retaining its original parent-relative offset for timeline snapshots and
+repeated layout barriers. Engine guards cover bordered/padded scrollports,
+containing-block margins, nested sticky blocks, anonymous column continuations,
+no-inset pixel/hit neutrality and unchanged layout work at five scales. Shared
+layout guards also exercise an inline ancestor between the sticky box and its
+block. These guards are uncompiled and unexecuted; this is no qualification
+claim or updated full renderer count.
+
+Required follow-up includes fieldset anonymous-content scrolling ownership
+(the legend must remain outside that scrolled content), promoted positioned
+ancestor routing, repeated table sections, extracted spanner wrappers and
+nested sticky View range measurements. Pinned Chromium 147 itself applies the
+first sticky ancestor in ViewTimeline and records a TODO for nested sticky
+elements; the native snapshot guard retains that source behavior. All
+native/Chromium geometry, hit,
+static pixel and full census gates remain required. Open UI runs no JavaScript;
+these operations belong to the retained native Engine used by applications.
