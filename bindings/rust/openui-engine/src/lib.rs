@@ -346,7 +346,21 @@ struct HitClip {
     world_to_local: Affine,
     width: f32,
     height: f32,
+    clip_x: bool,
+    clip_y: bool,
     radii: [(f32, f32); 4],
+}
+
+impl HitClip {
+    fn contains(&self, x: f32, y: f32) -> bool {
+        let (x, y) = self.world_to_local.map(x, y);
+        if self.clip_x && self.clip_y {
+            rounded_rect_contains(x, y, self.width, self.height, self.radii)
+        } else {
+            (!self.clip_x || (x >= 0.0 && x < self.width))
+                && (!self.clip_y || (y >= 0.0 && y < self.height))
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -2521,10 +2535,7 @@ impl Engine {
         for entry in self.hit_test.iter().rev() {
             let (local_x, local_y) = entry.world_to_local.map(x, y);
             if rounded_rect_contains(local_x, local_y, entry.width, entry.height, [(0.0, 0.0); 4])
-                && entry.clips.iter().all(|clip| {
-                    let (clip_x, clip_y) = clip.world_to_local.map(x, y);
-                    rounded_rect_contains(clip_x, clip_y, clip.width, clip.height, clip.radii)
-                })
+                && entry.clips.iter().all(|clip| clip.contains(x, y))
             {
                 if let Some(index) = self.node_slots.get(&entry.node) {
                     return Ok(Some(self.handle_for_slot(*index)));
@@ -2760,6 +2771,8 @@ impl Engine {
                             world_to_local: inverse,
                             width: (box_width - left - right).max(0.0),
                             height: (box_height - top - bottom).max(0.0),
+                            clip_x: true,
+                            clip_y: true,
                             radii: [(0.0, 0.0); 4],
                         });
                     }
@@ -2778,42 +2791,77 @@ impl Engine {
                         clips: own_clips.clone(),
                     });
                 }
-                // An authored overflow clip belongs to the element's border
-                // box. A synthetic continuation clip still bounds the larger
-                // flow extent carrying its visible descendants.
-                let clips_authored_box = owns_box
-                    && (style.overflow_x != openui_style::Overflow::Visible
-                        || style.overflow_y != openui_style::Overflow::Visible);
+                // CSS overflow uses the final layout policy, including table,
+                // replaced and viewport-propagated boxes. A visible axis must
+                // continue accepting the descendant ink painted on that axis.
+                let (overflow_x, overflow_y) = if !owns_box {
+                    (
+                        openui_style::Overflow::Visible,
+                        openui_style::Overflow::Visible,
+                    )
+                } else if let Some(area) = fragment.scroll_area {
+                    (area.overflow_x, area.overflow_y)
+                } else {
+                    openui_layout::used_overflow_pair(document, fragment.node_id)
+                };
+                let clips_used_box = owns_box
+                    && (overflow_x != openui_style::Overflow::Visible
+                        || overflow_y != openui_style::Overflow::Visible);
+                // Containment and continuation clips retain their own axes.
+                // CSS clipping must not suppress a structural fragment edge.
+                let structural = fragment.has_overflow_clip
+                    && (!clips_used_box
+                        || fragment.block_axis_clip_only
+                        || fragment.inline_axis_clip_only);
+                let block_axis_is_x = fragment
+                    .fragmentation_writing_direction
+                    .is_some_and(|direction| !direction.is_horizontal());
+                let (structural_x, structural_y) = if !structural {
+                    (false, false)
+                } else if fragment.block_axis_clip_only && !fragment.inline_axis_clip_only {
+                    (block_axis_is_x, !block_axis_is_x)
+                } else if fragment.inline_axis_clip_only && !fragment.block_axis_clip_only {
+                    (!block_axis_is_x, block_axis_is_x)
+                } else {
+                    (true, true)
+                };
+                let clip_x = structural_x
+                    || (owns_box && style.has_paint_containment())
+                    || (clips_used_box && overflow_x != openui_style::Overflow::Visible);
+                let clip_y = structural_y
+                    || (owns_box && style.has_paint_containment())
+                    || (clips_used_box && overflow_y != openui_style::Overflow::Visible);
                 let (clip_world, clip_width, clip_height) =
-                    if let Some(scrollport) = fragment.viewport_scrollport {
+                    if let Some(scrollport) = fragment.viewport_scrollport.filter(|_| owns_box) {
                         (
                             world,
                             scrollport.client_rect.width().to_f32(),
                             scrollport.client_rect.height().to_f32(),
                         )
-                    } else if let (Some(_), Some(area)) =
-                        (fragment.element_scrollbars, fragment.scroll_area)
-                    {
+                    } else if let Some(area) = fragment.scroll_area.filter(|_| owns_box) {
                         (
-                            box_world.then(Affine::translate(
+                            // client_rect is local to the physical fragment;
+                            // it already includes the principal border-box
+                            // origin (including a table caption's placement).
+                            world.then(Affine::translate(
                                 area.client_rect.x().to_f32(),
                                 area.client_rect.y().to_f32(),
                             )),
                             area.client_rect.width().to_f32(),
                             area.client_rect.height().to_f32(),
                         )
-                    } else if clips_authored_box {
+                    } else if clips_used_box {
                         (box_world, box_width, box_height)
                     } else {
                         (world, width, height)
                     };
-                if let Some(world_to_local) =
-                    clip_world.inverse().filter(|_| fragment.has_overflow_clip)
-                {
+                if let Some(world_to_local) = clip_world.inverse().filter(|_| clip_x || clip_y) {
                     own_clips.push(HitClip {
                         world_to_local,
                         width: clip_width,
                         height: clip_height,
+                        clip_x,
+                        clip_y,
                         radii: if fragment.ignore_border_radius || !owns_box {
                             [(0.0, 0.0); 4]
                         } else {
