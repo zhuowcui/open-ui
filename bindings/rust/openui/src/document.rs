@@ -753,7 +753,8 @@ impl Document {
     }
 
     pub fn update_all(&self) -> Result<(), Error> {
-        self.with_engine_mut(|engine| engine.update().map(|_| ()))
+        self.with_engine_mut(|engine| engine.update().map(|_| ()))?;
+        self.dispatch_animation_events()
     }
 
     pub fn accessibility_update(&self) -> Result<AccessibilityTreeUpdate, Error> {
@@ -831,6 +832,7 @@ impl Document {
 
     pub fn render_to_bitmap(&self) -> Result<Bitmap, Error> {
         let scene = self.with_engine_mut(|engine| engine.scene())?;
+        self.dispatch_animation_events()?;
         let frame = SoftwareCompositor::default().render(&scene)?;
         Ok(Bitmap {
             pixels: frame.pixels,
@@ -843,6 +845,7 @@ impl Document {
 
     pub fn render_to_png_buffer(&self) -> Result<Vec<u8>, Error> {
         let scene = self.with_engine_mut(|engine| engine.scene())?;
+        self.dispatch_animation_events()?;
         Ok(SoftwareCompositor::default().render_png(&scene)?)
     }
 
@@ -883,6 +886,26 @@ impl Document {
     pub fn animation_state(&self, animation: AnimationId) -> Result<AnimationState, Error> {
         self.with_engine(|engine| engine.animation_state(animation))?
             .map_err(Into::into)
+    }
+
+    /// Resolve and copy a scroll/view timeline's range, axis and percentage time.
+    pub fn animation_timeline_snapshot(
+        &self,
+        animation: AnimationId,
+    ) -> Result<Option<crate::AnimationTimelineSnapshot>, Error> {
+        let snapshot =
+            self.with_engine_mut(|engine| engine.animation_timeline_snapshot(animation))?;
+        self.dispatch_animation_events()?;
+        Ok(snapshot)
+    }
+
+    pub fn seek_animation_progress(
+        &self,
+        animation: AnimationId,
+        percentage: f64,
+    ) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.seek_animation_progress(animation, percentage))?;
+        self.dispatch_animation_events()
     }
 
     pub fn pause_animation(&self, animation: AnimationId) -> Result<(), Error> {
@@ -944,7 +967,7 @@ impl Document {
         self.update_all()
     }
 
-    fn dispatch_animation_events(&self) -> Result<(), Error> {
+    pub(crate) fn dispatch_animation_events(&self) -> Result<(), Error> {
         let events = self.with_engine_mut(|engine| Ok(engine.drain_animation_events()))?;
         for animation_event in &events {
             if !self.with_engine(|engine| engine.event_route(animation_event.target).is_ok())? {

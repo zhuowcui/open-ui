@@ -62,7 +62,11 @@ pub(crate) struct AnimationInstance {
     pub target: NodeHandle,
     pub keyframes: PropertyKeyframes,
     pub options: AnimationOptions,
+    pub timing_options: AnimationOptions,
     pub timeline: AnimationTimeline,
+    pub timeline_snapshot: Option<crate::animation_timeline::ProgressTimelineSnapshot>,
+    pub auto_align_start_time: bool,
+    pub pending_progress_seek: Option<f64>,
     pub underlying: StyleValue,
     pub start_time_ms: f64,
     pub offset_ms: f64,
@@ -75,6 +79,17 @@ pub(crate) struct AnimationInstance {
 }
 
 impl AnimationInstance {
+    pub(crate) fn sample_local_time_with_direction(
+        &self,
+        local_time_ms: f64,
+    ) -> (openui_style::AnimationSample, bool) {
+        let (start, end) = self.timeline_snapshot.map_or((false, false), |timeline| {
+            timeline.boundary_alignment(&self.timing_options, self.auto_align_start_time)
+        });
+        self.timing_options
+            .sample_local_time_with_direction_and_boundaries(local_time_ms, start, end)
+    }
+
     // offset_ms is a LOCAL time at the timeline anchor start_time_ms.
     // Applying rate here, rather than in the effect sampler, preserves seeks
     // and continuity when a native application changes playback rate.
@@ -86,8 +101,23 @@ impl AnimationInstance {
 
     fn reached_endpoint(&self, local_time_ms: f64) -> bool {
         self.options.play_state == PlayState::Running
-            && ((self.options.playback_rate > 0.0 && local_time_ms >= self.options.effect_end_ms())
+            && ((self.options.playback_rate > 0.0
+                && local_time_ms >= self.timing_options.effect_end_ms())
                 || (self.options.playback_rate < 0.0 && local_time_ms <= 0.0))
+    }
+
+    fn reanchor_progress(&mut self, timeline_time_ms: f64, local_time_ms: f64) {
+        self.offset_ms = 0.0;
+        if self.options.play_state == PlayState::Paused
+            || self.options.playback_rate == 0.0
+            || self.timeline_snapshot.is_none()
+        {
+            self.hold_time_ms = Some(local_time_ms);
+            self.start_time_ms = timeline_time_ms;
+        } else {
+            self.hold_time_ms = None;
+            self.start_time_ms = timeline_time_ms - local_time_ms / self.options.playback_rate;
+        }
     }
 
     fn reanchor(&mut self, timeline_time_ms: f64, local_time_ms: f64) {
@@ -262,7 +292,17 @@ impl Engine {
         let node = self.resolve(target)?;
         options.validate().map_err(EngineError::from)?;
         self.validate_timeline(timeline)?;
-        let initial_time = initial_local_time(&options)?;
+        if !matches!(timeline, AnimationTimeline::Document) {
+            self.update()?;
+        }
+        let timeline_snapshot = self.progress_timeline_snapshot(timeline);
+        let timing_options = timeline_snapshot
+            .map_or_else(|| options.clone(), |snapshot| snapshot.normalize(&options));
+        let initial_time = if matches!(timeline, AnimationTimeline::Document) {
+            initial_local_time(&options)?
+        } else {
+            0.0
+        };
         let property = keyframes.property();
         let underlying = underlying_override
             .or_else(|| {
@@ -277,21 +317,33 @@ impl Engine {
         let timeline_now = self.timeline_time(timeline, &options)?;
         let start_time_ms = if matches!(timeline, AnimationTimeline::Document) {
             timeline_now
+        } else if options.playback_rate < 0.0 {
+            timeline_snapshot.map_or(0.0, |snapshot| snapshot.range_duration_ms)
         } else {
             0.0
         };
-        let held = options.play_state == PlayState::Paused || options.playback_rate == 0.0;
+        let held = options.play_state == PlayState::Paused
+            || (matches!(timeline, AnimationTimeline::Document) && options.playback_rate == 0.0);
+        let initial_hold = if matches!(timeline, AnimationTimeline::Document) {
+            initial_time
+        } else {
+            (timeline_now - start_time_ms) * options.playback_rate
+        };
         self.animations.insert(
             id,
             AnimationInstance {
                 target,
                 keyframes,
                 options,
+                timing_options,
                 timeline,
+                timeline_snapshot,
+                auto_align_start_time: true,
+                pending_progress_seek: None,
                 underlying,
                 start_time_ms,
                 offset_ms: initial_time,
-                hold_time_ms: held.then_some(initial_time),
+                hold_time_ms: held.then_some(initial_hold),
                 last_applied: None,
                 last_phase: None,
                 last_iteration: 0,
@@ -304,6 +356,7 @@ impl Engine {
     }
 
     pub fn pause_animation(&mut self, id: AnimationId) -> Result<(), EngineError> {
+        self.update()?;
         let snapshot = self.animation_instance(id)?.clone();
         if snapshot.options.play_state == PlayState::Paused {
             return Ok(());
@@ -312,16 +365,39 @@ impl Engine {
         let current = snapshot.current_time(now);
         let instance = self.animations.get_mut(&id).expect("live animation");
         instance.options.play_state = PlayState::Paused;
-        instance.reanchor(now, current);
+        instance.timing_options.play_state = PlayState::Paused;
+        if matches!(instance.timeline, AnimationTimeline::Document) {
+            instance.reanchor(now, current);
+        } else {
+            instance.auto_align_start_time = false;
+            instance.reanchor_progress(now, current);
+        }
         self.sample_animations()
     }
 
     pub fn play_animation(&mut self, id: AnimationId) -> Result<(), EngineError> {
+        self.update()?;
         let snapshot = self.animation_instance(id)?.clone();
         let now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
         let mut current = snapshot.current_time(now);
+        if !matches!(snapshot.timeline, AnimationTimeline::Document) {
+            let instance = self.animations.get_mut(&id).expect("live animation");
+            instance.options.play_state = PlayState::Running;
+            instance.timing_options.play_state = PlayState::Running;
+            instance.auto_align_start_time = true;
+            instance.start_time_ms = if instance.options.playback_rate < 0.0 {
+                instance
+                    .timeline_snapshot
+                    .map_or(0.0, |snapshot| snapshot.range_duration_ms)
+            } else {
+                0.0
+            };
+            instance.offset_ms = 0.0;
+            instance.hold_time_ms = None;
+            return self.sample_animations();
+        }
         if matches!(snapshot.timeline, AnimationTimeline::Document) {
-            let end = snapshot.options.effect_end_ms();
+            let end = snapshot.timing_options.effect_end_ms();
             let rate = snapshot.options.playback_rate;
             if rate > 0.0 && (current < 0.0 || current >= end) {
                 current = 0.0;
@@ -342,6 +418,7 @@ impl Engine {
         }
         let instance = self.animations.get_mut(&id).expect("live animation");
         instance.options.play_state = PlayState::Running;
+        instance.timing_options.play_state = PlayState::Running;
         instance.reanchor(now, current);
         self.sample_animations()
     }
@@ -356,12 +433,16 @@ impl Engine {
                 "animation seek time must be finite",
             ));
         }
+        self.update()?;
         let snapshot = self.animation_instance(id)?.clone();
         let now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
-        self.animations
-            .get_mut(&id)
-            .expect("live animation")
-            .reanchor(now, current_time_ms);
+        let instance = self.animations.get_mut(&id).expect("live animation");
+        if matches!(instance.timeline, AnimationTimeline::Document) {
+            instance.reanchor(now, current_time_ms);
+        } else {
+            instance.auto_align_start_time = false;
+            instance.reanchor_progress(now, current_time_ms);
+        }
         self.sample_animations()
     }
 
@@ -375,16 +456,33 @@ impl Engine {
                 "animation playback rate must be finite",
             ));
         }
+        self.update()?;
         let snapshot = self.animation_instance(id)?.clone();
         let now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
         let current = snapshot.current_time(now);
         let instance = self.animations.get_mut(&id).expect("live animation");
         instance.options.playback_rate = playback_rate;
-        instance.reanchor(now, current);
+        instance.timing_options.playback_rate = playback_rate;
+        if matches!(instance.timeline, AnimationTimeline::Document) {
+            instance.reanchor(now, current);
+        } else if (snapshot.options.playback_rate < 0.0) != (playback_rate < 0.0) {
+            instance.start_time_ms = if instance.auto_align_start_time {
+                if playback_rate < 0.0 {
+                    instance
+                        .timeline_snapshot
+                        .map_or(0.0, |snapshot| snapshot.range_duration_ms)
+                } else {
+                    0.0
+                }
+            } else {
+                instance.timing_options.effect_end_ms() - instance.start_time_ms
+            };
+        }
         self.sample_animations()
     }
 
     pub fn finish_animation(&mut self, id: AnimationId) -> Result<(), EngineError> {
+        self.update()?;
         let snapshot = self.animation_instance(id)?.clone();
         let rate = snapshot.options.playback_rate;
         if rate == 0.0 {
@@ -395,7 +493,7 @@ impl Engine {
         let endpoint = if rate < 0.0 {
             0.0
         } else {
-            snapshot.options.effect_end_ms()
+            snapshot.timing_options.effect_end_ms()
         };
         if !endpoint.is_finite() {
             return Err(EngineError::InvalidInput(
@@ -406,7 +504,13 @@ impl Engine {
         let instance = self.animations.get_mut(&id).expect("live animation");
         // Finishing a paused animation resolves its start time and finished state.
         instance.options.play_state = PlayState::Running;
-        instance.reanchor(now, endpoint);
+        instance.timing_options.play_state = PlayState::Running;
+        if matches!(instance.timeline, AnimationTimeline::Document) {
+            instance.reanchor(now, endpoint);
+        } else {
+            instance.auto_align_start_time = false;
+            instance.reanchor_progress(now, endpoint);
+        }
         self.sample_animations()
     }
 
@@ -435,12 +539,81 @@ impl Engine {
         Ok(())
     }
 
+    /// An owned progress-timeline snapshot, resolved at a native layout barrier.
+    /// Document animations use the ordinary millisecond state and return None.
+    pub fn animation_timeline_snapshot(
+        &mut self,
+        id: AnimationId,
+    ) -> Result<Option<crate::AnimationTimelineSnapshot>, EngineError> {
+        self.animation_instance(id)?;
+        self.update()?;
+        let instance = self.animation_instance(id)?;
+        if matches!(instance.timeline, AnimationTimeline::Document) {
+            return Ok(None);
+        }
+        if let Some(snapshot) = instance.timeline_snapshot {
+            return Ok(Some(
+                snapshot.reflection(Some(instance.current_time(snapshot.time_ms))),
+            ));
+        }
+        let range = match instance.timeline {
+            AnimationTimeline::Scroll { range, .. } | AnimationTimeline::View { range, .. } => {
+                range
+            }
+            AnimationTimeline::Document => unreachable!(),
+        };
+        Ok(Some(crate::AnimationTimelineSnapshot {
+            source: None,
+            active: false,
+            physical_axis: None,
+            scroll_offset: None,
+            cover_start: None,
+            cover_end: None,
+            range_start: range.start,
+            range_end: range.end,
+            duration_ms: None,
+            current_time_ms: None,
+            current_time_percentage: None,
+        }))
+    }
+
+    /// Set a scroll/view animation's current time as a percentage of its
+    /// resolved timeline duration. Finite percentages outside 0..100 are valid.
+    /// An inactive timeline retains the request until its range resolves.
+    pub fn seek_animation_progress(
+        &mut self,
+        id: AnimationId,
+        percentage: f64,
+    ) -> Result<(), EngineError> {
+        if !percentage.is_finite() {
+            return Err(EngineError::InvalidInput(
+                "animation progress must be finite",
+            ));
+        }
+        let instance = self.animation_instance(id)?;
+        if matches!(instance.timeline, AnimationTimeline::Document) {
+            return Err(EngineError::InvalidInput(
+                "percentage time requires a scroll or view timeline",
+            ));
+        }
+        self.update()?;
+        let snapshot = self.animation_instance(id)?.timeline_snapshot;
+        if let Some(snapshot) = snapshot {
+            self.seek_animation(id, snapshot.time_from_percentage(percentage))
+        } else {
+            let instance = self.animations.get_mut(&id).expect("live animation");
+            instance.auto_align_start_time = false;
+            instance.pending_progress_seek = Some(percentage);
+            Ok(())
+        }
+    }
+
     pub fn animation_state(&self, id: AnimationId) -> Result<AnimationState, EngineError> {
         let instance = self.animation_instance(id)?;
         let timeline_now = self.timeline_time(instance.timeline, &instance.options)?;
         let current_time_ms = instance.current_time(timeline_now);
         let effective = self.effective_elapsed(instance, current_time_ms);
-        let sample = instance.options.sample_local_time(effective);
+        let sample = instance.sample_local_time_with_direction(effective).0;
         Ok(AnimationState {
             id,
             target: instance.target,
@@ -456,7 +629,8 @@ impl Engine {
     pub fn is_animating(&self) -> bool {
         !self.reduced_motion
             && (self.animations.values().any(|animation| {
-                animation.options.play_state == PlayState::Running
+                matches!(animation.timeline, AnimationTimeline::Document)
+                    && animation.options.play_state == PlayState::Running
                     && animation.options.playback_rate != 0.0
                     && !animation.ended
             }) || !self.scroll_animations.is_empty())
@@ -498,13 +672,69 @@ impl Engine {
     }
 
     pub(crate) fn sample_animations(&mut self) -> Result<(), EngineError> {
-        let ids = self.animations.keys().copied().collect::<Vec<_>>();
+        if self
+            .animations
+            .values()
+            .any(|instance| !matches!(instance.timeline, AnimationTimeline::Document))
+        {
+            self.update_once()?;
+        }
+        self.sample_animations_at_snapshot(false)
+    }
+
+    pub(crate) fn sample_progress_animations_after_layout(&mut self) -> Result<(), EngineError> {
+        self.sample_animations_at_snapshot(true)
+    }
+
+    fn sample_animations_at_snapshot(&mut self, progress_only: bool) -> Result<(), EngineError> {
+        let ids = self
+            .animations
+            .iter()
+            .filter_map(|(id, instance)| {
+                (!progress_only || !matches!(instance.timeline, AnimationTimeline::Document))
+                    .then_some(*id)
+            })
+            .collect::<Vec<_>>();
         for id in ids {
+            self.refresh_progress_timeline_snapshot(id);
             let Some(snapshot) = self.animations.get(&id).cloned() else {
                 continue;
             };
             if self.resolve(snapshot.target).is_err() {
                 self.animations.remove(&id);
+                continue;
+            }
+            if !matches!(snapshot.timeline, AnimationTimeline::Document)
+                && snapshot.timeline_snapshot.is_none()
+            {
+                if snapshot.last_applied.is_some() {
+                    self.animations
+                        .get_mut(&id)
+                        .expect("live animation")
+                        .last_applied = None;
+                    self.apply_animation_value(
+                        snapshot.target,
+                        snapshot.keyframes.property(),
+                        &snapshot.underlying,
+                    )?;
+                }
+                if snapshot.last_phase.is_some()
+                    && snapshot.last_phase != Some(AnimationPhase::After)
+                {
+                    self.animation_events.push(AnimationEvent {
+                        animation: id,
+                        target: snapshot.target,
+                        property: snapshot.keyframes.property(),
+                        kind: AnimationEventKind::Cancel,
+                        elapsed_time_ms: self.cancel_elapsed_time(&snapshot),
+                        iteration: snapshot.last_iteration,
+                    });
+                }
+                if let Some(instance) = self.animations.get_mut(&id) {
+                    instance.last_phase = None;
+                    instance.last_iteration = 0;
+                    instance.ended = true;
+                }
                 continue;
             }
             let timeline_now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
@@ -516,14 +746,14 @@ impl Engine {
                 if snapshot.options.playback_rate < 0.0 {
                     0.0
                 } else {
-                    snapshot.options.effect_end_ms()
+                    snapshot.timing_options.effect_end_ms()
                 }
             } else {
                 raw_time
             };
             let effective = self.effective_elapsed(&snapshot, current_time);
             let (sample, current_direction_is_reversed) =
-                snapshot.options.sample_local_time_with_direction(effective);
+                snapshot.sample_local_time_with_direction(effective);
             let finished = self.reduced_motion || snapshot.reached_endpoint(current_time);
             let sampled = sample
                 .eased_progress(&snapshot.options.easing, current_direction_is_reversed)
@@ -568,11 +798,12 @@ impl Engine {
             let was_before = snapshot.last_phase.is_none()
                 || snapshot.last_phase == Some(AnimationPhase::Before);
             let was_after = snapshot.last_phase == Some(AnimationPhase::After);
-            let interval_start = (-snapshot.options.delay_ms)
-                .min(snapshot.options.active_duration_ms())
+            let interval_start = (-snapshot.timing_options.delay_ms)
+                .min(snapshot.timing_options.active_duration_ms())
                 .max(0.0);
-            let interval_end = (snapshot.options.effect_end_ms() - snapshot.options.delay_ms)
-                .min(snapshot.options.active_duration_ms())
+            let interval_end = (snapshot.timing_options.effect_end_ms()
+                - snapshot.timing_options.delay_ms)
+                .min(snapshot.timing_options.active_duration_ms())
                 .max(0.0);
             let mut events = Vec::new();
             if phase_changed
@@ -613,7 +844,7 @@ impl Engine {
                 };
                 events.push((
                     AnimationEventKind::Iteration,
-                    snapshot.options.duration_ms * boundary as f64,
+                    snapshot.timing_options.duration_ms * boundary as f64,
                 ));
             }
             for (kind, elapsed_time_ms) in events {
@@ -678,10 +909,10 @@ impl Engine {
         if self.reduced_motion {
             if instance.options.playback_rate < 0.0 {
                 0.0
-            } else if instance.options.effect_end_ms().is_finite() {
-                instance.options.effect_end_ms()
+            } else if instance.timing_options.effect_end_ms().is_finite() {
+                instance.timing_options.effect_end_ms()
             } else {
-                instance.options.delay_ms + instance.options.duration_ms
+                instance.timing_options.delay_ms + instance.timing_options.duration_ms
             }
         } else {
             current_time
@@ -689,12 +920,19 @@ impl Engine {
     }
 
     fn cancel_elapsed_time(&self, instance: &AnimationInstance) -> f64 {
-        let current = self
-            .timeline_time(instance.timeline, &instance.options)
-            .map(|time| instance.current_time(time))
-            .unwrap_or(instance.last_current_time_ms);
-        (current - instance.options.delay_ms)
-            .min(instance.options.active_duration_ms())
+        let current = if !matches!(instance.timeline, AnimationTimeline::Document)
+            && instance.timeline_snapshot.is_none()
+        {
+            instance
+                .hold_time_ms
+                .unwrap_or(instance.last_current_time_ms)
+        } else {
+            self.timeline_time(instance.timeline, &instance.options)
+                .map(|time| instance.current_time(time))
+                .unwrap_or(instance.last_current_time_ms)
+        };
+        (current - instance.timing_options.delay_ms)
+            .min(instance.timing_options.active_duration_ms())
             .max(0.0)
     }
 
@@ -762,6 +1000,49 @@ impl Engine {
         Ok(())
     }
 
+    fn refresh_progress_timeline_snapshot(&mut self, id: AnimationId) {
+        let Some(previous) = self.animations.get(&id).cloned() else {
+            return;
+        };
+        if matches!(previous.timeline, AnimationTimeline::Document) {
+            return;
+        }
+        let next = self.progress_timeline_snapshot(previous.timeline);
+        let instance = self.animations.get_mut(&id).expect("live animation");
+        if let Some(next) = next {
+            if let Some(old) = previous.timeline_snapshot {
+                let duration_changed = old.duration_ms != next.duration_ms;
+                if duration_changed {
+                    if let Some(held) = instance.hold_time_ms {
+                        let progress = held / old.duration_ms;
+                        instance.hold_time_ms = Some((progress * next.duration_seconds) * 1000.0);
+                    } else if !instance.auto_align_start_time
+                        && instance.options.playback_rate != 0.0
+                    {
+                        let progress = previous.current_time(old.time_ms) / old.duration_ms;
+                        let current = (progress * next.duration_seconds) * 1000.0;
+                        instance.start_time_ms =
+                            next.time_ms - current / instance.options.playback_rate;
+                    }
+                }
+            }
+            if instance.auto_align_start_time {
+                instance.start_time_ms = if instance.options.playback_rate < 0.0 {
+                    next.range_duration_ms
+                } else {
+                    0.0
+                };
+                instance.offset_ms = 0.0;
+            }
+            instance.timing_options = next.normalize(&instance.options);
+            instance.timeline_snapshot = Some(next);
+            if let Some(percentage) = instance.pending_progress_seek.take() {
+                instance.reanchor_progress(next.time_ms, next.time_from_percentage(percentage));
+            }
+        }
+        instance.timeline_snapshot = next;
+    }
+
     fn animation_instance(&self, id: AnimationId) -> Result<&AnimationInstance, EngineError> {
         self.animations
             .get(&id)
@@ -787,45 +1068,13 @@ impl Engine {
         timeline: AnimationTimeline,
         options: &AnimationOptions,
     ) -> Result<f64, EngineError> {
-        let virtual_duration = if options.active_duration_ms().is_finite() {
-            options.active_duration_ms()
-        } else {
-            options.duration_ms
-        };
-        match timeline {
-            AnimationTimeline::Document => Ok(self.animation_time_ms),
-            AnimationTimeline::Scroll {
-                source,
-                axis,
-                range,
-            } => {
-                let node = self.document.node(self.resolve(source)?);
-                let position = match axis {
-                    TimelineAxis::Inline | TimelineAxis::X => node.scroll_left as f64,
-                    TimelineAxis::Block | TimelineAxis::Y => node.scroll_top as f64,
-                };
-                Ok(options.delay_ms + range.progress(position) * virtual_duration)
-            }
-            AnimationTimeline::View {
-                subject,
-                axis,
-                range,
-            } => {
-                let node = self.resolve(subject)?;
-                let position = self
-                    .node_bounds(node)
-                    .map(|bounds| match axis {
-                        TimelineAxis::Inline | TimelineAxis::X => {
-                            (bounds.x + bounds.width * 0.5) as f64
-                        }
-                        TimelineAxis::Block | TimelineAxis::Y => {
-                            (bounds.y + bounds.height * 0.5) as f64
-                        }
-                    })
-                    .unwrap_or_default();
-                Ok(options.delay_ms + range.progress(position) * virtual_duration)
-            }
-        }
+        let _ = options;
+        Ok(match timeline {
+            AnimationTimeline::Document => self.animation_time_ms,
+            _ => self
+                .progress_timeline_snapshot(timeline)
+                .map_or(0.0, |snapshot| snapshot.time_ms),
+        })
     }
 }
 

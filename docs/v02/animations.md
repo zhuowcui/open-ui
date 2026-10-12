@@ -95,15 +95,54 @@ as even. These rules are implemented from pinned Chromium 147.0.7727.50 source a
 including checks that a rate change preserves rendered bytes. Their compilation,
 runtime and Chromium qualification are still pending.
 
-Scroll and view timelines remain required work. Their current source maps
-caller-provided ranges to physical scroll offsets or a subject's world-space
-center. It does not yet retain the nearest scrollport's flow-relative axes,
-subject visibility interval and normalized timeline-range snapshot needed for
-Blink's nonmonotonic start-time alignment and reversal controls. The document
-clock repair preserves these public operations; their complete behavior is
-unqualified and requires shared range geometry and corresponding native guards.
+## Retained scroll and view timelines
+
+Scroll and view effects now use a post-layout snapshot from the same retained
+Engine as native element mutations. Inline and block axes resolve through the
+source's writing mode. Negative physical scroll origins use offset magnitude.
+A view effect selects its nearest owned scroll container and measures the
+subject before transforms, scrolling and sticky visual displacement. Its cover
+range includes the source's scroll-padding and retained sticky constraints.
+
+`TimelineRange` endpoints are native CSS-pixel attachment offsets. Scroll
+attachments measure them from the scroll origin; view attachments measure them
+from the cover-range start. Reversed endpoints retain their oriented native
+range behavior; this older oriented native interface is not the complete browser
+attachment-range interface. The required additive named attachment interface must
+retain Chromium's clamped intrinsic fraction for reversed browser endpoints.
+The internal progress clock follows the pinned Chromium scale
+of 16 microseconds per CSS pixel. Cover-relative current time converts to integer
+microseconds before attachment alignment; duration retains the pinned double
+seconds calculation. Auto-aligned effects include the physical scroll endpoints
+in their active phase, while an interior attachment end or an explicit seek keeps
+its exclusive phase boundary. Finite and infinite effect timing normalizes
+to the attachment range. Consequently `current_time_ms` on a progress effect
+reports normalized internal milliseconds, while a document effect reports
+ordinary document-clock milliseconds. Existing field and method layouts remain
+unchanged.
+
+`Document::animation_timeline_snapshot` returns owned range, physical-axis and
+percentage-time data. Inactive timelines report absent resolved fields rather
+than manufacturing a current time. `seek_animation_progress` takes percentage
+current time relative to the whole resolved timeline duration; it retains an
+inactive request until layout resolves the range. These are native Rust APIs.
+
+Sticky layout now resolves in one final shared stage after owned scroll geometry
+is retained. It follows used overflow for block, flex, grid, table and viewport
+boxes; anonymous table helpers do not create authored scroll boundaries. Engine
+scroll invalidation follows the same retained ownership.
+
+Progress timelines sample when retained layout or scroll position changes;
+they request no document-clock animation ticks. Pause holds percentage time,
+play re-aligns to the attachment range, and rate changes use Blink's separate
+nonmonotonic start-time rules. A finished effect can re-enter when its scroll
+position reverses. These source changes and native guards are uncompiled and
+unqualified. Named view ranges, complete continuation geometry, nested sticky
+relationships and their Chromium measurements still require completion. The
+new typed progress operations also require additive C transport and consumers.
+
 Overlapping effects and cancellation also need qualification: each animation
-still retains its captured underlying value, so restoring it must be reviewed
+retains an underlying value, updated by authored property setters, so restoring it must be reviewed
 against surviving effects and later authored changes. The
 [Web Animations timing model](https://www.w3.org/TR/web-animations-1/#the-current-time-of-an-animation)
 defines the browser behavior used as the oracle. Applications perform the
@@ -125,3 +164,14 @@ Typed transform lists accept translate/scale/rotate/matrix operations in both
 2D and 3D plus perspective, and compatible lists interpolate deterministically.
 Depth preservation, `preserve-3d`, backface visibility, and perspective-origin
 remain gated on a real 3D layer tree rather than being approximated in paint.
+
+
+### Phase boundary timing
+
+The source implementation follows pinned Chromium 147.0.7727.50 timing arithmetic:
+local time is represented as seconds, snapped to the before boundary within one
+microsecond, and then snapped to the after boundary if it has not already entered
+the before phase. The same adjusted time supplies active time and progress.
+This also governs fill and tiny-duration effects; the unchanged pixel gates have
+zero tolerance. Native boundary, tiny-effect, and inactive-source guards are
+written but have not been compiled or executed in this source checkpoint.

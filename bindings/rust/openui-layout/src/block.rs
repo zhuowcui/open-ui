@@ -1534,6 +1534,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     if node_id == doc.root() {
         crate::table::populate_column_background_positioning(doc, &mut fragment);
         crate::scroll_area::populate(doc, &mut fragment);
+        populate_sticky_geometry(doc, &mut fragment);
     }
     fragment
 }
@@ -5432,14 +5433,6 @@ pub(crate) fn block_layout_contents(
         FragmentKind::Box
     };
 
-    // Sticky descendants are constrained by their nearest scroll container,
-    // not merely left at their normal-flow position.  At this point the
-    // scrollport and every descendant containing block have final physical
-    // geometry, so the offset can be applied without disturbing sibling flow.
-    if is_viewport || crate::scroll_area::is_scroll_container(doc, node_id) {
-        apply_sticky_descendants_in_scrollport(doc, &mut fragment);
-    }
-
     // ── Overflow tracking ────────────────────────────────────────────
     // Compute the scrollable overflow rect by unioning all child border-box
     // rects (relative to this fragment). If the union extends beyond this
@@ -5606,6 +5599,24 @@ fn suppress_nested_principal_decoration_duplicates(fragment: &mut Fragment) {
     visit(fragment, &mut Vec::new(), None);
 }
 
+/// Resolve sticky offsets after all authored boxes have final physical and
+/// used-overflow geometry. Postorder gives each real scrollport its descendants
+/// before an ancestor resolves its own sticky child. Helper boxes are traversed
+/// but never acquire a separate authored scrolling/effect boundary.
+fn populate_sticky_geometry(doc: &Document, fragment: &mut Fragment) {
+    for child in &mut fragment.children {
+        populate_sticky_geometry(doc, child);
+    }
+    if fragment.owns_element_box()
+        && (fragment.viewport_scrollport.is_some()
+            || fragment
+                .scroll_area
+                .is_some_and(|area| area.is_scroll_container()))
+    {
+        apply_sticky_descendants_in_scrollport(doc, fragment);
+    }
+}
+
 pub(crate) fn apply_sticky_descendants_in_scrollport(
     doc: &Document,
     scroll_container: &mut Fragment,
@@ -5651,7 +5662,11 @@ pub(crate) fn apply_sticky_descendants_in_scrollport(
                 .map_or(LayoutUnit::zero(), |s| s.insets.block_sum()))
         .clamp_negative_to_zero(),
     );
-    let viewport = PhysicalRect::new(viewport_offset, viewport_size);
+    let viewport = scroll_container
+        .scroll_area
+        .map_or(PhysicalRect::new(viewport_offset, viewport_size), |area| {
+            area.client_rect
+        });
 
     fn visit(
         doc: &Document,
@@ -5660,20 +5675,45 @@ pub(crate) fn apply_sticky_descendants_in_scrollport(
         containing_block: PhysicalRect,
         viewport: PhysicalRect,
         scroll_offset: PhysicalOffset,
+        scroll_container_node: NodeId,
+        ancestor_sticky_translation: PhysicalOffset,
     ) {
+        if let Some(retained) = fragment.sticky_timeline_geometry {
+            if retained.scroll_container == scroll_container_node {
+                fragment.offset = retained.parent_relative_normal_offset;
+            }
+        }
+        fragment.sticky_timeline_geometry = None;
         let normal = PhysicalOffset::new(
             parent_offset.left + fragment.offset.left,
             parent_offset.top + fragment.offset.top,
         );
         let mut visual = normal;
+        let mut sticky_translation = ancestor_sticky_translation;
         if !fragment.node_id.is_none() {
             let style = &doc.node(fragment.node_id).style;
-            if style.position == Position::Sticky {
+            if fragment.owns_element_box() && style.position == Position::Sticky {
                 let insets = crate::sticky::compute_sticky_constraint_rect(
                     style,
                     viewport.size.width,
                     viewport.size.height,
                 );
+                fragment.sticky_timeline_geometry = Some(crate::fragment::StickyTimelineGeometry {
+                    scroll_container: scroll_container_node,
+                    parent_relative_normal_offset: fragment.offset,
+                    scroll_container_relative_normal_offset: PhysicalOffset::new(
+                        normal.left - ancestor_sticky_translation.left,
+                        normal.top - ancestor_sticky_translation.top,
+                    ),
+                    containing_block_rect: PhysicalRect::new(
+                        PhysicalOffset::new(
+                            containing_block.offset.left - ancestor_sticky_translation.left,
+                            containing_block.offset.top - ancestor_sticky_translation.top,
+                        ),
+                        containing_block.size,
+                    ),
+                    insets,
+                });
                 let delta = crate::sticky::compute_sticky_offset(
                     normal,
                     scroll_offset,
@@ -5686,13 +5726,17 @@ pub(crate) fn apply_sticky_descendants_in_scrollport(
                 fragment.offset.top = fragment.offset.top + delta.top;
                 visual.left = visual.left + delta.left;
                 visual.top = visual.top + delta.top;
+                sticky_translation.left = sticky_translation.left + delta.left;
+                sticky_translation.top = sticky_translation.top + delta.top;
             }
 
             // Sticky positioning belongs to the nearest scroll container.
             // Descendants of this nested scrollport were resolved when its
             // own block layout completed; an ancestor scrollport (especially
             // the viewport) must not apply their constraints a second time.
-            if crate::scroll_area::is_scroll_container(doc, fragment.node_id) {
+            if fragment.owns_element_box()
+                && crate::scroll_area::is_scroll_container(doc, fragment.node_id)
+            {
                 return;
             }
         }
@@ -5707,6 +5751,8 @@ pub(crate) fn apply_sticky_descendants_in_scrollport(
                 child_containing_block,
                 viewport,
                 scroll_offset,
+                scroll_container_node,
+                sticky_translation,
             );
         }
     }
@@ -5716,7 +5762,13 @@ pub(crate) fn apply_sticky_descendants_in_scrollport(
     // in RTL or reverse flex flows.
     let mut content_rect = viewport;
     for child in &scroll_container.children {
-        content_rect = content_rect.unite(&PhysicalRect::new(child.offset, child.size));
+        let normal_offset = child
+            .sticky_timeline_geometry
+            .filter(|geometry| geometry.scroll_container == scroll_container.node_id)
+            .map_or(child.offset, |geometry| {
+                geometry.parent_relative_normal_offset
+            });
+        content_rect = content_rect.unite(&PhysicalRect::new(normal_offset, child.size));
     }
     for child in &mut scroll_container.children {
         visit(
@@ -5726,6 +5778,8 @@ pub(crate) fn apply_sticky_descendants_in_scrollport(
             content_rect,
             viewport,
             scroll_offset,
+            scroll_container.node_id,
+            PhysicalOffset::zero(),
         );
     }
 }

@@ -2285,8 +2285,9 @@ fn scroll_timeline_samples_from_offset() {
         )
         .unwrap();
     scroller.scroll_to(0.0, 50.0).unwrap();
+    assert_eq!(target.computed_style().unwrap().opacity, 0.5);
     document.advance_time(1.0).unwrap();
-    assert!(document.is_animating().unwrap());
+    assert!(!document.is_animating().unwrap());
 }
 
 #[test]

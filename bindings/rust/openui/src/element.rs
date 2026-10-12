@@ -713,12 +713,14 @@ impl Element {
 
     pub fn scroll_to(&self, x: f64, y: f64) -> Result<(), Error> {
         self.document
-            .with_engine_mut(|engine| engine.scroll_to(self.handle, x, y))
+            .with_engine_mut(|engine| engine.scroll_to(self.handle, x, y))?;
+        self.document.dispatch_animation_events()
     }
 
     pub fn scroll_by(&self, dx: f64, dy: f64) -> Result<(), Error> {
         self.document
-            .with_engine_mut(|engine| engine.scroll_by(self.handle, dx, dy))
+            .with_engine_mut(|engine| engine.scroll_by(self.handle, dx, dy))?;
+        self.document.dispatch_animation_events()
     }
 
     /// Reveal this element through enclosing scrollports and the native viewport.

@@ -934,9 +934,6 @@ pub(crate) fn flex_layout_contents(
     }
     fragment.oof_candidates = bubbled_oof_candidates;
     finalize_flex_fragment(doc, &mut fragment, style, is_column);
-    if crate::scroll_area::is_scroll_container(doc, node_id) {
-        crate::block::apply_sticky_descendants_in_scrollport(doc, &mut fragment);
-    }
     // Override baselines with values computed from the baseline alignment group.
     // flex_baseline_from_child only examines the first/last child and cannot
     // account for baseline-aligned items (which may be deeper in the list and

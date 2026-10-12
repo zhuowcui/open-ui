@@ -462,20 +462,56 @@ impl AnimationOptions {
     /// An unresolved iteration outside the fill interval is not even.
     #[doc(hidden)]
     pub fn sample_local_time_with_direction(&self, local_time_ms: f64) -> (AnimationSample, bool) {
-        let active_duration = self.active_duration_ms();
-        let end = self.effect_end_ms();
-        let before_boundary = self.delay_ms.min(end).max(0.0);
-        let after_boundary = (self.delay_ms + active_duration).min(end).max(0.0);
+        self.sample_local_time_with_direction_and_boundaries(local_time_ms, false, false)
+    }
+
+    /// Engine-only normalized progress-timeline phase context. Document and
+    /// direct callers retain exclusive endpoint defaults through the helper above.
+    #[doc(hidden)]
+    pub fn sample_local_time_with_direction_and_boundaries(
+        &self,
+        local_time_ms: f64,
+        start_boundary_aligned: bool,
+        end_boundary_aligned: bool,
+    ) -> (AnimationSample, bool) {
+        // Blink's default AnimationTimeDelta stores seconds. Its phase operation
+        // mutates local time, first snapping to the before boundary, then (only
+        // if not already Before) to the after boundary. Active-time/progress must
+        // consume that same mutated time. This 1us rule is timing semantics.
+        let duration_seconds = self.duration_ms / 1000.0;
+        let delay_seconds = self.delay_ms / 1000.0;
+        let count = match self.iterations {
+            IterationCount::Number(value) => value,
+            IterationCount::Infinite => f64::INFINITY,
+        };
+        let active_duration = if duration_seconds == 0.0 || count == 0.0 {
+            0.0
+        } else {
+            duration_seconds * count
+        };
+        let end = (delay_seconds + active_duration).max(0.0);
+        let before_boundary = delay_seconds.min(end).max(0.0);
+        let after_boundary = (delay_seconds + active_duration).min(end).max(0.0);
         let backwards = self.playback_rate < 0.0;
-        let phase = if local_time_ms < before_boundary
-            || (backwards && local_time_ms == before_boundary)
+        let mut local_time_seconds = local_time_ms / 1000.0;
+        if within_animation_time_tolerance(local_time_seconds, before_boundary) {
+            local_time_seconds = before_boundary;
+        }
+        let phase = if local_time_seconds < before_boundary
+            || (backwards && local_time_seconds == before_boundary && !start_boundary_aligned)
         {
             AnimationPhase::Before
-        } else if local_time_ms > after_boundary || (!backwards && local_time_ms == after_boundary)
-        {
-            AnimationPhase::After
         } else {
-            AnimationPhase::Active
+            if within_animation_time_tolerance(local_time_seconds, after_boundary) {
+                local_time_seconds = after_boundary;
+            }
+            if local_time_seconds > after_boundary
+                || (!backwards && local_time_seconds == after_boundary && !end_boundary_aligned)
+            {
+                AnimationPhase::After
+            } else {
+                AnimationPhase::Active
+            }
         };
         let in_effect = match phase {
             AnimationPhase::Before => self.fill.fills_before(),
@@ -493,34 +529,30 @@ impl AnimationOptions {
             );
         }
         let active_time = match phase {
-            AnimationPhase::Before => (local_time_ms - self.delay_ms).max(0.0),
-            AnimationPhase::Active => local_time_ms - self.delay_ms,
-            AnimationPhase::After => (local_time_ms - self.delay_ms)
+            AnimationPhase::Before => (local_time_seconds - delay_seconds).max(0.0),
+            AnimationPhase::Active => local_time_seconds - delay_seconds,
+            AnimationPhase::After => (local_time_seconds - delay_seconds)
                 .min(active_duration)
                 .max(0.0),
         };
-        let count = match self.iterations {
-            IterationCount::Number(value) => value,
-            IterationCount::Infinite => f64::INFINITY,
-        };
-        let overall = if self.duration_ms == 0.0 {
+        let overall = if within_animation_time_tolerance(duration_seconds, 0.0) {
             if phase == AnimationPhase::Before {
                 0.0
             } else {
                 count
             }
         } else {
-            active_time / self.duration_ms
+            active_time / duration_seconds
         };
         let mut progress = if overall.is_infinite() {
             0.0
         } else {
             overall.fract()
         };
-        if progress == 0.0
+        if progress.abs() <= 2.0 * f64::EPSILON
             && phase != AnimationPhase::Before
-            && active_time == active_duration
-            && count != 0.0
+            && within_animation_time_tolerance(active_time, active_duration)
+            && count.abs() > 2.0 * f64::EPSILON
         {
             progress = 1.0;
         }
@@ -614,6 +646,21 @@ impl AnimationOptions {
                 iteration_time / self.duration_ms,
             )),
         }
+    }
+}
+
+// TimingCalculations::IsWithinAnimationTimeTolerance, in seconds. Infinity
+// compares equal only to itself; subtracting it would otherwise produce NaN.
+fn within_animation_time_tolerance(left: f64, right: f64) -> bool {
+    if left.is_infinite() || right.is_infinite() {
+        left == right
+    } else {
+        let difference = if left >= right {
+            left - right
+        } else {
+            right - left
+        };
+        difference <= 0.000001
     }
 }
 
@@ -1172,7 +1219,11 @@ impl TimelineRange {
 
     /// Validate a range, including one built directly with the public fields.
     pub fn validate(self) -> Result<(), AnimationError> {
-        if !self.start.is_finite() || !self.end.is_finite() || self.start == self.end {
+        if !self.start.is_finite()
+            || !self.end.is_finite()
+            || self.start == self.end
+            || !(self.end - self.start).is_finite()
+        {
             return Err(AnimationError::InvalidTiming(
                 "timeline range must have distinct finite endpoints",
             ));

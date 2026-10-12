@@ -2,6 +2,7 @@
 
 mod accessibility;
 mod animation;
+mod animation_timeline;
 mod control_geometry;
 mod element_dimensions;
 mod forms;
@@ -21,6 +22,8 @@ pub use accessibility::{
     AccessibilityNode, AccessibilityNodeId, AccessibilityPlatformAction, AccessibilityRelation,
     AccessibilityRole, AccessibilityToggled, AccessibilityTreeUpdate,
 };
+
+pub use animation_timeline::AnimationTimelineSnapshot;
 
 pub use animation::{
     AnimationEvent, AnimationEventKind, AnimationId, AnimationState, AnimationTimeline,
@@ -2263,6 +2266,9 @@ impl Engine {
         data.scroll_left = x;
         data.scroll_top = y;
         self.invalidate_scroll(node);
+        // Programmatic scrolling samples the same retained timeline without
+        // advancing the document clock or calling application callbacks.
+        self.sample_progress_animations_after_layout()?;
         Ok(())
     }
 
@@ -2281,7 +2287,10 @@ impl Engine {
                 sticky = true;
                 break;
             }
-            if !style.is_scroll_container() {
+            if !self
+                .layout_scroll_area(descendant)
+                .is_some_and(|area| area.is_scroll_container())
+            {
                 pending.extend(self.document.children(descendant));
             }
         }
@@ -2420,7 +2429,16 @@ impl Engine {
         }
         self.animation_time_ms = time_ms;
         self.sample_animations()?;
-        self.sample_scroll_animations()
+        self.sample_scroll_animations()?;
+        if self
+            .animations
+            .values()
+            .any(|instance| !matches!(instance.timeline, AnimationTimeline::Document))
+        {
+            self.update_once()?;
+            self.sample_progress_animations_after_layout()?;
+        }
+        Ok(())
     }
 
     pub fn animation_time(&self) -> f64 {
@@ -2428,6 +2446,21 @@ impl Engine {
     }
 
     pub fn update(&mut self) -> Result<&SceneSnapshot, EngineError> {
+        // Freeze one post-layout progress-timeline snapshot per native barrier.
+        // A layout-affecting sample gets a second layout without recursively
+        // re-snapshotting a feedback-dependent view timeline in this barrier.
+        let snapshot_needed = self.dirty.visual() || self.latest_fragment.is_none();
+        self.update_once()?;
+        if snapshot_needed {
+            self.sample_progress_animations_after_layout()?;
+        }
+        if self.dirty.visual() {
+            self.update_once()?;
+        }
+        Ok(self.latest_scene.as_ref().expect("scene assigned"))
+    }
+
+    fn update_once(&mut self) -> Result<&SceneSnapshot, EngineError> {
         self.synchronize_font_collection()?;
         if !self.dirty.layout && self.latest_fragment.is_some() {
             self.refresh_scroll_button_states();

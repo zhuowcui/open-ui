@@ -261,6 +261,17 @@ pub struct MulticolFragmentationData {
     pub declared_column_count: u32,
 }
 
+/// Original layout geometry used by a view timeline's sticky range.
+/// Paint and hit testing continue to consume the resolved fragment offset.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct StickyTimelineGeometry {
+    pub scroll_container: NodeId,
+    pub parent_relative_normal_offset: PhysicalOffset,
+    pub scroll_container_relative_normal_offset: PhysicalOffset,
+    pub containing_block_rect: PhysicalRect,
+    pub insets: crate::sticky::StickyConstraintRect,
+}
+
 /// A positioned layout fragment, ready for painting.
 ///
 /// Mirrors Blink's `PhysicalBoxFragment`. Contains the resolved size,
@@ -389,6 +400,10 @@ pub struct Fragment {
     /// this to slice in normal-flow coordinates while moving each slice and
     /// its clip with the interrupted inline continuation.
     pub fragmentation_visual_offset: PhysicalOffset,
+
+    /// Sticky source geometry before scroll-dependent visual displacement.
+    /// Timeline geometry ignores this displacement, including that of ancestors.
+    pub sticky_timeline_geometry: Option<StickyTimelineGeometry>,
 
     /// The positioning inputs used to create an out-of-flow fragment.
     pub positioned_fragmentation: Option<PositionedFragmentationData>,
@@ -643,6 +658,7 @@ impl Fragment {
             column_block_start_ink_overflow: LayoutUnit::zero(),
             column_block_end_ink_overflow: LayoutUnit::zero(),
             fragmentation_visual_offset: PhysicalOffset::zero(),
+            sticky_timeline_geometry: None,
             positioned_fragmentation: None,
             promoted_transform_ancestors: Vec::new(),
             promoted_transform_uses_fragment_decoration: false,
@@ -720,6 +736,7 @@ impl Fragment {
             column_block_start_ink_overflow: LayoutUnit::zero(),
             column_block_end_ink_overflow: LayoutUnit::zero(),
             fragmentation_visual_offset: PhysicalOffset::zero(),
+            sticky_timeline_geometry: None,
             positioned_fragmentation: None,
             promoted_transform_ancestors: Vec::new(),
             promoted_transform_uses_fragment_decoration: false,
