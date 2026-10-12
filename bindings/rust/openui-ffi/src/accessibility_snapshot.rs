@@ -1,6 +1,22 @@
 //! Owned, versioned C snapshots of the shared AccessKit semantic tree.
 
 use super::*;
+
+// SAFETY CONTRACT: a non-null output has readable storage for struct_size;
+// when that size includes the ABI header, both header words are readable.
+// Only after validating the declared size may callers write a complete T.
+unsafe fn output_header<T>(output: *mut T) -> Result<(u32, u32), ApiError> {
+    if output.is_null() {
+        return Err(invalid("accessibility output is null"));
+    }
+    let struct_size = unsafe { ptr::read_unaligned(output.cast::<u32>()) };
+    if struct_size < 2 * size_of::<u32>() as u32 {
+        return Err(invalid("accessibility output header is too small"));
+    }
+    let abi_version = unsafe { ptr::read_unaligned(output.cast::<u32>().add(1)) };
+    check_header(struct_size, abi_version, size_of::<T>())?;
+    Ok((struct_size, abi_version))
+}
 use openui_engine::{
     AccessibilityNode, AccessibilityPlatformAction as Action, AccessibilityToggled,
 };
@@ -146,24 +162,23 @@ pub extern "C" fn oui_accessibility_snapshot_get_info(
     out_info: *mut OuiAccessibilitySnapshotInfo,
 ) -> OuiStatus {
     ffi(|| {
-        if out_info.is_null() {
-            return Err(invalid("accessibility snapshot info output is null"));
-        }
-        let info = unsafe { &mut *out_info };
-        check_header(
-            info.struct_size,
-            info.abi_version,
-            size_of::<OuiAccessibilitySnapshotInfo>(),
-        )?;
+        let (struct_size, abi_version) = unsafe { output_header(out_info) }?;
         let snapshot = snapshot(snapshot_handle as usize)?;
-        info.generation = snapshot.generation;
-        info.focus_id = snapshot.focus_id;
-        info.node_count = snapshot.nodes.len();
-        info.changed_count = snapshot.changed.len();
-        info.removed_count = snapshot.removed.len();
-        info.full_tree = u8::from(snapshot.full_tree);
-        info.reduced_motion = u8::from(snapshot.reduced_motion);
-        info.reserved = [0; 6];
+        let info = OuiAccessibilitySnapshotInfo {
+            struct_size,
+            abi_version,
+            generation: snapshot.generation,
+            focus_id: snapshot.focus_id,
+            node_count: snapshot.nodes.len(),
+            changed_count: snapshot.changed.len(),
+            removed_count: snapshot.removed.len(),
+            full_tree: u8::from(snapshot.full_tree),
+            reduced_motion: u8::from(snapshot.reduced_motion),
+            reserved: [0; 6],
+        };
+        // SAFETY: the validated size covers this value and the C caller
+        // provides aligned, writable storage. Every fallible step succeeded.
+        unsafe { ptr::write(out_info, info) };
         Ok(())
     })
 }
@@ -176,15 +191,7 @@ pub extern "C" fn oui_accessibility_snapshot_get_node(
     out_node: *mut OuiAccessibilityNodeInfo,
 ) -> OuiStatus {
     ffi(|| {
-        if out_node.is_null() {
-            return Err(invalid("accessibility node info output is null"));
-        }
-        let output = unsafe { &mut *out_node };
-        check_header(
-            output.struct_size,
-            output.abi_version,
-            size_of::<OuiAccessibilityNodeInfo>(),
-        )?;
+        let (struct_size, abi_version) = unsafe { output_header(out_node) }?;
         let snapshot = snapshot(snapshot_handle as usize)?;
         let (id, node) = snapshot
             .nodes
@@ -230,12 +237,7 @@ pub extern "C" fn oui_accessibility_snapshot_get_node(
             .fold(0u32, |bits, (index, action)| {
                 bits | (u32::from(node.supports_action(*action)) << index)
             });
-        output.id = id.0;
-        output.role = role_number(node.role());
-        output.flags = flags;
-        output.actions = actions;
-        output.reserved = 0;
-        output.bounds = bounds.map_or(
+        let bounds = bounds.map_or(
             OuiRect {
                 x: 0.0,
                 y: 0.0,
@@ -249,15 +251,28 @@ pub extern "C" fn oui_accessibility_snapshot_get_node(
                 height: (rect.y1 - rect.y0) as f32,
             },
         );
-        output.child_count = node.children().len();
-        output.labelled_by_count = node.labelled_by().len();
-        output.described_by_count = node.described_by().len();
-        output.controls_count = node.controls().len();
-        output.details_count = node.details().len();
-        output.label_length = node.label().map_or(0, str::len);
-        output.description_length = node.description().map_or(0, str::len);
-        output.value_length = node.value().map_or(0, str::len);
-        output.role_name_length = format!("{:?}", node.role()).len();
+        let output = OuiAccessibilityNodeInfo {
+            struct_size,
+            abi_version,
+            id: id.0,
+            role: role_number(node.role()),
+            flags,
+            actions,
+            reserved: 0,
+            bounds,
+            child_count: node.children().len(),
+            labelled_by_count: node.labelled_by().len(),
+            described_by_count: node.described_by().len(),
+            controls_count: node.controls().len(),
+            details_count: node.details().len(),
+            label_length: node.label().map_or(0, str::len),
+            description_length: node.description().map_or(0, str::len),
+            value_length: node.value().map_or(0, str::len),
+            role_name_length: format!("{:?}", node.role()).len(),
+        };
+        // SAFETY: the validated size covers this value; the C caller
+        // provides aligned, writable storage.
+        unsafe { ptr::write(out_node, output) };
         Ok(())
     })
 }
@@ -270,15 +285,7 @@ pub extern "C" fn oui_accessibility_snapshot_get_node_state(
     out_state: *mut OuiAccessibilityNodeState,
 ) -> OuiStatus {
     ffi(|| {
-        if out_state.is_null() {
-            return Err(invalid("accessibility node state output is null"));
-        }
-        let output = unsafe { &mut *out_state };
-        check_header(
-            output.struct_size,
-            output.abi_version,
-            size_of::<OuiAccessibilityNodeState>(),
-        )?;
+        let (struct_size, abi_version) = unsafe { output_header(out_state) }?;
         let snapshot = snapshot(snapshot_handle as usize)?;
         let node = node_by_id(&snapshot, node_id)?;
         let mut flags = u32::from(node.is_disabled());
@@ -330,25 +337,33 @@ pub extern "C" fn oui_accessibility_snapshot_get_node_state(
         if selection.is_some() {
             flags |= 1 << 14;
         }
-        output.flags = flags;
-        output.live = match node.live() {
+        let live = match node.live() {
             None => 0,
             Some(AccessibilityLive::Off) => 1,
             Some(AccessibilityLive::Polite) => 2,
             Some(AccessibilityLive::Assertive) => 3,
         };
-        output.numeric_value = numeric_value.unwrap_or(0.0);
-        output.numeric_min = numeric_min.unwrap_or(0.0);
-        output.numeric_max = numeric_max.unwrap_or(0.0);
-        output.numeric_step = numeric_step.unwrap_or(0.0);
-        output.scroll_x = scroll_x.unwrap_or(0.0);
-        output.scroll_y = scroll_y.unwrap_or(0.0);
-        output.placeholder_length = node.placeholder().map_or(0, str::len);
-        output.character_lengths_count = node.character_lengths().len();
-        output.selection_anchor_node = selection.map_or(0, |s| s.anchor.node.0);
-        output.selection_anchor_index = selection.map_or(0, |s| s.anchor.character_index);
-        output.selection_focus_node = selection.map_or(0, |s| s.focus.node.0);
-        output.selection_focus_index = selection.map_or(0, |s| s.focus.character_index);
+        let output = OuiAccessibilityNodeState {
+            struct_size,
+            abi_version,
+            flags,
+            live,
+            numeric_value: numeric_value.unwrap_or(0.0),
+            numeric_min: numeric_min.unwrap_or(0.0),
+            numeric_max: numeric_max.unwrap_or(0.0),
+            numeric_step: numeric_step.unwrap_or(0.0),
+            scroll_x: scroll_x.unwrap_or(0.0),
+            scroll_y: scroll_y.unwrap_or(0.0),
+            placeholder_length: node.placeholder().map_or(0, str::len),
+            character_lengths_count: node.character_lengths().len(),
+            selection_anchor_node: selection.map_or(0, |s| s.anchor.node.0),
+            selection_anchor_index: selection.map_or(0, |s| s.anchor.character_index),
+            selection_focus_node: selection.map_or(0, |s| s.focus.node.0),
+            selection_focus_index: selection.map_or(0, |s| s.focus.character_index),
+        };
+        // SAFETY: the validated size covers this value; the C caller
+        // provides aligned, writable storage.
+        unsafe { ptr::write(out_state, output) };
         Ok(())
     })
 }
@@ -467,4 +482,171 @@ pub extern "C" fn oui_accessibility_snapshot_copy_changes(
             "accessibility changes",
         )
     })
+}
+
+#[cfg(test)]
+mod output_tests {
+    use super::*;
+
+    type Query = fn(*const OuiAccessibilitySnapshot, u64, *mut u8) -> OuiStatus;
+
+    fn info(handle: *const OuiAccessibilitySnapshot, _: u64, output: *mut u8) -> OuiStatus {
+        oui_accessibility_snapshot_get_info(handle, output.cast())
+    }
+
+    fn node(handle: *const OuiAccessibilitySnapshot, _: u64, output: *mut u8) -> OuiStatus {
+        oui_accessibility_snapshot_get_node(handle, 0, output.cast())
+    }
+
+    fn state(handle: *const OuiAccessibilitySnapshot, id: u64, output: *mut u8) -> OuiStatus {
+        oui_accessibility_snapshot_get_node_state(handle, id, output.cast())
+    }
+
+    const QUERIES: [(usize, Query); 3] = [
+        (size_of::<OuiAccessibilitySnapshotInfo>(), info),
+        (size_of::<OuiAccessibilityNodeInfo>(), node),
+        (size_of::<OuiAccessibilityNodeState>(), state),
+    ];
+
+    #[test]
+    fn short_snapshot_output_prefixes_are_rejected_without_full_struct_access() {
+        for (_, query) in QUERIES {
+            let mut size_only = [size_of::<u32>() as u32];
+            assert_eq!(
+                query(ptr::null(), 0, size_only.as_mut_ptr().cast()),
+                OuiStatus::InvalidArgument
+            );
+            assert_eq!(size_only, [size_of::<u32>() as u32]);
+            for (version, status) in [
+                (OUI_ABI_VERSION, OuiStatus::InvalidArgument),
+                (OUI_ABI_VERSION + 1, OuiStatus::AbiMismatch),
+            ] {
+                let mut header_only = [2 * size_of::<u32>() as u32, version];
+                assert_eq!(
+                    query(ptr::null(), 0, header_only.as_mut_ptr().cast()),
+                    status
+                );
+                assert_eq!(header_only, [2 * size_of::<u32>() as u32, version]);
+            }
+        }
+    }
+
+    fn owned_snapshot() -> (*mut OuiAccessibilitySnapshot, u64) {
+        let config = OuiDocumentConfig {
+            struct_size: size_of::<OuiDocumentConfig>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            viewport: OuiViewportMetrics {
+                logical_width: 32.0,
+                logical_height: 24.0,
+                physical_width: 32,
+                physical_height: 24,
+                device_scale_factor: 1.0,
+                authority: 1,
+                reserved: 0,
+            },
+        };
+        let mut document = ptr::null_mut();
+        assert_eq!(oui_document_create(&config, &mut document), OuiStatus::Ok);
+        let mut snapshot = ptr::null_mut();
+        assert_eq!(
+            oui_document_accessibility_snapshot(document, ptr::null(), &mut snapshot),
+            OuiStatus::Ok
+        );
+        // All fields are integers or floating point values, so zero is a
+        // valid initial representation before setting the version header.
+        let mut node: OuiAccessibilityNodeInfo = unsafe { std::mem::zeroed() };
+        node.struct_size = size_of::<OuiAccessibilityNodeInfo>() as u32;
+        node.abi_version = OUI_ABI_VERSION;
+        assert_eq!(
+            oui_accessibility_snapshot_get_node(snapshot, 0, &mut node),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+        (snapshot, node.id)
+    }
+
+    fn storage(size: usize) -> Vec<std::mem::MaybeUninit<u64>> {
+        let mut result = vec![
+            std::mem::MaybeUninit::new(0xa5a5_a5a5_a5a5_a5a5u64);
+            (size + 16).div_ceil(size_of::<u64>())
+        ];
+        let length = result.len() * size_of::<u64>();
+        // u64 storage satisfies every snapshot output's alignment. The
+        // declared future extent includes a tail that getters must preserve.
+        unsafe {
+            ptr::write(result.as_mut_ptr().cast::<u32>(), length as u32);
+            ptr::write(result.as_mut_ptr().cast::<u32>().add(1), OUI_ABI_VERSION);
+        }
+        result
+    }
+
+    // Call only on pattern-initialized storage before/after a rejected query.
+    // Successful outputs may contain uninitialized C structure padding.
+    fn initialized_output_bytes(output: &[std::mem::MaybeUninit<u64>]) -> Vec<u8> {
+        unsafe {
+            std::slice::from_raw_parts(
+                output.as_ptr().cast::<u8>(),
+                output.len() * size_of::<u64>(),
+            )
+        }
+        .to_vec()
+    }
+
+    #[test]
+    fn owned_snapshot_getters_preserve_larger_output_tails_after_document_destruction() {
+        let (handle, id) = owned_snapshot();
+        for (size, query) in QUERIES {
+            let mut output = storage(size);
+            let declared = output.len() * size_of::<u64>();
+            assert_eq!(query(handle, id, output.as_mut_ptr().cast()), OuiStatus::Ok);
+            let prefix = output.as_ptr().cast::<u32>();
+            assert_eq!(unsafe { ptr::read(prefix) }, declared as u32);
+            assert_eq!(unsafe { ptr::read(prefix.add(1)) }, OUI_ABI_VERSION);
+            // Read only initialized bytes beyond the legacy structure, not
+            // its padding, which a value write need not initialize.
+            let tail = unsafe {
+                std::slice::from_raw_parts(output.as_ptr().cast::<u8>().add(size), declared - size)
+            };
+            assert!(tail.iter().all(|value| *value == 0xa5));
+        }
+        assert_eq!(oui_accessibility_snapshot_destroy(handle), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn failed_snapshot_getters_leave_initialized_outputs_unchanged() {
+        let (handle, id) = owned_snapshot();
+        let address = handle as usize;
+        std::thread::spawn(move || {
+            for (size, query) in QUERIES {
+                let mut output = storage(size);
+                let before = initialized_output_bytes(&output);
+                assert_eq!(
+                    query(
+                        address as *const OuiAccessibilitySnapshot,
+                        id,
+                        output.as_mut_ptr().cast()
+                    ),
+                    OuiStatus::WrongThread
+                );
+                assert_eq!(initialized_output_bytes(&output), before);
+            }
+        })
+        .join()
+        .unwrap();
+        assert_eq!(oui_accessibility_snapshot_destroy(handle), OuiStatus::Ok);
+        for (size, query) in QUERIES {
+            for (handle, expected) in [
+                (ptr::null(), OuiStatus::InvalidArgument),
+                (
+                    address as *const OuiAccessibilitySnapshot,
+                    OuiStatus::InvalidHandle,
+                ),
+            ] {
+                let mut output = storage(size);
+                let before = initialized_output_bytes(&output);
+                assert_eq!(query(handle, id, output.as_mut_ptr().cast()), expected);
+                assert_eq!(initialized_output_bytes(&output), before);
+            }
+        }
+    }
 }
