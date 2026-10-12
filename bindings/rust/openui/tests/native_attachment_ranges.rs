@@ -203,6 +203,14 @@ fn native_relative_offsets_and_inactive_owned_snapshots_resolve_through_public_s
             .current_time_percentage,
         Some(40.0)
     );
+    assert_eq!(
+        document
+            .animation_timeline_snapshot(id)
+            .unwrap()
+            .unwrap()
+            .current_time_ms,
+        Some(((40.0_f64 / 100.0) * ((100.0 * 16.0 / 1000.0) / 1000.0)) * 1000.0)
+    );
     assert_eq!(target.computed_style().unwrap().opacity, 0.5);
     assert_eq!(inactive.resolved, None);
 }

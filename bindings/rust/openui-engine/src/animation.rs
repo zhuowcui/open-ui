@@ -1,8 +1,9 @@
 use crate::{Engine, EngineError, NodeHandle};
 use openui_style::{
     apply_to_computed, value_from_computed, AnimationAttachmentRange, AnimationOptions,
-    AnimationPhase, CompositedStyleValue, Keyframes, LengthValue, PlayState, PropertyKeyframes,
-    StyleProperty, StyleValue, TimelineAxis, TimelineRange, ViewTimelineInset,
+    AnimationPhase, AnimationTimingSeconds, CompositedStyleValue, Keyframes, LengthValue,
+    PlayState, PropertyKeyframes, StyleProperty, StyleValue, TimelineAxis, TimelineRange,
+    ViewTimelineInset,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
@@ -133,17 +134,18 @@ pub(crate) struct AnimationInstance {
     pub keyframes: PropertyKeyframes,
     pub options: AnimationOptions,
     pub timing_options: AnimationOptions,
+    pub timing_seconds: AnimationTimingSeconds,
     pub timeline: RetainedAnimationTimeline,
     pub timeline_snapshot: Option<crate::animation_timeline::ProgressTimelineSnapshot>,
     pub auto_align_start_time: bool,
     pub pending_progress_seek: Option<f64>,
-    pub start_time_ms: f64,
-    pub offset_ms: f64,
-    pub hold_time_ms: Option<f64>,
+    pub start_time_seconds: f64,
+    pub offset_seconds: f64,
+    pub hold_time_seconds: Option<f64>,
     pub last_sample: Option<EffectSample>,
     pub last_phase: Option<AnimationPhase>,
     pub last_iteration: u64,
-    pub last_current_time_ms: f64,
+    pub last_current_time_seconds: f64,
     pub ended: bool,
 }
 
@@ -156,52 +158,63 @@ pub(crate) struct EffectSample {
 impl AnimationInstance {
     pub(crate) fn sample_local_time_with_direction(
         &self,
-        local_time_ms: f64,
+        local_time_seconds: f64,
     ) -> (openui_style::AnimationSample, bool) {
         let (start, end) = self.timeline_snapshot.map_or((false, false), |timeline| {
-            timeline.boundary_alignment(&self.timing_options, self.auto_align_start_time)
+            timeline.boundary_alignment(
+                &self.timing_options,
+                self.timing_seconds,
+                self.auto_align_start_time,
+            )
         });
         self.timing_options
-            .sample_local_time_with_direction_and_boundaries(local_time_ms, start, end)
+            .sample_local_time_seconds_with_direction_and_boundaries(
+                local_time_seconds,
+                self.timing_seconds,
+                start,
+                end,
+            )
     }
 
-    // offset_ms is a LOCAL time at the timeline anchor start_time_ms.
+    // offset_seconds is a LOCAL time at the timeline anchor start_time_seconds.
     // Applying rate here, rather than in the effect sampler, preserves seeks
     // and continuity when a native application changes playback rate.
-    fn current_time(&self, timeline_time_ms: f64) -> f64 {
-        self.hold_time_ms.unwrap_or_else(|| {
-            self.offset_ms + (timeline_time_ms - self.start_time_ms) * self.options.playback_rate
+    fn current_time(&self, timeline_time_seconds: f64) -> f64 {
+        self.hold_time_seconds.unwrap_or_else(|| {
+            self.offset_seconds
+                + (timeline_time_seconds - self.start_time_seconds) * self.options.playback_rate
         })
     }
 
-    fn reached_endpoint(&self, local_time_ms: f64) -> bool {
+    fn reached_endpoint(&self, local_time_seconds: f64) -> bool {
         self.options.play_state == PlayState::Running
             && ((self.options.playback_rate > 0.0
-                && local_time_ms >= self.timing_options.effect_end_ms())
-                || (self.options.playback_rate < 0.0 && local_time_ms <= 0.0))
+                && local_time_seconds >= self.timing_seconds.effect_end(self.options.iterations))
+                || (self.options.playback_rate < 0.0 && local_time_seconds <= 0.0))
     }
 
-    fn reanchor_progress(&mut self, timeline_time_ms: f64, local_time_ms: f64) {
-        self.offset_ms = 0.0;
+    fn reanchor_progress(&mut self, timeline_time_seconds: f64, local_time_seconds: f64) {
+        self.offset_seconds = 0.0;
         if self.options.play_state == PlayState::Paused
             || self.options.playback_rate == 0.0
             || self.timeline_snapshot.is_none()
         {
-            self.hold_time_ms = Some(local_time_ms);
-            self.start_time_ms = timeline_time_ms;
+            self.hold_time_seconds = Some(local_time_seconds);
+            self.start_time_seconds = timeline_time_seconds;
         } else {
-            self.hold_time_ms = None;
-            self.start_time_ms = timeline_time_ms - local_time_ms / self.options.playback_rate;
+            self.hold_time_seconds = None;
+            self.start_time_seconds =
+                timeline_time_seconds - local_time_seconds / self.options.playback_rate;
         }
     }
 
-    fn reanchor(&mut self, timeline_time_ms: f64, local_time_ms: f64) {
-        self.start_time_ms = timeline_time_ms;
-        self.offset_ms = local_time_ms;
-        self.hold_time_ms = (self.options.play_state == PlayState::Paused
+    fn reanchor(&mut self, timeline_time_seconds: f64, local_time_seconds: f64) {
+        self.start_time_seconds = timeline_time_seconds;
+        self.offset_seconds = local_time_seconds;
+        self.hold_time_seconds = (self.options.play_state == PlayState::Paused
             || self.options.playback_rate == 0.0
-            || (self.timeline.is_document() && self.reached_endpoint(local_time_ms)))
-        .then_some(local_time_ms);
+            || (self.timeline.is_document() && self.reached_endpoint(local_time_seconds)))
+        .then_some(local_time_seconds);
     }
 }
 
@@ -395,8 +408,15 @@ impl Engine {
             self.update()?;
         }
         let timeline_snapshot = self.progress_timeline_snapshot(timeline);
-        let timing_options = timeline_snapshot
-            .map_or_else(|| options.clone(), |snapshot| snapshot.normalize(&options));
+        let (timing_options, timing_seconds) = timeline_snapshot.map_or_else(
+            || {
+                (
+                    options.clone(),
+                    AnimationTimingSeconds::from_options(&options),
+                )
+            },
+            |snapshot| snapshot.normalize(&options),
+        );
         let initial_time = if timeline.is_document() {
             initial_local_time(&options)?
         } else {
@@ -404,19 +424,19 @@ impl Engine {
         };
         let property = keyframes.property();
         let timeline_now = self.timeline_time(timeline, &options)?;
-        let start_time_ms = if timeline.is_document() {
+        let start_time_seconds = if timeline.is_document() {
             timeline_now
-        } else if options.playback_rate < 0.0 {
-            timeline_snapshot.map_or(0.0, |snapshot| snapshot.range_duration_ms)
         } else {
-            0.0
+            timeline_snapshot.map_or(0.0, |snapshot| {
+                snapshot.automatic_start_time_seconds(options.playback_rate)
+            })
         };
         let held = options.play_state == PlayState::Paused
             || (timeline.is_document() && options.playback_rate == 0.0);
         let initial_hold = if timeline.is_document() {
             initial_time
         } else {
-            (timeline_now - start_time_ms) * options.playback_rate
+            (timeline_now - start_time_seconds) * options.playback_rate
         };
         if self.slots[target.index as usize]
             .animation_base_style
@@ -442,17 +462,18 @@ impl Engine {
                 keyframes,
                 options,
                 timing_options,
+                timing_seconds,
                 timeline,
                 timeline_snapshot,
                 auto_align_start_time: true,
                 pending_progress_seek: None,
-                start_time_ms,
-                offset_ms: initial_time,
-                hold_time_ms: held.then_some(initial_hold),
+                start_time_seconds,
+                offset_seconds: initial_time,
+                hold_time_seconds: held.then_some(initial_hold),
                 last_sample: None,
                 last_phase: None,
                 last_iteration: 0,
-                last_current_time_ms: initial_time,
+                last_current_time_seconds: initial_time,
                 ended: false,
             },
         );
@@ -494,19 +515,17 @@ impl Engine {
             // A newer play request supersedes an unresolved percentage seek.
             // Its time will come from the retained range's automatic alignment.
             instance.pending_progress_seek = None;
-            instance.start_time_ms = if instance.options.playback_rate < 0.0 {
-                instance
-                    .timeline_snapshot
-                    .map_or(0.0, |snapshot| snapshot.range_duration_ms)
-            } else {
-                0.0
-            };
-            instance.offset_ms = 0.0;
-            instance.hold_time_ms = None;
+            instance.start_time_seconds = instance.timeline_snapshot.map_or(0.0, |snapshot| {
+                snapshot.automatic_start_time_seconds(instance.options.playback_rate)
+            });
+            instance.offset_seconds = 0.0;
+            instance.hold_time_seconds = None;
             return self.sample_animations();
         }
         if snapshot.timeline.is_document() {
-            let end = snapshot.timing_options.effect_end_ms();
+            let end = snapshot
+                .timing_seconds
+                .effect_end(snapshot.options.iterations);
             let rate = snapshot.options.playback_rate;
             if rate > 0.0 && (current < 0.0 || current >= end) {
                 current = 0.0;
@@ -542,6 +561,14 @@ impl Engine {
                 "animation seek time must be finite",
             ));
         }
+        self.seek_animation_seconds(id, current_time_ms / 1000.0)
+    }
+
+    fn seek_animation_seconds(
+        &mut self,
+        id: AnimationId,
+        current_time_seconds: f64,
+    ) -> Result<(), EngineError> {
         self.update()?;
         let snapshot = self.animation_instance(id)?.clone();
         let now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
@@ -549,10 +576,10 @@ impl Engine {
         // Explicit native local time replaces any earlier unresolved percentage.
         instance.pending_progress_seek = None;
         if instance.timeline.is_document() {
-            instance.reanchor(now, current_time_ms);
+            instance.reanchor(now, current_time_seconds);
         } else {
             instance.auto_align_start_time = false;
-            instance.reanchor_progress(now, current_time_ms);
+            instance.reanchor_progress(now, current_time_seconds);
         }
         self.sample_animations()
     }
@@ -577,16 +604,15 @@ impl Engine {
         if instance.timeline.is_document() {
             instance.reanchor(now, current);
         } else if (snapshot.options.playback_rate < 0.0) != (playback_rate < 0.0) {
-            instance.start_time_ms = if instance.auto_align_start_time {
-                if playback_rate < 0.0 {
-                    instance
-                        .timeline_snapshot
-                        .map_or(0.0, |snapshot| snapshot.range_duration_ms)
-                } else {
-                    0.0
-                }
+            instance.start_time_seconds = if instance.auto_align_start_time {
+                instance.timeline_snapshot.map_or(0.0, |snapshot| {
+                    snapshot.automatic_start_time_seconds(playback_rate)
+                })
             } else {
-                instance.timing_options.effect_end_ms() - instance.start_time_ms
+                instance
+                    .timing_seconds
+                    .effect_end(instance.options.iterations)
+                    - instance.start_time_seconds
             };
         }
         self.sample_animations()
@@ -604,7 +630,9 @@ impl Engine {
         let endpoint = if rate < 0.0 {
             0.0
         } else {
-            snapshot.timing_options.effect_end_ms()
+            snapshot
+                .timing_seconds
+                .effect_end(snapshot.options.iterations)
         };
         if !endpoint.is_finite() {
             return Err(EngineError::InvalidInput(
@@ -662,9 +690,9 @@ impl Engine {
             return Ok(None);
         }
         if let Some(snapshot) = instance.timeline_snapshot {
-            return Ok(Some(
-                snapshot.reflection(Some(instance.current_time(snapshot.time_ms))),
-            ));
+            return Ok(Some(snapshot.reflection(Some(
+                instance.current_time(snapshot.clock_time_seconds()),
+            ))));
         }
         // Browser endpoints cannot be resolved while geometry is inactive.
         // Its additive attachment snapshot carries explicit optional bounds.
@@ -736,8 +764,8 @@ impl Engine {
         {
             // Pinned OnRangeUpdate invokes nonmonotonic PlayInternal for running
             // or finished animations; paused effects preserve their hold time.
-            instance.hold_time_ms = None;
-            instance.offset_ms = 0.0;
+            instance.hold_time_seconds = None;
+            instance.offset_seconds = 0.0;
         }
         self.sample_animations()
     }
@@ -764,7 +792,7 @@ impl Engine {
         self.update()?;
         let snapshot = self.animation_instance(id)?.timeline_snapshot;
         if let Some(snapshot) = snapshot {
-            self.seek_animation(id, snapshot.time_from_percentage(percentage))
+            self.seek_animation_seconds(id, snapshot.time_from_percentage(percentage))
         } else {
             let instance = self.animations.get_mut(&id).expect("live animation");
             instance.auto_align_start_time = false;
@@ -776,15 +804,15 @@ impl Engine {
     pub fn animation_state(&self, id: AnimationId) -> Result<AnimationState, EngineError> {
         let instance = self.animation_instance(id)?;
         let timeline_now = self.timeline_time(instance.timeline, &instance.options)?;
-        let current_time_ms = instance.current_time(timeline_now);
-        let effective = self.effective_elapsed(instance, current_time_ms);
+        let current_time_seconds = instance.current_time(timeline_now);
+        let effective = self.effective_elapsed(instance, current_time_seconds);
         let sample = instance.sample_local_time_with_direction(effective).0;
         Ok(AnimationState {
             id,
             target: instance.target,
             property: instance.keyframes.property(),
             play_state: instance.options.play_state,
-            current_time_ms,
+            current_time_ms: current_time_seconds * 1000.0,
             iteration: sample.iteration,
             phase: sample.phase,
             finished: instance.ended,
@@ -898,14 +926,16 @@ impl Engine {
             }
             let timeline_now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
             let raw_time = snapshot.current_time(timeline_now);
-            let current_time = if snapshot.hold_time_ms.is_none()
+            let current_time = if snapshot.hold_time_seconds.is_none()
                 && snapshot.timeline.is_document()
                 && snapshot.reached_endpoint(raw_time)
             {
                 if snapshot.options.playback_rate < 0.0 {
                     0.0
                 } else {
-                    snapshot.timing_options.effect_end_ms()
+                    snapshot
+                        .timing_seconds
+                        .effect_end(snapshot.options.iterations)
                 }
             } else {
                 raw_time
@@ -926,12 +956,22 @@ impl Engine {
             let was_before = snapshot.last_phase.is_none()
                 || snapshot.last_phase == Some(AnimationPhase::Before);
             let was_after = snapshot.last_phase == Some(AnimationPhase::After);
-            let interval_start = (-snapshot.timing_options.delay_ms)
-                .min(snapshot.timing_options.active_duration_ms())
+            let interval_start = (-snapshot.timing_seconds.delay)
+                .min(
+                    snapshot
+                        .timing_seconds
+                        .active_duration(snapshot.options.iterations),
+                )
                 .max(0.0);
-            let interval_end = (snapshot.timing_options.effect_end_ms()
-                - snapshot.timing_options.delay_ms)
-                .min(snapshot.timing_options.active_duration_ms())
+            let interval_end = (snapshot
+                .timing_seconds
+                .effect_end(snapshot.options.iterations)
+                - snapshot.timing_seconds.delay)
+                .min(
+                    snapshot
+                        .timing_seconds
+                        .active_duration(snapshot.options.iterations),
+                )
                 .max(0.0);
             let mut events = Vec::new();
             if phase_changed
@@ -972,16 +1012,16 @@ impl Engine {
                 };
                 events.push((
                     AnimationEventKind::Iteration,
-                    snapshot.timing_options.duration_ms * boundary as f64,
+                    snapshot.timing_seconds.duration * boundary as f64,
                 ));
             }
-            for (kind, elapsed_time_ms) in events {
+            for (kind, elapsed_time_seconds) in events {
                 self.animation_events.push(AnimationEvent {
                     animation: id,
                     target: snapshot.target,
                     property: snapshot.keyframes.property(),
                     kind,
-                    elapsed_time_ms,
+                    elapsed_time_ms: elapsed_time_seconds * 1000.0,
                     iteration: sample.iteration,
                 });
             }
@@ -989,15 +1029,15 @@ impl Engine {
             if let Some(instance) = self.animations.get_mut(&id) {
                 if snapshot.timeline.is_document() && finished {
                     if self.reduced_motion && effective.is_finite() {
-                        instance.hold_time_ms = Some(effective);
-                    } else if snapshot.hold_time_ms.is_none() {
-                        instance.hold_time_ms = Some(current_time);
+                        instance.hold_time_seconds = Some(effective);
+                    } else if snapshot.hold_time_seconds.is_none() {
+                        instance.hold_time_seconds = Some(current_time);
                     }
                 }
                 instance.last_sample = sampled;
                 instance.last_phase = Some(sample.phase);
                 instance.last_iteration = sample.iteration;
-                instance.last_current_time_ms = current_time;
+                instance.last_current_time_seconds = current_time;
                 instance.ended = finished;
             }
         }
@@ -1040,10 +1080,16 @@ impl Engine {
         if self.reduced_motion {
             if instance.options.playback_rate < 0.0 {
                 0.0
-            } else if instance.timing_options.effect_end_ms().is_finite() {
-                instance.timing_options.effect_end_ms()
+            } else if instance
+                .timing_seconds
+                .effect_end(instance.options.iterations)
+                .is_finite()
+            {
+                instance
+                    .timing_seconds
+                    .effect_end(instance.options.iterations)
             } else {
-                instance.timing_options.delay_ms + instance.timing_options.duration_ms
+                instance.timing_seconds.delay + instance.timing_seconds.duration
             }
         } else {
             current_time
@@ -1053,16 +1099,21 @@ impl Engine {
     fn cancel_elapsed_time(&self, instance: &AnimationInstance) -> f64 {
         let current = if !instance.timeline.is_document() && instance.timeline_snapshot.is_none() {
             instance
-                .hold_time_ms
-                .unwrap_or(instance.last_current_time_ms)
+                .hold_time_seconds
+                .unwrap_or(instance.last_current_time_seconds)
         } else {
             self.timeline_time(instance.timeline, &instance.options)
                 .map(|time| instance.current_time(time))
-                .unwrap_or(instance.last_current_time_ms)
+                .unwrap_or(instance.last_current_time_seconds)
         };
-        (current - instance.timing_options.delay_ms)
-            .min(instance.timing_options.active_duration_ms())
+        (current - instance.timing_seconds.delay)
+            .min(
+                instance
+                    .timing_seconds
+                    .active_duration(instance.options.iterations),
+            )
             .max(0.0)
+            * 1000.0
     }
 
     /// Fold active effects in creation order against the current unanimated
@@ -1208,33 +1259,39 @@ impl Engine {
         let instance = self.animations.get_mut(&id).expect("live animation");
         if let Some(next) = next {
             if let Some(old) = previous.timeline_snapshot {
-                let duration_changed = old.duration_ms != next.duration_ms;
+                let duration_changed = old.duration_seconds != next.duration_seconds;
                 if duration_changed {
-                    if let Some(held) = instance.hold_time_ms {
-                        let progress = held / old.duration_ms;
-                        instance.hold_time_ms = Some((progress * next.duration_seconds) * 1000.0);
+                    // OnValidateSnapshot explicitly divides reflected milliseconds;
+                    // preserve that operation order only for resize rescaling.
+                    if let Some(held) = instance.hold_time_seconds {
+                        let progress = (held * 1000.0) / (old.duration_seconds * 1000.0);
+                        instance.hold_time_seconds = Some(progress * next.duration_seconds);
                     } else if !instance.auto_align_start_time
                         && instance.options.playback_rate != 0.0
                     {
-                        let progress = previous.current_time(old.time_ms) / old.duration_ms;
-                        let current = (progress * next.duration_seconds) * 1000.0;
-                        instance.start_time_ms =
-                            next.time_ms - current / instance.options.playback_rate;
+                        // Blink replaces the timeline snapshot before this
+                        // callback: UnlimitedCurrentTime uses its NEW clock with
+                        // the PREVIOUS animation anchor and old duration.
+                        let progress = (previous.current_time(next.clock_time_seconds()) * 1000.0)
+                            / (old.duration_seconds * 1000.0);
+                        let current = progress * next.duration_seconds;
+                        instance.start_time_seconds =
+                            next.clock_time_seconds() - current / instance.options.playback_rate;
                     }
                 }
             }
             if instance.auto_align_start_time {
-                instance.start_time_ms = if instance.options.playback_rate < 0.0 {
-                    next.range_duration_ms
-                } else {
-                    0.0
-                };
-                instance.offset_ms = 0.0;
+                instance.start_time_seconds =
+                    next.automatic_start_time_seconds(instance.options.playback_rate);
+                instance.offset_seconds = 0.0;
             }
-            instance.timing_options = next.normalize(&instance.options);
+            (instance.timing_options, instance.timing_seconds) = next.normalize(&instance.options);
             instance.timeline_snapshot = Some(next);
             if let Some(percentage) = instance.pending_progress_seek.take() {
-                instance.reanchor_progress(next.time_ms, next.time_from_percentage(percentage));
+                instance.reanchor_progress(
+                    next.clock_time_seconds(),
+                    next.time_from_percentage(percentage),
+                );
             }
         }
         instance.timeline_snapshot = next;
@@ -1277,17 +1334,17 @@ impl Engine {
     ) -> Result<f64, EngineError> {
         let _ = options;
         Ok(if timeline.is_document() {
-            self.animation_time_ms
+            self.animation_time_ms / 1000.0
         } else {
             self.progress_timeline_snapshot(timeline)
-                .map_or(0.0, |snapshot| snapshot.time_ms)
+                .map_or(0.0, |snapshot| snapshot.clock_time_seconds())
         })
     }
 }
 
 fn initial_local_time(options: &AnimationOptions) -> Result<f64, EngineError> {
     if options.playback_rate < 0.0 {
-        let end = options.effect_end_ms();
+        let end = AnimationTimingSeconds::from_options(options).effect_end(options.iterations);
         if !end.is_finite() {
             return Err(EngineError::InvalidInput(
                 "cannot start reverse playback at an infinite effect end",

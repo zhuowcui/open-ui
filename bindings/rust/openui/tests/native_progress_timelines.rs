@@ -124,6 +124,10 @@ fn native_inactive_source_reports_unresolved_time_and_preserves_the_live_applica
     source.set_display(Display::Block).unwrap();
     document.update_all().unwrap();
     assert_eq!(snapshot(&document, id).current_time_percentage, Some(35.0));
+    assert_eq!(
+        snapshot(&document, id).current_time_ms,
+        Some(((35.0_f64 / 100.0) * ((100.0 * 16.0 / 1000.0) / 1000.0)) * 1000.0)
+    );
     assert_eq!(target.computed_style().unwrap().opacity, 0.35);
     assert!(!owned.active);
 }
@@ -140,6 +144,7 @@ fn native_fill_none_keeps_physical_end_value_and_explicit_seek_restores_underlyi
                 StyleProperty::Opacity,
                 Keyframes::from_values(0.0_f32, 1.0_f32),
                 AnimationOptions {
+                    duration_ms: 100.0,
                     fill: FillMode::None,
                     ..AnimationOptions::default()
                 },
@@ -159,6 +164,29 @@ fn native_fill_none_keeps_physical_end_value_and_explicit_seek_restores_underlyi
         document.seek_animation_progress(id, 100.0).unwrap();
         assert_eq!(
             document.animation_state(id).unwrap().phase,
+            AnimationPhase::After
+        );
+        assert_eq!(target.computed_style().unwrap().opacity, 0.25);
+        assert_eq!(document.render_to_png_buffer().unwrap(), underlying);
+        document.cancel_animation(id).unwrap();
+        // An explicitly zero-duration effect has no active interval at the
+        // physical endpoint and keeps the unfilled underlying publication.
+        let zero = target
+            .animate_on_scroll(
+                StyleProperty::Opacity,
+                Keyframes::from_values(0.0_f32, 1.0_f32),
+                AnimationOptions {
+                    duration_ms: 0.0,
+                    fill: FillMode::None,
+                    ..AnimationOptions::default()
+                },
+                &source,
+                TimelineAxis::Block,
+                TimelineRange::new(0.0, 100.0).unwrap(),
+            )
+            .unwrap();
+        assert_eq!(
+            document.animation_state(zero).unwrap().phase,
             AnimationPhase::After
         );
         assert_eq!(target.computed_style().unwrap().opacity, 0.25);

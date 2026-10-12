@@ -493,6 +493,18 @@ fn inactive_sources_keep_descriptors_pending_percentage_and_owned_resolved_data(
             .current_time_percentage,
         Some(10.0)
     );
+    let duration_seconds = (100.0_f64 * 16.0 / 1000.0) / 1000.0;
+    let raw_cover_seconds = (-40.0_f64 * 16.0) / 1_000_000.0;
+    let requested_local_seconds = (10.0 / 100.0) * duration_seconds;
+    let start_seconds = raw_cover_seconds - requested_local_seconds;
+    assert_eq!(
+        engine
+            .animation_timeline_snapshot(id)
+            .unwrap()
+            .unwrap()
+            .current_time_ms,
+        Some((raw_cover_seconds - start_seconds) * 1000.0)
+    );
     assert_eq!(engine.computed_style(target).unwrap().opacity, 0.5);
     assert_eq!(owned.resolved.unwrap().attachment, bounds(40.0, 60.0));
 }
@@ -887,4 +899,65 @@ fn paused_inactive_percentage_request_survives_attachment_range_mutation() {
     let resolved = engine.animation_timeline_snapshot(id).unwrap().unwrap();
     assert_eq!(resolved.current_time_percentage, Some(25.0));
     assert_eq!(engine.computed_style(target).unwrap().opacity, 0.5);
+}
+
+#[test]
+fn running_manual_view_seek_rescales_using_new_cover_clock_and_old_duration() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let (mut engine, source, _, subject, target) = fixture(scale, 20.0);
+        let id = animate(
+            &mut engine,
+            target,
+            AnimationTimelineSource::View {
+                subject,
+                axis: TimelineAxis::Y,
+            },
+            AnimationAttachmentRange::named(TimelineNamedRange::Cover),
+            options(),
+        );
+        engine.seek_animation_progress(id, 40.0).unwrap();
+        let old = engine.animation_timeline_snapshot(id).unwrap().unwrap();
+        assert_eq!(old.cover_start, Some(40.0));
+        assert_eq!(old.cover_end, Some(140.0));
+        assert_eq!(old.duration_ms, Some(1.6));
+        assert_eq!(old.current_time_percentage, Some(40.0));
+        let old_duration_seconds = (100.0_f64 * 16.0 / 1000.0) / 1000.0;
+        let old_clock_seconds = (-40.0_f64 * 16.0) / 1_000_000.0;
+        let old_anchor_seconds = old_clock_seconds - (40.0 / 100.0) * old_duration_seconds;
+        set(
+            &mut engine,
+            source,
+            StyleProperty::Height,
+            LengthValue::px(180.0),
+        );
+        let next = engine.animation_timeline_snapshot(id).unwrap().unwrap();
+        assert_eq!(next.cover_start, Some(-60.0));
+        assert_eq!(next.cover_end, Some(140.0));
+        assert_eq!(next.duration_ms, Some(3.2));
+        let new_clock_seconds = (60.0_f64 * 16.0) / 1_000_000.0;
+        let new_duration_seconds = (200.0_f64 * 16.0 / 1000.0) / 1000.0;
+        // OnValidateSnapshot uses new raw time with the old anchor; only its
+        // resize ratio reflects both operands into milliseconds.
+        let unlimited_seconds = new_clock_seconds - old_anchor_seconds;
+        let resized_seconds =
+            ((unlimited_seconds * 1000.0) / (old_duration_seconds * 1000.0)) * new_duration_seconds;
+        let new_anchor_seconds = new_clock_seconds - resized_seconds;
+        let current_seconds = new_clock_seconds - new_anchor_seconds;
+        assert_eq!(next.current_time_ms, Some(current_seconds * 1000.0));
+        assert_eq!(
+            next.current_time_percentage,
+            Some(current_seconds / new_duration_seconds * 100.0)
+        );
+        let stale_clock_rescale = ((old_clock_seconds - old_anchor_seconds) * 1000.0)
+            / (old_duration_seconds * 1000.0)
+            * new_duration_seconds;
+        assert_ne!(next.current_time_ms, Some(stale_clock_rescale * 1000.0));
+        assert_eq!(engine.computed_style(target).unwrap().opacity, 1.0);
+        assert_eq!(
+            engine.animation_state(id).unwrap().phase,
+            AnimationPhase::After
+        );
+        assert_eq!(old.current_time_percentage, Some(40.0));
+        engine.cancel_animation(id).unwrap();
+    }
 }

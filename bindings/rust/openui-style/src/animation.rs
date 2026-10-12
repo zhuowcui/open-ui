@@ -407,6 +407,41 @@ impl Default for AnimationOptions {
     }
 }
 
+/// Seconds-backed timing used by native effect sampling. Public option fields
+/// remain milliseconds; normalized timeline timing must not round-trip through
+/// that reflected unit before phase/progress calculations.
+#[doc(hidden)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct AnimationTimingSeconds {
+    pub duration: f64,
+    pub delay: f64,
+}
+
+impl AnimationTimingSeconds {
+    pub fn from_options(options: &AnimationOptions) -> Self {
+        Self {
+            duration: options.duration_ms / 1000.0,
+            delay: options.delay_ms / 1000.0,
+        }
+    }
+
+    pub fn active_duration(self, iterations: IterationCount) -> f64 {
+        let count = match iterations {
+            IterationCount::Number(count) => count,
+            IterationCount::Infinite => f64::INFINITY,
+        };
+        if self.duration == 0.0 || count == 0.0 {
+            0.0
+        } else {
+            self.duration * count
+        }
+    }
+
+    pub fn effect_end(self, iterations: IterationCount) -> f64 {
+        (self.delay + self.active_duration(iterations)).max(0.0)
+    }
+}
+
 impl AnimationOptions {
     pub fn validate(&self) -> Result<(), AnimationError> {
         if !self.delay_ms.is_finite() {
@@ -474,12 +509,30 @@ impl AnimationOptions {
         start_boundary_aligned: bool,
         end_boundary_aligned: bool,
     ) -> (AnimationSample, bool) {
+        self.sample_local_time_seconds_with_direction_and_boundaries(
+            local_time_ms / 1000.0,
+            AnimationTimingSeconds::from_options(self),
+            start_boundary_aligned,
+            end_boundary_aligned,
+        )
+    }
+
+    /// Native normalized timing and local clocks are retained in seconds.
+    /// The old millisecond entry points above remain boundary adapters.
+    #[doc(hidden)]
+    pub fn sample_local_time_seconds_with_direction_and_boundaries(
+        &self,
+        local_time_seconds: f64,
+        timing: AnimationTimingSeconds,
+        start_boundary_aligned: bool,
+        end_boundary_aligned: bool,
+    ) -> (AnimationSample, bool) {
         // Blink's default AnimationTimeDelta stores seconds. Its phase operation
         // mutates local time, first snapping to the before boundary, then (only
         // if not already Before) to the after boundary. Active-time/progress must
         // consume that same mutated time. This 1us rule is timing semantics.
-        let duration_seconds = self.duration_ms / 1000.0;
-        let delay_seconds = self.delay_ms / 1000.0;
+        let duration_seconds = timing.duration;
+        let delay_seconds = timing.delay;
         let count = match self.iterations {
             IterationCount::Number(value) => value,
             IterationCount::Infinite => f64::INFINITY,
@@ -493,7 +546,7 @@ impl AnimationOptions {
         let before_boundary = delay_seconds.min(end).max(0.0);
         let after_boundary = (delay_seconds + active_duration).min(end).max(0.0);
         let backwards = self.playback_rate < 0.0;
-        let mut local_time_seconds = local_time_ms / 1000.0;
+        let mut local_time_seconds = local_time_seconds;
         if within_animation_time_tolerance(local_time_seconds, before_boundary) {
             local_time_seconds = before_boundary;
         }
@@ -1536,6 +1589,46 @@ impl TimelineRange {
 mod tests {
     use super::*;
     use crate::TransformOperation;
+
+    #[test]
+    fn normalized_seconds_sampling_does_not_reimport_reflected_millisecond_timing() {
+        let count = 0.5;
+        let specified_duration = 100.0_f64 / 1000.0;
+        let specified_delay = 17.0_f64 / 1000.0;
+        let specified_end = specified_delay + specified_duration * count;
+        let timeline_seconds = ((100.0_f64 * 16.0 / 1000.0) / 1000.0) as f64;
+        let timing = AnimationTimingSeconds {
+            duration: specified_duration / specified_end * timeline_seconds,
+            delay: specified_delay / specified_end * timeline_seconds,
+        };
+        let options = AnimationOptions {
+            duration_ms: timing.duration * 1000.0,
+            delay_ms: timing.delay * 1000.0,
+            iterations: IterationCount::Number(count),
+            fill: FillMode::Both,
+            ..AnimationOptions::default()
+        };
+        let local = timing.delay + timing.duration * 0.25;
+        let sample = options
+            .sample_local_time_seconds_with_direction_and_boundaries(local, timing, false, false)
+            .0;
+        assert_eq!(sample.phase, AnimationPhase::Active);
+        assert_eq!(
+            sample.progress,
+            Some((local - timing.delay) / timing.duration)
+        );
+        let reflected = AnimationTimingSeconds::from_options(&options);
+        assert_ne!(reflected.duration, timing.duration);
+        assert_ne!(
+            options
+                .sample_local_time_seconds_with_direction_and_boundaries(
+                    local, reflected, false, false
+                )
+                .0
+                .progress,
+            sample.progress
+        );
+    }
 
     fn options() -> AnimationOptions {
         AnimationOptions {

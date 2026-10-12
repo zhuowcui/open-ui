@@ -300,7 +300,14 @@ fn malformed_timeline_ranges_do_not_start_an_animation_and_reversed_ranges_work(
         )
         .unwrap();
     assert_eq!(engine.computed_style(engine.root()).unwrap().opacity, 0.75);
-    assert_eq!(engine.animation_state(id).unwrap().current_time_ms, 75.0);
+    // The legacy reversed numeric range is a native extension. Its local
+    // clock uses the retained geometric 16us/px duration, not document 100ms.
+    let timeline_duration_seconds = (100.0_f64 * 16.0 / 1000.0) / 1000.0;
+    let cover_time_seconds = (25.0_f64 * 16.0) / 1_000_000.0;
+    assert_eq!(
+        engine.animation_state(id).unwrap().current_time_ms,
+        (timeline_duration_seconds - cover_time_seconds) * 1000.0
+    );
     engine.cancel_animation(id).unwrap();
     engine.set_animation_time(50.0).unwrap();
     assert_eq!(engine.scroll_offset(scroller).unwrap(), (50.0, 20.0));

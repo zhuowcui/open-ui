@@ -5,12 +5,18 @@ use openui_dom::NodeId;
 use openui_geometry::LayoutUnit;
 use openui_layout::{Fragment, ScrollArea};
 use openui_style::{
-    AnimationAttachmentRange, AnimationOptions, IterationCount, LengthValue, NamedTimelineRanges,
-    Overflow, TimelineAxis, TimelineRangeBounds, TimelineRangeOffset, ViewTimelineInset,
+    AnimationAttachmentRange, AnimationOptions, AnimationTimingSeconds, IterationCount,
+    LengthValue, NamedTimelineRanges, Overflow, TimelineAxis, TimelineRangeBounds,
+    TimelineRangeOffset, ViewTimelineInset,
 };
 use std::collections::HashMap;
 
 const TIMELINE_MICROSECONDS_PER_CSS_PIXEL: f64 = 16.0;
+
+fn cover_clock_seconds(scroll_offset: f64, cover_start: f64) -> f64 {
+    let microseconds = ((scroll_offset - cover_start) * TIMELINE_MICROSECONDS_PER_CSS_PIXEL) as i64;
+    microseconds as f64 / 1_000_000.0
+}
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct AnimationTimelineSnapshot {
@@ -60,15 +66,16 @@ pub(crate) struct ProgressTimelineSnapshot {
     pub named_ranges: NamedTimelineRanges,
     pub entry_crossing_distance: f64,
     pub exit_crossing_distance: f64,
-    pub time_ms: f64,
-    pub duration_ms: f64,
-    pub range_duration_ms: f64,
+    // Cover-relative integer-us clock, before attachment alignment.
+    pub cover_time_seconds: f64,
+    pub attachment_start_seconds: f64,
+    pub attachment_end_seconds: f64,
     pub scroll_maximum: f64,
     pub duration_seconds: f64,
 }
 
 impl ProgressTimelineSnapshot {
-    pub fn reflection(self, local_time_ms: Option<f64>) -> AnimationTimelineSnapshot {
+    pub fn reflection(self, local_time_seconds: Option<f64>) -> AnimationTimelineSnapshot {
         AnimationTimelineSnapshot {
             source: Some(self.source),
             active: true,
@@ -82,9 +89,10 @@ impl ProgressTimelineSnapshot {
             cover_end: Some(self.cover_end),
             range_start: self.range.start,
             range_end: self.range.end,
-            duration_ms: Some(self.duration_ms),
-            current_time_ms: local_time_ms,
-            current_time_percentage: local_time_ms.map(|time| time / self.duration_ms * 100.0),
+            duration_ms: Some(self.duration_seconds * 1000.0),
+            current_time_ms: local_time_seconds.map(|time| time * 1000.0),
+            current_time_percentage: local_time_seconds
+                .map(|time| time / self.duration_seconds * 100.0),
         }
     }
 
@@ -99,10 +107,38 @@ impl ProgressTimelineSnapshot {
     }
 
     pub fn time_from_percentage(self, percentage: f64) -> f64 {
-        (percentage / 100.0 * self.duration_seconds) * 1000.0
+        (percentage / 100.0) * self.duration_seconds
     }
 
-    pub fn boundary_alignment(self, timing: &AnimationOptions, auto_align: bool) -> (bool, bool) {
+    // Legacy reversed numeric ranges are an existing native extension. Browser
+    // attachment ranges retain the raw cover clock and their actual start/end.
+    fn polarity(self) -> f64 {
+        if self.legacy_oriented && self.range.end < self.range.start {
+            -1.0
+        } else {
+            1.0
+        }
+    }
+
+    pub fn clock_time_seconds(self) -> f64 {
+        self.cover_time_seconds * self.polarity()
+    }
+
+    pub fn automatic_start_time_seconds(self, rate: f64) -> f64 {
+        let offset = if rate < 0.0 {
+            self.attachment_end_seconds
+        } else {
+            self.attachment_start_seconds
+        };
+        offset * self.polarity()
+    }
+
+    pub fn boundary_alignment(
+        self,
+        options: &AnimationOptions,
+        timing: AnimationTimingSeconds,
+        auto_align: bool,
+    ) -> (bool, bool) {
         if !auto_align {
             return (false, false);
         }
@@ -111,18 +147,21 @@ impl ProgressTimelineSnapshot {
         let mut start = self.attachment_start_fraction;
         let end = self.attachment_end_fraction;
         if self.duration_seconds > 0.0 {
-            start += (timing.delay_ms / 1000.0) / self.duration_seconds;
+            start += timing.delay / self.duration_seconds;
         }
         let start_offset = start * self.cover_end + (1.0 - start) * self.cover_start;
         let end_offset = end * self.cover_end + (1.0 - end) * self.cover_start;
         (
-            timing.playback_rate < 0.0 && start_offset <= 0.5,
-            timing.playback_rate > 0.0
-                && timing.playback_rate * end_offset >= self.scroll_maximum - 0.5,
+            options.playback_rate < 0.0 && start_offset <= 0.5,
+            options.playback_rate > 0.0
+                && options.playback_rate * end_offset >= self.scroll_maximum - 0.5,
         )
     }
 
-    pub fn normalize(self, specified: &AnimationOptions) -> AnimationOptions {
+    pub fn normalize(
+        self,
+        specified: &AnimationOptions,
+    ) -> (AnimationOptions, AnimationTimingSeconds) {
         let mut timing = specified.clone();
         // Default .50 AnimationTimeDelta stores double seconds. Keep that
         // operation order here and reflect native milliseconds only at the end.
@@ -166,7 +205,7 @@ impl ProgressTimelineSnapshot {
         };
         timing.delay_ms = delay * 1000.0;
         timing.duration_ms = duration * 1000.0;
-        timing
+        (timing, AnimationTimingSeconds { delay, duration })
     }
 }
 
@@ -625,11 +664,6 @@ impl Engine {
                     end_fraction,
                 )
             };
-        let polarity = if legacy_oriented && range.end < range.start {
-            -1.0
-        } else {
-            1.0
-        };
         let duration_seconds =
             ((end - start) * TIMELINE_MICROSECONDS_PER_CSS_PIXEL / 1000.0) / 1000.0;
         let attachment_start_seconds = attachment_start_fraction * duration_seconds;
@@ -637,9 +671,7 @@ impl Engine {
         // ComputeTimelineState converts cover-relative time to integer
         // microseconds *before* animation attachment/start alignment. Rust's
         // float-to-i64 conversion has the same finite truncation/saturation.
-        let current_microseconds =
-            ((scroll_offset - start) * TIMELINE_MICROSECONDS_PER_CSS_PIXEL) as i64;
-        let timeline_seconds = current_microseconds as f64 / 1_000_000.0;
+        let timeline_seconds = cover_clock_seconds(scroll_offset, start);
         Some(ProgressTimelineSnapshot {
             source,
             axis,
@@ -654,17 +686,28 @@ impl Engine {
             named_ranges,
             entry_crossing_distance,
             exit_crossing_distance,
-            time_ms: ((timeline_seconds - attachment_start_seconds) * polarity) * 1000.0,
-            duration_ms: duration_seconds * 1000.0,
-            range_duration_ms: if legacy_oriented {
-                (attachment_end_seconds - attachment_start_seconds).abs() * 1000.0
-            } else {
-                // AutoAlignedStartTime uses the actual end attachment, even
-                // when intrinsic active duration clamps a reversed range to zero.
-                (attachment_end_seconds - attachment_start_seconds) * 1000.0
-            },
+            cover_time_seconds: timeline_seconds,
+            attachment_start_seconds,
+            attachment_end_seconds,
             scroll_maximum: maximum,
             duration_seconds,
         })
+    }
+}
+
+#[cfg(test)]
+mod clock_tests {
+    use super::*;
+
+    #[test]
+    fn cover_clock_truncates_integer_microseconds_before_attachment_alignment() {
+        assert_eq!(cover_clock_seconds(1.0 / 32.0, 0.0), 0.0);
+        assert_eq!(cover_clock_seconds(3.0 / 32.0, 0.0), 1.0 / 1_000_000.0);
+        assert_eq!(cover_clock_seconds(-3.0 / 32.0, 0.0), -1.0 / 1_000_000.0);
+        let duration_seconds = ((100.0 * 16.0 / 1000.0) / 1000.0) as f64;
+        let attachment_seconds = (1.0 / 32.0 / 100.0) * duration_seconds;
+        let local = cover_clock_seconds(0.0, 0.0) - attachment_seconds;
+        assert_eq!(local * 1000.0, -0.0005000000000000001);
+        assert_ne!(local, cover_clock_seconds(0.0, 1.0 / 32.0));
     }
 }

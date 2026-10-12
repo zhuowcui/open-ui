@@ -471,7 +471,7 @@ fn progress_timeline_idle_transitions_cancel_and_reactivation_starts_again() {
 }
 
 #[test]
-fn underlying_progress_clock_quantizes_microseconds_before_fractional_attachment_alignment() {
+fn integer_scroll_api_and_fractional_attachment_alignment_keep_distinct_clock_policies() {
     for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
         let (mut engine, source, _, target) = fixture(scale);
         let id = animate(
@@ -497,10 +497,12 @@ fn underlying_progress_clock_quantizes_microseconds_before_fractional_attachment
                 .unwrap()
                 .unwrap()
                 .current_time_ms,
-            Some(0.001)
+            Some(0.0)
         );
-        // The public clock stays at 1us; effect phase snaps that time to its
-        // before boundary before active-time/progress sampling.
+        // Default .50 FractionalScrollOffsets is disabled: the Engine's
+        // ordinary scroll setter rounds this 3/32px request to zero. The pure
+        // cover-clock guard separately tests integer-us truncation.
+        assert_eq!(engine.scroll_offset(source).unwrap().1, 0.0);
         assert_eq!(opacity(&engine, target), 0.0);
         engine.cancel_animation(id).unwrap();
         engine.scroll_to(source, 0.0, 0.0).unwrap();
@@ -517,7 +519,7 @@ fn underlying_progress_clock_quantizes_microseconds_before_fractional_attachment
                 .unwrap()
                 .unwrap()
                 .current_time_ms,
-            Some(-0.0005)
+            Some(-((1.0_f64 / 32.0 / 100.0) * ((100.0 * 16.0 / 1000.0) / 1000.0)) * 1000.0)
         );
     }
 }
@@ -1114,7 +1116,7 @@ fn fractional_attachment_boundary_uses_snapped_active_time_without_resolving_ina
                 .unwrap()
                 .unwrap()
                 .current_time_ms,
-            Some(-0.0005)
+            Some(-((1.0_f64 / 32.0 / 100.0) * ((100.0 * 16.0 / 1000.0) / 1000.0)) * 1000.0)
         );
         assert_eq!(
             engine.animation_state(id).unwrap().phase,
