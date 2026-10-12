@@ -18,25 +18,23 @@ use openui_geometry::{
     WritingModeConverter,
 };
 use openui_style::{
-    BoxSizing, Clear, ColumnSpan, ComputedStyle, FontFamily, LineBreak, WhiteSpace, WordBreak,
+    BoxSizing, Clear, ColumnSpan, ComputedStyle, LineBreak, OverflowWrap, WhiteSpace, WordBreak,
 };
+
+#[cfg(test)]
+use openui_style::FontFamily;
 
 use crate::block::{resolve_border, resolve_margins, resolve_padding};
 use crate::inline::items::InlineItemType;
 use crate::inline::items_builder::{
     preprocess_text_for_shaping, style_to_font_description, InlineItemsBuilder, InlineItemsData,
 };
+use crate::inline::line_breaker::find_break_opportunities;
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 
 /// Check if a style represents an inline-level element.
 fn is_inline_level(style: &ComputedStyle) -> bool {
     style.display.is_inline_level()
-}
-
-fn uses_deterministic_text_profile(style: &ComputedStyle) -> bool {
-    style.font_family.families.iter().any(|family| {
-        matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
-    })
 }
 
 fn is_interior_collapsible_whitespace(doc: &Document, siblings: &[NodeId], index: usize) -> bool {
@@ -350,6 +348,44 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
     let container_style = &doc.node(node_id).style;
     let mut data = InlineItemsBuilder::collect(doc, node_id);
     data.shape_for_base_style(container_style);
+    compute_inline_items_intrinsic_sizes(&data, container_style, false)
+}
+
+/// Measure shaped logical items through one CSS break/whitespace scanner.
+/// Break positions use the complete text stream, so font, bidi and DOM item
+/// boundaries cannot accidentally turn a legal wrap into an unbreakable run.
+/// Interior whitespace-only contributions retain their authored advance when
+/// the surrounding recursive block walk owns both neighboring inline boxes.
+fn compute_inline_items_intrinsic_sizes(
+    data: &InlineItemsData,
+    container_style: &ComputedStyle,
+    preserve_boundary_whitespace: bool,
+) -> MinMaxSizes {
+    let mut break_offsets: std::collections::HashMap<
+        (WordBreak, OverflowWrap, LineBreak),
+        Vec<usize>,
+    > = std::collections::HashMap::new();
+    for style in &data.styles {
+        let key = (style.word_break, style.overflow_wrap, style.line_break);
+        break_offsets.entry(key).or_insert_with(|| {
+            // Overflow-wrap: break-word leaves min-content unchanged. Anywhere
+            // and the legacy word-break: break-word use character opportunities
+            // in min-content, matching pinned LineBreaker::SetCurrentStyleForce.
+            let line_break = if style.overflow_wrap == OverflowWrap::Anywhere
+                || style.word_break == WordBreak::BreakWord
+            {
+                LineBreak::Anywhere
+            } else {
+                style.line_break
+            };
+            find_break_opportunities(
+                &data.text,
+                style.word_break,
+                style.overflow_wrap,
+                line_break,
+            )
+        });
+    }
 
     let mut stack: Vec<IntrinsicInlineBox> = Vec::new();
     let mut pending_open_edges = LayoutUnit::zero();
@@ -419,8 +455,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                 });
             }
             InlineItemType::CloseTag => {
-                let shaping_run_rounding_excess =
-                    intrinsic_close_rounding_excess(&data, item_index);
+                let shaping_run_rounding_excess = intrinsic_close_rounding_excess(data, item_index);
                 let position = stack
                     .iter()
                     .rposition(|entry| entry.node_id == item.node_id);
@@ -524,6 +559,8 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                         | WhiteSpace::BreakSpaces
                 );
 
+                let item_breaks =
+                    &break_offsets[&(style.word_break, style.overflow_wrap, style.line_break)];
                 let mut run_start = 0usize;
                 let mut run_start_char = 0usize;
                 let chars: Vec<(usize, char)> = text.char_indices().collect();
@@ -531,13 +568,12 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                     let char_end = index + 1;
                     let byte_end = byte_index + ch.len_utf8();
                     let is_forced = forces_newlines && ch == '\n';
-                    let is_space = ch.is_whitespace() && !is_forced;
-                    let is_break_all_character = wraps
-                        && (style.word_break == WordBreak::BreakAll
-                            || style.line_break == LineBreak::Anywhere)
-                        && !is_space
-                        && !is_forced;
-                    if !is_space && !is_forced && !is_break_all_character {
+                    let is_space = is_css_collapsible_whitespace(ch) && !is_forced;
+                    let is_soft_break_before = wraps
+                        && item_breaks
+                            .binary_search(&(item.text_range.start + byte_index))
+                            .is_ok();
+                    if !is_space && !is_forced && !is_soft_break_before {
                         continue;
                     }
 
@@ -590,32 +626,15 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                             &mut max_content,
                             &mut pending_collapsible_space,
                         );
-                    } else if is_break_all_character {
-                        let width = intrinsic_text_width(shape.width_for_range(index, char_end));
-                        let max_width = intrinsic_text_width(shape.width_for_range(0, char_end))
-                            - intrinsic_text_width(shape.width_for_range(0, index));
-                        min_segment = min_segment + pending_min_collapsible_space;
-                        pending_min_collapsible_space = LayoutUnit::zero();
-                        if soft_break_pending {
-                            commit_soft_segment(
-                                &mut min_segment,
-                                &mut min_content,
-                                &mut pending_open_edges,
-                                &mut stack,
-                            );
-                        } else {
-                            min_segment = min_segment + pending_open_edges;
-                            pending_open_edges = LayoutUnit::zero();
-                            for entry in &mut stack {
-                                entry.active_on_segment = true;
-                            }
-                        }
-                        min_segment = min_segment + width;
-                        max_line = max_line + pending_collapsible_space + max_width;
-                        pending_collapsible_space = LayoutUnit::zero();
+                    } else if !is_space {
+                        // This boundary precedes the current grapheme. Leave
+                        // it in the next contextual range; do not slice it as
+                        // a Unicode scalar or drop its shaped advance.
                         soft_break_pending = true;
                         soft_break_after_pending_edges = false;
-                        last_content_was_text = true;
+                        run_start = byte_index;
+                        run_start_char = index;
+                        continue;
                     } else {
                         let width = intrinsic_text_width(shape.width_for_range(index, char_end));
                         let max_width = intrinsic_text_width(shape.width_for_range(0, char_end))
@@ -625,6 +644,25 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                         } else {
                             max_line = max_line + pending_collapsible_space + max_width;
                             pending_collapsible_space = LayoutUnit::zero();
+                        }
+                        if style.white_space == WhiteSpace::BreakSpaces {
+                            // Preserved spaces contribute before the wrap
+                            // opportunity after each space. They neither
+                            // disappear nor become one oversized space run.
+                            if soft_break_pending || is_soft_break_before {
+                                commit_soft_segment(
+                                    &mut min_segment,
+                                    &mut min_content,
+                                    &mut pending_open_edges,
+                                    &mut stack,
+                                );
+                            }
+                            min_segment = min_segment + pending_open_edges + width;
+                            pending_open_edges = LayoutUnit::zero();
+                            for entry in &mut stack {
+                                entry.active_on_segment = true;
+                            }
+                            last_content_was_text = true;
                         }
                         if wraps {
                             soft_break_pending = true;
@@ -691,6 +729,10 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
         }
     }
 
+    if preserve_boundary_whitespace {
+        min_segment = min_segment + pending_min_collapsible_space;
+        max_line = max_line + pending_collapsible_space;
+    }
     min_segment = min_segment + pending_open_edges;
     min_content = min_content.max_of(min_segment + active_clone_end_edges(&stack));
     max_content = max_content.max_of(max_line);
@@ -3042,67 +3084,6 @@ fn is_css_collapsible_whitespace(ch: char) -> bool {
     matches!(ch, ' ' | '\t' | '\n' | '\r' | '\u{000C}')
 }
 
-/// Measure logical character ranges from the same immutable shaping items
-/// used by inline layout. Keep each item's strict LayoutUnit ceiling, as the
-/// ordinary inline intrinsic scanner does, including bidi/fallback splits.
-struct IntrinsicTextLine {
-    data: InlineItemsData,
-    /// Byte boundaries in logical character order, including the final end.
-    /// Wrap ranges must not recount the entire prefix for every character.
-    character_offsets: Vec<usize>,
-}
-
-impl IntrinsicTextLine {
-    fn shape_preprocessed_text(text: &str, style: &ComputedStyle, doc: &Document) -> Self {
-        Self {
-            data: InlineItemsData::shape_preprocessed_text(
-                text,
-                style,
-                std::sync::Arc::clone(doc.font_collection()),
-            ),
-            character_offsets: text
-                .char_indices()
-                .map(|(offset, _)| offset)
-                .chain(std::iter::once(text.len()))
-                .collect(),
-        }
-    }
-
-    fn width(&self, range: std::ops::Range<usize>) -> LayoutUnit {
-        if range.is_empty() {
-            return LayoutUnit::zero();
-        }
-        let character_index = |offset| {
-            self.character_offsets
-                .binary_search(&offset)
-                .expect("intrinsic text ranges end at character boundaries")
-        };
-        // Bidi and script splitting retain logical source order. Only visit
-        // overlapping runs, rather than scan every run for each wrap range.
-        let first_item = self
-            .data
-            .items
-            .partition_point(|item| item.text_range.end <= range.start);
-        self.data.items[first_item..]
-            .iter()
-            .take_while(|item| item.text_range.start < range.end)
-            .fold(LayoutUnit::zero(), |width, item| {
-                let start = range.start.max(item.text_range.start);
-                let end = range.end.min(item.text_range.end);
-                if start >= end {
-                    return width;
-                }
-                let Some(shape) = item.shape_result.as_ref() else {
-                    return width;
-                };
-                let item_character = character_index(item.text_range.start);
-                let first_character = character_index(start) - item_character;
-                let end_character = character_index(end) - item_character;
-                width + intrinsic_text_width(shape.width_for_range(first_character, end_character))
-            })
-    }
-}
-
 fn compute_text_intrinsic_sizes_impl(
     doc: &Document,
     text: &str,
@@ -3110,110 +3091,31 @@ fn compute_text_intrinsic_sizes_impl(
     preserve_boundary_whitespace: bool,
 ) -> MinMaxSizes {
     let processed = preprocess_text_for_shaping(text, style, doc.font_collection());
-    // Collapsible white space at an intrinsic line boundary has no advance.
-    // In particular, source indentation around a text-only shrink-to-fit
-    // float must not inflate its max-content width. Inline layout already
-    // applies the same start/end collapsing when it constructs the line.
-    let deterministic_text_profile = uses_deterministic_text_profile(style);
-    let processed = if deterministic_text_profile
-        && !preserve_boundary_whitespace
-        && matches!(
-            style.white_space,
-            WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine
-        ) {
-        processed.trim_matches(is_css_collapsible_whitespace)
-    } else {
-        processed.as_str()
-    };
-    if processed.is_empty() {
-        return MinMaxSizes::zero();
+    let collapses = matches!(
+        style.white_space,
+        WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine
+    );
+    let mut sizes = MinMaxSizes::zero();
+    // Each forced line keeps its own paragraph shaping context. CSS
+    // preprocessing is applied once, and the same item scanner determines
+    // min/max sizes for direct text, inline boxes and table content.
+    for line in processed.split('\n') {
+        let line = if collapses && !preserve_boundary_whitespace {
+            line.trim_matches(is_css_collapsible_whitespace)
+        } else {
+            line
+        };
+        let data = InlineItemsData::shape_preprocessed_text(
+            line,
+            style,
+            std::sync::Arc::clone(doc.font_collection()),
+        );
+        let line_sizes =
+            compute_inline_items_intrinsic_sizes(&data, style, preserve_boundary_whitespace);
+        sizes.min = sizes.min.max_of(line_sizes.min);
+        sizes.max = sizes.max.max_of(line_sizes.max);
     }
-
-    // Do not measure raw SkFont widths here: they omit shaping, fallback and
-    // spacing, and can differ from the final glyph advances around a strict
-    // 1/64px boundary. Preprocessing is deliberately performed only once.
-    // Shape each forced line as a paragraph and retain its full context when
-    // measuring soft-wrap ranges (including ligatures and combining marks).
-    let forced_lines: Vec<_> = processed
-        .split('\n')
-        .map(|line| {
-            (
-                line,
-                IntrinsicTextLine::shape_preprocessed_text(line, style, doc),
-            )
-        })
-        .collect();
-    let max_content = forced_lines
-        .iter()
-        .map(|(line, data)| data.width(0..line.len()))
-        .fold(LayoutUnit::zero(), |acc, width| acc.max_of(width));
-
-    let permits_soft_wrap = !matches!(style.white_space, WhiteSpace::Nowrap | WhiteSpace::Pre);
-    let min_content = if permits_soft_wrap
-        && (style.word_break == WordBreak::BreakAll || style.line_break == LineBreak::Anywhere)
-    {
-        // `break-all` and `line-break: anywhere` introduce a soft wrap
-        // opportunity between typographic character units. A combining
-        // sequence remains one unit; its width comes from the shaped line.
-        use unicode_segmentation::UnicodeSegmentation;
-
-        forced_lines
-            .iter()
-            .flat_map(|(line, data)| {
-                line.grapheme_indices(true)
-                    .map(move |(start, grapheme)| data.width(start..start + grapheme.len()))
-            })
-            .fold(LayoutUnit::zero(), |acc, width| acc.max_of(width))
-    } else if permits_soft_wrap && deterministic_text_profile {
-        use unicode_linebreak::{linebreaks, BreakOpportunity};
-
-        forced_lines
-            .iter()
-            .fold(LayoutUnit::zero(), |widest, (line, data)| {
-                let mut segment_start = 0;
-                let mut line_widest = LayoutUnit::zero();
-                for (segment_end, opportunity) in linebreaks(line) {
-                    if !matches!(
-                        opportunity,
-                        BreakOpportunity::Allowed | BreakOpportunity::Mandatory
-                    ) {
-                        continue;
-                    }
-                    let untrimmed = &line[segment_start..segment_end];
-                    let segment = untrimmed.trim_matches(is_css_collapsible_whitespace);
-                    if !segment.is_empty() {
-                        let start = segment_start + untrimmed.len()
-                            - untrimmed
-                                .trim_start_matches(is_css_collapsible_whitespace)
-                                .len();
-                        line_widest = line_widest.max_of(data.width(start..start + segment.len()));
-                    }
-                    segment_start = segment_end;
-                }
-                if segment_start < line.len() {
-                    line_widest = line_widest.max_of(data.width(segment_start..line.len()));
-                }
-                widest.max_of(line_widest)
-            })
-    } else if permits_soft_wrap {
-        forced_lines
-            .iter()
-            .fold(LayoutUnit::zero(), |widest, (line, data)| {
-                let mut segment_start = 0;
-                let mut line_widest = LayoutUnit::zero();
-                for (offset, character) in line.char_indices() {
-                    if is_css_collapsible_whitespace(character) {
-                        line_widest = line_widest.max_of(data.width(segment_start..offset));
-                        segment_start = offset + character.len_utf8();
-                    }
-                }
-                widest.max_of(line_widest.max_of(data.width(segment_start..line.len())))
-            })
-    } else {
-        max_content
-    };
-
-    MinMaxSizes::new(min_content, max_content)
+    sizes
 }
 
 // ── Auto block size from content ─────────────────────────────────────────
@@ -4423,6 +4325,200 @@ mod tests {
             );
             assert_eq!(doc.node(text_node).text.as_deref(), Some("x\nxx"));
         }
+    }
+
+    #[test]
+    fn intrinsic_breaks_use_full_logical_context_across_font_and_dom_items() {
+        let base = ahem_intrinsic_style().derive(|style| {
+            style.font_family.families = vec![
+                FontFamily::Named("Ahem".into()),
+                FontFamily::Named("Droid Sans Fallback".into()),
+                FontFamily::Named("DejaVu Sans".into()),
+            ];
+            style.white_space = WhiteSpace::Normal;
+        });
+        for (text, word_break, line_break, overflow_wrap) in [
+            (
+                "丁丁",
+                WordBreak::Normal,
+                LineBreak::Normal,
+                OverflowWrap::Normal,
+            ),
+            (
+                "丁丁",
+                WordBreak::KeepAll,
+                LineBreak::Normal,
+                OverflowWrap::Normal,
+            ),
+            (
+                "丁ぁ",
+                WordBreak::BreakAll,
+                LineBreak::Strict,
+                OverflowWrap::Normal,
+            ),
+            (
+                "丁ぁ",
+                WordBreak::KeepAll,
+                LineBreak::Anywhere,
+                OverflowWrap::Normal,
+            ),
+            (
+                "丁A丁 אב",
+                WordBreak::Normal,
+                LineBreak::Normal,
+                OverflowWrap::Normal,
+            ),
+            (
+                "XX-XXX",
+                WordBreak::Normal,
+                LineBreak::Normal,
+                OverflowWrap::Normal,
+            ),
+            (
+                "X\u{00a0}X",
+                WordBreak::Normal,
+                LineBreak::Normal,
+                OverflowWrap::Normal,
+            ),
+            (
+                "XXXX",
+                WordBreak::Normal,
+                LineBreak::Normal,
+                OverflowWrap::Anywhere,
+            ),
+            (
+                "XXXX",
+                WordBreak::BreakWord,
+                LineBreak::Normal,
+                OverflowWrap::Normal,
+            ),
+        ] {
+            let style = base.derive(|style| {
+                style.word_break = word_break;
+                style.line_break = line_break;
+                style.overflow_wrap = overflow_wrap;
+            });
+            let (doc, container, text_node) = text_shaping_document(text, &style);
+            assert_eq!(
+                compute_intrinsic_inline_sizes(&doc, text_node),
+                compute_inline_sequence_intrinsic_sizes(&doc, container),
+                "{text}/{word_break:?}/{line_break:?}/{overflow_wrap:?}"
+            );
+        }
+        let (mut doc, container, text_node) = text_shaping_document("丁", &base);
+        let following = doc.create_node(ElementTag::Span);
+        doc.install_resolved_style(
+            following,
+            base.derive(|style| style.display = openui_style::Display::Inline),
+        );
+        let text = doc.create_node(ElementTag::Text);
+        doc.install_resolved_style(text, base.clone());
+        doc.node_mut(text).text = Some("丁".into());
+        doc.append_child(container, following);
+        doc.append_child(following, text);
+        let single = compute_intrinsic_inline_sizes(&doc, text_node);
+        let two = compute_inline_sequence_intrinsic_sizes(&doc, container);
+        assert_eq!(
+            two.min, single.min,
+            "a real DOM item boundary must not hide a CJK wrap"
+        );
+        assert_eq!(two.max, single.max + single.max);
+    }
+
+    #[test]
+    fn intrinsic_preserved_space_and_grapheme_neighbors_share_the_item_scanner() {
+        for (text, white_space, word_break, expected) in [
+            ("X  X", WhiteSpace::BreakSpaces, WordBreak::Normal, (32, 64)),
+            (" ", WhiteSpace::BreakSpaces, WordBreak::Normal, (16, 16)),
+            (" X ", WhiteSpace::Normal, WordBreak::Normal, (16, 16)),
+            (
+                "X\u{00a0}X",
+                WhiteSpace::Normal,
+                WordBreak::Normal,
+                (48, 48),
+            ),
+        ] {
+            let style = ahem_intrinsic_style().derive(|style| {
+                style.white_space = white_space;
+                style.word_break = word_break;
+            });
+            let (doc, container, text_node) = text_shaping_document(text, &style);
+            let wanted = MinMaxSizes::new(
+                LayoutUnit::from_i32(expected.0),
+                LayoutUnit::from_i32(expected.1),
+            );
+            assert_eq!(compute_intrinsic_inline_sizes(&doc, text_node), wanted);
+            assert_eq!(
+                compute_inline_sequence_intrinsic_sizes(&doc, container),
+                wanted
+            );
+        }
+        let style = ahem_intrinsic_style().derive(|style| {
+            style.font_family.families = vec![FontFamily::Named("Noto Sans Devanagari".into())];
+            style.white_space = WhiteSpace::Normal;
+            style.word_break = WordBreak::BreakAll;
+        });
+        let (doc, container, text_node) = text_shaping_document("कि", &style);
+        let direct = compute_intrinsic_inline_sizes(&doc, text_node);
+        assert!(direct.max > LayoutUnit::zero());
+        assert_eq!(direct.min, direct.max);
+        assert_eq!(
+            compute_inline_sequence_intrinsic_sizes(&doc, container),
+            direct
+        );
+    }
+
+    #[test]
+    fn intrinsic_shaping_keeps_owned_font_bidi_and_character_run_metadata() {
+        let style = ahem_intrinsic_style().derive(|style| {
+            style.font_family.families = vec![
+                FontFamily::Named("Ahem".into()),
+                FontFamily::Named("Droid Sans Fallback".into()),
+                FontFamily::Named("Noto Sans Devanagari".into()),
+                FontFamily::Named("Noto Color Emoji".into()),
+                FontFamily::Named("DejaVu Sans".into()),
+            ];
+        });
+        let (doc, _, _) = text_shaping_document("Aकि丁😀אב", &style);
+        let data = InlineItemsData::shape_preprocessed_text(
+            "Aकि丁😀אב",
+            &style,
+            std::sync::Arc::clone(doc.font_collection()),
+        );
+        let mut end = 0;
+        let mut families = std::collections::HashSet::new();
+        assert!(data.items.iter().any(|item| item.bidi_level % 2 == 1));
+        for item in &data.items {
+            assert_eq!(item.text_range.start, end);
+            end = item.text_range.end;
+            let shape = item
+                .shape_result
+                .as_ref()
+                .expect("every painted text item is shaped");
+            assert_eq!(
+                shape.num_characters,
+                data.text[item.text_range.clone()].chars().count()
+            );
+            assert_eq!(shape.character_data.len(), shape.num_characters);
+            assert_eq!(shape.direction.is_ltr(), item.bidi_level % 2 == 0);
+            for run in &shape.runs {
+                families.insert(run.font_data.typeface().family_name());
+                assert!(run.start_index + run.num_characters <= shape.num_characters);
+                assert_eq!(run.glyphs.len(), run.advances.len());
+                assert_eq!(run.glyphs.len(), run.offsets.len());
+                assert_eq!(run.glyphs.len(), run.clusters.len());
+                assert!(run.glyphs.iter().all(|glyph| *glyph != 0));
+                assert!(run
+                    .clusters
+                    .iter()
+                    .all(|cluster| *cluster < run.num_characters));
+            }
+        }
+        assert_eq!(end, data.text.len());
+        assert!(
+            families.len() >= 3,
+            "the guard must exercise real fallback font runs"
+        );
     }
 
     #[test]

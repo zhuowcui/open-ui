@@ -6,9 +6,9 @@ use openui_dom::ElementTag;
 use openui_engine::{Engine, FontCollection, NodeHandle, ViewportMetrics};
 use openui_geometry::Length;
 use openui_style::{
-    Direction, Display, FontFamily, FontFamilyList, FontVariantLigatures, LengthValue,
-    RendererStyleValue, StyleProperty, StyleValue, TextTransform, TextWrapMode, UnicodeBidi,
-    WhiteSpaceCollapse, WhiteSpaceShorthand,
+    Direction, Display, FontFamily, FontFamilyList, FontVariantLigatures, LengthValue, LineBreak,
+    OverflowWrap, RendererStyleValue, StyleProperty, StyleValue, TextTransform, TextWrapMode,
+    UnicodeBidi, WhiteSpaceCollapse, WhiteSpaceShorthand, WordBreak,
 };
 
 struct TextContainers {
@@ -290,5 +290,212 @@ fn native_transform_and_forced_lines_leave_owned_text_unchanged() {
         for node in nodes.texts {
             assert_eq!(engine.text_data(node).unwrap(), "x\nxx");
         }
+    }
+}
+
+fn set_intrinsic_width(engine: &mut Engine, nodes: &TextContainers, min_content: bool) -> f32 {
+    let width = if min_content {
+        Length::min_content()
+    } else {
+        Length::max_content()
+    };
+    for node in nodes.boxes {
+        engine
+            .set_property(
+                node,
+                StyleProperty::Width,
+                LengthValue::Computed(width).into(),
+            )
+            .unwrap();
+    }
+    shared_width(engine, nodes)
+}
+
+fn permit_native_wrap(engine: &mut Engine) {
+    engine
+        .set_property(
+            engine.root(),
+            StyleProperty::WhiteSpace,
+            WhiteSpaceShorthand::default().into(),
+        )
+        .unwrap();
+}
+
+#[test]
+fn native_cjk_normal_keep_all_and_anywhere_share_min_content_with_stable_max_content() {
+    let mut engine = engine_with_families(&["Ahem", "Droid Sans Fallback"]);
+    permit_native_wrap(&mut engine);
+    let nodes = text_containers(&mut engine, "丁丁");
+    let max = shared_width(&mut engine, &nodes);
+    let normal = set_intrinsic_width(&mut engine, &nodes, true);
+    assert!(
+        normal > 0.0 && normal < max,
+        "normal CJK must retain a legal soft wrap"
+    );
+    engine
+        .set_property(
+            engine.root(),
+            StyleProperty::WordBreak,
+            WordBreak::KeepAll.into(),
+        )
+        .unwrap();
+    assert_eq!(shared_width(&mut engine, &nodes), max);
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), max);
+    engine
+        .set_property(
+            engine.root(),
+            StyleProperty::LineBreak,
+            LineBreak::Anywhere.into(),
+        )
+        .unwrap();
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, true), normal);
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), max);
+    for text in nodes.texts {
+        assert_eq!(engine.text_data(text).unwrap(), "丁丁");
+    }
+}
+
+#[test]
+fn native_strict_small_kana_and_anywhere_use_the_same_contextual_shaped_ranges() {
+    let mut engine = engine_with_families(&["Droid Sans Fallback"]);
+    permit_native_wrap(&mut engine);
+    engine
+        .set_property(
+            engine.root(),
+            StyleProperty::WordBreak,
+            WordBreak::BreakAll.into(),
+        )
+        .unwrap();
+    engine
+        .set_property(
+            engine.root(),
+            StyleProperty::LineBreak,
+            LineBreak::Normal.into(),
+        )
+        .unwrap();
+    let nodes = text_containers(&mut engine, "丁ぁ");
+    let max = shared_width(&mut engine, &nodes);
+    let normal = set_intrinsic_width(&mut engine, &nodes, true);
+    assert!(normal > 0.0 && normal < max);
+    engine
+        .set_property(
+            engine.root(),
+            StyleProperty::LineBreak,
+            LineBreak::Strict.into(),
+        )
+        .unwrap();
+    assert_eq!(
+        shared_width(&mut engine, &nodes),
+        max,
+        "strict breaking keeps the small kana with its preceding character"
+    );
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), max);
+    engine
+        .set_property(
+            engine.root(),
+            StyleProperty::LineBreak,
+            LineBreak::Anywhere.into(),
+        )
+        .unwrap();
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, true), normal);
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), max);
+}
+
+#[test]
+fn native_hyphen_nbsp_and_emergency_wrap_neighbors_preserve_css_min_content_rules() {
+    let mut engine = engine_with_families(&["Ahem"]);
+    permit_native_wrap(&mut engine);
+    let nodes = text_containers(&mut engine, "XX-XXX");
+    assert_eq!(shared_width(&mut engine, &nodes), 96.0);
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, true), 48.0);
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), 96.0);
+    for text in nodes.texts {
+        engine.set_text(text, "X\u{00a0}X").unwrap();
+    }
+    assert_eq!(shared_width(&mut engine, &nodes), 48.0);
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, true), 48.0);
+    for text in nodes.texts {
+        engine.set_text(text, "XXXX").unwrap();
+    }
+    engine
+        .set_property(
+            engine.root(),
+            StyleProperty::OverflowWrap,
+            OverflowWrap::BreakWord.into(),
+        )
+        .unwrap();
+    assert_eq!(
+        shared_width(&mut engine, &nodes),
+        64.0,
+        "break-word emergency wraps do not lower min-content"
+    );
+    engine
+        .set_property(
+            engine.root(),
+            StyleProperty::OverflowWrap,
+            OverflowWrap::Anywhere.into(),
+        )
+        .unwrap();
+    assert_eq!(shared_width(&mut engine, &nodes), 16.0);
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), 64.0);
+    engine
+        .set_property(
+            engine.root(),
+            StyleProperty::OverflowWrap,
+            OverflowWrap::Normal.into(),
+        )
+        .unwrap();
+    engine
+        .set_property(
+            engine.root(),
+            StyleProperty::WordBreak,
+            WordBreak::BreakWord.into(),
+        )
+        .unwrap();
+    assert_eq!(
+        set_intrinsic_width(&mut engine, &nodes, true),
+        16.0,
+        "the legacy word-break alias contributes character opportunities to min-content"
+    );
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), 64.0);
+}
+
+#[test]
+fn native_break_spaces_retains_space_units_and_bidi_fallback_boundaries_do_not_hide_wraps() {
+    let mut engine = engine_with_families(&["Ahem"]);
+    engine
+        .set_property(
+            engine.root(),
+            StyleProperty::WhiteSpace,
+            WhiteSpaceShorthand {
+                collapse: WhiteSpaceCollapse::BreakSpaces,
+                wrap: TextWrapMode::Wrap,
+            }
+            .into(),
+        )
+        .unwrap();
+    let nodes = text_containers(&mut engine, "X  X");
+    assert_eq!(shared_width(&mut engine, &nodes), 64.0);
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, true), 32.0);
+    for text in nodes.texts {
+        engine.set_text(text, " ").unwrap();
+    }
+    assert_eq!(shared_width(&mut engine, &nodes), 16.0);
+    assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), 16.0);
+
+    for direction in [Direction::Ltr, Direction::Rtl] {
+        let mut engine = engine_with_families(&["Ahem", "Droid Sans Fallback", "DejaVu Sans"]);
+        permit_native_wrap(&mut engine);
+        engine
+            .set_property(engine.root(), StyleProperty::Direction, direction.into())
+            .unwrap();
+        let nodes = text_containers(&mut engine, "丁A丁 אב");
+        let max = shared_width(&mut engine, &nodes);
+        let min = set_intrinsic_width(&mut engine, &nodes, true);
+        assert!(
+            min > 0.0 && min < max,
+            "font/script/bidi run boundaries must preserve legal wraps"
+        );
+        assert_eq!(set_intrinsic_width(&mut engine, &nodes, false), max);
     }
 }
