@@ -291,6 +291,56 @@ pub struct OuiEasing {
     pub values: [f64; 4],
 }
 
+/// A caller-owned normalized or authored-percentage linear stop.
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiLinearStopV1 {
+    pub input: f64,
+    pub output: f64,
+}
+
+/// The known prefix of a caller-owned curve; future tails are ignored.
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiEasingCurveV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub kind: u32,
+    pub step_position: u32,
+    pub step_count: u32,
+    pub reserved: u32,
+    pub values: [f64; 4],
+    pub stops: *const OuiLinearStopV1,
+    pub stop_count: usize,
+    pub stop_stride: usize,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiAnimationOptionsV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub delay_ms: f64,
+    pub duration_ms: f64,
+    pub iterations: f64,
+    pub playback_rate: f64,
+    pub direction: u32,
+    pub fill: u32,
+    pub play_state: u32,
+    pub composite: u32,
+    pub easing: *const OuiEasingCurveV1,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiKeyframeV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub offset: f64,
+    pub value: OuiStyleValue,
+    pub easing: *const OuiEasingCurveV1,
+}
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct OuiAnimationOptions {

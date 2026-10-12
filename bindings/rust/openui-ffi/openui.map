@@ -58,6 +58,7 @@ OPENUI_0.2 {
     oui_element_add_event_listener;
     oui_element_adjust_control;
     oui_element_animate;
+    oui_element_animate_v1;
     oui_element_append_child;
     oui_element_associated_form_v1;
     oui_element_blur;
@@ -120,7 +121,10 @@ OPENUI_0.2 {
     oui_element_set_text;
     oui_element_settle_scroll_snap_v1;
     oui_element_smooth_scroll_into_view_v1;
+    oui_element_smooth_scroll_into_view_v2;
+    oui_element_smooth_scroll_to_v1;
     oui_element_transition;
+    oui_element_transition_v1;
     oui_error_copy_message;
     oui_error_get_last;
     oui_event_focus_info_v1;

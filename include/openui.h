@@ -591,6 +591,65 @@ typedef struct OuiEasing {
   double values[4];
 } OuiEasing;
 
+/* Additive curve descriptor tags; OuiEasingKind and OuiEasing stay unchanged. */
+typedef enum OuiEasingCurveKindV1 {
+  OUI_EASING_CURVE_LINEAR = 0,
+  OUI_EASING_CURVE_CUBIC_BEZIER = 1,
+  OUI_EASING_CURVE_STEPS = 2,
+  OUI_EASING_CURVE_LINEAR_STOPS = 3,
+  OUI_EASING_CURVE_LINEAR_STOPS_PERCENT = 4
+} OuiEasingCurveKindV1;
+
+typedef struct OuiLinearStopV1 {
+  double input; /* normalized for kind 3; authored percent for kind 4 */
+  double output;
+} OuiLinearStopV1;
+
+/* Caller-owned input. Initialize size/version and zero unused/reserved fields.
+ * LINEAR uses no other fields. CUBIC_BEZIER uses values[0..3] as x1,y1,x2,y2.
+ * STEPS uses step_count and step_position. The two LINEAR_STOPS kinds use
+ * stops/count/stride and require at least two finite ordered points; equal
+ * inputs are accepted. Normalized points must span 0 through 1. Percentage
+ * points retain their authored units and need not begin at 0 or end at 100.
+ * Each point begins with OuiLinearStopV1; any stride tail is ignored. All
+ * descriptor/point storage is aligned, initialized, immutable and readable
+ * through the call. The known prefix is copied only after size/version checks;
+ * future descriptor tails are ignored. No caller pointer is retained. */
+typedef struct OuiEasingCurveV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t kind;
+  uint32_t step_position;
+  uint32_t step_count;
+  uint32_t reserved;
+  double values[4];
+  const OuiLinearStopV1* stops;
+  size_t stop_count;
+  size_t stop_stride;
+} OuiEasingCurveV1;
+
+typedef struct OuiAnimationOptionsV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  double delay_ms;
+  double duration_ms;
+  double iterations; /* -1 means infinite */
+  double playback_rate;
+  uint32_t direction; /* legacy options tag meanings */
+  uint32_t fill;
+  uint32_t play_state;
+  uint32_t composite;
+  const OuiEasingCurveV1* easing; /* NULL means linear */
+} OuiAnimationOptionsV1;
+
+typedef struct OuiKeyframeV1 {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  double offset;
+  OuiStyleValue value;
+  const OuiEasingCurveV1* easing; /* NULL means a linear segment curve */
+} OuiKeyframeV1;
+
 typedef struct OuiAnimationOptions {
   uint32_t struct_size;
   uint32_t abi_version;
@@ -1024,6 +1083,17 @@ OuiStatus oui_element_get_attribute_v1(OuiElement* element, OuiUtf8 name,
 OuiStatus oui_element_set_property(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* value);
 OuiStatus oui_element_animate(OuiElement* element, OuiStyleProperty property, const OuiKeyframe* keyframes, size_t keyframe_count, const OuiAnimationOptions* options, const OuiAnimationTimeline* timeline, uint64_t* out_animation_id);
 OuiStatus oui_element_transition(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* target, const OuiAnimationOptions* options, uint64_t* out_animation_id);
+/* Additive native curve APIs. Same timing, property/timeline ownership,
+ * interpolation, clock and events as the retained Rust Engine. Inputs and
+ * referenced stop arrays are copied synchronously on the owning thread before
+ * mutation; retain no pointers. Each strided keyframe has its own size/version
+ * prefix and its declared extent must fit its stride. Invalid descriptors,
+ * handles, threads and foreign timelines leave animation state and ID output
+ * unchanged. ID storage is aligned, writable and disjoint from all inputs.
+ * Event callbacks run after internal borrows end; existing listener/user_data
+ * lifetime and reentry rules apply. All boundaries contain Rust panics. */
+OuiStatus oui_element_animate_v1(OuiElement* element, OuiStyleProperty property, const OuiKeyframeV1* keyframes, size_t keyframe_count, size_t keyframe_stride, const OuiAnimationOptionsV1* options, const OuiAnimationTimeline* timeline, uint64_t* out_animation_id);
+OuiStatus oui_element_transition_v1(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* target, const OuiAnimationOptionsV1* options, uint64_t* out_animation_id);
 OuiStatus oui_element_get_bounds(OuiElement* element, OuiRect* out_rect);
 /* Logical viewport border boxes in layout order after scroll/transforms.
  * Includes hidden, empty and pointer-ineligible boxes; excludes detached and
@@ -1061,6 +1131,16 @@ OuiStatus oui_element_scroll_into_view_v1(OuiElement* element, uint32_t block_al
  * non-negative. Zero duration and reduced motion settle immediately. Calling
  * scroll_to on a participating container cancels its pending animation. */
 OuiStatus oui_element_smooth_scroll_into_view_v1(OuiElement* element, uint32_t block_alignment, uint32_t inline_alignment, uint32_t container, double duration_ms);
+/* Shared native scroll animation/reveal operations with an owned curve. NULL
+ * means linear. Finite coordinates/duration are required; duration is >= 0.
+ * Zero duration and reduced motion settle immediately. Reveal applies the same
+ * curve to every participating ancestor; v1 retains its CSS ease default.
+ * Descriptors/points are copied during the call; no handles or caller pointers
+ * are retained by the curve. out_scroll_animation_id is aligned/writable and
+ * unchanged on validation/ownership failure. Calling oui_element_scroll_to
+ * cancels the container's pending scroll animation. */
+OuiStatus oui_element_smooth_scroll_to_v1(OuiElement* element, double x, double y, double duration_ms, const OuiEasingCurveV1* easing, uint64_t* out_scroll_animation_id);
+OuiStatus oui_element_smooth_scroll_into_view_v2(OuiElement* element, uint32_t block_alignment, uint32_t inline_alignment, uint32_t container, double duration_ms, const OuiEasingCurveV1* easing);
 /* Resolve pending layout before reading the retained logical scroll offsets. */
 OuiStatus oui_element_get_scroll_offset(OuiElement* element, double* out_x, double* out_y);
 OuiStatus oui_element_focus(OuiElement* element);

@@ -741,6 +741,19 @@ impl Element {
         })
     }
 
+    /// Reveal through the same retained scroll plan with an owned native curve.
+    /// All enclosing scrollports use this curve; no caller data is retained.
+    pub fn smooth_scroll_into_view_with_easing(
+        &self,
+        options: crate::ScrollIntoViewOptions,
+        duration_ms: f64,
+        easing: openui_style::Easing,
+    ) -> Result<Vec<crate::ScrollAnimationId>, Error> {
+        self.document.with_engine_mut(|engine| {
+            engine.smooth_scroll_into_view_with_easing(self.handle, options, duration_ms, easing)
+        })
+    }
+
     pub fn control_value(&self) -> Result<Option<String>, Error> {
         self.document
             .with_engine(|engine| {

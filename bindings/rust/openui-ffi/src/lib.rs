@@ -9,6 +9,9 @@
 mod accessibility_snapshot;
 #[cfg(test)]
 mod copy_output_tests;
+mod easing_curve;
+#[cfg(test)]
+mod easing_curve_tests;
 mod editing_command;
 #[cfg(test)]
 mod element_dimension_tests;
@@ -40,6 +43,10 @@ mod versioned_input_tests;
 #[cfg(test)]
 mod versioned_output_tests;
 
+pub use easing_curve::{
+    oui_element_animate_v1, oui_element_smooth_scroll_into_view_v2,
+    oui_element_smooth_scroll_to_v1, oui_element_transition_v1,
+};
 pub use editing_command::oui_element_edit_text_v1;
 pub use element_dimensions::{
     oui_element_get_client_height_v1, oui_element_get_client_width_v1,
@@ -501,13 +508,42 @@ fn animation_easing(value: OuiEasing) -> Result<Easing, ApiError> {
     }
 }
 
+struct AnimationTimingInput {
+    delay_ms: f64,
+    duration_ms: f64,
+    iterations: f64,
+    playback_rate: f64,
+    direction: u32,
+    fill: u32,
+    play_state: u32,
+    composite: u32,
+}
+
 fn animation_options(value: *const OuiAnimationOptions) -> Result<AnimationOptions, ApiError> {
     if value.is_null() {
         return Err(invalid("animation options are null"));
     }
-    // SAFETY: the caller supplies initialized readable options storage;
-    // validate its prefix before copying the full legacy value.
+    // SAFETY: validate the readable header before copying legacy fields.
     let value = unsafe { versioned_input(value) }?;
+    animation_options_values(
+        AnimationTimingInput {
+            delay_ms: value.delay_ms,
+            duration_ms: value.duration_ms,
+            iterations: value.iterations,
+            playback_rate: value.playback_rate,
+            direction: value.direction,
+            fill: value.fill,
+            play_state: value.play_state,
+            composite: value.composite,
+        },
+        animation_easing(value.easing)?,
+    )
+}
+
+fn animation_options_values(
+    value: AnimationTimingInput,
+    easing: Easing,
+) -> Result<AnimationOptions, ApiError> {
     let iterations = if value.iterations == -1.0 {
         IterationCount::Infinite
     } else {
@@ -547,7 +583,7 @@ fn animation_options(value: *const OuiAnimationOptions) -> Result<AnimationOptio
         play_state,
         playback_rate: value.playback_rate,
         composite,
-        easing: animation_easing(value.easing)?,
+        easing,
     };
     options
         .validate()

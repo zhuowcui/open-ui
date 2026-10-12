@@ -26,6 +26,10 @@
       "align": 8,
       "size": 104
     },
+    "OuiAnimationOptionsV1": {
+      "align": 8,
+      "size": 64
+    },
     "OuiAnimationState": {
       "align": 8,
       "size": 48
@@ -57,6 +61,10 @@
     "OuiEasing": {
       "align": 8,
       "size": 48
+    },
+    "OuiEasingCurveV1": {
+      "align": 8,
+      "size": 80
     },
     "OuiEditCommandV1": {
       "align": 4,
@@ -102,9 +110,17 @@
       "align": 8,
       "size": 80
     },
+    "OuiKeyframeV1": {
+      "align": 8,
+      "size": 40
+    },
     "OuiLength": {
       "align": 4,
       "size": 8
+    },
+    "OuiLinearStopV1": {
+      "align": 8,
+      "size": 16
     },
     "OuiPlatformEvent": {
       "align": 8,

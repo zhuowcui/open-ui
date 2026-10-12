@@ -92,6 +92,63 @@ mod tests {
         (engine, outer, inner, target)
     }
 
+    #[test]
+    fn owned_reveal_curve_uses_the_shared_scroll_clock_in_every_container() {
+        use openui_style::{Easing, LinearStop};
+        let (mut engine, outer, inner, target) = nested();
+        engine.scroll_into_view(target, nearest()).unwrap();
+        let destinations = [outer, inner].map(|node| engine.scroll_offset(node).unwrap());
+        for node in [engine.root(), outer, inner] {
+            engine.scroll_to(node, 0.0, 0.0).unwrap();
+        }
+        let curve = Easing::linear_stops(vec![
+            LinearStop {
+                input: 0.0,
+                output: 0.0,
+            },
+            LinearStop {
+                input: 0.5,
+                output: 0.25,
+            },
+            LinearStop {
+                input: 1.0,
+                output: 1.0,
+            },
+        ])
+        .unwrap();
+        let ids = engine
+            .smooth_scroll_into_view_with_easing(target, nearest(), 100.0, curve)
+            .unwrap();
+        assert!(!ids.is_empty());
+        engine.set_animation_time(50.0).unwrap();
+        for (node, destination) in [outer, inner].into_iter().zip(destinations) {
+            let halfway = engine.scroll_offset(node).unwrap();
+            assert_eq!(halfway, (destination.0 * 0.25, destination.1 * 0.25));
+        }
+        engine.set_animation_time(100.0).unwrap();
+        for (node, destination) in [outer, inner].into_iter().zip(destinations) {
+            assert_eq!(engine.scroll_offset(node).unwrap(), destination);
+        }
+    }
+
+    #[test]
+    fn reveal_rejects_invalid_owned_curve_before_starting_any_container() {
+        let (mut engine, outer, inner, target) = nested();
+        let before = [outer, inner].map(|node| engine.scroll_offset(node).unwrap());
+        assert!(engine
+            .smooth_scroll_into_view_with_easing(
+                target,
+                nearest(),
+                100.0,
+                openui_style::Easing::LinearStopsPercent(Vec::new())
+            )
+            .is_err());
+        assert!(!engine.is_animating());
+        for (node, offset) in [outer, inner].into_iter().zip(before) {
+            assert_eq!(engine.scroll_offset(node).unwrap(), offset);
+        }
+    }
+
     fn nearest() -> ScrollIntoViewOptions {
         ScrollIntoViewOptions {
             block: ScrollAlignment::Nearest,
@@ -864,26 +921,38 @@ impl Engine {
         options: ScrollIntoViewOptions,
         duration_ms: f64,
     ) -> Result<Vec<ScrollAnimationId>, EngineError> {
+        self.smooth_scroll_into_view_with_easing(
+            target,
+            options,
+            duration_ms,
+            openui_style::Easing::CubicBezier {
+                x1: 0.25,
+                y1: 0.1,
+                x2: 0.25,
+                y2: 1.0,
+            },
+        )
+    }
+
+    /// Reveal through the shared plan with a caller-owned native easing curve.
+    /// Validate timing and curve before planning or starting any animation.
+    pub fn smooth_scroll_into_view_with_easing(
+        &mut self,
+        target: NodeHandle,
+        options: ScrollIntoViewOptions,
+        duration_ms: f64,
+        easing: openui_style::Easing,
+    ) -> Result<Vec<ScrollAnimationId>, EngineError> {
         if !duration_ms.is_finite() || duration_ms < 0.0 {
-            return Err(EngineError::InvalidInput(
-                "scroll duration must be finite and non-negative",
-            ));
+            return Err(EngineError::InvalidInput("invalid reveal duration"));
         }
+        easing
+            .validate()
+            .map_err(|_| EngineError::InvalidInput("invalid reveal easing curve"))?;
         self.scroll_into_view_plan(target, options)?
             .into_iter()
             .map(|(ancestor, x, y)| {
-                self.smooth_scroll_to(
-                    ancestor,
-                    x,
-                    y,
-                    duration_ms,
-                    openui_style::Easing::CubicBezier {
-                        x1: 0.25,
-                        y1: 0.1,
-                        x2: 0.25,
-                        y2: 1.0,
-                    },
-                )
+                self.smooth_scroll_to(ancestor, x, y, duration_ms, easing.clone())
             })
             .collect()
     }
