@@ -30,6 +30,7 @@ mod scrollbars;
 pub mod size_constraints;
 pub mod sticky;
 pub mod table;
+mod transform;
 mod viewport;
 
 pub use crate::inline::algorithm::inline_layout;
@@ -82,3 +83,6 @@ pub use size_constraints::{
 };
 pub use sticky::{apply_sticky_offset, compute_sticky_offset, StickyPositionData};
 pub use table::table_layout;
+pub use transform::{
+    finalize_fragment_transforms, resolved_fragment_transform, ResolvedFragmentTransform,
+};

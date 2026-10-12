@@ -304,6 +304,10 @@ pub struct Fragment {
     /// data, independent of decoration ink and paint clipping.
     pub principal_box_rect: Option<PhysicalRect>,
 
+    /// Full matrix resolved against this physical fragment's actual reference
+    /// box after layout; the owned authored operation list remains in style.
+    pub resolved_transform: Option<crate::ResolvedFragmentTransform>,
+
     /// Resolved padding (in LayoutUnit).
     pub padding: BoxStrut,
 
@@ -636,6 +640,7 @@ impl Fragment {
             offset: PhysicalOffset::zero(),
             size,
             principal_box_rect: None,
+            resolved_transform: None,
             padding: BoxStrut::zero(),
             border: BoxStrut::zero(),
             margin: BoxStrut::zero(),
@@ -714,6 +719,7 @@ impl Fragment {
             offset: PhysicalOffset::zero(),
             size,
             principal_box_rect: None,
+            resolved_transform: None,
             padding: BoxStrut::zero(),
             border: BoxStrut::zero(),
             margin: BoxStrut::zero(),

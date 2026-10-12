@@ -158,6 +158,7 @@ thread_local! {
     static BROKEN_IMAGE: RefCell<Option<Image>> = const { RefCell::new(None) };
     static BROKEN_IMAGE_HIGH_RES: RefCell<Option<Image>> = const { RefCell::new(None) };
     static RASTERIZING_PROMOTED_TRANSFORM: RefCell<bool> = const { RefCell::new(false) };
+    static CSS_PAINT_MATRIX: std::cell::Cell<openui_style::TransformMatrix> = const { std::cell::Cell::new(openui_style::TransformMatrix::IDENTITY) };
     static DEFERRED_OPAQUE_OUTLINE_COVERS: RefCell<Vec<OutlineCoverageKey>> = const { RefCell::new(Vec::new()) };
     static DEFERRED_OUTLINE_REPLAYS: RefCell<HashSet<usize>> = RefCell::new(HashSet::new());
     // Cross-cutting paint phases (fragment edges and late source-order
@@ -215,7 +216,7 @@ impl BackgroundEffectScope {
                     && style.mask_layers.is_empty()
                     && !(CONTENT_BACKGROUND_DEVICE_SPACE.with(|space| space.get())
                         && style.has_border_radius())
-                    && style.transform == openui_style::Transform2D::IDENTITY,
+                    && !style_has_transform(style),
             ));
             previous
         }))
@@ -448,32 +449,53 @@ fn fragment_transform_matrix(
     style: &ComputedStyle,
     fragment: &Fragment,
     abs_offset: PhysicalOffset,
-) -> Matrix {
-    let mut width = fragment.size.width.to_f32();
-    let mut height = fragment.size.height.to_f32();
-    if let Some(fragmented_block_size) = fragment.decoration_paint_block_size {
-        if fragment_block_axis_is_x(fragment) {
-            width = fragmented_block_size.to_f32();
-        } else {
-            height = fragmented_block_size.to_f32();
-        }
-    }
-    let origin_x = resolve_background_length(&style.transform_origin.0, width, width * 0.5);
-    let origin_y = resolve_background_length(&style.transform_origin.1, height, height * 0.5);
-    let pivot_x = abs_offset.left.to_f32() + origin_x;
-    let pivot_y = abs_offset.top.to_f32() + origin_y;
-    let transform = style.transform;
-    Matrix::new_all(
-        transform.a,
-        transform.c,
-        transform.e + pivot_x - transform.a * pivot_x - transform.c * pivot_y,
-        transform.b,
-        transform.d,
-        transform.f + pivot_y - transform.b * pivot_x - transform.d * pivot_y,
+) -> openui_style::TransformMatrix {
+    let used = fragment
+        .resolved_transform
+        .unwrap_or_else(|| openui_layout::resolved_fragment_transform(fragment, style));
+    openui_style::TransformMatrix::translation(
+        abs_offset.left.to_f64(),
+        abs_offset.top.to_f64(),
         0.0,
-        0.0,
-        1.0,
     )
+    .concat(used.local_matrix())
+    .concat(openui_style::TransformMatrix::translation(
+        -abs_offset.left.to_f64(),
+        -abs_offset.top.to_f64(),
+        0.0,
+    ))
+}
+
+fn concat_transform_matrix(canvas: &Canvas, matrix: openui_style::TransformMatrix) {
+    let m = matrix.raster_matrix().0;
+    if matrix.is_2d() {
+        canvas.concat(&Matrix::new_all(
+            m[0], m[4], m[12], m[1], m[5], m[13], 0.0, 0.0, 1.0,
+        ));
+    } else {
+        // The ordinary retained Skia recording owns this complete 4x4.
+        // Analytic 2D tile optimizations conservatively defer to that picture.
+        canvas.concat_44(&skia_safe::M44::col_major(&m));
+    }
+}
+
+// The CSS transform chain is separate from raster/device-scale transforms.
+// cc::TransformTree checks the accumulated full matrix for invertibility,
+// including products that become singular although both operands were valid.
+struct CssPaintMatrixScope(openui_style::TransformMatrix);
+impl CssPaintMatrixScope {
+    fn new(matrix: openui_style::TransformMatrix) -> Self {
+        Self(CSS_PAINT_MATRIX.with(|current| current.replace(matrix)))
+    }
+}
+impl Drop for CssPaintMatrixScope {
+    fn drop(&mut self) {
+        CSS_PAINT_MATRIX.with(|current| current.set(self.0));
+    }
+}
+
+fn style_has_transform(style: &ComputedStyle) -> bool {
+    style.has_transform()
 }
 
 fn promoted_subtree_bounds(fragment: &Fragment) -> Rect {
@@ -733,6 +755,8 @@ fn helper_paint_style(fragment: &Fragment, style: &ComputedStyle) -> Option<Comp
     is_formatting_helper(fragment).then(|| {
         style.derive(|adjusted| {
             adjusted.transform = openui_style::Transform2D::IDENTITY;
+            adjusted.native_transform = None;
+            adjusted.transform_matrix = None;
             adjusted.establishes_transform_containing_block = false;
             adjusted.will_change_transform = false;
             adjusted.opacity = 1.0;
@@ -778,6 +802,21 @@ fn paint_fragment_tracked(
     {
         return;
     }
+    // Default transform-style:flat ends inherited depth at each actual box.
+    // Keep the projected parent plane, then apply this box's complete matrix.
+    // Anonymous/style-borrowing helpers do not create another transform node.
+    let inherited_css = CSS_PAINT_MATRIX.with(|current| current.get());
+    let flattens_depth = fragment.owns_element_box() && !inherited_css.is_2d();
+    let _flat_css_scope = if flattens_depth {
+        canvas.save();
+        let mut values = [0.0; 16];
+        canvas.local_to_device().get_col_major(&mut values);
+        let flattened = openui_style::TransformMatrix(values.map(f64::from)).flattened();
+        canvas.set_matrix(&skia_safe::M44::col_major(&flattened.raster_matrix().0));
+        Some(CssPaintMatrixScope::new(inherited_css.flattened()))
+    } else {
+        None
+    };
     // A box that crosses a fractional viewport edge is cut by the physical
     // viewport scissor before its overflowing ink reaches the terminal cell.
     // A box ending at that edge keeps its own snapped edge coverage, so clip
@@ -828,6 +867,9 @@ fn paint_fragment_tracked(
         paint_fragment_contents(canvas, fragment, doc, offset);
     }
     if clips_fractional_terminal_column {
+        canvas.restore();
+    }
+    if flattens_depth {
         canvas.restore();
     }
 }
@@ -1296,48 +1338,62 @@ fn paint_fragment_contents(
         abs_offset.left - fragment.offset.left,
         abs_offset.top - fragment.offset.top,
     );
+    let mut css_matrix = CSS_PAINT_MATRIX.with(|current| current.get());
+    let mut promoted_transform_saves = 0;
     for ancestor in &fragment.promoted_transform_ancestors {
         let ancestor_style = &doc.node(ancestor.node_id).style;
-        let transform = ancestor_style.transform;
-        if transform == openui_style::Transform2D::IDENTITY {
-            continue;
-        }
         let width = ancestor.fragment_size.width.to_f32();
         let height = ancestor.fragment_size.height.to_f32();
+        let transform = ancestor_style.native_transform.as_ref().map_or_else(
+            || openui_style::TransformMatrix::from_affine(ancestor_style.transform),
+            |list| openui_style::transform_list_matrix(list, (width as f64, height as f64)),
+        );
+        if transform == openui_style::TransformMatrix::IDENTITY {
+            continue;
+        }
         let origin_x =
             resolve_background_length(&ancestor_style.transform_origin.0, width, width * 0.5);
         let origin_y =
             resolve_background_length(&ancestor_style.transform_origin.1, height, height * 0.5);
         let pivot_x = (promoted_transform_parent_offset.left + ancestor.fragment_offset.left)
-            .to_f32()
-            + origin_x;
+            .to_f64()
+            + origin_x as f64;
         let pivot_y = (promoted_transform_parent_offset.top + ancestor.fragment_offset.top)
-            .to_f32()
-            + origin_y;
-        let matrix = Matrix::new_all(
-            transform.a,
-            transform.c,
-            transform.e + pivot_x - transform.a * pivot_x - transform.c * pivot_y,
-            transform.b,
-            transform.d,
-            transform.f + pivot_y - transform.b * pivot_x - transform.d * pivot_y,
-            0.0,
-            0.0,
-            1.0,
-        );
+            .to_f64()
+            + origin_y as f64;
         canvas.save();
-        canvas.concat(&matrix);
+        let applied = transform.about_origin(pivot_x, pivot_y, 0.0);
+        concat_transform_matrix(canvas, applied);
+        css_matrix = css_matrix.concat(applied);
+        promoted_transform_saves += 1;
     }
     let suppress_transform = RASTERIZING_PROMOTED_TRANSFORM.with(|active| *active.borrow());
-    let transform = if suppress_transform {
-        openui_style::Transform2D::IDENTITY
+    let full_transform = if suppress_transform {
+        openui_style::TransformMatrix::IDENTITY
     } else {
-        style.transform
+        fragment
+            .resolved_transform
+            .unwrap_or_else(|| openui_layout::resolved_fragment_transform(fragment, style))
+            .matrix
     };
+    let transform = full_transform.compatibility_affine();
     let has_transform =
-        fragment.owns_element_box() && transform != openui_style::Transform2D::IDENTITY;
+        fragment.owns_element_box() && full_transform != openui_style::TransformMatrix::IDENTITY;
+    if has_transform {
+        css_matrix = css_matrix.concat(fragment_transform_matrix(style, fragment, abs_offset));
+    }
+    if !css_matrix.is_invertible() {
+        // Singular transforms keep their retained source/scene and can become
+        // drawable again on a later animation tick, but paint no subtree ink.
+        for _ in 0..promoted_transform_saves {
+            canvas.restore();
+        }
+        return;
+    }
+    let _css_matrix_scope = CssPaintMatrixScope::new(css_matrix);
     let has_precomposited_transform = has_transform
         && style.will_change_transform
+        && full_transform.is_2d()
         && (transform.b != 0.0 || transform.c != 0.0)
         && (fragment.decoration_slice.is_none()
             || fragment.is_first_for_node
@@ -1348,6 +1404,7 @@ fn paint_fragment_contents(
         && style.overflow_x == Overflow::Visible
         && style.overflow_y == Overflow::Visible;
     let has_fixed_fragmentation_transform_clip = has_layout_fragmentation_transform_clip
+        && full_transform.is_2d()
         && transform.a == 1.0
         && transform.b == 0.0
         && transform.c == 0.0
@@ -1404,7 +1461,10 @@ fn paint_fragment_contents(
             paint.set_anti_alias(true);
 
             canvas.save();
-            canvas.concat(&fragment_transform_matrix(style, fragment, abs_offset));
+            concat_transform_matrix(
+                canvas,
+                fragment_transform_matrix(style, fragment, abs_offset),
+            );
             // SoftwareRenderer composites a promoted picture tile with
             // drawImageRect rather than replaying it as an image shader. The
             // two paths have measurably different transformed edge coverage.
@@ -1420,10 +1480,8 @@ fn paint_fragment_contents(
         if has_fixed_fragmentation_transform_clip {
             canvas.restore();
         }
-        for ancestor in fragment.promoted_transform_ancestors.iter().rev() {
-            if doc.node(ancestor.node_id).style.transform != openui_style::Transform2D::IDENTITY {
-                canvas.restore();
-            }
+        for _ in 0..promoted_transform_saves {
+            canvas.restore();
         }
         return;
     }
@@ -1436,7 +1494,7 @@ fn paint_fragment_contents(
         // descending the fragment tree.
         let matrix = fragment_transform_matrix(style, fragment, abs_offset);
         canvas.save();
-        canvas.concat(&matrix);
+        concat_transform_matrix(canvas, matrix);
     }
     let has_clip_path = fragment.owns_element_box() && style.clip_path_inset.is_some();
     if let Some(inset) = style.clip_path_inset.as_ref().filter(|_| has_clip_path) {
@@ -1600,7 +1658,7 @@ fn paint_fragment_contents(
     // width/style/color, but it is not another principal box and must not
     // duplicate that element's outline around the synthetic rule fragment.
     let outline_key = outline_coverage_key(fragment, style, abs_offset);
-    let outline_occluded_by_ancestor = style.transform == openui_style::Transform2D::IDENTITY
+    let outline_occluded_by_ancestor = !style_has_transform(style)
         && outline_key.is_some_and(|key| {
             DEFERRED_OPAQUE_OUTLINE_COVERS.with(|covers| covers.borrow().contains(&key))
         });
@@ -1618,9 +1676,9 @@ fn paint_fragment_contents(
         && paint_outline_after_children
         && style.outline_style == BorderStyle::Solid
         && style.outline_color.resolve(&style.color).is_opaque()
-        && style.transform == openui_style::Transform2D::IDENTITY)
-        .then_some(outline_key)
-        .flatten();
+        && !style_has_transform(style))
+    .then_some(outline_key)
+    .flatten();
     if let Some(key) = deferred_outline_cover {
         DEFERRED_OPAQUE_OUTLINE_COVERS.with(|covers| covers.borrow_mut().push(key));
     }
@@ -1844,10 +1902,8 @@ fn paint_fragment_contents(
     if has_fixed_fragmentation_transform_clip {
         canvas.restore();
     }
-    for ancestor in fragment.promoted_transform_ancestors.iter().rev() {
-        if doc.node(ancestor.node_id).style.transform != openui_style::Transform2D::IDENTITY {
-            canvas.restore();
-        }
+    for _ in 0..promoted_transform_saves {
+        canvas.restore();
     }
 }
 
@@ -6535,7 +6591,7 @@ fn paint_children_with_stacking_order(
                     .is_last_for_node
                 && !is_fragment_stacking_context(first, doc)
                 && style.visibility == Visibility::Visible
-                && style.transform == openui_style::Transform2D::IDENTITY
+                && !style_has_transform(style)
                 && style.filter_blur == 0.0
                 && style.filter_grayscale == 0.0
                 && style.clip_path_inset.is_none()
@@ -6697,7 +6753,7 @@ fn table_part_has_layer(fragment: &Fragment, doc: &Document) -> bool {
         || is_fragment_stacking_context(fragment, doc)
         || style.has_layout_containment()
         || style.will_change_transform
-        || style.transform != openui_style::Transform2D::IDENTITY
+        || style_has_transform(style)
         || style.filter_blur > 0.0
         || style.filter_grayscale > 0.0
         || style.clip_path_inset.is_some()
@@ -6856,7 +6912,7 @@ fn prepaint_in_flow_block_decorations(
         let qualified_text_profile = uses_deterministic_text_profile(style);
         if !style.display.is_block_level()
             || style.float != openui_style::Float::None
-            || style.transform != openui_style::Transform2D::IDENTITY
+            || style_has_transform(style)
             || style.filter_blur > 0.0
             || style.filter_grayscale > 0.0
             || style.clip_path_inset.is_some()
@@ -7265,7 +7321,7 @@ fn collect_shared_column_decorations<'a>(
             && !fragment.skip_box_decoration
             && style.visibility == Visibility::Visible
             && style.opacity >= 1.0
-            && style.transform == openui_style::Transform2D::IDENTITY
+            && !style_has_transform(style)
             && style.filter_blur <= 0.0
             && style.filter_grayscale <= 0.0
             && style.clip_path_inset.is_none()
@@ -7293,7 +7349,7 @@ fn collect_shared_column_decorations<'a>(
             && matches!(style.overflow_x, Overflow::Visible | Overflow::Clip)
             && matches!(style.overflow_y, Overflow::Visible | Overflow::Clip);
         if style.opacity < 1.0
-            || style.transform != openui_style::Transform2D::IDENTITY
+            || style_has_transform(style)
             || style.filter_blur > 0.0
             || style.filter_grayscale > 0.0
             || style.clip_path_inset.is_some()
@@ -8097,7 +8153,7 @@ fn collect_fragmented_opacity_stacking_contexts<'a>(
             continue;
         }
         let style = &doc.node(child.node_id).style;
-        let has_visual_transform = style.transform != openui_style::Transform2D::IDENTITY;
+        let has_visual_transform = style_has_transform(style);
         if style.opacity < 1.0 || has_visual_transform {
             let pointer = child as *const Fragment as usize;
             let entry = if has_visual_transform {
@@ -8418,7 +8474,7 @@ fn needs_overflow_clip(fragment: &Fragment, style: &ComputedStyle, doc: &Documen
     }
     if fragment.decoration_slice.is_some()
         && fragment.block_axis_clip_only
-        && style.transform != openui_style::Transform2D::IDENTITY
+        && style_has_transform(style)
     {
         // Fragmentation slices a transformed box before transforming each
         // fragment. Its local slice clips the cloned subtree, while the
@@ -9498,7 +9554,23 @@ fn antialias_rectangular_overflow_clip(
     !is_embedded_viewport
         && !is_button_content_clip
         && !style.has_border_radius()
-        && ((style.transform.b != 0.0 || style.transform.c != 0.0)
+        && ((fragment
+            .resolved_transform
+            .unwrap_or_else(|| openui_layout::resolved_fragment_transform(fragment, style))
+            .matrix
+            .0[1]
+            != 0.0
+            || fragment
+                .resolved_transform
+                .unwrap_or_else(|| openui_layout::resolved_fragment_transform(fragment, style))
+                .matrix
+                .0[4]
+                != 0.0
+            || !fragment
+                .resolved_transform
+                .unwrap_or_else(|| openui_layout::resolved_fragment_transform(fragment, style))
+                .matrix
+                .is_2d())
             || (style.device_scale_factor.fract().abs() > f64::EPSILON
                 && (matches!(style.overflow_x, Overflow::Hidden | Overflow::Clip)
                     || matches!(style.overflow_y, Overflow::Hidden | Overflow::Clip))))
@@ -9618,7 +9690,7 @@ fn element_scroll_paint_translation(
     let mut ancestor = fragment.node_id;
     while !ancestor.is_none() {
         let node = doc.node(ancestor);
-        if node.style.transform != openui_style::Transform2D::IDENTITY
+        if style_has_transform(&node.style)
             || node.is_svg_foreign_object
             || node.tag == openui_dom::ElementTag::Svg
         {
@@ -14642,7 +14714,7 @@ fn paint_background_layers(
         let mut ancestor = doc.node(fragment.node_id).parent;
         while !ancestor.is_none() {
             let ancestor_style = &doc.node(ancestor).style;
-            if ancestor_style.transform != openui_style::Transform2D::IDENTITY {
+            if style_has_transform(ancestor_style) {
                 return true;
             }
             ancestor = doc.node(ancestor).parent;
@@ -16990,7 +17062,7 @@ fn collapsed_cell_background_clip<'a>(
         needs_clip |= style.position != Position::Static
             || style.opacity < 1.0
             || style.establishes_transform_containing_block
-            || style.transform != openui_style::Transform2D::IDENTITY
+            || style_has_transform(style)
             || style.has_layout_containment()
             || style.has_paint_containment()
             || style.will_change_transform
@@ -17499,7 +17571,7 @@ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Docum
             || child_style.opacity < 1.0
             || child_style.visibility != Visibility::Visible
             || child_style.position != Position::Static
-            || child_style.transform != openui_style::Transform2D::IDENTITY
+            || style_has_transform(child_style)
             || child_style.filter_blur > 0.0
             || child_style.clip_path_inset.is_some()
             || !child_style.mask_layers.is_empty()
@@ -20916,7 +20988,7 @@ fn paint_outline(
     }) {
         return;
     }
-    let has_axis_aligned_device_geometry = style.transform == openui_style::Transform2D::IDENTITY;
+    let has_axis_aligned_device_geometry = !style_has_transform(style);
     if has_axis_aligned_device_geometry
         && outline_coverage_key(fragment, style, abs_offset).is_some_and(|key| {
             DEFERRED_OPAQUE_OUTLINE_COVERS.with(|covers| covers.borrow().contains(&key))

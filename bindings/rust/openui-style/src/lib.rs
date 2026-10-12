@@ -11,6 +11,7 @@ mod enums;
 mod font_types;
 mod layout_systems;
 mod property;
+mod transform_composition;
 mod typography;
 
 pub use animation::*;
@@ -29,4 +30,5 @@ pub use font_types::*;
 pub use layout_systems::*;
 pub use openui_geometry::Length;
 pub use property::*;
+pub use transform_composition::*;
 pub use typography::*;

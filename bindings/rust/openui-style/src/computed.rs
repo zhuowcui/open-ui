@@ -706,6 +706,12 @@ pub struct ComputedStyleFields {
     pub object_fit: ObjectFit,
     pub object_position: ObjectPosition,
     pub transform: Transform2D,
+    /// Owned native transform source. `None` preserves legacy callers which
+    /// write the existing affine `transform` field directly.
+    pub native_transform: Option<crate::TransformList>,
+    /// Full constant transform when independent of the reference box. Used
+    /// fragment matrices are finalized after layout, including deferred lists.
+    pub transform_matrix: Option<crate::TransformMatrix>,
     pub transform_origin: (Length, Length),
     /// Deterministic CSS filter functions represented by the paint backend.
     pub filter_blur: f32,
@@ -1091,6 +1097,30 @@ pub struct ComputedStyleFields {
 }
 
 impl ComputedStyleFields {
+    /// A specified transform creates transform policy even when its used
+    /// matrix is identity. Direct legacy affine callers keep their old view.
+    #[inline]
+    pub fn has_transform(&self) -> bool {
+        self.native_transform
+            .as_ref()
+            .map_or(self.transform != Transform2D::IDENTITY, |list| {
+                !list.0.is_empty()
+            })
+    }
+
+    #[inline]
+    pub fn has_transform_containing_block(&self) -> bool {
+        self.establishes_transform_containing_block || self.has_transform()
+    }
+
+    /// Evaluate the retained native operation list with the actual used box.
+    #[doc(hidden)]
+    pub fn transform_for_reference_box(&self, width: f64, height: f64) -> crate::TransformMatrix {
+        self.native_transform.as_ref().map_or_else(
+            || crate::TransformMatrix::from_affine(self.transform),
+            |list| crate::transform_list_matrix(list, (width, height)),
+        )
+    }
     /// Compose nested derived-style setup while the DOM owns the only mutable
     /// borrow. This cannot be used to obtain or retain a mutable snapshot.
     #[doc(hidden)]
@@ -1328,6 +1358,8 @@ impl ComputedStyle {
                 object_fit: ObjectFit::Fill,
                 object_position: ObjectPosition::default(),
                 transform: Transform2D::IDENTITY,
+                native_transform: None,
+                transform_matrix: None,
                 transform_origin: (Length::percent(50.0), Length::percent(50.0)),
                 filter_blur: 0.0,
                 filter_grayscale: 0.0,

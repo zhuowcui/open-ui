@@ -1916,28 +1916,9 @@ impl Engine {
                     left: resolve(value.0.left),
                 }))
             }
-            StyleValue::Transform(value) => StyleValue::Transform(openui_style::TransformList(
-                value
-                    .0
-                    .iter()
-                    .map(|operation| match operation {
-                        openui_style::TransformOperation::Translate(x, y) => {
-                            openui_style::TransformOperation::Translate(resolve(*x), resolve(*y))
-                        }
-                        openui_style::TransformOperation::Translate3d(x, y, z) => {
-                            openui_style::TransformOperation::Translate3d(
-                                resolve(*x),
-                                resolve(*y),
-                                resolve(*z),
-                            )
-                        }
-                        openui_style::TransformOperation::Perspective(value) => {
-                            openui_style::TransformOperation::Perspective(resolve(*value))
-                        }
-                        other => other.clone(),
-                    })
-                    .collect(),
-            )),
+            StyleValue::Transform(value) => {
+                StyleValue::Transform(openui_style::map_transform_lengths(value, &resolve))
+            }
             _ => value.clone(),
         }
     }
@@ -2462,6 +2443,14 @@ impl Engine {
 
     fn update_once(&mut self) -> Result<&SceneSnapshot, EngineError> {
         self.synchronize_font_collection()?;
+        if !self.dirty.layout && self.dirty.visual() {
+            if let Some(fragment) = self.latest_fragment.as_mut() {
+                openui_layout::finalize_fragment_transforms(
+                    &self.document,
+                    Arc::make_mut(fragment),
+                );
+            }
+        }
         if !self.dirty.layout && self.latest_fragment.is_some() {
             self.refresh_scroll_button_states();
         }
@@ -2531,12 +2520,14 @@ impl Engine {
                 fragment =
                     openui_layout::block_layout(&self.document, self.document.root(), &space);
             }
+            openui_layout::finalize_fragment_transforms(&self.document, &mut fragment);
             if self.settle_native_snap_after_layout(&fragment) {
                 // Retained snap offsets and sticky descendants are recorded
                 // from the same final-state layout, without shifting fixtures.
                 fragment =
                     openui_layout::block_layout(&self.document, self.document.root(), &space);
             }
+            openui_layout::finalize_fragment_transforms(&self.document, &mut fragment);
             let fragment = Arc::new(fragment);
             self.stats.layouts += 1;
             self.rebuild_hit_test(&fragment);

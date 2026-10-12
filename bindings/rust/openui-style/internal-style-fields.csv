@@ -15,3 +15,5 @@ placeholder_style,Stores the resolved immutable placeholder pseudo-element snaps
 raster_configuration,Retains the immutable engine raster policy on every detached style snapshot used by text and paint.
 device_scale_factor,Retains physical-pixel scale for font strike selection without changing logical text metrics.
 will_change_transform,Caches compositing intent derived from authored will-change declarations.
+native_transform,Retains the owned typed native transform source for effect composition and actual post-layout reference-box resolution.
+transform_matrix,Retains a complete constant native transform matrix while the existing affine field remains a compatibility view.

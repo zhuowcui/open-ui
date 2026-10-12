@@ -387,50 +387,9 @@ fn propagated(doc: &Document, child: &Fragment) -> PhysicalRect {
         }
         rect = union(rect, content);
     }
-    let transform = style.transform;
-    if owned && transform != openui_style::Transform2D::IDENTITY {
-        let origin_x = crate::resolve_length(
-            &style.transform_origin.0,
-            child.size.width,
-            child.size.width / 2,
-            child.size.width / 2,
-        )
-        .to_f32();
-        let origin_y = crate::resolve_length(
-            &style.transform_origin.1,
-            child.size.height,
-            child.size.height / 2,
-            child.size.height / 2,
-        )
-        .to_f32();
-        let points = [
-            (rect.x(), rect.y()),
-            (rect.right(), rect.y()),
-            (rect.x(), rect.bottom()),
-            (rect.right(), rect.bottom()),
-        ];
-        let mut bounds = (
-            f32::INFINITY,
-            f32::INFINITY,
-            f32::NEG_INFINITY,
-            f32::NEG_INFINITY,
-        );
-        for (x, y) in points {
-            let x = x.to_f32() - origin_x;
-            let y = y.to_f32() - origin_y;
-            let next_x = transform.a * x + transform.c * y + transform.e + origin_x;
-            let next_y = transform.b * x + transform.d * y + transform.f + origin_y;
-            bounds.0 = bounds.0.min(next_x);
-            bounds.1 = bounds.1.min(next_y);
-            bounds.2 = bounds.2.max(next_x);
-            bounds.3 = bounds.3.max(next_y);
-        }
-        rect = PhysicalRect::from_xywh(
-            LayoutUnit::from_f32(bounds.0),
-            LayoutUnit::from_f32(bounds.1),
-            LayoutUnit::from_f32(bounds.2 - bounds.0),
-            LayoutUnit::from_f32(bounds.3 - bounds.1),
-        );
+    if owned && style.has_transform() {
+        let used = crate::resolved_fragment_transform(child, style);
+        rect = crate::transform::transformed_overflow_rect(used.local_matrix(), rect);
     }
     rect
 }

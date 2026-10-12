@@ -2127,12 +2127,12 @@ pub(crate) fn block_layout_contents(
     // fragment model we must keep auto-positioned abspos descendants under the
     // opacity fragment so they composite with the opacity stacking context.
     let establishes_cb_for_abspos = style.position.is_positioned()
-        || style.establishes_transform_containing_block
+        || style.has_transform_containing_block()
         || style.has_layout_containment()
         || style.opacity < 1.0
         || is_root;
     let captures_fixed_pos_descendants =
-        is_root || style.establishes_transform_containing_block || style.has_layout_containment();
+        is_root || style.has_transform_containing_block() || style.has_layout_containment();
     let mut oof_candidates: Vec<OutOfFlowCandidate> = Vec::new();
     let mut bubbled_oof_candidates: Vec<OutOfFlowCandidate> = Vec::new();
     // Per CSS 2.1 §10.1, the containing block for absolute positioning is the
@@ -2987,9 +2987,7 @@ pub(crate) fn block_layout_contents(
                         && candidate
                             .inline_containing_block_node
                             .is_some_and(|target| {
-                                doc.node(target)
-                                    .style
-                                    .establishes_transform_containing_block
+                                doc.node(target).style.has_transform_containing_block()
                             })
                     {
                         let target = candidate.inline_containing_block_node.unwrap();
@@ -3044,9 +3042,7 @@ pub(crate) fn block_layout_contents(
                                     nested.static_position.top + fragment.offset.top;
                                 let inherited_transform_inline_cb =
                                     candidate.inline_containing_block_node.filter(|target| {
-                                        doc.node(*target)
-                                            .style
-                                            .establishes_transform_containing_block
+                                        doc.node(*target).style.has_transform_containing_block()
                                     });
                                 if nested.style.position == Position::Fixed
                                     && inherited_transform_inline_cb.is_some()
@@ -5913,7 +5909,7 @@ fn scroll_marker_is_owned_by(doc: &Document, marker: NodeId, scroller: NodeId) -
             while !ancestor.is_none() {
                 let ancestor_style = &doc.node(ancestor).style;
                 let establishes = ancestor_style.has_layout_containment()
-                    || ancestor_style.establishes_transform_containing_block
+                    || ancestor_style.has_transform_containing_block()
                     || (!fixed && ancestor_style.position.is_positioned());
                 if establishes {
                     captured = true;
@@ -11150,7 +11146,7 @@ fn is_transparent_spanner_wrapper(style: &ComputedStyle, inline_size: LayoutUnit
         || style.column_span == openui_style::ColumnSpan::All
         || crate::multicol::ColumnLayoutAlgorithm::from_style(style).is_some()
         || style.creates_new_formatting_context()
-        || style.establishes_transform_containing_block
+        || style.has_transform_containing_block()
         || !style.background_color.is_transparent()
         || style.has_outline()
         || style.effective_border_top() != 0
@@ -14031,7 +14027,7 @@ fn split_multicol_child_at_nested_spanners(
         crate::multicol::ColumnLayoutAlgorithm::from_style(child_style).is_some();
     let has_nested_spanners = !child_is_multicol
         && !child_style.creates_new_formatting_context()
-        && !child_style.establishes_transform_containing_block
+        && !child_style.has_transform_containing_block()
         && !child_style.overflow_x.is_scrollable()
         && !child_style.overflow_y.is_scrollable()
         && child_style.display.is_block_level()
@@ -14897,7 +14893,7 @@ fn materialize_leaf_block_slices(
             || style.float != Float::None
             || style.break_inside.is_avoid()
             || style.box_decoration_break == BoxDecorationBreak::Clone
-            || style.transform != openui_style::Transform2D::IDENTITY
+            || style.has_transform()
             || node_is_monolithic_for_fragmentation(doc, child.node_id)
         {
             continue;
@@ -15733,7 +15729,7 @@ fn split_replayed_spanner_leaf_decorations(fragment: &mut Fragment, doc: &Docume
                         && style.box_shadow.is_empty()
                         && style.border_image.is_none()
                         && !style.has_border_radius()
-                        && style.transform == openui_style::Transform2D::IDENTITY
+                        && !style.has_transform()
                         && style.filter_blur <= 0.0
                         && style.filter_grayscale <= 0.0
                 };
@@ -16361,8 +16357,11 @@ fn fragment_direct_positioned_children_in_multicol(
                 parent_offset.left + fragment.offset.left,
                 parent_offset.top + fragment.offset.top,
             );
-            let (own_authored_visual_offset, own_transform) = if fragment.node_id.is_none() {
-                (PhysicalOffset::zero(), openui_style::Transform2D::IDENTITY)
+            let (own_authored_visual_offset, own_full_transform) = if fragment.node_id.is_none() {
+                (
+                    PhysicalOffset::zero(),
+                    openui_style::TransformMatrix::IDENTITY,
+                )
             } else {
                 let fragment_style = &doc.node(fragment.node_id).style;
                 let relative = if fragment_style.position == Position::Relative {
@@ -16374,9 +16373,16 @@ fn fragment_direct_positioned_children_in_multicol(
                 } else {
                     PhysicalOffset::zero()
                 };
-                (relative, fragment_style.transform)
+                let transform = if fragment.owns_element_box() {
+                    crate::resolved_fragment_transform(&fragment, fragment_style).matrix
+                } else {
+                    openui_style::TransformMatrix::IDENTITY
+                };
+                (relative, transform)
             };
-            let own_is_pure_translation = own_transform.a == 1.0
+            let own_transform = own_full_transform.compatibility_affine();
+            let own_is_pure_translation = own_full_transform.is_2d()
+                && own_transform.a == 1.0
                 && own_transform.b == 0.0
                 && own_transform.c == 0.0
                 && own_transform.d == 1.0;
@@ -16390,7 +16396,7 @@ fn fragment_direct_positioned_children_in_multicol(
             };
             let mut promoted_transforms = ancestor_promoted_transforms.to_vec();
             if !fragment.node_id.is_none()
-                && own_transform != openui_style::Transform2D::IDENTITY
+                && own_full_transform != openui_style::TransformMatrix::IDENTITY
                 && !own_is_pure_translation
             {
                 promoted_transforms.push(PromotedTransformAncestor {
@@ -16415,7 +16421,7 @@ fn fragment_direct_positioned_children_in_multicol(
                 && doc
                     .node(fragment.node_id)
                     .style
-                    .establishes_transform_containing_block
+                    .has_transform_containing_block()
                 && reconstructed_inline_offset == ancestor_authored_visual_offset
             {
                 // Relative positioning is recorded both on the fragmented
@@ -16446,7 +16452,7 @@ fn fragment_direct_positioned_children_in_multicol(
                                 || has_positioned_descendant(&fragment)
                         })
                         && writing_direction.is_horizontal()
-                        && own_transform == openui_style::Transform2D::IDENTITY
+                        && own_full_transform == openui_style::TransformMatrix::IDENTITY
                     {
                         LayoutUnit::zero()
                     } else {
@@ -16558,7 +16564,7 @@ fn fragment_direct_positioned_children_in_multicol(
                     // continuations. A nonidentity local transform installs
                     // a new source; otherwise retain the inherited one.
                     let child_transform_source =
-                        if own_transform != openui_style::Transform2D::IDENTITY {
+                        if own_full_transform != openui_style::TransformMatrix::IDENTITY {
                             Some((
                                 fragment.node_id,
                                 PhysicalOffset::new(
@@ -16660,8 +16666,14 @@ fn fragment_direct_positioned_children_in_multicol(
                 fragment.promoted_transform_ancestors = ancestor_promoted_transforms.to_vec();
                 fragment.promoted_transform_uses_fragment_decoration =
                     ancestor_promoted_transforms.iter().any(|ancestor| {
-                        let transform = doc.node(ancestor.node_id).style.transform;
-                        transform.b != 0.0 || transform.c != 0.0
+                        let transform = doc
+                            .node(ancestor.node_id)
+                            .style
+                            .transform_for_reference_box(
+                                ancestor.fragment_size.width.to_f64(),
+                                ancestor.fragment_size.height.to_f64(),
+                            );
+                        !transform.is_2d() || transform.0[1] != 0.0 || transform.0[4] != 0.0
                     });
                 // Reconstruct the source-space anchor before the mapper adds
                 // the ancestor's authored visual translation to each slice.
@@ -16748,7 +16760,7 @@ fn fragment_direct_positioned_children_in_multicol(
                 && doc
                     .node(fragment.node_id)
                     .style
-                    .establishes_transform_containing_block
+                    .has_transform_containing_block()
             {
                 // Keep the transformed containing block's normal-flow source
                 // coordinate. `absolute_offset` already includes relative
@@ -17274,12 +17286,9 @@ fn fragment_direct_positioned_children_in_multicol(
             ),
             writing_direction,
         };
-        let inline_transform_containing_block =
-            positioned.inline_containing_block_node.filter(|target| {
-                doc.node(*target)
-                    .style
-                    .establishes_transform_containing_block
-            });
+        let inline_transform_containing_block = positioned
+            .inline_containing_block_node
+            .filter(|target| doc.node(*target).style.has_transform_containing_block());
         let inline_transform_source_flow = inline_transform_containing_block
             .and_then(|target| {
                 first_in_flow_descendant_source_offset(doc, target, &first_source_fragment_offsets)
@@ -17529,11 +17538,19 @@ fn fragment_direct_positioned_children_in_multicol(
             positioned.transform_containing_block_source_offset,
             fragment.promoted_transform_ancestors.last(),
         ) {
-            let transform = doc.node(transform_ancestor.node_id).style.transform;
+            let full_transform = doc
+                .node(transform_ancestor.node_id)
+                .style
+                .transform_for_reference_box(
+                    transform_ancestor.fragment_size.width.to_f64(),
+                    transform_ancestor.fragment_size.height.to_f64(),
+                );
+            let transform = full_transform.compatibility_affine();
             let transform_source_flow = flow_offset(transform_source).1;
             let transform_source_end =
                 transform_source_flow + logical_record.containing_block_size.height;
-            if transform.a == 1.0
+            if full_transform.is_2d()
+                && transform.a == 1.0
                 && transform.b == 0.0
                 && transform.c == 0.0
                 && transform.d > 1.0
@@ -19651,7 +19668,7 @@ fn layout_inline_multicol(
         )
     };
     let captures_oof = style.position.is_positioned()
-        || style.establishes_transform_containing_block
+        || style.has_transform_containing_block()
         || style.opacity < 1.0;
     let cb_size = PhysicalSize::new(
         child_available_inline + padding.left + padding.right,
@@ -19973,7 +19990,7 @@ fn layout_multicol(
             crate::multicol::ColumnLayoutAlgorithm::from_style(child_style).is_some();
         let has_nested_spanners = !child_is_multicol
             && !child_style.creates_new_formatting_context()
-            && !child_style.establishes_transform_containing_block
+            && !child_style.has_transform_containing_block()
             && !child_style.overflow_x.is_scrollable()
             && !child_style.overflow_y.is_scrollable()
             && child_style.display.is_block_level()
@@ -20819,7 +20836,7 @@ fn layout_multicol(
                                 crate::out_of_flow::StaticPositionEdge::Start,
                             containing_block_offset: PhysicalOffset::zero(),
                             containing_block_node: if container_style.position.is_positioned()
-                                || container_style.establishes_transform_containing_block
+                                || container_style.has_transform_containing_block()
                             {
                                 split.container_id
                             } else {
@@ -20834,7 +20851,7 @@ fn layout_multicol(
                         });
                     }
                     if container_style.position.is_positioned()
-                        || container_style.establishes_transform_containing_block
+                        || container_style.has_transform_containing_block()
                     {
                         let mut positioned_fragments =
                             crate::out_of_flow::layout_out_of_flow_children(
@@ -23849,7 +23866,7 @@ fn layout_multicol(
                         PhysicalOffset::new(
                             content_edge_x
                                 + if style.position.is_positioned()
-                                    || style.establishes_transform_containing_block
+                                    || style.has_transform_containing_block()
                                 {
                                     LayoutUnit::zero()
                                 } else {
@@ -23857,7 +23874,7 @@ fn layout_multicol(
                                 },
                             content_edge_y
                                 + if style.position.is_positioned()
-                                    || style.establishes_transform_containing_block
+                                    || style.has_transform_containing_block()
                                 {
                                     LayoutUnit::zero()
                                 } else {
@@ -26013,7 +26030,7 @@ fn layout_multicol(
                                 PhysicalOffset::new(
                                     content_edge_x
                                         + if style.position.is_positioned()
-                                            || style.establishes_transform_containing_block
+                                            || style.has_transform_containing_block()
                                         {
                                             LayoutUnit::zero()
                                         } else {
@@ -26021,7 +26038,7 @@ fn layout_multicol(
                                         },
                                     content_edge_y
                                         + if style.position.is_positioned()
-                                            || style.establishes_transform_containing_block
+                                            || style.has_transform_containing_block()
                                         {
                                             LayoutUnit::zero()
                                         } else {
@@ -31322,10 +31339,13 @@ fn layout_multicol(
                                     space.writing_direction,
                                 );
                             }
-                            let transform = child_style.transform;
-                            let has_nontranslated_transform = transform
-                                != openui_style::Transform2D::IDENTITY
-                                && (transform.a != 1.0
+                            let full_transform =
+                                crate::resolved_fragment_transform(&part, child_style).matrix;
+                            let transform = full_transform.compatibility_affine();
+                            let has_nontranslated_transform = full_transform
+                                != openui_style::TransformMatrix::IDENTITY
+                                && (!full_transform.is_2d()
+                                    || transform.a != 1.0
                                     || transform.b != 0.0
                                     || transform.c != 0.0
                                     || transform.d != 1.0);
@@ -31865,7 +31885,7 @@ fn layout_multicol(
                             PhysicalOffset::new(
                                 content_edge_x
                                     + if style.position.is_positioned()
-                                        || style.establishes_transform_containing_block
+                                        || style.has_transform_containing_block()
                                     {
                                         LayoutUnit::zero()
                                     } else {
@@ -31873,7 +31893,7 @@ fn layout_multicol(
                                     },
                                 content_edge_y
                                     + if style.position.is_positioned()
-                                        || style.establishes_transform_containing_block
+                                        || style.has_transform_containing_block()
                                     {
                                         LayoutUnit::zero()
                                     } else {
@@ -33491,9 +33511,9 @@ fn layout_multicol(
                 !candidate.has_inline_containing_block
                     && ((candidate.style.position == Position::Absolute
                         && !style.position.is_positioned()
-                        && !style.establishes_transform_containing_block)
+                        && !style.has_transform_containing_block())
                         || (candidate.style.position == Position::Fixed
-                            && !style.establishes_transform_containing_block))
+                            && !style.has_transform_containing_block()))
             };
         let fixed_oof_wraps_rows = algo.column_wrap == openui_style::ColumnWrap::Wrap
             || (algo.column_wrap == openui_style::ColumnWrap::Auto && algo.column_height.is_some());
@@ -33704,7 +33724,7 @@ fn layout_multicol(
                 static_position_vertical_edge: crate::out_of_flow::StaticPositionEdge::Start,
                 containing_block_offset: *containing_block_offset,
                 containing_block_node: if style.position.is_positioned()
-                    || style.establishes_transform_containing_block
+                    || style.has_transform_containing_block()
                 {
                     node_id
                 } else {
@@ -33752,7 +33772,7 @@ fn layout_multicol(
                     static_position_vertical_edge: crate::out_of_flow::StaticPositionEdge::Start,
                     containing_block_offset: PhysicalOffset::zero(),
                     containing_block_node: if style.position.is_positioned()
-                        || style.establishes_transform_containing_block
+                        || style.has_transform_containing_block()
                     {
                         node_id
                     } else {
@@ -33820,11 +33840,7 @@ fn layout_multicol(
                     let inherited_transform_inline_cb = frag
                         .positioned_fragmentation
                         .and_then(|positioned| positioned.inline_containing_block_node)
-                        .filter(|target| {
-                            doc.node(*target)
-                                .style
-                                .establishes_transform_containing_block
-                        });
+                        .filter(|target| doc.node(*target).style.has_transform_containing_block());
                     if c.style.position == Position::Fixed
                         && inherited_transform_inline_cb.is_some()
                     {
@@ -33841,7 +33857,7 @@ fn layout_multicol(
                         c.inline_containing_block_node = inherited_transform_inline_cb;
                         pending.push(c);
                     } else if c.style.position == Position::Fixed
-                        && !style.establishes_transform_containing_block
+                        && !style.has_transform_containing_block()
                     {
                         deferred_oof_to_parent.push(c);
                     } else {

@@ -298,6 +298,30 @@ pub enum TransformOperation {
     Perspective(LengthValue),
     Matrix(Transform2D),
     Matrix3d(Transform3D),
+    /// Owned matrix suffix evaluated against the actual transform reference
+    /// box after layout. Native callers normally use the existing operations.
+    #[doc(hidden)]
+    Interpolated {
+        from: Box<TransformList>,
+        to: Box<TransformList>,
+        starting_index: usize,
+        progress: f64,
+    },
+    /// Context-free native keyframe sampling retains unresolved font/viewport
+    /// units; Engine unit mapping materializes the same shared kernel later.
+    #[doc(hidden)]
+    PendingInterpolation {
+        from: Box<TransformList>,
+        to: Box<TransformList>,
+        progress: f64,
+    },
+    #[doc(hidden)]
+    PendingAccumulation {
+        underlying: Box<TransformList>,
+        effect: Box<TransformList>,
+    },
+    #[doc(hidden)]
+    Resolved(Box<crate::ResolvedTransformOperation>),
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
@@ -371,16 +395,7 @@ impl StyleValue {
                 value.row.depends_on_font_metrics() || value.column.depends_on_font_metrics()
             }
             Self::CornerRadii(value) => edges(&value.0),
-            Self::Transform(value) => value.0.iter().any(|operation| match operation {
-                TransformOperation::Translate(x, y) => {
-                    x.depends_on_font_metrics() || y.depends_on_font_metrics()
-                }
-                TransformOperation::Translate3d(x, y, z) => [*x, *y, *z]
-                    .into_iter()
-                    .any(LengthValue::depends_on_font_metrics),
-                TransformOperation::Perspective(value) => value.depends_on_font_metrics(),
-                _ => false,
-            }),
+            Self::Transform(value) => crate::transform_depends_on_font_metrics(value),
             _ => false,
         }
     }
@@ -2292,6 +2307,16 @@ pub fn apply_to_computed(
             return Err(mismatch());
         }
     }
+    if let (P::Transform, StyleValue::Renderer(RendererStyleValue::Transform(matrix))) =
+        (property, value)
+    {
+        let list = if *matrix == Transform2D::IDENTITY {
+            TransformList::default()
+        } else {
+            TransformList(vec![TransformOperation::Matrix(*matrix)])
+        };
+        return apply_to_computed(style, property, &StyleValue::Transform(list), viewport);
+    }
     if let StyleValue::Renderer(value) = value {
         return value
             .apply(style, property)
@@ -2434,58 +2459,18 @@ pub fn apply_to_computed(
         }
         (P::ListStyleType, StyleValue::ListStyle(v)) => style.fields.list_style_type = *v,
         (P::Transform, StyleValue::Transform(v)) => {
-            let mut matrix = Transform2D::IDENTITY;
-            for op in &v.0 {
-                match op {
-                    TransformOperation::Matrix(v) => matrix = *v,
-                    TransformOperation::Scale(x, y) => {
-                        matrix.a *= x;
-                        matrix.d *= y;
-                    }
-                    TransformOperation::Scale3d(x, y, _) => {
-                        matrix.a *= x;
-                        matrix.d *= y;
-                    }
-                    TransformOperation::Translate(x, y) => {
-                        matrix.e += resolve(*x).value();
-                        matrix.f += resolve(*y).value();
-                    }
-                    TransformOperation::Translate3d(x, y, _) => {
-                        matrix.e += resolve(*x).value();
-                        matrix.f += resolve(*y).value();
-                    }
-                    TransformOperation::Rotate(deg) => {
-                        let r = deg.to_radians();
-                        let (s, c) = r.sin_cos();
-                        matrix = Transform2D {
-                            a: c,
-                            b: s,
-                            c: -s,
-                            d: c,
-                            e: matrix.e,
-                            f: matrix.f,
-                        };
-                    }
-                    TransformOperation::Rotate3d { x, y, z, degrees } => {
-                        let length = (*x * *x + *y * *y + *z * *z).sqrt();
-                        if length > f32::EPSILON && (*z / length).abs() > 1.0 - 1e-6 {
-                            let r = (*degrees * z.signum()).to_radians();
-                            let (s, c) = r.sin_cos();
-                            matrix = Transform2D {
-                                a: c,
-                                b: s,
-                                c: -s,
-                                d: c,
-                                e: matrix.e,
-                                f: matrix.f,
-                            };
-                        }
-                    }
-                    TransformOperation::Perspective(_) => {}
-                    TransformOperation::Matrix3d(value) => matrix = value.projected_2d(),
-                }
-            }
-            style.fields.transform = matrix;
+            let source =
+                crate::map_transform_lengths(v, &|value| LengthValue::Computed(resolve(value)));
+            let matrix = crate::transform_list_matrix(&source, (0.0, 0.0));
+            // This is the legacy affine view. Box-dependent operations remain
+            // owned; rendering consumes the actual post-layout fragment matrix.
+            style.fields.transform = matrix.compatibility_affine();
+            style.fields.transform_matrix = if crate::transform_depends_on_box(&source) {
+                None
+            } else {
+                Some(matrix)
+            };
+            style.fields.native_transform = Some(source);
         }
         (P::Cursor, StyleValue::Cursor(_)) => {}
         (P::PointerEvents, StyleValue::PointerEvents(v)) => style.fields.pointer_events = *v,
@@ -2501,6 +2486,15 @@ pub fn apply_to_computed(
 /// underlying value without maintaining a second handwritten style model.
 pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> StyleValue {
     use StyleProperty as P;
+    if property == P::Transform {
+        return StyleValue::Transform(style.fields.native_transform.clone().unwrap_or_else(|| {
+            if style.fields.transform == Transform2D::IDENTITY {
+                TransformList::default()
+            } else {
+                TransformList(vec![TransformOperation::Matrix(style.fields.transform)])
+            }
+        }));
+    }
     if let Some(value) = RendererStyleValue::from_computed(style, property) {
         return StyleValue::Renderer(value);
     }
@@ -2599,9 +2593,6 @@ pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> St
         })),
         P::Cursor => StyleValue::Cursor(Cursor::Auto),
         P::ListStyleType => StyleValue::ListStyle(style.fields.list_style_type),
-        P::Transform => StyleValue::Transform(TransformList(vec![TransformOperation::Matrix(
-            style.fields.transform,
-        )])),
         P::PointerEvents => StyleValue::PointerEvents(style.fields.pointer_events),
         _ => typography_from_computed(style, property),
     }
