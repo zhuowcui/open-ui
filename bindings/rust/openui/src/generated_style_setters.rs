@@ -753,4 +753,7 @@ impl Element {
     pub fn set_scroll_snap_align_inline(&self, value: Option<ScrollSnapAlign>) -> Result<(), Error> {
         self.set_property(StyleProperty::ScrollSnapAlignInline, StyleValue::Renderer(RendererStyleValue::ScrollSnapAlignInline(value)))
     }
+    pub fn set_webkit_text_fill_color(&self, value: StyleColor) -> Result<(), Error> {
+        self.set_property(StyleProperty::WebkitTextFillColor, StyleValue::Renderer(RendererStyleValue::WebkitTextFillColor(value)))
+    }
 }

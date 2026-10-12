@@ -362,6 +362,10 @@ pub enum StyleValue {
     Length(LengthValue),
     Edges(Edges<LengthValue>),
     Color(Color),
+    /// Owned working color returned by context-free animation sampling.
+    /// Engine resolves dependent keywords only after the final own color.
+    #[doc(hidden)]
+    ColorExpression(crate::AnimationColorExpression),
     Number(f32),
     Integer(i32),
     FlexDirection(FlexDirection),
@@ -382,6 +386,21 @@ pub enum StyleValue {
 }
 
 impl StyleValue {
+    /// Capture own color:currentcolor as the inherited numeric endpoint. Other
+    /// color properties retain their keyword until final color publication.
+    pub fn capture_own_current_color(&self, property: StyleProperty, parent_color: Color) -> Self {
+        if property == StyleProperty::Color {
+            match self {
+                Self::Typography(TypographyValue::StyleColor(StyleColor::CurrentColor)) => {
+                    return Self::Color(parent_color)
+                }
+                Self::ColorExpression(value) => return Self::Color(value.resolve(parent_color)),
+                _ => {}
+            }
+        }
+        self.clone()
+    }
+
     pub fn depends_on_font_metrics(&self) -> bool {
         let edges = |value: &Edges<LengthValue>| {
             [value.top, value.right, value.bottom, value.left]
@@ -528,6 +547,16 @@ pub struct Style {
 impl Style {
     pub fn declarations(&self) -> &[Declaration] {
         &self.declarations
+    }
+
+    /// Retain a numeric color or own-color currentcolor inheritance.
+    pub fn color_value(self, value: StyleColor) -> Self {
+        self.with(StyleProperty::Color, value)
+    }
+
+    /// Retain a background currentcolor dependency across native color mutations.
+    pub fn background_color_value(self, value: StyleColor) -> Self {
+        self.with(StyleProperty::BackgroundColor, value)
     }
 
     /// Retain a length-valued line-height in native style and pseudo declarations.
@@ -1395,7 +1424,11 @@ fn parse_typography_literal(property: StyleProperty, input: &str) -> Option<Styl
             "wavy" => TextDecorationStyle::Wavy,
             _ => return None,
         }),
-        P::TextDecorationColor | P::TextEmphasisColor => {
+        P::Color
+        | P::BackgroundColor
+        | P::TextDecorationColor
+        | P::TextEmphasisColor
+        | P::WebkitTextFillColor => {
             TypographyValue::StyleColor(if input.eq_ignore_ascii_case("currentcolor") {
                 StyleColor::CurrentColor
             } else {
@@ -1859,7 +1892,13 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
         | P::TextIndent
         | P::TextUnderlineOffset => length(input).map(StyleValue::Length),
         P::Margin | P::Padding => edges(input).map(StyleValue::Edges),
-        P::BackgroundColor | P::Color => color(input).map(StyleValue::Color),
+        P::BackgroundColor | P::Color => {
+            if input.eq_ignore_ascii_case("currentcolor") {
+                Some(StyleColor::CurrentColor.into())
+            } else {
+                color(input).map(StyleValue::Color)
+            }
+        }
         P::Opacity | P::FlexGrow | P::FlexShrink | P::LetterSpacing | P::WordSpacing => {
             if input == "normal" {
                 Some(StyleValue::Number(0.0))
@@ -2115,6 +2154,19 @@ fn apply_typography_to_computed(
         (P::TextDecorationThickness, TypographyValue::TextDecorationThickness(value)) => {
             style.fields.text_decoration_thickness = *value
         }
+        (P::Color, TypographyValue::StyleColor(value)) => {
+            // Native Engine captures currentcolor from its effective parent; a
+            // style snapshot already starts with that inherited own color.
+            style.fields.color = value.resolve(&style.fields.color);
+            style.resolve_current_color_dependencies();
+        }
+        (P::BackgroundColor, TypographyValue::StyleColor(value)) => {
+            style.fields.background_current_color = matches!(value, StyleColor::CurrentColor);
+            style.fields.background_color = value.resolve(&style.fields.color);
+        }
+        (P::WebkitTextFillColor, TypographyValue::StyleColor(value)) => {
+            style.fields.text_fill_color = *value
+        }
         (P::TextDecorationColor, TypographyValue::StyleColor(value)) => {
             style.fields.text_decoration_color = *value
         }
@@ -2307,6 +2359,55 @@ pub fn apply_to_computed(
             return Err(mismatch());
         }
     }
+    if let StyleValue::Color(color) = value {
+        if matches!(
+            property,
+            P::TextDecorationColor | P::TextEmphasisColor | P::WebkitTextFillColor
+        ) {
+            return apply_to_computed(
+                style,
+                property,
+                &StyleValue::Typography(TypographyValue::StyleColor(StyleColor::Resolved(*color))),
+                viewport,
+            );
+        }
+    }
+    if let StyleValue::ColorExpression(expression) = value {
+        if property.metadata().interpolation != InterpolationKind::Color || !expression.is_finite()
+        {
+            return Err(mismatch());
+        }
+        let context = if property == P::TextDecorationColor {
+            style.effective_text_fill_color()
+        } else {
+            style.color
+        };
+        let resolved = expression.resolve(context);
+        let value = if property.metadata().value_kind == ValueKind::Color {
+            StyleValue::Color(resolved)
+        } else {
+            StyleValue::Typography(TypographyValue::StyleColor(StyleColor::Resolved(resolved)))
+        };
+        return apply_to_computed(style, property, &value, viewport);
+    }
+    if let (
+        P::Color,
+        StyleValue::Color(color) | StyleValue::Renderer(RendererStyleValue::Color(color)),
+    ) = (property, value)
+    {
+        style.fields.color = *color;
+        style.resolve_current_color_dependencies();
+        return Ok(property.metadata().invalidation);
+    }
+    if let (
+        P::BackgroundColor,
+        StyleValue::Color(color) | StyleValue::Renderer(RendererStyleValue::BackgroundColor(color)),
+    ) = (property, value)
+    {
+        style.fields.background_current_color = false;
+        style.fields.background_color = *color;
+        return Ok(property.metadata().invalidation);
+    }
     if let (P::Transform, StyleValue::Renderer(RendererStyleValue::Transform(matrix))) =
         (property, value)
     {
@@ -2323,8 +2424,14 @@ pub fn apply_to_computed(
             .then_some(property.metadata().invalidation)
             .ok_or_else(mismatch);
     }
-    if let StyleValue::Typography(value) = value {
-        return apply_typography_to_computed(style, property, value)
+    if let StyleValue::Typography(typography) = value {
+        if apply_typography_to_computed(style, property, typography) {
+            return Ok(property.metadata().invalidation);
+        }
+        // Numeric/currentcolor StyleColor values also reach border/outline and
+        // column-rule properties through the schema-backed renderer bridge.
+        return RendererStyleValue::from_author_value(property, value, resolve)
+            .is_some_and(|value| value.apply(style, property))
             .then_some(property.metadata().invalidation)
             .ok_or_else(mismatch);
     }
@@ -2486,6 +2593,12 @@ pub fn apply_to_computed(
 /// underlying value without maintaining a second handwritten style model.
 pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> StyleValue {
     use StyleProperty as P;
+    if property == P::BackgroundColor && style.fields.background_current_color {
+        return StyleColor::CurrentColor.into();
+    }
+    if property == P::WebkitTextFillColor {
+        return style.fields.text_fill_color.into();
+    }
     if property == P::Transform {
         return StyleValue::Transform(style.fields.native_transform.clone().unwrap_or_else(|| {
             if style.fields.transform == Transform2D::IDENTITY {

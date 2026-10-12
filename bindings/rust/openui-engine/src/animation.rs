@@ -1,8 +1,8 @@
 use crate::{Engine, EngineError, NodeHandle};
 use openui_style::{
-    value_from_computed, AnimationAttachmentRange, AnimationOptions, AnimationPhase,
-    CompositedStyleValue, Keyframes, LengthValue, PlayState, PropertyKeyframes, StyleProperty,
-    StyleValue, TimelineAxis, TimelineRange, ViewTimelineInset,
+    apply_to_computed, value_from_computed, AnimationAttachmentRange, AnimationOptions,
+    AnimationPhase, CompositedStyleValue, Keyframes, LengthValue, PlayState, PropertyKeyframes,
+    StyleProperty, StyleValue, TimelineAxis, TimelineRange, ViewTimelineInset,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
@@ -1095,7 +1095,10 @@ impl Engine {
                     .get(&(property as u16))
                     .map(|(_, value): &(AnimationId, CompositedStyleValue)| value.clone())
                     .unwrap_or_else(|| {
-                        CompositedStyleValue::from_style_value(value_from_computed(style, property))
+                        CompositedStyleValue::from_style_value_for_property(
+                            property,
+                            value_from_computed(style, property),
+                        )
                     });
                 let value = instance
                     .keyframes
@@ -1107,6 +1110,9 @@ impl Engine {
                         &underlying,
                         instance.options.composite,
                         |value| {
+                            // Own color currentcolor is an inherited numeric endpoint;
+                            // dependent keywords remain owned working fractions.
+                            let value = value.capture_own_current_color(property, parent.color);
                             let metrics = value.depends_on_font_metrics().then(|| {
                                 let mut metrics = self.native_font_length_metrics(
                                     if property == StyleProperty::FontSize {
@@ -1122,7 +1128,7 @@ impl Engine {
                             });
                             Self::resolve_native_lengths(
                                 property,
-                                value,
+                                &value,
                                 if property == StyleProperty::FontSize {
                                     parent.font_size
                                 } else {
@@ -1154,10 +1160,40 @@ impl Engine {
                 )
             })
             .collect::<Vec<_>>();
-        ordered.sort_by_key(|(id, _, _)| *id);
+        // Color dependencies are resolved from the final ordered effect stacks,
+        // independently of animation creation order. Text-decoration currentcolor
+        // uses final text fill; the other color properties use final own color.
+        ordered.sort_by_key(|(id, property, _)| {
+            (
+                match property {
+                    StyleProperty::Color => 0,
+                    StyleProperty::WebkitTextFillColor => 1,
+                    _ => 2,
+                },
+                *id,
+            )
+        });
+        let mut color_style = style.clone();
         ordered
             .into_iter()
-            .map(|(_, property, value)| (property, value.into_style_value(property)))
+            .map(|(_, property, value)| {
+                let context = if property == StyleProperty::Color {
+                    parent.color
+                } else if property == StyleProperty::TextDecorationColor {
+                    color_style.effective_text_fill_color()
+                } else {
+                    color_style.color
+                };
+                let value = value.into_style_value_with_color_context(property, context);
+                if matches!(
+                    property,
+                    StyleProperty::Color | StyleProperty::WebkitTextFillColor
+                ) {
+                    apply_to_computed(&mut color_style, property, &value, viewport)
+                        .expect("owned typed color effect");
+                }
+                (property, value)
+            })
             .collect()
     }
 

@@ -940,7 +940,10 @@ impl PropertyKeyframes {
             progress,
             default_easing,
             before,
-            &CompositedStyleValue::from_style_value(self.frames[0].value.clone()),
+            &CompositedStyleValue::from_style_value_for_property(
+                self.property,
+                self.frames[0].value.clone(),
+            ),
             CompositeOperation::Replace,
             Clone::clone,
         )
@@ -965,7 +968,7 @@ impl PropertyKeyframes {
             progress,
             default_easing,
             before,
-            &CompositedStyleValue::from_style_value(underlying.clone()),
+            &CompositedStyleValue::from_style_value_for_property(self.property, underlying.clone()),
             composite,
             resolve,
         )
@@ -1005,7 +1008,8 @@ impl PropertyKeyframes {
         resolve: impl Fn(&StyleValue) -> StyleValue,
     ) -> CompositedStyleValue {
         let endpoint = |value: &StyleValue| {
-            let value = CompositedStyleValue::from_style_value(resolve(value));
+            let value =
+                CompositedStyleValue::from_style_value_for_property(property, resolve(value));
             if property == StyleProperty::Transform {
                 value.compose(property, underlying, composite)
             } else {
@@ -1035,7 +1039,8 @@ impl PropertyKeyframes {
                 from.interpolate(&to, eased).unwrap_or_else(|| {
                     let from = from.into_style_value(property);
                     let to = to.into_style_value(property);
-                    CompositedStyleValue::from_style_value(
+                    CompositedStyleValue::from_style_value_for_property(
+                        property,
                         interpolate(property, &from, &to, eased).unwrap_or_else(|| {
                             if eased < 0.5 {
                                 from
@@ -1069,10 +1074,10 @@ pub fn compose_property_value(
     sampled: StyleValue,
     composite: CompositeOperation,
 ) -> StyleValue {
-    CompositedStyleValue::from_style_value(sampled)
+    CompositedStyleValue::from_style_value_for_property(property, sampled)
         .compose(
             property,
-            &CompositedStyleValue::from_style_value(underlying.clone()),
+            &CompositedStyleValue::from_style_value_for_property(property, underlying.clone()),
             composite,
         )
         .into_style_value(property)
@@ -1101,10 +1106,12 @@ pub fn interpolate(
             to.clone()
         });
     }
-    if let Some(value) = CompositedStyleValue::from_style_value(from.clone()).interpolate(
-        &CompositedStyleValue::from_style_value(to.clone()),
-        progress,
-    ) {
+    if let Some(value) = CompositedStyleValue::from_style_value_for_property(property, from.clone())
+        .interpolate(
+            &CompositedStyleValue::from_style_value_for_property(property, to.clone()),
+            progress,
+        )
+    {
         return Some(value.into_style_value(property));
     }
     if let (StyleValue::Transform(from), StyleValue::Transform(to)) = (from, to) {

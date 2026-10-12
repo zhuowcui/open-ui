@@ -85,7 +85,9 @@ pub fn paint_text_decorations(
 
     // Resolve decoration color.
     // Blink: TextDecorationInfo::ResolvedColor()
-    let resolved_color = style.text_decoration_color.resolve(&style.color);
+    let resolved_color = style
+        .text_decoration_color
+        .resolve(&style.effective_text_fill_color());
 
     // Resolve decoration thickness.
     // Blink: TextDecorationInfo::ResolvedThickness() — uses UnderlineThickness()

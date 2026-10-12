@@ -570,6 +570,9 @@ pub struct ComputedStyleFields {
     // ── Colors ───────────────────────────────────────────────────────
     /// CSS `background-color`. Initial: `transparent`.
     pub background_color: Color,
+    /// Keeps an authored background currentcolor dependency while the existing
+    /// background Color field exposes the final used color.
+    pub background_current_color: bool,
 
     /// First CSS linear-gradient background-image layer. Initial: `none`.
     pub background_linear_gradient: Option<LinearGradient>,
@@ -594,6 +597,8 @@ pub struct ComputedStyleFields {
     /// CSS `color` (inherited). Initial: `black` (CanvasText in Blink,
     /// but we use black for simplicity — matches most user agents).
     pub color: Color,
+    /// CSS `-webkit-text-fill-color` (inherited). Initial: currentcolor.
+    pub text_fill_color: StyleColor,
 
     /// CSS `opacity`. Initial: `1.0`.
     pub opacity: f32,
@@ -1281,6 +1286,7 @@ impl ComputedStyle {
                 border_radius_percent: [(false, false); 4],
 
                 background_color: Color::TRANSPARENT,
+                background_current_color: false,
                 background_linear_gradient: None,
                 background_layers: Vec::new(),
                 mask_layers: Vec::new(),
@@ -1288,6 +1294,7 @@ impl ComputedStyle {
                 background_attachment: BackgroundAttachment::Scroll,
                 border_image: None,
                 color: Color::BLACK,
+                text_fill_color: StyleColor::CurrentColor,
                 opacity: 1.0,
                 box_shadow: Vec::new(),
                 z_index: None, // auto
@@ -1602,6 +1609,7 @@ impl ComputedStyle {
         style.fields.text_emphasis_fill = origin.text_emphasis_fill;
         style.fields.text_emphasis_position = origin.text_emphasis_position;
         style.fields.text_emphasis_color = origin.text_emphasis_color;
+        style.fields.text_fill_color = origin.text_fill_color;
         style.fields.text_combine_upright = origin.text_combine_upright;
         style.fields.ruby_position = origin.ruby_position;
         style.fields.ruby_align = origin.ruby_align;
@@ -1621,6 +1629,18 @@ impl ComputedStyle {
     /// which the generated porter can materialize the cascade.
     pub fn for_anonymous_box(parent: &Self) -> Self {
         Self::for_pseudo(parent)
+    }
+
+    /// Resolve inherited/currentcolor text fill against the final own color.
+    pub fn effective_text_fill_color(&self) -> Color {
+        self.text_fill_color.resolve(&self.color)
+    }
+
+    /// Publish dependent ordinary colors after the own color cascade/effect stack.
+    pub fn resolve_current_color_dependencies(&mut self) {
+        if self.fields.background_current_color {
+            self.fields.background_color = self.fields.color;
+        }
     }
 
     // ── Convenience: effective border width (0 if style is none/hidden) ──

@@ -248,3 +248,4 @@ id,rust_name,css_name,rust_type,value_kind,initial,inherited,invalidation,interp
 247,ScrollSnapStop,scroll-snap-stop,ScrollSnapStop,compound,renderer-initial,false,layout,discrete,scroll_snap_stop
 248,ScrollSnapAlignBlock,scroll-snap-align-block,Option<ScrollSnapAlign>,compound,renderer-initial,false,layout,discrete,scroll_snap_align_block
 249,ScrollSnapAlignInline,scroll-snap-align-inline,Option<ScrollSnapAlign>,compound,renderer-initial,false,layout,discrete,scroll_snap_align_inline
+250,WebkitTextFillColor,-webkit-text-fill-color,StyleColor,compound,currentColor,true,paint,color,text_fill_color

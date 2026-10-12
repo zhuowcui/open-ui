@@ -253,6 +253,7 @@ pub enum StyleProperty {
     ScrollSnapStop = 247,
     ScrollSnapAlignBlock = 248,
     ScrollSnapAlignInline = 249,
+    WebkitTextFillColor = 250,
 }
 
 /// Schema-generated values for renderer longhands appended after the stable
@@ -491,6 +492,7 @@ pub enum RendererStyleValue {
     ScrollSnapStop(ScrollSnapStop),
     ScrollSnapAlignBlock(Option<ScrollSnapAlign>),
     ScrollSnapAlignInline(Option<ScrollSnapAlign>),
+    WebkitTextFillColor(StyleColor),
 }
 
 impl PartialEq for RendererStyleValue {
@@ -737,6 +739,7 @@ impl RendererStyleValue {
             Self::ScrollSnapStop(..) => StyleProperty::ScrollSnapStop,
             Self::ScrollSnapAlignBlock(..) => StyleProperty::ScrollSnapAlignBlock,
             Self::ScrollSnapAlignInline(..) => StyleProperty::ScrollSnapAlignInline,
+            Self::WebkitTextFillColor(..) => StyleProperty::WebkitTextFillColor,
         }
     }
 
@@ -973,6 +976,7 @@ impl RendererStyleValue {
             (StyleProperty::ScrollSnapStop, Self::ScrollSnapStop(value)) => { style.fields.scroll_snap_stop = value.clone(); true },
             (StyleProperty::ScrollSnapAlignBlock, Self::ScrollSnapAlignBlock(value)) => { style.fields.scroll_snap_align_block = value.clone(); true },
             (StyleProperty::ScrollSnapAlignInline, Self::ScrollSnapAlignInline(value)) => { style.fields.scroll_snap_align_inline = value.clone(); true },
+            (StyleProperty::WebkitTextFillColor, Self::WebkitTextFillColor(value)) => { style.fields.text_fill_color = value.clone(); true },
             _ => false,
         }
     }
@@ -1081,18 +1085,18 @@ impl RendererStyleValue {
             Self::TextBoxTrim(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::Typography(TypographyValue::TextBoxTrim(value.clone())))),
             Self::AlignContent(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::ContentAlignment(value.clone()))),
             Self::AlignSelf(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::ItemAlignment(value.clone()))),
-            Self::BorderBottomColor(value) => match value { StyleColor::Resolved(value) => Some(crate::CompositedStyleValue::Color { value: crate::AnimationColor::from_color(*value), kind: crate::AnimationColorKind::Color }), _ => None },
+            Self::BorderBottomColor(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::Typography(TypographyValue::StyleColor(*value)))),
             Self::BorderBottomWidth(value) => Some(crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Integer }),
-            Self::BorderLeftColor(value) => match value { StyleColor::Resolved(value) => Some(crate::CompositedStyleValue::Color { value: crate::AnimationColor::from_color(*value), kind: crate::AnimationColorKind::Color }), _ => None },
+            Self::BorderLeftColor(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::Typography(TypographyValue::StyleColor(*value)))),
             Self::BorderLeftWidth(value) => Some(crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Integer }),
-            Self::BorderRightColor(value) => match value { StyleColor::Resolved(value) => Some(crate::CompositedStyleValue::Color { value: crate::AnimationColor::from_color(*value), kind: crate::AnimationColorKind::Color }), _ => None },
+            Self::BorderRightColor(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::Typography(TypographyValue::StyleColor(*value)))),
             Self::BorderRightWidth(value) => Some(crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Integer }),
-            Self::BorderTopColor(value) => match value { StyleColor::Resolved(value) => Some(crate::CompositedStyleValue::Color { value: crate::AnimationColor::from_color(*value), kind: crate::AnimationColorKind::Color }), _ => None },
+            Self::BorderTopColor(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::Typography(TypographyValue::StyleColor(*value)))),
             Self::BorderTopWidth(value) => Some(crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Integer }),
             Self::Bottom(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::Length(LengthValue::Computed(*value)))),
             Self::ColumnCount(value) => value.as_ref().map(|value| crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Integer }),
             Self::ColumnHeight(value) => value.as_ref().map(|value| crate::CompositedStyleValue::from_style_value(StyleValue::Length(LengthValue::Computed(*value)))),
-            Self::ColumnRuleColor(value) => match value { StyleColor::Resolved(value) => Some(crate::CompositedStyleValue::Color { value: crate::AnimationColor::from_color(*value), kind: crate::AnimationColorKind::Color }), _ => None },
+            Self::ColumnRuleColor(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::Typography(TypographyValue::StyleColor(*value)))),
             Self::ColumnRuleWidth(value) => Some(crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Integer }),
             Self::ColumnWidth(value) => value.as_ref().map(|value| crate::CompositedStyleValue::from_style_value(StyleValue::Length(LengthValue::Computed(*value)))),
             Self::FilterBlur(value) => Some(crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Number }),
@@ -1102,7 +1106,7 @@ impl RendererStyleValue {
             Self::Left(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::Length(LengthValue::Computed(*value)))),
             Self::Order(value) => Some(crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Integer }),
             Self::Orphans(value) => Some(crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Integer }),
-            Self::OutlineColor(value) => match value { StyleColor::Resolved(value) => Some(crate::CompositedStyleValue::Color { value: crate::AnimationColor::from_color(*value), kind: crate::AnimationColorKind::Color }), _ => None },
+            Self::OutlineColor(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::Typography(TypographyValue::StyleColor(*value)))),
             Self::OutlineOffset(value) => Some(crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Integer }),
             Self::OverflowClipMargin(value) => Some(crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Number }),
             Self::OverflowX(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::Overflow(value.clone()))),
@@ -1123,6 +1127,7 @@ impl RendererStyleValue {
             Self::ScrollMarginRight(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::Length(LengthValue::Computed(*value)))),
             Self::ScrollMarginBottom(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::Length(LengthValue::Computed(*value)))),
             Self::ScrollMarginLeft(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::Length(LengthValue::Computed(*value)))),
+            Self::WebkitTextFillColor(value) => Some(crate::CompositedStyleValue::from_style_value(StyleValue::Typography(TypographyValue::StyleColor(value.clone())))),
             _ => None,
         }
     }
@@ -1136,16 +1141,21 @@ impl RendererStyleValue {
             (StyleProperty::AlignContent, StyleValue::ContentAlignment(value)) => Some(Self::AlignContent(*value)),
             (StyleProperty::AlignSelf, StyleValue::ItemAlignment(value)) => Some(Self::AlignSelf(*value)),
             (StyleProperty::BorderBottomColor, StyleValue::Color(value)) => Some(Self::BorderBottomColor(StyleColor::Resolved(*value))),
+            (StyleProperty::BorderBottomColor, StyleValue::Typography(TypographyValue::StyleColor(value))) => Some(Self::BorderBottomColor(*value)),
             (StyleProperty::BorderBottomWidth, StyleValue::Integer(value)) => Some(Self::BorderBottomWidth(*value)),
             (StyleProperty::BorderLeftColor, StyleValue::Color(value)) => Some(Self::BorderLeftColor(StyleColor::Resolved(*value))),
+            (StyleProperty::BorderLeftColor, StyleValue::Typography(TypographyValue::StyleColor(value))) => Some(Self::BorderLeftColor(*value)),
             (StyleProperty::BorderLeftWidth, StyleValue::Integer(value)) => Some(Self::BorderLeftWidth(*value)),
             (StyleProperty::BorderRightColor, StyleValue::Color(value)) => Some(Self::BorderRightColor(StyleColor::Resolved(*value))),
+            (StyleProperty::BorderRightColor, StyleValue::Typography(TypographyValue::StyleColor(value))) => Some(Self::BorderRightColor(*value)),
             (StyleProperty::BorderRightWidth, StyleValue::Integer(value)) => Some(Self::BorderRightWidth(*value)),
             (StyleProperty::BorderTopColor, StyleValue::Color(value)) => Some(Self::BorderTopColor(StyleColor::Resolved(*value))),
+            (StyleProperty::BorderTopColor, StyleValue::Typography(TypographyValue::StyleColor(value))) => Some(Self::BorderTopColor(*value)),
             (StyleProperty::BorderTopWidth, StyleValue::Integer(value)) => Some(Self::BorderTopWidth(*value)),
             (StyleProperty::Bottom, StyleValue::Length(value)) => Some(Self::Bottom(resolve_length(*value))),
             (StyleProperty::ColumnHeight, StyleValue::Length(value)) => Some(Self::ColumnHeight({ let value = resolve_length(*value); (!value.is_auto()).then_some(value) })),
             (StyleProperty::ColumnRuleColor, StyleValue::Color(value)) => Some(Self::ColumnRuleColor(StyleColor::Resolved(*value))),
+            (StyleProperty::ColumnRuleColor, StyleValue::Typography(TypographyValue::StyleColor(value))) => Some(Self::ColumnRuleColor(*value)),
             (StyleProperty::ColumnRuleWidth, StyleValue::Integer(value)) => Some(Self::ColumnRuleWidth(*value)),
             (StyleProperty::ColumnWidth, StyleValue::Length(value)) => Some(Self::ColumnWidth({ let value = resolve_length(*value); (!value.is_auto()).then_some(value) })),
             (StyleProperty::FilterBlur, StyleValue::Number(value)) => Some(Self::FilterBlur(*value)),
@@ -1156,6 +1166,7 @@ impl RendererStyleValue {
             (StyleProperty::Order, StyleValue::Integer(value)) => Some(Self::Order(*value)),
             (StyleProperty::Orphans, StyleValue::Integer(value)) => Some(Self::Orphans(u32::try_from(*value).ok()?)),
             (StyleProperty::OutlineColor, StyleValue::Color(value)) => Some(Self::OutlineColor(StyleColor::Resolved(*value))),
+            (StyleProperty::OutlineColor, StyleValue::Typography(TypographyValue::StyleColor(value))) => Some(Self::OutlineColor(*value)),
             (StyleProperty::OutlineOffset, StyleValue::Integer(value)) => Some(Self::OutlineOffset(*value)),
             (StyleProperty::OverflowClipMargin, StyleValue::Number(value)) => Some(Self::OverflowClipMargin(*value)),
             (StyleProperty::OverflowX, StyleValue::Overflow(value)) => Some(Self::OverflowX(*value)),
@@ -1415,6 +1426,7 @@ impl RendererStyleValue {
             StyleProperty::ScrollSnapStop => Some(Self::ScrollSnapStop(style.fields.scroll_snap_stop.clone())),
             StyleProperty::ScrollSnapAlignBlock => Some(Self::ScrollSnapAlignBlock(style.fields.scroll_snap_align_block.clone())),
             StyleProperty::ScrollSnapAlignInline => Some(Self::ScrollSnapAlignInline(style.fields.scroll_snap_align_inline.clone())),
+            StyleProperty::WebkitTextFillColor => Some(Self::WebkitTextFillColor(style.fields.text_fill_color.clone())),
             _ => None,
         }
     }
@@ -1651,6 +1663,7 @@ fn parse_renderer_author_literal(property: StyleProperty, input: &str) -> Option
 #[doc(hidden)]
 #[derive(Debug, Clone)]
 pub enum RendererInternalStyleValue {
+    BackgroundCurrentColor(bool),
     AnimationSnapshot(Option<AnimationSnapshot>),
     EmbeddedDocumentText(bool),
     EstablishesTransformContainingBlock(bool),
@@ -1675,6 +1688,7 @@ impl RendererInternalStyleValue {
     #[doc(hidden)]
     pub fn apply_to(self, computed: &mut ComputedStyle) {
         computed.update_derived(|style| match self {
+            Self::BackgroundCurrentColor(value) => style.background_current_color = value,
             Self::AnimationSnapshot(value) => style.animation_snapshot = value,
             Self::EmbeddedDocumentText(value) => style.embedded_document_text = value,
             Self::EstablishesTransformContainingBlock(value) => style.establishes_transform_containing_block = value,
@@ -1755,6 +1769,7 @@ impl ComputedStyle {
         self.fields.text_emphasis_fill = parent.fields.text_emphasis_fill.clone();
         self.fields.text_emphasis_mark = parent.fields.text_emphasis_mark.clone();
         self.fields.text_emphasis_position = parent.fields.text_emphasis_position.clone();
+        self.fields.text_fill_color = parent.fields.text_fill_color.clone();
         self.fields.text_indent = parent.fields.text_indent.clone();
         self.fields.text_justify = parent.fields.text_justify.clone();
         self.fields.text_orientation = parent.fields.text_orientation.clone();
@@ -1774,6 +1789,7 @@ impl ComputedStyle {
         self.fields.word_break = parent.fields.word_break.clone();
         self.fields.word_spacing = parent.fields.word_spacing.clone();
         self.fields.writing_mode = parent.fields.writing_mode.clone();
+        self.resolve_current_color_dependencies();
     }
 }
 
@@ -1804,7 +1820,7 @@ impl StyleProperty {
             Self::PaddingRight => &["padding_right"],
             Self::PaddingBottom => &["padding_bottom"],
             Self::PaddingLeft => &["padding_left"],
-            Self::BackgroundColor => &["background_color"],
+            Self::BackgroundColor => &["background_color", "background_current_color"],
             Self::Color => &["color"],
             Self::Opacity => &["opacity"],
             Self::ZIndex => &["z_index"],
@@ -2034,6 +2050,7 @@ impl StyleProperty {
             Self::ScrollSnapStop => &["scroll_snap_stop"],
             Self::ScrollSnapAlignBlock => &["scroll_snap_align_block"],
             Self::ScrollSnapAlignInline => &["scroll_snap_align_inline"],
+            Self::WebkitTextFillColor => &["text_fill_color"],
         }
     }
 
@@ -2296,6 +2313,7 @@ impl StyleProperty {
             "scroll-snap-stop" => Some(Self::ScrollSnapStop),
             "scroll-snap-align-block" => Some(Self::ScrollSnapAlignBlock),
             "scroll-snap-align-inline" => Some(Self::ScrollSnapAlignInline),
+            "-webkit-text-fill-color" => Some(Self::WebkitTextFillColor),
             _ => None,
         }
     }
@@ -4796,6 +4814,16 @@ pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
         invalidation: InvalidationClass::Layout,
         interpolation: InterpolationKind::Discrete,
     },
+    PropertyMetadata {
+        property: StyleProperty::WebkitTextFillColor,
+        css_name: "-webkit-text-fill-color",
+        rust_type: "StyleColor",
+        value_kind: ValueKind::Compound,
+        initial: "currentColor",
+        inherited: true,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Color,
+    },
 ];
 
 /// Compile contract for every schema-generated Rust property builder.
@@ -5052,6 +5080,7 @@ pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
 ///     let _ = Style::default().scroll_snap_stop(());
 ///     let _ = Style::default().scroll_snap_align_block(());
 ///     let _ = Style::default().scroll_snap_align_inline(());
+///     let _ = Style::default().webkit_text_fill_color(());
 /// }
 /// ```
 #[doc(hidden)]
@@ -5312,6 +5341,7 @@ mod generated_property_compile_pass {
         let _ = Style::default().scroll_snap_stop(unimplemented!());
         let _ = Style::default().scroll_snap_align_block(unimplemented!());
         let _ = Style::default().scroll_snap_align_inline(unimplemented!());
+        let _ = Style::default().webkit_text_fill_color(unimplemented!());
     }
 }
 
@@ -6063,5 +6093,8 @@ impl Style {
     }
     pub fn scroll_snap_align_inline(self, value: Option<ScrollSnapAlign>) -> Self {
         self.with_renderer(StyleProperty::ScrollSnapAlignInline, RendererStyleValue::ScrollSnapAlignInline(value))
+    }
+    pub fn webkit_text_fill_color(self, value: StyleColor) -> Self {
+        self.with_renderer(StyleProperty::WebkitTextFillColor, RendererStyleValue::WebkitTextFillColor(value))
     }
 }

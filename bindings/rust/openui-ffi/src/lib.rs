@@ -3588,6 +3588,11 @@ pub extern "C" fn oui_style_value_color_f32_v1(
                     openui_style::StyleColor::Resolved(color),
                 ))
             }
+            StyleProperty::WebkitTextFillColor => {
+                StyleValue::Renderer(openui_style::RendererStyleValue::WebkitTextFillColor(
+                    openui_style::StyleColor::Resolved(color),
+                ))
+            }
             _ if property.metadata().value_kind == openui_style::ValueKind::Color => {
                 StyleValue::Color(color)
             }
@@ -6305,6 +6310,7 @@ mod tests {
             StyleProperty::ScrollbarThumbColor,
             StyleProperty::TextDecorationColor,
             StyleProperty::TextEmphasisColor,
+            StyleProperty::WebkitTextFillColor,
         ];
         for property in properties {
             let mut output = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
@@ -6351,6 +6357,10 @@ mod tests {
                 StyleProperty::TextEmphasisColor => {
                     assert_eq!(snapshot.text_emphasis_color, StyleColor::Resolved(color));
                     snapshot.text_emphasis_color.resolve(&color)
+                }
+                StyleProperty::WebkitTextFillColor => {
+                    assert_eq!(snapshot.text_fill_color, StyleColor::Resolved(color));
+                    snapshot.effective_text_fill_color()
                 }
                 _ => unreachable!(),
             };
@@ -6403,30 +6413,32 @@ mod tests {
 
     #[test]
     fn invalid_float_colors_leave_output_unchanged() {
-        for index in 0..4 {
-            for invalid_channel in [f32::NAN, f32::INFINITY, f32::NEG_INFINITY, -0.01, 1.01] {
-                let mut channels = [0.5; 4];
-                channels[index] = invalid_channel;
-                let mut output = OuiStyleValue {
-                    tag: 77,
-                    reserved: 42,
-                    data: OuiStylePayload { integer: 123 },
-                };
-                assert_eq!(
-                    oui_style_value_color_f32_v1(
-                        StyleProperty::Color as i32,
-                        channels[0],
-                        channels[1],
-                        channels[2],
-                        channels[3],
-                        &mut output
-                    ),
-                    OuiStatus::InvalidArgument
-                );
-                assert_eq!(
-                    (output.tag, output.reserved, unsafe { output.data.integer }),
-                    (77, 42, 123)
-                );
+        for property in [StyleProperty::Color, StyleProperty::WebkitTextFillColor] {
+            for index in 0..4 {
+                for invalid_channel in [f32::NAN, f32::INFINITY, f32::NEG_INFINITY, -0.01, 1.01] {
+                    let mut channels = [0.5; 4];
+                    channels[index] = invalid_channel;
+                    let mut output = OuiStyleValue {
+                        tag: 77,
+                        reserved: 42,
+                        data: OuiStylePayload { integer: 123 },
+                    };
+                    assert_eq!(
+                        oui_style_value_color_f32_v1(
+                            property as i32,
+                            channels[0],
+                            channels[1],
+                            channels[2],
+                            channels[3],
+                            &mut output
+                        ),
+                        OuiStatus::InvalidArgument
+                    );
+                    assert_eq!(
+                        (output.tag, output.reserved, unsafe { output.data.integer }),
+                        (77, 42, 123)
+                    );
+                }
             }
         }
         for (property, expected) in [

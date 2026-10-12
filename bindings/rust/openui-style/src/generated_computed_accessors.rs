@@ -38,6 +38,10 @@ impl ComputedStyle {
         &self.fields.background_color
     }
     #[inline]
+    pub fn background_current_color(&self) -> &bool {
+        &self.fields.background_current_color
+    }
+    #[inline]
     pub fn background_layers(&self) -> &Vec<BackgroundLayer> {
         &self.fields.background_layers
     }
@@ -868,6 +872,10 @@ impl ComputedStyle {
     #[inline]
     pub fn text_emphasis_position(&self) -> &TextEmphasisPosition {
         &self.fields.text_emphasis_position
+    }
+    #[inline]
+    pub fn text_fill_color(&self) -> &StyleColor {
+        &self.fields.text_fill_color
     }
     #[inline]
     pub fn text_indent(&self) -> &Length {

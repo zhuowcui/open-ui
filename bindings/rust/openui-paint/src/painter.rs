@@ -2627,7 +2627,12 @@ fn paint_control_text_lines(
         ClipOp::Intersect,
         false,
     );
-    let text_style = style.derive(|text_style| text_style.color.a *= opacity_multiplier);
+    let text_style = style.derive(|text_style| {
+        text_style.color.a *= opacity_multiplier;
+        if let openui_style::StyleColor::Resolved(color) = &mut text_style.text_fill_color {
+            color.a *= opacity_multiplier;
+        }
+    });
     let line_height = line_metrics.ascent + line_metrics.descent;
     let initial_top = if center_single_line {
         content_top + ((content_bottom - content_top - line_height) / 2.0).max(0.0)
@@ -2940,7 +2945,12 @@ fn paint_text_input_control(
         ClipOp::Intersect,
         false,
     );
-    let text_style = style.derive(|text_style| text_style.color.a *= opacity_multiplier);
+    let text_style = style.derive(|text_style| {
+        text_style.color.a *= opacity_multiplier;
+        if let openui_style::StyleColor::Resolved(color) = &mut text_style.text_fill_color {
+            color.a *= opacity_multiplier;
+        }
+    });
     let content_height = content_bottom - content_top;
     let line_height = line_metrics.ascent + line_metrics.descent;
     let line_top = content_top + ((content_height - line_height) / 2.0).max(0.0);
@@ -3058,7 +3068,12 @@ fn paint_single_line_control_text(
         rect.left
     };
     let line_top = rect.top + ((rect.height() - line_height).max(0.0) / 2.0).floor();
-    let text_style = style.derive(|text_style| text_style.color.a *= opacity_multiplier);
+    let text_style = style.derive(|text_style| {
+        text_style.color.a *= opacity_multiplier;
+        if let openui_style::StyleColor::Resolved(color) = &mut text_style.text_fill_color {
+            color.a *= opacity_multiplier;
+        }
+    });
     canvas.save();
     canvas.clip_rect(rect, ClipOp::Intersect, false);
     crate::text_painter::paint_text(
@@ -4840,7 +4855,12 @@ fn paint_missing_image(
         let metrics = font.font_metrics().copied().unwrap_or_default();
         let line_metrics =
             openui_text::used_line_height_metrics(&metrics, &style.line_height, style.font_size);
-        let alt_style = style.derive(|alt_style| alt_style.color.a *= opacity_multiplier);
+        let alt_style = style.derive(|alt_style| {
+            alt_style.color.a *= opacity_multiplier;
+            if let openui_style::StyleColor::Resolved(color) = &mut alt_style.text_fill_color {
+                color.a *= opacity_multiplier;
+            }
+        });
         crate::text_painter::paint_text(
             canvas,
             &shaped,

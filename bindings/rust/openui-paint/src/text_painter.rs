@@ -149,12 +149,12 @@ pub fn paint_text_with_raster_policy(
         paint.set_anti_alias(true);
         paint.set_style(PaintStyle::Fill);
 
-        // Set the text color from the computed `color` property.
+        // Resolve the inherited text-fill color against final own color.
         // For non-color glyphs, this is used directly. For color glyphs
         // (COLR/CPAL, CBDT/CBLC, sbix, SVG), Skia overrides this paint
         // color with the glyph's embedded palette colors automatically.
         // Blink: TextPainterBase::UpdatePaint sets the fill color.
-        let c = &style.color;
+        let c = style.effective_text_fill_color();
         paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
 
         let physical_scale = style.device_scale_factor as f32;
@@ -265,7 +265,7 @@ pub fn paint_vertical_text(
         let mut paint = Paint::default();
         paint.set_anti_alias(true);
         paint.set_style(PaintStyle::Fill);
-        let color = &style.color;
+        let color = style.effective_text_fill_color();
         paint.set_color4f(
             Color4f::new(color.r, color.g, color.b, color.a),
             None::<&ColorSpace>,
@@ -429,7 +429,7 @@ pub fn paint_text_combine(
     paint.set_anti_alias(true);
     paint.set_style(PaintStyle::Fill);
 
-    let c = &style.color;
+    let c = style.effective_text_fill_color();
     paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
 
     let (translate_x, translate_y, scale_x) =

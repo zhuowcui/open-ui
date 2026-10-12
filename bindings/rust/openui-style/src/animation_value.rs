@@ -78,6 +78,96 @@ impl AnimationColor {
     }
 }
 
+/// An owned legacy color contribution whose `currentcolor` term is resolved
+/// only after the ordered color effect stack is complete. The existing
+/// [`AnimationColor`] representation and public [`Color`] stay unchanged.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct AnimationColorExpression {
+    color: AnimationColor,
+    current_color_fraction: f64,
+}
+
+impl AnimationColorExpression {
+    pub fn from_color(color: Color) -> Self {
+        Self::from_animation_color(AnimationColor::from_color(color))
+    }
+
+    pub fn from_animation_color(color: AnimationColor) -> Self {
+        Self {
+            color,
+            current_color_fraction: 0.0,
+        }
+    }
+
+    pub fn current_color() -> Self {
+        Self {
+            color: AnimationColor {
+                channels: [0.0; 3],
+                alpha: 0.0,
+            },
+            current_color_fraction: 1.0,
+        }
+    }
+
+    pub fn from_style_color(color: StyleColor) -> Self {
+        match color {
+            StyleColor::Resolved(color) => Self::from_color(color),
+            StyleColor::CurrentColor => Self::current_color(),
+        }
+    }
+
+    pub fn interpolate(self, to: Self, progress: f64) -> Self {
+        Self {
+            color: self.color.interpolate(to.color, progress),
+            current_color_fraction: blend(
+                self.current_color_fraction,
+                to.current_color_fraction,
+                progress,
+            ),
+        }
+    }
+
+    pub fn compose(self, effect: Self, underlying_fraction: f64) -> Self {
+        Self {
+            color: self.color.compose(effect.color, underlying_fraction),
+            current_color_fraction: self.current_color_fraction * underlying_fraction
+                + effect.current_color_fraction,
+        }
+    }
+
+    pub fn depends_on_current_color(self) -> bool {
+        self.current_color_fraction != 0.0
+    }
+
+    pub fn is_finite(self) -> bool {
+        self.color.channels.iter().all(|v| v.is_finite())
+            && self.color.alpha.is_finite()
+            && self.current_color_fraction.is_finite()
+    }
+
+    pub fn resolve(self, current_color: Color) -> Color {
+        if self.current_color_fraction == 0.0 {
+            return self.color.resolve();
+        }
+        // .50 AddPremultipliedColor: keyword fraction * float parameter *
+        // float alpha, each promoted to double. This is deliberately distinct
+        // from Create's float parameter * float alpha endpoint capture.
+        let parameter = |channel: f32| (channel as f64 * 255.0) as f32;
+        let fraction = self.current_color_fraction;
+        let alpha = current_color.a as f64;
+        AnimationColor {
+            channels: std::array::from_fn(|i| {
+                self.color.channels[i]
+                    + fraction
+                        * parameter([current_color.r, current_color.g, current_color.b][i]) as f64
+                        * alpha
+            }),
+            alpha: self.color.alpha + fraction * alpha,
+        }
+        .resolve()
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum AnimationNumberKind {
     Number,
@@ -165,6 +255,11 @@ pub enum CompositedStyleValue {
         value: AnimationColor,
         kind: AnimationColorKind,
     },
+    /// A color with a retained dependent keyword contribution.
+    ColorExpression {
+        value: AnimationColorExpression,
+        kind: AnimationColorKind,
+    },
     Length(AnimationLength),
     Edges([AnimationLength; 4]),
     CornerRadii([AnimationLength; 4]),
@@ -208,6 +303,16 @@ impl CompositedStyleValue {
                     kind: AnimationColorKind::ResolvedStyleColor,
                 }
             }
+            StyleValue::Typography(TypographyValue::StyleColor(StyleColor::CurrentColor)) => {
+                Self::ColorExpression {
+                    value: AnimationColorExpression::current_color(),
+                    kind: AnimationColorKind::ResolvedStyleColor,
+                }
+            }
+            StyleValue::ColorExpression(value) => Self::ColorExpression {
+                value,
+                kind: AnimationColorKind::Color,
+            },
             StyleValue::Length(value) => AnimationLength::from_length(value)
                 .map(Self::Length)
                 .unwrap_or(Self::Style(StyleValue::Length(value))),
@@ -224,6 +329,58 @@ impl CompositedStyleValue {
             other => Self::Style(other),
         }
     }
+    /// Preserve the schema's author representation while canonicalizing all
+    /// accepted Color/StyleColor/renderer endpoints into one working color kind.
+    pub fn from_style_value_for_property(property: StyleProperty, value: StyleValue) -> Self {
+        let mut value = Self::from_style_value(value);
+        let kind = if property.metadata().value_kind == crate::ValueKind::Color {
+            AnimationColorKind::Color
+        } else {
+            AnimationColorKind::ResolvedStyleColor
+        };
+        match &mut value {
+            Self::Color { kind: actual, .. } | Self::ColorExpression { kind: actual, .. } => {
+                *actual = kind
+            }
+            _ => {}
+        }
+        value
+    }
+
+    fn color_expression(&self) -> Option<(AnimationColorExpression, AnimationColorKind)> {
+        match self {
+            Self::Color { value, kind } => Some((
+                AnimationColorExpression::from_animation_color(*value),
+                *kind,
+            )),
+            Self::ColorExpression { value, kind } => Some((*value, *kind)),
+            _ => None,
+        }
+    }
+
+    /// Resolve dependent keyword terms against the final cascade color. Own
+    /// `color: currentcolor` endpoints must instead be captured from the parent
+    /// before sampling, as CSSColorInterpolationType::MaybeConvertInherit does.
+    pub fn into_style_value_with_color_context(
+        self,
+        property: StyleProperty,
+        current_color: Color,
+    ) -> StyleValue {
+        match self {
+            Self::ColorExpression {
+                value,
+                kind: AnimationColorKind::Color,
+            } => StyleValue::Color(value.resolve(current_color)),
+            Self::ColorExpression {
+                value,
+                kind: AnimationColorKind::ResolvedStyleColor,
+            } => StyleValue::Typography(TypographyValue::StyleColor(StyleColor::Resolved(
+                value.resolve(current_color),
+            ))),
+            other => other.into_style_value(property),
+        }
+    }
+
     pub fn into_style_value(self, property: StyleProperty) -> StyleValue {
         let edges = |values: [AnimationLength; 4]| Edges {
             top: values[0].resolve(),
@@ -266,6 +423,7 @@ impl CompositedStyleValue {
             } => StyleValue::Typography(TypographyValue::StyleColor(StyleColor::Resolved(
                 value.resolve(),
             ))),
+            Self::ColorExpression { value, .. } => StyleValue::ColorExpression(value),
             Self::Length(value) => StyleValue::Length(value.resolve()),
             Self::Edges(value) => StyleValue::Edges(edges(value)),
             Self::CornerRadii(value) => StyleValue::CornerRadii(crate::CornerRadii(edges(value))),
@@ -276,6 +434,20 @@ impl CompositedStyleValue {
         }
     }
     pub fn interpolate(&self, to: &Self, progress: f64) -> Option<Self> {
+        if matches!(self, Self::ColorExpression { .. })
+            || matches!(to, Self::ColorExpression { .. })
+        {
+            if let (Some((from, kind)), Some((to, to_kind))) =
+                (self.color_expression(), to.color_expression())
+            {
+                if kind == to_kind {
+                    return Some(Self::ColorExpression {
+                        value: from.interpolate(to, progress),
+                        kind,
+                    });
+                }
+            }
+        }
         Some(match (self, to) {
             (Self::Number { value: a, kind: ak }, Self::Number { value: b, kind: bk })
                 if ak == bk =>
@@ -316,6 +488,20 @@ impl CompositedStyleValue {
             || property.metadata().interpolation == InterpolationKind::Discrete
         {
             return self;
+        }
+        if matches!(self, Self::ColorExpression { .. })
+            || matches!(underlying, Self::ColorExpression { .. })
+        {
+            if let (Some((effect, kind)), Some((base, base_kind))) =
+                (self.color_expression(), underlying.color_expression())
+            {
+                if kind == base_kind {
+                    return Self::ColorExpression {
+                        value: base.compose(effect, 1.0),
+                        kind,
+                    };
+                }
+            }
         }
         match (&self, underlying) {
             (Self::Number { value: b, kind: bk }, Self::Number { value: a, kind: ak })
@@ -361,6 +547,117 @@ impl CompositedStyleValue {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn currentcolor_interpolation_retains_a_fraction_until_final_color_resolution() {
+        let sampled = AnimationColorExpression::current_color()
+            .interpolate(AnimationColorExpression::from_color(Color::BLUE), 0.5);
+        assert!(sampled.depends_on_current_color());
+        assert_eq!(
+            sampled.resolve(Color::RED),
+            Color::from_rgba_f32(0.5, 0.0, 0.5, 1.0)
+        );
+        assert_eq!(
+            sampled.resolve(Color::BLACK),
+            Color::from_rgba_f32(0.0, 0.0, 0.5, 1.0)
+        );
+    }
+
+    #[test]
+    fn additive_currentcolor_terms_keep_keyword_alpha_outside_the_numeric_equal_alpha_branch() {
+        let keyword = AnimationColorExpression::current_color();
+        let doubled = keyword.compose(keyword, 1.0);
+        // Two unresolved keyword fractions contribute twice the final alpha.
+        // Resolving each first would hit Composite's equal-alpha branch and
+        // incorrectly preserve 0.25 while doubling straight red.
+        assert_eq!(
+            doubled.resolve(Color::from_rgba_f32(1.0, 0.0, 0.0, 0.25)),
+            Color::from_rgba_f32(1.0, 0.0, 0.0, 0.5)
+        );
+        let numeric = AnimationColor::from_color(Color::from_rgba_f32(1.0, 0.0, 0.0, 0.25));
+        assert_eq!(
+            numeric.compose(numeric, 1.0).resolve(),
+            Color::from_rgba_f32(2.0, 0.0, 0.0, 0.25)
+        );
+    }
+
+    #[test]
+    fn color_expression_round_trip_keeps_context_free_property_sampling_owned() {
+        let keyframes = crate::PropertyKeyframes::typed(
+            StyleProperty::BackgroundColor,
+            crate::Keyframes::from_values(
+                StyleColor::CurrentColor,
+                StyleColor::Resolved(Color::BLUE),
+            ),
+        )
+        .unwrap();
+        let StyleValue::ColorExpression(sampled) = keyframes.sample(0.5, &crate::Easing::Linear)
+        else {
+            panic!("dependent currentcolor was resolved before a color context existed")
+        };
+        assert_eq!(
+            sampled.resolve(Color::RED),
+            Color::from_rgba_f32(0.5, 0.0, 0.5, 1.0)
+        );
+        let composed = CompositedStyleValue::from_style_value_for_property(
+            StyleProperty::BackgroundColor,
+            StyleValue::ColorExpression(sampled),
+        );
+        assert_eq!(
+            composed
+                .into_style_value_with_color_context(StyleProperty::BackgroundColor, Color::RED),
+            StyleValue::Color(Color::from_rgba_f32(0.5, 0.0, 0.5, 1.0))
+        );
+    }
+
+    #[test]
+    fn own_currentcolor_captures_the_parent_before_premultiplying_endpoints() {
+        let value: StyleValue = StyleColor::CurrentColor.into();
+        let parent = Color::from_rgba_f32(0.1, 0.2, 0.3, 0.1);
+        assert_eq!(
+            value.capture_own_current_color(StyleProperty::Color, parent),
+            StyleValue::Color(parent)
+        );
+        assert_eq!(
+            value.capture_own_current_color(StyleProperty::BackgroundColor, parent),
+            value
+        );
+        let color = AnimationColor::from_color(parent);
+        // Captured numeric endpoints preserve Create's f32 product. The later
+        // dependent-keyword contribution uses double multiplication instead.
+        assert_eq!(color.interpolate(color, 0.5).resolve(), parent);
+        let parameter = (parent.r as f64 * 255.0) as f32;
+        assert_ne!(color.channels[0], parameter as f64 * parent.a as f64);
+    }
+
+    #[test]
+    fn invalid_or_wrong_property_expressions_are_rejected_without_mutation() {
+        let mut style = crate::ComputedStyle::initial();
+        let before = style.color;
+        let invalid = StyleValue::ColorExpression(AnimationColorExpression {
+            color: AnimationColor {
+                channels: [f64::NAN, 0.0, 0.0],
+                alpha: 1.0,
+            },
+            current_color_fraction: 0.0,
+        });
+        assert!(crate::apply_to_computed(
+            &mut style,
+            StyleProperty::Color,
+            &invalid,
+            (100.0, 80.0)
+        )
+        .is_err());
+        assert_eq!(style.color, before);
+        assert!(crate::apply_to_computed(
+            &mut style,
+            StyleProperty::Width,
+            &StyleValue::ColorExpression(AnimationColorExpression::current_color()),
+            (100.0, 80.0)
+        )
+        .is_err());
+        assert!(style.width.is_auto());
+    }
+
     #[test]
     fn legacy_parameter_units_preserve_constant_decimal_color() {
         let color = Color::from_rgba_f32(0.1, 0.2, 0.3, 0.1);

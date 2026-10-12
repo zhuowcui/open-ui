@@ -279,6 +279,16 @@ impl Element {
             .with_engine_mut(|engine| engine.set_property(self.handle, property, value))
     }
 
+    /// Set a numeric color or retain own-color currentcolor inheritance.
+    pub fn set_color_value(&self, value: openui_style::StyleColor) -> Result<(), Error> {
+        self.set_property(StyleProperty::Color, value.into())
+    }
+
+    /// Retain background currentcolor until the final own color is published.
+    pub fn set_background_color_value(&self, value: openui_style::StyleColor) -> Result<(), Error> {
+        self.set_property(StyleProperty::BackgroundColor, value.into())
+    }
+
     /// Retain a length-valued line height, including `em`, `rem`, `ch`, `ex`,
     /// `lh`, percentages and viewport units. The Engine resolves it after the
     /// final font context is known and refreshes it after native mutations.

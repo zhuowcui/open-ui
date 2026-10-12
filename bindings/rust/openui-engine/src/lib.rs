@@ -1618,6 +1618,7 @@ impl Engine {
                         apply_to_computed(&mut style, property, &value, viewport)
                             .map_err(|_| EngineError::PropertyType { property })?;
                     }
+                    style.resolve_current_color_dependencies();
                     self.adjust_native_control_style(index, node, &mut style);
                     self.invalidate_transform_containing_block_change(
                         node,
@@ -1781,9 +1782,10 @@ impl Engine {
                 if value.depends_on_font_metrics() {
                     continue;
                 }
+                let value = value.capture_own_current_color(*property, parent.color);
                 let value = Self::resolve_native_lengths(
                     *property,
-                    value,
+                    &value,
                     if *property == StyleProperty::FontSize {
                         parent_font
                     } else {
@@ -1851,9 +1853,10 @@ impl Engine {
         };
         let mut authored_line_height = false;
         for (property, value) in declarations {
+            let value = value.capture_own_current_color(*property, parent.color);
             let value = Self::resolve_native_lengths(
                 *property,
-                value,
+                &value,
                 if *property == StyleProperty::FontSize {
                     parent_font
                 } else {
@@ -1897,6 +1900,7 @@ impl Engine {
                 }
             });
         }
+        style.resolve_current_color_dependencies();
         Ok(style)
     }
 

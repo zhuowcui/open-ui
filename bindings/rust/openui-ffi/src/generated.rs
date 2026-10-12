@@ -253,6 +253,7 @@ pub(crate) fn property_from_raw(value: i32) -> Option<StyleProperty> {
         247 => Some(StyleProperty::ScrollSnapStop),
         248 => Some(StyleProperty::ScrollSnapAlignBlock),
         249 => Some(StyleProperty::ScrollSnapAlignInline),
+        250 => Some(StyleProperty::WebkitTextFillColor),
         _ => None,
     }
 }
@@ -508,6 +509,7 @@ pub(crate) fn expected_value_tag(property: StyleProperty) -> u32 {
         StyleProperty::ScrollSnapStop => 6,
         StyleProperty::ScrollSnapAlignBlock => 6,
         StyleProperty::ScrollSnapAlignInline => 6,
+        StyleProperty::WebkitTextFillColor => 6,
     }
 }
 

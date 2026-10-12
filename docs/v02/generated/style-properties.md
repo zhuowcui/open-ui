@@ -252,3 +252,4 @@
 | 247 | `scroll-snap-stop` | `scroll_snap_stop` | `ScrollSnapStop` | `renderer-initial` | false | layout | discrete |
 | 248 | `scroll-snap-align-block` | `scroll_snap_align_block` | `Option<ScrollSnapAlign>` | `renderer-initial` | false | layout | discrete |
 | 249 | `scroll-snap-align-inline` | `scroll_snap_align_inline` | `Option<ScrollSnapAlign>` | `renderer-initial` | false | layout | discrete |
+| 250 | `-webkit-text-fill-color` | `text_fill_color` | `StyleColor` | `currentColor` | true | paint | color |

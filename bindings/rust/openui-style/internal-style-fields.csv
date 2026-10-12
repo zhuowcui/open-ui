@@ -1,4 +1,5 @@
 field,rationale
+background_current_color,Retains the authored background currentcolor dependency while the public Color field exposes its final used value.
 animation_snapshot,Sampled animation state is engine-owned and never represents an author declaration.
 embedded_document_text,Marks text in a statically lowered nested document for the platform raster policy.
 establishes_transform_containing_block,Caches containing-block behavior derived from authored transform-related declarations.
