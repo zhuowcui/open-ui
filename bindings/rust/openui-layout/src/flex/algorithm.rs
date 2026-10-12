@@ -5848,8 +5848,10 @@ mod tests {
 
     #[test]
     fn overflow_padding_does_not_extend_an_items_existing_overflow_rect() {
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Div);
         let mut container = Fragment::new_box(
-            NodeId::NONE,
+            owner,
             PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(100)),
         );
         container.padding = BoxStrut::new(
@@ -5870,7 +5872,7 @@ mod tests {
         container.children.push(item);
 
         finalize_flex_fragment(
-            &Document::new(),
+            &doc,
             &mut container,
             &openui_style::ComputedStyle::default(),
             false,
@@ -5881,8 +5883,10 @@ mod tests {
 
     #[test]
     fn scrollable_flex_overflow_includes_margin_box_and_end_padding() {
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Div);
         let mut container = Fragment::new_box(
-            NodeId::NONE,
+            owner,
             PhysicalSize::new(LayoutUnit::from_i32(86), LayoutUnit::from_i32(86)),
         );
         container.padding = BoxStrut::new(
@@ -5909,7 +5913,8 @@ mod tests {
             computed.overflow_x = Overflow::Scroll;
             computed.overflow_y = Overflow::Scroll;
         });
-        finalize_flex_fragment(&Document::new(), &mut container, &style, false);
+        doc.install_resolved_style(owner, style.clone());
+        finalize_flex_fragment(&doc, &mut container, &style, false);
 
         assert_eq!(
             container.overflow_rect,
@@ -5922,8 +5927,10 @@ mod tests {
 
     #[test]
     fn reversed_scrollable_flex_overflow_puts_end_padding_at_start() {
+        let mut doc = Document::new();
+        let owner = doc.create_node(ElementTag::Div);
         let mut container = Fragment::new_box(
-            NodeId::NONE,
+            owner,
             PhysicalSize::new(LayoutUnit::from_i32(86), LayoutUnit::from_i32(86)),
         );
         container.padding = BoxStrut::new(
@@ -5952,7 +5959,8 @@ mod tests {
             computed.overflow_x = Overflow::Scroll;
             computed.overflow_y = Overflow::Scroll;
         });
-        finalize_flex_fragment(&Document::new(), &mut container, &style, false);
+        doc.install_resolved_style(owner, style.clone());
+        finalize_flex_fragment(&doc, &mut container, &style, false);
 
         assert_eq!(
             container.overflow_rect,

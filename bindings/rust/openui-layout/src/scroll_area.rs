@@ -297,8 +297,8 @@ fn propagated(doc: &dyn LayoutDocument, child: &Fragment) -> PhysicalRect {
     let border = child.border_box_rect();
     let Some(area) = child.scroll_area else {
         let mut rect = child.scrollable_overflow();
-        if child.node_id.is_none() {
-            // Anonymous line wrappers retain the available inline size, even
+        if child.node_id.is_none() || !child.owns_element_box() {
+            // Anonymous line wrappers and borrowed layout helpers retain the available inline size, even
             // when nowrap children extend beyond it. They have no principal
             // node or scroll area; propagate their descendants in the same
             // physical coordinates instead of treating that size as a clip.

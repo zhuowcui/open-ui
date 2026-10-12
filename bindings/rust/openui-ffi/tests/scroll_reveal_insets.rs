@@ -1,6 +1,6 @@
 //! C ABI consumers share the native Engine reveal destination and ownership.
 use openui_ffi::*;
-use openui_style::{Overflow, ScrollbarWidth, StyleProperty};
+use openui_style::{Overflow, StyleProperty};
 use std::{mem::size_of, ptr};
 
 struct Fixture {
@@ -108,10 +108,29 @@ impl Fixture {
             set_length(node, property, value);
         }
         set_enum(port, StyleProperty::Overflow, Overflow::Hidden as i32);
-        set_enum(
-            port,
-            StyleProperty::ScrollbarWidth,
-            ScrollbarWidth::None as i32,
+        let mut width = OuiStyleValue {
+            tag: 0,
+            reserved: 0,
+            data: OuiStylePayload { integer: 0 },
+        };
+        assert_eq!(
+            oui_style_value_parse(
+                StyleProperty::ScrollbarWidth as i32,
+                OuiUtf8 {
+                    data: b"none".as_ptr(),
+                    length: 4
+                },
+                &mut width
+            ),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            oui_element_set_property(port, StyleProperty::ScrollbarWidth as i32, &width),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            oui_style_compound_destroy(unsafe { width.data.compound } as *mut OuiStyleCompound),
+            OuiStatus::Ok
         );
         Self {
             document,
