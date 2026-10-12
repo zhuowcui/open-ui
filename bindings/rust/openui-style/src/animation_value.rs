@@ -172,6 +172,11 @@ pub enum CompositedStyleValue {
 }
 impl CompositedStyleValue {
     pub fn from_style_value(value: StyleValue) -> Self {
+        if let StyleValue::Renderer(renderer) = &value {
+            if let Some(value) = renderer.animation_value() {
+                return value;
+            }
+        }
         let lengths = |edges: Edges<LengthValue>| {
             Some([
                 AnimationLength::from_length(edges.top)?,
@@ -245,6 +250,8 @@ impl CompositedStyleValue {
                 // for column-count/orphans/widows.
                 let value = match property.metadata().css_name {
                     "z-index" | "order" | "reading-order" | "math-depth" => (value + 0.5).floor(),
+                    "orphans" | "widows" => value.round().clamp(1.0, i16::MAX as f64),
+                    "column-count" => value.round().clamp(1.0, u16::MAX as f64),
                     _ => value.round(),
                 };
                 StyleValue::Integer(value as i32)

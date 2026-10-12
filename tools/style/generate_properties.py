@@ -175,6 +175,51 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
         f"            StyleProperty::{row['rust_name']} => Some(Self::{row['rust_name']}(style.fields.{field_names(row)[0]}.clone())),"
         for row in renderer_rows
     )
+    # Animation endpoints and current computed values share one semantic
+    # conversion. Derive native wrappers from the public constructor surface;
+    # the renderer representation remains property-bound and lossless.
+    property_source = (ROOT / "bindings/rust/openui-style/src/property.rs").read_text()
+    native_variants = dict(re.findall(
+        r"impl_style_value!\(([^,]+),\s*([A-Za-z0-9_]+)\);", property_source
+    ))
+    typography_variants = dict(re.findall(
+        r"impl_typography_value!\(([^,]+),\s*([A-Za-z0-9_]+)\);", property_source
+    ))
+    animation_cases = []
+    for row in renderer_rows:
+        name = row["rust_name"]
+        field_type = fields[field_names(row)[0]].removeprefix("crate::")
+        kind = row["value_kind"]
+        expression = None
+        if kind == "number" and field_type == "f32":
+            expression = "Some(crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Number })"
+        elif kind == "integer" and field_type in {"i32", "u32"}:
+            expression = "Some(crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Integer })"
+        elif kind == "integer" and field_type in {"Option<i32>", "Option<u32>"}:
+            expression = "value.as_ref().map(|value| crate::CompositedStyleValue::Number { value: *value as f64, kind: crate::AnimationNumberKind::Integer })"
+        elif kind == "length" and field_type == "f32":
+            expression = "Some(crate::CompositedStyleValue::from_style_value(StyleValue::Length(LengthValue::px(*value))))"
+        elif kind == "length" and field_type == "Length":
+            expression = "Some(crate::CompositedStyleValue::from_style_value(StyleValue::Length(LengthValue::Computed(*value))))"
+        elif kind == "length" and field_type == "LengthValue":
+            expression = "Some(crate::CompositedStyleValue::from_style_value(StyleValue::Length(*value)))"
+        elif kind == "length" and field_type == "Option<Length>":
+            expression = "value.as_ref().map(|value| crate::CompositedStyleValue::from_style_value(StyleValue::Length(LengthValue::Computed(*value))))"
+        elif kind == "color" and field_type == "StyleColor":
+            # A color-kind StyleColor field uses the schema's Color author
+            # bridge. Compound typography colors use their native constructor.
+            expression = "match value { StyleColor::Resolved(value) => Some(crate::CompositedStyleValue::Color { value: crate::AnimationColor::from_color(*value), kind: crate::AnimationColorKind::Color }), _ => None }"
+        elif kind == "color" and field_type == "Option<Color>":
+            expression = "value.as_ref().map(|value| crate::CompositedStyleValue::from_style_value(StyleValue::Color(*value)))"
+        elif field_type == "Transform2D":
+            expression = "Some(crate::CompositedStyleValue::from_style_value(StyleValue::Transform(if *value == Transform2D::IDENTITY { TransformList::default() } else { TransformList(vec![TransformOperation::Matrix(*value)]) })))"
+        elif field_type in native_variants:
+            expression = f"Some(crate::CompositedStyleValue::from_style_value(StyleValue::{native_variants[field_type]}(value.clone())))"
+        elif field_type in typography_variants:
+            expression = f"Some(crate::CompositedStyleValue::from_style_value(StyleValue::Typography(TypographyValue::{typography_variants[field_type]}(value.clone()))))"
+        if expression is not None:
+            animation_cases.append(f"            Self::{name}(value) => {expression},")
+    animation_conversion = "\n".join(animation_cases)
     # Copy computed values, without resolving inherited lengths again.
     inherited_fields = sorted({field for row in schema if row["inherited"] == "true" for field in field_names(row)})
     inherited_copy = "\n".join(f"        self.fields.{field} = parent.fields.{field}.clone();" for field in inherited_fields)
@@ -393,6 +438,15 @@ impl RendererStyleValue {{
         match (property, self) {{
 {renderer_apply}
             _ => false,
+        }}
+    }}
+
+    /// Convert supported computed payloads through the shared native animation
+    /// value path. Optional/auto and unresolved keyword sources remain owned.
+    pub(crate) fn animation_value(&self) -> Option<crate::CompositedStyleValue> {{
+        match self {{
+{animation_conversion}
+            _ => None,
         }}
     }}
 
