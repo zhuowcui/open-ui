@@ -764,7 +764,7 @@ fn is_formatting_helper(fragment: &Fragment) -> bool {
 
 fn helper_paint_style(fragment: &Fragment, style: &ComputedStyle) -> Option<ComputedStyle> {
     is_formatting_helper(fragment).then(|| {
-        style.derive(|adjusted| {
+        fragment.layout_style(style).derive(|adjusted| {
             adjusted.transform = openui_style::Transform2D::IDENTITY;
             adjusted.native_transform = None;
             adjusted.transform_matrix = None;
@@ -781,8 +781,10 @@ fn helper_paint_style(fragment: &Fragment, style: &ComputedStyle) -> Option<Comp
             adjusted.contain = openui_style::Containment::NONE;
             // Layout's has_overflow_clip/axis metadata still supplies structural
             // clips. The borrowed style does not add another authored scrollport.
-            adjusted.overflow_x = Overflow::Visible;
-            adjusted.overflow_y = Overflow::Visible;
+            if fragment.anonymous_layout_box.is_none() {
+                adjusted.overflow_x = Overflow::Visible;
+                adjusted.overflow_y = Overflow::Visible;
+            }
         })
     })
 }
@@ -6896,7 +6898,7 @@ fn prepaint_collapsed_table_backgrounds(
             ClipOp::Intersect,
             false,
         );
-        if fragment.owns_element_box() {
+        if fragment.owns_scroll_box() {
             let node = doc.node(fragment.node_id);
             canvas.translate(element_scroll_paint_translation(
                 fragment,
@@ -8436,7 +8438,7 @@ fn paint_overflow_pair(
     style: &ComputedStyle,
     doc: &Document,
 ) -> (Overflow, Overflow) {
-    if is_formatting_helper(fragment) {
+    if is_formatting_helper(fragment) && fragment.anonymous_layout_box.is_none() {
         return (Overflow::Visible, Overflow::Visible);
     }
     if let Some(area) = fragment.scroll_area {
@@ -9059,7 +9061,7 @@ fn paint_list_marker(
 /// own explicit clip geometry. Returns `(x, y, width, height)`.
 pub fn compute_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> (f32, f32, f32, f32) {
     let retained_client = fragment
-        .owns_element_box()
+        .owns_layout_box()
         .then_some(fragment.scroll_area)
         .flatten()
         .map(|area| area.client_rect);
@@ -9611,7 +9613,7 @@ fn truncated_table_row_group_end(fragment: &Fragment, style: &ComputedStyle) -> 
 /// fractional resample. Ganesh keeps an explicit layer because its replay
 /// backend owns that surface and transform directly.
 fn has_composited_scroll_contents(fragment: &Fragment, style: &ComputedStyle) -> bool {
-    if !fragment.owns_element_box() || style.raster_configuration.backend != RasterBackend::GaneshGl
+    if !fragment.owns_scroll_box() || style.raster_configuration.backend != RasterBackend::GaneshGl
     {
         return false;
     }
@@ -9639,7 +9641,7 @@ fn needs_fractional_cpu_scroll_backing(
     style: &ComputedStyle,
     clip_rect: Rect,
 ) -> bool {
-    if !fragment.owns_element_box()
+    if !fragment.owns_scroll_box()
         || style.raster_configuration.backend == RasterBackend::GaneshGl
         || style.device_scale_factor.fract().abs() <= f64::EPSILON
     {
@@ -9691,7 +9693,7 @@ fn element_scroll_paint_translation(
     scroll_x: f32,
     scroll_y: f32,
 ) -> (f32, f32) {
-    if !fragment.owns_element_box() {
+    if !fragment.owns_scroll_box() {
         return (0.0, 0.0);
     }
     // Fragmentation also installs overflow clips and records a scroll area,
@@ -9862,7 +9864,7 @@ fn paint_composited_scroll_contents(
         1.0,
     );
 
-    let (scroll_x, scroll_y) = if !fragment.owns_element_box() {
+    let (scroll_x, scroll_y) = if !fragment.owns_scroll_box() {
         (0.0, 0.0)
     } else {
         let node = doc.node(fragment.node_id);
@@ -10350,7 +10352,7 @@ fn paint_with_overflow_clip(
         // Sticky offsets were resolved against the same document-owned scroll
         // state by layout, while scrollbars remain fixed in the scrollport.
         canvas.save();
-        let (scroll_x, scroll_y) = if !fragment.owns_element_box() {
+        let (scroll_x, scroll_y) = if !fragment.owns_scroll_box() {
             (0.0, 0.0)
         } else {
             let node = doc.node(fragment.node_id);
@@ -11807,7 +11809,7 @@ fn paint_element_scrollbars(
     doc: &Document,
     offset: PhysicalOffset,
 ) {
-    if !fragment.owns_element_box() {
+    if !fragment.owns_scroll_box() {
         return;
     }
     let (Some(bars), Some(area)) = (fragment.element_scrollbars, fragment.scroll_area) else {
@@ -11830,7 +11832,7 @@ fn paint_element_scrollbars(
         doc,
         offset,
         scrollport,
-        &doc.node(fragment.node_id).style,
+        fragment.layout_style(&doc.node(fragment.node_id).style),
         doc.node(fragment.node_id)
             .style
             .writing_mode

@@ -1,5 +1,6 @@
 //! Actual-box transform resolution shared by painting and native geometry.
 
+use crate::layout_context::LayoutDocument;
 use crate::Fragment;
 use openui_dom::Document;
 use openui_style::{
@@ -83,8 +84,8 @@ pub fn resolved_fragment_transform(
 /// Apply a removed ancestor about its retained owned physical reference box
 /// in the promoted parent's coordinate space. Both painting and native
 /// geometry consume this same source descriptor and kind-sensitive origin.
-pub fn promoted_ancestor_applied_transform(
-    document: &Document,
+pub(crate) fn promoted_ancestor_applied_transform_with_layout(
+    document: &dyn LayoutDocument,
     ancestor: &crate::PromotedTransformAncestor,
 ) -> AppliedTransform {
     let style = &document.node(ancestor.node_id).style;
@@ -131,7 +132,10 @@ pub fn promoted_ancestor_applied_transform(
 /// Call after final physical layout/sticky/snap resolution. Transform-only
 /// updates refresh this metadata without another layout, while unchanged
 /// frames keep the existing immutable fragment tree.
-pub fn finalize_fragment_transforms(document: &Document, fragment: &mut Fragment) {
+pub(crate) fn finalize_fragment_transforms_with_layout(
+    document: &dyn LayoutDocument,
+    fragment: &mut Fragment,
+) {
     fragment.resolved_transform = if fragment.owns_element_box() {
         Some(resolved_fragment_transform(
             fragment,
@@ -141,7 +145,7 @@ pub fn finalize_fragment_transforms(document: &Document, fragment: &mut Fragment
         None
     };
     for child in &mut fragment.children {
-        finalize_fragment_transforms(document, child);
+        finalize_fragment_transforms_with_layout(document, child);
     }
 }
 
@@ -279,7 +283,7 @@ mod tests {
             reference_block_size: None,
             reference_block_axis_is_x: false,
         };
-        let parent = promoted_ancestor_applied_transform(&document, &ancestor);
+        let parent = promoted_ancestor_applied_transform_with_layout(&document, &ancestor);
         let child = transform_list_applied(
             &TransformList(vec![TransformOperation::Rotate3d {
                 x: 0.0,
@@ -304,7 +308,7 @@ mod tests {
                 1.0, 1.0, 0.0,
             )]))
         });
-        let singular = promoted_ancestor_applied_transform(&document, &ancestor);
+        let singular = promoted_ancestor_applied_transform_with_layout(&document, &ancestor);
         assert!(!singular.is_invertible());
         assert!(singular.flattened().is_invertible());
         // Callers must latch the first result before following a flat child.
@@ -338,13 +342,13 @@ mod tests {
             reference_block_size: None,
             reference_block_axis_is_x: false,
         };
-        let used = promoted_ancestor_applied_transform(&document, &ancestor);
+        let used = promoted_ancestor_applied_transform_with_layout(&document, &ancestor);
         assert_eq!(used.axis_2d.unwrap().translation, [-80.0, -80.0]);
         ancestor.fragment_size.height = LayoutUnit::from_i32(20);
         ancestor.resolve_reference_slice(LayoutUnit::from_i32(20));
         assert_eq!(ancestor.fragment_reference_box, rect(0, 0, 100, 20));
         assert_eq!(
-            promoted_ancestor_applied_transform(&document, &ancestor)
+            promoted_ancestor_applied_transform_with_layout(&document, &ancestor)
                 .axis_2d
                 .unwrap()
                 .translation,
@@ -352,7 +356,7 @@ mod tests {
         );
         ancestor.reference_block_size = Some(LayoutUnit::from_i32(40));
         assert_eq!(
-            promoted_ancestor_applied_transform(&document, &ancestor)
+            promoted_ancestor_applied_transform_with_layout(&document, &ancestor)
                 .axis_2d
                 .unwrap()
                 .translation,
@@ -363,12 +367,14 @@ mod tests {
                 openui_style::Transform2D::IDENTITY,
             )]))
         });
-        assert!(promoted_ancestor_applied_transform(&document, &ancestor)
-            .axis_2d
-            .is_none());
+        assert!(
+            promoted_ancestor_applied_transform_with_layout(&document, &ancestor)
+                .axis_2d
+                .is_none()
+        );
         document.node_mut(node).style = ComputedStyle::initial();
         assert_eq!(
-            promoted_ancestor_applied_transform(&document, &ancestor),
+            promoted_ancestor_applied_transform_with_layout(&document, &ancestor),
             AppliedTransform::IDENTITY
         );
     }
@@ -430,4 +436,16 @@ mod tests {
         assert_eq!(crossing.right(), LayoutUnit::from_i32(1_000_000));
         assert_eq!(crossing.bottom(), LayoutUnit::from_i32(1_000_000));
     }
+}
+
+// Public entry points retain the original native Document signatures.
+pub fn promoted_ancestor_applied_transform(
+    document: &Document,
+    ancestor: &crate::PromotedTransformAncestor,
+) -> AppliedTransform {
+    promoted_ancestor_applied_transform_with_layout(document, ancestor)
+}
+
+pub fn finalize_fragment_transforms(document: &Document, fragment: &mut Fragment) {
+    finalize_fragment_transforms_with_layout(document, fragment)
 }

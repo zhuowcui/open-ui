@@ -10,6 +10,7 @@
 //! - Forced breaks (`<br>` via ElementTag convention)
 //! - Text shaping via openui-text
 
+use crate::layout_context::LayoutDocument;
 use openui_dom::{Document, ElementTag, NodeId, PseudoElementKind};
 use openui_geometry::WritingDirectionMode;
 use openui_style::{
@@ -33,7 +34,7 @@ use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 /// use the positioned ancestor's padding box, while normal-flow percentages
 /// use the parent's content box.
 fn definite_content_block_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     depth: usize,
 ) -> Option<openui_geometry::LayoutUnit> {
@@ -843,7 +844,7 @@ pub fn style_to_font_description(style: &ComputedStyle) -> FontDescription {
 
 /// Builder that walks the DOM and collects inline items.
 pub struct InlineItemsBuilder<'a> {
-    doc: &'a Document,
+    doc: &'a dyn LayoutDocument,
     /// Writing direction of the inline formatting context being collected.
     inline_writing_direction: WritingDirectionMode,
     text: String,
@@ -876,6 +877,10 @@ pub struct InlineItemsBuilder<'a> {
 
 impl<'a> InlineItemsBuilder<'a> {
     pub fn new(doc: &'a Document) -> Self {
+        Self::new_with_layout(doc)
+    }
+
+    pub(crate) fn new_with_layout(doc: &'a dyn LayoutDocument) -> Self {
         Self {
             doc,
             inline_writing_direction: WritingDirectionMode::horizontal_ltr(),
@@ -897,15 +902,22 @@ impl<'a> InlineItemsBuilder<'a> {
     /// This is the main entry point. It walks all children of `block_node_id`
     /// and produces a flat `InlineItemsData`.
     pub fn collect(doc: &Document, block_node_id: NodeId) -> InlineItemsData {
+        Self::collect_with_layout(doc, block_node_id)
+    }
+
+    pub(crate) fn collect_with_layout(
+        doc: &dyn LayoutDocument,
+        block_node_id: NodeId,
+    ) -> InlineItemsData {
         Self::collect_with_floats(doc, block_node_id).0
     }
 
     /// Collect inline items and the source-order float insertion boundaries.
     pub(crate) fn collect_with_floats(
-        doc: &Document,
+        doc: &dyn LayoutDocument,
         block_node_id: NodeId,
     ) -> (InlineItemsData, Vec<FloatPlaceholder>) {
-        let mut builder = InlineItemsBuilder::new(doc);
+        let mut builder = InlineItemsBuilder::new_with_layout(doc);
         let block_style = &doc.node(block_node_id).style;
         builder.include_scroll_markers =
             doc.node(block_node_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup);
@@ -937,6 +949,14 @@ impl<'a> InlineItemsBuilder<'a> {
         block_node_id: NodeId,
         children: &[NodeId],
     ) -> InlineItemsData {
+        Self::collect_for_children_with_layout(doc, block_node_id, children)
+    }
+
+    pub(crate) fn collect_for_children_with_layout(
+        doc: &dyn LayoutDocument,
+        block_node_id: NodeId,
+        children: &[NodeId],
+    ) -> InlineItemsData {
         Self::collect_for_children_with_floats(doc, block_node_id, children).0
     }
 
@@ -945,11 +965,11 @@ impl<'a> InlineItemsBuilder<'a> {
     /// those floats, while the returned items retain the interrupted inline
     /// ancestry used to position the remaining line content.
     pub(crate) fn collect_for_children_with_floats(
-        doc: &Document,
+        doc: &dyn LayoutDocument,
         block_node_id: NodeId,
         children: &[NodeId],
     ) -> (InlineItemsData, Vec<FloatPlaceholder>) {
-        let mut builder = InlineItemsBuilder::new(doc);
+        let mut builder = InlineItemsBuilder::new_with_layout(doc);
         let block_style = &doc.node(block_node_id).style;
         builder.include_scroll_markers =
             doc.node(block_node_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup);
@@ -1505,7 +1525,7 @@ impl<'a> InlineItemsBuilder<'a> {
                 true,
                 child_direction,
             );
-            let probe = crate::block::block_layout(self.doc, node_id, &probe_space);
+            let probe = crate::block::block_layout_with_layout(self.doc, node_id, &probe_space);
             let border_box = if self.inline_writing_direction.is_horizontal() {
                 probe.size.width
             } else {
@@ -1555,7 +1575,7 @@ impl<'a> InlineItemsBuilder<'a> {
                 raw_height + own_border.block_sum() + own_padding.block_sum()
             };
             Some(
-                crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+                crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size_with_layout(
                     self.doc,
                     node_id,
                     border_box_height,
@@ -1582,7 +1602,9 @@ impl<'a> InlineItemsBuilder<'a> {
                 .any(|child_id| self.doc.node(child_id).tag == ElementTag::Break)
                 .then(|| self.compute_intrinsic_inline_size(node_id))
                 .flatten();
-            let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes(self.doc, node_id);
+            let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(
+                self.doc, node_id,
+            );
             // Flex intrinsic sizes are expressed in the flex container's own
             // logical axes.
             let min_w = if child_direction.is_horizontal()
@@ -1623,7 +1645,7 @@ impl<'a> InlineItemsBuilder<'a> {
                 true,
                 child_direction,
             );
-            let probe = crate::block::block_layout(self.doc, node_id, &probe_space);
+            let probe = crate::block::block_layout_with_layout(self.doc, node_id, &probe_space);
             let size = if self.inline_writing_direction.is_horizontal() {
                 probe.size.width
             } else {
@@ -1637,7 +1659,7 @@ impl<'a> InlineItemsBuilder<'a> {
             let sizes =
                 crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(self.doc, node_id);
             // InlineItem::intrinsic_inline_size measures content-box width;
-            // block_layout applies this atomic element's own edges.
+            // block_layout_with_layout applies this atomic element's own edges.
             let max = (sizes.max.to_f32() - own_inline_edges).max(0.0);
             if max > 0.0 {
                 Some(max)

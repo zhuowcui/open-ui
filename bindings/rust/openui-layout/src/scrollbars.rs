@@ -1,7 +1,10 @@
 //! Physical scrollbar space, separate from authored border and padding.
 
+use crate::layout_context::LayoutDocument;
 use crate::{block::block_layout_contents, ConstraintSpace, Fragment};
-use openui_dom::{Document, NodeId};
+#[cfg(test)]
+use openui_dom::Document;
+use openui_dom::NodeId;
 use openui_geometry::{BoxStrut, LayoutUnit, PhysicalRect};
 use openui_style::{ComputedStyle, Display, Overflow, ScrollbarWidth};
 
@@ -73,7 +76,7 @@ pub(crate) fn for_node(space: &ConstraintSpace, node: NodeId) -> Option<ElementS
 
 /// The fixed/stable contribution available before measuring the contents.
 /// Auto scrollbars are discovered by the shared layout loop below.
-pub(crate) fn intrinsic_insets(doc: &Document, node: NodeId) -> BoxStrut {
+pub(crate) fn intrinsic_insets(doc: &dyn LayoutDocument, node: NodeId) -> BoxStrut {
     let item = doc.node(node);
     let style = &item.style;
     if crate::scroll_area::is_replaced_layout_box(doc, node)
@@ -95,7 +98,7 @@ pub(crate) fn intrinsic_insets(doc: &Document, node: NodeId) -> BoxStrut {
 /// Intrinsic sizing includes fixed/stable gutters. A later auto-scrollbar
 /// pass replaces that contribution with its actual reserved space.
 pub(crate) fn intrinsic_sizes_for_layout(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node: NodeId,
     space: &ConstraintSpace,
     mut sizes: crate::intrinsic_sizing::IntrinsicSizes,
@@ -119,7 +122,7 @@ pub(crate) fn intrinsic_sizes_for_layout(
     sizes
 }
 
-pub(crate) fn layout(doc: &Document, node: NodeId, space: &ConstraintSpace) -> Fragment {
+pub(crate) fn layout(doc: &dyn LayoutDocument, node: NodeId, space: &ConstraintSpace) -> Fragment {
     let item = doc.node(node);
     let style = &item.style;
     let viewport_source = crate::scroll_area::viewport_defining_element(doc);
@@ -145,7 +148,9 @@ pub(crate) fn layout(doc: &Document, node: NodeId, space: &ConstraintSpace) -> F
         || Some(node) == viewport_source
         || (!crate::scroll_area::is_scroll_container(doc, node) && !replaced)
     {
-        return block_layout_contents(doc, node, space);
+        let mut fragment = block_layout_contents(doc, node, space);
+        crate::layout_context::retain_layout_box(doc, node, &mut fragment);
+        return fragment;
     }
     let (overflow_x, overflow_y) = crate::scroll_area::overflow_pair(style);
     let enabled = style.scrollbar_width != ScrollbarWidth::None && !replaced;
@@ -156,6 +161,7 @@ pub(crate) fn layout(doc: &Document, node: NodeId, space: &ConstraintSpace) -> F
         let mut current = space.clone();
         current.element_scrollbars = Some((node, scrollbars));
         let mut fragment = block_layout_contents(doc, node, &current);
+        crate::layout_context::retain_layout_box(doc, node, &mut fragment);
         fragment.element_scrollbars = Some(scrollbars);
         // LayoutBox clamps a left gutter to the physical content width. The
         // right gutter remains its theme thickness, even in a narrow box.
@@ -226,9 +232,9 @@ mod tests {
             let direct = if display == Display::Flex {
                 crate::flex::flex_layout(&doc, container, &space)
             } else {
-                crate::grid::grid_layout(&doc, container, &space)
+                crate::grid::grid_layout_with_layout(&doc, container, &space)
             };
-            let retained = crate::block::block_layout(&doc, container, &space);
+            let retained = crate::block::block_layout_with_layout(&doc, container, &space);
             for fragment in [&direct, &retained] {
                 assert_eq!(
                     fragment.size,

@@ -2353,24 +2353,31 @@ impl Engine {
         // Sticky fragment positions currently resolve during layout. Invalidate
         // that dependency only when this scrollport owns a sticky descendant;
         // ordinary scrolling retains its existing compositor-only path.
-        let mut pending = self.document.children(node).collect::<Vec<_>>();
-        let mut sticky = false;
-        while let Some(descendant) = pending.pop() {
-            let style = &self.document.node(descendant).style;
-            if style.display == Display::None {
-                continue;
+        fn contains_sticky(fragment: &Fragment, document: &NativeDocument) -> bool {
+            for child in &fragment.children {
+                if child.owns_element_box()
+                    && document.node(child.node_id).style.position == openui_style::Position::Sticky
+                {
+                    return true;
+                }
+                if child.owns_scroll_box()
+                    && child
+                        .scroll_area
+                        .is_some_and(|area| area.is_scroll_container())
+                {
+                    continue;
+                }
+                if contains_sticky(child, document) {
+                    return true;
+                }
             }
-            if style.position == openui_style::Position::Sticky {
-                sticky = true;
-                break;
-            }
-            if !self
-                .layout_scroll_area(descendant)
-                .is_some_and(|area| area.is_scroll_container())
-            {
-                pending.extend(self.document.children(descendant));
-            }
+            false
         }
+        let sticky = self
+            .latest_fragment
+            .as_ref()
+            .and_then(|root| root.find_scroll_box(node))
+            .is_some_and(|box_| contains_sticky(box_, &self.document));
         self.dirty.hit_test = true;
         self.mark_dirty(if sticky {
             InvalidationClass::Layout
@@ -2402,18 +2409,22 @@ impl Engine {
             .map_or((0.0, 0.0), |area| area.clamp_offset(x, y)))
     }
 
-    fn layout_scroll_area(&self, node: NodeId) -> Option<openui_layout::ScrollArea> {
-        fn find(fragment: &Fragment, node: NodeId) -> Option<openui_layout::ScrollArea> {
-            if fragment.owns_element_box() && fragment.node_id == node {
-                if let Some(area) = fragment.scroll_area {
-                    return Some(area);
-                }
-            }
-            fragment.children.iter().find_map(|child| find(child, node))
-        }
+    /// Style of the real retained formatting/scroll box. Anonymous content
+    /// inherits only the source-defined properties, rather than every authored
+    /// effect or scroll property of its semantic owner.
+    fn retained_scroll_style(&self, node: NodeId) -> &ComputedStyle {
+        let authored = &self.document.node(node).style;
         self.latest_fragment
             .as_ref()
-            .and_then(|root| find(root, node))
+            .and_then(|root| root.find_scroll_box(node))
+            .map_or(authored, |box_| box_.layout_style(authored))
+    }
+
+    fn layout_scroll_area(&self, node: NodeId) -> Option<openui_layout::ScrollArea> {
+        self.latest_fragment
+            .as_ref()?
+            .find_scroll_box(node)?
+            .scroll_area
     }
 
     /// Apply user wheel input through the document-owned viewport geometry.
@@ -2444,6 +2455,35 @@ impl Engine {
             before.1 + if user_y { delta_y } else { 0.0 },
         )?;
         Ok(self.scroll_offset(handle)? != before)
+    }
+
+    /// Default wheel scrolling from a hit element through its retained box
+    /// ancestry. Direct `scroll_wheel` remains an explicit operation on one
+    /// element; this operation respects anonymous content membership.
+    pub fn scroll_wheel_from_target(
+        &mut self,
+        target: NodeHandle,
+        delta_x: f64,
+        delta_y: f64,
+    ) -> Result<bool, EngineError> {
+        if !delta_x.is_finite() || !delta_y.is_finite() {
+            return Err(EngineError::InvalidInput("wheel deltas must be finite"));
+        }
+        let target_node = self.resolve(target)?;
+        self.update()?;
+        let mut current = Some(target);
+        while let Some(handle) = current {
+            let owner = self.resolve(handle)?;
+            let in_scroll_box = self
+                .latest_fragment
+                .as_ref()
+                .is_some_and(|root| root.scroll_box_contains_element(owner, target_node));
+            if in_scroll_box && self.scroll_wheel(handle, delta_x, delta_y)? {
+                return Ok(true);
+            }
+            current = self.parent(handle)?;
+        }
+        Ok(false)
     }
 
     pub fn focus(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
@@ -2585,7 +2625,7 @@ impl Engine {
                 seen: &mut std::collections::HashSet<NodeId>,
                 changes: &mut Vec<(NodeId, f32, f32)>,
             ) {
-                if let Some(area) = fragment.scroll_area.filter(|_| fragment.owns_element_box()) {
+                if let Some(area) = fragment.scroll_area.filter(|_| fragment.owns_scroll_box()) {
                     if seen.insert(fragment.node_id) {
                         let node = document.node(fragment.node_id);
                         let (x, y) =
@@ -2930,7 +2970,8 @@ impl Engine {
                 // CSS overflow uses the final layout policy, including table,
                 // replaced and viewport-propagated boxes. A visible axis must
                 // continue accepting the descendant ink painted on that axis.
-                let (overflow_x, overflow_y) = if !owns_box {
+                let owns_scroll = fragment.owns_scroll_box();
+                let (overflow_x, overflow_y) = if !owns_scroll {
                     (
                         openui_style::Overflow::Visible,
                         openui_style::Overflow::Visible,
@@ -2940,7 +2981,7 @@ impl Engine {
                 } else {
                     openui_layout::used_overflow_pair(document, fragment.node_id)
                 };
-                let clips_used_box = owns_box
+                let clips_used_box = owns_scroll
                     && (overflow_x != openui_style::Overflow::Visible
                         || overflow_y != openui_style::Overflow::Visible);
                 // Containment and continuation clips retain their own axes.
@@ -2974,7 +3015,7 @@ impl Engine {
                             scrollport.client_rect.width().to_f32(),
                             scrollport.client_rect.height().to_f32(),
                         )
-                    } else if let Some(area) = fragment.scroll_area.filter(|_| owns_box) {
+                    } else if let Some(area) = fragment.scroll_area.filter(|_| owns_scroll) {
                         (
                             // client_rect is local to the physical fragment;
                             // it already includes the principal border-box
@@ -2998,7 +3039,7 @@ impl Engine {
                         height: clip_height,
                         clip_x,
                         clip_y,
-                        radii: if fragment.ignore_border_radius || !owns_box {
+                        radii: if fragment.ignore_border_radius || !fragment.owns_layout_box() {
                             [(0.0, 0.0); 4]
                         } else {
                             [
@@ -3011,16 +3052,17 @@ impl Engine {
                     });
                 }
             }
-            let child_world = if owns_box {
+            // Authored effects keep their ordinary flattening boundary even
+            // when scroll state belongs to an anonymous content descendant.
+            let child_world = if owns_box { world.flattened() } else { world };
+            let child_world = if fragment.owns_scroll_box() {
                 let node = document.node(fragment.node_id);
-                // The currently exposed style contract uses flat descendants.
-                // Flatten at the actual element boundary, not helper fragments.
-                world.flattened().then(WorldTransform::translate(
+                child_world.then(WorldTransform::translate(
                     -node.scroll_left as f64,
                     -node.scroll_top as f64,
                 ))
             } else {
-                world
+                child_world
             };
             let mut children: Vec<_> = fragment.children.iter().enumerate().collect();
             children.sort_by_key(|(order, child)| {

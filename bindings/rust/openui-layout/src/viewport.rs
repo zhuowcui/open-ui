@@ -1,11 +1,14 @@
 //! Layout of the initial containing block and its native scrollport.
 
+use crate::layout_context::LayoutDocument;
 use crate::{block::block_layout_contents, ConstraintSpace, Fragment, ViewportScrollport};
-use openui_dom::{Document, NodeId};
+#[cfg(test)]
+use openui_dom::Document;
+use openui_dom::NodeId;
 use openui_geometry::{LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize};
 use openui_style::{Overflow, ScrollbarWidth, WritingMode};
 
-pub(crate) fn layout(doc: &Document, root: NodeId, space: &ConstraintSpace) -> Fragment {
+pub(crate) fn layout(doc: &dyn LayoutDocument, root: NodeId, space: &ConstraintSpace) -> Fragment {
     let source = if doc.body_overflow_is_propagated() {
         doc.body_element().unwrap_or(root)
     } else {

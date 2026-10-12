@@ -17,7 +17,7 @@ use std::collections::HashMap;
 /// projects descendants into continuation-local coordinates. The source tree
 /// here is in the fragmenting context's logical `(inline, block)` storage.
 pub(crate) fn capture_source(fragment: &mut Fragment, direction: WritingDirectionMode) {
-    if fragment.owns_element_box()
+    if fragment.owns_layout_box()
         && !fragment.is_inline_box_fragment
         && fragment.box_geometry.is_none()
     {
@@ -68,7 +68,7 @@ pub(crate) fn record_piece(
     block_size: LayoutUnit,
     has_next: bool,
 ) {
-    if !fragment.owns_element_box() || fragment.is_inline_box_fragment {
+    if !fragment.owns_layout_box() || fragment.is_inline_box_fragment {
         return;
     }
     capture_source(fragment, direction);
@@ -107,10 +107,13 @@ pub(crate) fn record_subslice(fragment: &mut Fragment, consumed: LayoutUnit, has
 /// Finalize once after physical placement. This changes retained metadata only;
 /// it does not resize, translate, clip, decorate or reorder a fragment.
 pub(crate) fn populate(root: &mut Fragment) {
-    fn collect(fragment: &Fragment, boxes: &mut HashMap<NodeId, Vec<FragmentBoxGeometry>>) {
-        if fragment.owns_element_box() && !fragment.is_inline_box_fragment {
+    fn collect(fragment: &Fragment, boxes: &mut HashMap<(NodeId, bool), Vec<FragmentBoxGeometry>>) {
+        if fragment.owns_layout_box() && !fragment.is_inline_box_fragment {
             if let Some(geometry) = fragment.box_geometry {
-                boxes.entry(fragment.node_id).or_default().push(geometry);
+                boxes
+                    .entry((fragment.node_id, fragment.anonymous_layout_box.is_some()))
+                    .or_default()
+                    .push(geometry);
             }
         }
         for child in &fragment.children {
@@ -139,10 +142,12 @@ pub(crate) fn populate(root: &mut Fragment) {
             (node, size)
         })
         .collect();
-    fn publish(fragment: &mut Fragment, sizes: &HashMap<NodeId, PhysicalSize>) {
-        if fragment.owns_element_box() {
+    fn publish(fragment: &mut Fragment, sizes: &HashMap<(NodeId, bool), PhysicalSize>) {
+        if fragment.owns_layout_box() {
             if let Some(geometry) = fragment.box_geometry.as_mut() {
-                if let Some(size) = sizes.get(&fragment.node_id) {
+                if let Some(size) =
+                    sizes.get(&(fragment.node_id, fragment.anonymous_layout_box.is_some()))
+                {
                     geometry.stitched_size = *size;
                 }
             }

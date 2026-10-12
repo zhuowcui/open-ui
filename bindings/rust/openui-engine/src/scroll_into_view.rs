@@ -3,6 +3,7 @@
 use crate::{Engine, EngineError, NodeHandle, ScrollAnimationId, WorldTransform};
 use openui_compositor::SceneRect;
 use openui_dom::NodeId;
+use openui_geometry::PhysicalOffset;
 use openui_layout::{Fragment, ScrollArea};
 use openui_style::{Direction, Display, Position, WritingMode};
 
@@ -973,15 +974,21 @@ impl Engine {
     /// input world map already starts at that origin. Recover fragment space
     /// before comparing either the client rect or its padding-reduced snapport.
     fn reveal_scroll_geometry(&self, node: NodeId) -> Option<(ScrollArea, WorldTransform)> {
-        let fragment = self.reveal_fragment(node)?;
+        let fragment = self.latest_fragment.as_ref()?.find_scroll_box(node)?;
         let area = fragment.scroll_area?;
-        let principal = fragment.border_box_rect().offset;
+        let authored = self.reveal_fragment(node)?;
+        let principal = authored.border_box_rect().offset;
+        let anonymous_offset = if fragment.anonymous_layout_box.is_some() {
+            fragment.offset
+        } else {
+            PhysicalOffset::zero()
+        };
         let world = self
             .fragment_box_worlds
             .get(&node)?
             .then(WorldTransform::translate(
-                -principal.left.to_f64(),
-                -principal.top.to_f64(),
+                -principal.left.to_f64() + anonymous_offset.left.to_f64(),
+                -principal.top.to_f64() + anonymous_offset.top.to_f64(),
             ));
         Some((area, world))
     }
@@ -1062,6 +1069,16 @@ impl Engine {
                 continue;
             };
             let handle = self.handle_for_slot(index);
+            if self
+                .latest_fragment
+                .as_ref()
+                .and_then(|root| root.find_scroll_box(node))
+                .is_some_and(|box_| {
+                    box_.anonymous_layout_box.is_some() && !box_.contains_element_box(target_node)
+                })
+            {
+                continue;
+            }
             let Some((area, world)) = self.reveal_scroll_geometry(node) else {
                 continue;
             };
@@ -1085,7 +1102,7 @@ impl Engine {
             );
             let client = area.client_rect;
             let mut snapport =
-                crate::scroll_button::scroll_snapport(&self.document.node(node).style, area);
+                crate::scroll_button::scroll_snapport(self.retained_scroll_style(node), area);
             // GetScrollOffsetToExpose uses one raw LayoutUnit, rather than one
             // CSS pixel, when scroll-padding leaves no positive snapport size.
             snapport[2] = snapport[2].max(1.0 / 64.0);

@@ -130,6 +130,104 @@ fn stitched_overflow(
     combined
 }
 
+fn dimensions_for_boxes(boxes: &[&Fragment], style: &openui_style::ComputedStyle) -> [i32; 4] {
+    let first = boxes[0];
+    let mode = style.writing_mode;
+    let parts = source_parts(boxes, mode == WritingMode::HorizontalTb);
+    let size = stitched_size(&parts, mode);
+    let mut border = ScrollArea::used_border(first);
+    // Native continuation flags can suppress the last source edge in an
+    // early fragment. The stitched box retains each physical used edge.
+    for (fragment, _) in &parts {
+        let next = ScrollArea::used_border(fragment);
+        border.top = border.top.max_of(next.top);
+        border.right = border.right.max_of(next.right);
+        border.bottom = border.bottom.max_of(next.bottom);
+        border.left = border.left.max_of(next.left);
+    }
+    let gutters = first
+        .element_scrollbars
+        .map_or(BoxStrut::zero(), |bars| bars.insets);
+    let client = PhysicalSize::new(
+        (size.width - border.inline_sum() - gutters.inline_sum()).clamp_negative_to_zero(),
+        (size.height - border.block_sum() - gutters.block_sum()).clamp_negative_to_zero(),
+    );
+    let origin = first.border_box_rect().offset;
+    let padding_rect = PhysicalRect::new(
+        PhysicalOffset::new(
+            origin.left + border.left + gutters.left,
+            origin.top + border.top + gutters.top,
+        ),
+        client,
+    );
+    let content = stitched_overflow(&parts, mode, padding_rect);
+    let (computed_x, computed_y) = computed_overflow_pair(style);
+    let computed_block_overflow = if mode == WritingMode::HorizontalTb {
+        computed_y
+    } else {
+        computed_x
+    };
+    // Scrolling ownership belongs to final layout: viewport-propagated
+    // body overflow, table overflow normalization and replaced boxes can
+    // differ from the authored computed-style overflow pair.
+    let scroll = if first
+        .scroll_area
+        .is_some_and(ScrollArea::is_scroll_container)
+    {
+        PhysicalSize::new(
+            content.width().max_of(client.width),
+            content.height().max_of(client.height),
+        )
+    } else if style.scrollbar_gutter.is_stable() && computed_block_overflow == Overflow::Hidden {
+        // LayoutBox::ScrollWidth/ScrollHeight retain the scrollable
+        // overflow extent for stable hidden block overflow even when the
+        // used layout class cannot scroll (for example a replaced box).
+        // A leading gutter is an origin, not additional overflow height.
+        PhysicalSize::new(content.width(), content.height())
+    } else {
+        // LayoutBox::ScrollWidth accounts for reversed physical X. Its
+        // non-container ScrollHeight deliberately uses physical bottom.
+        let reversed = style.direction.writing_direction(mode);
+        let flipped_x = if reversed.is_horizontal() {
+            reversed.is_rtl()
+        } else {
+            reversed.is_flipped_blocks()
+        };
+        let width = if flipped_x {
+            client.width - (content.x() - origin.left - border.left).min_of(LayoutUnit::zero())
+        } else {
+            client
+                .width
+                .max_of(content.right() - origin.left - border.left)
+        };
+        PhysicalSize::new(
+            width,
+            client
+                .height
+                .max_of(content.bottom() - origin.top - border.top),
+        )
+    };
+    let table = matches!(style.display, Display::Table | Display::InlineTable);
+    [
+        (client.width
+            + if table {
+                border.inline_sum()
+            } else {
+                LayoutUnit::zero()
+            })
+        .round_i32(),
+        (client.height
+            + if table {
+                border.block_sum()
+            } else {
+                LayoutUnit::zero()
+            })
+        .round_i32(),
+        scroll.width.clamp_negative_to_zero().round_i32(),
+        scroll.height.clamp_negative_to_zero().round_i32(),
+    ]
+}
+
 impl Engine {
     /// Integer layout client width, preserving fractional raw ScrollMetrics.
     pub fn client_width(&mut self, handle: NodeHandle) -> Result<i32, EngineError> {
@@ -186,101 +284,33 @@ impl Engine {
             ]);
         }
         let style = &self.document.node(node).style;
-        let mode = style.writing_mode;
-        let parts = source_parts(&boxes, mode == WritingMode::HorizontalTb);
-        let size = stitched_size(&parts, mode);
-        let mut border = ScrollArea::used_border(first);
-        // Native continuation flags can suppress the last source edge in an
-        // early fragment. The stitched box retains each physical used edge.
-        for (fragment, _) in &parts {
-            let next = ScrollArea::used_border(fragment);
-            border.top = border.top.max_of(next.top);
-            border.right = border.right.max_of(next.right);
-            border.bottom = border.bottom.max_of(next.bottom);
-            border.left = border.left.max_of(next.left);
+        let mut dimensions = dimensions_for_boxes(&boxes, style);
+        // LayoutFieldset delegates virtual ScrollWidth/ScrollHeight to its
+        // content layout box. CSSOM client dimensions still read the wrapper.
+        if self.document.node(node).tag == openui_dom::ElementTag::Fieldset {
+            fn content_boxes<'a>(
+                fragment: &'a Fragment,
+                node: NodeId,
+                out: &mut Vec<&'a Fragment>,
+            ) {
+                if matches!(fragment.anonymous_layout_box,
+                    Some(openui_layout::AnonymousLayoutBox::FieldsetContent { owner }) if owner == node)
+                {
+                    out.push(fragment);
+                }
+                for child in &fragment.children {
+                    content_boxes(child, node, out);
+                }
+            }
+            let mut contents = Vec::new();
+            content_boxes(root, node, &mut contents);
+            if let Some(content) = contents.first() {
+                let inner = dimensions_for_boxes(&contents, content.layout_style(style));
+                dimensions[2] = inner[2];
+                dimensions[3] = inner[3];
+            }
         }
-        let gutters = first
-            .element_scrollbars
-            .map_or(BoxStrut::zero(), |bars| bars.insets);
-        let client = PhysicalSize::new(
-            (size.width - border.inline_sum() - gutters.inline_sum()).clamp_negative_to_zero(),
-            (size.height - border.block_sum() - gutters.block_sum()).clamp_negative_to_zero(),
-        );
-        let origin = first.border_box_rect().offset;
-        let padding_rect = PhysicalRect::new(
-            PhysicalOffset::new(
-                origin.left + border.left + gutters.left,
-                origin.top + border.top + gutters.top,
-            ),
-            client,
-        );
-        let content = stitched_overflow(&parts, mode, padding_rect);
-        let (computed_x, computed_y) = computed_overflow_pair(style);
-        let computed_block_overflow = if mode == WritingMode::HorizontalTb {
-            computed_y
-        } else {
-            computed_x
-        };
-        // Scrolling ownership belongs to final layout: viewport-propagated
-        // body overflow, table overflow normalization and replaced boxes can
-        // differ from the authored computed-style overflow pair.
-        let scroll = if first
-            .scroll_area
-            .is_some_and(ScrollArea::is_scroll_container)
-        {
-            PhysicalSize::new(
-                content.width().max_of(client.width),
-                content.height().max_of(client.height),
-            )
-        } else if style.scrollbar_gutter.is_stable() && computed_block_overflow == Overflow::Hidden
-        {
-            // LayoutBox::ScrollWidth/ScrollHeight retain the scrollable
-            // overflow extent for stable hidden block overflow even when the
-            // used layout class cannot scroll (for example a replaced box).
-            // A leading gutter is an origin, not additional overflow height.
-            PhysicalSize::new(content.width(), content.height())
-        } else {
-            // LayoutBox::ScrollWidth accounts for reversed physical X. Its
-            // non-container ScrollHeight deliberately uses physical bottom.
-            let reversed = style.direction.writing_direction(mode);
-            let flipped_x = if reversed.is_horizontal() {
-                reversed.is_rtl()
-            } else {
-                reversed.is_flipped_blocks()
-            };
-            let width = if flipped_x {
-                client.width - (content.x() - origin.left - border.left).min_of(LayoutUnit::zero())
-            } else {
-                client
-                    .width
-                    .max_of(content.right() - origin.left - border.left)
-            };
-            PhysicalSize::new(
-                width,
-                client
-                    .height
-                    .max_of(content.bottom() - origin.top - border.top),
-            )
-        };
-        let table = matches!(style.display, Display::Table | Display::InlineTable);
-        Ok([
-            (client.width
-                + if table {
-                    border.inline_sum()
-                } else {
-                    LayoutUnit::zero()
-                })
-            .round_i32(),
-            (client.height
-                + if table {
-                    border.block_sum()
-                } else {
-                    LayoutUnit::zero()
-                })
-            .round_i32(),
-            scroll.width.clamp_negative_to_zero().round_i32(),
-            scroll.height.clamp_negative_to_zero().round_i32(),
-        ])
+        Ok(dimensions)
     }
 }
 

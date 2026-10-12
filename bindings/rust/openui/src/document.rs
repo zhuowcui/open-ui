@@ -1432,16 +1432,9 @@ impl Document {
             let event = Event::wheel(x, y, delta_x, delta_y, modifiers);
             self.dispatch_to(target, &event)?;
             if !event.default_prevented() {
-                let mut current = Some(target);
-                while let Some(node) = current {
-                    let scrolled = self.with_engine_mut(|engine| {
-                        engine.scroll_wheel(node, delta_x as f64, delta_y as f64)
-                    })?;
-                    if scrolled {
-                        break;
-                    }
-                    current = self.with_engine(|engine| engine.parent(node))??;
-                }
+                self.with_engine_mut(|engine| {
+                    engine.scroll_wheel_from_target(target, delta_x as f64, delta_y as f64)
+                })?;
             }
         }
         Ok(())

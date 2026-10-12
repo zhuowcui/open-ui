@@ -173,6 +173,7 @@ impl ProgressTimelineSnapshot {
 #[derive(Clone, Copy)]
 struct LayoutBox {
     origin: [f64; 2],
+    scroll_origin: [f64; 2],
     rect: [f64; 4],
     area: Option<ScrollArea>,
     sticky: Option<openui_layout::StickyTimelineGeometry>,
@@ -211,6 +212,7 @@ fn boxes(root: &Fragment) -> HashMap<NodeId, LayoutBox> {
             };
             let next = LayoutBox {
                 origin,
+                scroll_origin: origin,
                 rect,
                 area: fragment.scroll_area,
                 sticky: fragment.sticky_timeline_geometry,
@@ -228,6 +230,14 @@ fn boxes(root: &Fragment) -> HashMap<NodeId, LayoutBox> {
                     }
                 })
                 .or_insert(next);
+        }
+        if let Some(openui_layout::AnonymousLayoutBox::FieldsetContent { owner }) =
+            fragment.anonymous_layout_box
+        {
+            if let Some(wrapper) = output.get_mut(&owner) {
+                wrapper.area = fragment.scroll_area;
+                wrapper.scroll_origin = origin;
+            }
         }
         for child in &fragment.children {
             walk(child, origin, output);
@@ -333,20 +343,7 @@ impl Engine {
                 if !self.node_is_connected(subject) || !geometry.contains_key(&subject) {
                     return None;
                 }
-                let mut ancestor = self.document.node(subject).parent;
-                let mut source = None;
-                while !ancestor.is_none() {
-                    if geometry
-                        .get(&ancestor)
-                        .and_then(|box_| box_.area)
-                        .is_some_and(scroll_container)
-                        || ancestor == self.document.root()
-                    {
-                        source = Some(ancestor);
-                        break;
-                    }
-                    ancestor = self.document.node(ancestor).parent;
-                }
+                let source = root.nearest_scroll_ancestor(subject);
                 (source?, Some(subject), axis)
             }
         };
@@ -359,7 +356,7 @@ impl Engine {
             .node_slots
             .get(&source_node)
             .map(|index| self.handle_for_slot(*index))?;
-        let style = &self.document.node(source_node).style;
+        let style = self.retained_scroll_style(source_node);
         let axis = match axis {
             TimelineAxis::X => 0,
             TimelineAxis::Y => 1,
@@ -396,7 +393,7 @@ impl Engine {
                 area.client_rect.height()
             }
             .to_f64();
-            let position = target.rect[axis] - source_box.origin[axis] - client_offset;
+            let position = target.rect[axis] - source_box.scroll_origin[axis] - client_offset;
             let size = target.rect[axis + 2];
             entry_crossing_distance = size;
             exit_crossing_distance = size;

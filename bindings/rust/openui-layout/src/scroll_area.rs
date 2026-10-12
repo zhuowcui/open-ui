@@ -4,6 +4,7 @@
 //! adds child overflow, then includes padding around in-flow bounds. The
 //! border box used for painting is not the native scroll content size.
 
+use crate::layout_context::LayoutDocument;
 use crate::{Fragment, FragmentKind, FragmentTablePart};
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize};
@@ -203,7 +204,7 @@ fn is_scrollable_pair((x, y): (Overflow, Overflow)) -> bool {
 /// passive media and canvas retain their replaced layout class even before a
 /// resource is installed. A failed image instead uses its block-flow fallback
 /// class, as HTMLImageElement::CreateLayoutObject does in the pinned source.
-pub(crate) fn is_replaced_layout_box(doc: &Document, node: NodeId) -> bool {
+pub(crate) fn is_replaced_layout_box(doc: &dyn LayoutDocument, node: NodeId) -> bool {
     let item = doc.node(node);
     item.replaced.is_some()
         || matches!(
@@ -212,7 +213,7 @@ pub(crate) fn is_replaced_layout_box(doc: &Document, node: NodeId) -> bool {
         )
 }
 
-pub(crate) fn viewport_defining_element(doc: &Document) -> Option<NodeId> {
+pub(crate) fn viewport_defining_element(doc: &dyn LayoutDocument) -> Option<NodeId> {
     if doc.body_overflow_is_propagated() {
         doc.body_element()
     } else {
@@ -223,9 +224,14 @@ pub(crate) fn viewport_defining_element(doc: &Document) -> Option<NodeId> {
 /// Used overflow belongs to the retained layout box, not the specified style.
 /// LayoutBlock ignores local overflow on the viewport-defining HTML/body box;
 /// LayoutReplaced clips non-visible overflow without creating a scrollport.
-pub fn used_overflow_pair(doc: &Document, node: NodeId) -> (Overflow, Overflow) {
+pub(crate) fn used_overflow_pair_with_layout(
+    doc: &dyn LayoutDocument,
+    node: NodeId,
+) -> (Overflow, Overflow) {
     let item = doc.node(node);
-    if Some(node) == viewport_defining_element(doc)
+    if (item.tag == ElementTag::Fieldset
+        && doc.layout_box_role(node) == crate::layout_context::LayoutBoxRole::Authored)
+        || Some(node) == viewport_defining_element(doc)
         || matches!(
             item.style.display,
             Display::Inline
@@ -254,12 +260,12 @@ pub fn used_overflow_pair(doc: &Document, node: NodeId) -> (Overflow, Overflow) 
     }
 }
 
-pub(crate) fn is_scroll_container(doc: &Document, node: NodeId) -> bool {
-    is_scrollable_pair(used_overflow_pair(doc, node))
+pub(crate) fn is_scroll_container(doc: &dyn LayoutDocument, node: NodeId) -> bool {
+    is_scrollable_pair(used_overflow_pair_with_layout(doc, node))
 }
 
-pub(crate) fn has_overflow_clip(doc: &Document, node: NodeId) -> bool {
-    let (x, y) = used_overflow_pair(doc, node);
+pub(crate) fn has_overflow_clip(doc: &dyn LayoutDocument, node: NodeId) -> bool {
+    let (x, y) = used_overflow_pair_with_layout(doc, node);
     x != Overflow::Visible || y != Overflow::Visible
 }
 
@@ -287,7 +293,7 @@ fn reachable(rect: PhysicalRect, client: PhysicalRect, x: bool, y: bool) -> Phys
     PhysicalRect::from_xywh(left, top, right - left, bottom - top)
 }
 
-fn propagated(doc: &Document, child: &Fragment) -> PhysicalRect {
+fn propagated(doc: &dyn LayoutDocument, child: &Fragment) -> PhysicalRect {
     let border = child.border_box_rect();
     let Some(area) = child.scroll_area else {
         let mut rect = child.scrollable_overflow();
@@ -305,7 +311,7 @@ fn propagated(doc: &Document, child: &Fragment) -> PhysicalRect {
         }
         return rect;
     };
-    let style = &doc.node(child.node_id).style;
+    let style = child.layout_style(&doc.node(child.node_id).style);
     let mut rect = border;
     // Paint containment establishes a formatting context, but its clipped
     // descendants still contribute to ancestor scrolling through clip margins.
@@ -413,7 +419,7 @@ pub(crate) fn client_rect(fragment: &Fragment, gutters: BoxStrut) -> PhysicalRec
     )
 }
 
-pub(crate) fn populate(doc: &Document, fragment: &mut Fragment) {
+pub(crate) fn populate(doc: &dyn LayoutDocument, fragment: &mut Fragment) {
     for child in &mut fragment.children {
         populate(doc, child);
     }
@@ -429,15 +435,19 @@ pub(crate) fn populate(doc: &Document, fragment: &mut Fragment) {
         });
         return;
     }
-    if !fragment.owns_element_box()
+    if !fragment.owns_layout_box()
         || fragment.kind != FragmentKind::Box
         || matches!(fragment.table_part, Some(FragmentTablePart::GridDecoration))
     {
         fragment.scroll_area = None;
         return;
     }
-    let style = &doc.node(fragment.node_id).style;
-    let (overflow_x, overflow_y) = used_overflow_pair(doc, fragment.node_id);
+    let style = fragment.layout_style(&doc.node(fragment.node_id).style);
+    let (overflow_x, overflow_y) = if fragment.anonymous_layout_box.is_some() {
+        overflow_pair(style)
+    } else {
+        used_overflow_pair_with_layout(doc, fragment.node_id)
+    };
     let (negative_x, negative_y) = directions(style);
     let border_box = fragment.border_box_rect();
     let gutters = fragment
@@ -542,4 +552,9 @@ mod tests {
         assert_eq!(area.content_rect.width(), LayoutUnit::from_i32(100));
         assert_eq!(area.limits(), ((0.0, 70.0), (0.0, 0.0)));
     }
+}
+
+// Public entry points retain the original native Document signatures.
+pub fn used_overflow_pair(doc: &Document, node: NodeId) -> (Overflow, Overflow) {
+    used_overflow_pair_with_layout(doc, node)
 }

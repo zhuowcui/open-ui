@@ -3,8 +3,11 @@
 //! Chromium147 uses authored stitched boxes, the real block's padding box,
 //! and two distinct ancestor channels. Anonymous line/column/table helpers
 //! retain positioning/traversal but never become another authored block.
+use crate::layout_context::LayoutDocument;
 use crate::{Fragment, ScrollArea, StickyTimelineGeometry};
-use openui_dom::{Document, NodeId};
+#[cfg(test)]
+use openui_dom::Document;
+use openui_dom::NodeId;
 use openui_geometry::{BoxStrut, LayoutUnit, Length, PhysicalOffset, PhysicalRect, PhysicalSize};
 use openui_style::{Display, Position};
 use std::collections::HashMap;
@@ -18,7 +21,16 @@ struct BoxGeometry {
     block: bool,
     inline: bool,
     consumed: LayoutUnit,
+    content_container: Option<BoxContentContainer>,
 }
+#[derive(Clone, Copy)]
+struct BoxContentContainer {
+    owner: NodeId,
+    rect: PhysicalRect,
+    padding_rect: PhysicalRect,
+    padding: BoxStrut,
+}
+
 #[derive(Clone, Copy)]
 struct Resolved {
     delta: PhysicalOffset,
@@ -42,7 +54,7 @@ fn minimum(length: &Length, basis: LayoutUnit) -> LayoutUnit {
     crate::sticky::resolve_sticky_length(length, basis)
 }
 
-fn is_block(doc: &Document, fragment: &Fragment) -> bool {
+fn is_block(doc: &dyn LayoutDocument, fragment: &Fragment) -> bool {
     !fragment.is_inline_box_fragment
         && !crate::scroll_area::is_replaced_layout_box(doc, fragment.node_id)
         && matches!(
@@ -68,16 +80,39 @@ fn normal_offset(fragment: &Fragment, source: NodeId) -> PhysicalOffset {
         .map_or(fragment.offset, |data| data.parent_relative_normal_offset)
 }
 fn collect(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     fragment: &Fragment,
     source: NodeId,
     parent_offset: PhysicalOffset,
     parent_owner: NodeId,
     boxes: &mut HashMap<NodeId, BoxGeometry>,
     order: &mut Vec<NodeId>,
+    anonymous_container: Option<BoxContentContainer>,
 ) {
     let origin = add(parent_offset, normal_offset(fragment, source));
     let mut next_owner = parent_owner;
+    let mut next_anonymous = anonymous_container;
+    if let Some(crate::AnonymousLayoutBox::FieldsetContent { owner }) =
+        fragment.anonymous_layout_box
+    {
+        let local = fragment.border_box_rect();
+        let size = fragment
+            .box_geometry
+            .map_or(local.size, |data| data.stitched_size);
+        let padding_rect = fragment.scroll_area.map_or(local, |area| area.client_rect);
+        next_anonymous = Some(BoxContentContainer {
+            owner,
+            rect: PhysicalRect::new(add(origin, local.offset), size),
+            padding_rect: moved(padding_rect, origin),
+            padding: ScrollArea::used_padding(fragment),
+        });
+        if fragment
+            .scroll_area
+            .is_some_and(|area| area.is_scroll_container())
+        {
+            return;
+        }
+    }
     if fragment.owns_element_box() {
         let local = fragment.border_box_rect();
         let size = if fragment.is_inline_box_fragment {
@@ -127,6 +162,7 @@ fn collect(
             consumed: fragment
                 .box_geometry
                 .map_or(LayoutUnit::zero(), |data| data.consumed_block_size),
+            content_container: anonymous_container,
         };
         if let Some(previous) = boxes.get_mut(&fragment.node_id) {
             if entry.inline && previous.inline {
@@ -151,10 +187,19 @@ fn collect(
         }
     }
     for child in &fragment.children {
-        collect(doc, child, source, origin, next_owner, boxes, order);
+        collect(
+            doc,
+            child,
+            source,
+            origin,
+            next_owner,
+            boxes,
+            order,
+            next_anonymous,
+        );
     }
 }
-fn parent(doc: &Document, node: NodeId, boxes: &HashMap<NodeId, BoxGeometry>) -> NodeId {
+fn parent(doc: &dyn LayoutDocument, node: NodeId, boxes: &HashMap<NodeId, BoxGeometry>) -> NodeId {
     // Inline wrappers can be siblings in the physical line tree. Use retained
     // authored ancestors when present, then the layout owner for promoted boxes.
     let mut candidate = doc.node(node).parent;
@@ -167,7 +212,7 @@ fn parent(doc: &Document, node: NodeId, boxes: &HashMap<NodeId, BoxGeometry>) ->
     boxes.get(&node).map_or(NodeId::NONE, |data| data.parent)
 }
 fn containing_block(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node: NodeId,
     source: NodeId,
     boxes: &HashMap<NodeId, BoxGeometry>,
@@ -182,7 +227,7 @@ fn containing_block(
     source
 }
 fn nearest_sticky(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     mut node: NodeId,
     end: NodeId,
     boxes: &HashMap<NodeId, BoxGeometry>,
@@ -195,7 +240,7 @@ fn nearest_sticky(
     }
     None
 }
-fn fixed_to_view(doc: &Document, node: NodeId, source: NodeId) -> bool {
+fn fixed_to_view(doc: &dyn LayoutDocument, node: NodeId, source: NodeId) -> bool {
     let mut ancestor = node;
     while !ancestor.is_none() && ancestor != source {
         let style = &doc.node(ancestor).style;
@@ -237,7 +282,7 @@ fn adjust_pair(
     }
 }
 
-pub(crate) fn populate(doc: &Document, scroller: &mut Fragment) {
+pub(crate) fn populate(doc: &dyn LayoutDocument, scroller: &mut Fragment) {
     let source = scroller.node_id;
     // Direct layout consumers can hand this stage a completed principal box
     // before the root finalizer has retained its scroll geometry. Use the same
@@ -262,6 +307,7 @@ pub(crate) fn populate(doc: &Document, scroller: &mut Fragment) {
             block: true,
             inline: false,
             consumed: LayoutUnit::zero(),
+            content_container: None,
         },
     );
     let mut order = Vec::new();
@@ -274,6 +320,7 @@ pub(crate) fn populate(doc: &Document, scroller: &mut Fragment) {
             source,
             &mut boxes,
             &mut order,
+            None,
         );
     }
     // PaintLayerScrollableArea::UpdateScrollOrigin floors the negated overflow
@@ -302,7 +349,15 @@ pub(crate) fn populate(doc: &Document, scroller: &mut Fragment) {
         }
         let normal = boxes[&node];
         let block_node = containing_block(doc, node, source, &boxes);
-        let block = boxes[&block_node];
+        let mut block = boxes[&block_node];
+        if let Some(content) = normal
+            .content_container
+            .filter(|content| content.owner == block_node)
+        {
+            block.rect = content.rect;
+            block.padding_rect = content.padding_rect;
+            block.padding = content.padding;
+        }
         let mut containing = if block_node == source {
             content(area.content_rect, padding)
         } else {
@@ -422,6 +477,13 @@ pub(crate) fn populate(doc: &Document, scroller: &mut Fragment) {
             {
                 return;
             }
+        }
+        if fragment.anonymous_layout_box.is_some()
+            && fragment
+                .scroll_area
+                .is_some_and(|area| area.is_scroll_container())
+        {
+            return;
         }
         for child in &mut fragment.children {
             apply(child, source, resolved);

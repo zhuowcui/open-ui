@@ -44,6 +44,14 @@ pub enum FragmentBoxOwnership {
     LayoutHelper,
 }
 
+/// Retained identity of an anonymous formatting box with native scroll state.
+/// The owner remains the authored semantic element; this box contributes no
+/// second element geometry, input target, accessibility node or element effect.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AnonymousLayoutBox {
+    FieldsetContent { owner: NodeId },
+}
+
 /// The table formatting role retained by layout for background painting.
 ///
 /// These are source identities and grid indices, not copied paint rectangles.
@@ -346,6 +354,10 @@ pub struct Fragment {
     /// Anonymous layout boxes and decoration helpers retain their source
     /// `node_id` without creating another authored element box.
     pub box_ownership: FragmentBoxOwnership,
+
+    /// Layout-owned anonymous formatting/scroll identity, separate from the
+    /// source node used for inherited style and semantic scroll state.
+    pub anonymous_layout_box: Option<AnonymousLayoutBox>,
 
     /// Offset from the parent fragment's top-left corner.
     pub offset: PhysicalOffset,
@@ -692,12 +704,117 @@ impl Fragment {
             && !self.node_id.is_none()
     }
 
+    /// Authored boxes and explicitly retained anonymous formatting boxes both
+    /// own layout geometry. Element APIs still use `owns_element_box()`.
+    #[inline]
+    pub fn owns_layout_box(&self) -> bool {
+        self.owns_element_box()
+            || matches!(
+                self.anonymous_layout_box,
+                Some(AnonymousLayoutBox::FieldsetContent { .. })
+            )
+    }
+
+    /// Whether this box applies its owner's scroll state to its descendants.
+    /// A fieldset wrapper delegates that operation to its content box.
+    #[inline]
+    pub fn owns_scroll_box(&self) -> bool {
+        fn delegates(fragment: &Fragment, owner: NodeId) -> bool {
+            matches!(fragment.anonymous_layout_box,
+                Some(AnonymousLayoutBox::FieldsetContent { owner: content_owner }) if content_owner == owner)
+                || fragment
+                    .children
+                    .iter()
+                    .any(|child| delegates(child, owner))
+        }
+        self.owns_layout_box()
+            && (self.anonymous_layout_box.is_some()
+                || !self
+                    .children
+                    .iter()
+                    .any(|child| delegates(child, self.node_id)))
+    }
+
+    #[inline]
+    pub fn layout_style<'a>(&'a self, authored: &'a ComputedStyle) -> &'a ComputedStyle {
+        if self.anonymous_layout_box.is_some() {
+            self.inherited_style.as_ref().unwrap_or(authored)
+        } else {
+            authored
+        }
+    }
+
+    /// Actual formatting box that owns this element's retained scroll state.
+    /// Fieldset wrappers delegate to their anonymous content box; layout-only
+    /// table helpers and line/column boxes cannot acquire that ownership.
+    pub fn find_scroll_box(&self, node: NodeId) -> Option<&Self> {
+        if self.node_id == node && self.owns_scroll_box() && self.scroll_area.is_some() {
+            return Some(self);
+        }
+        self.children
+            .iter()
+            .find_map(|child| child.find_scroll_box(node))
+    }
+
+    /// Membership in the retained box tree, rather than DOM parentage. The
+    /// rendered legend belongs to the fieldset wrapper, outside its content.
+    pub fn contains_element_box(&self, node: NodeId) -> bool {
+        (self.node_id == node && self.owns_element_box())
+            || self
+                .children
+                .iter()
+                .any(|child| child.contains_element_box(node))
+    }
+
+    /// All retained continuations participate in content membership. An
+    /// authored wrapper that delegates scrolling cannot make its sibling
+    /// legend part of the anonymous scroll box.
+    pub fn scroll_box_contains_element(&self, owner: NodeId, target: NodeId) -> bool {
+        (self.node_id == owner
+            && self.owns_scroll_box()
+            && self.scroll_area.is_some()
+            && self.contains_element_box(target))
+            || self
+                .children
+                .iter()
+                .any(|child| child.scroll_box_contains_element(owner, target))
+    }
+
+    /// Nearest retained scroll ancestor of an authored box. Its own overflow
+    /// is excluded, matching the source operation for a view timeline.
+    pub fn nearest_scroll_ancestor(&self, target: NodeId) -> Option<NodeId> {
+        fn walk(
+            fragment: &Fragment,
+            target: NodeId,
+            ancestor: Option<NodeId>,
+        ) -> Option<Option<NodeId>> {
+            if fragment.owns_element_box() && fragment.node_id == target {
+                return Some(ancestor);
+            }
+            let next = if fragment.owns_scroll_box()
+                && fragment
+                    .scroll_area
+                    .is_some_and(|area| area.is_scroll_container())
+            {
+                Some(fragment.node_id)
+            } else {
+                ancestor
+            };
+            fragment
+                .children
+                .iter()
+                .find_map(|child| walk(child, target, next))
+        }
+        walk(self, target, None).flatten()
+    }
+
     /// Create a new box fragment.
     pub fn new_box(node_id: NodeId, size: PhysicalSize) -> Self {
         Self {
             node_id,
             kind: FragmentKind::Box,
             box_ownership: FragmentBoxOwnership::AuthoredElement,
+            anonymous_layout_box: None,
             offset: PhysicalOffset::zero(),
             size,
             principal_box_rect: None,
@@ -778,6 +895,7 @@ impl Fragment {
             node_id,
             kind: FragmentKind::Text,
             box_ownership: FragmentBoxOwnership::LayoutHelper,
+            anonymous_layout_box: None,
             offset: PhysicalOffset::zero(),
             size,
             principal_box_rect: None,

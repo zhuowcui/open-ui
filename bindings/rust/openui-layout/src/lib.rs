@@ -48,10 +48,10 @@ pub use css_sizing::{
 pub use exclusions::ExclusionSpace;
 pub use flex::flex_layout;
 pub use fragment::{
-    resolve_text_run_orientation, DecorationSlice, Fragment, FragmentBoxGeometry,
-    FragmentBoxOwnership, FragmentKind, FragmentTablePart, PromotedTransformAncestor,
-    StickyTimelineGeometry, TableColumnBackgroundPositioning, TextRunOrientation,
-    ViewportScrollport,
+    resolve_text_run_orientation, AnonymousLayoutBox, DecorationSlice, Fragment,
+    FragmentBoxGeometry, FragmentBoxOwnership, FragmentKind, FragmentTablePart,
+    PromotedTransformAncestor, StickyTimelineGeometry, TableColumnBackgroundPositioning,
+    TextRunOrientation, ViewportScrollport,
 };
 pub use fragmentation::{
     BlockBreakToken, BreakAppeal, BreakToken, FragmentainerSpace, InlineBreakToken,
@@ -90,3 +90,7 @@ pub use transform::{
     finalize_fragment_transforms, promoted_ancestor_applied_transform, resolved_fragment_transform,
     ResolvedFragmentTransform,
 };
+
+mod fieldset;
+mod layout_context;
+pub(crate) use block::block_layout_with_layout;

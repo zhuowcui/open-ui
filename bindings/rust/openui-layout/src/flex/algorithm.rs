@@ -5,6 +5,7 @@
 //!
 //! Orchestrates: item collection → line breaking → flexing → alignment → positioning.
 
+use crate::layout_context::LayoutDocument;
 use openui_dom::{Document, ElementTag, NodeId, PseudoElementKind};
 use openui_geometry::Length;
 use openui_geometry::{
@@ -19,7 +20,7 @@ use openui_style::{
 use crate::block::{resolve_border, resolve_margins, resolve_padding};
 use crate::constraint_space::ConstraintSpace;
 use crate::fragment::Fragment;
-use crate::intrinsic_sizing::compute_intrinsic_block_sizes;
+use crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout;
 use crate::length_resolver::resolve_length;
 
 use super::alignment::{
@@ -182,12 +183,16 @@ impl FlexItemAxisMapping {
 /// Blink: `FlexLayoutAlgorithm::Layout()` → `LayoutInternal()` → `PlaceFlexItems()`.
 ///
 /// Takes a flex container node and its constraint space, returns a positioned Fragment.
-pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
+pub(crate) fn flex_layout_with_layout(
+    doc: &dyn LayoutDocument,
+    node_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
     crate::scrollbars::layout(doc, node_id, space)
 }
 
 pub(crate) fn flex_layout_contents(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     space: &ConstraintSpace,
 ) -> Fragment {
@@ -581,7 +586,7 @@ pub(crate) fn flex_layout_contents(
                         doc,
                         node_id,
                         space,
-                        compute_intrinsic_block_sizes(doc, node_id),
+                        compute_intrinsic_block_sizes_with_layout(doc, node_id),
                     );
                     let intrinsic = match min_block.length_type() {
                         LengthType::MinContent => sizes.min_content_block_size,
@@ -608,7 +613,7 @@ pub(crate) fn flex_layout_contents(
                         doc,
                         node_id,
                         space,
-                        compute_intrinsic_block_sizes(doc, node_id),
+                        compute_intrinsic_block_sizes_with_layout(doc, node_id),
                     );
                     let intrinsic = match max_block.length_type() {
                         LengthType::MinContent => sizes.min_content_block_size,
@@ -852,7 +857,15 @@ pub(crate) fn flex_layout_contents(
     let mut oof_candidates = Vec::new();
     let mut bubbled_oof_candidates = Vec::new();
     let is_root = node_id == doc.root();
-    let establishes_cb_for_abspos = style.position.is_positioned() || is_root;
+    let establishes_cb_for_abspos = style.position.is_positioned()
+        || is_root
+        || style.has_transform_containing_block()
+        || style.has_layout_containment()
+        || doc.anonymous_absolute_container(node_id);
+    let captures_fixed = is_root
+        || style.has_transform_containing_block()
+        || style.has_layout_containment()
+        || doc.anonymous_fixed_container(node_id);
 
     // Collect bubbled OOF candidates from flex item fragments.
     for child_frag in &mut fragment.children {
@@ -861,7 +874,7 @@ pub(crate) fn flex_layout_contents(
             c.static_position.left = c.static_position.left + child_frag.offset.left;
             c.static_position.top = c.static_position.top + child_frag.offset.top;
             let captures = if c.style.position == openui_style::Position::Fixed {
-                is_root
+                captures_fixed
             } else {
                 establishes_cb_for_abspos
             };
@@ -916,7 +929,7 @@ pub(crate) fn flex_layout_contents(
                 inline_containing_block_node: None,
             };
             let captures = if child_style.position == openui_style::Position::Fixed {
-                is_root
+                captures_fixed
             } else {
                 establishes_cb_for_abspos
             };
@@ -929,7 +942,8 @@ pub(crate) fn flex_layout_contents(
         }
     }
     if !oof_candidates.is_empty() {
-        let oof_fragments = crate::out_of_flow::layout_out_of_flow_children(doc, &oof_candidates);
+        let oof_fragments =
+            crate::out_of_flow::layout_out_of_flow_children_with_layout(doc, &oof_candidates);
         fragment.children.extend(oof_fragments);
     }
     fragment.oof_candidates = bubbled_oof_candidates;
@@ -952,7 +966,7 @@ pub(crate) fn flex_layout_contents(
 
 /// Resolve the container's logical inline size.
 fn resolve_container_inline_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     style: &openui_style::ComputedStyle,
     space: &ConstraintSpace,
@@ -972,7 +986,7 @@ fn resolve_container_inline_size(
                 doc,
                 node_id,
                 space,
-                compute_intrinsic_block_sizes(doc, node_id),
+                compute_intrinsic_block_sizes_with_layout(doc, node_id),
             );
             sizes.max_content_inline_size.max_of(border_padding_inline)
         } else {
@@ -984,7 +998,7 @@ fn resolve_container_inline_size(
             doc,
             node_id,
             space,
-            compute_intrinsic_block_sizes(doc, node_id),
+            compute_intrinsic_block_sizes_with_layout(doc, node_id),
         );
         let bp = border_padding_inline;
         match inline_size.length_type() {
@@ -1018,7 +1032,7 @@ fn resolve_container_inline_size(
 
 /// Clamp the logical inline size to its min/max constraints.
 fn clamp_inline_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     style: &openui_style::ComputedStyle,
     space: &ConstraintSpace,
@@ -1036,7 +1050,7 @@ fn clamp_inline_size(
                 doc,
                 node_id,
                 space,
-                compute_intrinsic_block_sizes(doc, node_id),
+                compute_intrinsic_block_sizes_with_layout(doc, node_id),
             );
             match min_inline_size.length_type() {
                 LengthType::MinContent => sizes.min_content_inline_size,
@@ -1065,7 +1079,7 @@ fn clamp_inline_size(
                 doc,
                 node_id,
                 space,
-                compute_intrinsic_block_sizes(doc, node_id),
+                compute_intrinsic_block_sizes_with_layout(doc, node_id),
             );
             match max_inline_size.length_type() {
                 LengthType::MinContent => sizes.min_content_inline_size,
@@ -1208,7 +1222,7 @@ fn resolve_container_block_size_for_flex(
 
 /// Resolve the total block size of the container.
 fn resolve_total_block_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     style: &openui_style::ComputedStyle,
     space: &ConstraintSpace,
@@ -1257,7 +1271,7 @@ fn resolve_total_block_size(
             doc,
             node_id,
             space,
-            compute_intrinsic_block_sizes(doc, node_id),
+            compute_intrinsic_block_sizes_with_layout(doc, node_id),
         );
         match block_size.length_type() {
             LengthType::MinContent => sizes.min_content_block_size.max_of(border_padding_block),
@@ -1291,7 +1305,7 @@ fn resolve_total_block_size(
                 doc,
                 node_id,
                 space,
-                compute_intrinsic_block_sizes(doc, node_id),
+                compute_intrinsic_block_sizes_with_layout(doc, node_id),
             );
             match min_block_size.length_type() {
                 LengthType::MinContent => sizes.min_content_block_size.max_of(border_padding_block),
@@ -1324,7 +1338,7 @@ fn resolve_total_block_size(
                 doc,
                 node_id,
                 space,
-                compute_intrinsic_block_sizes(doc, node_id),
+                compute_intrinsic_block_sizes_with_layout(doc, node_id),
             );
             match max_block_size.length_type() {
                 LengthType::MinContent => sizes.min_content_block_size.max_of(border_padding_block),
@@ -1369,7 +1383,7 @@ fn resolve_gap(gap: &Option<Length>, percentage_base: LayoutUnit) -> LayoutUnit 
 /// Construct flex items from in-flow children.
 /// Blink: `ConstructAndAppendFlexItems()` at line 801.
 fn construct_flex_items(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     container_id: NodeId,
     is_column: bool,
     is_horizontal_flow: bool,
@@ -1387,7 +1401,7 @@ fn construct_flex_items(
     if doc.node(container_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup) {
         let origin = doc.node(container_id).pseudo_origin;
         if !origin.is_none() {
-            let origin_fragment = crate::block::block_layout(doc, origin, space);
+            let origin_fragment = crate::block::block_layout_with_layout(doc, origin, space);
             let column_count = origin_fragment
                 .children
                 .iter()
@@ -1535,10 +1549,14 @@ fn construct_flex_items(
 /// boxes whose contents are an inline formatting context; invoking block
 /// layout directly on the Text node would otherwise measure its advance but
 /// produce an empty zero-height box with no paintable text fragment.
-fn layout_flex_item(doc: &Document, child_id: NodeId, space: &ConstraintSpace) -> Fragment {
+fn layout_flex_item(
+    doc: &dyn LayoutDocument,
+    child_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
     if doc.node(child_id).tag == ElementTag::Text {
         let anonymous_run = anonymous_flex_text_run(doc, child_id);
-        let mut fragment = crate::inline::algorithm::inline_layout_for_children(
+        let mut fragment = crate::inline::algorithm::inline_layout_for_children_with_layout(
             doc,
             child_id,
             &anonymous_run,
@@ -1565,11 +1583,11 @@ fn layout_flex_item(doc: &Document, child_id: NodeId, space: &ConstraintSpace) -
         }
         fragment
     } else {
-        crate::block::block_layout(doc, child_id, space)
+        crate::block::block_layout_with_layout(doc, child_id, space)
     }
 }
 
-fn flex_box_children(doc: &Document, parent_id: NodeId) -> Vec<NodeId> {
+fn flex_box_children(doc: &dyn LayoutDocument, parent_id: NodeId) -> Vec<NodeId> {
     let mut flattened = Vec::new();
     flatten_flex_box_children(doc, parent_id, &mut flattened);
     let mut children = Vec::new();
@@ -1620,7 +1638,11 @@ fn flex_box_children(doc: &Document, parent_id: NodeId) -> Vec<NodeId> {
     children
 }
 
-fn flatten_flex_box_children(doc: &Document, parent_id: NodeId, output: &mut Vec<NodeId>) {
+fn flatten_flex_box_children(
+    doc: &dyn LayoutDocument,
+    parent_id: NodeId,
+    output: &mut Vec<NodeId>,
+) {
     if doc.node(parent_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup) {
         let origin = doc.node(parent_id).pseudo_origin;
         if !origin.is_none() {
@@ -1641,7 +1663,7 @@ fn flatten_flex_box_children(doc: &Document, parent_id: NodeId, output: &mut Vec
     }
 }
 
-fn anonymous_flex_text_run(doc: &Document, representative: NodeId) -> Vec<NodeId> {
+fn anonymous_flex_text_run(doc: &dyn LayoutDocument, representative: NodeId) -> Vec<NodeId> {
     let mut flex_parent = doc.node(representative).parent;
     while !flex_parent.is_none() && !doc.node(flex_parent).style.display.is_flex() {
         flex_parent = doc.node(flex_parent).parent;
@@ -1673,7 +1695,7 @@ fn anonymous_flex_text_run(doc: &Document, representative: NodeId) -> Vec<NodeId
 }
 
 fn anonymous_flex_text_run_max_inline_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     representative: NodeId,
 ) -> Option<LayoutUnit> {
     let run = anonymous_flex_text_run(doc, representative);
@@ -1686,19 +1708,26 @@ fn anonymous_flex_text_run_max_inline_size(
             current = LayoutUnit::zero();
         } else {
             current = current
-                + crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id).max;
+                + crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(
+                    doc, child_id,
+                )
+                .max;
         }
     }
     Some(maximum.max_of(current))
 }
 
-fn flex_abspos_children(doc: &Document, parent_id: NodeId) -> Vec<NodeId> {
+fn flex_abspos_children(doc: &dyn LayoutDocument, parent_id: NodeId) -> Vec<NodeId> {
     let mut children = Vec::new();
     append_flex_abspos_children(doc, parent_id, &mut children);
     children
 }
 
-fn append_flex_abspos_children(doc: &Document, parent_id: NodeId, children: &mut Vec<NodeId>) {
+fn append_flex_abspos_children(
+    doc: &dyn LayoutDocument,
+    parent_id: NodeId,
+    children: &mut Vec<NodeId>,
+) {
     for child_id in doc.children(parent_id) {
         let child_style = &doc.node(child_id).style;
         if child_style.display == openui_style::Display::None {
@@ -1757,7 +1786,7 @@ fn resolve_item_alignment(
 ///
 /// Returns (base_content_size, is_used_flex_basis_indefinite).
 fn resolve_flex_basis(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     child_id: NodeId,
     child_style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -1797,7 +1826,9 @@ fn resolve_flex_basis(
             // For min-content specifically, we need the min-content value.
             if flex_basis.length_type() == LengthType::MinContent {
                 let contrib =
-                    crate::intrinsic_sizing::compute_child_intrinsic_contribution(doc, child_id);
+                    crate::intrinsic_sizing::compute_child_intrinsic_contribution_with_layout(
+                        doc, child_id,
+                    );
                 let child_margin = resolve_margins(child_style, LayoutUnit::zero());
                 let margin_main = if is_main_axis_horizontal {
                     child_margin.left + child_margin.right
@@ -1900,7 +1931,7 @@ fn resolve_flex_basis(
                     });
                 if let Some(block_size) = stretched_block_size {
                     let sizes =
-                        crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+                        crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size_with_layout(
                             doc,
                             child_id,
                             block_size,
@@ -1911,14 +1942,14 @@ fn resolve_flex_basis(
                         _ => sizes.max,
                     }
                 } else {
-                    let sizes = compute_intrinsic_block_sizes(doc, child_id);
+                    let sizes = compute_intrinsic_block_sizes_with_layout(doc, child_id);
                     match main_length.length_type() {
                         LengthType::MinContent => sizes.min_content_inline_size,
                         _ => sizes.max_content_inline_size,
                     }
                 }
             } else {
-                let sizes = compute_intrinsic_block_sizes(doc, child_id);
+                let sizes = compute_intrinsic_block_sizes_with_layout(doc, child_id);
                 match main_length.length_type() {
                     LengthType::MinContent => sizes.min_content_block_size,
                     _ => sizes.max_content_block_size,
@@ -2025,7 +2056,7 @@ fn resolve_flex_basis(
 /// Also handles aspect-ratio: if the item has an aspect ratio and one dimension
 /// is known, derive the main-axis size from the cross-axis size.
 fn effective_flex_item_aspect_ratio(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     child_id: NodeId,
     child_style: &openui_style::ComputedStyle,
 ) -> Option<openui_style::AspectRatio> {
@@ -2054,7 +2085,7 @@ fn effective_flex_item_aspect_ratio(
 }
 
 fn stretched_cross_replaced_inline_contribution(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     stretched_block_size: LayoutUnit,
 ) -> Option<LayoutUnit> {
@@ -2064,7 +2095,7 @@ fn stretched_cross_replaced_inline_contribution(
         return None;
     }
     Some(
-        crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+        crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size_with_layout(
             doc,
             node_id,
             stretched_block_size,
@@ -2075,7 +2106,7 @@ fn stretched_cross_replaced_inline_contribution(
 }
 
 fn resolve_content_based_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     child_id: NodeId,
     child_style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -2433,14 +2464,14 @@ fn resolve_content_based_size(
     // would apply an authored width and turn (for example) an empty padded
     // item's 10px content contribution into width + padding.
     if replaces_main_size && is_main_axis_horizontal {
-        let intrinsic = compute_intrinsic_block_sizes(doc, child_id);
+        let intrinsic = compute_intrinsic_block_sizes_with_layout(doc, child_id);
         return (intrinsic.max_content_inline_size - main_axis_border_padding)
             .clamp_negative_to_zero();
     }
 
     // Flex base sizing ignores min/max constraints on the main axis. A final
     // layout pass already applies those constraints, so measuring a replaced
-    // item through block_layout here incorrectly bakes (for example) a
+    // item through block_layout_with_layout here incorrectly bakes (for example) a
     // min-width into the base before free-space distribution. Definite cross
     // sizes and stretch transfers were handled above; the remaining
     // content-based basis is the resource's natural main-axis dimension.
@@ -2523,8 +2554,9 @@ fn resolve_content_based_size(
                 // max-content cross size is wider.
                 (child_percentage_inline - cross_margin).clamp_negative_to_zero()
             } else {
-                let min_max =
-                    crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
+                let min_max = crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(
+                    doc, child_id,
+                );
                 if min_max.max > LayoutUnit::zero() {
                     min_max.max
                 } else {
@@ -2616,7 +2648,7 @@ fn resolve_content_based_size(
 
     // CSS Flexbox §9.2 step E: "size the item into the available space using
     // its used flex basis in place of its main size, treating a value of content
-    // as max-content." For column flex, the main axis is block — block_layout
+    // as max-content." For column flex, the main axis is block — block_layout_with_layout
     // would use the item's own `height` property (even with indefinite available
     // space, a fixed height still resolves). Instead, compute the intrinsic
     // max-content block size, which ignores the item's height property and
@@ -2648,16 +2680,16 @@ fn resolve_content_based_size(
             // size. A measurement document provides that style override while
             // retaining the actual cross size, so wrapping, floats, controls,
             // and replaced descendants all contribute through normal layout.
-            let mut measurement_doc = doc.clone();
-            let measurement_style = measurement_doc.node(child_id).style.derive(|style| {
+            let measurement_style = doc.node(child_id).style.derive(|style| {
                 if is_main_axis_horizontal {
                     style.width = Length::auto();
                 } else {
                     style.height = Length::auto();
                 }
             });
-            measurement_doc.install_resolved_style(child_id, measurement_style);
-            let child_fragment = layout_flex_item(&measurement_doc, child_id, &child_space);
+            let measurement_context =
+                crate::layout_context::NodeStyleContext::new(doc, child_id, measurement_style);
+            let child_fragment = layout_flex_item(&measurement_context, child_id, &child_space);
             if is_main_axis_horizontal {
                 child_fragment.width()
             } else {
@@ -2668,7 +2700,7 @@ fn resolve_content_based_size(
             // table layout here would already apply min-height and inflate the
             // base before free-space distribution; use the raw table content
             // contribution and clamp only when forming the hypothetical size.
-            compute_intrinsic_block_sizes(doc, child_id).max_content_block_size
+            compute_intrinsic_block_sizes_with_layout(doc, child_id).max_content_block_size
         } else {
             // Preserve the established auto/content path: its layout-based
             // sizing also carries cross-axis constraints and aspect-ratio
@@ -2730,7 +2762,7 @@ fn resolve_content_based_size(
         }
     }
 
-    // If block_layout returned indefinite (empty element with unconstrained axis),
+    // If block_layout_with_layout returned indefinite (empty element with unconstrained axis),
     // treat as zero content size.
     let main_size = main_size.clamp_indefinite_to_zero();
 
@@ -2993,7 +3025,7 @@ fn compute_transferred_size_suggestion(
 /// Whether this node's own inline formatting context contains a semantic
 /// forced break. Inline wrappers are transparent here; atomic/block children
 /// establish their own formatting context and are measured independently.
-fn has_semantic_break_in_inline_flow(doc: &Document, node_id: NodeId) -> bool {
+fn has_semantic_break_in_inline_flow(doc: &dyn LayoutDocument, node_id: NodeId) -> bool {
     doc.children(node_id).any(|child_id| {
         let child = doc.node(child_id);
         if child.style.display == openui_style::Display::None
@@ -3014,7 +3046,7 @@ fn has_semantic_break_in_inline_flow(doc: &Document, node_id: NodeId) -> bool {
 /// Resolve min/max constraints on the main axis.
 /// Blink: lines 1034-1157.
 fn resolve_main_axis_min_max(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     child_id: NodeId,
     child_style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -3099,10 +3131,11 @@ fn resolve_main_axis_min_max(
                         if min <= LayoutUnit::zero() && max == LayoutUnit::max() {
                             None
                         } else {
-                            let natural = crate::intrinsic_sizing::compute_intrinsic_block_sizes(
-                                doc, child_id,
-                            )
-                            .max_content_block_size;
+                            let natural =
+                                crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(
+                                    doc, child_id,
+                                )
+                                .max_content_block_size;
                             Some(natural.clamp(min, max))
                         }
                     })
@@ -3110,9 +3143,9 @@ fn resolve_main_axis_min_max(
                     None
                 };
                 let min_max = constrained_cross.map_or_else(
-                    || crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id),
+                    || crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(doc, child_id),
                     |block_size| {
-                        crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+                        crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size_with_layout(
                             doc, child_id, block_size, pct_inline,
                         )
                     },
@@ -3273,8 +3306,9 @@ fn resolve_main_axis_min_max(
                 }
                 cs
             } else {
-                let intrinsic =
-                    crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
+                let intrinsic = crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(
+                    doc, child_id,
+                );
                 let has_definite_inline_constraint = child_style.width.is_fixed()
                     || child_style.min_width.is_fixed()
                     || (!child_style.max_width.is_none()
@@ -3557,14 +3591,16 @@ fn resolve_main_axis_min_max(
         if let Some(transferred) = transferred_intrinsic {
             transferred
         } else if is_main_axis_horizontal {
-            let min_max = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
+            let min_max =
+                crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(doc, child_id);
             let val = match min_prop.length_type() {
                 LengthType::MinContent => min_max.min,
                 _ => min_max.max,
             };
             (val - main_axis_border_padding).clamp_negative_to_zero()
         } else {
-            let intrinsic = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
+            let intrinsic =
+                crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(doc, child_id);
             let val = match min_prop.length_type() {
                 LengthType::MinContent => intrinsic.min_content_block_size,
                 _ => intrinsic.max_content_block_size,
@@ -3586,14 +3622,16 @@ fn resolve_main_axis_min_max(
     } else if max_prop.is_content_or_intrinsic() {
         // CSS Sizing 3: max-width/max-height: min-content/max-content
         if is_main_axis_horizontal {
-            let min_max = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
+            let min_max =
+                crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(doc, child_id);
             let val = match max_prop.length_type() {
                 LengthType::MinContent => min_max.min,
                 _ => min_max.max,
             };
             (val - main_axis_border_padding).clamp_negative_to_zero()
         } else {
-            let intrinsic = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
+            let intrinsic =
+                crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(doc, child_id);
             let val = match max_prop.length_type() {
                 LengthType::MinContent => intrinsic.min_content_block_size,
                 _ => intrinsic.max_content_block_size,
@@ -3621,7 +3659,8 @@ fn resolve_main_axis_min_max(
     // position the following item at the authored minimum while the principal
     // table box overflows through it.
     let min = if child_style.display.is_table_wrapper() && main_is_child_inline {
-        let intrinsic = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
+        let intrinsic =
+            crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(doc, child_id);
         min.max_of((intrinsic.min - main_axis_border_padding).clamp_negative_to_zero())
     } else {
         min
@@ -3640,7 +3679,7 @@ fn resolve_main_axis_min_max(
 
 /// Resolve a cross-axis min or max constraint, handling intrinsic keywords.
 fn resolve_cross_min_max(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     prop: &openui_geometry::Length,
     is_column: bool,
@@ -3655,9 +3694,10 @@ fn resolve_cross_min_max(
     }
     if prop.is_content_or_intrinsic() {
         let sizes = if is_column {
-            crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, node_id)
+            crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_layout(doc, node_id)
         } else {
-            let block = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, node_id);
+            let block =
+                crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(doc, node_id);
             MinMaxSizes::new(block.min_content_block_size, block.max_content_block_size)
         };
         return match prop.length_type() {
@@ -3679,7 +3719,7 @@ fn resolve_cross_min_max(
 /// Compute cross-axis sizes for each line.
 /// Blink: PlaceFlexItems cross-size computation (line 1470-1558).
 fn compute_line_cross_sizes(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     items: &[FlexItem],
     lines: &mut [FlexLine],
     is_column: bool,
@@ -3854,7 +3894,7 @@ fn compute_line_cross_sizes(
 
 /// Resolve the cross-axis size of a single flex item.
 fn resolve_cross_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     item: &FlexItem,
     child_style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -3945,7 +3985,7 @@ fn resolve_cross_size(
                 // item that is the child's block size, so percentage-height
                 // replaced descendants transfer that exact size into the
                 // fit-content cross contribution.
-                crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+                crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size_with_layout(
                     doc,
                     item.node_id,
                     item.flexed_border_box_size(),
@@ -4100,7 +4140,7 @@ fn compute_intrinsic_block_size(
 /// Blink: `GiveItemsFinalPositionAndSize()` at line 1834.
 #[allow(clippy::too_many_arguments)]
 fn give_items_final_position(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     items: &mut [FlexItem],
     lines: &mut [FlexLine],
     is_column: bool,
@@ -4147,7 +4187,7 @@ fn give_items_final_position(
 
     // ── Resolve align-content (cross-axis line offsets) ──────────────
     // NOTE: Line stretching (align-content:stretch/normal) was already
-    // performed before reversals in flex_layout(), so lines are already
+    // performed before reversals in flex_layout_with_layout(), so lines are already
     // at their final cross sizes here. Just compute remaining free space.
     let total_line_cross: LayoutUnit = lines
         .iter()
@@ -5007,7 +5047,7 @@ fn give_items_final_position(
 }
 
 fn finalize_flex_fragment(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     fragment: &mut Fragment,
     style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -5094,7 +5134,7 @@ fn finalize_flex_fragment(
 }
 
 fn flex_baseline_from_child(
-    _doc: &Document,
+    _doc: &dyn LayoutDocument,
     fragment: &Fragment,
     style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -5276,7 +5316,7 @@ fn edge_offset(edge: crate::out_of_flow::StaticPositionEdge, size: LayoutUnit) -
 }
 
 fn compute_abspos_static_position(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     child_id: NodeId,
     child_style: &openui_style::ComputedStyle,
     container_style: &openui_style::ComputedStyle,
@@ -5315,7 +5355,7 @@ fn compute_abspos_static_position(
             false,
             child_direction,
         );
-    let child_fragment = crate::block::block_layout(doc, child_id, &child_space);
+    let child_fragment = crate::block::block_layout_with_layout(doc, child_id, &child_space);
     let child_margins = resolve_margins(child_style, physical_padding_box.width);
     let child_margin_box = PhysicalSize::new(
         child_fragment.size.width + child_margins.left + child_margins.right,
@@ -5504,7 +5544,7 @@ mod tests {
         doc.append_child(container, sibling);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
         assert_eq!(fragment.first_baseline, Some(LayoutUnit::from_i32(1)));
     }
 
@@ -5529,7 +5569,7 @@ mod tests {
         doc.update_resolved_style(trailing, |style| style.margin_bottom = Length::px(8.0));
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
         assert_eq!(fragment.height(), LayoutUnit::from_i32(20));
     }
 
@@ -5555,7 +5595,7 @@ mod tests {
         doc.update_resolved_style(clamped, |style| style.line_clamp = LineClamp::Lines(3));
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
         assert_eq!(fragment.height(), LayoutUnit::from_i32(12));
     }
 
@@ -5571,7 +5611,7 @@ mod tests {
         doc.update_resolved_style(second, |style| style.min_width = Length::zero());
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
         assert_eq!(fragment.children[0].offset.left, LayoutUnit::from_i32(120));
         assert_eq!(fragment.children[1].offset.left, LayoutUnit::from_i32(170));
     }
@@ -5933,7 +5973,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         assert_eq!(fragment.children.len(), 3);
         // Items should be placed left-to-right: 0, 50, 130
@@ -5970,7 +6010,7 @@ mod tests {
             LayoutUnit::from_i32(30),
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         assert_eq!(
             fragment.size,
@@ -6026,7 +6066,7 @@ mod tests {
             LayoutUnit::from_i32(100),
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         assert_eq!(fragment.children[0].node_id, first);
         assert_eq!(fragment.children[1].node_id, second);
@@ -6059,7 +6099,7 @@ mod tests {
             LayoutUnit::from_i32(30),
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         assert_eq!(
             fragment.children[0].offset,
@@ -6104,7 +6144,7 @@ mod tests {
             LayoutUnit::from_i32(30),
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         assert_eq!(
             fragment.children[0].offset,
@@ -6151,7 +6191,7 @@ mod tests {
             LayoutUnit::from_i32(100),
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         let offsets: Vec<_> = fragment.children.iter().map(|child| child.offset).collect();
         assert_eq!(
@@ -6196,7 +6236,7 @@ mod tests {
             LayoutUnit::from_i32(100),
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         let offsets: Vec<_> = fragment.children.iter().map(|child| child.offset).collect();
         assert_eq!(
@@ -6273,8 +6313,8 @@ mod tests {
 
         let (target_doc, target_node, target_space) = build(false);
         let (reference_doc, reference_node, reference_space) = build(true);
-        let target = flex_layout(&target_doc, target_node, &target_space);
-        let reference = flex_layout(&reference_doc, reference_node, &reference_space);
+        let target = flex_layout_with_layout(&target_doc, target_node, &target_space);
+        let reference = flex_layout_with_layout(&reference_doc, reference_node, &reference_space);
         let mut target_geometry = Vec::new();
         let mut reference_geometry = Vec::new();
         geometry(&target, &mut target_geometry);
@@ -6307,7 +6347,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Each should get 150px width (300 / 2)
         assert_eq!(fragment.children[0].width(), LayoutUnit::from_i32(150));
@@ -6333,7 +6373,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Proportions: 1:2:1 of 400 = 100:200:100
         assert_eq!(fragment.children[0].width(), LayoutUnit::from_i32(100));
@@ -6360,7 +6400,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Total items = 100, free space = 300, offset = 150
         assert_eq!(fragment.children[0].offset.left, LayoutUnit::from_i32(150));
@@ -6388,7 +6428,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Free space = 250, 2 gaps → 125 each
         // Positions: 0, 50+125=175, 175+50+125=350
@@ -6417,7 +6457,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(300));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         assert_eq!(fragment.children.len(), 3);
         // First two on line 1, third on line 2
@@ -6445,7 +6485,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(300));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Column: items stack vertically
         assert_eq!(fragment.children[0].offset.top, LayoutUnit::zero());
@@ -6486,7 +6526,7 @@ mod tests {
             LayoutUnit::from_i32(100),
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         let geometry: Vec<_> = fragment
             .children
@@ -6553,7 +6593,7 @@ mod tests {
             openui_geometry::INDEFINITE_SIZE,
             direction,
         );
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         let total_child_block: LayoutUnit = fragment
             .children
@@ -6619,7 +6659,7 @@ mod tests {
                     LayoutUnit::from_i32(100),
                     writing_direction,
                 );
-                let fragment = flex_layout(&doc, container, &space);
+                let fragment = flex_layout_with_layout(&doc, container, &space);
                 let main_offsets: Vec<_> = fragment
                     .children
                     .iter()
@@ -6697,7 +6737,7 @@ mod tests {
                     LayoutUnit::from_i32(40),
                     direction,
                 );
-                let fragment = flex_layout(&doc, container, &space);
+                let fragment = flex_layout_with_layout(&doc, container, &space);
                 assert_eq!(fragment.children.len(), 4);
                 assert!(fragment.children.iter().all(|child| {
                     if flex_direction.is_column() {
@@ -6827,7 +6867,8 @@ mod tests {
             doc.append_child(container, child);
         }
 
-        let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes(&doc, container);
+        let sizes =
+            crate::intrinsic_sizing::compute_intrinsic_block_sizes_with_layout(&doc, container);
         assert!(sizes.max_content_inline_size >= sizes.min_content_inline_size);
         assert!(sizes.max_content_block_size >= sizes.min_content_block_size);
     }
@@ -6872,7 +6913,7 @@ mod tests {
         assert_eq!(bounds.min, LayoutUnit::from_i32(200));
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(200));
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
         assert_eq!(fragment.children[0].width(), LayoutUnit::from_i32(200));
         assert_eq!(fragment.children[0].height(), LayoutUnit::from_i32(200));
     }
@@ -6907,7 +6948,7 @@ mod tests {
         doc.append_child(item, canvas);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(760), LayoutUnit::from_i32(560));
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
         assert_eq!(fragment.children[0].width(), LayoutUnit::from_i32(100));
     }
 
@@ -6929,7 +6970,7 @@ mod tests {
         doc.update_resolved_style(child, |style| style.flex_shrink = 0.0);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(90), LayoutUnit::from_i32(90));
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         assert_eq!(fragment.children[0].offset.top, LayoutUnit::zero());
     }
@@ -6954,7 +6995,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Positions: 0, 50+20=70, 70+50+20=140
         assert_eq!(fragment.children[0].offset.left, LayoutUnit::from_i32(0));
@@ -6977,7 +7018,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Order: c2(1), c3(2), c1(3)
         // c2 should be first (leftmost), c1 should be last (rightmost)
@@ -7004,7 +7045,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Cross space = 100 - 40 = 60, center offset = 30
         assert_eq!(fragment.children[0].offset.top, LayoutUnit::from_i32(30));
@@ -7030,7 +7071,7 @@ mod tests {
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(100));
 
-        let fragment = flex_layout(&doc, container, &space);
+        let fragment = flex_layout_with_layout(&doc, container, &space);
 
         // Row-reverse: items reversed, justify-content flex-start means right side
         // free_space = 300 - 130 = 170
@@ -7041,4 +7082,9 @@ mod tests {
         assert_eq!(fragment.children[0].node_id, c2);
         assert_eq!(fragment.children[1].node_id, c1);
     }
+}
+
+// Public entry points retain the original native Document signatures.
+pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
+    flex_layout_with_layout(doc, node_id, space)
 }

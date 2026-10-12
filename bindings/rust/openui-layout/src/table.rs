@@ -5,6 +5,7 @@
 //! fragment tree.  It intentionally consumes typed DOM/style data only; HTML
 //! parsing and CSS grammar remain porter responsibilities.
 
+use crate::layout_context::LayoutDocument;
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{
     BoxStrut, LayoutUnit, LengthType, LogicalOffset, LogicalRect, LogicalSize, PhysicalOffset,
@@ -15,7 +16,7 @@ use openui_style::{
 };
 
 use crate::block::{
-    algorithm_box_from_logical_strut, block_layout, normalize_multicol_child_outer_box,
+    algorithm_box_from_logical_strut, block_layout_with_layout, normalize_multicol_child_outer_box,
     project_logical_fragment_tree_to_physical, resolve_border, resolve_margins, resolve_padding,
 };
 use crate::constraint_space::ConstraintSpace;
@@ -23,8 +24,8 @@ use crate::fragment::{
     Fragment, FragmentBoxOwnership, FragmentTablePart, TableColumnBackgroundPositioning,
 };
 use crate::intrinsic_sizing::{
-    compute_intrinsic_block_sizes, compute_intrinsic_block_sizes_with_used_border,
-    compute_intrinsic_inline_sizes, IntrinsicSizes,
+    compute_intrinsic_block_sizes_with_layout, compute_intrinsic_block_sizes_with_used_border,
+    compute_intrinsic_inline_sizes_with_layout, IntrinsicSizes,
 };
 use crate::length_resolver::resolve_length;
 use crate::out_of_flow::OutOfFlowCandidate;
@@ -190,13 +191,13 @@ fn logical_margins(
     logical_box_strut(resolve_margins(style, base), writing_direction)
 }
 
-fn row_owns_authored_element_box(doc: &Document, row: &TableRow) -> bool {
+fn row_owns_authored_element_box(doc: &dyn LayoutDocument, row: &TableRow) -> bool {
     !row.anonymous
         && doc.node(row.node_id).tag != ElementTag::Text
         && doc.node(row.node_id).style.display == Display::TableRow
 }
 
-fn is_authored_row_group(doc: &Document, node_id: NodeId) -> bool {
+fn is_authored_row_group(doc: &dyn LayoutDocument, node_id: NodeId) -> bool {
     doc.node(node_id).tag != ElementTag::Text
         && matches!(
             doc.node(node_id).style.display,
@@ -204,7 +205,7 @@ fn is_authored_row_group(doc: &Document, node_id: NodeId) -> bool {
         )
 }
 
-fn collect_row_cells(doc: &Document, row_id: NodeId, cells: &mut Vec<NodeId>) {
+fn collect_row_cells(doc: &dyn LayoutDocument, row_id: NodeId, cells: &mut Vec<NodeId>) {
     for child in doc.children(row_id) {
         let display = doc.node(child).style.display;
         if display == Display::None {
@@ -219,7 +220,7 @@ fn collect_row_cells(doc: &Document, row_id: NodeId, cells: &mut Vec<NodeId>) {
 }
 
 fn collect_group_rows(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     group_id: NodeId,
     rows: &mut Vec<TableRow>,
     captions: &mut Vec<NodeId>,
@@ -263,7 +264,7 @@ fn collect_group_rows(
     }
 
     fn visit(
-        doc: &Document,
+        doc: &dyn LayoutDocument,
         group_id: NodeId,
         child: NodeId,
         rows: &mut Vec<TableRow>,
@@ -307,7 +308,7 @@ fn collect_group_rows(
     flush_anonymous(group_id, rows, &mut anonymous_cells);
 }
 
-fn collect_columns(doc: &Document, node_id: NodeId, model: &mut TableModel) {
+fn collect_columns(doc: &dyn LayoutDocument, node_id: NodeId, model: &mut TableModel) {
     let node = doc.node(node_id);
     if node.style.display == Display::None {
         return;
@@ -339,7 +340,7 @@ fn collect_columns(doc: &Document, node_id: NodeId, model: &mut TableModel) {
     }
 }
 
-fn collect_table_model(doc: &Document, table_id: NodeId) -> TableModel {
+fn collect_table_model(doc: &dyn LayoutDocument, table_id: NodeId) -> TableModel {
     let mut model = TableModel::default();
     let mut headers = Vec::new();
     let mut bodies = Vec::new();
@@ -368,7 +369,7 @@ fn collect_table_model(doc: &Document, table_id: NodeId) -> TableModel {
     }
 
     fn visit(
-        doc: &Document,
+        doc: &dyn LayoutDocument,
         table_id: NodeId,
         node_id: NodeId,
         model: &mut TableModel,
@@ -519,7 +520,7 @@ fn group_end(rows: &[TableRow], row: usize) -> usize {
     end
 }
 
-fn place_cells(doc: &Document, rows: &[TableRow]) -> (Vec<CellSlot>, usize) {
+fn place_cells(doc: &dyn LayoutDocument, rows: &[TableRow]) -> (Vec<CellSlot>, usize) {
     let mut occupied_until: Vec<usize> = Vec::new();
     let mut slots = Vec::new();
     let mut column_count = 0usize;
@@ -571,7 +572,7 @@ fn cell_region(slot: CellSlot) -> GridRegion {
 }
 
 fn resolve_collapsed_grid(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     table_id: NodeId,
     model: &TableModel,
     slots: &[CellSlot],
@@ -730,7 +731,7 @@ fn cell_used_border(
 }
 
 fn measure_cell_intrinsic_sizes(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     slot: CellSlot,
     used_border: Option<BoxStrut>,
 ) -> IntrinsicSizes {
@@ -742,10 +743,10 @@ fn measure_cell_intrinsic_sizes(
     } else if used_border.is_some() && is_authored_row_group(doc, slot.node_id) {
         compute_intrinsic_block_sizes_with_used_border(doc, slot.node_id, BoxStrut::zero())
     } else {
-        compute_intrinsic_block_sizes(doc, slot.node_id)
+        compute_intrinsic_block_sizes_with_layout(doc, slot.node_id)
     };
     if doc.node(slot.node_id).tag == ElementTag::Text {
-        let inline = compute_intrinsic_inline_sizes(doc, slot.node_id);
+        let inline = compute_intrinsic_inline_sizes_with_layout(doc, slot.node_id);
         sizes.min_content_inline_size = inline.min;
         sizes.max_content_inline_size = inline.max;
     }
@@ -789,7 +790,7 @@ fn add_spanning_contribution(
 }
 
 fn measure_tracks(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     table_id: NodeId,
     model: &TableModel,
     slots: &[CellSlot],
@@ -896,7 +897,7 @@ fn sum_tracks(tracks: &[TrackContribution], max_content: bool) -> LayoutUnit {
 }
 
 fn resolved_spacing(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     table_id: NodeId,
     base: LayoutUnit,
 ) -> (LayoutUnit, LayoutUnit) {
@@ -922,7 +923,10 @@ fn resolved_spacing(
     )
 }
 
-pub fn compute_table_intrinsic_sizes(doc: &Document, table_id: NodeId) -> IntrinsicSizes {
+pub(crate) fn compute_table_intrinsic_sizes_with_layout(
+    doc: &dyn LayoutDocument,
+    table_id: NodeId,
+) -> IntrinsicSizes {
     let style = &doc.node(table_id).style;
     let writing_direction = style.writing_mode.to_writing_direction(style.direction);
     let model = collect_table_model(doc, table_id);
@@ -967,7 +971,7 @@ pub fn compute_table_intrinsic_sizes(doc: &Document, table_id: NodeId) -> Intrin
     let mut caption_block = LayoutUnit::zero();
     for caption in model.captions {
         let caption_style = &doc.node(caption).style;
-        let sizes = compute_intrinsic_block_sizes(doc, caption);
+        let sizes = compute_intrinsic_block_sizes_with_layout(doc, caption);
         let specified_outer =
             authored_inline_size(doc, caption, LayoutUnit::zero(), writing_direction).map(
                 |width| {
@@ -1035,7 +1039,7 @@ pub fn compute_table_intrinsic_sizes(doc: &Document, table_id: NodeId) -> Intrin
 }
 
 pub(crate) fn compute_table_caption_block_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     table_id: NodeId,
     inline_size: LayoutUnit,
     parent_space: &ConstraintSpace,
@@ -1063,7 +1067,7 @@ pub(crate) fn compute_table_caption_block_size(
             caption_space.is_fixed_inline_size =
                 authored_inline_size(doc, caption_id, inline_size, parent_space.writing_direction)
                     .is_none();
-            let mut caption = block_layout(doc, caption_id, &caption_space);
+            let mut caption = block_layout_with_layout(doc, caption_id, &caption_space);
             normalize_multicol_child_outer_box(doc, &mut caption, parent_space.writing_direction);
             let margin =
                 logical_margins(caption_style, inline_size, parent_space.writing_direction);
@@ -1125,7 +1129,7 @@ fn distribute_auto_tracks(tracks: &[TrackContribution], target: LayoutUnit) -> V
 }
 
 fn authored_inline_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     base: LayoutUnit,
     writing_direction: WritingDirectionMode,
@@ -1137,7 +1141,7 @@ fn authored_inline_size(
 }
 
 fn distribute_fixed_tracks(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     model: &TableModel,
     slots: &[CellSlot],
     column_count: usize,
@@ -1202,7 +1206,7 @@ fn distribute_fixed_tracks(
 }
 
 fn resolve_table_grid_width(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     table_id: NodeId,
     space: &ConstraintSpace,
     tracks: &[TrackContribution],
@@ -1315,7 +1319,7 @@ fn table_cell_alignment_height(fragment: &Fragment) -> LayoutUnit {
 }
 
 fn layout_cell(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     slot: CellSlot,
     width: LayoutUnit,
     table_space: &ConstraintSpace,
@@ -1389,7 +1393,7 @@ fn layout_cell(
         if used_border.is_some() {
             cell_space.element_used_border = Some((wrapper, BoxStrut::zero()));
         }
-        let mut fragment = block_layout(&anonymous_doc, wrapper, &cell_space);
+        let mut fragment = block_layout_with_layout(&anonymous_doc, wrapper, &cell_space);
         fn remap(fragment: &mut Fragment, wrapper: NodeId, text: NodeId, source: NodeId) {
             if fragment.node_id == wrapper {
                 fragment.node_id = NodeId::NONE;
@@ -1404,7 +1408,7 @@ fn layout_cell(
         remap(&mut fragment, wrapper, text, slot.node_id);
         fragment
     } else {
-        block_layout(doc, slot.node_id, &cell_space)
+        block_layout_with_layout(doc, slot.node_id, &cell_space)
     };
     // Improper row-group contents are laid out once inside an anonymous
     // cell. This content carrier reuses the group's style identity; the
@@ -1478,7 +1482,7 @@ fn layout_cell(
 }
 
 fn minimum_row_height(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     row: &TableRow,
     base: LayoutUnit,
     writing_direction: WritingDirectionMode,
@@ -1504,7 +1508,7 @@ fn minimum_row_height(
 }
 
 fn definite_table_internal_block_base(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     percentage_base: LayoutUnit,
     writing_direction: WritingDirectionMode,
@@ -1523,7 +1527,7 @@ fn definite_table_internal_block_base(
 }
 
 fn subtree_uses_percentage_block_size(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     node_id: NodeId,
     writing_direction: WritingDirectionMode,
 ) -> bool {
@@ -1560,7 +1564,7 @@ fn adopt_child_oof_candidates(children: &mut [Fragment]) -> Vec<OutOfFlowCandida
     candidates
 }
 
-fn resolve_table_box_oof(doc: &Document, fragment: &mut Fragment) {
+fn resolve_table_box_oof(doc: &dyn LayoutDocument, fragment: &mut Fragment) {
     if fragment.node_id.is_none() || fragment.oof_candidates.is_empty() {
         return;
     }
@@ -1607,7 +1611,7 @@ fn resolve_table_box_oof(doc: &Document, fragment: &mut Fragment) {
     }
 
     while !pending.is_empty() {
-        let laid_out = crate::out_of_flow::layout_out_of_flow_children(doc, &pending);
+        let laid_out = crate::out_of_flow::layout_out_of_flow_children_with_layout(doc, &pending);
         pending = Vec::new();
         for mut positioned in laid_out {
             let positioned_offset = positioned.offset;
@@ -1641,12 +1645,16 @@ fn resolve_table_box_oof(doc: &Document, fragment: &mut Fragment) {
 }
 
 /// Lay out a table wrapper and its caption/table-grid contents.
-pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -> Fragment {
+pub(crate) fn table_layout_with_layout(
+    doc: &dyn LayoutDocument,
+    table_id: NodeId,
+    space: &ConstraintSpace,
+) -> Fragment {
     crate::scrollbars::layout(doc, table_id, space)
 }
 
 pub(crate) fn table_layout_contents(
-    doc: &Document,
+    doc: &dyn LayoutDocument,
     table_id: NodeId,
     space: &ConstraintSpace,
 ) -> Fragment {
@@ -1876,7 +1884,7 @@ pub(crate) fn table_layout_contents(
         .copied()
         .map(|caption_id| {
             let caption_style = &doc.node(caption_id).style;
-            let intrinsic = compute_intrinsic_block_sizes(doc, caption_id);
+            let intrinsic = compute_intrinsic_block_sizes_with_layout(doc, caption_id);
             let caption_border = logical_border(caption_style, writing_direction);
             let caption_padding = logical_padding(
                 caption_style,
@@ -1951,7 +1959,7 @@ pub(crate) fn table_layout_contents(
         );
         caption_space.is_fixed_inline_size =
             authored_inline_size(doc, caption_id, border_box_width, writing_direction).is_none();
-        let mut caption = block_layout(doc, caption_id, &caption_space);
+        let mut caption = block_layout_with_layout(doc, caption_id, &caption_space);
         normalize_multicol_child_outer_box(doc, &mut caption, writing_direction);
         if caption_style.caption_side == CaptionSide::Bottom {
             bottom_captions.push(caption);
@@ -2667,7 +2675,7 @@ pub(crate) fn table_layout_contents(
         .map(|baseline| row_starts.last().copied().unwrap_or(grid_top) + baseline);
     table.has_overflow_clip = crate::scroll_area::has_overflow_clip(doc, table_id);
     if style.border_collapse == BorderCollapse::Collapse {
-        fn suppress_collapsed_table_radii(doc: &Document, fragment: &mut Fragment) {
+        fn suppress_collapsed_table_radii(doc: &dyn LayoutDocument, fragment: &mut Fragment) {
             if fragment.node_id != NodeId::NONE
                 && matches!(
                     doc.node(fragment.node_id).style.display,
@@ -2704,7 +2712,10 @@ pub(crate) fn table_layout_contents(
 /// Complete monolithic replays retain first+last ownership and begin independent
 /// source sequences. Real authored continuations remain in the open sequence;
 /// no rectangle/NodeId dedupe collapses a continuation into another box.
-pub(crate) fn populate_column_background_positioning(doc: &Document, root: &mut Fragment) {
+pub(crate) fn populate_column_background_positioning(
+    doc: &dyn LayoutDocument,
+    root: &mut Fragment,
+) {
     #[derive(Default)]
     struct Sequence {
         stitched_block_size: LayoutUnit,
@@ -2728,7 +2739,7 @@ pub(crate) fn populate_column_background_positioning(doc: &Document, root: &mut 
         )
     }
     fn collect(
-        doc: &Document,
+        doc: &dyn LayoutDocument,
         fragment: &Fragment,
         sequences: &mut Vec<Sequence>,
         open: &mut std::collections::HashMap<NodeId, usize>,
@@ -2873,7 +2884,7 @@ mod tests {
             cells.push(cell);
         }
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100));
-        let fragment = table_layout(&doc, table, &space);
+        let fragment = table_layout_with_layout(&doc, table, &space);
         let sections: Vec<_> = fragment
             .children
             .iter()
@@ -2977,7 +2988,7 @@ mod tests {
                         LayoutUnit::from_i32(100),
                         writing_direction,
                     );
-                    let fragment = table_layout(&doc, table, &space);
+                    let fragment = table_layout_with_layout(&doc, table, &space);
                     let graph = fragment.collapsed_table_border_data.as_ref().unwrap();
                     let section = fragment
                         .children
@@ -3187,7 +3198,7 @@ mod tests {
                     LayoutUnit::from_i32(200),
                     writing_direction,
                 );
-                let fragment = table_layout(&doc, table, &space);
+                let fragment = table_layout_with_layout(&doc, table, &space);
                 let group_fragment = fragment
                     .children
                     .iter()
@@ -3329,7 +3340,7 @@ mod tests {
                 style.height = Length::px(10.0);
             });
         }
-        let root = block_layout(
+        let root = block_layout_with_layout(
             &doc,
             doc.root(),
             &ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100)),
@@ -3388,7 +3399,7 @@ mod tests {
             });
             doc.node_mut(column).table_col_span = 3;
             doc.node_mut(cell).table_col_span = 3;
-            let fragment = table_layout(
+            let fragment = table_layout_with_layout(
                 &doc,
                 table,
                 &ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100)),
@@ -3542,7 +3553,7 @@ mod tests {
         doc.append_child(table, cell);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100));
-        let fragment = table_layout(&doc, table, &space);
+        let fragment = table_layout_with_layout(&doc, table, &space);
         assert_eq!(count_owned_boxes(&fragment, table), 1);
         assert_eq!(count_style_helpers(&fragment, table), 2);
         assert_eq!(
@@ -3585,7 +3596,7 @@ mod tests {
 
             let space =
                 ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(100));
-            let fragment = table_layout(&doc, table, &space);
+            let fragment = table_layout_with_layout(&doc, table, &space);
             assert_eq!(count_owned_boxes(&fragment, group), 1, "{display:?}");
             assert_eq!(count_style_helpers(&fragment, group), 2, "{display:?}");
             for child in authored_children {
@@ -3803,7 +3814,16 @@ mod tests {
         doc.node_mut(text).text = Some("stretch".to_string());
         doc.append_child(cell, text);
 
-        let intrinsic = compute_table_intrinsic_sizes(&doc, table);
+        let intrinsic = compute_table_intrinsic_sizes_with_layout(&doc, table);
         assert!(intrinsic.min_content_inline_size > LayoutUnit::from_i32(40));
     }
+}
+
+// Public entry points retain the original native Document signatures.
+pub fn compute_table_intrinsic_sizes(doc: &Document, table_id: NodeId) -> IntrinsicSizes {
+    compute_table_intrinsic_sizes_with_layout(doc, table_id)
+}
+
+pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -> Fragment {
+    table_layout_with_layout(doc, table_id, space)
 }

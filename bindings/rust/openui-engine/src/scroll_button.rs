@@ -1141,7 +1141,7 @@ impl Engine {
         let Some(area) = self.layout_scroll_area(node) else {
             return state;
         };
-        let style = &self.document.node(node).style;
+        let style = self.retained_scroll_style(node);
         if !area.is_scroll_container() {
             return state;
         }
@@ -1252,7 +1252,7 @@ impl Engine {
         let Some(area) = fragment.scroll_area else {
             return Ok(None);
         };
-        let style = &self.document.node(node).style;
+        let style = self.retained_scroll_style(node);
         if !area.is_scroll_container() {
             return Ok(None);
         }
@@ -1430,9 +1430,12 @@ impl Engine {
             out: &mut HashSet<NodeId>,
         ) {
             let pending = pending_nodes.contains(&fragment.node_id);
-            if fragment.owns_element_box()
+            if fragment.owns_scroll_box()
                 && !fragment.node_id.is_none()
-                && (document.node(fragment.node_id).style.scroll_snap_axis != ScrollSnapAxis::None
+                && (fragment
+                    .layout_style(&document.node(fragment.node_id).style)
+                    .scroll_snap_axis
+                    != ScrollSnapAxis::None
                     || pending)
             {
                 out.insert(fragment.node_id);
@@ -1546,7 +1549,7 @@ impl Engine {
         snap_unchanged_axes: bool,
     ) -> Result<(f32, f32), EngineError> {
         let node = self.resolve(origin)?;
-        if self.document.node(node).style.scroll_snap_axis == ScrollSnapAxis::None {
+        if self.retained_scroll_style(node).scroll_snap_axis == ScrollSnapAxis::None {
             return Ok((x, y));
         }
         let Some(root) = self.latest_fragment.as_ref() else {
@@ -1764,7 +1767,7 @@ fn unsupported_snap_transform(style: &ComputedStyle) -> Option<&'static str> {
 /// overflow without creating a local scrollport. Helpers cannot acquire
 /// their source element's scrolling boundary.
 fn fragment_owns_scrollport(fragment: &Fragment, document: &openui_dom::Document) -> bool {
-    if !fragment.owns_element_box() {
+    if !fragment.owns_scroll_box() {
         return false;
     }
     fragment.scroll_area.map_or_else(
@@ -1779,13 +1782,7 @@ fn fragment_owns_scrollport(fragment: &Fragment, document: &openui_dom::Document
 }
 
 fn find_fragment(fragment: &Fragment, node: NodeId) -> Option<&Fragment> {
-    if fragment.owns_element_box() && fragment.node_id == node && fragment.scroll_area.is_some() {
-        return Some(fragment);
-    }
-    fragment
-        .children
-        .iter()
-        .find_map(|child| find_fragment(child, node))
+    fragment.find_scroll_box(node)
 }
 
 #[cfg(test)]
