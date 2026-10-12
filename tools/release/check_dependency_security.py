@@ -293,9 +293,9 @@ def audit(root: Path, binary: Path, output: Path) -> dict:
             (sandbox / ".cargo").mkdir()
             (sandbox / ".cargo/audit.toml").write_text(CONFIG)
             receipt["config"] = {"text": CONFIG, "sha256": sha256(CONFIG.encode())}
-            version = command([str(binary), "audit", "--version"], sandbox, 60)
+            version = command([str(binary), "--version"], sandbox, 60)
             receipt["commands"].append(version)
-            if version["exit_code"] != 0 or version["timed_out"] or not re.fullmatch(r"cargo-audit(?: audit)? " + re.escape(AUDIT_VERSION) + r"\s*", version["stdout"]):
+            if version["exit_code"] != 0 or version["timed_out"] or not re.fullmatch(r"cargo-audit " + re.escape(AUDIT_VERSION) + r"\s*", version["stdout"]):
                 raise ValueError("cargo-audit version does not match the exact required release")
             for identity in before_locks:
                 name = identity["path"]

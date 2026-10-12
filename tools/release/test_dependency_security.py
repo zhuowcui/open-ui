@@ -19,7 +19,8 @@ FAKE_TOOL = r'''import datetime as dt,json,os,subprocess,sys,tomllib
 from pathlib import Path
 case=os.environ.get('OPENUI_FAKE_AUDIT_CASE','success')
 if '--version' in sys.argv:
- print('cargo-audit '+('0.0.0' if case=='version' else '0.22.2'));sys.exit(0)
+ name='cargo-audit-audit' if sys.argv[1:2]==['audit'] else 'cargo-audit'
+ print(name+' '+('0.0.0' if case=='version' else '0.22.2'));sys.exit(0)
 args=sys.argv[1:]
 lock=Path(args[args.index('--file')+1]);database=Path(args[args.index('--db')+1])
 cfg=tomllib.loads(Path('.cargo/audit.toml').read_text())
@@ -98,6 +99,9 @@ class DependencySecurityTests(unittest.TestCase):
     def test_full_check_ignores_ambient_exemptions_and_retains_actual_inputs(self) -> None:
         result = self.run_audit()
         self.assertTrue(result["passed"])
+        version = next(row for row in result["commands"] if "--version" in row["argv"])
+        self.assertEqual(version["argv"], [str(self.binary), "--version"])
+        self.assertEqual(version["stdout"], "cargo-audit 0.22.2\n")
         self.assertEqual(result["locks_before"], result["locks_after"])
         self.assertEqual(result["source_before"], result["source_after"])
         config = json.loads((self.output / "observed-config.json").read_text())
