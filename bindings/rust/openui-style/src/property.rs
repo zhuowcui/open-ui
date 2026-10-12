@@ -2318,7 +2318,8 @@ pub fn apply_to_computed(
     viewport: (f32, f32),
 ) -> Result<InvalidationClass, PropertyTypeError> {
     use StyleProperty as P;
-    let resolve = |v: LengthValue| v.resolve(viewport, style.fields.font_size, 16.0);
+    let font_size = style.fields.font_size;
+    let resolve = |v: LengthValue| v.resolve(viewport, font_size, 16.0);
     let mismatch = || PropertyTypeError {
         property,
         expected: property.metadata().value_kind,
