@@ -8,8 +8,8 @@
 use crate::{Engine, EngineError, NodeHandle};
 use openui_dom::NodeId;
 use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize};
-use openui_layout::{fragmentation::BreakToken, Fragment, ScrollArea};
-use openui_style::{Display, WritingMode};
+use openui_layout::{computed_overflow_pair, fragmentation::BreakToken, Fragment, ScrollArea};
+use openui_style::{Display, Overflow, WritingMode};
 
 fn union(a: PhysicalRect, b: PhysicalRect) -> PhysicalRect {
     let left = a.x().min_of(b.x());
@@ -215,11 +215,30 @@ impl Engine {
             client,
         );
         let content = stitched_overflow(&parts, mode, padding_rect);
-        let scroll = if style.is_scroll_container() {
+        let (computed_x, computed_y) = computed_overflow_pair(style);
+        let computed_block_overflow = if mode == WritingMode::HorizontalTb {
+            computed_y
+        } else {
+            computed_x
+        };
+        // Scrolling ownership belongs to final layout: viewport-propagated
+        // body overflow, table overflow normalization and replaced boxes can
+        // differ from the authored computed-style overflow pair.
+        let scroll = if first
+            .scroll_area
+            .is_some_and(ScrollArea::is_scroll_container)
+        {
             PhysicalSize::new(
                 content.width().max_of(client.width),
                 content.height().max_of(client.height),
             )
+        } else if style.scrollbar_gutter.is_stable() && computed_block_overflow == Overflow::Hidden
+        {
+            // LayoutBox::ScrollWidth/ScrollHeight retain the scrollable
+            // overflow extent for stable hidden block overflow even when the
+            // used layout class cannot scroll (for example a replaced box).
+            // A leading gutter is an origin, not additional overflow height.
+            PhysicalSize::new(content.width(), content.height())
         } else {
             // LayoutBox::ScrollWidth accounts for reversed physical X. Its
             // non-container ScrollHeight deliberately uses physical bottom.
@@ -262,5 +281,242 @@ impl Engine {
             scroll.width.clamp_negative_to_zero().round_i32(),
             scroll.height.clamp_negative_to_zero().round_i32(),
         ])
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::FontCollection;
+    use openui_dom::ElementTag;
+    use openui_geometry::ViewportMetrics;
+    use openui_style::{
+        BoxSizing, Direction, Length, LengthValue, Overflow, RendererStyleValue, ScrollbarGutter,
+        ScrollbarWidth, StyleProperty, StyleValue,
+    };
+
+    fn engine(scale: f64) -> Engine {
+        Engine::new_with_font_collection(
+            ViewportMetrics::from_logical_size(320.0, 240.0, scale).unwrap(),
+            FontCollection::deterministic_test(),
+        )
+        .unwrap()
+    }
+
+    fn sized(engine: &mut Engine, node: NodeHandle, width: f32, height: f32) {
+        engine
+            .set_property(node, StyleProperty::Width, LengthValue::px(width).into())
+            .unwrap();
+        engine
+            .set_property(node, StyleProperty::Height, LengthValue::px(height).into())
+            .unwrap();
+        engine
+            .set_property(
+                node,
+                StyleProperty::BoxSizing,
+                StyleValue::Renderer(RendererStyleValue::BoxSizing(BoxSizing::ContentBox)),
+            )
+            .unwrap();
+    }
+
+    fn dimensions(engine: &mut Engine, node: NodeHandle) -> [i32; 4] {
+        [
+            engine.client_width(node).unwrap(),
+            engine.client_height(node).unwrap(),
+            engine.scroll_width(node).unwrap(),
+            engine.scroll_height(node).unwrap(),
+        ]
+    }
+
+    #[test]
+    fn native_table_dimensions_follow_used_overflow_without_shrinking_cell_tracks() {
+        for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+            let mut engine = engine(scale);
+            let table = engine.create_native_element(ElementTag::Table).unwrap();
+            let row = engine.create_native_element(ElementTag::TableRow).unwrap();
+            let cell = engine.create_native_element(ElementTag::TableCell).unwrap();
+            let root = engine.root();
+            engine.append_child(root, table).unwrap();
+            engine.append_child(table, row).unwrap();
+            engine.append_child(row, cell).unwrap();
+            sized(&mut engine, table, 100.0, 80.0);
+            engine
+                .set_property(
+                    table,
+                    StyleProperty::BorderSpacing,
+                    StyleValue::Renderer(RendererStyleValue::BorderSpacing((
+                        Length::px(0.0),
+                        Length::px(0.0),
+                    ))),
+                )
+                .unwrap();
+            engine
+                .set_property(cell, StyleProperty::Height, LengthValue::px(80.0).into())
+                .unwrap();
+            engine
+                .set_property(
+                    table,
+                    StyleProperty::ScrollbarGutter,
+                    StyleValue::Renderer(RendererStyleValue::ScrollbarGutter(
+                        ScrollbarGutter::Stable,
+                    )),
+                )
+                .unwrap();
+            for overflow in [Overflow::Auto, Overflow::Scroll] {
+                engine
+                    .set_property(table, StyleProperty::Overflow, overflow.into())
+                    .unwrap();
+                assert_eq!(dimensions(&mut engine, table), [100, 80, 100, 80]);
+                engine.scroll_to(table, 1000.0, 1000.0).unwrap();
+                assert_eq!(engine.scroll_offset(table).unwrap(), (0.0, 0.0));
+            }
+            engine
+                .set_property(table, StyleProperty::Overflow, Overflow::Hidden.into())
+                .unwrap();
+            assert_eq!(dimensions(&mut engine, table), [85, 80, 100, 80]);
+            assert_eq!(dimensions(&mut engine, cell), [100, 80, 100, 80]);
+            engine.scroll_to(table, 1000.0, 1000.0).unwrap();
+            assert_eq!(engine.scroll_offset(table).unwrap(), (15.0, 0.0));
+            engine
+                .set_property(table, StyleProperty::OverflowY, Overflow::Auto.into())
+                .unwrap();
+            assert_eq!(dimensions(&mut engine, table), [100, 80, 100, 80]);
+            assert_eq!(engine.scroll_offset(table).unwrap(), (0.0, 0.0));
+        }
+    }
+
+    #[test]
+    fn native_replaced_dimensions_keep_stable_gutters_without_scroll_ownership() {
+        for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+            let mut engine = engine(scale);
+            let image = engine.create_native_element(ElementTag::Image).unwrap();
+            // An image without a resource uses block fallback layout. Keep
+            // this guard on the actual replaced resource layout class.
+            let resource = engine.register_image_resource(
+                "memory:dimensions-pixel.svg",
+                "image/svg+xml",
+                "949c974a51bfed3daa2be2aed981026336857d4cfd494dd120dbb6da66c891f7",
+                br#"<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><rect width="1" height="1" fill="black"/></svg>"#.to_vec(),
+            );
+            engine
+                .set_image_resource(image, resource, Some((1.0, 1.0)))
+                .unwrap();
+            let root = engine.root();
+            engine.append_child(root, image).unwrap();
+            sized(&mut engine, image, 100.0, 80.0);
+            engine
+                .set_property(image, StyleProperty::Overflow, Overflow::Scroll.into())
+                .unwrap();
+            assert_eq!(dimensions(&mut engine, image), [100, 80, 100, 80]);
+            engine
+                .set_property(image, StyleProperty::Overflow, Overflow::Hidden.into())
+                .unwrap();
+            engine
+                .set_property(
+                    image,
+                    StyleProperty::ScrollbarGutter,
+                    StyleValue::Renderer(RendererStyleValue::ScrollbarGutter(
+                        ScrollbarGutter::Stable,
+                    )),
+                )
+                .unwrap();
+            assert_eq!(dimensions(&mut engine, image), [85, 80, 85, 80]);
+            engine
+                .set_property(image, StyleProperty::Direction, Direction::Rtl.into())
+                .unwrap();
+            assert_eq!(dimensions(&mut engine, image), [85, 80, 85, 80]);
+            engine
+                .set_property(
+                    image,
+                    StyleProperty::ScrollbarGutter,
+                    StyleValue::Renderer(RendererStyleValue::ScrollbarGutter(
+                        ScrollbarGutter::StableBothEdges,
+                    )),
+                )
+                .unwrap();
+            assert_eq!(dimensions(&mut engine, image), [70, 80, 70, 80]);
+            engine.scroll_to(image, -1000.0, 1000.0).unwrap();
+            assert_eq!(engine.scroll_offset(image).unwrap(), (0.0, 0.0));
+            engine
+                .set_property(image, StyleProperty::Direction, Direction::Ltr.into())
+                .unwrap();
+            engine
+                .set_property(
+                    image,
+                    StyleProperty::WritingMode,
+                    WritingMode::VerticalRl.into(),
+                )
+                .unwrap();
+            engine
+                .set_property(
+                    image,
+                    StyleProperty::ScrollbarGutter,
+                    StyleValue::Renderer(RendererStyleValue::ScrollbarGutter(
+                        ScrollbarGutter::Stable,
+                    )),
+                )
+                .unwrap();
+            assert_eq!(dimensions(&mut engine, image), [100, 65, 100, 65]);
+            engine
+                .set_property(
+                    image,
+                    StyleProperty::ScrollbarGutter,
+                    StyleValue::Renderer(RendererStyleValue::ScrollbarGutter(
+                        ScrollbarGutter::StableBothEdges,
+                    )),
+                )
+                .unwrap();
+            // The leading 15px gutter must not inflate scrollHeight to 65.
+            assert_eq!(dimensions(&mut engine, image), [100, 50, 100, 50]);
+            engine.scroll_to(image, 1000.0, 1000.0).unwrap();
+            assert_eq!(engine.scroll_offset(image).unwrap(), (0.0, 0.0));
+            engine
+                .set_property(
+                    image,
+                    StyleProperty::ScrollbarWidth,
+                    StyleValue::Renderer(RendererStyleValue::ScrollbarWidth(ScrollbarWidth::None)),
+                )
+                .unwrap();
+            assert_eq!(dimensions(&mut engine, image), [100, 80, 100, 80]);
+            engine.detach(image).unwrap();
+            assert_eq!(dimensions(&mut engine, image), [0; 4]);
+            engine.append_child(root, image).unwrap();
+            assert_eq!(dimensions(&mut engine, image), [100, 80, 100, 80]);
+        }
+    }
+
+    #[test]
+    fn native_body_dimensions_follow_viewport_overflow_propagation_changes() {
+        for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+            let mut engine = engine(scale);
+            let root = engine.root();
+            let html = engine.create_native_element(ElementTag::Html).unwrap();
+            let body = engine.create_native_element(ElementTag::Body).unwrap();
+            let content = engine.create_native_element(ElementTag::Div).unwrap();
+            engine.append_child(root, html).unwrap();
+            engine.append_child(html, body).unwrap();
+            engine.append_child(body, content).unwrap();
+            sized(&mut engine, body, 100.0, 80.0);
+            sized(&mut engine, content, 150.0, 120.0);
+            engine
+                .set_property(body, StyleProperty::Overflow, Overflow::Scroll.into())
+                .unwrap();
+            assert_eq!(dimensions(&mut engine, root), [305, 225, 305, 225]);
+            assert_eq!(dimensions(&mut engine, html), [305, 225, 305, 225]);
+            assert_eq!(dimensions(&mut engine, body), [100, 80, 150, 120]);
+            engine.scroll_to(body, 1000.0, 1000.0).unwrap();
+            assert_eq!(engine.scroll_offset(body).unwrap(), (0.0, 0.0));
+            engine
+                .set_property(html, StyleProperty::Overflow, Overflow::Hidden.into())
+                .unwrap();
+            assert_eq!(dimensions(&mut engine, body), [85, 65, 150, 120]);
+            engine.scroll_to(body, 1000.0, 1000.0).unwrap();
+            assert_eq!(engine.scroll_offset(body).unwrap(), (65.0, 55.0));
+            engine
+                .set_property(html, StyleProperty::Overflow, Overflow::Visible.into())
+                .unwrap();
+            assert_eq!(dimensions(&mut engine, body), [100, 80, 150, 120]);
+            assert_eq!(engine.scroll_offset(body).unwrap(), (0.0, 0.0));
+        }
     }
 }

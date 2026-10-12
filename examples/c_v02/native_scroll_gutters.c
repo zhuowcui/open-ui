@@ -1,4 +1,4 @@
-/* Public C/C++ consumers of the retained flex/grid scrollbar geometry.
+/* Public C/C++ consumers of retained native scrollbar and overflow geometry.
  * Run after the shared layout implementation and runtime ABI gate are built.
  * Logical dimensions must be independent of raster scale. */
 #ifdef NDEBUG
@@ -202,11 +202,152 @@ static void consumer(const char* display, double scale) {
   printf("native C flex/grid scroll gutters: display=%s scale=%g passed\n", display, scale);
 }
 
+static OuiDocument* document_for_scale(double scale, OuiElement** root) {
+  OuiDocumentConfig config = {sizeof(config), OUI_ABI_VERSION,
+    {320.0, 240.0, (uint32_t)(320.0 * scale), (uint32_t)(240.0 * scale),
+     scale, OUI_VIEWPORT_LOGICAL, 0}};
+  OuiDocument* document = NULL;
+  assert(oui_document_create(&config, &document) == OUI_OK);
+  assert(oui_document_root(document, root) == OUI_OK);
+  return document;
+}
+
+static void authored_size(OuiElement* element) {
+  property(element, OUI_STYLE_PROPERTY_WIDTH, "100px");
+  property(element, OUI_STYLE_PROPERTY_HEIGHT, "80px");
+  property(element, OUI_STYLE_PROPERTY_BOX_SIZING, "content-box");
+}
+
+static void table_consumer(double scale) {
+  OuiElement *root = NULL, *table = NULL, *row = NULL, *cell = NULL;
+  OuiDocument* document = document_for_scale(scale, &root);
+  assert(oui_element_create(document, OUI_ELEMENT_TABLE, &table) == OUI_OK);
+  assert(oui_element_create(document, OUI_ELEMENT_TABLE_ROW, &row) == OUI_OK);
+  assert(oui_element_create(document, OUI_ELEMENT_TABLE_CELL, &cell) == OUI_OK);
+  assert(oui_element_append_child(root, table) == OUI_OK);
+  assert(oui_element_append_child(table, row) == OUI_OK);
+  assert(oui_element_append_child(row, cell) == OUI_OK);
+  authored_size(table);
+  property(table, OUI_STYLE_PROPERTY_BORDER_SPACING, "0px");
+  property(cell, OUI_STYLE_PROPERTY_HEIGHT, "80px");
+  property(table, OUI_STYLE_PROPERTY_SCROLLBAR_GUTTER, "stable");
+  const char* overflow[] = {"auto", "scroll"};
+  for (size_t i = 0; i < sizeof(overflow) / sizeof(overflow[0]); ++i) {
+    property(table, OUI_STYLE_PROPERTY_OVERFLOW, overflow[i]);
+    dimensions(table, 100, 80, 100, 80);
+    assert(oui_element_scroll_to(table, 1000.0, 1000.0) == OUI_OK);
+    offset(table, 0.0, 0.0);
+  }
+  /* Hidden/hidden keeps table scrolling; columns retain authored grid width. */
+  property(table, OUI_STYLE_PROPERTY_OVERFLOW, "hidden");
+  dimensions(table, 85, 80, 100, 80);
+  dimensions(cell, 100, 80, 100, 80);
+  size(table, 100.0f, 80.0f);
+  assert(oui_element_scroll_to(table, 1000.0, 1000.0) == OUI_OK);
+  offset(table, 15.0, 0.0);
+  /* A mixed hidden/auto table normalizes both axes to visible. */
+  property(table, OUI_STYLE_PROPERTY_OVERFLOW_Y, "auto");
+  dimensions(table, 100, 80, 100, 80);
+  offset(table, 0.0, 0.0);
+  assert(oui_element_destroy(cell) == OUI_OK);
+  assert(oui_element_destroy(row) == OUI_OK);
+  assert(oui_element_destroy(table) == OUI_OK);
+  assert(oui_element_destroy(root) == OUI_OK);
+  assert(oui_document_destroy(document) == OUI_OK);
+  printf("native C table scroll dimensions: scale=%g passed\n", scale);
+}
+
+static void replaced_consumer(double scale) {
+  OuiElement *root = NULL, *image = NULL;
+  OuiResource* resource = NULL;
+  OuiDocument* document = document_for_scale(scale, &root);
+  assert(oui_element_create(document, OUI_ELEMENT_IMAGE, &image) == OUI_OK);
+  /* A missing image uses block fallback layout. Install actual primary content. */
+  const char svg[] = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1\" height=\"1\">"
+                     "<rect width=\"1\" height=\"1\" fill=\"black\"/></svg>";
+  assert(oui_document_register_image(document, utf8("memory:dimensions-pixel.svg"),
+      utf8("image/svg+xml"),
+      utf8("949c974a51bfed3daa2be2aed981026336857d4cfd494dd120dbb6da66c891f7"),
+      (const uint8_t*)svg, sizeof(svg) - 1, &resource) == OUI_OK);
+  assert(oui_element_set_image(image, resource, 1.0f, 1.0f) == OUI_OK);
+  assert(oui_element_append_child(root, image) == OUI_OK);
+  authored_size(image);
+  property(image, OUI_STYLE_PROPERTY_OVERFLOW, "scroll");
+  dimensions(image, 100, 80, 100, 80);
+  property(image, OUI_STYLE_PROPERTY_OVERFLOW, "hidden");
+  property(image, OUI_STYLE_PROPERTY_SCROLLBAR_GUTTER, "stable");
+  dimensions(image, 85, 80, 85, 80);
+  size(image, 100.0f, 80.0f);
+  property(image, OUI_STYLE_PROPERTY_DIRECTION, "rtl");
+  dimensions(image, 85, 80, 85, 80);
+  property(image, OUI_STYLE_PROPERTY_SCROLLBAR_GUTTER, "stable both-edges");
+  dimensions(image, 70, 80, 70, 80);
+  assert(oui_element_scroll_to(image, -1000.0, 1000.0) == OUI_OK);
+  offset(image, 0.0, 0.0);
+  property(image, OUI_STYLE_PROPERTY_DIRECTION, "ltr");
+  property(image, OUI_STYLE_PROPERTY_WRITING_MODE, "vertical-rl");
+  property(image, OUI_STYLE_PROPERTY_SCROLLBAR_GUTTER, "stable");
+  dimensions(image, 100, 65, 100, 65);
+  property(image, OUI_STYLE_PROPERTY_SCROLLBAR_GUTTER, "stable both-edges");
+  /* The leading gutter is not additional scroll height: content is 50px high. */
+  dimensions(image, 100, 50, 100, 50);
+  assert(oui_element_scroll_to(image, 1000.0, 1000.0) == OUI_OK);
+  offset(image, 0.0, 0.0);
+  property(image, OUI_STYLE_PROPERTY_SCROLLBAR_WIDTH, "none");
+  dimensions(image, 100, 80, 100, 80);
+  assert(oui_element_detach(image) == OUI_OK);
+  dimensions(image, 0, 0, 0, 0);
+  assert(oui_element_append_child(root, image) == OUI_OK);
+  dimensions(image, 100, 80, 100, 80);
+  assert(oui_element_destroy(image) == OUI_OK);
+  assert(oui_resource_destroy(resource) == OUI_OK);
+  assert(oui_element_destroy(root) == OUI_OK);
+  assert(oui_document_destroy(document) == OUI_OK);
+  printf("native C replaced scroll dimensions: scale=%g passed\n", scale);
+}
+
+static void body_consumer(double scale) {
+  OuiElement *root = NULL, *html = NULL, *body = NULL, *content = NULL;
+  OuiDocument* document = document_for_scale(scale, &root);
+  assert(oui_element_create(document, OUI_ELEMENT_HTML, &html) == OUI_OK);
+  assert(oui_element_create(document, OUI_ELEMENT_BODY, &body) == OUI_OK);
+  assert(oui_element_create(document, OUI_ELEMENT_DIV, &content) == OUI_OK);
+  assert(oui_element_append_child(root, html) == OUI_OK);
+  assert(oui_element_append_child(html, body) == OUI_OK);
+  assert(oui_element_append_child(body, content) == OUI_OK);
+  authored_size(body);
+  property(content, OUI_STYLE_PROPERTY_WIDTH, "150px");
+  property(content, OUI_STYLE_PROPERTY_HEIGHT, "120px");
+  property(body, OUI_STYLE_PROPERTY_OVERFLOW, "scroll");
+  dimensions(root, 305, 225, 305, 225);
+  dimensions(html, 305, 225, 305, 225);
+  dimensions(body, 100, 80, 150, 120);
+  assert(oui_element_scroll_to(body, 1000.0, 1000.0) == OUI_OK);
+  offset(body, 0.0, 0.0);
+  /* Disabling propagation transfers actual scroll ownership to the body. */
+  property(html, OUI_STYLE_PROPERTY_OVERFLOW, "hidden");
+  dimensions(body, 85, 65, 150, 120);
+  assert(oui_element_scroll_to(body, 1000.0, 1000.0) == OUI_OK);
+  offset(body, 65.0, 55.0);
+  property(html, OUI_STYLE_PROPERTY_OVERFLOW, "visible");
+  dimensions(body, 100, 80, 150, 120);
+  offset(body, 0.0, 0.0);
+  assert(oui_element_destroy(content) == OUI_OK);
+  assert(oui_element_destroy(body) == OUI_OK);
+  assert(oui_element_destroy(html) == OUI_OK);
+  assert(oui_element_destroy(root) == OUI_OK);
+  assert(oui_document_destroy(document) == OUI_OK);
+  printf("native C body scroll dimensions: scale=%g passed\n", scale);
+}
+
 int main(void) {
   const double scales[] = {1.0, 1.25, 1.5, 1.75, 2.0};
   for (size_t i = 0; i < sizeof(scales) / sizeof(scales[0]); ++i) {
     consumer("flex", scales[i]);
     consumer("grid", scales[i]);
+    table_consumer(scales[i]);
+    replaced_consumer(scales[i]);
+    body_consumer(scales[i]);
   }
   return 0;
 }
