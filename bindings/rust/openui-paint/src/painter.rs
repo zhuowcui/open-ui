@@ -24797,48 +24797,57 @@ mod tests {
 
     #[test]
     fn rounded_overflow_clip_leaves_visible_axis_unbounded() {
-        let mut doc = Document::new();
-        let parent = doc.create_node(openui_dom::ElementTag::Div);
-        doc.update_resolved_style(parent, |parent_style| {
-            parent_style.overflow_x = Overflow::Clip;
-            parent_style.overflow_y = Overflow::Visible;
-            parent_style.border_top_left_radius = (8.0, 8.0);
-            parent_style.border_top_right_radius = (8.0, 8.0);
-            parent_style.border_bottom_right_radius = (8.0, 8.0);
-            parent_style.border_bottom_left_radius = (8.0, 8.0);
-        });
-        doc.append_child(doc.root(), parent);
-        let child = doc.create_node(openui_dom::ElementTag::Div);
-        doc.update_resolved_style(child, |style| {
-            style.background_color = Color::from_rgba8(0, 128, 0, 255)
-        });
-        doc.append_child(parent, child);
+        for display in [openui_style::Display::Block, openui_style::Display::Inline] {
+            let mut doc = Document::new();
+            let parent = doc.create_node(openui_dom::ElementTag::Div);
+            doc.update_resolved_style(parent, |parent_style| {
+                parent_style.display = display;
+                parent_style.overflow_x = Overflow::Clip;
+                parent_style.overflow_y = Overflow::Visible;
+                parent_style.border_top_left_radius = (8.0, 8.0);
+                parent_style.border_top_right_radius = (8.0, 8.0);
+                parent_style.border_bottom_right_radius = (8.0, 8.0);
+                parent_style.border_bottom_left_radius = (8.0, 8.0);
+            });
+            doc.append_child(doc.root(), parent);
+            let child = doc.create_node(openui_dom::ElementTag::Div);
+            doc.update_resolved_style(child, |style| {
+                style.background_color = Color::from_rgba8(0, 128, 0, 255)
+            });
+            doc.append_child(parent, child);
 
-        let mut parent_fragment = Fragment::new_box(
-            parent,
-            PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(20)),
-        );
-        parent_fragment.offset =
-            PhysicalOffset::new(LayoutUnit::from_i32(5), LayoutUnit::from_i32(5));
-        parent_fragment.children.push(Fragment::new_box(
-            child,
-            PhysicalSize::new(LayoutUnit::from_i32(30), LayoutUnit::from_i32(35)),
-        ));
-        let mut surface = surfaces::raster_n32_premul((45, 45)).expect("surface");
-        surface.canvas().clear(skia_safe::Color::WHITE);
-        let save_count = surface.canvas().save_count();
-        paint_fragment_tracked(
-            surface.canvas(),
-            &parent_fragment,
-            &doc,
-            PhysicalOffset::zero(),
-        );
-        assert_eq!(surface.canvas().save_count(), save_count);
+            let mut parent_fragment = Fragment::new_box(
+                parent,
+                PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(20)),
+            );
+            parent_fragment.is_inline_box_fragment = display == openui_style::Display::Inline;
+            parent_fragment.offset =
+                PhysicalOffset::new(LayoutUnit::from_i32(5), LayoutUnit::from_i32(5));
+            parent_fragment.children.push(Fragment::new_box(
+                child,
+                PhysicalSize::new(LayoutUnit::from_i32(30), LayoutUnit::from_i32(35)),
+            ));
+            let mut surface = surfaces::raster_n32_premul((45, 45)).expect("surface");
+            surface.canvas().clear(skia_safe::Color::WHITE);
+            let save_count = surface.canvas().save_count();
+            paint_fragment_tracked(
+                surface.canvas(),
+                &parent_fragment,
+                &doc,
+                PhysicalOffset::zero(),
+            );
+            assert_eq!(surface.canvas().save_count(), save_count);
 
-        let pixels = surface_bytes(&mut surface);
-        let pixel = |x: usize, y: usize| &pixels[(y * 45 + x) * 4..][..4];
-        assert_eq!(pixel(15, 30), [0, 128, 0, 255]);
-        assert_eq!(pixel(30, 15), [255, 255, 255, 255]);
+            let pixels = surface_bytes(&mut surface);
+            let pixel = |x: usize, y: usize| &pixels[(y * 45 + x) * 4..][..4];
+            assert_eq!(pixel(15, 30), [0, 128, 0, 255]);
+            if display == openui_style::Display::Block {
+                assert_eq!(pixel(30, 15), [255, 255, 255, 255]);
+            } else {
+                // A non-atomic inline does not establish a CSS overflow clip.
+                assert_eq!(pixel(30, 15), [0, 128, 0, 255]);
+            }
+        }
     }
 
     #[test]

@@ -415,3 +415,88 @@ fn a_flex_assigned_grid_height_controls_percentage_rows_after_gutter_reservation
     assert_eq!(dimensions(&mut engine, container), [85, 145, 85, 145]);
     assert_eq!(size(&mut engine, child), (85.0, 145.0));
 }
+
+#[test]
+fn gutter_and_width_style_mutations_rebuild_retained_geometry_once() {
+    for display in [Display::Block, Display::Flex, Display::Grid] {
+        for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+            let (mut engine, container, child) = fixture(display, scale);
+            engine
+                .set_property(container, StyleProperty::Overflow, Overflow::Hidden.into())
+                .unwrap();
+            assert_eq!(dimensions(&mut engine, container), [100, 80, 100, 80]);
+            for (gutter, client) in [
+                (ScrollbarGutter::Stable, (85, 80)),
+                (ScrollbarGutter::StableBothEdges, (70, 80)),
+                (ScrollbarGutter::Auto, (100, 80)),
+            ] {
+                let before = engine.stats();
+                renderer(
+                    &mut engine,
+                    container,
+                    StyleProperty::ScrollbarGutter,
+                    RendererStyleValue::ScrollbarGutter(gutter),
+                );
+                assert_eq!(
+                    dimensions(&mut engine, container),
+                    [client.0, client.1, client.0, client.1]
+                );
+                assert_eq!(size(&mut engine, container), (100.0, 80.0));
+                assert_eq!(size(&mut engine, child), (client.0 as f32, client.1 as f32));
+                assert!(engine.stats().layouts > before.layouts);
+                let scene = engine.scene().unwrap();
+                let settled = engine.stats();
+                renderer(
+                    &mut engine,
+                    container,
+                    StyleProperty::ScrollbarGutter,
+                    RendererStyleValue::ScrollbarGutter(gutter),
+                );
+                assert_eq!(
+                    dimensions(&mut engine, container),
+                    [client.0, client.1, client.0, client.1]
+                );
+                assert_eq!(engine.scene().unwrap().generation(), scene.generation());
+                assert_eq!(engine.stats(), settled);
+            }
+            engine
+                .set_property(container, StyleProperty::Overflow, Overflow::Scroll.into())
+                .unwrap();
+            assert_eq!(dimensions(&mut engine, container), [85, 65, 85, 65]);
+            for (width, client) in [
+                (ScrollbarWidth::Thin, (90, 70)),
+                (ScrollbarWidth::None, (100, 80)),
+                (ScrollbarWidth::Auto, (85, 65)),
+            ] {
+                let before = engine.stats();
+                renderer(
+                    &mut engine,
+                    container,
+                    StyleProperty::ScrollbarWidth,
+                    RendererStyleValue::ScrollbarWidth(width),
+                );
+                assert_eq!(
+                    dimensions(&mut engine, container),
+                    [client.0, client.1, client.0, client.1]
+                );
+                assert_eq!(size(&mut engine, container), (100.0, 80.0));
+                assert_eq!(size(&mut engine, child), (client.0 as f32, client.1 as f32));
+                assert!(engine.stats().layouts > before.layouts);
+                let scene = engine.scene().unwrap();
+                let settled = engine.stats();
+                renderer(
+                    &mut engine,
+                    container,
+                    StyleProperty::ScrollbarWidth,
+                    RendererStyleValue::ScrollbarWidth(width),
+                );
+                assert_eq!(
+                    dimensions(&mut engine, container),
+                    [client.0, client.1, client.0, client.1]
+                );
+                assert_eq!(engine.scene().unwrap().generation(), scene.generation());
+                assert_eq!(engine.stats(), settled);
+            }
+        }
+    }
+}

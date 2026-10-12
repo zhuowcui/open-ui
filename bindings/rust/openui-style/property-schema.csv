@@ -211,9 +211,9 @@ id,rust_name,css_name,rust_type,value_kind,initial,inherited,invalidation,interp
 210,ScrollMarkerGroup,scroll-marker-group,ScrollMarkerGroup,compound,renderer-initial,false,layout,discrete,scroll_marker_group
 211,ScrollSnapAlign,scroll-snap-align,ScrollSnapAlign,compound,renderer-initial,false,layout,discrete,scroll_snap_align
 212,ScrollSnapAxis,scroll-snap-axis,ScrollSnapAxis,compound,renderer-initial,false,layout,discrete,scroll_snap_axis
-213,ScrollbarGutter,scrollbar-gutter,ScrollbarGutter,compound,renderer-initial,false,paint,discrete,scrollbar_gutter
+213,ScrollbarGutter,scrollbar-gutter,ScrollbarGutter,compound,renderer-initial,false,layout,discrete,scrollbar_gutter
 214,ScrollbarTrackColor,scrollbar-track-color,Option<Color>,color,renderer-initial,false,paint,color,scrollbar_track_color
-215,ScrollbarWidth,scrollbar-width,ScrollbarWidth,compound,renderer-initial,false,paint,discrete,scrollbar_width
+215,ScrollbarWidth,scrollbar-width,ScrollbarWidth,compound,renderer-initial,false,layout,discrete,scrollbar_width
 216,TableLayout,table-layout,TableLayout,compound,renderer-initial,false,layout,discrete,table_layout
 217,Top,top,Length,length,renderer-initial,false,layout,length,top
 218,TransformOrigin,transform-origin,"(Length, Length)",compound,renderer-initial,false,composite,discrete,transform_origin

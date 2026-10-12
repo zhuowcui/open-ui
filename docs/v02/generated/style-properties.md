@@ -215,9 +215,9 @@
 | 210 | `scroll-marker-group` | `scroll_marker_group` | `ScrollMarkerGroup` | `renderer-initial` | false | layout | discrete |
 | 211 | `scroll-snap-align` | `scroll_snap_align` | `ScrollSnapAlign` | `renderer-initial` | false | layout | discrete |
 | 212 | `scroll-snap-axis` | `scroll_snap_axis` | `ScrollSnapAxis` | `renderer-initial` | false | layout | discrete |
-| 213 | `scrollbar-gutter` | `scrollbar_gutter` | `ScrollbarGutter` | `renderer-initial` | false | paint | discrete |
+| 213 | `scrollbar-gutter` | `scrollbar_gutter` | `ScrollbarGutter` | `renderer-initial` | false | layout | discrete |
 | 214 | `scrollbar-track-color` | `scrollbar_track_color` | `Option<Color>` | `renderer-initial` | false | paint | color |
-| 215 | `scrollbar-width` | `scrollbar_width` | `ScrollbarWidth` | `renderer-initial` | false | paint | discrete |
+| 215 | `scrollbar-width` | `scrollbar_width` | `ScrollbarWidth` | `renderer-initial` | false | layout | discrete |
 | 216 | `table-layout` | `table_layout` | `TableLayout` | `renderer-initial` | false | layout | discrete |
 | 217 | `top` | `top` | `Length` | `renderer-initial` | false | layout | length |
 | 218 | `transform-origin` | `transform_origin` | `(Length, Length)` | `renderer-initial` | false | composite | discrete |

@@ -549,8 +549,9 @@ mod tests {
         }
     }
 
-    #[test]
-    fn reveal_outer_geometry_uses_the_inner_snapped_endpoint() {
+    fn snap_corridor_fixture(
+        candidate_height: f32,
+    ) -> (Engine, NodeHandle, NodeHandle, NodeHandle) {
         let (mut engine, outer, inner, target) = nested();
         engine
             .set_property(inner, StyleProperty::Width, LengthValue::px(100.0).into())
@@ -560,7 +561,7 @@ mod tests {
             .unwrap();
         let _tail = box_node(&mut engine, inner, 400.0, 300.0);
         for left in [0.0, 200.0] {
-            let candidate = box_node(&mut engine, inner, 10.0, 10.0);
+            let candidate = box_node(&mut engine, inner, 10.0, candidate_height);
             engine
                 .set_property(
                     candidate,
@@ -608,9 +609,28 @@ mod tests {
                 ),
             )
             .unwrap();
+        (engine, outer, inner, target)
+    }
+
+    #[test]
+    fn reveal_outer_geometry_uses_the_inner_snapped_endpoint() {
+        // Both X snap areas span the content's Y corridor, so they remain
+        // eligible after revealing the target at Y=40. Pinned Chromium .50
+        // SnapSearchResult::visible_range requires this mutual visibility.
+        let (mut engine, outer, inner, target) = snap_corridor_fixture(300.0);
         engine.scroll_into_view(target, nearest()).unwrap();
         assert_eq!(engine.scroll_offset(inner).unwrap().0, 0.0);
         assert_eq!(engine.scroll_offset(outer).unwrap().0, 70.0);
+    }
+
+    #[test]
+    fn reveal_does_not_select_snap_areas_outside_its_cross_axis_corridor() {
+        // The original 10px-high areas end at Y=10. Reveal's Y=40 endpoint
+        // cannot select those X areas, even with mandatory X snapping.
+        let (mut engine, outer, inner, target) = snap_corridor_fixture(10.0);
+        engine.scroll_into_view(target, nearest()).unwrap();
+        assert_eq!(engine.scroll_offset(inner).unwrap(), (70.0, 40.0));
+        assert_eq!(engine.scroll_offset(outer).unwrap(), (0.0, 220.0));
     }
 
     #[test]

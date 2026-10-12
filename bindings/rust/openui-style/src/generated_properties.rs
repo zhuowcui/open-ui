@@ -4451,7 +4451,7 @@ pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
         value_kind: ValueKind::Compound,
         initial: "renderer-initial",
         inherited: false,
-        invalidation: InvalidationClass::Paint,
+        invalidation: InvalidationClass::Layout,
         interpolation: InterpolationKind::Discrete,
     },
     PropertyMetadata {
@@ -4471,7 +4471,7 @@ pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
         value_kind: ValueKind::Compound,
         initial: "renderer-initial",
         inherited: false,
-        invalidation: InvalidationClass::Paint,
+        invalidation: InvalidationClass::Layout,
         interpolation: InterpolationKind::Discrete,
     },
     PropertyMetadata {
