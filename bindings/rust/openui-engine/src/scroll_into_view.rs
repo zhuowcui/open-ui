@@ -2,7 +2,9 @@
 
 use crate::{Affine, Engine, EngineError, NodeHandle, ScrollAnimationId};
 use openui_compositor::SceneRect;
-use openui_style::{Direction, Overflow, WritingMode};
+use openui_dom::NodeId;
+use openui_layout::{Fragment, ScrollArea};
+use openui_style::{Direction, Display, Position, WritingMode};
 
 /// Alignment along a logical writing axis.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -18,7 +20,7 @@ mod tests {
     use super::*;
     use crate::{AccessibilityAction, ViewportMetrics};
     use openui_dom::ElementTag;
-    use openui_style::{LengthValue, Position, ScrollbarWidth, StyleProperty};
+    use openui_style::{LengthValue, Overflow, ScrollbarWidth, StyleProperty};
 
     fn box_node(engine: &mut Engine, parent: NodeHandle, width: f32, height: f32) -> NodeHandle {
         let node = engine.create_native_element(ElementTag::Div).unwrap();
@@ -200,6 +202,559 @@ mod tests {
         engine.remove(target).unwrap();
         assert!(engine.scroll_into_view(target, nearest()).is_err());
     }
+    fn insets_fixture() -> (Engine, NodeHandle, NodeHandle) {
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(320.0, 240.0, 1.0).unwrap()).unwrap();
+        let root = engine.root();
+        let port = box_node(&mut engine, root, 100.0, 80.0);
+        engine
+            .set_property(port, StyleProperty::Overflow, Overflow::Hidden.into())
+            .unwrap();
+        let target = box_node(&mut engine, port, 20.0, 20.0);
+        for (node, property, value) in [
+            (target, StyleProperty::MarginLeft, 150.0),
+            (target, StyleProperty::MarginTop, 120.0),
+            (target, StyleProperty::ScrollMarginLeft, 10.0),
+            (target, StyleProperty::ScrollMarginTop, 15.0),
+            (port, StyleProperty::ScrollPaddingLeft, 20.0),
+            (port, StyleProperty::ScrollPaddingTop, 25.0),
+        ] {
+            engine
+                .set_property(node, property, LengthValue::px(value).into())
+                .unwrap();
+        }
+        // Leave enough reachable content for start alignment to avoid clamping.
+        let _tail = box_node(&mut engine, port, 400.0, 300.0);
+        (engine, port, target)
+    }
+
+    fn absolute_target(engine: &mut Engine, port: NodeHandle, target: NodeHandle) {
+        engine
+            .set_property(port, StyleProperty::Position, Position::Relative.into())
+            .unwrap();
+        engine
+            .set_property(target, StyleProperty::Position, Position::Absolute.into())
+            .unwrap();
+        for (property, value) in [
+            (StyleProperty::Left, 150.0),
+            (StyleProperty::Top, 120.0),
+            (StyleProperty::MarginLeft, 0.0),
+            (StyleProperty::MarginTop, 0.0),
+        ] {
+            engine
+                .set_property(target, property, LengthValue::px(value).into())
+                .unwrap();
+        }
+    }
+
+    #[test]
+    fn reveal_start_uses_native_margin_and_padding_with_border_and_transform() {
+        for transformed in [false, true] {
+            let (mut engine, port, target) = insets_fixture();
+            engine
+                .set_property(
+                    port,
+                    StyleProperty::Border,
+                    openui_style::Border {
+                        width: 4.0,
+                        style: openui_style::BorderStyle::Solid,
+                        color: openui_style::Color::BLACK,
+                    }
+                    .into(),
+                )
+                .unwrap();
+            if transformed {
+                engine
+                    .set_property(
+                        port,
+                        StyleProperty::Transform,
+                        openui_style::TransformList(vec![
+                            openui_style::TransformOperation::Translate(
+                                LengthValue::px(17.0),
+                                LengthValue::px(9.0),
+                            ),
+                            openui_style::TransformOperation::Scale(1.25, 1.5),
+                        ])
+                        .into(),
+                    )
+                    .unwrap();
+            }
+            engine
+                .scroll_into_view(
+                    target,
+                    ScrollIntoViewOptions {
+                        block: ScrollAlignment::Start,
+                        inline: ScrollAlignment::Start,
+                        ..Default::default()
+                    },
+                )
+                .unwrap();
+            assert_eq!(engine.scroll_offset(port).unwrap(), (120.0, 80.0));
+        }
+    }
+
+    #[test]
+    fn reveal_nearest_and_accessibility_share_insets_and_minimum_move() {
+        for accessibility in [false, true] {
+            let (mut engine, port, target) = insets_fixture();
+            for (node, property, value) in [
+                (port, StyleProperty::ScrollPaddingRight, 5.0),
+                (port, StyleProperty::ScrollPaddingBottom, 10.0),
+                (target, StyleProperty::ScrollMarginRight, 9.0),
+                (target, StyleProperty::ScrollMarginBottom, 7.0),
+            ] {
+                engine
+                    .set_property(node, property, LengthValue::px(value).into())
+                    .unwrap();
+            }
+            if accessibility {
+                engine
+                    .perform_accessibility_action(target, AccessibilityAction::ScrollIntoView)
+                    .unwrap();
+            } else {
+                engine.scroll_into_view(target, nearest()).unwrap();
+            }
+            assert_eq!(engine.scroll_offset(port).unwrap(), (84.0, 77.0));
+            let generation = engine.scene().unwrap().generation();
+            let stats = engine.stats();
+            engine.scroll_into_view(target, nearest()).unwrap();
+            assert_eq!(generation, engine.scene().unwrap().generation());
+            assert_eq!(stats, engine.stats());
+        }
+    }
+
+    #[test]
+    fn reveal_percentage_padding_and_degenerate_snapport_keep_layout_unit_policy() {
+        let (mut engine, port, target) = insets_fixture();
+        engine
+            .set_property(
+                port,
+                StyleProperty::ScrollPaddingLeft,
+                LengthValue::percent(20.0).into(),
+            )
+            .unwrap();
+        engine
+            .scroll_into_view(
+                target,
+                ScrollIntoViewOptions {
+                    block: ScrollAlignment::Start,
+                    inline: ScrollAlignment::Start,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        assert_eq!(engine.scroll_offset(port).unwrap().0, 120.0);
+        engine.scroll_to(port, 0.0, 0.0).unwrap();
+        for property in [
+            StyleProperty::ScrollPaddingLeft,
+            StyleProperty::ScrollPaddingRight,
+        ] {
+            engine
+                .set_property(port, property, LengthValue::px(80.0).into())
+                .unwrap();
+        }
+        engine
+            .scroll_into_view(
+                target,
+                ScrollIntoViewOptions {
+                    block: ScrollAlignment::Start,
+                    inline: ScrollAlignment::Center,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        assert_eq!(engine.scroll_offset(port).unwrap().0, 75.0);
+    }
+
+    #[test]
+    fn reveal_negative_margin_and_logical_end_use_physical_insets() {
+        let (mut engine, port, target) = insets_fixture();
+        absolute_target(&mut engine, port, target);
+        engine
+            .set_property(
+                target,
+                StyleProperty::ScrollMarginLeft,
+                LengthValue::px(-5.0).into(),
+            )
+            .unwrap();
+        engine
+            .scroll_into_view(
+                target,
+                ScrollIntoViewOptions {
+                    block: ScrollAlignment::Start,
+                    inline: ScrollAlignment::Start,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        assert_eq!(engine.scroll_offset(port).unwrap().0, 135.0);
+        engine.scroll_to(port, 0.0, 0.0).unwrap();
+        engine
+            .set_property(target, StyleProperty::Direction, Direction::Rtl.into())
+            .unwrap();
+        engine
+            .set_property(
+                target,
+                StyleProperty::ScrollMarginRight,
+                LengthValue::px(9.0).into(),
+            )
+            .unwrap();
+        engine
+            .set_property(
+                port,
+                StyleProperty::ScrollPaddingRight,
+                LengthValue::px(5.0).into(),
+            )
+            .unwrap();
+        engine
+            .scroll_into_view(
+                target,
+                ScrollIntoViewOptions {
+                    block: ScrollAlignment::Start,
+                    inline: ScrollAlignment::Start,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        assert_eq!(engine.scroll_offset(port).unwrap().0, 84.0);
+    }
+
+    #[test]
+    fn reveal_logical_alignment_uses_target_writing_mode_and_direction() {
+        for (mode, direction, expected) in [
+            (WritingMode::VerticalRl, Direction::Ltr, (84.0, 80.0)),
+            (WritingMode::VerticalLr, Direction::Ltr, (120.0, 80.0)),
+            (WritingMode::SidewaysLr, Direction::Ltr, (120.0, 77.0)),
+            (WritingMode::VerticalRl, Direction::Rtl, (84.0, 77.0)),
+        ] {
+            let (mut engine, port, target) = insets_fixture();
+            absolute_target(&mut engine, port, target);
+            engine
+                .set_property(
+                    target,
+                    StyleProperty::WritingMode,
+                    openui_style::StyleValue::Renderer(
+                        openui_style::RendererStyleValue::WritingMode(mode),
+                    ),
+                )
+                .unwrap();
+            engine
+                .set_property(target, StyleProperty::Direction, direction.into())
+                .unwrap();
+            engine
+                .set_property(
+                    target,
+                    StyleProperty::ScrollMarginRight,
+                    LengthValue::px(9.0).into(),
+                )
+                .unwrap();
+            engine
+                .set_property(
+                    target,
+                    StyleProperty::ScrollMarginBottom,
+                    LengthValue::px(7.0).into(),
+                )
+                .unwrap();
+            engine
+                .set_property(
+                    port,
+                    StyleProperty::ScrollPaddingRight,
+                    LengthValue::px(5.0).into(),
+                )
+                .unwrap();
+            engine
+                .set_property(
+                    port,
+                    StyleProperty::ScrollPaddingBottom,
+                    LengthValue::px(10.0).into(),
+                )
+                .unwrap();
+            engine
+                .scroll_into_view(
+                    target,
+                    ScrollIntoViewOptions {
+                        block: ScrollAlignment::Start,
+                        inline: ScrollAlignment::Start,
+                        ..Default::default()
+                    },
+                )
+                .unwrap();
+            assert_eq!(engine.scroll_offset(port).unwrap(), expected);
+        }
+    }
+
+    #[test]
+    fn reveal_outer_geometry_uses_the_inner_snapped_endpoint() {
+        let (mut engine, outer, inner, target) = nested();
+        engine
+            .set_property(inner, StyleProperty::Width, LengthValue::px(100.0).into())
+            .unwrap();
+        engine
+            .set_property(inner, StyleProperty::Position, Position::Relative.into())
+            .unwrap();
+        let _tail = box_node(&mut engine, inner, 400.0, 300.0);
+        for left in [0.0, 200.0] {
+            let candidate = box_node(&mut engine, inner, 10.0, 10.0);
+            engine
+                .set_property(
+                    candidate,
+                    StyleProperty::Position,
+                    Position::Absolute.into(),
+                )
+                .unwrap();
+            engine
+                .set_property(candidate, StyleProperty::Left, LengthValue::px(left).into())
+                .unwrap();
+            engine
+                .set_property(candidate, StyleProperty::Top, LengthValue::px(0.0).into())
+                .unwrap();
+            engine
+                .set_property(
+                    candidate,
+                    StyleProperty::ScrollSnapAlign,
+                    openui_style::StyleValue::Renderer(
+                        openui_style::RendererStyleValue::ScrollSnapAlign(
+                            openui_style::ScrollSnapAlign::Start,
+                        ),
+                    ),
+                )
+                .unwrap();
+        }
+        engine
+            .set_property(
+                inner,
+                StyleProperty::ScrollSnapAxis,
+                openui_style::StyleValue::Renderer(
+                    openui_style::RendererStyleValue::ScrollSnapAxis(
+                        openui_style::ScrollSnapAxis::X,
+                    ),
+                ),
+            )
+            .unwrap();
+        engine
+            .set_property(
+                inner,
+                StyleProperty::ScrollSnapStrictness,
+                openui_style::StyleValue::Renderer(
+                    openui_style::RendererStyleValue::ScrollSnapStrictness(
+                        openui_style::ScrollSnapStrictness::Mandatory,
+                    ),
+                ),
+            )
+            .unwrap();
+        engine.scroll_into_view(target, nearest()).unwrap();
+        assert_eq!(engine.scroll_offset(inner).unwrap().0, 0.0);
+        assert_eq!(engine.scroll_offset(outer).unwrap().0, 70.0);
+    }
+
+    #[test]
+    fn reveal_nested_margin_survives_bubbling_and_padding_does_not_clip_target() {
+        let (mut engine, outer, inner, target) = nested();
+        let _tail = box_node(&mut engine, inner, 200.0, 300.0);
+        for (node, property, value) in [
+            (inner, StyleProperty::ScrollPaddingBottom, 15.0),
+            (outer, StyleProperty::ScrollPaddingBottom, 10.0),
+            (target, StyleProperty::ScrollMarginBottom, 7.0),
+        ] {
+            engine
+                .set_property(node, property, LengthValue::px(value).into())
+                .unwrap();
+        }
+        engine.scroll_into_view(target, nearest()).unwrap();
+        assert_eq!(engine.scroll_offset(inner).unwrap().1, 62.0);
+        assert_eq!(engine.scroll_offset(outer).unwrap().1, 215.0);
+    }
+
+    #[test]
+    fn reveal_viewport_uses_retained_client_and_native_insets() {
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(100.0, 80.0, 1.0).unwrap()).unwrap();
+        let root = engine.root();
+        engine
+            .set_property(
+                root,
+                StyleProperty::ScrollbarWidth,
+                openui_style::StyleValue::Renderer(
+                    openui_style::RendererStyleValue::ScrollbarWidth(ScrollbarWidth::None),
+                ),
+            )
+            .unwrap();
+        engine
+            .set_property(root, StyleProperty::Overflow, Overflow::Hidden.into())
+            .unwrap();
+        let target = box_node(&mut engine, root, 20.0, 20.0);
+        absolute_target(&mut engine, root, target);
+        let _tail = box_node(&mut engine, root, 400.0, 500.0);
+        for (node, property, value) in [
+            (root, StyleProperty::ScrollPaddingLeft, 20.0),
+            (root, StyleProperty::ScrollPaddingTop, 25.0),
+            (target, StyleProperty::ScrollMarginLeft, 10.0),
+            (target, StyleProperty::ScrollMarginTop, 15.0),
+        ] {
+            engine
+                .set_property(node, property, LengthValue::px(value).into())
+                .unwrap();
+        }
+        engine
+            .scroll_into_view(
+                target,
+                ScrollIntoViewOptions {
+                    block: ScrollAlignment::Start,
+                    inline: ScrollAlignment::Start,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        assert_eq!(engine.scroll_offset(root).unwrap(), (120.0, 80.0));
+    }
+
+    #[test]
+    fn reveal_smooth_and_instant_share_inset_destinations() {
+        let (mut engine, port, target) = insets_fixture();
+        let options = ScrollIntoViewOptions {
+            block: ScrollAlignment::Start,
+            inline: ScrollAlignment::Start,
+            ..Default::default()
+        };
+        let ids = engine
+            .smooth_scroll_into_view(target, options, 100.0)
+            .unwrap();
+        assert_eq!(ids.len(), 1);
+        assert_eq!(engine.scroll_offset(port).unwrap(), (0.0, 0.0));
+        engine.set_animation_time(100.0).unwrap();
+        assert_eq!(engine.scroll_offset(port).unwrap(), (120.0, 80.0));
+        assert!(!engine.is_animating());
+        engine.scroll_to(port, 0.0, 0.0).unwrap();
+        engine.scroll_into_view(target, options).unwrap();
+        assert_eq!(engine.scroll_offset(port).unwrap(), (120.0, 80.0));
+    }
+
+    #[test]
+    fn reveal_fixed_and_absolute_targets_follow_used_containing_blocks() {
+        for position in [Position::Fixed, Position::Absolute] {
+            for captures in [false, true] {
+                let (mut engine, outer, _, target) = nested();
+                engine.append_child(outer, target).unwrap();
+                engine
+                    .set_property(target, StyleProperty::Position, position.into())
+                    .unwrap();
+                for (property, value) in [
+                    (StyleProperty::Left, 150.0),
+                    (StyleProperty::Top, 120.0),
+                    (StyleProperty::MarginLeft, 0.0),
+                    (StyleProperty::MarginTop, 0.0),
+                ] {
+                    engine
+                        .set_property(target, property, LengthValue::px(value).into())
+                        .unwrap();
+                }
+                engine
+                    .set_property(outer, StyleProperty::Position, Position::Static.into())
+                    .unwrap();
+                if captures {
+                    engine
+                        .set_property(
+                            outer,
+                            StyleProperty::Transform,
+                            openui_style::TransformList(vec![
+                                openui_style::TransformOperation::Translate(
+                                    LengthValue::px(7.0),
+                                    LengthValue::px(3.0),
+                                ),
+                            ])
+                            .into(),
+                        )
+                        .unwrap();
+                }
+                engine.scroll_into_view(target, nearest()).unwrap();
+                assert_eq!(
+                    engine.scroll_offset(outer).unwrap(),
+                    if captures { (70.0, 60.0) } else { (0.0, 0.0) }
+                );
+                assert_eq!(engine.scroll_offset(engine.root()).unwrap(), (0.0, 0.0));
+            }
+        }
+    }
+
+    #[test]
+    fn reveal_preserves_positive_fractional_target_size_and_oversized_nearest() {
+        for (left, width) in [(99.75, 0.25), (0.0, 150.0)] {
+            let (mut engine, port, target) = insets_fixture();
+            for (node, property, value) in [
+                (target, StyleProperty::Width, width),
+                (target, StyleProperty::MarginLeft, left),
+                (target, StyleProperty::MarginTop, 0.0),
+                (target, StyleProperty::ScrollMarginLeft, 0.0),
+                (target, StyleProperty::ScrollMarginTop, 0.0),
+                (port, StyleProperty::ScrollPaddingLeft, 0.0),
+                (port, StyleProperty::ScrollPaddingTop, 0.0),
+            ] {
+                engine
+                    .set_property(node, property, LengthValue::px(value).into())
+                    .unwrap();
+            }
+            engine.scroll_into_view(target, nearest()).unwrap();
+            assert_eq!(engine.scroll_offset(port).unwrap(), (0.0, 0.0));
+        }
+    }
+
+    #[test]
+    fn reveal_captioned_table_preserves_offsets_under_authored_transform() {
+        let (mut engine, port, target) = insets_fixture();
+        let root = engine.root();
+        let table = engine.create_native_element(ElementTag::Table).unwrap();
+        engine
+            .set_property(table, StyleProperty::Width, LengthValue::px(140.0).into())
+            .unwrap();
+        engine.append_child(root, table).unwrap();
+        let caption = box_node(&mut engine, table, 140.0, 30.0);
+        engine
+            .set_property(
+                caption,
+                StyleProperty::Display,
+                Display::TableCaption.into(),
+            )
+            .unwrap();
+        let row = engine.create_native_element(ElementTag::Div).unwrap();
+        engine
+            .set_property(row, StyleProperty::Display, Display::TableRow.into())
+            .unwrap();
+        engine.append_child(table, row).unwrap();
+        let cell = engine.create_native_element(ElementTag::Div).unwrap();
+        engine
+            .set_property(cell, StyleProperty::Display, Display::TableCell.into())
+            .unwrap();
+        engine.append_child(row, cell).unwrap();
+        engine.append_child(cell, port).unwrap();
+        let options = ScrollIntoViewOptions {
+            block: ScrollAlignment::Start,
+            inline: ScrollAlignment::Start,
+            container: ScrollIntoViewContainer::Nearest,
+        };
+        engine.scroll_into_view(target, options).unwrap();
+        let offset = engine.scroll_offset(port).unwrap();
+        let bounds = engine.bounds(target).unwrap().unwrap();
+        assert_eq!(offset, (120.0, 80.0));
+        engine.scroll_to(port, 0.0, 0.0).unwrap();
+        engine
+            .set_property(
+                table,
+                StyleProperty::Transform,
+                openui_style::TransformList(vec![openui_style::TransformOperation::Translate(
+                    LengthValue::px(17.0),
+                    LengthValue::px(9.0),
+                )])
+                .into(),
+            )
+            .unwrap();
+        engine.scroll_into_view(target, options).unwrap();
+        let translated = engine.bounds(target).unwrap().unwrap();
+        assert_eq!(engine.scroll_offset(port).unwrap(), offset);
+        assert_eq!(
+            (translated.x - bounds.x, translated.y - bounds.y),
+            (17.0, 9.0)
+        );
+    }
 }
 
 /// Which enclosing scroll containers a reveal operation may move.
@@ -295,7 +850,7 @@ impl Engine {
         options: ScrollIntoViewOptions,
     ) -> Result<(), EngineError> {
         for (ancestor, x, y) in self.scroll_into_view_plan(target, options)? {
-            self.scroll_to(ancestor, x, y)?;
+            self.scroll_to_resolved(ancestor, x as f32, y as f32)?;
         }
         Ok(())
     }
@@ -333,6 +888,64 @@ impl Engine {
             .collect()
     }
 
+    fn reveal_fragment(&self, node: NodeId) -> Option<&Fragment> {
+        fn find(fragment: &Fragment, node: NodeId) -> Option<&Fragment> {
+            if fragment.owns_element_box() && fragment.node_id == node {
+                return Some(fragment);
+            }
+            fragment.children.iter().find_map(|child| find(child, node))
+        }
+        self.latest_fragment
+            .as_ref()
+            .and_then(|root| find(root, node))
+    }
+
+    /// Client rectangles include the principal border-box origin, while the
+    /// input world map already starts at that origin. Recover fragment space
+    /// before comparing either the client rect or its padding-reduced snapport.
+    fn reveal_scroll_geometry(&self, node: NodeId) -> Option<(ScrollArea, Affine)> {
+        let fragment = self.reveal_fragment(node)?;
+        let area = fragment.scroll_area?;
+        let principal = fragment.border_box_rect().offset;
+        let world = self.fragment_box_worlds.get(&node)?.then(Affine::translate(
+            -principal.left.to_f32(),
+            -principal.top.to_f32(),
+        ));
+        Some((area, world))
+    }
+
+    /// Blink bubbles reveal along containing blocks. Positioned descendants
+    /// can bypass DOM ancestors that scrolling would not move; a viewport-fixed
+    /// box must not request scrolling of that viewport.
+    fn reveal_parent(&self, node: NodeId) -> Option<NodeId> {
+        let source = self.document.node(node);
+        if source.style.position.is_absolutely_positioned() {
+            if let Some(positioned) = self
+                .reveal_fragment(node)
+                .and_then(|fragment| fragment.positioned_fragmentation)
+            {
+                let mut container = positioned.containing_block_node;
+                if source.style.position == Position::Fixed && container == self.document.root() {
+                    return None;
+                }
+                // A positioned inline supplies positioning geometry, but
+                // InclusiveContainingBlock bubbles through its enclosing block.
+                while !container.is_none()
+                    && matches!(
+                        self.document.node(container).style.display,
+                        Display::Inline | Display::Contents
+                    )
+                {
+                    container = self.document.node(container).parent;
+                }
+                if !container.is_none() && container != node {
+                    return Some(container);
+                }
+            }
+        }
+        (!source.parent.is_none()).then_some(source.parent)
+    }
+
     fn scroll_into_view_plan(
         &mut self,
         target: NodeHandle,
@@ -348,6 +961,7 @@ impl Engine {
         };
         // Blink resolves logical alignment using the target's writing mode.
         let style = &self.document.node(target_node).style;
+        let margin = crate::scroll_button::scroll_margin(style);
         let horizontal = style.writing_mode.is_horizontal();
         let inline_reversed =
             (style.direction == Direction::Rtl) ^ (style.writing_mode == WritingMode::SidewaysLr);
@@ -362,53 +976,73 @@ impl Engine {
             )
         };
         // Chromium gives degenerate expose rectangles one logical pixel.
-        exposed.width = exposed.width.max(1.0);
-        exposed.height = exposed.height.max(1.0);
+        if exposed.width <= 0.0 {
+            exposed.width = 1.0;
+        }
+        if exposed.height <= 0.0 {
+            exposed.height = 1.0;
+        }
         let mut plan = Vec::new();
-        let mut ancestor = self.parent(target)?;
-        while let Some(handle) = ancestor {
-            let node = self.resolve(handle)?;
-            ancestor = self.parent(handle)?;
-            let Some(area) = self.layout_scroll_area(node) else {
+        let mut ancestor = self.reveal_parent(target_node);
+        while let Some(node) = ancestor {
+            ancestor = self.reveal_parent(node);
+            let Some(index) = self.node_slots.get(&node).copied() else {
                 continue;
             };
-            if matches!(area.overflow_x, Overflow::Visible | Overflow::Clip)
-                && matches!(area.overflow_y, Overflow::Visible | Overflow::Clip)
-            {
+            let handle = self.handle_for_slot(index);
+            let Some((area, world)) = self.reveal_scroll_geometry(node) else {
+                continue;
+            };
+            if !area.is_scroll_container() {
                 continue;
             }
-            let Some(world) = self.fragment_box_worlds.get(&node).copied() else {
-                continue;
-            };
+            // A previous intersection can also be degenerate.
+            if exposed.width <= 0.0 {
+                exposed.width = 1.0;
+            }
+            if exposed.height <= 0.0 {
+                exposed.height = 1.0;
+            }
             let Some(inverse) = world.inverse() else {
                 continue;
             };
             let local = map_rect(inverse, exposed);
             let client = area.client_rect;
+            let mut snapport =
+                crate::scroll_button::scroll_snapport(&self.document.node(node).style, area);
+            // GetScrollOffsetToExpose uses one raw LayoutUnit, rather than one
+            // CSS pixel, when scroll-padding leaves no positive snapport size.
+            snapport[2] = snapport[2].max(1.0 / 64.0);
+            snapport[3] = snapport[3].max(1.0 / 64.0);
             let (x, y) = self.scroll_offset(handle)?;
             let (new_x, new_y) = area.clamp_offset(
                 (x + alignment_delta(
-                    local.x,
-                    local.x + local.width,
-                    client.x().to_f32(),
-                    client.right().to_f32(),
+                    local.x - margin[0],
+                    local.x + local.width + margin[2],
+                    snapport[0],
+                    snapport[0] + snapport[2],
                     x_align,
                     x_reversed,
                 ))
                 .round(),
                 (y + alignment_delta(
-                    local.y,
-                    local.y + local.height,
-                    client.y().to_f32(),
-                    client.bottom().to_f32(),
+                    local.y - margin[1],
+                    local.y + local.height + margin[3],
+                    snapport[1],
+                    snapport[1] + snapport[3],
                     y_align,
                     y_reversed,
                 ))
                 .round(),
             );
+            // Native endpoint snapping is part of the reveal destination, so
+            // outer containers must see its final position too.
+            let (new_x, new_y) = self.resolve_native_reveal_endpoint(handle, new_x, new_y)?;
             // Propagate the final visible rectangle. Outer containers must
             // reveal the part exposed by the inner scrollport, including when
             // the inner move is scheduled as an animation rather than applied.
+            // Padding affects alignment, but neither it nor the target margin
+            // clips this unexpanded rectangle passed to the next scrollport.
             let shifted = SceneRect {
                 x: local.x - (new_x as f64 - x) as f32,
                 y: local.y - (new_y as f64 - y) as f32,

@@ -240,19 +240,29 @@ fn layout_length_pixels(length: Length, reference: f32) -> f32 {
     LayoutUnit::from_f32(length_pixels(length, reference)).to_f32()
 }
 
-fn scroll_snapport(style: &ComputedStyle, area: openui_layout::ScrollArea) -> [f32; 4] {
+pub(super) fn scroll_snapport(style: &ComputedStyle, area: openui_layout::ScrollArea) -> [f32; 4] {
     let width = area.client_rect.width().to_f32();
     let height = area.client_rect.height().to_f32();
     let top = layout_length_pixels(style.scroll_padding_top, height).max(0.0);
     let right = layout_length_pixels(style.scroll_padding_right, width).max(0.0);
     let bottom = layout_length_pixels(style.scroll_padding_bottom, height).max(0.0);
     let left = layout_length_pixels(style.scroll_padding_left, width).max(0.0);
-    // The geometry remains relative to the authored container border box.
+    // The geometry uses the retained physical-fragment client coordinate space.
     [
         area.client_rect.x().to_f32() + left,
         area.client_rect.y().to_f32() + top,
         (width - left - right).max(0.0),
         (height - top - bottom).max(0.0),
+    ]
+}
+
+/// Physical target outsets shared by snap selection and native reveal.
+pub(super) fn scroll_margin(style: &ComputedStyle) -> [f32; 4] {
+    [
+        layout_length_pixels(style.scroll_margin_left, 0.0),
+        layout_length_pixels(style.scroll_margin_top, 0.0),
+        layout_length_pixels(style.scroll_margin_right, 0.0),
+        layout_length_pixels(style.scroll_margin_bottom, 0.0),
     ]
 }
 
@@ -1267,12 +1277,7 @@ impl Engine {
                     self.resolve(candidate.handle)
                         .map_err(|_| "snap area has no retained identity")?,
                 );
-                let margin = [
-                    layout_length_pixels(data.style.scroll_margin_left, 0.0),
-                    layout_length_pixels(data.style.scroll_margin_top, 0.0),
-                    layout_length_pixels(data.style.scroll_margin_right, 0.0),
-                    layout_length_pixels(data.style.scroll_margin_bottom, 0.0),
-                ];
+                let margin = scroll_margin(&data.style);
                 candidate.rect[0] -= margin[0];
                 candidate.rect[1] -= margin[1];
                 candidate.rect[2] += margin[0] + margin[2];
@@ -1578,6 +1583,27 @@ impl Engine {
         x: f32,
         y: f32,
     ) -> Result<(f32, f32), EngineError> {
+        self.resolve_native_endpoint(origin, x, y, false)
+    }
+
+    /// Blink reveal selects an end position on both configured snap axes,
+    /// including an axis whose alignment leaves its current offset unchanged.
+    pub(crate) fn resolve_native_reveal_endpoint(
+        &mut self,
+        origin: NodeHandle,
+        x: f32,
+        y: f32,
+    ) -> Result<(f32, f32), EngineError> {
+        self.resolve_native_endpoint(origin, x, y, true)
+    }
+
+    fn resolve_native_endpoint(
+        &mut self,
+        origin: NodeHandle,
+        x: f32,
+        y: f32,
+        snap_unchanged_axes: bool,
+    ) -> Result<(f32, f32), EngineError> {
         let node = self.resolve(origin)?;
         if self.document.node(node).style.scroll_snap_axis == ScrollSnapAxis::None {
             return Ok((x, y));
@@ -1593,8 +1619,8 @@ impl Engine {
         };
         let old_offset = self.scroll_offset(origin)?;
         let axes = [
-            geometry.axes[0] && x as f64 != old_offset.0,
-            geometry.axes[1] && y as f64 != old_offset.1,
+            geometry.axes[0] && (snap_unchanged_axes || x as f64 != old_offset.0),
+            geometry.axes[1] && (snap_unchanged_axes || y as f64 != old_offset.1),
         ];
         let current = [x - geometry.minimum[0], y - geometry.minimum[1]];
         let old = self
