@@ -363,7 +363,7 @@ def computed_fields() -> dict[str, str]:
 def style_inventory() -> dict[str, object]:
     fields = computed_fields()
     consumers = {}
-    for area in ("openui-layout/src", "openui-paint/src"):
+    for area in ("openui-layout/src", "openui-paint/src", "openui-engine/src"):
         for path in sorted((ROOT / "bindings/rust" / area).rglob("*.rs")):
             text = path.read_text()
             for field in fields:
@@ -417,16 +417,19 @@ def style_inventory() -> dict[str, object]:
             }
         )
     public_count = sum(row["classification"] == "public-typed" for row in rows)
-    # Native viewport controls now consume the existing typed thumb-color
-    # field (schema property 234), in addition to the previous 202 fields.
-    if public_count != 203:
-        raise ValueError(f"expected 203 consumed author fields, found {public_count}")
+    # The shared Engine owns native hit testing, scroll snap and scroll reveal.
+    # Include those consumers after moving snap resolution out of block layout;
+    # every previously inventoried author field remains consumed, with thirteen
+    # additional native interaction fields now covered by the same strict gate.
+    if public_count != 216:
+        raise ValueError(f"expected 216 consumed author fields, found {public_count}")
     return {
         "schema_version": 1,
         "source": str(COMPUTED.relative_to(ROOT)),
         "consumer_roots": [
             "bindings/rust/openui-layout/src",
             "bindings/rust/openui-paint/src",
+            "bindings/rust/openui-engine/src",
         ],
         "counts": {
             "consumed": len(rows),
