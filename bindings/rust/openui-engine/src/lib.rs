@@ -3,6 +3,7 @@
 mod accessibility;
 mod animation;
 mod animation_timeline;
+mod compositor_scene;
 mod control_geometry;
 mod element_dimensions;
 mod forms;
@@ -330,6 +331,7 @@ pub struct Engine {
     dirty_generations: DirtyGenerations,
     latest_fragment: Option<Arc<Fragment>>,
     latest_scene: Option<SceneSnapshot>,
+    scene_registry: compositor_scene::SceneIdentityRegistry,
     hit_test: Vec<HitEntry>,
     fragment_rects: HashMap<NodeId, Vec<SceneRect>>,
     fragment_box_worlds: HashMap<NodeId, WorldTransform>,
@@ -421,6 +423,7 @@ impl Engine {
             dirty_generations: DirtyGenerations::default(),
             latest_fragment: None,
             latest_scene: None,
+            scene_registry: compositor_scene::SceneIdentityRegistry::default(),
             hit_test: Vec::new(),
             fragment_rects: HashMap::new(),
             fragment_box_worlds: HashMap::new(),
@@ -1126,6 +1129,7 @@ impl Engine {
             }
             debug_assert!(self.document.release_detached_node(node));
         }
+        self.scene_registry.retire(&removed_handles);
         self.mark_dirty(InvalidationClass::Subtree);
         Ok(())
     }
@@ -2687,7 +2691,16 @@ impl Engine {
             width: width as f32,
             height: height as f32,
         }];
-        self.latest_scene = Some(SceneSnapshot::new(generation, recording, fragment, damage));
+        let retained = self.retained_scene_plan(&fragment, &recording)?;
+        let scene = SceneSnapshot::new(generation, recording, fragment, damage)
+            .with_retained_scene(retained)
+            .map_err(|error| match error {
+                openui_compositor::RetainedSceneError::AllocationFailure => {
+                    EngineError::AllocationFailure
+                }
+                other => EngineError::Render(other.to_string()),
+            })?;
+        self.latest_scene = Some(scene);
         self.stats.scenes += 1;
         let accessibility = self.dirty.accessibility;
         self.dirty = DirtyState {

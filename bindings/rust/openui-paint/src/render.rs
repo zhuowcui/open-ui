@@ -109,6 +109,17 @@ pub struct RecordedPicture {
 }
 
 impl RecordedPicture {
+    /// The canonical document recording, including viewport controls.
+    pub fn canonical_picture(&self) -> &Picture {
+        &self.picture
+    }
+
+    /// The existing document recording before viewport controls are composed.
+    /// This is not an independently recorded arbitrary element subtree.
+    pub fn document_content_picture(&self) -> &Picture {
+        &self.content_picture
+    }
+
     pub fn retained_font_face_count(&self) -> usize {
         self.retained_font_bytes.len()
     }

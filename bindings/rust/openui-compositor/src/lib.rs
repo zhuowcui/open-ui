@@ -7,6 +7,9 @@ use skia_safe::image::CachingHint;
 use skia_safe::{Canvas, EncodedImageFormat};
 use std::sync::{Arc, Condvar, Mutex};
 
+mod retained_scene;
+pub use retained_scene::*;
+
 #[cfg(feature = "ganesh-gl")]
 mod ganesh_gl;
 #[cfg(feature = "ganesh-gl")]
@@ -67,6 +70,7 @@ pub struct SceneSnapshot {
     fragments: Arc<Fragment>,
     logical_damage: Arc<[SceneRect]>,
     physical_damage: Arc<[PhysicalSceneRect]>,
+    retained_scene: Option<Arc<RetainedSceneSnapshot>>,
 }
 
 impl SceneSnapshot {
@@ -89,7 +93,25 @@ impl SceneSnapshot {
             fragments,
             logical_damage: damage.into(),
             physical_damage: physical_damage.into(),
+            retained_scene: None,
         }
+    }
+
+    /// Attach owned layer metadata to this exact recording. Canonical replay
+    /// and the CPU raster cache continue to use the original picture.
+    pub fn with_retained_scene(
+        mut self,
+        plan: RetainedScenePlan,
+    ) -> Result<Self, RetainedSceneError> {
+        self.retained_scene = Some(Arc::new(RetainedSceneSnapshot::bind(
+            plan,
+            Arc::clone(&self.picture),
+        )?));
+        Ok(self)
+    }
+
+    pub fn retained_scene(&self) -> Option<&Arc<RetainedSceneSnapshot>> {
+        self.retained_scene.as_ref()
     }
 
     pub fn generation(&self) -> SceneGeneration {
