@@ -4,7 +4,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 
 use openui_dom::{Document, EncodedImageResource};
-use openui_style::{Color, ImageResourceId};
+use openui_style::{parse_literal, Color, ImageResourceId, StyleProperty, StyleValue};
 use skia_safe::image::CachingHint;
 use skia_safe::{
     surfaces, AlphaType, Canvas, ClipOp, ColorSpace, ColorType, Data, Image, ImageInfo, Paint,
@@ -2405,28 +2405,22 @@ fn parse_svg_view_box(value: &str) -> Option<Rect> {
 }
 
 fn parse_svg_color(value: &str) -> Option<skia_safe::Color> {
-    let rgb = match value.trim().to_ascii_lowercase().as_str() {
-        "none" => return None,
-        "black" => (0, 0, 0),
-        "blue" => (0, 0, 255),
-        "aqua" => (0, 255, 255),
-        "fuchsia" => (255, 0, 255),
-        "lime" => (0, 255, 0),
-        "green" => (0, 128, 0),
-        "gray" | "grey" => (128, 128, 128),
-        "maroon" => (128, 0, 0),
-        "navy" => (0, 0, 128),
-        "olive" => (128, 128, 0),
-        "orange" => (255, 165, 0),
-        "purple" => (128, 0, 128),
-        "red" => (255, 0, 0),
-        "silver" => (192, 192, 192),
-        "teal" => (0, 128, 128),
-        "white" => (255, 255, 255),
-        "yellow" => (255, 255, 0),
-        _ => return None,
+    let Ok(StyleValue::Color(color)) = parse_literal(StyleProperty::Color, value) else {
+        // StaticSvg currently carries fixed paints only. Preserve the existing
+        // none/currentColor/invalid context policy; adding resolution requires
+        // a retained SVG paint context, not a fabricated fallback color.
+        return None;
     };
-    Some(skia_safe::Color::from_argb(255, rgb.0, rgb.1, rgb.2))
+    // StaticSvg stores packed 8-bit sRGB paints. Match pinned Skia's rounded
+    // conversion instead of rust-skia Color4f::to_color's truncating helper.
+    // Wider-gamut/relative/missing-channel colors are not represented here.
+    let byte = |value: f32| (value * 255.0 + 0.5).clamp(0.0, 255.0) as u8;
+    Some(skia_safe::Color::from_argb(
+        byte(color.a),
+        byte(color.r),
+        byte(color.g),
+        byte(color.b),
+    ))
 }
 
 #[derive(Clone, Copy)]
@@ -2619,6 +2613,85 @@ fn svg_has_explicit_dimension(bytes: &[u8]) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn static_svg_fixed_paints_reuse_native_literal_colors() {
+        for (literal, argb) in [
+            ("#008080", 0xff008080),
+            ("#088", 0xff008888),
+            ("#00808080", 0x80008080),
+            ("#0888", 0x88008888),
+            ("teal", 0xff008080),
+            ("RebeccaPurple", 0xff663399),
+            ("transparent", 0x00000000),
+            ("rgb(0,128,128)", 0xff008080),
+            ("rgba(0 128 128 / .5)", 0x80008080),
+            ("rgb(12.5 127.49 300 / .1)", 0x1a0d7fff),
+        ] {
+            assert_eq!(
+                parse_svg_color(literal),
+                Some(skia_safe::Color::from(argb)),
+                "{literal}"
+            );
+        }
+        for literal in [
+            "none",
+            "currentColor",
+            "unknown-color",
+            "rgb(1,2)",
+            "color(display-p3 1 0 0)",
+            "rgb(from teal r g b)",
+        ] {
+            assert_eq!(parse_svg_color(literal), None, "{literal}");
+        }
+    }
+
+    #[test]
+    fn static_svg_fixed_hex_paints_preserve_every_channel_byte() {
+        for value in 0_u8..=255 {
+            let literal = format!("#{value:02x}{value:02x}{value:02x}{value:02x}");
+            assert_eq!(
+                parse_svg_color(&literal),
+                Some(skia_safe::Color::from_argb(value, value, value, value))
+            );
+        }
+    }
+
+    #[test]
+    fn static_svg_hex_resource_decodes_unchanged_native_teal_pixels_and_cache() {
+        const RESOURCE: &[u8] = br##"<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><rect width="1" height="1" fill="#008080"/></svg>"##;
+        let mut doc = Document::new();
+        let id = doc.register_image_resource(
+            "native-teal.svg",
+            "image/svg+xml",
+            "809bab3d90547e75eda8d473aa72a4f4f20b9e23ea7885f2e900eb0cf61aa6de",
+            RESOURCE.to_vec(),
+        );
+        let first = decode_image_resource(&doc, id).expect("generic hex SVG paint");
+        let second = decode_image_resource(&doc, id).unwrap();
+        assert_eq!((first.width(), first.height()), (1, 1));
+        assert_eq!(first.unique_id(), second.unique_id());
+        let info = ImageInfo::new((1, 1), ColorType::RGBA8888, AlphaType::Unpremul, None);
+        let mut rgba = [0_u8; 4];
+        assert!(first.read_pixels(&info, &mut rgba, 4, (0, 0), CachingHint::Allow));
+        assert_eq!(rgba, [0, 128, 128, 255]);
+    }
+
+    #[test]
+    fn static_svg_fixed_color_repair_keeps_existing_paint_context_selection() {
+        let source = br#"<svg width="4" height="1"><rect width="1" height="1"/><rect x="1" width="1" height="1" fill="none"/><rect x="2" width="1" height="1" fill="currentColor"/><rect x="3" width="1" height="1" fill="invalid"/></svg>"#;
+        let svg = parse_static_svg(source).unwrap();
+        assert_eq!(svg.shapes.len(), 1);
+        assert_eq!(svg.shapes[0].color, skia_safe::Color::BLACK);
+        // These are existing decoder outcomes, not a Chromium conformance
+        // assertion. Correct currentColor/default/invalid-declaration behavior
+        // needs the separately required SVG paint context and cascade repair.
+        let root_none = parse_static_svg(
+            br#"<svg width="1" height="1" fill="none"><rect width="1" height="1"/></svg>"#,
+        )
+        .unwrap();
+        assert_eq!(root_none.shapes[0].color, skia_safe::Color::BLACK);
+    }
 
     fn png_color_chunks(chunks: &[(&[u8; 4], &[u8])]) -> Vec<u8> {
         let mut bytes = b"\x89PNG\r\n\x1a\n".to_vec();

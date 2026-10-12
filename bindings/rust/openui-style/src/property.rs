@@ -787,8 +787,82 @@ fn color(input: &str) -> Option<Color> {
         };
         Some(Color::from_hex(value, alpha))
     } else {
-        Color::from_named(input)
+        rgb_color_literal(input).or_else(|| Color::from_named(input))
     }
+}
+
+/// Fixed sRGB forms supported by Chromium's pinned fast color parser. Keep
+/// this shared by native declarations and static resource decoding. Context,
+/// calc(), relative colors, missing channels and other color spaces require
+/// the richer color representation and are not accepted by this helper.
+fn rgb_color_literal(input: &str) -> Option<Color> {
+    let (name, body) = input.split_once('(')?;
+    if !name.eq_ignore_ascii_case("rgb") && !name.eq_ignore_ascii_case("rgba") {
+        return None;
+    }
+    let body = body.strip_suffix(')')?;
+    let (channels, alpha): (Vec<&str>, Option<&str>) = if body.contains(',') {
+        let mut values: Vec<_> = body.split(',').map(str::trim).collect();
+        let alpha = match values.len() {
+            3 => None,
+            4 => values.pop(),
+            _ => return None,
+        };
+        (values, alpha)
+    } else {
+        let (channels, alpha) = match body.split_once('/') {
+            Some((channels, alpha)) => (channels, Some(alpha.trim())),
+            None => (body, None),
+        };
+        (channels.split_ascii_whitespace().collect(), alpha)
+    };
+    if channels.len() != 3 {
+        return None;
+    }
+    // The pinned fast path accepts a consistent number or percentage triple.
+    // Mixed-unit modern rgb() is handled by Blink's richer slow parser.
+    let percentage = channels[0].ends_with('%');
+    let mut rgb = [0_u8; 3];
+    for (component, token) in rgb.iter_mut().zip(channels) {
+        if token.ends_with('%') != percentage {
+            return None;
+        }
+        let number = if percentage {
+            token.strip_suffix('%')?
+        } else {
+            token
+        };
+        let value = rgb_decimal(number, false)?;
+        let value = if percentage {
+            value / 100.0 * 255.0
+        } else {
+            value
+        };
+        *component = value.clamp(0.0, 255.0).round() as u8;
+    }
+    let alpha = match alpha {
+        None => 255,
+        Some(token) => (rgb_decimal(token, true)?.clamp(0.0, 1.0) * 255.0).round() as u8,
+    };
+    Some(Color::from_rgba8(rgb[0], rgb[1], rgb[2], alpha))
+}
+
+/// Decimal grammar used by the pinned simple rgb path; reject Rust's NaN/inf
+/// spellings, exponent and plus syntax rather than silently invent CSS tokens.
+fn rgb_decimal(input: &str, allow_leading_point: bool) -> Option<f64> {
+    let unsigned = input.strip_prefix('-').unwrap_or(input);
+    let (whole, fraction) = match unsigned.split_once('.') {
+        Some((whole, fraction)) => (whole, Some(fraction)),
+        None => (unsigned, None),
+    };
+    if (whole.is_empty() && (!allow_leading_point || fraction.is_none()))
+        || !whole.bytes().all(|c| c.is_ascii_digit())
+        || fraction.is_some_and(|part| part.is_empty() || !part.bytes().all(|c| c.is_ascii_digit()))
+    {
+        return None;
+    }
+    let value = input.parse::<f64>().ok()?;
+    value.is_finite().then_some(value)
 }
 
 fn border(input: &str) -> Option<Border> {
@@ -2955,6 +3029,80 @@ mod tests {
             parse_literal(StyleProperty::ColumnCount, "70000").unwrap(),
             StyleValue::Renderer(RendererStyleValue::ColumnCount(Some(70_000)))
         );
+    }
+
+    #[test]
+    fn fixed_rgb_literals_share_pinned_channel_and_alpha_rounding() {
+        for (literal, expected) in [
+            ("rgb(0, 128, 128)", Color::from_rgba8(0, 128, 128, 255)),
+            ("RGBA(0 128 128)", Color::from_rgba8(0, 128, 128, 255)),
+            ("rgb(100%, 50%, 0%)", Color::from_rgba8(255, 128, 0, 255)),
+            ("rgb(100% 50% 0%)", Color::from_rgba8(255, 128, 0, 255)),
+            (
+                "rgba(12.5, 127.49, 300, .5)",
+                Color::from_rgba8(13, 127, 255, 128),
+            ),
+            ("rgb(-50 255 999 / 0.1)", Color::from_rgba8(0, 255, 255, 26)),
+            ("rgba(0, 0, 0, -2)", Color::from_rgba8(0, 0, 0, 0)),
+            ("rgba(0 0 0 / 2)", Color::from_rgba8(0, 0, 0, 255)),
+            ("#008080", Color::from_rgba8(0, 128, 128, 255)),
+            ("teal", Color::from_rgba8(0, 128, 128, 255)),
+        ] {
+            for property in [StyleProperty::Color, StyleProperty::BackgroundColor] {
+                assert_eq!(
+                    parse_literal(property, literal).unwrap(),
+                    expected.into(),
+                    "{literal}"
+                );
+                let mut style = ComputedStyle::default();
+                apply_to_computed(
+                    &mut style,
+                    property,
+                    &parse_literal(property, literal).unwrap(),
+                    (320.0, 240.0),
+                )
+                .unwrap();
+                assert_eq!(
+                    value_from_computed(&style, property),
+                    expected.into(),
+                    "{literal}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn fixed_rgb_literal_rejects_malformed_and_unrepresented_forms() {
+        for literal in [
+            "rgb(1,2)",
+            "rgb(1,2,3,4,5)",
+            "rgb(1,2,3 / .5)",
+            "rgb(1 2 3 / .5 / .2)",
+            "rgb(1, 2%, 3)",
+            "rgb(1 2% 3)",
+            "rgb(NaN,0,0)",
+            "rgb(inf,0,0)",
+            "rgb(1.,0,0)",
+            "rgb(.5,0,0)",
+            "rgb(+1,0,0)",
+            "rgb(1e2,0,0)",
+            "rgb(1 2 3 / 50%)",
+            "rgb(none 0 0)",
+            "rgb(from teal r g b)",
+            "rgb(calc(1) 2 3)",
+            "rgb (1,2,3)",
+            "rgb(1,2,3) garbage",
+            "color(display-p3 1 0 0)",
+        ] {
+            assert!(
+                parse_literal(StyleProperty::Color, literal).is_err(),
+                "{literal}"
+            );
+        }
+        assert!(matches!(
+            parse_literal(StyleProperty::Color, "currentColor").unwrap(),
+            StyleValue::Typography(TypographyValue::StyleColor(StyleColor::CurrentColor))
+        ));
     }
 
     #[test]
