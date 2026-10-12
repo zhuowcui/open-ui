@@ -68,40 +68,63 @@ pub enum Easing {
 
 impl Easing {
     pub fn cubic_bezier(x1: f64, y1: f64, x2: f64, y2: f64) -> Result<Self, AnimationError> {
-        if [x1, y1, x2, y2].iter().any(|value| !value.is_finite())
-            || !(0.0..=1.0).contains(&x1)
-            || !(0.0..=1.0).contains(&x2)
-        {
-            return Err(AnimationError::InvalidEasing(
-                "cubic-bezier x coordinates must be finite and in [0, 1]",
-            ));
-        }
-        Ok(Self::CubicBezier { x1, y1, x2, y2 })
+        let easing = Self::CubicBezier { x1, y1, x2, y2 };
+        easing.validate()?;
+        Ok(easing)
     }
 
     pub fn steps(count: u32, position: StepPosition) -> Result<Self, AnimationError> {
-        if count == 0 || (position == StepPosition::JumpNone && count == 1) {
-            return Err(AnimationError::InvalidEasing(
-                "steps requires a positive interval count (at least two for jump-none)",
-            ));
-        }
-        Ok(Self::Steps { count, position })
+        let easing = Self::Steps { count, position };
+        easing.validate()?;
+        Ok(easing)
     }
 
     pub fn linear_stops(stops: Vec<LinearStop>) -> Result<Self, AnimationError> {
-        if stops.len() < 2
-            || stops
-                .iter()
-                .any(|stop| !stop.input.is_finite() || !stop.output.is_finite())
-            || stops.windows(2).any(|pair| pair[0].input > pair[1].input)
-            || stops.first().is_some_and(|stop| stop.input != 0.0)
-            || stops.last().is_some_and(|stop| stop.input != 1.0)
-        {
-            return Err(AnimationError::InvalidEasing(
-                "linear easing requires ordered finite stops spanning 0 through 1",
-            ));
+        let easing = Self::LinearStops(stops);
+        easing.validate()?;
+        Ok(easing)
+    }
+
+    /// Validate a curve, including one built directly with the public enum.
+    /// Animation and scrolling entry points validate before retaining a curve.
+    pub fn validate(&self) -> Result<(), AnimationError> {
+        match self {
+            Self::Linear => Ok(()),
+            Self::CubicBezier { x1, y1, x2, y2 } => {
+                if [x1, y1, x2, y2].iter().any(|value| !value.is_finite())
+                    || !(0.0..=1.0).contains(x1)
+                    || !(0.0..=1.0).contains(x2)
+                {
+                    return Err(AnimationError::InvalidEasing(
+                        "cubic-bezier x coordinates must be finite and in [0, 1]",
+                    ));
+                }
+                Ok(())
+            }
+            Self::Steps { count, position } => {
+                if *count == 0 || (*position == StepPosition::JumpNone && *count == 1) {
+                    return Err(AnimationError::InvalidEasing(
+                        "steps requires a positive interval count (at least two for jump-none)",
+                    ));
+                }
+                Ok(())
+            }
+            Self::LinearStops(stops) => {
+                if stops.len() < 2
+                    || stops
+                        .iter()
+                        .any(|stop| !stop.input.is_finite() || !stop.output.is_finite())
+                    || stops.windows(2).any(|pair| pair[0].input > pair[1].input)
+                    || stops.first().is_some_and(|stop| stop.input != 0.0)
+                    || stops.last().is_some_and(|stop| stop.input != 1.0)
+                {
+                    return Err(AnimationError::InvalidEasing(
+                        "linear easing requires ordered finite stops spanning 0 through 1",
+                    ));
+                }
+                Ok(())
+            }
         }
-        Ok(Self::LinearStops(stops))
     }
 
     pub fn sample(&self, input: f64) -> f64 {
@@ -276,22 +299,7 @@ impl AnimationOptions {
                 ));
             }
         }
-        match &self.easing {
-            Easing::CubicBezier { x1, y1, x2, y2 } => {
-                Self::validate_easing(Easing::cubic_bezier(*x1, *y1, *x2, *y2)?)
-            }
-            Easing::Steps { count, position } => {
-                Self::validate_easing(Easing::steps(*count, *position)?)
-            }
-            Easing::LinearStops(stops) => {
-                Self::validate_easing(Easing::linear_stops(stops.clone())?)
-            }
-            Easing::Linear => Ok(()),
-        }
-    }
-
-    fn validate_easing(_: Easing) -> Result<(), AnimationError> {
-        Ok(())
+        self.easing.validate()
     }
 
     pub fn active_duration_ms(&self) -> f64 {
@@ -441,6 +449,11 @@ impl<T> Keyframes<T> {
             return Err(AnimationError::InvalidKeyframes(
                 "offsets must be strictly ordered and span 0 through 1",
             ));
+        }
+        for frame in &frames {
+            if let Some(easing) = &frame.easing {
+                easing.validate()?;
+            }
         }
         Ok(Self { frames })
     }
@@ -857,12 +870,19 @@ pub struct TimelineRange {
 
 impl TimelineRange {
     pub fn new(start: f64, end: f64) -> Result<Self, AnimationError> {
-        if !start.is_finite() || !end.is_finite() || start == end {
+        let range = Self { start, end };
+        range.validate()?;
+        Ok(range)
+    }
+
+    /// Validate a range, including one built directly with the public fields.
+    pub fn validate(self) -> Result<(), AnimationError> {
+        if !self.start.is_finite() || !self.end.is_finite() || self.start == self.end {
             return Err(AnimationError::InvalidTiming(
                 "timeline range must have distinct finite endpoints",
             ));
         }
-        Ok(Self { start, end })
+        Ok(())
     }
 
     pub fn progress(self, position: f64) -> f64 {
@@ -880,6 +900,43 @@ mod tests {
             fill: FillMode::Both,
             ..AnimationOptions::default()
         }
+    }
+
+    #[test]
+    fn keyframe_overrides_keep_overshoot_and_duplicate_linear_stops() {
+        let curve = Easing::LinearStops(vec![
+            LinearStop {
+                input: 0.0,
+                output: 0.0,
+            },
+            LinearStop {
+                input: 0.5,
+                output: -1.0,
+            },
+            LinearStop {
+                input: 0.5,
+                output: 2.0,
+            },
+            LinearStop {
+                input: 1.0,
+                output: 1.0,
+            },
+        ]);
+        let frames = Keyframes::new(vec![
+            Keyframe::new(0.0, 0.0_f32).easing(curve),
+            Keyframe::new(1.0, 1.0_f32),
+        ])
+        .unwrap();
+        let property = PropertyKeyframes::typed(StyleProperty::Opacity, frames).unwrap();
+        assert_eq!(
+            property.sample(0.25, &Easing::Linear),
+            StyleValue::Number(-0.5)
+        );
+        assert_eq!(
+            property.sample(0.75, &Easing::Linear),
+            StyleValue::Number(1.5)
+        );
+        assert!(Easing::cubic_bezier(0.0, -2.0, 1.0, 3.0).is_ok());
     }
 
     #[test]

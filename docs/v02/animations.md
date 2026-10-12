@@ -18,13 +18,37 @@ The engine owns generation-checked `AnimationId` values and samples them from a
 manual document clock. It also exposes scroll and view timelines with typed
 axes and ranges. Pause, play, seek, playback-rate change, finish, cancellation,
 iteration boundaries, removal of animated nodes, and reduced-motion completion
-are deterministic. Lifecycle events use the normal capture/target/bubble event
-path in both Rust and C. Smooth scrolling and snap settling share the clock and
+are exposed as native operations. Their complete behavior still requires
+qualification against pinned Chromium. Lifecycle events use the normal
+capture/target/bubble event path in both Rust and C. Smooth scrolling and snap settling share the clock and
 easing implementation.
 
 Headless callers use `HeadlessApp::render_at`; native Linux redraws continue
-only while `Document::is_animating()` is true. At time zero, documents without
-animation instances follow the unchanged frozen paint path.
+only while `Document::is_animating()` is true. Documents without animation instances
+use the ordinary static paint path.
+
+## Input validation and remaining timing work
+
+Easing curves built directly through the public Rust enum use the same
+validation as the checked constructors. Animation options, per-keyframe
+overrides, smooth scrolling and snap settling validate before retaining a
+curve. An invalid curve must return an error without replacing a running
+scroll animation or publishing a changed scene. A snap request validates its
+timing even when it would otherwise be a no-op. Scroll and view timelines
+validate their directly constructed ranges before retaining an animation;
+finite reversed ranges remain supported.
+
+The source guards for these input rules still need compilation and runtime
+verification on the complete integrated checkpoint. They do not qualify every
+animation operation. In particular, playback-rate changes currently retain
+unscaled elapsed time while the effect sampler applies the new rate. Seeking
+to 80 ms and then reversing a 100 ms opacity animation can therefore change
+its sampled value immediately. Local-time preservation, reverse completion,
+zero-rate behavior, scroll/view timeline axes and lifecycle event boundaries
+need shared repairs and exact Chromium qualification. The
+[Web Animations timing model](https://www.w3.org/TR/web-animations-1/#the-current-time-of-an-animation)
+defines the browser behavior used as the oracle; consuming Open UI applications
+perform the equivalent operations through native Rust APIs.
 
 ## Current compositor boundary
 

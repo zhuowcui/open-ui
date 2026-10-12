@@ -93,11 +93,12 @@ impl Engine {
         duration_ms: f64,
         easing: openui_style::Easing,
     ) -> Result<ScrollAnimationId, EngineError> {
-        if !x.is_finite() || !y.is_finite() || !duration_ms.is_finite() || duration_ms < 0.0 {
+        if !x.is_finite() || !y.is_finite() {
             return Err(EngineError::InvalidInput(
-                "smooth-scroll coordinates and duration must be finite and non-negative",
+                "smooth-scroll coordinates must be finite",
             ));
         }
+        validate_scroll_animation_timing(duration_ms, &easing)?;
         let node = self.resolve(target)?;
         let clamped = self.clamp_scroll_offset(target, x, y)?;
         let clamped = self.resolve_native_scroll_endpoint(target, clamped.0, clamped.1)?;
@@ -148,6 +149,9 @@ impl Engine {
                 "scroll snap points must be finite",
             ));
         }
+        // Validate even when the nearest point already equals the current offset.
+        // Invalid inputs must not become successful no-ops or replace a live scroll.
+        validate_scroll_animation_timing(duration_ms, &easing)?;
         let (x, y) = self.scroll_offset(target)?;
         let nearest = |current: f64, points: &[f64]| {
             points
@@ -660,8 +664,18 @@ impl Engine {
     fn validate_timeline(&self, timeline: AnimationTimeline) -> Result<(), EngineError> {
         match timeline {
             AnimationTimeline::Document => Ok(()),
-            AnimationTimeline::Scroll { source, .. } => self.resolve(source).map(|_| ()),
-            AnimationTimeline::View { subject, .. } => self.resolve(subject).map(|_| ()),
+            AnimationTimeline::Scroll { source, range, .. } => {
+                self.resolve(source)?;
+                range
+                    .validate()
+                    .map_err(|error| EngineError::Render(error.to_string()))
+            }
+            AnimationTimeline::View { subject, range, .. } => {
+                self.resolve(subject)?;
+                range
+                    .validate()
+                    .map_err(|error| EngineError::Render(error.to_string()))
+            }
         }
     }
 
@@ -710,6 +724,20 @@ impl Engine {
             }
         }
     }
+}
+
+fn validate_scroll_animation_timing(
+    duration_ms: f64,
+    easing: &openui_style::Easing,
+) -> Result<(), EngineError> {
+    if !duration_ms.is_finite() || duration_ms < 0.0 {
+        return Err(EngineError::InvalidInput(
+            "smooth-scroll duration must be finite and non-negative",
+        ));
+    }
+    easing
+        .validate()
+        .map_err(|error| EngineError::Render(error.to_string()))
 }
 
 fn compose_value(
