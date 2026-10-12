@@ -868,7 +868,8 @@ impl Document {
         self.with_engine_mut(|engine| {
             let next = engine.animation_time() + delta_ms;
             engine.set_animation_time(next)
-        })
+        })?;
+        self.dispatch_animation_events()
     }
 
     pub fn get_time(&self) -> Result<f64, Error> {
@@ -885,11 +886,13 @@ impl Document {
     }
 
     pub fn pause_animation(&self, animation: AnimationId) -> Result<(), Error> {
-        self.with_engine_mut(|engine| engine.pause_animation(animation))
+        self.with_engine_mut(|engine| engine.pause_animation(animation))?;
+        self.dispatch_animation_events()
     }
 
     pub fn play_animation(&self, animation: AnimationId) -> Result<(), Error> {
-        self.with_engine_mut(|engine| engine.play_animation(animation))
+        self.with_engine_mut(|engine| engine.play_animation(animation))?;
+        self.dispatch_animation_events()
     }
 
     pub fn seek_animation(
@@ -906,7 +909,10 @@ impl Document {
         animation: AnimationId,
         playback_rate: f64,
     ) -> Result<(), Error> {
-        self.with_engine_mut(|engine| engine.set_animation_playback_rate(animation, playback_rate))
+        self.with_engine_mut(|engine| {
+            engine.set_animation_playback_rate(animation, playback_rate)
+        })?;
+        self.dispatch_animation_events()
     }
 
     pub fn finish_animation(&self, animation: AnimationId) -> Result<(), Error> {

@@ -287,9 +287,9 @@ impl AnimationOptions {
                 "duration must be finite and non-negative",
             ));
         }
-        if !self.playback_rate.is_finite() || self.playback_rate == 0.0 {
+        if !self.playback_rate.is_finite() {
             return Err(AnimationError::InvalidTiming(
-                "playback rate must be finite and non-zero",
+                "playback rate must be finite",
             ));
         }
         if let IterationCount::Number(iterations) = self.iterations {
@@ -303,10 +303,118 @@ impl AnimationOptions {
     }
 
     pub fn active_duration_ms(&self) -> f64 {
+        // Blink's MultiplyZeroAlwaysGivesZero also covers infinite iterations.
+        if self.duration_ms == 0.0 {
+            return 0.0;
+        }
         match self.iterations {
             IterationCount::Number(iterations) => self.duration_ms * iterations,
             IterationCount::Infinite => f64::INFINITY,
         }
+    }
+
+    /// End of this effect in animation-local milliseconds (there is no end delay).
+    pub fn effect_end_ms(&self) -> f64 {
+        (self.delay_ms + self.active_duration_ms()).max(0.0)
+    }
+
+    /// Sample an animation-local time. Its clock has already applied playback rate.
+    /// The rate's sign only chooses which side owns an exact phase boundary.
+    /// `sample` retains its existing elapsed-time interpretation for direct callers.
+    pub fn sample_local_time(&self, local_time_ms: f64) -> AnimationSample {
+        self.sample_local_time_with_direction(local_time_ms).0
+    }
+
+    /// Shared effect-sampling context for the native animation engine.
+    /// The bool is `current_direction_is_reversed`, derived before the public
+    /// integer iteration count saturates. Blink treats an infinite iteration
+    /// as even; finite floating-point iterations retain their own parity.
+    /// An unresolved iteration outside the fill interval is not even.
+    #[doc(hidden)]
+    pub fn sample_local_time_with_direction(&self, local_time_ms: f64) -> (AnimationSample, bool) {
+        let active_duration = self.active_duration_ms();
+        let end = self.effect_end_ms();
+        let before_boundary = self.delay_ms.min(end).max(0.0);
+        let after_boundary = (self.delay_ms + active_duration).min(end).max(0.0);
+        let backwards = self.playback_rate < 0.0;
+        let phase = if local_time_ms < before_boundary
+            || (backwards && local_time_ms == before_boundary)
+        {
+            AnimationPhase::Before
+        } else if local_time_ms > after_boundary || (!backwards && local_time_ms == after_boundary)
+        {
+            AnimationPhase::After
+        } else {
+            AnimationPhase::Active
+        };
+        let in_effect = match phase {
+            AnimationPhase::Before => self.fill.fills_before(),
+            AnimationPhase::Active => true,
+            AnimationPhase::After => self.fill.fills_after(),
+        };
+        if !in_effect {
+            return (
+                AnimationSample {
+                    phase,
+                    iteration: 0,
+                    progress: None,
+                },
+                current_direction_is_reversed(self.direction, None),
+            );
+        }
+        let active_time = match phase {
+            AnimationPhase::Before => (local_time_ms - self.delay_ms).max(0.0),
+            AnimationPhase::Active => local_time_ms - self.delay_ms,
+            AnimationPhase::After => (local_time_ms - self.delay_ms)
+                .min(active_duration)
+                .max(0.0),
+        };
+        let count = match self.iterations {
+            IterationCount::Number(value) => value,
+            IterationCount::Infinite => f64::INFINITY,
+        };
+        let overall = if self.duration_ms == 0.0 {
+            if phase == AnimationPhase::Before {
+                0.0
+            } else {
+                count
+            }
+        } else {
+            active_time / self.duration_ms
+        };
+        let mut progress = if overall.is_infinite() {
+            0.0
+        } else {
+            overall.fract()
+        };
+        if progress == 0.0
+            && phase != AnimationPhase::Before
+            && active_time == active_duration
+            && count != 0.0
+        {
+            progress = 1.0;
+        }
+        let current_iteration = if phase == AnimationPhase::After && count.is_infinite() {
+            f64::INFINITY
+        } else if progress == 1.0 {
+            (overall.floor() - 1.0).max(0.0)
+        } else {
+            overall.floor().max(0.0)
+        };
+        let current_direction_is_reversed =
+            current_direction_is_reversed(self.direction, Some(current_iteration));
+        (
+            AnimationSample {
+                phase,
+                iteration: current_iteration as u64,
+                progress: Some(if current_direction_is_reversed {
+                    1.0 - progress
+                } else {
+                    progress
+                }),
+            },
+            current_direction_is_reversed,
+        )
     }
 
     pub fn sample(&self, elapsed_since_start_ms: f64) -> AnimationSample {
@@ -376,6 +484,20 @@ impl AnimationOptions {
                 iteration_time / self.duration_ms,
             )),
         }
+    }
+}
+
+fn current_direction_is_reversed(
+    direction: PlaybackDirection,
+    current_iteration: Option<f64>,
+) -> bool {
+    let current_iteration_is_even = current_iteration
+        .is_some_and(|iteration| iteration.is_infinite() || iteration % 2.0 == 0.0);
+    match direction {
+        PlaybackDirection::Normal => false,
+        PlaybackDirection::Reverse => true,
+        PlaybackDirection::Alternate => !current_iteration_is_even,
+        PlaybackDirection::AlternateReverse => current_iteration_is_even,
     }
 }
 

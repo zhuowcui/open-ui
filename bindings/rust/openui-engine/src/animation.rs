@@ -1,7 +1,7 @@
 use crate::{Engine, EngineError, NodeHandle};
 use openui_style::{
-    value_from_computed, AnimationOptions, AnimationPhase, CompositeOperation, IterationCount,
-    Keyframes, LengthValue, PlayState, PropertyKeyframes, StyleProperty, StyleValue, TimelineAxis,
+    value_from_computed, AnimationOptions, AnimationPhase, CompositeOperation, Keyframes,
+    LengthValue, PlayState, PropertyKeyframes, StyleProperty, StyleValue, TimelineAxis,
     TimelineRange, TransformList,
 };
 
@@ -68,10 +68,37 @@ pub(crate) struct AnimationInstance {
     pub offset_ms: f64,
     pub hold_time_ms: Option<f64>,
     pub last_applied: Option<StyleValue>,
-    pub last_phase: AnimationPhase,
+    pub last_phase: Option<AnimationPhase>,
     pub last_iteration: u64,
-    pub started: bool,
+    pub last_current_time_ms: f64,
     pub ended: bool,
+}
+
+impl AnimationInstance {
+    // offset_ms is a LOCAL time at the timeline anchor start_time_ms.
+    // Applying rate here, rather than in the effect sampler, preserves seeks
+    // and continuity when a native application changes playback rate.
+    fn current_time(&self, timeline_time_ms: f64) -> f64 {
+        self.hold_time_ms.unwrap_or_else(|| {
+            self.offset_ms + (timeline_time_ms - self.start_time_ms) * self.options.playback_rate
+        })
+    }
+
+    fn reached_endpoint(&self, local_time_ms: f64) -> bool {
+        self.options.play_state == PlayState::Running
+            && ((self.options.playback_rate > 0.0 && local_time_ms >= self.options.effect_end_ms())
+                || (self.options.playback_rate < 0.0 && local_time_ms <= 0.0))
+    }
+
+    fn reanchor(&mut self, timeline_time_ms: f64, local_time_ms: f64) {
+        self.start_time_ms = timeline_time_ms;
+        self.offset_ms = local_time_ms;
+        self.hold_time_ms = (self.options.play_state == PlayState::Paused
+            || self.options.playback_rate == 0.0
+            || (matches!(self.timeline, AnimationTimeline::Document)
+                && self.reached_endpoint(local_time_ms)))
+        .then_some(local_time_ms);
+    }
 }
 
 #[derive(Clone)]
@@ -206,6 +233,7 @@ impl Engine {
         options
             .validate()
             .map_err(|error| EngineError::Render(error.to_string()))?;
+        initial_local_time(&options)?;
         let from = value_from_computed(&self.document.node(node).style, property);
         let keyframes =
             PropertyKeyframes::typed(property, Keyframes::from_values(from, to.clone()))
@@ -238,6 +266,7 @@ impl Engine {
             .validate()
             .map_err(|error| EngineError::Render(error.to_string()))?;
         self.validate_timeline(timeline)?;
+        let initial_time = initial_local_time(&options)?;
         let property = keyframes.property();
         let underlying = underlying_override
             .or_else(|| {
@@ -255,7 +284,7 @@ impl Engine {
         } else {
             0.0
         };
-        let paused = options.play_state == PlayState::Paused;
+        let held = options.play_state == PlayState::Paused || options.playback_rate == 0.0;
         self.animations.insert(
             id,
             AnimationInstance {
@@ -265,12 +294,12 @@ impl Engine {
                 timeline,
                 underlying,
                 start_time_ms,
-                offset_ms: 0.0,
-                hold_time_ms: paused.then_some(0.0),
+                offset_ms: initial_time,
+                hold_time_ms: held.then_some(initial_time),
                 last_applied: None,
-                last_phase: AnimationPhase::Before,
+                last_phase: None,
                 last_iteration: 0,
-                started: false,
+                last_current_time_ms: initial_time,
                 ended: false,
             },
         );
@@ -284,30 +313,41 @@ impl Engine {
             return Ok(());
         }
         let now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
-        let instance = self
-            .animations
-            .get_mut(&id)
-            .ok_or(EngineError::InvalidInput("unknown animation"))?;
-        instance.hold_time_ms = Some(now - instance.start_time_ms + instance.offset_ms);
+        let current = snapshot.current_time(now);
+        let instance = self.animations.get_mut(&id).expect("live animation");
         instance.options.play_state = PlayState::Paused;
-        Ok(())
+        instance.reanchor(now, current);
+        self.sample_animations()
     }
 
     pub fn play_animation(&mut self, id: AnimationId) -> Result<(), EngineError> {
         let snapshot = self.animation_instance(id)?.clone();
-        if snapshot.options.play_state == PlayState::Running {
+        let now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
+        let mut current = snapshot.current_time(now);
+        if matches!(snapshot.timeline, AnimationTimeline::Document) {
+            let end = snapshot.options.effect_end_ms();
+            let rate = snapshot.options.playback_rate;
+            if rate > 0.0 && (current < 0.0 || current >= end) {
+                current = 0.0;
+            } else if rate < 0.0 && (current <= 0.0 || current > end) {
+                if !end.is_finite() {
+                    return Err(EngineError::InvalidInput(
+                        "cannot start reverse playback at an infinite effect end",
+                    ));
+                }
+                current = end;
+            }
+        }
+        if snapshot.options.play_state == PlayState::Running
+            && !snapshot.ended
+            && current == snapshot.current_time(now)
+        {
             return Ok(());
         }
-        let now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
-        let instance = self
-            .animations
-            .get_mut(&id)
-            .ok_or(EngineError::InvalidInput("unknown animation"))?;
-        instance.offset_ms = instance.hold_time_ms.take().unwrap_or_default();
-        instance.start_time_ms = now;
+        let instance = self.animations.get_mut(&id).expect("live animation");
         instance.options.play_state = PlayState::Running;
-        instance.ended = false;
-        Ok(())
+        instance.reanchor(now, current);
+        self.sample_animations()
     }
 
     pub fn seek_animation(
@@ -322,17 +362,10 @@ impl Engine {
         }
         let snapshot = self.animation_instance(id)?.clone();
         let now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
-        let instance = self
-            .animations
+        self.animations
             .get_mut(&id)
-            .ok_or(EngineError::InvalidInput("unknown animation"))?;
-        if instance.options.play_state == PlayState::Paused {
-            instance.hold_time_ms = Some(current_time_ms);
-        } else {
-            instance.start_time_ms = now;
-            instance.offset_ms = current_time_ms;
-        }
-        instance.ended = false;
+            .expect("live animation")
+            .reanchor(now, current_time_ms);
         self.sample_animations()
     }
 
@@ -341,69 +374,77 @@ impl Engine {
         id: AnimationId,
         playback_rate: f64,
     ) -> Result<(), EngineError> {
-        if !playback_rate.is_finite() || playback_rate == 0.0 {
+        if !playback_rate.is_finite() {
             return Err(EngineError::InvalidInput(
-                "animation playback rate must be finite and non-zero",
+                "animation playback rate must be finite",
             ));
         }
-        let current = self.animation_state(id)?.current_time_ms;
         let snapshot = self.animation_instance(id)?.clone();
         let now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
-        let instance = self
-            .animations
-            .get_mut(&id)
-            .ok_or(EngineError::InvalidInput("unknown animation"))?;
+        let current = snapshot.current_time(now);
+        let instance = self.animations.get_mut(&id).expect("live animation");
         instance.options.playback_rate = playback_rate;
-        if instance.options.play_state == PlayState::Paused {
-            instance.hold_time_ms = Some(current);
-        } else {
-            instance.start_time_ms = now;
-            instance.offset_ms = current;
-        }
-        instance.ended = false;
+        instance.reanchor(now, current);
         self.sample_animations()
     }
 
     pub fn finish_animation(&mut self, id: AnimationId) -> Result<(), EngineError> {
-        let instance = self.animation_instance(id)?;
-        let IterationCount::Number(_) = instance.options.iterations else {
+        let snapshot = self.animation_instance(id)?.clone();
+        let rate = snapshot.options.playback_rate;
+        if rate == 0.0 {
             return Err(EngineError::InvalidInput(
-                "an infinitely repeating animation cannot be finished",
+                "cannot finish an animation with zero playback rate",
             ));
+        }
+        let endpoint = if rate < 0.0 {
+            0.0
+        } else {
+            snapshot.options.effect_end_ms()
         };
-        let finish = instance.options.delay_ms + instance.options.active_duration_ms();
-        self.seek_animation(id, finish)
+        if !endpoint.is_finite() {
+            return Err(EngineError::InvalidInput(
+                "cannot finish at an infinite effect end",
+            ));
+        }
+        let now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
+        let instance = self.animations.get_mut(&id).expect("live animation");
+        // Finishing a paused animation resolves its start time and finished state.
+        instance.options.play_state = PlayState::Running;
+        instance.reanchor(now, endpoint);
+        self.sample_animations()
     }
 
     pub fn cancel_animation(&mut self, id: AnimationId) -> Result<(), EngineError> {
-        let instance = self
-            .animations
-            .remove(&id)
-            .ok_or(EngineError::InvalidInput("unknown animation"))?;
-        self.apply_animation_value(
-            instance.target,
-            instance.keyframes.property(),
-            &instance.underlying,
-        )?;
-        self.animation_events.push(AnimationEvent {
-            animation: id,
-            target: instance.target,
-            property: instance.keyframes.property(),
-            kind: AnimationEventKind::Cancel,
-            elapsed_time_ms: self.animation_time_ms,
-            iteration: instance.last_iteration,
-        });
+        let snapshot = self.animation_instance(id)?.clone();
+        let elapsed_time_ms = self.cancel_elapsed_time(&snapshot);
+        self.animations.remove(&id);
+        if let Err(error) = self.apply_animation_value(
+            snapshot.target,
+            snapshot.keyframes.property(),
+            &snapshot.underlying,
+        ) {
+            self.animations.insert(id, snapshot);
+            return Err(error);
+        }
+        if snapshot.last_phase.is_some() && snapshot.last_phase != Some(AnimationPhase::After) {
+            self.animation_events.push(AnimationEvent {
+                animation: id,
+                target: snapshot.target,
+                property: snapshot.keyframes.property(),
+                kind: AnimationEventKind::Cancel,
+                elapsed_time_ms,
+                iteration: snapshot.last_iteration,
+            });
+        }
         Ok(())
     }
 
     pub fn animation_state(&self, id: AnimationId) -> Result<AnimationState, EngineError> {
         let instance = self.animation_instance(id)?;
         let timeline_now = self.timeline_time(instance.timeline, &instance.options)?;
-        let current_time_ms = instance
-            .hold_time_ms
-            .unwrap_or(timeline_now - instance.start_time_ms + instance.offset_ms);
+        let current_time_ms = instance.current_time(timeline_now);
         let effective = self.effective_elapsed(instance, current_time_ms);
-        let sample = instance.options.sample(effective);
+        let sample = instance.options.sample_local_time(effective);
         Ok(AnimationState {
             id,
             target: instance.target,
@@ -419,7 +460,9 @@ impl Engine {
     pub fn is_animating(&self) -> bool {
         !self.reduced_motion
             && (self.animations.values().any(|animation| {
-                animation.options.play_state == PlayState::Running && !animation.ended
+                animation.options.play_state == PlayState::Running
+                    && animation.options.playback_rate != 0.0
+                    && !animation.ended
             }) || !self.scroll_animations.is_empty())
     }
 
@@ -441,19 +484,20 @@ impl Engine {
             .animations
             .iter()
             .filter(|(_, animation)| handles.contains(&animation.target))
-            .map(|(id, animation)| (*id, animation.target, animation.last_iteration))
+            .map(|(id, animation)| (*id, animation.clone(), self.cancel_elapsed_time(animation)))
             .collect::<Vec<_>>();
-        for (id, target, iteration) in canceled {
-            let property = self.animations[&id].keyframes.property();
+        for (id, instance, elapsed_time_ms) in canceled {
             self.animations.remove(&id);
-            self.animation_events.push(AnimationEvent {
-                animation: id,
-                target,
-                property,
-                kind: AnimationEventKind::Cancel,
-                elapsed_time_ms: self.animation_time_ms,
-                iteration,
-            });
+            if instance.last_phase.is_some() && instance.last_phase != Some(AnimationPhase::After) {
+                self.animation_events.push(AnimationEvent {
+                    animation: id,
+                    target: instance.target,
+                    property: instance.keyframes.property(),
+                    kind: AnimationEventKind::Cancel,
+                    elapsed_time_ms,
+                    iteration: instance.last_iteration,
+                });
+            }
         }
     }
 
@@ -468,11 +512,22 @@ impl Engine {
                 continue;
             }
             let timeline_now = self.timeline_time(snapshot.timeline, &snapshot.options)?;
-            let current_time = snapshot
-                .hold_time_ms
-                .unwrap_or(timeline_now - snapshot.start_time_ms + snapshot.offset_ms);
+            let raw_time = snapshot.current_time(timeline_now);
+            let current_time = if snapshot.hold_time_ms.is_none()
+                && matches!(snapshot.timeline, AnimationTimeline::Document)
+                && snapshot.reached_endpoint(raw_time)
+            {
+                if snapshot.options.playback_rate < 0.0 {
+                    0.0
+                } else {
+                    snapshot.options.effect_end_ms()
+                }
+            } else {
+                raw_time
+            };
             let effective = self.effective_elapsed(&snapshot, current_time);
-            let sample = snapshot.options.sample(effective);
+            let sample = snapshot.options.sample_local_time(effective);
+            let finished = self.reduced_motion || snapshot.reached_endpoint(current_time);
             let sampled = sample.progress.map(|progress| {
                 let value = snapshot
                     .keyframes
@@ -506,42 +561,82 @@ impl Engine {
                 }
             }
 
+            let phase_changed = snapshot.last_phase != Some(sample.phase);
+            let was_before = snapshot.last_phase.is_none()
+                || snapshot.last_phase == Some(AnimationPhase::Before);
+            let was_after = snapshot.last_phase == Some(AnimationPhase::After);
+            let interval_start = (-snapshot.options.delay_ms)
+                .min(snapshot.options.active_duration_ms())
+                .max(0.0);
+            let interval_end = (snapshot.options.effect_end_ms() - snapshot.options.delay_ms)
+                .min(snapshot.options.active_duration_ms())
+                .max(0.0);
             let mut events = Vec::new();
-            let starts_now = !snapshot.started
-                && matches!(sample.phase, AnimationPhase::Active | AnimationPhase::After);
-            if starts_now {
-                events.push(AnimationEventKind::Start);
-            }
-            if snapshot.started
-                && sample.phase == AnimationPhase::Active
-                && sample.iteration > snapshot.last_iteration
+            if phase_changed
+                && ((was_before && sample.phase != AnimationPhase::Before)
+                    || (was_after && sample.phase != AnimationPhase::After))
             {
-                events.extend(
-                    (snapshot.last_iteration + 1..=sample.iteration)
-                        .map(|_| AnimationEventKind::Iteration),
-                );
+                events.push((
+                    AnimationEventKind::Start,
+                    if was_after {
+                        interval_end
+                    } else {
+                        interval_start
+                    },
+                ));
             }
-            let ends_now = !snapshot.ended && sample.phase == AnimationPhase::After;
-            if ends_now {
-                events.push(AnimationEventKind::End);
+            if phase_changed
+                && (sample.phase == AnimationPhase::After
+                    || (sample.phase == AnimationPhase::Before && !was_before))
+            {
+                events.push((
+                    AnimationEventKind::End,
+                    if sample.phase == AnimationPhase::After {
+                        interval_end
+                    } else {
+                        interval_start
+                    },
+                ));
             }
-            for kind in events {
+            if !phase_changed
+                && sample.phase == AnimationPhase::Active
+                && sample.iteration != snapshot.last_iteration
+            {
+                // Chromium emits one event for all skipped iterations, in either direction.
+                let boundary = if snapshot.last_iteration > sample.iteration {
+                    sample.iteration.saturating_add(1)
+                } else {
+                    sample.iteration
+                };
+                events.push((
+                    AnimationEventKind::Iteration,
+                    snapshot.options.duration_ms * boundary as f64,
+                ));
+            }
+            for (kind, elapsed_time_ms) in events {
                 self.animation_events.push(AnimationEvent {
                     animation: id,
                     target: snapshot.target,
                     property: snapshot.keyframes.property(),
                     kind,
-                    elapsed_time_ms: effective.max(0.0),
+                    elapsed_time_ms,
                     iteration: sample.iteration,
                 });
             }
 
             if let Some(instance) = self.animations.get_mut(&id) {
+                if matches!(snapshot.timeline, AnimationTimeline::Document) && finished {
+                    if self.reduced_motion && effective.is_finite() {
+                        instance.hold_time_ms = Some(effective);
+                    } else if snapshot.hold_time_ms.is_none() {
+                        instance.hold_time_ms = Some(current_time);
+                    }
+                }
                 instance.last_applied = sampled;
-                instance.last_phase = sample.phase;
+                instance.last_phase = Some(sample.phase);
                 instance.last_iteration = sample.iteration;
-                instance.started |= starts_now;
-                instance.ended |= ends_now;
+                instance.last_current_time_ms = current_time;
+                instance.ended = finished;
             }
         }
         Ok(())
@@ -578,17 +673,26 @@ impl Engine {
 
     fn effective_elapsed(&self, instance: &AnimationInstance, current_time: f64) -> f64 {
         if self.reduced_motion {
-            match instance.options.iterations {
-                IterationCount::Infinite => {
-                    instance.options.delay_ms + instance.options.duration_ms
-                }
-                IterationCount::Number(_) => {
-                    instance.options.delay_ms + instance.options.active_duration_ms()
-                }
+            if instance.options.playback_rate < 0.0 {
+                0.0
+            } else if instance.options.effect_end_ms().is_finite() {
+                instance.options.effect_end_ms()
+            } else {
+                instance.options.delay_ms + instance.options.duration_ms
             }
         } else {
             current_time
         }
+    }
+
+    fn cancel_elapsed_time(&self, instance: &AnimationInstance) -> f64 {
+        let current = self
+            .timeline_time(instance.timeline, &instance.options)
+            .map(|time| instance.current_time(time))
+            .unwrap_or(instance.last_current_time_ms);
+        (current - instance.options.delay_ms)
+            .min(instance.options.active_duration_ms())
+            .max(0.0)
     }
 
     fn apply_animation_value(
@@ -726,6 +830,20 @@ impl Engine {
     }
 }
 
+fn initial_local_time(options: &AnimationOptions) -> Result<f64, EngineError> {
+    if options.playback_rate < 0.0 {
+        let end = options.effect_end_ms();
+        if !end.is_finite() {
+            return Err(EngineError::InvalidInput(
+                "cannot start reverse playback at an infinite effect end",
+            ));
+        }
+        Ok(end)
+    } else {
+        Ok(0.0)
+    }
+}
+
 fn validate_scroll_animation_timing(
     duration_ms: f64,
     easing: &openui_style::Easing,
@@ -859,7 +977,8 @@ mod tests {
         engine.set_animation_playback_rate(id, -1.0).unwrap();
         engine.play_animation(id).unwrap();
         engine.set_animation_time(85.0).unwrap();
-        assert!(engine.computed_style(node).unwrap().opacity < 0.8);
+        assert_eq!(engine.computed_style(node).unwrap().opacity, 0.7);
+        assert_eq!(engine.animation_state(id).unwrap().current_time_ms, 70.0);
         engine.cancel_animation(id).unwrap();
         assert_eq!(engine.computed_style(node).unwrap().opacity, 0.75);
         assert_eq!(

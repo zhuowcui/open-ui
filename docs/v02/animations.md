@@ -40,15 +40,50 @@ finite reversed ranges remain supported.
 
 The source guards for these input rules still need compilation and runtime
 verification on the complete integrated checkpoint. They do not qualify every
-animation operation. In particular, playback-rate changes currently retain
-unscaled elapsed time while the effect sampler applies the new rate. Seeking
-to 80 ms and then reversing a 100 ms opacity animation can therefore change
-its sampled value immediately. Local-time preservation, reverse completion,
-zero-rate behavior, scroll/view timeline axes and lifecycle event boundaries
-need shared repairs and exact Chromium qualification. The
+animation operation.
+
+## Animation local clock
+
+The Engine records a local time at a document-clock anchor. A running animation
+advances that time by the elapsed document time multiplied by its playback rate.
+The effect then samples the local time without applying the rate a second time.
+Pausing, seeking and changing the rate preserve this same local time, including
+when a native application seeks while paused and then reverses playback.
+
+A zero playback rate holds the current picture and requests no animation ticks.
+It can be resumed by assigning a nonzero rate. Finishing with a zero rate returns
+an error. Forward playback holds the effect end; reverse playback holds zero.
+An explicit seek beyond a finished boundary preserves the requested time, while
+an ordinary tick holds the boundary. Playing a finished document animation
+rewinds to its beginning or end according to the rate. An infinite forward effect
+cannot be finished, but an already running infinite effect can be reversed and
+finished at zero. Creating reverse playback at an infinite end is rejected.
+
+`AnimationOptions::sample` retains its elapsed-time interpretation for direct
+callers. The Engine uses `sample_local_time` for its owned clocks. Animation
+lifecycle callbacks follow effect phase transitions, including reverse completion;
+a skipped group of iterations emits one event, and event elapsed time describes
+the active effect interval rather than elapsed wall-clock time. Rust application
+controls and both absolute and delta clock advances dispatch these callbacks
+after releasing Engine borrows. Alternating direction is computed before the
+public integer iteration count saturates; infinite current iteration is treated
+as even. These rules are implemented from pinned Chromium 147.0.7727.50 source and have native guards,
+including checks that a rate change preserves rendered bytes. Their compilation,
+runtime and Chromium qualification are still pending.
+
+Scroll and view timelines remain required work. Their current source maps
+caller-provided ranges to physical scroll offsets or a subject's world-space
+center. It does not yet retain the nearest scrollport's flow-relative axes,
+subject visibility interval and normalized timeline-range snapshot needed for
+Blink's nonmonotonic start-time alignment and reversal controls. The document
+clock repair preserves these public operations; their complete behavior is
+unqualified and requires shared range geometry and corresponding native guards.
+Overlapping effects and cancellation also need qualification: each animation
+still retains its captured underlying value, so restoring it must be reviewed
+against surviving effects and later authored changes. The
 [Web Animations timing model](https://www.w3.org/TR/web-animations-1/#the-current-time-of-an-animation)
-defines the browser behavior used as the oracle; consuming Open UI applications
-perform the equivalent operations through native Rust APIs.
+defines the browser behavior used as the oracle. Applications perform the
+equivalent operations through native Rust APIs; Open UI executes no JavaScript.
 
 ## Current compositor boundary
 
