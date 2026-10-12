@@ -926,6 +926,19 @@ fn normalize_multicol_owned_subtree(
             logical_visual.block_offset - logical_origin.block_offset,
         );
         for ancestor in &mut fragment.promoted_transform_ancestors {
+            let project = |rect: PhysicalRect, size: PhysicalSize| {
+                let logical =
+                    WritingModeConverter::new(writing_direction, size).to_logical_rect(rect);
+                PhysicalRect::new(
+                    PhysicalOffset::new(logical.offset.inline_offset, logical.offset.block_offset),
+                    PhysicalSize::new(logical.size.inline_size, logical.size.block_size),
+                )
+            };
+            ancestor.source_reference_box =
+                project(ancestor.source_reference_box, ancestor.source_size);
+            ancestor.fragment_reference_box =
+                project(ancestor.fragment_reference_box, ancestor.fragment_size);
+            ancestor.reference_block_axis_is_x ^= !writing_direction.is_horizontal();
             let source_logical_size = converter.to_logical_size(ancestor.source_size);
             let source_logical_offset =
                 converter.to_logical_offset(ancestor.source_offset, ancestor.source_size);
@@ -1103,6 +1116,20 @@ fn project_multicol_child_to_physical(
             );
         }
         for ancestor in &mut fragment.promoted_transform_ancestors {
+            let project = |rect: PhysicalRect, size: PhysicalSize| {
+                let outer = converter.to_physical_size(LogicalSize::new(size.width, size.height));
+                WritingModeConverter::new(writing_direction, outer).to_physical_rect(
+                    LogicalRect::new(
+                        LogicalOffset::new(rect.x(), rect.y()),
+                        LogicalSize::new(rect.width(), rect.height()),
+                    ),
+                )
+            };
+            ancestor.source_reference_box =
+                project(ancestor.source_reference_box, ancestor.source_size);
+            ancestor.fragment_reference_box =
+                project(ancestor.fragment_reference_box, ancestor.fragment_size);
+            ancestor.reference_block_axis_is_x ^= !writing_direction.is_horizontal();
             let source_physical_size = converter.to_physical_size(LogicalSize::new(
                 ancestor.source_size.width,
                 ancestor.source_size.height,
@@ -16357,10 +16384,11 @@ fn fragment_direct_positioned_children_in_multicol(
                 parent_offset.left + fragment.offset.left,
                 parent_offset.top + fragment.offset.top,
             );
-            let (own_authored_visual_offset, own_full_transform) = if fragment.node_id.is_none() {
+            let (own_authored_visual_offset, own_applied_transform) = if fragment.node_id.is_none()
+            {
                 (
                     PhysicalOffset::zero(),
-                    openui_style::TransformMatrix::IDENTITY,
+                    openui_style::AppliedTransform::IDENTITY,
                 )
             } else {
                 let fragment_style = &doc.node(fragment.node_id).style;
@@ -16374,14 +16402,17 @@ fn fragment_direct_positioned_children_in_multicol(
                     PhysicalOffset::zero()
                 };
                 let transform = if fragment.owns_element_box() {
-                    crate::resolved_fragment_transform(&fragment, fragment_style).matrix
+                    crate::resolved_fragment_transform(&fragment, fragment_style).local_applied
                 } else {
-                    openui_style::TransformMatrix::IDENTITY
+                    openui_style::AppliedTransform::IDENTITY
                 };
                 (relative, transform)
             };
+            let own_full_transform = own_applied_transform.matrix;
             let own_transform = own_full_transform.compatibility_affine();
-            let own_is_pure_translation = own_full_transform.is_2d()
+            // Folding a full Matrix44 into LayoutUnit offsets would erase
+            // its double/source arithmetic even for an affine translation.
+            let own_is_pure_translation = own_applied_transform.axis_2d.is_some()
                 && own_transform.a == 1.0
                 && own_transform.b == 0.0
                 && own_transform.c == 0.0
@@ -16396,7 +16427,8 @@ fn fragment_direct_positioned_children_in_multicol(
             };
             let mut promoted_transforms = ancestor_promoted_transforms.to_vec();
             if !fragment.node_id.is_none()
-                && own_full_transform != openui_style::TransformMatrix::IDENTITY
+                && (own_applied_transform.axis_2d.is_none()
+                    || own_full_transform != openui_style::TransformMatrix::IDENTITY)
                 && !own_is_pure_translation
             {
                 promoted_transforms.push(PromotedTransformAncestor {
@@ -16405,6 +16437,18 @@ fn fragment_direct_positioned_children_in_multicol(
                     source_size: fragment.size,
                     fragment_offset: absolute_offset,
                     fragment_size: fragment.size,
+                    source_reference_box: fragment.border_box_rect(),
+                    fragment_reference_box: fragment.border_box_rect(),
+                    reference_block_size: fragment.decoration_paint_block_size,
+                    reference_block_axis_is_x: !fragment
+                        .fragmentation_writing_direction
+                        .unwrap_or_else(|| {
+                            doc.node(fragment.node_id)
+                                .style
+                                .direction
+                                .writing_direction(doc.node(fragment.node_id).style.writing_mode)
+                        })
+                        .is_horizontal(),
                 });
             }
             let authored_visual_offset = PhysicalOffset::new(
@@ -17018,6 +17062,7 @@ fn fragment_direct_positioned_children_in_multicol(
                             ancestor.source_size.width,
                             intersection_end - intersection_start,
                         );
+                        ancestor.resolve_reference_slice(intersection_start - source_flow_start);
                     } else {
                         // Positioned overflow may create continuations before
                         // or after every real fragment of its transformed
@@ -17033,6 +17078,7 @@ fn fragment_direct_positioned_children_in_multicol(
                         );
                         ancestor.fragment_size =
                             PhysicalSize::new(ancestor.source_size.width, LayoutUnit::zero());
+                        ancestor.resolve_reference_slice(LayoutUnit::zero());
                     }
                 } else {
                     // The transform reference box for a promoted descendant
@@ -17040,6 +17086,7 @@ fn fragment_direct_positioned_children_in_multicol(
                     // complete pre-fragmentation source box.
                     ancestor.fragment_offset = continuation.offset;
                     ancestor.fragment_size = continuation.size;
+                    ancestor.resolve_reference_slice(LayoutUnit::zero());
                 }
             }
             if continuation.promoted_transform_uses_fragment_decoration {

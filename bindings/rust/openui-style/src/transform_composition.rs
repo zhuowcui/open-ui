@@ -133,6 +133,22 @@ impl TransformMatrix {
     }
 
     pub fn inverse(self) -> Option<Self> {
+        if self.is_2d() {
+            let m = self.0;
+            let determinant = m[0] * m[5] - m[1] * m[4];
+            if !(determinant as f32).is_normal() {
+                return None;
+            }
+            let inverse = 1.0 / determinant;
+            let mut result = Self::IDENTITY;
+            result.0[0] = m[5] * inverse;
+            result.0[1] = -m[1] * inverse;
+            result.0[4] = -m[4] * inverse;
+            result.0[5] = m[0] * inverse;
+            result.0[12] = (m[4] * m[13] - m[5] * m[12]) * inverse;
+            result.0[13] = (m[1] * m[12] - m[0] * m[13]) * inverse;
+            return Some(result);
+        }
         let cols = inverse_columns([self.col(0), self.col(1), self.col(2), self.col(3)])?;
         let mut out = Self::IDENTITY;
         for (i, col) in cols.into_iter().enumerate() {
@@ -331,6 +347,166 @@ impl TransformMatrix {
             q: a.q.multiply(b.q),
         };
         Some(out.compose())
+    }
+}
+
+/// The source's optimized float axis representation. This tag is retained
+/// from operations, never inferred from zero-skew matrix components.
+#[doc(hidden)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct AxisTransform2d {
+    pub scale: [f32; 2],
+    pub translation: [f32; 2],
+}
+impl AxisTransform2d {
+    pub const IDENTITY: Self = Self {
+        scale: [1.0, 1.0],
+        translation: [0.0, 0.0],
+    };
+}
+
+/// A gfx::Transform-equivalent applied value. `None` means full Matrix44,
+/// including explicit identity/axis-aligned matrices which stay full matrices.
+#[doc(hidden)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct AppliedTransform {
+    pub matrix: TransformMatrix,
+    pub axis_2d: Option<AxisTransform2d>,
+}
+impl AppliedTransform {
+    pub const IDENTITY: Self = Self {
+        matrix: TransformMatrix::IDENTITY,
+        axis_2d: Some(AxisTransform2d::IDENTITY),
+    };
+    pub fn identity() -> Self {
+        Self::IDENTITY
+    }
+    pub fn from_matrix(matrix: TransformMatrix) -> Self {
+        Self {
+            matrix,
+            axis_2d: None,
+        }
+    }
+    pub fn from_axis(axis: AxisTransform2d) -> Self {
+        let mut matrix = TransformMatrix::IDENTITY;
+        matrix.0[0] = axis.scale[0] as f64;
+        matrix.0[5] = axis.scale[1] as f64;
+        matrix.0[12] = axis.translation[0] as f64;
+        matrix.0[13] = axis.translation[1] as f64;
+        Self {
+            matrix,
+            axis_2d: Some(axis),
+        }
+    }
+    pub fn translation(x: f32, y: f32) -> Self {
+        Self::from_axis(AxisTransform2d {
+            translation: [x, y],
+            ..AxisTransform2d::IDENTITY
+        })
+    }
+    /// `self * rhs`, with exact source Axis/Matrix promotion and arithmetic.
+    pub fn concat(self, rhs: Self) -> Self {
+        match (self.axis_2d, rhs.axis_2d) {
+            (Some(a), Some(b)) => Self::from_axis(AxisTransform2d {
+                translation: [
+                    a.translation[0] + b.translation[0] * a.scale[0],
+                    a.translation[1] + b.translation[1] * a.scale[1],
+                ],
+                scale: [a.scale[0] * b.scale[0], a.scale[1] * b.scale[1]],
+            }),
+            (None, Some(b)) => {
+                let mut matrix = self.matrix;
+                matrix.set_col(
+                    3,
+                    add(
+                        add(
+                            mul(matrix.col(0), b.translation[0] as f64),
+                            mul(matrix.col(1), b.translation[1] as f64),
+                        ),
+                        matrix.col(3),
+                    ),
+                );
+                matrix.set_col(0, mul(matrix.col(0), b.scale[0] as f64));
+                matrix.set_col(1, mul(matrix.col(1), b.scale[1] as f64));
+                Self::from_matrix(matrix)
+            }
+            (Some(a), None) => {
+                let mut matrix = rhs.matrix;
+                for row in 0..2 {
+                    if a.scale[row] != 1.0 {
+                        for col in 0..4 {
+                            matrix.0[col * 4 + row] *= a.scale[row] as f64;
+                        }
+                    }
+                }
+                let perspective = matrix.0[3] != 0.0
+                    || matrix.0[7] != 0.0
+                    || matrix.0[11] != 0.0
+                    || matrix.0[15] != 1.0;
+                if !perspective {
+                    matrix.0[12] += a.translation[0] as f64;
+                    matrix.0[13] += a.translation[1] as f64;
+                } else {
+                    for row in 0..2 {
+                        if a.translation[row] != 0.0 {
+                            for col in 0..4 {
+                                matrix.0[col * 4 + row] +=
+                                    matrix.0[col * 4 + 3] * a.translation[row] as f64;
+                            }
+                        }
+                    }
+                }
+                Self::from_matrix(matrix)
+            }
+            (None, None) => Self::from_matrix(self.matrix.concat(rhs.matrix)),
+        }
+    }
+    pub fn inverse(self) -> Option<Self> {
+        if let Some(mut axis) = self.axis_2d {
+            if !(axis.scale[0] * axis.scale[1]).is_normal() {
+                return None;
+            }
+            axis.scale = [1.0 / axis.scale[0], 1.0 / axis.scale[1]];
+            axis.translation = [
+                axis.translation[0] * -axis.scale[0],
+                axis.translation[1] * -axis.scale[1],
+            ];
+            Some(Self::from_axis(axis))
+        } else {
+            self.matrix.inverse().map(Self::from_matrix)
+        }
+    }
+    pub fn is_invertible(self) -> bool {
+        self.axis_2d.map_or_else(
+            || self.matrix.is_invertible(),
+            |axis| (axis.scale[0] * axis.scale[1]).is_normal(),
+        )
+    }
+    pub fn flattened(self) -> Self {
+        if self.axis_2d.is_some() {
+            self
+        } else {
+            Self::from_matrix(self.matrix.flattened())
+        }
+    }
+    pub fn is_2d(self) -> bool {
+        self.matrix.is_2d()
+    }
+    fn from_internal(value: Applied) -> Self {
+        if value.axis {
+            Self::from_axis(AxisTransform2d {
+                scale: [value.matrix.0[0] as f32, value.matrix.0[5] as f32],
+                translation: [value.matrix.0[12] as f32, value.matrix.0[13] as f32],
+            })
+        } else {
+            Self::from_matrix(value.matrix)
+        }
+    }
+    fn internal(self) -> Applied {
+        Applied {
+            matrix: self.matrix,
+            axis: self.axis_2d.is_some(),
+        }
     }
 }
 
@@ -709,6 +885,51 @@ pub enum TransformLengthExpression {
     ScalarAdd(Box<Self>, Box<Self>),
 }
 
+#[derive(Clone, Copy, PartialEq)]
+enum TransformLengthKind {
+    Fixed,
+    Percent,
+    Calculated,
+}
+#[derive(Clone, Copy)]
+struct TransformLengthCoefficients {
+    pixels: f32,
+    percent: f32,
+    kind: TransformLengthKind,
+}
+impl TransformLengthCoefficients {
+    fn scalar(self) -> f32 {
+        if self.kind == TransformLengthKind::Percent {
+            self.percent
+        } else {
+            self.pixels
+        }
+    }
+    fn simple(kind: TransformLengthKind, value: f32) -> Self {
+        if kind == TransformLengthKind::Percent {
+            Self {
+                pixels: 0.0,
+                percent: value,
+                kind,
+            }
+        } else {
+            Self {
+                pixels: value,
+                percent: 0.0,
+                kind,
+            }
+        }
+    }
+}
+
+/// Resolve a computed transform length with the same kind-sensitive float
+/// arithmetic used by Blink's FloatValueForLength/CalculationValue::Evaluate.
+#[doc(hidden)]
+pub fn transform_length_for_reference_box(length: openui_geometry::Length, reference: f32) -> f32 {
+    TransformLengthExpression::Value(LengthValue::Computed(length)).evaluate(reference as f64)
+        as f32
+}
+
 impl TransformLengthExpression {
     fn zero() -> Self {
         Self::Value(LengthValue::px(0.0))
@@ -728,31 +949,77 @@ impl TransformLengthExpression {
             }
         }
     }
-    fn coefficients(&self) -> (f32, f32) {
+    fn coefficients(&self) -> TransformLengthCoefficients {
+        use TransformLengthKind::{Calculated, Fixed, Percent};
         match self {
-            Self::Value(LengthValue::Computed(v)) => {
-                if v.is_percent() {
-                    (0.0, v.value())
-                } else if v.is_calculated() {
-                    (v.calc_offset(), v.value())
-                } else if v.is_fixed() {
-                    (v.value(), 0.0)
+            Self::Value(LengthValue::Computed(value)) => {
+                if value.is_percent() {
+                    TransformLengthCoefficients {
+                        pixels: 0.0,
+                        percent: value.value(),
+                        kind: Percent,
+                    }
+                } else if value.is_calculated() {
+                    TransformLengthCoefficients {
+                        pixels: value.calc_offset(),
+                        percent: value.value(),
+                        kind: Calculated,
+                    }
                 } else {
-                    (0.0, 0.0)
+                    TransformLengthCoefficients {
+                        pixels: if value.is_fixed() { value.value() } else { 0.0 },
+                        percent: 0.0,
+                        kind: Fixed,
+                    }
                 }
             }
-            // The Engine resolves these before application. Keep their units
-            // through the expression tree rather than assuming a font size.
             Self::Value(_) => unreachable!("font-relative transform length was not resolved"),
             Self::Blend(a, b, p) => {
-                let (ap, ac) = a.coefficients();
-                let (bp, bc) = b.coefficients();
-                (blend_float(ap, bp, *p), blend_float(ac, bc, *p))
+                let a = a.coefficients();
+                let b = b.coefficients();
+                // Length::Blend preserves the original endpoint's type at
+                // endpoints, including calculated zero-pixel coefficients.
+                if *p == 0.0 {
+                    return a;
+                }
+                if *p == 1.0 {
+                    return b;
+                }
+                if a.kind == Calculated
+                    || b.kind == Calculated
+                    || (a.scalar() != 0.0 && b.scalar() != 0.0 && a.kind != b.kind)
+                {
+                    return TransformLengthCoefficients {
+                        pixels: blend_float(a.pixels, b.pixels, *p),
+                        percent: blend_float(a.percent, b.percent, *p),
+                        kind: Calculated,
+                    };
+                }
+                if a.scalar() == 0.0 && b.scalar() == 0.0 {
+                    return b;
+                }
+                let kind = if b.scalar() == 0.0 { a.kind } else { b.kind };
+                TransformLengthCoefficients::simple(kind, blend_float(a.scalar(), b.scalar(), *p))
             }
             Self::Add(a, b) => {
-                let (ap, ac) = a.coefficients();
-                let (bp, bc) = b.coefficients();
-                (ap + bp, ac + bc)
+                // TranslateTransformOperation::AddLengths collapses its
+                // summed coefficients, unlike Length::Blend mixed types.
+                let a = a.coefficients();
+                let b = b.coefficients();
+                let pixels = a.pixels + b.pixels;
+                let percent = a.percent + b.percent;
+                let kind = if percent == 0.0 {
+                    Fixed
+                } else if pixels == 0.0 {
+                    Percent
+                } else {
+                    Calculated
+                };
+                TransformLengthCoefficients {
+                    pixels,
+                    percent,
+                    kind,
+                }
             }
             Self::ScalarBlend(..) | Self::ScalarAdd(..) => {
                 unreachable!("scalar z length used for x/y")
@@ -760,10 +1027,21 @@ impl TransformLengthExpression {
         }
     }
     fn evaluate(&self, reference: f64) -> f64 {
-        let (px, percent) = self.coefficients();
-        // The reference box is gfx::SizeF; the result enters gfx Translate3d
-        // as float even when the operation's z component is a double.
-        (px + (reference as f32) * percent / 100.0) as f64
+        let value = self.coefficients();
+        let result = match value.kind {
+            TransformLengthKind::Fixed => value.pixels,
+            TransformLengthKind::Percent => (reference as f32) * value.percent / 100.0,
+            // CalculationValue::Evaluate deliberately divides before the
+            // reference-box multiply. Pure percent uses a different order.
+            TransformLengthKind::Calculated => {
+                value.pixels + value.percent / 100.0 * (reference as f32)
+            }
+        };
+        if result.is_nan() {
+            0.0
+        } else {
+            result.clamp(f32::MIN, f32::MAX) as f64
+        }
     }
     fn depends_on_box(&self) -> bool {
         match self {
@@ -1137,8 +1415,8 @@ fn discrete(from: &TransformList, to: &TransformList, p: f64) -> TransformList {
 
 /// Interpolate matching primitives and identity-pad shorter lists. A matrix
 /// suffix with percentage dependence remains owned and deferred until layout.
-/// The Engine resolves font-relative lengths before calling this sampler;
-/// [`map_transform_lengths`] performs the shared recursive unit conversion.
+/// Unresolved font/viewport units remain owned until [`map_transform_lengths`]
+/// supplies the Engine's metrics and materializes this same sampler.
 pub fn interpolate_transform_lists(
     from: &TransformList,
     to: &TransformList,
@@ -1222,7 +1500,7 @@ pub fn interpolate_transform_lists(
 /// Accumulate compatible components, then use Chromium's zero-box matrix
 /// decomposition for a mismatched suffix. Failure replaces the entire list
 /// with the effect; concatenation belongs to the separate Add operation.
-/// Font-relative lengths must first pass through [`map_transform_lengths`].
+/// Unresolved font/viewport units remain owned until [`map_transform_lengths`].
 pub fn accumulate_transform_lists(base: &TransformList, effect: &TransformList) -> TransformList {
     if transform_has_unresolved_lengths(base) || transform_has_unresolved_lengths(effect) {
         return TransformList(vec![TransformOperation::PendingAccumulation {
@@ -1477,19 +1755,16 @@ impl Applied {
             self.matrix.0[13] = ((self.matrix.0[13] as f32) + y * (self.matrix.0[5] as f32)) as f64;
         } else {
             self.axis = false;
-            self.matrix.set_col(
-                3,
-                add(
-                    add(
-                        add(
-                            mul(self.matrix.col(0), x as f64),
-                            mul(self.matrix.col(1), y as f64),
-                        ),
-                        mul(self.matrix.col(2), z as f64),
-                    ),
-                    self.matrix.col(3),
-                ),
+            let xy = add(
+                mul(self.matrix.col(0), x as f64),
+                mul(self.matrix.col(1), y as f64),
             );
+            let xyz = if z == 0.0 {
+                xy
+            } else {
+                add(xy, mul(self.matrix.col(2), z as f64))
+            };
+            self.matrix.set_col(3, add(xyz, self.matrix.col(3)));
         }
     }
     fn scale(&mut self, values: [f64; 3]) {
@@ -1499,7 +1774,13 @@ impl Applied {
             self.matrix.0[5] = ((self.matrix.0[5] as f32) * y) as f64;
         } else {
             self.axis = false;
-            for (i, v) in [x, y, z].into_iter().enumerate() {
+            // gfx::Transform redirects Scale3d with z==1 to the 2D
+            // PreScale operation, which does not touch the depth column.
+            for (i, v) in [x, y, z]
+                .into_iter()
+                .take(if z == 1.0 { 2 } else { 3 })
+                .enumerate()
+            {
                 self.matrix.set_col(i, mul(self.matrix.col(i), v as f64));
             }
         }
@@ -1507,7 +1788,14 @@ impl Applied {
 }
 
 fn apply_remaining(list: &TransformList, size: (f64, f64), start: usize) -> Applied {
-    let mut out = Applied::identity();
+    apply_remaining_into(list, size, start, Applied::identity())
+}
+fn apply_remaining_into(
+    list: &TransformList,
+    size: (f64, f64),
+    start: usize,
+    mut out: Applied,
+) -> Applied {
     for op in list.0.iter().skip(start) {
         if let TransformOperation::PendingInterpolation { .. }
         | TransformOperation::PendingAccumulation { .. } = op
@@ -1518,8 +1806,9 @@ fn apply_remaining(list: &TransformList, size: (f64, f64), start: usize) -> Appl
                 "transform units must be mapped before actual-box application"
             );
             let value = apply_remaining(&materialized, size, 0);
-            out.matrix = out.matrix.concat(value.matrix);
-            out.axis = false;
+            out = AppliedTransform::from_internal(out)
+                .concat(AppliedTransform::from_internal(value))
+                .internal();
             continue;
         }
         if let TransformOperation::Interpolated {
@@ -1534,8 +1823,9 @@ fn apply_remaining(list: &TransformList, size: (f64, f64), start: usize) -> Appl
             let value =
                 b.blend(a, *progress)
                     .unwrap_or(if *progress < 0.5 { a.matrix } else { b.matrix });
-            out.matrix = out.matrix.concat(value);
-            out.axis = false;
+            out = AppliedTransform::from_internal(out)
+                .concat(AppliedTransform::from_matrix(value))
+                .internal();
             continue;
         }
         // Font-dependent perspective is mapped to a computed length by Engine.
@@ -1561,12 +1851,43 @@ fn apply_remaining(list: &TransformList, size: (f64, f64), start: usize) -> Appl
             }
             ResolvedTransformOperation::Perspective(None) => {}
             ResolvedTransformOperation::Matrix { value, .. } => {
-                out.matrix = out.matrix.concat(value);
-                out.axis = false;
+                out = AppliedTransform::from_internal(out)
+                    .concat(AppliedTransform::from_matrix(value))
+                    .internal();
             }
         }
     }
     out
+}
+
+/// Apply actual transform operations, retaining the source representation.
+/// Origin brackets follow ComputedStyle::ApplyTransform and are skipped for
+/// lists containing only translation operations. Font/viewport units must be
+/// mapped before this post-layout application.
+#[doc(hidden)]
+pub fn transform_list_applied(
+    list: &TransformList,
+    size: (f64, f64),
+    origin: Option<(f64, f64, f64)>,
+) -> AppliedTransform {
+    let brackets = origin.filter(|_| {
+        list.0.iter().any(|op| match op {
+            TransformOperation::Translate(..) | TransformOperation::Translate3d(..) => false,
+            TransformOperation::Resolved(value) => {
+                !matches!(&**value, ResolvedTransformOperation::Translate { .. })
+            }
+            _ => true,
+        })
+    });
+    let mut start = Applied::identity();
+    if let Some((x, y, z)) = brackets {
+        start.translate(x, y, z);
+    }
+    let mut result = apply_remaining_into(list, size, 0, start);
+    if let Some((x, y, z)) = brackets {
+        result.translate(-x, -y, -z);
+    }
+    AppliedTransform::from_internal(result)
 }
 
 /// Resolve a complete list against the actual physical reference box after
@@ -1599,6 +1920,167 @@ mod tests {
             z: axis[2],
             degrees,
         }
+    }
+
+    #[test]
+    fn transform_calc_preserves_length_kind_and_blink_division_order_through_composition() {
+        use openui_geometry::Length;
+        let calculated = TransformLengthExpression::Value(LengthValue::Computed(
+            Length::calc_percent_px(29.0, 1.0),
+        ));
+        assert_eq!((calculated.evaluate(5.0) as f32).to_bits(), 1075629260);
+        let pure = TransformLengthExpression::Value(LengthValue::percent(29.0));
+        let calculated_zero = TransformLengthExpression::Value(LengthValue::Computed(
+            Length::calc_percent_px(29.0, 0.0),
+        ));
+        assert_ne!(pure.evaluate(5.0), calculated_zero.evaluate(5.0));
+        let blended = TransformLengthExpression::Blend(
+            Box::new(pure.clone()),
+            Box::new(calculated_zero.clone()),
+            0.5,
+        );
+        assert_eq!(blended.evaluate(5.0), calculated_zero.evaluate(5.0));
+        let from_endpoint = TransformLengthExpression::Blend(
+            Box::new(pure.clone()),
+            Box::new(calculated_zero.clone()),
+            0.0,
+        );
+        assert_eq!(from_endpoint.evaluate(5.0), pure.evaluate(5.0));
+        let accumulated = TransformLengthExpression::Add(
+            Box::new(calculated_zero),
+            Box::new(TransformLengthExpression::zero()),
+        );
+        assert_eq!(accumulated.evaluate(5.0), pure.evaluate(5.0));
+        let zero_to_percent = TransformLengthExpression::Blend(
+            Box::new(TransformLengthExpression::zero()),
+            Box::new(pure.clone()),
+            0.5,
+        );
+        assert_eq!(
+            zero_to_percent.evaluate(5.0),
+            TransformLengthExpression::Value(LengthValue::percent(14.5)).evaluate(5.0)
+        );
+        let source = list(vec![TransformOperation::Translate(
+            LengthValue::Computed(Length::calc_percent_px(29.0, 1.0)),
+            LengthValue::px(0.0),
+        )]);
+        let used = transform_list_applied(&source, (5.0, 40.0), None);
+        assert_eq!((used.matrix.0[12] as f32).to_bits(), 1075629260);
+        let effect = list(vec![translate(1.0, 0.0)]);
+        let accumulated = accumulate_transform_lists(
+            &list(vec![TransformOperation::Translate(
+                LengthValue::percent(29.0),
+                LengthValue::px(0.0),
+            )]),
+            &effect,
+        );
+        assert_eq!(
+            (transform_list_applied(&accumulated, (5.0, 40.0), None)
+                .matrix
+                .0[12] as f32)
+                .to_bits(),
+            1075629260
+        );
+    }
+
+    #[test]
+    fn applied_source_representation_preserves_axis_concat_and_explicit_matrix_rounding() {
+        let axis = AppliedTransform::translation(16_777_216.0, 0.0)
+            .concat(AppliedTransform::translation(1.0, 0.0))
+            .concat(AppliedTransform::translation(-16_777_216.0, 0.0));
+        assert_eq!(axis.matrix.0[12], 0.0);
+        assert!(axis.axis_2d.is_some());
+        let full = AppliedTransform::from_matrix(TransformMatrix::IDENTITY)
+            .concat(AppliedTransform::translation(16_777_216.0, 0.0))
+            .concat(AppliedTransform::translation(1.0, 0.0))
+            .concat(AppliedTransform::translation(-16_777_216.0, 0.0));
+        assert_eq!(full.matrix.0[12], 1.0);
+        assert!(full.axis_2d.is_none());
+        let explicit = transform_list_applied(
+            &list(vec![TransformOperation::Matrix(Transform2D::IDENTITY)]),
+            (100.0, 40.0),
+            None,
+        );
+        assert_eq!(explicit.matrix, TransformMatrix::IDENTITY);
+        assert!(explicit.axis_2d.is_none());
+        assert_eq!(
+            transform_list_applied(&TransformList::default(), (100.0, 40.0), None),
+            AppliedTransform::IDENTITY
+        );
+    }
+
+    #[test]
+    fn applied_inverse_and_flatten_retain_source_arithmetic_and_singularity() {
+        let axis = AppliedTransform::from_axis(AxisTransform2d {
+            scale: [3.0, 2.0],
+            translation: [7.0, 5.0],
+        });
+        let axis_inverse = axis.inverse().unwrap();
+        assert_eq!(axis_inverse.axis_2d.unwrap().scale, [1.0_f32 / 3.0, 0.5]);
+        assert_eq!(
+            axis_inverse.matrix.0[12],
+            (7.0_f32 * -(1.0_f32 / 3.0)) as f64
+        );
+        let full_inverse = AppliedTransform::from_matrix(axis.matrix)
+            .inverse()
+            .unwrap();
+        assert_eq!(full_inverse.matrix.0[0], 1.0 / 3.0);
+        assert_eq!(full_inverse.matrix.0[12], -14.0 * (1.0 / 6.0));
+        assert_ne!(axis_inverse.matrix.0[0], full_inverse.matrix.0[0]);
+        assert!(full_inverse.axis_2d.is_none());
+        assert_eq!(axis.flattened(), axis);
+        let mut depth = TransformMatrix::IDENTITY;
+        depth.0[10] = 0.0;
+        let depth = AppliedTransform::from_matrix(depth);
+        assert!(!depth.is_invertible());
+        assert!(depth.inverse().is_none());
+        assert!(depth.flattened().is_invertible());
+        assert!(depth.flattened().axis_2d.is_none());
+        assert!(!AppliedTransform::from_axis(AxisTransform2d {
+            scale: [f32::MIN_POSITIVE, 0.5],
+            ..AxisTransform2d::IDENTITY
+        })
+        .is_invertible());
+    }
+
+    #[test]
+    fn transform_origin_uses_the_actual_operation_loop_and_skips_translate_only_lists() {
+        let origin = Some((16_777_216.0, 0.0, 0.0));
+        let translation =
+            transform_list_applied(&list(vec![translate(1.0, 0.0)]), (100.0, 40.0), origin);
+        assert_eq!(translation.matrix.0[12], 1.0);
+        let axis = transform_list_applied(
+            &list(vec![
+                TransformOperation::Scale(1.0, 1.0),
+                translate(1.0, 0.0),
+            ]),
+            (100.0, 40.0),
+            origin,
+        );
+        assert_eq!(axis.matrix.0[12], 0.0);
+        assert!(axis.axis_2d.is_some());
+        let full = transform_list_applied(
+            &list(vec![
+                TransformOperation::Matrix(Transform2D::IDENTITY),
+                translate(1.0, 0.0),
+            ]),
+            (100.0, 40.0),
+            origin,
+        );
+        assert_eq!(full.matrix.0[12], 1.0);
+        assert!(full.axis_2d.is_none());
+        let mut matrix = TransformMatrix::IDENTITY;
+        matrix.0[3] = 0.125;
+        let left = AppliedTransform::from_axis(AxisTransform2d {
+            scale: [2.0, 3.0],
+            translation: [7.0, 11.0],
+        });
+        let product = left.concat(AppliedTransform::from_matrix(matrix));
+        assert_eq!(product.matrix.0[0], 2.0 + 0.125 * 7.0);
+        assert_eq!(product.matrix.0[1], 0.125 * 11.0);
+        assert_eq!(product.matrix.0[12], 7.0);
+        assert_eq!(product.matrix.0[13], 11.0);
+        assert!(product.axis_2d.is_none());
     }
 
     #[test]

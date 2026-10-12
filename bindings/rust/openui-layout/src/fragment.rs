@@ -246,6 +246,30 @@ pub struct PromotedTransformAncestor {
     pub source_size: PhysicalSize,
     pub fragment_offset: PhysicalOffset,
     pub fragment_size: PhysicalSize,
+    /// Actual owned box, excluding a caption/helper extent, in source space.
+    pub source_reference_box: PhysicalRect,
+    /// Owned reference box in this physical continuation's local coordinates.
+    pub fragment_reference_box: PhysicalRect,
+    /// Sliced decorations use the original block reference dimension.
+    pub reference_block_size: Option<LayoutUnit>,
+    pub reference_block_axis_is_x: bool,
+}
+
+impl PromotedTransformAncestor {
+    /// Intersect the retained owned box with a logical-block source slice.
+    pub(crate) fn resolve_reference_slice(&mut self, consumed: LayoutUnit) {
+        let source = self.source_reference_box;
+        let top = (source.y() - consumed)
+            .max_of(LayoutUnit::zero())
+            .min_of(self.fragment_size.height);
+        let bottom = (source.bottom() - consumed)
+            .max_of(top)
+            .min_of(self.fragment_size.height);
+        self.fragment_reference_box = PhysicalRect::new(
+            PhysicalOffset::new(source.x(), top),
+            PhysicalSize::new(source.width(), (bottom - top).clamp_negative_to_zero()),
+        );
+    }
 }
 
 /// Authoritative geometry of a multicol fragment. Nested fragmentation uses

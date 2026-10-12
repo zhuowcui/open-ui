@@ -389,7 +389,7 @@ fn propagated(doc: &Document, child: &Fragment) -> PhysicalRect {
     }
     if owned && style.has_transform() {
         let used = crate::resolved_fragment_transform(child, style);
-        rect = crate::transform::transformed_overflow_rect(used.local_matrix(), rect);
+        rect = crate::transform::transformed_overflow_rect(used.local_applied, rect);
     }
     rect
 }

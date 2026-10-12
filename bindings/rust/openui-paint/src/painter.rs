@@ -158,7 +158,7 @@ thread_local! {
     static BROKEN_IMAGE: RefCell<Option<Image>> = const { RefCell::new(None) };
     static BROKEN_IMAGE_HIGH_RES: RefCell<Option<Image>> = const { RefCell::new(None) };
     static RASTERIZING_PROMOTED_TRANSFORM: RefCell<bool> = const { RefCell::new(false) };
-    static CSS_PAINT_MATRIX: std::cell::Cell<openui_style::TransformMatrix> = const { std::cell::Cell::new(openui_style::TransformMatrix::IDENTITY) };
+    static CSS_PAINT_MATRIX: std::cell::Cell<openui_style::AppliedTransform> = const { std::cell::Cell::new(openui_style::AppliedTransform::IDENTITY) };
     static DEFERRED_OPAQUE_OUTLINE_COVERS: RefCell<Vec<OutlineCoverageKey>> = const { RefCell::new(Vec::new()) };
     static DEFERRED_OUTLINE_REPLAYS: RefCell<HashSet<usize>> = RefCell::new(HashSet::new());
     // Cross-cutting paint phases (fragment edges and late source-order
@@ -445,25 +445,28 @@ fn resolve_margin_or_padding_f32(len: &openui_geometry::Length, container_size: 
     }
 }
 
+fn fragment_applied_transform(
+    style: &ComputedStyle,
+    fragment: &Fragment,
+    abs_offset: PhysicalOffset,
+) -> openui_style::AppliedTransform {
+    let used = fragment
+        .resolved_transform
+        .unwrap_or_else(|| openui_layout::resolved_fragment_transform(fragment, style));
+    openui_style::AppliedTransform::translation(abs_offset.left.to_f32(), abs_offset.top.to_f32())
+        .concat(used.local_applied)
+        .concat(openui_style::AppliedTransform::translation(
+            -abs_offset.left.to_f32(),
+            -abs_offset.top.to_f32(),
+        ))
+}
+
 fn fragment_transform_matrix(
     style: &ComputedStyle,
     fragment: &Fragment,
     abs_offset: PhysicalOffset,
 ) -> openui_style::TransformMatrix {
-    let used = fragment
-        .resolved_transform
-        .unwrap_or_else(|| openui_layout::resolved_fragment_transform(fragment, style));
-    openui_style::TransformMatrix::translation(
-        abs_offset.left.to_f64(),
-        abs_offset.top.to_f64(),
-        0.0,
-    )
-    .concat(used.local_matrix())
-    .concat(openui_style::TransformMatrix::translation(
-        -abs_offset.left.to_f64(),
-        -abs_offset.top.to_f64(),
-        0.0,
-    ))
+    fragment_applied_transform(style, fragment, abs_offset).matrix
 }
 
 fn concat_transform_matrix(canvas: &Canvas, matrix: openui_style::TransformMatrix) {
@@ -479,12 +482,25 @@ fn concat_transform_matrix(canvas: &Canvas, matrix: openui_style::TransformMatri
     }
 }
 
+fn flatten_inherited_css_transform(
+    canvas: &Canvas,
+    applied: openui_style::AppliedTransform,
+) -> openui_style::AppliedTransform {
+    if !applied.is_2d() {
+        let mut values = [0.0; 16];
+        canvas.local_to_device().get_col_major(&mut values);
+        let flattened = openui_style::TransformMatrix(values.map(f64::from)).flattened();
+        canvas.set_matrix(&skia_safe::M44::col_major(&flattened.raster_matrix().0));
+    }
+    applied.flattened()
+}
+
 // The CSS transform chain is separate from raster/device-scale transforms.
 // cc::TransformTree checks the accumulated full matrix for invertibility,
 // including products that become singular although both operands were valid.
-struct CssPaintMatrixScope(openui_style::TransformMatrix);
+struct CssPaintMatrixScope(openui_style::AppliedTransform);
 impl CssPaintMatrixScope {
-    fn new(matrix: openui_style::TransformMatrix) -> Self {
+    fn new(matrix: openui_style::AppliedTransform) -> Self {
         Self(CSS_PAINT_MATRIX.with(|current| current.replace(matrix)))
     }
 }
@@ -809,11 +825,10 @@ fn paint_fragment_tracked(
     let flattens_depth = fragment.owns_element_box() && !inherited_css.is_2d();
     let _flat_css_scope = if flattens_depth {
         canvas.save();
-        let mut values = [0.0; 16];
-        canvas.local_to_device().get_col_major(&mut values);
-        let flattened = openui_style::TransformMatrix(values.map(f64::from)).flattened();
-        canvas.set_matrix(&skia_safe::M44::col_major(&flattened.raster_matrix().0));
-        Some(CssPaintMatrixScope::new(inherited_css.flattened()))
+        Some(CssPaintMatrixScope::new(flatten_inherited_css_transform(
+            canvas,
+            inherited_css,
+        )))
     } else {
         None
     };
@@ -1341,31 +1356,33 @@ fn paint_fragment_contents(
     let mut css_matrix = CSS_PAINT_MATRIX.with(|current| current.get());
     let mut promoted_transform_saves = 0;
     for ancestor in &fragment.promoted_transform_ancestors {
-        let ancestor_style = &doc.node(ancestor.node_id).style;
-        let width = ancestor.fragment_size.width.to_f32();
-        let height = ancestor.fragment_size.height.to_f32();
-        let transform = ancestor_style.native_transform.as_ref().map_or_else(
-            || openui_style::TransformMatrix::from_affine(ancestor_style.transform),
-            |list| openui_style::transform_list_matrix(list, (width as f64, height as f64)),
-        );
-        if transform == openui_style::TransformMatrix::IDENTITY {
+        if !doc.node(ancestor.node_id).style.has_transform() {
             continue;
         }
-        let origin_x =
-            resolve_background_length(&ancestor_style.transform_origin.0, width, width * 0.5);
-        let origin_y =
-            resolve_background_length(&ancestor_style.transform_origin.1, height, height * 0.5);
-        let pivot_x = (promoted_transform_parent_offset.left + ancestor.fragment_offset.left)
-            .to_f64()
-            + origin_x as f64;
-        let pivot_y = (promoted_transform_parent_offset.top + ancestor.fragment_offset.top)
-            .to_f64()
-            + origin_y as f64;
+        let local = openui_layout::promoted_ancestor_applied_transform(doc, ancestor);
+        let applied = openui_style::AppliedTransform::translation(
+            promoted_transform_parent_offset.left.to_f32(),
+            promoted_transform_parent_offset.top.to_f32(),
+        )
+        .concat(local)
+        .concat(openui_style::AppliedTransform::translation(
+            -promoted_transform_parent_offset.left.to_f32(),
+            -promoted_transform_parent_offset.top.to_f32(),
+        ));
         canvas.save();
-        let applied = transform.about_origin(pivot_x, pivot_y, 0.0);
-        concat_transform_matrix(canvas, applied);
+        concat_transform_matrix(canvas, applied.matrix);
         css_matrix = css_matrix.concat(applied);
         promoted_transform_saves += 1;
+        // Each removed authored ancestor still ends inherited depth under
+        // default transform-style:flat. Check singularity first: flattening
+        // must not revive an ancestor's otherwise invisible subtree.
+        if !css_matrix.is_invertible() {
+            for _ in 0..promoted_transform_saves {
+                canvas.restore();
+            }
+            return;
+        }
+        css_matrix = flatten_inherited_css_transform(canvas, css_matrix);
     }
     let suppress_transform = RASTERIZING_PROMOTED_TRANSFORM.with(|active| *active.borrow());
     let full_transform = if suppress_transform {
@@ -1377,10 +1394,9 @@ fn paint_fragment_contents(
             .matrix
     };
     let transform = full_transform.compatibility_affine();
-    let has_transform =
-        fragment.owns_element_box() && full_transform != openui_style::TransformMatrix::IDENTITY;
+    let has_transform = fragment.owns_element_box() && !suppress_transform && style.has_transform();
     if has_transform {
-        css_matrix = css_matrix.concat(fragment_transform_matrix(style, fragment, abs_offset));
+        css_matrix = css_matrix.concat(fragment_applied_transform(style, fragment, abs_offset));
     }
     if !css_matrix.is_invertible() {
         // Singular transforms keep their retained source/scene and can become
