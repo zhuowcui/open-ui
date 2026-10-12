@@ -8,10 +8,10 @@ use crate::{ActivationResult, Affine, Engine, EngineError, FocusOrigin, NodeHand
 pub use openui_dom::ScrollButtonDirection;
 use openui_dom::{ElementTag, NodeId, PseudoElementKind};
 use openui_geometry::{LayoutUnit, Length, LengthType, WritingDirectionMode};
-use openui_layout::Fragment;
+use openui_layout::{Fragment, ScrollArea};
 use openui_style::{
-    ComputedStyle, Display, InvalidationClass, RendererStyleValue, ScrollSnapAlign, ScrollSnapAxis,
-    ScrollSnapStop, StyleProperty, StyleValue, TransformOperation,
+    ComputedStyle, Display, InvalidationClass, Overflow, RendererStyleValue, ScrollSnapAlign,
+    ScrollSnapAxis, ScrollSnapStop, StyleProperty, StyleValue, TransformOperation,
 };
 use std::collections::{HashMap, HashSet};
 
@@ -1132,7 +1132,7 @@ impl Engine {
             return state;
         };
         let style = &self.document.node(node).style;
-        if node != self.document.root() && !style.is_scroll_container() {
+        if !area.is_scroll_container() {
             return state;
         }
         let direction = physical_direction(
@@ -1243,7 +1243,7 @@ impl Engine {
             return Ok(None);
         };
         let style = &self.document.node(node).style;
-        if !style.is_scroll_container() && node != self.document.root() {
+        if !area.is_scroll_container() {
             return Ok(None);
         }
         let limits = area.limits();
@@ -1456,7 +1456,7 @@ impl Engine {
             }
             // Each nested scrollport owns its descendant areas; helper table
             // boxes do not acquire transforms or scroller ownership again.
-            if owns && data.style.is_scroll_container() {
+            if fragment_owns_scrollport(child, &self.document) {
                 continue;
             }
             self.collect_snap_areas(child, world, minimum, unsupported, seen, out)?;
@@ -1780,6 +1780,25 @@ impl Engine {
     }
 }
 
+/// Actual nested scrolling ownership follows retained layout. A table,
+/// replaced box or viewport-defining body may have non-visible authored
+/// overflow without creating a local scrollport. Helpers cannot acquire
+/// their source element's scrolling boundary.
+fn fragment_owns_scrollport(fragment: &Fragment, document: &openui_dom::Document) -> bool {
+    if !fragment.owns_element_box() {
+        return false;
+    }
+    fragment.scroll_area.map_or_else(
+        || {
+            let (x, y) = openui_layout::used_overflow_pair(document, fragment.node_id);
+            [x, y]
+                .into_iter()
+                .any(|value| matches!(value, Overflow::Hidden | Overflow::Auto | Overflow::Scroll))
+        },
+        ScrollArea::is_scroll_container,
+    )
+}
+
 fn find_fragment(fragment: &Fragment, node: NodeId) -> Option<&Fragment> {
     if fragment.owns_element_box() && fragment.node_id == node && fragment.scroll_area.is_some() {
         return Some(fragment);
@@ -1797,8 +1816,291 @@ mod snapshot_scroll_snap_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ViewportMetrics;
-    use openui_style::LengthValue;
+    use crate::{FontCollection, ViewportMetrics};
+    use openui_style::{LengthValue, Position, ScrollbarWidth};
+
+    fn retained_engine(scale: f64) -> Engine {
+        Engine::new_with_font_collection(
+            ViewportMetrics::from_logical_size(320.0, 240.0, scale).unwrap(),
+            FontCollection::deterministic_test(),
+        )
+        .unwrap()
+    }
+
+    fn native_box(engine: &mut Engine, tag: ElementTag, width: f32, height: f32) -> NodeHandle {
+        let node = engine.create_native_element(tag).unwrap();
+        engine
+            .set_property(node, StyleProperty::Width, LengthValue::px(width).into())
+            .unwrap();
+        engine
+            .set_property(node, StyleProperty::Height, LengthValue::px(height).into())
+            .unwrap();
+        engine
+            .set_property(
+                node,
+                StyleProperty::ScrollbarWidth,
+                StyleValue::Renderer(RendererStyleValue::ScrollbarWidth(ScrollbarWidth::None)),
+            )
+            .unwrap();
+        node
+    }
+
+    #[test]
+    fn native_scroll_button_state_follows_retained_scroll_ownership() {
+        for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+            let mut engine = retained_engine(scale);
+            let root = engine.root();
+            let block = native_box(&mut engine, ElementTag::Div, 100.0, 80.0);
+            let content = native_box(&mut engine, ElementTag::Div, 300.0, 20.0);
+            engine.append_child(root, block).unwrap();
+            engine.append_child(block, content).unwrap();
+            let button = engine
+                .create_scroll_button(block, ScrollButtonDirection::Right)
+                .unwrap();
+            for (overflow, expected) in [
+                (Overflow::Hidden, ScrollButtonAvailability::Available),
+                (Overflow::Clip, ScrollButtonAvailability::NoScrollport),
+                (Overflow::Visible, ScrollButtonAvailability::NoScrollport),
+                (Overflow::Scroll, ScrollButtonAvailability::Available),
+                (Overflow::Hidden, ScrollButtonAvailability::Available),
+            ] {
+                engine
+                    .set_property(block, StyleProperty::Overflow, overflow.into())
+                    .unwrap();
+                let state = engine.scroll_button_state(button).unwrap();
+                assert_eq!(
+                    state.availability, expected,
+                    "block {overflow:?}, scale={scale}"
+                );
+                assert_eq!(
+                    state.enabled,
+                    expected == ScrollButtonAvailability::Available
+                );
+            }
+            engine.remove(block).unwrap();
+
+            let table = native_box(&mut engine, ElementTag::Table, 100.0, 80.0);
+            let row = engine.create_native_element(ElementTag::TableRow).unwrap();
+            let cell = native_box(&mut engine, ElementTag::TableCell, 100.0, 80.0);
+            engine.append_child(root, table).unwrap();
+            engine.append_child(table, row).unwrap();
+            engine.append_child(row, cell).unwrap();
+            engine
+                .set_property(
+                    table,
+                    StyleProperty::BorderSpacing,
+                    StyleValue::Renderer(RendererStyleValue::BorderSpacing((
+                        Length::px(0.0),
+                        Length::px(0.0),
+                    ))),
+                )
+                .unwrap();
+            let button = engine
+                .create_scroll_button(table, ScrollButtonDirection::Right)
+                .unwrap();
+            for (x, y, expected) in [
+                (
+                    Overflow::Auto,
+                    Overflow::Auto,
+                    ScrollButtonAvailability::NoScrollport,
+                ),
+                (
+                    Overflow::Scroll,
+                    Overflow::Scroll,
+                    ScrollButtonAvailability::NoScrollport,
+                ),
+                (
+                    Overflow::Hidden,
+                    Overflow::Auto,
+                    ScrollButtonAvailability::NoScrollport,
+                ),
+                (
+                    Overflow::Hidden,
+                    Overflow::Hidden,
+                    ScrollButtonAvailability::Boundary,
+                ),
+                (
+                    Overflow::Clip,
+                    Overflow::Clip,
+                    ScrollButtonAvailability::NoScrollport,
+                ),
+            ] {
+                engine
+                    .set_property(table, StyleProperty::OverflowX, x.into())
+                    .unwrap();
+                engine
+                    .set_property(table, StyleProperty::OverflowY, y.into())
+                    .unwrap();
+                let state = engine.scroll_button_state(button).unwrap();
+                assert_eq!(
+                    state.availability, expected,
+                    "table {x:?}/{y:?}, scale={scale}"
+                );
+                assert!(!state.enabled);
+                assert_eq!(state.current_snap_targets, [None, None]);
+            }
+            engine.remove(table).unwrap();
+
+            let image = native_box(&mut engine, ElementTag::Image, 100.0, 80.0);
+            let resource = engine.register_image_resource(
+                "memory:scroll-ownership-pixel.svg",
+                "image/svg+xml",
+                "949c974a51bfed3daa2be2aed981026336857d4cfd494dd120dbb6da66c891f7",
+                br#"<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><rect width="1" height="1" fill="black"/></svg>"#.to_vec(),
+            );
+            engine
+                .set_image_resource(image, resource, Some((1.0, 1.0)))
+                .unwrap();
+            engine.append_child(root, image).unwrap();
+            let button = engine
+                .create_scroll_button(image, ScrollButtonDirection::Right)
+                .unwrap();
+            for overflow in [Overflow::Scroll, Overflow::Hidden, Overflow::Clip] {
+                engine
+                    .set_property(image, StyleProperty::Overflow, overflow.into())
+                    .unwrap();
+                let state = engine.scroll_button_state(button).unwrap();
+                assert_eq!(state.availability, ScrollButtonAvailability::NoScrollport);
+                assert_eq!(state.target_offset, None);
+                engine.scroll_to(image, 1000.0, 1000.0).unwrap();
+                assert_eq!(engine.scroll_offset(image).unwrap(), (0.0, 0.0));
+            }
+            engine.remove(image).unwrap();
+
+            let html = engine.create_native_element(ElementTag::Html).unwrap();
+            let body = native_box(&mut engine, ElementTag::Body, 100.0, 80.0);
+            let content = native_box(&mut engine, ElementTag::Div, 300.0, 20.0);
+            engine.append_child(root, html).unwrap();
+            engine.append_child(html, body).unwrap();
+            engine.append_child(body, content).unwrap();
+            engine
+                .set_property(body, StyleProperty::Overflow, Overflow::Scroll.into())
+                .unwrap();
+            let button = engine
+                .create_scroll_button(body, ScrollButtonDirection::Right)
+                .unwrap();
+            for (html_overflow, expected) in [
+                (Overflow::Visible, ScrollButtonAvailability::NoScrollport),
+                (Overflow::Hidden, ScrollButtonAvailability::Available),
+                (Overflow::Visible, ScrollButtonAvailability::NoScrollport),
+            ] {
+                engine
+                    .set_property(html, StyleProperty::Overflow, html_overflow.into())
+                    .unwrap();
+                let state = engine.scroll_button_state(button).unwrap();
+                assert_eq!(
+                    state.availability, expected,
+                    "body propagation, scale={scale}"
+                );
+                assert_eq!(
+                    state.enabled,
+                    expected == ScrollButtonAvailability::Available
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn native_snap_descendants_follow_retained_container_boundaries() {
+        for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+            for (tag, x, y, descendant_belongs_to_outer) in [
+                (ElementTag::Table, Overflow::Scroll, Overflow::Scroll, true),
+                (ElementTag::Table, Overflow::Auto, Overflow::Auto, true),
+                (ElementTag::Table, Overflow::Hidden, Overflow::Auto, true),
+                (ElementTag::Table, Overflow::Hidden, Overflow::Hidden, false),
+                (ElementTag::Table, Overflow::Clip, Overflow::Clip, true),
+                (ElementTag::Div, Overflow::Scroll, Overflow::Scroll, false),
+                (ElementTag::Div, Overflow::Hidden, Overflow::Hidden, false),
+                (ElementTag::Div, Overflow::Clip, Overflow::Clip, true),
+            ] {
+                let mut engine = retained_engine(scale);
+                let root = engine.root();
+                let outer = native_box(&mut engine, ElementTag::Div, 100.0, 80.0);
+                engine.append_child(root, outer).unwrap();
+                engine
+                    .set_property(outer, StyleProperty::Overflow, Overflow::Hidden.into())
+                    .unwrap();
+                let middle = native_box(&mut engine, tag, 300.0, 80.0);
+                engine.append_child(outer, middle).unwrap();
+                engine
+                    .set_property(middle, StyleProperty::OverflowX, x.into())
+                    .unwrap();
+                engine
+                    .set_property(middle, StyleProperty::OverflowY, y.into())
+                    .unwrap();
+                let positioning_parent = if tag == ElementTag::Table {
+                    engine
+                        .set_property(
+                            middle,
+                            StyleProperty::BorderSpacing,
+                            StyleValue::Renderer(RendererStyleValue::BorderSpacing((
+                                Length::px(0.0),
+                                Length::px(0.0),
+                            ))),
+                        )
+                        .unwrap();
+                    let row = engine.create_native_element(ElementTag::TableRow).unwrap();
+                    let cell = native_box(&mut engine, ElementTag::TableCell, 300.0, 80.0);
+                    engine.append_child(middle, row).unwrap();
+                    engine.append_child(row, cell).unwrap();
+                    cell
+                } else {
+                    middle
+                };
+                engine
+                    .set_property(
+                        positioning_parent,
+                        StyleProperty::Position,
+                        Position::Relative.into(),
+                    )
+                    .unwrap();
+                let target = native_box(&mut engine, ElementTag::Div, 20.0, 20.0);
+                engine
+                    .set_property(target, StyleProperty::Position, Position::Absolute.into())
+                    .unwrap();
+                engine
+                    .set_property(target, StyleProperty::Left, LengthValue::px(160.0).into())
+                    .unwrap();
+                engine
+                    .set_property(target, StyleProperty::Top, LengthValue::px(0.0).into())
+                    .unwrap();
+                engine
+                    .set_property(
+                        target,
+                        StyleProperty::ScrollSnapAlign,
+                        StyleValue::Renderer(RendererStyleValue::ScrollSnapAlign(
+                            ScrollSnapAlign::Start,
+                        )),
+                    )
+                    .unwrap();
+                engine.append_child(positioning_parent, target).unwrap();
+                engine
+                    .set_property(
+                        outer,
+                        StyleProperty::ScrollSnapAxis,
+                        StyleValue::Renderer(RendererStyleValue::ScrollSnapAxis(ScrollSnapAxis::X)),
+                    )
+                    .unwrap();
+                let button = engine
+                    .create_scroll_button(outer, ScrollButtonDirection::Right)
+                    .unwrap();
+                let state = engine.scroll_button_state(button).unwrap();
+                assert_eq!(
+                    state.current_snap_targets[0],
+                    descendant_belongs_to_outer.then_some(target),
+                    "tag={tag:?}, overflow={x:?}/{y:?}, scale={scale}"
+                );
+                assert_eq!(
+                    engine.scroll_offset(outer).unwrap().0,
+                    if descendant_belongs_to_outer {
+                        160.0
+                    } else {
+                        0.0
+                    }
+                );
+            }
+        }
+    }
 
     #[test]
     fn unchanged_native_scroll_buttons_keep_the_scene_and_idle_state() {
