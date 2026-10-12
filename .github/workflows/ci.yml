@@ -51,6 +51,28 @@ jobs:
           rustup toolchain install 1.94.1 --profile minimal --component rustfmt
           rustup default 1.94.1
 
+      - name: Install the pinned dependency audit tool
+        run: |
+          CARGO_TARGET_DIR="$RUNNER_TEMP/openui-audit-tool-target" \
+            cargo +1.94.1 install cargo-audit --version =0.22.2 --locked \
+              --root "$RUNNER_TEMP/openui-audit-tool"
+          printf 'OPENUI_CARGO_AUDIT=%s\n' \
+            "$RUNNER_TEMP/openui-audit-tool/bin/cargo-audit" >> "$GITHUB_ENV"
+
+      - name: Enforce dependency security for both reviewed lockfiles
+        run: |
+          python3 -m unittest tools.release.test_dependency_security
+          python3 tools/release/check_dependency_security.py \
+            --output "$RUNNER_TEMP/dependency-security/ci"
+
+      - name: Preserve dependency security diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: dependency-security-ci
+          path: ${{ runner.temp }}/dependency-security/
+          if-no-files-found: error
+
       - uses: actions/cache@v5
         with:
           path: |

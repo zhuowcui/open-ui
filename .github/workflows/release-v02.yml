@@ -41,6 +41,26 @@ jobs:
         run: |
           rustup toolchain install 1.85.0 --profile minimal
           rustup default 1.85.0
+      - name: Install the pinned dependency audit tool separately from the MSRV
+        run: |
+          rustup toolchain install 1.94.1 --profile minimal
+          CARGO_TARGET_DIR="$RUNNER_TEMP/openui-audit-tool-target" \
+            cargo +1.94.1 install cargo-audit --version =0.22.2 --locked \
+              --root "$RUNNER_TEMP/openui-audit-tool"
+          printf 'OPENUI_CARGO_AUDIT=%s\n' \
+            "$RUNNER_TEMP/openui-audit-tool/bin/cargo-audit" >> "$GITHUB_ENV"
+      - name: Enforce dependency security for both reviewed lockfiles
+        run: |
+          python3 -m unittest tools.release.test_dependency_security
+          python3 tools/release/check_dependency_security.py \
+            --output "$RUNNER_TEMP/dependency-security/source-contract"
+      - name: Preserve dependency security diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: dependency-security-source-contract
+          path: ${{ runner.temp }}/dependency-security/
+          if-no-files-found: error
       - name: Verify generated release inputs
         run: python3 tools/release/build_v02_linux.py --verify-source
       - name: Inspect every crates.io package without publishing
@@ -79,6 +99,16 @@ jobs:
             weston xvfb
           rustup toolchain install 1.85.0 --profile minimal
           rustup default 1.85.0
+      - name: Install the pinned dependency audit tool separately from the MSRV
+        run: |
+          rustup toolchain install 1.94.1 --profile minimal
+          CARGO_TARGET_DIR="$RUNNER_TEMP/openui-audit-tool-target" \
+            cargo +1.94.1 install cargo-audit --version =0.22.2 --locked \
+              --root "$RUNNER_TEMP/openui-audit-tool"
+          printf 'OPENUI_CARGO_AUDIT=%s\n' \
+            "$RUNNER_TEMP/openui-audit-tool/bin/cargo-audit" >> "$GITHUB_ENV"
+          printf 'OPENUI_DEPENDENCY_SECURITY_EVIDENCE_ROOT=%s\n' \
+            "$RUNNER_TEMP/dependency-security" >> "$GITHUB_ENV"
       - name: Build two clean SDKs
         run: |
           epoch=$(git show -s --format=%ct HEAD)
@@ -96,6 +126,13 @@ jobs:
           cp -a "$RUNNER_TEMP/dist-a" dist
           python3 tools/release/verify_v02_artifact.py \
             "dist/openui-sdk-0.2.0-${{ matrix.target }}.tar.gz"
+      - name: Preserve every artifact build's dependency security diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: dependency-security-${{ matrix.target }}
+          path: ${{ runner.temp }}/dependency-security/
+          if-no-files-found: error
       - name: Install Debian package and run packaged C example
         run: |
           sudo dpkg -i dist/openui-sdk_0.2.0_*.deb

@@ -77,6 +77,17 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def verify_dependency_security() -> Path:
+    """Every artifact build gets fresh security evidence, including local builds."""
+    evidence_root = Path(
+        os.environ.get("OPENUI_DEPENDENCY_SECURITY_EVIDENCE_ROOT", tempfile.gettempdir())
+    )
+    evidence_root.mkdir(parents=True, exist_ok=True)
+    evidence = Path(tempfile.mkdtemp(prefix="openui-dependency-security-", dir=evidence_root)) / "report"
+    run(["python3", "tools/release/check_dependency_security.py", "--output", str(evidence)])
+    return evidence
+
+
 def write_text(path: Path, value: str, mode: int = 0o644) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(value, encoding="utf-8", newline="\n")
@@ -558,6 +569,7 @@ def main() -> None:
     metadata = verify_source()
     if args.verify_source:
         return
+    verify_dependency_security()
     dirty = bool(
         run(["git", "status", "--porcelain"], echo_output=False).strip()
     )

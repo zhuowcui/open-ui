@@ -14,6 +14,9 @@ packaging tests and does not produce release-qualified evidence.
 - `objcopy`, `strip`, and `readelf` from binutils.
 - `dpkg-deb` for Debian packages or `rpmbuild` for RPM packages.
 - A clean source revision and the checked-in `Cargo.lock`.
+- cargo-audit 0.22.2 installed with the separate Rust 1.94.1 toolchain, as
+  described in [dependency review](dependency-review.md#required-security-check).
+  Set `OPENUI_CARGO_AUDIT` to its executable path, or put it on `PATH`.
 
 Build an SDK and Debian package:
 
@@ -27,6 +30,15 @@ python3 tools/release/build_v02_linux.py \
 On Fedora, replace `deb` with `rpm`. `--library-dir` accepts a directory with
 prebuilt `libopenui_ffi.a` and `libopenui_ffi.so`; it exists for package
 verification and never changes the artifact layout.
+
+Every actual build performs the strict shared dependency security check before
+creating artifacts. `--allow-dirty` and `--library-dir` do not bypass it.
+`--verify-source` remains the generated-input and locked-metadata check without
+an advisory audit; release CI runs the security checker separately before it. Fresh audit evidence
+is kept outside the checkout under `OPENUI_DEPENDENCY_SECURITY_EVIDENCE_ROOT`
+(the system temporary directory by default). A failed or incomplete audit stops
+packaging and retains its diagnostics. Audit evidence is separate from the
+deterministic package contents.
 
 The SDK archive contains:
 
