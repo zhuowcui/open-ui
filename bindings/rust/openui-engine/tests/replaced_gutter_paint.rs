@@ -4,7 +4,7 @@
 
 use openui_compositor::{Frame, SceneRect, SoftwareCompositor};
 use openui_dom::ElementTag;
-use openui_engine::{Engine, NodeHandle, ViewportMetrics};
+use openui_engine::{Engine, EngineError, NodeHandle, ViewportMetrics};
 use openui_geometry::Length;
 use openui_style::{
     Border, BorderCollapse, BorderStyle, Color, Containment, Direction, Display, Edges,
@@ -328,7 +328,10 @@ fn native_passive_video_uses_the_same_gutter_content_box_and_cleans_up() {
             assert_eq!(engine.scroll_offset(video).unwrap(), (0.0, 0.0));
         }
         engine.remove(video).unwrap();
-        assert!(!engine.is_connected(video).unwrap());
+        assert!(matches!(
+            engine.is_connected(video),
+            Err(EngineError::StaleHandle)
+        ));
         let frame = SoftwareCompositor::default()
             .render(&engine.scene().unwrap())
             .unwrap();

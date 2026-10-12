@@ -348,7 +348,7 @@ fn intrinsic_flex_grid_and_parent_measurements_include_reserved_gutters() {
             )
             .unwrap();
         engine.append_child(engine.root(), parent).unwrap();
-        engine.append_child(parent, container).unwrap();
+        engine.append_or_move_child(parent, container).unwrap();
         assert_eq!(size(&mut engine, parent).0, 35.0);
     }
 }
@@ -410,7 +410,7 @@ fn a_flex_assigned_grid_height_controls_percentage_rows_after_gutter_reservation
         )
         .unwrap();
     engine.append_child(engine.root(), parent).unwrap();
-    engine.append_child(parent, container).unwrap();
+    engine.append_or_move_child(parent, container).unwrap();
     assert_eq!(size(&mut engine, container), (100.0, 160.0));
     assert_eq!(dimensions(&mut engine, container), [85, 145, 85, 145]);
     assert_eq!(size(&mut engine, child), (85.0, 145.0));
