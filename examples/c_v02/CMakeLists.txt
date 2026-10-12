@@ -65,3 +65,10 @@ set_target_properties(openui_easing_curves PROPERTIES C_STANDARD 11 C_STANDARD_R
 add_executable(openui_easing_curves_cpp easing_curves.cc)
 target_link_libraries(openui_easing_curves_cpp PRIVATE OpenUI::OpenUI)
 set_target_properties(openui_easing_curves_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
+
+add_executable(openui_named_timelines named_timelines.c)
+target_link_libraries(openui_named_timelines PRIVATE OpenUI::OpenUI)
+set_target_properties(openui_named_timelines PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES)
+add_executable(openui_named_timelines_cpp named_timelines.cc)
+target_link_libraries(openui_named_timelines_cpp PRIVATE OpenUI::OpenUI)
+set_target_properties(openui_named_timelines_cpp PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)

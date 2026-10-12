@@ -18,6 +18,14 @@
       "align": 8,
       "size": 40
     },
+    "OuiAnimationAttachmentRangeV1": {
+      "align": 8,
+      "size": 80
+    },
+    "OuiAnimationAttachmentSnapshotV1": {
+      "align": 8,
+      "size": 248
+    },
     "OuiAnimationEvent": {
       "align": 8,
       "size": 48
@@ -37,6 +45,14 @@
     "OuiAnimationTimeline": {
       "align": 8,
       "size": 40
+    },
+    "OuiAnimationTimelineSnapshotV1": {
+      "align": 8,
+      "size": 96
+    },
+    "OuiAnimationTimelineSourceV1": {
+      "align": 8,
+      "size": 80
     },
     "OuiAppConfig": {
       "align": 8,
@@ -145,6 +161,18 @@
     "OuiStyleValue": {
       "align": 8,
       "size": 16
+    },
+    "OuiTimelineLengthV1": {
+      "align": 8,
+      "size": 24
+    },
+    "OuiTimelineRangeBoundsV1": {
+      "align": 8,
+      "size": 16
+    },
+    "OuiTimelineRangeOffsetV1": {
+      "align": 8,
+      "size": 32
     },
     "OuiTransformOperation": {
       "align": 4,

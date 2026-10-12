@@ -195,3 +195,32 @@ supports `--backend opengl`. `--report` writes source and binary identities
 with both consumers' results. Hosted checks exercise X11 software/Mesa GL
 and pure Wayland software; release-lab AT-SPI operation, physical GPUs, context
 loss, and packaged application qualification remain separate gates.
+
+## Named native animation timelines
+
+The five additive named-timeline operations create an effect with typed source,
+update its attachment range, seek percentage progress, and copy timeline or
+attachment snapshots. They use the same Engine operations as Rust. Existing
+151 exports and layouts retain their previous contracts.
+
+`OuiAnimationTimelineSourceV1` accepts document, scroll, or view sources; optional
+logical view insets default to source scroll padding. Attachment endpoints select
+cover, contain, entry, entry-crossing, exit, exit-crossing, or scroll bounds.
+Finite reversed/equal endpoints retain the shared browser attachment semantics.
+Lengths use finite f64 transport values checked once into existing native f32
+lengths, with conversion overflow rejected. Returned descriptors reflect owned
+native values. No strings, JavaScript, or caller pointers are retained.
+
+Versioned descriptors and outputs read their initialized size word first, then
+ABI word only when the declared prefix includes it. Unknown flags/reserved fields
+and nonzero unused fields are rejected. Future input tails are ignored; successful
+outputs preserve the caller's size/version and tail. Errors leave output bytes
+unchanged. Snapshot presence bits distinguish absent/inactive geometry. A returned
+source is a new owned C alias; release it with `oui_element_destroy`. It does not
+keep the document alive. Callbacks run outside Engine and registry borrows; document,
+animation and source identities are checked again before output ownership transfers.
+
+`named_timelines.c` and its C++17 wrapper consume all five operations, copied easing
+and range inputs, native callbacks, retained snapshot data and PNG lifetime.
+The source guards and consumers require compilation/runtime qualification; this
+source checkpoint does not claim a measured renderer or release result.

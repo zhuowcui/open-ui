@@ -626,3 +626,82 @@ pub struct OuiEventPropertiesV1 {
     pub bubbles: u32,
     pub cancelable: u32,
 }
+
+/// Versioned timeline descriptors carry f64 inputs checked into native f32 lengths.
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiTimelineLengthV1 {
+    pub value: f64,
+    pub calc_offset: f64,
+    pub unit: u32,
+    pub reserved: u32,
+}
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiTimelineRangeOffsetV1 {
+    pub name: u32,
+    pub reserved: u32,
+    pub offset: OuiTimelineLengthV1,
+}
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiAnimationAttachmentRangeV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub present: u32,
+    pub reserved: u32,
+    pub start: OuiTimelineRangeOffsetV1,
+    pub end: OuiTimelineRangeOffsetV1,
+}
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiAnimationTimelineSourceV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub kind: u32,
+    pub axis: u32,
+    pub source: *mut OuiElement,
+    pub inset_present: u32,
+    pub reserved: u32,
+    pub inset_start: OuiTimelineLengthV1,
+    pub inset_end: OuiTimelineLengthV1,
+}
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiTimelineRangeBoundsV1 {
+    pub start: f64,
+    pub end: f64,
+}
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiAnimationTimelineSnapshotV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub present: u32,
+    pub active: u32,
+    pub physical_axis: u32,
+    pub reserved: u32,
+    pub source: *mut OuiElement,
+    pub scroll_offset: f64,
+    pub cover_start: f64,
+    pub cover_end: f64,
+    pub range_start: f64,
+    pub range_end: f64,
+    pub duration_ms: f64,
+    pub current_time_ms: f64,
+    pub current_time_percentage: f64,
+}
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiAnimationAttachmentSnapshotV1 {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub present: u32,
+    pub reserved: u32,
+    pub range: OuiAnimationAttachmentRangeV1,
+    pub source: *mut OuiElement,
+    pub named: [OuiTimelineRangeBoundsV1; 7],
+    pub attachment: OuiTimelineRangeBoundsV1,
+    pub entry_crossing_distance: f64,
+    pub exit_crossing_distance: f64,
+}

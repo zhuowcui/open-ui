@@ -1421,6 +1421,126 @@ OuiStatus oui_element_settle_scroll_snap_v1(OuiElement* origin, uint8_t* out_cha
  * Non-NULL target must be live and belong to the origin's document. */
 OuiStatus oui_element_set_scroll_snap_target_v1(OuiElement* origin, OuiElement* target);
 
+/* Length unit values preserve existing OuiLength unit numbering.
+ * 0 px, 1 percent, 2 em, 3 rem, 4 vw, 5 vh, 8 vmin, 9 vmax,
+ * 10 ch, 11 ex, 12 lh, 13 calc(percent + pixels).
+ * Auto/none units 6/7 are invalid in a present endpoint/inset.
+ * For unit13 value is the percentage coefficient and calc_offset is pixels.
+ * Other units require calc_offset == 0. Reserved fields must be zero.
+ */
+typedef struct OuiTimelineLengthV1 {
+    double value;
+    double calc_offset;
+    uint32_t unit;
+    uint32_t reserved;
+} OuiTimelineLengthV1;
+
+/* name: 0cover,1contain,2entry,3entry-crossing,4exit,5exit-crossing,6scroll */
+typedef struct OuiTimelineRangeOffsetV1 {
+    uint32_t name;
+    uint32_t reserved;
+    OuiTimelineLengthV1 offset;
+} OuiTimelineRangeOffsetV1;
+
+typedef struct OuiAnimationAttachmentRangeV1 {
+    uint32_t struct_size;
+    uint32_t abi_version;
+    uint32_t present; /* bit0 start, bit1 end; missing means normal */
+    uint32_t reserved;
+    OuiTimelineRangeOffsetV1 start;
+    OuiTimelineRangeOffsetV1 end;
+} OuiAnimationAttachmentRangeV1;
+
+typedef struct OuiAnimationTimelineSourceV1 {
+    uint32_t struct_size;
+    uint32_t abi_version;
+    uint32_t kind; /* 0document, 1scroll, 2view */
+    uint32_t axis; /* 0block, 1inline, 2x, 3y */
+    OuiElement *source; /* scroll source or view subject, borrowed for this call */
+    uint32_t inset_present; /* bit0 logical start, bit1 logical end; view only */
+    uint32_t reserved;
+    OuiTimelineLengthV1 inset_start;
+    OuiTimelineLengthV1 inset_end;
+} OuiAnimationTimelineSourceV1;
+
+typedef struct OuiTimelineRangeBoundsV1 {
+    double start;
+    double end;
+} OuiTimelineRangeBoundsV1;
+
+typedef struct OuiAnimationTimelineSnapshotV1 {
+    uint32_t struct_size;
+    uint32_t abi_version;
+    /* bit0 timeline,1source,2axis,3scroll-offset,4cover-start,5cover-end,
+     * 6duration,7current-ms,8current-percent. Missing scalars are zero.
+     */
+    uint32_t present;
+    uint32_t active;
+    uint32_t physical_axis;
+    uint32_t reserved;
+    OuiElement *source; /* owned alias when present; caller releases it */
+    double scroll_offset;
+    double cover_start;
+    double cover_end;
+    double range_start;
+    double range_end;
+    double duration_ms;
+    double current_time_ms;
+    double current_time_percentage;
+} OuiAnimationTimelineSnapshotV1;
+
+typedef struct OuiAnimationAttachmentSnapshotV1 {
+    uint32_t struct_size;
+    uint32_t abi_version;
+    uint32_t present; /* bit0 descriptor, bit1 resolved geometry */
+    uint32_t reserved;
+    OuiAnimationAttachmentRangeV1 range;
+    OuiElement *source; /* owned alias only when geometry resolved */
+    OuiTimelineRangeBoundsV1 named[7]; /* same order as name values above */
+    OuiTimelineRangeBoundsV1 attachment;
+    double entry_crossing_distance;
+    double exit_crossing_distance;
+} OuiAnimationAttachmentSnapshotV1;
+
+/* Named timelines use the same native Rust Engine, keyframe/curve parser and
+ * allocation-safe copying. Length fields are finite f64 inputs checked into
+ * the existing native f32 representation (overflow is rejected); snapshots
+ * reflect those owned native values. No caller pointer is retained.
+ *
+ * All calls require owning-thread live handles. Snapshot output needs only
+ * its initialized size word, then ABI word when declared size >=8, before
+ * full-prefix validation; errors leave all output bytes unchanged. Success
+ * writes only the known prefix and preserves future tails. Optional snapshot
+ * values have presence bits; absent values are zero. Returned source aliases
+ * are owned and require oui_element_destroy (ordinary C alias release).
+ * Callbacks run after Engine/registry borrows end; source and document identity
+ * are revalidated after callbacks before an alias is allocated.
+ *
+ * Existing keyframe/curve parser and allocation-safe copying are shared.
+ * NULL source means document; NULL range means normal cover endpoints.
+ * All input descriptor/payload/source pointers are copied/validated before
+ * shared Engine mutation; no caller pointer is retained.
+ */
+OuiStatus oui_element_animate_with_attachment_range_v1(
+    OuiElement *element, int32_t property,
+    const OuiKeyframeV1 *frames, size_t frame_count, size_t frame_stride,
+    const OuiAnimationOptionsV1 *timing,
+    const OuiAnimationTimelineSourceV1 *source,
+    const OuiAnimationAttachmentRangeV1 *range,
+    uint64_t *out_animation_id);
+
+OuiStatus oui_document_set_animation_attachment_range_v1(
+    OuiDocument *document, uint64_t animation_id,
+    const OuiAnimationAttachmentRangeV1 *range);
+OuiStatus oui_document_seek_animation_progress_v1(
+    OuiDocument *document, uint64_t animation_id, double percentage);
+OuiStatus oui_document_get_animation_timeline_snapshot_v1(
+    OuiDocument *document, uint64_t animation_id,
+    OuiAnimationTimelineSnapshotV1 *output);
+OuiStatus oui_document_get_animation_attachment_snapshot_v1(
+    OuiDocument *document, uint64_t animation_id,
+    OuiAnimationAttachmentSnapshotV1 *output);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif

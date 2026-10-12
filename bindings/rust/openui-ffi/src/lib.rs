@@ -27,6 +27,9 @@ mod generated;
 mod input_events;
 #[cfg(test)]
 mod listener_lifetime_tests;
+mod named_timeline;
+#[cfg(test)]
+mod named_timeline_tests;
 mod native_app;
 #[cfg(test)]
 mod native_app_tests;
@@ -56,6 +59,11 @@ pub use element_relations::{oui_element_associated_form_v1, oui_element_parent_v
 pub use event_properties::oui_event_properties_v1;
 pub use focus_events::{oui_document_focused_element_v1, oui_event_focus_info_v1};
 pub use input_events::oui_event_input_info_v1;
+pub use named_timeline::{
+    oui_document_get_animation_attachment_snapshot_v1,
+    oui_document_get_animation_timeline_snapshot_v1, oui_document_seek_animation_progress_v1,
+    oui_document_set_animation_attachment_range_v1, oui_element_animate_with_attachment_range_v1,
+};
 pub use native_app::{oui_app_request_exit, oui_app_run};
 pub use scroll_button::{
     oui_element_create_scroll_button_v1, oui_element_get_scroll_button_v1,

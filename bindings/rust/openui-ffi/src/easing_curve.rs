@@ -7,7 +7,10 @@ use std::mem::align_of;
 // Read only the size/version header until its extent is accepted. The caller
 // keeps the initialized descriptor and any referenced points immutable and
 // readable for the call; no caller pointer is retained by an Engine operation.
-unsafe fn read_input<T: Copy>(input: *const T, stride: Option<usize>) -> Result<T, ApiError> {
+pub(super) unsafe fn read_input<T: Copy>(
+    input: *const T,
+    stride: Option<usize>,
+) -> Result<T, ApiError> {
     if input.is_null() || (input as usize).checked_add(size_of::<T>()).is_none() {
         return Err(invalid("descriptor pointer or prefix address is invalid"));
     }
@@ -131,7 +134,7 @@ pub(super) fn curve(input: *const OuiEasingCurveV1) -> Result<Easing, ApiError> 
     }
 }
 
-fn options(input: *const OuiAnimationOptionsV1) -> Result<AnimationOptions, ApiError> {
+pub(super) fn options(input: *const OuiAnimationOptionsV1) -> Result<AnimationOptions, ApiError> {
     // SAFETY: the readable size/version header is checked before the prefix.
     let raw = unsafe { read_input(input, None) }?;
     animation_options_values(
@@ -149,7 +152,7 @@ fn options(input: *const OuiAnimationOptionsV1) -> Result<AnimationOptions, ApiE
     )
 }
 
-fn keyframes(
+pub(super) fn keyframes(
     property: StyleProperty,
     input: *const OuiKeyframeV1,
     count: usize,
@@ -186,7 +189,7 @@ fn keyframes(
     PropertyKeyframes::typed(property, frames).map_err(animation_error)
 }
 
-fn id_output(output: *mut u64) -> Result<(), ApiError> {
+pub(super) fn id_output(output: *mut u64) -> Result<(), ApiError> {
     if output.is_null()
         || (output as usize) % align_of::<u64>() != 0
         || (output as usize).checked_add(size_of::<u64>()).is_none()

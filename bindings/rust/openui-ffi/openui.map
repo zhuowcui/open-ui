@@ -40,6 +40,8 @@ OPENUI_0.2 {
     oui_document_element_by_id;
     oui_document_end_update;
     oui_document_focused_element_v1;
+    oui_document_get_animation_attachment_snapshot_v1;
+    oui_document_get_animation_timeline_snapshot_v1;
     oui_document_get_viewport;
     oui_document_hit_test;
     oui_document_is_animating;
@@ -48,6 +50,8 @@ OPENUI_0.2 {
     oui_document_render_png;
     oui_document_render_rgba;
     oui_document_root;
+    oui_document_seek_animation_progress_v1;
+    oui_document_set_animation_attachment_range_v1;
     oui_document_set_animation_time;
     oui_document_set_modal_root;
     oui_document_set_reduced_motion;
@@ -59,6 +63,7 @@ OPENUI_0.2 {
     oui_element_adjust_control;
     oui_element_animate;
     oui_element_animate_v1;
+    oui_element_animate_with_attachment_range_v1;
     oui_element_append_child;
     oui_element_associated_form_v1;
     oui_element_blur;
