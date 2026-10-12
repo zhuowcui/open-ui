@@ -1,8 +1,9 @@
 {
   "chromium": {
-    "build_identity": "147.0.7727.24",
+    "build_identity": "147.0.7727.50",
     "pin_sha256": "58fea0f408f25bb556040cb338f0e33936421253d3beaa913e7544bf7d40b952",
-    "raster_oracle_build_identity": "147.0.7727.50"
+    "raster_oracle_build_identity": "147.0.7727.50",
+    "source_structure_pin": "147.0.7727.24"
   },
   "focused_cross_product": [
     {
@@ -488,6 +489,14 @@
     ],
     "qualifying_font_source": "document-owned-hash-pinned-bytes"
   },
+  "historical_openui_archive": {
+    "manifest": "docs/v02/generated/baseline.json",
+    "manifest_sha256": "787cd40ae63d06d5933efa89a4eba65a70d6327673b8056b83cae76ef3606001",
+    "pixel_target": false,
+    "purpose": "immutable-provenance-and-archive-integrity",
+    "qualifies_current_renderer": false,
+    "recorded_chromium_build_identity": "147.0.7727.24"
+  },
   "media_certification": {
     "decoded_transport": "OUIR-v1-sRGB-unpremultiplied-RGBA8",
     "first_frame_manifest": "docs/renderer/generated/media-first-frames-v1.json",
@@ -537,13 +546,7 @@
         "height": 600,
         "width": 800
       },
-      "result": {
-        "exact": 5731,
-        "manifest_sha256": "787cd40ae63d06d5933efa89a4eba65a70d6327673b8056b83cae76ef3606001",
-        "ordered_id_sha256": "3dcab97aac9dd2b7b0b58150b4008e0b60631b098be226bf95f02ad1706942d3",
-        "total": 5731
-      },
-      "status": "qualified-immutable"
+      "status": "required"
     },
     {
       "device_scale": 2.0,

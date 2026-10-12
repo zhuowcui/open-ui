@@ -1983,7 +1983,7 @@ fn resolve_container_block_size(
     size.max_of(border_padding)
 }
 
-fn overflow_from_children(fragment: &mut Fragment, style: &openui_style::ComputedStyle) {
+fn overflow_from_children(doc: &Document, fragment: &mut Fragment) {
     let border_box = PhysicalRect::new(PhysicalOffset::zero(), fragment.size);
     let mut overflow = border_box;
     for child in &fragment.children {
@@ -2550,7 +2550,7 @@ pub(crate) fn grid_layout_contents(
         .map(|baseline| {
             grid_child_baseline_offset(doc, fragment.children.last().unwrap(), baseline)
         });
-    overflow_from_children(&mut fragment, style);
+    overflow_from_children(doc, &mut fragment);
     fragment
 }
 

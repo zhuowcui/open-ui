@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Generate and verify the versioned renderer qualification contract.
 
-The legacy SP20 baseline is an input to this contract, never an output.  This
-is deliberate: expanding qualification profiles must not silently re-freeze
-the 800x600@1 result.
+The historical SP20 archive is immutable provenance, never a pixel target.
+Every required profile compares the current renderer with pinned Chromium.
+Archive integrity does not qualify a current renderer result.
 """
 
 from __future__ import annotations
@@ -57,7 +57,7 @@ MUTATION_IR = ROOT / "tools/wpt/javascript_mutation_ir.mjs"
 sys.path.insert(0, str(ROOT))
 
 QUALIFICATION_PROFILES = (
-    ("legacy-800x600@1", 800.0, 600.0, 1.0, "qualified-immutable"),
+    ("legacy-800x600@1", 800.0, 600.0, 1.0, "required"),
     ("mobile-375x667@2", 375.0, 667.0, 2.0, "required"),
     ("desktop-1280x720@1.25", 1280.0, 720.0, 1.25, "required"),
     ("desktop-1920x1080@1.5", 1920.0, 1080.0, 1.5, "required"),
@@ -166,13 +166,6 @@ def qualification_contract(javascript_audit: bytes) -> dict[str, object]:
             },
             "device_scale": scale,
         }
-        if status == "qualified-immutable":
-            profile["result"] = {
-                "manifest_sha256": LEGACY_SHA256,
-                "exact": 5731,
-                "total": 5731,
-                "ordered_id_sha256": legacy["results"]["ordered_id_sha256"],
-            }
         profiles.append(profile)
 
     focused = [
@@ -191,9 +184,18 @@ def qualification_contract(javascript_audit: bytes) -> dict[str, object]:
         "schema_version": 2,
         "renderer_contract": "chromium-147-native-structure-v2",
         "chromium": {
-            "build_identity": legacy["chromium_build_identity"],
+            "build_identity": RASTER_ORACLE_BUILD,
             "raster_oracle_build_identity": RASTER_ORACLE_BUILD,
+            "source_structure_pin": CHROMIUM_VERSION.read_text().strip(),
             "pin_sha256": digest(CHROMIUM_VERSION.read_bytes()),
+        },
+        "historical_openui_archive": {
+            "manifest": str(LEGACY.relative_to(ROOT)),
+            "manifest_sha256": LEGACY_SHA256,
+            "recorded_chromium_build_identity": legacy["chromium_build_identity"],
+            "purpose": "immutable-provenance-and-archive-integrity",
+            "pixel_target": False,
+            "qualifies_current_renderer": False,
         },
         "raster": {
             "destination_color_space": "sRGB",

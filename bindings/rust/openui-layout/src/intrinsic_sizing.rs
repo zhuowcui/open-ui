@@ -4030,6 +4030,7 @@ fn apply_min_max_block(style: &ComputedStyle, size: LayoutUnit) -> LayoutUnit {
 }
 mod tests {
     use super::*;
+    use openui_style::FontFamily;
 
     #[test]
     fn inline_flex_intrinsic_size_includes_negative_item_margin() {

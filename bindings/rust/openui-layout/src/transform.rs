@@ -260,8 +260,8 @@ mod tests {
                 },
             ]));
             style.transform_origin = (
-                openui_geometry::Length::fixed(0.0),
-                openui_geometry::Length::fixed(0.0),
+                openui_geometry::Length::px(0.0),
+                openui_geometry::Length::px(0.0),
             );
         });
         let size =
