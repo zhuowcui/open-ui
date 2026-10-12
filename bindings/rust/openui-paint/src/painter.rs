@@ -1514,17 +1514,21 @@ fn paint_fragment_contents(
     }
     let has_clip_path = fragment.owns_element_box() && style.clip_path_inset.is_some();
     if let Some(inset) = style.clip_path_inset.as_ref().filter(|_| has_clip_path) {
-        let width = fragment.size.width.to_f32();
-        let height = fragment.size.height.to_f32();
-        let top = resolve_background_length(&inset[0], height, 0.0);
-        let right = resolve_background_length(&inset[1], width, 0.0);
-        let bottom = resolve_background_length(&inset[2], height, 0.0);
-        let left = resolve_background_length(&inset[3], width, 0.0);
+        // ClipPathClipper::LocalReferenceBox uses the owned border box, not a
+        // physical wrapper carrying captions or visible descendant overflow.
+        // BasicShapeInset then resolves each length with FloatValueForLength.
+        let reference = fragment.border_box_rect();
+        let width = reference.width().to_f32();
+        let height = reference.height().to_f32();
+        let top = openui_style::transform_length_for_reference_box(inset[0], height);
+        let right = openui_style::transform_length_for_reference_box(inset[1], width);
+        let bottom = openui_style::transform_length_for_reference_box(inset[2], height);
+        let left = openui_style::transform_length_for_reference_box(inset[3], width);
         canvas.save();
         canvas.clip_rect(
             Rect::from_xywh(
-                abs_offset.left.to_f32() + left,
-                abs_offset.top.to_f32() + top,
+                left + reference.x().to_f32() + abs_offset.left.to_f32(),
+                top + reference.y().to_f32() + abs_offset.top.to_f32(),
                 (width - left - right).max(0.0),
                 (height - top - bottom).max(0.0),
             ),

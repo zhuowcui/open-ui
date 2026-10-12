@@ -934,6 +934,8 @@ fn normalize_multicol_owned_subtree(
                     PhysicalSize::new(logical.size.inline_size, logical.size.block_size),
                 )
             };
+            ancestor.visual_offset =
+                physical_vector_to_logical(ancestor.visual_offset, writing_direction);
             ancestor.source_reference_box =
                 project(ancestor.source_reference_box, ancestor.source_size);
             ancestor.fragment_reference_box =
@@ -1125,6 +1127,16 @@ fn project_multicol_child_to_physical(
                     ),
                 )
             };
+            let visual_origin =
+                converter.to_physical_offset(LogicalOffset::zero(), PhysicalSize::zero());
+            let visual = converter.to_physical_offset(
+                LogicalOffset::new(ancestor.visual_offset.left, ancestor.visual_offset.top),
+                PhysicalSize::zero(),
+            );
+            ancestor.visual_offset = PhysicalOffset::new(
+                visual.left - visual_origin.left,
+                visual.top - visual_origin.top,
+            );
             ancestor.source_reference_box =
                 project(ancestor.source_reference_box, ancestor.source_size);
             ancestor.fragment_reference_box =
@@ -16436,31 +16448,6 @@ fn fragment_direct_positioned_children_in_multicol(
                 ancestor_transform_translation
             };
             let mut promoted_transforms = ancestor_promoted_transforms.to_vec();
-            if !fragment.node_id.is_none()
-                && (own_applied_transform.axis_2d.is_none()
-                    || own_full_transform != openui_style::TransformMatrix::IDENTITY)
-                && !own_is_pure_translation
-            {
-                promoted_transforms.push(PromotedTransformAncestor {
-                    node_id: fragment.node_id,
-                    source_offset: absolute_offset,
-                    source_size: fragment.size,
-                    fragment_offset: absolute_offset,
-                    fragment_size: fragment.size,
-                    source_reference_box: fragment.border_box_rect(),
-                    fragment_reference_box: fragment.border_box_rect(),
-                    reference_block_size: fragment.decoration_paint_block_size,
-                    reference_block_axis_is_x: !fragment
-                        .fragmentation_writing_direction
-                        .unwrap_or_else(|| {
-                            doc.node(fragment.node_id)
-                                .style
-                                .direction
-                                .writing_direction(doc.node(fragment.node_id).style.writing_mode)
-                        })
-                        .is_horizontal(),
-                });
-            }
             let authored_visual_offset = PhysicalOffset::new(
                 ancestor_authored_visual_offset.left + own_authored_visual_offset.left,
                 ancestor_authored_visual_offset.top + own_authored_visual_offset.top,
@@ -16517,6 +16504,35 @@ fn fragment_direct_positioned_children_in_multicol(
                 authored_visual_offset.left + reconstructed_inline_offset.left,
                 authored_visual_offset.top + reconstructed_inline_offset.top,
             );
+            if !fragment.node_id.is_none()
+                && (own_applied_transform.axis_2d.is_none()
+                    || own_full_transform != openui_style::TransformMatrix::IDENTITY)
+                && !own_is_pure_translation
+            {
+                promoted_transforms.push(PromotedTransformAncestor {
+                    node_id: fragment.node_id,
+                    source_offset: PhysicalOffset::new(
+                        absolute_offset.left - source_space_visual_offset.left,
+                        absolute_offset.top - source_space_visual_offset.top,
+                    ),
+                    source_size: fragment.size,
+                    visual_offset: physical_visual_offset,
+                    fragment_offset: absolute_offset,
+                    fragment_size: fragment.size,
+                    source_reference_box: fragment.border_box_rect(),
+                    fragment_reference_box: fragment.border_box_rect(),
+                    reference_block_size: fragment.decoration_paint_block_size,
+                    reference_block_axis_is_x: !fragment
+                        .fragmentation_writing_direction
+                        .unwrap_or_else(|| {
+                            doc.node(fragment.node_id)
+                                .style
+                                .direction
+                                .writing_direction(doc.node(fragment.node_id).style.writing_mode)
+                        })
+                        .is_horizontal(),
+                });
+            }
             let visual_offset =
                 physical_vector_to_logical(physical_visual_offset, writing_direction);
             let principal = in_principal_source
@@ -16615,20 +16631,24 @@ fn fragment_direct_positioned_children_in_multicol(
                     // Positioned descendants may extend beyond every slice
                     // of this box. Promote them while the parent still has
                     // source-space geometry, so later columns can own their
-                    // continuations. A nonidentity local transform installs
-                    // a new source; otherwise retain the inherited one.
-                    let child_transform_source =
-                        if own_full_transform != openui_style::TransformMatrix::IDENTITY {
-                            Some((
-                                fragment.node_id,
-                                PhysicalOffset::new(
-                                    absolute_offset.left - ancestor_authored_visual_offset.left,
-                                    absolute_offset.top - ancestor_authored_visual_offset.top,
-                                ),
-                            ))
-                        } else {
-                            transform_containing_block_source
-                        };
+                    // continuations. Containing-block ownership is authored
+                    // source state, including an explicit identity matrix.
+                    let child_transform_source = if fragment.owns_element_box()
+                        && doc
+                            .node(fragment.node_id)
+                            .style
+                            .has_transform_containing_block()
+                    {
+                        Some((
+                            fragment.node_id,
+                            PhysicalOffset::new(
+                                absolute_offset.left - source_space_visual_offset.left,
+                                absolute_offset.top - source_space_visual_offset.top,
+                            ),
+                        ))
+                    } else {
+                        transform_containing_block_source
+                    };
                     extract_nested_positioned_fragments(
                         &mut fragment.children,
                         doc,
@@ -16810,7 +16830,7 @@ fn fragment_direct_positioned_children_in_multicol(
             } else {
                 containing_block_origin
             };
-            let child_transform_containing_block_source = if !fragment.node_id.is_none()
+            let child_transform_containing_block_source = if fragment.owns_element_box()
                 && doc
                     .node(fragment.node_id)
                     .style
@@ -16824,8 +16844,8 @@ fn fragment_direct_positioned_children_in_multicol(
                 Some((
                     fragment.node_id,
                     PhysicalOffset::new(
-                        absolute_offset.left - ancestor_authored_visual_offset.left,
-                        absolute_offset.top - ancestor_authored_visual_offset.top,
+                        absolute_offset.left - source_space_visual_offset.left,
+                        absolute_offset.top - source_space_visual_offset.top,
                     ),
                 ))
             } else {
@@ -17037,65 +17057,57 @@ fn fragment_direct_positioned_children_in_multicol(
         };
         let resolve_promoted_transform_ancestors = |continuation: &mut Fragment, index: usize| {
             for ancestor in &mut continuation.promoted_transform_ancestors {
-                if let Some(transform_source) = positioned.transform_containing_block_source_offset
-                {
-                    let (source_column, source_flow_start) = flow_offset(transform_source);
-                    let source_flow_end =
-                        source_flow_start + positioned.containing_block_size.height;
-                    let first = if source_flow_start > LayoutUnit::zero() {
-                        (source_flow_start.raw() / fragmentainer_height.raw()) as usize
-                    } else {
-                        0
-                    };
-                    let last = if source_flow_end > LayoutUnit::zero() {
-                        ((source_flow_end.raw() - 1) / fragmentainer_height.raw()) as usize
-                    } else {
-                        first
-                    };
-                    if (first..=last).contains(&index) {
-                        let column_start = fragmentainer_height * index as i32;
-                        let intersection_start = source_flow_start.max_of(column_start);
-                        let intersection_end = source_flow_end
-                            .min_of(column_start + fragmentainer_height)
-                            .max_of(intersection_start);
-                        let inline_local =
-                            transform_source.left - content_edge_x - inline_offset(source_column);
-                        ancestor.fragment_offset = PhysicalOffset::new(
-                            content_edge_x
-                                + inline_offset(index)
-                                + inline_local
-                                + positioned.visual_offset.left,
-                            content_edge_y + intersection_start - column_start
-                                + positioned.visual_offset.top,
-                        );
-                        ancestor.fragment_size = PhysicalSize::new(
-                            ancestor.source_size.width,
-                            intersection_end - intersection_start,
-                        );
-                        ancestor.resolve_reference_slice(intersection_start - source_flow_start);
-                    } else {
-                        // Positioned overflow may create continuations before
-                        // or after every real fragment of its transformed
-                        // containing block. Those continuations extrapolate a
-                        // zero-block-size transform reference at the normal
-                        // column origin; relative positioning affects only
-                        // the real containing-block fragments.
-                        let inline_local =
-                            transform_source.left - content_edge_x - inline_offset(source_column);
-                        ancestor.fragment_offset = PhysicalOffset::new(
-                            content_edge_x + inline_offset(index) + inline_local,
-                            content_edge_y,
-                        );
-                        ancestor.fragment_size =
-                            PhysicalSize::new(ancestor.source_size.width, LayoutUnit::zero());
-                        ancestor.resolve_reference_slice(LayoutUnit::zero());
-                    }
+                // Every removed ancestor owns a distinct source fragment. A
+                // positioned descendant's nearest containing-block window is
+                // not a substitute for outer ancestors' normal-flow extents.
+                let transform_source = ancestor.source_offset;
+                let (source_column, wrapper_flow_start) = flow_offset(transform_source);
+                // The wrapper may carry caption space or visible overflow.
+                // Only the actual owner's retained border-box interval makes
+                // a real fragment of this transform source.
+                let source_flow_start = wrapper_flow_start + ancestor.source_reference_box.y();
+                let source_flow_end = source_flow_start + ancestor.source_reference_box.height();
+                let first = if source_flow_start > LayoutUnit::zero() {
+                    (source_flow_start.raw() / fragmentainer_height.raw()) as usize
                 } else {
-                    // The transform reference box for a promoted descendant
-                    // is the fragment that owns this continuation, not the
-                    // complete pre-fragmentation source box.
-                    ancestor.fragment_offset = continuation.offset;
-                    ancestor.fragment_size = continuation.size;
+                    0
+                };
+                let last = if source_flow_end > LayoutUnit::zero() {
+                    ((source_flow_end.raw() - 1) / fragmentainer_height.raw()) as usize
+                } else {
+                    first
+                };
+                let inline_local =
+                    transform_source.left - content_edge_x - inline_offset(source_column);
+                if (first..=last).contains(&index) {
+                    let column_start = fragmentainer_height * index as i32;
+                    let intersection_start = source_flow_start.max_of(column_start);
+                    let intersection_end = source_flow_end
+                        .min_of(column_start + fragmentainer_height)
+                        .max_of(intersection_start);
+                    ancestor.fragment_offset = PhysicalOffset::new(
+                        content_edge_x
+                            + inline_offset(index)
+                            + inline_local
+                            + ancestor.visual_offset.left,
+                        content_edge_y + intersection_start - column_start
+                            + ancestor.visual_offset.top,
+                    );
+                    ancestor.fragment_size = PhysicalSize::new(
+                        ancestor.source_size.width,
+                        intersection_end - intersection_start,
+                    );
+                    ancestor.resolve_reference_slice(intersection_start - wrapper_flow_start);
+                } else {
+                    // Overflow outside this ancestor's real fragments retains
+                    // a zero-block reference at its own column origin. Late
+                    // relative displacement belongs to real fragments only.
+                    ancestor.fragment_offset = PhysicalOffset::new(
+                        content_edge_x + inline_offset(index) + inline_local,
+                        content_edge_y,
+                    );
+                    ancestor.fragment_size =
+                        PhysicalSize::new(ancestor.source_size.width, LayoutUnit::zero());
                     ancestor.resolve_reference_slice(LayoutUnit::zero());
                 }
             }

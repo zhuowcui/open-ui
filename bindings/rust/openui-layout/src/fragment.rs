@@ -242,8 +242,12 @@ pub struct PositionedFragmentationData {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct PromotedTransformAncestor {
     pub node_id: NodeId,
+    /// Normal-flow source anchor before authored visual displacement.
     pub source_offset: PhysicalOffset,
     pub source_size: PhysicalSize,
+    /// This ancestor's own cumulative displacement, applied after slicing.
+    /// It is a vector in the same physical/logical basis as `source_offset`.
+    pub visual_offset: PhysicalOffset,
     pub fragment_offset: PhysicalOffset,
     pub fragment_size: PhysicalSize,
     /// Actual owned box, excluding a caption/helper extent, in source space.

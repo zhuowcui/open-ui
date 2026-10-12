@@ -271,6 +271,7 @@ mod tests {
             node_id: node,
             source_offset: openui_geometry::PhysicalOffset::zero(),
             source_size: size,
+            visual_offset: openui_geometry::PhysicalOffset::zero(),
             fragment_offset: openui_geometry::PhysicalOffset::zero(),
             fragment_size: size,
             source_reference_box: owned,
@@ -326,6 +327,7 @@ mod tests {
                 LayoutUnit::from_i32(40),
             ),
             source_size: size,
+            visual_offset: openui_geometry::PhysicalOffset::zero(),
             fragment_offset: openui_geometry::PhysicalOffset::new(
                 LayoutUnit::from_i32(30),
                 LayoutUnit::from_i32(40),
