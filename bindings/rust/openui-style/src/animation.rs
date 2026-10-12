@@ -14,11 +14,13 @@ pub enum AnimationError {
     InvalidEasing(&'static str),
     InvalidKeyframes(&'static str),
     PropertyType { property: StyleProperty },
+    AllocationFailure,
 }
 
 impl std::fmt::Display for AnimationError {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::AllocationFailure => write!(formatter, "unable to allocate owned animation data"),
             Self::InvalidTiming(message) => {
                 write!(formatter, "invalid animation timing: {message}")
             }
@@ -657,6 +659,35 @@ pub struct AnimationSample {
     pub progress: Option<f64>,
 }
 
+impl AnimationSample {
+    /// Transform whole-effect progress using its actual iteration direction.
+    /// Obtain that direction from `AnimationOptions::sample_local_time_with_direction`;
+    /// the public iteration counter may have saturated for a very large iteration.
+    pub fn eased_progress(
+        &self,
+        easing: &Easing,
+        current_direction_is_reversed: bool,
+    ) -> Option<f64> {
+        self.progress.map(|mut progress| {
+            let before = if current_direction_is_reversed {
+                self.phase == AnimationPhase::After
+            } else {
+                self.phase == AnimationPhase::Before
+            };
+            // Match pinned TimingCalculations boundary snapping before easing;
+            // this is effect arithmetic and does not relax any pixel gate.
+            if self.phase == AnimationPhase::After {
+                if !current_direction_is_reversed && (progress - 1.0).abs() <= 2.0 * f64::EPSILON {
+                    progress = 1.0;
+                } else if current_direction_is_reversed && progress.abs() <= 2.0 * f64::EPSILON {
+                    progress = 0.0;
+                }
+            }
+            easing.sample_with_before(progress, before)
+        })
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct Keyframe<T> {
     pub offset: f64,
@@ -744,20 +775,21 @@ impl PropertyKeyframes {
     where
         T: Into<StyleValue>,
     {
-        let frames = keyframes
-            .into_frames()
-            .into_iter()
-            .map(|frame| PropertyKeyframe {
+        let owned = keyframes.into_frames();
+        let mut frames = Vec::new();
+        frames
+            .try_reserve_exact(owned.len())
+            .map_err(|_| AnimationError::AllocationFailure)?;
+        for frame in owned {
+            let value = frame.value.into();
+            if !value_matches_property(property, &value) {
+                return Err(AnimationError::PropertyType { property });
+            }
+            frames.push(PropertyKeyframe {
                 offset: frame.offset,
-                value: frame.value.into(),
+                value,
                 easing: frame.easing,
-            })
-            .collect::<Vec<_>>();
-        if frames
-            .iter()
-            .any(|frame| !value_matches_property(property, &frame.value))
-        {
-            return Err(AnimationError::PropertyType { property });
+            });
         }
         Ok(Self { property, frames })
     }

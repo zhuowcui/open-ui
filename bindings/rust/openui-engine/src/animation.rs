@@ -230,14 +230,12 @@ impl Engine {
         if !openui_style::value_matches_property(property, &to) {
             return Err(EngineError::PropertyType { property });
         }
-        options
-            .validate()
-            .map_err(|error| EngineError::Render(error.to_string()))?;
+        options.validate().map_err(EngineError::from)?;
         initial_local_time(&options)?;
         let from = value_from_computed(&self.document.node(node).style, property);
         let keyframes =
             PropertyKeyframes::typed(property, Keyframes::from_values(from, to.clone()))
-                .map_err(|error| EngineError::Render(error.to_string()))?;
+                .map_err(EngineError::from)?;
         self.slots[target.index as usize]
             .authored
             .insert(property as u16, to.clone());
@@ -262,9 +260,7 @@ impl Engine {
         underlying_override: Option<StyleValue>,
     ) -> Result<AnimationId, EngineError> {
         let node = self.resolve(target)?;
-        options
-            .validate()
-            .map_err(|error| EngineError::Render(error.to_string()))?;
+        options.validate().map_err(EngineError::from)?;
         self.validate_timeline(timeline)?;
         let initial_time = initial_local_time(&options)?;
         let property = keyframes.property();
@@ -526,19 +522,26 @@ impl Engine {
                 raw_time
             };
             let effective = self.effective_elapsed(&snapshot, current_time);
-            let sample = snapshot.options.sample_local_time(effective);
+            let (sample, current_direction_is_reversed) =
+                snapshot.options.sample_local_time_with_direction(effective);
             let finished = self.reduced_motion || snapshot.reached_endpoint(current_time);
-            let sampled = sample.progress.map(|progress| {
-                let value = snapshot
-                    .keyframes
-                    .sample(progress, &snapshot.options.easing);
-                compose_value(
-                    &snapshot.underlying,
-                    value,
-                    snapshot.options.composite,
-                    sample.iteration,
-                )
-            });
+            let sampled = sample
+                .eased_progress(&snapshot.options.easing, current_direction_is_reversed)
+                .map(|progress| {
+                    let value = snapshot.keyframes.sample_with_before(
+                        progress,
+                        &openui_style::Easing::Linear,
+                        // Pinned .50 KeyframeEffect uses Before directly here;
+                        // its reverse-after limit differs from effect easing.
+                        sample.phase == AnimationPhase::Before,
+                    );
+                    compose_value(
+                        &snapshot.underlying,
+                        value,
+                        snapshot.options.composite,
+                        sample.iteration,
+                    )
+                });
             let next_value = sampled.as_ref().unwrap_or(&snapshot.underlying);
             if snapshot.last_applied.as_ref() != sampled.as_ref() {
                 // Inherited values recompute this node and its descendants.
@@ -770,15 +773,11 @@ impl Engine {
             AnimationTimeline::Document => Ok(()),
             AnimationTimeline::Scroll { source, range, .. } => {
                 self.resolve(source)?;
-                range
-                    .validate()
-                    .map_err(|error| EngineError::Render(error.to_string()))
+                range.validate().map_err(EngineError::from)
             }
             AnimationTimeline::View { subject, range, .. } => {
                 self.resolve(subject)?;
-                range
-                    .validate()
-                    .map_err(|error| EngineError::Render(error.to_string()))
+                range.validate().map_err(EngineError::from)
             }
         }
     }
@@ -853,9 +852,7 @@ fn validate_scroll_animation_timing(
             "smooth-scroll duration must be finite and non-negative",
         ));
     }
-    easing
-        .validate()
-        .map_err(|error| EngineError::Render(error.to_string()))
+    easing.validate().map_err(EngineError::from)
 }
 
 fn compose_value(

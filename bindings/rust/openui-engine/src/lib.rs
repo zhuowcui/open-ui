@@ -146,11 +146,13 @@ pub enum EngineError {
     Render(String),
     Font(FontCollectionError),
     Hyphenation(HyphenationRegistryError),
+    AllocationFailure,
 }
 
 impl std::fmt::Display for EngineError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::AllocationFailure => f.write_str("unable to allocate owned Engine data"),
             Self::InvalidViewport => f.write_str("viewport dimensions must be positive"),
             Self::WrongDocument => f.write_str("node belongs to another document"),
             Self::StaleHandle => f.write_str("node handle is stale"),
@@ -176,6 +178,15 @@ impl std::fmt::Display for EngineError {
 }
 
 impl std::error::Error for EngineError {}
+
+impl From<openui_style::AnimationError> for EngineError {
+    fn from(value: openui_style::AnimationError) -> Self {
+        match value {
+            openui_style::AnimationError::AllocationFailure => Self::AllocationFailure,
+            error => Self::Render(error.to_string()),
+        }
+    }
+}
 
 impl From<ViewportMetricsError> for EngineError {
     fn from(_: ViewportMetricsError) -> Self {

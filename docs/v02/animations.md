@@ -10,9 +10,26 @@ metadata; C keyframes pass through the same generated value-tag validation.
 infinite iteration count, normal/reverse/alternate direction, fill mode,
 running/paused state, playback rate, replace/add/accumulate composition, and a
 typed easing curve. Available curves are linear, cubic Bézier, all four CSS
-step positions, and ordered piecewise-linear stops. Per-keyframe easing
-overrides the animation default for its interval. Unsupported value pairs fall
-back to deterministic discrete interpolation.
+step positions, and ordered piecewise-linear stops. The animation's easing
+transforms progress across the whole effect before selecting a keyframe
+interval. That interval then applies its own easing, defaulting to linear.
+An explicit keyframe curve composes with the whole-effect curve. Unsupported
+value pairs fall back to deterministic discrete interpolation.
+
+`Easing::linear_stops_percent` accepts owned `PercentageLinearStop` values and
+preserves authored percentages, including repeated knots and knots outside
+0% and 100%. The existing normalized `LinearStop` representation keeps its
+validation and converts each input to percentage units by ordinary IEEE
+multiplication. Cubic and linear curves extrapolate beyond the effect interval;
+their outputs are not clamped. Ordered duplicate keyframe offsets select the
+outgoing interval at an exact offset.
+
+Step discontinuities use the effect's phase and actual iteration direction.
+Pinned Chromium 147.0.7727.50 applies a separate phase rule to per-keyframe
+steps: the left limit is selected in the before phase. Its reverse-after
+keyframe limit differs from whole-effect easing. The shared native sampler
+preserves those pinned rules; these source changes still require runtime and
+Chromium qualification.
 
 The engine owns generation-checked `AnimationId` values and samples them from a
 manual document clock. It also exposes scroll and view timelines with typed
@@ -38,9 +55,15 @@ timing even when it would otherwise be a no-op. Scroll and view timelines
 validate their directly constructed ranges before retaining an animation;
 finite reversed ranges remain supported.
 
-The source guards for these input rules still need compilation and runtime
+The source guards for these input and easing rules still need compilation and runtime
 verification on the complete integrated checkpoint. They do not qualify every
 animation operation.
+
+Typed keyframe conversion reserves its owned storage fallibly. Allocation
+failure retains its error type through the Engine, including `transition`, so
+the C interface can report out of memory. This does not qualify every allocation
+in animation creation or sampling; those paths still need ownership and failure
+verification.
 
 ## Animation local clock
 
@@ -60,7 +83,8 @@ cannot be finished, but an already running infinite effect can be reversed and
 finished at zero. Creating reverse playback at an infinite end is rejected.
 
 `AnimationOptions::sample` retains its elapsed-time interpretation for direct
-callers. The Engine uses `sample_local_time` for its owned clocks. Animation
+callers. The Engine samples its owned local clock and actual iteration direction
+before applying whole-effect easing and per-keyframe easing. Animation
 lifecycle callbacks follow effect phase transitions, including reverse completion;
 a skipped group of iterations emits one event, and event elapsed time describes
 the active effect interval rather than elapsed wall-clock time. Rust application
