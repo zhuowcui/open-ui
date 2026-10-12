@@ -197,6 +197,18 @@ fn boxes(root: &Fragment) -> HashMap<NodeId, LayoutBox> {
                 border.width().to_f64(),
                 border.height().to_f64(),
             ];
+            let rect = if fragment.is_inline_box_fragment {
+                rect
+            } else if let Some(geometry) = fragment.box_geometry {
+                [
+                    rect[0],
+                    rect[1],
+                    geometry.stitched_size.width.to_f64(),
+                    geometry.stitched_size.height.to_f64(),
+                ]
+            } else {
+                rect
+            };
             let next = LayoutBox {
                 origin,
                 rect,
@@ -216,15 +228,6 @@ fn boxes(root: &Fragment) -> HashMap<NodeId, LayoutBox> {
                     }
                 })
                 .or_insert(next);
-            if let Some(slice) = fragment.decoration_slice {
-                let horizontal = fragment
-                    .fragmentation_writing_direction
-                    .map_or(true, |direction| direction.is_horizontal());
-                let physical_block = if horizontal { 1 } else { 0 };
-                let entry = output.get_mut(&fragment.node_id).expect("inserted box");
-                entry.rect[physical_block + 2] =
-                    entry.rect[physical_block + 2].max(slice.source_block_size.to_f64());
-            }
         }
         for child in &fragment.children {
             walk(child, origin, output);

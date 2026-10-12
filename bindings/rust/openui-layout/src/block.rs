@@ -1560,6 +1560,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // geometry once, after the document's final physical layout is complete.
     if node_id == doc.root() {
         crate::table::populate_column_background_positioning(doc, &mut fragment);
+        crate::fragment_geometry::populate(&mut fragment);
         crate::scroll_area::populate(doc, &mut fragment);
         populate_sticky_geometry(doc, &mut fragment);
     }
@@ -14814,6 +14815,11 @@ fn slice_translated_fragment_descendants(
         }
         descendant.is_first_for_node = intersection_start == normal_top;
         descendant.is_last_for_node = intersection_end == normal_bottom;
+        crate::fragment_geometry::record_subslice(
+            descendant,
+            descendant_source_start,
+            intersection_end < normal_bottom,
+        );
 
         let nested_translation = slice_translated_fragment_descendants(
             descendant,
@@ -14878,6 +14884,8 @@ fn materialize_nontranslated_transform_slice(
             });
             child.is_first_for_node = source_offset == LayoutUnit::zero();
             child.is_last_for_node = source_offset + child.size.height >= original_source_size;
+            let has_next = source_offset + child.size.height < original_source_size;
+            crate::fragment_geometry::record_subslice(child, consumed, has_next);
         }
         true
     });
@@ -14951,6 +14959,8 @@ fn materialize_leaf_block_slices(
         });
         child.is_first_for_node &= source_offset == LayoutUnit::zero();
         child.is_last_for_node &= source_offset + child.size.height >= original_source_size;
+        let has_next = source_offset + child.size.height < original_source_size;
+        crate::fragment_geometry::record_subslice(child, consumed, has_next);
         child.fragmentation_writing_direction = Some(writing_direction);
     }
 }
@@ -25354,6 +25364,7 @@ fn layout_multicol(
                 // insets against the containing-block fragment where the
                 // preceding fragmented box began, while its static position
                 // may advance to a later continuation column.
+                crate::fragment_geometry::capture_source(&mut child_frag, space.writing_direction);
                 let child_start_col_idx = col_idx;
                 let child_start_block_offset = col_block_offset;
 
@@ -25842,6 +25853,13 @@ fn layout_multicol(
                         if remaining > part_height {
                             part.is_last_for_node = false;
                         }
+                        crate::fragment_geometry::record_piece(
+                            &mut part,
+                            space.writing_direction,
+                            consumed,
+                            part_height,
+                            remaining > part_height,
+                        );
                         per_col_children[target_col].push(part);
                         max_col_content = max_col_content.max_of(part_height);
                         max_wrapped_content_extent = max_wrapped_content_extent
@@ -25931,6 +25949,10 @@ fn layout_multicol(
                     }
                     let mut next_token: Option<crate::fragmentation::InlineBreakToken> = None;
                     let mut first_fragment = true;
+                    // InlineBreakToken advances the line source, which can end
+                    // before a fragmentainer edge. Principal-box consumption
+                    // instead uses each final, possibly stretched fragment.
+                    let mut principal_consumed = LayoutUnit::zero();
                     // An extracted anonymous inline run is a portion of its
                     // containing block's flow, not an independent principal
                     // block box. Do not apply inherited widow/orphan minima a
@@ -26025,6 +26047,15 @@ fn layout_multicol(
                             per_col_children.push(Vec::new());
                         }
                         let part_height = part.size.height;
+                        let principal_block_size = part.border_box_rect().height();
+                        crate::fragment_geometry::record_piece(
+                            &mut part,
+                            space.writing_direction,
+                            principal_consumed,
+                            principal_block_size,
+                            next_token.is_some(),
+                        );
+                        principal_consumed = principal_consumed + principal_block_size;
                         per_col_children[col_idx].push(part);
                         col_block_offset = part_block_offset + part_height;
                         col_remaining = (column_height - col_block_offset).clamp_negative_to_zero();
@@ -28037,6 +28068,7 @@ fn layout_multicol(
                                     .clamp_negative_to_zero()
                             };
                         let mut content_consumed = LayoutUnit::zero();
+                        let mut stitched_consumed = LayoutUnit::zero();
                         let mut nested_repeated_table_first_capacity = None;
                         // An avoided break inside a wrapped row flexbox can
                         // consume less flex-coordinate space than the amount
@@ -31482,6 +31514,26 @@ fn layout_multicol(
                                 per_col_children.push(Vec::new());
                             }
                             project_collapsed_table_sections(&mut part);
+                            let owned_block_size = part.border_box_rect().height();
+                            let source_block_end =
+                                child_frag.box_geometry.map_or(child_height, |geometry| {
+                                    WritingModeConverter::new(
+                                        space.writing_direction,
+                                        PhysicalSize::zero(),
+                                    )
+                                    .to_logical_size(geometry.source_size)
+                                    .block_size
+                                });
+                            let source_content_end =
+                                (source_block_end - clone_bp_block).clamp_negative_to_zero();
+                            crate::fragment_geometry::record_piece(
+                                &mut part,
+                                space.writing_direction,
+                                stitched_consumed,
+                                owned_block_size,
+                                content_consumed + content_in_part < source_content_end,
+                            );
+                            stitched_consumed = stitched_consumed + owned_block_size;
                             per_col_children[part_col_idx].push(part);
                             if !(resumed_owned_multicol_overflow
                                 && content_consumed >= child_height)

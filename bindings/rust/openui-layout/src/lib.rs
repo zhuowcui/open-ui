@@ -10,6 +10,7 @@ pub mod css_sizing;
 pub mod exclusions;
 pub mod flex;
 mod fragment;
+mod fragment_geometry;
 pub mod fragmentation;
 pub mod grid;
 pub mod inflow_position;
@@ -46,9 +47,9 @@ pub use css_sizing::{
 pub use exclusions::ExclusionSpace;
 pub use flex::flex_layout;
 pub use fragment::{
-    resolve_text_run_orientation, DecorationSlice, Fragment, FragmentBoxOwnership, FragmentKind,
-    FragmentTablePart, StickyTimelineGeometry, TableColumnBackgroundPositioning,
-    TextRunOrientation, ViewportScrollport,
+    resolve_text_run_orientation, DecorationSlice, Fragment, FragmentBoxGeometry,
+    FragmentBoxOwnership, FragmentKind, FragmentTablePart, StickyTimelineGeometry,
+    TableColumnBackgroundPositioning, TextRunOrientation, ViewportScrollport,
 };
 pub use fragmentation::{
     BlockBreakToken, BreakAppeal, BreakToken, FragmentainerSpace, InlineBreakToken,

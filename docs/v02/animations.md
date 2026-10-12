@@ -226,3 +226,28 @@ measurements remain required until their evidence is recorded.
 ### Ordering controls on inactive progress sources
 
 The retained native API stores an explicit percentage seek while source geometry is inactive. A later successful millisecond seek, play, finish or running attachment-range alignment replaces that deferred request. Pause and playback-rate changes preserve the requested held percentage; rejected nonfinite controls leave it intact. Native Engine and Rust application guards cover activation after each order. These guards remain uncompiled and unexecuted; the independent v1 source review identified the stale-request defect and v2 corrects it.
+
+
+### Fragmented principal-box geometry (source checkpoint)
+
+Layout retains the first logical inline size, each continuation's consumed block
+size and the generating box's block-end separately from decoration slicing.
+View timeline sizes consume this retained stitched geometry. Cloned decorations
+include their repeated border and padding in the stitched size; visible
+continuations past a definite box's end do not enlarge that box. Block and
+inline-formatting continuation routes share this metadata. Native guards cover
+sliced versus cloned edges, definite-box overflow, logical vertical axes,
+inline-formatting tokens, static picture bytes and hit results at five scales.
+An inline line-resume token tracks source lines independently of principal-box
+consumption: each nonfinal principal part reaches its fragmentainer edge. Three
+60-pixel lines in 100-pixel fragmentainers therefore have a stitched block size
+of 260 pixels, while the unfragmented block remains 180 pixels. The first source
+review found that v1 conflated these counters; v2 records each final principal
+part in its block-layout owner. These guards are written but uncompiled and
+unexecuted.
+
+This is not complete fragmentation qualification. Extracted spanner wrapper
+consumption, repeated table sections, promoted positioned descendants, variable
+fragmentainer inline sizes and nested sticky/fragmentation combinations remain
+required source and native/Chromium measurement work. Static paint and input
+still consume the actual fragment boxes; metadata does not change those boxes.

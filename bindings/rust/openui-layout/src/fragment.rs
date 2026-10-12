@@ -285,6 +285,23 @@ pub struct MulticolFragmentationData {
     pub declared_column_count: u32,
 }
 
+/// Principal-box continuation geometry retained by layout, independently of
+/// decoration slicing and visual overflow. Logical consumption is measured in
+/// the fragmenting context's axes; `stitched_size` is always physical.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct FragmentBoxGeometry {
+    pub source_size: PhysicalSize,
+    pub stitched_size: PhysicalSize,
+    pub writing_direction: WritingDirectionMode,
+    pub inline_size: LayoutUnit,
+    pub block_size: LayoutUnit,
+    pub consumed_block_size: LayoutUnit,
+    pub has_next: bool,
+    pub is_repeated: bool,
+    /// Distinguishes an actual continuation token from the unsplit source.
+    pub continuation_record: bool,
+}
+
 /// Original layout geometry used by a view timeline's sticky range.
 /// Paint and hit testing continue to consume the resolved fragment offset.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -428,6 +445,10 @@ pub struct Fragment {
     /// this to slice in normal-flow coordinates while moving each slice and
     /// its clip with the interrupted inline continuation.
     pub fragmentation_visual_offset: PhysicalOffset,
+
+    /// Source and consumed principal-box geometry for native dimension/timeline
+    /// consumers. Paint and hit testing continue to use the actual local box.
+    pub box_geometry: Option<FragmentBoxGeometry>,
 
     /// Sticky source geometry before scroll-dependent visual displacement.
     /// Timeline geometry ignores this displacement, including that of ancestors.
@@ -687,6 +708,7 @@ impl Fragment {
             column_block_start_ink_overflow: LayoutUnit::zero(),
             column_block_end_ink_overflow: LayoutUnit::zero(),
             fragmentation_visual_offset: PhysicalOffset::zero(),
+            box_geometry: None,
             sticky_timeline_geometry: None,
             positioned_fragmentation: None,
             promoted_transform_ancestors: Vec::new(),
@@ -766,6 +788,7 @@ impl Fragment {
             column_block_start_ink_overflow: LayoutUnit::zero(),
             column_block_end_ink_overflow: LayoutUnit::zero(),
             fragmentation_visual_offset: PhysicalOffset::zero(),
+            box_geometry: None,
             sticky_timeline_geometry: None,
             positioned_fragmentation: None,
             promoted_transform_ancestors: Vec::new(),
