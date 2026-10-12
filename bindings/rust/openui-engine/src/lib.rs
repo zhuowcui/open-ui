@@ -6,6 +6,7 @@ mod animation_timeline;
 mod control_geometry;
 mod element_dimensions;
 mod forms;
+mod hit_geometry;
 mod interaction;
 mod scroll_button;
 mod scroll_into_view;
@@ -38,6 +39,7 @@ pub use interaction::{
     RouteStep, SelectionDirection, TextDirection, TextUnit,
 };
 
+use hit_geometry::WorldTransform;
 use openui_compositor::{SceneGeneration, SceneRect, SceneSnapshot};
 use openui_dom::{
     Document as NativeDocument, ElementTag, FormControlRole, NodeId, PseudoElementKind,
@@ -267,103 +269,9 @@ struct Slot {
     animation_properties: BTreeSet<u16>,
 }
 
-#[derive(Debug, Clone, Copy)]
-struct Affine {
-    a: f32,
-    b: f32,
-    c: f32,
-    d: f32,
-    e: f32,
-    f: f32,
-}
-
-impl Affine {
-    const IDENTITY: Self = Self {
-        a: 1.0,
-        b: 0.0,
-        c: 0.0,
-        d: 1.0,
-        e: 0.0,
-        f: 0.0,
-    };
-
-    fn translate(x: f32, y: f32) -> Self {
-        Self {
-            e: x,
-            f: y,
-            ..Self::IDENTITY
-        }
-    }
-
-    fn then(self, rhs: Self) -> Self {
-        Self {
-            a: self.a * rhs.a + self.c * rhs.b,
-            b: self.b * rhs.a + self.d * rhs.b,
-            c: self.a * rhs.c + self.c * rhs.d,
-            d: self.b * rhs.c + self.d * rhs.d,
-            e: self.a * rhs.e + self.c * rhs.f + self.e,
-            f: self.b * rhs.e + self.d * rhs.f + self.f,
-        }
-    }
-
-    fn inverse(self) -> Option<Self> {
-        let determinant = self.a * self.d - self.b * self.c;
-        if !determinant.is_finite() || determinant.abs() < f32::EPSILON {
-            return None;
-        }
-        let inverse = determinant.recip();
-        Some(Self {
-            a: self.d * inverse,
-            b: -self.b * inverse,
-            c: -self.c * inverse,
-            d: self.a * inverse,
-            e: (self.c * self.f - self.d * self.e) * inverse,
-            f: (self.b * self.e - self.a * self.f) * inverse,
-        })
-    }
-
-    fn map(self, x: f32, y: f32) -> (f32, f32) {
-        (
-            self.a * x + self.c * y + self.e,
-            self.b * x + self.d * y + self.f,
-        )
-    }
-
-    fn map_rect(self, width: f32, height: f32) -> SceneRect {
-        let corners = [
-            self.map(0.0, 0.0),
-            self.map(width, 0.0),
-            self.map(0.0, height),
-            self.map(width, height),
-        ];
-        let min_x = corners
-            .iter()
-            .map(|point| point.0)
-            .fold(f32::INFINITY, f32::min);
-        let max_x = corners
-            .iter()
-            .map(|point| point.0)
-            .fold(f32::NEG_INFINITY, f32::max);
-        let min_y = corners
-            .iter()
-            .map(|point| point.1)
-            .fold(f32::INFINITY, f32::min);
-        let max_y = corners
-            .iter()
-            .map(|point| point.1)
-            .fold(f32::NEG_INFINITY, f32::max);
-        SceneRect {
-            x: min_x,
-            y: min_y,
-            width: max_x - min_x,
-            height: max_y - min_y,
-        }
-    }
-}
-
 #[derive(Debug, Clone)]
 struct HitClip {
-    world_to_local: Affine,
+    world_to_local: WorldTransform,
     width: f32,
     height: f32,
     clip_x: bool,
@@ -373,7 +281,7 @@ struct HitClip {
 
 impl HitClip {
     fn contains(&self, x: f32, y: f32) -> bool {
-        let (x, y) = self.world_to_local.map(x, y);
+        let (x, y) = self.world_to_local.project_point(x, y);
         if self.clip_x && self.clip_y {
             rounded_rect_contains(x, y, self.width, self.height, self.radii)
         } else {
@@ -386,7 +294,7 @@ impl HitClip {
 #[derive(Debug, Clone)]
 struct HitEntry {
     node: NodeId,
-    world_to_local: Affine,
+    world_to_local: WorldTransform,
     width: f32,
     height: f32,
     clips: Vec<HitClip>,
@@ -424,7 +332,7 @@ pub struct Engine {
     latest_scene: Option<SceneSnapshot>,
     hit_test: Vec<HitEntry>,
     fragment_rects: HashMap<NodeId, Vec<SceneRect>>,
-    fragment_box_worlds: HashMap<NodeId, Affine>,
+    fragment_box_worlds: HashMap<NodeId, WorldTransform>,
     focused: Option<NodeHandle>,
     pointer_capture: HashMap<u64, NodeHandle>,
     hover_paths: HashMap<u64, Vec<NodeHandle>>,
@@ -2750,9 +2658,12 @@ impl Engine {
     }
 
     pub fn hit_test(&mut self, x: f32, y: f32) -> Result<Option<NodeHandle>, EngineError> {
+        if !x.is_finite() || !y.is_finite() {
+            return Err(EngineError::InvalidInput("hit coordinates must be finite"));
+        }
         self.update()?;
         for entry in self.hit_test.iter().rev() {
-            let (local_x, local_y) = entry.world_to_local.map(x, y);
+            let (local_x, local_y) = entry.world_to_local.project_point(x, y);
             if rounded_rect_contains(local_x, local_y, entry.width, entry.height, [(0.0, 0.0); 4])
                 && entry.clips.iter().all(|clip| clip.contains(x, y))
             {
@@ -2902,34 +2813,39 @@ impl Engine {
         }
     }
     fn rebuild_hit_test(&mut self, fragment: &Fragment) {
-        fn resolve_origin(length: &openui_geometry::Length, size: f32) -> f32 {
-            if length.is_fixed() {
-                length.value()
-            } else if length.length_type() == openui_geometry::LengthType::Percent {
-                length.value() * size / 100.0
-            } else if length.is_calculated() {
-                length.calc_offset() + length.value() * size / 100.0
-            } else {
-                size * 0.5
-            }
-        }
         fn walk(
             document: &NativeDocument,
             fragment: &Fragment,
-            parent_world: Affine,
+            parent_world: WorldTransform,
+            inherited_hittable: bool,
             inherited_clips: &[HitClip],
             out: &mut Vec<HitEntry>,
             rects: &mut HashMap<NodeId, Vec<SceneRect>>,
-            box_worlds: &mut HashMap<NodeId, Affine>,
+            box_worlds: &mut HashMap<NodeId, WorldTransform>,
         ) {
             let width = fragment.size.width.to_f32();
             let height = fragment.size.height.to_f32();
             let border_box = fragment.border_box_rect();
             let box_width = border_box.size.width.to_f32();
             let box_height = border_box.size.height.to_f32();
-            let translated = parent_world.then(Affine::translate(
-                fragment.offset.left.to_f32(),
-                fragment.offset.top.to_f32(),
+            // Out-of-flow continuation records retain transforms whose real
+            // ancestors are absent from this physical fragment subtree. Use
+            // the same owned reference-box operation as painting.
+            let mut promoted_world = parent_world;
+            let mut ancestry_hittable = inherited_hittable;
+            for ancestor in &fragment.promoted_transform_ancestors {
+                promoted_world = promoted_world.then(WorldTransform(
+                    openui_layout::promoted_ancestor_applied_transform(document, ancestor),
+                ));
+                ancestry_hittable &= promoted_world.is_invertible();
+                // These are actual removed element boundaries. The current
+                // flat style ends their inherited depth before the next box;
+                // the inverse eligibility latch survives that flattening.
+                promoted_world = promoted_world.flattened();
+            }
+            let translated = promoted_world.then(WorldTransform::translate(
+                fragment.offset.left.to_f64(),
+                fragment.offset.top.to_f64(),
             ));
             // Helpers retain a style source for decoration and structural
             // clips, but authored effects belong to the element's own box.
@@ -2937,28 +2853,18 @@ impl Engine {
                 (!fragment.node_id.is_none()).then(|| &document.node(fragment.node_id).style);
             let owns_box = fragment.owns_element_box()
                 && document.node(fragment.node_id).tag != ElementTag::Text;
-            let world = if let Some(style) = node_style.filter(|_| owns_box) {
-                let transform = style.transform;
-                let origin_x = resolve_origin(&style.transform_origin.0, width);
-                let origin_y = resolve_origin(&style.transform_origin.1, height);
-                let transform = Affine {
-                    a: transform.a,
-                    b: transform.b,
-                    c: transform.c,
-                    d: transform.d,
-                    e: transform.e,
-                    f: transform.f,
+            let world =
+                if let Some(style) = node_style.filter(|style| owns_box && style.has_transform()) {
+                    let resolved = fragment.resolved_transform.unwrap_or_else(|| {
+                        openui_layout::resolved_fragment_transform(fragment, style)
+                    });
+                    translated.then(WorldTransform(resolved.local_applied))
+                } else {
+                    translated
                 };
-                translated
-                    .then(Affine::translate(origin_x, origin_y))
-                    .then(transform)
-                    .then(Affine::translate(-origin_x, -origin_y))
-            } else {
-                translated
-            };
-            let box_world = world.then(Affine::translate(
-                border_box.offset.left.to_f32(),
-                border_box.offset.top.to_f32(),
+            let box_world = world.then(WorldTransform::translate(
+                border_box.offset.left.to_f64(),
+                border_box.offset.top.to_f64(),
             ));
             if owns_box {
                 rects
@@ -2967,15 +2873,20 @@ impl Engine {
                     .push(box_world.map_rect(box_width, box_height));
                 box_worlds.entry(fragment.node_id).or_insert(box_world);
             }
-            let world_to_local = box_world.inverse();
+            // Blink rejects the complete CSS transform before plane
+            // projection. A flat child must not revive a singular ancestor.
+            // Geometry queries still retain all of the layout rectangles.
+            let subtree_hittable = ancestry_hittable && world.is_invertible();
+            let world_to_local = subtree_hittable.then(|| box_world.inverse()).flatten();
             let mut own_clips = inherited_clips.to_vec();
             if let Some(style) = node_style {
                 if let Some(inset) = style.clip_path_inset.filter(|_| owns_box) {
                     let resolve = |length: &openui_geometry::Length, size: f32| {
-                        if length.is_fixed() {
-                            length.value()
-                        } else if length.length_type() == openui_geometry::LengthType::Percent {
-                            length.value() * size / 100.0
+                        if length.is_fixed() || length.is_percent() || length.is_calculated() {
+                            // BasicShapeInset uses FloatValueForLength. Its
+                            // calculated-length arithmetic retains the source
+                            // kind and differs from a pure percent operation.
+                            openui_style::transform_length_for_reference_box(*length, size)
                         } else {
                             0.0
                         }
@@ -2984,7 +2895,8 @@ impl Engine {
                     let right = resolve(&inset[1], box_width);
                     let bottom = resolve(&inset[2], box_height);
                     let left = resolve(&inset[3], box_width);
-                    let clipped_world = box_world.then(Affine::translate(left, top));
+                    let clipped_world =
+                        box_world.then(WorldTransform::translate(left as f64, top as f64));
                     if let Some(inverse) = clipped_world.inverse() {
                         own_clips.push(HitClip {
                             world_to_local: inverse,
@@ -2996,7 +2908,8 @@ impl Engine {
                         });
                     }
                 }
-                let pointer_eligible = owns_box
+                let pointer_eligible = subtree_hittable
+                    && owns_box
                     && style.visibility == openui_style::Visibility::Visible
                     && style.pointer_events == openui_style::PointerEvents::Auto;
                 if let Some(world_to_local) = world_to_local
@@ -3062,9 +2975,9 @@ impl Engine {
                             // client_rect is local to the physical fragment;
                             // it already includes the principal border-box
                             // origin (including a table caption's placement).
-                            world.then(Affine::translate(
-                                area.client_rect.x().to_f32(),
-                                area.client_rect.y().to_f32(),
+                            world.then(WorldTransform::translate(
+                                area.client_rect.x().to_f64(),
+                                area.client_rect.y().to_f64(),
                             )),
                             area.client_rect.width().to_f32(),
                             area.client_rect.height().to_f32(),
@@ -3096,7 +3009,12 @@ impl Engine {
             }
             let child_world = if owns_box {
                 let node = document.node(fragment.node_id);
-                world.then(Affine::translate(-node.scroll_left, -node.scroll_top))
+                // The currently exposed style contract uses flat descendants.
+                // Flatten at the actual element boundary, not helper fragments.
+                world.flattened().then(WorldTransform::translate(
+                    -node.scroll_left as f64,
+                    -node.scroll_top as f64,
+                ))
             } else {
                 world
             };
@@ -3129,6 +3047,7 @@ impl Engine {
                     document,
                     child,
                     child_world,
+                    subtree_hittable,
                     &own_clips,
                     out,
                     rects,
@@ -3162,7 +3081,8 @@ impl Engine {
         walk(
             &self.document,
             fragment,
-            Affine::IDENTITY,
+            WorldTransform::IDENTITY,
+            true,
             &[],
             &mut entries,
             &mut rects,

@@ -1,6 +1,6 @@
 //! Native reveal operations over the retained fragment geometry.
 
-use crate::{Affine, Engine, EngineError, NodeHandle, ScrollAnimationId};
+use crate::{Engine, EngineError, NodeHandle, ScrollAnimationId, WorldTransform};
 use openui_compositor::SceneRect;
 use openui_dom::NodeId;
 use openui_layout::{Fragment, ScrollArea};
@@ -841,9 +841,9 @@ impl Default for ScrollIntoViewOptions {
     }
 }
 
-fn map_rect(transform: Affine, rect: SceneRect) -> SceneRect {
+fn map_rect(transform: WorldTransform, rect: SceneRect) -> SceneRect {
     transform
-        .then(Affine::translate(rect.x, rect.y))
+        .then(WorldTransform::translate(rect.x as f64, rect.y as f64))
         .map_rect(rect.width, rect.height)
 }
 
@@ -972,14 +972,17 @@ impl Engine {
     /// Client rectangles include the principal border-box origin, while the
     /// input world map already starts at that origin. Recover fragment space
     /// before comparing either the client rect or its padding-reduced snapport.
-    fn reveal_scroll_geometry(&self, node: NodeId) -> Option<(ScrollArea, Affine)> {
+    fn reveal_scroll_geometry(&self, node: NodeId) -> Option<(ScrollArea, WorldTransform)> {
         let fragment = self.reveal_fragment(node)?;
         let area = fragment.scroll_area?;
         let principal = fragment.border_box_rect().offset;
-        let world = self.fragment_box_worlds.get(&node)?.then(Affine::translate(
-            -principal.left.to_f32(),
-            -principal.top.to_f32(),
-        ));
+        let world = self
+            .fragment_box_worlds
+            .get(&node)?
+            .then(WorldTransform::translate(
+                -principal.left.to_f64(),
+                -principal.top.to_f64(),
+            ));
         Some((area, world))
     }
 
@@ -1072,10 +1075,14 @@ impl Engine {
             if exposed.height <= 0.0 {
                 exposed.height = 1.0;
             }
-            let Some(inverse) = world.inverse() else {
-                continue;
-            };
-            let local = map_rect(inverse, exposed);
+            // Blink's inverse TransformState uses ProjectQuad, not a depth=0
+            // forward MapQuad. This intersects the transformed source plane.
+            // Failed inversion leaves the planar quad unchanged in Blink.
+            let local = crate::hit_geometry::enclosing_layout_rect(
+                world
+                    .inverse()
+                    .map_or(exposed, |inverse| inverse.project_rect(exposed)),
+            );
             let client = area.client_rect;
             let mut snapport =
                 crate::scroll_button::scroll_snapport(&self.document.node(node).style, area);
