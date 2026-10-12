@@ -245,7 +245,9 @@ fn descendant_positions(
 ) {
     let left = parent_left + fragment.offset.left;
     let top = parent_top + fragment.offset.top;
-    if fragment.node_id == node {
+    // These positions describe authored elements. Retained formatting helpers
+    // can borrow a node identity without owning another element box.
+    if fragment.node_id == node && fragment.owns_element_box() {
         out.push((left, top));
     }
     for child in &fragment.children {
@@ -1039,6 +1041,24 @@ fn fieldset_promotes_a_legend_through_display_contents_before_ordinary_content()
         LayoutUnit::zero(),
         LayoutUnit::zero(),
         &mut ordinary_positions,
+    );
+
+    let mut fieldset_fragments = Vec::new();
+    descendants(&fragment, fieldset, &mut fieldset_fragments);
+    assert_eq!(
+        fieldset_fragments
+            .iter()
+            .filter(|f| f.owns_element_box())
+            .count(),
+        1
+    );
+    assert_eq!(
+        fieldset_fragments
+            .iter()
+            .filter(|f| f.owns_layout_box() && !f.owns_element_box())
+            .count(),
+        1,
+        "the fieldset content helper remains retained without duplicating element geometry"
     );
 
     assert_eq!(fieldset_positions.len(), 1);

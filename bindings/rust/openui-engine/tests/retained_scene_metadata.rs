@@ -169,7 +169,7 @@ fn identities_survive_geometry_effect_scroll_and_hidden_projection_changes() {
     engine.append_child(root, node).unwrap();
     assert_eq!(layer(&engine.scene().unwrap(), node).id, original.id);
     let new_parent = box_node(&mut engine, root, ElementTag::Div);
-    engine.append_child(new_parent, node).unwrap();
+    engine.append_or_move_child(new_parent, node).unwrap();
     let reparented = engine.scene().unwrap();
     assert_eq!(layer(&reparented, node).id, original.id);
     assert_eq!(
