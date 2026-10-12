@@ -142,12 +142,15 @@ continuation geometry, nested sticky relationships and Chromium measurements
 still require completion. The
 new typed progress operations also require additive C transport and consumers.
 
-Overlapping effects and cancellation also need qualification: each animation
-retains an underlying value, updated by authored property setters, so restoring it must be reviewed
-against surviving effects and later authored changes. The
-[Web Animations timing model](https://www.w3.org/TR/web-animations-1/#the-current-time-of-an-animation)
-defines the browser behavior used as the oracle. Applications perform the
-equivalent operations through native Rust APIs; Open UI executes no JavaScript.
+Overlapping effects share a retained, unanimated base for each target and
+property. Native setters update that base. The Engine folds raw samples in
+animation creation order, resolves the final value once, and recomputes surviving
+effects when one is cancelled or its progress source becomes inactive. Computed
+renderer values and native endpoints enter the same typed composition path.
+These source changes still require compilation, runtime and Chromium comparison;
+currentcolor, modern color spaces and compound typography interpolation remain
+unfinished. Applications control these effects through native Rust APIs.
+Open UI executes no JavaScript.
 
 ## Current compositor boundary
 
@@ -160,11 +163,15 @@ is not claimed. Completing it requires retained per-layer pictures and GPU-side
 curve application; it must not be simulated with global picture transforms or
 backend-specific layout.
 
-The renderer currently stores a 2D projected transform in `ComputedStyle`.
-Typed transform lists accept translate/scale/rotate/matrix operations in both
-2D and 3D plus perspective, and compatible lists interpolate deterministically.
-Depth preservation, `preserve-3d`, backface visibility, and perspective-origin
-remain gated on a real 3D layer tree rather than being approximated in paint.
+Layout and paint retain full transform matrices and their source arithmetic:
+axis-aligned operations keep float scale and translation; explicit matrix and
+3D operations keep full matrices. Transform origins use each owned physical
+reference box. Native client geometry, hit testing and scroll reveal consume the
+same retained transforms, including inverse plane projection and singularity
+checks before flat boundaries. These changes have source review and authored
+native guards; compilation, runtime and exact Chromium measurements are pending.
+Depth preservation, `preserve-3d`, backface visibility, perspective-origin and
+3D paint/hit ordering still require completion.
 
 
 ## Phase boundary timing
@@ -213,7 +220,7 @@ part of qualification evidence.
 
 These additions are source work, not a native API qualification result. C
 transport, complete fragmented subject/source geometry, nested sticky cases,
-underlying effect-stack integration, compilation and exact Chromium/native
+shared effect-stack runtime verification, compilation and exact Chromium/native
 measurements remain required until their evidence is recorded.
 
 ### Ordering controls on inactive progress sources
