@@ -35,12 +35,12 @@ fn fixture(scale: f64, playback_rate: f64) -> (Document, Element, AnimationId) {
 fn native_rate_changes_keep_running_and_paused_pixels_until_the_clock_advances() {
     for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
         let (document, node, id) = fixture(scale, 1.0);
-        document.set_animation_time(40.0).unwrap();
+        document.advance_time(40.0).unwrap();
         let pixels = document.render_to_png_buffer().unwrap();
         document.set_animation_playback_rate(id, 2.0).unwrap();
         assert_eq!(document.render_to_png_buffer().unwrap(), pixels);
         assert_eq!(document.animation_state(id).unwrap().current_time_ms, 40.0);
-        document.set_animation_time(50.0).unwrap();
+        document.advance_time(50.0).unwrap();
         assert_eq!(node.computed_style().unwrap().opacity, 0.6);
         document.pause_animation(id).unwrap();
         document.seek_animation(id, 80.0).unwrap();
@@ -49,7 +49,7 @@ fn native_rate_changes_keep_running_and_paused_pixels_until_the_clock_advances()
         assert_eq!(document.render_to_png_buffer().unwrap(), pixels);
         document.play_animation(id).unwrap();
         assert_eq!(document.render_to_png_buffer().unwrap(), pixels);
-        document.set_animation_time(60.0).unwrap();
+        document.advance_time(60.0).unwrap();
         assert_eq!(node.computed_style().unwrap().opacity, 0.7);
         assert_ne!(document.render_to_png_buffer().unwrap(), pixels);
     }
@@ -62,7 +62,7 @@ fn native_zero_rate_and_invalid_controls_preserve_owned_state_and_picture() {
     document.set_animation_playback_rate(id, 0.0).unwrap();
     let owned_state = document.animation_state(id).unwrap();
     let pixels = document.render_to_png_buffer().unwrap();
-    document.set_animation_time(1000.0).unwrap();
+    document.advance_time(1000.0).unwrap();
     assert_eq!(document.render_to_png_buffer().unwrap(), pixels);
     assert_eq!(document.animation_state(id).unwrap().current_time_ms, 35.0);
     assert!(!document.is_animating().unwrap());
@@ -72,7 +72,7 @@ fn native_zero_rate_and_invalid_controls_preserve_owned_state_and_picture() {
     }
     assert_eq!(document.render_to_png_buffer().unwrap(), pixels);
     document.set_animation_playback_rate(id, -2.0).unwrap();
-    document.set_animation_time(1010.0).unwrap();
+    document.advance_time(1010.0).unwrap();
     assert_eq!(node.computed_style().unwrap().opacity, 0.15);
     assert_eq!(owned_state.current_time_ms, 35.0);
     document.cancel_animation(id).unwrap();
@@ -92,13 +92,13 @@ fn native_reverse_lifecycle_callbacks_can_read_the_same_document_after_controls(
             .push((state.current_time_ms, state.finished));
     })
     .unwrap();
-    document.set_animation_time(25.0).unwrap();
+    document.advance_time(25.0).unwrap();
     assert_eq!(node.computed_style().unwrap().opacity, 0.75);
     document.pause_animation(id).unwrap();
     document.finish_animation(id).unwrap();
     assert_eq!(&*events.borrow(), &[(0.0, true)]);
     assert!(!document.is_animating().unwrap());
-    document.set_animation_time(1000.0).unwrap();
+    document.advance_time(1000.0).unwrap();
     assert_eq!(events.borrow().len(), 1);
     document.play_animation(id).unwrap();
     assert_eq!(document.animation_state(id).unwrap().current_time_ms, 100.0);

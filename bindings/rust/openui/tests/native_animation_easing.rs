@@ -53,7 +53,7 @@ fn native_multikeyframe_easing_preserves_pixels_during_paused_controls() {
                 },
             )
             .unwrap();
-        document.set_animation_time(50.0).unwrap();
+        document.advance_time(50.0).unwrap();
         assert_eq!(node.computed_style().unwrap().width.value(), 10.0);
         let pixels = document.render_to_png_buffer().unwrap();
         document.pause_animation(id).unwrap();

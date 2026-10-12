@@ -75,8 +75,8 @@ fn consumer(output: &Path, display: Display, scale: f64) -> Result<()> {
     root.set_background_color(Color::WHITE)?;
     let container = box_node(&document, &root)?;
     container.set_position(Position::Absolute)?;
-    container.set_left(LengthValue::px(20.0))?;
-    container.set_top(LengthValue::px(20.0))?;
+    container.set_left(Length::px(20.0))?;
+    container.set_top(Length::px(20.0))?;
     container.set_display(display)?;
     container.set_width(LengthValue::px(100.0))?;
     container.set_height(LengthValue::px(80.0))?;
@@ -178,8 +178,8 @@ fn consumer(output: &Path, display: Display, scale: f64) -> Result<()> {
     container.set_height(LengthValue::px(80.0))?;
     let absolute = box_node(&document, &container)?;
     absolute.set_position(Position::Absolute)?;
-    absolute.set_left(LengthValue::px(0.0))?;
-    absolute.set_top(LengthValue::px(0.0))?;
+    absolute.set_left(Length::px(0.0))?;
+    absolute.set_top(Length::px(0.0))?;
     absolute.set_width(LengthValue::percent(100.0))?;
     absolute.set_height(LengthValue::percent(100.0))?;
     let bounds = absolute.bounding_rect()?.ok_or("absolute child missing")?;
