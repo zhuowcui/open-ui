@@ -181,6 +181,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "border-bottom-left-radius",
@@ -195,6 +196,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "border-bottom-right-radius",
@@ -331,7 +333,8 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/fieldset.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "border-radius-percent",
       "field": "border_radius_percent",
@@ -428,6 +431,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "border-top-left-radius",
@@ -442,6 +446,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "border-top-right-radius",
@@ -664,6 +669,7 @@
       "consumers": [
         "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "clip-path-inset",
@@ -1044,7 +1050,8 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-paint/src/paint_order.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "filter-blur",
       "field": "filter_blur",
@@ -1058,7 +1065,8 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-paint/src/paint_order.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "filter-grayscale",
       "field": "filter_grayscale",
@@ -2225,7 +2233,8 @@
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-engine/src/animation.rs"
+        "bindings/rust/openui-engine/src/animation.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "opacity",
       "field": "opacity",
@@ -2315,7 +2324,8 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/scroll_area.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "overflow-clip-box",
       "field": "overflow_clip_box",
@@ -2328,7 +2338,8 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/scroll_area.rs",
-        "bindings/rust/openui-paint/src/painter.rs"
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": "overflow-clip-margin",
       "field": "overflow_clip_margin",
@@ -2369,6 +2380,7 @@
         "bindings/rust/openui-paint/src/render.rs",
         "bindings/rust/openui-engine/src/accessibility.rs",
         "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
         "bindings/rust/openui-engine/src/control_geometry.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
@@ -2395,6 +2407,7 @@
         "bindings/rust/openui-paint/src/render.rs",
         "bindings/rust/openui-engine/src/accessibility.rs",
         "bindings/rust/openui-engine/src/animation_timeline.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs",
         "bindings/rust/openui-engine/src/control_geometry.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
@@ -3591,7 +3604,8 @@
       "classification": "internal",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-paint/src/render.rs"
+        "bindings/rust/openui-paint/src/render.rs",
+        "bindings/rust/openui-engine/src/compositor_scene.rs"
       ],
       "css_name": null,
       "field": "will_change_transform",
