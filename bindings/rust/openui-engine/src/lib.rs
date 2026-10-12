@@ -2762,10 +2762,35 @@ impl Engine {
     }
 
     fn node_is_connected(&self, mut node: NodeId) -> bool {
-        // Chromium's UpdateStyleAndLayoutForNode skips detached nodes. A
-        // geometry read on a detached subtree must not flush unrelated
-        // attached layout or clamp its pending scroll positions.
+        // Origin-owned buttons can be absent from the presentation tree while
+        // hidden. Their logical connection follows the live origin, so the
+        // first geometry read after showing it still reaches the layout barrier.
+        // Ordinary detached subtrees continue to skip unrelated layout work.
+        let mut remaining = self.node_slots.len();
         while !node.is_none() {
+            // Ownership and parent links must not turn malformed retained
+            // state into an unbounded walk. No allocation is needed here.
+            if remaining == 0 {
+                return false;
+            }
+            remaining -= 1;
+            let Some(index) = self.node_slots.get(&node).copied() else {
+                return false;
+            };
+            if self.slots.get(index as usize).and_then(|slot| slot.node) != Some(node) {
+                return false;
+            }
+            let handle = self.handle_for_slot(index);
+            if let Some(binding) = self.scroll_buttons.bindings.get(&handle) {
+                if binding.button != handle {
+                    return false;
+                }
+                let Ok(origin) = self.resolve(binding.origin) else {
+                    return false;
+                };
+                node = origin;
+                continue;
+            }
             if node == self.document.root() {
                 return true;
             }
@@ -4437,5 +4462,79 @@ mod tests {
             Some("ar-EG")
         );
         assert!(LanguageTag::parse("not_a_tag").is_none());
+    }
+
+    #[test]
+    fn owned_button_connectivity_rejects_cycles_and_invalid_origin_handles() {
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(80.0, 60.0, 1.0).unwrap()).unwrap();
+        let origin = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(engine.root(), origin).unwrap();
+        let button = engine
+            .create_scroll_button(origin, ScrollButtonDirection::Right)
+            .unwrap();
+        let child = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.append_child(button, child).unwrap();
+        engine.update().unwrap();
+        let valid_binding = engine.scroll_buttons.bindings[&button];
+        let baseline = engine.stats();
+        // The child-to-button parent edge makes this a two-node ownership cycle.
+        for invalid_origin in [
+            button,
+            child,
+            NodeHandle {
+                generation: origin.generation.wrapping_add(1),
+                ..origin
+            },
+            NodeHandle {
+                document: engine.document_id().wrapping_add(1),
+                ..origin
+            },
+        ] {
+            engine
+                .scroll_buttons
+                .bindings
+                .get_mut(&button)
+                .unwrap()
+                .origin = invalid_origin;
+            assert!(!engine.is_connected(button).unwrap());
+            assert!(!engine.is_connected(child).unwrap());
+            assert!(engine.bounds(button).unwrap().is_none());
+            assert!(engine.client_rects(child).unwrap().is_empty());
+            assert_eq!(engine.stats(), baseline);
+        }
+        engine.scroll_buttons.bindings.insert(button, valid_binding);
+        assert!(engine.is_connected(button).unwrap());
+
+        // Reusing a removed slot must not validate the old origin generation.
+        let removed = engine.create_native_element(ElementTag::Div).unwrap();
+        engine.remove(removed).unwrap();
+        let replacement = engine.create_native_element(ElementTag::Div).unwrap();
+        assert_eq!(replacement.index(), removed.index());
+        assert_ne!(replacement.generation(), removed.generation());
+        engine.append_child(engine.root(), replacement).unwrap();
+        engine
+            .scroll_buttons
+            .bindings
+            .get_mut(&button)
+            .unwrap()
+            .origin = removed;
+        let baseline = engine.stats();
+        assert!(!engine.is_connected(button).unwrap());
+        assert!(engine.bounds(child).unwrap().is_none());
+        assert_eq!(engine.stats(), baseline);
+        engine.scroll_buttons.bindings.insert(button, valid_binding);
+
+        engine
+            .scroll_buttons
+            .bindings
+            .get_mut(&button)
+            .unwrap()
+            .button = origin;
+        assert!(!engine.is_connected(button).unwrap());
+        engine.scroll_buttons.bindings.insert(button, valid_binding);
+        engine.remove(origin).unwrap();
+        assert!(engine.is_connected(button).is_err());
+        assert!(engine.is_connected(child).is_err());
     }
 }
