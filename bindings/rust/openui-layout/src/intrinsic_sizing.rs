@@ -742,7 +742,9 @@ fn compute_intrinsic_block_sizes_impl(
     // Flex containers have their own intrinsic sizing algorithm.
     // CSS Flexbox §9.9: Flex container intrinsic sizes.
     if style.display.is_flex() {
-        return apply_size_containment_with_border(
+        return apply_flex_grid_size_containment(
+            doc,
+            node_id,
             style,
             used_border,
             compute_flex_intrinsic_sizes(doc, node_id, style, None),
@@ -750,7 +752,9 @@ fn compute_intrinsic_block_sizes_impl(
     }
 
     if style.display.is_grid() {
-        return apply_size_containment_with_border(
+        return apply_flex_grid_size_containment(
+            doc,
+            node_id,
             style,
             used_border,
             crate::grid::compute_grid_intrinsic_sizes(doc, node_id),
@@ -1258,6 +1262,34 @@ fn apply_size_containment_with_border(
     sizes
 }
 
+/// Containment replaces the contents; the box still owns border, padding and
+/// scrollbar decorations. Flex/grid sizes are expressed in their logical axes.
+fn apply_flex_grid_size_containment(
+    doc: &Document,
+    node: NodeId,
+    style: &ComputedStyle,
+    used_border: Option<BoxStrut>,
+    mut sizes: IntrinsicSizes,
+) -> IntrinsicSizes {
+    let direction = style.direction.writing_direction(style.writing_mode);
+    let border = used_border
+        .unwrap_or_else(|| resolve_border(style))
+        .to_logical(direction);
+    let padding = resolve_padding(style, LayoutUnit::zero()).to_logical(direction);
+    let scrollbars = crate::scrollbars::intrinsic_insets(doc, node).to_logical(direction);
+    if let Some(fallback) = crate::containment::logical_inline_fallback(style) {
+        let size = fallback + border.inline_sum() + padding.inline_sum() + scrollbars.inline_sum();
+        sizes.min_content_inline_size = size;
+        sizes.max_content_inline_size = size;
+    }
+    if let Some(fallback) = crate::containment::logical_block_fallback(style) {
+        let size = fallback + border.block_sum() + padding.block_sum() + scrollbars.block_sum();
+        sizes.min_content_block_size = size;
+        sizes.max_content_block_size = size;
+    }
+    sizes
+}
+
 /// Compute intrinsic sizes for flex containers.
 ///
 /// CSS Flexbox §9.9: Flex container intrinsic main size is determined by
@@ -1295,8 +1327,13 @@ fn compute_flex_intrinsic_sizes(
     let padding = resolve_padding(style, LayoutUnit::zero());
     let logical_border = border.to_logical(writing_direction);
     let logical_padding = padding.to_logical(writing_direction);
-    let bp_inline = logical_border.inline_sum() + logical_padding.inline_sum();
-    let bp_block = logical_border.block_sum() + logical_padding.block_sum();
+    let logical_scrollbars =
+        crate::scrollbars::intrinsic_insets(doc, node_id).to_logical(writing_direction);
+    let bp_inline = logical_border.inline_sum()
+        + logical_padding.inline_sum()
+        + logical_scrollbars.inline_sum();
+    let bp_block =
+        logical_border.block_sum() + logical_padding.block_sum() + logical_scrollbars.block_sum();
 
     let is_column = style.flex_direction == openui_style::FlexDirection::Column
         || style.flex_direction == openui_style::FlexDirection::ColumnReverse;
@@ -1394,7 +1431,7 @@ fn compute_flex_intrinsic_sizes(
                     if style.box_sizing == BoxSizing::BorderBox {
                         (val - bp_block).clamp_negative_to_zero()
                     } else {
-                        val
+                        (val - logical_scrollbars.block_sum()).clamp_negative_to_zero()
                     }
                 } else {
                     LayoutUnit::zero()
@@ -1416,7 +1453,7 @@ fn compute_flex_intrinsic_sizes(
                         (val - bp_block).clamp_negative_to_zero()
                     }
                 } else {
-                    val
+                    (val - logical_scrollbars.inline_sum()).clamp_negative_to_zero()
                 };
                 content_val
             } else {
@@ -1440,7 +1477,7 @@ fn compute_flex_intrinsic_sizes(
                     if style.box_sizing == BoxSizing::BorderBox {
                         (value - bp_block).clamp_negative_to_zero()
                     } else {
-                        value
+                        (value - logical_scrollbars.block_sum()).clamp_negative_to_zero()
                     }
                 } else {
                     LayoutUnit::zero()
@@ -1458,7 +1495,7 @@ fn compute_flex_intrinsic_sizes(
                 if style.box_sizing == BoxSizing::BorderBox {
                     (value - if is_column { bp_block } else { bp_inline }).clamp_negative_to_zero()
                 } else {
-                    value
+                    (value - logical_scrollbars.inline_sum()).clamp_negative_to_zero()
                 }
             } else {
                 LayoutUnit::zero()

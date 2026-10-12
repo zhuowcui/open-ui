@@ -1865,10 +1865,21 @@ fn resolve_container_inline_size(
     {
         let (min, max) = if let Some(fallback) = crate::containment::logical_inline_fallback(style)
         {
-            let contained = fallback + border_padding;
+            let direction = logical.writing_direction;
+            let gutters = crate::scrollbars::for_node(space, node_id)
+                .map_or(crate::scrollbars::intrinsic_insets(doc, node_id), |bars| {
+                    bars.insets
+                })
+                .to_logical(direction);
+            let contained = fallback + border_padding + gutters.inline_sum();
             (contained, contained)
         } else {
-            let intrinsic = compute_grid_intrinsic_sizes(doc, node_id);
+            let intrinsic = crate::scrollbars::intrinsic_sizes_for_layout(
+                doc,
+                node_id,
+                space,
+                compute_grid_intrinsic_sizes(doc, node_id),
+            );
             (
                 intrinsic.min_content_inline_size,
                 intrinsic.max_content_inline_size,
@@ -1881,7 +1892,13 @@ fn resolve_container_inline_size(
         }
     } else if preferred.is_auto() {
         if space.available_inline_size.is_indefinite() {
-            compute_grid_intrinsic_sizes(doc, node_id).max_content_inline_size
+            crate::scrollbars::intrinsic_sizes_for_layout(
+                doc,
+                node_id,
+                space,
+                compute_grid_intrinsic_sizes(doc, node_id),
+            )
+            .max_content_inline_size
         } else {
             space.available_inline_size
         }
@@ -2001,11 +2018,19 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     let logical_padding = padding.to_logical(writing_direction);
     let border_padding_inline = logical_border.inline_sum() + logical_padding.inline_sum();
     let border_padding_block = logical_border.block_sum() + logical_padding.block_sum();
+    let element_scrollbars = crate::scrollbars::for_node(space, node_id);
+    let scrollbar_insets = element_scrollbars.map_or(BoxStrut::zero(), |bars| bars.insets);
+    let logical_scrollbars = scrollbar_insets.to_logical(writing_direction);
+    let border_scrollbar_padding_inline = border_padding_inline + logical_scrollbars.inline_sum();
+    let border_scrollbar_padding_block = border_padding_block + logical_scrollbars.block_sum();
     let container_inline =
         resolve_container_inline_size(doc, node_id, style, space, border_padding_inline);
-    let content_inline = (container_inline - border_padding_inline).clamp_negative_to_zero();
+    let content_inline =
+        (container_inline - border_scrollbar_padding_inline).clamp_negative_to_zero();
     let column_gap = resolve_gap(&style.column_gap, content_inline);
-    let preliminary_block = if logical_box.sizes.block_size.is_auto() {
+    let preliminary_block = if space.is_fixed_block_size || space.stretch_block_size {
+        (space.available_block_size - border_scrollbar_padding_block).clamp_negative_to_zero()
+    } else if logical_box.sizes.block_size.is_auto() {
         // Size containment substitutes the contain-intrinsic block size for
         // the contents before track sizing. Treat that substituted content
         // box as definite so fr and auto-repeat rows resolve against it.
@@ -2018,9 +2043,9 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             INDEFINITE_SIZE,
         );
         if style.box_sizing == BoxSizing::BorderBox {
-            (raw - border_padding_block).clamp_negative_to_zero()
+            (raw - border_scrollbar_padding_block).clamp_negative_to_zero()
         } else {
-            raw
+            (raw - logical_scrollbars.block_sum()).clamp_negative_to_zero()
         }
     };
     let row_gap = resolve_gap(
@@ -2132,8 +2157,8 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
 
     let intrinsic_content_block = tracks_used_size(&rows.tracks, row_gap);
     let intrinsic_container_block = crate::containment::logical_block_fallback(style)
-        .map_or(intrinsic_content_block, |fallback| fallback)
-        + border_padding_block;
+        .unwrap_or(intrinsic_content_block)
+        + border_scrollbar_padding_block;
     let container_block = resolve_container_block_size(
         style,
         space,
@@ -2141,7 +2166,7 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         border_padding_block,
         container_inline,
     );
-    let content_block = (container_block - border_padding_block).clamp_negative_to_zero();
+    let content_block = (container_block - border_scrollbar_padding_block).clamp_negative_to_zero();
     distribute_flexible_tracks(&mut rows.tracks, content_block, row_gap);
 
     let (row_initial, row_between) = content_alignment(
@@ -2157,10 +2182,13 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         logical_box.physical_size(LogicalSize::new(container_inline, container_block));
     let converter = WritingModeConverter::new(writing_direction, physical_size);
     let content_origin = LogicalOffset::new(
-        logical_border.inline_start + logical_padding.inline_start,
-        logical_border.block_start + logical_padding.block_start,
+        logical_border.inline_start
+            + logical_padding.inline_start
+            + logical_scrollbars.inline_start,
+        logical_border.block_start + logical_padding.block_start + logical_scrollbars.block_start,
     );
     let mut fragment = Fragment::new_box(node_id, physical_size);
+    fragment.element_scrollbars = element_scrollbars;
     fragment.border = border;
     fragment.padding = padding;
 
@@ -2541,8 +2569,13 @@ pub fn compute_grid_intrinsic_sizes(doc: &Document, node_id: NodeId) -> Intrinsi
     let writing_direction = style.direction.writing_direction(style.writing_mode);
     let logical_border = border.to_logical(writing_direction);
     let logical_padding = padding.to_logical(writing_direction);
-    let bp_inline = logical_border.inline_sum() + logical_padding.inline_sum();
-    let bp_block = logical_border.block_sum() + logical_padding.block_sum();
+    let logical_scrollbars =
+        crate::scrollbars::intrinsic_insets(doc, node_id).to_logical(writing_direction);
+    let bp_inline = logical_border.inline_sum()
+        + logical_padding.inline_sum()
+        + logical_scrollbars.inline_sum();
+    let bp_block =
+        logical_border.block_sum() + logical_padding.block_sum() + logical_scrollbars.block_sum();
     let column_gap = resolve_gap(&style.column_gap, LayoutUnit::zero());
     let row_gap = resolve_gap(&style.row_gap, LayoutUnit::zero());
     let mut columns = expand_tracks(

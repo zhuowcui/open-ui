@@ -73,6 +73,65 @@ fn geometry(style: &ComputedStyle, horizontal: bool, vertical: bool) -> ElementS
     }
 }
 
+/// Reserved space belongs to this element, not its descendants. A parent's
+/// layout can carry the same constraint space through several algorithms.
+pub(crate) fn for_node(space: &ConstraintSpace, node: NodeId) -> Option<ElementScrollbars> {
+    space
+        .element_scrollbars
+        .filter(|(owner, _)| *owner == node)
+        .map(|(_, scrollbars)| scrollbars)
+}
+
+/// The fixed/stable contribution available before measuring the contents.
+/// Auto scrollbars are discovered by the shared layout loop below.
+pub(crate) fn intrinsic_insets(doc: &Document, node: NodeId) -> BoxStrut {
+    let item = doc.node(node);
+    let style = &item.style;
+    let viewport_source = if doc.body_overflow_is_propagated() {
+        doc.body_element()
+    } else {
+        doc.document_element()
+    };
+    if item.replaced.is_some() || !style.is_scroll_container() || Some(node) == viewport_source {
+        return BoxStrut::zero();
+    }
+    let (overflow_x, overflow_y) = crate::scroll_area::overflow_pair(style);
+    let enabled = style.scrollbar_width != ScrollbarWidth::None;
+    geometry(
+        style,
+        enabled && overflow_x == Overflow::Scroll,
+        enabled && overflow_y == Overflow::Scroll,
+    )
+    .insets
+}
+
+/// Intrinsic sizing includes fixed/stable gutters. A later auto-scrollbar
+/// pass replaces that contribution with its actual reserved space.
+pub(crate) fn intrinsic_sizes_for_layout(
+    doc: &Document,
+    node: NodeId,
+    space: &ConstraintSpace,
+    mut sizes: crate::intrinsic_sizing::IntrinsicSizes,
+) -> crate::intrinsic_sizing::IntrinsicSizes {
+    let Some(scrollbars) = for_node(space, node) else {
+        return sizes;
+    };
+    let direction = doc
+        .node(node)
+        .style
+        .direction
+        .writing_direction(doc.node(node).style.writing_mode);
+    let initial = intrinsic_insets(doc, node).to_logical(direction);
+    let actual = scrollbars.insets.to_logical(direction);
+    let inline_delta = actual.inline_sum() - initial.inline_sum();
+    let block_delta = actual.block_sum() - initial.block_sum();
+    sizes.min_content_inline_size = sizes.min_content_inline_size + inline_delta;
+    sizes.max_content_inline_size = sizes.max_content_inline_size + inline_delta;
+    sizes.min_content_block_size = sizes.min_content_block_size + block_delta;
+    sizes.max_content_block_size = sizes.max_content_block_size + block_delta;
+    sizes
+}
+
 pub(crate) fn layout(doc: &Document, node: NodeId, space: &ConstraintSpace) -> Fragment {
     let item = doc.node(node);
     let style = &item.style;
@@ -81,11 +140,19 @@ pub(crate) fn layout(doc: &Document, node: NodeId, space: &ConstraintSpace) -> F
     } else {
         doc.document_element()
     };
-    // These block algorithms now consume independent scrollbar space. Flex,
-    // grid, table and replaced sizing still require the same integration.
+    // Each admitted formatting context consumes independent scrollbar space.
+    // Table overflow has class-specific used values; replaced elements do not
+    // establish scroll containers. Their stable-gutter paths are separate.
     if !matches!(
         style.display,
-        Display::Block | Display::InlineBlock | Display::FlowRoot | Display::ListItem
+        Display::Block
+            | Display::InlineBlock
+            | Display::FlowRoot
+            | Display::ListItem
+            | Display::Flex
+            | Display::InlineFlex
+            | Display::Grid
+            | Display::InlineGrid
     ) || !style.is_scroll_container()
         || item.replaced.is_some()
         || Some(node) == viewport_source
@@ -113,7 +180,7 @@ pub(crate) fn layout(doc: &Document, node: NodeId, space: &ConstraintSpace) -> F
             continue;
         }
         crate::scroll_area::populate(doc, &mut fragment);
-        let area = fragment.scroll_area.expect("block scroll geometry");
+        let area = fragment.scroll_area.expect("element scroll geometry");
         let (x, y) = area.limits();
         let next_horizontal = horizontal || enabled && overflow_x == Overflow::Auto && x.0 != x.1;
         let next_vertical = vertical || enabled && overflow_y == Overflow::Auto && y.0 != y.1;
