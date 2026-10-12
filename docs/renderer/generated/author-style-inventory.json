@@ -3329,8 +3329,7 @@
         "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs",
-        "bindings/rust/openui-engine/src/lib.rs",
-        "bindings/rust/openui-engine/src/scroll_button.rs"
+        "bindings/rust/openui-engine/src/lib.rs"
       ],
       "css_name": "transform",
       "field": "transform",
@@ -3354,8 +3353,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/transform.rs",
-        "bindings/rust/openui-engine/src/scroll_button.rs"
+        "bindings/rust/openui-layout/src/transform.rs"
       ],
       "css_name": "transform-origin",
       "field": "transform_origin",

@@ -4,7 +4,7 @@
 //! Page arithmetic and directional selection follow Chromium 147.0.7727.50
 //! scroll_button_pseudo_element.cc, scroll_utils.cc and scroll_snap_data.cc.
 
-use crate::{ActivationResult, Affine, Engine, EngineError, FocusOrigin, NodeHandle};
+use crate::{ActivationResult, Engine, EngineError, FocusOrigin, NodeHandle, WorldTransform};
 pub use openui_dom::ScrollButtonDirection;
 use openui_dom::{ElementTag, NodeId, PseudoElementKind};
 use openui_geometry::{LayoutUnit, Length, LengthType, WritingDirectionMode};
@@ -1266,7 +1266,7 @@ impl Engine {
         if snap_axes(style) != [false, false] {
             self.collect_snap_areas(
                 fragment,
-                Affine::IDENTITY,
+                WorldTransform::IDENTITY,
                 minimum,
                 None,
                 &mut HashSet::new(),
@@ -1305,7 +1305,7 @@ impl Engine {
     fn collect_snap_areas(
         &self,
         fragment: &Fragment,
-        parent: Affine,
+        parent: WorldTransform,
         minimum: [f32; 2],
         unsupported_ancestor: Option<&'static str>,
         seen: &mut HashSet<NodeId>,
@@ -1314,33 +1314,13 @@ impl Engine {
         for child in &fragment.children {
             let mut inherited = parent;
             for ancestor in &child.promoted_transform_ancestors {
-                let style = &self.document.node(ancestor.node_id).style;
-                let t = style.transform;
-                let ox = length_pixels(
-                    style.transform_origin.0,
-                    ancestor.fragment_size.width.to_f32(),
-                );
-                let oy = length_pixels(
-                    style.transform_origin.1,
-                    ancestor.fragment_size.height.to_f32(),
-                );
-                let px = ancestor.fragment_offset.left.to_f32() + ox;
-                let py = ancestor.fragment_offset.top.to_f32() + oy;
-                inherited = inherited
-                    .then(Affine::translate(px, py))
-                    .then(Affine {
-                        a: t.a,
-                        b: t.b,
-                        c: t.c,
-                        d: t.d,
-                        e: t.e,
-                        f: t.f,
-                    })
-                    .then(Affine::translate(-px, -py));
+                inherited = inherited.then(WorldTransform(
+                    openui_layout::promoted_ancestor_applied_transform(&self.document, ancestor),
+                ));
             }
-            let translated = inherited.then(Affine::translate(
-                child.offset.left.to_f32(),
-                child.offset.top.to_f32(),
+            let translated = inherited.then(WorldTransform::translate(
+                child.offset.left.to_f64(),
+                child.offset.top.to_f64(),
             ));
             if child.node_id.is_none() {
                 self.collect_snap_areas(
@@ -1379,29 +1359,11 @@ impl Engine {
                     })
                     .then_some("three-dimensional snap quads require retained 3D scene geometry")
             });
-            let world = if owns {
-                let transform = data.style.transform;
-                let ox = if data.style.transform_origin.0.is_auto() {
-                    child.size.width.to_f32() * 0.5
-                } else {
-                    length_pixels(data.style.transform_origin.0, child.size.width.to_f32())
-                };
-                let oy = if data.style.transform_origin.1.is_auto() {
-                    child.size.height.to_f32() * 0.5
-                } else {
-                    length_pixels(data.style.transform_origin.1, child.size.height.to_f32())
-                };
-                translated
-                    .then(Affine::translate(ox, oy))
-                    .then(Affine {
-                        a: transform.a,
-                        b: transform.b,
-                        c: transform.c,
-                        d: transform.d,
-                        e: transform.e,
-                        f: transform.f,
-                    })
-                    .then(Affine::translate(-ox, -oy))
+            let world = if owns && data.style.has_transform() {
+                let resolved = child.resolved_transform.unwrap_or_else(|| {
+                    openui_layout::resolved_fragment_transform(child, &data.style)
+                });
+                translated.then(WorldTransform(resolved.local_applied))
             } else {
                 translated
             };
@@ -1425,9 +1387,9 @@ impl Engine {
                 let handle = self.handle_for_slot(*index);
                 let border = child.border_box_rect();
                 let mapped = world
-                    .then(Affine::translate(
-                        border.offset.left.to_f32(),
-                        border.offset.top.to_f32(),
+                    .then(WorldTransform::translate(
+                        border.offset.left.to_f64(),
+                        border.offset.top.to_f64(),
                     ))
                     .map_rect(border.size.width.to_f32(), border.size.height.to_f32());
                 // Pinned QuadsInAncestor ignores retained scroll offsets;
@@ -2173,7 +2135,7 @@ mod tests {
     #[test]
     fn page_size_uses_location_phase_and_linux_fraction() {
         assert_eq!(
-            pixel_snapped_size(LayoutUnit::from_f32(99.5), LayoutUnit::ZERO),
+            pixel_snapped_size(LayoutUnit::from_f32(99.5), LayoutUnit::zero()),
             100
         );
         assert_eq!(

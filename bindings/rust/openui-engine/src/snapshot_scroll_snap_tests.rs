@@ -308,6 +308,45 @@ fn snapshot_split_alignment_writing_modes_and_subpixel_transform_share_native_ge
 }
 
 #[test]
+fn native_percentage_transform_snap_area_tracks_its_owned_reference_box() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let (mut engine, origin, content) = fixture(Input::Native, scale);
+        let target = area(&mut engine, Input::Native, content, 40.0, 20.0);
+        engine
+            .set_property(
+                target,
+                StyleProperty::Transform,
+                openui_style::TransformList(vec![TransformOperation::Translate(
+                    openui_style::LengthValue::percent(50.0),
+                    openui_style::LengthValue::px(0.0),
+                )])
+                .into(),
+            )
+            .unwrap();
+        for (width, expected_x) in [(20.0, 50.0), (60.0, 70.0), (20.0, 50.0)] {
+            engine
+                .set_property(
+                    target,
+                    StyleProperty::Width,
+                    openui_style::LengthValue::px(width).into(),
+                )
+                .unwrap();
+            engine.update().unwrap();
+            let geometry = engine
+                .snap_geometry(engine.latest_fragment.as_ref().unwrap(), origin)
+                .unwrap()
+                .unwrap();
+            let area = geometry
+                .areas
+                .iter()
+                .find(|area| area.handle == target)
+                .unwrap();
+            assert_eq!(area.rect, [expected_x, 20.0, width, 20.0], "scale={scale}");
+        }
+    }
+}
+
+#[test]
 fn anonymous_table_helpers_do_not_create_extra_snap_areas_or_reapply_transform() {
     for input in [Input::Native, Input::Snapshot, Input::Derived] {
         let (mut engine, origin, content) = fixture(input, 1.0);
