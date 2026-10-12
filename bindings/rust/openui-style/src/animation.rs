@@ -45,7 +45,16 @@ pub enum StepPosition {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LinearStop {
+    /// A normalized input converted to percentage units by ordinary IEEE `* 100`.
+    /// Use `PercentageLinearStop` to preserve an authored CSS percentage.
     pub input: f64,
+    pub output: f64,
+}
+
+/// An authored percentage knot, preserved without a normalized round trip.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct PercentageLinearStop {
+    pub input_percent: f64,
     pub output: f64,
 }
 
@@ -64,6 +73,7 @@ pub enum Easing {
         position: StepPosition,
     },
     LinearStops(Vec<LinearStop>),
+    LinearStopsPercent(Vec<PercentageLinearStop>),
 }
 
 impl Easing {
@@ -79,8 +89,18 @@ impl Easing {
         Ok(easing)
     }
 
+    /// Normalized stops spanning zero through one. Inputs convert with IEEE
+    /// `* 100`; use `linear_stops_percent` to retain authored percentages exactly.
     pub fn linear_stops(stops: Vec<LinearStop>) -> Result<Self, AnimationError> {
         let easing = Self::LinearStops(stops);
+        easing.validate()?;
+        Ok(easing)
+    }
+
+    /// Preserve the authored percentage arithmetic used by Chromium's `linear()`.
+    /// Inputs may extend beyond zero through one hundred percent.
+    pub fn linear_stops_percent(stops: Vec<PercentageLinearStop>) -> Result<Self, AnimationError> {
+        let easing = Self::LinearStopsPercent(stops);
         easing.validate()?;
         Ok(easing)
     }
@@ -124,77 +144,185 @@ impl Easing {
                 }
                 Ok(())
             }
+            Self::LinearStopsPercent(stops) => {
+                if stops.len() < 2
+                    || stops
+                        .iter()
+                        .any(|stop| !stop.input_percent.is_finite() || !stop.output.is_finite())
+                    || stops
+                        .windows(2)
+                        .any(|pair| pair[0].input_percent > pair[1].input_percent)
+                {
+                    return Err(AnimationError::InvalidEasing(
+                        "percentage linear easing requires at least two ordered finite stops",
+                    ));
+                }
+                Ok(())
+            }
         }
     }
 
     pub fn sample(&self, input: f64) -> f64 {
-        let input = input.clamp(0.0, 1.0);
+        self.sample_with_before(input, false)
+    }
+
+    /// Evaluate a curve without discarding progress from an earlier easing.
+    /// `before` selects the left limit at a discontinuous step boundary.
+    pub fn sample_with_before(&self, input: f64, before: bool) -> f64 {
         match self {
             Self::Linear => input,
             Self::CubicBezier { x1, y1, x2, y2 } => sample_cubic_bezier(input, *x1, *y1, *x2, *y2),
-            Self::Steps { count, position } => sample_steps(input, *count, *position),
+            Self::Steps { count, position } => sample_steps(input, *count, *position, before),
             Self::LinearStops(stops) => {
-                let upper = stops.partition_point(|stop| stop.input < input);
-                if upper == 0 {
-                    return stops[0].output;
-                }
-                if upper == stops.len() {
-                    return stops[stops.len() - 1].output;
-                }
-                let left = stops[upper - 1];
-                let right = stops[upper];
-                if right.input == left.input {
-                    right.output
-                } else {
-                    let progress = (input - left.input) / (right.input - left.input);
-                    left.output + (right.output - left.output) * progress
-                }
+                sample_linear_stops(input, stops, |stop| (stop.input * 100.0, stop.output))
+            }
+            Self::LinearStopsPercent(stops) => {
+                sample_linear_stops(input, stops, |stop| (stop.input_percent, stop.output))
             }
         }
     }
 }
 
-fn cubic(value: f64, a: f64, b: f64) -> f64 {
-    let inverse = 1.0 - value;
-    3.0 * inverse * inverse * value * a + 3.0 * inverse * value * value * b + value.powi(3)
+fn sample_linear_stops<T>(input: f64, stops: &[T], point: impl Fn(&T) -> (f64, f64)) -> f64 {
+    // Preserve gfx::LinearTimingFunction's percentage storage and operation
+    // order. At decimal discontinuities, (100 * input) and an authored percent
+    // can differ even when input was obtained by dividing that percent by 100.
+    // Its limit-direction argument is deliberately unused for linear curves.
+    let upper = stops.partition_point(|stop| 100.0 * input >= point(stop).0);
+    let left_index = upper.saturating_sub(1).min(stops.len() - 2);
+    let (left_input, left_output) = point(&stops[left_index]);
+    let (right_input, right_output) = point(&stops[left_index + 1]);
+    if left_input == right_input {
+        return right_output;
+    }
+    let from_left = input - left_input / 100.0;
+    let input_range = (right_input - left_input) / 100.0;
+    let progress = from_left / input_range;
+    let output_range = right_output - left_output;
+    left_output + progress * output_range
+}
+
+fn finite_curve_value(value: f64) -> f64 {
+    if value.is_infinite() {
+        if value.is_sign_positive() {
+            f64::MAX
+        } else {
+            -f64::MAX
+        }
+    } else {
+        value
+    }
 }
 
 fn sample_cubic_bezier(input: f64, x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
-    if input == 0.0 || input == 1.0 {
-        return input;
+    // Use the pinned Chromium gfx::CubicBezier arithmetic, including its
+    // endpoint gradients, eleven spline samples and four Newton iterations.
+    let start_gradient = if x1 > 0.0 {
+        y1 / x1
+    } else if y1 == 0.0 && x2 > 0.0 {
+        y2 / x2
+    } else if y1 == 0.0 && y2 == 0.0 {
+        1.0
+    } else {
+        0.0
+    };
+    let end_gradient = if x2 < 1.0 {
+        (y2 - 1.0) / (x2 - 1.0)
+    } else if y2 == 1.0 && x1 < 1.0 {
+        (y1 - 1.0) / (x1 - 1.0)
+    } else if y2 == 1.0 && y1 == 1.0 {
+        1.0
+    } else {
+        0.0
+    };
+    if input < 0.0 {
+        return finite_curve_value(0.0 + start_gradient * input);
+    }
+    if input > 1.0 {
+        return finite_curve_value(1.0 + end_gradient * (input - 1.0));
+    }
+
+    let cx = 3.0 * x1;
+    let bx = 3.0 * (x2 - x1) - cx;
+    let ax = 1.0 - cx - bx;
+    let cy = finite_curve_value(3.0 * y1);
+    let by = finite_curve_value(3.0 * (y2 - y1) - cy);
+    let ay = finite_curve_value(1.0 - cy - by);
+    let curve_x = |parameter: f64| ((ax * parameter + bx) * parameter + cx) * parameter;
+    let curve_y =
+        |parameter: f64| finite_curve_value(((ay * parameter + by) * parameter + cy) * parameter);
+    let derivative_x = |parameter: f64| (3.0 * ax * parameter + 2.0 * bx) * parameter + cx;
+    let delta = 1.0 / 10.0;
+    let mut spline = [0.0; 11];
+    for (index, value) in spline.iter_mut().enumerate() {
+        *value = curve_x(index as f64 * delta);
     }
     let mut low = 0.0;
     let mut high = 1.0;
     let mut parameter = input;
-    for _ in 0..24 {
-        let x = cubic(parameter, x1, x2);
-        if (x - input).abs() <= 1e-8 {
+    for index in 1..spline.len() {
+        if input <= spline[index] {
+            high = delta * index as f64;
+            low = high - delta;
+            parameter = low
+                + (high - low) * (input - spline[index - 1]) / (spline[index] - spline[index - 1]);
             break;
         }
-        if x < input {
+    }
+    const EPSILON: f64 = 1e-7;
+    let mut error = 0.0;
+    for _ in 0..4 {
+        error = curve_x(parameter) - input;
+        if error.abs() < EPSILON {
+            return curve_y(parameter);
+        }
+        let derivative = derivative_x(parameter);
+        if derivative.abs() < EPSILON {
+            break;
+        }
+        parameter -= error / derivative;
+    }
+    if error.abs() < EPSILON {
+        return curve_y(parameter);
+    }
+    while low < high {
+        let x = curve_x(parameter);
+        if (x - input).abs() < EPSILON {
+            return curve_y(parameter);
+        }
+        if input > x {
             low = parameter;
         } else {
             high = parameter;
         }
-        parameter = (low + high) * 0.5;
+        parameter = (high + low) * 0.5;
     }
-    cubic(parameter, y1, y2)
+    curve_y(parameter)
 }
 
-fn sample_steps(input: f64, count: u32, position: StepPosition) -> f64 {
+fn sample_steps(input: f64, count: u32, position: StepPosition, before: bool) -> f64 {
     let intervals = count as f64;
-    let value = match position {
-        StepPosition::JumpStart => (input * intervals).floor() + 1.0,
-        StepPosition::JumpEnd => (input * intervals).floor(),
-        StepPosition::JumpNone => (input * intervals).floor().min(intervals - 1.0),
-        StepPosition::JumpBoth => (input * intervals).floor() + 1.0,
+    let offset = match position {
+        StepPosition::JumpStart | StepPosition::JumpBoth => 1.0,
+        _ => 0.0,
     };
+    let scaled = intervals * input;
+    let mut value = (scaled + offset).floor();
+    if before && scaled - scaled.floor() == 0.0 {
+        value -= 1.0;
+    }
     let denominator = match position {
         StepPosition::JumpNone => intervals - 1.0,
         StepPosition::JumpBoth => intervals + 1.0,
         _ => intervals,
     };
-    (value / denominator).clamp(0.0, 1.0)
+    if input >= 0.0 && value < 0.0 {
+        value = 0.0;
+    }
+    if input <= 1.0 && value > denominator {
+        value = denominator;
+    }
+    value / denominator
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -564,12 +692,12 @@ impl<T> Keyframes<T> {
                 .any(|frame| !frame.offset.is_finite() || !(0.0..=1.0).contains(&frame.offset))
             || frames
                 .windows(2)
-                .any(|pair| pair[0].offset >= pair[1].offset)
+                .any(|pair| pair[0].offset > pair[1].offset)
             || frames.first().is_some_and(|frame| frame.offset != 0.0)
             || frames.last().is_some_and(|frame| frame.offset != 1.0)
         {
             return Err(AnimationError::InvalidKeyframes(
-                "offsets must be strictly ordered and span 0 through 1",
+                "offsets must be ordered and span 0 through 1",
             ));
         }
         for frame in &frames {
@@ -643,22 +771,35 @@ impl PropertyKeyframes {
     }
 
     pub fn sample(&self, progress: f64, default_easing: &Easing) -> StyleValue {
-        let progress = progress.clamp(0.0, 1.0);
-        let upper = self.frames.partition_point(|frame| frame.offset < progress);
-        if upper == 0 {
+        self.sample_with_before(progress, default_easing, false)
+    }
+
+    /// Select the outgoing interval at an exact offset and evaluate its easing.
+    /// First and last intervals also handle progress outside zero through one.
+    pub fn sample_with_before(
+        &self,
+        progress: f64,
+        default_easing: &Easing,
+        before: bool,
+    ) -> StyleValue {
+        if progress < 0.0 && self.frames[1].offset == 0.0 {
             return self.frames[0].value.clone();
         }
-        if upper == self.frames.len() {
+        if progress >= 1.0 && self.frames[self.frames.len() - 2].offset == 1.0 {
             return self.frames[self.frames.len() - 1].value.clone();
         }
-        let from = &self.frames[upper - 1];
-        let to = &self.frames[upper];
+        let upper = self
+            .frames
+            .partition_point(|frame| frame.offset <= progress);
+        let from_index = upper.saturating_sub(1).min(self.frames.len() - 2);
+        let from = &self.frames[from_index];
+        let to = &self.frames[from_index + 1];
         let interval = (progress - from.offset) / (to.offset - from.offset);
         let eased = from
             .easing
             .as_ref()
             .unwrap_or(default_easing)
-            .sample(interval);
+            .sample_with_before(interval, before);
         interpolate(self.property, &from.value, &to.value, eased).unwrap_or_else(|| {
             if eased < 0.5 {
                 from.value.clone()
@@ -1094,6 +1235,285 @@ mod tests {
         let steps = Easing::steps(4, StepPosition::JumpEnd).unwrap();
         assert_eq!(steps.sample(0.49), 0.25);
         assert_eq!(steps.sample(1.0), 1.0);
+    }
+
+    #[test]
+    fn step_limits_distinguish_fill_from_active_boundaries() {
+        for (position, zero, middle, end) in [
+            (
+                StepPosition::JumpStart,
+                [0.0, 0.25],
+                [0.5, 0.75],
+                [1.0, 1.0],
+            ),
+            (StepPosition::JumpEnd, [0.0, 0.0], [0.25, 0.5], [0.75, 1.0]),
+            (
+                StepPosition::JumpNone,
+                [0.0, 0.0],
+                [1.0 / 3.0, 2.0 / 3.0],
+                [1.0, 1.0],
+            ),
+            (StepPosition::JumpBoth, [0.0, 0.2], [0.4, 0.6], [0.8, 1.0]),
+        ] {
+            let easing = Easing::steps(4, position).unwrap();
+            for (input, limits) in [(0.0, zero), (0.5, middle), (1.0, end)] {
+                assert_eq!(easing.sample_with_before(input, true), limits[0]);
+                assert_eq!(easing.sample_with_before(input, false), limits[1]);
+            }
+        }
+        let steps = Easing::steps(4, StepPosition::JumpEnd).unwrap();
+        assert_eq!(steps.sample(-0.5), -0.5);
+        assert_eq!(steps.sample(1.5), 1.5);
+        assert_eq!(steps.sample_with_before(1.5, true), 1.25);
+    }
+
+    #[test]
+    fn linear_knots_take_the_right_value_and_preserve_extrapolation() {
+        let easing = Easing::linear_stops(vec![
+            LinearStop {
+                input: 0.0,
+                output: 0.0,
+            },
+            LinearStop {
+                input: 0.5,
+                output: 1.0,
+            },
+            LinearStop {
+                input: 0.5,
+                output: 2.0,
+            },
+            LinearStop {
+                input: 1.0,
+                output: 3.0,
+            },
+        ])
+        .unwrap();
+        assert_eq!(easing.sample(0.25), 0.5);
+        assert_eq!(easing.sample(0.5), 2.0);
+        assert_eq!(easing.sample_with_before(0.5, true), 2.0);
+        assert_eq!(easing.sample(0.75), 2.5);
+        assert_eq!(easing.sample(-0.25), -0.5);
+        assert_eq!(easing.sample(1.25), 3.5);
+
+        let endpoints = Easing::linear_stops(vec![
+            LinearStop {
+                input: 0.0,
+                output: 0.0,
+            },
+            LinearStop {
+                input: 0.0,
+                output: 2.0,
+            },
+            LinearStop {
+                input: 1.0,
+                output: 3.0,
+            },
+            LinearStop {
+                input: 1.0,
+                output: 4.0,
+            },
+        ])
+        .unwrap();
+        assert_eq!(endpoints.sample(-0.5), 2.0);
+        assert_eq!(endpoints.sample(0.0), 2.0);
+        assert_eq!(endpoints.sample(1.0), 4.0);
+        assert_eq!(endpoints.sample(1.5), 4.0);
+        assert_eq!(Easing::Linear.sample(-0.25), -0.25);
+        assert_eq!(Easing::Linear.sample(1.25), 1.25);
+    }
+
+    #[test]
+    fn cubic_extrapolation_uses_chromium_endpoint_gradients() {
+        let easing = Easing::cubic_bezier(0.25, 0.5, 0.75, 0.5).unwrap();
+        assert_eq!(easing.sample(-0.25), -0.5);
+        assert_eq!(easing.sample(1.25), 1.5);
+        assert_eq!(easing.sample(0.5), 0.5);
+        // A vertical first tangent is held constant; a coincident first
+        // control instead uses the second tangent.
+        let vertical = Easing::cubic_bezier(0.0, 1.0, 0.5, 0.0).unwrap();
+        assert_eq!(vertical.sample(-0.25), 0.0);
+        let coincident = Easing::cubic_bezier(0.0, 0.0, 0.5, 1.0).unwrap();
+        assert_eq!(coincident.sample(-0.25), -0.5);
+        for (x, y) in [(0.0, 0.0), (1.0, 1.0)] {
+            let linear = Easing::cubic_bezier(x, y, x, y).unwrap();
+            assert_eq!(linear.sample(-0.5), -0.5);
+            assert_eq!(linear.sample(1.5), 1.5);
+        }
+        // x(t)=t while y(t)=1.5t-1.5t²+t³, with exact quarter samples.
+        let interior = Easing::cubic_bezier(1.0 / 3.0, 0.5, 2.0 / 3.0, 0.5).unwrap();
+        assert_eq!(interior.sample(0.25), 0.296875);
+        assert_eq!(interior.sample(0.75), 0.703125);
+    }
+
+    #[test]
+    fn authored_percentages_preserve_decimal_discontinuities_and_outer_stops() {
+        let easing = Easing::linear_stops_percent(vec![
+            PercentageLinearStop {
+                input_percent: 0.0,
+                output: 0.0,
+            },
+            PercentageLinearStop {
+                input_percent: 29.0,
+                output: 1.0,
+            },
+            PercentageLinearStop {
+                input_percent: 29.0,
+                output: 2.0,
+            },
+            PercentageLinearStop {
+                input_percent: 100.0,
+                output: 3.0,
+            },
+        ])
+        .unwrap();
+        let progress = 29.0_f64 / 100.0;
+        // The double product is below the authored 29%, so Chromium samples
+        // the left interval. No rounding or pixel tolerance changes that.
+        assert!(100.0 * progress < 29.0);
+        assert_eq!(easing.sample(progress), 1.0);
+        assert_eq!(easing.sample_with_before(progress, true), 1.0);
+        let just_after = f64::from_bits(progress.to_bits() + 1);
+        assert!(100.0 * just_after > 29.0);
+        assert_eq!(easing.sample(just_after), 2.0);
+
+        let outer = Easing::linear_stops_percent(vec![
+            PercentageLinearStop {
+                input_percent: -100.0,
+                output: 0.0,
+            },
+            PercentageLinearStop {
+                input_percent: 200.0,
+                output: 1.0,
+            },
+        ])
+        .unwrap();
+        assert_eq!(outer.sample(-1.0), 0.0);
+        assert_eq!(outer.sample(0.0), 1.0 / 3.0);
+        assert_eq!(outer.sample(1.0), 2.0 / 3.0);
+        assert_eq!(outer.sample(2.0), 1.0);
+        let duplicate = Easing::linear_stops_percent(vec![
+            PercentageLinearStop {
+                input_percent: 29.0,
+                output: 1.0,
+            },
+            PercentageLinearStop {
+                input_percent: 29.0,
+                output: 2.0,
+            },
+        ])
+        .unwrap();
+        assert_eq!(duplicate.sample(0.0), 2.0);
+        assert_eq!(duplicate.sample(1.0), 2.0);
+        assert!(Easing::LinearStopsPercent(Vec::new()).validate().is_err());
+        assert!(Easing::linear_stops_percent(vec![
+            PercentageLinearStop {
+                input_percent: 100.0,
+                output: 0.0
+            },
+            PercentageLinearStop {
+                input_percent: 0.0,
+                output: 1.0
+            },
+        ])
+        .is_err());
+        assert!(Easing::linear_stops_percent(vec![
+            PercentageLinearStop {
+                input_percent: 0.0,
+                output: 0.0
+            },
+            PercentageLinearStop {
+                input_percent: f64::INFINITY,
+                output: 1.0
+            },
+        ])
+        .is_err());
+    }
+
+    #[test]
+    fn keyframe_boundaries_evaluate_the_outgoing_interval() {
+        let frames = PropertyKeyframes::typed(
+            StyleProperty::Width,
+            Keyframes::new(vec![
+                Keyframe::new(0.0, LengthValue::px(0.0))
+                    .easing(Easing::steps(4, StepPosition::JumpStart).unwrap()),
+                Keyframe::new(0.5, LengthValue::px(40.0))
+                    .easing(Easing::steps(4, StepPosition::JumpStart).unwrap()),
+                Keyframe::new(1.0, LengthValue::px(100.0)),
+            ])
+            .unwrap(),
+        )
+        .unwrap();
+        assert_eq!(
+            frames.sample(0.0, &Easing::Linear),
+            LengthValue::px(10.0).into()
+        );
+        assert_eq!(
+            frames.sample_with_before(0.0, &Easing::Linear, true),
+            LengthValue::px(0.0).into()
+        );
+        assert_eq!(
+            frames.sample(0.5, &Easing::Linear),
+            LengthValue::px(55.0).into()
+        );
+        assert_eq!(
+            frames.sample_with_before(0.5, &Easing::Linear, true),
+            LengthValue::px(40.0).into()
+        );
+        assert_eq!(
+            frames.sample(1.0, &Easing::Linear),
+            LengthValue::px(100.0).into()
+        );
+    }
+
+    #[test]
+    fn duplicate_keyframe_offsets_and_outer_intervals_keep_authored_values() {
+        let frames = PropertyKeyframes::typed(
+            StyleProperty::Width,
+            Keyframes::new(vec![
+                Keyframe::new(0.0, LengthValue::px(0.0)),
+                Keyframe::new(0.0, LengthValue::px(10.0)),
+                Keyframe::new(0.5, LengthValue::px(40.0)),
+                Keyframe::new(0.5, LengthValue::px(60.0)),
+                Keyframe::new(1.0, LengthValue::px(90.0)),
+                Keyframe::new(1.0, LengthValue::px(100.0)),
+            ])
+            .unwrap(),
+        )
+        .unwrap();
+        for (progress, width) in [
+            (-0.5, 0.0),
+            (0.0, 10.0),
+            (0.25, 25.0),
+            (0.5, 60.0),
+            (0.75, 75.0),
+            (1.0, 100.0),
+            (1.5, 100.0),
+        ] {
+            assert_eq!(
+                frames.sample(progress, &Easing::Linear),
+                LengthValue::px(width).into()
+            );
+        }
+        let outer = PropertyKeyframes::typed(
+            StyleProperty::Width,
+            Keyframes::from_values(LengthValue::px(10.0), LengthValue::px(20.0)),
+        )
+        .unwrap();
+        assert_eq!(
+            outer.sample(-0.5, &Easing::Linear),
+            LengthValue::px(5.0).into()
+        );
+        assert_eq!(
+            outer.sample(1.5, &Easing::Linear),
+            LengthValue::px(25.0).into()
+        );
+        assert!(Keyframes::new(vec![
+            Keyframe::new(0.0, 0.0),
+            Keyframe::new(0.75, 1.0),
+            Keyframe::new(0.5, 2.0),
+            Keyframe::new(1.0, 3.0)
+        ])
+        .is_err());
     }
 
     #[test]
