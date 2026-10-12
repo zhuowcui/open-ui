@@ -1386,6 +1386,15 @@ impl Engine {
         value: StyleValue,
     ) -> Result<(), EngineError> {
         let node = self.resolve(handle)?;
+        let old_transform = (property == StyleProperty::Transform).then(|| {
+            (
+                self.document
+                    .node(node)
+                    .style
+                    .has_transform_containing_block(),
+                openui_style::value_from_computed(&self.document.node(node).style, property),
+            )
+        });
         let slot = &self.slots[handle.index as usize];
         if slot.authored.get(&(property as u16)) == Some(&value)
             && slot
@@ -1446,10 +1455,13 @@ impl Engine {
         if let Some(base) = &mut self.slots[handle.index as usize].animation_base_style {
             apply_to_computed(base, property, &resolved, viewport)
                 .map_err(|_| EngineError::PropertyType { property })?;
+            // Publish the recomposed result once. A masked authored mutation
+            // must not temporarily remove the effective containing block.
+        } else {
+            self.document
+                .apply_style_property(node, property, &resolved, viewport)
+                .map_err(|_| EngineError::PropertyType { property })?;
         }
-        self.document
-            .apply_style_property(node, property, &resolved, viewport)
-            .map_err(|_| EngineError::PropertyType { property })?;
         self.slots[handle.index as usize]
             .authored
             .insert(property as u16, value.clone());
@@ -1463,6 +1475,13 @@ impl Engine {
             || value.depends_on_font_metrics()
         {
             self.refresh_inherited_styles(node)?;
+        }
+        if let Some((old_policy, old_value)) = old_transform {
+            let style = self.document.node(node).style.clone();
+            self.invalidate_transform_containing_block_change(node, old_policy, &style);
+            if openui_style::value_from_computed(&style, property) == old_value {
+                return Ok(());
+            }
         }
         self.dirty.hit_test = true;
         self.mark_dirty(property.metadata().invalidation);
@@ -1484,7 +1503,28 @@ impl Engine {
     ) -> Result<(), EngineError> {
         let node = self.resolve(handle)?;
         let property = value.property();
-        let value = StyleValue::Renderer(value);
+        // The old renderer affine setter shares the retained source route.
+        // An identity legacy matrix means none; an authored identity operation
+        // supplied through the native TransformList remains a specified box.
+        let value = match value {
+            RendererStyleValue::Transform(matrix) => StyleValue::Transform(
+                openui_style::TransformList(if matrix == openui_style::Transform2D::IDENTITY {
+                    Vec::new()
+                } else {
+                    vec![openui_style::TransformOperation::Matrix(matrix)]
+                }),
+            ),
+            value => StyleValue::Renderer(value),
+        };
+        let old_transform = (property == StyleProperty::Transform).then(|| {
+            (
+                self.document
+                    .node(node)
+                    .style
+                    .has_transform_containing_block(),
+                openui_style::value_from_computed(&self.document.node(node).style, property),
+            )
+        });
         let slot = &self.slots[handle.index as usize];
         if slot.resolved_style_snapshot
             && slot.authored.is_empty()
@@ -1508,14 +1548,24 @@ impl Engine {
         apply_to_computed(&mut source, property, &value, viewport)
             .map_err(|_| EngineError::PropertyType { property })?;
         let slot = &mut self.slots[handle.index as usize];
-        if slot.animation_base_style.is_some() {
+        let owns_animation_source = slot.animation_base_style.is_some();
+        if owns_animation_source {
             slot.animation_base_style = Some(source.clone());
         }
         slot.authored.clear();
         slot.authored_order.clear();
         slot.resolved_style_snapshot = true;
-        self.document.install_resolved_style(node, source);
+        if !owns_animation_source {
+            self.document.install_resolved_style(node, source);
+        }
         self.refresh_inherited_styles(node)?;
+        if let Some((old_policy, old_value)) = old_transform {
+            let style = self.document.node(node).style.clone();
+            self.invalidate_transform_containing_block_change(node, old_policy, &style);
+            if openui_style::value_from_computed(&style, property) == old_value {
+                return Ok(());
+            }
+        }
         self.dirty.hit_test = true;
         self.mark_dirty(property.metadata().invalidation);
         Ok(())
@@ -1659,6 +1709,11 @@ impl Engine {
                             .map_err(|_| EngineError::PropertyType { property })?;
                     }
                     self.adjust_native_control_style(index, node, &mut style);
+                    self.invalidate_transform_containing_block_change(
+                        node,
+                        old_style.has_transform_containing_block(),
+                        &style,
+                    );
                     for id in changed_properties {
                         let property = StyleProperty::from_u16(id).expect("animated property");
                         if openui_style::value_from_computed(&old_style, property)
@@ -1687,6 +1742,78 @@ impl Engine {
             pending.extend(children.into_iter().rev());
         }
         Ok(())
+    }
+
+    /// A specified identity transform owns positioned descendants just like
+    /// a nonidentity matrix. Replacing that policy requires layout only when
+    /// a real retained descendant can change its geometric containing block.
+    /// Borrowed helper style IDs do not create independent element ownership.
+    fn invalidate_transform_containing_block_change(
+        &mut self,
+        owner: NodeId,
+        previous_policy: bool,
+        style: &ComputedStyle,
+    ) {
+        if self.dirty.layout
+            || previous_policy == style.has_transform_containing_block()
+            || owner == self.document.root()
+        {
+            return;
+        }
+        fn collect_owned(fragment: &Fragment, nodes: &mut std::collections::HashSet<NodeId>) {
+            if fragment.owns_element_box() {
+                nodes.insert(fragment.node_id);
+            }
+            for child in &fragment.children {
+                collect_owned(child, nodes);
+            }
+        }
+        let mut owned = std::collections::HashSet::new();
+        if let Some(fragment) = &self.latest_fragment {
+            collect_owned(fragment, &mut owned);
+        } else {
+            // There is no retained layout before the first frame. The first
+            // layout is normally already dirty; keep this fallback explicit.
+            owned.extend(self.node_slots.keys().copied());
+        }
+        if !owned.contains(&owner) {
+            return;
+        }
+        let affects = owned.iter().copied().any(|descendant| {
+            if descendant == owner {
+                return false;
+            }
+            let position = self.document.node(descendant).style.position;
+            let fixed = position == openui_style::Position::Fixed;
+            if !fixed && position != openui_style::Position::Absolute {
+                return false;
+            }
+            // An existing position/containment owner keeps absolute geometry
+            // stable. Fixed geometry is independent of position:relative.
+            if style.has_layout_containment() || (!fixed && style.position.is_positioned()) {
+                return false;
+            }
+            let mut current = self.document.node(descendant).parent;
+            while !current.is_none() {
+                if current == owner {
+                    return true;
+                }
+                if owned.contains(&current) {
+                    let ancestor = &self.document.node(current).style;
+                    if ancestor.has_transform_containing_block()
+                        || ancestor.has_layout_containment()
+                        || (!fixed && ancestor.position.is_positioned())
+                    {
+                        return false;
+                    }
+                }
+                current = self.document.node(current).parent;
+            }
+            false
+        });
+        if affects {
+            self.mark_dirty(InvalidationClass::Layout);
+        }
     }
 
     /// Compute native declarations once for ordinary and pseudo styles.
