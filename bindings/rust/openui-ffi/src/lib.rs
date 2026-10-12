@@ -469,6 +469,16 @@ fn copy_array_to_c<T: Copy>(
     Ok(())
 }
 
+// Preserve the shared animation allocation failure across legacy and additive
+// entry points; malformed timing/property/curve inputs remain InvalidArgument.
+fn animation_error(error: openui_style::AnimationError) -> ApiError {
+    let status = match &error {
+        openui_style::AnimationError::AllocationFailure => OuiStatus::OutOfMemory,
+        _ => OuiStatus::InvalidArgument,
+    };
+    ApiError::new(status, error.to_string())
+}
+
 fn animation_easing(value: OuiEasing) -> Result<Easing, ApiError> {
     if value.reserved != 0 || value.values.iter().any(|number| !number.is_finite()) {
         return Err(invalid(
@@ -490,9 +500,8 @@ fn animation_easing(value: OuiEasing) -> Result<Easing, ApiError> {
             value.values[2],
             value.values[3],
         )
-        .map_err(|error| invalid(error.to_string())),
-        2 => Easing::steps(value.step_count, step_position)
-            .map_err(|error| invalid(error.to_string())),
+        .map_err(animation_error),
+        2 => Easing::steps(value.step_count, step_position).map_err(animation_error),
         3 => Easing::linear_stops(vec![
             LinearStop {
                 input: value.values[0],
@@ -503,7 +512,7 @@ fn animation_easing(value: OuiEasing) -> Result<Easing, ApiError> {
                 output: value.values[3],
             },
         ])
-        .map_err(|error| invalid(error.to_string())),
+        .map_err(animation_error),
         _ => Err(invalid("unknown animation easing kind")),
     }
 }
@@ -585,9 +594,7 @@ fn animation_options_values(
         composite,
         easing,
     };
-    options
-        .validate()
-        .map_err(|error| invalid(error.to_string()))?;
+    options.validate().map_err(animation_error)?;
     Ok(options)
 }
 
@@ -1599,10 +1606,8 @@ pub extern "C" fn oui_element_animate(
                 },
             });
         }
-        let keyframes =
-            Keyframes::new(typed_keyframes).map_err(|error| invalid(error.to_string()))?;
-        let keyframes = PropertyKeyframes::typed(property, keyframes)
-            .map_err(|error| invalid(error.to_string()))?;
+        let keyframes = Keyframes::new(typed_keyframes).map_err(animation_error)?;
+        let keyframes = PropertyKeyframes::typed(property, keyframes).map_err(animation_error)?;
         let options = animation_options(options)?;
         let element = element(element_handle as usize)?;
         let state = element_document(&element)?;

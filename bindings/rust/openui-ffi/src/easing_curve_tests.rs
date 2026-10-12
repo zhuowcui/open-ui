@@ -984,3 +984,11 @@ fn scalar_curve_kinds_use_the_same_checked_native_constructors() {
     raw.step_count = 1;
     assert!(easing_curve::curve(&raw).is_err());
 }
+
+#[test]
+fn shared_animation_allocation_error_preserves_out_of_memory_status() {
+    let allocation = animation_error(openui_style::AnimationError::AllocationFailure);
+    assert_eq!(allocation.status, OuiStatus::OutOfMemory);
+    let malformed = animation_error(openui_style::AnimationError::InvalidEasing("bad stops"));
+    assert_eq!(malformed.status, OuiStatus::InvalidArgument);
+}

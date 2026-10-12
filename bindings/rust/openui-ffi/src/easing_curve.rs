@@ -99,7 +99,7 @@ pub(super) fn curve(input: *const OuiEasingCurveV1) -> Result<Easing, ApiError> 
         }
         1 if raw.step_position == 0 && raw.step_count == 0 && !has_array => {
             Easing::cubic_bezier(raw.values[0], raw.values[1], raw.values[2], raw.values[3])
-                .map_err(|error| invalid(error.to_string()))
+                .map_err(animation_error)
         }
         2 if raw.values == [0.0; 4] && !has_array => {
             let position = match raw.step_position {
@@ -109,7 +109,7 @@ pub(super) fn curve(input: *const OuiEasingCurveV1) -> Result<Easing, ApiError> 
                 3 => StepPosition::JumpBoth,
                 _ => return Err(invalid("unknown step position")),
             };
-            Easing::steps(raw.step_count, position).map_err(|error| invalid(error.to_string()))
+            Easing::steps(raw.step_count, position).map_err(animation_error)
         }
         3 | 4 if raw.step_position == 0 && raw.step_count == 0 && raw.values == [0.0; 4] => {
             if raw.kind == 3 {
@@ -125,7 +125,7 @@ pub(super) fn curve(input: *const OuiEasingCurveV1) -> Result<Easing, ApiError> 
                     output: point.output,
                 })?)
             }
-            .map_err(|error| invalid(error.to_string()))
+            .map_err(animation_error)
         }
         _ => Err(invalid("unknown curve kind or nonzero unused curve fields")),
     }
@@ -182,8 +182,8 @@ fn keyframes(
             },
         });
     }
-    let frames = Keyframes::new(frames).map_err(|error| invalid(error.to_string()))?;
-    PropertyKeyframes::typed(property, frames).map_err(|error| invalid(error.to_string()))
+    let frames = Keyframes::new(frames).map_err(animation_error)?;
+    PropertyKeyframes::typed(property, frames).map_err(animation_error)
 }
 
 fn id_output(output: *mut u64) -> Result<(), ApiError> {
