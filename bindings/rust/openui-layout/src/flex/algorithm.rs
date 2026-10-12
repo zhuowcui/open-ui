@@ -104,6 +104,13 @@ impl FlexItemAxisMapping {
         }
     }
 
+    /// Percentages on physical cross-axis properties still use the
+    /// container's logical cross size. Physical flow selects width/height;
+    /// flex-direction selects inline/block, independently of writing mode.
+    fn container_cross_percentage_size(self, inline: LayoutUnit, block: LayoutUnit) -> LayoutUnit {
+        self.container_logical_to_main_cross(inline, block).1
+    }
+
     fn child_space(
         self,
         available_main: LayoutUnit,
@@ -3777,11 +3784,12 @@ fn compute_line_cross_sizes(
             } else {
                 (&child_style.min_width, &child_style.max_width)
             };
-            let cross_pct_base = if is_main_axis_horizontal {
-                child_percentage_block
-            } else {
-                child_percentage_inline
-            };
+            let cross_pct_base =
+                FlexItemAxisMapping::new(child_style, is_column, is_main_axis_horizontal)
+                    .container_cross_percentage_size(
+                        child_percentage_inline,
+                        child_percentage_block,
+                    );
             let cross_min_raw = resolve_cross_min_max(
                 doc,
                 item.node_id,
@@ -3904,11 +3912,13 @@ fn resolve_cross_size(
     child_percentage_block: LayoutUnit,
     _space: &ConstraintSpace,
 ) -> LayoutUnit {
-    let (cross_prop, pct_base) = if is_main_axis_horizontal {
-        (&child_style.height, child_percentage_block)
+    let cross_prop = if is_main_axis_horizontal {
+        &child_style.height
     } else {
-        (&child_style.width, child_percentage_inline)
+        &child_style.width
     };
+    let pct_base = FlexItemAxisMapping::new(child_style, is_column, is_main_axis_horizontal)
+        .container_cross_percentage_size(child_percentage_inline, child_percentage_block);
 
     if cross_prop.is_stretch() && !pct_base.is_indefinite() {
         let margin_box = (pct_base - item.cross_axis_margin_extent()).clamp_negative_to_zero();
@@ -4382,11 +4392,10 @@ fn give_items_final_position(
                 } else {
                     (&child_style.min_width, &child_style.max_width)
                 };
-                let cross_pct_base = if is_main_axis_horizontal {
-                    child_percentage_block
-                } else {
-                    child_percentage_inline
-                };
+                let cross_pct_base = axis_mapping.container_cross_percentage_size(
+                    child_percentage_inline,
+                    child_percentage_block,
+                );
                 let cross_min_raw = resolve_cross_min_max(
                     doc,
                     item.node_id,
@@ -4430,11 +4439,15 @@ fn give_items_final_position(
             if item.flex_grow == 0.0 {
                 if let Some(ar) = &child_style.aspect_ratio {
                     if ar.ratio.0 > 0.0 && ar.ratio.1 > 0.0 {
-                        let (cross_max_prop, cross_pct_base) = if is_column {
-                            (&child_style.max_width, child_percentage_inline)
+                        let cross_max_prop = if is_main_axis_horizontal {
+                            &child_style.max_height
                         } else {
-                            (&child_style.max_height, child_percentage_block)
+                            &child_style.max_width
                         };
+                        let cross_pct_base = axis_mapping.container_cross_percentage_size(
+                            child_percentage_inline,
+                            child_percentage_block,
+                        );
                         if !cross_max_prop.is_none()
                             && (!cross_pct_base.is_indefinite() || cross_max_prop.is_fixed())
                         {
@@ -4448,7 +4461,7 @@ fn give_items_final_position(
                                 == openui_style::BoxSizing::BorderBox
                                 && !ar.auto_flag
                             {
-                                if is_column {
+                                if !is_main_axis_horizontal {
                                     LayoutUnit::from_f32(
                                         cross_max.to_f32() * ar.ratio.1 / ar.ratio.0,
                                     )
@@ -4465,7 +4478,7 @@ fn give_items_final_position(
                                 } else {
                                     cross_max
                                 };
-                                let content_main = if is_column {
+                                let content_main = if !is_main_axis_horizontal {
                                     LayoutUnit::from_f32(
                                         content_cross.to_f32() * ar.ratio.1 / ar.ratio.0,
                                     )
