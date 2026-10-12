@@ -264,6 +264,7 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
         ("number", "f32"): ("Number", "*value", "input.parse::<f32>().ok().filter(|value| value.is_finite()).map(StyleValue::Number)"),
         ("integer", "i32"): ("Integer", "*value", "input.parse::<i32>().ok().map(StyleValue::Integer)"),
         ("integer", "u32"): ("Integer", "u32::try_from(*value).ok()?", None),
+        ("integer", "Option<u32>"): ("Integer", "Some(u32::try_from(*value).ok().filter(|value| *value > 0)?)", None),
         ("color", "StyleColor"): ("Color", "StyleColor::Resolved(*value)", None),
         ("color", "Option<Color>"): ("Color", "Some(*value)", None),
         ("overflow", "Overflow"): ("Overflow", "*value", "overflow_literal(input).map(StyleValue::Overflow)"),
@@ -316,7 +317,7 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
     primitive_parse_cases = []
     for row in renderer_rows:
         field_type = fields[field_names(row)[0]]
-        if int(row["id"]) <= 125 or row["rust_name"] == "ColumnCount":
+        if int(row["id"]) <= 125:
             continue
         shape = primitive_shapes.get((row["value_kind"], fields[field_names(row)[0]]))
         if shape is None:
@@ -364,6 +365,10 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
             primitive_apply_cases.append(
                 f"            (StyleProperty::{name}, StyleValue::Typography(TypographyValue::StyleColor(value))) => Some(Self::{name}(*value)),"
             )
+        # ColumnCount's auto/positive literal parser is handwritten. Its
+        # native integer bridge still uses the checked generated apply path.
+        if name == "ColumnCount":
+            continue
         if parse is None:
             if row["rust_type"] == "u32":
                 parse = f"input.parse::<u32>().ok().map(|value| StyleValue::Renderer(RendererStyleValue::{name}(value)))"

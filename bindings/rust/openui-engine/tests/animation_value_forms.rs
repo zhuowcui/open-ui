@@ -299,3 +299,36 @@ fn settled_mixed_form_stack_preserves_unchanged_frame_and_cancel_survivor_zero_w
     engine.cancel_animation(upper).unwrap();
     assert_eq!(engine.computed_style(node).unwrap().opacity, 1.0);
 }
+
+#[test]
+fn native_column_count_mutation_and_animation_restore_auto_atomically() {
+    for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
+        let (mut engine, node) = fixture(scale);
+        assert_eq!(engine.computed_style(node).unwrap().column_count, None);
+        for invalid in [0, -1, i32::MIN] {
+            assert!(engine
+                .set_property(node, StyleProperty::ColumnCount, invalid.into())
+                .is_err());
+            assert_eq!(engine.computed_style(node).unwrap().column_count, None);
+        }
+        let id = animate(
+            &mut engine,
+            node,
+            StyleProperty::ColumnCount,
+            StyleValue::Integer(1),
+            StyleValue::Renderer(RendererStyleValue::ColumnCount(Some(70_000))),
+            CompositeOperation::Replace,
+        );
+        engine.seek_animation(id, 100.0).unwrap();
+        assert_eq!(
+            engine.computed_style(node).unwrap().column_count,
+            Some(65_535)
+        );
+        engine.cancel_animation(id).unwrap();
+        assert_eq!(engine.computed_style(node).unwrap().column_count, None);
+        engine
+            .set_property(node, StyleProperty::ColumnCount, StyleValue::Integer(2))
+            .unwrap();
+        assert_eq!(engine.computed_style(node).unwrap().column_count, Some(2));
+    }
+}

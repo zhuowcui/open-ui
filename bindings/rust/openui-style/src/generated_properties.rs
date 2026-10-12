@@ -1153,6 +1153,7 @@ impl RendererStyleValue {
             (StyleProperty::BorderTopColor, StyleValue::Typography(TypographyValue::StyleColor(value))) => Some(Self::BorderTopColor(*value)),
             (StyleProperty::BorderTopWidth, StyleValue::Integer(value)) => Some(Self::BorderTopWidth(*value)),
             (StyleProperty::Bottom, StyleValue::Length(value)) => Some(Self::Bottom(resolve_length(*value))),
+            (StyleProperty::ColumnCount, StyleValue::Integer(value)) => Some(Self::ColumnCount(Some(u32::try_from(*value).ok().filter(|value| *value > 0)?))),
             (StyleProperty::ColumnHeight, StyleValue::Length(value)) => Some(Self::ColumnHeight({ let value = resolve_length(*value); (!value.is_auto()).then_some(value) })),
             (StyleProperty::ColumnRuleColor, StyleValue::Color(value)) => Some(Self::ColumnRuleColor(StyleColor::Resolved(*value))),
             (StyleProperty::ColumnRuleColor, StyleValue::Typography(TypographyValue::StyleColor(value))) => Some(Self::ColumnRuleColor(*value)),

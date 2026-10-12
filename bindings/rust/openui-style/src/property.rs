@@ -2912,6 +2912,52 @@ mod tests {
     use super::*;
 
     #[test]
+    fn column_count_native_integers_preserve_optional_auto_and_reject_nonpositive_values() {
+        let mut style = ComputedStyle::initial();
+        assert_eq!(style.column_count, None);
+        for count in [1, 65_535, 70_000, i32::MAX] {
+            apply_to_computed(
+                &mut style,
+                StyleProperty::ColumnCount,
+                &StyleValue::Integer(count),
+                (320.0, 240.0),
+            )
+            .unwrap();
+            assert_eq!(style.column_count, Some(count as u32));
+            assert_eq!(
+                value_from_computed(&style, StyleProperty::ColumnCount),
+                StyleValue::Renderer(RendererStyleValue::ColumnCount(Some(count as u32)))
+            );
+            for invalid in [0, -1, i32::MIN] {
+                assert!(apply_to_computed(
+                    &mut style,
+                    StyleProperty::ColumnCount,
+                    &StyleValue::Integer(invalid),
+                    (320.0, 240.0),
+                )
+                .is_err());
+                assert_eq!(style.column_count, Some(count as u32));
+            }
+        }
+        let auto = parse_literal(StyleProperty::ColumnCount, "auto").unwrap();
+        apply_to_computed(
+            &mut style,
+            StyleProperty::ColumnCount,
+            &auto,
+            (320.0, 240.0),
+        )
+        .unwrap();
+        assert_eq!(style.column_count, None);
+        for literal in ["0", "-1"] {
+            assert!(parse_literal(StyleProperty::ColumnCount, literal).is_err());
+        }
+        assert_eq!(
+            parse_literal(StyleProperty::ColumnCount, "70000").unwrap(),
+            StyleValue::Renderer(RendererStyleValue::ColumnCount(Some(70_000)))
+        );
+    }
+
+    #[test]
     fn native_snap_values_round_trip_and_preserve_declaration_order() {
         let mut style = ComputedStyle::initial();
         let pair = parse_literal(StyleProperty::ScrollSnapAlign, "end start").unwrap();
