@@ -16,6 +16,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-paint/src/painter.rs"
@@ -31,6 +32,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
@@ -61,6 +63,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -176,6 +179,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
@@ -189,6 +193,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
@@ -325,6 +330,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "border-radius-percent",
@@ -420,6 +426,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
@@ -433,6 +440,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
@@ -488,6 +496,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
         "bindings/rust/openui-layout/src/fragment_geometry.rs",
@@ -525,6 +534,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
@@ -554,6 +564,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -687,6 +698,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs",
         "bindings/rust/openui-layout/src/table.rs",
@@ -704,6 +716,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs"
       ],
       "css_name": "column-fill",
@@ -717,6 +730,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
@@ -735,6 +749,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs"
       ],
       "css_name": "column-height",
@@ -747,6 +762,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
@@ -761,6 +777,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
@@ -775,6 +792,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs"
       ],
       "css_name": "column-rule-width",
@@ -806,6 +824,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs",
         "bindings/rust/openui-layout/src/ruby/layout.rs",
@@ -822,6 +841,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/multicol/mod.rs"
       ],
       "css_name": "column-wrap",
@@ -901,6 +921,7 @@
       "canonical_schema_entry": false,
       "classification": "internal",
       "consumers": [
+        "bindings/rust/openui-layout/src/layout_context.rs",
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/decoration_painter.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
@@ -920,6 +941,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
         "bindings/rust/openui-layout/src/grid.rs",
@@ -927,6 +949,7 @@
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/layout_context.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/relative.rs",
@@ -955,6 +978,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
@@ -1003,7 +1027,6 @@
       "canonical_schema_entry": false,
       "classification": "internal",
       "consumers": [
-        "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/table.rs",
@@ -1090,6 +1113,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/scroll_area.rs",
@@ -1136,6 +1160,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
         "bindings/rust/openui-layout/src/scroll_area.rs"
@@ -1490,6 +1515,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-auto-columns",
@@ -1502,6 +1528,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-auto-flow",
@@ -1514,6 +1541,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-auto-rows",
@@ -1526,6 +1554,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-column",
@@ -1538,6 +1567,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-row",
@@ -1550,6 +1580,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-template-areas",
@@ -1562,6 +1593,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/scrollbars.rs"
       ],
@@ -1575,6 +1607,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/scrollbars.rs"
       ],
@@ -1590,6 +1623,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
         "bindings/rust/openui-layout/src/fragment_geometry.rs",
@@ -1688,6 +1722,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
@@ -1701,6 +1736,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "justify-items",
@@ -1728,6 +1764,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
         "bindings/rust/openui-layout/src/fragment_geometry.rs",
@@ -1910,6 +1947,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -1932,6 +1970,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -1953,6 +1992,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/first_letter.rs",
@@ -1975,6 +2015,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -2315,6 +2356,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
@@ -2341,6 +2383,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
@@ -2366,6 +2409,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -2385,6 +2429,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -2406,6 +2451,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -2427,6 +2473,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -2472,6 +2519,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/flex/alignment.rs",
         "bindings/rust/openui-layout/src/grid.rs",
@@ -2479,6 +2527,7 @@
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/layout_context.rs",
         "bindings/rust/openui-layout/src/new_formatting_context.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/relative.rs",
@@ -2528,6 +2577,7 @@
       "canonical_schema_entry": false,
       "classification": "internal",
       "consumers": [
+        "bindings/rust/openui-layout/src/layout_context.rs",
         "bindings/rust/openui-layout/src/table.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/painter.rs",
@@ -2560,6 +2610,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
         "bindings/rust/openui-layout/src/fragment_geometry.rs",
@@ -2597,6 +2648,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
@@ -2912,6 +2964,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs"
       ],
@@ -3301,6 +3354,7 @@
         "bindings/rust/openui-layout/src/bfc_resolution.rs",
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
         "bindings/rust/openui-layout/src/fragment_geometry.rs",
@@ -3380,6 +3434,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
@@ -3484,6 +3539,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
         "bindings/rust/openui-layout/src/fragment_geometry.rs",
@@ -3578,12 +3634,14 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/containment.rs",
+        "bindings/rust/openui-layout/src/fieldset.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/layout_context.rs",
         "bindings/rust/openui-layout/src/logical_geometry.rs",
         "bindings/rust/openui-layout/src/out_of_flow.rs",
         "bindings/rust/openui-layout/src/scroll_area.rs",
