@@ -1,5 +1,8 @@
 //! Canonical public property schema and typed declaration values.
 
+#[path = "grid_literal.rs"]
+mod grid_literal;
+
 use crate::{
     AnimationSnapshot, AspectRatio, BackgroundAttachment, BackgroundClip, BackgroundLayer,
     BlockEllipsis, BorderCollapse, BorderImage, BorderStyle, BoxDecorationBreak, BoxShadow,
@@ -1999,6 +2002,14 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(|value| StyleValue::Renderer(RendererStyleValue::BoxSizing(value))),
+        P::GridTemplateColumns => grid_literal::list(input)
+            .map(|value| StyleValue::Renderer(RendererStyleValue::GridTemplateColumns(value))),
+        P::GridTemplateRows => grid_literal::list(input)
+            .map(|value| StyleValue::Renderer(RendererStyleValue::GridTemplateRows(value))),
+        P::GridAutoColumns => grid_literal::sizes(input)
+            .map(|value| StyleValue::Renderer(RendererStyleValue::GridAutoColumns(value))),
+        P::GridAutoRows => grid_literal::sizes(input)
+            .map(|value| StyleValue::Renderer(RendererStyleValue::GridAutoRows(value))),
         P::ColumnCount => {
             if input == "auto" {
                 Some(StyleValue::Renderer(RendererStyleValue::ColumnCount(None)))

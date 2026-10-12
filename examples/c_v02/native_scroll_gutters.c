@@ -4,38 +4,43 @@
 #ifdef NDEBUG
 #undef NDEBUG
 #endif
+#include "openui.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include "openui.h"
 
-static OuiUtf8 utf8(const char* text) {
-  OuiUtf8 result = {(const uint8_t*)text, strlen(text)};
+static OuiUtf8 utf8(const char *text) {
+  OuiUtf8 result = {(const uint8_t *)text, strlen(text)};
   return result;
 }
 
-static void property(OuiElement* element, OuiStyleProperty id, const char* literal) {
+static void property(OuiElement *element, OuiStyleProperty id,
+                     const char *literal) {
   OuiStyleValue value;
   OuiStatus status = oui_style_value_parse(id, utf8(literal), &value);
   if (status != OUI_OK)
-    fprintf(stderr, "native gutter property %d '%s': %d\n", (int)id, literal, (int)status);
+    fprintf(stderr, "native gutter property %d '%s': %d\n", (int)id, literal,
+            (int)status);
   assert(status == OUI_OK);
   assert(oui_element_set_property(element, id, &value) == OUI_OK);
   if (value.tag == OUI_STYLE_VALUE_COMPOUND)
-    assert(oui_style_compound_destroy((OuiStyleCompound*)value.data.compound) == OUI_OK);
+    assert(oui_style_compound_destroy(
+               (OuiStyleCompound *)value.data.compound) == OUI_OK);
 }
 
-typedef OuiStatus (*DimensionQuery)(OuiElement*, int32_t*);
+typedef OuiStatus (*DimensionQuery)(OuiElement *, int32_t *);
 
-static void dimensions(OuiElement* element, int32_t width, int32_t height,
+static void dimensions(OuiElement *element, int32_t width, int32_t height,
                        int32_t scroll_width, int32_t scroll_height) {
-  const DimensionQuery queries[] = {oui_element_get_client_width_v1,
-                                   oui_element_get_client_height_v1,
-                                   oui_element_get_scroll_width_v1,
-                                   oui_element_get_scroll_height_v1};
+  const DimensionQuery queries[] = {
+      oui_element_get_client_width_v1, oui_element_get_client_height_v1,
+      oui_element_get_scroll_width_v1, oui_element_get_scroll_height_v1};
   const int32_t expected[] = {width, height, scroll_width, scroll_height};
   for (size_t i = 0; i < sizeof(queries) / sizeof(queries[0]); ++i) {
-    struct Output { int32_t value; uint8_t tail[12]; } output;
+    struct Output {
+      int32_t value;
+      uint8_t tail[12];
+    } output;
     output.value = INT32_MIN;
     memset(output.tail, 0x6d, sizeof(output.tail));
     assert(queries[i](element, &output.value) == OUI_OK);
@@ -43,40 +48,44 @@ static void dimensions(OuiElement* element, int32_t width, int32_t height,
       fprintf(stderr, "native gutter dimension %zu: got %d expected %d\n", i,
               (int)output.value, (int)expected[i]);
     assert(output.value == expected[i]);
-    for (size_t j = 0; j < sizeof(output.tail); ++j) assert(output.tail[j] == 0x6d);
+    for (size_t j = 0; j < sizeof(output.tail); ++j)
+      assert(output.tail[j] == 0x6d);
   }
 }
 
-static OuiRect bounds(OuiElement* element) {
+static OuiRect bounds(OuiElement *element) {
   OuiRect value;
   assert(oui_element_get_bounds(element, &value) == OUI_OK);
   return value;
 }
 
-static void size(OuiElement* element, float width, float height) {
+static void size(OuiElement *element, float width, float height) {
   OuiRect value = bounds(element);
   assert(value.width == width && value.height == height);
 }
 
-static OuiScrollMetricsV1 raw_metrics(OuiElement* element) {
-  OuiScrollMetricsV1 value = {sizeof(value), OUI_ABI_VERSION, 0.0, 0.0, 0.0, 0.0};
+static OuiScrollMetricsV1 raw_metrics(OuiElement *element) {
+  OuiScrollMetricsV1 value = {
+      sizeof(value), OUI_ABI_VERSION, 0.0, 0.0, 0.0, 0.0};
   uint8_t found = 0;
   assert(oui_element_get_scroll_metrics_v1(element, &value, &found) == OUI_OK);
   assert(found == 1);
   return value;
 }
 
-static void offset(OuiElement* element, double expected_x, double expected_y) {
+static void offset(OuiElement *element, double expected_x, double expected_y) {
   double x = -999.0, y = -999.0;
   assert(oui_element_get_scroll_offset(element, &x, &y) == OUI_OK);
   assert(x == expected_x && y == expected_y);
 }
 
-static void consumer(const char* display, double scale) {
-  OuiDocumentConfig config = {sizeof(config), OUI_ABI_VERSION,
-    {320.0, 240.0, (uint32_t)(320.0 * scale), (uint32_t)(240.0 * scale),
-     scale, OUI_VIEWPORT_LOGICAL, 0}};
-  OuiDocument* document = NULL;
+static void consumer(const char *display, double scale) {
+  OuiDocumentConfig config = {sizeof(config),
+                              OUI_ABI_VERSION,
+                              {320.0, 240.0, (uint32_t)(320.0 * scale),
+                               (uint32_t)(240.0 * scale), scale,
+                               OUI_VIEWPORT_LOGICAL, 0}};
+  OuiDocument *document = NULL;
   OuiElement *root = NULL, *container = NULL, *child = NULL, *absolute = NULL;
   assert(oui_document_create(&config, &document) == OUI_OK);
   assert(oui_document_root(document, &root) == OUI_OK);
@@ -118,7 +127,8 @@ static void consumer(const char* display, double scale) {
   size(container, 114.0f, 94.0f);
   size(child, 85.0f, 65.0f);
 
-  /* Retain fractional layout metrics separately from the integer DOM-style API. */
+  /* Retain fractional layout metrics separately from the integer DOM-style API.
+   */
   property(container, OUI_STYLE_PROPERTY_PADDING, "0px");
   property(container, OUI_STYLE_PROPERTY_BORDER, "0px solid black");
   property(container, OUI_STYLE_PROPERTY_WIDTH, "100.25px");
@@ -127,13 +137,28 @@ static void consumer(const char* display, double scale) {
   OuiScrollMetricsV1 fractional = raw_metrics(container);
   assert(fractional.client_width == 85.25 && fractional.client_height == 65.5);
   size(child, 85.25f, 65.5f);
-  property(container, OUI_STYLE_PROPERTY_TRANSFORM, "translate(0.25px, 0.5px) scale(2)");
+  OuiTransformOperation operations[2] = {{0}};
+  operations[0].kind = 1;
+  operations[0].x = (OuiLength){0.25f, 0};
+  operations[0].y = (OuiLength){0.5f, 0};
+  operations[1].kind = 2;
+  operations[1].values[0] = 2.0f;
+  operations[1].values[1] = 2.0f;
+  OuiStyleCompound *transform = NULL;
+  assert(oui_transform_create(operations, 2, &transform) == OUI_OK);
+  OuiStyleValue transform_value = {0};
+  transform_value.tag = OUI_STYLE_VALUE_COMPOUND;
+  transform_value.data.compound = transform;
+  assert(oui_element_set_property(container, OUI_STYLE_PROPERTY_TRANSFORM,
+                                  &transform_value) == OUI_OK);
+  assert(oui_style_compound_destroy(transform) == OUI_OK);
   dimensions(container, 85, 66, 85, 66);
   property(container, OUI_STYLE_PROPERTY_TRANSFORM, "none");
   property(container, OUI_STYLE_PROPERTY_WIDTH, "100px");
   property(container, OUI_STYLE_PROPERTY_HEIGHT, "80px");
 
-  /* Absolute percentages resolve against the same gutter-reduced containing box. */
+  /* Absolute percentages resolve against the same gutter-reduced containing
+   * box. */
   assert(oui_element_create(document, OUI_ELEMENT_DIV, &absolute) == OUI_OK);
   assert(oui_element_append_child(container, absolute) == OUI_OK);
   property(absolute, OUI_STYLE_PROPERTY_POSITION, "absolute");
@@ -145,7 +170,8 @@ static void consumer(const char* display, double scale) {
   size(absolute, 85.0f, 65.0f);
   assert(oui_element_detach(absolute) == OUI_OK);
 
-  /* Auto overflow must relayout percentage descendants and clamp retained offsets. */
+  /* Auto overflow must relayout percentage descendants and clamp retained
+   * offsets. */
   property(container, OUI_STYLE_PROPERTY_OVERFLOW, "auto");
   property(child, OUI_STYLE_PROPERTY_WIDTH, "150px");
   property(child, OUI_STYLE_PROPERTY_HEIGHT, "120px");
@@ -183,7 +209,8 @@ static void consumer(const char* display, double scale) {
   size(child, 100.0f, 50.0f);
   assert(bounds(child).y == bounds(container).y + 15.0f);
 
-  /* No-box transitions use the API's zero dimensions, then recover live geometry. */
+  /* No-box transitions use the API's zero dimensions, then recover live
+   * geometry. */
   property(container, OUI_STYLE_PROPERTY_DISPLAY, "none");
   dimensions(container, 0, 0, 0, 0);
   property(container, OUI_STYLE_PROPERTY_DISPLAY, display);
@@ -199,20 +226,23 @@ static void consumer(const char* display, double scale) {
   assert(oui_element_destroy(container) == OUI_OK);
   assert(oui_element_destroy(root) == OUI_OK);
   assert(oui_document_destroy(document) == OUI_OK);
-  printf("native C flex/grid scroll gutters: display=%s scale=%g passed\n", display, scale);
+  printf("native C flex/grid scroll gutters: display=%s scale=%g passed\n",
+         display, scale);
 }
 
-static OuiDocument* document_for_scale(double scale, OuiElement** root) {
-  OuiDocumentConfig config = {sizeof(config), OUI_ABI_VERSION,
-    {320.0, 240.0, (uint32_t)(320.0 * scale), (uint32_t)(240.0 * scale),
-     scale, OUI_VIEWPORT_LOGICAL, 0}};
-  OuiDocument* document = NULL;
+static OuiDocument *document_for_scale(double scale, OuiElement **root) {
+  OuiDocumentConfig config = {sizeof(config),
+                              OUI_ABI_VERSION,
+                              {320.0, 240.0, (uint32_t)(320.0 * scale),
+                               (uint32_t)(240.0 * scale), scale,
+                               OUI_VIEWPORT_LOGICAL, 0}};
+  OuiDocument *document = NULL;
   assert(oui_document_create(&config, &document) == OUI_OK);
   assert(oui_document_root(document, root) == OUI_OK);
   return document;
 }
 
-static void authored_size(OuiElement* element) {
+static void authored_size(OuiElement *element) {
   property(element, OUI_STYLE_PROPERTY_WIDTH, "100px");
   property(element, OUI_STYLE_PROPERTY_HEIGHT, "80px");
   property(element, OUI_STYLE_PROPERTY_BOX_SIZING, "content-box");
@@ -220,7 +250,7 @@ static void authored_size(OuiElement* element) {
 
 static void table_consumer(double scale) {
   OuiElement *root = NULL, *table = NULL, *row = NULL, *cell = NULL;
-  OuiDocument* document = document_for_scale(scale, &root);
+  OuiDocument *document = document_for_scale(scale, &root);
   assert(oui_element_create(document, OUI_ELEMENT_TABLE, &table) == OUI_OK);
   assert(oui_element_create(document, OUI_ELEMENT_TABLE_ROW, &row) == OUI_OK);
   assert(oui_element_create(document, OUI_ELEMENT_TABLE_CELL, &cell) == OUI_OK);
@@ -231,7 +261,7 @@ static void table_consumer(double scale) {
   property(table, OUI_STYLE_PROPERTY_BORDER_SPACING, "0px");
   property(cell, OUI_STYLE_PROPERTY_HEIGHT, "80px");
   property(table, OUI_STYLE_PROPERTY_SCROLLBAR_GUTTER, "stable");
-  const char* overflow[] = {"auto", "scroll"};
+  const char *overflow[] = {"auto", "scroll"};
   for (size_t i = 0; i < sizeof(overflow) / sizeof(overflow[0]); ++i) {
     property(table, OUI_STYLE_PROPERTY_OVERFLOW, overflow[i]);
     dimensions(table, 100, 80, 100, 80);
@@ -259,16 +289,20 @@ static void table_consumer(double scale) {
 
 static void replaced_consumer(double scale) {
   OuiElement *root = NULL, *image = NULL;
-  OuiResource* resource = NULL;
-  OuiDocument* document = document_for_scale(scale, &root);
+  OuiResource *resource = NULL;
+  OuiDocument *document = document_for_scale(scale, &root);
   assert(oui_element_create(document, OUI_ELEMENT_IMAGE, &image) == OUI_OK);
-  /* A missing image uses block fallback layout. Install actual primary content. */
-  const char svg[] = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1\" height=\"1\">"
-                     "<rect width=\"1\" height=\"1\" fill=\"black\"/></svg>";
-  assert(oui_document_register_image(document, utf8("memory:dimensions-pixel.svg"),
-      utf8("image/svg+xml"),
-      utf8("949c974a51bfed3daa2be2aed981026336857d4cfd494dd120dbb6da66c891f7"),
-      (const uint8_t*)svg, sizeof(svg) - 1, &resource) == OUI_OK);
+  /* A missing image uses block fallback layout. Install actual primary content.
+   */
+  const char svg[] =
+      "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1\" height=\"1\">"
+      "<rect width=\"1\" height=\"1\" fill=\"black\"/></svg>";
+  assert(oui_document_register_image(
+             document, utf8("memory:dimensions-pixel.svg"),
+             utf8("image/svg+xml"),
+             utf8("949c974a51bfed3daa2be2aed981026336857d4cfd494dd120dbb6da66c8"
+                  "91f7"),
+             (const uint8_t *)svg, sizeof(svg) - 1, &resource) == OUI_OK);
   assert(oui_element_set_image(image, resource, 1.0f, 1.0f) == OUI_OK);
   assert(oui_element_append_child(root, image) == OUI_OK);
   authored_size(image);
@@ -289,7 +323,8 @@ static void replaced_consumer(double scale) {
   property(image, OUI_STYLE_PROPERTY_SCROLLBAR_GUTTER, "stable");
   dimensions(image, 100, 65, 100, 65);
   property(image, OUI_STYLE_PROPERTY_SCROLLBAR_GUTTER, "stable both-edges");
-  /* The leading gutter is not additional scroll height: content is 50px high. */
+  /* The leading gutter is not additional scroll height: content is 50px high.
+   */
   dimensions(image, 100, 50, 100, 50);
   assert(oui_element_scroll_to(image, 1000.0, 1000.0) == OUI_OK);
   offset(image, 0.0, 0.0);
@@ -308,7 +343,7 @@ static void replaced_consumer(double scale) {
 
 static void body_consumer(double scale) {
   OuiElement *root = NULL, *html = NULL, *body = NULL, *content = NULL;
-  OuiDocument* document = document_for_scale(scale, &root);
+  OuiDocument *document = document_for_scale(scale, &root);
   assert(oui_element_create(document, OUI_ELEMENT_HTML, &html) == OUI_OK);
   assert(oui_element_create(document, OUI_ELEMENT_BODY, &body) == OUI_OK);
   assert(oui_element_create(document, OUI_ELEMENT_DIV, &content) == OUI_OK);
