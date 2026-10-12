@@ -662,3 +662,30 @@ fn shorthand_and_longhand_effects_share_the_same_lower_component() {
     assert_eq!(e.computed_style(n).unwrap().row_gap.unwrap().value(), 2.0);
     e.cancel_animation(row).unwrap();
 }
+
+#[test]
+fn constant_decimal_color_keeps_native_float_bits_while_effect_owned() {
+    use openui_style::Color;
+    let mut e = engine();
+    let n = node(&mut e);
+    let color = Color::from_rgba_f32(0.1, 0.2, 0.3, 0.1);
+    e.set_property(n, StyleProperty::BackgroundColor, color.into())
+        .unwrap();
+    let effect = constant(
+        &mut e,
+        n,
+        StyleProperty::BackgroundColor,
+        color.into(),
+        CompositeOperation::Replace,
+    );
+    for time in [0.0, 25.0, 50.0, 100.0] {
+        e.set_animation_time(time).unwrap();
+        assert_eq!(e.computed_style(n).unwrap().background_color, color);
+    }
+    let current = Color::from_rgba_f32(0.3, 0.2, 0.1, 0.25);
+    e.set_property(n, StyleProperty::BackgroundColor, current.into())
+        .unwrap();
+    assert_eq!(e.computed_style(n).unwrap().background_color, color);
+    e.cancel_animation(effect).unwrap();
+    assert_eq!(e.computed_style(n).unwrap().background_color, current);
+}

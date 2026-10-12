@@ -18,7 +18,7 @@ fn blend(a: f64, b: f64, progress: f64) -> f64 {
     }
 }
 
-/// Premultiplied legacy sRGB working channels. Native Color already stores
+/// Premultiplied legacy sRGB channels in 0..255 parameter units. Native Color stores
 /// straight f32 sRGB; working channels retain double precision across effects.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct AnimationColor {
@@ -27,13 +27,16 @@ pub struct AnimationColor {
 }
 impl AnimationColor {
     pub fn from_color(color: Color) -> Self {
-        // Param0()/Alpha() are float in the pinned Create expression, so the
-        // initial product is float before assignment to the double channel.
+        // Legacy Color parameters use 0..255 units. The pinned SkColor4f
+        // constructor multiplies float RGB by double 255 before storing float.
+        // Create then multiplies that float parameter by float alpha, assigning
+        // the rounded float product to the double working channel.
+        let parameter = |channel: f32| (channel as f64 * 255.0) as f32;
         Self {
             channels: [
-                (color.r * color.a) as f64,
-                (color.g * color.a) as f64,
-                (color.b * color.a) as f64,
+                (parameter(color.r) * color.a) as f64,
+                (parameter(color.g) * color.a) as f64,
+                (parameter(color.b) * color.a) as f64,
             ],
             alpha: color.a as f64,
         }
@@ -67,8 +70,11 @@ impl AnimationColor {
         } else {
             self.channels.map(|v| v / alpha)
         };
-        // Color::FromColorSpace stores float RGB without a legacy channel clamp.
-        Color::from_rgba_f32(rgb[0] as f32, rgb[1] as f32, rgb[2] as f32, alpha as f32)
+        // Resolve constructs float legacy parameters. ToSkColor4f then calls
+        // gfx::SRGBLegacyToSRGB: float parameter / double 255, stored as float.
+        // Keep both conversions; folding the scale changes float rounding.
+        let normalized = rgb.map(|parameter| (parameter as f32 as f64 / 255.0) as f32);
+        Color::from_rgba_f32(normalized[0], normalized[1], normalized[2], alpha as f32)
     }
 }
 
@@ -348,6 +354,18 @@ impl CompositedStyleValue {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn legacy_parameter_units_preserve_constant_decimal_color() {
+        let color = Color::from_rgba_f32(0.1, 0.2, 0.3, 0.1);
+        let value = AnimationColor::from_color(color);
+        // Normalized-premultiplied float arithmetic changes the red channel
+        // from bits 1036831949 to 1036831950 even for identical endpoints.
+        assert_eq!(value.interpolate(value, 0.25).resolve(), color);
+        assert_eq!(
+            value.interpolate(value, 0.5).resolve().r.to_bits(),
+            0.1_f32.to_bits()
+        );
+    }
     #[test]
     fn color_equal_translucent_alpha_follows_pinned_composite_branch() {
         let red = AnimationColor::from_color(Color::from_rgba_f32(1.0, 0.0, 0.0, 0.5));
