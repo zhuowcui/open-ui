@@ -2451,7 +2451,7 @@ fn native_table_span_attributes_share_typed_reflection_and_callback_layout() {
     let weak = cell.downgrade();
     cell.on("click", move |_| {
         let cell = weak.upgrade().unwrap();
-        cell.set_column_span(2).unwrap();
+        cell.set_table_column_span(2).unwrap();
         cell.set_attribute("rowspan", "-0tail").unwrap();
         count.set(count.get() + 1);
     })

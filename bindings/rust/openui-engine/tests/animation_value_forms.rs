@@ -75,7 +75,7 @@ fn opacity_add_folds_computed_underlying_and_current_native_author_mutation() {
 fn width_add_and_accumulate_mix_native_and_renderer_endpoints_without_losing_base() {
     for scale in [1.0, 1.25, 1.5, 1.75, 2.0] {
         let (mut engine, node) = fixture(scale);
-        let renderer = StyleValue::Renderer(RendererStyleValue::Width(Length::fixed(5.0)));
+        let renderer = StyleValue::Renderer(RendererStyleValue::Width(Length::px(5.0)));
         let lower = animate(
             &mut engine,
             node,

@@ -305,7 +305,7 @@ fn main() -> ProbeResult<()> {
             {
                 let value = string(value)?;
                 match attribute.as_str() {
-                    "colspan" | "span" => element.set_column_span(value.parse()?)?,
+                    "colspan" | "span" => element.set_table_column_span(value.parse()?)?,
                     "rowspan" => element.set_row_span(value.parse()?)?,
                     _ => element.set_attribute(attribute, value)?,
                 }

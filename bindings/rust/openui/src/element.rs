@@ -106,7 +106,8 @@ impl Element {
     /// Set colspan (td/th) or span (col/colgroup) through the shared native
     /// attribute/layout path. Zero reflects as one. Values above i32::MAX
     /// store the default one, matching the pinned unsigned reflection rule.
-    pub fn set_column_span(&self, value: u32) -> Result<(), Error> {
+    /// [`Self::set_column_span`] controls CSS multicolumn spanning.
+    pub fn set_table_column_span(&self, value: u32) -> Result<(), Error> {
         self.document
             .with_engine_mut(|engine| engine.set_column_span(self.handle, value))
     }

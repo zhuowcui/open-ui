@@ -47,7 +47,7 @@ fn native_table_span_reflection_matches_attributes_limits_and_element_kinds() {
             "span"
         };
         for (value, expected) in [(0, 1), (2, 2), (1000, 1000), (1001, 1000), (u32::MAX, 1)] {
-            element.set_column_span(value).unwrap();
+            element.set_table_column_span(value).unwrap();
             assert_eq!(element.column_span().unwrap(), expected);
             assert_eq!(
                 element.get_attribute(attribute).unwrap().unwrap(),
@@ -87,7 +87,7 @@ fn native_table_span_reflection_matches_attributes_limits_and_element_kinds() {
     assert!(plain.row_span().is_err());
     assert!(plain.column_span().is_err());
     assert!(plain.set_row_span(2).is_err());
-    assert!(plain.set_column_span(2).is_err());
+    assert!(plain.set_table_column_span(2).is_err());
     assert!(plain.get_attribute("rowspan").unwrap().is_none());
     assert!(plain.get_attribute("colspan").unwrap().is_none());
 }
@@ -107,7 +107,7 @@ fn native_cell_span_callback_reflows_owned_boxes_and_removal_restores_pixels() {
         let count = callbacks.clone();
         let weak = cell.downgrade();
         cell.on("click", move |_| {
-            weak.upgrade().unwrap().set_column_span(2).unwrap();
+            weak.upgrade().unwrap().set_table_column_span(2).unwrap();
             count.set(count.get() + 1);
         })
         .unwrap();
@@ -212,7 +212,7 @@ fn native_table_spans_keep_real_continuations_and_refresh_after_attribute_change
 fn native_table_span_clone_keeps_reflection_and_detached_edits_use_the_same_state() {
     let document = Document::new(320, 240).unwrap();
     let cell = append(&document, &document.body(), "td");
-    cell.set_column_span(3).unwrap();
+    cell.set_table_column_span(3).unwrap();
     cell.set_row_span(0).unwrap();
     let cloned = cell.clone_subtree().unwrap();
     assert_eq!(cloned.column_span().unwrap(), 3);

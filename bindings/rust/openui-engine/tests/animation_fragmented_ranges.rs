@@ -129,7 +129,7 @@ fn sliced_and_cloned_principal_boxes_include_their_actual_continuation_edges() {
                 StyleProperty::BoxDecorationBreak,
                 StyleValue::Renderer(RendererStyleValue::BoxDecorationBreak(decoration)),
             );
-            let bounds = engine.bounding_rect(subject).unwrap().unwrap();
+            let bounds = engine.bounds(subject).unwrap().unwrap();
             let rects = engine.client_rects(subject).unwrap();
             assert!(rects.len() >= 2);
             let owned = engine
@@ -141,7 +141,7 @@ fn sliced_and_cloned_principal_boxes_include_their_actual_continuation_edges() {
             assert_eq!(owned.named.cover.start, 40.0);
             assert_eq!(owned.named.cover.end, 120.0 + height);
             // Timeline queries do not replace the element's real continued boxes.
-            assert_eq!(engine.bounding_rect(subject).unwrap().unwrap(), bounds);
+            assert_eq!(engine.bounds(subject).unwrap().unwrap(), bounds);
             assert_eq!(engine.client_rects(subject).unwrap(), rects);
             for scroll in [0.0, 50.0, 150.0, 0.0] {
                 engine.scroll_to(source, 0.0, scroll).unwrap();

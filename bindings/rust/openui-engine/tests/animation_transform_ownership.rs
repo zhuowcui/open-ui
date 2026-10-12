@@ -244,10 +244,10 @@ fn removing_none_replace_reveals_identity_survivor_then_current_authored_none() 
     let child = positioned(&mut e, owner, Position::Absolute, ElementTag::Div);
     let before = e.bounds(child).unwrap().unwrap();
     let lower = constant(&mut e, owner, identity(), FillMode::Both);
-    e.advance_time(0.0).unwrap();
+    e.set_animation_time(0.0).unwrap();
     assert_origin(&mut e, child, owner);
     let upper = constant(&mut e, owner, TransformList::default(), FillMode::Both);
-    e.advance_time(0.0).unwrap();
+    e.set_animation_time(0.0).unwrap();
     assert_eq!(e.bounds(child).unwrap().unwrap(), before);
     let layouts = e.stats().layouts;
     e.cancel_animation(upper).unwrap();
@@ -265,7 +265,7 @@ fn masked_authored_transform_mutation_publishes_once_and_cancellation_reveals_po
     let owner = owner(&mut e);
     let child = positioned(&mut e, owner, Position::Fixed, ElementTag::Div);
     let mask = constant(&mut e, owner, identity(), FillMode::Both);
-    e.advance_time(0.0).unwrap();
+    e.set_animation_time(0.0).unwrap();
     assert_origin(&mut e, child, owner);
     let stats = e.stats();
     let dirty = e.dirty_generations();
@@ -298,10 +298,10 @@ fn no_fill_effect_expires_and_restores_viewport_fixed_owner() {
     let child = positioned(&mut e, owner, Position::Fixed, ElementTag::Div);
     let before = e.bounds(child).unwrap().unwrap();
     constant(&mut e, owner, identity(), FillMode::None);
-    e.advance_time(0.0).unwrap();
+    e.set_animation_time(0.0).unwrap();
     assert_origin(&mut e, child, owner);
     let layouts = e.stats().layouts;
-    e.advance_time(100.0).unwrap();
+    e.set_animation_time(100.0).unwrap();
     assert_eq!(e.bounds(child).unwrap().unwrap(), before);
     assert_eq!(e.stats().layouts, layouts + 1);
 }
