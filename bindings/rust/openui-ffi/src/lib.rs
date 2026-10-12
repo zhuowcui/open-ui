@@ -35,6 +35,8 @@ mod scroll_button;
 mod scroll_button_tests;
 mod types;
 mod value;
+#[cfg(test)]
+mod versioned_output_tests;
 
 pub use editing_command::oui_element_edit_text_v1;
 pub use element_dimensions::{
@@ -103,6 +105,24 @@ fn check_header(actual_size: u32, actual_abi: u32, required: usize) -> Result<()
         )));
     }
     Ok(())
+}
+
+// SAFETY CONTRACT: non-null storage has an initialized, readable struct_size
+// word. When the declared size includes both header words, abi_version is also
+// initialized and readable. A successful check establishes the declared extent
+// for T; callers still require aligned, writable output storage before writing.
+// The remaining fields need not be initialized unless the API reads them.
+unsafe fn versioned_output_header<T>(output: *mut T) -> Result<(u32, u32), ApiError> {
+    if output.is_null() {
+        return Err(invalid("versioned output is null"));
+    }
+    let struct_size = unsafe { ptr::read_unaligned(output.cast::<u32>()) };
+    if struct_size < 2 * size_of::<u32>() as u32 {
+        return Err(invalid("versioned output header is too small"));
+    }
+    let abi_version = unsafe { ptr::read_unaligned(output.cast::<u32>().add(1)) };
+    check_header(struct_size, abi_version, size_of::<T>())?;
+    Ok((struct_size, abi_version))
 }
 
 fn write_handle<T>(out: *mut *mut T, handle: LocalHandle) -> Result<(), ApiError> {
@@ -625,19 +645,17 @@ pub extern "C" fn oui_abi_version() -> u32 {
 pub extern "C" fn oui_error_get_last(out_error: *mut OuiErrorInfo) -> OuiStatus {
     ffi_preserve(|| {
         let saved = last_error();
-        if out_error.is_null() {
-            return Err(invalid("out_error is null"));
-        }
-        // SAFETY: the caller guarantees a readable/writable `OuiErrorInfo`.
-        let output = unsafe { &mut *out_error };
-        check_header(
-            output.struct_size,
-            output.abi_version,
-            size_of::<OuiErrorInfo>(),
-        )?;
-        output.status = saved.status;
-        output.detail = saved.detail;
-        output.message_length = saved.message.len();
+        // SAFETY: the caller initializes the readable versioned header and
+        // supplies aligned, writable storage for its declared extent.
+        let (struct_size, abi_version) = unsafe { versioned_output_header(out_error) }?;
+        let output = OuiErrorInfo {
+            struct_size,
+            abi_version,
+            status: saved.status,
+            detail: saved.detail,
+            message_length: saved.message.len(),
+        };
+        unsafe { ptr::write(out_error, output) };
         Ok(())
     })
 }
@@ -947,25 +965,23 @@ pub extern "C" fn oui_document_accessibility_update(
     out_update: *mut OuiAccessibilityUpdate,
 ) -> OuiStatus {
     ffi(|| {
-        if out_update.is_null() {
-            return Err(invalid("accessibility update output is null"));
-        }
-        // SAFETY: the caller guarantees a readable/writable output struct.
-        let output = unsafe { &mut *out_update };
-        check_header(
-            output.struct_size,
-            output.abi_version,
-            size_of::<OuiAccessibilityUpdate>(),
-        )?;
+        // SAFETY: only the initialized header is read before validation.
+        let (struct_size, abi_version) = unsafe { versioned_output_header(out_update) }?;
         let state = document(document_handle as usize)?;
         let mut engine = borrow_engine_mut(&state)?;
         let update = engine.accessibility_update()?;
-        output.generation = engine.dirty_generations().accessibility;
-        output.updated_nodes = update.nodes.len();
-        output.focus_id = update.focus.0;
-        output.full_tree = u8::from(update.tree.is_some());
-        output.reduced_motion = u8::from(engine.prefers_reduced_motion());
-        output.reserved = 0;
+        let output = OuiAccessibilityUpdate {
+            struct_size,
+            abi_version,
+            generation: engine.dirty_generations().accessibility,
+            updated_nodes: update.nodes.len(),
+            focus_id: update.focus.0,
+            full_tree: u8::from(update.tree.is_some()),
+            reduced_motion: u8::from(engine.prefers_reduced_motion()),
+            reserved: 0,
+        };
+        // SAFETY: the validated output is aligned and writable for this value.
+        unsafe { ptr::write(out_update, output) };
         Ok(())
     })
 }
@@ -1074,33 +1090,31 @@ pub extern "C" fn oui_document_animation_get_state(
     out_state: *mut OuiAnimationState,
 ) -> OuiStatus {
     ffi(|| {
-        if out_state.is_null() {
-            return Err(invalid("animation state output is null"));
-        }
-        // SAFETY: the caller supplies readable/writable output storage.
-        let output = unsafe { &mut *out_state };
-        check_header(
-            output.struct_size,
-            output.abi_version,
-            size_of::<OuiAnimationState>(),
-        )?;
+        // SAFETY: only the initialized header is read before validation.
+        let (struct_size, abi_version) = unsafe { versioned_output_header(out_state) }?;
         let state = document(document_handle as usize)?;
         let animation = borrow_engine(&state)?.animation_state(AnimationId(animation_id))?;
-        output.animation_id = animation.id.0;
-        output.current_time_ms = animation.current_time_ms;
-        output.iteration = animation.iteration;
-        output.property = animation.property as i32;
-        output.play_state = match animation.play_state {
-            PlayState::Running => 0,
-            PlayState::Paused => 1,
+        let output = OuiAnimationState {
+            struct_size,
+            abi_version,
+            animation_id: animation.id.0,
+            current_time_ms: animation.current_time_ms,
+            iteration: animation.iteration,
+            property: animation.property as i32,
+            play_state: match animation.play_state {
+                PlayState::Running => 0,
+                PlayState::Paused => 1,
+            },
+            phase: match animation.phase {
+                AnimationPhase::Before => 0,
+                AnimationPhase::Active => 1,
+                AnimationPhase::After => 2,
+            },
+            finished: u8::from(animation.finished),
+            reserved: [0; 3],
         };
-        output.phase = match animation.phase {
-            AnimationPhase::Before => 0,
-            AnimationPhase::Active => 1,
-            AnimationPhase::After => 2,
-        };
-        output.finished = u8::from(animation.finished);
-        output.reserved = [0; 3];
+        // SAFETY: the validated output is aligned and writable for this value.
+        unsafe { ptr::write(out_state, output) };
         Ok(())
     })
 }
@@ -1117,13 +1131,8 @@ pub extern "C" fn oui_document_take_animation_event(
         if out_event.is_null() || out_has_event.is_null() {
             return Err(invalid("animation event outputs are null"));
         }
-        // SAFETY: the caller supplies readable/writable output storage.
-        let output = unsafe { &mut *out_event };
-        check_header(
-            output.struct_size,
-            output.abi_version,
-            size_of::<OuiAnimationEvent>(),
-        )?;
+        // SAFETY: only the initialized header is read before validation.
+        let (struct_size, abi_version) = unsafe { versioned_output_header(out_event) }?;
         let state = document(document_handle as usize)?;
         let event = {
             let mut events = state.animation_events.try_borrow_mut().map_err(|_| {
@@ -1136,21 +1145,28 @@ pub extern "C" fn oui_document_take_animation_event(
             }
         };
         if let Some(event) = event {
-            output.animation_id = event.animation.0;
-            output.kind = match event.kind {
-                AnimationEventKind::Start => 0,
-                AnimationEventKind::Iteration => 1,
-                AnimationEventKind::End => 2,
-                AnimationEventKind::Cancel => 3,
+            let output = OuiAnimationEvent {
+                struct_size,
+                abi_version,
+                animation_id: event.animation.0,
+                kind: match event.kind {
+                    AnimationEventKind::Start => 0,
+                    AnimationEventKind::Iteration => 1,
+                    AnimationEventKind::End => 2,
+                    AnimationEventKind::Cancel => 3,
+                },
+                property: event.property as i32,
+                elapsed_time_ms: event.elapsed_time_ms,
+                iteration: event.iteration,
+                target: element_address(&state, event.target)
+                    .map(|address| address as *mut OuiElement)
+                    .unwrap_or(ptr::null_mut()),
             };
-            output.property = event.property as i32;
-            output.elapsed_time_ms = event.elapsed_time_ms;
-            output.iteration = event.iteration;
-            output.target = element_address(&state, event.target)
-                .map(|address| address as *mut OuiElement)
-                .unwrap_or(ptr::null_mut());
             // SAFETY: output storage was checked for null and must be writable.
-            unsafe { ptr::write(out_has_event, 1) };
+            unsafe {
+                ptr::write(out_event, output);
+                ptr::write(out_has_event, 1);
+            }
         } else {
             // SAFETY: output storage was checked for null and must be writable.
             unsafe { ptr::write(out_has_event, 0) };
@@ -1178,27 +1194,27 @@ pub extern "C" fn oui_document_render_rgba(
     out_bitmap: *mut OuiBitmap,
 ) -> OuiStatus {
     ffi(|| {
-        if out_bitmap.is_null() {
-            return Err(invalid("out_bitmap is null"));
-        }
-        // SAFETY: the caller guarantees a readable/writable `OuiBitmap`.
-        let output = unsafe { &mut *out_bitmap };
-        check_header(
-            output.struct_size,
-            output.abi_version,
-            size_of::<OuiBitmap>(),
-        )?;
-        if !output.pixels.is_null() {
+        // SAFETY: the caller initializes the header and pixels field, and
+        // supplies aligned, writable storage for the validated structure.
+        let (struct_size, abi_version) = unsafe { versioned_output_header(out_bitmap) }?;
+        let previous_pixels = unsafe { ptr::read(ptr::addr_of!((*out_bitmap).pixels)) };
+        if !previous_pixels.is_null() {
             return Err(invalid(
                 "out_bitmap.pixels must be null; destroy the previous buffer first",
             ));
         }
         let frame = render_frame(document_handle)?;
         let buffer = register(LocalHandle::Buffer(Rc::new(frame.pixels)))?;
-        output.width = frame.width;
-        output.height = frame.height;
-        output.stride = frame.stride;
-        output.pixels = buffer as *mut OuiBuffer;
+        let output = OuiBitmap {
+            struct_size,
+            abi_version,
+            width: frame.width,
+            height: frame.height,
+            stride: frame.stride,
+            pixels: buffer as *mut OuiBuffer,
+        };
+        // SAFETY: the validated output is aligned and writable for this value.
+        unsafe { ptr::write(out_bitmap, output) };
         Ok(())
     })
 }
@@ -3608,16 +3624,8 @@ pub extern "C" fn oui_font_face_get_info(
     out_info: *mut OuiFontFaceInfo,
 ) -> OuiStatus {
     ffi(|| {
-        if out_info.is_null() {
-            return Err(invalid("font info output is null"));
-        }
-        // SAFETY: caller supplies readable/writable storage for the header.
-        let output = unsafe { &mut *out_info };
-        check_header(
-            output.struct_size,
-            output.abi_version,
-            size_of::<OuiFontFaceInfo>(),
-        )?;
+        // SAFETY: only the initialized header is read before validation.
+        unsafe { versioned_output_header(out_info) }?;
         let face = font_face_ref(face_handle as usize)?;
         let state = font_face_document(&face)?;
         let engine = borrow_engine(&state)?;
@@ -3640,7 +3648,7 @@ pub extern "C" fn oui_font_face_get_info(
         if info.descriptor.metric_overrides.line_gap.is_some() {
             flags |= OUI_FONT_FACE_HAS_LINE_GAP_OVERRIDE;
         }
-        *output = OuiFontFaceInfo {
+        let output = OuiFontFaceInfo {
             struct_size: size_of::<OuiFontFaceInfo>() as u32,
             abi_version: OUI_ABI_VERSION,
             collection_id: info.handle.collection_id(),
@@ -3672,6 +3680,8 @@ pub extern "C" fn oui_font_face_get_info(
             feature_default_count: info.descriptor.feature_defaults.len(),
             sha256: info.sha256,
         };
+        // SAFETY: the validated output is aligned and writable for this value.
+        unsafe { ptr::write(out_info, output) };
         Ok(())
     })
 }
