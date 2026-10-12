@@ -142,7 +142,7 @@ fn add(
     assert_eq!(
         oui_element_add_event_listener(
             node,
-            kind,
+            i32::try_from(kind).unwrap(),
             u8::from(capture),
             Some(callback),
             data,

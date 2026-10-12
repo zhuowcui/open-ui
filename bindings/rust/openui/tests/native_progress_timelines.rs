@@ -195,7 +195,7 @@ fn native_static_sticky_consumers_use_one_stage_for_block_flex_and_grid() {
             subject.set_width(LengthValue::px(30.0)).unwrap();
             subject.set_height(LengthValue::px(20.0)).unwrap();
             subject.set_position(Position::Sticky).unwrap();
-            subject.set_top(LengthValue::px(0.0)).unwrap();
+            subject.set_top(Length::px(0.0)).unwrap();
             subject.set_background_color(Color::BLUE).unwrap();
             subject.set_attribute("id", "sticky-native").unwrap();
             content.append_child(&subject).unwrap();

@@ -130,7 +130,7 @@ impl Context {
         let state = element_document(&handle).unwrap();
         borrow_engine_mut(&state)
             .unwrap()
-            .set_property(handle.node, property, value)
+            .set_property(handle.node, property, value.into())
             .unwrap();
     }
     fn port(&mut self) -> (*mut OuiElement, *mut OuiElement) {
