@@ -1259,6 +1259,7 @@
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-engine/src/animation.rs",
+        "bindings/rust/openui-engine/src/animation_timeline.rs",
         "bindings/rust/openui-engine/src/control_geometry.rs",
         "bindings/rust/openui-engine/src/lib.rs"
       ],
@@ -1585,6 +1586,7 @@
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/fragment_geometry.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/first_letter.rs",
@@ -1609,6 +1611,7 @@
         "bindings/rust/openui-engine/src/animation_timeline.rs",
         "bindings/rust/openui-engine/src/control_geometry.rs",
         "bindings/rust/openui-engine/src/element_dimensions.rs",
+        "bindings/rust/openui-engine/src/hit_geometry.rs",
         "bindings/rust/openui-engine/src/lib.rs",
         "bindings/rust/openui-engine/src/scroll_button.rs",
         "bindings/rust/openui-engine/src/scroll_into_view.rs"
@@ -2125,6 +2128,7 @@
       "canonical_schema_entry": false,
       "classification": "internal",
       "consumers": [
+        "bindings/rust/openui-layout/src/transform.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": null,
@@ -3300,6 +3304,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/transform.rs",
         "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs",
@@ -3329,8 +3334,6 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/transform.rs",
-        "bindings/rust/openui-paint/src/painter.rs",
-        "bindings/rust/openui-engine/src/lib.rs",
         "bindings/rust/openui-engine/src/scroll_button.rs"
       ],
       "css_name": "transform-origin",
@@ -3449,6 +3452,7 @@
         "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/fragment_geometry.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/first_letter.rs",
@@ -3478,6 +3482,7 @@
         "bindings/rust/openui-engine/src/animation_timeline.rs",
         "bindings/rust/openui-engine/src/control_geometry.rs",
         "bindings/rust/openui-engine/src/element_dimensions.rs",
+        "bindings/rust/openui-engine/src/hit_geometry.rs",
         "bindings/rust/openui-engine/src/interaction.rs",
         "bindings/rust/openui-engine/src/lib.rs",
         "bindings/rust/openui-engine/src/scroll_button.rs",
