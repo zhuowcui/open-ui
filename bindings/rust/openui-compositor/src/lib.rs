@@ -119,10 +119,14 @@ impl SceneSnapshot {
     ///
     /// GPU and software presenters use this exact recording, so backend
     /// selection cannot affect layout or scene construction.
+    /// The caller's transform, clip and save stack are preserved, including
+    /// when the same scene is embedded or replayed more than once.
     pub fn replay(&self, canvas: &Canvas) {
+        let save_count = canvas.save();
         let scale = self.viewport.device_scale_factor() as f32;
         canvas.scale((scale, scale));
         canvas.draw_picture(&self.picture.picture, None, None);
+        canvas.restore_to_count(save_count);
     }
 }
 
@@ -377,6 +381,70 @@ mod tests {
     fn immutable_scenes_can_cross_render_threads() {
         fn assert_send_sync<T: Send + Sync>() {}
         assert_send_sync::<SceneSnapshot>();
+    }
+
+    #[test]
+    fn embedded_scene_replays_preserve_host_composition_at_each_device_scale() {
+        use skia_safe::{surfaces, Color, Paint, PictureRecorder, Rect};
+
+        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+            let viewport = ViewportMetrics::from_logical_size(8.0, 8.0, scale).unwrap();
+            let document = openui_dom::Document::new();
+            let (fragment, mut picture) =
+                openui_paint::record_document(&document, viewport).unwrap();
+            let mut recorder = PictureRecorder::new();
+            let recording = recorder.begin_recording(Rect::from_xywh(0.0, 0.0, 8.0, 8.0), false);
+            let mut red = Paint::default();
+            red.set_color(Color::RED);
+            recording.draw_rect(Rect::from_xywh(0.0, 0.0, 3.0, 4.0), &red);
+            picture.picture = recorder.finish_recording_as_picture(None).unwrap();
+            let scene =
+                SceneSnapshot::new(SceneGeneration(1), picture, Arc::new(fragment), Vec::new());
+
+            let mut actual = surfaces::raster_n32_premul((48, 40)).unwrap();
+            let mut expected = surfaces::raster_n32_premul((48, 40)).unwrap();
+            let mut blue = Paint::default();
+            blue.set_color(Color::BLUE);
+            for canvas in [actual.canvas(), expected.canvas()] {
+                canvas.clear(Color::WHITE);
+                canvas.save();
+                canvas.translate((3.0, 5.0));
+                canvas.clip_rect(Rect::from_xywh(0.0, 0.0, 24.0, 24.0), None, false);
+                canvas.scale((1.5, 1.25));
+            }
+            let host_transform = actual.canvas().local_to_device_as_3x3();
+            let host_clip = actual.canvas().device_clip_bounds();
+            let host_save_count = actual.canvas().save_count();
+            for _ in 0..2 {
+                scene.replay(actual.canvas());
+                assert_eq!(actual.canvas().local_to_device_as_3x3(), host_transform);
+                assert_eq!(actual.canvas().device_clip_bounds(), host_clip);
+                assert_eq!(actual.canvas().save_count(), host_save_count);
+                actual
+                    .canvas()
+                    .draw_rect(Rect::from_xywh(14.0, 12.0, 1.0, 1.0), &blue);
+            }
+            expected.canvas().draw_rect(
+                Rect::from_xywh(0.0, 0.0, 3.0 * scale as f32, 4.0 * scale as f32),
+                &red,
+            );
+            expected
+                .canvas()
+                .draw_rect(Rect::from_xywh(14.0, 12.0, 1.0, 1.0), &blue);
+            let actual = actual
+                .image_snapshot()
+                .encode(None, EncodedImageFormat::PNG, None)
+                .unwrap();
+            let expected = expected
+                .image_snapshot()
+                .encode(None, EncodedImageFormat::PNG, None)
+                .unwrap();
+            assert_eq!(
+                actual.as_bytes(),
+                expected.as_bytes(),
+                "device scale {scale}"
+            );
+        }
     }
 
     #[test]
