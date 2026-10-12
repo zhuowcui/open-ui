@@ -561,6 +561,7 @@ fn is_monolithic_column_fragment(fragment: &Fragment, doc: &Document) -> bool {
         return false;
     }
     let node = doc.node(fragment.node_id);
+    let (overflow_x, overflow_y) = paint_overflow_pair(fragment, &node.style, doc);
     node.replaced.is_some()
         || matches!(
             node.form_control,
@@ -594,10 +595,8 @@ fn is_monolithic_column_fragment(fragment: &Fragment, doc: &Document) -> bool {
                 | Display::TableRowGroup
                 | Display::TableHeaderGroup
                 | Display::TableFooterGroup
-        ) && ((node.style.overflow_x != Overflow::Visible
-            && node.style.overflow_x != Overflow::Clip)
-            || (node.style.overflow_y != Overflow::Visible
-                && node.style.overflow_y != Overflow::Clip)))
+        ) && ((overflow_x != Overflow::Visible && overflow_x != Overflow::Clip)
+            || (overflow_y != Overflow::Visible && overflow_y != Overflow::Clip)))
 }
 
 fn collect_overflowing_monolithic_column_fragments<'a>(
@@ -1289,7 +1288,9 @@ fn paint_fragment_contents(
         canvas_adjusted_style.as_ref().unwrap_or(original_style)
     };
     let helper_style = helper_paint_style(fragment, source_style);
-    let style = helper_style.as_ref().unwrap_or(source_style);
+    let source_style = helper_style.as_ref().unwrap_or(source_style);
+    let used_style = paint_style_with_used_overflow(fragment, source_style, doc);
+    let style = used_style.as_ref().unwrap_or(source_style);
     let _background_effect = BackgroundEffectScope::new(fragment, style);
     let promoted_transform_parent_offset = PhysicalOffset::new(
         abs_offset.left - fragment.offset.left,
@@ -1858,6 +1859,20 @@ enum PassiveMediaIcon {
     Overflow,
 }
 
+/// Resource objects use the layout-owned content box. Scrollbar gutters are
+/// separate from authored padding and can consume this box even on replaced
+/// elements which do not create a scroll container.
+fn resource_content_rect(fragment: &Fragment, abs_offset: PhysicalOffset) -> Rect {
+    let offset = fragment.content_offset();
+    let size = fragment.content_size();
+    Rect::from_xywh(
+        (abs_offset.left + offset.left).to_f32(),
+        (abs_offset.top + offset.top).to_f32(),
+        size.width.clamp_negative_to_zero().to_f32(),
+        size.height.clamp_negative_to_zero().to_f32(),
+    )
+}
+
 /// Paint Chromium's deterministic initial video surface and passive controls.
 ///
 /// The media decoder is deliberately outside the compact renderer. The
@@ -1879,14 +1894,7 @@ fn paint_media_element(
         return;
     }
 
-    let content_rect = Rect::from_ltrb(
-        abs_offset.left.to_f32() + fragment.border.left.to_f32() + fragment.padding.left.to_f32(),
-        abs_offset.top.to_f32() + fragment.border.top.to_f32() + fragment.padding.top.to_f32(),
-        (abs_offset.left + fragment.size.width - fragment.border.right - fragment.padding.right)
-            .to_f32(),
-        (abs_offset.top + fragment.size.height - fragment.border.bottom - fragment.padding.bottom)
-            .to_f32(),
-    );
+    let content_rect = resource_content_rect(fragment, abs_offset);
     if content_rect.width() <= 0.0 || content_rect.height() <= 0.0 {
         return;
     }
@@ -4596,32 +4604,20 @@ fn paint_missing_image(
         );
         return;
     }
-    let content_x =
-        abs_offset.left.to_f32() + fragment.border.left.to_f32() + fragment.padding.left.to_f32();
-    let content_y =
-        abs_offset.top.to_f32() + fragment.border.top.to_f32() + fragment.padding.top.to_f32();
-    let content_width = (fragment.size.width
-        - fragment.border.left
-        - fragment.border.right
-        - fragment.padding.left
-        - fragment.padding.right)
-        .clamp_negative_to_zero()
-        .to_f32();
-    let content_height = (fragment.size.height
-        - fragment.border.top
-        - fragment.border.bottom
-        - fragment.padding.top
-        - fragment.padding.bottom)
-        .clamp_negative_to_zero()
-        .to_f32();
-    let clips_missing_replaced = treated_as_replaced
-        && (style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible);
+    let content_rect = resource_content_rect(fragment, abs_offset);
+    let content_x = content_rect.left;
+    let content_y = content_rect.top;
+    let content_width = content_rect.width();
+    let content_height = content_rect.height();
+    let (overflow_x, overflow_y) = paint_overflow_pair(fragment, style, doc);
+    let clips_missing_replaced =
+        treated_as_replaced && (overflow_x != Overflow::Visible || overflow_y != Overflow::Visible);
     // Blink places the broken-image glyph in a UA shadow child. The host
     // image's `overflow: clip` applies to that child even when the image is
     // rendered as non-replaced alternative text. Paint the glyph under the
     // host content clip, just as ordinary descendants are clipped below.
-    let clips_missing_nonreplaced = !treated_as_replaced
-        && (style.overflow_x == Overflow::Clip || style.overflow_y == Overflow::Clip);
+    let clips_missing_nonreplaced =
+        !treated_as_replaced && (overflow_x == Overflow::Clip || overflow_y == Overflow::Clip);
     let mut missing_clip_rrect = None;
     if clips_missing_replaced {
         let content_rect = Rect::from_xywh(content_x, content_y, content_width, content_height);
@@ -4644,22 +4640,22 @@ fn paint_missing_image(
             compute_overflow_clip_reference_rect(fragment, abs_offset, style);
         let margin = style.overflow_clip_margin;
         let bounds = Rect::from_ltrb(
-            if style.overflow_x == Overflow::Clip {
+            if overflow_x == Overflow::Clip {
                 x - margin
             } else {
                 -100_000.0
             },
-            if style.overflow_y == Overflow::Clip {
+            if overflow_y == Overflow::Clip {
                 y - margin
             } else {
                 -100_000.0
             },
-            if style.overflow_x == Overflow::Clip {
+            if overflow_x == Overflow::Clip {
                 x + width + margin
             } else {
                 100_000.0
             },
-            if style.overflow_y == Overflow::Clip {
+            if overflow_y == Overflow::Clip {
                 y + height + margin
             } else {
                 100_000.0
@@ -5020,24 +5016,7 @@ fn paint_embedded_canvas(
     let Some(color) = doc.node(fragment.node_id).embedded_canvas_color else {
         return;
     };
-    let content_rect = Rect::from_xywh(
-        abs_offset.left.to_f32() + fragment.border.left.to_f32() + fragment.padding.left.to_f32(),
-        abs_offset.top.to_f32() + fragment.border.top.to_f32() + fragment.padding.top.to_f32(),
-        (fragment.size.width
-            - fragment.border.left
-            - fragment.border.right
-            - fragment.padding.left
-            - fragment.padding.right)
-            .clamp_negative_to_zero()
-            .to_f32(),
-        (fragment.size.height
-            - fragment.border.top
-            - fragment.border.bottom
-            - fragment.padding.top
-            - fragment.padding.bottom)
-            .clamp_negative_to_zero()
-            .to_f32(),
-    );
+    let content_rect = resource_content_rect(fragment, abs_offset);
     if content_rect.width() <= 0.0 || content_rect.height() <= 0.0 {
         return;
     }
@@ -5090,24 +5069,11 @@ fn paint_replaced_content(
         return;
     };
 
-    let content_x =
-        abs_offset.left.to_f32() + fragment.border.left.to_f32() + fragment.padding.left.to_f32();
-    let content_y =
-        abs_offset.top.to_f32() + fragment.border.top.to_f32() + fragment.padding.top.to_f32();
-    let content_width = (fragment.size.width
-        - fragment.border.left
-        - fragment.border.right
-        - fragment.padding.left
-        - fragment.padding.right)
-        .clamp_negative_to_zero()
-        .to_f32();
-    let content_height = (fragment.size.height
-        - fragment.border.top
-        - fragment.border.bottom
-        - fragment.padding.top
-        - fragment.padding.bottom)
-        .clamp_negative_to_zero()
-        .to_f32();
+    let content_rect = resource_content_rect(fragment, abs_offset);
+    let content_x = content_rect.left;
+    let content_y = content_rect.top;
+    let content_width = content_rect.width();
+    let content_height = content_rect.height();
     if content_width <= 0.0 || content_height <= 0.0 {
         return;
     }
@@ -5198,12 +5164,13 @@ fn paint_replaced_content(
     // A visible axis paired with `clip` remains unbounded. When it is paired
     // with hidden/scroll/auto it computes to the scrollable behavior and is
     // clipped as well (CSS Overflow 3, matching the fragment clip path).
-    let clip_x = style.overflow_x != Overflow::Visible
-        || (style.overflow_x == Overflow::Visible
-            && !matches!(style.overflow_y, Overflow::Visible | Overflow::Clip));
-    let clip_y = style.overflow_y != Overflow::Visible
-        || (style.overflow_y == Overflow::Visible
-            && !matches!(style.overflow_x, Overflow::Visible | Overflow::Clip));
+    let (overflow_x, overflow_y) = paint_overflow_pair(fragment, style, doc);
+    let clip_x = overflow_x != Overflow::Visible
+        || (overflow_x == Overflow::Visible
+            && !matches!(overflow_y, Overflow::Visible | Overflow::Clip));
+    let clip_y = overflow_y != Overflow::Visible
+        || (overflow_y == Overflow::Visible
+            && !matches!(overflow_x, Overflow::Visible | Overflow::Clip));
     if clip_x && clip_y && style.has_border_radius() && !fragment.ignore_border_radius {
         canvas.clip_rrect(
             build_clip_rrect(
@@ -5235,10 +5202,10 @@ fn paint_replaced_content(
         );
         let clip = if clip_x
             && clip_y
-            && (style.overflow_x.is_scrollable()
-                || style.overflow_y.is_scrollable()
-                || style.overflow_x == Overflow::Clip
-                || style.overflow_y == Overflow::Clip)
+            && (overflow_x.is_scrollable()
+                || overflow_y.is_scrollable()
+                || overflow_x == Overflow::Clip
+                || overflow_y == Overflow::Clip)
         {
             // A native scrollport owns a hard physical scissor. Expand that
             // scissor to every touched device cell and let the replaced
@@ -6159,10 +6126,7 @@ fn paint_children_with_stacking_order(
                 child.has_overflow_clip
             } else {
                 let cs = &doc.node(child.node_id).style;
-                child.has_overflow_clip
-                    || (child.owns_element_box()
-                        && (cs.overflow_x != Overflow::Visible
-                            || cs.overflow_y != Overflow::Visible))
+                needs_overflow_clip(child, cs, doc)
             };
             if !child_clips {
                 collect_positioned_z_auto_descendants(
@@ -6796,7 +6760,11 @@ fn prepaint_collapsed_table_backgrounds(
     let adjusted_style = fragment
         .paint_background_color_override
         .map(|color| original_style.derive(|style| style.background_color = color));
-    let style = adjusted_style.as_ref().unwrap_or(original_style);
+    let source_style = adjusted_style.as_ref().unwrap_or(original_style);
+    let helper_style = helper_paint_style(fragment, source_style);
+    let source_style = helper_style.as_ref().unwrap_or(source_style);
+    let used_style = paint_style_with_used_overflow(fragment, source_style, doc);
+    let style = used_style.as_ref().unwrap_or(source_style);
     if fragment.kind == FragmentKind::Box
         && (style.visibility == Visibility::Visible
             || fragment
@@ -6825,27 +6793,12 @@ fn prepaint_collapsed_table_backgrounds(
         canvas.save();
         let (x, y, width, height) = compute_overflow_clip_reference_rect(fragment, offset, style);
         let big = 100_000.0;
+        let (clip_x_axis, clip_y_axis) = paint_overflow_clip_axes(fragment, style, doc);
         let clip = Rect::from_ltrb(
-            if style.overflow_x == Overflow::Visible {
-                -big
-            } else {
-                x
-            },
-            if style.overflow_y == Overflow::Visible {
-                -big
-            } else {
-                y
-            },
-            if style.overflow_x == Overflow::Visible {
-                big
-            } else {
-                x + width
-            },
-            if style.overflow_y == Overflow::Visible {
-                big
-            } else {
-                y + height
-            },
+            if !clip_x_axis { -big } else { x },
+            if !clip_y_axis { -big } else { y },
+            if !clip_x_axis { big } else { x + width },
+            if !clip_y_axis { big } else { y + height },
         );
         canvas.clip_rect(
             outward_snap_rect_to_physical(clip, doc.device_scale_factor()),
@@ -7295,7 +7248,9 @@ fn collect_shared_column_decorations<'a>(
             });
         }
     } else if !fragment.node_id.is_none() {
-        let style = &doc.node(fragment.node_id).style;
+        let source_style = &doc.node(fragment.node_id).style;
+        let used_style = paint_style_with_used_overflow(fragment, source_style, doc);
+        let style = used_style.as_ref().unwrap_or(source_style);
         // Floats paint in their own phase after in-flow block backgrounds.
         // Hoisting a float's decoration into the shared column-root prepass
         // lets a later in-flow background erase its overflow continuation.
@@ -8070,10 +8025,7 @@ fn collect_positioned_z_auto_descendants<'a>(
             // even when their containing block is a z:auto positioned block.
             // Ordinary block descendants remain in this fragment's recursive
             // paint order, which also preserves local rounded-edge compositing.
-            let clips_overflow = child.has_overflow_clip
-                || (child.owns_element_box()
-                    && (child_style.overflow_x != Overflow::Visible
-                        || child_style.overflow_y != Overflow::Visible));
+            let clips_overflow = needs_overflow_clip(child, child_style, doc);
             if is_positioned
                 && child_style.z_index.is_none()
                 && (fragment_has_inline_fragment_descendant(child, doc)
@@ -8099,10 +8051,7 @@ fn collect_positioned_z_auto_descendants<'a>(
             // Non-positioned, non-SC: only recurse if the child does NOT clip
             // overflow. Elements inside an overflow-clipping container must
             // remain inside it — hoisting them out would bypass the clip.
-            let clips_overflow = child.has_overflow_clip
-                || (child.owns_element_box()
-                    && (child_style.overflow_x != Overflow::Visible
-                        || child_style.overflow_y != Overflow::Visible));
+            let clips_overflow = needs_overflow_clip(child, child_style, doc);
             if !clips_overflow {
                 collect_positioned_z_auto_descendants(
                     child,
@@ -8161,10 +8110,7 @@ fn collect_fragmented_opacity_stacking_contexts<'a>(
             non_negative_z.push((style.z_index.unwrap_or(0), child.node_id.index(), entry));
             hoisted_ptrs.push(pointer);
         } else if !is_fragment_stacking_context(child, doc) {
-            let clips_overflow = child.has_overflow_clip
-                || (child.owns_element_box()
-                    && (style.overflow_x != Overflow::Visible
-                        || style.overflow_y != Overflow::Visible));
+            let clips_overflow = needs_overflow_clip(child, style, doc);
             if !clips_overflow {
                 collect_fragmented_opacity_stacking_contexts(
                     child,
@@ -8391,20 +8337,84 @@ fn collect_flex_negative_stacking_descendants<'a>(
 
 // ── Overflow clipping helpers ────────────────────────────────────────
 
+/// Prefer final retained policy, including the viewport's propagated
+/// overflow. Authored builders without a retained area use the same layout
+/// policy; anonymous structure never acquires borrowed CSS overflow.
+fn paint_overflow_pair(
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    doc: &Document,
+) -> (Overflow, Overflow) {
+    if is_formatting_helper(fragment) {
+        return (Overflow::Visible, Overflow::Visible);
+    }
+    if let Some(area) = fragment.scroll_area {
+        return (area.overflow_x, area.overflow_y);
+    }
+    if fragment.owns_element_box() {
+        return openui_layout::used_overflow_pair(doc, fragment.node_id);
+    }
+    openui_layout::computed_overflow_pair(style)
+}
+
+/// CSS overflow axes and independent containment/fragmentation boundaries
+/// share geometry, but a visible CSS axis must not erase a layout-owned clip.
+fn paint_overflow_clip_axes(
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    doc: &Document,
+) -> (bool, bool) {
+    let (x, y) = paint_overflow_pair(fragment, style, doc);
+    let mut axes = (x != Overflow::Visible, y != Overflow::Visible);
+    if fragment.owns_element_box() && style.has_paint_containment() {
+        return (true, true);
+    }
+    if fragment.has_overflow_clip {
+        if fragment.block_axis_clip_only {
+            if fragment_block_axis_is_x(fragment) {
+                axes.0 = true;
+            } else {
+                axes.1 = true;
+            }
+        }
+        if fragment.inline_axis_clip_only {
+            if fragment_block_axis_is_x(fragment) {
+                axes.1 = true;
+            } else {
+                axes.0 = true;
+            }
+        }
+        if !fragment.block_axis_clip_only && !fragment.inline_axis_clip_only && !axes.0 && !axes.1 {
+            return (true, true);
+        }
+    }
+    axes
+}
+
+/// Resolve overflow for shared computed-style geometry helpers while
+/// retaining opacity, masks, transforms and authored box edges.
+fn paint_style_with_used_overflow(
+    fragment: &Fragment,
+    style: &ComputedStyle,
+    doc: &Document,
+) -> Option<ComputedStyle> {
+    let (x, y) = paint_overflow_pair(fragment, style, doc);
+    (x != style.overflow_x || y != style.overflow_y).then(|| {
+        style.derive(|adjusted| {
+            adjusted.overflow_x = x;
+            adjusted.overflow_y = y;
+        })
+    })
+}
+
 /// Determine whether a fragment needs overflow clipping.
 ///
 /// Returns `true` when either the layout-computed `has_overflow_clip` flag is
-/// set, or the style's `overflow-x`/`overflow-y` is not `visible` for a
-/// box-level fragment.
+/// set, or the retained used overflow is not `visible` for a box-level
+/// fragment. Containment and fragmentation remain independent clips.
 fn needs_overflow_clip(fragment: &Fragment, style: &ComputedStyle, doc: &Document) -> bool {
     if is_formatting_helper(fragment) {
         return fragment.has_overflow_clip;
-    }
-    if !fragment.node_id.is_none()
-        && doc.node(fragment.node_id).tag == openui_dom::ElementTag::Body
-        && doc.body_overflow_is_propagated()
-    {
-        return false;
     }
     if fragment.decoration_slice.is_some()
         && fragment.block_axis_clip_only
@@ -8415,9 +8425,10 @@ fn needs_overflow_clip(fragment: &Fragment, style: &ComputedStyle, doc: &Documen
         // transformed result may overflow the enclosing column.
         return true;
     }
+    let (overflow_x, overflow_y) = paint_overflow_pair(fragment, style, doc);
     fragment.has_overflow_clip
         || style.has_paint_containment()
-        || ((style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible)
+        || ((overflow_x != Overflow::Visible || overflow_y != Overflow::Visible)
             && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport))
 }
 
@@ -8970,30 +8981,47 @@ fn paint_list_marker(
     );
 }
 
-/// Compute the clip rectangle for overflow clipping.
+/// Compute the physical client rectangle used for overflow clipping.
 ///
-/// Per CSS spec, overflow clips to the **padding box** — the border-box
-/// inset by each side's border width. Returns `(x, y, width, height)`.
+/// Retained authored geometry includes resolved table borders, real
+/// continuation boxes and reserved gutters. Anonymous structure retains its
+/// own explicit clip geometry. Returns `(x, y, width, height)`.
 pub fn compute_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> (f32, f32, f32, f32) {
-    let insets = fragment
-        .element_scrollbars
-        .map_or(openui_geometry::BoxStrut::zero(), |s| s.insets);
-    // Pixel-snap the padding box edges independently for crisp clipping.
-    let clip_left = (offset.left + fragment.border.left + insets.left)
-        .round()
-        .to_f32();
-    let clip_top = (offset.top + fragment.border.top + insets.top)
-        .round()
-        .to_f32();
-    let clip_right = (offset.left + fragment.size.width - fragment.border.right - insets.right)
-        .round()
-        .to_f32();
-    let clip_bottom = (offset.top + fragment.size.height - fragment.border.bottom - insets.bottom)
-        .round()
-        .to_f32();
-    let clip_w = (clip_right - clip_left).max(0.0);
-    let clip_h = (clip_bottom - clip_top).max(0.0);
-    (clip_left, clip_top, clip_w, clip_h)
+    let retained_client = fragment
+        .owns_element_box()
+        .then_some(fragment.scroll_area)
+        .flatten()
+        .map(|area| area.client_rect);
+    let client = retained_client.unwrap_or_else(|| {
+        let insets = fragment
+            .element_scrollbars
+            .map_or(openui_geometry::BoxStrut::zero(), |s| s.insets);
+        let border = openui_layout::ScrollArea::used_border(fragment);
+        let border_box = fragment.border_box_rect();
+        openui_geometry::PhysicalRect::new(
+            PhysicalOffset::new(
+                border_box.x() + border.left + insets.left,
+                border_box.y() + border.top + insets.top,
+            ),
+            PhysicalSize::new(
+                (border_box.width() - border.inline_sum() - insets.inline_sum())
+                    .clamp_negative_to_zero(),
+                (border_box.height() - border.block_sum() - insets.block_sum())
+                    .clamp_negative_to_zero(),
+            ),
+        )
+    });
+    // Pixel-snap the client edges independently for crisp clipping.
+    let clip_left = (offset.left + client.x()).round().to_f32();
+    let clip_top = (offset.top + client.y()).round().to_f32();
+    let clip_right = (offset.left + client.right()).round().to_f32();
+    let clip_bottom = (offset.top + client.bottom()).round().to_f32();
+    (
+        clip_left,
+        clip_top,
+        (clip_right - clip_left).max(0.0),
+        (clip_bottom - clip_top).max(0.0),
+    )
 }
 
 /// Resolve the authored visual box that establishes an overflow clip.
@@ -9012,10 +9040,11 @@ fn compute_overflow_clip_reference_rect(
     match overflow_clip_reference_box(style) {
         OverflowClipBox::PaddingBox => (px, py, pw, ph),
         OverflowClipBox::ContentBox => {
-            let pl = resolve_margin_or_padding_f32(&style.padding_left, pw);
-            let pr = resolve_margin_or_padding_f32(&style.padding_right, pw);
-            let pt = resolve_margin_or_padding_f32(&style.padding_top, ph);
-            let pb = resolve_margin_or_padding_f32(&style.padding_bottom, ph);
+            let padding = openui_layout::ScrollArea::used_padding(fragment);
+            let pl = padding.left.to_f32();
+            let pr = padding.right.to_f32();
+            let pt = padding.top.to_f32();
+            let pb = padding.bottom.to_f32();
             (
                 px + pl,
                 py + pt,
@@ -9024,10 +9053,11 @@ fn compute_overflow_clip_reference_rect(
             )
         }
         OverflowClipBox::BorderBox => {
-            let bl = fragment.border.left.to_f32();
-            let br = fragment.border.right.to_f32();
-            let bt = fragment.border.top.to_f32();
-            let bb = fragment.border.bottom.to_f32();
+            let border = openui_layout::ScrollArea::used_border(fragment);
+            let bl = border.left.to_f32();
+            let br = border.right.to_f32();
+            let bt = border.top.to_f32();
+            let bb = border.bottom.to_f32();
             (px - bl, py - bt, pw + bl + br, ph + bt + bb)
         }
     }
@@ -9580,7 +9610,9 @@ fn element_scroll_paint_translation(
     // Fragmentation also installs overflow clips and records a scroll area,
     // but those slices have no scroll transform. Only an authored scroll
     // container owns the origin and physical translation below.
-    if fragment.node_id.is_none() || !doc.node(fragment.node_id).style.is_scroll_container() {
+    let (overflow_x, overflow_y) =
+        paint_overflow_pair(fragment, &doc.node(fragment.node_id).style, doc);
+    if !overflow_x.is_scrollable() && !overflow_y.is_scrollable() {
         return (-scroll_x, -scroll_y);
     }
     let mut ancestor = fragment.node_id;
@@ -9841,6 +9873,8 @@ fn paint_with_overflow_clip(
     offset: PhysicalOffset,
     style: &ComputedStyle,
 ) {
+    let used_style = paint_style_with_used_overflow(fragment, style, doc);
+    let style = used_style.as_ref().unwrap_or(style);
     // The fieldset's rendered legend is part of the fieldset decoration.  It
     // remains visible over the block-start border even when authored overflow
     // clips the fieldset contents (HTML rendering §14.3).  Paint that direct
@@ -9933,10 +9967,9 @@ fn paint_with_overflow_clip(
     // When paired with hidden/scroll/auto, the visible axis computes to auto
     // and clips as part of the scroll container.
     let big = 100_000.0_f32;
-    let clip_x_visible =
-        style.overflow_x == Overflow::Visible && style.overflow_y == Overflow::Clip;
-    let clip_y_visible =
-        style.overflow_y == Overflow::Visible && style.overflow_x == Overflow::Clip;
+    let (clip_x_axis, clip_y_axis) = paint_overflow_clip_axes(fragment, style, doc);
+    let clip_x_visible = !clip_x_axis;
+    let clip_y_visible = !clip_y_axis;
     let (clip_x, clip_y, clip_w, clip_h) = match (clip_x_visible, clip_y_visible) {
         (true, false) => (-big, clip_y, big * 2.0, clip_h),
         (false, true) => (clip_x, -big, clip_w, big * 2.0),
@@ -10077,6 +10110,11 @@ fn paint_with_overflow_clip(
     };
 
     let (clip_x, clip_y, clip_w, clip_h) = if fragment.block_axis_clip_only
+        && if fragment_block_axis_is_x(fragment) {
+            !clip_y_axis
+        } else {
+            !clip_x_axis
+        }
         && !(fragment.owns_element_box()
             && style.has_border_radius()
             && !fragment.ignore_border_radius)
@@ -23152,6 +23190,150 @@ mod tests {
         }
         assert_eq!(native_following_inline_origin(891.0, 1.0), 891.0);
         assert_eq!(native_following_inline_origin(891.0, 2.0), 891.0);
+    }
+
+    #[test]
+    fn authored_fragment_builders_use_the_shared_table_overflow_policy() {
+        let mut doc = Document::new();
+        let table = doc.create_node(ElementTag::Table);
+        doc.append_child(doc.root(), table);
+        doc.update_resolved_style(table, |style| {
+            style.display = Display::Table;
+            style.overflow_x = Overflow::Auto;
+            style.overflow_y = Overflow::Scroll;
+        });
+        let mut fragment = Fragment::new_box(
+            table,
+            PhysicalSize::new(LayoutUnit::from_i32(40), LayoutUnit::from_i32(40)),
+        );
+        assert!(fragment.scroll_area.is_none());
+        assert_eq!(
+            paint_overflow_pair(&fragment, &doc.node(table).style, &doc),
+            (Overflow::Visible, Overflow::Visible),
+        );
+        assert!(!needs_overflow_clip(
+            &fragment,
+            &doc.node(table).style,
+            &doc
+        ));
+        fragment.has_overflow_clip = true;
+        fragment.block_axis_clip_only = true;
+        assert!(needs_overflow_clip(&fragment, &doc.node(table).style, &doc));
+        assert_eq!(
+            paint_overflow_clip_axes(&fragment, &doc.node(table).style, &doc),
+            (false, true),
+            "a real continuation clip survives visible used CSS overflow",
+        );
+        doc.update_resolved_style(table, |style| {
+            style.overflow_x = Overflow::Clip;
+            style.overflow_y = Overflow::Visible;
+        });
+        assert_eq!(
+            paint_overflow_clip_axes(&fragment, &doc.node(table).style, &doc),
+            (true, true),
+            "a CSS inline-axis clip and a real block-axis continuation both apply",
+        );
+        doc.update_resolved_style(table, |style| {
+            style.overflow_x = Overflow::Hidden;
+            style.overflow_y = Overflow::Hidden;
+        });
+        fragment.has_overflow_clip = false;
+        fragment.block_axis_clip_only = false;
+        assert!(needs_overflow_clip(&fragment, &doc.node(table).style, &doc));
+    }
+
+    #[test]
+    fn retained_viewport_overflow_precedes_its_local_style_and_helper_clips_remain_owned() {
+        let mut doc = Document::new();
+        let html = doc.create_node(ElementTag::Html);
+        doc.append_child(doc.root(), html);
+        doc.update_resolved_style(html, |style| style.overflow_x = Overflow::Hidden);
+        let mut fragment = Fragment::new_box(
+            html,
+            PhysicalSize::new(LayoutUnit::from_i32(40), LayoutUnit::from_i32(40)),
+        );
+        assert_eq!(
+            paint_overflow_pair(&fragment, &doc.node(html).style, &doc),
+            (Overflow::Visible, Overflow::Visible),
+            "viewport-defining HTML has no second local clip without an area",
+        );
+        fragment.kind = FragmentKind::Viewport;
+        fragment.scroll_area = Some(openui_layout::ScrollArea {
+            client_rect: fragment.border_box_rect(),
+            content_rect: fragment.border_box_rect(),
+            overflow_x: Overflow::Scroll,
+            overflow_y: Overflow::Hidden,
+            negative_x: false,
+            negative_y: false,
+            integer_offsets: false,
+        });
+        assert_eq!(
+            paint_overflow_pair(&fragment, &doc.node(html).style, &doc),
+            (Overflow::Scroll, Overflow::Hidden),
+            "retained viewport policy includes propagated overflow",
+        );
+        fragment.kind = FragmentKind::Box;
+        fragment.box_ownership = openui_layout::FragmentBoxOwnership::LayoutHelper;
+        doc.update_resolved_style(html, |style| {
+            style.contain = openui_style::Containment::PAINT;
+        });
+        assert_eq!(
+            paint_overflow_pair(&fragment, &doc.node(html).style, &doc),
+            (Overflow::Visible, Overflow::Visible),
+            "a helper area cannot revive its source element's authored overflow",
+        );
+        fragment.has_overflow_clip = true;
+        fragment.inline_axis_clip_only = true;
+        assert!(needs_overflow_clip(&fragment, &doc.node(html).style, &doc));
+        assert_eq!(
+            paint_overflow_clip_axes(&fragment, &doc.node(html).style, &doc),
+            (true, false),
+            "borrowed style cannot erase the helper's explicit inline-axis clip",
+        );
+    }
+
+    #[test]
+    fn overflow_clip_uses_retained_owned_client_geometry_and_paired_edges() {
+        let mut doc = Document::new();
+        let element = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), element);
+        let mut fragment = Fragment::new_box(
+            element,
+            PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(80)),
+        );
+        fragment.border = BoxStrut::new(
+            LayoutUnit::from_i32(3),
+            LayoutUnit::from_i32(3),
+            LayoutUnit::from_i32(3),
+            LayoutUnit::from_i32(3),
+        );
+        let client = openui_geometry::PhysicalRect::from_xywh(
+            LayoutUnit::from_f32(4.25),
+            LayoutUnit::from_f32(6.25),
+            LayoutUnit::from_f32(25.5),
+            LayoutUnit::from_f32(15.5),
+        );
+        fragment.scroll_area = Some(openui_layout::ScrollArea {
+            client_rect: client,
+            content_rect: client,
+            overflow_x: Overflow::Hidden,
+            overflow_y: Overflow::Hidden,
+            negative_x: false,
+            negative_y: false,
+            integer_offsets: true,
+        });
+        let offset = PhysicalOffset::new(LayoutUnit::from_f32(10.25), LayoutUnit::from_f32(20.25));
+        assert_eq!(
+            compute_clip_rect(&fragment, offset),
+            (15.0, 27.0, 25.0, 15.0),
+            "the client edges are snapped after adding the physical origin",
+        );
+        fragment.box_ownership = openui_layout::FragmentBoxOwnership::LayoutHelper;
+        assert_eq!(
+            compute_clip_rect(&fragment, offset),
+            (13.0, 23.0, 94.0, 74.0),
+            "borrowed retained state cannot replace a helper's explicit clip box",
+        );
     }
 
     #[test]
