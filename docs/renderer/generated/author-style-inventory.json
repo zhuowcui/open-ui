@@ -5,8 +5,8 @@
     "bindings/rust/openui-engine/src"
   ],
   "counts": {
-    "consumed": 231,
-    "internal": 15,
+    "consumed": 233,
+    "internal": 17,
     "public_typed": 216,
     "unclassified": 0
   },
@@ -500,6 +500,7 @@
         "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
         "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
@@ -928,6 +929,7 @@
         "bindings/rust/openui-layout/src/scroll_area.rs",
         "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
         "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs",
@@ -995,7 +997,6 @@
       "canonical_schema_entry": false,
       "classification": "internal",
       "consumers": [
-        "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/grid.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -1596,6 +1597,7 @@
         "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
         "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
         "bindings/rust/openui-paint/src/content_layer.rs",
@@ -1728,6 +1730,7 @@
         "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
         "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
         "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
@@ -2117,6 +2120,18 @@
       "internal_rationale": "Marks engine-generated native control text for platform rasterization.",
       "property_id": null,
       "rust_type": "bool"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": null,
+      "field": "native_transform",
+      "internal_rationale": "Retains the owned typed native transform source for effect composition and actual post-layout reference-box resolution.",
+      "property_id": null,
+      "rust_type": "Option<crate::TransformList>"
     },
     {
       "canonical_schema_entry": true,
@@ -2533,6 +2548,7 @@
         "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
         "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
@@ -3261,6 +3277,7 @@
         "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
         "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
         "bindings/rust/openui-paint/src/content_layer.rs",
         "bindings/rust/openui-paint/src/image_resource.rs",
@@ -3283,8 +3300,6 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/block.rs",
-        "bindings/rust/openui-layout/src/scroll_area.rs",
         "bindings/rust/openui-paint/src/paint_order.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-paint/src/render.rs",
@@ -3298,10 +3313,22 @@
       "rust_type": "Transform2D"
     },
     {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": null,
+      "field": "transform_matrix",
+      "internal_rationale": "Retains a complete constant native transform matrix while the existing affine field remains a compatibility view.",
+      "property_id": null,
+      "rust_type": "Option<crate::TransformMatrix>"
+    },
+    {
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/scroll_area.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
         "bindings/rust/openui-paint/src/painter.rs",
         "bindings/rust/openui-engine/src/lib.rs",
         "bindings/rust/openui-engine/src/scroll_button.rs"
@@ -3437,6 +3464,7 @@
         "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/sticky.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
         "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/collapsed_table_painter.rs",
         "bindings/rust/openui-paint/src/content_layer.rs",
@@ -3521,6 +3549,7 @@
         "bindings/rust/openui-layout/src/scroll_area.rs",
         "bindings/rust/openui-layout/src/scrollbars.rs",
         "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-layout/src/transform.rs",
         "bindings/rust/openui-layout/src/viewport.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs",
         "bindings/rust/openui-paint/src/painter.rs",
