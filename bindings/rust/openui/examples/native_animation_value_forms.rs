@@ -84,9 +84,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let width = target.animate(
         StyleProperty::Width,
         Keyframes::from_values(
-            StyleValue::Renderer(RendererStyleValue::Width(
-                openui::typed_style::Length::fixed(5.0),
-            )),
+            StyleValue::Renderer(RendererStyleValue::Width(openui::typed_style::Length::px(
+                5.0,
+            ))),
             StyleValue::from(LengthValue::px(5.0)),
         ),
         options(CompositeOperation::Add),

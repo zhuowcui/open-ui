@@ -1,5 +1,7 @@
 use openui::prelude::*;
-use openui::style::{Length, RendererStyleValue, Transform3D, TransformList, TransformOperation};
+use openui::typed_style::{
+    Length, RendererStyleValue, Transform3D, TransformList, TransformOperation,
+};
 
 fn fixture(scale: f64, width: f32, transform: TransformList) -> (Document, Element) {
     let document = Document::with_font_collection(
@@ -63,7 +65,7 @@ fn deferred_suffix_resolves_same_frame_animated_width_and_later_paused_geometry(
                 options,
             )
             .unwrap();
-        document.set_animation_time(50.0).unwrap();
+        document.advance_time(50.0).unwrap();
         let (expected, _) = fixture(scale, 150.0, translate(75.0));
         let first = document.render_to_png_buffer().unwrap();
         assert_eq!(first, expected.render_to_png_buffer().unwrap());
