@@ -71,3 +71,36 @@ All eleven crates.io packages declare Apache-2.0, repository/homepage metadata,
 the Rust 1.85 floor, and version 0.2.0. Internal dependencies carry both a
 local path and an exact registry version. The non-publishable `openui-ffi`
 crate is packaged as the native SDK after the same dependency review.
+
+## XML dependency backport and publication gate
+
+The Linux accessibility graph uses `zbus_xml` 5.1.0 through
+`zbus-lockstep` 0.5.2 and AccessKit. Its upstream `quick-xml` 0.38 requirement
+selects a version affected by RUSTSEC-2026-0194 and RUSTSEC-2026-0195. The
+patched `quick-xml` 0.41 line supports Rust 1.79, while newer published
+`zbus_xml` releases require Rust 1.87. Open UI retains its Rust 1.85 floor.
+
+The workspace therefore applies `vendor/zbus_xml-v5_1`: the official MIT
+licensed 5.1.0 crate with only its normalized `Cargo.toml` dependency
+requirement changed from `quick-xml` 0.38 to 0.41. Its Rust source, tests,
+license and original manifest remain byte-identical to the upstream archive.
+`OPENUI-BACKPORT.json` records the official archive checksum, each original
+and retained file checksum, the manifest change, and the canonical retained
+source inventory digest. The upstream standalone lockfile is omitted because
+the active production graph is governed by the framework lockfile.
+
+The production lock also selects `crossbeam-epoch` 0.9.20, which fixes
+RUSTSEC-2026-0204 and retains its Rust 1.61 minimum. Fuzz has a separate lock;
+both active locks remain subject to the complete strict security check.
+Dependency resolution and source review do not replace Rust 1.85 compilation,
+Linux feature checks, upstream XML round-trip/error guards or a fresh audit.
+
+Cargo only honors `[patch]` at the final consuming workspace root;
+[dependency manifests do not propagate patches](https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html#the-patch-section).
+This local backport does not make the registry copy of `zbus_xml` 5.1.0 patched.
+The SDK ships the verified backport source and license, identifies it in the
+SBOM, and adds an explicit root patch to its Rust example manifests. Standalone
+crates.io consumer publication remains blocked until a compatible fixed
+upstream graph is published or an actual consumer explicitly applies and
+qualifies the backport. Publishing an Open UI crate alone cannot satisfy that
+gate.

@@ -20,7 +20,7 @@ members = [
     "examples/framework-test",
     "pixel-compare",
 ]
-exclude = ["fuzz"]
+exclude = ["fuzz", "vendor/zbus_xml-v5_1"]
 
 [workspace.package]
 version = "0.2.0"
@@ -40,3 +40,12 @@ read-fonts = { path = "vendor/read-fonts-v0_37" }
 font-types = { path = "vendor/font-types-v0_11" }
 bytemuck = { path = "vendor/bytemuck-v1" }
 bytemuck_derive = { path = "vendor/bytemuck_derive-v1" }
+zbus_xml = { path = "vendor/zbus_xml-v5_1" }
+
+[workspace.metadata.openui.dependency-backports.zbus_xml]
+version = "5.1.0"
+path = "vendor/zbus_xml-v5_1"
+license = "MIT"
+provenance-sha256 = "62f3fc2efb28acbe25e47b7b61f61c5ef77eaf29d3ccfe9ec5a562380ace4938"
+source-inventory-sha256 = "c16fc22d85ab7e01b3b59e766bd5223627d5e6c21f9b2bdcdf347c6356998882"
+upstream-archive-sha256 = "441a0064125265655bccc3a6af6bef56814d9277ac83fce48b1cd7e160b80eac"
