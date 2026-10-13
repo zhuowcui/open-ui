@@ -1425,6 +1425,11 @@ impl Engine {
             StyleProperty::BorderBottomLeftRadius,
         ];
         let mut legacy_pairs: [Option<(AnimationId, (f32, f32))>; 4] = [None; 4];
+        // Original renderer pairs preserve the lower percentage flags. Keep
+        // overwritten axis publication steps in effect order so a lower calc
+        // can publish its non-percent flag before the pair clears raw sources.
+        // These already-composed values never feed back into the numeric fold.
+        let mut legacy_lower_axes = Vec::new();
         for (id, instance) in &self.animations {
             if instance.target != self.handle_for_slot(index) {
                 continue;
@@ -1500,6 +1505,11 @@ impl Engine {
                     )
                     .expect("owned typed animation component");
                 if let Some((corner, axis)) = property.radius_axis_coordinates() {
+                    if legacy_corners.contains(&instance.keyframes.property()) {
+                        if let Some((lower_id, lower_value)) = values.get(&(property as u16)) {
+                            legacy_lower_axes.push((*lower_id, property, lower_value.clone()));
+                        }
+                    }
                     radius_underlying[corner * 2 + axis] = Some(value.clone());
                 } else if property == StyleProperty::BorderRadiusPercent {
                     if let StyleValue::Renderer(
@@ -1594,6 +1604,7 @@ impl Engine {
                 )
             })
             .collect::<Vec<_>>();
+        ordered.extend(legacy_lower_axes);
         // Color dependencies are resolved from the final ordered effect stacks,
         // independently of animation creation order. Text-decoration currentcolor
         // uses final text fill; the other color properties use final own color.

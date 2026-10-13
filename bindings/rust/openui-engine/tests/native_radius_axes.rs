@@ -468,3 +468,167 @@ fn accepted_legacy_discrete_pairs_keep_raw_numbers_around_new_axis_effects() {
         );
     }
 }
+
+#[test]
+fn legacy_pair_publication_keeps_lower_axis_kinds_and_intervening_overlay_order() {
+    for scale in SCALES {
+        for reverse_axes in [false, true] {
+            for between in [None, Some((true, false)), Some((false, true))] {
+                let (mut e, n) = fixture(scale);
+                set(
+                    &mut e,
+                    n,
+                    StyleProperty::BorderTopLeftRadiusX,
+                    LengthValue::px(10.0),
+                );
+                set(
+                    &mut e,
+                    n,
+                    StyleProperty::BorderTopLeftRadiusY,
+                    LengthValue::px(20.0),
+                );
+                set(
+                    &mut e,
+                    n,
+                    StyleProperty::BorderTopRightRadiusX,
+                    LengthValue::px(12.0),
+                );
+                set(
+                    &mut e,
+                    n,
+                    StyleProperty::BorderTopRightRadiusY,
+                    LengthValue::percent(13.0),
+                );
+                let authored_unrelated = RADIUS_AXIS_PROPERTIES[2..]
+                    .iter()
+                    .map(|&property| e.radius_axis_length(n, property).unwrap())
+                    .collect::<Vec<_>>();
+                let mut flags = [(false, true); 4];
+                flags[0] = (true, true);
+                let overlay = constant(
+                    &mut e,
+                    n,
+                    StyleProperty::BorderRadiusPercent,
+                    StyleValue::Renderer(RendererStyleValue::BorderRadiusPercent(flags)),
+                    CompositeOperation::Replace,
+                );
+                let create_axis = |e: &mut Engine, axis| {
+                    constant(
+                        e,
+                        n,
+                        if axis == 0 {
+                            StyleProperty::BorderTopLeftRadiusX
+                        } else {
+                            StyleProperty::BorderTopLeftRadiusY
+                        },
+                        LengthValue::px(if axis == 0 { 2.0 } else { 3.0 }),
+                        CompositeOperation::Add,
+                    )
+                };
+                let (x, y) = if reverse_axes {
+                    let y = create_axis(&mut e, 1);
+                    (create_axis(&mut e, 0), y)
+                } else {
+                    let x = create_axis(&mut e, 0);
+                    (x, create_axis(&mut e, 1))
+                };
+                assert_eq!(
+                    pair(&e, n),
+                    (
+                        LengthValue::calc_percent_px(10.0, 2.0),
+                        LengthValue::calc_percent_px(20.0, 3.0),
+                    )
+                );
+                let later_overlay = between.map(|between| {
+                    flags[0] = between;
+                    constant(
+                        &mut e,
+                        n,
+                        StyleProperty::BorderRadiusPercent,
+                        StyleValue::Renderer(RendererStyleValue::BorderRadiusPercent(flags)),
+                        CompositeOperation::Replace,
+                    )
+                });
+                let unrelated = RADIUS_AXIS_PROPERTIES[2..]
+                    .iter()
+                    .map(|&property| e.radius_axis_length(n, property).unwrap())
+                    .collect::<Vec<_>>();
+                assert_eq!(unrelated[0], LengthValue::px(12.0));
+                assert_eq!(unrelated[1], LengthValue::percent(13.0));
+                let legacy = constant(
+                    &mut e,
+                    n,
+                    StyleProperty::BorderTopLeftRadius,
+                    StyleValue::Renderer(RendererStyleValue::BorderTopLeftRadius((7.0, 8.0))),
+                    CompositeOperation::Replace,
+                );
+                let pair_flags = between.unwrap_or((false, false));
+                let expected = (
+                    if pair_flags.0 {
+                        LengthValue::percent(7.0)
+                    } else {
+                        LengthValue::px(7.0)
+                    },
+                    if pair_flags.1 {
+                        LengthValue::percent(8.0)
+                    } else {
+                        LengthValue::px(8.0)
+                    },
+                );
+                assert_eq!(pair(&e, n), expected);
+                assert_eq!(e.computed_style(n).unwrap().border_radius_lengths[0], None);
+                for (&property, &value) in RADIUS_AXIS_PROPERTIES[2..].iter().zip(&unrelated) {
+                    assert_eq!(e.radius_axis_length(n, property).unwrap(), value);
+                }
+                // Removing current authored X changes the surviving lower Add,
+                // while the discrete pair still owns its unchanged result.
+                assert!(e
+                    .remove_property(n, StyleProperty::BorderTopLeftRadiusX)
+                    .unwrap());
+                assert_eq!(pair(&e, n), expected);
+                if let Some(later_overlay) = later_overlay {
+                    e.cancel_animation(later_overlay).unwrap();
+                    // The earlier overlay is followed by two real calc axes.
+                    assert_eq!(pair(&e, n), (LengthValue::px(7.0), LengthValue::px(8.0)));
+                }
+                e.cancel_animation(legacy).unwrap();
+                assert_eq!(
+                    pair(&e, n),
+                    (
+                        LengthValue::calc_percent_px(0.0, 2.0),
+                        LengthValue::calc_percent_px(20.0, 3.0),
+                    )
+                );
+                e.cancel_animation(x).unwrap();
+                assert_eq!(
+                    pair(&e, n),
+                    (
+                        LengthValue::percent(0.0),
+                        LengthValue::calc_percent_px(20.0, 3.0)
+                    )
+                );
+                e.cancel_animation(y).unwrap();
+                assert_eq!(
+                    pair(&e, n),
+                    (LengthValue::percent(0.0), LengthValue::percent(20.0))
+                );
+                e.cancel_animation(overlay).unwrap();
+                assert_eq!(pair(&e, n), (LengthValue::px(0.0), LengthValue::px(20.0)));
+                for (&property, &value) in
+                    RADIUS_AXIS_PROPERTIES[2..].iter().zip(&authored_unrelated)
+                {
+                    assert_eq!(e.radius_axis_length(n, property).unwrap(), value);
+                }
+                let scene = e.scene().unwrap();
+                let stats = e.stats();
+                let generations = e.dirty_generations();
+                e.drain_animation_events();
+                e.set_animation_time(0.0).unwrap();
+                assert_eq!(e.scene().unwrap().generation(), scene.generation());
+                assert_eq!(e.stats(), stats);
+                assert_eq!(e.dirty_generations(), generations);
+                assert!(e.drain_animation_events().is_empty());
+            }
+        }
+    }
+}
