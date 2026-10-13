@@ -40,25 +40,40 @@ pub fn resolved_fragment_transform(
     fragment: &Fragment,
     style: &ComputedStyle,
 ) -> ResolvedFragmentTransform {
-    let border_box = fragment.border_box_rect();
-    let mut width = border_box.size.width.to_f64();
-    let mut height = border_box.size.height.to_f64();
+    let mut reference_box = fragment.border_box_rect();
     if let Some(block_size) = fragment.decoration_paint_block_size {
         let direction = fragment
             .fragmentation_writing_direction
             .unwrap_or_else(|| style.direction.writing_direction(style.writing_mode));
         if direction.is_horizontal() {
-            height = block_size.to_f64();
+            reference_box.size.height = block_size;
         } else {
-            width = block_size.to_f64();
+            reference_box.size.width = block_size;
         }
     }
+    resolved_transform_for_reference_box(style, reference_box)
+}
+
+/// Resolve an authored transform against an explicitly owned reference box.
+///
+/// Chromium147 uses different reference boxes for physical paint fragments and
+/// source-box client quads. Both paths share the operation and origin arithmetic;
+/// the layout owner supplies the reference geometry. The source-box route must
+/// not replace the physical fragment's paint matrix.
+pub fn resolved_transform_for_reference_box(
+    style: &ComputedStyle,
+    reference_box: openui_geometry::PhysicalRect,
+) -> ResolvedFragmentTransform {
+    let width = reference_box.width().to_f64();
+    let height = reference_box.height().to_f64();
     let matrix = style.transform_for_reference_box(width, height);
     // Blink stores each origin coordinate in float, including addition of
     // the owned reference-box offset, before it applies the operation list.
     let origin = (
-        (border_box.offset.left.to_f32() + origin(style.transform_origin.0, width) as f32) as f64,
-        (border_box.offset.top.to_f32() + origin(style.transform_origin.1, height) as f32) as f64,
+        (reference_box.offset.left.to_f32() + origin(style.transform_origin.0, width) as f32)
+            as f64,
+        (reference_box.offset.top.to_f32() + origin(style.transform_origin.1, height) as f32)
+            as f64,
     );
     let local_applied = if let Some(list) = &style.native_transform {
         transform_list_applied(list, (width, height), Some((origin.0, origin.1, 0.0)))

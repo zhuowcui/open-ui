@@ -88,7 +88,7 @@ pub use sticky::{apply_sticky_offset, compute_sticky_offset, StickyPositionData}
 pub use table::table_layout;
 pub use transform::{
     finalize_fragment_transforms, promoted_ancestor_applied_transform, resolved_fragment_transform,
-    ResolvedFragmentTransform,
+    resolved_transform_for_reference_box, ResolvedFragmentTransform,
 };
 
 mod fieldset;

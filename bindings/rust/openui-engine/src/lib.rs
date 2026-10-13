@@ -3,6 +3,7 @@
 mod accessibility;
 mod animation;
 mod animation_timeline;
+mod client_geometry;
 mod compositor_scene;
 mod control_geometry;
 mod element_dimensions;
@@ -3174,6 +3175,13 @@ impl Engine {
         );
         self.hit_test = entries;
         self.fragment_rects = rects;
+        // Client quads use Chromium's source-box/container mapping, while
+        // physical hit entries and their clips keep the actual fragment matrix.
+        self.fragment_rects
+            .extend(client_geometry::fragment_client_rects(
+                &self.document,
+                fragment,
+            ));
         self.fragment_box_worlds = box_worlds;
     }
 }
